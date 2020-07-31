@@ -1,8 +1,8 @@
 {
     "name": "Lib9c",
     "references": [
-        "GUID:5d8f5a5645f256a47b503bbb6f2a2477",
-        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:db63fa540f010af478a755cc5e979763"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
