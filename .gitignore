@@ -1,6 +1,9 @@
 # Common IntelliJ Platform excludes
 **/.idea/
 
+# Unity generated metadata files
+*.meta
+
 *.suo
 *.user
 .vs/
