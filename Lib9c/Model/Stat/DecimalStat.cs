@@ -71,5 +71,13 @@ namespace Nekoyume.Model.Stat
                 return (_value.GetHashCode() * 397) ^ (int) Type;
             }
         }
+
+        public override string ToString()
+        {
+            var value = Type == StatType.SPD ?
+                (Value / 100m) : Value;
+
+            return $"{Type} +{(float) value}";
+        }
     }
 }
