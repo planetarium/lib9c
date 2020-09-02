@@ -88,17 +88,13 @@ namespace Nekoyume.Model.State
 
         #endregion
 
-        //FIXME (Text) 대신 (Integer) 로 직렬화해야함
         #region Integer
 
-        public static IValue Serialize(this int number) =>
-            (Text)number.ToString(CultureInfo.InvariantCulture);
+        public static IValue Serialize(this int number) => (Integer) number;
 
-        public static IValue Serialize(this int? number) =>
-            Serialize(Serialize, number);
+        public static IValue Serialize(this int? number) => Serialize(Serialize, number);
 
-        public static int ToInteger(this IValue serialized) =>
-            int.Parse(((Text)serialized).Value, CultureInfo.InvariantCulture);
+        public static int ToInteger(this IValue serialized) => (int) ((Integer) serialized).Value;
 
         public static int? ToNullableInteger(this IValue serialized) =>
             Deserialize(ToInteger, serialized);
