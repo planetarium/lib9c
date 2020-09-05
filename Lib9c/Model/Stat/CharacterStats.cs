@@ -294,7 +294,7 @@ namespace Nekoyume.Model.Stat
 
         public void AddBuff(Buff.Buff buff, bool updateImmediate = true)
         {
-            _buffStatModifiers[buff.RowData.GroupId] = buff.RowData.StatModifier;
+            _buffStatModifiers[buff.GroupId] = buff.StatModifier;
 
             if (updateImmediate)
             {
@@ -304,10 +304,10 @@ namespace Nekoyume.Model.Stat
 
         public void RemoveBuff(Buff.Buff buff, bool updateImmediate = true)
         {
-            if (!_buffStatModifiers.ContainsKey(buff.RowData.GroupId))
+            if (!_buffStatModifiers.ContainsKey(buff.GroupId))
                 return;
 
-            _buffStatModifiers.Remove(buff.RowData.GroupId);
+            _buffStatModifiers.Remove(buff.GroupId);
 
             if (updateImmediate)
             {

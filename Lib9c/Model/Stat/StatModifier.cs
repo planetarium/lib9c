@@ -5,6 +5,30 @@ namespace Nekoyume.Model.Stat
     [Serializable]
     public class StatModifier
     {
+        protected bool Equals(StatModifier other)
+        {
+            return StatType == other.StatType && Operation == other.Operation && Value == other.Value;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((StatModifier) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (int) StatType;
+                hashCode = (hashCode * 397) ^ (int) Operation;
+                hashCode = (hashCode * 397) ^ Value;
+                return hashCode;
+            }
+        }
+
         public enum OperationType
         {
             Add,

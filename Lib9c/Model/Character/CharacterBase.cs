@@ -231,12 +231,12 @@ namespace Nekoyume.Model
 
         public void AddBuff(Buff.Buff buff, bool updateImmediate = true)
         {
-            if (Buffs.TryGetValue(buff.RowData.GroupId, out var outBuff) &&
-                outBuff.RowData.Id > buff.RowData.Id)
+            if (Buffs.TryGetValue(buff.GroupId, out var outBuff) &&
+                outBuff.Id > buff.Id)
                 return;
 
             var clone = (Buff.Buff) buff.Clone();
-            Buffs[buff.RowData.GroupId] = clone;
+            Buffs[buff.GroupId] = clone;
             Stats.AddBuff(clone, updateImmediate);
         }
 

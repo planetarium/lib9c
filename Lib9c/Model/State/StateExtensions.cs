@@ -403,5 +403,26 @@ namespace Nekoyume.Model.State
             Deserialize(ToFungibleAssetValue, serialized);
 
         #endregion
+
+        #region StatModifier
+
+        public static IValue Serialize(this StatModifier value)
+        {
+            return Dictionary.Empty
+                .Add("stat_type", value.StatType.Serialize())
+                .Add("operation_type", value.Operation.Serialize())
+                .Add("value", value.Value.Serialize());
+        }
+
+        public static StatModifier ToStatModifier(this IValue serialized)
+        {
+            var dict = (Dictionary) serialized;
+            var statType = dict["stat_type"].ToEnum<StatType>();
+            var operationType = dict["operation_type"].ToEnum<StatModifier.OperationType>();
+            var value = dict["value"].ToInteger();
+            return new StatModifier(statType, operationType, value);
+        }
+
+        #endregion
     }
 }
