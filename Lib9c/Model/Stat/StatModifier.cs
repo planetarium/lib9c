@@ -3,9 +3,9 @@ using System;
 namespace Nekoyume.Model.Stat
 {
     [Serializable]
-    public class StatModifier
+    public class StatModifier : IEquatable<StatModifier>
     {
-        protected bool Equals(StatModifier other)
+        public bool Equals(StatModifier other)
         {
             return StatType == other.StatType && Operation == other.Operation && Value == other.Value;
         }

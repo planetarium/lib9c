@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bencodex.Types;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Stat
@@ -18,6 +20,48 @@ namespace Nekoyume.Model.Stat
     [Serializable]
     public class CharacterStats : Stats, IBaseAndAdditionalStats, ICloneable
     {
+        protected bool Equals(CharacterStats other)
+        {
+            return base.Equals(other) &&
+                   Equals(_levelStats, other._levelStats) &&
+                   Equals(_equipmentStats, other._equipmentStats) &&
+                   Equals(_consumableStats, other._consumableStats) &&
+                   Equals(_buffStats, other._buffStats) &&
+                   Equals(_optionalStats, other._optionalStats) &&
+                   Equals(_equipmentStatModifiers, other._equipmentStatModifiers) &&
+                   Equals(_consumableStatModifiers, other._consumableStatModifiers) &&
+                   Equals(_buffStatModifiers, other._buffStatModifiers) &&
+                   Equals(_optionalStatModifiers, other._optionalStatModifiers) &&
+                   Level == other.Level;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((CharacterStats) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = base.GetHashCode();
+                hashCode = (hashCode * 397) ^ (_levelStats != null ? _levelStats.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_equipmentStats != null ? _equipmentStats.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_consumableStats != null ? _consumableStats.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_buffStats != null ? _buffStats.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_optionalStats != null ? _optionalStats.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_equipmentStatModifiers != null ? _equipmentStatModifiers.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_consumableStatModifiers != null ? _consumableStatModifiers.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_buffStatModifiers != null ? _buffStatModifiers.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_optionalStatModifiers != null ? _optionalStatModifiers.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ Level;
+                return hashCode;
+            }
+        }
+
         private readonly CharacterSheet.Row _row;
 
         private readonly Stats _levelStats = new Stats();
@@ -97,6 +141,24 @@ namespace Nekoyume.Model.Stat
             _optionalStatModifiers = value._optionalStatModifiers;
 
             Level = value.Level;
+        }
+
+        public CharacterStats(Dictionary serialized) : base(serialized)
+        {
+            _levelStats = new Stats(serialized["level_stats"]);
+            _equipmentStats = new Stats(serialized["equipment_stats"]);
+            _consumableStats = new Stats(serialized["consumable_stats"]);
+            _buffStats = new Stats(serialized["buff_stats"]);
+            _optionalStats = new Stats(serialized["optional_stats"]);
+            _equipmentStatModifiers = serialized["equipment_stat_modifiers"].ToList(m => m.ToStatModifier());
+            _consumableStatModifiers = serialized["consumable_stat_modifiers"].ToList(m => m.ToStatModifier());
+            _buffStatModifiers = serialized["buff_stat_modifiers"].ToBuffStatModifiers();
+            _optionalStatModifiers = serialized["optional_stat_modifiers"].ToList(m => m.ToStatModifier());
+            Level = serialized["level"].ToInteger();
+        }
+        public CharacterStats(IValue serialized) : this((Dictionary)serialized)
+        {
+
         }
 
         public CharacterStats SetAll(
@@ -452,6 +514,25 @@ namespace Nekoyume.Model.Stat
                 yield return (StatType.HIT, BaseHIT, AdditionalHIT);
                 yield return (StatType.SPD, BaseSPD, AdditionalSPD);
             }
+        }
+
+        public override IValue Serialize()
+        {
+            var dict = ((Dictionary) base.Serialize())
+                .Add("level_stats", _levelStats.Serialize())
+                .Add("equipment_stats", _equipmentStats.Serialize())
+                .Add("consumable_stats", _consumableStats.Serialize())
+                .Add("buff_stats", _buffStats.Serialize())
+                .Add("optional_stats", _optionalStats.Serialize())
+                .Add("equipment_stat_modifiers",
+                    new List(_equipmentStatModifiers.Select(m => m.Serialize())).Serialize())
+                .Add("consumable_stat_modifiers",
+                    new List(_consumableStatModifiers.Select(m => m.Serialize())).Serialize())
+                .Add("optional_stat_modifiers",
+                    new List(_optionalStatModifiers.Select(m => m.Serialize())).Serialize())
+                .Add("buff_stat_modifiers", _buffStatModifiers.Serialize())
+                .Add("level", Level.Serialize());
+            return dict;
         }
     }
 }

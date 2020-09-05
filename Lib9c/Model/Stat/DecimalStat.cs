@@ -68,7 +68,10 @@ namespace Nekoyume.Model.Stat
         {
             unchecked
             {
-                return (_value.GetHashCode() * 397) ^ (int) Type;
+                var hashCode = _value.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int) Type;
+                hashCode = (hashCode * 397) ^ ValueAsInt;
+                return hashCode;
             }
         }
     }

@@ -1,12 +1,42 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bencodex.Types;
+using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Stat
 {
     [Serializable]
     public class Stats : IStats, ICloneable
     {
+        protected bool Equals(Stats other)
+        {
+            return Equals(hp, other.hp) && Equals(atk, other.atk) && Equals(def, other.def) && Equals(cri, other.cri) &&
+                   Equals(hit, other.hit) && Equals(spd, other.spd);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Stats) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (hp != null ? hp.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (atk != null ? atk.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (def != null ? def.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (cri != null ? cri.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (hit != null ? hit.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (spd != null ? spd.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
+
         protected readonly IntStatWithCurrent hp = new IntStatWithCurrent(StatType.HP);
         protected readonly IntStat atk = new IntStat(StatType.ATK);
         protected readonly IntStat def = new IntStat(StatType.DEF);
@@ -46,6 +76,20 @@ namespace Nekoyume.Model.Stat
             cri = (DecimalStat)value.cri.Clone();
             hit = (DecimalStat)value.hit.Clone();
             spd = (DecimalStat)value.spd.Clone();
+        }
+
+        public Stats(Dictionary serialized)
+        {
+            hp = serialized["hp"].ToIntStatWitCurrent();
+            atk = serialized["atk"].ToIntStat();
+            def = serialized["def"].ToIntStat();
+            cri = serialized["cri"].ToDecimalStat();
+            hit = serialized["hit"].ToDecimalStat();
+            spd = serialized["spd"].ToDecimalStat();
+        }
+
+        public Stats(IValue serialized) : this((Dictionary) serialized)
+        {
         }
 
         public void Reset()
@@ -194,5 +238,17 @@ namespace Nekoyume.Model.Stat
         {
             return new Stats(this);
         }
+
+        public virtual IValue Serialize()
+        {
+            return Dictionary.Empty
+                .Add("hp", hp.Serialize())
+                .Add("atk", atk.Serialize())
+                .Add("def", def.Serialize())
+                .Add("cri", cri.Serialize())
+                .Add("hit", hit.Serialize())
+                .Add("spd", spd.Serialize());
+        }
+
     }
 }

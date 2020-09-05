@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Assets;
 using Libplanet.Crypto;
-using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 
@@ -239,6 +237,26 @@ namespace Nekoyume.Model.State
                 );
         }
 
+        public static IValue Serialize(this Dictionary<int, StatModifier> value)
+        {
+            return new Dictionary(value
+                .Select(pair => new KeyValuePair<IKey, IValue>(
+                        (Text) pair.Key.ToString(CultureInfo.InvariantCulture),
+                        pair.Value.Serialize()
+                    )
+                )
+            );
+        }
+
+        public static Dictionary<int, StatModifier> ToBuffStatModifiers(this IValue value)
+        {
+            var dict = (Dictionary) value;
+            return dict.ToDictionary(
+                pair => int.Parse(pair.Key.ToDotnetString(), CultureInfo.InvariantCulture),
+                pair => pair.Value.ToStatModifier()
+            );
+        }
+
         public static IValue Serialize(this Dictionary<HashDigest<SHA256>, int> value)
         {
             return new List(
@@ -421,6 +439,26 @@ namespace Nekoyume.Model.State
             var operationType = dict["operation_type"].ToEnum<StatModifier.OperationType>();
             var value = dict["value"].ToInteger();
             return new StatModifier(statType, operationType, value);
+        }
+
+        #endregion
+
+        #region IntStat
+
+        public static IntStat ToIntStat(this IValue value)
+        {
+            var dict = (Dictionary) value;
+            return new IntStat(dict["type"].ToEnum<StatType>(), dict["value"].ToInteger());
+        }
+
+        public static IntStatWithCurrent ToIntStatWitCurrent(this IValue value)
+        {
+            var dict = (Dictionary) value;
+            return new IntStatWithCurrent(
+                dict["type"].ToEnum<StatType>(),
+                dict["value"].ToInteger(),
+                dict["current"].ToInteger()
+            );
         }
 
         #endregion
