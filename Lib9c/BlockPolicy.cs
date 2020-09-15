@@ -42,7 +42,16 @@ namespace Nekoyume.BlockChain
                 return excFromValidator;
             }
 
-            return _impl.ValidateNextBlock(blocks, nextBlock);
+            // FIXME it should be removed after fixing libplanet's state root bug.
+            InvalidBlockException excFromImpl = _impl.ValidateNextBlock(blocks, nextBlock);
+            if (excFromImpl is InvalidBlockStateRootHashException)
+            {
+                return null;
+            }
+            else
+            {
+                return excFromImpl;
+            }
         }
     }
 }
