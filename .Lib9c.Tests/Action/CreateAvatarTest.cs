@@ -6,7 +6,7 @@ namespace Lib9c.Tests.Action
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
+    using System.Security.Cryptography;
     using Libplanet;
     using Libplanet.Assets;
     using Nekoyume;
@@ -165,6 +165,55 @@ namespace Lib9c.Tests.Action
             Assert.Equal(5, deserialized.lens);
             Assert.Equal(7, deserialized.tail);
             Assert.Equal("test", deserialized.name);
+        }
+
+        [Fact]
+        public void Determinism()
+        {
+            var agentAddress = default(Address);
+            var avatarAddress = agentAddress.Derive("avatar");
+
+            var action = new CreateAvatar()
+            {
+                avatarAddress = avatarAddress,
+                index = 0,
+                hair = 0,
+                ear = 0,
+                lens = 0,
+                tail = 0,
+                name = "test",
+            };
+
+            var gold = new GoldCurrencyState(new Currency("NCG", 2, minter: null));
+            var ranking = new RankingState();
+            for (var i = 0; i < RankingState.RankingMapCapacity; i++)
+            {
+                ranking.RankingMap[RankingState.Derive(i)] = new HashSet<Address>().ToImmutableHashSet();
+            }
+
+            var sheets = TableSheetsImporter.ImportSheets();
+            var state = new State()
+                .SetState(GoldCurrencyState.Address, gold.Serialize())
+                .SetState(
+                    Addresses.GoldDistribution,
+                    GoldDistributionTest.Fixture.Select(v => v.Serialize()).Serialize()
+                )
+                .SetState(
+                    Addresses.GameConfig,
+                    new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
+                )
+                .SetState(Addresses.Ranking, ranking.Serialize())
+                .MintAsset(GoldCurrencyState.Address, gold.Currency * 100000000000);
+
+            foreach (var (key, value) in sheets)
+            {
+                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            HashDigest<SHA256> stateRootHashA = ActionExecutionUtils.CalculateStateRootHash(action, state, signer: agentAddress);
+            HashDigest<SHA256> stateRootHashB = ActionExecutionUtils.CalculateStateRootHash(action, state, signer: agentAddress);
+
+            Assert.Equal(stateRootHashA, stateRootHashB);
         }
     }
 }

@@ -2,6 +2,7 @@ namespace Lib9c.Tests.Action
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Security.Cryptography;
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
@@ -96,6 +97,33 @@ namespace Lib9c.Tests.Action
                 ImmutableHashSet.Create(pendingActivation.address),
                 nextState.UpdatedAddresses
             );
+        }
+
+        [Fact]
+        public void Determinism()
+        {
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var pubKey = new PublicKey(
+                ByteUtil.ParseHex("02ed49dbe0f2c34d9dff8335d6dd9097f7a3ef17dfb5f048382eebc7f451a50aa1")
+            );
+            var pendingActivation = new PendingActivationState(nonce, pubKey);
+            var action = new CreatePendingActivation(pendingActivation);
+            var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
+            var adminState = new AdminState(adminAddress, 100);
+            var state = new State(ImmutableDictionary<Address, IValue>.Empty
+                .Add(AdminState.Address, adminState.Serialize())
+            );
+            var actionContext = new ActionContext()
+            {
+                BlockIndex = 1,
+                PreviousStates = state,
+                Signer = adminAddress,
+            };
+
+            HashDigest<SHA256> stateRootHashA = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: state, signer: adminAddress);
+            HashDigest<SHA256> stateRootHashB = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: state, signer: adminAddress);
+
+            Assert.Equal(stateRootHashA, stateRootHashB);
         }
     }
 }

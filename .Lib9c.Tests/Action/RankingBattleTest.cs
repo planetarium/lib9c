@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Cryptography;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Assets;
@@ -392,6 +393,37 @@ namespace Lib9c.Tests.Action
                     Rehearsal = false,
                 });
             });
+        }
+
+        [Fact]
+        public void Determinism()
+        {
+            var previousWeeklyState = _initialState.GetWeeklyArenaState(0);
+            var previousAvatar1State = _initialState.GetAvatarState(_avatar1Address);
+            previousAvatar1State.level = 10;
+
+            var previousState = _initialState.SetState(
+                _avatar1Address,
+                previousAvatar1State.Serialize());
+
+            var itemIds = _tableSheets.WeeklyArenaRewardSheet.Values
+                .Select(r => r.Reward.ItemId)
+                .ToList();
+
+            var action = new RankingBattle
+            {
+                AvatarAddress = _avatar1Address,
+                EnemyAddress = _avatar2Address,
+                WeeklyArenaAddress = _weeklyArenaAddress,
+                costumeIds = new List<int>(),
+                equipmentIds = new List<Guid>(),
+                consumableIds = new List<Guid>(),
+            };
+
+            HashDigest<SHA256> stateRootHashA = ActionExecutionUtils.CalculateStateRootHash(action, _initialState, signer: _agent1Address);
+            HashDigest<SHA256> stateRootHashB = ActionExecutionUtils.CalculateStateRootHash(action, _initialState, signer: _agent1Address);
+
+            Assert.Equal(stateRootHashA, stateRootHashB);
         }
 
         private static (AgentState, AvatarState) GetAgentStateWithAvatarState(

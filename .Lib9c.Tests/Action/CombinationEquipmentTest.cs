@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Security.Cryptography;
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
@@ -170,6 +171,60 @@ namespace Lib9c.Tests.Action
 
             Assert.NotNull(slotState.Result);
             Assert.NotNull(slotState.Result.itemUsable);
+        }
+
+        [Fact]
+        public void Determinism()
+        {
+            var agentState = new AgentState(_agentAddress);
+            agentState.avatarAddresses[0] = _avatarAddress;
+
+            var gameConfigState = new GameConfigState();
+            var avatarState = new AvatarState(
+                _avatarAddress,
+                _agentAddress,
+                1,
+                _tableSheets.GetAvatarSheets(),
+                gameConfigState,
+                default
+            );
+            var row = _tableSheets.EquipmentItemRecipeSheet.Values.First();
+            var materialRow = _tableSheets.MaterialItemSheet[row.MaterialId];
+            var material = ItemFactory.CreateItem(materialRow);
+            avatarState.inventory.AddItem(material, row.MaterialCount);
+
+            const int requiredStage = GameConfig.RequireClearedStageLevel.CombinationEquipmentAction;
+            for (var i = 1; i < requiredStage + 1; i++)
+            {
+                avatarState.worldInformation.ClearStage(1, i, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
+            }
+
+            var gold = new GoldCurrencyState(new Currency("NCG", 2, minter: null));
+
+            var initialState = new State()
+                .SetState(_agentAddress, agentState.Serialize())
+                .SetState(_avatarAddress, avatarState.Serialize())
+                .SetState(_slotAddress, new CombinationSlotState(_slotAddress, requiredStage).Serialize())
+                .SetState(GoldCurrencyState.Address, gold.Serialize())
+                .MintAsset(GoldCurrencyState.Address, gold.Currency * 100000000000);
+
+            foreach (var (key, value) in _sheets)
+            {
+                initialState =
+                    initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var action = new CombinationEquipment()
+            {
+                AvatarAddress = _avatarAddress,
+                RecipeId = row.Id,
+                SlotIndex = 0,
+            };
+
+            HashDigest<SHA256> stateRootHashA = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: initialState, signer: _agentAddress);
+            HashDigest<SHA256> stateRootHashB = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: initialState, signer: _agentAddress);
+
+            Assert.Equal(stateRootHashA, stateRootHashB);
         }
     }
 }

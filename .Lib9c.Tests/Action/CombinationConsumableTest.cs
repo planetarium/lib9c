@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Security.Cryptography;
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
@@ -21,6 +22,8 @@ namespace Lib9c.Tests.Action
         private readonly Dictionary<string, string> _sheets;
         private readonly IRandom _random;
         private readonly TableSheets _tableSheets;
+        private readonly IAccountStateDelta _initialState;
+        private readonly ConsumableItemRecipeSheet.Row _consumableItemRecipeRow;
 
         public CombinationConsumableTest()
         {
@@ -36,11 +39,7 @@ namespace Lib9c.Tests.Action
             _sheets = TableSheetsImporter.ImportSheets();
             _random = new ItemEnhancementTest.TestRandom();
             _tableSheets = new TableSheets(_sheets);
-        }
 
-        [Fact]
-        public void Execute()
-        {
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses[0] = _avatarAddress;
 
@@ -53,8 +52,8 @@ namespace Lib9c.Tests.Action
                 gameConfigState,
                 default
             );
-            var row = _tableSheets.ConsumableItemRecipeSheet.Values.First();
-            foreach (var materialInfo in row.Materials)
+            _consumableItemRecipeRow = _tableSheets.ConsumableItemRecipeSheet.Values.First();
+            foreach (var materialInfo in _consumableItemRecipeRow.Materials)
             {
                 var materialRow = _tableSheets.MaterialItemSheet[materialInfo.Id];
                 var material = ItemFactory.CreateItem(materialRow);
@@ -67,27 +66,31 @@ namespace Lib9c.Tests.Action
                 avatarState.worldInformation.ClearStage(1, i, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var initialState = new State()
+            _initialState = new State()
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(_avatarAddress, avatarState.Serialize())
                 .SetState(_slotAddress, new CombinationSlotState(_slotAddress, requiredStage).Serialize());
 
             foreach (var (key, value) in _sheets)
             {
-                initialState =
-                    initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState =
+                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
+        }
 
+        [Fact]
+        public void Execute()
+        {
             var action = new CombinationConsumable()
             {
                 AvatarAddress = _avatarAddress,
-                recipeId = row.Id,
+                recipeId = _consumableItemRecipeRow.Id,
                 slotIndex = 0,
             };
 
             var nextState = action.Execute(new ActionContext()
             {
-                PreviousStates = initialState,
+                PreviousStates = _initialState,
                 Signer = _agentAddress,
                 BlockIndex = 1,
                 Random = _random,
@@ -99,6 +102,21 @@ namespace Lib9c.Tests.Action
 
             var consumable = (Consumable)slotState.Result.itemUsable;
             Assert.NotNull(consumable);
+        }
+
+        [Fact]
+        public void Determinism()
+        {
+            var action = new CombinationConsumable()
+            {
+                AvatarAddress = _avatarAddress,
+                recipeId = _consumableItemRecipeRow.Id,
+                slotIndex = 0,
+            };
+
+            HashDigest<SHA256> stateRootHashA = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: _initialState, signer: _agentAddress);
+            HashDigest<SHA256> stateRootHashB = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: _initialState, signer: _agentAddress);
+            Assert.Equal(stateRootHashA, stateRootHashB);
         }
     }
 }

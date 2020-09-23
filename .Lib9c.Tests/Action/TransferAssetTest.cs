@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using System.Numerics;
     using System.Runtime.Serialization.Formatters.Binary;
+    using System.Security.Cryptography;
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
@@ -255,6 +256,32 @@ namespace Lib9c.Tests.Action
             Assert.Equal(_sender, deserialized.Sender);
             Assert.Equal(_recipient, deserialized.Recipient);
             Assert.Equal(_currency * 100, deserialized.Amount);
+        }
+
+        [Fact]
+        public void Determinism()
+        {
+            var balance = ImmutableDictionary<(Address, Currency), FungibleAssetValue>.Empty
+                .Add((_sender, _currency), _currency * 1000)
+                .Add((_recipient, _currency), _currency * 10);
+            // FIXME: now Libplanet.Store.Trie.MerkleTrie implementation throws NullReferenceException if the state is null.
+            var state = ImmutableDictionary<Address, IValue>.Empty
+                .Add(_sender, default(Null))
+                .Add(_recipient, default(Null));
+            var prevState = new State(
+                state: state,
+                balance: balance
+            );
+            var action = new TransferAsset(
+                sender: _sender,
+                recipient: _recipient,
+                amount: _currency * 100
+            );
+
+            HashDigest<SHA256> stateRootHashA = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: prevState, signer: _sender);
+            HashDigest<SHA256> stateRootHashB = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: prevState, signer: _sender);
+
+            Assert.Equal(stateRootHashA, stateRootHashB);
         }
     }
 }

@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Security.Cryptography;
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Assets;
@@ -176,6 +177,44 @@ namespace Lib9c.Tests.Action
                 (Dictionary)genesisState.GetState(Addresses.ActivatedAccount));
 
             Assert.Contains(adminAddress, fetchedState.Accounts);
+        }
+
+        [Fact]
+        public void Determinism()
+        {
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
+            var redeemCodeListSheet = new RedeemCodeListSheet();
+            redeemCodeListSheet.Set(_sheets[nameof(RedeemCodeListSheet)]);
+            var goldDistributionCsvPath = GoldDistributionTest.CreateFixtureCsvFile();
+            var goldDistributions = GoldDistribution.LoadInDescendingEndBlockOrder(goldDistributionCsvPath);
+            var minterKey = new PrivateKey();
+            var ncg = new Currency("NCG", 2, minterKey.ToAddress());
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var privateKey = new PrivateKey();
+            (ActivationKey activationKey, PendingActivationState pendingActivation) =
+                ActivationKey.Create(privateKey, nonce);
+
+            var action = new InitializeStates
+            {
+                RankingState = new RankingState(),
+                ShopState = new ShopState(),
+                TableSheets = _sheets,
+                GameConfigState = gameConfigState,
+                RedeemCodeState = new RedeemCodeState(redeemCodeListSheet),
+                AdminAddressState = new AdminState(
+                    new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9"),
+                    1500000
+                ),
+                ActivatedAccountsState = new ActivatedAccountsState(),
+                GoldCurrencyState = new GoldCurrencyState(ncg),
+                GoldDistributions = goldDistributions,
+                PendingActivationStates = new[] { pendingActivation },
+            };
+
+            HashDigest<SHA256> stateRootHashA = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: new State());
+            HashDigest<SHA256> stateRootHashB = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: new State());
+
+            Assert.Equal(stateRootHashA, stateRootHashB);
         }
     }
 }

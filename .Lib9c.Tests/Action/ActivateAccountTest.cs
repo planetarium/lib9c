@@ -1,6 +1,7 @@
 namespace Lib9c.Tests.Action
 {
     using System.Collections.Immutable;
+    using System.Security.Cryptography;
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
@@ -165,6 +166,25 @@ namespace Lib9c.Tests.Action
                     BlockIndex = 2,
                 });
             });
+        }
+
+        [Fact]
+        public void Determinism()
+        {
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var privateKey = new PrivateKey();
+            (ActivationKey activationKey, PendingActivationState pendingActivation) =
+                ActivationKey.Create(privateKey, nonce);
+            var state = new State(ImmutableDictionary<Address, IValue>.Empty
+                .Add(ActivatedAccountsState.Address, new ActivatedAccountsState().Serialize())
+                .Add(pendingActivation.address, pendingActivation.Serialize()));
+
+            ActivateAccount action = activationKey.CreateActivateAccount(nonce);
+
+            HashDigest<SHA256> stateRootHashA = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: state);
+            HashDigest<SHA256> stateRootHashB = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: state);
+
+            Assert.Equal(stateRootHashA, stateRootHashB);
         }
     }
 }

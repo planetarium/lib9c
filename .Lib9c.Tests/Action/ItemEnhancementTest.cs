@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using System.Collections.Immutable;
     using System.Globalization;
     using System.Linq;
+    using System.Security.Cryptography;
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
@@ -150,6 +151,74 @@ namespace Lib9c.Tests.Action
             });
 
             Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.UpdatedAddresses);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(3)]
+        public void Determinism(int level)
+        {
+            var privateKey = new PrivateKey();
+            var agentAddress = privateKey.PublicKey.ToAddress();
+            var agentState = new AgentState(agentAddress);
+
+            var avatarAddress = agentAddress.Derive("avatar");
+            var avatarState = new AvatarState(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                new GameConfigState(),
+                default
+            );
+
+            agentState.avatarAddresses.Add(0, avatarAddress);
+
+            var row = _tableSheets.EquipmentItemSheet.Values.First(r => r.Grade == 1);
+            var equipment = (Equipment)ItemFactory.CreateItemUsable(row, default, 0, level);
+            var materialId = Guid.NewGuid();
+            var material = (Equipment)ItemFactory.CreateItemUsable(row, materialId, 0, level);
+
+            avatarState.inventory.AddItem(equipment, 1);
+            avatarState.inventory.AddItem(material, 1);
+
+            avatarState.worldInformation.ClearStage(1, 1, 1, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
+
+            var slotAddress =
+                avatarAddress.Derive(string.Format(CultureInfo.InvariantCulture, CombinationSlotState.DeriveFormat, 0));
+
+            var gold = new GoldCurrencyState(new Currency("NCG", 2, minter: null));
+            var state = new State()
+                .SetState(agentAddress, agentState.Serialize())
+                .SetState(avatarAddress, avatarState.Serialize())
+                .SetState(slotAddress, new CombinationSlotState(slotAddress, 0).Serialize())
+                .SetState(GoldCurrencyState.Address, gold.Serialize())
+                .MintAsset(GoldCurrencyState.Address, gold.Currency * 100000000000)
+                .TransferAsset(Addresses.GoldCurrency, agentAddress, gold.Currency * 1000);
+
+            Assert.Equal(gold.Currency * 99999999000, state.GetBalance(Addresses.GoldCurrency, gold.Currency));
+            Assert.Equal(gold.Currency * 1000, state.GetBalance(agentAddress, gold.Currency));
+
+            foreach (var (key, value) in _sheets)
+            {
+                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // FIXME: now Libplanet.Store.Trie.MerkleTrie implementation throws NullReferenceException if the state is null.
+            state = state.SetState(Addresses.Blacksmith, default(Null));
+
+            var action = new ItemEnhancement()
+            {
+                itemId = default,
+                materialIds = new[] { materialId },
+                avatarAddress = avatarAddress,
+                slotIndex = 0,
+            };
+
+            HashDigest<SHA256> stateRootHashA = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: state, signer: agentAddress);
+            HashDigest<SHA256> stateRootHashB = ActionExecutionUtils.CalculateStateRootHash(action, previousStates: state, signer: agentAddress);
+
+            Assert.Equal(stateRootHashA, stateRootHashB);
         }
 
         public class TestRandom : IRandom

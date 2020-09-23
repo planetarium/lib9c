@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
+    using System.Security.Cryptography;
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
@@ -661,6 +662,38 @@ namespace Lib9c.Tests.Action
             deserialized.LoadPlainValue(action.PlainValue);
 
             Assert.Equal(action.PlainValue, deserialized.PlainValue);
+        }
+
+        [Theory]
+        [InlineData(1, 1, 1)]
+        [InlineData(100, 1, GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)]
+        public void Determinism(int avatarLevel, int worldId, int stageId)
+        {
+            var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
+            previousAvatarState.level = avatarLevel;
+            previousAvatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                Math.Max(_tableSheets.StageSheet.First?.Id ?? 1, stageId - 1));
+
+            var state = _initialState.SetState(_avatarAddress, previousAvatarState.Serialize());
+
+            var action = new HackAndSlash()
+            {
+                costumes = new List<int>(),
+                equipments = new List<Guid>(),
+                foods = new List<Guid>(),
+                worldId = worldId,
+                stageId = stageId,
+                avatarAddress = _avatarAddress,
+                WeeklyArenaAddress = _weeklyArenaState.address,
+                RankingMapAddress = _rankingMapAddress,
+            };
+
+            HashDigest<SHA256> stateRootHashA = ActionExecutionUtils.CalculateStateRootHash(action, state, signer: _agentAddress);
+            HashDigest<SHA256> stateRootHashB = ActionExecutionUtils.CalculateStateRootHash(action, state, signer: _agentAddress);
+
+            Assert.Equal(stateRootHashA, stateRootHashB);
         }
 
         private static void SerializeException<T>(Exception exec)
