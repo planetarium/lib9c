@@ -98,10 +98,14 @@ namespace Lib9c.Tests.Action
             // Check target avatar & agent
             AvatarState nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             // See also Data/TableCSV/RedeemRewardSheet.csv
-            ItemSheet itemSheet = initialState.GetItemSheet();
             HashSet<int> expectedItems = new[] { 100000, 40100000 }.ToHashSet();
             Assert.Subset(nextAvatarState.inventory.Items.Select(i => i.item.Id).ToHashSet(), expectedItems);
             Assert.Equal(goldState.Currency * 100, nextState.GetBalance(_agentAddress, goldState.Currency));
+
+            nextAvatarState.inventory.TryGetCostume(40100000, out var item);
+            var costume = (Costume)item.item;
+            var statRow = _tableSheets.CostumeStatSheet.Values.First();
+            Assert.Equal(statRow.Stat, costume.StatsMap.GetStat(statRow.StatType));
 
             // Check the code redeemed properly
             RedeemCodeState nextRedeemCodeState = nextState.GetRedeemCodeState();

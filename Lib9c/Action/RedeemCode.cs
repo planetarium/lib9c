@@ -74,6 +74,7 @@ namespace Nekoyume.Action
 
             var row = states.GetSheet<RedeemRewardSheet>().Values.First(r => r.Id == redeemId);
             var itemSheets = states.GetItemSheet();
+            var costumeStatSheets = states.GetSheet<CostumeStatSheet>();
 
             foreach (RedeemRewardSheet.RewardInfo info in row.Rewards)
             {
@@ -87,6 +88,11 @@ namespace Nekoyume.Action
                                 ItemBase item = ItemFactory.CreateItem(itemSheets[itemId]);
                                 // We should fix count as 1 because ItemFactory.CreateItem
                                 // will create a new item every time.
+                                if (item is Costume costume)
+                                {
+                                    var statRow = costumeStatSheets.Values.First();
+                                    costume.StatsMap.AddStatValue(statRow.StatType, statRow.Stat);
+                                }
                                 avatarState.inventory.AddItem(item, 1);
                             }
                         }
