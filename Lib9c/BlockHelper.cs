@@ -29,11 +29,16 @@ namespace Nekoyume
             PrivateKey privateKey = null
         )
         {
-            if (!tableSheets.TryGetValue(nameof(GameConfigSheet), out var csv))
+            if (!tableSheets.TryGetValue(nameof(GameConfigSheet), out var gameConfigCsv))
             {
                 throw new KeyNotFoundException(nameof(GameConfigSheet));
             }
-            var gameConfigState = new GameConfigState(csv);
+            var gameConfigState = new GameConfigState(gameConfigCsv);
+            if (!tableSheets.TryGetValue(nameof(ArenaConfigSheet), out var arenaConfigCsv))
+            {
+                throw new KeyNotFoundException(nameof(ArenaConfigSheet));
+            }
+            var arenaConfigState = new ArenaConfigState(arenaConfigCsv);
             var redeemCodeListSheet = new RedeemCodeListSheet();
             redeemCodeListSheet.Set(tableSheets[nameof(RedeemCodeListSheet)]);
 
@@ -50,6 +55,7 @@ namespace Nekoyume
                 shopState: new ShopState(),
                 tableSheets: (Dictionary<string, string>) tableSheets,
                 gameConfigState: gameConfigState,
+                arenaConfigState: arenaConfigState,
                 redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: adminState,
                 activatedAccountsState: new ActivatedAccountsState(

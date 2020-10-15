@@ -29,9 +29,6 @@ namespace Nekoyume
 
         public const int EnhanceEquipmentCostAP = 0;
 
-        public const int ArenaScoreDefault = 1000;
-        public const int ArenaChallengeCountMax = 5;
-
         #endregion
 
         #region system or contents unlock

@@ -110,6 +110,8 @@ namespace Lib9c.Tests
 
         public GameConfigSheet GameConfigSheet { get; private set; }
 
+        public ArenaConfigSheet ArenaConfigSheet { get; private set; }
+
         public RedeemRewardSheet RedeemRewardSheet { get; private set; }
 
         public RedeemCodeListSheet RedeemCodeListSheet { get; private set; }

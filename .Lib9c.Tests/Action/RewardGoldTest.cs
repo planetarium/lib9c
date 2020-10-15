@@ -53,11 +53,11 @@ namespace Lib9c.Tests.Action
         public void ExecuteCreateNextWeeklyArenaState()
         {
             var weekly = new WeeklyArenaState(0);
-            var gameConfigState = new GameConfigState();
-            gameConfigState.Set(_tableSheets.GameConfigSheet);
+            var arenaConfigState = new ArenaConfigState();
+            arenaConfigState.Set(_tableSheets.ArenaConfigSheet);
             var state = _baseState
                 .SetState(weekly.address, weekly.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+                .SetState(arenaConfigState.address, arenaConfigState.Serialize());
             var action = new RewardGold();
 
             var nextState = action.Execute(new ActionContext()
@@ -79,24 +79,24 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(4, weekly[_avatarState.address].DailyChallengeCount);
 
-            var gameConfigState = new GameConfigState();
-            gameConfigState.Set(_tableSheets.GameConfigSheet);
+            var arenaConfigState = new ArenaConfigState();
+            arenaConfigState.Set(_tableSheets.ArenaConfigSheet);
             var state = _baseState
                 .SetState(weekly.address, weekly.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+                .SetState(arenaConfigState.address, arenaConfigState.Serialize());
             var action = new RewardGold();
 
             var nextState = action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Miner = default,
-                BlockIndex = gameConfigState.DailyArenaInterval,
+                BlockIndex = arenaConfigState.DailyArenaInterval,
             });
 
             var current = nextState.GetWeeklyArenaState(0);
 
             Assert.Contains(WeeklyArenaState.DeriveAddress(1), nextState.UpdatedAddresses);
-            Assert.Equal(gameConfigState.DailyArenaInterval, current.ResetIndex);
+            Assert.Equal(arenaConfigState.DailyArenaInterval, current.ResetIndex);
             Assert.Equal(5, current[_avatarState.address].DailyChallengeCount);
         }
 
@@ -111,12 +111,12 @@ namespace Lib9c.Tests.Action
             Assert.True(prevWeekly[_avatarState.address].Active);
 
             var weekly = new WeeklyArenaState(1);
-            var gameConfigState = new GameConfigState();
-            gameConfigState.Set(_tableSheets.GameConfigSheet);
+            var arenaConfigState = new ArenaConfigState();
+            arenaConfigState.Set(_tableSheets.ArenaConfigSheet);
             var state = _baseState
                 .SetState(prevWeekly.address, prevWeekly.Serialize())
                 .SetState(weekly.address, weekly.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+                .SetState(arenaConfigState.address, arenaConfigState.Serialize());
 
             var action = new RewardGold();
 
@@ -124,7 +124,7 @@ namespace Lib9c.Tests.Action
             {
                 PreviousStates = state,
                 Miner = default,
-                BlockIndex = gameConfigState.WeeklyArenaInterval,
+                BlockIndex = arenaConfigState.WeeklyArenaInterval,
             });
 
             var prev = nextState.GetWeeklyArenaState(0);
@@ -133,7 +133,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(prevWeekly.address, prev.address);
             Assert.Equal(weekly.address, current.address);
             Assert.True(prev.Ended);
-            Assert.Equal(gameConfigState.WeeklyArenaInterval, current.ResetIndex);
+            Assert.Equal(arenaConfigState.WeeklyArenaInterval, current.ResetIndex);
             Assert.Contains(_avatarState.address, current);
         }
 

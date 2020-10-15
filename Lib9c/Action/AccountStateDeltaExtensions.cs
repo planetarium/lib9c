@@ -252,7 +252,27 @@ namespace Nekoyume.Action
             }
             catch (Exception e)
             {
-                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotState)}()");
+                Log.Error(e, $"Unexpected error occurred during {nameof(GetGameConfigState)}()");
+                throw;
+            }
+        }
+
+        public static ArenaConfigState GetArenaConfigState(this IAccountStateDelta states)
+        {
+            var value = states.GetState(ArenaConfigState.Address);
+            if (value is null)
+            {
+                Log.Warning("No arena config state ({0})", ArenaConfigState.Address.ToHex());
+                return null;
+            }
+
+            try
+            {
+                return new ArenaConfigState((Dictionary) value);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, $"Unexpected error occurred during {nameof(GetArenaConfigState)}()");
                 throw;
             }
         }
@@ -272,7 +292,7 @@ namespace Nekoyume.Action
             }
             catch (Exception e)
             {
-                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotState)}()");
+                Log.Error(e, $"Unexpected error occurred during {nameof(GetRedeemCodeState)}()");
                 throw;
             }
         }

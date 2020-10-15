@@ -14,8 +14,6 @@ namespace Nekoyume.Model.State
         public int HourglassPerBlock { get; private set; }
         public int ActionPointMax { get; private set; }
         public int DailyRewardInterval { get; private set; }
-        public int DailyArenaInterval { get; private set; }
-        public int WeeklyArenaInterval { get; private set; }
 
         public GameConfigState() : base(Address)
         {
@@ -34,14 +32,6 @@ namespace Nekoyume.Model.State
             if (serialized.TryGetValue((Text) "daily_reward_interval", out var value3))
             {
                 DailyRewardInterval = value3.ToInteger();
-            }
-            if (serialized.TryGetValue((Text) "daily_arena_interval", out var value4))
-            {
-                DailyArenaInterval = value4.ToInteger();
-            }
-            if (serialized.TryGetValue((Text) "weekly_arena_interval", out var value5))
-            {
-                WeeklyArenaInterval = value5.ToInteger();
             }
         }
 
@@ -62,8 +52,6 @@ namespace Nekoyume.Model.State
                 [(Text) "hourglass_per_block"] = HourglassPerBlock.Serialize(),
                 [(Text) "action_point_max"] = ActionPointMax.Serialize(),
                 [(Text) "daily_reward_interval"] = DailyRewardInterval.Serialize(),
-                [(Text) "daily_arena_interval"] = DailyArenaInterval.Serialize(),
-                [(Text) "weekly_arena_interval"] = WeeklyArenaInterval.Serialize(),
             };
 #pragma warning disable LAA1002
             return new Dictionary(values.Union((Dictionary) base.Serialize()));
@@ -90,12 +78,6 @@ namespace Nekoyume.Model.State
                     break;
                 case "daily_reward_interval":
                     DailyRewardInterval = TableExtensions.ParseInt(row.Value);
-                    break;
-                case "daily_arena_interval":
-                    DailyArenaInterval = TableExtensions.ParseInt(row.Value);
-                    break;
-                case "weekly_arena_interval":
-                    WeeklyArenaInterval = TableExtensions.ParseInt(row.Value);
                     break;
             }
         }

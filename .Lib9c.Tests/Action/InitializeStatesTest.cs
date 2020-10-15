@@ -27,6 +27,7 @@ namespace Lib9c.Tests.Action
         public void Execute()
         {
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
+            var arenaConfigState = new ArenaConfigState(_sheets[nameof(ArenaConfigSheet)]);
             var redeemCodeListSheet = new RedeemCodeListSheet();
             redeemCodeListSheet.Set(_sheets[nameof(RedeemCodeListSheet)]);
             var goldDistributionCsvPath = GoldDistributionTest.CreateFixtureCsvFile();
@@ -43,6 +44,7 @@ namespace Lib9c.Tests.Action
                 shopState: new ShopState(),
                 tableSheets: _sheets,
                 gameConfigState: gameConfigState,
+                arenaConfigState: arenaConfigState,
                 redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: new AdminState(
                     new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9"),
@@ -66,6 +68,7 @@ namespace Lib9c.Tests.Action
                 Addresses.Ranking,
                 Addresses.Shop,
                 Addresses.GameConfig,
+                Addresses.ArenaConfig,
                 Addresses.RedeemCode,
                 Addresses.Admin,
                 Addresses.ActivatedAccount,
@@ -101,6 +104,7 @@ namespace Lib9c.Tests.Action
                 shopState: new ShopState(),
                 tableSheets: _sheets,
                 gameConfigState: gameConfigState,
+                arenaConfigState: new ArenaConfigState(),
                 redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: new AdminState(
                     new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9"),
@@ -154,6 +158,7 @@ namespace Lib9c.Tests.Action
                 shopState: new ShopState(),
                 tableSheets: _sheets,
                 gameConfigState: gameConfigState,
+                arenaConfigState: new ArenaConfigState(),
                 redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: new AdminState(adminAddress, 1500000),
                 activatedAccountsState: new ActivatedAccountsState(ImmutableHashSet<Address>.Empty.Add(adminAddress)),
@@ -201,6 +206,7 @@ namespace Lib9c.Tests.Action
                 shopState: new ShopState(),
                 tableSheets: _sheets,
                 gameConfigState: gameConfigState,
+                arenaConfigState: new ArenaConfigState(),
                 redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: new AdminState(adminAddress, 1500000),
                 activatedAccountsState: new ActivatedAccountsState(ImmutableHashSet<Address>.Empty.Add(adminAddress)),
