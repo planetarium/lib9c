@@ -51,6 +51,7 @@ namespace Lib9c.Tests.Model
                 _tableSheets.WorldUnlockSheet
             );
 
+            var arenaConfigState = new ArenaConfigState(_tableSheets.ArenaConfigSheet);
             var simulator = new RankingSimulator(
                 _random,
                 avatarState,
@@ -58,8 +59,8 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 _tableSheets.GetRankingSimulatorSheets(),
                 1,
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false),
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false)
+                new ArenaInfo(avatarState, arenaConfigState, _tableSheets.CharacterSheet, false),
+                new ArenaInfo(avatarState, arenaConfigState, _tableSheets.CharacterSheet, false)
             );
             simulator.Simulate();
 
@@ -91,7 +92,12 @@ namespace Lib9c.Tests.Model
                 _tableSheets.WorldUnlockSheet
             );
 
-            var serialized = (Dictionary)new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false).Serialize();
+            var arenaConfigState = new ArenaConfigState(_tableSheets.ArenaConfigSheet);
+            var serialized = (Dictionary)new ArenaInfo(
+                avatarState,
+                arenaConfigState,
+                _tableSheets.CharacterSheet,
+                false).Serialize();
             serialized = serialized.SetItem("score", score.Serialize());
             var info = new ArenaInfo(serialized);
 
@@ -103,7 +109,7 @@ namespace Lib9c.Tests.Model
                 _tableSheets.GetRankingSimulatorSheets(),
                 1,
                 info,
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false)
+                new ArenaInfo(avatarState, arenaConfigState, _tableSheets.CharacterSheet, false)
             );
             simulator.Simulate();
 

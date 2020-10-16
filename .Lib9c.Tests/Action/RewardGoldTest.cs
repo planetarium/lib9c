@@ -53,8 +53,7 @@ namespace Lib9c.Tests.Action
         public void ExecuteCreateNextWeeklyArenaState()
         {
             var weekly = new WeeklyArenaState(0);
-            var arenaConfigState = new ArenaConfigState();
-            arenaConfigState.Set(_tableSheets.ArenaConfigSheet);
+            var arenaConfigState = new ArenaConfigState(_tableSheets.ArenaConfigSheet);
             var state = _baseState
                 .SetState(weekly.address, weekly.Serialize())
                 .SetState(arenaConfigState.address, arenaConfigState.Serialize());
@@ -73,14 +72,13 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteResetCount()
         {
+            var arenaConfigState = new ArenaConfigState(_tableSheets.ArenaConfigSheet);
             var weekly = new WeeklyArenaState(0);
-            weekly.Set(_avatarState, _tableSheets.CharacterSheet);
+            weekly.Set(_avatarState, arenaConfigState, _tableSheets.CharacterSheet);
             weekly[_avatarState.address].Update(_avatarState, weekly[_avatarState.address], BattleLog.Result.Lose);
 
             Assert.Equal(4, weekly[_avatarState.address].DailyChallengeCount);
 
-            var arenaConfigState = new ArenaConfigState();
-            arenaConfigState.Set(_tableSheets.ArenaConfigSheet);
             var state = _baseState
                 .SetState(weekly.address, weekly.Serialize())
                 .SetState(arenaConfigState.address, arenaConfigState.Serialize());
@@ -103,16 +101,15 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteUpdateNextWeeklyArenaState()
         {
+            var arenaConfigState = new ArenaConfigState(_tableSheets.ArenaConfigSheet);
             var prevWeekly = new WeeklyArenaState(0);
-            prevWeekly.Set(_avatarState, _tableSheets.CharacterSheet);
+            prevWeekly.Set(_avatarState, arenaConfigState, _tableSheets.CharacterSheet);
             prevWeekly[_avatarState.address].Activate();
 
             Assert.False(prevWeekly.Ended);
             Assert.True(prevWeekly[_avatarState.address].Active);
 
             var weekly = new WeeklyArenaState(1);
-            var arenaConfigState = new ArenaConfigState();
-            arenaConfigState.Set(_tableSheets.ArenaConfigSheet);
             var state = _baseState
                 .SetState(prevWeekly.address, prevWeekly.Serialize())
                 .SetState(weekly.address, weekly.Serialize())

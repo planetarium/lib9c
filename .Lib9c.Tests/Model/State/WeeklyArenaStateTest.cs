@@ -95,6 +95,7 @@ namespace Lib9c.Tests.Model.State
             int count,
             int expectedCount)
         {
+            var arenaConfigState = new ArenaConfigState(_tableSheets.ArenaConfigSheet);
             var weeklyArenaState = new WeeklyArenaState(new PrivateKey().ToAddress());
             var characterSheet = new CharacterSheet();
             characterSheet.Set(_sheets[nameof(CharacterSheet)]);
@@ -111,7 +112,7 @@ namespace Lib9c.Tests.Model.State
                     i.ToString());
                 weeklyArenaState.Add(
                     new PrivateKey().ToAddress(),
-                    new ArenaInfo(avatarState, characterSheet, true));
+                    new ArenaInfo(avatarState, arenaConfigState, characterSheet, true));
             }
 
             var arenaInfos = weeklyArenaState.GetArenaInfos(firstRank, count);
@@ -129,6 +130,7 @@ namespace Lib9c.Tests.Model.State
         [InlineData(10, 11)]
         public void GetArenaInfosByFirstRankAndCountThrow(int infoCount, int firstRank)
         {
+            var arenaConfigState = new ArenaConfigState(_tableSheets.ArenaConfigSheet);
             var weeklyArenaState = new WeeklyArenaState(new PrivateKey().ToAddress());
             var characterSheet = new CharacterSheet();
             characterSheet.Set(_sheets[nameof(CharacterSheet)]);
@@ -145,7 +147,7 @@ namespace Lib9c.Tests.Model.State
                     i.ToString());
                 weeklyArenaState.Add(
                     new PrivateKey().ToAddress(),
-                    new ArenaInfo(avatarState, characterSheet, true));
+                    new ArenaInfo(avatarState, arenaConfigState, characterSheet, true));
             }
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -163,6 +165,7 @@ namespace Lib9c.Tests.Model.State
             int lowerRange,
             int expectedCount)
         {
+            var arenaConfigState = new ArenaConfigState(_tableSheets.ArenaConfigSheet);
             var weeklyArenaState = new WeeklyArenaState(new PrivateKey().ToAddress());
             Address targetAddress;
             var characterSheet = new CharacterSheet();
@@ -185,7 +188,7 @@ namespace Lib9c.Tests.Model.State
                     i.ToString());
                 weeklyArenaState.Add(
                     new PrivateKey().ToAddress(),
-                    new ArenaInfo(avatarState, characterSheet, true));
+                    new ArenaInfo(avatarState, arenaConfigState, characterSheet, true));
             }
 
             var arenaInfos = weeklyArenaState.GetArenaInfos(targetAddress, upperRange, lowerRange);
