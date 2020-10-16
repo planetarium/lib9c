@@ -50,6 +50,14 @@ namespace Nekoyume.Model.State
             }
         }
 
+        public ArenaConfigState(ArenaConfigSheet sheet) : base(Address)
+        {
+            foreach (var row in sheet.Values)
+            {
+                Update(row);
+            }
+        }
+
         public override IValue Serialize()
         {
             var values = new Dictionary<IKey, IValue>
