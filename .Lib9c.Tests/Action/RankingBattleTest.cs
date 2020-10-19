@@ -61,11 +61,11 @@ namespace Lib9c.Tests.Action
             _agent2Address = agent2State.address;
             _avatar2Address = avatar2State.address;
 
-            var arenaConfigState = new ArenaConfigState(_tableSheets.ArenaConfigSheet);
+            var arenaConfig = new ArenaConfig(_tableSheets.ArenaConfigSheet);
             var weeklyArenaState = new WeeklyArenaState(0);
-            weeklyArenaState.Set(avatar1State, arenaConfigState, _tableSheets.CharacterSheet);
+            weeklyArenaState.Set(avatar1State, arenaConfig, _tableSheets.CharacterSheet);
             weeklyArenaState[_avatar1Address].Activate();
-            weeklyArenaState.Set(avatar2State, arenaConfigState, _tableSheets.CharacterSheet);
+            weeklyArenaState.Set(avatar2State, arenaConfig, _tableSheets.CharacterSheet);
             weeklyArenaState[_avatar2Address].Activate();
             _weeklyArenaAddress = weeklyArenaState.address;
 

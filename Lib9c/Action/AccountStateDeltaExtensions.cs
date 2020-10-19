@@ -257,26 +257,6 @@ namespace Nekoyume.Action
             }
         }
 
-        public static ArenaConfigState GetArenaConfigState(this IAccountStateDelta states)
-        {
-            var value = states.GetState(ArenaConfigState.Address);
-            if (value is null)
-            {
-                Log.Warning("No arena config state ({0})", ArenaConfigState.Address.ToHex());
-                return null;
-            }
-
-            try
-            {
-                return new ArenaConfigState((Dictionary) value);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, $"Unexpected error occurred during {nameof(GetArenaConfigState)}()");
-                throw;
-            }
-        }
-
         public static RedeemCodeState GetRedeemCodeState(this IAccountStateDelta states)
         {
             var value = states.GetState(RedeemCodeState.Address);
@@ -442,6 +422,12 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException(nameof(ShopState));
             }
             return new ShopState((Dictionary) value);
+        }
+
+        public static ArenaConfig GetArenaConfig(this IAccountStateDelta states)
+        {
+            var value = states.GetSheet<ArenaConfigSheet>();
+            return new ArenaConfig(value);
         }
     }
 }

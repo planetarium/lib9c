@@ -41,7 +41,6 @@ namespace Nekoyume.Action
             ShopState shopState,
             Dictionary<string, string> tableSheets,
             GameConfigState gameConfigState,
-            ArenaConfigState arenaConfigState,
             RedeemCodeState redeemCodeState,
             AdminState adminAddressState,
             ActivatedAccountsState activatedAccountsState,
@@ -55,7 +54,6 @@ namespace Nekoyume.Action
             Shop = (Bencodex.Types.Dictionary)shopState.Serialize();
             TableSheets = tableSheets;
             GameConfig = (Bencodex.Types.Dictionary)gameConfigState.Serialize();
-            ArenaConfig = (Bencodex.Types.Dictionary)arenaConfigState.Serialize();
             RedeemCode = (Bencodex.Types.Dictionary)redeemCodeState.Serialize();
             AdminAddress = (Bencodex.Types.Dictionary)adminAddressState.Serialize();
             ActivatedAccounts = (Bencodex.Types.Dictionary)activatedAccountsState.Serialize();
@@ -97,7 +95,6 @@ namespace Nekoyume.Action
 #pragma warning restore LAA1002
                 states = states.SetState(weeklyArenaState.address, MarkChanged);
                 states = states.SetState(GameConfigState.Address, MarkChanged);
-                states = states.SetState(ArenaConfigState.Address, MarkChanged);
                 states = states.SetState(RedeemCodeState.Address, MarkChanged);
                 states = states.SetState(AdminState.Address, MarkChanged);
                 states = states.SetState(ActivatedAccountsState.Address, MarkChanged);
@@ -133,7 +130,6 @@ namespace Nekoyume.Action
                 .SetState(RankingState.Address, Ranking)
                 .SetState(ShopState.Address, Shop)
                 .SetState(GameConfigState.Address, GameConfig)
-                .SetState(ArenaConfigState.Address, ArenaConfig)
                 .SetState(RedeemCodeState.Address, RedeemCode)
                 .SetState(AdminState.Address, AdminAddress)
                 .SetState(ActivatedAccountsState.Address, ActivatedAccounts)

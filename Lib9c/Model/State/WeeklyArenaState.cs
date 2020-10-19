@@ -163,9 +163,9 @@ namespace Nekoyume.Model.State
             return OrderedArenaInfos.FirstOrDefault(info => info.AvatarAddress.Equals(avatarAddress));
         }
 
-        private void Update(AvatarState avatarState, ArenaConfigState arenaConfigState, CharacterSheet characterSheet, bool active = false)
+        private void Update(AvatarState avatarState, ArenaConfig arenaConfig, CharacterSheet characterSheet, bool active = false)
         {
-            Add(avatarState.address, new ArenaInfo(avatarState, arenaConfigState, characterSheet, active));
+            Add(avatarState.address, new ArenaInfo(avatarState, arenaConfig, characterSheet, active));
         }
 
         public void Update(ArenaInfo info)
@@ -173,9 +173,9 @@ namespace Nekoyume.Model.State
             Add(info.AvatarAddress, info);
         }
 
-        public void Set(AvatarState avatarState, ArenaConfigState arenaConfigState, CharacterSheet characterSheet)
+        public void Set(AvatarState avatarState, ArenaConfig arenaConfig, CharacterSheet characterSheet)
         {
-            Update(avatarState, arenaConfigState, characterSheet);
+            Update(avatarState, arenaConfig, characterSheet);
         }
 
         public void ResetCount(long ctxBlockIndex)
@@ -336,7 +336,7 @@ namespace Nekoyume.Model.State
         public int Score { get; private set; }
         public bool Receive;
 
-        public ArenaInfo(AvatarState avatarState, ArenaConfigState arenaConfigState, CharacterSheet characterSheet, bool active)
+        public ArenaInfo(AvatarState avatarState, ArenaConfig arenaConfig, CharacterSheet characterSheet, bool active)
         {
             AvatarAddress = avatarState.address;
             AgentAddress = avatarState.agentAddress;
@@ -347,8 +347,8 @@ namespace Nekoyume.Model.State
             ArmorId = armor?.Id ?? GameConfig.DefaultAvatarArmorId;
             CombatPoint = CPHelper.GetCP(avatarState, characterSheet);
             Active = active;
-            DailyChallengeCount = arenaConfigState.ArenaChallengeCountMax;
-            Score = arenaConfigState.ArenaScoreDefault;
+            DailyChallengeCount = arenaConfig.ArenaChallengeCountMax;
+            Score = arenaConfig.ArenaScoreDefault;
         }
 
         public ArenaInfo(Dictionary serialized)

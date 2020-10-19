@@ -409,7 +409,6 @@ namespace Lib9c.Tests
                             shopState: new ShopState(),
                             tableSheets: TableSheetsImporter.ImportSheets(),
                             gameConfigState: new GameConfigState(),
-                            arenaConfigState: new ArenaConfigState(),
                             redeemCodeState: new RedeemCodeState(Dictionary.Empty
                                 .Add("address", RedeemCodeState.Address.Serialize())
                                 .Add("map", Dictionary.Empty)
