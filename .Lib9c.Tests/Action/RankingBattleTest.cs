@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus;
+    using Nekoyume.Model.Config;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;

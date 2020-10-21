@@ -9,6 +9,7 @@ using Libplanet;
 using Nekoyume.Action;
 using Nekoyume.Battle;
 using Nekoyume.Model.BattleStatus;
+using Nekoyume.Model.Config;
 using Nekoyume.Model.Item;
 using Nekoyume.TableData;
 

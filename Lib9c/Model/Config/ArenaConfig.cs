@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Bencodex.Types;
-using Libplanet;
 using Nekoyume.TableData;
 
-namespace Nekoyume.Model.State
+namespace Nekoyume.Model.Config
 {
-    public class ArenaConfig
+    public class ArenaConfig : IConfig
     {
         public int ArenaScoreDefault { get; private set; }
         public int ArenaChallengeCountMax { get; private set; } 

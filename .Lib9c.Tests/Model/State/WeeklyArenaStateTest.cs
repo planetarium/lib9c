@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Model.State
     using Libplanet;
     using Libplanet.Crypto;
     using Nekoyume.Action;
+    using Nekoyume.Model.Config;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
