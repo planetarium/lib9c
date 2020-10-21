@@ -12,28 +12,28 @@ namespace Lib9c.Tests.Action
             new GoldDistribution
             {
                 Address = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9"),
-                AmountPerBlock = 100,
+                AmountPerBlock = 100m,
                 StartBlock = 1,
                 EndBlock = 100000,
             },
             new GoldDistribution
             {
                 Address = new Address("Fb90278C67f9b266eA309E6AE8463042f5461449"),
-                AmountPerBlock = 3000,
+                AmountPerBlock = 3000m,
                 StartBlock = 3600,
                 EndBlock = 13600,
             },
             new GoldDistribution
             {
                 Address = new Address("Fb90278C67f9b266eA309E6AE8463042f5461449"),
-                AmountPerBlock = 100000000000,
+                AmountPerBlock = 100000000000m,
                 StartBlock = 2,
                 EndBlock = 2,
             },
             new GoldDistribution
             {
                 Address = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9"),
-                AmountPerBlock = 1000000,
+                AmountPerBlock = 1000000m,
                 StartBlock = 0,
                 EndBlock = 0,
             },

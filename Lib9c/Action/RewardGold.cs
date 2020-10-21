@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Numerics;
 using Bencodex.Types;
 using Libplanet;
@@ -38,12 +39,15 @@ namespace Nekoyume.Action
             Address fund = GoldCurrencyState.Address;
             foreach(GoldDistribution distribution in goldDistributions)
             {
-                BigInteger amount = distribution.GetAmount(index);
+                decimal amount = distribution.GetAmount(index);
                 if (amount <= 0) continue;
                 states = states.TransferAsset(
                     fund,
                     distribution.Address,
-                    goldCurrency * amount
+                    FungibleAssetValue.Parse(
+                        goldCurrency, 
+                        amount.ToString(CultureInfo.InvariantCulture)
+                    )
                 );
             }
             return states;

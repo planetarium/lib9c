@@ -26,7 +26,7 @@ namespace Nekoyume.Action
         }
 
         [Index(1)]
-        public BigInteger AmountPerBlock { get; set; }
+        public decimal AmountPerBlock { get; set; }
 
         [Index(2)]
         public long StartBlock { get; set; }
@@ -59,7 +59,7 @@ namespace Nekoyume.Action
         public GoldDistribution(Bencodex.Types.Dictionary serialized)
         {
             Address = serialized["addr"].ToAddress();
-            AmountPerBlock = serialized["amnt"].ToBigInteger();
+            AmountPerBlock = serialized["amnt"].ToDecimal();
             StartBlock = serialized["strt"].ToLong();
             EndBlock = serialized["end"].ToLong();
         }
@@ -70,14 +70,14 @@ namespace Nekoyume.Action
             .Add("strt", StartBlock.Serialize())
             .Add("end", EndBlock.Serialize());
 
-        public BigInteger GetAmount(long blockIndex)
+        public decimal GetAmount(long blockIndex)
         {
             if (StartBlock <= blockIndex && blockIndex <= EndBlock)
             {
                 return AmountPerBlock;
             }
 
-            return 0;
+            return 0m;
         }
 
         public bool Equals(GoldDistribution other) =>
