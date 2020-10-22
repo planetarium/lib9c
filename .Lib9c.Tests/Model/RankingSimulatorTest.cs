@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Model
     using Libplanet.Action;
     using Nekoyume;
     using Nekoyume.Battle;
+    using Nekoyume.Model.Config;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
@@ -51,6 +52,7 @@ namespace Lib9c.Tests.Model
                 _tableSheets.WorldUnlockSheet
             );
 
+            var arenaConfig = new ArenaConfig(_tableSheets.ArenaConfigSheet);
             var simulator = new RankingSimulator(
                 _random,
                 avatarState,
@@ -58,8 +60,8 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 _tableSheets.GetRankingSimulatorSheets(),
                 1,
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false),
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false)
+                new ArenaInfo(avatarState, arenaConfig, _tableSheets.CharacterSheet, false),
+                new ArenaInfo(avatarState, arenaConfig, _tableSheets.CharacterSheet, false)
             );
             simulator.Simulate();
 
@@ -91,7 +93,12 @@ namespace Lib9c.Tests.Model
                 _tableSheets.WorldUnlockSheet
             );
 
-            var serialized = (Dictionary)new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false).Serialize();
+            var arenaConfig = new ArenaConfig(_tableSheets.ArenaConfigSheet);
+            var serialized = (Dictionary)new ArenaInfo(
+                avatarState,
+                arenaConfig,
+                _tableSheets.CharacterSheet,
+                false).Serialize();
             serialized = serialized.SetItem("score", score.Serialize());
             var info = new ArenaInfo(serialized);
 
@@ -103,7 +110,7 @@ namespace Lib9c.Tests.Model
                 _tableSheets.GetRankingSimulatorSheets(),
                 1,
                 info,
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false)
+                new ArenaInfo(avatarState, arenaConfig, _tableSheets.CharacterSheet, false)
             );
             simulator.Simulate();
 

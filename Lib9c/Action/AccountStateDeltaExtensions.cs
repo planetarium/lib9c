@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Numerics;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.Model.Config;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
@@ -252,7 +252,7 @@ namespace Nekoyume.Action
             }
             catch (Exception e)
             {
-                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotState)}()");
+                Log.Error(e, $"Unexpected error occurred during {nameof(GetGameConfigState)}()");
                 throw;
             }
         }
@@ -272,7 +272,7 @@ namespace Nekoyume.Action
             }
             catch (Exception e)
             {
-                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotState)}()");
+                Log.Error(e, $"Unexpected error occurred during {nameof(GetRedeemCodeState)}()");
                 throw;
             }
         }
@@ -422,6 +422,12 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException(nameof(ShopState));
             }
             return new ShopState((Dictionary) value);
+        }
+
+        public static ArenaConfig GetArenaConfig(this IAccountStateDelta states)
+        {
+            var value = states.GetSheet<ArenaConfigSheet>();
+            return new ArenaConfig(value);
         }
     }
 }

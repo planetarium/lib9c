@@ -29,11 +29,11 @@ namespace Nekoyume
             PrivateKey privateKey = null
         )
         {
-            if (!tableSheets.TryGetValue(nameof(GameConfigSheet), out var csv))
+            if (!tableSheets.TryGetValue(nameof(GameConfigSheet), out var gameConfigCsv))
             {
                 throw new KeyNotFoundException(nameof(GameConfigSheet));
             }
-            var gameConfigState = new GameConfigState(csv);
+            var gameConfigState = new GameConfigState(gameConfigCsv);
             var redeemCodeListSheet = new RedeemCodeListSheet();
             redeemCodeListSheet.Set(tableSheets[nameof(RedeemCodeListSheet)]);
 

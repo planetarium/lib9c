@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Model.State
     using Libplanet;
     using Libplanet.Crypto;
     using Nekoyume.Action;
+    using Nekoyume.Model.Config;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
@@ -95,6 +96,7 @@ namespace Lib9c.Tests.Model.State
             int count,
             int expectedCount)
         {
+            var arenaConfig = new ArenaConfig(_tableSheets.ArenaConfigSheet);
             var weeklyArenaState = new WeeklyArenaState(new PrivateKey().ToAddress());
             var characterSheet = new CharacterSheet();
             characterSheet.Set(_sheets[nameof(CharacterSheet)]);
@@ -111,7 +113,7 @@ namespace Lib9c.Tests.Model.State
                     i.ToString());
                 weeklyArenaState.Add(
                     new PrivateKey().ToAddress(),
-                    new ArenaInfo(avatarState, characterSheet, true));
+                    new ArenaInfo(avatarState, arenaConfig, characterSheet, true));
             }
 
             var arenaInfos = weeklyArenaState.GetArenaInfos(firstRank, count);
@@ -129,6 +131,7 @@ namespace Lib9c.Tests.Model.State
         [InlineData(10, 11)]
         public void GetArenaInfosByFirstRankAndCountThrow(int infoCount, int firstRank)
         {
+            var arenaConfig = new ArenaConfig(_tableSheets.ArenaConfigSheet);
             var weeklyArenaState = new WeeklyArenaState(new PrivateKey().ToAddress());
             var characterSheet = new CharacterSheet();
             characterSheet.Set(_sheets[nameof(CharacterSheet)]);
@@ -145,7 +148,7 @@ namespace Lib9c.Tests.Model.State
                     i.ToString());
                 weeklyArenaState.Add(
                     new PrivateKey().ToAddress(),
-                    new ArenaInfo(avatarState, characterSheet, true));
+                    new ArenaInfo(avatarState, arenaConfig, characterSheet, true));
             }
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -163,6 +166,7 @@ namespace Lib9c.Tests.Model.State
             int lowerRange,
             int expectedCount)
         {
+            var arenaConfig = new ArenaConfig(_tableSheets.ArenaConfigSheet);
             var weeklyArenaState = new WeeklyArenaState(new PrivateKey().ToAddress());
             Address targetAddress;
             var characterSheet = new CharacterSheet();
@@ -185,7 +189,7 @@ namespace Lib9c.Tests.Model.State
                     i.ToString());
                 weeklyArenaState.Add(
                     new PrivateKey().ToAddress(),
-                    new ArenaInfo(avatarState, characterSheet, true));
+                    new ArenaInfo(avatarState, arenaConfig, characterSheet, true));
             }
 
             var arenaInfos = weeklyArenaState.GetArenaInfos(targetAddress, upperRange, lowerRange);

@@ -1,0 +1,5 @@
+key,value
+arena_score_default,1000
+arena_challenge_count_max,5
+daily_arena_interval,500
+weekly_arena_interval,56000

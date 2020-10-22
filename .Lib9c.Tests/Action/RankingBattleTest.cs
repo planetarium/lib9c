@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus;
+    using Nekoyume.Model.Config;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
@@ -61,10 +62,11 @@ namespace Lib9c.Tests.Action
             _agent2Address = agent2State.address;
             _avatar2Address = avatar2State.address;
 
+            var arenaConfig = new ArenaConfig(_tableSheets.ArenaConfigSheet);
             var weeklyArenaState = new WeeklyArenaState(0);
-            weeklyArenaState.Set(avatar1State, _tableSheets.CharacterSheet);
+            weeklyArenaState.Set(avatar1State, arenaConfig, _tableSheets.CharacterSheet);
             weeklyArenaState[_avatar1Address].Activate();
-            weeklyArenaState.Set(avatar2State, _tableSheets.CharacterSheet);
+            weeklyArenaState.Set(avatar2State, arenaConfig, _tableSheets.CharacterSheet);
             weeklyArenaState[_avatar2Address].Activate();
             _weeklyArenaAddress = weeklyArenaState.address;
 

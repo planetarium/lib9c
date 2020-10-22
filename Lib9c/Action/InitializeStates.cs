@@ -15,6 +15,7 @@ namespace Nekoyume.Action
         public Bencodex.Types.Dictionary Shop { get; set; }
         public Dictionary<string, string> TableSheets { get; set; }
         public Bencodex.Types.Dictionary GameConfig { get; set; }
+        public Bencodex.Types.Dictionary ArenaConfig { get; set; }
         public Bencodex.Types.Dictionary RedeemCode { get; set; }
 
         public Bencodex.Types.Dictionary AdminAddress { get; set; }
@@ -175,6 +176,7 @@ namespace Nekoyume.Action
                             (Bencodex.Types.Text)pair.Key, (Bencodex.Types.Text)pair.Value))))
 #pragma warning restore LAA1002
                 .Add("game_config_state", GameConfig)
+                .Add("arena_config_state", ArenaConfig)
                 .Add("redeem_code_state", RedeemCode)
                 .Add("admin_address_state", AdminAddress)
                 .Add("activated_accounts_state", ActivatedAccounts)
@@ -206,6 +208,7 @@ namespace Nekoyume.Action
                 pair => (string)(Bencodex.Types.Text) pair.Value
                 );
             GameConfig = (Bencodex.Types.Dictionary) plainValue["game_config_state"];
+            ArenaConfig = (Bencodex.Types.Dictionary) plainValue["arena_config_state"];
             RedeemCode = (Bencodex.Types.Dictionary) plainValue["redeem_code_state"];
             AdminAddress = (Bencodex.Types.Dictionary)plainValue["admin_address_state"];
             ActivatedAccounts = (Bencodex.Types.Dictionary)plainValue["activated_accounts_state"];

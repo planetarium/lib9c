@@ -256,7 +256,8 @@ namespace Nekoyume.Action
                     }
                     else
                     {
-                        weekly.Set(avatarState, characterSheet);
+                        var arenaConfig = states.GetArenaConfig();
+                        weekly.Set(avatarState, arenaConfig, characterSheet);
                     }
 
                     sw.Stop();
