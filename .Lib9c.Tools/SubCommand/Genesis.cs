@@ -103,7 +103,7 @@ namespace Lib9c.Tools.SubCommand
                 ? ImmutableHashSet<Address>.Empty
                 : Utils.GetActivatedAccounts(activatedAccountsListPath);
 
-            Block<PolymorphicAction<ActionBase>> block = BlockHelper.MineGenesisBlock(
+            Block<NCAction> block = BlockHelper.MineGenesisBlock(
                 tableSheets,
                 goldDistributions,
                 pendingActivationStates.ToArray(),
@@ -118,7 +118,7 @@ namespace Lib9c.Tools.SubCommand
             ExportBlock(block, "genesis-block");
         }
 
-        private static void ExportBlock(Block<PolymorphicAction<ActionBase>> block, string path)
+        private static void ExportBlock(Block<NCAction> block, string path)
         {
             byte[] encoded = block.Serialize();
             File.WriteAllBytes(path, encoded);
