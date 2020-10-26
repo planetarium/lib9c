@@ -17,6 +17,15 @@ namespace Lib9c.Tools.SubCommand
 {
     public class Genesis
     {
+        [Command(Description = "Checks genesis block header")]
+        public void Check(string path)
+        {
+            Block<NCAction> genesis = Block<NCAction>.Deserialize(File.ReadAllBytes(path));
+            Console.WriteLine($"Hash: {genesis.Hash}");
+            Console.WriteLine($"Miner: {genesis.Miner}");
+            Console.WriteLine($"Action Signger: {genesis.Transactions.Single().Signer}");
+        }
+
         [Command(Description = "Convert key files to pendings")]
         public void ConvertPending(string activationKeys)
         {
