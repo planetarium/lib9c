@@ -2,8 +2,10 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Libplanet.Action;
 using Nekoyume.Model.State;
+using Serilog;
 
 namespace Nekoyume.Action
 {
@@ -116,6 +118,8 @@ namespace Nekoyume.Action
                 return states;
             }
 
+            var started = DateTimeOffset.UtcNow;
+            Log.Debug("InitializeStates exec started.");
 #pragma warning disable LAA1002
             states = TableSheets
                 .Aggregate(states, (current, pair) =>
@@ -134,7 +138,6 @@ namespace Nekoyume.Action
                 .SetState(ActivatedAccountsState.Address, ActivatedAccounts)
                 .SetState(GoldCurrencyState.Address, GoldCurrency)
                 .SetState(Addresses.GoldDistribution, GoldDistributions);
-
             if (!(AuthorizedMiners is null))
             {
                 states = states.SetState(
@@ -158,6 +161,8 @@ namespace Nekoyume.Action
 
             var currency = new GoldCurrencyState(GoldCurrency).Currency;
             states = states.MintAsset(GoldCurrencyState.Address, currency * 1000000000);
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug("InitializeStates Total Executed Time: {Elapsed}", ended - started);
             return states;
         }
 

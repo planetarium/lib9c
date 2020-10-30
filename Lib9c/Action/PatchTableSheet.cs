@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Bencodex.Types;
 using Libplanet.Action;
 using Nekoyume.Model.State;
@@ -26,8 +27,16 @@ namespace Nekoyume.Action
                     .SetState(sheetAddress, MarkChanged)
                     .SetState(GameConfigState.Address, MarkChanged);
             }
+            var sw = new Stopwatch();
+            sw.Start();
+            var started = DateTimeOffset.UtcNow;
+            Log.Debug("PatchTableSheet exec started.");
 
             CheckPermission(context);
+
+            sw.Stop();
+            Log.Debug("PatchTableSheet CheckPermission: {Elapsed}", sw.Elapsed);
+            sw.Restart();
 
             var sheets = states.GetState(sheetAddress);
             var value = sheets is null ? string.Empty : sheets.ToDotnetString();
@@ -42,12 +51,17 @@ namespace Nekoyume.Action
 
             states = states.SetState(sheetAddress, TableCsv.Serialize());
 
+            sw.Stop();
+            Log.Debug("PatchTableSheet Serialize Table: {Elapsed}", sw.Elapsed);
+
             if (TableName == nameof(GameConfigSheet))
             {
                 var gameConfigState = new GameConfigState(TableCsv);
                 states = states.SetState(GameConfigState.Address, gameConfigState.Serialize());
             }
 
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug("PatchTableSheet Total Executed Time: {Elapsed}", ended - started);
             return states;
         }
 

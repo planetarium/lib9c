@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet;
@@ -44,17 +45,30 @@ namespace Nekoyume.Action
                 return states;
             }
 
+            var sw = new Stopwatch();
+            sw.Start();
+            var started = DateTimeOffset.UtcNow;
+            Log.Debug("RedeemCode exec started.");
+
             if (!states.TryGetAgentAvatarStates(context.Signer, AvatarAddress, out AgentState agentState,
                 out AvatarState avatarState))
             {
                 return states;
             }
 
+            sw.Stop();
+            Log.Debug("RedeemCode Get AgentAvatarStates: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             var redeemState = states.GetRedeemCodeState();
             if (redeemState is null)
             {
                 return states;
             }
+
+            sw.Stop();
+            Log.Debug("RedeemCode Get RedeemCodeState: {Elapsed}", sw.Elapsed);
+            sw.Restart();
 
             int redeemId;
             try
@@ -71,6 +85,10 @@ namespace Nekoyume.Action
                 Log.Warning(e.Message);
                 throw;
             }
+
+            sw.Stop();
+            Log.Debug("RedeemCode Redeem(): {Elapsed}", sw.Elapsed);
+            sw.Restart();
 
             var row = states.GetSheet<RedeemRewardSheet>().Values.First(r => r.Id == redeemId);
             var itemSheets = states.GetItemSheet();
@@ -103,9 +121,20 @@ namespace Nekoyume.Action
                         // FIXME: We should raise exception here.
                         break;
                 }
+                sw.Stop();
+                Log.Debug($"RedeemCode Get Reward {info.Type}: {sw.Elapsed}");
+                sw.Restart();
             }
             states = states.SetState(RedeemCodeState.Address, redeemState.Serialize());
+            sw.Stop();
+            Log.Debug("RedeemCode Serialize RedeemCodeState: {Elapsed}", sw.Elapsed);
+            sw.Restart();
             states = states.SetState(context.Signer, agentState.Serialize());
+            sw.Stop();
+            Log.Debug("RedeemCode Serialize AvatarState: {Elapsed}", sw.Elapsed);
+
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug("RedeemCode Total Executed Time: {Elapsed}", ended - started);
             return states;
         }
 

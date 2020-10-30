@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
 using Nekoyume.Model.State;
+using Serilog;
 
 namespace Nekoyume.Action
 {
@@ -25,9 +27,25 @@ namespace Nekoyume.Action
         public override IAccountStateDelta Execute(IActionContext context)
         {
             var states = context.PreviousStates;
+
+            var sw = new Stopwatch();
+            sw.Start();
+            var started = DateTimeOffset.UtcNow;
+            Log.Debug("RewardGold exec started.");
             states = GenesisGoldDistribution(context, states);
+            sw.Stop();
+            Log.Debug("RewardGold GenesisGoldDistribution(): {Elapsed}", sw.Elapsed);
+            sw.Restart();
             states = WeeklyArenaRankingBoard(context, states);
-            return MinerReward(context, states);
+            sw.Stop();
+            sw.Restart();
+            Log.Debug("RewardGold WeeklyArenaRankingBoard(): {Elapsed}", sw.Elapsed);
+            states = MinerReward(context, states);
+            sw.Stop();
+            Log.Debug("RewardGold MinerReward(): {Elapsed}", sw.Elapsed);
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug("RewardGold Total Executed Time: {Elapsed}", ended - started);
+            return states;
         }
 
         public IAccountStateDelta GenesisGoldDistribution(IActionContext ctx, IAccountStateDelta states)
@@ -115,7 +133,6 @@ namespace Nekoyume.Action
                     miningReward
                 );
             }
-            
             return states;
         }
     }

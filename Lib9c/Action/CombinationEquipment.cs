@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
@@ -15,6 +16,7 @@ using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Serilog;
 
 namespace Nekoyume.Action
 {
@@ -49,11 +51,20 @@ namespace Nekoyume.Action
                     .MarkBalanceChanged(GoldCurrencyMock, ctx.Signer, BlacksmithAddress);
             }
 
+            var sw = new Stopwatch();
+            sw.Start();
+            var started = DateTimeOffset.UtcNow;
+            Log.Debug("CombinationEquipment exec started.");
+
             if (!states.TryGetAgentAvatarStates(ctx.Signer, AvatarAddress, out var agentState,
                 out var avatarState))
             {
                 throw new FailedLoadStateException("Aborted as the avatar state of the signer was failed to load.");
             }
+
+            sw.Stop();
+            Log.Debug("CombinationEquipment Get AgentAvatarStates: {Elapsed}", sw.Elapsed);
+            sw.Restart();
 
             var slotState = states.GetCombinationSlotState(AvatarAddress, SlotIndex);
             if (slotState is null)
@@ -61,11 +72,19 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException("Aborted as the slot state is failed to load");
             }
 
+            sw.Stop();
+            Log.Debug("CombinationEquipment Get Slot: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             if (!slotState.Validate(avatarState, ctx.BlockIndex))
             {
                 throw new CombinationSlotUnlockException(
                     $"Aborted as the slot state is invalid: {slotState} @ {SlotIndex}");
             }
+
+            sw.Stop();
+            Log.Debug("CombinationEquipment Validate Slot: {Elapsed}", sw.Elapsed);
+            sw.Restart();
 
             var recipeSheet = states.GetSheet<EquipmentItemRecipeSheet>();
             var materialSheet = states.GetSheet<MaterialItemSheet>();
@@ -87,6 +106,10 @@ namespace Nekoyume.Action
                 }
             }
 
+            sw.Stop();
+            Log.Debug("CombinationEquipment Check RecipeId: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             // 메인 레시피 해금 검사.
             if (!avatarState.worldInformation.IsStageCleared(recipe.UnlockStage))
             {
@@ -106,7 +129,16 @@ namespace Nekoyume.Action
                 );
             }
 
+            sw.Stop();
+            Log.Debug("CombinationEquipment Check MaterialId: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             var equipmentMaterial = ItemFactory.CreateMaterial(materialSheet, material.Id);
+
+            sw.Stop();
+            Log.Debug("CombinationEquipment Create Material: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             materials[equipmentMaterial] = recipe.MaterialCount;
 
             BigInteger requiredGold = recipe.RequiredGold;
@@ -119,12 +151,20 @@ namespace Nekoyume.Action
                 throw new SheetRowNotFoundException(nameof(equipmentItemSheet), recipe.ResultEquipmentId);
             }
 
+            sw.Stop();
+            Log.Debug("CombinationEquipment Check ResultEquipmentId: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             var requiredBlockIndex = ctx.BlockIndex + recipe.RequiredBlockIndex;
             var equipment = (Equipment) ItemFactory.CreateItemUsable(
                 equipRow,
                 ctx.Random.GenerateRandomGuid(),
                 requiredBlockIndex
             );
+
+            sw.Stop();
+            Log.Debug("CombinationEquipment Create Equipment: {Elapsed}", sw.Elapsed);
+            sw.Restart();
 
             // 서브 레시피 검증
             HashSet<int> optionIds = null;
@@ -136,6 +176,10 @@ namespace Nekoyume.Action
                 {
                     throw new SheetRowNotFoundException(nameof(EquipmentItemSubRecipeSheet), subId);
                 }
+
+                sw.Stop();
+                Log.Debug("CombinationEquipment Check SubRecipeId: {Elapsed}", sw.Elapsed);
+                sw.Restart();
 
                 requiredBlockIndex += subRecipe.RequiredBlockIndex;
                 requiredGold += subRecipe.RequiredGold;
@@ -160,9 +204,22 @@ namespace Nekoyume.Action
                     materials[subMaterial] = materialInfo.Count;
                 }
 
+                sw.Stop();
+                Log.Debug("CombinationEquipment Create Materials: {Elapsed}", sw.Elapsed);
+                sw.Restart();
+
                 optionIds = SelectOption(states.GetSheet<EquipmentItemOptionSheet>(), states.GetSheet<SkillSheet>(),
                     subRecipe, ctx.Random, equipment);
+
+                sw.Stop();
+                Log.Debug("CombinationEquipment Select Options: {Elapsed}", sw.Elapsed);
+                sw.Restart();
+
                 equipment.Update(requiredBlockIndex);
+
+                sw.Stop();
+                Log.Debug("CombinationEquipment Update Equipment Option: {Elapsed}", sw.Elapsed);
+                sw.Restart();
             }
 
             // 자원 검증
@@ -193,6 +250,10 @@ namespace Nekoyume.Action
                 );
             }
 
+            sw.Stop();
+            Log.Debug("CombinationEquipment TransferAsset: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             var result = new CombinationConsumable.ResultModel
             {
                 actionPoint = requiredActionPoint,
@@ -204,6 +265,11 @@ namespace Nekoyume.Action
                 itemType = ItemType.Equipment,
             };
             slotState.Update(result, ctx.BlockIndex, requiredBlockIndex);
+
+            sw.Stop();
+            Log.Debug("CombinationEquipment Update slot: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             var mail = new CombinationMail(result, ctx.BlockIndex, ctx.Random.GenerateRandomGuid(),
                 requiredBlockIndex);
             result.id = mail.id;
@@ -211,10 +277,24 @@ namespace Nekoyume.Action
             avatarState.questList.UpdateCombinationEquipmentQuest(RecipeId);
             avatarState.UpdateFromCombination(equipment);
             avatarState.UpdateQuestRewards(materialSheet);
-            return states
-                .SetState(AvatarAddress, avatarState.Serialize())
-                .SetState(slotAddress, slotState.Serialize())
-                .SetState(ctx.Signer, agentState.Serialize());
+
+            states = states.SetState(AvatarAddress, avatarState.Serialize());
+            sw.Stop();
+            Log.Debug("CombinationEquipment Serialize AvatarState: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
+            states = states.SetState(slotAddress, slotState.Serialize());
+            sw.Stop();
+            Log.Debug("CombinationEquipment Serialize SlotState: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
+            states = states.SetState(ctx.Signer, agentState.Serialize());
+            sw.Stop();
+            Log.Debug("CombinationEquipment Serialize AgentState: {Elapsed}", sw.Elapsed);
+
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug("CombinationEquipment Total Executed Time: {Elapsed}", ended - started);
+            return states;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

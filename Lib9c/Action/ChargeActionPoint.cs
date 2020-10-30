@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet;
@@ -26,10 +27,18 @@ namespace Nekoyume.Action
                 return states.SetState(avatarAddress, MarkChanged);
             }
 
+            var sw = new Stopwatch();
+            sw.Start();
+            var started = DateTimeOffset.UtcNow;
+            Log.Debug("ChargeActionPoint exec started.");
             if (!states.TryGetAgentAvatarStates(context.Signer, avatarAddress, out var _, out var avatarState))
             {
                 return states;
             }
+
+            sw.Stop();
+            Log.Debug("ChargeActionPoint Get AgentAvatarStates: {Elapsed}", sw.Elapsed);
+            sw.Restart();
 
             var row = states.GetSheet<MaterialItemSheet>().Values.FirstOrDefault(r => r.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateMaterial(row);
@@ -39,13 +48,24 @@ namespace Nekoyume.Action
                 return states;
             }
 
+            sw.Stop();
+            Log.Debug("ChargeActionPoint Use ApStone: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             var gameConfigState = states.GetGameConfigState();
             if (gameConfigState is null)
             {
                 return states;
             }
 
+            sw.Stop();
+            Log.Debug("ChargeActionPoint Get GameConfigState: {Elapsed}", sw.Elapsed);
+
             avatarState.actionPoint = gameConfigState.ActionPointMax;
+
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug("ChargeActionPoint Total Executed Time: {Elapsed}", ended - started);
+
             return states.SetState(avatarAddress, avatarState.Serialize());
         }
 

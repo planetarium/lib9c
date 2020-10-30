@@ -123,7 +123,7 @@ namespace Nekoyume.Action
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;
-            Log.Debug("Combination exec started.");
+            Log.Debug("CombinationConsumable exec started.");
 
             if (!states.TryGetAgentAvatarStates(ctx.Signer, AvatarAddress, out AgentState agentState,
                 out AvatarState avatarState))
@@ -132,7 +132,7 @@ namespace Nekoyume.Action
             }
 
             sw.Stop();
-            Log.Debug("Combination Get AgentAvatarStates: {Elapsed}", sw.Elapsed);
+            Log.Debug("CombinationConsumable Get AgentAvatarStates: {Elapsed}", sw.Elapsed);
             sw.Restart();
 
             if (!avatarState.worldInformation.IsStageCleared(GameConfig.RequireClearedStageLevel.CombinationEquipmentAction))
@@ -181,7 +181,7 @@ namespace Nekoyume.Action
             }
 
             sw.Stop();
-            Log.Debug("Combination Remove Materials: {Elapsed}", sw.Elapsed);
+            Log.Debug("CombinationConsumable Remove Materials: {Elapsed}", sw.Elapsed);
             sw.Restart();
 
             var result = new ResultModel
@@ -205,7 +205,7 @@ namespace Nekoyume.Action
 
             var resultConsumableItemId = recipeRow.ResultConsumableItemId;
             sw.Stop();
-            Log.Debug("Combination Get Food id: {Elapsed}", sw.Elapsed);
+            Log.Debug("CombinationConsumable Get Food id: {Elapsed}", sw.Elapsed);
             sw.Restart();
             result.recipeId = recipeRow.Id;
 
@@ -230,7 +230,7 @@ namespace Nekoyume.Action
             avatarState.Update(mail);
             avatarState.UpdateFromCombination(itemUsable);
             sw.Stop();
-            Log.Debug("Combination Update AvatarState: {Elapsed}", sw.Elapsed);
+            Log.Debug("CombinationConsumable Update AvatarState: {Elapsed}", sw.Elapsed);
             sw.Restart();
 
             var materialSheet = states.GetSheet<MaterialItemSheet>();
@@ -241,9 +241,9 @@ namespace Nekoyume.Action
             states = states.SetState(AvatarAddress, avatarState.Serialize());
             slotState.Update(result, ctx.BlockIndex, requiredBlockIndex);
             sw.Stop();
-            Log.Debug("Combination Set AvatarState: {Elapsed}", sw.Elapsed);
+            Log.Debug("CombinationConsumable Set AvatarState: {Elapsed}", sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
-            Log.Debug("Combination Total Executed Time: {Elapsed}", ended - started);
+            Log.Debug("CombinationConsumable Total Executed Time: {Elapsed}", ended - started);
             return states
                 .SetState(ctx.Signer, agentState.Serialize())
                 .SetState(slotAddress, slotState.Serialize());

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
@@ -43,6 +44,11 @@ namespace Nekoyume.Action
                     .MarkBalanceChanged(GoldCurrencyMock, ctx.Signer, WeeklyArenaAddress);
             }
 
+            var sw = new Stopwatch();
+            sw.Start();
+            var started = DateTimeOffset.UtcNow;
+            Log.Debug("RankingBattle exec started.");
+
             if (AvatarAddress.Equals(EnemyAddress))
             {
                 throw new InvalidAddressException("Aborted as the signer tried to battle for themselves.");
@@ -57,8 +63,21 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException("Aborted as the avatar state of the signer was failed to load.");
             }
 
+            sw.Stop();
+            Log.Debug("RankingBattle Get AgentAvatarStates: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             avatarState.ValidateEquipments(equipmentIds, context.BlockIndex);
+
+            sw.Stop();
+            Log.Debug("RankingBattle Validate Equipment: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             avatarState.ValidateConsumable(consumableIds, context.BlockIndex);
+
+            sw.Stop();
+            Log.Debug("RankingBattle Validate Consumable: {Elapsed}", sw.Elapsed);
+            sw.Restart();
 
             if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(out var world) ||
                 world.StageClearedId < GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)
@@ -72,13 +91,25 @@ namespace Nekoyume.Action
             avatarState.EquipEquipments(equipmentIds);
             avatarState.ValidateCostume(new HashSet<int>(costumeIds));
 
+            sw.Stop();
+            Log.Debug("RankingBattle Validate Costume: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             var enemyAvatarState = states.GetAvatarState(EnemyAddress);
             if (enemyAvatarState is null)
             {
                 throw new FailedLoadStateException($"Aborted as the avatar state of the opponent ({EnemyAddress}) was failed to load.");
             }
 
+            sw.Stop();
+            Log.Debug("RankingBattle Get EnemyAvatarState: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             var weeklyArenaState = states.GetWeeklyArenaState(WeeklyArenaAddress);
+
+            sw.Stop();
+            Log.Debug("RankingBattle Get WeeklyArenaState: {Elapsed}", sw.Elapsed);
+            sw.Restart();
 
             if (weeklyArenaState.Ended)
             {
@@ -121,7 +152,15 @@ namespace Nekoyume.Action
                 weeklyArenaState[EnemyAddress],
                 costumeStatSheet);
 
+            sw.Stop();
+            Log.Debug("RankingBattle Initialize Simulator: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
             simulator.Simulate();
+
+            sw.Stop();
+            Log.Debug("RankingBattle Simulate(): {Elapsed}", sw.Elapsed);
+            sw.Restart();
 
             Result = simulator.Log;
 
@@ -130,10 +169,27 @@ namespace Nekoyume.Action
                 avatarState.inventory.AddItem(itemBase);
             }
 
-            return states
-                .SetState(ctx.Signer, agentState.Serialize())
-                .SetState(WeeklyArenaAddress, weeklyArenaState.Serialize())
-                .SetState(AvatarAddress, avatarState.Serialize());
+            states = states.SetState(ctx.Signer, agentState.Serialize());
+
+            sw.Stop();
+            Log.Debug("RankingBattle Serialize AgentState: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
+            states = states.SetState(WeeklyArenaAddress, weeklyArenaState.Serialize());
+
+            sw.Stop();
+            Log.Debug("RankingBattle Serialize WeeklyArenaState: {Elapsed}", sw.Elapsed);
+            sw.Restart();
+
+            states = states.SetState(AvatarAddress, avatarState.Serialize());
+
+            sw.Stop();
+            Log.Debug("RankingBattle Serialize AvatarState: {Elapsed}", sw.Elapsed);
+
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug("RankingBattle Total Executed Time: {Elapsed}", ended - started);
+
+            return states;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
