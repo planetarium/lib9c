@@ -2,7 +2,9 @@ namespace Lib9c.Tests.Model.State
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
+    using System.Diagnostics;
+    using System.IO;
+    using System.IO.Compression;
     using System.Linq;
     using System.Security.Cryptography;
     using System.Threading.Tasks;
@@ -15,14 +17,21 @@ namespace Lib9c.Tests.Model.State
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Quest;
     using Nekoyume.Model.State;
+    using Serilog;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class AvatarStateTest
     {
         private readonly TableSheets _tableSheets;
 
-        public AvatarStateTest()
+        public AvatarStateTest(ITestOutputHelper outputHelper)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.TestOutput(outputHelper)
+                .CreateLogger();
+
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
         }
@@ -289,6 +298,66 @@ namespace Lib9c.Tests.Model.State
             avatarState.inventory.AddItem(costume);
 
             Assert.Throws<CostumeSlotUnlockException>(() => avatarState.ValidateCostume(costumeIds));
+        }
+
+        [Fact]
+        public void Compress()
+        {
+            Address avatarAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
+            Address agentAddress = new PrivateKey().ToAddress();
+            var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
+            var sw = new Stopwatch();
+            Log.Verbose("Start Serialize");
+            var started = DateTimeOffset.UtcNow;
+            using var compressed = new MemoryStream();
+            using var ds = new DeflateStream(compressed, CompressionMode.Compress);
+            var codec = new Codec();
+            var serialized = avatarState.Serialize();
+            codec.Encode(serialized, ds);
+            ds.Flush();
+            sw.Stop();
+            Log.Verbose($"Serialize End : {sw.Elapsed}");
+            sw.Restart();
+            var state = new Tests.Action.State().SetState(avatarAddress, (Binary)compressed.ToArray());
+            sw.Stop();
+            Log.Verbose($"SetState End : {sw.Elapsed}");
+            sw.Restart();
+            var value = state.GetState(avatarAddress);
+            sw.Stop();
+            Log.Verbose($"GetState End : {sw.Elapsed}");
+            sw.Restart();
+            Assert.NotNull(value);
+            using var ms = new MemoryStream((Binary)value);
+            using var ms2 = new MemoryStream();
+            using var ds2 = new DeflateStream(ms, CompressionMode.Decompress);
+            ds2.CopyTo(ms2);
+            ms.Seek(0, SeekOrigin.Begin);
+            var des = new AvatarState((Dictionary)codec.Decode(ms2.ToArray()));
+            sw.Stop();
+            Log.Verbose($"Deserialize End : {sw.Elapsed}");
+            Log.Verbose($"Total: {DateTimeOffset.UtcNow - started}");
+            Assert.Equal(avatarAddress, des.address);
+
+            Log.Verbose("Start Serialize without Compress");
+            var started2 = DateTimeOffset.UtcNow;
+            sw.Restart();
+            var serialized2 = avatarState.Serialize();
+            Log.Verbose($"Serialize End : {sw.Elapsed}");
+            sw.Restart();
+            var state2 = new Tests.Action.State().SetState(avatarAddress, serialized2);
+            sw.Stop();
+            Log.Verbose($"SetState End : {sw.Elapsed}");
+            sw.Restart();
+            var value2 = state2.GetState(avatarAddress);
+            sw.Stop();
+            Log.Verbose($"GetState End : {sw.Elapsed}");
+            sw.Restart();
+            Assert.NotNull(value2);
+            var des2 = new AvatarState((Dictionary)value2);
+            sw.Stop();
+            Log.Verbose($"Deserialize End : {sw.Elapsed}");
+            Log.Verbose($"Total: {DateTimeOffset.UtcNow - started2}");
+            Assert.Equal(avatarAddress, des2.address);
         }
 
         private AvatarState GetNewAvatarState(Address avatarAddress, Address agentAddress)
