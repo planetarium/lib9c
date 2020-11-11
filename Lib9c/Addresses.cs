@@ -1,5 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Libplanet;
 using Nekoyume.Action;
+using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
 namespace Nekoyume
@@ -21,6 +25,39 @@ namespace Nekoyume
         public static readonly Address AuthorizedMiners  = new Address("000000000000000000000000000000000000000c");
         public static readonly Address Credits           = new Address("000000000000000000000000000000000000000d");
 
+        public static List<Address> GetAll(bool ignoreDerive = false)
+        {
+            var addressType = typeof(Address);
+            var addresses = typeof(Addresses).GetFields(BindingFlags.Public | BindingFlags.Static)
+                .Where(fieldInfo => fieldInfo.FieldType == addressType)
+                .Select(fieldInfo => fieldInfo.GetValue(null))
+                .Where(value => value != null)
+                .Select(value => (Address) value)
+                .ToList();
+
+            if (ignoreDerive)
+            {
+                return addresses;
+            }
+            
+            // RankingState
+            for (var i = 0; i < RankingState.RankingMapCapacity; i++)
+            {
+                addresses.Add(RankingState.Derive(i));
+            }
+            
+            // WeeklyArenaState
+            // The address of `WeeklyArenaState` to subscribe to is not specified because since the address of `WeeklyArenaState` is different according to `BlockIndex`
+
+            // TableSheet
+            var iSheetType = typeof(ISheet);
+            addresses.AddRange(iSheetType.Assembly.GetTypes()
+                .Where(type => !type.IsInterface && !type.IsAbstract && type.IsSubclassOf(iSheetType))
+                .Select(type => TableSheet.Derive(type.Name)));
+            
+            return addresses;
+        }
+        
         public static Address GetSheetAddress<T>() where T : ISheet
         {
             return TableSheet.Derive(typeof(T).Name);
