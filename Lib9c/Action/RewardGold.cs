@@ -6,6 +6,7 @@ using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
 using Nekoyume.Model.State;
+using Serilog;
 
 namespace Nekoyume.Action
 {
@@ -23,14 +24,28 @@ namespace Nekoyume.Action
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
+            Log.Debug("RewardGold Execute Beginning.");
             var states = context.PreviousStates;
-            states = GenesisGoldDistribution(context, states);
-            states = WeeklyArenaRankingBoard(context, states);
-            return MinerReward(context, states);
+            try
+            {
+                states = GenesisGoldDistribution(context, states);
+                states = WeeklyArenaRankingBoard(context, states);
+                states = MinerReward(context, states);
+            }
+            catch (Exception e)
+            {
+                Log.Debug($"RewardGold throw exception.\n{e.Message}");
+                throw;
+            }
+            
+            Log.Debug("RewardGold End.");
+            return states;
         }
 
         public IAccountStateDelta GenesisGoldDistribution(IActionContext ctx, IAccountStateDelta states)
         {
+            Log.Debug("RewardGold GenesisGoldDistribution() invoked.");
+            
             IEnumerable<GoldDistribution> goldDistributions = states.GetGoldDistribution();
             var index = ctx.BlockIndex;
             Currency goldCurrency = states.GetGoldCurrency();
@@ -54,6 +69,7 @@ namespace Nekoyume.Action
                 {
                     fav = fav.DivRem(100, out FungibleAssetValue _);
                 }
+                Log.Debug($"RewardGold TransferAsset(). sender({fund}), recipient({distribution.Address}), fav({fav.ToString()}), allowNegativeBalance(false)");
                 states = states.TransferAsset(
                     fund,
                     distribution.Address,
@@ -65,6 +81,8 @@ namespace Nekoyume.Action
 
         public IAccountStateDelta WeeklyArenaRankingBoard(IActionContext ctx, IAccountStateDelta states)
         {
+            Log.Debug("RewardGold WeeklyArenaRankingBoard() invoked.");
+            
             var gameConfigState = states.GetGameConfigState();
             var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
             var weekly = states.GetWeeklyArenaState(index);
@@ -73,6 +91,7 @@ namespace Nekoyume.Action
             if (nextWeekly is null)
             {
                 nextWeekly = new WeeklyArenaState(nextIndex);
+                Log.Debug($"RewardGold SetState(). nextWeekly, address({nextWeekly.address}), index({nextIndex})");
                 states = states.SetState(nextWeekly.address, nextWeekly.Serialize());
             }
 
@@ -84,13 +103,16 @@ namespace Nekoyume.Action
                 {
                     prevWeekly.End();
                     weekly.Update(prevWeekly, ctx.BlockIndex);
+                    Log.Debug($"RewardGold SetState(). prevWeekly, address({prevWeekly.address})");
                     states = states.SetState(prevWeekly.address, prevWeekly.Serialize());
+                    Log.Debug($"RewardGold SetState(). weekly, address({weekly.address})");
                     states = states.SetState(weekly.address, weekly.Serialize());
                 }
             }
             else if (ctx.BlockIndex - weekly.ResetIndex >= gameConfigState.DailyArenaInterval)
             {
                 weekly.ResetCount(ctx.BlockIndex);
+                Log.Debug($"RewardGold SetState(). weekly, address({weekly.address})");
                 states = states.SetState(weekly.address, weekly.Serialize());
             }
 
@@ -99,6 +121,8 @@ namespace Nekoyume.Action
 
         public IAccountStateDelta MinerReward(IActionContext ctx, IAccountStateDelta states)
         {
+            Log.Debug("RewardGold MinerReward() invoked.");
+            
             // 마이닝 보상
             // https://www.notion.so/planetarium/Mining-Reward-b7024ef463c24ebca40a2623027d497d
             Currency currency = states.GetGoldCurrency();
@@ -109,6 +133,7 @@ namespace Nekoyume.Action
 
             if (miningReward >= FungibleAssetValue.Parse(currency, "1.25"))
             {
+                Log.Debug($"RewardGold TransferAsset(). sender({GoldCurrencyState.Address}), recipient({ctx.Miner}), fav({miningReward.ToString()}), allowNegativeBalance(false)");
                 states = states.TransferAsset(
                     GoldCurrencyState.Address,
                     ctx.Miner,
