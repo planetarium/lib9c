@@ -34,7 +34,7 @@ namespace Nekoyume.Action
             }
             catch (Exception e)
             {
-                Log.Debug($"RewardGold throw exception.\n{e.Message}");
+                Log.Debug(e, $"RewardGold throw exception.\n{e.Message}");
                 throw;
             }
             
