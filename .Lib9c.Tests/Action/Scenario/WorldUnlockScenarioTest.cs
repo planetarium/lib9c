@@ -63,7 +63,7 @@ namespace Lib9c.Tests.Action.Scenario
 
         [Theory]
         [InlineData(1, 1, 1, 2)]
-        [InlineData(400, 3, 101, 4)]
+        [InlineData(400, 2, 51, 3)]
         public void UnlockWorldByHackAndSlashAfterPatchTableWithAddRow(
             int avatarLevel,
             int worldIdToClear,
