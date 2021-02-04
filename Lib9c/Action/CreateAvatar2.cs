@@ -85,8 +85,10 @@ namespace Nekoyume.Action
 
             if (!Regex.IsMatch(name, GameConfig.AvatarNickNamePattern))
             {
-                throw new InvalidNamePatternException(
+                var exc = new InvalidNamePatternException(
                     $"{addressesHex}Aborted as the input name {name} does not follow the allowed name pattern.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var sw = new Stopwatch();
@@ -98,20 +100,26 @@ namespace Nekoyume.Action
             var avatarState = states.GetAvatarState(avatarAddress);
             if (!(avatarState is null))
             {
-                throw new InvalidAddressException(
+                var exc = new InvalidAddressException(
                     $"{addressesHex}Aborted as there is already an avatar at {avatarAddress}.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (!(0 <= index && index < GameConfig.SlotCount))
             {
-                throw new AvatarIndexOutOfRangeException(
+                var exc = new AvatarIndexOutOfRangeException(
                     $"{addressesHex}Aborted as the index is out of range #{index}.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (agentState.avatarAddresses.ContainsKey(index))
             {
-                throw new AvatarIndexAlreadyUsedException(
+                var exc = new AvatarIndexAlreadyUsedException(
                     $"{addressesHex}Aborted as the signer already has an avatar at index #{index}.");
+                Log.Error(exc.Message);
+                throw exc;
             }
             sw.Stop();
             Log.Debug("{AddressesHex}CreateAvatar Get AgentAvatarStates: {Elapsed}", addressesHex, sw.Elapsed);

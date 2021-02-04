@@ -15,6 +15,7 @@ using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Serilog;
 
 namespace Nekoyume.Action
 {
@@ -54,19 +55,25 @@ namespace Nekoyume.Action
             if (!states.TryGetAgentAvatarStates(ctx.Signer, AvatarAddress, out var agentState,
                 out var avatarState))
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                var exc = new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var slotState = states.GetCombinationSlotState(AvatarAddress, SlotIndex);
             if (slotState is null)
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the slot state is failed to load");
+                var exc = new FailedLoadStateException($"{addressesHex}Aborted as the slot state is failed to load");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (!slotState.Validate(avatarState, ctx.BlockIndex))
             {
-                throw new CombinationSlotUnlockException(
+                var exc = new CombinationSlotUnlockException(
                     $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {SlotIndex}");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var recipeSheet = states.GetSheet<EquipmentItemRecipeSheet>();
@@ -76,16 +83,20 @@ namespace Nekoyume.Action
             // Validate recipe.
             if (!recipeSheet.TryGetValue(RecipeId, out var recipe))
             {
-                throw new SheetRowNotFoundException(addressesHex, nameof(EquipmentItemRecipeSheet), RecipeId);
+                var exc = new SheetRowNotFoundException(addressesHex, nameof(EquipmentItemRecipeSheet), RecipeId);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (!(SubRecipeId is null))
             {
                 if (!recipe.SubRecipeIds.Contains((int) SubRecipeId))
                 {
-                    throw new SheetRowColumnException(
+                    var exc = new SheetRowColumnException(
                         $"{addressesHex}Aborted as the sub recipe {SubRecipeId} was failed to load from the sheet."
                     );
+                    Log.Error(exc.Message);
+                    throw exc;
                 }
             }
 
@@ -93,19 +104,25 @@ namespace Nekoyume.Action
             if (!avatarState.worldInformation.IsStageCleared(recipe.UnlockStage))
             {
                 avatarState.worldInformation.TryGetLastClearedStageId(out var current);
-                throw new NotEnoughClearedStageLevelException(addressesHex, recipe.UnlockStage, current);
+                var exc = new NotEnoughClearedStageLevelException(addressesHex, recipe.UnlockStage, current);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (!materialSheet.TryGetValue(recipe.MaterialId, out var material))
             {
-                throw new SheetRowNotFoundException(addressesHex, nameof(MaterialItemSheet), recipe.MaterialId);
+                var exc = new SheetRowNotFoundException(addressesHex, nameof(MaterialItemSheet), recipe.MaterialId);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (!avatarState.inventory.RemoveMaterial(material.ItemId, recipe.MaterialCount))
             {
-                throw new NotEnoughMaterialException(
+                var exc = new NotEnoughMaterialException(
                     $"{addressesHex}Aborted as the player has no enough material ({material} * {recipe.MaterialCount})"
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var equipmentMaterial = ItemFactory.CreateMaterial(materialSheet, material.Id);
@@ -118,7 +135,9 @@ namespace Nekoyume.Action
             // Validate equipment id.
             if (!equipmentItemSheet.TryGetValue(recipe.ResultEquipmentId, out var equipRow))
             {
-                throw new SheetRowNotFoundException(addressesHex, nameof(equipmentItemSheet), recipe.ResultEquipmentId);
+                var exc = new SheetRowNotFoundException(addressesHex, nameof(equipmentItemSheet), recipe.ResultEquipmentId);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var requiredBlockIndex = ctx.BlockIndex + recipe.RequiredBlockIndex;
@@ -136,7 +155,9 @@ namespace Nekoyume.Action
                 var subId = (int) SubRecipeId;
                 if (!subSheet.TryGetValue(subId, out var subRecipe))
                 {
-                    throw new SheetRowNotFoundException(addressesHex, nameof(EquipmentItemSubRecipeSheet), subId);
+                    var exc = new SheetRowNotFoundException(addressesHex, nameof(EquipmentItemSubRecipeSheet), subId);
+                    Log.Error(exc.Message);
+                    throw exc;
                 }
 
                 requiredBlockIndex += subRecipe.RequiredBlockIndex;
@@ -147,15 +168,19 @@ namespace Nekoyume.Action
                 {
                     if (!materialSheet.TryGetValue(materialInfo.Id, out var subMaterialRow))
                     {
-                        throw new SheetRowNotFoundException(addressesHex, nameof(MaterialItemSheet), materialInfo.Id);
+                        var exc = new SheetRowNotFoundException(addressesHex, nameof(MaterialItemSheet), materialInfo.Id);
+                        Log.Error(exc.Message);
+                        throw exc;
                     }
 
                     if (!avatarState.inventory.RemoveMaterial(subMaterialRow.ItemId,
                         materialInfo.Count))
                     {
-                        throw new NotEnoughMaterialException(
+                        var exc = new NotEnoughMaterialException(
                             $"{addressesHex}Aborted as the player has no enough material ({subMaterialRow} * {materialInfo.Count})"
                         );
+                        Log.Error(exc.Message);
+                        throw exc;
                     }
 
                     var subMaterial = ItemFactory.CreateMaterial(materialSheet, materialInfo.Id);
@@ -171,18 +196,22 @@ namespace Nekoyume.Action
             FungibleAssetValue agentBalance = states.GetBalance(ctx.Signer, states.GetGoldCurrency());
             if (agentBalance < states.GetGoldCurrency() * requiredGold)
             {
-                throw new InsufficientBalanceException(
+                var exc = new InsufficientBalanceException(
                     ctx.Signer,
                     agentBalance,
                     $"{addressesHex}Aborted as the agent ({ctx.Signer}) has no sufficient gold: {agentBalance} < {requiredGold}"
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (avatarState.actionPoint < requiredActionPoint)
             {
-                throw new NotEnoughActionPointException(
+                var exc = new NotEnoughActionPointException(
                     $"{addressesHex}Aborted due to insufficient action point: {avatarState.actionPoint} < {requiredActionPoint}"
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             avatarState.actionPoint -= requiredActionPoint;

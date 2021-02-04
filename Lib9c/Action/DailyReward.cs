@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.State;
+using Serilog;
 
 namespace Nekoyume.Action
 {
@@ -27,13 +28,17 @@ namespace Nekoyume.Action
 
             if (!states.TryGetAgentAvatarStates(ctx.Signer, avatarAddress, out _, out AvatarState avatarState))
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                var exc = new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var gameConfigState = states.GetGameConfigState();
             if (gameConfigState is null)
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the game config was failed to load.");
+                var exc = new FailedLoadStateException($"{addressesHex}Aborted as the game config was failed to load.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (ctx.BlockIndex - avatarState.dailyRewardReceivedIndex >= gameConfigState.DailyRewardInterval)

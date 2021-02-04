@@ -76,7 +76,9 @@ namespace Nekoyume.Action
 
             if (!states.TryGetAvatarState(ctx.Signer, avatarAddress, out AvatarState avatarState))
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                var exc = new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             sw.Stop();
@@ -86,7 +88,9 @@ namespace Nekoyume.Action
 
             if (avatarState.RankingMapAddress != RankingMapAddress)
             {
-                throw new InvalidAddressException($"{addressesHex}Invalid ranking map address");
+                var exc = new InvalidAddressException($"{addressesHex}Invalid ranking map address");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             // worldId와 stageId가 유효한지 확인합니다.
@@ -94,21 +98,27 @@ namespace Nekoyume.Action
 
             if (!worldSheet.TryGetValue(worldId, out var worldRow, false))
             {
-                throw new SheetRowNotFoundException(addressesHex, nameof(WorldSheet), worldId);
+                var exc =  new SheetRowNotFoundException(addressesHex, nameof(WorldSheet), worldId);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (stageId < worldRow.StageBegin ||
                 stageId > worldRow.StageEnd)
             {
-                throw new SheetRowColumnException(
+                var exc =  new SheetRowColumnException(
                     $"{addressesHex}{worldId} world is not contains {worldRow.Id} stage: " +
                     $"{worldRow.StageBegin}-{worldRow.StageEnd}");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var stageSheet = states.GetSheet<StageSheet>();
             if (!stageSheet.TryGetValue(stageId, out var stageRow))
             {
-                throw new SheetRowNotFoundException(addressesHex, nameof(StageSheet), stageId);
+                var exc =  new SheetRowNotFoundException(addressesHex, nameof(StageSheet), stageId);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var worldInformation = avatarState.worldInformation;
@@ -120,7 +130,9 @@ namespace Nekoyume.Action
 
             if (!world.IsUnlocked)
             {
-                throw new InvalidWorldException($"{addressesHex}{worldId} is locked.");
+                var exc =  new InvalidWorldException($"{addressesHex}{worldId} is locked.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (world.StageBegin != worldRow.StageBegin ||
@@ -132,10 +144,12 @@ namespace Nekoyume.Action
             if (world.IsStageCleared && stageId > world.StageClearedId + 1 ||
                 !world.IsStageCleared && stageId != world.StageBegin)
             {
-                throw new InvalidStageException(
+                var exc =  new InvalidStageException(
                     $"{addressesHex}Aborted as the stage ({worldId}/{stageId}) is not cleared; " +
                     $"cleared stage: {world.StageClearedId}"
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             avatarState.ValidateEquipmentsV2(equipments, context.BlockIndex);
@@ -147,10 +161,12 @@ namespace Nekoyume.Action
             sw.Restart();
             if (avatarState.actionPoint < stageRow.CostAP)
             {
-                throw new NotEnoughActionPointException(
+                var exc =  new NotEnoughActionPointException(
                     $"{addressesHex}Aborted due to insufficient action point: " +
                     $"{avatarState.actionPoint} < {stageRow.CostAP}"
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             avatarState.actionPoint -= stageRow.CostAP;

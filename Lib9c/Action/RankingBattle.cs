@@ -57,12 +57,16 @@ namespace Nekoyume.Action
 
             if (AvatarAddress.Equals(EnemyAddress))
             {
-                throw new InvalidAddressException($"{addressesHex}Aborted as the signer tried to battle for themselves.");
+                var exc = new InvalidAddressException($"{addressesHex}Aborted as the signer tried to battle for themselves.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (!states.TryGetAvatarState(ctx.Signer, AvatarAddress, out var avatarState))
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                var exc = new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             sw.Stop();
@@ -88,16 +92,20 @@ namespace Nekoyume.Action
             if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(out var world) ||
                 world.StageClearedId < GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)
             {
-                throw new NotEnoughClearedStageLevelException(
+                var exc = new NotEnoughClearedStageLevelException(
                     addressesHex,
                     GameConfig.RequireClearedStageLevel.ActionsInRankingBoard,
                     world.StageClearedId);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var enemyAvatarState = states.GetAvatarState(EnemyAddress);
             if (enemyAvatarState is null)
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the opponent ({EnemyAddress}) was failed to load.");
+                var exc = new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the opponent ({EnemyAddress}) was failed to load.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             sw.Stop();
@@ -112,7 +120,9 @@ namespace Nekoyume.Action
 
             if (weeklyArenaState.Ended)
             {
-                throw new WeeklyArenaStateAlreadyEndedException();
+                var exc = new WeeklyArenaStateAlreadyEndedException();
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var costumeStatSheet = states.GetSheet<CostumeStatSheet>();
@@ -134,8 +144,10 @@ namespace Nekoyume.Action
 
             if (arenaInfo.DailyChallengeCount <= 0)
             {
-                throw new NotEnoughWeeklyArenaChallengeCountException(
+                var exc = new NotEnoughWeeklyArenaChallengeCountException(
                     addressesHex + NotEnoughWeeklyArenaChallengeCountException.BaseMessage);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (!arenaInfo.Active)
@@ -145,7 +157,9 @@ namespace Nekoyume.Action
 
             if (!weeklyArenaState.ContainsKey(EnemyAddress))
             {
-                throw new WeeklyArenaStateNotContainsAvatarAddressException(addressesHex, EnemyAddress);
+                var exc = new WeeklyArenaStateNotContainsAvatarAddressException(addressesHex, EnemyAddress);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             Log.Debug("{WeeklyArenaStateAddress}", weeklyArenaState.address.ToHex());

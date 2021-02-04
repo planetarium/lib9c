@@ -55,7 +55,9 @@ namespace Nekoyume.Action
             if (!states.TryGetAgentAvatarStates(ctx.Signer, avatarAddress, out AgentState agentState,
                 out AvatarState avatarState))
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                var exc = new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                Log.Error(exc.Message);
+                throw exc;
             }
             sw.Stop();
             Log.Debug("{AddressesHex}ItemEnhancement Get AgentAvatarStates: {Elapsed}", addressesHex, sw.Elapsed);
@@ -63,35 +65,44 @@ namespace Nekoyume.Action
 
             if (!avatarState.inventory.TryGetNonFungibleItem(itemId, out ItemUsable enhancementItem))
             {
-                throw new ItemDoesNotExistException(
+                var exc = new ItemDoesNotExistException(
                     $"{addressesHex}Aborted as the NonFungibleItem ({itemId}) was failed to load from avatar's inventory."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (enhancementItem.RequiredBlockIndex > context.BlockIndex)
             {
-                throw new RequiredBlockIndexException(
+                var exc = new RequiredBlockIndexException(
                     $"{addressesHex}Aborted as the equipment to enhance ({itemId}) is not available yet; it will be available at the block #{enhancementItem.RequiredBlockIndex}."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (!(enhancementItem is Equipment enhancementEquipment))
             {
-                throw new InvalidCastException(
+                var exc = new InvalidCastException(
                     $"{addressesHex}Aborted as the item is not a {nameof(Equipment)}, but {enhancementItem.GetType().Name}."
-
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var slotState = states.GetCombinationSlotState(avatarAddress, slotIndex);
             if (slotState is null)
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the slot state was failed to load. #{slotIndex}");
+                var exc = new FailedLoadStateException($"{addressesHex}Aborted as the slot state was failed to load. #{slotIndex}");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (!slotState.Validate(avatarState, ctx.BlockIndex))
             {
-                throw new CombinationSlotUnlockException($"{addressesHex}Aborted as the slot state was failed to invalid. #{slotIndex}");
+                var exc = new CombinationSlotUnlockException($"{addressesHex}Aborted as the slot state was failed to invalid. #{slotIndex}");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             sw.Stop();
@@ -101,9 +112,11 @@ namespace Nekoyume.Action
             if (enhancementEquipment.level > 9)
             {
                 // Maximum level exceeded.
-                throw new EquipmentLevelExceededException(
+                var exc = new EquipmentLevelExceededException(
                     $"{addressesHex}Aborted due to invalid equipment level: {enhancementEquipment.level} < 9"
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var result = new ItemEnhancement.ResultModel
@@ -115,9 +128,11 @@ namespace Nekoyume.Action
             var requiredAP = ItemEnhancement.GetRequiredAp();
             if (avatarState.actionPoint < requiredAP)
             {
-                throw new NotEnoughActionPointException(
+                var exc = new NotEnoughActionPointException(
                     $"{addressesHex}Aborted due to insufficient action point: {avatarState.actionPoint} < {requiredAP}"
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var enhancementCostSheet = states.GetSheet<EnhancementCostSheet>();
@@ -137,54 +152,68 @@ namespace Nekoyume.Action
 
             if (!avatarState.inventory.TryGetNonFungibleItem(materialId, out ItemUsable materialItem))
             {
-                throw new NotEnoughMaterialException(
+                var exc = new NotEnoughMaterialException(
                     $"{addressesHex}Aborted as the signer does not have a necessary material ({materialId})."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (materialItem.RequiredBlockIndex > context.BlockIndex)
             {
-                throw new RequiredBlockIndexException(
+                var exc = new RequiredBlockIndexException(
                     $"{addressesHex}Aborted as the material ({materialId}) is not available yet; it will be available at the block #{materialItem.RequiredBlockIndex}."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (!(materialItem is Equipment materialEquipment))
             {
-                throw new InvalidCastException(
+                var exc = new InvalidCastException(
                     $"{addressesHex}Aborted as the material item is not an {nameof(Equipment)}, but {materialItem.GetType().Name}."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (enhancementEquipment.ItemId == materialId)
             {
-                throw new InvalidMaterialException(
+                var exc = new InvalidMaterialException(
                     $"{addressesHex}Aborted as an equipment to enhance ({materialId}) was used as a material too."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (materialEquipment.ItemSubType != enhancementEquipment.ItemSubType)
             {
                 // Invalid ItemSubType
-                throw new InvalidMaterialException(
+                var exc = new InvalidMaterialException(
                     $"{addressesHex}Aborted as the material item is not a {enhancementEquipment.ItemSubType}, but {materialEquipment.ItemSubType}."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (materialEquipment.Grade != enhancementEquipment.Grade)
             {
                 // Invalid Grade
-                throw new InvalidMaterialException(
+                var exc = new InvalidMaterialException(
                     $"{addressesHex}Aborted as grades of the equipment to enhance ({enhancementEquipment.Grade}) and a material ({materialEquipment.Grade}) does not match."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (materialEquipment.level != enhancementEquipment.level)
             {
                 // Invalid level
-                throw new InvalidMaterialException(
+                var exc = new InvalidMaterialException(
                     $"{addressesHex}Aborted as levels of the equipment to enhance ({enhancementEquipment.level}) and a material ({materialEquipment.level}) does not match."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
             sw.Stop();
             Log.Debug("{AddressesHex}ItemEnhancement Get Material: {Elapsed}", addressesHex, sw.Elapsed);

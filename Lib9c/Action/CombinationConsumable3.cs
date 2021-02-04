@@ -87,7 +87,9 @@ namespace Nekoyume.Action
 
             if (!states.TryGetAvatarState(ctx.Signer, AvatarAddress, out AvatarState avatarState))
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                var exc =  new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             sw.Stop();
@@ -97,22 +99,28 @@ namespace Nekoyume.Action
             if (!avatarState.worldInformation.IsStageCleared(GameConfig.RequireClearedStageLevel.CombinationEquipmentAction))
             {
                 avatarState.worldInformation.TryGetLastClearedStageId(out var current);
-                throw new NotEnoughClearedStageLevelException(
+                var exc =  new NotEnoughClearedStageLevelException(
                     addressesHex,
                     GameConfig.RequireClearedStageLevel.CombinationEquipmentAction,
                     current);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var slotState = states.GetCombinationSlotState(AvatarAddress, slotIndex);
             if (slotState is null)
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the slot state is failed to load: # {slotIndex}");
+                var exc =  new FailedLoadStateException($"{addressesHex}Aborted as the slot state is failed to load: # {slotIndex}");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if(!slotState.Validate(avatarState, ctx.BlockIndex))
             {
-                throw new CombinationSlotUnlockException(
+                var exc =  new CombinationSlotUnlockException(
                     $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {slotIndex}");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             Log.Debug("{AddressesHex}Execute Combination; player: {Player}", addressesHex, AvatarAddress);
@@ -120,7 +128,7 @@ namespace Nekoyume.Action
             var recipeRow = states.GetSheet<ConsumableItemRecipeSheet>().Values.FirstOrDefault(r => r.Id == recipeId);
             if (recipeRow is null)
             {
-                throw new SheetRowNotFoundException(addressesHex, nameof(ConsumableItemRecipeSheet), recipeId);
+                var exc =  new SheetRowNotFoundException(addressesHex, nameof(ConsumableItemRecipeSheet), recipeId);
             }
             var materials = new Dictionary<Material, int>();
             foreach (var materialInfo in recipeRow.Materials.OrderBy(r => r.Id))
@@ -136,8 +144,10 @@ namespace Nekoyume.Action
                 }
                 else
                 {
-                    throw new NotEnoughMaterialException(
+                    var exc =  new NotEnoughMaterialException(
                         $"{addressesHex}Aborted as the player has no enough material ({materialId} * {count})");
+                    Log.Error(exc.Message);
+                    throw exc;
                 }
             }
 
@@ -155,9 +165,11 @@ namespace Nekoyume.Action
             var costAP = recipeRow.RequiredActionPoint;
             if (avatarState.actionPoint < costAP)
             {
-                throw new NotEnoughActionPointException(
+                var exc =  new NotEnoughActionPointException(
                     $"{addressesHex}Aborted due to insufficient action point: {avatarState.actionPoint} < {costAP}"
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             // ap 차감.
@@ -172,7 +184,9 @@ namespace Nekoyume.Action
 
             if (!consumableItemSheet.TryGetValue(resultConsumableItemId, out var consumableItemRow))
             {
-                throw new SheetRowNotFoundException(addressesHex, nameof(ConsumableItemSheet), resultConsumableItemId);
+                var exc =  new SheetRowNotFoundException(addressesHex, nameof(ConsumableItemSheet), resultConsumableItemId);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             // 조합 결과 획득.

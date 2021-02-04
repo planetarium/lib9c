@@ -64,7 +64,9 @@ namespace Nekoyume.Action
 
             if (ctx.Signer.Equals(sellerAgentAddress))
             {
-                throw new InvalidAddressException($"{addressesHex}Aborted as the signer is the seller.");
+                var exc =  new InvalidAddressException($"{addressesHex}Aborted as the signer is the seller.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var sw = new Stopwatch();
@@ -74,7 +76,9 @@ namespace Nekoyume.Action
 
             if (!states.TryGetAvatarState(ctx.Signer, buyerAvatarAddress, out var buyerAvatarState))
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the buyer was failed to load.");
+                var exc =  new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the buyer was failed to load.");
+                Log.Error(exc.Message);
+                throw exc;
             }
             sw.Stop();
             Log.Debug("{AddressesHex}Buy Get Buyer AgentAvatarStates: {Elapsed}", addressesHex, sw.Elapsed);
@@ -83,12 +87,16 @@ namespace Nekoyume.Action
             if (!buyerAvatarState.worldInformation.IsStageCleared(GameConfig.RequireClearedStageLevel.ActionsInShop))
             {
                 buyerAvatarState.worldInformation.TryGetLastClearedStageId(out var current);
-                throw new NotEnoughClearedStageLevelException(addressesHex, GameConfig.RequireClearedStageLevel.ActionsInShop, current);
+                var exc =  new NotEnoughClearedStageLevelException(addressesHex, GameConfig.RequireClearedStageLevel.ActionsInShop, current);
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             if (!states.TryGetState(ShopState.Address, out Bencodex.Types.Dictionary shopStateDict))
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the shop state was failed to load.");
+                var exc =  new FailedLoadStateException($"{addressesHex}Aborted as the shop state was failed to load.");
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             sw.Stop();
@@ -106,17 +114,21 @@ namespace Nekoyume.Action
             IKey productIdSerialized = (IKey)productId.Serialize();
             if (!products.ContainsKey(productIdSerialized))
             {
-                throw new ItemDoesNotExistException(
+                var exc =  new ItemDoesNotExistException(
                     $"{addressesHex}Aborted as the shop item ({productId}) was failed to get from the shop."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             ShopItem shopItem = new ShopItem((Dictionary)products[productIdSerialized]);
             if (!shopItem.SellerAgentAddress.Equals(sellerAgentAddress))
             {
-                throw new ItemDoesNotExistException(
+                var exc =  new ItemDoesNotExistException(
                     $"{addressesHex}Aborted as the shop item ({productId}) of seller ({shopItem.SellerAgentAddress}) is different from ({sellerAgentAddress})."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
             sw.Stop();
             Log.Debug("{AddressesHex}Buy Get Item: {Elapsed}", addressesHex, sw.Elapsed);
@@ -124,9 +136,11 @@ namespace Nekoyume.Action
 
             if (!states.TryGetAvatarState(sellerAgentAddress, sellerAvatarAddress, out var sellerAvatarState))
             {
-                throw new FailedLoadStateException(
+                var exc =  new FailedLoadStateException(
                     $"{addressesHex}Aborted as the seller agent/avatar was failed to load from {sellerAgentAddress}/{sellerAvatarAddress}."
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
             sw.Stop();
             Log.Debug("{AddressesHex}Buy Get Seller AgentAvatarStates: {Elapsed}", addressesHex, sw.Elapsed);
@@ -136,11 +150,13 @@ namespace Nekoyume.Action
             FungibleAssetValue buyerBalance = states.GetBalance(context.Signer, states.GetGoldCurrency());
             if (buyerBalance < shopItem.Price)
             {
-                throw new InsufficientBalanceException(
+                var exc =  new InsufficientBalanceException(
                     ctx.Signer,
                     buyerBalance,
                     $"{addressesHex}Aborted as the buyer ({ctx.Signer}) has no sufficient gold: {buyerBalance} < {shopItem.Price}"
                 );
+                Log.Error(exc.Message);
+                throw exc;
             }
 
             var tax = shopItem.Price.DivRem(100, out _) * Buy.TaxRate;
