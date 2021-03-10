@@ -37,7 +37,7 @@ namespace Lib9c.Tools.SubCommand
                 Console.WriteLine("Skip copy");                
             }
             
-            var originStore = new OldRocksDBStore(originRootPath);
+            var originStore = new MonoRocksDBStore(originRootPath);
             var distStore = new RocksDBStore(distRootPath);
 
             var totalLength = originStore.CountBlocks();
