@@ -68,5 +68,8 @@ namespace Lib9c
         public const string LegacyItemSubTypeKey = "item_sub_type";
         public const string LegacyGradeKey = "grade";
         public const string LegacyElementalTypeKey = "elemental_type";
+
+        // ShardedShopState
+        public const string ProductsKey = "pr";
     }
 }

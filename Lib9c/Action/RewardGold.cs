@@ -5,7 +5,9 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Serilog;
 
 namespace Nekoyume.Action
 {
@@ -26,6 +28,7 @@ namespace Nekoyume.Action
             var states = context.PreviousStates;
             states = GenesisGoldDistribution(context, states);
             states = WeeklyArenaRankingBoard(context, states);
+            states = ShardShopStateByCategoryWithGuId(context, states);
             return MinerReward(context, states);
         }
 
@@ -35,7 +38,7 @@ namespace Nekoyume.Action
             var index = ctx.BlockIndex;
             Currency goldCurrency = states.GetGoldCurrency();
             Address fund = GoldCurrencyState.Address;
-            foreach(GoldDistribution distribution in goldDistributions)
+            foreach (GoldDistribution distribution in goldDistributions)
             {
                 BigInteger amount = distribution.GetAmount(index);
                 if (amount <= 0) continue;
@@ -44,7 +47,7 @@ namespace Nekoyume.Action
                 // See also: https://github.com/planetarium/lib9c/pull/170#issuecomment-713380172
                 FungibleAssetValue fav = goldCurrency * amount;
                 var testAddresses = new HashSet<Address>(
-                    new []
+                    new[]
                     {
                         new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9"),
                         new Address("Fb90278C67f9b266eA309E6AE8463042f5461449"),
@@ -54,12 +57,14 @@ namespace Nekoyume.Action
                 {
                     fav = fav.DivRem(100, out FungibleAssetValue _);
                 }
+
                 states = states.TransferAsset(
                     fund,
                     distribution.Address,
                     fav
                 );
             }
+
             return states;
         }
 
@@ -103,7 +108,7 @@ namespace Nekoyume.Action
             // https://www.notion.so/planetarium/Mining-Reward-b7024ef463c24ebca40a2623027d497d
             Currency currency = states.GetGoldCurrency();
             FungibleAssetValue defaultMiningReward = currency * 10;
-            var countOfHalfLife = (int)Math.Pow(2, Convert.ToInt64((ctx.BlockIndex - 1) / 12614400));
+            var countOfHalfLife = (int) Math.Pow(2, Convert.ToInt64((ctx.BlockIndex - 1) / 12614400));
             FungibleAssetValue miningReward =
                 defaultMiningReward.DivRem(countOfHalfLife, out FungibleAssetValue _);
 
@@ -116,6 +121,99 @@ namespace Nekoyume.Action
                 );
             }
 
+            return states;
+        }
+
+        public IAccountStateDelta ShardShopStateByCategoryWithGuId(IActionContext ctx, IAccountStateDelta states)
+        {
+            // Change BlockIndex on main net.
+            if (ctx.BlockIndex == 1039424)
+            {
+                Log.Information("Start {Method} on BlockIndex: #{BlockIndex}",
+                    nameof(ShardShopStateByCategoryWithGuId), ctx.BlockIndex);
+                ShopState shopState = states.GetShopState();
+                IReadOnlyDictionary<Guid, ShopItem> products = shopState.Products;
+                int count = products.Count;
+                var shardedShopStates = new Dictionary<Address, ShardedShopState>();
+                var addressKeys = new List<string>
+                {
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                };
+                int shardedCount = 0;
+                var itemTypeKeys = new List<ItemSubType>()
+                {
+                    ItemSubType.Weapon,
+                    ItemSubType.Armor,
+                    ItemSubType.Belt,
+                    ItemSubType.Necklace,
+                    ItemSubType.Ring,
+                    ItemSubType.Food,
+                    ItemSubType.FullCostume,
+                    ItemSubType.HairCostume,
+                    ItemSubType.EarCostume,
+                    ItemSubType.EyeCostume,
+                    ItemSubType.TailCostume,
+                    ItemSubType.Title,
+                };
+
+                Log.Information("Initialize ShardedShopStates");
+                foreach (var itemSubType in itemTypeKeys)
+                {
+                    foreach (var addressKey in addressKeys)
+                    {
+                        Address address = ShardedShopState.DeriveAddress(itemSubType, addressKey);
+                        shardedShopStates[address] = new ShardedShopState(address);
+                    }
+                }
+                Log.Information("Initialize Finish");
+
+                Log.Information("Start Shard ShopState.Products");
+                foreach (var kv in products)
+                {
+                    ItemSubType itemSubType =  kv.Value.ItemUsable?.ItemSubType ?? kv.Value.Costume.ItemSubType;
+                    Address address = ShardedShopState.DeriveAddress(itemSubType, kv.Key);
+                    if (shardedShopStates.ContainsKey(address))
+                    {
+                        ShardedShopState state = shardedShopStates[address];
+                        state.Register(kv.Value);
+                    }
+                    else
+                    {
+                        var state = new ShardedShopState(address);
+                        state.Register(kv.Value);
+                        shardedShopStates[address] = state;
+                    }
+                }
+                Log.Information("Shard ShopState.Products Finish");
+
+                Log.Information("Start Set ShardedShopStates");
+#pragma warning disable LAA1002
+                foreach (var kv in shardedShopStates)
+                {
+                    var state = kv.Value;
+                    shardedCount += state.Products.Count;
+                    states = states.SetState(kv.Key, state.Serialize());
+                }
+#pragma warning restore LAA1002
+                Log.Information("Set ShopStates Finish. Shop.Products: {ShopCount} ShardedCount: {ShardedCount}",
+                    count, shardedCount);
+                Log.Information("End {Method}", nameof(ShardShopStateByCategoryWithGuId));
+            }
             return states;
         }
     }
