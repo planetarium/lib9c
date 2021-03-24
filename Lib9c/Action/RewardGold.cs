@@ -135,25 +135,6 @@ namespace Nekoyume.Action
                 IReadOnlyDictionary<Guid, ShopItem> products = shopState.Products;
                 int count = products.Count;
                 var shardedShopStates = new Dictionary<Address, ShardedShopState>();
-                var addressKeys = new List<string>
-                {
-                    "0",
-                    "1",
-                    "2",
-                    "3",
-                    "4",
-                    "5",
-                    "6",
-                    "7",
-                    "8",
-                    "9",
-                    "a",
-                    "b",
-                    "c",
-                    "d",
-                    "e",
-                    "f",
-                };
                 int shardedCount = 0;
                 var itemTypeKeys = new List<ItemSubType>()
                 {
@@ -174,7 +155,7 @@ namespace Nekoyume.Action
                 Log.Information("Initialize ShardedShopStates");
                 foreach (var itemSubType in itemTypeKeys)
                 {
-                    foreach (var addressKey in addressKeys)
+                    foreach (var addressKey in ShardedShopState.AddressKeys)
                     {
                         Address address = ShardedShopState.DeriveAddress(itemSubType, addressKey);
                         shardedShopStates[address] = new ShardedShopState(address);
