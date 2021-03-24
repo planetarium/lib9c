@@ -10,6 +10,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
 using Serilog;
+using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -20,6 +21,7 @@ namespace Nekoyume.Action
         public Guid productId;
         public Address sellerAvatarAddress;
         public Result result;
+        public ItemSubType itemSubType;
 
         [Serializable]
         public class Result : AttachmentActionResult
@@ -53,21 +55,24 @@ namespace Nekoyume.Action
         {
             ["productId"] = productId.Serialize(),
             ["sellerAvatarAddress"] = sellerAvatarAddress.Serialize(),
+            ["itemSubType"] = itemSubType.Serialize(),
         }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             productId = plainValue["productId"].ToGuid();
             sellerAvatarAddress = plainValue["sellerAvatarAddress"].ToAddress();
+            itemSubType = plainValue["itemSubType"].ToEnum<ItemSubType>();
         }
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
             IActionContext ctx = context;
             var states = ctx.PreviousStates;
+            Address shardedShopAddress = ShardedShopState.DeriveAddress(itemSubType, productId);
             if (ctx.Rehearsal)
             {
-                states = states.SetState(ShopState.Address, MarkChanged);
+                states = states.SetState(shardedShopAddress, MarkChanged);
                 return states.SetState(sellerAvatarAddress, MarkChanged);
             }
 
@@ -96,7 +101,7 @@ namespace Nekoyume.Action
                 return states;
             }
 
-            if (!states.TryGetState(ShopState.Address, out Bencodex.Types.Dictionary shopStateDict))
+            if (!states.TryGetState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
             {
                 return states;
             }
@@ -105,18 +110,22 @@ namespace Nekoyume.Action
             sw.Restart();
 
             // 상점에서 아이템을 빼온다.
-            Dictionary products = (Dictionary)shopStateDict["products"];
+            List products = (List)shopStateDict[ProductsKey];
 
-            IKey productIdSerialized = (IKey)productId.Serialize();
-            if (!products.ContainsKey(productIdSerialized))
+            IValue productIdSerialized = productId.Serialize();
+            Dictionary productSerialized = products
+                .Select(p => (Dictionary) p)
+                .FirstOrDefault(p => p[ProductIdKey].Equals(productIdSerialized));
+
+            if (productSerialized.Equals(Dictionary.Empty))
             {
                 return states;
             }
 
-            ShopItem outUnregisteredItem = new ShopItem((Dictionary)products[productIdSerialized]);
+            ShopItem outUnregisteredItem = new ShopItem(productSerialized);
 
-            products = (Dictionary)products.Remove(productIdSerialized);
-            shopStateDict = shopStateDict.SetItem("products", products);
+            products = (List) products.Remove(productSerialized);
+            shopStateDict = shopStateDict.SetItem(ProductsKey, new List<IValue>(products));
 
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Cancel Get Unregister Item: {Elapsed}", addressesHex, sw.Elapsed);
@@ -184,7 +193,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            states = states.SetState(ShopState.Address, shopStateDict);
+            states = states.SetState(shardedShopAddress, shopStateDict);
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}Sell Cancel Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
