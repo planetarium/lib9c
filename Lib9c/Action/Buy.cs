@@ -13,6 +13,7 @@ using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
+using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -28,6 +29,7 @@ namespace Nekoyume.Action
         public Guid productId;
         public BuyerResult buyerResult;
         public SellerResult sellerResult;
+        public ItemSubType itemSubType;
 
         [Serializable]
         public class BuyerResult : AttachmentActionResult
@@ -94,6 +96,7 @@ namespace Nekoyume.Action
             ["sellerAgentAddress"] = sellerAgentAddress.Serialize(),
             ["sellerAvatarAddress"] = sellerAvatarAddress.Serialize(),
             ["productId"] = productId.Serialize(),
+            ["i"] = itemSubType.Serialize(),
         }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
@@ -102,12 +105,14 @@ namespace Nekoyume.Action
             sellerAgentAddress = plainValue["sellerAgentAddress"].ToAddress();
             sellerAvatarAddress = plainValue["sellerAvatarAddress"].ToAddress();
             productId = plainValue["productId"].ToGuid();
+            itemSubType = plainValue["i"].ToEnum<ItemSubType>();
         }
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
             IActionContext ctx = context;
             var states = ctx.PreviousStates;
+            Address shardedShopAddress = ShardedShopState.DeriveAddress(itemSubType, productId);
             if (ctx.Rehearsal)
             {
                 states = states
@@ -119,7 +124,7 @@ namespace Nekoyume.Action
                         ctx.Signer,
                         sellerAgentAddress,
                         GoldCurrencyState.Address);
-                return states.SetState(ShopState.Address, MarkChanged);
+                return states.SetState(shardedShopAddress, MarkChanged);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, buyerAvatarAddress, sellerAvatarAddress);
@@ -148,9 +153,9 @@ namespace Nekoyume.Action
                 throw new NotEnoughClearedStageLevelException(addressesHex, GameConfig.RequireClearedStageLevel.ActionsInShop, current);
             }
 
-            if (!states.TryGetState(ShopState.Address, out Bencodex.Types.Dictionary shopStateDict))
+            if (!states.TryGetState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the shop state was failed to load.");
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the sharded shop state was failed to load.");
             }
 
             sw.Stop();
@@ -163,17 +168,20 @@ namespace Nekoyume.Action
                 buyerAvatarAddress,
                 sellerAvatarAddress);
             // 상점에서 구매할 아이템을 찾는다.
-            Dictionary products = (Dictionary)shopStateDict["products"];
+            List products = (List)shopStateDict[ProductsKey];
+            IValue productIdSerialized = productId.Serialize();
+            Dictionary productSerialized = products
+                .Select(p => (Dictionary) p)
+                .FirstOrDefault(p => p[ProductIdKey].Equals(productIdSerialized));
 
-            IKey productIdSerialized = (IKey)productId.Serialize();
-            if (!products.ContainsKey(productIdSerialized))
+            if (productSerialized.Equals(Dictionary.Empty))
             {
                 throw new ItemDoesNotExistException(
                     $"{addressesHex}Aborted as the shop item ({productId}) was failed to get from the shop."
                 );
             }
 
-            ShopItem shopItem = new ShopItem((Dictionary)products[productIdSerialized]);
+            ShopItem shopItem = new ShopItem(productSerialized);
             if (!shopItem.SellerAgentAddress.Equals(sellerAgentAddress))
             {
                 throw new ItemDoesNotExistException(
@@ -226,8 +234,8 @@ namespace Nekoyume.Action
                 taxedPrice
             );
 
-            products = (Dictionary)products.Remove(productIdSerialized);
-            shopStateDict = shopStateDict.SetItem("products", products);
+            products = (List) products.Remove(productSerialized);
+            shopStateDict = shopStateDict.SetItem(ProductsKey, new List<IValue>(products));
 
             INonFungibleItem nonFungibleItem = (INonFungibleItem) shopItem.ItemUsable ?? shopItem.Costume;
             if (!sellerAvatarState.inventory.RemoveNonFungibleItem(nonFungibleItem))
@@ -297,7 +305,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}Buy Set Buyer AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            states = states.SetState(ShopState.Address, shopStateDict);
+            states = states.SetState(shardedShopAddress, shopStateDict);
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}Buy Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
