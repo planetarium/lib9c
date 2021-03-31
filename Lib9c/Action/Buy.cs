@@ -22,14 +22,15 @@ namespace Nekoyume.Action
     public class Buy : GameAction
     {
         public const int TaxRate = 8;
+        public const int ERROR_CODE_FAILED_LOADING_STATE = 1;
+        public const int ERROR_CODE_ITEM_DOES_NOT_EXIST = 2;
+        public const int ERROR_CODE_SHOPITEM_EXPIRED = 3;
+        public const int ERROR_CODE_INSUFFICIENT_BALANCE = 4;
 
         public Address buyerAvatarAddress;
-        public Address sellerAgentAddress;
-        public Address sellerAvatarAddress;
-        public Guid productId;
-        public BuyerResult buyerResult;
-        public SellerResult sellerResult;
-        public ItemSubType itemSubType;
+        public IEnumerable<PurchaseInfo> purchaseInfos;
+        public BuyerMultipleResult buyerMultipleResult;
+        public SellerMultipleResult sellerMultipleResult;
 
         [Serializable]
         public class BuyerResult : AttachmentActionResult
@@ -90,48 +91,163 @@ namespace Nekoyume.Action
 #pragma warning restore LAA1002
         }
 
+        [Serializable]
+        public class PurchaseInfo
+        {
+            public Guid productId;
+            public Address sellerAgentAddress;
+            public Address sellerAvatarAddress;
+            public ItemSubType itemSubType;
+
+            public PurchaseInfo(Guid productId, Address sellerAgentAddress, Address sellerAvatarAddress, ItemSubType itemSubType)
+            {
+                this.productId = productId;
+                this.sellerAgentAddress = sellerAgentAddress;
+                this.sellerAvatarAddress = sellerAvatarAddress;
+                this.itemSubType = itemSubType;
+            }
+
+            public PurchaseInfo(Bencodex.Types.Dictionary serialized)
+            {
+                productId = serialized[ProductIdKey].ToGuid();
+                sellerAvatarAddress = serialized[SellerAvatarAddressKey].ToAddress();
+                sellerAgentAddress = serialized[SellerAgentAddressKey].ToAddress();
+                itemSubType = serialized[ItemSubTypeKey].ToEnum<ItemSubType>();
+            }
+
+            public IValue Serialize() =>
+#pragma warning disable LAA1002
+                new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
+                {
+                    [(Text) ProductIdKey] = productId.Serialize(),
+                    [(Text) SellerAvatarAddressKey] = sellerAvatarAddress.Serialize(),
+                    [(Text) SellerAgentAddressKey] = sellerAgentAddress.Serialize(),
+                    [(Text) ItemSubTypeKey] = itemSubType.Serialize(),
+                });
+#pragma warning restore LAA1002
+        }
+
+        [Serializable]
+        public class PurchaseResult : BuyerResult
+        {
+            public int errorCode = 0;
+            public Guid productId;
+
+            public PurchaseResult(Guid productId)
+            {
+                this.productId = productId;
+            }
+
+            public PurchaseResult(Bencodex.Types.Dictionary serialized) : base(serialized)
+            {
+                errorCode = serialized[ErrorCodeKey].ToInteger();
+                productId = serialized[ProductIdKey].ToGuid();
+            }
+
+            public override IValue Serialize() =>
+#pragma warning disable LAA1002
+                new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
+                {
+                    [(Text) ErrorCodeKey] = errorCode.Serialize(),
+                    [(Text) ProductIdKey] = productId.Serialize(),
+                }.Union((Bencodex.Types.Dictionary)base.Serialize()));
+#pragma warning restore LAA1002
+        }
+
+        [Serializable]
+        public class BuyerMultipleResult
+        {
+            public IEnumerable<PurchaseResult> purchaseResults;
+
+            public BuyerMultipleResult()
+            {
+            }
+
+            public BuyerMultipleResult(Bencodex.Types.Dictionary serialized)
+            {
+                purchaseResults = serialized[PurchaseResultsKey].ToList(StateExtensions.ToPurchaseResult);
+            }
+
+            public IValue Serialize() =>
+#pragma warning disable LAA1002
+                new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
+                {
+                    [(Text) PurchaseResultsKey] = purchaseResults
+                        .OrderBy(i => i)
+                        .Select(g => g.Serialize()).Serialize()
+                });
+#pragma warning restore LAA1002
+        }
+
+        [Serializable]
+        public class SellerMultipleResult
+        {
+            public IEnumerable<SellerResult> sellerResults;
+
+            public SellerMultipleResult()
+            {
+            }
+
+            public SellerMultipleResult(Bencodex.Types.Dictionary serialized)
+            {
+                sellerResults = serialized[SellerResultsKey].ToList(StateExtensions.ToSellerResult);
+            }
+
+            public IValue Serialize() =>
+#pragma warning disable LAA1002
+                new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
+                {
+                    [(Text) SellerResultsKey] = sellerResults
+                        .OrderBy(i => i)
+                        .Select(g => g.Serialize()).Serialize()
+                });
+#pragma warning restore LAA1002
+        }
+
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
         {
             ["buyerAvatarAddress"] = buyerAvatarAddress.Serialize(),
-            ["sellerAgentAddress"] = sellerAgentAddress.Serialize(),
-            ["sellerAvatarAddress"] = sellerAvatarAddress.Serialize(),
-            ["productId"] = productId.Serialize(),
-            ["i"] = itemSubType.Serialize(),
+            [PurchaseInfosKey] = purchaseInfos
+                .OrderBy(p => p.productId)
+                .Select(p => p.Serialize())
+                .Serialize(),
         }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             buyerAvatarAddress = plainValue["buyerAvatarAddress"].ToAddress();
-            sellerAgentAddress = plainValue["sellerAgentAddress"].ToAddress();
-            sellerAvatarAddress = plainValue["sellerAvatarAddress"].ToAddress();
-            productId = plainValue["productId"].ToGuid();
-            itemSubType = plainValue["i"].ToEnum<ItemSubType>();
+            purchaseInfos = plainValue[PurchaseInfosKey].ToList(StateExtensions.ToPurchaseInfo);
         }
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
             IActionContext ctx = context;
             var states = ctx.PreviousStates;
-            Address shardedShopAddress = ShardedShopState.DeriveAddress(itemSubType, productId);
             if (ctx.Rehearsal)
             {
-                states = states
+                foreach (var purchaseInfo in purchaseInfos)
+                {
+                    Address shardedShopAddress =
+                        ShardedShopState.DeriveAddress(purchaseInfo.itemSubType, purchaseInfo.productId);
+                    states = states
+                        .SetState(shardedShopAddress, MarkChanged)
+                        .SetState(purchaseInfo.sellerAvatarAddress, MarkChanged)
+                        .MarkBalanceChanged(
+                            GoldCurrencyMock,
+                            ctx.Signer,
+                            purchaseInfo.sellerAgentAddress,
+                            GoldCurrencyState.Address);
+                }
+
+                return states
                     .SetState(buyerAvatarAddress, MarkChanged)
                     .SetState(ctx.Signer, MarkChanged)
-                    .SetState(sellerAvatarAddress, MarkChanged)
-                    .MarkBalanceChanged(
-                        GoldCurrencyMock,
-                        ctx.Signer,
-                        sellerAgentAddress,
-                        GoldCurrencyState.Address);
-                return states
-                    .SetState(Addresses.Shop, MarkChanged)
-                    .SetState(shardedShopAddress, MarkChanged);
+                    .SetState(Addresses.Shop, MarkChanged);
             }
 
-            var addressesHex = GetSignerAndOtherAddressesHex(context, buyerAvatarAddress, sellerAvatarAddress);
+            var addressesHex = GetSignerAndOtherAddressesHex(context, buyerAvatarAddress);
 
-            if (ctx.Signer.Equals(sellerAgentAddress))
+            if (purchaseInfos.Select(p => p.sellerAgentAddress).Contains(ctx.Signer))
             {
                 throw new InvalidAddressException($"{addressesHex}Aborted as the signer is the seller.");
             }
@@ -155,175 +271,188 @@ namespace Nekoyume.Action
                 throw new NotEnoughClearedStageLevelException(addressesHex, GameConfig.RequireClearedStageLevel.ActionsInShop, current);
             }
 
-            if (!states.TryGetState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
+            List<PurchaseResult> purchaseResults = new List<PurchaseResult>();
+            List<SellerResult> sellerResults = new List<SellerResult>();
+            MaterialItemSheet materialSheet = states.GetSheet<MaterialItemSheet>();
+            buyerMultipleResult = new BuyerMultipleResult();
+            sellerMultipleResult = new SellerMultipleResult();
+
+            foreach (var purchaseInfo in purchaseInfos)
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the sharded shop state was failed to load.");
-            }
+                PurchaseResult purchaseResult = new PurchaseResult(purchaseInfo.productId);
+                Address shardedShopAddress =
+                    ShardedShopState.DeriveAddress(purchaseInfo.itemSubType, purchaseInfo.productId);
+                Address sellerAgentAddress = purchaseInfo.sellerAgentAddress;
+                Address sellerAvatarAddress = purchaseInfo.sellerAvatarAddress;
 
-            sw.Stop();
-            Log.Verbose("{AddressesHex}Buy Get ShopState: {Elapsed}", addressesHex, sw.Elapsed);
-            sw.Restart();
-
-            Log.Verbose(
-                "{AddressesHex}Execute Buy; buyer: {Buyer} seller: {Seller}",
-                addressesHex,
-                buyerAvatarAddress,
-                sellerAvatarAddress);
-            // 상점에서 구매할 아이템을 찾는다.
-            List products = (List)shopStateDict[ProductsKey];
-            IValue productIdSerialized = productId.Serialize();
-            Dictionary productSerialized = products
-                .Select(p => (Dictionary) p)
-                .FirstOrDefault(p => p[ProductIdKey].Equals(productIdSerialized));
-
-            if (productSerialized.Equals(Dictionary.Empty))
-            {
-                throw new ItemDoesNotExistException(
-                    $"{addressesHex}Aborted as the shop item ({productId}) was failed to get from the shop."
-                );
-            }
-
-            ShopItem shopItem = new ShopItem(productSerialized);
-            if (!shopItem.SellerAgentAddress.Equals(sellerAgentAddress))
-            {
-                throw new ItemDoesNotExistException(
-                    $"{addressesHex}Aborted as the shop item ({productId}) of seller ({shopItem.SellerAgentAddress}) is different from ({sellerAgentAddress})."
-                );
-            }
-            sw.Stop();
-            Log.Verbose("{AddressesHex}Buy Get Item: {Elapsed}", addressesHex, sw.Elapsed);
-            sw.Restart();
-
-            if (0 < shopItem.ExpiredBlockIndex && shopItem.ExpiredBlockIndex < context.BlockIndex)
-            {
-                throw new ShopItemExpiredException(
-                    $"{addressesHex}Aborted as the shop item ({productId}) already expired on # ({shopItem.ExpiredBlockIndex}).");
-            }
-            if (!states.TryGetAvatarState(sellerAgentAddress, sellerAvatarAddress, out var sellerAvatarState))
-            {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the seller agent/avatar was failed to load from {sellerAgentAddress}/{sellerAvatarAddress}."
-                );
-            }
-            sw.Stop();
-            Log.Verbose("{AddressesHex}Buy Get Seller AgentAvatarStates: {Elapsed}", addressesHex, sw.Elapsed);
-            sw.Restart();
-
-            // 돈은 있냐?
-            FungibleAssetValue buyerBalance = states.GetBalance(context.Signer, states.GetGoldCurrency());
-            if (buyerBalance < shopItem.Price)
-            {
-                throw new InsufficientBalanceException(
-                    ctx.Signer,
-                    buyerBalance,
-                    $"{addressesHex}Aborted as the buyer ({ctx.Signer}) has no sufficient gold: {buyerBalance} < {shopItem.Price}"
-                );
-            }
-
-            var tax = shopItem.Price.DivRem(100, out _) * TaxRate;
-            var taxedPrice = shopItem.Price - tax;
-
-            // 세금을 송금한다.
-            states = states.TransferAsset(
-                context.Signer,
-                GoldCurrencyState.Address,
-                tax);
-
-            // 구매자의 돈을 판매자에게 송금한다.
-            states = states.TransferAsset(
-                context.Signer,
-                sellerAgentAddress,
-                taxedPrice
-            );
-
-            products = (List) products.Remove(productSerialized);
-            shopStateDict = shopStateDict.SetItem(ProductsKey, new List<IValue>(products));
-
-            INonFungibleItem nonFungibleItem = (INonFungibleItem) shopItem.ItemUsable ?? shopItem.Costume;
-            if (!sellerAvatarState.inventory.RemoveNonFungibleItem(nonFungibleItem))
-            {
-                // Backward compatibility.
-                IValue rawShop = states.GetState(Addresses.Shop);
-                if (!(rawShop is null))
+                purchaseResults.Add(purchaseResult);
+                if (!states.TryGetState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
                 {
-                    Dictionary legacyShopDict = (Dictionary) rawShop;
-                    Dictionary legacyProducts = (Dictionary) legacyShopDict[LegacyProductsKey];
-                    IKey productKey = (IKey)productId.Serialize();
-                    // SoldOut
-                    if (!legacyProducts.ContainsKey(productKey))
-                    {
-                        throw new ItemDoesNotExistException(
-                            $"{addressesHex}Aborted as the shop item ({productId}) was failed to get from the legacy shop."
-                        );
-                    }
-
-                    legacyProducts = (Dictionary)legacyProducts.Remove(productKey);
-                    legacyShopDict = legacyShopDict.SetItem(LegacyProductsKey, legacyProducts);
-                    states = states.SetState(Addresses.Shop, legacyShopDict);
+                    purchaseResult.errorCode = ERROR_CODE_FAILED_LOADING_STATE;
+                    continue;
                 }
+                sw.Stop();
+                Log.Verbose("{AddressesHex}Buy Get ShopState: {Elapsed}", addressesHex, sw.Elapsed);
+                sw.Restart();
+
+                Log.Verbose(
+                    "{AddressesHex}Execute Buy; buyer: {Buyer} seller: {Seller}",
+                    addressesHex,
+                    buyerAvatarAddress,
+                    sellerAvatarAddress);
+
+                // 상점에서 구매할 아이템을 찾는다.
+                List products = (List)shopStateDict[ProductsKey];
+                IValue productIdSerialized = purchaseInfo.productId.Serialize();
+                Dictionary productSerialized = products
+                    .Select(p => (Dictionary) p)
+                    .FirstOrDefault(p => p[ProductIdKey].Equals(productIdSerialized));
+                if (productSerialized.Equals(Dictionary.Empty))
+                {
+                    purchaseResult.errorCode = ERROR_CODE_ITEM_DOES_NOT_EXIST;
+                    continue;
+                }
+
+                ShopItem shopItem = new ShopItem(productSerialized);
+                if (!shopItem.SellerAgentAddress.Equals(sellerAgentAddress))
+                {
+                    purchaseResult.errorCode = ERROR_CODE_ITEM_DOES_NOT_EXIST;
+                    continue;
+                }
+                sw.Stop();
+                Log.Verbose("{AddressesHex}Buy Get Item: {Elapsed}", addressesHex, sw.Elapsed);
+                sw.Restart();
+
+                if (0 < shopItem.ExpiredBlockIndex && shopItem.ExpiredBlockIndex < context.BlockIndex)
+                {
+                    purchaseResult.errorCode = ERROR_CODE_SHOPITEM_EXPIRED;
+                    continue;
+                }
+
+                if (!states.TryGetAvatarState(sellerAgentAddress, sellerAvatarAddress, out var sellerAvatarState))
+                {
+                    purchaseResult.errorCode = ERROR_CODE_FAILED_LOADING_STATE;
+                    continue;
+                }
+                sw.Stop();
+                Log.Verbose("{AddressesHex}Buy Get Seller AgentAvatarStates: {Elapsed}", addressesHex, sw.Elapsed);
+                sw.Restart();
+
+                // 돈은 있냐?
+                FungibleAssetValue buyerBalance = states.GetBalance(context.Signer, states.GetGoldCurrency());
+                if (buyerBalance < shopItem.Price)
+                {
+                    purchaseResult.errorCode = ERROR_CODE_INSUFFICIENT_BALANCE;
+                    continue;
+                }
+
+                var tax = shopItem.Price.DivRem(100, out _) * TaxRate;
+                var taxedPrice = shopItem.Price - tax;
+
+                // 세금을 송금한다.
+                states = states.TransferAsset(
+                    context.Signer,
+                    GoldCurrencyState.Address,
+                    tax);
+
+                // 구매자의 돈을 판매자에게 송금한다.
+                states = states.TransferAsset(
+                    context.Signer,
+                    sellerAgentAddress,
+                    taxedPrice
+                );
+
+
+                products = (List) products.Remove(productSerialized);
+                shopStateDict = shopStateDict.SetItem(ProductsKey, new List<IValue>(products));
+
+                INonFungibleItem nonFungibleItem = (INonFungibleItem) shopItem.ItemUsable ?? shopItem.Costume;
+                if (!sellerAvatarState.inventory.RemoveNonFungibleItem(nonFungibleItem))
+                {
+                    // Backward compatibility.
+                    IValue rawShop = states.GetState(Addresses.Shop);
+                    if (!(rawShop is null))
+                    {
+                        Dictionary legacyShopDict = (Dictionary) rawShop;
+                        Dictionary legacyProducts = (Dictionary) legacyShopDict[LegacyProductsKey];
+                        IKey productKey = (IKey) purchaseInfo.productId.Serialize();
+                        // SoldOut
+                        if (!legacyProducts.ContainsKey(productKey))
+                        {
+                            purchaseResult.errorCode = ERROR_CODE_ITEM_DOES_NOT_EXIST;
+                            continue;
+                        }
+
+                        legacyProducts = (Dictionary) legacyProducts.Remove(productKey);
+                        legacyShopDict = legacyShopDict.SetItem(LegacyProductsKey, legacyProducts);
+                        states = states.SetState(Addresses.Shop, legacyShopDict);
+                    }
+                }
+
+                nonFungibleItem.Update(context.BlockIndex);
+
+
+                // 구매자, 판매자에게 결과 메일 전송
+                purchaseResult.shopItem = shopItem;
+                purchaseResult.itemUsable = shopItem.ItemUsable;
+                purchaseResult.costume = shopItem.Costume;
+                var buyerMail = new BuyerMail(purchaseResult, ctx.BlockIndex, ctx.Random.GenerateRandomGuid(), ctx.BlockIndex);
+                purchaseResult.id = buyerMail.id;
+
+                var sr = new SellerResult
+                {
+                    shopItem = shopItem,
+                    itemUsable = shopItem.ItemUsable,
+                    costume = shopItem.Costume,
+                    gold = taxedPrice
+                };
+                var sellerMail = new SellerMail(sr, ctx.BlockIndex, ctx.Random.GenerateRandomGuid(),
+                    ctx.BlockIndex);
+                sr.id = sellerMail.id;
+                sellerResults.Add(sr);
+
+                buyerAvatarState.UpdateV4(buyerMail, context.BlockIndex);
+                if (purchaseResult.itemUsable != null)
+                {
+                    buyerAvatarState.UpdateFromAddItem(purchaseResult.itemUsable, false);
+                }
+
+                if (purchaseResult.costume != null)
+                {
+                    buyerAvatarState.UpdateFromAddCostume(purchaseResult.costume, false);
+                }
+                sellerAvatarState.UpdateV4(sellerMail, context.BlockIndex);
+
+                // 퀘스트 업데이트
+                buyerAvatarState.questList.UpdateTradeQuest(TradeType.Buy, shopItem.Price);
+                sellerAvatarState.questList.UpdateTradeQuest(TradeType.Sell, shopItem.Price);
+
+                sellerAvatarState.updatedAt = ctx.BlockIndex;
+                sellerAvatarState.blockIndex = ctx.BlockIndex;
+                buyerAvatarState.UpdateQuestRewards(materialSheet);
+                sellerAvatarState.UpdateQuestRewards(materialSheet);
+
+                states = states.SetState(sellerAvatarAddress, sellerAvatarState.Serialize());
+                sw.Stop();
+                Log.Verbose("{AddressesHex}Buy Set Seller AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
+                sw.Restart();
+                states = states.SetState(shardedShopAddress, shopStateDict);
+                sw.Stop();
+                Log.Verbose("{AddressesHex}Buy Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
             }
-            nonFungibleItem.Update(context.BlockIndex);
 
-            // 구매자, 판매자에게 결과 메일 전송
-            buyerResult = new BuyerResult
-            {
-                shopItem = shopItem,
-                itemUsable = shopItem.ItemUsable,
-                costume = shopItem.Costume
-            };
-            var buyerMail = new BuyerMail(buyerResult, ctx.BlockIndex, ctx.Random.GenerateRandomGuid(), ctx.BlockIndex);
-            buyerResult.id = buyerMail.id;
-
-            sellerResult = new SellerResult
-            {
-                shopItem = shopItem,
-                itemUsable = shopItem.ItemUsable,
-                costume = shopItem.Costume,
-                gold = taxedPrice
-            };
-            var sellerMail = new SellerMail(sellerResult, ctx.BlockIndex, ctx.Random.GenerateRandomGuid(),
-                ctx.BlockIndex);
-            sellerResult.id = sellerMail.id;
-
-            buyerAvatarState.UpdateV4(buyerMail, context.BlockIndex);
-            if (buyerResult.itemUsable != null)
-            {
-                buyerAvatarState.UpdateFromAddItem(buyerResult.itemUsable, false);
-            }
-
-            if (buyerResult.costume != null)
-            {
-                buyerAvatarState.UpdateFromAddCostume(buyerResult.costume, false);
-            }
-            sellerAvatarState.UpdateV4(sellerMail, context.BlockIndex);
-
-            // 퀘스트 업데이트
-            buyerAvatarState.questList.UpdateTradeQuest(TradeType.Buy, shopItem.Price);
-            sellerAvatarState.questList.UpdateTradeQuest(TradeType.Sell, shopItem.Price);
+            buyerMultipleResult.purchaseResults = purchaseResults;
+            sellerMultipleResult.sellerResults = sellerResults;
 
             buyerAvatarState.updatedAt = ctx.BlockIndex;
             buyerAvatarState.blockIndex = ctx.BlockIndex;
-            sellerAvatarState.updatedAt = ctx.BlockIndex;
-            sellerAvatarState.blockIndex = ctx.BlockIndex;
-
-            var materialSheet = states.GetSheet<MaterialItemSheet>();
-            buyerAvatarState.UpdateQuestRewards(materialSheet);
-            sellerAvatarState.UpdateQuestRewards(materialSheet);
-
-            states = states.SetState(sellerAvatarAddress, sellerAvatarState.Serialize());
-            sw.Stop();
-            Log.Verbose("{AddressesHex}Buy Set Seller AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
-            sw.Restart();
 
             states = states.SetState(buyerAvatarAddress, buyerAvatarState.Serialize());
             sw.Stop();
             Log.Verbose("{AddressesHex}Buy Set Buyer AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            states = states.SetState(shardedShopAddress, shopStateDict);
-            sw.Stop();
             var ended = DateTimeOffset.UtcNow;
-            Log.Verbose("{AddressesHex}Buy Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
             Log.Verbose("{AddressesHex}Buy Total Executed Time: {Elapsed}", addressesHex, ended - started);
 
             return states;

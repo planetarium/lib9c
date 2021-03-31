@@ -74,5 +74,11 @@ namespace Lib9c
 
         // ShopState
         public const string LegacyProductsKey = "products";
+
+        // Buy
+        public const string ErrorCodeKey = "ec";
+        public const string PurchaseResultsKey = "prs";
+        public const string SellerResultsKey = "srs";
+        public const string PurchaseInfosKey = "pis";
     }
 }
