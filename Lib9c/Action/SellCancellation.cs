@@ -73,7 +73,9 @@ namespace Nekoyume.Action
             if (ctx.Rehearsal)
             {
                 states = states.SetState(shardedShopAddress, MarkChanged);
-                return states.SetState(sellerAvatarAddress, MarkChanged);
+                return states
+                    .SetState(Addresses.Shop, MarkChanged)
+                    .SetState(sellerAvatarAddress, MarkChanged);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, sellerAvatarAddress);
@@ -142,15 +144,26 @@ namespace Nekoyume.Action
             bool backWardCompatible = false;
             if (!avatarState.inventory.TryGetNonFungibleItem(nonFungibleItem.ItemId, out INonFungibleItem outNonFungibleItem))
             {
-                if (nonFungibleItem.RequiredBlockIndex != 0)
+                // Backward compatibility.
+                IValue rawShop = states.GetState(Addresses.Shop);
+                if (!(rawShop is null))
                 {
-                    throw new ItemDoesNotExistException(
-                        $"{addressesHex}Aborted as the NonFungibleItem ({nonFungibleItem.ItemId}) was failed to load from avatar's inventory."
-                    );
-                }
+                    Dictionary legacyShopDict = (Dictionary) rawShop;
+                    Dictionary legacyProducts = (Dictionary) legacyShopDict[LegacyProductsKey];
+                    IKey productKey = (IKey)productId.Serialize();
+                    // SoldOut
+                    if (!legacyProducts.ContainsKey(productKey))
+                    {
+                        throw new ItemDoesNotExistException(
+                            $"{addressesHex}Aborted as the shop item ({productId}) was failed to get from the legacy shop."
+                        );
+                    }
 
-                // Backward compatible for old actions.
-                backWardCompatible = true;
+                    legacyProducts = (Dictionary)legacyProducts.Remove(productKey);
+                    legacyShopDict = legacyShopDict.SetItem(LegacyProductsKey, legacyProducts);
+                    states = states.SetState(Addresses.Shop, legacyShopDict);
+                    backWardCompatible = true;
+                }
             }
             else
             {

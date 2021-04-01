@@ -22,8 +22,8 @@ namespace Lib9c.Tests.Action
         private readonly IAccountStateDelta _initialState;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private GoldCurrencyState _goldCurrencyState;
-        private TableSheets _tableSheets;
+        private readonly GoldCurrencyState _goldCurrencyState;
+        private readonly TableSheets _tableSheets;
 
         public SellCancellationTest(ITestOutputHelper outputHelper)
         {
@@ -99,21 +99,24 @@ namespace Lib9c.Tests.Action
             _initialState = _initialState
                 .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetState(_agentAddress, agentState.Serialize())
+                .SetState(Addresses.Shop, new ShopState().Serialize())
                 .SetState(_avatarAddress, avatarState.Serialize());
         }
 
         [Theory]
-        [InlineData(ItemType.Equipment, "F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4", Sell.ExpiredBlockIndex, true)]
-        [InlineData(ItemType.Costume, "936DA01F-9ABD-4d9d-80C7-02AF85C822A8", Sell.ExpiredBlockIndex, true)]
-        [InlineData(ItemType.Equipment, "F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4", 0, false)]
-        [InlineData(ItemType.Costume, "936DA01F-9ABD-4d9d-80C7-02AF85C822A8", 0, false)]
-        public void Execute(ItemType itemType, string guid, long requiredBlockIndex, bool contain)
+        [InlineData(ItemType.Equipment, "F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4", true)]
+        [InlineData(ItemType.Costume, "936DA01F-9ABD-4d9d-80C7-02AF85C822A8", true)]
+        [InlineData(ItemType.Equipment, "F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4", false)]
+        [InlineData(ItemType.Costume, "936DA01F-9ABD-4d9d-80C7-02AF85C822A8", false)]
+        public void Execute(ItemType itemType, string guid, bool contain)
         {
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
             INonFungibleItem nonFungibleItem;
             Guid itemId = new Guid(guid);
             Guid productId = itemId;
             ItemSubType itemSubType;
+            long requiredBlockIndex = 0;
+            ShopState legacyShopState = _initialState.GetShopState();
             if (itemType == ItemType.Equipment)
             {
                 var itemUsable = ItemFactory.CreateItemUsable(
@@ -129,11 +132,6 @@ namespace Lib9c.Tests.Action
                 costume.Update(requiredBlockIndex);
                 nonFungibleItem = costume;
                 itemSubType = costume.ItemSubType;
-            }
-
-            if (contain)
-            {
-                avatarState.inventory.AddItem((ItemBase)nonFungibleItem);
             }
 
             var result = new DailyReward.DailyRewardResult()
@@ -159,12 +157,24 @@ namespace Lib9c.Tests.Action
                 nonFungibleItem);
             shopState.Register(shopItem);
 
+            if (contain)
+            {
+                avatarState.inventory.AddItem((ItemBase)nonFungibleItem);
+                Assert.Empty(legacyShopState.Products);
+            }
+            else
+            {
+                legacyShopState.Register(shopItem);
+                Assert.Single(legacyShopState.Products);
+            }
+
             Assert.Equal(requiredBlockIndex, nonFungibleItem.RequiredBlockIndex);
             Assert.Equal(contain, avatarState.inventory.TryGetNonFungibleItem(itemId, out _));
             Assert.Single(shopState.Products);
 
             IAccountStateDelta prevState = _initialState
                 .SetState(_avatarAddress, avatarState.Serialize())
+                .SetState(Addresses.Shop, legacyShopState.Serialize())
                 .SetState(shardedShopAddress, shopState.Serialize());
 
             var sellCancellationAction = new SellCancellation
@@ -190,10 +200,13 @@ namespace Lib9c.Tests.Action
             Assert.Equal(1, nextNonFungibleItem.RequiredBlockIndex);
             Assert.Single(nextAvatarState.mailBox);
             Assert.IsType<SellCancelMail>(nextAvatarState.mailBox.First());
+
+            ShopState nextLegacyShopState = nextState.GetShopState();
+            Assert.Empty(nextLegacyShopState.Products);
         }
 
         [Fact]
-        public void ExecuteThrowItemDoesNotExistException()
+        public void Execute_Throw_ItemDoesNotExistException()
         {
             Guid productId = Guid.NewGuid();
             ItemUsable itemUsable = ItemFactory.CreateItemUsable(
