@@ -71,5 +71,8 @@ namespace Lib9c
 
         // ShardedShopState
         public const string ProductsKey = "pr";
+
+        // ShopState
+        public const string LegacyProductsKey = "products";
     }
 }

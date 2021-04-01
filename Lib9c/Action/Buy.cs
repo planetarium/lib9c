@@ -124,7 +124,9 @@ namespace Nekoyume.Action
                         ctx.Signer,
                         sellerAgentAddress,
                         GoldCurrencyState.Address);
-                return states.SetState(shardedShopAddress, MarkChanged);
+                return states
+                    .SetState(Addresses.Shop, MarkChanged)
+                    .SetState(shardedShopAddress, MarkChanged);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, buyerAvatarAddress, sellerAvatarAddress);
@@ -240,11 +242,24 @@ namespace Nekoyume.Action
             INonFungibleItem nonFungibleItem = (INonFungibleItem) shopItem.ItemUsable ?? shopItem.Costume;
             if (!sellerAvatarState.inventory.RemoveNonFungibleItem(nonFungibleItem))
             {
-                if (nonFungibleItem.RequiredBlockIndex != 0)
+                // Backward compatibility.
+                IValue rawShop = states.GetState(Addresses.Shop);
+                if (!(rawShop is null))
                 {
-                    throw new ItemDoesNotExistException(
-                        $"{addressesHex}Aborted as the {nameof(nonFungibleItem)} ({nonFungibleItem.ItemId}) was failed to get from the sellerAvatar."
-                    );
+                    Dictionary legacyShopDict = (Dictionary) rawShop;
+                    Dictionary legacyProducts = (Dictionary) legacyShopDict[LegacyProductsKey];
+                    IKey productKey = (IKey)productId.Serialize();
+                    // SoldOut
+                    if (!legacyProducts.ContainsKey(productKey))
+                    {
+                        throw new ItemDoesNotExistException(
+                            $"{addressesHex}Aborted as the shop item ({productId}) was failed to get from the legacy shop."
+                        );
+                    }
+
+                    legacyProducts = (Dictionary)legacyProducts.Remove(productKey);
+                    legacyShopDict = legacyShopDict.SetItem(LegacyProductsKey, legacyProducts);
+                    states = states.SetState(Addresses.Shop, legacyShopDict);
                 }
             }
             nonFungibleItem.Update(context.BlockIndex);
