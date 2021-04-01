@@ -2,6 +2,7 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
     using System.Numerics;
@@ -604,6 +605,52 @@ namespace Lib9c.Tests.Action
             Assert.Contains(
                 Buy.ERROR_CODE_SHOPITEM_EXPIRED,
                 action.buyerMultipleResult.purchaseResults.Select(r => r.errorCode)
+            );
+        }
+
+        [Fact]
+        public void Rehearsal()
+        {
+            Guid productId = Guid.NewGuid();
+            Buy.PurchaseInfo purchaseInfo = new Buy.PurchaseInfo(
+                productId,
+                _sellerAgentAddress,
+                _sellerAvatarAddress,
+                ItemSubType.Weapon
+            );
+
+            var action = new Buy
+            {
+                buyerAvatarAddress = _buyerAvatarAddress,
+                purchaseInfos = new[] { purchaseInfo },
+            };
+
+            Address shardedShopAddress = ShardedShopState.DeriveAddress(ItemSubType.Weapon, productId);
+
+            var updatedAddresses = new List<Address>()
+            {
+                _sellerAgentAddress,
+                _sellerAvatarAddress,
+                _buyerAgentAddress,
+                _buyerAvatarAddress,
+                Addresses.GoldCurrency,
+                Addresses.Shop,
+                shardedShopAddress,
+            };
+
+            var state = new State();
+
+            var nextState = action.Execute(new ActionContext()
+            {
+                PreviousStates = state,
+                Signer = _buyerAgentAddress,
+                BlockIndex = 0,
+                Rehearsal = true,
+            });
+
+            Assert.Equal(
+                updatedAddresses.ToImmutableHashSet(),
+                nextState.UpdatedAddresses
             );
         }
 
