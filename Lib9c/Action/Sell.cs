@@ -97,6 +97,15 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the NonFungibleItem ({itemId}) was failed to load from avatar's inventory.");
             }
 
+            ItemSubType nonFungibleItemType = nonFungibleItem is Costume costume
+                ? costume.ItemSubType
+                : ((ItemUsable) nonFungibleItem).ItemSubType;
+
+            if (!nonFungibleItemType.Equals(itemSubType))
+            {
+                throw new InvalidItemTypeException($"Expected ItemType: {nonFungibleItemType}. Actual ItemType: {itemSubType}");
+            }
+
             if (nonFungibleItem.RequiredBlockIndex > context.BlockIndex)
             {
                 throw new RequiredBlockIndexException(

@@ -215,7 +215,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void ExecuteThrowInvalidPriceException()
+        public void Execute_Throw_InvalidPriceException()
         {
             var action = new Sell
             {
@@ -233,7 +233,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void ExecuteThrowFailedLoadStateException()
+        public void Execute_Throw_FailedLoadStateException()
         {
             var action = new Sell
             {
@@ -252,7 +252,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void ExecuteThrowNotEnoughClearedStageLevelException()
+        public void Execute_Throw_NotEnoughClearedStageLevelException()
         {
             var avatarState = new AvatarState(_avatarState)
             {
@@ -282,7 +282,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void ExecuteThrowItemDoesNotExistException()
+        public void Execute_Throw_ItemDoesNotExistException()
         {
             var action = new Sell
             {
@@ -302,7 +302,36 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void ExecuteThrowRequiredBlockIndexException()
+        public void Execute_Throw_InvalidItemTypeException()
+        {
+            var equipmentId = Guid.NewGuid();
+            var equipment = ItemFactory.CreateItemUsable(
+                _tableSheets.EquipmentItemSheet.First,
+                equipmentId,
+                10);
+            _avatarState.inventory.AddItem(equipment);
+
+            _initialState = _initialState.SetState(_avatarAddress, _avatarState.Serialize());
+
+            var action = new Sell
+            {
+                itemId = equipmentId,
+                price = 0 * _currency,
+                sellerAvatarAddress = _avatarAddress,
+                itemSubType = ItemSubType.Food,
+            };
+
+            Assert.Throws<InvalidItemTypeException>(() => action.Execute(new ActionContext
+            {
+                BlockIndex = 0,
+                PreviousStates = _initialState,
+                Signer = _agentAddress,
+                Random = new TestRandom(),
+            }));
+        }
+
+        [Fact]
+        public void Execute_Throw_RequiredBlockIndexException()
         {
             var equipmentId = Guid.NewGuid();
             var equipment = ItemFactory.CreateItemUsable(
