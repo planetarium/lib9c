@@ -34,9 +34,9 @@ namespace Lib9c.Benchmarks
 
             string storePath = args[0];
             int limit = int.Parse(args[1]);
-            ILogger logger = new LoggerConfiguration().CreateLogger();
+            Log.Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger();
             Libplanet.Crypto.CryptoConfig.CryptoBackend = new Secp256K1CryptoBackend<SHA256>();
-            var policySource = new BlockPolicySource(logger, LogEventLevel.Verbose);
+            var policySource = new BlockPolicySource(Log.Logger, LogEventLevel.Verbose);
             IBlockPolicy<NCAction> policy =
                 policySource.GetPolicy(BlockPolicySource.DifficultyBoundDivisor + 1, 0);
             IStagePolicy<NCAction> stagePolicy = new VolatileStagePolicy<NCAction>();
@@ -60,7 +60,8 @@ namespace Lib9c.Benchmarks
             IKeyValueStore stateRootKeyValueStore = new RocksDBKeyValueStore(Path.Combine(storePath, "state_hashes")),
                 stateKeyValueStore = new RocksDBKeyValueStore(Path.Combine(storePath, "states"));
             IStateStore stateStore = new TrieStateStore(stateKeyValueStore, stateRootKeyValueStore);
-            var chain = new BlockChain<NCAction>(policy, stagePolicy, store, stateStore, genesis);
+            var chain = new BlockChain<NCAction>(policy, stagePolicy, store, stateStore, genesis,
+                new []{ policySource.LoggedActionRenderer });
             long height = chain.Tip.Index;
             BlockHash[] blockHashes = limit < 0
                 ? chain.BlockHashes.SkipWhile((_, i) => i < height + limit).ToArray()
@@ -77,6 +78,10 @@ namespace Lib9c.Benchmarks
             long actions = 0;
             foreach (Block<NCAction> block in blocks)
             {
+                if (!block.Transactions.Any())
+                {
+                    continue;
+                }
                 Console.Error.WriteLine(
                     "Block #{0} {1}; {2} txs",
                     block.Index,
