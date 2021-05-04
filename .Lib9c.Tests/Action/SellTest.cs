@@ -69,28 +69,6 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses[0] = _avatarAddress;
 
-            var equipment = ItemFactory.CreateItemUsable(
-                _tableSheets.EquipmentItemSheet.First,
-                Guid.NewGuid(),
-                0);
-            _avatarState.inventory.AddItem(equipment);
-
-            var consumable = ItemFactory.CreateItemUsable(
-                _tableSheets.ConsumableItemSheet.First,
-                Guid.NewGuid(),
-                0);
-            _avatarState.inventory.AddItem(consumable);
-
-            var costume = ItemFactory.CreateCostume(
-                _tableSheets.CostumeItemSheet.First,
-                Guid.NewGuid());
-            _avatarState.inventory.AddItem(costume);
-
-            var tradableMaterialRow = _tableSheets.MaterialItemSheet.OrderedList
-                .FirstOrDefault(row => row.ItemSubType == ItemSubType.Hourglass);
-            var tradableMaterial = ItemFactory.CreateTradableMaterial(tradableMaterialRow);
-            _avatarState.inventory.AddItem(tradableMaterial);
-
             _initialState = _initialState
                 .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
                 .SetState(Addresses.Shop, shopState.Serialize())
@@ -99,26 +77,53 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(ItemType.Consumable, true, 2)]
-        [InlineData(ItemType.Costume, true, 2)]
-        [InlineData(ItemType.Equipment, true, 2)]
-        [InlineData(ItemType.Material, true, 2)]
-        [InlineData(ItemType.Consumable, false, 0)]
-        [InlineData(ItemType.Costume, false, 0)]
-        [InlineData(ItemType.Equipment, false, 0)]
-        [InlineData(ItemType.Material, false, 0)]
-        public void Execute(ItemType itemType, bool shopItemExist, int blockIndex)
+        [InlineData(ItemType.Consumable, true, 2, 1)]
+        [InlineData(ItemType.Costume, true, 2, 1)]
+        [InlineData(ItemType.Equipment, true, 2, 1)]
+        [InlineData(ItemType.Material, true, 2, 2)]
+        [InlineData(ItemType.Consumable, false, 0, 1)]
+        [InlineData(ItemType.Costume, false, 0, 1)]
+        [InlineData(ItemType.Equipment, false, 0, 1)]
+        [InlineData(ItemType.Material, false, 0, 2)]
+        public void Execute(ItemType itemType, bool shopItemExist, int blockIndex, int itemCount)
         {
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
-            var inventoryItems = avatarState.inventory.Items
-                .Where(i => i.item.ItemType == itemType)
-                .ToList();
-            Assert.NotEmpty(inventoryItems);
+
+            ITradableItem tradableItem;
+            switch (itemType)
+            {
+                case ItemType.Consumable:
+                    tradableItem = ItemFactory.CreateItemUsable(
+                        _tableSheets.ConsumableItemSheet.First,
+                        Guid.NewGuid(),
+                        0);
+                    break;
+                case ItemType.Costume:
+                    tradableItem = ItemFactory.CreateCostume(
+                        _tableSheets.CostumeItemSheet.First,
+                        Guid.NewGuid());
+                    break;
+                case ItemType.Equipment:
+                    tradableItem = ItemFactory.CreateItemUsable(
+                        _tableSheets.EquipmentItemSheet.First,
+                        Guid.NewGuid(),
+                        0);
+                    break;
+                case ItemType.Material:
+                    var tradableMaterialRow = _tableSheets.MaterialItemSheet.OrderedList
+                        .FirstOrDefault(row => row.ItemSubType == ItemSubType.Hourglass);
+                    tradableItem = ItemFactory.CreateTradableMaterial(tradableMaterialRow, new TestRandom());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(itemType), itemType, null);
+            }
+
+            avatarState.inventory.AddItem((ItemBase)tradableItem, itemCount);
 
             var previousStates = _initialState;
+            previousStates = previousStates.SetState(_avatarAddress, avatarState.Serialize());
             var currencyState = previousStates.GetGoldCurrency();
             var price = new FungibleAssetValue(currencyState, ProductPrice, 0);
-            var tradableItem = (ITradableItem)inventoryItems.First().item;
             var productId = new Guid("6f460c1a755d48e4ad6765d5f519dbc8");
             var shardedShopAddress = ShardedShopState.DeriveAddress(
                 tradableItem.ItemSubType,
@@ -133,7 +138,9 @@ namespace Lib9c.Tests.Action
                     productId,
                     price,
                     blockIndex,
-                    tradableItem);
+                    tradableItem,
+                    itemCount
+                );
 
                 var shardedShopState = new ShardedShopState(shardedShopAddress);
                 shardedShopState.Register(shopItem);
@@ -211,25 +218,34 @@ namespace Lib9c.Tests.Action
             var mail = mailList.First() as SellCancelMail;
             Assert.NotNull(mail);
             Assert.Equal(expiredBlockIndex, mail.requiredBlockIndex);
+
+            ITradableItem attachmentItem;
+            int attachmentCount = 0;
             switch (itemType)
             {
                 case ItemType.Consumable:
                 case ItemType.Equipment:
                     Assert.NotNull(mail.attachment.itemUsable);
+                    attachmentItem = mail.attachment.itemUsable;
                     Assert.Equal(tradableItem, mail.attachment.itemUsable);
                     break;
                 case ItemType.Costume:
                     Assert.NotNull(mail.attachment.costume);
+                    attachmentItem = mail.attachment.costume;
                     Assert.Equal(tradableItem, mail.attachment.costume);
                     break;
                 case ItemType.Material:
                     Assert.NotNull(mail.attachment.tradableFungibleItem);
-                    Assert.Equal(tradableItem, mail.attachment.tradableFungibleItem);
-                    Assert.True(mail.attachment.tradableFungibleItemCount == 1);
+                    attachmentItem = mail.attachment.tradableFungibleItem;
+                    attachmentCount = mail.attachment.tradableFungibleItemCount;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(itemType), itemType, null);
             }
+
+            Assert.Equal(attachmentCount, mail.attachment.tradableFungibleItemCount);
+            Assert.Equal(nextTradableItem, attachmentItem);
+            Assert.Equal(nextTradableItemInShopItem, attachmentItem);
         }
 
         [Fact]

@@ -30,12 +30,9 @@ namespace Nekoyume.Model.Item
 
         private long _requiredBlockIndex;
 
-        public static Guid DeriveTradableId(HashDigest<SHA256> hashDigest) =>
-            new Guid(HashDigest<MD5>.DeriveFrom(hashDigest.ToByteArray()).ToByteArray());
-
-        public TradableMaterial(MaterialItemSheet.Row data) : base(data)
+        public TradableMaterial(MaterialItemSheet.Row data, Guid tradableId) : base(data)
         {
-            TradableId = DeriveTradableId(ItemId);
+            TradableId = tradableId;
         }
 
         public TradableMaterial(Dictionary serialized) : base(serialized)
@@ -44,7 +41,7 @@ namespace Nekoyume.Model.Item
                 ? serialized[RequiredBlockIndexKey].ToLong()
                 : default;
 
-            TradableId = DeriveTradableId(ItemId);
+            TradableId = serialized[ItemIdKey].ToGuid();
         }
 
         protected TradableMaterial(SerializationInfo info, StreamingContext _)
@@ -74,7 +71,8 @@ namespace Nekoyume.Model.Item
         }
 
         public override IValue Serialize() => ((Dictionary) base.Serialize())
-            .SetItem(RequiredBlockIndexKey, RequiredBlockIndex.Serialize());
+            .SetItem(RequiredBlockIndexKey, RequiredBlockIndex.Serialize())
+            .SetItem(ItemIdKey, TradableId.Serialize());
 
         public override string ToString()
         {

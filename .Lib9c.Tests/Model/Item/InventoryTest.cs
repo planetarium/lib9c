@@ -4,7 +4,10 @@
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
+    using Lib9c.Tests.Action;
+    using Libplanet.Action;
     using Nekoyume.Model.Item;
+    using Nekoyume.TableData;
     using Xunit;
     using BxList = Bencodex.Types.List;
 
@@ -44,7 +47,7 @@
             var row = TableSheets.MaterialItemSheet.First;
             Assert.NotNull(row);
             var material = ItemFactory.CreateMaterial(row);
-            var tradableMaterial = ItemFactory.CreateTradableMaterial(row);
+            var tradableMaterial = ItemFactory.CreateTradableMaterial(row, new TestRandom());
             var inventory = new Inventory();
             Assert.Empty(inventory.Items);
             inventory.AddItem(material);
@@ -64,7 +67,7 @@
             var row = TableSheets.MaterialItemSheet.First;
             Assert.NotNull(row);
             var material = ItemFactory.CreateMaterial(row);
-            var tradableMaterial = ItemFactory.CreateTradableMaterial(row);
+            var tradableMaterial = ItemFactory.CreateTradableMaterial(row, new TestRandom());
             var inventory = new Inventory();
             Assert.Empty(inventory.Items);
             inventory.AddItem(material);
@@ -87,7 +90,7 @@
             var row = TableSheets.MaterialItemSheet.First;
             Assert.NotNull(row);
             var material = ItemFactory.CreateMaterial(row);
-            var tradableMaterial = ItemFactory.CreateTradableMaterial(row);
+            var tradableMaterial = ItemFactory.CreateTradableMaterial(row, new TestRandom());
             var tradableItem = (ITradableItem)tradableMaterial;
             Assert.NotNull(tradableItem);
             var inventory = new Inventory();
@@ -123,7 +126,7 @@
             var row = TableSheets.MaterialItemSheet.First;
             Assert.NotNull(row);
             var material = ItemFactory.CreateMaterial(row);
-            var tradableMaterial = ItemFactory.CreateTradableMaterial(row);
+            var tradableMaterial = ItemFactory.CreateTradableMaterial(row, new TestRandom());
             var inventory = new Inventory();
             Assert.Empty(inventory.Items);
             inventory.AddItem(material);
@@ -132,6 +135,64 @@
             Assert.False(inventory.Materials.First() is ITradableFungibleItem);
             Assert.False(inventory.RemoveTradableFungibleItem(row.ItemId));
             Assert.Single(inventory.Materials);
+        }
+
+        [Fact]
+        public void AddItem_TradableMaterial()
+        {
+            var row = TableSheets.MaterialItemSheet.First;
+            Assert.NotNull(row);
+            IRandom random = new TestRandom();
+            var tradableMaterial = ItemFactory.CreateTradableMaterial(row, random);
+            tradableMaterial.RequiredBlockIndex = 0;
+            var inventory = new Inventory();
+            Assert.Empty(inventory.Items);
+
+            inventory.AddItem(tradableMaterial);
+            Assert.Single(inventory.Items);
+            Assert.Single(inventory.Materials);
+
+            // Add new tradable material
+            var tradableMaterial2 = ItemFactory.CreateTradableMaterial(row, random);
+            tradableMaterial2.RequiredBlockIndex = 1;
+            inventory.AddItem(tradableMaterial2);
+            Assert.Equal(2, inventory.Items.Count);
+            Assert.Equal(2, inventory.Materials.Count());
+            Assert.True(inventory.HasItem(row.Id, 2));
+        }
+
+        [Theory]
+        [InlineData(ItemType.Equipment, 1)]
+        [InlineData(ItemType.Costume, 2)]
+        [InlineData(ItemType.Consumable, 3)]
+        [InlineData(ItemType.Material, 4)]
+        public void HasItem(ItemType itemType, int itemCount)
+        {
+            ItemSheet.Row row = null;
+            var inventory = new Inventory();
+            switch (itemType)
+            {
+                case ItemType.Consumable:
+                    row = TableSheets.EquipmentItemSheet.First;
+                    break;
+                case ItemType.Costume:
+                    row = TableSheets.CostumeItemSheet.First;
+                    break;
+                case ItemType.Equipment:
+                    row = TableSheets.ConsumableItemSheet.First;
+                    break;
+                case ItemType.Material:
+                    row = TableSheets.MaterialItemSheet.First;
+                    break;
+            }
+
+            Assert.NotNull(row);
+            for (int i = 0; i < itemCount; i++)
+            {
+                inventory.AddItem(ItemFactory.CreateItem(row, new TestRandom()));
+            }
+
+            Assert.True(inventory.HasItem(row.Id, itemCount));
         }
     }
 }

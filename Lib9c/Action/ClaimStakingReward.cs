@@ -73,7 +73,7 @@ namespace Nekoyume.Action
                 {
                     var row = itemSheet[rewardInfo.ItemId];
                     var item = row is MaterialItemSheet.Row materialRow
-                        ? ItemFactory.CreateTradableMaterial(materialRow)
+                        ? ItemFactory.CreateTradableMaterial(materialRow, context.Random)
                         : ItemFactory.CreateItem(row, context.Random);
                     avatarState.inventory.AddItem(item, rewardInfo.Quantity);
                 }

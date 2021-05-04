@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Model.Item
 {
+    using System;
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
     using Nekoyume.Model.Item;
@@ -21,7 +22,7 @@ namespace Lib9c.Tests.Model.Item
         {
             Assert.NotNull(_materialRow);
 
-            var material = new TradableMaterial(_materialRow);
+            var material = new TradableMaterial(_materialRow, Guid.NewGuid());
             var serialized = material.Serialize();
             var deserialized = new TradableMaterial((Bencodex.Types.Dictionary)serialized);
 
@@ -33,7 +34,7 @@ namespace Lib9c.Tests.Model.Item
         {
             Assert.NotNull(_materialRow);
 
-            var material = new TradableMaterial(_materialRow);
+            var material = new TradableMaterial(_materialRow, Guid.NewGuid());
             var formatter = new BinaryFormatter();
             using var ms = new MemoryStream();
             formatter.Serialize(ms, material);

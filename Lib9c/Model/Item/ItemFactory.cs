@@ -37,8 +37,8 @@ namespace Nekoyume.Model.Item
 
         public static Material CreateMaterial(MaterialItemSheet.Row row) => new Material(row);
 
-        public static TradableMaterial CreateTradableMaterial(MaterialItemSheet.Row row)
-            => new TradableMaterial(row);
+        public static TradableMaterial CreateTradableMaterial(MaterialItemSheet.Row row, IRandom random)
+            => new TradableMaterial(row, random.GenerateRandomGuid());
 
         public static ItemUsable CreateItemUsable(ItemSheet.Row itemRow, Guid id,
             long requiredBlockIndex, int level = 0)

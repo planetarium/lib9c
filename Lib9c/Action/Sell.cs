@@ -123,9 +123,7 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted because {nameof(count)}({count}) should be greater than or equal to 1.");
             }
 
-            if (!avatarState.inventory.TryGetTradableItem(
-                    tradableId,
-                    out var inventoryItem) ||
+            if (!avatarState.inventory.TryGetTradableItem(tradableId, out var inventoryItem) ||
                 !(inventoryItem.item is ITradableItem tradableItem))
             {
                 throw new ItemDoesNotExistException(
@@ -196,7 +194,7 @@ namespace Nekoyume.Action
                     break;
                 case ItemType.Material:
                     productKey = TradableFungibleItemKey;
-                    itemIdKey = LegacyCostumeItemIdKey;
+                    itemIdKey = ItemIdKey;
                     requiredBlockIndexKey = RequiredBlockIndexKey;
                     break;
                 default:
@@ -204,27 +202,17 @@ namespace Nekoyume.Action
             }
 
             BxDictionary serializedProductDictionary;
+            var serializedTradeId = tradableItem.TradableId.Serialize();
             switch (tradableItem.ItemType)
             {
                 case ItemType.Consumable:
                 case ItemType.Costume:
                 case ItemType.Equipment:
-                    var serializedTradeId = tradableItem.TradableId.Serialize();
-                    serializedProductDictionary = serializedProductList
-                        .Select(p => (BxDictionary) p)
-                        .FirstOrDefault(p =>
-                            ((BxDictionary) p[productKey])[itemIdKey].Equals(serializedTradeId));
-                    break;
                 case ItemType.Material:
                     serializedProductDictionary = serializedProductList
                         .Select(p => (BxDictionary) p)
                         .FirstOrDefault(p =>
-                        {
-                            var materialItemId =
-                                ((BxDictionary) p[productKey])[itemIdKey].ToItemId();
-                            return TradableMaterial.DeriveTradableId(materialItemId)
-                                .Equals(tradableItem.TradableId);
-                        });
+                            ((BxDictionary) p[productKey])[itemIdKey].Equals(serializedTradeId));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

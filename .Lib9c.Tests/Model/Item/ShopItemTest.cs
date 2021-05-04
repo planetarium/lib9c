@@ -159,7 +159,7 @@
         private static ShopItem GetShopItemWithFirstMaterial()
         {
             var row = _tableSheets.MaterialItemSheet.First;
-            var tradableMaterial = new TradableMaterial(row);
+            var tradableMaterial = new TradableMaterial(row, Guid.NewGuid());
             return new ShopItem(
                 new PrivateKey().ToAddress(),
                 new PrivateKey().ToAddress(),
@@ -177,7 +177,7 @@
             foreach (var row in _tableSheets.MaterialItemSheet.OrderedList
                 .Where(e => e.ItemSubType == ItemSubType.Hourglass || e.ItemSubType == ItemSubType.ApStone))
             {
-                var tradableMaterial = new TradableMaterial(row);
+                var tradableMaterial = new TradableMaterial(row, Guid.NewGuid());
                 var shopItem = new ShopItem(
                     new PrivateKey().ToAddress(),
                     new PrivateKey().ToAddress(),

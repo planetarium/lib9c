@@ -222,7 +222,7 @@ namespace Nekoyume.Action
                 if (row.ItemSubType == ItemSubType.Hourglass ||
                     row.ItemSubType == ItemSubType.ApStone)
                 {
-                    avatarState.inventory.AddItem(ItemFactory.CreateTradableMaterial(row), 100);
+                    avatarState.inventory.AddItem(ItemFactory.CreateTradableMaterial(row, random), 100);
                 }
             }
 

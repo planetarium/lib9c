@@ -447,9 +447,9 @@ namespace Nekoyume.Model.Item
         #region Has
 
         public bool HasItem(int rowId, int count = 1) => _items
-            .Exists(item =>
-                item.item.Id == rowId &&
-                item.count >= count);
+            .Where(item =>
+                item.item.Id == rowId
+            ).Sum(item => item.count) >= count;
 
         public bool HasFungibleItem(HashDigest<SHA256> fungibleId, int count = 1) => _items
             .Exists(item =>

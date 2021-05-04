@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Libplanet;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Model.Item
 {
@@ -22,7 +23,7 @@ namespace Nekoyume.Model.Item
 
         public Material(Dictionary serialized) : base(serialized)
         {
-            if (serialized.TryGetValue((Text) "item_id", out var itemId))
+            if (serialized.TryGetValue((Text) LegacyCostumeItemIdKey, out var itemId))
             {
                 ItemId = itemId.ToItemId();
             }
@@ -60,7 +61,7 @@ namespace Nekoyume.Model.Item
         public override IValue Serialize()
         {
             var result = ((Dictionary) base.Serialize())
-                .SetItem("item_id", ItemId.Serialize());
+                .SetItem(LegacyCostumeItemIdKey, ItemId.Serialize());
 
             return result;
         }
