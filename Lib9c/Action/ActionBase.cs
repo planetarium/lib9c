@@ -11,9 +11,10 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Blocks;
 using Serilog;
 using Nekoyume.Model.State;
-using Libplanet.Assets;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
 #else
@@ -193,6 +194,8 @@ namespace Nekoyume.Action
 
             public Address Signer { get; set; }
 
+            public BlockHash BlockHash { get; set; }
+
             public long BlockIndex { get; set; }
 
             public IAccountStateDelta OutputStates { get; set; }
@@ -205,6 +208,7 @@ namespace Nekoyume.Action
             {
                 Action = FromBytes((byte[]) info.GetValue("action", typeof(byte[])));
                 Signer = new Address((byte[]) info.GetValue("signer", typeof(byte[])));
+                BlockHash = new BlockHash((byte[]) info.GetValue("blockHash", typeof(byte[])));
                 BlockIndex = info.GetInt64("blockIndex");
                 OutputStates = new AccountStateDelta((byte[]) info.GetValue("outputStates", typeof(byte[])));
                 Exception = (Exception) info.GetValue("exc", typeof(Exception));
@@ -215,6 +219,7 @@ namespace Nekoyume.Action
             {
                 info.AddValue("action", ToBytes(Action));
                 info.AddValue("signer", Signer.ToByteArray());
+                info.AddValue("blockHash", BlockHash.ToByteArray());
                 info.AddValue("blockIndex", BlockIndex);
                 info.AddValue("outputStates", ToBytes(OutputStates, OutputStates.UpdatedAddresses));
                 info.AddValue("exc", Exception);

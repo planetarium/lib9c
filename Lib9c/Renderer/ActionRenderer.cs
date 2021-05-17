@@ -39,6 +39,7 @@ namespace Lib9c.Renderer
             {
                 Action = GetActionBase(action),
                 Signer = context.Signer,
+                BlockHash = context.BlockHash,
                 BlockIndex = context.BlockIndex,
                 OutputStates = nextStates,
                 PreviousStates = context.PreviousStates,
@@ -55,6 +56,7 @@ namespace Lib9c.Renderer
             {
                 Action = GetActionBase(action),
                 Signer = context.Signer,
+                BlockHash = context.BlockHash,
                 BlockIndex = context.BlockIndex,
                 OutputStates = nextStates,
                 PreviousStates = context.PreviousStates,
@@ -72,6 +74,7 @@ namespace Lib9c.Renderer
             {
                 Action = GetActionBase(action),
                 Signer = context.Signer,
+                BlockHash = context.BlockHash,
                 BlockIndex = context.BlockIndex,
                 OutputStates = context.PreviousStates,
                 Exception = exception,
@@ -90,6 +93,7 @@ namespace Lib9c.Renderer
                 Action = GetActionBase(action),
                 Signer = context.Signer,
                 BlockIndex = context.BlockIndex,
+                BlockHash = context.BlockHash,
                 OutputStates = context.PreviousStates,
                 Exception = exception,
                 PreviousStates = context.PreviousStates,
@@ -139,6 +143,7 @@ namespace Lib9c.Renderer
             {
                 Action = (T) eval.Action,
                 Signer = eval.Signer,
+                BlockHash = eval.BlockHash,
                 BlockIndex = eval.BlockIndex,
                 OutputStates = eval.OutputStates,
                 Exception = eval.Exception,
@@ -155,6 +160,7 @@ namespace Lib9c.Renderer
             {
                 Action = (T) eval.Action,
                 Signer = eval.Signer,
+                BlockHash = eval.BlockHash,
                 BlockIndex = eval.BlockIndex,
                 OutputStates = eval.OutputStates,
                 Exception = eval.Exception,
@@ -170,6 +176,7 @@ namespace Lib9c.Renderer
             {
                 Action = eval.Action,
                 Signer = eval.Signer,
+                BlockHash = eval.BlockHash,
                 BlockIndex = eval.BlockIndex,
                 OutputStates = eval.OutputStates,
                 Exception = eval.Exception,
@@ -185,6 +192,7 @@ namespace Lib9c.Renderer
             {
                 Action = eval.Action,
                 Signer = eval.Signer,
+                BlockHash = eval.BlockHash,
                 BlockIndex = eval.BlockIndex,
                 OutputStates = eval.OutputStates,
                 Exception = eval.Exception,
