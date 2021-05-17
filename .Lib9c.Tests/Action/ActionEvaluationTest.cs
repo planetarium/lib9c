@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Assets;
+    using Libplanet.Blocks;
     using Nekoyume.Action;
     using Xunit;
 
@@ -15,6 +16,7 @@ namespace Lib9c.Tests.Action
         {
             var currency = new Currency("NCG", 2, minters: null);
             var signer = default(Address);
+            var blockHash = default(BlockHash);
             var blockIndex = 1234;
             var states = new State()
                 .SetState(signer, (Text)"ANYTHING")
@@ -30,6 +32,7 @@ namespace Lib9c.Tests.Action
             {
                 Action = action,
                 Signer = signer,
+                BlockHash = blockHash,
                 BlockIndex = blockIndex,
                 PreviousStates = states,
                 OutputStates = states,
@@ -44,6 +47,7 @@ namespace Lib9c.Tests.Action
 
             // FIXME We should equality check more precisely.
             Assert.Equal(evaluation.Signer, deserialized.Signer);
+            Assert.Equal(evaluation.BlockHash, deserialized.BlockHash);
             Assert.Equal(evaluation.BlockIndex, deserialized.BlockIndex);
             var dict = (Dictionary)deserialized.OutputStates.GetState(default);
             Assert.Equal("value", (Text)dict["key"]);
