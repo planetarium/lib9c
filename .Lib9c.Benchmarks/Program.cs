@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using Bencodex.Types;
+using BTAI;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
@@ -15,6 +16,7 @@ using Libplanet.RocksDBStore;
 using Libplanet.Store;
 using Libplanet.Store.Trie;
 using Nekoyume.BlockChain;
+using Nekoyume.Model.State;
 using Serilog;
 using Serilog.Events;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
@@ -34,11 +36,11 @@ namespace Lib9c.Benchmarks
 
             string storePath = args[0];
             int limit = int.Parse(args[1]);
-            ILogger logger = new LoggerConfiguration().CreateLogger();
+            Serilog.Log.Logger = new LoggerConfiguration().MinimumLevel.Error().WriteTo.Console().CreateLogger();
             Libplanet.Crypto.CryptoConfig.CryptoBackend = new Secp256K1CryptoBackend<SHA256>();
-            var policySource = new BlockPolicySource(logger, LogEventLevel.Verbose);
+            var policySource = new BlockPolicySource(Serilog.Log.Logger, LogEventLevel.Verbose);
             IBlockPolicy<NCAction> policy =
-                policySource.GetPolicy(BlockPolicySource.DifficultyBoundDivisor + 1, 0);
+                policySource.GetPolicy(5000000, 2048);
             IStagePolicy<NCAction> stagePolicy = new VolatileStagePolicy<NCAction>();
             var store = new RocksDBStore(storePath);
             if (!(store.GetCanonicalChainId() is Guid chainId))
@@ -57,63 +59,98 @@ namespace Lib9c.Benchmarks
 
             DateTimeOffset started = DateTimeOffset.UtcNow;
             Block<NCAction> genesis = store.GetBlock<NCAction>(gHash);
+            string mainPath = @"C:\Users\qoora\AppData\Local\planetarium\9c-main-partition";
+            var store2 = new RocksDBStore(mainPath);
+
             IKeyValueStore stateRootKeyValueStore = new RocksDBKeyValueStore(Path.Combine(storePath, "state_hashes")),
                 stateKeyValueStore = new RocksDBKeyValueStore(Path.Combine(storePath, "states"));
             IStateStore stateStore = new TrieStateStore(stateKeyValueStore, stateRootKeyValueStore);
-            var chain = new BlockChain<NCAction>(policy, stagePolicy, store, stateStore, genesis);
-            long height = chain.Tip.Index;
-            BlockHash[] blockHashes = limit < 0
-                ? chain.BlockHashes.SkipWhile((_, i) => i < height + limit).ToArray()
-                : chain.BlockHashes.Take(limit).ToArray();
-            Console.Error.WriteLine(
-                "Executing {0} blocks: {1}-{2} (inclusive).",
-                blockHashes.Length,
-                blockHashes[0],
-                blockHashes.Last()
-            );
-            Block<NCAction>[] blocks = blockHashes.Select(h => chain[h]).ToArray();
-            DateTimeOffset blocksLoaded = DateTimeOffset.UtcNow;
-            long txs = 0;
-            long actions = 0;
-            foreach (Block<NCAction> block in blocks)
+            var mx = 0L;
+            foreach (var cid in store.ListChainIds())
             {
-                Console.Error.WriteLine(
-                    "Block #{0} {1}; {2} txs",
-                    block.Index,
-                    block.Hash,
-                    block.Transactions.Count()
-                );
+                if (mx < store.CountIndex(cid))
+                {
+                    mx = store.CountIndex(cid);
+                    store.SetCanonicalChainId(cid);
+                }
+            }
+            var chain = new BlockChain<NCAction>(policy, stagePolicy, store, stateStore, genesis);
 
-                IEnumerable<ActionEvaluation> blockEvals;
-                if (block.Index > 0)
-                {
-                    blockEvals = block.Evaluate(
-                        DateTimeOffset.UtcNow,
-                        address => chain.GetState(address, block.Hash),
-                        (address, currency) => chain.GetBalance(address, currency, block.Hash)
-                    );
-                }
-                else
-                {
-                    blockEvals = block.Evaluate(
-                        DateTimeOffset.UtcNow,
-                        _ => null,
-                        ((_, currency) => new FungibleAssetValue(currency))
-                    );
-                }
-                SetStates(chain.Id, stateStore, block, blockEvals.ToArray(), buildStateReferences: true);
-                txs += block.Transactions.LongCount();
-                actions += block.Transactions.Sum(tx => tx.Actions.LongCount()) + 1;
+            IKeyValueStore stateRootKeyValueStore2 = new RocksDBKeyValueStore(Path.Combine(mainPath, "state_hashes")),
+                stateKeyValueStore2 = new RocksDBKeyValueStore(Path.Combine(mainPath, "states"));
+            IStateStore stateStore2 = new TrieStateStore(stateKeyValueStore2, stateRootKeyValueStore2);
+            var mainChain = new BlockChain<NCAction>(policy, stagePolicy, store2, stateStore2, genesis);
+
+            if (mainChain.GetState(AuthorizedMinersState.Address) is Dictionary ams &&
+                policy is BlockPolicy bp)
+            {
+                bp.AuthorizedMinersState = new AuthorizedMinersState(ams);
+            }
+            Block<NCAction> current = chain.Tip;
+            while (!mainChain.ContainsBlock(current.Hash))
+            {
+                current = chain[current.PreviousHash.Value];
             }
 
-            DateTimeOffset ended = DateTimeOffset.UtcNow;
-            Console.WriteLine("Loading blocks\t{0}", blocksLoaded - started);
-            long execActionsTotalMilliseconds = (long) (ended - blocksLoaded).TotalMilliseconds;
-            Console.WriteLine("Executing actions\t{0}ms", execActionsTotalMilliseconds);
-            Console.WriteLine("Average per block\t{0}ms", execActionsTotalMilliseconds / blockHashes.Length);
-            Console.WriteLine("Average per tx\t{0}ms", execActionsTotalMilliseconds / txs);
-            Console.WriteLine("Average per action\t{0}ms", execActionsTotalMilliseconds / actions);
-            Console.WriteLine("Total elapsed\t{0}", ended - started);
+            while (chain.Count < mainChain.Count)
+            {
+                var block = mainChain[chain.Count];
+                chain.Append(block);
+                Serilog.Log.Error($"BlockIndex: {block.Index} / Remain: {mainChain.Count - chain.Count}");
+            }
+            // long height = chain.Tip.Index;
+            // BlockHash[] blockHashes = limit < 0
+            //     ? chain.BlockHashes.SkipWhile((_, i) => i < height + limit).ToArray()
+            //     : chain.BlockHashes.Take(limit).ToArray();
+            // Console.Error.WriteLine(
+            //     "Executing {0} blocks: {1}-{2} (inclusive).",
+            //     blockHashes.Length,
+            //     blockHashes[0],
+            //     blockHashes.Last()
+            // );
+            // Block<NCAction>[] blocks = blockHashes.Select(h => chain[h]).ToArray();
+            // DateTimeOffset blocksLoaded = DateTimeOffset.UtcNow;
+            // long txs = 0;
+            // long actions = 0;
+            // foreach (Block<NCAction> block in blocks)
+            // {
+            //     Console.Error.WriteLine(
+            //         "Block #{0} {1}; {2} txs",
+            //         block.Index,
+            //         block.Hash,
+            //         block.Transactions.Count()
+            //     );
+            //
+            //     IEnumerable<ActionEvaluation> blockEvals;
+            //     if (block.Index > 0)
+            //     {
+            //         blockEvals = block.Evaluate(
+            //             DateTimeOffset.UtcNow,
+            //             address => chain.GetState(address, block.Hash),
+            //             (address, currency) => chain.GetBalance(address, currency, block.Hash)
+            //         );
+            //     }
+            //     else
+            //     {
+            //         blockEvals = block.Evaluate(
+            //             DateTimeOffset.UtcNow,
+            //             _ => null,
+            //             ((_, currency) => new FungibleAssetValue(currency))
+            //         );
+            //     }
+            //     SetStates(chain.Id, stateStore, block, blockEvals.ToArray(), buildStateReferences: true);
+            //     txs += block.Transactions.LongCount();
+            //     actions += block.Transactions.Sum(tx => tx.Actions.LongCount()) + 1;
+            // }
+            //
+            // DateTimeOffset ended = DateTimeOffset.UtcNow;
+            // Console.WriteLine("Loading blocks\t{0}", blocksLoaded - started);
+            // long execActionsTotalMilliseconds = (long) (ended - blocksLoaded).TotalMilliseconds;
+            // Console.WriteLine("Executing actions\t{0}ms", execActionsTotalMilliseconds);
+            // Console.WriteLine("Average per block\t{0}ms", execActionsTotalMilliseconds / blockHashes.Length);
+            // Console.WriteLine("Average per tx\t{0}ms", execActionsTotalMilliseconds / txs);
+            // Console.WriteLine("Average per action\t{0}ms", execActionsTotalMilliseconds / actions);
+            // Console.WriteLine("Total elapsed\t{0}", ended - started);
         }
 
         // Copied from BlockChain<T>.SetStates().

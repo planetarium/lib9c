@@ -450,6 +450,17 @@ namespace Nekoyume.Action
                 states = states.SetState(shardedShopAddress, shopStateDict);
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
+
+                if ((purchaseInfo.itemSubType == ItemSubType.Hourglass ||
+                    purchaseInfo.itemSubType == ItemSubType.ApStone))
+                {
+                    var msg = $"Buy Fungible Tx Found. TxId: {context.TxId}, Index: {context.BlockIndex}, ItemType: {purchaseInfo.itemSubType}, " +
+                              $"BuyerAgent: {context.Signer}, BuyerAvatar: {buyerAvatarAddress}, SellerAgent: {sellerAgentAddress}, SellerAvatar: {sellerAvatarAddress}, " +
+                              $"ShopItem ExpiredBlockIndex: {shopItem.ExpiredBlockIndex}, Updated ExpiredBlockIndex: {context.BlockIndex}, " +
+                              $"ShopItem RequiredBlockIndex: {shopItem.TradableFungibleItem.RequiredBlockIndex}, Updated RequiredBlockIndex: {context.BlockIndex}, " +
+                              $"ItemCount: {shopItem.TradableFungibleItemCount}";
+                    Log.Error(msg);
+                }
             }
 
             buyerMultipleResult.purchaseResults = purchaseResults;
