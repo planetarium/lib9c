@@ -224,6 +224,11 @@ namespace Nekoyume.Action
                 INonFungibleItem nonFungibleItem = (INonFungibleItem) shopItem.ItemUsable ?? shopItem.Costume;
                 if (!sellerAvatarState.inventory.RemoveNonFungibleItem(nonFungibleItem) && !fromLegacy)
                 {
+                    var msg = $"Invalid Buy Tx Found. TxId: {context.TxId}, Index: {context.BlockIndex}, ItemType: {purchaseInfo.itemSubType}, " +
+                              $"ProductId: {productId}, " +
+                              $"BuyerAgentAddress: {context.Signer}, BuyerAvatarAddress: {buyerAvatarAddress}, SellerAgentAddress: {sellerAgentAddress}, SellerAvatarAddress: {sellerAvatarAddress}" +
+                              $"Item Price: {shopItem.Price}, Tax: {tax}, Taxed Price: {taxedPrice}.";
+                    Log.Fatal(msg);
                     purchaseResult.errorCode = ErrorCodeItemDoesNotExist;
                     continue;
                 }

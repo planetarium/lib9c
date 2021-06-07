@@ -365,6 +365,13 @@ namespace Nekoyume.Action
                     taxedPrice
                 );
 
+                ItemSubType itemSubType = shopItem.ItemUsable?.ItemSubType ?? shopItem.Costume.ItemSubType;
+                var msg = $"Invalid Buy Tx Found. TxId: {context.TxId}, Index: {context.BlockIndex}, ItemType: {itemSubType}, " +
+                          $"ProductId: {productId}, " +
+                          $"BuyerAgentAddress: {context.Signer}, BuyerAvatarAddress: {buyerAvatarAddress}, SellerAgentAddress: {shopItem.SellerAgentAddress}, SellerAvatarAddress: {shopItem.SellerAvatarAddress}" +
+                          $"Item Price: {shopItem.Price}, Tax: {tax}, Taxed Price: {taxedPrice}.";
+                Log.Fatal(msg);
+
                 productDict = (Dictionary)productDict.Remove(productIdSerialized);
                 shopStateDict = shopStateDict.SetItem("products", productDict);
 

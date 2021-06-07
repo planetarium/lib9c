@@ -236,6 +236,19 @@ namespace Nekoyume.Action
             // Update Registered ShopItem
             else
             {
+                var exist = new ShopItem(serializedProductDictionary);
+                if (!exist.SellerAgentAddress.Equals(context.Signer) || !exist.SellerAvatarAddress.Equals(sellerAvatarAddress))
+                {
+                    var msg = $"Invalid Sell Tx Found. TxId: {context.TxId}, Index: {context.BlockIndex}, ItemType: {itemSubType}, " +
+                              $"Generated ProductId: {productId}, Updated ProductId: {exist.ProductId}, " +
+                              $"Signer: {context.Signer}, Seller: {sellerAvatarAddress}, " +
+                              $"ShopItem AgentAddress: {exist.SellerAgentAddress}, AvatarAddress: {exist.SellerAvatarAddress}, " +
+                              $"Prev ExpiredBlockIndex: {exist.ExpiredBlockIndex}, Updated ExpiredBlockIndex: {expiredBlockIndex}, " +
+                              $"Prev RequiredBlockIndex: {exist.TradableFungibleItem?.RequiredBlockIndex}, Updated RequiredBlockIndex: {expiredBlockIndex}, " +
+                              $"Prev ItemCount: {exist.TradableFungibleItemCount}, Updated ItemCount: {count}, " +
+                              $"Prev Price: {exist.Price}, Selling Price: {price}(Skipped. Update require.)";
+                    Log.Fatal(msg);
+                }
                 // Delete current ShopItem
                 serializedProductList =
                     (BxList) serializedProductList.Remove(serializedProductDictionary);
