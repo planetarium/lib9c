@@ -385,6 +385,11 @@ namespace Nekoyume.Action
 
                 if (!sellerAvatarState.inventory.RemoveTradableItem(tradableItem, count) && !fromLegacy)
                 {
+                    var msg = $"Invalid Buy Tx Found. TxId: {context.TxId}, Index: {context.BlockIndex}, ItemType: {purchaseInfo.itemSubType}, " +
+                              $"ProductId: {productId}, " +
+                              $"BuyerAgentAddress: {context.Signer}, BuyerAvatarAddress: {buyerAvatarAddress}, SellerAgentAddress: {sellerAgentAddress}, SellerAvatarAddress: {sellerAvatarAddress}" +
+                              $"Item Price: {shopItem.Price}, Tax: {tax}, Taxed Price: {taxedPrice}.";
+                    Log.Error(msg);
                     purchaseResult.errorCode = ErrorCodeItemDoesNotExist;
                     continue;
                 }
