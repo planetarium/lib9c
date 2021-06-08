@@ -159,14 +159,31 @@ namespace Nekoyume.Action
                 var exist = new ShopItem(productSerialized);
                 if (!exist.SellerAgentAddress.Equals(context.Signer) || !exist.SellerAvatarAddress.Equals(sellerAvatarAddress))
                 {
-                    var msg = $"Invalid Sell Tx Found. TxId: {context.TxId}, Index: {context.BlockIndex}, ItemType: {itemSubType}, " +
-                              $"Generated ProductId: {productId}, Updated ProductId: {exist.ProductId}, " +
-                              $"Signer: {context.Signer}, Seller: {sellerAvatarAddress}, " +
-                              $"ShopItem AgentAddress: {exist.SellerAgentAddress}, AvatarAddress: {exist.SellerAvatarAddress}, " +
-                              $"Prev ExpiredBlockIndex: {exist.ExpiredBlockIndex}, Updated ExpiredBlockIndex: {expiredBlockIndex}, " +
-                              $"Prev RequiredBlockIndex: {exist.TradableFungibleItem?.RequiredBlockIndex}, Updated RequiredBlockIndex: {expiredBlockIndex}, " +
-                              $"Prev Price: {exist.Price}, Selling Price: {price}(Skipped. Update require.)";
-                    Log.Fatal(msg);
+                    var msg = "Invalid Sell Tx Found. TxId: {txId}, Index: {blockIndex}, ItemType: {itemSubType}, " +
+                              "Generated ProductId: {productId}, Updated ProductId: {updatedProductId}, " +
+                              "Signer: {signer}, Seller: {sellerAvatarAddress}, " +
+                              "ShopItem AgentAddress: {sellerAgentAddress}, AvatarAddress: {sellerAvatarAddress}, " +
+                              "Prev ExpiredBlockIndex: {prevExpiredBlockIndex}, Updated ExpiredBlockIndex: {expiredBlockIndex}, " +
+                              "Prev RequiredBlockIndex: {prevRequiredBlockIndex}, Updated RequiredBlockIndex: {expiredBlockIndex}, " +
+                              "Prev Price: {prevPrice}, Selling Price: {price}(Skipped. Update require.)";
+                    Log.Fatal(
+                        msg,
+                        context.TxId,
+                        context.BlockIndex,
+                        itemSubType,
+                        productId,
+                        exist.ProductId,
+                        context.Signer,
+                        sellerAvatarAddress,
+                        exist.SellerAgentAddress,
+                        exist.SellerAvatarAddress,
+                        exist.ExpiredBlockIndex,
+                        expiredBlockIndex,
+                        exist.TradableFungibleItem?.RequiredBlockIndex,
+                        expiredBlockIndex,
+                        exist.Price,
+                        price
+                    );
                 }
                 // Delete current ShopItem
                 products = (List) products.Remove(productSerialized);

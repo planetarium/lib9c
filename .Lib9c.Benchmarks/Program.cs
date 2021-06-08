@@ -19,6 +19,7 @@ using Nekoyume.BlockChain;
 using Nekoyume.Model.State;
 using Serilog;
 using Serilog.Events;
+using Serilog.Formatting.Compact;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
 namespace Lib9c.Benchmarks
@@ -34,27 +35,29 @@ namespace Lib9c.Benchmarks
                 return;
             }
 
-            string storePath = args[0];
-            string mainPath = args[1];
-            long startIndex = Convert.ToInt64(args[2]);
+            string statePath = args[0];
+            string blockPath = args[1];
+            int lastIndex = Convert.ToInt32(args[2]);
             bool sync = args[3] == "true";
+            // Log.Logger = new LoggerConfiguration().MinimumLevel.Fatal().WriteTo.File(new CompactJsonFormatter(), @"D:\20210607.txt").CreateLogger();
             Log.Logger = new LoggerConfiguration().MinimumLevel.Fatal().WriteTo.Console().CreateLogger();
             Libplanet.Crypto.CryptoConfig.CryptoBackend = new Secp256K1CryptoBackend<SHA256>();
-            var policySource = new BlockPolicySource(Serilog.Log.Logger, LogEventLevel.Verbose);
+            var policySource = new BlockPolicySource(Log.Logger, LogEventLevel.Verbose);
             IBlockPolicy<NCAction> policy =
                 policySource.GetPolicy(5000000, 2048);
             IStagePolicy<NCAction> stagePolicy = new VolatileStagePolicy<NCAction>();
 
             DateTimeOffset started = DateTimeOffset.UtcNow;
-            var chain = GetChain(policy, stagePolicy, storePath);
-            var mainChain = GetChain(policy, stagePolicy, mainPath);
+            var chain = GetChain(policy, stagePolicy, statePath, statePath);
+            var mainPath = @"C:\Users\qoora\AppData\Local\planetarium\9c-main-partition2";
+            var mainChain = GetChain(policy, stagePolicy, mainPath, mainPath);
             if (mainChain.GetState(AuthorizedMinersState.Address) is Dictionary ams &&
                 policy is BlockPolicy bp)
             {
                 bp.AuthorizedMinersState = new AuthorizedMinersState(ams);
             }
 
-            if (sync)
+            if (true)
             {
                 Block<NCAction> current = chain.Tip;
                 while (!mainChain.ContainsBlock(current.Hash))
@@ -68,55 +71,55 @@ namespace Lib9c.Benchmarks
                 {
                     var block = mainChain[forked.Count];
                     forked.Append(block);
-                    Log.Fatal($"BlockIndex: {block.Index} / Remain: {mainChain.Count - forked.Count}");
+                    Console.WriteLine($"BlockIndex: {block.Index} / Remain: {mainChain.Count - forked.Count}");
                 }
             }
             DateTimeOffset blocksLoaded = DateTimeOffset.UtcNow;
             long txs = 0;
             long actions = 0;
-            for (var i = startIndex; i < chain.Count; i++)
-            {
-                var block = chain[i];
-                if (!block.Transactions.Any(t => t.UpdatedAddresses.Contains(Addresses.Shop)))
-                {
-                    continue;
-                }
-                Log.Fatal(
-                    "Execute Block #{0} {1}; {2} txs",
-                    block.Index,
-                    block.Hash,
-                    block.Transactions.Count()
-                );
+            int startIndex = 1628736;
+            lastIndex = (int) (chain.Count - 1);
+            var en = Enumerable.Range(startIndex, lastIndex - startIndex);
 
-                IEnumerable<ActionEvaluation> blockEvals;
-                if (block.Index > 0)
-                {
-                    blockEvals = block.Evaluate(
-                        DateTimeOffset.UtcNow,
-                        address => chain.GetState(address, block.PreviousHash),
-                        (address, currency) => chain.GetBalance(address, currency, block.PreviousHash)
-                    );
-                }
-                else
-                {
-                    blockEvals = block.Evaluate(
-                        DateTimeOffset.UtcNow,
-                        _ => null,
-                        ((_, currency) => new FungibleAssetValue(currency))
-                    );
-                }
-
-                try
-                {
-                    SetStates(chain.Id, chain.StateStore, block, blockEvals.ToArray(), buildStateReferences: true);
-                    txs += block.Transactions.LongCount();
-                    actions += block.Transactions.Sum(tx => tx.Actions.LongCount()) + 1;
-                }
-                catch (KeyNotFoundException e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
+        //     en.AsParallel().WithDegreeOfParallelism(12).ForAll(i =>
+        //     {
+        //         var bHash = chain.Store.IndexBlockHash(chain.Id, i).Value;
+        //         var block = chain.Store.GetBlock<NCAction>(bHash);
+        //         Console.WriteLine($"bHash: {bHash}, index: {i}");
+        //         var ts = block.Transactions;
+        //         if (!ts.Any(t => t.UpdatedAddresses.Contains(Addresses.Shop)))
+        //         {
+        //             return;
+        //         }
+        //         IEnumerable<ActionEvaluation> blockEvals;
+        //         if (block.Index > 0)
+        //         {
+        //             blockEvals = block.Evaluate(
+        //                 DateTimeOffset.UtcNow,
+        //                 address => chain.GetState(address, block.PreviousHash),
+        //                 (address, currency) => chain.GetBalance(address, currency, block.PreviousHash)
+        //             );
+        //         }
+        //         else
+        //         {
+        //             blockEvals = block.Evaluate(
+        //                 DateTimeOffset.UtcNow,
+        //                 _ => null,
+        //                 ((_, currency) => new FungibleAssetValue(currency))
+        //             );
+        //         }
+        //
+        //         try
+        //         {
+        //             // SetStates(chain.Id, chain.StateStore, block, blockEvals.ToArray(), buildStateReferences: true);
+        //             txs += block.Transactions.LongCount();
+        //             actions += block.Transactions.Sum(tx => tx.Actions.LongCount()) + 1;
+        //         }
+        //         catch (KeyNotFoundException e)
+        //         {
+        //             Console.WriteLine(e);
+        //         }
+        //     });
         }
 
         // Copied from BlockChain<T>.SetStates().
@@ -190,26 +193,26 @@ namespace Lib9c.Benchmarks
         private static string ToFungibleAssetKey((Address, Currency) pair) =>
             ToFungibleAssetKey(pair.Item1, pair.Item2);
 
-        private static BlockChain<NCAction> GetChain(IBlockPolicy<NCAction> policy, IStagePolicy<NCAction> stagePolicy, string storePath)
+        private static BlockChain<NCAction> GetChain(IBlockPolicy<NCAction> policy, IStagePolicy<NCAction> stagePolicy, string statePath, string blockPath)
         {
-            var store = new RocksDBStore(storePath);
+            var store = new RocksDBStore(blockPath);
             if (!(store.GetCanonicalChainId() is Guid chainId))
             {
-                Console.Error.WriteLine("There is no canonical chain: {0}", storePath);
+                Console.Error.WriteLine("There is no canonical chain: {0}", statePath);
                 Environment.Exit(1);
                 throw new Exception();
             }
 
             if (!(store.IndexBlockHash(chainId, 0) is { } gHash))
             {
-                Console.Error.WriteLine("There is no genesis block: {0}", storePath);
+                Console.Error.WriteLine("There is no genesis block: {0}", statePath);
                 Environment.Exit(1);
                 throw new Exception();
             }
 
             Block<NCAction> genesis = store.GetBlock<NCAction>(gHash);
-            IKeyValueStore stateRootKeyValueStore = new RocksDBKeyValueStore(Path.Combine(storePath, "state_hashes")),
-                stateKeyValueStore = new RocksDBKeyValueStore(Path.Combine(storePath, "states"));
+            IKeyValueStore stateRootKeyValueStore = new RocksDBKeyValueStore(Path.Combine(statePath, "state_hashes")),
+                stateKeyValueStore = new RocksDBKeyValueStore(Path.Combine(statePath, "states"));
             IStateStore stateStore = new TrieStateStore(stateKeyValueStore, stateRootKeyValueStore);
 
             var mx = 0L;
