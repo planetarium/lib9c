@@ -18,8 +18,8 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("sell7")]
-    public class Sell : GameAction
+    [ActionType("sell6")]
+    public class Sell6 : GameAction
     {
         public const long ExpiredBlockIndex = 16000;
 
