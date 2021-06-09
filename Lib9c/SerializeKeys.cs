@@ -95,5 +95,8 @@ namespace Lib9c
         public const string MonsterCollectionResultKey = "mcr";
         public const string QuantityKey = "q";
         public const string RewardLevelMapKey = "rlm";
+
+        public const string OrderIdKey = "oi";
+        public const string OrderTypeKey = "t";
     }
 }
