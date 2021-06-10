@@ -157,6 +157,7 @@ namespace Nekoyume.BlockChain
 
             if (!AuthorizedMinersState.Miners.Contains(miner))
             {
+                return null;
                 return new InvalidMinerException(
                     $"The block #{block.Index} {block.Hash} is not mined by an authorized miner.",
                     miner

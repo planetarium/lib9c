@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
+using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Action
 {
@@ -94,6 +98,7 @@ namespace Nekoyume.Action
                 states = states.SetState(weekly.address, weekly.Serialize());
             }
 
+            states = MigrateOrder(ctx, states);
             return states;
         }
 
@@ -116,6 +121,71 @@ namespace Nekoyume.Action
                 );
             }
 
+            return states;
+        }
+
+        public IAccountStateDelta MigrateOrder(IActionContext ctx, IAccountStateDelta states)
+        {
+            var types = new List<ItemSubType>()
+            {
+                ItemSubType.Weapon,
+                ItemSubType.Armor,
+                ItemSubType.Belt,
+                ItemSubType.Necklace,
+                ItemSubType.Ring,
+                ItemSubType.Food,
+                ItemSubType.Hourglass,
+                ItemSubType.ApStone,
+                ItemSubType.FullCostume,
+                ItemSubType.HairCostume,
+                ItemSubType.EarCostume,
+                ItemSubType.EyeCostume,
+                ItemSubType.TailCostume,
+                ItemSubType.Title,
+            };
+
+            var costumeStatSheet = states.GetSheet<CostumeStatSheet>();
+            var shardedList = new Dictionary<Address, ShardedShopStateV2>();
+            foreach (var type in types)
+            {
+                foreach (var key in ShardedShopState.AddressKeys)
+                {
+                    var address = ShardedShopState.DeriveAddress(type, key);
+                    if (states.GetState(address) is Dictionary dictionary)
+                    {
+                        var shardedShopState = new ShardedShopState(dictionary);
+                        foreach (var shopItem in shardedShopState.Products.Values)
+                        {
+                            var order = OrderFactory.Create(shopItem, ctx.BlockIndex);
+                            var orderAddress = Order.DeriveAddress(order.OrderId);
+                            var orderDigest = order.Digest(shopItem, costumeStatSheet);
+                            var itemAddress = Addresses.GetItemAddress(order.TradableId);
+                            var v2Address = ShardedShopStateV2.DeriveAddress(order.ItemSubType, order.TradableId);
+                            var shardedShopStateV2 = shardedList.ContainsKey(v2Address)
+                                ? shardedList[v2Address]
+                                : new ShardedShopStateV2(v2Address);
+                            if (!shardedShopStateV2.OrderDigestList.Contains(orderDigest))
+                            {
+                                shardedShopStateV2.OrderDigestList.Add(orderDigest);
+                            }
+
+                            shardedList[v2Address] = shardedShopStateV2;
+
+                            ITradableItem tradableItem =
+                                (shopItem.ItemUsable ?? (ITradableItem) shopItem.Costume)
+                                ?? shopItem.TradableFungibleItem;
+                            states = states.SetState(orderAddress, order.Serialize());
+                            states = states.SetState(itemAddress, tradableItem.Serialize());
+                        }
+                    }
+                }
+            }
+            states = shardedList
+                .OrderBy(i => i.Key)
+                .Aggregate(
+                    states, (current, kv) =>
+                        current.SetState(kv.Key, kv.Value.Serialize())
+                );
             return states;
         }
     }
