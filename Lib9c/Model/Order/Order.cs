@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Assets;
+using Nekoyume;
+using Nekoyume.Action;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
@@ -11,6 +14,13 @@ namespace Lib9c.Model.Order
     [Serializable]
     public abstract class Order
     {
+        public const long ExpirationInterval = 36000;
+
+        public static Address DeriveAddress(Guid orderId)
+        {
+            return Addresses.Shop.Derive(orderId.ToString());
+        }
+
         public enum OrderType
         {
             Fungible,
@@ -24,6 +34,7 @@ namespace Lib9c.Model.Order
         public FungibleAssetValue Price { get; }
         public Guid TradableId { get; }
         public long StartedBlockIndex { get; }
+        public ItemSubType ItemSubType { get; }
         private long _expiredBlockIndex;
 
         public long ExpiredBlockIndex
@@ -45,7 +56,8 @@ namespace Lib9c.Model.Order
             Guid orderId,
             FungibleAssetValue price,
             Guid itemId,
-            long startedBlockIndex
+            long startedBlockIndex,
+            ItemSubType itemSubType
         )
         {
             SellerAgentAddress = sellerAgentAddress;
@@ -54,6 +66,8 @@ namespace Lib9c.Model.Order
             OrderId = orderId;
             TradableId = itemId;
             StartedBlockIndex = startedBlockIndex;
+            ExpiredBlockIndex = startedBlockIndex + ExpirationInterval;
+            ItemSubType = itemSubType;
         }
 
         protected Order(Dictionary serialized)
@@ -65,6 +79,7 @@ namespace Lib9c.Model.Order
             TradableId = serialized[ItemIdKey].ToGuid();
             ExpiredBlockIndex = serialized[ExpiredBlockIndexKey].ToLong();
             StartedBlockIndex = serialized[StartedBlockIndexKey].ToLong();
+            ItemSubType = serialized[ItemSubTypeKey].ToEnum<ItemSubType>();
         }
 
         public virtual IValue Serialize()
@@ -79,9 +94,23 @@ namespace Lib9c.Model.Order
                 [(Text) ExpiredBlockIndexKey] = ExpiredBlockIndex.Serialize(),
                 [(Text) StartedBlockIndexKey] = StartedBlockIndex.Serialize(),
                 [(Text) OrderTypeKey] = Type.Serialize(),
+                [(Text) ItemSubTypeKey] = ItemSubType.Serialize(),
             };
 
             return new Dictionary(innerDictionary);
+        }
+
+        public virtual void Validate(AvatarState avatarState, int count)
+        {
+            if (!avatarState.address.Equals(SellerAvatarAddress) || !avatarState.agentAddress.Equals(SellerAgentAddress))
+            {
+                throw new InvalidAddressException();
+            }
+
+            if (count < 1)
+            {
+                throw new InvalidItemCountException("item count must be greater than 0.");
+            }
         }
 
         #region Equals
@@ -95,7 +124,8 @@ namespace Lib9c.Model.Order
                    OrderId.Equals(other.OrderId) &&
                    Price.Equals(other.Price) &&
                    TradableId.Equals(other.TradableId) &&
-                   StartedBlockIndex == other.StartedBlockIndex;
+                   StartedBlockIndex == other.StartedBlockIndex &&
+                   ItemSubType == other.ItemSubType;
         }
 
         public override bool Equals(object obj)
@@ -118,6 +148,7 @@ namespace Lib9c.Model.Order
                 hashCode = (hashCode * 397) ^ Price.GetHashCode();
                 hashCode = (hashCode * 397) ^ TradableId.GetHashCode();
                 hashCode = (hashCode * 397) ^ StartedBlockIndex.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int) ItemSubType;
                 return hashCode;
             }
         }

@@ -204,6 +204,13 @@ namespace Lib9c.Tests.Action
             AssertException<InvalidLevelException>(exc);
         }
 
+        [Fact]
+        public void InvalidItemCountException_Serializable()
+        {
+            var exc = new InvalidItemCountException("for testing.");
+            AssertException<InvalidItemCountException>(exc);
+        }
+
         private static void AssertException<T>(Exception exc)
             where T : Exception
         {
