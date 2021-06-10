@@ -1,12 +1,12 @@
 namespace Lib9c.Tests.Model
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
     using Lib9c.Model.Order;
-    using Lib9c.Tests.Action;
     using Libplanet.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -216,6 +216,135 @@ namespace Lib9c.Tests.Model
 
             _avatarState.inventory.AddItem(tradableItem);
             Assert.Throws<InvalidItemTypeException>(() => order.Validate(_avatarState, 1));
+        }
+
+        [Theory]
+        [MemberData(nameof(SellMemberData))]
+        public void Sell(OrderData orderData)
+        {
+            var row = _tableSheets.MaterialItemSheet.OrderedList.First(r => r.ItemSubType == ItemSubType.Hourglass);
+            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            Guid tradableId = TradableMaterial.DeriveTradableId(row.ItemId);
+            FungibleOrder order = OrderFactory.CreateFungibleOrder(
+                _avatarState.agentAddress,
+                _avatarState.address,
+                orderId,
+                new FungibleAssetValue(_currency, 10, 0),
+                tradableId,
+                orderData.BlockIndex,
+                orderData.SellCount,
+                ItemSubType.Hourglass
+            );
+            foreach (var (blockIndex, count) in orderData.InventoryData)
+            {
+                ItemBase item = ItemFactory.CreateTradableMaterial(row);
+                ITradableItem tradableItem = (ITradableItem)item;
+                tradableItem.RequiredBlockIndex = blockIndex;
+                _avatarState.inventory.AddItem(item, count);
+            }
+
+            Assert.Equal(orderData.InventoryData.Count, _avatarState.inventory.Items.Count);
+
+            if (orderData.Exception is null)
+            {
+                ITradableItem result = order.Sell(_avatarState);
+
+                Assert.Equal(order.ExpiredBlockIndex, result.RequiredBlockIndex);
+                Assert.Equal(order.TradableId, result.TradableId);
+                Assert.Equal(orderData.TotalCount, _avatarState.inventory.Items.Sum(i => i.count));
+                Assert.True(_avatarState.inventory.TryGetTradableItem(tradableId, order.ExpiredBlockIndex, order.ItemCount, out _));
+            }
+            else
+            {
+                Assert.Throws(orderData.Exception, () => order.Sell(_avatarState));
+            }
+        }
+
+#pragma warning disable SA1204
+        public static IEnumerable<object[]> SellMemberData() => new List<object[]>
+        {
+            new object[]
+            {
+                new OrderData
+                {
+                    SellCount = 1,
+                    BlockIndex = 1,
+                    InventoryData = new List<(long, int)>
+                    {
+                        (1, 1),
+                    },
+                    Exception = null,
+                },
+            },
+            new object[]
+            {
+                new OrderData
+                {
+                    SellCount = 3,
+                    BlockIndex = 10,
+                    InventoryData = new List<(long, int)>
+                    {
+                        (1, 1),
+                        (5, 2),
+                    },
+                    Exception = null,
+                },
+            },
+            new object[]
+            {
+                new OrderData
+                {
+                    SellCount = 3,
+                    BlockIndex = 100,
+                    InventoryData = new List<(long, int)>
+                    {
+                        (10, 20),
+                    },
+                    Exception = null,
+                },
+            },
+            new object[]
+            {
+                new OrderData
+                {
+                    SellCount = 1,
+                    BlockIndex = 1,
+                    InventoryData = new List<(long, int)>
+                    {
+                        (3, 2),
+                        (5, 3),
+                    },
+                    Exception = typeof(ItemDoesNotExistException),
+                },
+            },
+            new object[]
+            {
+                new OrderData
+                {
+                    SellCount = 2,
+                    BlockIndex = 1,
+                    InventoryData = new List<(long, int)>
+                    {
+                        (1, 1),
+                        (2, 100),
+                    },
+                    Exception = typeof(ItemDoesNotExistException),
+                },
+            },
+        };
+#pragma warning restore SA1204
+
+        public class OrderData
+        {
+            public int SellCount { get; set; }
+
+            public long BlockIndex { get; set; }
+
+            public List<(long, int)> InventoryData { get; set; }
+
+            public Type Exception { get; set; }
+
+            public int TotalCount => InventoryData.Sum(i => i.Item2);
         }
     }
 }

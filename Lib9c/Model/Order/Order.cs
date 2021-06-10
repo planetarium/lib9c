@@ -113,6 +113,8 @@ namespace Lib9c.Model.Order
             }
         }
 
+        public abstract ITradableItem Sell(AvatarState avatarState);
+
         #region Equals
 
         protected bool Equals(Order other)

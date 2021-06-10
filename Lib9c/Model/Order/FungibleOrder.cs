@@ -6,6 +6,7 @@ using Libplanet;
 using Libplanet.Assets;
 using Nekoyume.Action;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
@@ -79,7 +80,34 @@ namespace Lib9c.Model.Order
             }
         }
 
+        public override ITradableItem Sell(AvatarState avatarState)
+        {
+            if (avatarState.inventory.TryGetTradableItems(TradableId, StartedBlockIndex, ItemCount, out List<Inventory.Item> items))
+            {
+                int totalCount = ItemCount;
+                // Copy ITradableFungible item for separate inventory slots.
+                ITradableFungibleItem copy = (ITradableFungibleItem) ((ITradableFungibleItem) items.First().item).Clone();
+                foreach (var item in items)
+                {
+                    int removeCount = Math.Min(totalCount, item.count);
+                    ITradableFungibleItem tradableFungibleItem = (ITradableFungibleItem) item.item;
+                    avatarState.inventory.RemoveTradableItem(TradableId, tradableFungibleItem.RequiredBlockIndex, removeCount);
+                    totalCount -= removeCount;
+                    if (totalCount < 1)
+                    {
+                        break;
+                    }
+                }
+                // Lock item.
+                copy.RequiredBlockIndex = ExpiredBlockIndex;
+                avatarState.inventory.AddItem((ItemBase) copy, ItemCount);
+                return copy;
+            }
+
+            throw new ItemDoesNotExistException(
+                $"Can't find available item in seller inventory. TradableId: {TradableId}. RequiredBlockIndex: {StartedBlockIndex}, Count: {ItemCount}");
         }
+
         protected bool Equals(FungibleOrder other)
         {
             return base.Equals(other) && ItemCount == other.ItemCount;
