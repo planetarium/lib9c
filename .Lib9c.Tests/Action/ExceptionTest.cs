@@ -211,6 +211,13 @@ namespace Lib9c.Tests.Action
             AssertException<InvalidItemCountException>(exc);
         }
 
+        [Fact]
+        public void DuplicateOrderIdException_Serializable()
+        {
+            var exc = new DuplicateOrderIdException("for testing.");
+            AssertException<DuplicateOrderIdException>(exc);
+        }
+
         private static void AssertException<T>(Exception exc)
             where T : Exception
         {

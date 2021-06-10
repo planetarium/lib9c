@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Model
     using Lib9c.Model.Order;
     using Libplanet.Assets;
     using Nekoyume;
+    using Nekoyume.Action;
     using Nekoyume.Model.Item;
     using Xunit;
 
@@ -79,6 +80,17 @@ namespace Lib9c.Tests.Model
             {
                 Assert.Equal(1, ((FungibleOrder)order).ItemCount);
             }
+        }
+
+        [Theory]
+        [InlineData(ItemSubType.EquipmentMaterial)]
+        [InlineData(ItemSubType.FoodMaterial)]
+        [InlineData(ItemSubType.MonsterPart)]
+        [InlineData(ItemSubType.NormalMaterial)]
+        public void Create_Throw_InvalidItemTypeException(ItemSubType itemSubType)
+        {
+            Assert.Throws<InvalidItemTypeException>(() =>
+                OrderFactory.Create(default, default, default, default, default, default, itemSubType, 1));
         }
 
         [Theory]

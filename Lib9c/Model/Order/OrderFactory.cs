@@ -2,6 +2,7 @@ using System;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Assets;
+using Nekoyume.Action;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
@@ -52,7 +53,7 @@ namespace Lib9c.Model.Order
                     return CreateFungibleOrder(agentAddress, avatarAddress, orderId, price, tradableId,
                         startedIndex, count, itemSubType);
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(itemSubType), itemSubType, null);
+                    throw new InvalidItemTypeException($"{nameof(itemSubType)}({itemSubType}) does not support.");
             }
         }
 

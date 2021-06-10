@@ -98,5 +98,7 @@ namespace Lib9c
 
         public const string OrderIdKey = "oi";
         public const string OrderTypeKey = "t";
+        public const string CombatPointKey = "cp";
+        public const string OrderDigestListKey = "odl";
     }
 }
