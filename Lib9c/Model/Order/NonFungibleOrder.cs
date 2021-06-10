@@ -65,5 +65,21 @@ namespace Lib9c.Model.Order
                     $"Aborted as the itemUsable to sell ({TradableId}) is not available yet; it will be available at the block #{nonFungibleItem.RequiredBlockIndex}.");
             }
         }
+
+        public override ITradableItem Sell(AvatarState avatarState)
+        {
+            if (avatarState.inventory.TryGetNonFungibleItem(TradableId, out INonFungibleItem nonFungibleItem))
+            {
+                nonFungibleItem.RequiredBlockIndex = ExpiredBlockIndex;
+                if (nonFungibleItem is Equipment equipment)
+                {
+                    equipment.Unequip();
+                }
+                return nonFungibleItem;
+            }
+
+            throw new ItemDoesNotExistException(
+                $"Aborted because the tradable item({TradableId}) was failed to load from avatar's inventory.");
+        }
     }
 }

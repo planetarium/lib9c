@@ -6,7 +6,6 @@ namespace Lib9c.Tests.Model
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
     using Lib9c.Model.Order;
-    using Lib9c.Tests.Action;
     using Libplanet.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -216,6 +215,35 @@ namespace Lib9c.Tests.Model
 
             _avatarState.inventory.AddItem(tradableItem);
             Assert.Throws<InvalidItemTypeException>(() => order.Validate(_avatarState, 1));
+        }
+
+        [Theory]
+        [InlineData(100, 100)]
+        [InlineData(10, 1)]
+        public void Sell(int itemCount, int sellCount)
+        {
+            var row = _tableSheets.MaterialItemSheet.OrderedList.First(r => r.ItemSubType == ItemSubType.Hourglass);
+            ItemBase item = ItemFactory.CreateTradableMaterial(row);
+            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            ITradableItem tradableItem = (ITradableItem)item;
+            FungibleOrder order = OrderFactory.CreateFungibleOrder(
+                _avatarState.agentAddress,
+                _avatarState.address,
+                orderId,
+                new FungibleAssetValue(_currency, 10, 0),
+                tradableItem.TradableId,
+                1,
+                sellCount,
+                ItemSubType.Hourglass
+            );
+            _avatarState.inventory.AddItem(item, itemCount);
+
+            Assert.Single(_avatarState.inventory.Items);
+
+            ITradableItem result = order.Sell(_avatarState);
+
+            Assert.Equal(order.ExpiredBlockIndex, result.RequiredBlockIndex);
+            Assert.Equal(order.TradableId, result.TradableId);
         }
     }
 }

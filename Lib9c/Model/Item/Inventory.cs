@@ -669,6 +669,36 @@ namespace Nekoyume.Model.Item
             throw new ItemDoesNotExistException(tradableId.ToString());
         }
 
+        public ITradableItem SellFungibleItem(Guid tradableId, long blockIndex, int count, long interval)
+        {
+            if (TryGetTradableItems(tradableId, blockIndex, count, out List<Item> items))
+            {
+                int remain = count;
+                long requiredBlockIndex = blockIndex + interval;
+                for (int i = 0; i < items.Count; i++)
+                {
+                    Item item = items[i];
+                    if (item.count > remain)
+                    {
+                        item.count -= remain;
+                        break;
+                    }
+
+                    _items.Remove(item);
+                    remain -= item.count;
+
+                    if (remain <= 0)
+                    {
+                        break;
+                    }
+                }
+
+                return ReplaceTradableItem(count, items.First(), requiredBlockIndex);
+            }
+
+            throw new ItemDoesNotExistException(tradableId.ToString());
+        }
+
         public ITradableItem UpdateTradableItem(Guid tradableId, long blockIndex, int count, long requiredBlockIndex)
         {
             if (TryGetTradableItem(tradableId, blockIndex, count, out Item item))

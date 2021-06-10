@@ -226,5 +226,55 @@ namespace Lib9c.Tests.Model
             _avatarState.inventory.AddNonFungibleItem(item);
             Assert.Throws<RequiredBlockIndexException>(() => order.Validate(_avatarState, 1));
         }
+
+        [Theory]
+        [InlineData(ItemSubType.Weapon, true, null)]
+        [InlineData(ItemSubType.Weapon, false, typeof(ItemDoesNotExistException))]
+        [InlineData(ItemSubType.FullCostume, true, null)]
+        [InlineData(ItemSubType.Food, false, typeof(ItemDoesNotExistException))]
+        public void Sell(ItemSubType itemSubType, bool add, Type exc)
+        {
+            var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == itemSubType);
+            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
+            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            ITradableItem tradableItem = (ITradableItem)item;
+            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+                _avatarState.agentAddress,
+                _avatarState.address,
+                orderId,
+                new FungibleAssetValue(_currency, 10, 0),
+                tradableItem.TradableId,
+                1,
+                itemSubType
+            );
+            if (add)
+            {
+                _avatarState.inventory.AddNonFungibleItem(item);
+            }
+
+            if (item is Equipment equipment)
+            {
+                equipment.Equip();
+            }
+
+            Assert.Equal(add, _avatarState.inventory.TryGetTradableItems(tradableItem.TradableId, order.StartedBlockIndex, 1, out _));
+
+            if (add)
+            {
+                ITradableItem result = order.Sell(_avatarState);
+                Assert.Equal(order.ExpiredBlockIndex, result.RequiredBlockIndex);
+                if (result is Equipment equipmentResult)
+                {
+                    Assert.False(equipmentResult.equipped);
+                }
+            }
+            else
+            {
+                Assert.Throws(exc, () => order.Sell(_avatarState));
+            }
+
+            Assert.False(_avatarState.inventory.TryGetTradableItems(tradableItem.TradableId, order.StartedBlockIndex, 1, out _));
+            Assert.Equal(add, _avatarState.inventory.TryGetTradableItems(tradableItem.TradableId, order.ExpiredBlockIndex, 1, out _));
+        }
     }
 }

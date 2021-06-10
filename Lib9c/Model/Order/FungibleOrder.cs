@@ -79,7 +79,13 @@ namespace Lib9c.Model.Order
             }
         }
 
+        public override ITradableItem Sell(AvatarState avatarState)
+        {
+            // 아이템을 나눈다. (판매갯수만큼 덜어온다.)
+            // 나눠온 아이템에서 블록 높이를 바꾼다.
+            return avatarState.inventory.SellFungibleItem(TradableId, StartedBlockIndex, ItemCount, ExpirationInterval);
         }
+
         protected bool Equals(FungibleOrder other)
         {
             return base.Equals(other) && ItemCount == other.ItemCount;
