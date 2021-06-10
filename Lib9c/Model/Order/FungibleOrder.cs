@@ -4,6 +4,8 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Assets;
+using Nekoyume.Action;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
@@ -20,13 +22,15 @@ namespace Lib9c.Model.Order
             FungibleAssetValue price,
             Guid itemId,
             long startedBlockIndex,
+            ItemSubType itemSubType,
             int itemCount
         ) : base(sellerAgentAddress,
             sellerAvatarAddress,
             orderId,
             price,
             itemId,
-            startedBlockIndex
+            startedBlockIndex,
+            itemSubType
         )
         {
             ItemCount = itemCount;
@@ -47,6 +51,35 @@ namespace Lib9c.Model.Order
             }.Union((Dictionary) base.Serialize()));
 #pragma warning restore LAA1002
 
+        public override void Validate(AvatarState avatarState, int count)
+        {
+            base.Validate(avatarState, count);
+
+            if (ItemCount != count)
+            {
+                throw new InvalidItemCountException(
+                    $"Aborted because {nameof(count)}({count}) should be 1 because {nameof(TradableId)}({TradableId}) is non-fungible item.");
+            }
+
+            if (!avatarState.inventory.TryGetTradableItems(TradableId, StartedBlockIndex, count, out List<Inventory.Item> inventoryItems))
+            {
+                throw new ItemDoesNotExistException(
+                    $"Aborted because the tradable item({TradableId}) was failed to load from avatar's inventory.");
+            }
+
+            IEnumerable<ITradableItem> tradableItems = inventoryItems.Select(i => (ITradableItem)i.item).ToList();
+
+            foreach (var tradableItem in tradableItems)
+            {
+                if (!tradableItem.ItemSubType.Equals(ItemSubType))
+                {
+                    throw new InvalidItemTypeException(
+                        $"Expected ItemSubType: {tradableItem.ItemSubType}. Actual ItemSubType: {ItemSubType}");
+                }
+            }
+        }
+
+        }
         protected bool Equals(FungibleOrder other)
         {
             return base.Equals(other) && ItemCount == other.ItemCount;
