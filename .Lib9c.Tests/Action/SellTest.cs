@@ -209,6 +209,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(blockIndex, orderDigest.StartedBlockIndex);
             Assert.Equal(expiredBlockIndex, orderDigest.ExpiredBlockIndex);
             Assert.Equal(((ItemBase)tradableItem).Id, orderDigest.ItemId);
+            Assert.Equal(tradableItem.TradableId, orderDigest.TradableId);
 
             var serializedOrder = nextState.GetState(orderAddress);
             Assert.NotNull(serializedOrder);

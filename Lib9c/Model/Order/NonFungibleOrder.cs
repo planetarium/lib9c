@@ -1,11 +1,12 @@
 using System;
-using System.IO;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Assets;
 using Nekoyume.Action;
+using Nekoyume.Battle;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.TableData;
 
 namespace Lib9c.Model.Order
 {
@@ -76,6 +77,31 @@ namespace Lib9c.Model.Order
                     equipment.Unequip();
                 }
                 return nonFungibleItem;
+            }
+
+            throw new ItemDoesNotExistException(
+                $"Aborted because the tradable item({TradableId}) was failed to load from avatar's inventory.");
+        }
+
+        public override OrderDigest Digest(AvatarState avatarState, CostumeStatSheet costumeStatSheet)
+        {
+            if (avatarState.inventory.TryGetNonFungibleItem(TradableId, out INonFungibleItem nonFungibleItem))
+            {
+                ItemBase item = (ItemBase) nonFungibleItem;
+                int cp = CPHelper.GetCP(nonFungibleItem, costumeStatSheet);
+                int level = item is Equipment equipment ? equipment.level : 0;
+                return new OrderDigest(
+                    StartedBlockIndex,
+                    ExpiredBlockIndex,
+                    OrderId,
+                    TradableId,
+                    Price,
+                    cp,
+                    item.Grade,
+                    level,
+                    item.ElementalType,
+                    item.Id
+                );
             }
 
             throw new ItemDoesNotExistException(

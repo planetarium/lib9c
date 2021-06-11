@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Model
     using Libplanet.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Battle;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Xunit;
@@ -275,6 +276,52 @@ namespace Lib9c.Tests.Model
 
             Assert.False(_avatarState.inventory.TryGetTradableItems(tradableItem.TradableId, order.StartedBlockIndex, 1, out _));
             Assert.Equal(add, _avatarState.inventory.TryGetTradableItems(tradableItem.TradableId, order.ExpiredBlockIndex, 1, out _));
+        }
+
+        [Theory]
+        [InlineData(ItemSubType.Weapon, true, null)]
+        [InlineData(ItemSubType.Weapon, false, typeof(ItemDoesNotExistException))]
+        [InlineData(ItemSubType.FullCostume, true, null)]
+        [InlineData(ItemSubType.Food, false, typeof(ItemDoesNotExistException))]
+        public void Digest(ItemSubType itemSubType, bool add, Type exc)
+        {
+            var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == itemSubType);
+            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
+            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            ITradableItem tradableItem = (ITradableItem)item;
+            tradableItem.RequiredBlockIndex = 1;
+            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+                _avatarState.agentAddress,
+                _avatarState.address,
+                orderId,
+                new FungibleAssetValue(_currency, 10, 0),
+                tradableItem.TradableId,
+                1,
+                itemSubType
+            );
+
+            if (add)
+            {
+                _avatarState.inventory.AddNonFungibleItem(item);
+
+                int cp = CPHelper.GetCP(tradableItem, _tableSheets.CostumeStatSheet);
+                Assert.True(cp > 0);
+                OrderDigest digest = order.Digest(_avatarState, _tableSheets.CostumeStatSheet);
+
+                Assert.Equal(orderId, digest.OrderId);
+                Assert.Equal(order.StartedBlockIndex, digest.StartedBlockIndex);
+                Assert.Equal(order.ExpiredBlockIndex, digest.ExpiredBlockIndex);
+                Assert.Equal(order.Price, digest.Price);
+                Assert.Equal(item.ElementalType, digest.ElementalType);
+                Assert.Equal(item.Id, digest.ItemId);
+                Assert.Equal(item.Grade, digest.Grade);
+                Assert.Equal(cp, digest.CombatPoint);
+                Assert.Equal(0, digest.Level);
+            }
+            else
+            {
+                Assert.Throws(exc, () => order.Digest(_avatarState, _tableSheets.CostumeStatSheet));
+            }
         }
     }
 }

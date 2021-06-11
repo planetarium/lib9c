@@ -260,6 +260,49 @@ namespace Lib9c.Tests.Model
             }
         }
 
+        [Theory]
+        [InlineData(ItemSubType.ApStone, true, null)]
+        [InlineData(ItemSubType.Hourglass, false, typeof(ItemDoesNotExistException))]
+        public void Digest(ItemSubType itemSubType, bool add, Type exc)
+        {
+            var row = _tableSheets.MaterialItemSheet.OrderedList.First(r => r.ItemSubType == itemSubType);
+            TradableMaterial item = ItemFactory.CreateTradableMaterial(row);
+            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            item.RequiredBlockIndex = 1;
+            FungibleOrder order = OrderFactory.CreateFungibleOrder(
+                _avatarState.agentAddress,
+                _avatarState.address,
+                orderId,
+                new FungibleAssetValue(_currency, 10, 0),
+                item.TradableId,
+                1,
+                1,
+                itemSubType
+            );
+
+            if (add)
+            {
+                _avatarState.inventory.AddNonFungibleItem(item);
+
+                order.Sell(_avatarState);
+                OrderDigest digest = order.Digest(_avatarState, _tableSheets.CostumeStatSheet);
+
+                Assert.Equal(orderId, digest.OrderId);
+                Assert.Equal(order.StartedBlockIndex, digest.StartedBlockIndex);
+                Assert.Equal(order.ExpiredBlockIndex, digest.ExpiredBlockIndex);
+                Assert.Equal(order.Price, digest.Price);
+                Assert.Equal(row.ElementalType, digest.ElementalType);
+                Assert.Equal(row.Id, digest.ItemId);
+                Assert.Equal(row.Grade, digest.Grade);
+                Assert.Equal(0, digest.CombatPoint);
+                Assert.Equal(0, digest.Level);
+            }
+            else
+            {
+                Assert.Throws(exc, () => order.Digest(_avatarState, _tableSheets.CostumeStatSheet));
+            }
+        }
+
 #pragma warning disable SA1204
         public static IEnumerable<object[]> SellMemberData() => new List<object[]>
         {

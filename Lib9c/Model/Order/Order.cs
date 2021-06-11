@@ -5,8 +5,10 @@ using Libplanet;
 using Libplanet.Assets;
 using Nekoyume;
 using Nekoyume.Action;
+using Nekoyume.Battle;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
 namespace Lib9c.Model.Order
@@ -80,6 +82,42 @@ namespace Lib9c.Model.Order
             ExpiredBlockIndex = serialized[ExpiredBlockIndexKey].ToLong();
             StartedBlockIndex = serialized[StartedBlockIndexKey].ToLong();
             ItemSubType = serialized[ItemSubTypeKey].ToEnum<ItemSubType>();
+        }
+
+        public abstract OrderDigest Digest(AvatarState avatarState, CostumeStatSheet costumeStatSheet);
+
+        public OrderDigest Digest(ShopItem shopItem, CostumeStatSheet costumeStatSheet)
+        {
+            ItemBase item;
+            int cp = 0;
+            if (!(shopItem.ItemUsable is null))
+            {
+                item = shopItem.ItemUsable;
+                cp = CPHelper.GetCP(shopItem.ItemUsable);
+            }
+            else if (!(shopItem.Costume is null))
+            {
+                item = shopItem.Costume;
+                cp = CPHelper.GetCP(shopItem.Costume, costumeStatSheet);
+            }
+            else
+            {
+                item = (ItemBase)shopItem.TradableFungibleItem;
+            }
+
+            int level = shopItem.ItemUsable is Equipment equipment ? equipment.level : 0;
+            return new OrderDigest(
+                StartedBlockIndex,
+                ExpiredBlockIndex,
+                OrderId,
+                TradableId,
+                Price,
+                cp,
+                item.Grade,
+                level,
+                item.ElementalType,
+                item.Id
+            );
         }
 
         public virtual IValue Serialize()

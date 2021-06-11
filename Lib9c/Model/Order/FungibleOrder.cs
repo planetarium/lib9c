@@ -5,9 +5,10 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Assets;
 using Nekoyume.Action;
+using Nekoyume.Battle;
 using Nekoyume.Model.Item;
-using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
 namespace Lib9c.Model.Order
@@ -106,6 +107,32 @@ namespace Lib9c.Model.Order
 
             throw new ItemDoesNotExistException(
                 $"Can't find available item in seller inventory. TradableId: {TradableId}. RequiredBlockIndex: {StartedBlockIndex}, Count: {ItemCount}");
+        }
+
+        public override OrderDigest Digest(AvatarState avatarState, CostumeStatSheet costumeStatSheet)
+        {
+            if (avatarState.inventory.TryGetTradableItem(TradableId, ExpiredBlockIndex, ItemCount,
+                out Inventory.Item inventoryItem))
+            {
+                ItemBase item = inventoryItem.item;
+                int cp = CPHelper.GetCP((ITradableItem) item, costumeStatSheet);
+                int level = item is Equipment equipment ? equipment.level : 0;
+                return new OrderDigest(
+                    StartedBlockIndex,
+                    ExpiredBlockIndex,
+                    OrderId,
+                    TradableId,
+                    Price,
+                    cp,
+                    item.Grade,
+                    level,
+                    item.ElementalType,
+                    item.Id
+                );
+            }
+
+            throw new ItemDoesNotExistException(
+                $"Aborted because the tradable item({TradableId}) was failed to load from avatar's inventory.");
         }
 
         protected bool Equals(FungibleOrder other)
