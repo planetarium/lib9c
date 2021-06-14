@@ -56,6 +56,7 @@ namespace Nekoyume.Action
             Address shopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
             Address itemAddress = Addresses.GetItemAddress(tradableId);
             Address orderAddress = Order.DeriveAddress(orderId);
+            Address orderReceiptAddress = OrderReceiptList.DeriveAddress(sellerAvatarAddress);
             if (context.Rehearsal)
             {
                 return states
@@ -63,6 +64,7 @@ namespace Nekoyume.Action
                     .SetState(shopAddress, MarkChanged)
                     .SetState(itemAddress, MarkChanged)
                     .SetState(orderAddress, MarkChanged)
+                    .SetState(orderReceiptAddress, MarkChanged)
                     .SetState(sellerAvatarAddress, MarkChanged);
             }
 
@@ -146,6 +148,12 @@ namespace Nekoyume.Action
             );
             avatarState.UpdateV3(mail);
 
+            var orderReceiptList = states.TryGetState(orderReceiptAddress, out Dictionary receiptDict)
+                ? new OrderReceiptList(receiptDict)
+                : new OrderReceiptList(orderReceiptAddress);
+            orderReceiptList.Add(order);
+
+            states = states.SetState(orderReceiptAddress, orderReceiptList.Serialize());
             states = states.SetState(sellerAvatarAddress, avatarState.Serialize());
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);

@@ -100,5 +100,8 @@ namespace Lib9c
         public const string OrderTypeKey = "t";
         public const string CombatPointKey = "cp";
         public const string OrderDigestListKey = "odl";
+        public const string TradableIdKey = "ti";
+        public const string AddressKey = "a";
+        public const string OrderReceiptListKey = "orl";
     }
 }

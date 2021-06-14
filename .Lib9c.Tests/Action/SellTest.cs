@@ -234,6 +234,16 @@ namespace Lib9c.Tests.Action
             Assert.NotNull(mail);
             Assert.Equal(expiredBlockIndex, mail.requiredBlockIndex);
             Assert.Equal(orderId, mail.OrderId);
+
+            var receiptDict = nextState.GetState(OrderReceiptList.DeriveAddress(_avatarAddress));
+            Assert.NotNull(receiptDict);
+            var orderReceiptList = new OrderReceiptList((Dictionary)receiptDict);
+            Assert.Single(orderReceiptList.ReceiptList);
+            OrderReceiptList.OrderReceipt orderReceipt = orderReceiptList.ReceiptList.First();
+            Assert.Equal(orderId, orderReceipt.OrderId);
+            Assert.Equal(tradableItem.TradableId, orderReceipt.TradableId);
+            Assert.Equal(blockIndex, orderReceipt.StartedBlockIndex);
+            Assert.Equal(expiredBlockIndex, orderReceipt.ExpiredBlockIndex);
         }
 
         [Fact]
@@ -436,6 +446,7 @@ namespace Lib9c.Tests.Action
                 Addresses.GetItemAddress(tradableId),
                 Order.DeriveAddress(orderId),
                 ShardedShopStateV2.DeriveAddress(ItemSubType.Weapon, orderId),
+                OrderReceiptList.DeriveAddress(_avatarAddress),
             };
 
             var state = new State();
