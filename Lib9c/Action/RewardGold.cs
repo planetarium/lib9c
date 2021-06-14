@@ -10,6 +10,7 @@ using Libplanet.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Serilog;
 
 namespace Nekoyume.Action
 {
@@ -30,6 +31,7 @@ namespace Nekoyume.Action
             var states = context.PreviousStates;
             states = GenesisGoldDistribution(context, states);
             states = WeeklyArenaRankingBoard(context, states);
+            // states = MigrateOrder(context, states);
             return MinerReward(context, states);
         }
 
@@ -97,8 +99,6 @@ namespace Nekoyume.Action
                 weekly.ResetCount(ctx.BlockIndex);
                 states = states.SetState(weekly.address, weekly.Serialize());
             }
-
-            states = MigrateOrder(ctx, states);
             return states;
         }
 
@@ -145,11 +145,12 @@ namespace Nekoyume.Action
             };
 
             var costumeStatSheet = states.GetSheet<CostumeStatSheet>();
-            var shardedList = new Dictionary<Address, ShardedShopStateV2>();
             foreach (var type in types)
             {
+                Log.Debug($"Type: {type}");
                 foreach (var key in ShardedShopState.AddressKeys)
                 {
+                    Log.Debug($"AddressKey: {key}");
                     var address = ShardedShopState.DeriveAddress(type, key);
                     if (states.GetState(address) is Dictionary dictionary)
                     {
@@ -160,32 +161,42 @@ namespace Nekoyume.Action
                             var orderAddress = Order.DeriveAddress(order.OrderId);
                             var orderDigest = order.Digest(shopItem, costumeStatSheet);
                             var itemAddress = Addresses.GetItemAddress(order.TradableId);
-                            var v2Address = ShardedShopStateV2.DeriveAddress(order.ItemSubType, order.TradableId);
-                            var shardedShopStateV2 = shardedList.ContainsKey(v2Address)
-                                ? shardedList[v2Address]
+                            var v2Address = ShardedShopStateV2.DeriveAddress(order.ItemSubType, order.OrderId);
+                            var shardedShopStateV2 = states.TryGetState(v2Address, out Dictionary dict)
+                                ? new ShardedShopStateV2(dict)
                                 : new ShardedShopStateV2(v2Address);
-                            if (!shardedShopStateV2.OrderDigestList.Contains(orderDigest))
+                            if (shardedShopStateV2.OrderDigestList.Exists(o => o.OrderId.Equals(order.OrderId)))
                             {
-                                shardedShopStateV2.OrderDigestList.Add(orderDigest);
+                                continue;
                             }
 
-                            shardedList[v2Address] = shardedShopStateV2;
+                            var receiptAddress = OrderReceiptList.DeriveAddress(order.SellerAvatarAddress);
+                            var receiptList = states.TryGetState(receiptAddress, out Dictionary receiptDict)
+                                ? new OrderReceiptList(receiptDict)
+                                : new OrderReceiptList(receiptAddress);
+                            receiptList.Add(order);
 
-                            ITradableItem tradableItem =
-                                (shopItem.ItemUsable ?? (ITradableItem) shopItem.Costume)
-                                ?? shopItem.TradableFungibleItem;
+                            shardedShopStateV2.OrderDigestList.Add(orderDigest);
+
+                            if (!(shopItem.ItemUsable is null))
+                            {
+                                states = states.SetState(itemAddress, shopItem.ItemUsable.Serialize());
+                            }
+                            if (!(shopItem.Costume is null))
+                            {
+                                states = states.SetState(itemAddress, shopItem.Costume.Serialize());
+                            }
+                            if (!(shopItem.TradableFungibleItem is null))
+                            {
+                                states = states.SetState(itemAddress, shopItem.TradableFungibleItem.Serialize());
+                            }
                             states = states.SetState(orderAddress, order.Serialize());
-                            states = states.SetState(itemAddress, tradableItem.Serialize());
+                            states = states.SetState(receiptAddress, receiptList.Serialize());
+                            states = states.SetState(v2Address, shardedShopStateV2.Serialize());
                         }
                     }
                 }
             }
-            states = shardedList
-                .OrderBy(i => i.Key)
-                .Aggregate(
-                    states, (current, kv) =>
-                        current.SetState(kv.Key, kv.Value.Serialize())
-                );
             return states;
         }
     }
