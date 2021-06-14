@@ -137,7 +137,7 @@ namespace Lib9c.Tests.Action
             var orderAddress = Order.DeriveAddress(orderId);
             var shardedShopAddress = ShardedShopStateV2.DeriveAddress(
                 tradableItem.ItemSubType,
-                tradableItem.TradableId);
+                orderId);
             long blockIndex = 1;
             if (orderExist)
             {
@@ -373,10 +373,10 @@ namespace Lib9c.Tests.Action
             avatarState.inventory.AddItem((ItemBase)tradableItem);
 
             Guid tradableId = tradableItem.TradableId;
+            Guid orderId = Guid.NewGuid();
             var shardedShopAddress = ShardedShopStateV2.DeriveAddress(
                 ItemSubType.Weapon,
-                tradableId);
-            Guid orderId = Guid.NewGuid();
+                orderId);
             var shardedShopState = new ShardedShopStateV2(shardedShopAddress);
             var order = OrderFactory.Create(
                 _agentAddress,
@@ -435,7 +435,7 @@ namespace Lib9c.Tests.Action
                 _avatarAddress,
                 Addresses.GetItemAddress(tradableId),
                 Order.DeriveAddress(orderId),
-                ShardedShopStateV2.DeriveAddress(ItemSubType.Weapon, tradableId),
+                ShardedShopStateV2.DeriveAddress(ItemSubType.Weapon, orderId),
             };
 
             var state = new State();

@@ -53,7 +53,7 @@ namespace Nekoyume.Action
         public override IAccountStateDelta Execute(IActionContext context)
         {
             var states = context.PreviousStates;
-            Address shopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, tradableId);
+            Address shopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
             Address itemAddress = Addresses.GetItemAddress(tradableId);
             Address orderAddress = Order.DeriveAddress(orderId);
             if (context.Rehearsal)

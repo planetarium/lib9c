@@ -12,9 +12,9 @@ namespace Nekoyume.Model.State
 {
     public class ShardedShopStateV2 : State
     {
-        public static Address DeriveAddress(ItemSubType itemSubType, Guid tradableId)
+        public static Address DeriveAddress(ItemSubType itemSubType, Guid orderId)
         {
-            string nonce = tradableId.ToString().Substring(0, 1);
+            string nonce = orderId.ToString().Substring(0, 1);
             return DeriveAddress(itemSubType, nonce);
         }
 
