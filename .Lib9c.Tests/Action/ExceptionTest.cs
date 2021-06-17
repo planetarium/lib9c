@@ -218,6 +218,14 @@ namespace Lib9c.Tests.Action
             AssertException<DuplicateOrderIdException>(exc);
         }
 
+
+        [Fact]
+        public void InvalidTradableIdException_Serializable()
+        {
+            var exc = new InvalidTradableIdException("for testing.");
+            AssertException<InvalidTradableIdException>(exc);
+        }
+
         private static void AssertException<T>(Exception exc)
             where T : Exception
         {
