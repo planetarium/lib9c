@@ -127,7 +127,7 @@ namespace Nekoyume.BlockChain
             DateTimeOffset prevTimestamp = prevBlock.Timestamp;
             TimeSpan timeDiff = prevTimestamp - beforePrevTimestamp;
             long timeDiffMilliseconds = (long)timeDiff.TotalMilliseconds;
-            const long minimumMultiplier = -99;
+            const long minimumMultiplier = -1;
             long multiplier = 1 - timeDiffMilliseconds / (long)BlockInterval.TotalMilliseconds;
             multiplier = Math.Max(multiplier, minimumMultiplier);
 
