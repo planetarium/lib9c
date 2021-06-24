@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using Lib9c;
 using Libplanet;
 using Nekoyume.Model.State;
+using RandomXSharp;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
 namespace Nekoyume.BlockChain
@@ -20,6 +21,7 @@ namespace Nekoyume.BlockChain
             new Dictionary<long, HashAlgorithmType>
             {
                 [0] = HashAlgorithmType.Of<SHA256>(),
+                [1_900_000] = HashAlgorithmType.Of<RandomX>(),
             };
         private readonly long _minimumDifficulty;
         private readonly long _difficultyBoundDivisor;
