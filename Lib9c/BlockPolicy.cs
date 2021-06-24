@@ -164,11 +164,6 @@ namespace Nekoyume.BlockChain
 
         private InvalidBlockException ValidateBlock(Block<NCAction> block)
         {
-            if (!(block.Miner is Address miner))
-            {
-                return null;
-            }
-
             // As a temporary approach to prevent selfish mining (again), we add a new rule
             // disallowing blocks with less than 3 transactions.  This rule is applied since
             // 2,100,000th block.  (Note that as of Aug 4, 2021, there are about 2,060,000+ blocks.)
@@ -177,26 +172,26 @@ namespace Nekoyume.BlockChain
                 block.Index >= 2_110_000 &&
                 !(AuthorizedMinersState is AuthorizedMinersState ams &&
                     block.Index <= ams.ValidUntil &&
-                    block.Miner is Address m && ams.Miners.Contains(m) &&
-                    block.Transactions.Any(tx => tx.Signer.Equals(m))))
+                    ams.Miners.Contains(block.Miner) &&
+                    block.Transactions.Any(tx => tx.Signer.Equals(block.Miner))))
             {
                 return new InvalidMinerException(
-                    $"The block #{block.Index} {block.Hash} (mined by {miner}) must " +
+                    $"The block #{block.Index} {block.Hash} (mined by {block.Miner}) must " +
                     "include at least 3 transactions.",
-                    miner
+                    block.Miner
                 );
             }
 
-            // To prevent selfish mining, we define a consensus that blocks with no transactions are do not accepted. 
+            // To prevent selfish mining, we define a consensus that blocks with no transactions are do not accepted.
             // (For backward compatibility, blocks before 1,711,631th don't have to be proven.
             // Note that as of Jun 16, 2021, there are about 1,710,000+ blocks.)
             if (block.Transactions.Count <= 0 &&
                 (IgnoreHardcodedIndicesForBackwardCompatibility || block.Index > 1_711_631))
             {
                 return new InvalidMinerException(
-                    $"The block #{block.Index} {block.Hash} (mined by {miner}) should " +
+                    $"The block #{block.Index} {block.Hash} (mined by {block.Miner}) should " +
                     "include at least one transaction.",
-                    miner
+                    block.Miner
                 );
             }
 
