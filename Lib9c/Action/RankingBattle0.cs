@@ -43,7 +43,9 @@ namespace Nekoyume.Action
                     .SetState(ctx.Signer, MarkChanged)
                     .MarkBalanceChanged(GoldCurrencyMock, ctx.Signer, WeeklyArenaAddress);
             }
-            
+
+            CheckObsolete(1815592, context);
+
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress, EnemyAddress);
 
             Log.Warning("ranking_battle is deprecated. Please use ranking_battle2");

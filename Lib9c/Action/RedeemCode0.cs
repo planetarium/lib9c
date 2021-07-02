@@ -45,6 +45,8 @@ namespace Nekoyume.Action
                 return states;
             }
 
+            CheckObsolete(1815592, context);
+
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
 
             if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out AvatarState avatarState))
