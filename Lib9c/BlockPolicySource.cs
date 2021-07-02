@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using Bencodex.Types;
 using Lib9c;
 using Lib9c.Renderer;
@@ -12,6 +13,7 @@ using Nekoyume.Action;
 using Nekoyume.Model.State;
 using Libplanet;
 using Libplanet.Blockchain.Renderers;
+using Libplanet.Blocks;
 using Serilog;
 using Serilog.Events;
 #if UNITY_EDITOR || UNITY_STANDALONE
@@ -87,11 +89,17 @@ namespace Nekoyume.BlockChain
         public IEnumerable<IRenderer<NCAction>> GetRenderers() =>
             new IRenderer<NCAction>[] { BlockRenderer, LoggedActionRenderer };
 
-        public static bool IsObsolete(Transaction<NCAction> transaction)
+        public static bool IsObsolete(Transaction<NCAction> transaction, long blockIndex)
         {
             return transaction.Actions
                 .Select(action => action.InnerAction.GetType())
-                .Any(at => at.IsDefined(typeof(ObsoleteAttribute), false));
+                .Any(
+                    at =>
+                    at.IsDefined(typeof(ActionObsoleteAttribute), false) &&
+                    at.GetCustomAttributes()
+                        .OfType<ActionObsoleteAttribute>()
+                        .FirstOrDefault()?.ObsoleteIndex < blockIndex
+                );
         }
 
         private bool DoesTransactionFollowPolicy(
@@ -107,7 +115,9 @@ namespace Nekoyume.BlockChain
             BlockChain<NCAction> blockChain
         )
         {
-            if (transaction.Actions.Count > 1 || IsObsolete(transaction))
+            // Avoid NRE when genesis block appended
+            long index = blockChain.Tip?.Index ?? 0;
+            if (transaction.Actions.Count > 1 || IsObsolete(transaction, index))
             {
                 return false;
             }

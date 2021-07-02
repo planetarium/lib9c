@@ -5,7 +5,6 @@ namespace Lib9c.Tests
     using System.Collections.Immutable;
     using System.Linq;
     using System.Reflection;
-    using System.Security.Cryptography;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Bencodex.Types;
@@ -637,8 +636,10 @@ namespace Lib9c.Tests
             Assert.False(blockChain.ContainsBlock(block3.Hash));
         }
 
-        [Fact]
-        public void IsObsolete()
+        [Theory]
+        [InlineData(199, false)]
+        [InlineData(2000002, true)]
+        public void IsObsolete(long blockIndex, bool expected)
         {
             var action = new HackAndSlash
             {
@@ -660,7 +661,7 @@ namespace Lib9c.Tests
                 action,
             });
 
-            Assert.False(BlockPolicySource.IsObsolete(tx));
+            Assert.False(BlockPolicySource.IsObsolete(tx, blockIndex));
 
             var action2 = new HackAndSlash4
             {
@@ -682,7 +683,7 @@ namespace Lib9c.Tests
                     action2,
                 });
 
-            Assert.True(BlockPolicySource.IsObsolete(tx2));
+            Assert.Equal(expected, BlockPolicySource.IsObsolete(tx2, blockIndex));
         }
 
         [Fact]
@@ -694,7 +695,7 @@ namespace Lib9c.Tests
                         (typeof(ActionBase).IsAssignableFrom(type) || typeof(ActionBase).IsAssignableFrom(type)) &&
                         !type.IsAbstract &&
                         Regex.IsMatch(type.Name, @"\d+$") &&
-                        !type.IsDefined(typeof(ObsoleteAttribute), false)));
+                        !type.IsDefined(typeof(ActionObsoleteAttribute), false)));
         }
 
         private Block<PolymorphicAction<ActionBase>> MakeGenesisBlock(
