@@ -13,7 +13,7 @@ namespace Lib9c.Tests.Action
     using Xunit;
     using static SerializeKeys;
 
-    public class CombinationConsumableTest
+    public class CombinationConsumable6Test
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -24,7 +24,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _avatarState;
         private IAccountStateDelta _initialState;
 
-        public CombinationConsumableTest()
+        public CombinationConsumable6Test()
         {
             _agentAddress = default;
             _avatarAddress = _agentAddress.Derive("avatar");
@@ -72,11 +72,7 @@ namespace Lib9c.Tests.Action
             foreach (var materialInfo in row.Materials)
             {
                 var materialRow = _tableSheets.MaterialItemSheet[materialInfo.Id];
-                var material = ItemFactory.CreateItemV2(
-                    2,
-                    materialRow,
-                    _random,
-                    1);
+                var material = ItemFactory.CreateItem(materialRow, _random);
                 _avatarState.inventory.AddItem(material, count: materialInfo.Count);
             }
 
@@ -92,12 +88,7 @@ namespace Lib9c.Tests.Action
                 );
             }
 
-            var equipment = ItemFactory.CreateItemUsableV2(
-                2,
-                _tableSheets.EquipmentItemSheet.First,
-                default,
-                0,
-                1);
+            var equipment = ItemFactory.CreateItemUsable(_tableSheets.EquipmentItemSheet.First, default, 0);
 
             var result = new CombinationConsumable5.ResultModel()
             {
@@ -130,7 +121,7 @@ namespace Lib9c.Tests.Action
                     .SetState(_avatarAddress, _avatarState.SerializeV2());
             }
 
-            var action = new CombinationConsumable()
+            var action = new CombinationConsumable6()
             {
                 AvatarAddress = _avatarAddress,
                 recipeId = row.Id,

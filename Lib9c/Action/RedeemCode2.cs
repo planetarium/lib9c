@@ -14,18 +14,18 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("redeem_code3")]
-    public class RedeemCode : GameAction
+    [ActionType("redeem_code2")]
+    public class RedeemCode2 : GameAction
     {
         public string Code { get; internal set; }
 
         public Address AvatarAddress {get; internal set; }
 
-        public RedeemCode()
+        public RedeemCode2()
         {
         }
 
-        public RedeemCode(string code, Address avatarAddress)
+        public RedeemCode2(string code, Address avatarAddress)
         {
             Code = code;
             AvatarAddress = avatarAddress;
@@ -81,7 +81,6 @@ namespace Nekoyume.Action
 
             var row = states.GetSheet<RedeemRewardSheet>().Values.First(r => r.Id == redeemId);
             var itemSheets = states.GetItemSheet();
-            var itemRequirementSheet = states.GetSheet<ItemRequirementSheet>();
 
             foreach (RedeemRewardSheet.RewardInfo info in row.Rewards)
             {
@@ -90,23 +89,13 @@ namespace Nekoyume.Action
                     case RewardType.Item:
                         for (var i = 0; i < info.Quantity; i++)
                         {
-                            if (!(info.ItemId is int itemId))
+                            if (info.ItemId is int itemId)
                             {
-                                continue;
+                                ItemBase item = ItemFactory.CreateItem(itemSheets[itemId], context.Random);
+                                // We should fix count as 1 because ItemFactory.CreateItem
+                                // will create a new item every time.
+                                avatarState.inventory.AddItem(item, count: 1);
                             }
-                            
-                            var requirementCharacterLevel =
-                                itemRequirementSheet.TryGetValue(itemId, out var itemRequirementRow)
-                                    ? itemRequirementRow.Level
-                                    : 1;
-                            var item = ItemFactory.CreateItemV2(
-                                2,
-                                itemSheets[itemId],
-                                context.Random,
-                                requirementCharacterLevel);
-                            // We should fix count as 1 because ItemFactory.CreateItemV2
-                            // will create a new item every time.
-                            avatarState.inventory.AddItem(item, count: 1);
                         }
                         break;
                     case RewardType.Gold:

@@ -3,7 +3,7 @@ using System;
 namespace Nekoyume.Model.Stat
 {
     [Serializable]
-    public class IntStatWithCurrent : IntStat, ICloneable
+    public class IntStatWithCurrent : IntStat
     {
         public int Current { get; private set; }
 

@@ -11,6 +11,16 @@ namespace Nekoyume.Model.Item
         public Necklace(EquipmentItemSheet.Row data, Guid id, long requiredBlockIndex) : base(data, id, requiredBlockIndex)
         {
         }
+        
+        public Necklace(
+            int serializedVersion,
+            EquipmentItemSheet.Row data,
+            Guid id,
+            long requiredBlockIndex,
+            int requiredCharacterLevel)
+            : base(serializedVersion, data, id, requiredBlockIndex, requiredCharacterLevel)
+        {
+        }
 
         public Necklace(Dictionary serialized) : base(serialized)
         {

@@ -6,7 +6,6 @@ using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Stat
 {
-    // todo: 없어질 대상.
     [Serializable]
     public class StatMapEx : StatMap
     {
@@ -26,6 +25,7 @@ namespace Nekoyume.Model.Stat
 
         public int AdditionalValueAsInt { get; private set; }
 
+        // FIXME: `decimal TotalValue` to be expected `Value + AdditionalValue`
         public decimal TotalValue => Value + AdditionalValueAsInt;
         public int TotalValueAsInt => ValueAsInt + AdditionalValueAsInt;
 

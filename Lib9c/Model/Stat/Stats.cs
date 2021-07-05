@@ -1,32 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bencodex.Types;
+using Nekoyume.Model.State;
+using BxDictionary = Bencodex.Types.Dictionary;
+using BxText = Bencodex.Types.Text;
 
 namespace Nekoyume.Model.Stat
 {
     [Serializable]
-    public class Stats : IStats, ICloneable
+    public class Stats : ICloneable, IState, IStats
     {
-        protected readonly IntStatWithCurrent hp = new IntStatWithCurrent(StatType.HP);
-        protected readonly IntStat atk = new IntStat(StatType.ATK);
-        protected readonly IntStat def = new IntStat(StatType.DEF);
-        protected readonly DecimalStat cri = new DecimalStat(StatType.CRI);
-        protected readonly DecimalStat hit = new DecimalStat(StatType.HIT);
-        protected readonly DecimalStat spd = new DecimalStat(StatType.SPD);
-
-        public int HP => hp.Value;
-        public int ATK => atk.Value;
-        public int DEF => def.Value;
-        public int CRI => cri.ValueAsInt;
-        public int HIT => hit.ValueAsInt;
-        public int SPD => spd.ValueAsInt;
-
-        public bool HasHP => HP > 0;
-        public bool HasATK => ATK > 0;
-        public bool HasDEF => DEF > 0;
-        public bool HasCRI => CRI > 0;
-        public bool HasHIT => HIT > 0;
-        public bool HasSPD => SPD > 0;
+        protected readonly IntStatWithCurrent hp;
+        protected readonly IntStat atk;
+        protected readonly IntStat def;
+        protected readonly DecimalStat cri;
+        protected readonly DecimalStat hit;
+        protected readonly DecimalStat spd;
 
         public int CurrentHP
         {
@@ -36,17 +26,213 @@ namespace Nekoyume.Model.Stat
 
         public Stats()
         {
+            hp = new IntStatWithCurrent(StatType.HP);
+            atk = new IntStat(StatType.ATK);
+            def = new IntStat(StatType.DEF);
+            cri = new DecimalStat(StatType.CRI);
+            hit = new DecimalStat(StatType.HIT);
+            spd = new DecimalStat(StatType.SPD);
         }
 
         public Stats(Stats value)
         {
-            hp = (IntStatWithCurrent)value.hp.Clone();
-            atk = (IntStat)value.atk.Clone();
-            def = (IntStat)value.def.Clone();
-            cri = (DecimalStat)value.cri.Clone();
-            hit = (DecimalStat)value.hit.Clone();
-            spd = (DecimalStat)value.spd.Clone();
+            hp = (IntStatWithCurrent) value.hp.Clone();
+            atk = (IntStat) value.atk.Clone();
+            def = (IntStat) value.def.Clone();
+            cri = (DecimalStat) value.cri.Clone();
+            hit = (DecimalStat) value.hit.Clone();
+            spd = (DecimalStat) value.spd.Clone();
         }
+
+        public Stats(BxDictionary serialized)
+        {
+            hp = serialized.TryGetValue((BxText) "hp", out var hpValue)
+                ? hpValue.ToIntStatWithCurrent()
+                : new IntStatWithCurrent(StatType.HP);
+
+            atk = serialized.TryGetValue((BxText) "atk", out var atkValue)
+                ? atkValue.ToIntStat()
+                : new IntStat(StatType.ATK);
+
+            def = serialized.TryGetValue((BxText) "def", out var defValue)
+                ? defValue.ToIntStat()
+                : new IntStat(StatType.DEF);
+
+            cri = serialized.TryGetValue((BxText) "cri", out var criValue)
+                ? criValue.ToDecimalStat()
+                : new DecimalStat(StatType.CRI);
+
+            hit = serialized.TryGetValue((BxText) "hit", out var hitValue)
+                ? hitValue.ToDecimalStat()
+                : new DecimalStat(StatType.HIT);
+
+            spd = serialized.TryGetValue((BxText) "spd", out var spdValue)
+                ? spdValue.ToDecimalStat()
+                : new DecimalStat(StatType.SPD);
+        }
+
+        #region IState
+
+        public virtual IValue Serialize()
+        {
+            var result = new BxDictionary();
+            if (hp.Value > 0)
+            {
+                result = result.SetItem("hp", hp.Serialize());
+            }
+
+            if (atk.Value > 0)
+            {
+                result = result.SetItem("atk", atk.Serialize());
+            }
+            
+            if (def.Value > 0)
+            {
+                result = result.SetItem("def", def.Serialize());
+            }
+            
+            if (cri.Value > 0m)
+            {
+                result = result.SetItem("cri", cri.Serialize());
+            }
+            
+            if (hit.Value > 0m)
+            {
+                result = result.SetItem("hit", hit.Serialize());
+            }
+            
+            if (spd.Value > 0m)
+            {
+                result = result.SetItem("spd", spd.Serialize());
+            }
+
+            return result;
+        }
+
+        #endregion
+        
+        #region ICloneable
+
+        public virtual object Clone()
+        {
+            return new Stats(this);
+        }
+
+        #endregion
+
+        #region IStats
+
+        public int HP => hp.Value;
+        public decimal HPAsDecimal => hp.Value;
+        public int ATK => atk.Value;
+        public decimal ATKAsDecimal => atk.Value;
+        public int DEF => def.Value;
+        public decimal DEFAsDecimal => def.Value;
+        public int CRI => cri.ValueAsInt;
+        public decimal CRIAsDecimal => cri.Value;
+        public int HIT => hit.ValueAsInt;
+        public decimal HITAsDecimal => hit.Value;
+        public int SPD => spd.ValueAsInt;
+        public decimal SPDAsDecimal => spd.Value;
+
+        public bool HasHP => HP > 0;
+        public bool HasATK => ATK > 0;
+        public bool HasDEF => DEF > 0;
+        public bool HasCRI => CRI > 0;
+        public bool HasHIT => HIT > 0;
+        public bool HasSPD => SPD > 0;
+
+        public IEnumerable<(StatType statType, int value)> GetStats(bool ignoreZero = default)
+        {
+            if (ignoreZero)
+            {
+                if (HasHP)
+                {
+                    yield return (StatType.HP, HP);
+                }
+
+                if (HasATK)
+                {
+                    yield return (StatType.ATK, ATK);
+                }
+
+                if (HasDEF)
+                {
+                    yield return (StatType.DEF, DEF);
+                }
+
+                if (HasCRI)
+                {
+                    yield return (StatType.CRI, CRI);
+                }
+
+                if (HasHIT)
+                {
+                    yield return (StatType.HIT, HIT);
+                }
+
+                if (HasSPD)
+                {
+                    yield return (StatType.SPD, SPD);
+                }
+            }
+            else
+            {
+                yield return (StatType.HP, HP);
+                yield return (StatType.ATK, ATK);
+                yield return (StatType.DEF, DEF);
+                yield return (StatType.CRI, CRI);
+                yield return (StatType.HIT, HIT);
+                yield return (StatType.SPD, SPD);
+            }
+        }
+
+        public IEnumerable<(StatType statType, decimal value)> GetRawStats(bool ignoreZero = default)
+        {
+            if (ignoreZero)
+            {
+                if (HasHP)
+                {
+                    yield return (StatType.HP, HP);
+                }
+
+                if (HasATK)
+                {
+                    yield return (StatType.ATK, ATK);
+                }
+
+                if (HasDEF)
+                {
+                    yield return (StatType.DEF, DEF);
+                }
+
+                if (HasCRI)
+                {
+                    yield return (StatType.CRI, CRIAsDecimal);
+                }
+
+                if (HasHIT)
+                {
+                    yield return (StatType.HIT, HITAsDecimal);
+                }
+
+                if (HasSPD)
+                {
+                    yield return (StatType.SPD, SPDAsDecimal);
+                }
+            }
+            else
+            {
+                yield return (StatType.HP, HP);
+                yield return (StatType.ATK, ATK);
+                yield return (StatType.DEF, DEF);
+                yield return (StatType.CRI, CRIAsDecimal);
+                yield return (StatType.HIT, HITAsDecimal);
+                yield return (StatType.SPD, SPDAsDecimal);
+            }
+        }
+
+        #endregion
 
         public void Reset()
         {
@@ -124,75 +310,9 @@ namespace Nekoyume.Model.Stat
             spd.SetValue(value.SPD);
         }
 
-        /// <summary>
-        /// Please to use only test.
-        /// </summary>
-        /// <param name="statType"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public void SetStatForTest(StatType statType, int value)
-        {
-            switch (statType)
-            {
-                case StatType.HP:
-                    hp.SetValue(value);
-                    break;
-                case StatType.ATK:
-                    atk.SetValue(value);
-                    break;
-                case StatType.DEF:
-                    def.SetValue(value);
-                    break;
-                case StatType.CRI:
-                    cri.SetValue(value);
-                    break;
-                case StatType.HIT:
-                    hit.SetValue(value);
-                    break;
-                case StatType.SPD:
-                    spd.SetValue(value);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(statType), statType, null);
-            }
-        }
-
-        public IEnumerable<(StatType statType, int value)> GetStats(bool ignoreZero = false)
-        {
-            if (ignoreZero)
-            {
-                if (HasHP)
-                    yield return (StatType.HP, HP);
-                if (HasATK)
-                    yield return (StatType.ATK, ATK);
-                if (HasDEF)
-                    yield return (StatType.DEF, DEF);
-                if (HasCRI)
-                    yield return (StatType.CRI, CRI);
-                if (HasHIT)
-                    yield return (StatType.HIT, HIT);
-                if (HasSPD)
-                    yield return (StatType.SPD, SPD);
-            }
-            else
-            {
-                yield return (StatType.HP, HP);
-                yield return (StatType.ATK, ATK);
-                yield return (StatType.DEF, DEF);
-                yield return (StatType.CRI, CRI);
-                yield return (StatType.HIT, HIT);
-                yield return (StatType.SPD, SPD);
-            }
-        }
-
         public void EqualizeCurrentHPWithHP()
         {
             hp.EqualizeCurrentWithValue();
-        }
-
-        public virtual object Clone()
-        {
-            return new Stats(this);
         }
     }
 }

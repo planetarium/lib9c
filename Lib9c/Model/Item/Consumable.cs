@@ -16,7 +16,19 @@ namespace Nekoyume.Model.Item
 
         public List<StatMap> Stats { get; }
 
-        public Consumable(ConsumableItemSheet.Row data, Guid id, long requiredBlockIndex) : base(data, id, requiredBlockIndex)
+        public Consumable(ConsumableItemSheet.Row data, Guid id, long requiredBlockIndex)
+            : base(data, id, requiredBlockIndex)
+        {
+            Stats = data.Stats;
+        }
+
+        public Consumable(
+            int serializedVersion,
+            ConsumableItemSheet.Row data,
+            Guid id,
+            long requiredBlockIndex,
+            int requiredCharacterLevel)
+            : base(serializedVersion, data, id, requiredBlockIndex, requiredCharacterLevel)
         {
             Stats = data.Stats;
         }
@@ -27,6 +39,12 @@ namespace Nekoyume.Model.Item
             {
                 Stats = stats.ToList(i => new StatMap((Dictionary) i));
             }
+            
+            UpdateBaseOptionAndOtherOptions(
+                MainStat,
+                StatsMap,
+                Skills,
+                BuffSkills);
         }
         
         protected Consumable(SerializationInfo info, StreamingContext _)

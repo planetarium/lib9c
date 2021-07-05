@@ -43,10 +43,15 @@ namespace Nekoyume.Model.Stat
     }
 
     [Serializable]
-    public class StatTypeComparer : IEqualityComparer<StatType>
+    public class StatTypeComparer : IComparer<StatType>, IEqualityComparer<StatType>
     {
         public static readonly StatTypeComparer Instance = new StatTypeComparer();
 
+        public int Compare(StatType x, StatType y)
+        {
+            return (int) x - (int) y;
+        }
+        
         public bool Equals(StatType x, StatType y)
         {
             return x == y;

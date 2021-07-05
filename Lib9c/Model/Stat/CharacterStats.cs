@@ -16,7 +16,7 @@ namespace Nekoyume.Model.Stat
     /// 마지막으로 모든 스탯을 합한 CharacterStats 순서로 계산한다.
     /// </summary>
     [Serializable]
-    public class CharacterStats : Stats, IBaseAndAdditionalStats, ICloneable
+    public class CharacterStats : Stats, IBaseAndAdditionalStats
     {
         private readonly CharacterSheet.Row _row;
 
@@ -38,38 +38,6 @@ namespace Nekoyume.Model.Stat
         public IStats ConsumableStats => _consumableStats;
         public IStats BuffStats => _buffStats;
         public IStats OptionalStats => _optionalStats;
-
-
-        public int BaseHP => LevelStats.HP;
-        public int BaseATK => LevelStats.ATK;
-        public int BaseDEF => LevelStats.DEF;
-        public int BaseCRI => LevelStats.CRI;
-        public int BaseHIT => LevelStats.HIT;
-        public int BaseSPD => LevelStats.SPD;
-
-        public bool HasBaseHP => LevelStats.HasHP;
-        public bool HasBaseATK => LevelStats.HasATK;
-        public bool HasBaseDEF => LevelStats.HasDEF;
-        public bool HasBaseCRI => LevelStats.HasCRI;
-        public bool HasBaseHIT => LevelStats.HasHIT;
-        public bool HasBaseSPD => LevelStats.HasSPD;
-
-        public int AdditionalHP => HP - _levelStats.HP;
-        public int AdditionalATK => ATK - _levelStats.ATK;
-        public int AdditionalDEF => DEF - _levelStats.DEF;
-        public int AdditionalCRI => CRI - _levelStats.CRI;
-        public int AdditionalHIT => HIT - _levelStats.HIT;
-        public int AdditionalSPD => SPD - _levelStats.SPD;
-
-        public bool HasAdditionalHP => AdditionalHP > 0;
-        public bool HasAdditionalATK => AdditionalATK > 0;
-        public bool HasAdditionalDEF => AdditionalDEF > 0;
-        public bool HasAdditionalCRI => AdditionalCRI > 0;
-        public bool HasAdditionalHIT => AdditionalHIT > 0;
-        public bool HasAdditionalSPD => AdditionalSPD > 0;
-
-        public bool HasAdditionalStats => HasAdditionalHP || HasAdditionalATK || HasAdditionalDEF || HasAdditionalCRI ||
-                                          HasAdditionalHIT || HasAdditionalSPD;
 
         public CharacterStats(
             CharacterSheet.Row row,
@@ -98,6 +66,145 @@ namespace Nekoyume.Model.Stat
 
             Level = value.Level;
         }
+        
+        #region IBaseAndAdditionalStats
+
+        public int BaseHP => LevelStats.HP;
+        public decimal BaseHPAsDecimal => LevelStats.HPAsDecimal;
+        public int BaseATK => LevelStats.ATK;
+        public decimal BaseATKAsDecimal => LevelStats.ATKAsDecimal;
+        public int BaseDEF => LevelStats.DEF;
+        public decimal BaseDEFAsDecimal => LevelStats.DEFAsDecimal;
+        public int BaseCRI => LevelStats.CRI;
+        public decimal BaseCRIAsDecimal => LevelStats.CRIAsDecimal;
+        public int BaseHIT => LevelStats.HIT;
+        public decimal BaseHITAsDecimal => LevelStats.HITAsDecimal;
+        public int BaseSPD => LevelStats.SPD;
+        public decimal BaseSPDAsDecimal => LevelStats.SPDAsDecimal;
+
+        public bool HasBaseHP => LevelStats.HasHP;
+        public bool HasBaseATK => LevelStats.HasATK;
+        public bool HasBaseDEF => LevelStats.HasDEF;
+        public bool HasBaseCRI => LevelStats.HasCRI;
+        public bool HasBaseHIT => LevelStats.HasHIT;
+        public bool HasBaseSPD => LevelStats.HasSPD;
+
+        public int AdditionalHP => HP - _levelStats.HP;
+        public decimal AdditionalHPAsDecimal => HPAsDecimal - _levelStats.HPAsDecimal;
+        public int AdditionalATK => ATK - _levelStats.ATK;
+        public decimal AdditionalATKAsDecimal => ATKAsDecimal - _levelStats.ATKAsDecimal;
+        public int AdditionalDEF => DEF - _levelStats.DEF;
+        public decimal AdditionalDEFAsDecimal => DEFAsDecimal - _levelStats.DEFAsDecimal;
+        public int AdditionalCRI => CRI - _levelStats.CRI;
+        public decimal AdditionalCRIAsDecimal => CRIAsDecimal - _levelStats.CRIAsDecimal;
+        public int AdditionalHIT => HIT - _levelStats.HIT;
+        public decimal AdditionalHITAsDecimal => HITAsDecimal - _levelStats.HITAsDecimal;
+        public int AdditionalSPD => SPD - _levelStats.SPD;
+        public decimal AdditionalSPDAsDecimal => SPDAsDecimal - _levelStats.SPDAsDecimal;
+
+        public bool HasAdditionalHP => AdditionalHP > 0;
+        public bool HasAdditionalATK => AdditionalATK > 0;
+        public bool HasAdditionalDEF => AdditionalDEF > 0;
+        public bool HasAdditionalCRI => AdditionalCRI > 0;
+        public bool HasAdditionalHIT => AdditionalHIT > 0;
+        public bool HasAdditionalSPD => AdditionalSPD > 0;
+
+        public bool HasAdditionalStats => HasAdditionalHP || HasAdditionalATK || HasAdditionalDEF || HasAdditionalCRI ||
+                                          HasAdditionalHIT || HasAdditionalSPD;
+
+        public IEnumerable<(StatType statType, int baseValue, int additionalValue)> GetBaseAndAdditionalStats(
+            bool ignoreZero = default)
+        {
+            if (ignoreZero)
+            {
+                if (HasBaseHP || HasAdditionalHP)
+                {
+                    yield return (StatType.HP, BaseHP, AdditionalHP);
+                }
+
+                if (HasBaseATK || HasAdditionalATK)
+                {
+                    yield return (StatType.ATK, BaseATK, AdditionalATK);
+                }
+
+                if (HasBaseDEF || HasAdditionalDEF)
+                {
+                    yield return (StatType.DEF, BaseDEF, AdditionalDEF);
+                }
+
+                if (HasBaseCRI || HasAdditionalCRI)
+                {
+                    yield return (StatType.CRI, BaseCRI, AdditionalCRI);
+                }
+
+                if (HasBaseHIT || HasAdditionalHIT)
+                {
+                    yield return (StatType.HIT, BaseHIT, AdditionalHIT);
+                }
+
+                if (HasBaseSPD || HasAdditionalSPD)
+                {
+                    yield return (StatType.SPD, BaseSPD, AdditionalSPD);
+                }
+            }
+            else
+            {
+                yield return (StatType.HP, BaseHP, AdditionalHP);
+                yield return (StatType.ATK, BaseATK, AdditionalATK);
+                yield return (StatType.DEF, BaseDEF, AdditionalDEF);
+                yield return (StatType.CRI, BaseCRI, AdditionalCRI);
+                yield return (StatType.HIT, BaseHIT, AdditionalHIT);
+                yield return (StatType.SPD, BaseSPD, AdditionalSPD);
+            }
+        }
+
+        public IEnumerable<(StatType statType, decimal baseValue, decimal additionalValue)> GetBaseAndAdditionalRawStats(
+            bool ignoreZero = default)
+        {
+            if (ignoreZero)
+            {
+                if (HasBaseHP || HasAdditionalHP)
+                {
+                    yield return (StatType.HP, BaseHP, AdditionalHP);
+                }
+
+                if (HasBaseATK || HasAdditionalATK)
+                {
+                    yield return (StatType.ATK, BaseATK, AdditionalATK);
+                }
+
+                if (HasBaseDEF || HasAdditionalDEF)
+                {
+                    yield return (StatType.DEF, BaseDEF, AdditionalDEF);
+                }
+
+                if (HasBaseCRI || HasAdditionalCRI)
+                {
+                    yield return (StatType.CRI, BaseCRIAsDecimal, AdditionalCRIAsDecimal);
+                }
+
+                if (HasBaseHIT || HasAdditionalHIT)
+                {
+                    yield return (StatType.HIT, BaseHITAsDecimal, AdditionalHITAsDecimal);
+                }
+
+                if (HasBaseSPD || HasAdditionalSPD)
+                {
+                    yield return (StatType.SPD, BaseSPDAsDecimal, AdditionalSPDAsDecimal);
+                }
+            }
+            else
+            {
+                yield return (StatType.HP, BaseHP, AdditionalHP);
+                yield return (StatType.ATK, BaseATK, AdditionalATK);
+                yield return (StatType.DEF, BaseDEF, AdditionalDEF);
+                yield return (StatType.CRI, BaseCRIAsDecimal, AdditionalCRIAsDecimal);
+                yield return (StatType.HIT, BaseHITAsDecimal, AdditionalHITAsDecimal);
+                yield return (StatType.SPD, BaseSPDAsDecimal, AdditionalSPDAsDecimal);
+            }
+        }
+
+        #endregion
 
         public CharacterStats SetAll(
             int level,
@@ -140,6 +247,7 @@ namespace Nekoyume.Model.Stat
         /// 장비들을 바탕으로 장비 스탯을 재설정한다. 또한 소모품 스탯과 버프 스탯을 다시 계산한다. 
         /// </summary>
         /// <param name="value"></param>
+        /// <param name="sheet"></param>
         /// <param name="updateImmediate"></param>
         /// <returns></returns>
         public CharacterStats SetEquipments(
@@ -151,7 +259,8 @@ namespace Nekoyume.Model.Stat
             _equipmentStatModifiers.Clear();
             if (!(value is null))
             {
-                foreach (var equipment in value)
+                var equipments = value as Equipment[] ?? value.ToArray();
+                foreach (var equipment in equipments)
                 {
                     var statMap = equipment.StatsMap;
                     if (statMap.HasHP)
@@ -192,7 +301,7 @@ namespace Nekoyume.Model.Stat
                 }
 
                 // set effects.
-                var setEffectRows = sheet.GetSetEffectRows(value);
+                var setEffectRows = sheet.GetSetEffectRows(equipments);
                 foreach (var statModifier in setEffectRows.SelectMany(row => row.StatModifiers.Values))
                 {
                     _equipmentStatModifiers.Add(statModifier);
@@ -373,91 +482,6 @@ namespace Nekoyume.Model.Stat
         public override object Clone()
         {
             return new CharacterStats(this);
-        }
-
-        public IEnumerable<(StatType statType, int baseValue)> GetBaseStats(bool ignoreZero = false)
-        {
-            if (ignoreZero)
-            {
-                if (HasBaseHP)
-                    yield return (StatType.HP, BaseHP);
-                if (HasBaseATK)
-                    yield return (StatType.ATK, BaseATK);
-                if (HasBaseDEF)
-                    yield return (StatType.DEF, BaseDEF);
-                if (HasBaseCRI)
-                    yield return (StatType.CRI, BaseCRI);
-                if (HasBaseHIT)
-                    yield return (StatType.HIT, BaseHIT);
-                if (HasBaseSPD)
-                    yield return (StatType.SPD, BaseSPD);
-            }
-            else
-            {
-                yield return (StatType.HP, BaseHP);
-                yield return (StatType.ATK, BaseATK);
-                yield return (StatType.DEF, BaseDEF);
-                yield return (StatType.CRI, BaseCRI);
-                yield return (StatType.HIT, BaseHIT);
-                yield return (StatType.SPD, BaseSPD);
-            }
-        }
-
-        public IEnumerable<(StatType statType, int additionalValue)> GetAdditionalStats(bool ignoreZero = false)
-        {
-            if (ignoreZero)
-            {
-                if (HasAdditionalHP)
-                    yield return (StatType.HP, AdditionalHP);
-                if (HasAdditionalATK)
-                    yield return (StatType.ATK, AdditionalATK);
-                if (HasAdditionalDEF)
-                    yield return (StatType.DEF, AdditionalDEF);
-                if (HasAdditionalCRI)
-                    yield return (StatType.CRI, AdditionalCRI);
-                if (HasAdditionalHIT)
-                    yield return (StatType.HIT, AdditionalHIT);
-                if (HasAdditionalSPD)
-                    yield return (StatType.SPD, AdditionalSPD);
-            }
-            else
-            {
-                yield return (StatType.HP, AdditionalHP);
-                yield return (StatType.ATK, AdditionalATK);
-                yield return (StatType.DEF, AdditionalDEF);
-                yield return (StatType.CRI, AdditionalCRI);
-                yield return (StatType.HIT, AdditionalHIT);
-                yield return (StatType.SPD, AdditionalSPD);
-            }
-        }
-
-        public IEnumerable<(StatType statType, int baseValue, int additionalValue)> GetBaseAndAdditionalStats(
-            bool ignoreZero = false)
-        {
-            if (ignoreZero)
-            {
-                if (HasBaseHP || HasAdditionalHP)
-                    yield return (StatType.HP, BaseHP, AdditionalHP);
-                if (HasBaseATK || HasAdditionalATK)
-                    yield return (StatType.ATK, BaseATK, AdditionalATK);
-                if (HasBaseDEF || HasAdditionalDEF)
-                    yield return (StatType.DEF, BaseDEF, AdditionalDEF);
-                if (HasBaseCRI || HasAdditionalCRI)
-                    yield return (StatType.CRI, BaseCRI, AdditionalCRI);
-                if (HasBaseHIT || HasAdditionalHIT)
-                    yield return (StatType.HIT, BaseHIT, AdditionalHIT);
-                if (HasBaseSPD || HasAdditionalSPD)
-                    yield return (StatType.SPD, BaseSPD, AdditionalSPD);
-            }
-            else
-            {
-                yield return (StatType.HP, BaseHP, AdditionalHP);
-                yield return (StatType.ATK, BaseATK, AdditionalATK);
-                yield return (StatType.DEF, BaseDEF, AdditionalDEF);
-                yield return (StatType.CRI, BaseCRI, AdditionalCRI);
-                yield return (StatType.HIT, BaseHIT, AdditionalHIT);
-                yield return (StatType.SPD, BaseSPD, AdditionalSPD);
-            }
         }
     }
 }

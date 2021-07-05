@@ -33,6 +33,19 @@ namespace Nekoyume.Model.Item
             SetId = data.SetId;
             SpineResourcePath = data.SpineResourcePath;
         }
+        
+        public Equipment(
+            int serializedVersion,
+            EquipmentItemSheet.Row data,
+            Guid id,
+            long requiredBlockIndex,
+            int requiredCharacterLevel)
+            : base(serializedVersion, data, id, requiredBlockIndex, requiredCharacterLevel)
+        {
+            Stat = data.Stat;
+            SetId = data.SetId;
+            SpineResourcePath = data.SpineResourcePath;
+        }
 
         public Equipment(Dictionary serialized) : base(serialized)
         {
@@ -63,6 +76,12 @@ namespace Nekoyume.Model.Item
             {
                 SpineResourcePath = (Text) spineResourcePath;
             }
+            
+            UpdateBaseOptionAndOtherOptions(
+                UniqueStatType,
+                StatsMap,
+                Skills,
+                BuffSkills);
         }
 
         protected Equipment(SerializationInfo info, StreamingContext _)

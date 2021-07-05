@@ -11,6 +11,16 @@ namespace Nekoyume.Model.Item
         public Ring(EquipmentItemSheet.Row data, Guid id, long requiredBlockIndex) : base(data, id, requiredBlockIndex)
         {
         }
+        
+        public Ring(
+            int serializedVersion,
+            EquipmentItemSheet.Row data,
+            Guid id,
+            long requiredBlockIndex,
+            int requiredCharacterLevel)
+            : base(serializedVersion, data, id, requiredBlockIndex, requiredCharacterLevel)
+        {
+        }
 
         public Ring(Dictionary serialized) : base(serialized)
         {

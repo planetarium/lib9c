@@ -1,4 +1,5 @@
 using Bencodex.Types;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 

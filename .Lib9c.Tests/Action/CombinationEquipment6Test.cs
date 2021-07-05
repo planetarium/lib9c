@@ -17,7 +17,7 @@ namespace Lib9c.Tests.Action
     using Xunit.Abstractions;
     using static SerializeKeys;
 
-    public class CombinationEquipmentTest
+    public class CombinationEquipment6Test
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _avatarState;
         private IAccountStateDelta _initialState;
 
-        public CombinationEquipmentTest(ITestOutputHelper outputHelper)
+        public CombinationEquipment6Test(ITestOutputHelper outputHelper)
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -85,20 +85,12 @@ namespace Lib9c.Tests.Action
         {
             var row = _tableSheets.EquipmentItemRecipeSheet[109];
             var materialRow = _tableSheets.MaterialItemSheet[row.MaterialId];
-            var material = backward
-                ? ItemFactory.CreateItem(materialRow, _random)
-                : ItemFactory.CreateItemV2(2, materialRow, _random, 1);
+            var material = ItemFactory.CreateItem(materialRow, _random);
             _avatarState.inventory.AddItem(material, count: row.MaterialCount);
 
             foreach (var materialInfo in _tableSheets.EquipmentItemSubRecipeSheet[255].Materials)
             {
-                var subMaterial = backward
-                    ? ItemFactory.CreateItem(_tableSheets.MaterialItemSheet[materialInfo.Id], _random)
-                    : ItemFactory.CreateItemV2(
-                        2,
-                        _tableSheets.MaterialItemSheet[materialInfo.Id],
-                        _random,
-                        1);
+                var subMaterial = ItemFactory.CreateItem(_tableSheets.MaterialItemSheet[materialInfo.Id], _random);
                 _avatarState.inventory.AddItem(subMaterial, count: materialInfo.Count);
             }
 
@@ -115,17 +107,7 @@ namespace Lib9c.Tests.Action
             }
 
             var equipmentRow = _tableSheets.EquipmentItemSheet[row.ResultEquipmentId];
-            var equipment = backward
-                ? ItemFactory.CreateItemUsable(
-                    equipmentRow,
-                    default,
-                    0)
-                : ItemFactory.CreateItemUsableV2(
-                    2,
-                    equipmentRow,
-                    default,
-                    0,
-                    1);
+            var equipment = ItemFactory.CreateItemUsable(equipmentRow, default, 0);
 
             var result = new CombinationConsumable5.ResultModel()
             {
@@ -157,7 +139,7 @@ namespace Lib9c.Tests.Action
                     .SetState(_avatarAddress, _avatarState.SerializeV2());
             }
 
-            var action = new CombinationEquipment()
+            var action = new CombinationEquipment6()
             {
                 AvatarAddress = _avatarAddress,
                 RecipeId = row.Id,
@@ -196,16 +178,12 @@ namespace Lib9c.Tests.Action
         {
             var row = _tableSheets.EquipmentItemRecipeSheet[2];
             var materialRow = _tableSheets.MaterialItemSheet[row.MaterialId];
-            var material = ItemFactory.CreateItemV2(2, materialRow, _random, 1);
+            var material = ItemFactory.CreateItem(materialRow, _random);
             _avatarState.inventory.AddItem(material, count: row.MaterialCount);
 
             foreach (var materialInfo in _tableSheets.EquipmentItemSubRecipeSheet[3].Materials)
             {
-                var subMaterial = ItemFactory.CreateItemV2(
-                    2,
-                    _tableSheets.MaterialItemSheet[materialInfo.Id],
-                    _random,
-                    1);
+                var subMaterial = ItemFactory.CreateItem(_tableSheets.MaterialItemSheet[materialInfo.Id], _random);
                 _avatarState.inventory.AddItem(subMaterial, count: materialInfo.Count);
             }
 
@@ -223,7 +201,7 @@ namespace Lib9c.Tests.Action
 
             _initialState = _initialState.SetState(_avatarAddress, _avatarState.Serialize());
 
-            var action = new CombinationEquipment()
+            var action = new CombinationEquipment6()
             {
                 AvatarAddress = _avatarAddress,
                 RecipeId = row.Id,
@@ -242,7 +220,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Rehearsal()
         {
-            var action = new CombinationEquipment()
+            var action = new CombinationEquipment6()
             {
                 AvatarAddress = _avatarAddress,
                 RecipeId = 1,
@@ -286,17 +264,13 @@ namespace Lib9c.Tests.Action
         {
             var options = new Dictionary<int, int>();
             var subRecipe = _tableSheets.EquipmentItemSubRecipeSheet[255];
-            var equipment = (Necklace)ItemFactory.CreateItemUsableV2(
-                2,
-                _tableSheets.EquipmentItemSheet[10411000],
-                default,
-                0,
-                1);
+            var equipment =
+                (Necklace)ItemFactory.CreateItemUsable(_tableSheets.EquipmentItemSheet[10411000], default, 0);
             var i = 0;
             while (i < 10000)
             {
-                var ids = CombinationEquipment.SelectOption(
-                    _tableSheets.EquipmentItemOptionSheetV2,
+                var ids = CombinationEquipment4.SelectOption(
+                    _tableSheets.EquipmentItemOptionSheet,
                     _tableSheets.SkillSheet,
                     subRecipe,
                     _random,

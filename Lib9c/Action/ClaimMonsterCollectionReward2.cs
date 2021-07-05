@@ -14,7 +14,7 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("claim_monster_collection_reward2")]
-    public class ClaimMonsterCollectionReward : GameAction
+    public class ClaimMonsterCollectionReward2 : GameAction
     {
         public Address avatarAddress;
         public override IAccountStateDelta Execute(IActionContext context)
@@ -61,23 +61,18 @@ namespace Nekoyume.Action
                 throw new RequiredBlockIndexException($"{collectionAddress} is not available yet");
             }
 
-            var id = context.Random.GenerateRandomGuid();
+            Guid id = context.Random.GenerateRandomGuid();
             var result = new MonsterCollectionResult(id, avatarAddress, rewards);
             var mail = new MonsterCollectionMail(result, context.BlockIndex, id, context.BlockIndex);
             avatarState.UpdateV3(mail);
 
-            var itemSheet = states.GetItemSheet();
+            ItemSheet itemSheet = states.GetItemSheet();
             foreach (MonsterCollectionRewardSheet.RewardInfo rewardInfo in rewards)
             {
-                var row = itemSheet[rewardInfo.ItemId];
-                var itemRequirementSheet = states.GetSheet<ItemRequirementSheet>();
-                var requirementCharacterLevel =
-                    itemRequirementSheet.TryGetValue(row.Id, out var itemRequirementRow)
-                        ? itemRequirementRow.Level
-                        : 1;
-                var item = row is MaterialItemSheet.Row materialRow
+                ItemSheet.Row row = itemSheet[rewardInfo.ItemId];
+                ItemBase item = row is MaterialItemSheet.Row materialRow
                     ? ItemFactory.CreateTradableMaterial(materialRow)
-                    : ItemFactory.CreateItemV2(2, row, context.Random, requirementCharacterLevel);
+                    : ItemFactory.CreateItem(row, context.Random);
                 avatarState.inventory.AddItem(item, rewardInfo.Quantity);
             }
             monsterCollectionState.Claim(context.BlockIndex);

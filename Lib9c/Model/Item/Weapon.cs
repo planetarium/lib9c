@@ -11,6 +11,16 @@ namespace Nekoyume.Model.Item
         public Weapon(EquipmentItemSheet.Row data, Guid id, long requiredBlockIndex) : base(data, id, requiredBlockIndex)
         {
         }
+        
+        public Weapon(
+            int serializedVersion,
+            EquipmentItemSheet.Row data,
+            Guid id,
+            long requiredBlockIndex,
+            int requiredCharacterLevel)
+            : base(serializedVersion, data, id, requiredBlockIndex, requiredCharacterLevel)
+        {
+        }
 
         public Weapon(Dictionary serialized) : base(serialized)
         {

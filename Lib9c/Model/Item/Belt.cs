@@ -11,6 +11,16 @@ namespace Nekoyume.Model.Item
         public Belt(EquipmentItemSheet.Row data, Guid id, long requiredBlockIndex) : base(data, id, requiredBlockIndex)
         {
         }
+        
+        public Belt(
+            int serializedVersion,
+            EquipmentItemSheet.Row data,
+            Guid id,
+            long requiredBlockIndex,
+            int requiredCharacterLevel)
+            : base(serializedVersion, data, id, requiredBlockIndex, requiredCharacterLevel)
+        {
+        }
 
         public Belt(Dictionary serialized) : base(serialized)
         {

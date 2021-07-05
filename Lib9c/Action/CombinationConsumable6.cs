@@ -19,8 +19,8 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("combination_consumable7")]
-    public class CombinationConsumable : GameAction
+    [ActionType("combination_consumable6")]
+    public class CombinationConsumable6 : GameAction
     {
         public Address AvatarAddress;
         public int recipeId;
@@ -185,17 +185,7 @@ namespace Nekoyume.Action
             // 조합 결과 획득.
             var requiredBlockIndex = ctx.BlockIndex + recipeRow.RequiredBlockIndex;
             var itemId = ctx.Random.GenerateRandomGuid();
-            var itemRequirementSheet = states.GetSheet<ItemRequirementSheet>();
-            var requirementCharacterLevel =
-                itemRequirementSheet.TryGetValue(consumableItemRow.Id, out var itemRequirementRow)
-                    ? itemRequirementRow.Level
-                    : 1;
-            var itemUsable = ItemFactory.CreateItemUsableV2(
-                2,
-                consumableItemRow,
-                itemId,
-                requiredBlockIndex,
-                requirementCharacterLevel);
+            var itemUsable = GetFood(consumableItemRow, itemId, requiredBlockIndex);
             // 액션 결과
             result.itemUsable = itemUsable;
             var mail = new CombinationMail(
@@ -227,6 +217,11 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}Combination Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetState(slotAddress, slotState.Serialize());
+        }
+
+        private static ItemUsable GetFood(ConsumableItemSheet.Row equipmentItemRow, Guid itemId, long ctxBlockIndex)
+        {
+            return ItemFactory.CreateItemUsable(equipmentItemRow, itemId, ctxBlockIndex);
         }
     }
 }

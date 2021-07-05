@@ -230,7 +230,12 @@ namespace Nekoyume.Action
                 row.Id > GameConfig.DefaultAvatarWeaponId))
             {
                 var itemId = random.GenerateRandomGuid();
-                avatarState.inventory.AddItem(ItemFactory.CreateItemUsable(row, itemId, default));
+                avatarState.inventory.AddItem(ItemFactory.CreateItemUsableV2(
+                    2,
+                    row,
+                    itemId,
+                    default,
+                    1));
             }
         }
 
@@ -251,7 +256,13 @@ namespace Nekoyume.Action
             }
 
             var itemId = random.GenerateRandomGuid();
-            var equipment = (Equipment)ItemFactory.CreateItemUsable(equipmentRow, itemId, 0, level);
+            var equipment = (Equipment)ItemFactory.CreateItemUsableV2(
+                2,
+                equipmentRow,
+                itemId,
+                0,
+                level,
+                1);
             var optionRows = new List<EquipmentItemOptionSheet.Row>();
             foreach (var optionId in optionIds)
             {
