@@ -239,6 +239,13 @@ namespace Lib9c.Tests.Action
             AssertException<InvalidTradableIdException>(exc);
         }
 
+        [Fact]
+        public void ActionObsoletedException_Serializable()
+        {
+            var exc = new ActionObsoletedException();
+            AssertException<ActionObsoletedException>(exc);
+        }
+
         private static void AssertException<T>(Exception exc)
             where T : Exception
         {
