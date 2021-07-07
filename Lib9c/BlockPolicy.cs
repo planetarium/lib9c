@@ -15,6 +15,8 @@ namespace Nekoyume.BlockChain
 {
     public class BlockPolicy : BlockPolicy<NCAction>
     {
+        // Approximately starting 2021.07.01
+        private readonly long _difficultyForkIndex = 1825600;
         private readonly long _minimumDifficulty;
         private readonly long _difficultyBoundDivisor;
         private AuthorizedMinersState _authorizedMinersState;
@@ -142,7 +144,7 @@ namespace Nekoyume.BlockChain
             DateTimeOffset prevTimestamp = prevBlock.Timestamp;
             TimeSpan timeDiff = prevTimestamp - beforePrevTimestamp;
             long timeDiffMilliseconds = (long)timeDiff.TotalMilliseconds;
-            const long minimumMultiplier = -99;
+            long minimumMultiplier = index > _difficultyForkIndex ? -1 : -99;
             long multiplier = 1 - timeDiffMilliseconds / (long)BlockInterval.TotalMilliseconds;
             multiplier = Math.Max(multiplier, minimumMultiplier);
 
