@@ -206,7 +206,7 @@ namespace Nekoyume.BlockChain
             // (For backward compatibility, blocks before 1,200,000th don't have to be proven.
             // Note that as of Feb 9, 2021, there are about 770,000+ blocks.)
             Transaction<NCAction>[] txs = block.Transactions.ToArray();
-            if (!txs.Any(tx => tx.Signer.Equals(miner) && !tx.Actions.Any()) &&
+            if (!(txs.First().Signer.Equals(miner) && !txs.First().Actions.Any()) &&
                 block.ProtocolVersion > 0 &&
                 (IgnoreHardcodedIndicesForBackwardCompatibility || block.Index > 1_200_000))
             {

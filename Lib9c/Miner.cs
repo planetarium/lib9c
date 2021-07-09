@@ -53,11 +53,12 @@ namespace Nekoyume.BlockChain
             {
                 if (AuthorizedMiner)
                 {
-                    _chain
+                    var txList = _chain
                         .GetStagedTransactionIds()
-                        .Select(txid => _chain.GetTransaction(txid)).ToList()
-                        .ForEach(tx => _chain.UnstageTransaction(tx));
+                        .Select(txid => _chain.GetTransaction(txid)).ToList();
+                    txList.ForEach(tx => _chain.UnstageTransaction(tx));
                     StageProofTransaction();
+                    txList.ForEach(tx => _chain.StageTransaction(tx));
                 }
 
                 block = await _chain.MineBlock(
