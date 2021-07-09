@@ -53,6 +53,8 @@ namespace Nekoyume.BlockChain
             {
                 if (AuthorizedMiner)
                 {
+                    //FIXME: Revise this code when `BlockChain` provides method StageTransactionInFront
+                    //which enqueues a transaction in front of the queue of the stage
                     var txList = _chain
                         .GetStagedTransactionIds()
                         .Select(txid => _chain.GetTransaction(txid)).ToList();

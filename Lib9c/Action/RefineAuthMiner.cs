@@ -14,15 +14,26 @@ namespace Nekoyume.Action
     public class RefineAuthMiner : ActionBase
     {
         private long _interval;
-        private ImmutableHashSet<Address> _miners;
+        private List<Address> _miners;
         private long _validUntil;
+
+        public RefineAuthMiner(
+            long interval,
+            long validUntil,
+            IEnumerable<Address> miners
+            )
+        {
+            _interval = interval;
+            _validUntil = validUntil;
+            _miners = miners.ToList();
+        }
 
         public override IValue PlainValue {
             get
             {
                 var values = new Dictionary<IKey, IValue>
                 {
-                    [(Text) nameof(_miners)] = new List(_miners.Select(m => m.Serialize())),
+                    [(Text) nameof(_miners)] = new List(_miners.OrderBy(m => m).Select(m => m.Serialize())),
                     [(Text) nameof(_interval)] = _interval.Serialize(),
                     [(Text) nameof(_validUntil)] = _validUntil.Serialize(),
                 };
@@ -34,7 +45,7 @@ namespace Nekoyume.Action
         public override void LoadPlainValue(IValue plainValue)
         {
             var asDict = (Dictionary) plainValue;
-            _miners = ((List)asDict[nameof(_miners)]).Select(v => v.ToAddress()).ToImmutableHashSet();
+            _miners = asDict[nameof(_miners)].ToList(m => m.ToAddress());
             _interval = asDict[nameof(_interval)].ToLong();
             _validUntil = asDict[nameof(_validUntil)].ToLong();
         }
@@ -42,12 +53,17 @@ namespace Nekoyume.Action
         public override IAccountStateDelta Execute(IActionContext context)
         {
             IAccountStateDelta state = context.PreviousStates;
+            if (context.Rehearsal)
+            {
+                return state
+                    .SetState(AuthorizedMinersState.Address, MarkChanged);
+            }
             CheckPermission(context);
 
-            var authMinersState = new AuthorizedMinersState(_miners, _interval, _validUntil);
+            var authMinersState = new AuthorizedMinersState(_miners.ToList(), _interval, _validUntil);
             
             return state.SetState(
-                ActivatedAccountsState.Address,
+                AuthorizedMinersState.Address,
                 authMinersState.Serialize()
             );
         }
