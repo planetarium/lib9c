@@ -10,35 +10,40 @@ using Nekoyume.TableData;
 namespace Nekoyume.Model.Item
 {
     [Serializable]
-    public class Equipment : ItemUsable, IEquippableItem
+    public class Equipment2 : ItemUsable2, IEquippableItem
     {
-        // FIXME: Whether the equipment is equipped or not has no asset value and must be removed from the state.
-        public bool equipped = false;
         public int level;
         public DecimalStat Stat { get; }
         public int SetId { get; }
         public string SpineResourcePath { get; }
         public StatType UniqueStatType => Stat.Type;
-        public bool Equipped => equipped;
+        
+        private bool _equipped = false;
+        public bool Equipped => _equipped;
 
         public decimal GetIncrementAmountOfEnhancement()
         {
             return Math.Max(1.0m, StatsMap.GetStat(UniqueStatType, true) * 0.1m);
         }
 
-        public Equipment(EquipmentItemSheet.Row data, Guid id, long requiredBlockIndex)
-            : base(data, id, requiredBlockIndex)
+        public Equipment2(
+            int serializedVersion,
+            EquipmentItemSheet.Row data,
+            Guid id,
+            long requiredBlockIndex,
+            int requiredCharacterLevel)
+            : base(serializedVersion, data, id, requiredBlockIndex, requiredCharacterLevel)
         {
             Stat = data.Stat;
             SetId = data.SetId;
             SpineResourcePath = data.SpineResourcePath;
         }
 
-        public Equipment(Dictionary serialized) : base(serialized)
+        public Equipment2(Dictionary serialized) : base(serialized)
         {
             if (serialized.TryGetValue((Text) "equipped", out var toEquipped))
             {
-                equipped = toEquipped.ToBoolean();
+                _equipped = toEquipped.ToBoolean();
             }
             if (serialized.TryGetValue((Text) "level", out var toLevel))
             {
@@ -63,9 +68,15 @@ namespace Nekoyume.Model.Item
             {
                 SpineResourcePath = (Text) spineResourcePath;
             }
+            
+            UpdateBaseOptionAndOtherOptions(
+                UniqueStatType,
+                StatsMap,
+                Skills,
+                BuffSkills);
         }
 
-        protected Equipment(SerializationInfo info, StreamingContext _)
+        protected Equipment2(SerializationInfo info, StreamingContext _)
             : this((Dictionary) Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
         {
         }
@@ -74,7 +85,7 @@ namespace Nekoyume.Model.Item
 #pragma warning disable LAA1002
             new Dictionary(new Dictionary<IKey, IValue>
             {
-                [(Text) "equipped"] = equipped.Serialize(),
+                [(Text) "equipped"] = _equipped.Serialize(),
                 [(Text) "level"] = level.Serialize(),
                 [(Text) "stat"] = Stat.Serialize(),
                 [(Text) "set_id"] = SetId.Serialize(),
@@ -85,12 +96,12 @@ namespace Nekoyume.Model.Item
 
         public void Equip()
         {
-            equipped = true;
+            _equipped = true;
         }
 
         public void Unequip()
         {
-            equipped = false;
+            _equipped = false;
         }
 
         // FIXME: 기본 스탯을 복리로 증가시키고 있는데, 단리로 증가시켜야 한다.
@@ -143,10 +154,10 @@ namespace Nekoyume.Model.Item
             }
         }
 
-        protected bool Equals(Equipment other)
+        protected bool Equals(Equipment2 other)
         {
             return base.Equals(other) &&
-                   equipped == other.equipped &&
+                   _equipped == other._equipped &&
                    level == other.level &&
                    Equals(Stat, other.Stat) &&
                    SetId == other.SetId &&
@@ -158,7 +169,7 @@ namespace Nekoyume.Model.Item
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Equipment) obj);
+            return Equals((Equipment2) obj);
         }
 
         public override int GetHashCode()
@@ -166,7 +177,7 @@ namespace Nekoyume.Model.Item
             unchecked
             {
                 int hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ equipped.GetHashCode();
+                hashCode = (hashCode * 397) ^ _equipped.GetHashCode();
                 hashCode = (hashCode * 397) ^ level;
                 hashCode = (hashCode * 397) ^ (Stat != null ? Stat.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ SetId;

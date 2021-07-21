@@ -23,6 +23,28 @@ namespace Nekoyume.Model.Item
             }
         }
 
+        public static ItemBase CreateItemV2(
+            int serializedVersion,
+            ItemSheet.Row row,
+            IRandom random,
+            int requiredCharacterLevel)
+        {
+            switch (row)
+            {
+                case CostumeItemSheet.Row costumeRow:
+                    return CreateCostume(costumeRow, random.GenerateRandomGuid());
+                case MaterialItemSheet.Row materialRow:
+                    return CreateMaterial(materialRow);
+                default:
+                    return CreateItemUsableV2(
+                        serializedVersion,
+                        row,
+                        random.GenerateRandomGuid(),
+                        0,
+                        requiredCharacterLevel);
+            }
+        }
+
         public static Costume CreateCostume(CostumeItemSheet.Row row, Guid itemId)
         {
             return new Costume(row, itemId);
@@ -40,11 +62,13 @@ namespace Nekoyume.Model.Item
         public static TradableMaterial CreateTradableMaterial(MaterialItemSheet.Row row)
             => new TradableMaterial(row);
 
-        public static ItemUsable CreateItemUsable(ItemSheet.Row itemRow, Guid id,
-            long requiredBlockIndex, int level = 0)
+        public static ItemUsable CreateItemUsable(
+            ItemSheet.Row itemRow,
+            Guid id,
+            long requiredBlockIndex,
+            int level = 0)
         {
             Equipment equipment = null;
-
             switch (itemRow.ItemSubType)
             {
                 // Consumable
@@ -71,12 +95,48 @@ namespace Nekoyume.Model.Item
                         itemRow.Id.ToString(CultureInfo.InvariantCulture));
             }
 
-            for (int i = 0; i < level; ++i)
+            for (var i = level; i > 0; i--)
             {
                 equipment.LevelUp();
             }
 
             return equipment;
+        }
+
+        public static ItemUsable2 CreateItemUsableV2(
+            int serializedVersion,
+            ItemSheet.Row itemRow,
+            Guid id,
+            long requiredBlockIndex,
+            int requiredCharacterLevel,
+            int enhancedLevel = 0)
+        {
+            switch (itemRow.ItemType)
+            {
+                case ItemType.Consumable:
+                    return new Consumable2(
+                        serializedVersion,
+                        (ConsumableItemSheet.Row) itemRow,
+                        id,
+                        requiredBlockIndex,
+                        requiredCharacterLevel);
+                case ItemType.Equipment:
+                    var equipment = new Equipment2(
+                        serializedVersion,
+                        (EquipmentItemSheet.Row) itemRow,
+                        id,
+                        requiredBlockIndex,
+                        requiredCharacterLevel);
+                    for (var i = enhancedLevel; i > 0; i--)
+                    {
+                        equipment.LevelUp();
+                    }
+
+                    return equipment;
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        itemRow.Id.ToString(CultureInfo.InvariantCulture));
+            }
         }
 
         public static ItemBase Deserialize(Dictionary serialized)
@@ -124,6 +184,7 @@ namespace Nekoyume.Model.Item
 
             throw new ArgumentException($"Can't Deserialize Item {serialized}");
         }
+        
         private static ItemSheet.Row DeserializeRow(Dictionary serialized)
         {
             var itemSubType =
