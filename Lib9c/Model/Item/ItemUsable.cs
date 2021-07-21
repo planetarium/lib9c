@@ -7,6 +7,7 @@ using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Model.Item
 {
@@ -68,15 +69,15 @@ namespace Nekoyume.Model.Item
             StatsMap = new StatsMap();
             Skills = new List<Model.Skill.Skill>();
             BuffSkills = new List<BuffSkill>();
-            if (serialized.TryGetValue((Text) "itemId", out var itemId))
+            if (serialized.TryGetValue((Text) LegacyItemIdKey, out var itemId))
             {
                 ItemId = itemId.ToGuid();
             }
-            if (serialized.TryGetValue((Text) "statsMap", out var statsMap))
+            if (serialized.TryGetValue((Text) LegacyStatsMapKey, out var statsMap))
             {
                 StatsMap.Deserialize((Dictionary) statsMap);
             }
-            if (serialized.TryGetValue((Text) "skills", out var skills))
+            if (serialized.TryGetValue((Text) LegacySkillsKey, out var skills))
             {
                 foreach (var value in (List) skills)
                 {
@@ -84,7 +85,7 @@ namespace Nekoyume.Model.Item
                     Skills.Add(SkillFactory.Deserialize(skill));
                 }
             }
-            if (serialized.TryGetValue((Text) "buffSkills", out var buffSkills))
+            if (serialized.TryGetValue((Text) LegacyBuffSkillsKey, out var buffSkills))
             {
                 foreach (var value in (List) buffSkills)
                 {
@@ -92,7 +93,7 @@ namespace Nekoyume.Model.Item
                     BuffSkills.Add((BuffSkill) SkillFactory.Deserialize(buffSkill));
                 }
             }
-            if (serialized.TryGetValue((Text) "requiredBlockIndex", out var requiredBlockIndex))
+            if (serialized.TryGetValue((Text) LegacyRequiredBlockIndexKey, out var requiredBlockIndex))
             {
                 RequiredBlockIndex = requiredBlockIndex.ToLong();
             }
@@ -140,17 +141,17 @@ namespace Nekoyume.Model.Item
 #pragma warning disable LAA1002
             new Dictionary(new Dictionary<IKey, IValue>
             {
-                [(Text) "itemId"] = ItemId.Serialize(),
-                [(Text) "statsMap"] = StatsMap.Serialize(),
-                [(Text) "skills"] = new List(Skills
+                [(Text) LegacyItemIdKey] = ItemId.Serialize(),
+                [(Text) LegacyStatsMapKey] = StatsMap.Serialize(),
+                [(Text) LegacySkillsKey] = new List(Skills
                     .OrderByDescending(i => i.Chance)
                     .ThenByDescending(i => i.Power)
                     .Select(s => s.Serialize())),
-                [(Text) "buffSkills"] = new List(BuffSkills
+                [(Text) LegacyBuffSkillsKey] = new List(BuffSkills
                     .OrderByDescending(i => i.Chance)
                     .ThenByDescending(i => i.Power)
                     .Select(s => s.Serialize())),
-                [(Text) "requiredBlockIndex"] = RequiredBlockIndex.Serialize(),
+                [(Text) LegacyRequiredBlockIndexKey] = RequiredBlockIndex.Serialize(),
             }.Union((Dictionary) base.Serialize()));
 #pragma warning restore LAA1002
     }
