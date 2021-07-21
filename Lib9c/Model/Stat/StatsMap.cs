@@ -2,20 +2,51 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Stat
 {
     // todo: `Stats`나 `StatModifier`로 대체되어야 함.
     [Serializable]
-    public class StatsMap : IStats, IBaseAndAdditionalStats, IState
+    public class StatsMap : IBaseAndAdditionalStats, IState
     {
         public int HP => HasHP ? _statMaps[StatType.HP].TotalValueAsInt : 0;
+
+        public decimal HPAsDecimal => HasHP
+            ? _statMaps[StatType.HP].Value + _statMaps[StatType.HP].AdditionalValue
+            : 0m;
+        
         public int ATK => HasATK ? _statMaps[StatType.ATK].TotalValueAsInt : 0;
+        
+        public decimal ATKAsDecimal => HasATK
+            ? _statMaps[StatType.ATK].Value + _statMaps[StatType.ATK].AdditionalValue
+            : 0m;
+        
         public int DEF => HasDEF ? _statMaps[StatType.DEF].TotalValueAsInt : 0;
+        
+        public decimal DEFAsDecimal => HasDEF
+            ? _statMaps[StatType.DEF].Value + _statMaps[StatType.DEF].AdditionalValue
+            : 0m;
+        
         public int CRI => HasCRI ? _statMaps[StatType.CRI].TotalValueAsInt : 0;
+        
+        public decimal CRIAsDecimal => HasCRI
+            ? _statMaps[StatType.CRI].TotalValue
+            : 0m;
+        
         public int HIT => HasHIT ? _statMaps[StatType.HIT].TotalValueAsInt : 0;
+        
+        public decimal HITAsDecimal => HasHIT
+            ? _statMaps[StatType.HIT].Value + _statMaps[StatType.HIT].AdditionalValue
+            : 0m;
+        
         public int SPD => HasSPD ? _statMaps[StatType.SPD].TotalValueAsInt : 0;
+        
+        public decimal SPDAsDecimal => HasSPD
+            ? _statMaps[StatType.SPD].Value + _statMaps[StatType.SPD].AdditionalValue
+            : 0m;
+        
 
         public bool HasHP => _statMaps.ContainsKey(StatType.HP) &&
                              (_statMaps[StatType.HP].HasValue || _statMaps[StatType.HP].HasAdditionalValue);
@@ -36,11 +67,17 @@ namespace Nekoyume.Model.Stat
                               (_statMaps[StatType.SPD].HasValue || _statMaps[StatType.SPD].HasAdditionalValue);
 
         public int BaseHP => HasBaseHP ? _statMaps[StatType.HP].ValueAsInt : 0;
+        public decimal BaseHPAsDecimal => HasBaseHP ? _statMaps[StatType.HP].Value : 0m;
         public int BaseATK => HasBaseATK ? _statMaps[StatType.ATK].ValueAsInt : 0;
+        public decimal BaseATKAsDecimal => HasBaseATK ? _statMaps[StatType.ATK].Value : 0m;
         public int BaseDEF => HasBaseDEF ? _statMaps[StatType.DEF].ValueAsInt : 0;
+        public decimal BaseDEFAsDecimal => HasBaseDEF ? _statMaps[StatType.DEF].Value : 0m;
         public int BaseCRI => HasBaseCRI ? _statMaps[StatType.CRI].ValueAsInt : 0;
+        public decimal BaseCRIAsDecimal => HasBaseCRI ? _statMaps[StatType.CRI].Value : 0m;
         public int BaseHIT => HasBaseHIT ? _statMaps[StatType.HIT].ValueAsInt : 0;
+        public decimal BaseHITAsDecimal => HasBaseHIT ? _statMaps[StatType.HIT].Value : 0m;
         public int BaseSPD => HasBaseSPD ? _statMaps[StatType.SPD].ValueAsInt : 0;
+        public decimal BaseSPDAsDecimal => HasBaseSPD ? _statMaps[StatType.SPD].Value : 0m;
 
         public bool HasBaseHP => _statMaps.ContainsKey(StatType.HP) && _statMaps[StatType.HP].HasValue;
         public bool HasBaseATK => _statMaps.ContainsKey(StatType.ATK) && _statMaps[StatType.ATK].HasValue;
@@ -50,11 +87,17 @@ namespace Nekoyume.Model.Stat
         public bool HasBaseSPD => _statMaps.ContainsKey(StatType.SPD) && _statMaps[StatType.SPD].HasValue;
 
         public int AdditionalHP => HasAdditionalHP ? _statMaps[StatType.HP].AdditionalValueAsInt : 0;
+        public decimal AdditionalHPAsDecimal => HasAdditionalHP ? _statMaps[StatType.HP].AdditionalValue : 0m;
         public int AdditionalATK => HasAdditionalATK ? _statMaps[StatType.ATK].AdditionalValueAsInt : 0;
+        public decimal AdditionalATKAsDecimal => HasAdditionalATK ? _statMaps[StatType.ATK].AdditionalValue : 0m;
         public int AdditionalDEF => HasAdditionalDEF ? _statMaps[StatType.DEF].AdditionalValueAsInt : 0;
+        public decimal AdditionalDEFAsDecimal => HasAdditionalDEF ? _statMaps[StatType.DEF].AdditionalValue : 0m;
         public int AdditionalCRI => HasAdditionalCRI ? _statMaps[StatType.CRI].AdditionalValueAsInt : 0;
+        public decimal AdditionalCRIAsDecimal => HasAdditionalCRI ? _statMaps[StatType.CRI].AdditionalValue : 0m;
         public int AdditionalHIT => HasAdditionalHIT ? _statMaps[StatType.HIT].AdditionalValueAsInt : 0;
+        public decimal AdditionalHITAsDecimal => HasAdditionalHIT ? _statMaps[StatType.HIT].AdditionalValue : 0m;
         public int AdditionalSPD => HasAdditionalSPD ? _statMaps[StatType.SPD].AdditionalValueAsInt : 0;
+        public decimal AdditionalSPDAsDecimal => HasAdditionalSPD ? _statMaps[StatType.SPD].AdditionalValue : 0m;
 
         public bool HasAdditionalHP => _statMaps.ContainsKey(StatType.HP) && _statMaps[StatType.HP].HasAdditionalValue;
 
@@ -73,15 +116,31 @@ namespace Nekoyume.Model.Stat
         public bool HasAdditionalSPD =>
             _statMaps.ContainsKey(StatType.SPD) && _statMaps[StatType.SPD].HasAdditionalValue;
 
-        public bool HasAdditionalStats => HasAdditionalHP || HasAdditionalATK || HasAdditionalDEF || HasAdditionalCRI ||
-                                          HasAdditionalHIT || HasAdditionalSPD;
+        public bool HasAdditionalStats => HasAdditionalHP ||
+                                          HasAdditionalATK ||
+                                          HasAdditionalDEF ||
+                                          HasAdditionalCRI ||
+                                          HasAdditionalHIT ||
+                                          HasAdditionalSPD;
 
         private readonly Dictionary<StatType, StatMapEx> _statMaps =
             new Dictionary<StatType, StatMapEx>(StatTypeComparer.Instance);
 
+        public void Clear()
+        {
+            _statMaps.Clear();
+        }
+
         protected bool Equals(StatsMap other)
         {
-            return Equals(_statMaps, other._statMaps);
+            if (_statMaps is null || other._statMaps is null)
+            {
+                return false;
+            }
+ 
+            var orderedStatMaps = _statMaps.OrderBy(pair => pair.Key, StatTypeComparer.Instance);
+            var otherOrderedStatMaps = other._statMaps.OrderBy(pair => pair.Key, StatTypeComparer.Instance);
+            return _statMaps.Count == other._statMaps.Count && !orderedStatMaps.Except(otherOrderedStatMaps).Any();
         }
 
         public override bool Equals(object obj)
@@ -89,12 +148,14 @@ namespace Nekoyume.Model.Stat
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((StatsMap)obj);
+            return Equals((StatsMap) obj);
         }
 
         public override int GetHashCode()
         {
-            return _statMaps != null ? _statMaps.GetHashCode() : 0;
+            return _statMaps != null
+                ? _statMaps.GetHashCode()
+                : 0;
         }
 
         public void AddStatValue(StatType key, decimal value)
@@ -107,6 +168,8 @@ namespace Nekoyume.Model.Stat
             _statMaps[key].Value += value;
             PostStatValueChanged(key);
         }
+
+        public void AddStatValue(StatOption statOption) => AddStatValue(statOption.StatType, statOption.statValue);
 
         public void AddStatAdditionalValue(StatType key, decimal additionalValue)
         {
@@ -123,6 +186,22 @@ namespace Nekoyume.Model.Stat
         {
             AddStatAdditionalValue(statModifier.StatType, statModifier.Value);
         }
+        
+        public void AddStatAdditionalValue(StatOption statOption)
+        {
+            AddStatAdditionalValue(statOption.StatType, statOption.statValue);
+        }
+
+        public void SetStatValue(StatType key, decimal value)
+        {
+            if (!_statMaps.ContainsKey(key))
+            {
+                _statMaps.Add(key, new StatMapEx(key));
+            }
+
+            _statMaps[key].Value = value;
+            PostStatValueChanged(key);
+        }
 
         public void SetStatAdditionalValue(StatType key, decimal additionalValue)
         {
@@ -138,12 +217,15 @@ namespace Nekoyume.Model.Stat
         private void PostStatValueChanged(StatType key)
         {
             if (!_statMaps.ContainsKey(key))
+            {
                 return;
+            }
 
             var statMap = _statMaps[key];
-            if (statMap.HasValue ||
-                statMap.HasAdditionalValue)
+            if (statMap.HasValue || statMap.HasAdditionalValue)
+            {
                 return;
+            }
 
             _statMaps.Remove(key);
         }
@@ -166,8 +248,8 @@ namespace Nekoyume.Model.Stat
             foreach (KeyValuePair<IKey, IValue> kv in serialized)
 #pragma warning restore LAA1002
             {
-                _statMaps[StatTypeExtension.Deserialize((Binary)kv.Key)] =
-                    new StatMapEx((Dictionary)kv.Value);
+                _statMaps[StatTypeExtension.Deserialize((Binary) kv.Key)] =
+                    new StatMapEx((Dictionary) kv.Value);
             }
         }
 
@@ -191,23 +273,82 @@ namespace Nekoyume.Model.Stat
                     throw new ArgumentOutOfRangeException(nameof(statType), statType, null);
             }
         }
+        
+        public decimal GetRawStat(StatType statType, bool ignoreAdditional = false)
+        {
+            switch (statType)
+            {
+                case StatType.HP:
+                    return ignoreAdditional ? BaseHPAsDecimal : HPAsDecimal;
+                case StatType.ATK:
+                    return ignoreAdditional ? BaseATKAsDecimal : ATKAsDecimal;
+                case StatType.DEF:
+                    return ignoreAdditional ? BaseDEFAsDecimal : DEFAsDecimal;
+                case StatType.CRI:
+                    return ignoreAdditional ? BaseCRIAsDecimal : CRIAsDecimal;
+                case StatType.HIT:
+                    return ignoreAdditional ? BaseHITAsDecimal : HITAsDecimal;
+                case StatType.SPD:
+                    return ignoreAdditional ? BaseSPDAsDecimal : SPDAsDecimal;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(statType), statType, null);
+            }
+        }
+        
+        public decimal GetAdditionalRawStat(StatType statType)
+        {
+            switch (statType)
+            {
+                case StatType.HP:
+                    return HP - BaseHPAsDecimal;
+                case StatType.ATK:
+                    return ATK - BaseATKAsDecimal;
+                case StatType.DEF:
+                    return DEF - BaseDEFAsDecimal;
+                case StatType.CRI:
+                    return CRIAsDecimal - BaseCRIAsDecimal;
+                case StatType.HIT:
+                    return HITAsDecimal - BaseHITAsDecimal;
+                case StatType.SPD:
+                    return SPDAsDecimal - BaseSPDAsDecimal;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(statType), statType, null);
+            }
+        }
 
-        public IEnumerable<(StatType statType, int value)> GetStats(bool ignoreZero = false)
+        public IEnumerable<(StatType statType, int value)> GetStats(bool ignoreZero = default)
         {
             if (ignoreZero)
             {
                 if (HasHP)
+                {
                     yield return (StatType.HP, HP);
+                }
+
                 if (HasATK)
+                {
                     yield return (StatType.ATK, ATK);
+                }
+
                 if (HasDEF)
+                {
                     yield return (StatType.DEF, DEF);
+                }
+
                 if (HasCRI)
+                {
                     yield return (StatType.CRI, CRI);
+                }
+
                 if (HasHIT)
+                {
                     yield return (StatType.HIT, HIT);
+                }
+
                 if (HasSPD)
+                {
                     yield return (StatType.SPD, SPD);
+                }
             }
             else
             {
@@ -220,79 +361,85 @@ namespace Nekoyume.Model.Stat
             }
         }
 
-        public IEnumerable<(StatType statType, int baseValue)> GetBaseStats(bool ignoreZero = false)
+        public IEnumerable<(StatType statType, decimal value)> GetRawStats(bool ignoreZero = default)
         {
             if (ignoreZero)
             {
-                if (HasBaseHP)
-                    yield return (StatType.HP, BaseHP);
-                if (HasBaseATK)
-                    yield return (StatType.ATK, BaseATK);
-                if (HasBaseDEF)
-                    yield return (StatType.DEF, BaseDEF);
-                if (HasBaseCRI)
-                    yield return (StatType.CRI, BaseCRI);
-                if (HasBaseHIT)
-                    yield return (StatType.HIT, BaseHIT);
-                if (HasBaseSPD)
-                    yield return (StatType.SPD, BaseSPD);
-            }
-            else
-            {
-                yield return (StatType.HP, BaseHP);
-                yield return (StatType.ATK, BaseATK);
-                yield return (StatType.DEF, BaseDEF);
-                yield return (StatType.CRI, BaseCRI);
-                yield return (StatType.HIT, BaseHIT);
-                yield return (StatType.SPD, BaseSPD);
-            }
-        }
+                if (HasHP)
+                {
+                    yield return (StatType.HP, HPAsDecimal);
+                }
 
-        public IEnumerable<(StatType statType, int additionalValue)> GetAdditionalStats(bool ignoreZero = false)
-        {
-            if (ignoreZero)
-            {
-                if (HasAdditionalHP)
-                    yield return (StatType.HP, AdditionalHP);
-                if (HasAdditionalATK)
-                    yield return (StatType.ATK, AdditionalATK);
-                if (HasAdditionalDEF)
-                    yield return (StatType.DEF, AdditionalDEF);
-                if (HasAdditionalCRI)
-                    yield return (StatType.CRI, AdditionalCRI);
-                if (HasAdditionalHIT)
-                    yield return (StatType.HIT, AdditionalHIT);
-                if (HasAdditionalSPD)
-                    yield return (StatType.SPD, AdditionalSPD);
+                if (HasATK)
+                {
+                    yield return (StatType.ATK, ATKAsDecimal);
+                }
+
+                if (HasDEF)
+                {
+                    yield return (StatType.DEF, DEFAsDecimal);
+                }
+
+                if (HasCRI)
+                {
+                    yield return (StatType.CRI, CRIAsDecimal);
+                }
+
+                if (HasHIT)
+                {
+                    yield return (StatType.HIT, HITAsDecimal);
+                }
+
+                if (HasSPD)
+                {
+                    yield return (StatType.SPD, SPDAsDecimal);
+                }
             }
             else
             {
-                yield return (StatType.HP, AdditionalHP);
-                yield return (StatType.ATK, AdditionalATK);
-                yield return (StatType.DEF, AdditionalDEF);
-                yield return (StatType.CRI, AdditionalCRI);
-                yield return (StatType.HIT, AdditionalHIT);
-                yield return (StatType.SPD, AdditionalSPD);
+                yield return (StatType.HP, HPAsDecimal);
+                yield return (StatType.ATK, ATKAsDecimal);
+                yield return (StatType.DEF, DEFAsDecimal);
+                yield return (StatType.CRI, CRIAsDecimal);
+                yield return (StatType.HIT, HITAsDecimal);
+                yield return (StatType.SPD, SPDAsDecimal);
             }
         }
 
         public IEnumerable<(StatType statType, int baseValue, int additionalValue)> GetBaseAndAdditionalStats(
-            bool ignoreZero = false)
+            bool ignoreZero = default)
         {
             if (ignoreZero)
             {
                 if (HasBaseHP || HasAdditionalHP)
+                {
                     yield return (StatType.HP, BaseHP, AdditionalHP);
+                }
+
                 if (HasBaseATK || HasAdditionalATK)
+                {
                     yield return (StatType.ATK, BaseATK, AdditionalATK);
+                }
+
                 if (HasBaseDEF || HasAdditionalDEF)
+                {
                     yield return (StatType.DEF, BaseDEF, AdditionalDEF);
+                }
+
                 if (HasBaseCRI || HasAdditionalCRI)
+                {
                     yield return (StatType.CRI, BaseCRI, AdditionalCRI);
+                }
+
                 if (HasBaseHIT || HasAdditionalHIT)
+                {
                     yield return (StatType.HIT, BaseHIT, AdditionalHIT);
+                }
+
                 if (HasBaseSPD || HasAdditionalSPD)
+                {
                     yield return (StatType.SPD, BaseSPD, AdditionalSPD);
+                }
             }
             else
             {
@@ -304,21 +451,84 @@ namespace Nekoyume.Model.Stat
                 yield return (StatType.SPD, BaseSPD, AdditionalSPD);
             }
         }
+        
+        public IEnumerable<(StatType statType, decimal baseValue, decimal additionalValue)> GetBaseAndAdditionalRawStats(
+            bool ignoreZero = default)
+        {
+            if (ignoreZero)
+            {
+                if (HasBaseHP || HasAdditionalHP)
+                {
+                    yield return (StatType.HP, BaseHPAsDecimal, AdditionalHPAsDecimal);
+                }
+
+                if (HasBaseATK || HasAdditionalATK)
+                {
+                    yield return (StatType.ATK, BaseATKAsDecimal, AdditionalATKAsDecimal);
+                }
+
+                if (HasBaseDEF || HasAdditionalDEF)
+                {
+                    yield return (StatType.DEF, BaseDEFAsDecimal, AdditionalDEFAsDecimal);
+                }
+
+                if (HasBaseCRI || HasAdditionalCRI)
+                {
+                    yield return (StatType.CRI, BaseCRIAsDecimal, AdditionalCRIAsDecimal);
+                }
+
+                if (HasBaseHIT || HasAdditionalHIT)
+                {
+                    yield return (StatType.HIT, BaseHITAsDecimal, AdditionalHITAsDecimal);
+                }
+
+                if (HasBaseSPD || HasAdditionalSPD)
+                {
+                    yield return (StatType.SPD, BaseSPDAsDecimal, AdditionalSPDAsDecimal);
+                }
+            }
+            else
+            {
+                yield return (StatType.HP, BaseHPAsDecimal, AdditionalHPAsDecimal);
+                yield return (StatType.ATK, BaseATKAsDecimal, AdditionalATKAsDecimal);
+                yield return (StatType.DEF, BaseDEFAsDecimal, AdditionalDEFAsDecimal);
+                yield return (StatType.CRI, BaseCRIAsDecimal, AdditionalCRIAsDecimal);
+                yield return (StatType.HIT, BaseHITAsDecimal, AdditionalHITAsDecimal);
+                yield return (StatType.SPD, BaseSPDAsDecimal, AdditionalSPDAsDecimal);
+            }
+        }
 
         public IEnumerable<StatMapEx> GetStats()
         {
             if (HasHP)
+            {
                 yield return _statMaps[StatType.HP];
+            }
+
             if (HasATK)
+            {
                 yield return _statMaps[StatType.ATK];
+            }
+
             if (HasDEF)
+            {
                 yield return _statMaps[StatType.DEF];
+            }
+
             if (HasCRI)
+            {
                 yield return _statMaps[StatType.CRI];
+            }
+
             if (HasHIT)
+            {
                 yield return _statMaps[StatType.HIT];
+            }
+
             if (HasSPD)
+            {
                 yield return _statMaps[StatType.SPD];
+            }
         }
 
         /// <summery>
@@ -328,17 +538,34 @@ namespace Nekoyume.Model.Stat
         public IEnumerable<StatMapEx> GetAdditionalStats()
         {
             if (HasAdditionalHP)
+            {
                 yield return _statMaps[StatType.HP];
+            }
+
             if (HasAdditionalATK)
+            {
                 yield return _statMaps[StatType.ATK];
+            }
+
             if (HasAdditionalDEF)
+            {
                 yield return _statMaps[StatType.DEF];
+            }
+
             if (HasAdditionalCRI)
+            {
                 yield return _statMaps[StatType.CRI];
+            }
+
             if (HasAdditionalHIT)
+            {
                 yield return _statMaps[StatType.HIT];
+            }
+
             if (HasAdditionalSPD)
+            {
                 yield return _statMaps[StatType.SPD];
+            }
         }
     }
 }

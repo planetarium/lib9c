@@ -11,9 +11,9 @@ namespace Nekoyume.Model.Stat
             Percentage
         }
 
-        public StatType StatType { get; }
-        public OperationType Operation { get; }
-        public int Value { get; private set; }
+        public readonly StatType StatType;
+        public readonly OperationType Operation;
+        public readonly int Value;
 
         public StatModifier(StatType statType, OperationType operation, int value)
         {
@@ -145,14 +145,5 @@ namespace Nekoyume.Model.Stat
             (Value >= 0 ? "+" : string.Empty) +
             Value +
             (Operation == OperationType.Percentage ? "%" : string.Empty);
-
-        #region PlayModeTest
-
-        public void SetForTest(int value)
-        {
-            Value = value;
-        }
-
-        #endregion
     }
 }

@@ -200,6 +200,42 @@ namespace Nekoyume.Model.State
 
         #endregion
 
+        #region IntStat
+
+        public static IValue Serialize(this IntStat value) =>
+            Dictionary.Empty
+                .Add("type", StatTypeExtension.Serialize(value.Type))
+                .Add("value", value.Value.Serialize());
+
+        public static IntStat ToIntStat(this IValue serialized) =>
+            ((Dictionary) serialized).ToIntStat();
+
+        public static IntStat ToIntStat(this Dictionary serialized) =>
+            new IntStat(
+                StatTypeExtension.Deserialize((Binary)serialized["type"]),
+                serialized["value"].ToInteger());
+
+        #endregion
+        
+        #region IntStatWithCurrent
+
+        public static IValue Serialize(this IntStatWithCurrent value) =>
+            Dictionary.Empty
+                .Add("type", StatTypeExtension.Serialize(value.Type))
+                .Add("value", value.Value.Serialize())
+                .Add("current", value.Current.Serialize());
+
+        public static IntStatWithCurrent ToIntStatWithCurrent(this IValue serialized) =>
+            ((Dictionary) serialized).ToIntStatWithCurrent();
+
+        public static IntStatWithCurrent ToIntStatWithCurrent(this Dictionary serialized) =>
+            new IntStatWithCurrent(
+                StatTypeExtension.Deserialize((Binary)serialized["type"]),
+                serialized["value"].ToInteger(),
+                serialized["current"].ToInteger());
+
+        #endregion
+        
         #region DecimalStat
 
         public static IValue Serialize(this DecimalStat decimalStat) =>
@@ -214,6 +250,25 @@ namespace Nekoyume.Model.State
             new DecimalStat(
                 StatTypeExtension.Deserialize((Binary)serialized["type"]),
                 serialized["value"].ToDecimal());
+
+        #endregion
+        
+        #region EnhancedDecimalStat
+
+        public static IValue Serialize(this EnhancedDecimalStat value) =>
+            Dictionary.Empty
+                .Add("type", StatTypeExtension.Serialize(value.Type))
+                .Add("base-value", value.BaseValue.Serialize())
+                .Add("enhanced-value", value.enhancedValue.Serialize());
+
+        public static EnhancedDecimalStat ToEnhancedDecimalStat(this IValue serialized) =>
+            ((Dictionary) serialized).ToEnhancedDecimalStat();
+
+        public static EnhancedDecimalStat ToEnhancedDecimalStat(this Dictionary serialized) =>
+            new EnhancedDecimalStat(
+                StatTypeExtension.Deserialize((Binary)serialized["type"]),
+                serialized["base-value"].ToDecimal(),
+                serialized["enhanced-value"].ToDecimal());
 
         #endregion
 
