@@ -2,6 +2,8 @@ namespace Lib9c
 {
     public static class SerializeKeys
     {
+        public const string BaseKey = "b";
+        
         // ShopItem
         public const string ExpiredBlockIndexKey = "ebi";
         public const string SellerAgentAddressKey = "sga";
