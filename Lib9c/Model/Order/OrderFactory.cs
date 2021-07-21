@@ -68,6 +68,5 @@ namespace Lib9c.Model.Order
                 ? (Order) new FungibleOrder(dictionary)
                 : new NonFungibleOrder(dictionary);
         }
-
     }
 }

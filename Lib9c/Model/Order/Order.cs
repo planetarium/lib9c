@@ -4,7 +4,6 @@ using Libplanet;
 using Libplanet.Assets;
 using Nekoyume;
 using Nekoyume.Action;
-using Nekoyume.Battle;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
