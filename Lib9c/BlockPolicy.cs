@@ -21,7 +21,7 @@ namespace Nekoyume.BlockChain
             new Dictionary<long, HashAlgorithmType>
             {
                 [0] = HashAlgorithmType.Of<SHA256>(),
-                [1_900_000] = HashAlgorithmType.Of<RandomX>(),
+                [2_175_000] = HashAlgorithmType.Of<RandomX>(),
             };
         private readonly long _minimumDifficulty;
         private readonly long _difficultyBoundDivisor;
