@@ -155,42 +155,42 @@ namespace Lib9c.Tests.Action
             IAccountStateDelta delta;
 
             // 제너시스에 받아야 할 돈들 검사
-            delta = action.GenesisGoldDistribution(ctx, _baseState);
+            delta = action.GenesisGoldDistribution(ctx, _baseState, currency);
             Assert.Equal(currency * 99999000000, delta.GetBalance(fund, currency));
             Assert.Equal(currency * 1000000, delta.GetBalance(address1, currency));
             Assert.Equal(currency * 0, delta.GetBalance(address2, currency));
 
             // 1번 블록에 받아야 할 것들 검사
             ctx.BlockIndex = 1;
-            delta = action.GenesisGoldDistribution(ctx, _baseState);
+            delta = action.GenesisGoldDistribution(ctx, _baseState, currency);
             Assert.Equal(currency * 99999999900, delta.GetBalance(fund, currency));
             Assert.Equal(currency * 100, delta.GetBalance(address1, currency));
             Assert.Equal(currency * 0, delta.GetBalance(address2, currency));
 
             // 3599번 블록에 받아야 할 것들 검사
             ctx.BlockIndex = 3599;
-            delta = action.GenesisGoldDistribution(ctx, _baseState);
+            delta = action.GenesisGoldDistribution(ctx, _baseState, currency);
             Assert.Equal(currency * 99999999900, delta.GetBalance(fund, currency));
             Assert.Equal(currency * 100, delta.GetBalance(address1, currency));
             Assert.Equal(currency * 0, delta.GetBalance(address2, currency));
 
             // 3600번 블록에 받아야 할 것들 검사
             ctx.BlockIndex = 3600;
-            delta = action.GenesisGoldDistribution(ctx, _baseState);
+            delta = action.GenesisGoldDistribution(ctx, _baseState, currency);
             Assert.Equal(currency * 99999996900, delta.GetBalance(fund, currency));
             Assert.Equal(currency * 100, delta.GetBalance(address1, currency));
             Assert.Equal(currency * 3000, delta.GetBalance(address2, currency));
 
             // 13600번 블록에 받아야 할 것들 검사
             ctx.BlockIndex = 13600;
-            delta = action.GenesisGoldDistribution(ctx, _baseState);
+            delta = action.GenesisGoldDistribution(ctx, _baseState, currency);
             Assert.Equal(currency * 99999996900, delta.GetBalance(fund, currency));
             Assert.Equal(currency * 100, delta.GetBalance(address1, currency));
             Assert.Equal(currency * 3000, delta.GetBalance(address2, currency));
 
             // 13601번 블록에 받아야 할 것들 검사
             ctx.BlockIndex = 13601;
-            delta = action.GenesisGoldDistribution(ctx, _baseState);
+            delta = action.GenesisGoldDistribution(ctx, _baseState, currency);
             Assert.Equal(currency * 99999999900, delta.GetBalance(fund, currency));
             Assert.Equal(currency * 100, delta.GetBalance(address1, currency));
             Assert.Equal(currency * 0, delta.GetBalance(address2, currency));
@@ -200,7 +200,7 @@ namespace Lib9c.Tests.Action
             ctx.BlockIndex = 2;
             Assert.Throws<InsufficientBalanceException>(() =>
             {
-                delta = action.GenesisGoldDistribution(ctx, _baseState);
+                delta = action.GenesisGoldDistribution(ctx, _baseState, currency);
             });
             Assert.Equal(currency * 99999999900, delta.GetBalance(fund, currency));
             Assert.Equal(currency * 100, delta.GetBalance(address1, currency));
@@ -224,7 +224,7 @@ namespace Lib9c.Tests.Action
             void AssertMinerReward(int blockIndex, string expected)
             {
                 ctx.BlockIndex = blockIndex;
-                IAccountStateDelta delta = action.MinerReward(ctx, _baseState);
+                IAccountStateDelta delta = action.MinerReward(ctx, _baseState, currency);
                 Assert.Equal(FungibleAssetValue.Parse(currency, expected), delta.GetBalance(miner, currency));
             }
 
