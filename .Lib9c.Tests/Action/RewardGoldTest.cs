@@ -2,6 +2,7 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Linq;
+    using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Assets;
@@ -125,6 +126,99 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(updateNext, currentWeeklyState.Ended);
                 Assert.Contains(_avatarState.address, currentWeeklyState);
                 Assert.Equal(updateNext, nextWeeklyState.ContainsKey(_avatarState.address));
+            }
+        }
+
+        [Theory]
+        [InlineData(false, false, false)]
+        [InlineData(true, false, false)]
+        [InlineData(true, true, false)]
+        [InlineData(true, false, true)]
+        public void WeeklyArenaRankingBoard3(bool migrationFinished, bool resetCount, bool updateNext)
+        {
+            var gameConfigState = new GameConfigState();
+            gameConfigState.Set(_tableSheets.GameConfigSheet);
+            var state = _baseState
+                .SetState(gameConfigState.address, gameConfigState.Serialize());
+
+            var blockIndex = 0;
+
+            var action = new RewardGold();
+
+            if (!migrationFinished)
+            {
+                var ctx = new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousStates = state,
+                    Miner = default,
+                };
+
+                Assert.Throws<MigrationNotFinishedException>(() => action.WeeklyArenaRankingBoard3(ctx, state));
+            }
+            else
+            {
+                var weekly = new WeeklyArenaState2(0);
+                weekly.Update(_avatarState.address);
+                var infoAddress = weekly.address.Derive(_avatarState.address.ToHex());
+                var info = new ArenaInfo2(_avatarState, _tableSheets.CharacterSheet, _tableSheets.CostumeStatSheet, true);
+
+                if (resetCount)
+                {
+                    blockIndex = gameConfigState.DailyArenaInterval;
+                    info.Update(_avatarState, info, BattleLog.Result.Win);
+                    Assert.Equal(4, info.DailyChallengeCount);
+                }
+
+                if (updateNext)
+                {
+                    info.Activate();
+                    blockIndex = gameConfigState.WeeklyArenaInterval;
+                    // Avoid NRE in test case.
+                    var nextWeekly = new WeeklyArenaState2(1);
+                    state = state
+                        .SetState(nextWeekly.address, nextWeekly.Serialize());
+                }
+
+                state = state
+                    .SetState(weekly.address, weekly.Serialize())
+                    .SetState(infoAddress, info.Serialize());
+
+                var ctx = new ActionContext()
+                {
+                    BlockIndex = blockIndex,
+                    PreviousStates = state,
+                    Miner = default,
+                };
+
+                Assert.False(weekly.Ended);
+
+                var nextState = action.WeeklyArenaRankingBoard3(ctx, state);
+                var currentWeeklyState = nextState.GetWeeklyArenaState2(0);
+                var nextWeeklyState = nextState.GetWeeklyArenaState2(1);
+
+                var nextInfo = new ArenaInfo2((List)nextState.GetState(infoAddress));
+
+                Assert.Contains(WeeklyArenaState2.DeriveAddress(0), nextState.UpdatedAddresses);
+                Assert.Contains(WeeklyArenaState2.DeriveAddress(1), nextState.UpdatedAddresses);
+
+                if (updateNext)
+                {
+                    Assert.Contains(WeeklyArenaState2.DeriveAddress(2), nextState.UpdatedAddresses);
+                    Assert.Equal(blockIndex, nextWeeklyState.ResetIndex);
+                }
+
+                if (resetCount)
+                {
+                    var expectedCount = updateNext ? 4 : 5;
+                    var expectedIndex = updateNext ? 0 : blockIndex;
+                    Assert.Equal(expectedCount, nextInfo.DailyChallengeCount);
+                    Assert.Equal(expectedIndex, currentWeeklyState.ResetIndex);
+                }
+
+                Assert.Equal(updateNext, currentWeeklyState.Ended);
+                Assert.Contains(_avatarState.address, currentWeeklyState.AvatarAddresses);
+                Assert.Equal(updateNext, nextWeeklyState.AvatarAddresses.Contains(_avatarState.address));
             }
         }
 

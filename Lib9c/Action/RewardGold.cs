@@ -25,7 +25,15 @@ namespace Nekoyume.Action
         {
             var states = context.PreviousStates;
             states = GenesisGoldDistribution(context, states);
-            states = WeeklyArenaRankingBoard2(context, states);
+            try
+            {
+                states = WeeklyArenaRankingBoard3(context, states);
+            }
+            catch (MigrationNotFinishedException)
+            {
+                //backward
+                states = WeeklyArenaRankingBoard2(context, states);
+            }
             return MinerReward(context, states);
         }
 
@@ -134,6 +142,66 @@ namespace Nekoyume.Action
                 states = states.SetState(weeklyAddress, weekly.Serialize());
             }
             return states;
+        }
+
+        public IAccountStateDelta WeeklyArenaRankingBoard3(IActionContext ctx, IAccountStateDelta states)
+        {
+            var gameConfigState = states.GetGameConfigState();
+            var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
+            var weeklyAddress = WeeklyArenaState2.DeriveAddress(index);
+            var weekly = states.GetWeeklyArenaState2(weeklyAddress);
+            if (weekly is null)
+            {
+                throw new MigrationNotFinishedException("Run migration first.");
+            }
+            var nextIndex = index + 1;
+            var nextWeekly = states.GetWeeklyArenaState2(nextIndex);
+            if (nextWeekly is null)
+            {
+                nextWeekly = new WeeklyArenaState2(nextIndex);
+                states = states.SetState(nextWeekly.address, nextWeekly.Serialize());
+            }
+
+            // Beginning block of a new weekly arena.
+            if (ctx.BlockIndex % gameConfigState.WeeklyArenaInterval == 0 && index > 0)
+            {
+                var prevWeeklyAddress = WeeklyArenaState2.DeriveAddress(index - 1);
+                var prevWeekly = states.GetWeeklyArenaState2(index - 1);
+                if (!prevWeekly.Ended)
+                {
+                    prevWeekly.End();
+                    foreach (var avatarAddress in prevWeekly.AvatarAddresses)
+                    {
+                        var avatarAddressHex = avatarAddress.ToHex();
+                        var prevInfoAddress = prevWeeklyAddress.Derive(avatarAddressHex);
+                        var info = new ArenaInfo2((List)states.GetState(prevInfoAddress));
+                        if (info.Active)
+                        {
+                            var infoAddress = weeklyAddress.Derive(avatarAddressHex);
+                            states = states.SetState(infoAddress, info.Serialize());
+                            weekly.Update(avatarAddress);
+                        }
+                    }
+                    weekly.Update(ctx.BlockIndex);
+
+                    states = states.SetState(prevWeeklyAddress, prevWeekly.Serialize());
+                    states = states.SetState(weeklyAddress, weekly.Serialize());
+                }
+            }
+            else if (ctx.BlockIndex - weekly.ResetIndex >= gameConfigState.DailyArenaInterval)
+            {
+                foreach (var avatarAddress in weekly.AvatarAddresses)
+                {
+                    var infoAddress = weeklyAddress.Derive(avatarAddress.ToHex());
+                    var info = new ArenaInfo2((List)states.GetState(infoAddress));
+                    info.ResetCount();
+                    states = states.SetState(infoAddress, info.Serialize());
+                }
+                weekly.Update(ctx.BlockIndex);
+                states = states.SetState(weeklyAddress, weekly.Serialize());
+            }
+            return states;
+
         }
 
         public IAccountStateDelta MinerReward(IActionContext ctx, IAccountStateDelta states)

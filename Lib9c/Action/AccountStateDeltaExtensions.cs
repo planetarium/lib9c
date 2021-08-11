@@ -355,6 +355,38 @@ namespace Nekoyume.Action
             return GetWeeklyArenaState(states, address);
         }
 
+        public static WeeklyArenaState2 GetWeeklyArenaState2(this IAccountStateDelta states, Address address)
+        {
+            var iValue = states.GetState(address);
+            if (iValue is null)
+            {
+                Log.Warning("No weekly arena state ({0})", address.ToHex());
+                return null;
+            }
+
+            try
+            {
+                return new WeeklyArenaState2((List)iValue);
+            }
+            catch (InvalidCastException e)
+            {
+                Log.Error(
+                    e,
+                    "Invalid weekly arena state ({0}): {1}",
+                    address.ToHex(),
+                    iValue
+                );
+
+                return null;
+            }
+        }
+
+        public static WeeklyArenaState2 GetWeeklyArenaState2(this IAccountStateDelta states, int index)
+        {
+            var address = WeeklyArenaState2.DeriveAddress(index);
+            return GetWeeklyArenaState2(states, address);
+        }
+
         public static CombinationSlotState GetCombinationSlotState(this IAccountStateDelta states,
             Address avatarAddress, int index)
         {
