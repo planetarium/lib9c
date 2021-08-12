@@ -83,6 +83,7 @@ namespace Lib9c.Tools.SubCommand
                         nameof(AddRedeemCode) => new AddRedeemCode(),
                         nameof(Nekoyume.Action.MigrationLegacyShop) => new MigrationLegacyShop(),
                         nameof(Nekoyume.Action.MigrationActivatedAccountsState) => new MigrationActivatedAccountsState(),
+                        nameof(Nekoyume.Action.MigrationWeeklyArenaState) => new MigrationWeeklyArenaState(),
                         _ => throw new CommandExitedException($"Can't determine given action type: {type}", 128),
                     };
                     action.LoadPlainValue(plainValue);
@@ -169,6 +170,22 @@ namespace Lib9c.Tools.SubCommand
                 new IValue[]
                 {
                     (Text) nameof(Nekoyume.Action.MigrationActivatedAccountsState),
+                    action.PlainValue
+                }
+            );
+
+            byte[] raw = _codec.Encode(bencoded);
+            Console.WriteLine(ByteUtil.Hex(raw));
+        }
+
+        [Command(Description = "Create MigrationWeeklyArenaState action and dump it.")]
+        public void MigrationWeeklyArenaState()
+        {
+            var action = new MigrationWeeklyArenaState();
+            var bencoded = new List(
+                new IValue[]
+                {
+                    (Text) nameof(Nekoyume.Action.MigrationWeeklyArenaState),
                     action.PlainValue
                 }
             );
