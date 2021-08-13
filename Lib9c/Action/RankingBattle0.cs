@@ -16,7 +16,7 @@ using Serilog;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionObsolete(2100000)]
+    [ActionObsolete(2200000)]
     [ActionType("ranking_battle")]
     public class RankingBattle0 : GameAction
     {
@@ -44,7 +44,7 @@ namespace Nekoyume.Action
                     .MarkBalanceChanged(GoldCurrencyMock, ctx.Signer, WeeklyArenaAddress);
             }
 
-            CheckObsolete(2100000, context);
+            CheckObsolete(2200000, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress, EnemyAddress);
 

@@ -8,7 +8,7 @@ using Nekoyume.Model.State;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionObsolete(2100000)]
+    [ActionObsolete(2200000)]
     [ActionType("add_activated_account")]
     public class AddActivatedAccount0 : ActionBase
     {
@@ -46,7 +46,7 @@ namespace Nekoyume.Action
                 throw new ActivatedAccountsDoesNotExistsException();
             }
 
-            CheckObsolete(2100000, context);
+            CheckObsolete(2200000, context);
             CheckPermission(context);
 
             var accounts = new ActivatedAccountsState(accountsAsDict);

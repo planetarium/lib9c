@@ -14,7 +14,7 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionObsolete(2100000)]
+    [ActionObsolete(2200000)]
     [ActionType("claim_monster_collection_reward")]
     public class ClaimMonsterCollectionReward0 : GameAction
     {
@@ -33,7 +33,7 @@ namespace Nekoyume.Action
                     .SetState(collectionAddress, MarkChanged);
             }
 
-            CheckObsolete(2100000, context);
+            CheckObsolete(2200000, context);
 
             if (!states.TryGetAgentAvatarStates(context.Signer, avatarAddress, out AgentState agentState, out AvatarState avatarState))
             {
