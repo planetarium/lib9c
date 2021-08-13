@@ -26,6 +26,7 @@ namespace Nekoyume.BlockChain
     public class BlockPolicySource
     {
         public const int DifficultyBoundDivisor = 2048;
+        public const long ActionObsoleteIndex = 2100000;
 
         // Note: The heaviest block of 9c-main (except for the genesis) weighs 58,408 B (58 KiB).
         public const int MaxBlockBytes = 1024 * 100; // 100 KiB
