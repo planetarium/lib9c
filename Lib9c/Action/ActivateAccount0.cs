@@ -9,7 +9,7 @@ using Serilog;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionObsolete(2200000)]
+    [ActionObsolete(2100000)]
     [ActionType("activate_account")]
     public class ActivateAccount0 : ActionBase, IActivateAction
     {
@@ -47,7 +47,7 @@ namespace Nekoyume.Action
                     .SetState(PendingAddress, MarkChanged);
             }
 
-            CheckObsolete(2200000, context);
+            CheckObsolete(2100000, context);
 
             if (!state.TryGetState(ActivatedAccountsState.Address, out Dictionary accountsAsDict))
             {
