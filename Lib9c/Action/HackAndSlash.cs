@@ -16,7 +16,7 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("hack_and_slash7")]
+    [ActionType("hack_and_slash8")]
     public class HackAndSlash : GameAction
     {
         public List<Guid> costumes;
@@ -166,7 +166,7 @@ namespace Nekoyume.Action
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Unequip items: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
-            
+
             // Update QuestList only when QuestSheet.Count is greater than QuestList.Count
             var questList = avatarState.questList;
             var questSheet = states.GetQuestSheet();
@@ -179,11 +179,11 @@ namespace Nekoyume.Action
                     states.GetSheet<QuestItemRewardSheet>(),
                     states.GetSheet<EquipmentItemRecipeSheet>());
             }
-            
+
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Update QuestList: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
-            
+
             var characterSheet = states.GetSheet<CharacterSheet>();
             var simulator = new StageSimulator(
                 ctx.Random,
@@ -199,7 +199,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}HAS Initialize Simulator: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
-            simulator.SimulateV3();
+            simulator.Simulate();
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Simulator.SimulateV2(): {Elapsed}", addressesHex, sw.Elapsed);
 
@@ -231,14 +231,14 @@ namespace Nekoyume.Action
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS ClearStage: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
-            
+
             avatarState.Update(simulator);
 
             var materialSheet = states.GetSheet<MaterialItemSheet>();
             avatarState.UpdateQuestRewards(materialSheet);
 
             avatarState.updatedAt = ctx.BlockIndex;
-            avatarState.mailBox.CleanUpV2();
+            avatarState.mailBox.CleanUp();
             states = states
                 .SetState(avatarAddress, avatarState.SerializeV2())
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())

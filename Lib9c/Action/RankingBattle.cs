@@ -17,7 +17,7 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("ranking_battle5")]
+    [ActionType("ranking_battle6")]
     public class RankingBattle : GameAction
     {
         public const int StageId = 999999;
@@ -185,7 +185,7 @@ namespace Nekoyume.Action
                 weeklyArenaState[EnemyAddress],
                 costumeStatSheet);
 
-            simulator.SimulateV2();
+            simulator.Simulate();
 
             sw.Stop();
             Log.Verbose(
