@@ -2,6 +2,7 @@ using Libplanet.Blockchain;
 using Nekoyume.Model.State;
 using System;
 using System.Collections.Generic;
+using Libplanet.Blocks;
 
 namespace Lib9c
 {
@@ -33,8 +34,8 @@ namespace Lib9c
         {
             if (AuthorizedMinersState is AuthorizedMinersState authorizedMinersState)
             {
-                long xIndex = x.BlockExcerpt.Index;
-                long yIndex = y.BlockExcerpt.Index;
+                long xIndex = x.Index;
+                long yIndex = y.Index;
                 if (xIndex <= authorizedMinersState.ValidUntil ||
                     yIndex <= authorizedMinersState.ValidUntil)
                 {
