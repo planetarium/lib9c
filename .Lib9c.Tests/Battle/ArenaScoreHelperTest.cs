@@ -10,9 +10,6 @@ namespace Lib9c.Tests
         [Fact]
         public void GetScore()
         {
-            var challengerRating = 10000;
-            var defenderRating = 9000;
-            
             Assert.Equal(ArenaScoreHelper.GetScore(10000, 11000, BattleLog.Result.Win), 60);
             Assert.Equal(ArenaScoreHelper.GetScore(10000, 11000, BattleLog.Result.Lose), -30);
             
