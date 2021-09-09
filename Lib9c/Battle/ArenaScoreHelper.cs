@@ -47,7 +47,7 @@ namespace Nekoyume.Battle
             var differ = challengerRating - defenderRating;
             if (differ < 0)
             {
-                foreach (var pair in CachedScore.Where(pair => pair.Key < 0).OrderBy(kv => kv.Key))
+                foreach (var pair in CachedScore.Where(pair => pair.Key < 0).OrderByDescending(kv => kv.Key))
                 {
                     if (differ < pair.Key)
                     {
