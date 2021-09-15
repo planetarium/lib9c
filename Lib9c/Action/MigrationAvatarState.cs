@@ -21,7 +21,7 @@ namespace Nekoyume.Action
                 return states;
             }
 
-            CheckPermission(context);
+            // CheckPermission(context);
 
             foreach (var rawAvatar in avatarStates)
             {
