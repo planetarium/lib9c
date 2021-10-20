@@ -6,6 +6,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -15,8 +16,9 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("combination_consumable9")]
-    public class CombinationConsumable : GameAction
+    [ActionObsolete(BlockPolicySource.V100082ObsoleteIndex)]
+    [ActionType("combination_consumable8")]
+    public class CombinationConsumable8 : GameAction
     {
         public const string AvatarAddressKey = "a";
         public Address avatarAddress;
@@ -65,6 +67,8 @@ namespace Nekoyume.Action
                     .SetState(questListAddress, MarkChanged)
                     .SetState(slotAddress, MarkChanged);
             }
+
+            CheckObsolete(BlockPolicySource.V100082ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
@@ -219,16 +223,7 @@ namespace Nekoyume.Action
                 context.BlockIndex,
                 mailId,
                 endBlockIndex);
-            var mailIdsThatShouldRemain = Enumerable.Range(0, 4)
-                .Where(index => index != slotIndex)
-                .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(avatarAddress, slotIndex))
-                .Where(slotStateValue =>
-                    slotStateValue["unlockBlockIndex"].ToLong() < context.BlockIndex &&
-                    slotStateValue.ContainsKey("result") &&
-                    ((Bencodex.Types.Dictionary)slotStateValue["result"]).ContainsKey("id"))
-                .Select(slotStateValue => ((Bencodex.Types.Dictionary)slotStateValue["result"])["id"].ToGuid())
-                .ToArray();
-            avatarState.Update(mail, mailIdsThatShouldRemain);
+            avatarState.UpdateV3(mail);
             // ~Create Mail
 
             return states
