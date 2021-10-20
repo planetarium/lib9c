@@ -8,6 +8,7 @@ using System.Numerics;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
@@ -20,8 +21,9 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
+    [ActionObsolete(BlockPolicySource.V100082ObsoleteIndex)]
     [ActionType("item_enhancement9")]
-    public class ItemEnhancement : GameAction
+    public class ItemEnhancement9 : GameAction
     {
         public static readonly Address BlacksmithAddress = Addresses.Blacksmith;
 
@@ -29,6 +31,49 @@ namespace Nekoyume.Action
         public Guid materialId;
         public Address avatarAddress;
         public int slotIndex;
+
+        [Serializable]
+        public class ResultModel : AttachmentActionResult
+        {
+            protected override string TypeId => "item_enhancement9.result";
+            public Guid id;
+            public IEnumerable<Guid> materialItemIdList;
+            public BigInteger gold;
+            public int actionPoint;
+            public EnhancementResult enhancementResult;
+            public ItemUsable preItemUsable;
+
+            public ResultModel()
+            {
+            }
+
+            public ResultModel(Dictionary serialized) : base(serialized)
+            {
+                id = serialized["id"].ToGuid();
+                materialItemIdList = serialized["materialItemIdList"].ToList(StateExtensions.ToGuid);
+                gold = serialized["gold"].ToBigInteger();
+                actionPoint = serialized["actionPoint"].ToInteger();
+                enhancementResult = serialized["enhancementResult"].ToEnum<EnhancementResult>();
+                preItemUsable = serialized.ContainsKey("preItemUsable")
+                    ? (ItemUsable) ItemFactory.Deserialize((Dictionary) serialized["preItemUsable"])
+                    : null;
+            }
+
+            public override IValue Serialize() =>
+#pragma warning disable LAA1002
+                new Dictionary(new Dictionary<IKey, IValue>
+                {
+                    [(Text) "id"] = id.Serialize(),
+                    [(Text) "materialItemIdList"] = materialItemIdList
+                        .OrderBy(i => i)
+                        .Select(g => g.Serialize()).Serialize(),
+                    [(Text) "gold"] = gold.Serialize(),
+                    [(Text) "actionPoint"] = actionPoint.Serialize(),
+                    [(Text) "enhancementResult"] = enhancementResult.Serialize(),
+                    [(Text) "preItemUsable"] = preItemUsable.Serialize(),
+                }.Union((Dictionary) base.Serialize()));
+#pragma warning restore LAA1002
+        }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {
@@ -81,6 +126,8 @@ namespace Nekoyume.Action
                     .SetState(questListAddress, MarkChanged)
                     .SetState(slotAddress, MarkChanged);
             }
+
+            CheckObsolete(BlockPolicySource.V100082ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
@@ -239,10 +286,8 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}ItemEnhancement Upgrade Equipment: {Elapsed}", addressesHex, sw.Elapsed);
 
             // Send scheduled mail
-            var mailId = context.Random.GenerateRandomGuid();
-            var result = new ItemEnhancement9.ResultModel
+            var result = new ResultModel
             {
-                id = mailId,
                 preItemUsable = preItemUsable,
                 itemUsable = enhancementEquipment,
                 materialItemIdList = new[] { materialId },
@@ -251,19 +296,10 @@ namespace Nekoyume.Action
                 gold = requiredNcg,
             };
 
-            var mail = new ItemEnhanceMail(result, ctx.BlockIndex, mailId, requiredBlockIndex);
-            var mailIdsThatShouldRemain = Enumerable.Range(0, 4)
-                .Where(index => index != slotIndex)
-                .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(avatarAddress, slotIndex))
-                .Where(slotStateValue =>
-                    slotStateValue["unlockBlockIndex"].ToLong() < context.BlockIndex &&
-                    slotStateValue.ContainsKey("result") &&
-                    ((Bencodex.Types.Dictionary)slotStateValue["result"]).ContainsKey("id"))
-                .Select(slotStateValue => ((Bencodex.Types.Dictionary)slotStateValue["result"])["id"].ToGuid())
-                .ToArray();
-            avatarState.Update(mail, mailIdsThatShouldRemain);
-
+            var mail = new ItemEnhanceMail(result, ctx.BlockIndex, ctx.Random.GenerateRandomGuid(), requiredBlockIndex);
+            result.id = mail.id;
             avatarState.inventory.RemoveNonFungibleItem(enhancementEquipment);
+            avatarState.UpdateV3(mail);
             avatarState.UpdateFromItemEnhancement(enhancementEquipment);
 
             // Update quest reward

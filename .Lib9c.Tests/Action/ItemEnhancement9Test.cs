@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action
     using Xunit;
     using static SerializeKeys;
 
-    public class ItemEnhancementTest
+    public class ItemEnhancement9Test
     {
         private readonly IRandom _random;
         private readonly TableSheets _tableSheets;
@@ -31,7 +31,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _currency;
         private IAccountStateDelta _initialState;
 
-        public ItemEnhancementTest()
+        public ItemEnhancement9Test()
         {
             var sheets = TableSheetsImporter.ImportSheets();
             _random = new TestRandom();
@@ -89,7 +89,7 @@ namespace Lib9c.Tests.Action
             _avatarState.inventory.AddItem(equipment, count: 1);
             _avatarState.inventory.AddItem(material, count: 1);
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new CombinationConsumable5.ResultModel()
             {
                 id = default,
                 gold = 0,
@@ -126,7 +126,7 @@ namespace Lib9c.Tests.Action
                     .SetState(_avatarAddress, _avatarState.SerializeV2());
             }
 
-            var action = new ItemEnhancement
+            var action = new ItemEnhancement9()
             {
                 itemId = default,
                 materialId = materialId,
@@ -134,7 +134,7 @@ namespace Lib9c.Tests.Action
                 slotIndex = 0,
             };
 
-            var nextState = action.Execute(new ActionContext
+            var nextState = action.Execute(new ActionContext()
             {
                 PreviousStates = _initialState,
                 Signer = _agentAddress,
@@ -191,7 +191,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Rehearsal()
         {
-            var action = new ItemEnhancement
+            var action = new ItemEnhancement9()
             {
                 itemId = default,
                 materialId = default,
@@ -206,7 +206,7 @@ namespace Lib9c.Tests.Action
                     0
                 )
             );
-            var updatedAddresses = new List<Address>
+            var updatedAddresses = new List<Address>()
             {
                 _agentAddress,
                 _avatarAddress,
@@ -219,7 +219,7 @@ namespace Lib9c.Tests.Action
 
             var state = new State();
 
-            var nextState = action.Execute(new ActionContext
+            var nextState = action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _agentAddress,
