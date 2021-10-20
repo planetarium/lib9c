@@ -42,6 +42,15 @@ namespace Nekoyume.Model.Mail
             _mails.Add(mail);
         }
 
+        [Obsolete("Use CleanUp")]
+        public void CleanUpV1()
+        {
+            if (_mails.Count > 30)
+            {
+                _mails = _mails.OrderByDescending(m => m.blockIndex).Take(30).ToList();
+            }
+        }
+
         public void CleanUp()
         {
             if (_mails.Count > 30)
@@ -51,15 +60,6 @@ namespace Nekoyume.Model.Mail
                     .ThenBy(m => m.id)
                     .Take(30)
                     .ToList();
-            }
-        }
-
-        [Obsolete("Use CleanUp")]
-        public void CleanUp2()
-        {
-            if (_mails.Count > 30)
-            {
-                _mails = _mails.OrderByDescending(m => m.blockIndex).Take(30).ToList();
             }
         }
 
