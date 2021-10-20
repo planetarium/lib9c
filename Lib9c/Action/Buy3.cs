@@ -189,7 +189,7 @@ namespace Nekoyume.Action
                 ctx.BlockIndex);
             sellerResult.id = sellerMail.id;
 
-            buyerAvatarState.Update2(buyerMail);
+            buyerAvatarState.UpdateV1(buyerMail);
             if (buyerResult.itemUsable != null)
             {
                 buyerAvatarState.UpdateFromAddItem2(buyerResult.itemUsable, false);
@@ -199,7 +199,7 @@ namespace Nekoyume.Action
             {
                 buyerAvatarState.UpdateFromAddCostume(buyerResult.costume, false);
             }
-            sellerAvatarState.Update2(sellerMail);
+            sellerAvatarState.UpdateV1(sellerMail);
 
             // 퀘스트 업데이트
             buyerAvatarState.questList.UpdateTradeQuest(TradeType.Buy, shopItem.Price);

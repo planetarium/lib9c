@@ -136,8 +136,8 @@
             for (var i = 0; i < 100; i++)
             {
                 var mail = new CombinationMail(result, i, default, 0);
-                _buyerAvatarState.Update2(mail);
-                sellerAvatarState.Update2(mail);
+                _buyerAvatarState.UpdateV1(mail);
+                sellerAvatarState.UpdateV1(mail);
             }
 
             _initialState = _initialState

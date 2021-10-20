@@ -162,7 +162,7 @@ namespace Lib9c.Tests.Action
             for (var i = 0; i < 100; i++)
             {
                 var mail = new CombinationMail(result, i, default, 0);
-                previousAvatarState.Update2(mail);
+                previousAvatarState.UpdateV1(mail);
             }
 
             IAccountStateDelta state;

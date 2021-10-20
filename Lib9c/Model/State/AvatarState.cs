@@ -289,23 +289,23 @@ namespace Nekoyume.Model.State
             return MemberwiseClone();
         }
 
+        [Obsolete("Use Update")]
+        public void UpdateV1(Mail.Mail mail)
+        {
+            mailBox.Add(mail);
+        }
+
+        [Obsolete("Use Update")]
+        public void UpdateV2(Mail.Mail mail)
+        {
+            mailBox.Add(mail);
+            mailBox.CleanUpV1();
+        }
+
         public void Update(Mail.Mail mail)
         {
             mailBox.Add(mail);
             mailBox.CleanUpV2();
-        }
-
-        [Obsolete("Use Update")]
-        public void Update2(Mail.Mail mail)
-        {
-            mailBox.Add(mail);
-        }
-
-        [Obsolete("Use Update")]
-        public void Update3(Mail.Mail mail)
-        {
-            mailBox.Add(mail);
-            mailBox.CleanUpV1();
         }
 
         [Obsolete("No longer in use.")]

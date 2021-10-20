@@ -238,8 +238,8 @@ namespace Lib9c.Tests.Action
                 for (var i = 0; i < 100; i++)
                 {
                     var mail = new DailyRewardMail(result, i, default, 0);
-                    sellerAvatarState.Update2(mail);
-                    buyerAvatarState.Update2(mail);
+                    sellerAvatarState.UpdateV1(mail);
+                    buyerAvatarState.UpdateV1(mail);
                 }
 
                 Address shardedShopAddress = ShardedShopState.DeriveAddress(itemSubType, productId);

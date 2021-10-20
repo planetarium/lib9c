@@ -100,7 +100,7 @@ namespace Lib9c.Tests.Action
 
             var mail = new CombinationMail(result, 0, default, requiredBlockIndex);
             result.id = mail.id;
-            avatarState.Update2(mail);
+            avatarState.UpdateV1(mail);
 
             var slotAddress = _avatarAddress.Derive(string.Format(
                 CultureInfo.InvariantCulture,
@@ -312,7 +312,7 @@ namespace Lib9c.Tests.Action
 
             var mail = new CombinationMail(result, 0, default, requiredBlockIndex);
             result.id = mail.id;
-            avatarState.Update2(mail);
+            avatarState.UpdateV1(mail);
 
             var slotAddress = _avatarAddress.Derive(string.Format(
                 CultureInfo.InvariantCulture,

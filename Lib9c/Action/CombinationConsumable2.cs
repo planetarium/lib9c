@@ -191,7 +191,7 @@ namespace Nekoyume.Action
                 requiredBlockIndex
             );
             result.id = mail.id;
-            avatarState.Update3(mail);
+            avatarState.UpdateV2(mail);
             avatarState.UpdateFromCombination2(itemUsable);
             sw.Stop();
             Log.Verbose("{AddressesHex}Combination Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);

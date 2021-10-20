@@ -136,7 +136,7 @@ namespace Lib9c.Tests.Action
             for (var i = 0; i < 100; i++)
             {
                 var mail = new DailyRewardMail(result, i, default, 0);
-                avatarState.Update2(mail);
+                avatarState.UpdateV1(mail);
             }
 
             Address shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
@@ -581,7 +581,7 @@ namespace Lib9c.Tests.Action
             for (var i = 0; i < 100; i++)
             {
                 var mail = new DailyRewardMail(result, i, default, 0);
-                avatarState.Update2(mail);
+                avatarState.UpdateV1(mail);
             }
 
             Address shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);

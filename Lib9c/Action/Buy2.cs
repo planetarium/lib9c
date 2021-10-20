@@ -190,9 +190,9 @@ namespace Nekoyume.Action
                 ctx.BlockIndex);
             sellerResult.id = sellerMail.id;
 
-            buyerAvatarState.Update3(buyerMail);
+            buyerAvatarState.UpdateV2(buyerMail);
             buyerAvatarState.UpdateFromAddItem2(buyerResult.itemUsable, false);
-            sellerAvatarState.Update3(sellerMail);
+            sellerAvatarState.UpdateV2(sellerMail);
 
             // 퀘스트 업데이트
             buyerAvatarState.questList.UpdateTradeQuest(TradeType.Buy, shopItem.Price);

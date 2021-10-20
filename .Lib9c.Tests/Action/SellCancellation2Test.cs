@@ -86,7 +86,7 @@ namespace Lib9c.Tests.Action
             for (var i = 0; i < 100; i++)
             {
                 var mail = new CombinationMail(result, i, default, 0);
-                avatarState.Update2(mail);
+                avatarState.UpdateV1(mail);
             }
 
             _initialState = _initialState
