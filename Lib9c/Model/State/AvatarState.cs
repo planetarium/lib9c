@@ -309,6 +309,12 @@ namespace Nekoyume.Model.State
             mailBox.CleanUpV2();
         }
 
+        public void Update(Mail.Mail mail, params Guid[] mailIdsThatShouldRemain)
+        {
+            mailBox.Add(mail);
+            mailBox.CleanUp(mailIdsThatShouldRemain);
+        }
+
         [Obsolete("No longer in use.")]
         public void UpdateTemp(Mail.Mail mail, long currentBlockIndex)
         {
