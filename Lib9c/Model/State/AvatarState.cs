@@ -302,7 +302,8 @@ namespace Nekoyume.Model.State
             mailBox.CleanUpV1();
         }
 
-        public void Update(Mail.Mail mail)
+        [Obsolete("Use Update")]
+        public void UpdateV3(Mail.Mail mail)
         {
             mailBox.Add(mail);
             mailBox.CleanUpV2();

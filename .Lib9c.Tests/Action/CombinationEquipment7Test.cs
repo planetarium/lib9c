@@ -123,7 +123,7 @@ namespace Lib9c.Tests.Action
             for (var i = 0; i < 100; i++)
             {
                 var mail = new CombinationMail(result, i, default, 0);
-                _avatarState.Update(mail);
+                _avatarState.UpdateV3(mail);
             }
 
             IAccountStateDelta previousState;

@@ -504,7 +504,7 @@ namespace Lib9c.Tests.Action
 
             var mail = new CombinationMail(result, 0, default, requiredBlockIndex);
             result.id = mail.id;
-            avatarState.Update(mail);
+            avatarState.UpdateV3(mail);
 
             var slotAddress = _avatarAddress.Derive(string.Format(
                 CultureInfo.InvariantCulture,

@@ -259,8 +259,8 @@ namespace Lib9c.Tests.Action
                 for (var i = 0; i < 100; i++)
                 {
                     var mail = new DailyRewardMail(result, i, default, 0);
-                    sellerAvatarState.Update(mail);
-                    buyerAvatarState.Update(mail);
+                    sellerAvatarState.UpdateV3(mail);
+                    buyerAvatarState.UpdateV3(mail);
                 }
 
                 Address shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
@@ -616,8 +616,8 @@ namespace Lib9c.Tests.Action
                 for (var i = 0; i < 100; i++)
                 {
                     var mail = new DailyRewardMail(result, i, default, 0);
-                    sellerAvatarState.Update(mail);
-                    buyerAvatarState.Update(mail);
+                    sellerAvatarState.UpdateV3(mail);
+                    buyerAvatarState.UpdateV3(mail);
                 }
 
                 Address shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);

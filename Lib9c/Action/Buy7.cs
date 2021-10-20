@@ -430,7 +430,7 @@ namespace Nekoyume.Action
                 sellerResult.id = sellerMail.id;
                 sellerResults.Add(sellerResult);
 
-                buyerAvatarState.Update(buyerMail);
+                buyerAvatarState.UpdateV3(buyerMail);
                 if (purchaseResult.itemUsable != null)
                 {
                     buyerAvatarState.UpdateFromAddItem2(purchaseResult.itemUsable, false);
@@ -446,7 +446,7 @@ namespace Nekoyume.Action
                     buyerAvatarState.UpdateFromAddItem2(material, shopItem.TradableFungibleItemCount, false);
                 }
 
-                sellerAvatarState.Update(sellerMail);
+                sellerAvatarState.UpdateV3(sellerMail);
 
                 // Update quest.
                 buyerAvatarState.questList.UpdateTradeQuest(TradeType.Buy, shopItem.Price);

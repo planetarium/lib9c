@@ -198,7 +198,7 @@
             for (var i = 0; i < 100; i++)
             {
                 var mail = new CombinationMail(result, i, default, 0);
-                previousAvatarState.Update(mail);
+                previousAvatarState.UpdateV3(mail);
             }
 
             IAccountStateDelta state;

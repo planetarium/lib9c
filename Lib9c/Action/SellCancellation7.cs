@@ -160,7 +160,7 @@ namespace Nekoyume.Action
                 context.BlockIndex,
                 orderId
             );
-            avatarState.Update(mail);
+            avatarState.UpdateV3(mail);
 
             avatarState.updatedAt = context.BlockIndex;
             avatarState.blockIndex = context.BlockIndex;

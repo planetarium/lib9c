@@ -71,7 +71,7 @@ namespace Nekoyume.Action
                 Guid id = context.Random.GenerateRandomGuid();
                 MonsterCollectionResult result = new MonsterCollectionResult(id, avatarAddress, rewards);
                 MonsterCollectionMail mail = new MonsterCollectionMail(result, context.BlockIndex, id, context.BlockIndex);
-                avatarState.Update(mail);
+                avatarState.UpdateV3(mail);
                 foreach (var rewardInfo in rewards)
                 {
                     var row = itemSheet[rewardInfo.ItemId];

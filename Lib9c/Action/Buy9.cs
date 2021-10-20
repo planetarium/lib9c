@@ -264,8 +264,8 @@ namespace Nekoyume.Action
                     orderId
                 );
 
-                buyerAvatarState.Update(orderBuyerMail);
-                sellerAvatarState.Update(orderSellerMail);
+                buyerAvatarState.UpdateV3(orderBuyerMail);
+                sellerAvatarState.UpdateV3(orderSellerMail);
 
                 // // Update quest.
                 buyerAvatarState.questList.UpdateTradeQuest(TradeType.Buy, order.Price);

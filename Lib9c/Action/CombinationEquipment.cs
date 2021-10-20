@@ -314,7 +314,7 @@ namespace Nekoyume.Action
                 context.BlockIndex,
                 mailId,
                 endBlockIndex);
-            avatarState.Update(mail);
+            avatarState.UpdateV3(mail);
             // ~Create Mail
 
             return states

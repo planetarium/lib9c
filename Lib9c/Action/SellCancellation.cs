@@ -171,7 +171,7 @@ namespace Nekoyume.Action
                 context.BlockIndex,
                 orderId
             );
-            avatarState.Update(mail);
+            avatarState.UpdateV3(mail);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Cancel Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);

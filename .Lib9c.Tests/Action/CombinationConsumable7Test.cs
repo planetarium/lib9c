@@ -102,7 +102,7 @@ namespace Lib9c.Tests.Action
             for (var i = 0; i < 100; i++)
             {
                 var mail = new CombinationMail(result, i, default, 0);
-                avatarState.Update(mail);
+                avatarState.UpdateV3(mail);
             }
 
             var previousState = _initialState.SetState(_slotAddress, new CombinationSlotState(_slotAddress, requiredStage).Serialize());

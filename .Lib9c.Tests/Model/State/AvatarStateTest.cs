@@ -321,7 +321,7 @@ namespace Lib9c.Tests.Model.State
             for (var i = 0; i < 100; i++)
             {
                 var mail = new CombinationMail(result, i, default, 0);
-                avatarState.Update(mail);
+                avatarState.UpdateV3(mail);
             }
 
             Assert.Equal(30, avatarState.mailBox.Count);
@@ -346,7 +346,7 @@ namespace Lib9c.Tests.Model.State
             for (var i = 0; i < 100; i++)
             {
                 var mail = new CombinationMail(result, i, default, i);
-                avatarState.Update(mail);
+                avatarState.UpdateV3(mail);
             }
 
             Assert.Equal(30, avatarState.mailBox.Count);

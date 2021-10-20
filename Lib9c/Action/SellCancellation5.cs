@@ -163,7 +163,7 @@ namespace Nekoyume.Action
             var mail = new SellCancelMail(result, ctx.BlockIndex, ctx.Random.GenerateRandomGuid(), ctx.BlockIndex);
             result.id = mail.id;
 
-            avatarState.Update(mail);
+            avatarState.UpdateV3(mail);
             avatarState.updatedAt = ctx.BlockIndex;
             avatarState.blockIndex = ctx.BlockIndex;
 

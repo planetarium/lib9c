@@ -150,7 +150,7 @@ namespace Nekoyume.Action
                 order.ExpiredBlockIndex,
                 orderId
             );
-            avatarState.Update(mail);
+            avatarState.UpdateV3(mail);
 
             var orderReceiptList = states.TryGetState(orderReceiptAddress, out Dictionary receiptDict)
                 ? new OrderDigestListState(receiptDict)
