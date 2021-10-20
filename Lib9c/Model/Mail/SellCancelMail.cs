@@ -9,7 +9,7 @@ namespace Nekoyume.Model.Mail
         protected override string TypeId => "sellCancel";
         public override MailType MailType => MailType.Auction;
 
-        public SellCancelMail(SellCancellation.Result attachmentActionResult, long blockIndex, Guid id, long requiredBlockIndex)
+        public SellCancelMail(SellCancellation7.Result attachmentActionResult, long blockIndex, Guid id, long requiredBlockIndex)
             : base(attachmentActionResult, blockIndex, id, requiredBlockIndex)
         {
 

@@ -27,34 +27,6 @@ namespace Nekoyume.Action
         public Address sellerAvatarAddress;
         public ItemSubType itemSubType;
 
-        [Serializable]
-        public class Result : AttachmentActionResult
-        {
-            public ShopItem shopItem;
-            public Guid id;
-
-            protected override string TypeId => "sellCancellation.result";
-
-            public Result()
-            {
-            }
-
-            public Result(BxDictionary serialized) : base(serialized)
-            {
-                shopItem = new ShopItem((BxDictionary) serialized["shopItem"]);
-                id = serialized["id"].ToGuid();
-            }
-
-            public override IValue Serialize() =>
-#pragma warning disable LAA1002
-                new BxDictionary(new Dictionary<IKey, IValue>
-                {
-                    [(Text) "shopItem"] = shopItem.Serialize(),
-                    [(Text) "id"] = id.Serialize()
-                }.Union((BxDictionary) base.Serialize()));
-#pragma warning restore LAA1002
-        }
-
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
         {
             [ProductIdKey] = orderId.Serialize(),

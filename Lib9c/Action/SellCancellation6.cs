@@ -23,7 +23,7 @@ namespace Nekoyume.Action
     {
         public Guid productId;
         public Address sellerAvatarAddress;
-        public SellCancellation.Result result;
+        public SellCancellation7.Result result;
         public ItemSubType itemSubType;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
@@ -185,7 +185,7 @@ namespace Nekoyume.Action
             }
 
             // 메일에 아이템을 넣는다.
-            result = new SellCancellation.Result
+            result = new SellCancellation7.Result
             {
                 shopItem = shopItem,
                 itemUsable = shopItem.ItemUsable,

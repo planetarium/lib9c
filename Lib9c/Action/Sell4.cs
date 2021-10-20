@@ -182,7 +182,7 @@ namespace Nekoyume.Action
             avatarState.updatedAt = ctx.BlockIndex;
             avatarState.blockIndex = ctx.BlockIndex;
 
-            var result = new SellCancellation.Result
+            var result = new SellCancellation7.Result
             {
                 shopItem = shopItem,
                 itemUsable = shopItem.ItemUsable,
