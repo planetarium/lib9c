@@ -51,7 +51,8 @@ namespace Nekoyume.Model.Mail
             }
         }
 
-        public void CleanUp()
+        [Obsolete("Use CleanUp")]
+        public void CleanUpV2()
         {
             if (_mails.Count > 30)
             {

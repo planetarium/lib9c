@@ -292,7 +292,7 @@ namespace Nekoyume.Model.State
         public void Update(Mail.Mail mail)
         {
             mailBox.Add(mail);
-            mailBox.CleanUp();
+            mailBox.CleanUpV2();
         }
 
         [Obsolete("Use Update")]
