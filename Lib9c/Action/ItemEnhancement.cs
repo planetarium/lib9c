@@ -8,6 +8,7 @@ using System.Numerics;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -23,13 +24,6 @@ namespace Nekoyume.Action
     public class ItemEnhancement : GameAction
     {
         public static readonly Address BlacksmithAddress = Addresses.Blacksmith;
-
-        public enum EnhancementResult
-        {
-            GreatSuccess = 0,
-            Success = 1,
-            Fail = 2,
-        }
 
         public Guid itemId;
         public Guid materialId;
