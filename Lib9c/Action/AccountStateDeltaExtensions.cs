@@ -355,20 +355,14 @@ namespace Nekoyume.Action
             return GetWeeklyArenaState(states, address);
         }
 
-        public static CombinationSlotState GetCombinationSlotState(this IAccountStateDelta states,
-            Address avatarAddress, int index)
+        public static CombinationSlotState GetCombinationSlotState(
+            this IAccountStateDelta states,
+            Address avatarAddress,
+            int index)
         {
-            var address = avatarAddress.Derive(
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    CombinationSlotState.DeriveFormat,
-                    index
-                )
-            );
-            var value = states.GetState(address);
+            var value = GetCombinationSlotStateValue(states, avatarAddress, index);
             if (value is null)
             {
-                Log.Warning("No combination slot state ({0})", address.ToHex());
                 return null;
             }
 
@@ -381,6 +375,29 @@ namespace Nekoyume.Action
                 Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotState)}()");
                 throw;
             }
+        }
+
+        public static IValue GetCombinationSlotStateValue(
+            this IAccountStateDelta states,
+            Address avatarAddress,
+            int index)
+        {
+            var address = avatarAddress.Derive(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    CombinationSlotState.DeriveFormat,
+                    index
+                )
+            );
+
+            var value = states.GetState(address);
+            if (value is null)
+            {
+                Log.Warning("No combination slot state ({0})", address.ToHex());
+                return null;
+            }
+
+            return value;
         }
 
         public static GameConfigState GetGameConfigState(this IAccountStateDelta states)
