@@ -10,6 +10,8 @@ namespace Nekoyume.Model.Mail
     [Serializable]
     public class MailBox : IEnumerable<Mail>, IState
     {
+        public const int MaxCount = 30;
+
         private List<Mail> _mails = new List<Mail>();
 
         public int Count => _mails.Count;
@@ -45,23 +47,75 @@ namespace Nekoyume.Model.Mail
         [Obsolete("Use CleanUp")]
         public void CleanUpV1()
         {
-            if (_mails.Count > 30)
+            if (_mails.Count > MaxCount)
             {
-                _mails = _mails.OrderByDescending(m => m.blockIndex).Take(30).ToList();
+                _mails = _mails.OrderByDescending(m => m.blockIndex).Take(MaxCount).ToList();
             }
         }
 
         [Obsolete("Use CleanUp")]
         public void CleanUpV2()
         {
-            if (_mails.Count > 30)
+            if (_mails.Count > MaxCount)
             {
                 _mails = _mails
                     .OrderByDescending(m => m.blockIndex)
                     .ThenBy(m => m.id)
-                    .Take(30)
+                    .Take(MaxCount)
                     .ToList();
             }
+        }
+
+        /// <param name="mailIdsThatShouldRemain"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public void CleanUp(params Guid[] mailIdsThatShouldRemain)
+        {
+            if (_mails.Count <= MaxCount)
+            {
+                return;
+            }
+
+            var shouldRemainCount = mailIdsThatShouldRemain.Length;
+            if (shouldRemainCount > MaxCount)
+            {
+                var message = $"{nameof(mailIdsThatShouldRemain)} count should less or equal to {MaxCount}";
+                throw new ArgumentOutOfRangeException(
+                    nameof(mailIdsThatShouldRemain),
+                    shouldRemainCount,
+                    message);
+            }
+
+            var mails = new List<Mail>();
+            foreach (var mail in _mails
+                .OrderByDescending(e => e.blockIndex)
+                .ThenBy(e => e.id))
+            {
+                if (shouldRemainCount > 0 &&
+                    mailIdsThatShouldRemain.Contains(mail.id))
+                {
+                    mails.Add(mail);
+                    if (mails.Count == MaxCount)
+                    {
+                        break;
+                    }
+
+                    shouldRemainCount--;
+                    continue;
+                }
+
+                if (mails.Count == MaxCount - shouldRemainCount)
+                {
+                    continue;
+                }
+
+                mails.Add(mail);
+                if (mails.Count == MaxCount)
+                {
+                    break;
+                }
+            }
+
+            _mails = mails;
         }
 
         [Obsolete("No longer in use.")]
