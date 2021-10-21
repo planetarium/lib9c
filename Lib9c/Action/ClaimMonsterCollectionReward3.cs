@@ -5,6 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -14,8 +15,9 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("claim_monster_collection_reward4")]
-    public class ClaimMonsterCollectionReward : GameAction
+    [ActionObsolete(BlockPolicySource.V100082ObsoleteIndex)]
+    [ActionType("claim_monster_collection_reward3")]
+    public class ClaimMonsterCollectionReward3 : GameAction
     {
         public Address avatarAddress;
         public override IAccountStateDelta Execute(IActionContext context)
@@ -37,6 +39,8 @@ namespace Nekoyume.Action
                     .SetState(MonsterCollectionState.DeriveAddress(context.Signer, 2), MarkChanged)
                     .SetState(MonsterCollectionState.DeriveAddress(context.Signer, 3), MarkChanged);
             }
+            
+            CheckObsolete(BlockPolicySource.V100082ObsoleteIndex, context);
 
             if (!states.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress, out AgentState agentState, out AvatarState avatarState))
             {
@@ -65,15 +69,7 @@ namespace Nekoyume.Action
             Guid id = context.Random.GenerateRandomGuid();
             var result = new MonsterCollectionResult(id, avatarAddress, rewards);
             var mail = new MonsterCollectionMail(result, context.BlockIndex, id, context.BlockIndex);
-            var mailIdsThatShouldRemain = Enumerable.Range(0, 4)
-                .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(avatarAddress, index))
-                .Where(slotStateValue =>
-                    slotStateValue["unlockBlockIndex"].ToLong() < context.BlockIndex &&
-                    slotStateValue.ContainsKey("result") &&
-                    ((Bencodex.Types.Dictionary)slotStateValue["result"]).ContainsKey("id"))
-                .Select(slotStateValue => ((Bencodex.Types.Dictionary)slotStateValue["result"])["id"].ToGuid())
-                .ToArray();
-            avatarState.Update(mail, mailIdsThatShouldRemain);
+            avatarState.UpdateV3(mail);
 
             ItemSheet itemSheet = states.GetItemSheet();
             foreach (MonsterCollectionRewardSheet.RewardInfo rewardInfo in rewards)
