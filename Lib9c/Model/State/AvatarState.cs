@@ -313,7 +313,6 @@ namespace Nekoyume.Model.State
         public void Update(
             Mail.Mail mail,
             IAccountStateDelta accountStateDelta,
-            Address avatarAddress,
             long contextBlockIndex,
             params int[] ignoreSlotIndexes)
         {
@@ -323,7 +322,7 @@ namespace Nekoyume.Model.State
                 .Where(index => !ignoreSlotIndexes.Contains(index))
                 .Select(index =>
                 {
-                    var value = accountStateDelta.GetCombinationSlotStateValue(avatarAddress, index);
+                    var value = accountStateDelta.GetCombinationSlotStateValue(address, index);
                     return value is null
                         ? Bencodex.Types.Dictionary.Empty
                         : (Bencodex.Types.Dictionary)value;

@@ -219,7 +219,7 @@ namespace Nekoyume.Action
                 context.BlockIndex,
                 mailId,
                 endBlockIndex);
-            avatarState.Update(mail, states, avatarAddress, context.BlockIndex, slotIndex);
+            avatarState.Update(mail, states, context.BlockIndex, slotIndex);
             // ~Create Mail
 
             return states

@@ -253,7 +253,7 @@ namespace Nekoyume.Action
                     context.BlockIndex,
                     orderId
                 );
-                buyerAvatarState.Update(orderBuyerMail, states, buyerAvatarAddress, context.BlockIndex);
+                buyerAvatarState.Update(orderBuyerMail, states, context.BlockIndex);
 
                 var orderSellerMail = new OrderSellerMail(
                     context.BlockIndex,
@@ -261,7 +261,7 @@ namespace Nekoyume.Action
                     context.BlockIndex,
                     orderId
                 );
-                sellerAvatarState.Update(orderSellerMail, states, sellerAvatarAddress, context.BlockIndex);
+                sellerAvatarState.Update(orderSellerMail, states, context.BlockIndex);
 
                 // // Update quest.
                 buyerAvatarState.questList.UpdateTradeQuest(TradeType.Buy, order.Price);

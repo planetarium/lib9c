@@ -252,7 +252,7 @@ namespace Nekoyume.Action
             };
 
             var mail = new ItemEnhanceMail(result, ctx.BlockIndex, mailId, requiredBlockIndex);
-            avatarState.Update(mail, states, avatarAddress, context.BlockIndex, slotIndex);
+            avatarState.Update(mail, states, context.BlockIndex, slotIndex);
 
             avatarState.inventory.RemoveNonFungibleItem(enhancementEquipment);
             avatarState.UpdateFromItemEnhancement(enhancementEquipment);

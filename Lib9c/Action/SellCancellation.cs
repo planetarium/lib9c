@@ -143,7 +143,7 @@ namespace Nekoyume.Action
                 context.BlockIndex,
                 orderId
             );
-            avatarState.Update(mail, states, sellerAvatarAddress, context.BlockIndex);
+            avatarState.Update(mail, states, context.BlockIndex);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Cancel Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
