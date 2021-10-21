@@ -316,7 +316,7 @@ namespace Nekoyume.Action
                 endBlockIndex);
             var mailIdsThatShouldRemain = Enumerable.Range(0, 4)
                 .Where(index => index != slotIndex)
-                .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(avatarAddress, slotIndex))
+                .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(avatarAddress, index))
                 .Where(slotStateValue =>
                     slotStateValue["unlockBlockIndex"].ToLong() < context.BlockIndex &&
                     slotStateValue.ContainsKey("result") &&
