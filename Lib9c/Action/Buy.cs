@@ -260,25 +260,8 @@ namespace Nekoyume.Action
                     orderId
                 );
 
-                var mailIdsThatShouldRemain = Enumerable.Range(0, 4)
-                    .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(buyerAvatarAddress, index))
-                    .Where(slotStateValue =>
-                        slotStateValue["unlockBlockIndex"].ToLong() < context.BlockIndex &&
-                        slotStateValue.ContainsKey("result") &&
-                        ((Bencodex.Types.Dictionary)slotStateValue["result"]).ContainsKey("id"))
-                    .Select(slotStateValue => ((Bencodex.Types.Dictionary)slotStateValue["result"])["id"].ToGuid())
-                    .ToArray();
-                buyerAvatarState.Update(orderBuyerMail, mailIdsThatShouldRemain);
-                
-                mailIdsThatShouldRemain = Enumerable.Range(0, 4)
-                    .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(buyerAvatarAddress, index))
-                    .Where(slotStateValue =>
-                        slotStateValue["unlockBlockIndex"].ToLong() < context.BlockIndex &&
-                        slotStateValue.ContainsKey("result") &&
-                        ((Bencodex.Types.Dictionary)slotStateValue["result"]).ContainsKey("id"))
-                    .Select(slotStateValue => ((Bencodex.Types.Dictionary)slotStateValue["result"])["id"].ToGuid())
-                    .ToArray();
-                sellerAvatarState.Update(orderBuyerMail, mailIdsThatShouldRemain);
+                buyerAvatarState.Update(orderBuyerMail, states, buyerAvatarAddress, context.BlockIndex);
+                sellerAvatarState.Update(orderBuyerMail, states, sellerAvatarAddress, context.BlockIndex);
 
                 // // Update quest.
                 buyerAvatarState.questList.UpdateTradeQuest(TradeType.Buy, order.Price);

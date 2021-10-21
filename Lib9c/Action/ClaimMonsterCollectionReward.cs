@@ -65,15 +65,7 @@ namespace Nekoyume.Action
             Guid id = context.Random.GenerateRandomGuid();
             var result = new MonsterCollectionResult(id, avatarAddress, rewards);
             var mail = new MonsterCollectionMail(result, context.BlockIndex, id, context.BlockIndex);
-            var mailIdsThatShouldRemain = Enumerable.Range(0, 4)
-                .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(avatarAddress, index))
-                .Where(slotStateValue =>
-                    slotStateValue["unlockBlockIndex"].ToLong() < context.BlockIndex &&
-                    slotStateValue.ContainsKey("result") &&
-                    ((Bencodex.Types.Dictionary)slotStateValue["result"]).ContainsKey("id"))
-                .Select(slotStateValue => ((Bencodex.Types.Dictionary)slotStateValue["result"])["id"].ToGuid())
-                .ToArray();
-            avatarState.Update(mail, mailIdsThatShouldRemain);
+            avatarState.Update(mail, states, avatarAddress, context.BlockIndex);
 
             ItemSheet itemSheet = states.GetItemSheet();
             foreach (MonsterCollectionRewardSheet.RewardInfo rewardInfo in rewards)

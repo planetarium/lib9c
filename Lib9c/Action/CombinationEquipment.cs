@@ -314,16 +314,7 @@ namespace Nekoyume.Action
                 context.BlockIndex,
                 mailId,
                 endBlockIndex);
-            var mailIdsThatShouldRemain = Enumerable.Range(0, 4)
-                .Where(index => index != slotIndex)
-                .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(avatarAddress, index))
-                .Where(slotStateValue =>
-                    slotStateValue["unlockBlockIndex"].ToLong() < context.BlockIndex &&
-                    slotStateValue.ContainsKey("result") &&
-                    ((Bencodex.Types.Dictionary)slotStateValue["result"]).ContainsKey("id"))
-                .Select(slotStateValue => ((Bencodex.Types.Dictionary)slotStateValue["result"])["id"].ToGuid())
-                .ToArray();
-            avatarState.Update(mail, mailIdsThatShouldRemain);
+            avatarState.Update(mail, states, avatarAddress, context.BlockIndex, slotIndex);
             // ~Create Mail
 
             return states

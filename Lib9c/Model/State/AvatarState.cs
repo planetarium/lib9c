@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using Bencodex.Types;
 using Libplanet;
+using Libplanet.Action;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Battle;
@@ -309,9 +310,31 @@ namespace Nekoyume.Model.State
             mailBox.CleanUpV2();
         }
 
-        public void Update(Mail.Mail mail, params Guid[] mailIdsThatShouldRemain)
+        public void Update(
+            Mail.Mail mail,
+            IAccountStateDelta accountStateDelta,
+            Address avatarAddress,
+            long contextBlockIndex,
+            params int[] ignoreSlotIndexes)
         {
             mailBox.Add(mail);
+
+            var mailIdsThatShouldRemain = Enumerable.Range(0, 4)
+                .Where(index => !ignoreSlotIndexes.Contains(index))
+                .Select(index =>
+                {
+                    var value = accountStateDelta.GetCombinationSlotStateValue(avatarAddress, index);
+                    return value is null
+                        ? Bencodex.Types.Dictionary.Empty
+                        : (Bencodex.Types.Dictionary)value;
+                })
+                .Where(slotStateValue =>
+                    slotStateValue.ContainsKey("unlockBlockIndex") &&
+                    slotStateValue["unlockBlockIndex"].ToLong() < contextBlockIndex &&
+                    slotStateValue.ContainsKey("result") &&
+                    ((Bencodex.Types.Dictionary)slotStateValue["result"]).ContainsKey("id"))
+                .Select(slotStateValue => ((Bencodex.Types.Dictionary)slotStateValue["result"])["id"].ToGuid())
+                .ToArray();
             mailBox.CleanUp(mailIdsThatShouldRemain);
         }
 
