@@ -8,6 +8,7 @@ using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
@@ -19,8 +20,9 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("buy11")]
-    public class Buy : GameAction, IBuy5
+    [ActionObsolete(BlockPolicySource.V100082ObsoleteIndex)]
+    [ActionType("buy10")]
+    public class Buy10 : GameAction, IBuy5
     {
         public const int TaxRate = 8;
         public const int ErrorCodeFailedLoadingState = 1;
@@ -95,6 +97,8 @@ namespace Nekoyume.Action
                     .SetState(buyerQuestListAddress, MarkChanged)
                     .SetState(ctx.Signer, MarkChanged);
             }
+            
+            CheckObsolete(BlockPolicySource.V100082ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, buyerAvatarAddress);
 
@@ -260,25 +264,8 @@ namespace Nekoyume.Action
                     orderId
                 );
 
-                var mailIdsThatShouldRemain = Enumerable.Range(0, 4)
-                    .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(buyerAvatarAddress, index))
-                    .Where(slotStateValue =>
-                        slotStateValue["unlockBlockIndex"].ToLong() < context.BlockIndex &&
-                        slotStateValue.ContainsKey("result") &&
-                        ((Bencodex.Types.Dictionary)slotStateValue["result"]).ContainsKey("id"))
-                    .Select(slotStateValue => ((Bencodex.Types.Dictionary)slotStateValue["result"])["id"].ToGuid())
-                    .ToArray();
-                buyerAvatarState.Update(orderBuyerMail, mailIdsThatShouldRemain);
-                
-                mailIdsThatShouldRemain = Enumerable.Range(0, 4)
-                    .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(buyerAvatarAddress, index))
-                    .Where(slotStateValue =>
-                        slotStateValue["unlockBlockIndex"].ToLong() < context.BlockIndex &&
-                        slotStateValue.ContainsKey("result") &&
-                        ((Bencodex.Types.Dictionary)slotStateValue["result"]).ContainsKey("id"))
-                    .Select(slotStateValue => ((Bencodex.Types.Dictionary)slotStateValue["result"])["id"].ToGuid())
-                    .ToArray();
-                sellerAvatarState.Update(orderBuyerMail, mailIdsThatShouldRemain);
+                buyerAvatarState.UpdateV3(orderBuyerMail);
+                sellerAvatarState.UpdateV3(orderSellerMail);
 
                 // // Update quest.
                 buyerAvatarState.questList.UpdateTradeQuest(TradeType.Buy, order.Price);
