@@ -7,6 +7,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Battle;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -16,8 +17,9 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("mimisbrunnr_battle6")]
-    public class MimisbrunnrBattle : GameAction
+    [ActionObsolete(BlockPolicySource.V100082ObsoleteIndex)]
+    [ActionType("mimisbrunnr_battle5")]
+    public class MimisbrunnrBattle5 : GameAction
     {
         public List<Guid> costumes;
         public List<Guid> equipments;
@@ -67,6 +69,8 @@ namespace Nekoyume.Action
                     .SetState(questListAddress, MarkChanged);
                 return states.SetState(ctx.Signer, MarkChanged);
             }
+            
+            CheckObsolete(BlockPolicySource.V100082ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
@@ -250,6 +254,7 @@ namespace Nekoyume.Action
             avatarState.UpdateQuestRewards(materialSheet);
 
             avatarState.updatedAt = ctx.BlockIndex;
+            avatarState.mailBox.CleanUpV2();
             states = states
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())

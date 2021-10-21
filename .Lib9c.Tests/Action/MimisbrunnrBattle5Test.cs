@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action
     using Xunit;
     using static SerializeKeys;
 
-    public class MimisbrunnrBattleTest
+    public class MimisbrunnrBattle5Test
     {
         private readonly TableSheets _tableSheets;
 
@@ -32,7 +32,7 @@ namespace Lib9c.Tests.Action
 
         private readonly IAccountStateDelta _initialState;
 
-        public MimisbrunnrBattleTest()
+        public MimisbrunnrBattle5Test()
         {
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
@@ -145,7 +145,7 @@ namespace Lib9c.Tests.Action
                     .SetState(_avatarAddress, previousAvatarState.SerializeV2());
             }
 
-            var action = new MimisbrunnrBattle
+            var action = new MimisbrunnrBattle5
             {
                 costumes = new List<Guid> { ((Costume)costume).ItemId },
                 equipments = new List<Guid> { equipment.ItemId },
@@ -228,7 +228,7 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            var action = new MimisbrunnrBattle
+            var action = new MimisbrunnrBattle5
             {
                 costumes = new List<Guid> { costume.ItemId },
                 equipments = new List<Guid> { equipment.ItemId },
@@ -254,7 +254,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteThrowFailedLoadStateException()
         {
-            var action = new MimisbrunnrBattle
+            var action = new MimisbrunnrBattle5
             {
                 costumes = new List<Guid>(),
                 equipments = new List<Guid>(),
@@ -278,7 +278,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteThrowInvalidRankingMapAddress()
         {
-            var action = new MimisbrunnrBattle
+            var action = new MimisbrunnrBattle5
             {
                 costumes = new List<Guid>(),
                 equipments = new List<Guid>(),
@@ -302,7 +302,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteThrowSheetRowNotFound()
         {
-            var action = new MimisbrunnrBattle
+            var action = new MimisbrunnrBattle5
             {
                 costumes = new List<Guid>(),
                 equipments = new List<Guid>(),
@@ -326,7 +326,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteThrowSheetRowColumn()
         {
-            var action = new MimisbrunnrBattle
+            var action = new MimisbrunnrBattle5
             {
                 costumes = new List<Guid>(),
                 equipments = new List<Guid>(),
@@ -365,7 +365,7 @@ namespace Lib9c.Tests.Action
                 _tableSheets.WorldSheet,
                 _tableSheets.WorldUnlockSheet);
 
-            var action = new MimisbrunnrBattle
+            var action = new MimisbrunnrBattle5
             {
                 costumes = new List<Guid>(),
                 equipments = new List<Guid>(),
@@ -451,7 +451,7 @@ namespace Lib9c.Tests.Action
 
             var state = _initialState.SetState(_avatarAddress, previousAvatarState.Serialize());
 
-            var action = new MimisbrunnrBattle
+            var action = new MimisbrunnrBattle5
             {
                 costumes = new List<Guid> { ((Costume)costume).ItemId },
                 equipments = new List<Guid> { equipment.ItemId },
@@ -490,7 +490,7 @@ namespace Lib9c.Tests.Action
             avatarState.worldInformation = new WorldInformation(0, worldSheet, alreadyClearedStageId);
             var nextState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
 
-            var action = new MimisbrunnrBattle
+            var action = new MimisbrunnrBattle5
             {
                 costumes = new List<Guid>(),
                 equipments = new List<Guid>(),
@@ -535,7 +535,7 @@ namespace Lib9c.Tests.Action
             avatarState.inventory.AddItem(equipment);
             var nextState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
 
-            var action = new MimisbrunnrBattle
+            var action = new MimisbrunnrBattle5
             {
                 costumes = new List<Guid> { ((Costume)costume).ItemId },
                 equipments = new List<Guid> { equipment.ItemId },
@@ -558,7 +558,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Rehearsal()
         {
-            var action = new MimisbrunnrBattle
+            var action = new MimisbrunnrBattle5
             {
                 costumes = new List<Guid>(),
                 equipments = new List<Guid>(),
