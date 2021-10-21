@@ -7,6 +7,7 @@ using Bencodex.Types;
 using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -18,8 +19,9 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("sell_cancellation10")]
-    public class SellCancellation : GameAction
+    [ActionObsolete(BlockPolicySource.V100082ObsoleteIndex)]
+    [ActionType("sell_cancellation9")]
+    public class SellCancellation9 : GameAction
     {
         public Guid orderId;
         public Guid tradableId;
@@ -65,6 +67,8 @@ namespace Nekoyume.Action
                     .SetState(itemAddress, MarkChanged)
                     .SetState(sellerAvatarAddress, MarkChanged);
             }
+
+            CheckObsolete(BlockPolicySource.V100082ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, sellerAvatarAddress);
             var sw = new Stopwatch();
@@ -143,15 +147,7 @@ namespace Nekoyume.Action
                 context.BlockIndex,
                 orderId
             );
-            var mailIdsThatShouldRemain = Enumerable.Range(0, 4)
-                .Select(index => (Bencodex.Types.Dictionary)states.GetCombinationSlotStateValue(sellerAvatarAddress, index))
-                .Where(slotStateValue =>
-                    slotStateValue["unlockBlockIndex"].ToLong() < context.BlockIndex &&
-                    slotStateValue.ContainsKey("result") &&
-                    ((Bencodex.Types.Dictionary)slotStateValue["result"]).ContainsKey("id"))
-                .Select(slotStateValue => ((Bencodex.Types.Dictionary)slotStateValue["result"])["id"].ToGuid())
-                .ToArray();
-            avatarState.Update(mail, mailIdsThatShouldRemain);
+            avatarState.UpdateV3(mail);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Cancel Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
