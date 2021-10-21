@@ -247,21 +247,21 @@ namespace Nekoyume.Action
                     sellerAvatarState.mailBox.Remove(expirationMail);
                 }
 
-                var orderSellerMail = new OrderSellerMail(
-                    context.BlockIndex,
-                    orderId,
-                    context.BlockIndex,
-                    orderId
-                );
                 var orderBuyerMail = new OrderBuyerMail(
                     context.BlockIndex,
                     orderId,
                     context.BlockIndex,
                     orderId
                 );
-
                 buyerAvatarState.Update(orderBuyerMail, states, buyerAvatarAddress, context.BlockIndex);
-                sellerAvatarState.Update(orderBuyerMail, states, sellerAvatarAddress, context.BlockIndex);
+
+                var orderSellerMail = new OrderSellerMail(
+                    context.BlockIndex,
+                    orderId,
+                    context.BlockIndex,
+                    orderId
+                );
+                sellerAvatarState.Update(orderSellerMail, states, sellerAvatarAddress, context.BlockIndex);
 
                 // // Update quest.
                 buyerAvatarState.questList.UpdateTradeQuest(TradeType.Buy, order.Price);
