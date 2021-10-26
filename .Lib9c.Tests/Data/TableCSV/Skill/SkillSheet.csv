@@ -10,7 +10,7 @@ _100002,일격(전체),Normal,Attack,BlowAttack,Enemies,1,1 // 노멀 속성의 
 110002,불꽃 일격(전체),Fire,Attack,BlowAttack,Enemies,1,2
 110003,불꽃 연사,Fire,Attack,DoubleAttack,Enemy,2,3
 110004,불꽃 연사(전체),Fire,Attack,DoubleAttack,Enemy,2,1
-110005,용암 해일,Fire,Attack,AreaAttack,Enemies,5,5
+110005,용암 해일,Fire,Attack,AreaAttack,Enemies,5,0
 120000,물 공격,Water,Attack,NormalAttack,Enemy,1,1
 120001,얼음 일격,Water,Attack,BlowAttack,Enemy,1,1
 120002,얼음 일격(전체),Water,Attack,BlowAttack,Enemies,1,2

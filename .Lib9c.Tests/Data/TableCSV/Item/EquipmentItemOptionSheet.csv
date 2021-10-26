@@ -53,7 +53,7 @@ id,stat_type,stat_min,stat_max,skill_id,skill_damage_min,skill_damage_max,skill_
 52,ATK,10,16,,,,,
 53,,,,110001,254,338,20,20
 54,CRI,4,6,,,,,
-55,,,,110005,376,502,12,12
+55,,,,110005,376,502,100,100
 56,ATK,15,19,,,,,
 57,SPD,44,54,,,,,
 58,ATK,23,28,,,,,
