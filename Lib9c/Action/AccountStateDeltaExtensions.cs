@@ -9,6 +9,7 @@ using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
 using LruCacheNet;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
@@ -154,7 +155,10 @@ namespace Nekoyume.Action
             }
         }
 
-        public static AvatarState GetAvatarStateV2(this IAccountStateDelta states, Address address)
+        public static AvatarState GetAvatarStateV2(
+            this IAccountStateDelta states,
+            Address address,
+            bool ignoreInventory = false)
         {
             if (!(states.GetState(address) is Dictionary serializedAvatar))
             {
@@ -164,7 +168,6 @@ namespace Nekoyume.Action
 
             string[] keys =
             {
-                LegacyInventoryKey,
                 LegacyWorldInformationKey,
                 LegacyQuestListKey,
             };
@@ -180,11 +183,20 @@ namespace Nekoyume.Action
 
                 serializedAvatar = serializedAvatar.SetItem(key, serialized);
             }
+
             try
             {
-                return new AvatarState(serializedAvatar);
+                var avatarState = new AvatarState(serializedAvatar);
+                if (!ignoreInventory)
+                {
+                    avatarState.inventory = states.GetInventoryStateByAvatarAddress(address);
+                }
+
+                return avatarState;
             }
-            catch (InvalidCastException e)
+            catch (Exception e) when (
+                e is InvalidCastException ||
+                e is FailedLoadStateException)
             {
                 Log.Error(
                     e,
@@ -195,6 +207,29 @@ namespace Nekoyume.Action
 
                 return null;
             }
+        }
+
+        public static Inventory GetInventoryState(this IAccountStateDelta states, Address inventoryAddress)
+        {
+            var inventoryValue = states.GetState(inventoryAddress);
+            if (inventoryValue is null)
+            {
+                throw new FailedLoadStateException($"{nameof(inventoryAddress)}: {inventoryAddress.ToHex()}");
+            }
+
+            if (!(inventoryValue is Bencodex.Types.List serializedInventory))
+            {
+                Log.Warning("No avatar state ({AvatarAddress})", inventoryAddress.ToHex());
+                throw new InvalidCastException($"{nameof(inventoryValue)}, {typeof(Bencodex.Types.List).FullName}");
+            }
+
+            return new Inventory(serializedInventory);
+        }
+
+        public static Inventory GetInventoryStateByAvatarAddress(this IAccountStateDelta states, Address avatarAddress)
+        {
+            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
+            return states.GetInventoryState(inventoryAddress);
         }
 
         public static bool TryGetAvatarState(
@@ -236,7 +271,8 @@ namespace Nekoyume.Action
             this IAccountStateDelta states,
             Address agentAddress,
             Address avatarAddress,
-            out AvatarState avatarState
+            out AvatarState avatarState,
+            bool ignoreInventory = false
         )
         {
             avatarState = null;
@@ -249,7 +285,7 @@ namespace Nekoyume.Action
                         return false;
                     }
 
-                    avatarState = GetAvatarStateV2(states, avatarAddress);
+                    avatarState = states.GetAvatarStateV2(avatarAddress, ignoreInventory);
                     return true;
                 }
                 catch (Exception e)
@@ -296,7 +332,8 @@ namespace Nekoyume.Action
             Address agentAddress,
             Address avatarAddress,
             out AgentState agentState,
-            out AvatarState avatarState
+            out AvatarState avatarState,
+            bool ignoreInventory = false
         )
         {
             avatarState = null;
@@ -313,7 +350,7 @@ namespace Nekoyume.Action
 
             try
             {
-                avatarState = states.GetAvatarStateV2(avatarAddress);
+                avatarState = states.GetAvatarStateV2(avatarAddress, ignoreInventory);
             }
             catch (FailedLoadStateException)
             {
