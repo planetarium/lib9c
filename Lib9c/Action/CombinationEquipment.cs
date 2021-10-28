@@ -78,12 +78,23 @@ namespace Nekoyume.Action
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
-            if (!states.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress, out var agentState,
-                out var avatarState))
+            // Separate inventory
+            // NOTE: Separate inventory getter logic and inject to the `avatarState.inventory`.
+            // This not affect to states.
+            if (!states.TryGetAgentAvatarStatesV2(
+                context.Signer,
+                avatarAddress,
+                out var agentState,
+                out var avatarState,
+                true))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
+
+            var inventory = states.GetInventoryStateByAvatarAddress(avatarAddress);
+            avatarState.inventory = inventory;
+            // ~Separate inventory
 
             // Validate Required Cleared Stage
             if (!avatarState.worldInformation.IsStageCleared(
@@ -226,7 +237,6 @@ namespace Nekoyume.Action
             // ~Validate Work
 
             // Remove Required Materials
-            var inventory = avatarState.inventory;
             foreach (var pair in requiredFungibleItems.OrderBy(pair => pair.Key))
             {
                 if (!materialItemSheet.TryGetValue(pair.Key, out materialRow) ||
