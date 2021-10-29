@@ -166,11 +166,18 @@ namespace Nekoyume.Action
                 return null;
             }
 
-            string[] keys =
-            {
-                LegacyWorldInformationKey,
-                LegacyQuestListKey,
-            };
+            var keys = ignoreInventory
+                ? new[]
+                {
+                    LegacyWorldInformationKey,
+                    LegacyQuestListKey,
+                }
+                : new[]
+                {
+                    LegacyInventoryKey,
+                    LegacyWorldInformationKey,
+                    LegacyQuestListKey,
+                };
 
             foreach (var key in keys)
             {
@@ -194,9 +201,7 @@ namespace Nekoyume.Action
 
                 return avatarState;
             }
-            catch (Exception e) when (
-                e is InvalidCastException ||
-                e is FailedLoadStateException)
+            catch (InvalidCastException e)
             {
                 Log.Error(
                     e,
@@ -206,6 +211,17 @@ namespace Nekoyume.Action
                 );
 
                 return null;
+            }
+            catch (FailedLoadStateException e)
+            {
+                Log.Error(
+                    e,
+                    "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
+                    address.ToHex(),
+                    serializedAvatar
+                );
+
+                throw;
             }
         }
 
@@ -336,12 +352,13 @@ namespace Nekoyume.Action
             bool ignoreInventory = false
         )
         {
-            avatarState = null;
             agentState = states.GetAgentState(agentAddress);
+            avatarState = null;
             if (agentState is null)
             {
                 return false;
             }
+
             if (!agentState.avatarAddresses.ContainsValue(avatarAddress))
             {
                 throw new AgentStateNotContainsAvatarAddressException(

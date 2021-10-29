@@ -92,7 +92,9 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var inventory = states.GetInventoryStateByAvatarAddress(avatarAddress);
+            var inventory = avatarState.inventory is null
+                ? states.GetInventoryStateByAvatarAddress(avatarAddress)
+                : avatarState.inventory;
             avatarState.inventory = inventory;
             // ~Separate inventory
 
