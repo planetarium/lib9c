@@ -193,13 +193,7 @@ namespace Nekoyume.Action
 
             try
             {
-                var avatarState = new AvatarState(serializedAvatar);
-                if (!ignoreInventory)
-                {
-                    avatarState.inventory = states.GetInventoryStateByAvatarAddress(address);
-                }
-
-                return avatarState;
+                return new AvatarState(serializedAvatar);
             }
             catch (InvalidCastException e)
             {
