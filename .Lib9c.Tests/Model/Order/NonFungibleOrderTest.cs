@@ -2,6 +2,7 @@ namespace Lib9c.Tests.Model.Order
 {
     using System;
     using System.Collections.Generic;
+    using System.Dynamic;
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
@@ -10,21 +11,26 @@ namespace Lib9c.Tests.Model.Order
     using Lib9c.Tests.Action;
     using Libplanet;
     using Libplanet.Assets;
+    using MessagePack;
+    using MessagePack.Resolvers;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Battle;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class NonFungibleOrderTest
     {
+        private readonly ITestOutputHelper _testOutputHelper;
         private readonly TableSheets _tableSheets;
         private readonly Currency _currency;
         private readonly AvatarState _avatarState;
 
-        public NonFungibleOrderTest()
+        public NonFungibleOrderTest(ITestOutputHelper testOutputHelper)
         {
+            _testOutputHelper = testOutputHelper;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             _currency = new Currency("NCG", 2, minter: null);
             _avatarState = new AvatarState(
@@ -714,6 +720,50 @@ namespace Lib9c.Tests.Model.Order
             {
                 Assert.Throws(exc, () => order.Transfer2(_avatarState, buyer, 0));
             }
+        }
+
+        [Fact]
+        public void Serialize_MessagePack()
+        {
+            Guid orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
+            Guid itemId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            Currency currency = new Currency("NCG", 2, minter: null);
+            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+                Addresses.Admin,
+                Addresses.Blacksmith,
+                orderId,
+                new FungibleAssetValue(currency, 10, 0),
+                itemId,
+                1,
+                ItemSubType.Weapon
+            );
+
+            Assert.Equal(1, order.StartedBlockIndex);
+            Assert.Equal(currency * 10, order.Price);
+            Assert.Equal(Order.OrderType.NonFungible, order.Type);
+            Assert.Equal(Addresses.Admin, order.SellerAgentAddress);
+            Assert.Equal(Addresses.Blacksmith, order.SellerAvatarAddress);
+            Assert.Equal(orderId, order.OrderId);
+            Assert.Equal(itemId, order.TradableId);
+            Assert.Equal(ItemSubType.Weapon, order.ItemSubType);
+
+            var resolver = MessagePack.Resolvers.CompositeResolver.Create(
+                AddressResolver.Instance,
+                StandardResolver.Instance
+            );
+            var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
+
+// Pass options every time or set as default
+            MessagePackSerializer.DefaultOptions = options;
+            var exc = new Exception("test");
+            var b = MessagePackSerializer.Serialize(exc);
+            var des = MessagePackSerializer.Deserialize<Exception>(b);
+            Assert.Equal(exc, des);
+            // var b = MessagePackSerializer.Serialize(exc, ContractlessStandardResolver.Options);
+            // dynamic des = MessagePackSerializer.Deserialize<ExpandoObject>(b);
+            // var blob = MessagePackSerializer.Serialize(order.SellerAgentAddress);
+            // _testOutputHelper.WriteLine(MessagePackSerializer.ConvertToJson(blob));
+            // Assert.Equal(order.SellerAgentAddress, MessagePackSerializer.Deserialize<Address>(blob));
         }
 
 #pragma warning disable SA1204

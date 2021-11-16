@@ -3,7 +3,10 @@ namespace Lib9c.Tests.Action
     using System;
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
+    using Lib9c.Model.Order;
     using Libplanet;
+    using MessagePack;
+    using MessagePack.Resolvers;
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
@@ -12,6 +15,16 @@ namespace Lib9c.Tests.Action
 
     public class ExceptionTest
     {
+        public ExceptionTest()
+        {
+            var resolver = MessagePack.Resolvers.CompositeResolver.Create(
+                AddressResolver.Instance,
+                StandardResolver.Instance
+            );
+            var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
+            MessagePackSerializer.DefaultOptions = options;
+        }
+
         [Theory]
         [InlineData(typeof(InvalidTradableIdException))]
         [InlineData(typeof(AlreadyReceivedException))]
@@ -94,16 +107,19 @@ namespace Lib9c.Tests.Action
 
         private static void AssertException(Type type, Exception exc)
         {
-            var formatter = new BinaryFormatter();
-            using (var ms = new MemoryStream())
-            {
-                formatter.Serialize(ms, exc);
-
-                ms.Seek(0, SeekOrigin.Begin);
-                var deserialized = formatter.Deserialize(ms);
-                Exception exception = (Exception)Convert.ChangeType(deserialized, type);
-                Assert.Equal(exc.Message, exception.Message);
-            }
+            var b = MessagePackSerializer.Serialize(exc);
+            var des = MessagePackSerializer.Deserialize<Exception>(b);
+            Assert.Equal(exc.Message, des.Message);
+            // var formatter = new BinaryFormatter();
+            // using (var ms = new MemoryStream())
+            // {
+            //     formatter.Serialize(ms, exc);
+            //
+            //     ms.Seek(0, SeekOrigin.Begin);
+            //     var deserialized = formatter.Deserialize(ms);
+            //     Exception exception = (Exception)Convert.ChangeType(deserialized, type);
+            //     Assert.Equal(exc.Message, exception.Message);
+            // }
         }
 
         private static void AssertAdminState(AdminState adminState, AdminState adminState2)
