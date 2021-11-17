@@ -12,6 +12,11 @@ namespace Lib9c.Model.Order
         public void Serialize(ref MessagePackWriter writer, T value,
             MessagePackSerializerOptions options)
         {
+            if (value is null)
+            {
+                writer.WriteNil();
+                return;
+            }
             var formatter = new BinaryFormatter();
             using (var stream = new MemoryStream())
             {
@@ -26,7 +31,7 @@ namespace Lib9c.Model.Order
         {
             if (reader.TryReadNil())
             {
-                return default;
+                return null;
             }
 
             options.Security.DepthStep(ref reader);

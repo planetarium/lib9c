@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Bencodex.Types;
 using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
 using MessagePack.Formatters;
 
 namespace Lib9c.Model.Order
@@ -11,7 +14,10 @@ namespace Lib9c.Model.Order
         static readonly Dictionary<Type, object> formatterMap = new Dictionary<Type, object>()
         {
             {typeof(Address), new AddressFormatter()},
-            {typeof(Exception), new ExceptionFormatter<Exception>()}
+            {typeof(Exception), new ExceptionFormatter<Exception>()},
+            {typeof(IValue), new BencodexFormatter()},
+            {typeof(FungibleAssetValue), new FungibleAssetValueFormatter()},
+            {typeof(IAccountStateDelta), new AccountStateDeltaFormatter()}
             // add more your own custom serializers.
         };
 

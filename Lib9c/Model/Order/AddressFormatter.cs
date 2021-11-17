@@ -30,7 +30,13 @@ namespace Lib9c.Model.Order
 
             options.Security.DepthStep(ref reader);
 
-            return new Address(reader.ReadBytes()?.ToArray() ?? throw new InvalidOperationException());
+            var bytes = reader.ReadBytes()?.ToArray();
+            if (bytes is null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return new Address(bytes);
         }
     }
 }
