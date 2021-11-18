@@ -6,8 +6,10 @@ namespace Lib9c.Tests.Action
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
+    using Bencodex.Types;
     using Libplanet;
     using Libplanet.Assets;
+    using MessagePack;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
@@ -15,6 +17,7 @@ namespace Lib9c.Tests.Action
     using Xunit;
     using static SerializeKeys;
 
+    [Collection("Resolver Collection")]
     public class CreateAvatarTest
     {
         private readonly Address _agentAddress;
@@ -318,6 +321,95 @@ namespace Lib9c.Tests.Action
             Assert.Equal(5, deserialized.lens);
             Assert.Equal(7, deserialized.tail);
             Assert.Equal("test", deserialized.name);
+
+            var currency = new Currency("NCG", 2, minters: null);
+            var signer = default(Address);
+            var blockIndex = 1234;
+            var states = new State()
+                .SetState(signer, (Text)"ANYTHING")
+                .SetState(default, Dictionary.Empty.Add("key", "value"))
+                .MintAsset(signer, currency * 10000);
+
+            var evaluation = new ActionBase.ActionEvaluation<ActionBase>()
+            {
+                Action = action,
+                Signer = signer,
+                BlockIndex = blockIndex,
+                PreviousStates = states,
+                OutputStates = states,
+            };
+
+            using var ms2 = new MemoryStream();
+            formatter.Serialize(ms2, evaluation);
+
+            ms2.Seek(0, SeekOrigin.Begin);
+            var des = (ActionBase.ActionEvaluation<ActionBase>)formatter.Deserialize(ms2);
+            Assert.IsType<CreateAvatar>(des.Action);
+            var innerAction = (CreateAvatar)des.Action;
+            // FIXME We should equality check more precisely.
+            Assert.Equal(2, innerAction.index);
+            Assert.Equal(1, innerAction.hair);
+            Assert.Equal(4, innerAction.ear);
+            Assert.Equal(5, innerAction.lens);
+            Assert.Equal(7, innerAction.tail);
+            Assert.Equal("test", innerAction.name);
+            Assert.Equal(evaluation.Signer, des.Signer);
+            Assert.Equal(evaluation.BlockIndex, des.BlockIndex);
+            var dict = (Dictionary)des.OutputStates.GetState(default);
+            Assert.Equal("value", (Text)dict["key"]);
+        }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new CreateAvatar()
+            {
+                index = 2,
+                hair = 1,
+                ear = 4,
+                lens = 5,
+                tail = 7,
+                name = "test",
+            };
+            var b = MessagePackSerializer.Serialize(action);
+            var deserialized = MessagePackSerializer.Deserialize<CreateAvatar>(b);
+
+            Assert.Equal(2, deserialized.index);
+            Assert.Equal(1, deserialized.hair);
+            Assert.Equal(4, deserialized.ear);
+            Assert.Equal(5, deserialized.lens);
+            Assert.Equal(7, deserialized.tail);
+            Assert.Equal("test", deserialized.name);
+
+            var currency = new Currency("NCG", 2, minters: null);
+            var signer = default(Address);
+            var blockIndex = 1234;
+            var states = new State()
+                .SetState(signer, (Text)"ANYTHING")
+                .SetState(default, Dictionary.Empty.Add("key", "value"))
+                .MintAsset(signer, currency * 10000);
+
+            var evaluation = new ActionBase.ActionEvaluation<ActionBase>()
+            {
+                Action = action,
+                Signer = signer,
+                BlockIndex = blockIndex,
+                PreviousStates = states,
+                OutputStates = states,
+            };
+            var serialize = MessagePackSerializer.Serialize(evaluation);
+            var des = MessagePackSerializer.Deserialize<ActionBase.ActionEvaluation<ActionBase>>(serialize);
+
+            Assert.IsType<CreateAvatar>(des.Action);
+            var innerAction = (CreateAvatar)des.Action;
+            Assert.Equal(2, innerAction.index);
+            Assert.Equal(1, innerAction.hair);
+            Assert.Equal(4, innerAction.ear);
+            Assert.Equal(5, innerAction.lens);
+            Assert.Equal(7, innerAction.tail);
+            Assert.Equal("test", innerAction.name);
+            Assert.Equal(evaluation.Signer, des.Signer);
+            Assert.Equal(evaluation.BlockIndex, des.BlockIndex);
         }
     }
 }

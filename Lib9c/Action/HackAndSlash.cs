@@ -6,6 +6,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Battle;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.State;
@@ -16,18 +17,57 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
+    [MessagePackObject]
     [ActionType("hack_and_slash10")]
     public class HackAndSlash : GameAction
     {
+        [Key(1)]
         public List<Guid> costumes;
+        [Key(2)]
         public List<Guid> equipments;
+        [Key(3)]
         public List<Guid> foods;
+        [Key(4)]
         public int worldId;
+        [Key(5)]
         public int stageId;
+        [Key(6)]
         public int playCount = 1;
+        [Key(7)]
+#pragma warning disable MsgPack003
         public Address avatarAddress;
+#pragma warning restore MsgPack003
+        [Key(8)]
         public Address rankingMapAddress;
 
+        public HackAndSlash()
+        {
+        }
+
+        [SerializationConstructor]
+        public HackAndSlash(
+            Guid guid,
+            List<Guid> costumes,
+            List<Guid> equipments,
+            List<Guid> foods,
+            int worldId,
+            int stageId,
+            int playCount,
+            Address avatarAddress,
+            Address rankingMapAddress
+        ) : base(guid)
+        {
+            this.costumes = costumes;
+            this.equipments = equipments;
+            this.foods = foods;
+            this.worldId = worldId;
+            this.stageId = stageId;
+            this.playCount = playCount;
+            this.avatarAddress = avatarAddress;
+            this.rankingMapAddress = rankingMapAddress;
+        }
+
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
             {

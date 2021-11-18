@@ -8,11 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using MessagePack;
 using Nekoyume.Model;
 
 namespace Nekoyume.Action
 {
     [Serializable]
+    [MessagePackObject]
     [ActionType("transfer_asset2")]
     public class TransferAsset : ActionBase, ISerializable
     {
@@ -22,6 +24,7 @@ namespace Nekoyume.Action
         {
         }
 
+        [SerializationConstructor]
         public TransferAsset(Address sender, Address recipient, FungibleAssetValue amount, string memo = null)
         {
             Sender = sender;
@@ -40,11 +43,20 @@ namespace Nekoyume.Action
             LoadPlainValue(pv);
         }
 
+        [Key(0)]
+#pragma warning disable MsgPack003
         public Address Sender { get; private set; }
+#pragma warning restore MsgPack003
+        [Key(1)]
         public Address Recipient { get; private set; }
+        [Key(2)]
+#pragma warning disable MsgPack003
         public FungibleAssetValue Amount { get; private set; }
+#pragma warning restore MsgPack003
+        [Key(3)]
         public string Memo { get; private set; }
 
+        [IgnoreMember]
         public override IValue PlainValue
         {
             get

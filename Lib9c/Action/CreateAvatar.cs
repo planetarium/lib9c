@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
@@ -14,18 +15,40 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
+    [MessagePackObject]
     [ActionType("create_avatar4")]
     public class CreateAvatar : GameAction
     {
         public const string DeriveFormat = "avatar-state-{0}";
-
+        [Key(1)]
         public int index;
+        [Key(2)]
         public int hair;
+        [Key(3)]
         public int lens;
+        [Key(4)]
         public int ear;
+        [Key(5)]
         public int tail;
+        [Key(6)]
         public string name;
 
+        public CreateAvatar()
+        {
+        }
+
+        [SerializationConstructor]
+        public CreateAvatar(Guid guid, int index, int hair, int lens, int ear, int tail, string name) : base(guid)
+        {
+            this.index = index;
+            this.hair = hair;
+            this.lens = lens;
+            this.ear = ear;
+            this.tail = tail;
+            this.name = name;
+        }
+
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>()
         {
             ["index"] = (Integer) index,

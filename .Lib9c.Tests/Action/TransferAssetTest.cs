@@ -11,12 +11,14 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Assets;
     using Libplanet.Crypto;
+    using MessagePack;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
     using Xunit;
 
+    [Collection("Resolver Collection")]
     public class TransferAssetTest
     {
         private static readonly Address _sender = new Address(
@@ -355,7 +357,7 @@ namespace Lib9c.Tests.Action
         [Theory]
         [InlineData(null)]
         [InlineData("Nine Chronicles")]
-        public void SerializeWithDotnetAPI(string memo)
+        public void Serialize_With_DotnetAPI(string memo)
         {
             var formatter = new BinaryFormatter();
             var action = new TransferAsset(_sender, _recipient, _currency * 100, memo);
@@ -370,6 +372,46 @@ namespace Lib9c.Tests.Action
             Assert.Equal(_recipient, deserialized.Recipient);
             Assert.Equal(_currency * 100, deserialized.Amount);
             Assert.Equal(memo, deserialized.Memo);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("Nine Chronicles")]
+        public void Serialize_With_MessagePack(string memo)
+        {
+            var action = new TransferAsset(_sender, _recipient, _currency * 100, memo);
+            var b = MessagePackSerializer.Serialize(action);
+            var deserialized = MessagePackSerializer.Deserialize<TransferAsset>(b);
+            Assert.Equal(_sender, deserialized.Sender);
+            Assert.Equal(_recipient, deserialized.Recipient);
+            Assert.Equal(_currency * 100, deserialized.Amount);
+            Assert.Equal(memo, deserialized.Memo);
+
+            var currency = new Currency("NCG", 2, minters: null);
+            var signer = default(Address);
+            var blockIndex = 1234;
+            var states = new State()
+                .SetState(signer, (Text)"ANYTHING")
+                .SetState(default, Dictionary.Empty.Add("key", "value"))
+                .MintAsset(signer, currency * 10000);
+
+            var evaluation = new ActionBase.ActionEvaluation<ActionBase>()
+            {
+                Action = action,
+                Signer = signer,
+                BlockIndex = blockIndex,
+                PreviousStates = states,
+                OutputStates = states,
+            };
+            var serialize = MessagePackSerializer.Serialize(evaluation);
+            var des = MessagePackSerializer.Deserialize<ActionBase.ActionEvaluation<ActionBase>>(serialize);
+
+            Assert.IsType<TransferAsset>(des.Action);
+            var innerAction = (TransferAsset)des.Action;
+            Assert.Equal(_sender, innerAction.Sender);
+            Assert.Equal(_recipient, innerAction.Recipient);
+            Assert.Equal(_currency * 100, innerAction.Amount);
+            Assert.Equal(memo, innerAction.Memo);
         }
     }
 }

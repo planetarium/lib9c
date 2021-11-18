@@ -14,6 +14,7 @@ using Libplanet.Action;
 using Serilog;
 using Nekoyume.Model.State;
 using Libplanet.Assets;
+using MessagePack;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
 #else
@@ -24,6 +25,10 @@ using System.Reactive.Linq;
 namespace Nekoyume.Action
 {
     [Serializable]
+    [MessagePackObject]
+    [Union(0, typeof(TransferAsset))]
+    [Union(1, typeof(CreateAvatar))]
+    [Union(2, typeof(HackAndSlash))]
     public abstract class ActionBase : IAction
     {
         public static readonly IValue MarkChanged = default(Null);
@@ -31,11 +36,12 @@ namespace Nekoyume.Action
         // FIXME GoldCurrencyState 에 정의된 것과 다른데 괜찮을지 점검해봐야 합니다.
         protected static readonly Currency GoldCurrencyMock = new Currency();
 
+        [IgnoreMember]
         public abstract IValue PlainValue { get; }
         public abstract void LoadPlainValue(IValue plainValue);
         public abstract IAccountStateDelta Execute(IActionContext context);
 
-        private struct AccountStateDelta : IAccountStateDelta
+        public struct AccountStateDelta : IAccountStateDelta
         {
             private IImmutableDictionary<Address, IValue> _states;
             private IImmutableDictionary<(Address, Currency), BigInteger> _balances;
@@ -128,7 +134,9 @@ namespace Nekoyume.Action
                 Address sender,
                 Address recipient,
                 FungibleAssetValue value,
+#pragma warning disable S1172
                 bool allowNegativeBalance = false)
+#pragma warning restore S1172
             {
                 if (value.Sign <= 0)
                 {
@@ -186,22 +194,50 @@ namespace Nekoyume.Action
         }
 
         [Serializable]
+        [MessagePackObject]
         public struct ActionEvaluation<T> : ISerializable
             where T : ActionBase
         {
+            [Key(0)]
             public T Action { get; set; }
 
+            [Key(1)]
             public Address Signer { get; set; }
 
+            [Key(2)]
             public long BlockIndex { get; set; }
 
+            [Key(3)]
             public IAccountStateDelta OutputStates { get; set; }
 
+            [Key(4)]
             public Exception Exception { get; set; }
 
+            [Key(5)]
             public IAccountStateDelta PreviousStates { get; set; }
 
+            [Key(6)]
             public int RandomSeed { get; set; }
+
+            [SerializationConstructor]
+            public ActionEvaluation(
+                T action,
+                Address signer,
+                long blockIndex,
+                IAccountStateDelta outputStates,
+                Exception exception,
+                IAccountStateDelta previousStates,
+                int randomSeed
+            )
+            {
+                Action = action;
+                Signer = signer;
+                BlockIndex = blockIndex;
+                OutputStates = outputStates;
+                Exception = exception;
+                PreviousStates = previousStates;
+                RandomSeed = randomSeed;
+            }
 
             public ActionEvaluation(SerializationInfo info, StreamingContext ctx)
             {
