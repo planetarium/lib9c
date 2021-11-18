@@ -6,6 +6,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.Stat;
@@ -17,22 +18,40 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("combination_equipment9")]
+    [MessagePackObject]
     public class CombinationEquipment : GameAction
     {
         public static readonly Address BlacksmithAddress = ItemEnhancement.BlacksmithAddress;
 
         public const string AvatarAddressKey = "a";
+        [Key(1)]
+#pragma warning disable MsgPack003
         public Address avatarAddress;
-
+#pragma warning restore MsgPack003
         public const string SlotIndexKey = "s";
+        [Key(2)]
         public int slotIndex;
-
         public const string RecipeIdKey = "r";
+        [Key(3)]
         public int recipeId;
-
         public const string SubRecipeIdKey = "i";
+        [Key(4)]
         public int? subRecipeId;
 
+        public CombinationEquipment()
+        {
+        }
+
+        [SerializationConstructor]
+        public CombinationEquipment(Guid guid, Address avatarAddress, int slotIndex, int recipeId, int? subRecipeId) : base(guid)
+        {
+            this.avatarAddress = avatarAddress;
+            this.slotIndex = slotIndex;
+            this.recipeId = recipeId;
+            this.subRecipeId = subRecipeId;
+        }
+
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
             {

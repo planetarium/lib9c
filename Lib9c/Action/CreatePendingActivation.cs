@@ -2,16 +2,20 @@ using System;
 using System.Collections.Generic;
 using Bencodex.Types;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("create_pending_activation")]
+    [MessagePackObject]
     public class CreatePendingActivation : ActionBase
     {
+        [Key(0)]
         public PendingActivationState PendingActivation { get; private set; }
 
+        [IgnoreMember]
         public override IValue PlainValue
             => new Dictionary(
                 new[]
@@ -27,6 +31,7 @@ namespace Nekoyume.Action
         {
         }
 
+        [SerializationConstructor]
         public CreatePendingActivation(PendingActivationState activationKey)
         {
             PendingActivation = activationKey;

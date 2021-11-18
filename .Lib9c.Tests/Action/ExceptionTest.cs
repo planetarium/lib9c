@@ -10,7 +10,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.TableData;
     using Xunit;
 
-    [Collection("Resolver Collection")]
     public class ExceptionTest
     {
         [Theory]

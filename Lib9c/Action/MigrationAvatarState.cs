@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using Bencodex.Types;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
@@ -10,9 +11,22 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("migration_avatar_state")]
+    [MessagePackObject]
     public class MigrationAvatarState : GameAction
     {
+        [Key(1)]
         public List<Dictionary> avatarStates;
+
+        public MigrationAvatarState()
+        {
+        }
+
+        [SerializationConstructor]
+        public MigrationAvatarState(Guid guid, List<Dictionary> avatarStates) : base(guid)
+        {
+            this.avatarStates = avatarStates;
+        }
+
         public override IAccountStateDelta Execute(IActionContext context)
         {
             var states = context.PreviousStates;
@@ -52,6 +66,7 @@ namespace Nekoyume.Action
             return states;
         }
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
         {
             ["a"] = avatarStates.Serialize(),

@@ -7,20 +7,18 @@ using MessagePack.Formatters;
 
 namespace Lib9c.Formatters
 {
-    public class BencodexFormatter : IMessagePackFormatter<IValue>
+    public class BencodexFormatter<T> : IMessagePackFormatter<T> where T: IValue
     {
-        public void Serialize(ref MessagePackWriter writer, IValue value, MessagePackSerializerOptions options)
+        public void Serialize(ref MessagePackWriter writer, T value, MessagePackSerializerOptions options)
         {
             writer.Write(new Codec().Encode(value));
         }
 
-        IValue IMessagePackFormatter<IValue>.Deserialize(ref MessagePackReader reader,
-            MessagePackSerializerOptions options)
+        T IMessagePackFormatter<T>.Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
         {
             options.Security.DepthStep(ref reader);
 
-            return new Codec().Decode(reader.ReadBytes()?.ToArray() ?? throw new InvalidOperationException());
+            return (T)new Codec().Decode(reader.ReadBytes()?.ToArray() ?? throw new InvalidOperationException());
         }
-
     }
 }

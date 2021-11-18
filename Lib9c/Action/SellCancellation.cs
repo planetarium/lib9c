@@ -7,6 +7,7 @@ using Bencodex.Types;
 using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -19,12 +20,37 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("sell_cancellation9")]
+    [MessagePackObject]
     public class SellCancellation : GameAction
     {
+        [Key(1)]
         public Guid orderId;
+        [Key(2)]
         public Guid tradableId;
+        [Key(3)]
+#pragma warning disable MsgPack003
         public Address sellerAvatarAddress;
+#pragma warning restore MsgPack003
+        [Key(4)]
         public ItemSubType itemSubType;
+
+        public SellCancellation()
+        {
+        }
+
+        [SerializationConstructor]
+        public SellCancellation(
+            Guid guid,
+            Guid orderId,
+            Guid tradableId,
+            Address sellerAvatarAddress,
+            ItemSubType itemSubType) : base(guid)
+        {
+            this.orderId = orderId;
+            this.tradableId = tradableId;
+            this.sellerAvatarAddress = sellerAvatarAddress;
+            this.itemSubType = itemSubType;
+        }
 
         [Serializable]
         public class Result : AttachmentActionResult
@@ -54,6 +80,7 @@ namespace Nekoyume.Action
 #pragma warning restore LAA1002
         }
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
         {
             [ProductIdKey] = orderId.Serialize(),

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Immutable;
 using Bencodex.Types;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
@@ -10,10 +11,24 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("patch_table_sheet")]
+    [MessagePackObject]
     public class PatchTableSheet : GameAction
     {
+        [Key(1)]
         public string TableName;
+        [Key(2)]
         public string TableCsv;
+
+        public PatchTableSheet()
+        {
+        }
+
+        [SerializationConstructor]
+        public PatchTableSheet(Guid guid, string tableName, string tableCsv) : base(guid)
+        {
+            TableName = tableName;
+            TableCsv = tableCsv;
+        }
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
@@ -57,6 +72,7 @@ namespace Nekoyume.Action
             return states;
         }
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             ImmutableDictionary<string, IValue>.Empty
                 .SetItem("table_name", (Text) TableName)

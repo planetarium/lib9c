@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
 
@@ -10,6 +11,7 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("add_activated_account2")]
+    [MessagePackObject]
     public class AddActivatedAccount : ActionBase
     {
         public AddActivatedAccount(Address address)
@@ -21,8 +23,12 @@ namespace Nekoyume.Action
         {
         }
 
+        [Key(0)]
+#pragma warning disable MsgPack003
         public Address Address { get; private set; }
+#pragma warning restore MsgPack003
 
+        [IgnoreMember]
         public override IValue PlainValue =>
             new Dictionary(
                 new[]

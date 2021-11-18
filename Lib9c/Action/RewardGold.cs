@@ -5,13 +5,16 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using MessagePack;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Action
 {
     [Serializable]
+    [MessagePackObject]
     public class RewardGold : ActionBase
     {
+        [IgnoreMember]
         public override IValue PlainValue =>
             new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
             {

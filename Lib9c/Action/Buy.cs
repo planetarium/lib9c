@@ -8,6 +8,7 @@ using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using MessagePack;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
@@ -20,6 +21,7 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("buy10")]
+    [MessagePackObject]
     public class Buy : GameAction, IBuy5
     {
         public const int TaxRate = 8;
@@ -34,11 +36,36 @@ namespace Nekoyume.Action
         public const int ErrorCodeInvalidItemType = 9;
         public const int ErrorCodeDuplicateSell = 10;
 
+        public Buy()
+        {
+        }
+
+        [SerializationConstructor]
+        public Buy(
+            Guid guid,
+            Address address,
+            List<(Guid orderId, int errorCode)> errors,
+            IEnumerable<PurchaseInfo> purchaseInfos
+        ) : base(guid)
+        {
+            buyerAvatarAddress = address;
+            this.errors = errors;
+            this.purchaseInfos = purchaseInfos;
+        }
+
+        [Key(1)]
+#pragma warning disable MsgPack003
         public Address buyerAvatarAddress { get; set; }
+#pragma warning restore MsgPack003
+
+        [Key(2)]
         public List<(Guid orderId, int errorCode)> errors = new List<(Guid orderId, int errorCode)>();
+        [Key(3)]
         public IEnumerable<PurchaseInfo> purchaseInfos;
+
         IEnumerable<IPurchaseInfo> IBuy5.purchaseInfos => purchaseInfos;
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
         {
             [BuyerAvatarAddressKey] = buyerAvatarAddress.Serialize(),

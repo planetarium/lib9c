@@ -5,6 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
 using Serilog;
@@ -13,8 +14,17 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("migration_activated_accounts_state")]
+    [MessagePackObject]
     public class MigrationActivatedAccountsState : GameAction
     {
+        public MigrationActivatedAccountsState()
+        {
+        }
+
+        public MigrationActivatedAccountsState(Guid guid) : base(guid)
+        {
+        }
+
         public override IAccountStateDelta Execute(IActionContext context)
         {
             var states = context.PreviousStates;

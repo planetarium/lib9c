@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Crypto;
+    using MessagePack;
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
@@ -95,8 +96,7 @@ namespace Lib9c.Tests.Action
         {
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var privateKey = new PrivateKey();
-            (ActivationKey activationKey, PendingActivationState pendingActivation) =
-                ActivationKey.Create(privateKey, nonce);
+            (ActivationKey activationKey, _) = ActivationKey.Create(privateKey, nonce);
 
             ActivateAccount action = activationKey.CreateActivateAccount(nonce);
 
@@ -105,6 +105,21 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(action.Signature, action2.Signature);
             Assert.Equal(action.PendingAddress, action2.PendingAddress);
+        }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var privateKey = new PrivateKey();
+            (ActivationKey activationKey, _) = ActivationKey.Create(privateKey, nonce);
+
+            ActivateAccount action = activationKey.CreateActivateAccount(nonce);
+            byte[] b = MessagePackSerializer.Serialize(action);
+            var deserialize = MessagePackSerializer.Deserialize<ActivateAccount>(b);
+
+            Assert.Equal(action.Signature, deserialize.Signature);
+            Assert.Equal(action.PendingAddress, deserialize.PendingAddress);
         }
     }
 }

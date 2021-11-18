@@ -8,6 +8,7 @@ using System.Numerics;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -20,6 +21,7 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("item_enhancement9")]
+    [MessagePackObject]
     public class ItemEnhancement : GameAction
     {
         public static readonly Address BlacksmithAddress = Addresses.Blacksmith;
@@ -31,10 +33,29 @@ namespace Nekoyume.Action
             Fail = 2,
         }
 
+        [Key(1)]
         public Guid itemId;
+        [Key(2)]
         public Guid materialId;
+        [Key(3)]
+#pragma warning disable MsgPack003
         public Address avatarAddress;
+#pragma warning restore MsgPack003
+        [Key(4)]
         public int slotIndex;
+
+        public ItemEnhancement()
+        {
+        }
+
+        [SerializationConstructor]
+        public ItemEnhancement(Guid guid, Guid itemId, Guid materialId, Address avatarAddress, int slotIndex) : base(guid)
+        {
+            this.itemId = itemId;
+            this.materialId = materialId;
+            this.avatarAddress = avatarAddress;
+            this.slotIndex = slotIndex;
+        }
 
         [Serializable]
         public class ResultModel : AttachmentActionResult
@@ -79,6 +100,7 @@ namespace Nekoyume.Action
 #pragma warning restore LAA1002
         }
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {
             get

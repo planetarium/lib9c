@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Assets;
+using MessagePack;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
@@ -10,6 +11,7 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
+    [MessagePackObject]
     public class PurchaseInfo : IComparable<PurchaseInfo>, IComparable, IPurchaseInfo
     {
         public static bool operator >(PurchaseInfo left, PurchaseInfo right) => left.CompareTo(right) > 0;
@@ -55,13 +57,26 @@ namespace Nekoyume.Action
             }
         }
 
+        [Key(0)]
         public readonly Guid OrderId;
+
         Guid? IPurchaseInfo.OrderId => OrderId;
+
+        [Key(1)]
         public readonly Guid TradableId;
+
+        [Key(2)]
+#pragma warning disable MsgPack003
         public Address SellerAgentAddress { get; }
+#pragma warning restore MsgPack003
+        [Key(3)]
         public Address SellerAvatarAddress { get; }
+        [Key(4)]
         public ItemSubType ItemSubType { get; }
+        [Key(5)]
+#pragma warning disable MsgPack003
         public FungibleAssetValue Price { get; }
+#pragma warning restore MsgPack003
 
         public PurchaseInfo(
             Guid orderId,

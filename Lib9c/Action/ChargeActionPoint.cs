@@ -5,6 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -14,9 +15,23 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("charge_action_point3")]
+    [MessagePackObject]
     public class ChargeActionPoint : GameAction
     {
+        [Key(1)]
+#pragma warning disable MsgPack003
         public Address avatarAddress;
+#pragma warning restore MsgPack003
+
+        public ChargeActionPoint()
+        {
+        }
+
+        [SerializationConstructor]
+        public ChargeActionPoint(Guid guid, Address address): base(guid)
+        {
+            avatarAddress = address;
+        }
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
@@ -69,6 +84,7 @@ namespace Nekoyume.Action
                 .SetState(avatarAddress, avatarState.SerializeV2());
         }
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
             {

@@ -2,14 +2,20 @@ using System;
 using System.Collections.Generic;
 using Bencodex.Types;
 using Libplanet;
+using MessagePack;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Model.State
 {
     [Serializable]
+    [MessagePackObject]
+    [Union(0, typeof(PendingActivationState))]
     public abstract class State : IState
     {
+        [Key(0)]
+#pragma warning disable MsgPack003
         public Address address;
+#pragma warning restore MsgPack003
 
         protected State(Address address)
         {

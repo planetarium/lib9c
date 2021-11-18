@@ -5,6 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
@@ -12,8 +13,18 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("migration_legacy_shop2")]
+    [MessagePackObject]
     public class MigrationLegacyShop : GameAction
     {
+        public MigrationLegacyShop()
+        {
+        }
+
+        [SerializationConstructor]
+        public MigrationLegacyShop(Guid guid) : base(guid)
+        {
+        }
+
         public override IAccountStateDelta Execute(IActionContext context)
         {
             var states = context.PreviousStates;
@@ -87,6 +98,7 @@ namespace Nekoyume.Action
             return states;
         }
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
         {
         }.ToImmutableDictionary();
@@ -94,6 +106,7 @@ namespace Nekoyume.Action
         {
         }
 
+        [Key(1)]
         private List<string> _avatarAddressesHex = new List<string>
         {
             "96b34502661451C896378c04c0ad4004D6b691db",
@@ -1605,6 +1618,7 @@ namespace Nekoyume.Action
             "37db6469Af723416FBE03EE36975a6a2a27784Db",
         };
 
+        [IgnoreMember]
         public IReadOnlyList<string> AvatarAddressesHex => _avatarAddressesHex;
     }
 }

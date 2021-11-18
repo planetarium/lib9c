@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -18,17 +19,33 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("combination_consumable8")]
+    [MessagePackObject]
     public class CombinationConsumable : GameAction
     {
         public const string AvatarAddressKey = "a";
+        [Key(1)]
+#pragma warning disable MsgPack003
         public Address avatarAddress;
-
+#pragma warning restore MsgPack003
         public const string SlotIndexKey = "s";
+        [Key(2)]
         public int slotIndex;
-
         public const string RecipeIdKey = "r";
+        [Key(3)]
         public int recipeId;
 
+        public CombinationConsumable()
+        {
+        }
+
+        public CombinationConsumable(Guid guid, Address avatarAddress, int slotIndex, int recipeId) : base(guid)
+        {
+            this.avatarAddress = avatarAddress;
+            this.slotIndex = slotIndex;
+            this.recipeId = recipeId;
+        }
+
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
             {

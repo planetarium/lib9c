@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
 using Serilog;
@@ -11,12 +12,18 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("activate_account2")]
+    [MessagePackObject]
     public class ActivateAccount : ActionBase, IActivateAction
     {
+        [Key(0)]
+#pragma warning disable MsgPack003
         public Address PendingAddress { get; private set; }
+#pragma warning restore MsgPack003
 
+        [Key(1)]
         public byte[] Signature { get; private set; }
 
+        [IgnoreMember]
         public override IValue PlainValue =>
             new Dictionary(
                 new[]
@@ -30,6 +37,7 @@ namespace Nekoyume.Action
         {
         }
 
+        [SerializationConstructor]
         public ActivateAccount(Address pendingAddress, byte[] signature)
         {
             PendingAddress = pendingAddress;

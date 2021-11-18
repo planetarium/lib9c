@@ -2,37 +2,82 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Bencodex.Types;
+using Lib9c.Formatters;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("initialize_states")]
+    [MessagePackObject]
     public class InitializeStates : GameAction
     {
+        [Key(1)]
         public Bencodex.Types.Dictionary Ranking { get; set; }
+        [Key(2)]
         public Bencodex.Types.Dictionary Shop { get; set; }
+        [Key(3)]
         public Dictionary<string, string> TableSheets { get; set; }
+        [Key(4)]
         public Bencodex.Types.Dictionary GameConfig { get; set; }
+        [Key(5)]
         public Bencodex.Types.Dictionary RedeemCode { get; set; }
 
+        [Key(6)]
         public Bencodex.Types.Dictionary AdminAddress { get; set; }
 
+        [Key(7)]
         public Bencodex.Types.Dictionary ActivatedAccounts { get; set; }
 
+        [Key(8)]
         public Bencodex.Types.Dictionary GoldCurrency { get; set; }
 
+        [Key(9)]
         public Bencodex.Types.List GoldDistributions { get; set; }
 
+        [Key(10)]
         public Bencodex.Types.List PendingActivations { get; set; }
 
+        [Key(11)]
         public Bencodex.Types.Dictionary? AuthorizedMiners { get; set; }
 
+        [Key(12)]
         public Bencodex.Types.Dictionary? Credits { get; set; }
 
         public InitializeStates()
         {
+        }
+
+        [SerializationConstructor]
+        public InitializeStates(Guid guid,
+            Dictionary ranking,
+            Dictionary shop,
+            Dictionary<string, string> tableSheets,
+            Dictionary gameConfig,
+            Dictionary redeemCode,
+            Dictionary adminAddress,
+            Dictionary activatedAccounts,
+            Dictionary goldCurrency,
+            List goldDistributions,
+            List pendingActivations,
+            Dictionary? authorizedMiners,
+            Dictionary? credits) : base(guid)
+        {
+            Ranking = ranking;
+            Shop = shop;
+            TableSheets = tableSheets;
+            GameConfig = gameConfig;
+            RedeemCode = redeemCode;
+            AdminAddress = adminAddress;
+            ActivatedAccounts = activatedAccounts;
+            GoldCurrency = goldCurrency;
+            GoldDistributions = goldDistributions;
+            PendingActivations = pendingActivations;
+            AuthorizedMiners = authorizedMiners;
+            Credits = credits;
         }
 
         public InitializeStates(
@@ -138,7 +183,7 @@ namespace Nekoyume.Action
             if (!(AuthorizedMiners is null))
             {
                 states = states.SetState(
-                    AuthorizedMinersState.Address, 
+                    AuthorizedMinersState.Address,
                     AuthorizedMiners
                 );
             }
@@ -161,6 +206,7 @@ namespace Nekoyume.Action
             return states;
         }
 
+        [Key(13)]
         protected override IImmutableDictionary<string, Bencodex.Types.IValue> PlainValueInternal
         {
             get
@@ -181,7 +227,7 @@ namespace Nekoyume.Action
                 .Add("gold_currency_state", GoldCurrency)
                 .Add("gold_distributions", GoldDistributions)
                 .Add("pending_activation_states", PendingActivations);
-                
+
                 if (!(AuthorizedMiners is null))
                 {
                     rv = rv.Add("authorized_miners_state", AuthorizedMiners);
@@ -191,7 +237,7 @@ namespace Nekoyume.Action
                 {
                     rv = rv.Add("credits_state", Credits);
                 }
-                
+
                 return rv;
             }
         }

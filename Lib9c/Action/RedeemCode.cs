@@ -5,6 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -15,14 +16,26 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("redeem_code3")]
+    [MessagePackObject]
     public class RedeemCode : GameAction
     {
+        [Key(1)]
         public string Code { get; internal set; }
 
+        [Key(2)]
+#pragma warning disable MsgPack003
         public Address AvatarAddress {get; internal set; }
+#pragma warning restore MsgPack003
 
         public RedeemCode()
         {
+        }
+
+        [SerializationConstructor]
+        public RedeemCode(Guid guid, string code, Address avatarAddress) : base(guid)
+        {
+            Code = code;
+            AvatarAddress = avatarAddress;
         }
 
         public RedeemCode(string code, Address avatarAddress)
@@ -118,6 +131,7 @@ namespace Nekoyume.Action
                 .SetState(RedeemCodeState.Address, redeemState.Serialize());
         }
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
             {

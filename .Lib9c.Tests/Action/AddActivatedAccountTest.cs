@@ -5,6 +5,8 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
+    using Libplanet.Assets;
+    using MessagePack;
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
@@ -96,6 +98,17 @@ namespace Lib9c.Tests.Action
             action2.LoadPlainValue(action.PlainValue);
 
             Assert.Equal(action.Address, action2.Address);
+        }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var newComer = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
+            var action = new AddActivatedAccount(newComer);
+            byte[] b = MessagePackSerializer.Serialize(action);
+            var deserialize = MessagePackSerializer.Deserialize<AddActivatedAccount>(b);
+
+            Assert.Equal(action.Address, deserialize.Address);
         }
     }
 }

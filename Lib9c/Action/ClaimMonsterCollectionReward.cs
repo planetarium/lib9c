@@ -5,6 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -15,9 +16,24 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("claim_monster_collection_reward3")]
+    [MessagePackObject]
     public class ClaimMonsterCollectionReward : GameAction
     {
+        [Key(1)]
+#pragma warning disable MsgPack003
         public Address avatarAddress;
+#pragma warning restore MsgPack003
+
+        public ClaimMonsterCollectionReward()
+        {
+        }
+
+        [SerializationConstructor]
+        public ClaimMonsterCollectionReward(Guid guid, Address address) : base(guid)
+        {
+            avatarAddress = address;
+        }
+
         public override IAccountStateDelta Execute(IActionContext context)
         {
             IAccountStateDelta states = context.PreviousStates;
@@ -86,6 +102,7 @@ namespace Nekoyume.Action
                 .SetState(collectionAddress, monsterCollectionState.Serialize());
         }
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
         {
             [AvatarAddressKey] = avatarAddress.Serialize(),

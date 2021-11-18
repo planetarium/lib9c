@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using MessagePack;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
@@ -13,9 +14,22 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("monster_collect3")]
+    [MessagePackObject]
     public class MonsterCollect : GameAction
     {
+        [Key(1)]
         public int level;
+
+        public MonsterCollect()
+        {
+        }
+
+        [SerializationConstructor]
+        public MonsterCollect(Guid guid, int level) : base(guid)
+        {
+            this.level = level;
+        }
+
         public override IAccountStateDelta Execute(IActionContext context)
         {
             IAccountStateDelta states = context.PreviousStates;
@@ -100,6 +114,7 @@ namespace Nekoyume.Action
             return states;
         }
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
         {
             [LevelKey] = level.Serialize(),

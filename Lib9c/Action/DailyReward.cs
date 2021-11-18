@@ -5,6 +5,7 @@ using System.Text;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
@@ -12,10 +13,24 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("daily_reward6")]
+    [MessagePackObject]
     public class DailyReward : GameAction
     {
+        [Key(1)]
+#pragma warning disable MsgPack003
         public Address avatarAddress;
+#pragma warning restore MsgPack003
         public const string AvatarAddressKey = "a";
+
+        public DailyReward()
+        {
+        }
+
+        [SerializationConstructor]
+        public DailyReward(Guid guid, Address avatarAddress) : base(guid)
+        {
+            this.avatarAddress = avatarAddress;
+        }
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
@@ -66,6 +81,7 @@ namespace Nekoyume.Action
                 .SetState(questListAddress, avatarState.questList.Serialize());
         }
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
         {
             [AvatarAddressKey] = avatarAddress.Serialize(),

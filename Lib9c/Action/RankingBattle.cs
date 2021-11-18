@@ -7,6 +7,7 @@ using System.Numerics;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Battle;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.State;
@@ -18,17 +19,51 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("ranking_battle8")]
+    [MessagePackObject]
     public class RankingBattle : GameAction
     {
         public const int StageId = 999999;
         public static readonly BigInteger EntranceFee = 100;
-
+        [Key(1)]
+#pragma warning disable MsgPack003
         public Address avatarAddress;
+#pragma warning restore MsgPack003
+        [Key(2)]
         public Address enemyAddress;
+        [Key(3)]
         public Address weeklyArenaAddress;
+        [Key(4)]
         public List<Guid> costumeIds;
+        [Key(5)]
         public List<Guid> equipmentIds;
+        [Key(6)]
         public List<Guid> consumableIds;
+
+        public RankingBattle()
+        {
+        }
+
+        [SerializationConstructor]
+        public RankingBattle(
+            Guid guid,
+            Address avatarAddress,
+            Address enemyAddress,
+            Address weeklyArenaAddress,
+            List<Guid> costumeIds,
+            List<Guid> equipmentIds,
+            List<Guid> consumableIds
+        ) : base(guid)
+        {
+            this.avatarAddress = avatarAddress;
+            this.enemyAddress = enemyAddress;
+            this.weeklyArenaAddress = weeklyArenaAddress;
+            this.costumeIds = costumeIds;
+            this.equipmentIds = equipmentIds;
+            this.consumableIds = consumableIds;
+        }
+
+        // FIXME Delete Result field.
+        [IgnoreMember]
         public BattleLog Result { get; private set; }
 
         public override IAccountStateDelta Execute(IActionContext context)
@@ -244,6 +279,7 @@ namespace Nekoyume.Action
             return states;
         }
 
+        [Key(8)]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
             {

@@ -6,6 +6,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using MessagePack;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
@@ -16,10 +17,26 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("rapid_combination6")]
+    [MessagePackObject]
     public class RapidCombination : GameAction
     {
+        [Key(1)]
+#pragma warning disable MsgPack003
         public Address avatarAddress;
+#pragma warning restore MsgPack003
+        [Key(2)]
         public int slotIndex;
+
+        public RapidCombination()
+        {
+        }
+
+        [SerializationConstructor]
+        public RapidCombination(Guid guid, Address avatarAddress, int slotIndex) : base(guid)
+        {
+            this.avatarAddress = avatarAddress;
+            this.slotIndex = slotIndex;
+        }
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
@@ -128,6 +145,7 @@ namespace Nekoyume.Action
                 .SetState(slotAddress, slotState.Serialize());
         }
 
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
             {

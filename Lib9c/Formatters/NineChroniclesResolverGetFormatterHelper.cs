@@ -5,6 +5,7 @@ using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
 using MessagePack.Formatters;
+using Nekoyume.Action;
 
 namespace Lib9c.Formatters
 {
@@ -15,9 +16,11 @@ namespace Lib9c.Formatters
         {
             {typeof(Address), new AddressFormatter()},
             {typeof(Exception), new ExceptionFormatter<Exception>()},
-            {typeof(IValue), new BencodexFormatter()},
             {typeof(FungibleAssetValue), new FungibleAssetValueFormatter()},
-            {typeof(IAccountStateDelta), new AccountStateDeltaFormatter()}
+            {typeof(IAccountStateDelta), new AccountStateDeltaFormatter()},
+            {typeof(PublicKeyFormatter), new PublicKeyFormatter()},
+            {typeof(Dictionary), new BencodexFormatter<Dictionary>()},
+            {typeof(IValue), new BencodexFormatter<IValue>()}
             // add more your own custom serializers.
         };
 

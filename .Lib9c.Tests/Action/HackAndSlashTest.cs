@@ -1203,38 +1203,6 @@ namespace Lib9c.Tests.Action
             Assert.Equal(3, deserialized.playCount);
             Assert.Equal(_avatarAddress, deserialized.avatarAddress);
             Assert.Equal(_rankingMapAddress, deserialized.rankingMapAddress);
-
-            var currency = new Currency("NCG", 2, minters: null);
-            var signer = default(Address);
-            var blockIndex = 1234;
-            var states = new State()
-                .SetState(signer, (Text)"ANYTHING")
-                .SetState(default, Dictionary.Empty.Add("key", "value"))
-                .MintAsset(signer, currency * 10000);
-
-            var evaluation = new ActionBase.ActionEvaluation<ActionBase>()
-            {
-                Action = action,
-                Signer = signer,
-                BlockIndex = blockIndex,
-                PreviousStates = states,
-                OutputStates = states,
-            };
-            var serialize = MessagePackSerializer.Serialize(evaluation);
-            var des = MessagePackSerializer.Deserialize<ActionBase.ActionEvaluation<ActionBase>>(serialize);
-
-            Assert.IsType<HackAndSlash>(des.Action);
-            var innerAction = (HackAndSlash)des.Action;
-            Assert.Equal(costumes, innerAction.costumes);
-            Assert.Equal(equipments, innerAction.equipments);
-            Assert.Equal(foods, innerAction.foods);
-            Assert.Equal(1, innerAction.worldId);
-            Assert.Equal(2, innerAction.stageId);
-            Assert.Equal(3, innerAction.playCount);
-            Assert.Equal(_avatarAddress, innerAction.avatarAddress);
-            Assert.Equal(_rankingMapAddress, innerAction.rankingMapAddress);
-            Assert.Equal(evaluation.Signer, des.Signer);
-            Assert.Equal(evaluation.BlockIndex, des.BlockIndex);
         }
 
         private static void SerializeException<T>(Exception exec)

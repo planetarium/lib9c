@@ -6,18 +6,24 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Crypto;
+using MessagePack;
 using Nekoyume.Action;
 
 namespace Nekoyume.Model.State
 {
     [Serializable]
+    [MessagePackObject]
     public class PendingActivationState : State, ISerializable
     {
         private static Address BaseAddress = Addresses.PendingActivation;
 
+        [Key(1)]
         public byte[] Nonce { get; }
 
+#pragma warning disable MsgPack003
+        [Key(2)]
         public PublicKey PublicKey { get; }
+#pragma warning restore MsgPack003
 
         public PendingActivationState(byte[] nonce, PublicKey publicKey)
             : base (DeriveAddress(nonce, publicKey))
@@ -31,7 +37,7 @@ namespace Nekoyume.Model.State
             return BaseAddress.Derive(nonce.Concat(publicKey.Format(true)).ToArray());
         }
 
-        public PendingActivationState(Dictionary serialized) 
+        public PendingActivationState(Dictionary serialized)
             : base(serialized)
         {
             Nonce = (Binary)serialized["nonce"];

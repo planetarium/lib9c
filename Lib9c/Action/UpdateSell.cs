@@ -8,6 +8,7 @@ using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using MessagePack;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -21,16 +22,53 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("update_sell2")]
+    [MessagePackObject]
     public class UpdateSell : GameAction
     {
+        [Key(1)]
         public Guid orderId;
+        [Key(2)]
         public Guid updateSellOrderId;
+        [Key(3)]
         public Guid tradableId;
+        [Key(4)]
+#pragma warning disable MsgPack003
         public Address sellerAvatarAddress;
+#pragma warning restore MsgPack003
+        [Key(5)]
         public ItemSubType itemSubType;
+        [Key(6)]
+#pragma warning disable MsgPack003
         public FungibleAssetValue price;
+#pragma warning restore MsgPack003
+        [Key(7)]
         public int count;
 
+        public UpdateSell()
+        {
+        }
+
+        [SerializationConstructor]
+        public UpdateSell(
+            Guid guid,
+            Guid orderId,
+            Guid updateSellOrderId,
+            Guid tradableId,
+            Address sellerAvatarAddress,
+            ItemSubType itemSubType,
+            FungibleAssetValue price,
+            int count) : base(guid)
+        {
+            this.orderId = orderId;
+            this.updateSellOrderId = updateSellOrderId;
+            this.tradableId = tradableId;
+            this.sellerAvatarAddress = sellerAvatarAddress;
+            this.itemSubType = itemSubType;
+            this.price = price;
+            this.count = count;
+        }
+
+        [IgnoreMember]
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
             {
