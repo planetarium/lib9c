@@ -38,6 +38,12 @@ namespace Nekoyume.Action
         public List<Guid> equipmentIds;
         [Key(6)]
         public List<Guid> consumableIds;
+        [Key(7)]
+        public Dictionary? EnemyAvatarState;
+        [Key(8)]
+        public Dictionary? ArenaInfo;
+        [Key(9)]
+        public Dictionary? EnemyArenaInfo;
 
         public RankingBattle()
         {
@@ -51,7 +57,10 @@ namespace Nekoyume.Action
             Address weeklyArenaAddress,
             List<Guid> costumeIds,
             List<Guid> equipmentIds,
-            List<Guid> consumableIds
+            List<Guid> consumableIds,
+            Dictionary? enemyAvatarState,
+            Dictionary? arenaInfo,
+            Dictionary? enemyArenaInfo
         ) : base(guid)
         {
             this.avatarAddress = avatarAddress;
@@ -60,6 +69,9 @@ namespace Nekoyume.Action
             this.costumeIds = costumeIds;
             this.equipmentIds = equipmentIds;
             this.consumableIds = consumableIds;
+            EnemyAvatarState = enemyAvatarState;
+            ArenaInfo = arenaInfo;
+            EnemyArenaInfo = enemyArenaInfo;
         }
 
         // FIXME Delete Result field.
@@ -215,6 +227,9 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Validate ArenaInfo: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
+            var serializedArenaInfo = (Dictionary)arenaInfo.Serialize();
+            var serializedEnemyArenaInfo = (Dictionary)enemyArenaInfo.Serialize();
+            var serializedEnemyAvatarState = (Dictionary)enemyAvatarState.Serialize();
             var simulator = new RankingSimulator(
                 ctx.Random,
                 avatarState,
@@ -276,6 +291,9 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}RankingBattle Total Executed Time: {Elapsed}", addressesHex, ended - started);
+            EnemyAvatarState = serializedEnemyAvatarState;
+            EnemyArenaInfo = serializedEnemyArenaInfo;
+            ArenaInfo = serializedArenaInfo;
             return states;
         }
 

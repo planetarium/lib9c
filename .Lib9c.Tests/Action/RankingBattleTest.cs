@@ -6,11 +6,16 @@ namespace Lib9c.Tests.Action
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
+    using Bencodex.Types;
+    using Lib9c.Formatters;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Crypto;
+    using MessagePack;
+    using MessagePack.Resolvers;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Battle;
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.Item;
@@ -155,27 +160,41 @@ namespace Lib9c.Tests.Action
 
             if (avatarBackward)
             {
-                previousState = previousState.SetState(_avatar1Address, previousAvatar1State.Serialize());
+                previousState =
+                    previousState.SetState(_avatar1Address, previousAvatar1State.Serialize());
             }
             else
             {
                 previousState = previousState
-                    .SetState(_avatar1Address.Derive(LegacyInventoryKey), previousAvatar1State.inventory.Serialize())
-                    .SetState(_avatar1Address.Derive(LegacyWorldInformationKey), previousAvatar1State.worldInformation.Serialize())
-                    .SetState(_avatar1Address.Derive(LegacyQuestListKey), previousAvatar1State.questList.Serialize())
+                    .SetState(
+                        _avatar1Address.Derive(LegacyInventoryKey),
+                        previousAvatar1State.inventory.Serialize())
+                    .SetState(
+                        _avatar1Address.Derive(LegacyWorldInformationKey),
+                        previousAvatar1State.worldInformation.Serialize())
+                    .SetState(
+                        _avatar1Address.Derive(LegacyQuestListKey),
+                        previousAvatar1State.questList.Serialize())
                     .SetState(_avatar1Address, previousAvatar1State.SerializeV2());
             }
 
             if (enemyBackward)
             {
-                previousState = previousState.SetState(_avatar2Address, enemyAvatarState.Serialize());
+                previousState =
+                    previousState.SetState(_avatar2Address, enemyAvatarState.Serialize());
             }
             else
             {
                 previousState = previousState
-                    .SetState(_avatar2Address.Derive(LegacyInventoryKey), enemyAvatarState.inventory.Serialize())
-                    .SetState(_avatar2Address.Derive(LegacyWorldInformationKey), enemyAvatarState.worldInformation.Serialize())
-                    .SetState(_avatar2Address.Derive(LegacyQuestListKey), enemyAvatarState.questList.Serialize())
+                    .SetState(
+                        _avatar2Address.Derive(LegacyInventoryKey),
+                        enemyAvatarState.inventory.Serialize())
+                    .SetState(
+                        _avatar2Address.Derive(LegacyWorldInformationKey),
+                        enemyAvatarState.worldInformation.Serialize())
+                    .SetState(
+                        _avatar2Address.Derive(LegacyQuestListKey),
+                        enemyAvatarState.questList.Serialize())
                     .SetState(_avatar2Address, enemyAvatarState.SerializeV2());
             }
 
@@ -190,6 +209,9 @@ namespace Lib9c.Tests.Action
             };
 
             Assert.Null(action.Result);
+            Assert.Null(action.ArenaInfo);
+            Assert.Null(action.EnemyArenaInfo);
+            Assert.Null(action.EnemyAvatarState);
 
             var nextState = action.Execute(new ActionContext()
             {
@@ -204,9 +226,31 @@ namespace Lib9c.Tests.Action
 
             Assert.Contains(nextAvatar1State.inventory.Materials, i => itemIds.Contains(i.Id));
             Assert.NotNull(action.Result);
+            Assert.NotNull(action.ArenaInfo);
+            Assert.NotNull(action.EnemyArenaInfo);
+            Assert.NotNull(action.EnemyAvatarState);
             Assert.Contains(typeof(GetReward), action.Result.Select(e => e.GetType()));
             Assert.Equal(BattleLog.Result.Win, action.Result.result);
             Assert.True(nextWeeklyState[_avatar1Address].Score > prevScore);
+
+            // Check simulation result equal.
+            var simulator = new RankingSimulator(
+                new TestRandom(),
+                previousAvatar1State,
+                new AvatarState((Dictionary)action.EnemyAvatarState),
+                action.consumableIds,
+                _tableSheets.GetRankingSimulatorSheets(),
+                RankingBattle.StageId,
+                new ArenaInfo((Dictionary)action.ArenaInfo),
+                new ArenaInfo((Dictionary)action.EnemyArenaInfo),
+                _tableSheets.CostumeStatSheet);
+            simulator.Simulate();
+
+            BattleLog log = simulator.Log;
+            BattleLog result = action.Result;
+            Assert.Equal(result.score, log.score);
+            Assert.Equal(result.Count, log.Count);
+            Assert.Equal(result.result, log.result);
         }
 
         [Fact]
@@ -457,7 +501,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void SerializeWithDotnetAPI()
+        public void Serialize_With_DotnetAPI()
         {
             var action = new RankingBattle
             {
@@ -482,6 +526,48 @@ namespace Lib9c.Tests.Action
             ms.Seek(0, SeekOrigin.Begin);
 
             var deserialized = (RankingBattle)formatter.Deserialize(ms);
+            Assert.Equal(action.PlainValue, deserialized.PlainValue);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Serialize_With_MessagePack(bool execute)
+        {
+            var resolver = MessagePack.Resolvers.CompositeResolver.Create(
+                NineChroniclesResolver.Instance,
+                StandardResolver.Instance
+            );
+            var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
+            MessagePackSerializer.DefaultOptions = options;
+
+            var action = new RankingBattle
+            {
+                avatarAddress = _avatar1Address,
+                enemyAddress = _avatar2Address,
+                weeklyArenaAddress = _weeklyArenaAddress,
+                costumeIds = new List<Guid>(),
+                equipmentIds = new List<Guid>(),
+                consumableIds = new List<Guid>(),
+            };
+            if (execute)
+            {
+                action.Execute(new ActionContext()
+                {
+                    PreviousStates = _initialState,
+                    Signer = _agent1Address,
+                    Random = new TestRandom(),
+                    Rehearsal = false,
+                });
+            }
+
+            Assert.Equal(!execute, action.Result is null);
+            Assert.Equal(!execute, action.EnemyAvatarState is null);
+            Assert.Equal(!execute, action.ArenaInfo is null);
+            Assert.Equal(!execute, action.EnemyArenaInfo is null);
+
+            var b = MessagePackSerializer.Serialize(action);
+            var deserialized = MessagePackSerializer.Deserialize<RankingBattle>(b);
             Assert.Equal(action.PlainValue, deserialized.PlainValue);
         }
 
