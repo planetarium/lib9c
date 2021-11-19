@@ -92,5 +92,12 @@ namespace Lib9c.Tests.Action
                 }));
             }
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new MigrationLegacyShop();
+            ActionSerializer.AssertAction<MigrationLegacyShop>(action);
+        }
     }
 }

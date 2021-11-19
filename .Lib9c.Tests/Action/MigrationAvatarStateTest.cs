@@ -59,5 +59,36 @@ namespace Lib9c.Tests.Action
             Assert.NotNull(nextAvatarState.worldInformation);
             Assert.NotNull(nextAvatarState.questList);
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var agentAddress = new PrivateKey().ToAddress();
+            var avatarAddress = new PrivateKey().ToAddress();
+            var avatarState = new AvatarState(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                new GameConfigState(),
+                default
+            );
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var admin = new Address("8d9f76aF8Dc5A812aCeA15d8bf56E2F790F47fd7");
+            var state = new State(ImmutableDictionary<Address, IValue>.Empty
+                .Add(AdminState.Address, new AdminState(admin, 100).Serialize())
+                .Add(avatarAddress, avatarState.SerializeV2())
+            );
+
+            var action = new MigrationAvatarState
+            {
+                avatarStates = new List<Dictionary>
+                {
+                    (Dictionary)avatarState.Serialize(),
+                },
+            };
+
+            ActionSerializer.AssertAction<MigrationAvatarState>(action);
+        }
     }
 }

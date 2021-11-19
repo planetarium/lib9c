@@ -810,6 +810,31 @@ namespace Lib9c.Tests.Action
             Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.UpdatedAddresses);
         }
 
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new Buy
+            {
+                buyerAvatarAddress = _buyerAvatarAddress,
+                purchaseInfos = new[]
+                {
+                    new PurchaseInfo(
+                        Guid.NewGuid(),
+                        Guid.NewGuid(),
+                        _sellerAgentAddress,
+                        _sellerAvatarAddress,
+                        ItemSubType.Armor,
+                        _goldCurrencyState.Currency * 100),
+                },
+                errors = new List<(Guid orderId, int errorCode)>
+                {
+                    (Guid.NewGuid(), 1),
+                },
+            };
+            Buy deserialized = ActionSerializer.AssertAction<Buy>(action);
+            Assert.Equal(action.errors, deserialized.errors);
+        }
+
         private (AvatarState avatarState, AgentState agentState) CreateAvatarState(
             Address agentAddress, Address avatarAddress)
         {

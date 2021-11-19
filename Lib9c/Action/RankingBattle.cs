@@ -38,11 +38,15 @@ namespace Nekoyume.Action
         public List<Guid> equipmentIds;
         [Key(6)]
         public List<Guid> consumableIds;
+        // FIXME Delete NonSerialized
         [Key(7)]
+        [NonSerialized]
         public Dictionary? EnemyAvatarState;
         [Key(8)]
+        [NonSerialized]
         public Dictionary? ArenaInfo;
         [Key(9)]
+        [NonSerialized]
         public Dictionary? EnemyArenaInfo;
 
         public RankingBattle()

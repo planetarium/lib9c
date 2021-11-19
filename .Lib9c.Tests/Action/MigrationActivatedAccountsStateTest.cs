@@ -39,5 +39,12 @@ namespace Lib9c.Tests.Action
             Assert.Equal(default, nextAccountsState.Accounts.First());
             Assert.True(nextState.GetState(default(Address).Derive(ActivationKey.DeriveKey)).ToBoolean());
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new MigrationActivatedAccountsState();
+            ActionSerializer.AssertAction<MigrationActivatedAccountsState>(action);
+        }
     }
 }

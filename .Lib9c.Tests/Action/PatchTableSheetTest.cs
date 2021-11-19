@@ -149,5 +149,16 @@ namespace Lib9c.Tests.Action
 
             Assert.NotNull(nextState.GetSheet<CostumeStatSheet>());
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new PatchTableSheet
+            {
+                TableName = nameof(CostumeStatSheet),
+                TableCsv = "id,costume_id,stat_type,stat\n1,40100000,ATK,100",
+            };
+            ActionSerializer.AssertAction<PatchTableSheet>(action);
+        }
     }
 }

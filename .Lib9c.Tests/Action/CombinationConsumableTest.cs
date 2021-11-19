@@ -140,5 +140,18 @@ namespace Lib9c.Tests.Action
                 previousResultConsumableCount + 1,
                 nextAvatarState.inventory.Consumables.Count(e => e.Id == row.ResultConsumableItemId));
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new CombinationConsumable
+            {
+                avatarAddress = _avatarAddress,
+                recipeId = 1,
+                slotIndex = 2,
+            };
+
+            ActionSerializer.AssertAction<CombinationConsumable>(action);
+        }
     }
 }

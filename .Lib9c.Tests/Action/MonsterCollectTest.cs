@@ -177,5 +177,16 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.UpdatedAddresses);
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new MonsterCollect
+            {
+                level = 1,
+            };
+
+            ActionSerializer.AssertAction<MonsterCollect>(action);
+        }
     }
 }

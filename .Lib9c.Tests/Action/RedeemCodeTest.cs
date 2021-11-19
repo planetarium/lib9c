@@ -160,5 +160,17 @@ namespace Lib9c.Tests.Action
                 nextState.UpdatedAddresses
             );
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new RedeemCode
+            {
+                AvatarAddress = _avatarAddress,
+                Code = "code",
+            };
+
+            ActionSerializer.AssertAction<RedeemCode>(action);
+        }
     }
 }

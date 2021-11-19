@@ -3,10 +3,12 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Immutable;
     using Bencodex.Types;
+    using Lib9c.Formatters;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Assets;
     using MessagePack;
+    using MessagePack.Resolvers;
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
@@ -14,6 +16,16 @@ namespace Lib9c.Tests.Action
 
     public class AddActivatedAccountTest
     {
+        public AddActivatedAccountTest()
+        {
+            var resolver = MessagePack.Resolvers.CompositeResolver.Create(
+                NineChroniclesResolver.Instance,
+                StandardResolver.Instance
+            );
+            var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
+            MessagePackSerializer.DefaultOptions = options;
+        }
+
         [Theory]
         [InlineData(true, 1, false, null)]
         [InlineData(true, 101, false, typeof(PolicyExpiredException))]

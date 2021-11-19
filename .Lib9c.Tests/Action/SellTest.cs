@@ -452,5 +452,21 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.UpdatedAddresses);
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new Sell
+            {
+                sellerAvatarAddress = _avatarAddress,
+                tradableId = Guid.NewGuid(),
+                count = 2,
+                price = _currency * 1000,
+                itemSubType = ItemSubType.Belt,
+                orderId = Guid.NewGuid(),
+            };
+
+            ActionSerializer.AssertAction<Sell>(action);
+        }
     }
 }

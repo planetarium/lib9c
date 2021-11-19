@@ -7,12 +7,10 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
-    using Lib9c.Formatters;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Crypto;
     using MessagePack;
-    using MessagePack.Resolvers;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Battle;
@@ -534,13 +532,6 @@ namespace Lib9c.Tests.Action
         [InlineData(false)]
         public void Serialize_With_MessagePack(bool execute)
         {
-            var resolver = MessagePack.Resolvers.CompositeResolver.Create(
-                NineChroniclesResolver.Instance,
-                StandardResolver.Instance
-            );
-            var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
-            MessagePackSerializer.DefaultOptions = options;
-
             var action = new RankingBattle
             {
                 avatarAddress = _avatar1Address,
@@ -565,10 +556,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(!execute, action.EnemyAvatarState is null);
             Assert.Equal(!execute, action.ArenaInfo is null);
             Assert.Equal(!execute, action.EnemyArenaInfo is null);
-
-            var b = MessagePackSerializer.Serialize(action);
-            var deserialized = MessagePackSerializer.Deserialize<RankingBattle>(b);
-            Assert.Equal(action.PlainValue, deserialized.PlainValue);
+            ActionSerializer.AssertAction<RankingBattle>(action);
         }
 
         [Theory]

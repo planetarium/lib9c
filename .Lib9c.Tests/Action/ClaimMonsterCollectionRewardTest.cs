@@ -229,6 +229,17 @@ namespace Lib9c.Tests.Action
             Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.UpdatedAddresses);
         }
 
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new ClaimMonsterCollectionReward
+            {
+                avatarAddress = _avatarAddress,
+            };
+
+            ActionSerializer.AssertAction<ClaimMonsterCollectionReward>(action);
+        }
+
         private class ExecuteFixture : IEnumerable<object[]>
         {
             private readonly List<object[]> _data = new List<object[]>

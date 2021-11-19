@@ -143,6 +143,13 @@ namespace Lib9c.Tests.Action
             }
         }
 
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new DailyReward();
+            ActionSerializer.AssertAction<DailyReward>(action);
+        }
+
         private IAccountStateDelta SetAvatarStateAsV2To(IAccountStateDelta state, AvatarState avatarState) =>
             state
                 .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())

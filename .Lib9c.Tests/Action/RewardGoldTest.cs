@@ -239,5 +239,13 @@ namespace Lib9c.Tests.Action
             // Rewardless era
             AssertMinerReward(50457601, "0");
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new RewardGold();
+
+            ActionSerializer.AssertAction<RewardGold>(action);
+        }
     }
 }

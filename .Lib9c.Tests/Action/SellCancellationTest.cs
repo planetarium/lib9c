@@ -711,5 +711,19 @@ namespace Lib9c.Tests.Action
             var sellCancelItem = (ITradableItem)ItemFactory.Deserialize((Dictionary)nextState.GetState(Addresses.GetItemAddress(itemId)));
             Assert.Equal(101, sellCancelItem.RequiredBlockIndex);
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new SellCancellation
+            {
+                itemSubType = ItemSubType.Food,
+                orderId = Guid.NewGuid(),
+                sellerAvatarAddress = _avatarAddress,
+                tradableId = Guid.NewGuid(),
+            };
+
+            ActionSerializer.AssertAction<SellCancellation>(action);
+        }
     }
 }

@@ -357,5 +357,22 @@
 
             Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.UpdatedAddresses);
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new UpdateSell
+            {
+                count = 10,
+                itemSubType = ItemSubType.Hourglass,
+                orderId = Guid.NewGuid(),
+                price = _currency * 50,
+                sellerAvatarAddress = _avatarAddress,
+                tradableId = Guid.NewGuid(),
+                updateSellOrderId = Guid.NewGuid(),
+            };
+
+            ActionSerializer.AssertAction<UpdateSell>(action);
+        }
     }
 }

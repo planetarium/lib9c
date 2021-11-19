@@ -530,5 +530,16 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 1,
             }));
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new RapidCombination
+            {
+                avatarAddress = _avatarAddress,
+                slotIndex = 2,
+            };
+            ActionSerializer.AssertAction<RapidCombination>(action);
+        }
     }
 }

@@ -127,5 +127,16 @@ namespace Lib9c.Tests.Action
                 new[] { Addresses.RedeemCode }.ToImmutableHashSet()
             );
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var csv = TableSheetsImporter.ImportSheets()[nameof(RedeemCodeListSheet)];
+            var action = new AddRedeemCode
+            {
+                redeemCsv = csv,
+            };
+            ActionSerializer.AssertAction<AddRedeemCode>(action);
+        }
     }
 }

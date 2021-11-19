@@ -171,6 +171,22 @@ namespace Lib9c.Tests.Action
             Assert.True(equipment.optionCountFromCombination > 0);
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Serialize_With_MessagePack(bool useSubRecipe)
+        {
+            var action = new CombinationEquipment
+            {
+                avatarAddress = _avatarAddress,
+                recipeId = 1,
+                subRecipeId = useSubRecipe ? 1 : (int?)null,
+                slotIndex = 3,
+            };
+
+            ActionSerializer.AssertAction<CombinationEquipment>(action);
+        }
+
         private void Execute(bool backward, int recipeId, int? subRecipeId, int mintNCG)
         {
             var currency = new Currency("NCG", 2, minter: null);

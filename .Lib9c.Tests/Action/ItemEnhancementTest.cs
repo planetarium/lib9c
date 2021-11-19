@@ -228,5 +228,19 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.UpdatedAddresses);
         }
+
+        [Fact]
+        public void Serialize_With_MessagePack()
+        {
+            var action = new ItemEnhancement
+            {
+                avatarAddress = _avatarAddress,
+                materialId = Guid.NewGuid(),
+                itemId = Guid.NewGuid(),
+                slotIndex = 1,
+            };
+
+            ActionSerializer.AssertAction<ItemEnhancement>(action);
+        }
     }
 }
