@@ -32,6 +32,13 @@ namespace Nekoyume.Model.State
             PublicKey = publicKey;
         }
 
+        [SerializationConstructor]
+        public PendingActivationState(Address address, byte[] nonce, PublicKey publicKey) : base(address)
+        {
+            Nonce = nonce;
+            PublicKey = publicKey;
+        }
+
         private static Address DeriveAddress(byte[] nonce, PublicKey publicKey)
         {
             return BaseAddress.Derive(nonce.Concat(publicKey.Format(true)).ToArray());
