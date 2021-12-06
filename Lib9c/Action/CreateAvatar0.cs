@@ -197,20 +197,1783 @@ namespace Nekoyume.Action
 
             var items = data.CustomEquipmentItems;
             foreach (var item in items)
-            {
                 AddCustomEquipment(
                     avatarState: avatarState,
                     random: ctx.Random,
                     skillSheet: skillSheet,
                     equipmentItemSheet: equipmentItemSheet,
                     equipmentItemOptionSheet: optionSheet,
-                    // Set level of equipment here.
-                    level: item.Level,
-                    // Set recipeId of target equipment here.
-                    recipeId: item.ID,
-                    // Add optionIds here.
-                    item.OptionIds);
-            }
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10530000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10234001,
+                    // `OptionId`들을 넣습니다.
+                    521, 522, 523, 524);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10234001,
+                    // `OptionId`들을 넣습니다.
+                    521, 522, 523, 524);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10234001,
+                    // `OptionId`들을 넣습니다.
+                    521, 522, 523);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10234001,
+                    // `OptionId`들을 넣습니다.
+                    521, 522, 523);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10234001,
+                    // `OptionId`들을 넣습니다.
+                    521, 522, 523);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10234001,
+                    // `OptionId`들을 넣습니다.
+                    521, 522, 523);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10234001,
+                    // `OptionId`들을 넣습니다.
+                    521, 522, 523);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10234001,
+                    // `OptionId`들을 넣습니다.
+                    521, 522, 523);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10230000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10530000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10534000,
+                    // `OptionId`들을 넣습니다.
+                    1266, 1267, 1268);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10530000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10441000,
+                    // `OptionId`들을 넣습니다.
+                    1060, 1061, 1062, 1063);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10441000,
+                    // `OptionId`들을 넣습니다.
+                    1060, 1061, 1062, 1063);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10441000,
+                    // `OptionId`들을 넣습니다.
+                    1060, 1061, 1062);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10441000,
+                    // `OptionId`들을 넣습니다.
+                    1060, 1061, 1062);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10441000,
+                    // `OptionId`들을 넣습니다.
+                    1060, 1061, 1062);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10441000,
+                    // `OptionId`들을 넣습니다.
+                    1060, 1061, 1062);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10441000,
+                    // `OptionId`들을 넣습니다.
+                    1060, 1061, 1062);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10441000,
+                    // `OptionId`들을 넣습니다.
+                    1060, 1061, 1062);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10440000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10442000,
+                    // `OptionId`들을 넣습니다.
+                    1071, 1072, 1073, 1074);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10442000,
+                    // `OptionId`들을 넣습니다.
+                    1071, 1072, 1073, 1074);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10442000,
+                    // `OptionId`들을 넣습니다.
+                    1071, 1072, 1073);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10442000,
+                    // `OptionId`들을 넣습니다.
+                    1071, 1072, 1073);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10442000,
+                    // `OptionId`들을 넣습니다.
+                    1071, 1072, 1073);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10442000,
+                    // `OptionId`들을 넣습니다.
+                    1071, 1072, 1073);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10442000,
+                    // `OptionId`들을 넣습니다.
+                    1071, 1072, 1073);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10442000,
+                    // `OptionId`들을 넣습니다.
+                    1071, 1072, 1073);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10440000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10443000,
+                    // `OptionId`들을 넣습니다.
+                    1082, 1083, 1084, 1085);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10443000,
+                    // `OptionId`들을 넣습니다.
+                    1082, 1083, 1084, 1085);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10443000,
+                    // `OptionId`들을 넣습니다.
+                    1082, 1083, 1084);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10443000,
+                    // `OptionId`들을 넣습니다.
+                    1082, 1083, 1084);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10443000,
+                    // `OptionId`들을 넣습니다.
+                    1082, 1083, 1084);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10443000,
+                    // `OptionId`들을 넣습니다.
+                    1082, 1083, 1084);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10443000,
+                    // `OptionId`들을 넣습니다.
+                    1082, 1083, 1084);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10443000,
+                    // `OptionId`들을 넣습니다.
+                    1082, 1083, 1084);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10440000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10444000,
+                    // `OptionId`들을 넣습니다.
+                    1093, 1094, 1095, 1096);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10444000,
+                    // `OptionId`들을 넣습니다.
+                    1093, 1094, 1095, 1096);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10444000,
+                    // `OptionId`들을 넣습니다.
+                    1093, 1094, 1095);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10444000,
+                    // `OptionId`들을 넣습니다.
+                    1093, 1094, 1095);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10444000,
+                    // `OptionId`들을 넣습니다.
+                    1093, 1094, 1095);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10444000,
+                    // `OptionId`들을 넣습니다.
+                    1093, 1094, 1095);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10444000,
+                    // `OptionId`들을 넣습니다.
+                    1093, 1094, 1095);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10444000,
+                    // `OptionId`들을 넣습니다.
+                    1093, 1094, 1095);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10440000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10233001,
+                    // `OptionId`들을 넣습니다.
+                    510, 511, 512, 513);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10233001,
+                    // `OptionId`들을 넣습니다.
+                    510, 511, 512, 513);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10233001,
+                    // `OptionId`들을 넣습니다.
+                    510, 511, 512);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10233001,
+                    // `OptionId`들을 넣습니다.
+                    510, 511, 512);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10233001,
+                    // `OptionId`들을 넣습니다.
+                    510, 511, 512);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10233001,
+                    // `OptionId`들을 넣습니다.
+                    510, 511, 512);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10233001,
+                    // `OptionId`들을 넣습니다.
+                    510, 511, 512);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10233001,
+                    // `OptionId`들을 넣습니다.
+                    510, 511, 512);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10230000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10434000,
+                    // `OptionId`들을 넣습니다.
+                    1049, 1050, 1051, 1052);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10434000,
+                    // `OptionId`들을 넣습니다.
+                    1049, 1050, 1051, 1052);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10434000,
+                    // `OptionId`들을 넣습니다.
+                    1049, 1050, 1051);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10434000,
+                    // `OptionId`들을 넣습니다.
+                    1049, 1050, 1051);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10434000,
+                    // `OptionId`들을 넣습니다.
+                    1049, 1050, 1051);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10434000,
+                    // `OptionId`들을 넣습니다.
+                    1049, 1050, 1051);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10434000,
+                    // `OptionId`들을 넣습니다.
+                    1049, 1050, 1051);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10434000,
+                    // `OptionId`들을 넣습니다.
+                    1049, 1050, 1051);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10430000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10134001,
+                    // `OptionId`들을 넣습니다.
+                    169, 170, 171, 172);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10134001,
+                    // `OptionId`들을 넣습니다.
+                    169, 170, 171, 172);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10134001,
+                    // `OptionId`들을 넣습니다.
+                    169, 170, 171, 172);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10134001,
+                    // `OptionId`들을 넣습니다.
+                    169, 170, 171, 172);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10134001,
+                    // `OptionId`들을 넣습니다.
+                    169, 170, 171, 172);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10134001,
+                    // `OptionId`들을 넣습니다.
+                    169, 170, 171, 172);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10134001,
+                    // `OptionId`들을 넣습니다.
+                    169, 170, 171, 172);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10134001,
+                    // `OptionId`들을 넣습니다.
+                    169, 170, 171, 172);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10130000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10533000,
+                    // `OptionId`들을 넣습니다.
+                    1255, 1256, 1257);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10530000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10343000,
+                    // `OptionId`들을 넣습니다.
+                    862, 863, 864, 865);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10343000,
+                    // `OptionId`들을 넣습니다.
+                    862, 863, 864, 865);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10343000,
+                    // `OptionId`들을 넣습니다.
+                    862, 863, 864);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10343000,
+                    // `OptionId`들을 넣습니다.
+                    862, 863, 864);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10343000,
+                    // `OptionId`들을 넣습니다.
+                    862, 863, 864);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10343000,
+                    // `OptionId`들을 넣습니다.
+                    862, 863, 864);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10343000,
+                    // `OptionId`들을 넣습니다.
+                    862, 863, 864);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10343000,
+                    // `OptionId`들을 넣습니다.
+                    862, 863, 864);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10340000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10344000,
+                    // `OptionId`들을 넣습니다.
+                    873, 874, 875, 876);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10344000,
+                    // `OptionId`들을 넣습니다.
+                    873, 874, 875, 876);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10344000,
+                    // `OptionId`들을 넣습니다.
+                    873, 874, 875);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10344000,
+                    // `OptionId`들을 넣습니다.
+                    873, 874, 875);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10344000,
+                    // `OptionId`들을 넣습니다.
+                    873, 874, 875);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10344000,
+                    // `OptionId`들을 넣습니다.
+                    873, 874, 875);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10344000,
+                    // `OptionId`들을 넣습니다.
+                    873, 874, 875);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 3,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10344000,
+                    // `OptionId`들을 넣습니다.
+                    873, 874, 875);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 6,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10340000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 7,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10530000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 7,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10230000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 7,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10430000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 7,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10230000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 7,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10520000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 7,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10520000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 7,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10530000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 7,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10530000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 7,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10230000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 7,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10430000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 7,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10130000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 8,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10530000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 8,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10230000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 8,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10430000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 8,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10230000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 8,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10520000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 8,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10520000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 8,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10530000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 8,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10530000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 8,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10230000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 8,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10430000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // 만들 장비의 강화도를 입력합니다.
+                    level: 8,
+                    // 만들 장비의 레시피 아이디를 입력합니다. (서브 레시피는 입력하지 않아도 괜찮습니다.)1
+                    recipeId: 10130000,
+                    // `OptionId`들을 넣습니다.
+                    1, 1, 1);
+
 #endif
 
             return avatarState;
