@@ -203,13 +203,27 @@ namespace Nekoyume.Model.State
             foreach (var kv in prevState._map)
 #pragma warning restore LAA1002
             {
-                LazyArenaInfo lazyArenaInfo = kv.Value;
-                bool active =
-                    lazyArenaInfo.GetStateOrSerializedEncoding(out ArenaInfo i, out Dictionary d)
-                        ? i.Active
-                        : ArenaInfo.IsActive(d);
-                if (active)
+                var lazyArenaInfo = kv.Value;
+                if (lazyArenaInfo.GetStateOrSerializedEncoding(out var arenaInfo, out var serialized))
                 {
+                    if (!arenaInfo.Active)
+                    {
+                        continue;
+                    }
+
+                    arenaInfo.ResetNonAvatarInfos();
+                    lazyArenaInfo.SetState(arenaInfo);
+                    _map[kv.Key] = lazyArenaInfo;
+                }
+                else
+                {
+                    if (!ArenaInfo.IsActive(serialized))
+                    {
+                        continue;
+                    }
+
+                    serialized = ArenaInfo.ResetNonAvatarInfos(serialized);
+                    lazyArenaInfo.SetSerialized(serialized, DeserializeArenaInfo);
                     _map[kv.Key] = lazyArenaInfo;
                 }
             }
