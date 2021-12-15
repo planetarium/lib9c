@@ -37,7 +37,7 @@ namespace Nekoyume.Model.State
         }
 
         public readonly Address AvatarAddress;
-        public readonly Record ArenaRecord;
+        public Record ArenaRecord { get; private set; }
         public int Score { get; private set; }
         public int DailyChallengeCount { get; private set; }
         public bool Active { get; private set; }
@@ -104,10 +104,7 @@ namespace Nekoyume.Model.State
             Level = prevInfo.Level;
             AvatarName = prevInfo.AvatarName;
             CombatPoint = prevInfo.CombatPoint;
-            Score = 1000;
-            DailyChallengeCount = GameConfig.ArenaChallengeCountMax;
-            Active = false;
-            ArenaRecord = new Record();
+            ResetNonAvatarInfos();
         }
 
         public IValue Serialize() =>
@@ -261,5 +258,19 @@ namespace Nekoyume.Model.State
 
         public static bool IsActive(Dictionary serialized) =>
             serialized.GetBoolean("active");
+
+        public void ResetNonAvatarInfos()
+        {
+            Score = 1000;
+            DailyChallengeCount = GameConfig.ArenaChallengeCountMax;
+            Active = false;
+            ArenaRecord = new Record();
+        }
+
+        public static Dictionary ResetNonAvatarInfos(Dictionary serialized) => serialized
+            .SetItem("score", 1000)
+            .SetItem("dailyChallengeCount", GameConfig.ArenaChallengeCountMax)
+            .SetItem("active", false)
+            .SetItem("arenaRecord", new Record().Serialize());
     }
 }
