@@ -59,6 +59,20 @@ namespace Nekoyume.Model.State
             return true;
         }
 
+        public void SetState(TState state)
+        {
+            _loaded = state;
+            _serialized = default;
+            _loader = null;
+        }
+
+        public void SetSerialized(TEncoding serialized, Func<TEncoding, TState> loader)
+        {
+            _loaded = default;
+            _serialized = serialized;
+            _loader = loader;
+        }
+
         public IValue Serialize() =>
             GetStateOrSerializedEncoding(out TState loaded, out TEncoding serialized)
                 ? loaded.Serialize()
