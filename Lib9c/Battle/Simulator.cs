@@ -53,6 +53,27 @@ namespace Nekoyume.Battle
             Player.Stats.EqualizeCurrentHPWithHP();
         }
 
+        protected Simulator(
+            IRandom random,
+            Player player,
+            List<Guid> foods,
+            SimulatorSheets simulatorSheets
+        )
+        {
+            Random = random;
+            MaterialItemSheet = simulatorSheets.MaterialItemSheet;
+            SkillSheet = simulatorSheets.SkillSheet;
+            SkillBuffSheet = simulatorSheets.SkillBuffSheet;
+            BuffSheet = simulatorSheets.BuffSheet;
+            CharacterSheet = simulatorSheets.CharacterSheet;
+            CharacterLevelSheet = simulatorSheets.CharacterLevelSheet;
+            EquipmentItemSetEffectSheet = simulatorSheets.EquipmentItemSetEffectSheet;
+            Log = new BattleLog();
+            Player = player;
+            Player.Use(foods);
+            Player.Stats.EqualizeCurrentHPWithHP();
+        }
+
         public static List<ItemBase> SetReward(
             WeightedSelector<StageSheet.RewardData> itemSelector,
             int maxCount,

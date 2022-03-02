@@ -8,7 +8,6 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Battle;
-using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -18,8 +17,8 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("ranking_battle11")]
-    public class RankingBattle : GameAction
+    [ActionType("ranking_battle10")]
+    public class RankingBattle10 : GameAction
     {
         public const int StageId = 999999;
         public static readonly BigInteger EntranceFee = 100;
@@ -76,7 +75,7 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the signer tried to battle for themselves.");
             }
 
-            if (!states.TryGetAvatarStateV2(ctx.Signer, avatarAddress, out var avatarState, out bool migrationRequired))
+            if (!states.TryGetAvatarStateV2(ctx.Signer, avatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -160,10 +159,10 @@ namespace Nekoyume.Action
                 sw.Elapsed);
             sw.Restart();
 
-            var characterSheet = states.GetSheet<CharacterSheet>();
-            var arenaKey = (IKey)avatarAddress.Serialize();
+            IKey arenaKey = (IKey)avatarAddress.Serialize();
             if (!weeklyArenaMap.ContainsKey(arenaKey))
             {
+                var characterSheet = states.GetSheet<CharacterSheet>();
                 var newInfo = new ArenaInfo(avatarState, characterSheet, costumeStatSheet, false);
                 weeklyArenaMap =
                     (Dictionary)weeklyArenaMap.Add(arenaKey, newInfo.Serialize());
@@ -208,25 +207,17 @@ namespace Nekoyume.Action
 
             ArenaInfo = new ArenaInfo((Dictionary)weeklyArenaMap[arenaKey]);
             EnemyArenaInfo = new ArenaInfo((Dictionary)weeklyArenaMap[enemyKey]);
-
-            var characterLevelSheet = states.GetSheet<CharacterLevelSheet>();
-            var equipmentItemSetEffectSheet = states.GetSheet<EquipmentItemSetEffectSheet>();
-            var player = new Player(avatarState, characterSheet, characterLevelSheet,
-                equipmentItemSetEffectSheet);
-            var enemyPlayer = new EnemyPlayer(enemyAvatarState, characterSheet, characterLevelSheet,
-                equipmentItemSetEffectSheet);
-            var simulator = new RankingSimulator(
+            var simulator = new RankingSimulatorV1(
                 ctx.Random,
-                player,
-                enemyPlayer,
+                avatarState,
+                enemyAvatarState,
                 new List<Guid>(),
                 states.GetRankingSimulatorSheets(),
                 StageId,
                 arenaInfo,
                 enemyArenaInfo,
                 costumeStatSheet);
-            player.Simulator = simulator;
-            enemyPlayer.Simulator = simulator;
+
             simulator.Simulate();
 
             sw.Stop();
@@ -294,14 +285,9 @@ namespace Nekoyume.Action
 
             states = states
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
-
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(avatarAddress, avatarState.SerializeV2());
-            }
+                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
+                .SetState(questListAddress, avatarState.questList.Serialize())
+                .SetState(avatarAddress, avatarState.SerializeV2());
 
             sw.Stop();
             Log.Verbose("{AddressesHex}RankingBattle Serialize AvatarState: {Elapsed}",

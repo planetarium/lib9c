@@ -1,12 +1,16 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.IO;
     using System.Linq;
+    using System.Runtime.Serialization.Formatters.Binary;
+    using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Crypto;
+    using MessagePack;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Battle;
@@ -21,7 +25,7 @@
     using Xunit.Abstractions;
     using static SerializeKeys;
 
-    public class RankingBattleTest
+    public class RankingBattle10Test
     {
         private readonly TableSheets _tableSheets;
         private readonly Address _agent1Address;
@@ -30,7 +34,7 @@
         private readonly Address _weeklyArenaAddress;
         private readonly IAccountStateDelta _initialState;
 
-        public RankingBattleTest(ITestOutputHelper outputHelper)
+        public RankingBattle10Test(ITestOutputHelper outputHelper)
         {
             _initialState = new State();
 
@@ -152,7 +156,6 @@
             var enemyAvatarState = _initialState.GetAvatarState(_avatar2Address);
             enemyAvatarState.inventory.AddItem(enemyCostume);
 
-            Address worldInformationAddress = _avatar1Address.Derive(LegacyWorldInformationKey);
             if (avatarBackward)
             {
                 previousState =
@@ -165,7 +168,7 @@
                         _avatar1Address.Derive(LegacyInventoryKey),
                         previousAvatar1State.inventory.Serialize())
                     .SetState(
-                        worldInformationAddress,
+                        _avatar1Address.Derive(LegacyWorldInformationKey),
                         previousAvatar1State.worldInformation.Serialize())
                     .SetState(
                         _avatar1Address.Derive(LegacyQuestListKey),
@@ -193,7 +196,7 @@
                     .SetState(_avatar2Address, enemyAvatarState.SerializeV2());
             }
 
-            var action = new RankingBattle
+            var action = new RankingBattle10
             {
                 avatarAddress = _avatar1Address,
                 enemyAddress = _avatar2Address,
@@ -231,7 +234,7 @@
                 action.EnemyAvatarState,
                 new List<Guid>(),
                 _tableSheets.GetRankingSimulatorSheets(),
-                RankingBattle.StageId,
+                RankingBattle10.StageId,
                 action.ArenaInfo,
                 action.EnemyArenaInfo,
                 _tableSheets.CostumeStatSheet);
@@ -242,15 +245,12 @@
             Assert.Equal(result.score, log.score);
             Assert.Equal(result.Count, log.Count);
             Assert.Equal(result.result, log.result);
-
-            Assert.Equal(previousAvatar1State.SerializeV2(), nextAvatar1State.SerializeV2());
-            Assert.Equal(previousAvatar1State.worldInformation.Serialize(), nextAvatar1State.worldInformation.Serialize());
         }
 
         [Fact]
         public void ExecuteThrowInvalidAddressException()
         {
-            var action = new RankingBattle
+            var action = new RankingBattle10
             {
                 avatarAddress = _avatar1Address,
                 enemyAddress = _avatar1Address,
@@ -294,7 +294,7 @@
                     break;
             }
 
-            var action = new RankingBattle
+            var action = new RankingBattle10
             {
                 avatarAddress = avatarAddress,
                 enemyAddress = enemyAddress,
@@ -328,7 +328,7 @@
                 _avatar1Address,
                 previousAvatar1State.Serialize());
 
-            var action = new RankingBattle
+            var action = new RankingBattle10
             {
                 avatarAddress = _avatar1Address,
                 enemyAddress = _avatar2Address,
@@ -359,7 +359,7 @@
                 _weeklyArenaAddress,
                 previousWeeklyArenaState.Serialize());
 
-            var action = new RankingBattle
+            var action = new RankingBattle10
             {
                 avatarAddress = _avatar1Address,
                 enemyAddress = _avatar2Address,
@@ -392,7 +392,7 @@
                 _weeklyArenaAddress,
                 previousWeeklyArenaState.Serialize());
 
-            var action = new RankingBattle
+            var action = new RankingBattle10
             {
                 avatarAddress = _avatar1Address,
                 enemyAddress = _avatar2Address,
@@ -432,7 +432,7 @@
                 _weeklyArenaAddress,
                 previousWeeklyArenaState.Serialize());
 
-            var action = new RankingBattle
+            var action = new RankingBattle10
             {
                 avatarAddress = _avatar1Address,
                 enemyAddress = _avatar2Address,
@@ -456,7 +456,7 @@
         [Fact]
         public void Rehearsal()
         {
-            var action = new RankingBattle
+            var action = new RankingBattle10
             {
                 avatarAddress = _avatar1Address,
                 enemyAddress = _avatar2Address,
@@ -523,7 +523,7 @@
 
             var state = _initialState.SetState(_avatar1Address, previousAvatarState.Serialize());
 
-            var action = new RankingBattle
+            var action = new RankingBattle10
             {
                 avatarAddress = _avatar1Address,
                 enemyAddress = _avatar2Address,

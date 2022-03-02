@@ -21,8 +21,8 @@ namespace Nekoyume.Model
 
         public readonly Guid Id = Guid.NewGuid();
 
-        [NonSerialized]
-        public readonly Simulator Simulator;
+        [field: NonSerialized]
+        public Simulator Simulator { get; set; }
 
         public ElementalType atkElementType;
         public float attackRange;
@@ -63,7 +63,8 @@ namespace Nekoyume.Model
         public int AttackCount { get; private set; }
         public int AttackCountMax { get; protected set; }
 
-        protected CharacterBase(Simulator simulator, CharacterSheet characterSheet, int characterId, int level,
+        protected CharacterBase(Simulator simulator, CharacterSheet characterSheet, int characterId,
+            int level,
             IEnumerable<StatModifier> optionalStatModifiers = null)
         {
             Simulator = simulator;
@@ -88,6 +89,30 @@ namespace Nekoyume.Model
             AttackCountMax = 0;
         }
 
+        protected CharacterBase(CharacterSheet characterSheet, int characterId, int level,
+            IEnumerable<StatModifier> optionalStatModifiers = null)
+        {
+            if (!characterSheet.TryGetValue(characterId, out var row))
+                throw new SheetRowNotFoundException("CharacterSheet", characterId);
+
+            RowData = row;
+            CharacterId = characterId;
+            Stats = new CharacterStats(RowData, level);
+            if (!(optionalStatModifiers is null))
+            {
+                Stats.AddOption(optionalStatModifiers);
+            }
+
+            Skills.Clear();
+
+            atkElementType = RowData.ElementalType;
+            attackRange = RowData.AttackRange;
+            defElementType = RowData.ElementalType;
+            CurrentHP = HP;
+            AttackCountMax = 0;
+        }
+
+
         protected CharacterBase(CharacterBase value)
         {
             _root = value._root;
@@ -105,7 +130,7 @@ namespace Nekoyume.Model
 #pragma warning restore LAA1002
             {
                 // 깊은 복사까지 꼭.
-                Buffs.Add(pair.Key, (Buff.Buff) pair.Value.Clone());
+                Buffs.Add(pair.Key, (Buff.Buff)pair.Value.Clone());
             }
 
             // 타갯은 컨테이너만 옮기기.
@@ -207,7 +232,8 @@ namespace Nekoyume.Model
 
             if (!Simulator.SkillSheet.TryGetValue(selectedSkill.SkillRow.Id, out var sheetSkill))
             {
-                throw new KeyNotFoundException(selectedSkill.SkillRow.Id.ToString(CultureInfo.InvariantCulture));
+                throw new KeyNotFoundException(
+                    selectedSkill.SkillRow.Id.ToString(CultureInfo.InvariantCulture));
             }
 
             Skills.SetCooldown(selectedSkill.SkillRow.Id, sheetSkill.Cooldown);
@@ -298,7 +324,7 @@ namespace Nekoyume.Model
                 return;
 
             Stats.SetBuffs(Buffs.Values);
-            Simulator.Log.Add(new RemoveBuffs((CharacterBase) Clone()));
+            Simulator.Log.Add(new RemoveBuffs((CharacterBase)Clone()));
         }
 
         protected virtual void EndTurn()
@@ -318,7 +344,7 @@ namespace Nekoyume.Model
                 outBuff.RowData.Id > buff.RowData.Id)
                 return;
 
-            var clone = (Buff.Buff) buff.Clone();
+            var clone = (Buff.Buff)buff.Clone();
             Buffs[buff.RowData.GroupId] = clone;
             Stats.AddBuff(clone, updateImmediate);
         }
@@ -332,7 +358,7 @@ namespace Nekoyume.Model
                 return CRI >= chance;
 
             var additionalCriticalChance =
-                (int) AttackCountHelper.GetAdditionalCriticalChance(AttackCount, AttackCountMax);
+                (int)AttackCountHelper.GetAdditionalCriticalChance(AttackCount, AttackCountMax);
             return CRI + additionalCriticalChance >= chance;
         }
 
@@ -345,7 +371,8 @@ namespace Nekoyume.Model
 
         public virtual bool IsHit(CharacterBase caster)
         {
-            var isHit = HitHelper.IsHit(caster.Level, caster.HIT, Level, HIT, Simulator.Random.Next(0, 100));
+            var isHit = HitHelper.IsHit(caster.Level, caster.HIT, Level, HIT,
+                Simulator.Random.Next(0, 100));
             if (!isHit)
             {
                 caster.AttackCount = 0;
@@ -365,7 +392,8 @@ namespace Nekoyume.Model
                 AttackCount = 1;
             }
 
-            var damageMultiplier = (int) AttackCountHelper.GetDamageMultiplier(AttackCount, AttackCountMax);
+            var damageMultiplier =
+                (int)AttackCountHelper.GetDamageMultiplier(AttackCount, AttackCountMax);
             damage *= damageMultiplier;
 
 #if TEST_LOG
@@ -387,7 +415,7 @@ namespace Nekoyume.Model
 
         protected virtual void OnDead()
         {
-            var dead = new Dead((CharacterBase) Clone());
+            var dead = new Dead((CharacterBase)Clone());
             Simulator.Log.Add(dead);
         }
 
@@ -400,7 +428,8 @@ namespace Nekoyume.Model
         {
             if (!Simulator.SkillSheet.TryGetValue(GameConfig.DefaultAttackId, out var skillRow))
             {
-                throw new KeyNotFoundException(GameConfig.DefaultAttackId.ToString(CultureInfo.InvariantCulture));
+                throw new KeyNotFoundException(
+                    GameConfig.DefaultAttackId.ToString(CultureInfo.InvariantCulture));
             }
 
             var attack = SkillFactory.Get(skillRow, 0, 100);
@@ -421,6 +450,7 @@ namespace Nekoyume.Model
                 UseSkill();
                 RemoveBuffs();
             }
+
             EndTurn();
         }
 
@@ -434,6 +464,7 @@ namespace Nekoyume.Model
                 UseSkillV1();
                 RemoveBuffs();
             }
+
             EndTurn();
         }
 
@@ -447,6 +478,7 @@ namespace Nekoyume.Model
                 UseSkillV2();
                 RemoveBuffs();
             }
+
             EndTurn();
         }
     }
