@@ -61,9 +61,13 @@
             _avatar2Address = avatar2State.address;
 
             var weeklyArenaState = new WeeklyArenaState(0);
-            weeklyArenaState.SetV2(avatar1State, _tableSheets.CharacterSheet, _tableSheets.CostumeStatSheet);
-            weeklyArenaState[_avatar1Address].Activate();
-            weeklyArenaState.SetV2(avatar2State, _tableSheets.CharacterSheet, _tableSheets.CostumeStatSheet);
+            if (_tableSheets.CostumeStatSheet != null)
+            {
+                weeklyArenaState.SetV2(avatar1State, _tableSheets.CharacterSheet, _tableSheets.CostumeStatSheet);
+                weeklyArenaState[_avatar1Address].Activate();
+                weeklyArenaState.SetV2(avatar2State, _tableSheets.CharacterSheet, _tableSheets.CostumeStatSheet);
+            }
+
             weeklyArenaState[_avatar2Address].Activate();
             _weeklyArenaAddress = weeklyArenaState.address;
 
@@ -224,17 +228,28 @@
             Assert.Equal(BattleLog.Result.Win, action.Result.result);
             Assert.True(nextWeeklyState[_avatar1Address].Score > prevScore);
 
-            // Check simulation result equal.
-            var simulator = new RankingSimulatorV1(
-                new TestRandom(),
+            var player = new Player(
                 previousAvatar1State,
+                _tableSheets.CharacterSheet,
+                _tableSheets.CharacterLevelSheet,
+                _tableSheets.EquipmentItemSetEffectSheet);
+            var enemyPlayer = new EnemyPlayer(
                 action.EnemyAvatarState,
+                _tableSheets.CharacterSheet,
+                _tableSheets.CharacterLevelSheet,
+                _tableSheets.EquipmentItemSetEffectSheet);
+            var simulator = new RankingSimulator(
+                new TestRandom(),
+                player,
+                enemyPlayer,
                 new List<Guid>(),
                 _tableSheets.GetRankingSimulatorSheets(),
                 RankingBattle.StageId,
                 action.ArenaInfo,
                 action.EnemyArenaInfo,
                 _tableSheets.CostumeStatSheet);
+            player.Simulator = simulator;
+            enemyPlayer.Simulator = simulator;
             simulator.Simulate();
 
             BattleLog log = simulator.Log;
