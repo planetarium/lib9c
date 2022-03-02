@@ -55,7 +55,7 @@ namespace Lib9c.Tests.Model
                 _tableSheets.WorldUnlockSheet
             );
 
-            var simulator = new RankingSimulator(
+            var simulator = new RankingSimulatorV1(
                 _random,
                 avatarState,
                 avatarState,
@@ -99,7 +99,7 @@ namespace Lib9c.Tests.Model
             serialized = serialized.SetItem("score", score.Serialize());
             var info = new ArenaInfo(serialized);
 
-            var simulator = new RankingSimulator(
+            var simulator = new RankingSimulatorV1(
                 _random,
                 avatarState,
                 avatarState,
@@ -145,7 +145,7 @@ namespace Lib9c.Tests.Model
             enemyCostume.equipped = true;
             enemyAvatarState.inventory.AddItem(enemyCostume);
 
-            var simulator = new RankingSimulator(
+            var simulator = new RankingSimulatorV1(
                 _random,
                 avatarState,
                 enemyAvatarState,
@@ -193,7 +193,7 @@ namespace Lib9c.Tests.Model
                 _tableSheets.WorldSheet,
                 GameConfig.RequireClearedStageLevel.ActionsInRankingBoard);
 
-            var simulator = new RankingSimulator(
+            var simulator = new RankingSimulatorV1(
                 _random,
                 avatarState,
                 avatarState,

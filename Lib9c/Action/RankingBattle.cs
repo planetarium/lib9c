@@ -192,7 +192,7 @@ namespace Nekoyume.Action
 
             ArenaInfo = new ArenaInfo((Dictionary)weeklyArenaMap[arenaKey]);
             EnemyArenaInfo = new ArenaInfo((Dictionary)weeklyArenaMap[enemyKey]);
-            var simulator = new RankingSimulator(
+            var simulator = new RankingSimulatorV1(
                 ctx.Random,
                 avatarState,
                 enemyAvatarState,
