@@ -223,7 +223,6 @@
             Assert.NotNull(action.Result);
             Assert.NotNull(action.ArenaInfo);
             Assert.NotNull(action.EnemyArenaInfo);
-            Assert.NotNull(action.EnemyAvatarState);
             Assert.Contains(typeof(GetReward), action.Result.Select(e => e.GetType()));
             Assert.Equal(BattleLog.Result.Win, action.Result.result);
             Assert.True(nextWeeklyState[_avatar1Address].Score > prevScore);
@@ -234,7 +233,7 @@
                 _tableSheets.CharacterLevelSheet,
                 _tableSheets.EquipmentItemSetEffectSheet);
             var enemyPlayer = new EnemyPlayer(
-                action.EnemyAvatarState,
+                action.EnemyPlayer,
                 _tableSheets.CharacterSheet,
                 _tableSheets.CharacterLevelSheet,
                 _tableSheets.EquipmentItemSetEffectSheet);
