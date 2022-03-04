@@ -245,6 +245,9 @@ namespace Lib9c.Tests.Action
             Assert.Equal(result.score, log.score);
             Assert.Equal(result.Count, log.Count);
             Assert.Equal(result.result, log.result);
+
+            Assert.Equal(previousAvatar1State.SerializeV2(), nextAvatar1State.SerializeV2());
+            Assert.Equal(previousAvatar1State.worldInformation.Serialize(), nextAvatar1State.worldInformation.Serialize());
         }
 
         [Fact]
