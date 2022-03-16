@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Model
     using Lib9c.Tests.Action;
     using Libplanet.Action;
     using Nekoyume;
+    using Nekoyume.Action;
     using Nekoyume.Battle;
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus;
@@ -61,11 +62,10 @@ namespace Lib9c.Tests.Model
                 avatarState,
                 new List<Guid>(),
                 _tableSheets.GetRankingSimulatorSheets(),
-                1,
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false),
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false)
+                1
             );
             simulator.SimulateV2();
+            RankingBattle.UpdateReward(new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false).GetRewardCount(), simulator);
 
             Assert.Equal(expected, simulator.Reward.Any());
         }
@@ -105,12 +105,10 @@ namespace Lib9c.Tests.Model
                 avatarState,
                 new List<Guid>(),
                 _tableSheets.GetRankingSimulatorSheets(),
-                1,
-                info,
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false)
+                1
             );
             simulator.SimulateV2();
-
+            RankingBattle.UpdateReward(info.GetRewardCount(), simulator);
             Assert.Equal(expected, simulator.Reward.Count());
         }
 
@@ -152,8 +150,6 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 _tableSheets.GetRankingSimulatorSheets(),
                 1,
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false),
-                new ArenaInfo(enemyAvatarState, _tableSheets.CharacterSheet, false),
                 _tableSheets.CostumeStatSheet
             );
 
@@ -199,14 +195,14 @@ namespace Lib9c.Tests.Model
                 avatarState,
                 new List<Guid>(),
                 _tableSheets.GetRankingSimulatorSheets(),
-                1,
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false),
-                new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false));
+                1);
 
             var rewardIds = new HashSet<int>();
             for (int i = 0; i < simulationCount; ++i)
             {
                 simulator.SimulateV2();
+                RankingBattle.UpdateReward(new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false).GetRewardCount(), simulator);
+
                 foreach (var itemBase in simulator.Reward)
                 {
                     if (!rewardIds.Contains(itemBase.Id))

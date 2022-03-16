@@ -146,17 +146,19 @@ namespace Nekoyume.Action
 
             Log.Verbose("{WeeklyArenaStateAddress}", weeklyArenaState.address.ToHex());
 
+            var enemyArenaInfo = weeklyArenaState[EnemyAddress];
+            var rankingSheets = states.GetRankingSimulatorSheets();
             var simulator = new RankingSimulator(
                 ctx.Random,
                 avatarState,
                 enemyAvatarState,
                 consumableIds,
-                states.GetRankingSimulatorSheets(),
-                StageId,
-                arenaInfo,
-                weeklyArenaState[EnemyAddress]);
-
+                rankingSheets,
+                StageId
+            );
             simulator.SimulateV1();
+            RankingBattle6.UpdateScore(arenaInfo, avatarState, enemyArenaInfo, simulator);
+            RankingBattle2.UpdateReward(arenaInfo.GetRewardCount(), simulator);
 
             Result = simulator.Log;
 

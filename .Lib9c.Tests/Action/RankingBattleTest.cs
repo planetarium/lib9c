@@ -232,10 +232,10 @@ namespace Lib9c.Tests.Action
                 new List<Guid>(),
                 _tableSheets.GetRankingSimulatorSheets(),
                 RankingBattle.StageId,
-                action.ArenaInfo,
-                action.EnemyArenaInfo,
                 _tableSheets.CostumeStatSheet);
             simulator.Simulate();
+            RankingBattle.UpdateScore(action.ArenaInfo, action.EnemyArenaInfo, simulator);
+            RankingBattle.UpdateReward(action.ArenaInfo.GetRewardCount(), simulator);
 
             Assert.Equal(nextArenaInfo.Score, simulator.Log.score);
             Assert.Equal(previousAvatar1State.SerializeV2(), nextAvatar1State.SerializeV2());

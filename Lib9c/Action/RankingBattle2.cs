@@ -47,7 +47,7 @@ namespace Nekoyume.Action
             CheckObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress, EnemyAddress);
-            
+
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;
@@ -151,18 +151,20 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Get CostumeStatSheet: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
+            var enemyArenaInfo = weeklyArenaState[EnemyAddress];
+            var rankingSheets = states.GetRankingSimulatorSheets();
             var simulator = new RankingSimulator(
                 ctx.Random,
                 avatarState,
                 enemyAvatarState,
                 consumableIds,
-                states.GetRankingSimulatorSheets(),
+                rankingSheets,
                 StageId,
-                arenaInfo,
-                weeklyArenaState[EnemyAddress],
                 costumeStatSheet);
 
             simulator.SimulateV1();
+            RankingBattle6.UpdateScore(arenaInfo, avatarState, enemyArenaInfo, simulator);
+            UpdateReward(arenaInfo.GetRewardCount(), simulator);
 
             sw.Stop();
             Log.Verbose(
@@ -242,6 +244,25 @@ namespace Nekoyume.Action
             consumableIds = ((List) plainValue["consumable_ids"])
                 .Select(e => e.ToGuid())
                 .ToList();
+        }
+
+        public static void UpdateReward(int rewardCount, RankingSimulator simulator)
+        {
+            var itemSelector = new WeightedSelector<StageSheet.RewardData>(simulator.Random);
+            foreach (var row in simulator.WeeklyArenaRewardSheet.OrderedList)
+            {
+                var reward = row.Reward;
+                if (reward.RequiredLevel <= simulator.Player.Level)
+                {
+                    itemSelector.Add(reward, reward.Ratio);
+                }
+            }
+
+            var rewardList = Simulator.SetReward(itemSelector, rewardCount, simulator.Random, simulator.MaterialItemSheet);
+            var getReward = new GetReward(null, rewardList);
+            simulator.Log.Add(getReward);
+            simulator.Log.result = simulator.Result;
+            simulator.SetReward(rewardList);
         }
     }
 }

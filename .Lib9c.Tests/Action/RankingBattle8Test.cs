@@ -236,10 +236,10 @@
                 action.consumableIds,
                 _tableSheets.GetRankingSimulatorSheets(),
                 RankingBattle8.StageId,
-                action.ArenaInfo,
-                action.EnemyArenaInfo,
                 _tableSheets.CostumeStatSheet);
             simulator.Simulate();
+            RankingBattle.UpdateScore(action.ArenaInfo, action.EnemyArenaInfo, simulator);
+            RankingBattle.UpdateReward(action.ArenaInfo.GetRewardCount(), simulator);
 
             BattleLog log = simulator.Log;
             BattleLog result = action.Result;

@@ -189,18 +189,19 @@ namespace Nekoyume.Action
 
             ArenaInfo = new ArenaInfo((Dictionary)weeklyArenaState[avatarAddress].Serialize());
             EnemyArenaInfo = new ArenaInfo((Dictionary)weeklyArenaState[enemyAddress].Serialize());
+            var rankingSheets = states.GetRankingSimulatorSheets();
             var simulator = new RankingSimulator(
                 ctx.Random,
                 avatarState,
                 enemyAvatarState,
                 consumableIds,
-                states.GetRankingSimulatorSheets(),
+                rankingSheets,
                 StageId,
-                arenaInfo,
-                enemyArenaInfo,
                 costumeStatSheet);
 
             simulator.Simulate();
+            RankingBattle.UpdateScore(arenaInfo, enemyArenaInfo, simulator);
+            RankingBattle.UpdateReward(arenaInfo.GetRewardCount(), simulator);
 
             sw.Stop();
             Log.Verbose(

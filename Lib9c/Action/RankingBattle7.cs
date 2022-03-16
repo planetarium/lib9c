@@ -183,18 +183,19 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Validate ArenaInfo: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
+            var rankingSheets = states.GetRankingSimulatorSheets();
             var simulator = new RankingSimulator(
                 ctx.Random,
                 avatarState,
                 enemyAvatarState,
                 consumableIds,
-                states.GetRankingSimulatorSheets(),
+                rankingSheets,
                 StageId,
-                arenaInfo,
-                enemyArenaInfo,
                 costumeStatSheet);
 
-            simulator.SimulateV3();
+            simulator.SimulateV2();
+            RankingBattle8.UpdateScore(arenaInfo, enemyArenaInfo, simulator);
+            RankingBattle.UpdateReward(arenaInfo.GetRewardCount(), simulator);
 
             sw.Stop();
             Log.Verbose(

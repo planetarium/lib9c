@@ -202,11 +202,11 @@ namespace Nekoyume.Action
                 new List<Guid>(),
                 rankingSheets,
                 StageId,
-                arenaInfo,
-                enemyArenaInfo,
                 costumeStatSheet);
 
             simulator.Simulate();
+            UpdateScore(arenaInfo, enemyArenaInfo, simulator);
+            UpdateReward(arenaInfo.GetRewardCount(), simulator);
 
             sw.Stop();
             Log.Verbose(
@@ -314,6 +314,31 @@ namespace Nekoyume.Action
             equipmentIds = ((List) plainValue["equipment_ids"])
                 .Select(e => e.ToGuid())
                 .ToList();
+        }
+
+        public static void UpdateScore(ArenaInfo arenaInfo, ArenaInfo enemyInfo, RankingSimulator simulator)
+        {
+            simulator.Log.diffScore = arenaInfo.Update(enemyInfo, simulator.Result);
+            simulator.Log.score = arenaInfo.Score;
+        }
+
+        public static void UpdateReward(int rewardCount, RankingSimulator simulator)
+        {
+            var itemSelector = new WeightedSelector<StageSheet.RewardData>(simulator.Random);
+            foreach (var row in simulator.WeeklyArenaRewardSheet.OrderedList)
+            {
+                var reward = row.Reward;
+                if (reward.RequiredLevel <= simulator.Player.Level)
+                {
+                    itemSelector.Add(reward, reward.Ratio);
+                }
+            }
+
+            var rewardList = Simulator.SetRewardV2(itemSelector, rewardCount, simulator.Random, simulator.MaterialItemSheet);
+            var getReward = new GetReward(null, rewardList);
+            simulator.Log.Add(getReward);
+            simulator.Log.result = simulator.Result;
+            simulator.SetReward(rewardList);
         }
     }
 }

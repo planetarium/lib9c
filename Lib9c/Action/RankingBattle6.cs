@@ -183,18 +183,19 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Validate ArenaInfo: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
+            var rankingSheets = states.GetRankingSimulatorSheets();
             var simulator = new RankingSimulator(
                 ctx.Random,
                 avatarState,
                 enemyAvatarState,
                 consumableIds,
-                states.GetRankingSimulatorSheets(),
+                rankingSheets,
                 StageId,
-                arenaInfo,
-                enemyArenaInfo,
                 costumeStatSheet);
 
             simulator.SimulateV2();
+            UpdateScore(arenaInfo, avatarState, enemyArenaInfo, simulator);
+            RankingBattle.UpdateReward(arenaInfo.GetRewardCount(), simulator);
 
             sw.Stop();
             Log.Verbose(
@@ -278,6 +279,13 @@ namespace Nekoyume.Action
             consumableIds = ((List) plainValue["consumable_ids"])
                 .Select(e => e.ToGuid())
                 .ToList();
+        }
+
+        public static void UpdateScore(ArenaInfo arenaInfo, AvatarState avatarState, ArenaInfo enemyInfo,
+            RankingSimulator simulator)
+        {
+            simulator.Log.diffScore = arenaInfo.UpdateV3(avatarState, enemyInfo, simulator.Result);
+            simulator.Log.score = arenaInfo.Score;
         }
     }
 }
