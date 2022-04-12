@@ -18,9 +18,6 @@ namespace Nekoyume.Action
 {
     public static class AccountStateDeltaExtensions
     {
-        private const int SheetsCacheSize = 100;
-        private static readonly LruCache<string, ISheet> SheetsCache = new LruCache<string, ISheet>(SheetsCacheSize);
-
         public static IAccountStateDelta MarkBalanceChanged(
             this IAccountStateDelta states,
             Currency currency,
@@ -473,26 +470,11 @@ namespace Nekoyume.Action
 
         public static T GetSheet<T>(this IAccountStateDelta states) where T : ISheet, new()
         {
-            var address = Addresses.GetSheetAddress<T>();
-
             try
             {
                 var csv = GetSheetCsv<T>(states);
-                byte[] hash;
-                using (var sha256 = SHA256.Create())
-                {
-                    hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(csv));
-                }
-
-                var cacheKey = address.ToHex() + ByteUtil.Hex(hash);
-                if (SheetsCache.TryGetValue(cacheKey, out var cached))
-                {
-                    return (T)cached;
-                }
-
                 var sheet = new T();
                 sheet.Set(csv);
-                SheetsCache.AddOrUpdate(cacheKey, sheet);
                 return sheet;
             }
             catch (Exception e)
@@ -599,19 +581,6 @@ namespace Nekoyume.Action
                 }
 
                 var csv = csvValue.ToDotnetString();
-                byte[] hash;
-                using (var sha256 = SHA256.Create())
-                {
-                    hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(csv));
-                }
-
-                var cacheKey = address.ToHex() + ByteUtil.Hex(hash);
-                if (SheetsCache.TryGetValue(cacheKey, out var cached))
-                {
-                    result[sheetType] = (address, cached);
-                    continue;
-                }
-
                 var sheetConstructorInfo = sheetType.GetConstructor(Type.EmptyTypes);
                 if (!(sheetConstructorInfo?.Invoke(Array.Empty<object>()) is ISheet sheet))
                 {
@@ -619,7 +588,6 @@ namespace Nekoyume.Action
                 }
 
                 sheet.Set(csv);
-                SheetsCache.AddOrUpdate(cacheKey, sheet);
                 result[sheetType] = (address, sheet);
             }
 
