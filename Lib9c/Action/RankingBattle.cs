@@ -107,7 +107,7 @@ namespace Nekoyume.Action
 
             var items = equipmentIds.Concat(costumeIds);
             avatarState.EquipItems(items);
-            if (context.BlockIndex > 3806354)
+            if (context.BlockIndex > 3806324)
             {
                 avatarState.ValidateItemRequirement(
                     costumeItemIds.ToList(),
