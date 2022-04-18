@@ -217,7 +217,7 @@ namespace Nekoyume.Action
                 enemyArenaInfo,
                 costumeStatSheet);
 
-            simulator.Simulate();
+            simulator.SimulateV5();
 
             sw.Stop();
             Log.Verbose(

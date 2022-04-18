@@ -222,7 +222,7 @@ namespace Lib9c.Tests.Action
                 action.ArenaInfo,
                 action.EnemyArenaInfo,
                 _tableSheets.CostumeStatSheet);
-            simulator.Simulate();
+            simulator.SimulateV5();
 
             Assert.Equal(nextArenaInfo.Score, simulator.Log.score);
             Assert.Equal(previousAvatar1State.SerializeV2(), nextAvatar1State.SerializeV2());
@@ -356,7 +356,7 @@ namespace Lib9c.Tests.Action
                 action.ArenaInfo,
                 action.EnemyArenaInfo,
                 _tableSheets.CostumeStatSheet);
-            simulator.Simulate();
+            simulator.SimulateV5();
 
             Assert.Equal(nextArenaInfo.Score, simulator.Log.score);
             Assert.Equal(previousAvatar1State.SerializeV2(), nextAvatar1State.SerializeV2());

@@ -239,7 +239,7 @@ namespace Lib9c.Tests.Action
                 action.ArenaInfo,
                 action.EnemyArenaInfo,
                 _tableSheets.CostumeStatSheet);
-            simulator.Simulate();
+            simulator.SimulateV5();
 
             BattleLog log = simulator.Log;
             BattleLog result = action.Result;
