@@ -108,7 +108,7 @@ namespace Nekoyume.Battle
             _enemyPlayer.SetCostumeStat(costumeStatSheet);
         }
 
-        public Player Simulate(Func<int, int, BattleLog.Result, (int challengerScore, int defenderScore)> scoreGetter)
+        public Player Simulate(Func<int, int, BattleLog.Result, (int challengerScoreDelta, int defenderScoreDelta)> scoreGetter)
         {
 #if TEST_LOG
             var sb = new System.Text.StringBuilder();

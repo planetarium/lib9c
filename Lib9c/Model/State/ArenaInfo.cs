@@ -223,7 +223,7 @@ namespace Nekoyume.Model.State
         public int Update(
             ArenaInfo enemyInfo,
             BattleLog.Result result,
-            Func<int, int, BattleLog.Result, (int challengerScore, int defenderScore)> scoreGetter)
+            Func<int, int, BattleLog.Result, (int challengerScoreDelta, int defenderScoreDelta)> scoreGetter)
         {
             DailyChallengeCount--;
             switch (result)
@@ -241,10 +241,10 @@ namespace Nekoyume.Model.State
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
             }
 
-            var (challengerScore, defenderScore) = scoreGetter(Score, enemyInfo.Score, result);
-            Score = Math.Max(1000, Score + challengerScore);
-            enemyInfo.Score = Math.Max(1000, enemyInfo.Score + defenderScore);
-            return challengerScore;
+            var (challengerScoreDelta, defenderScoreDelta) = scoreGetter(Score, enemyInfo.Score, result);
+            Score = Math.Max(1000, Score + challengerScoreDelta);
+            enemyInfo.Score = Math.Max(1000, enemyInfo.Score + defenderScoreDelta);
+            return challengerScoreDelta;
         }
 
         public void Activate()
