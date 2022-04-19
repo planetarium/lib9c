@@ -96,7 +96,7 @@ namespace Lib9c.Tests.Action
             var ctx = new ActionContext()
             {
                 BlockIndex = blockIndex,
-                PreviousStates = _baseState,
+                PreviousStates = state,
                 Miner = default,
             };
 
@@ -135,11 +135,10 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void PrepareNextArena(bool afterUpdate)
+        [InlineData(true, RankingBattle11.UpdateTargetWeeklyArenaIndex - 1, RankingBattle11.UpdateTargetBlockIndex)]
+        [InlineData(false, RankingBattle11.UpdateTargetWeeklyArenaIndex - 1, RankingBattle11.UpdateTargetBlockIndex)]
+        public void PrepareNextArena(bool afterUpdate, int weeklyIndex, int blockIndex)
         {
-            var weeklyIndex = RankingBattle.UpdateTargetWeeklyArenaIndex - 1;
             if (afterUpdate)
             {
                 weeklyIndex++;
@@ -165,8 +164,6 @@ namespace Lib9c.Tests.Action
                 .SetState(weekly.address, weekly.Serialize())
                 .SetState(nextWeekly.address, nextWeekly.Serialize())
                 .SetState(gameConfigState.address, gameConfigState.Serialize());
-
-            var blockIndex = RankingBattle.UpdateTargetBlockIndex;
 
             if (afterUpdate)
             {
@@ -196,7 +193,7 @@ namespace Lib9c.Tests.Action
             var ctx = new ActionContext()
             {
                 BlockIndex = blockIndex,
-                PreviousStates = _baseState,
+                PreviousStates = state,
                 Miner = default,
             };
 
@@ -230,10 +227,10 @@ namespace Lib9c.Tests.Action
             Assert.Equal(avatarAddress, addressList.First());
         }
 
-        [Fact]
-        public void ResetChallengeCount()
+        [Theory]
+        [InlineData(RankingBattle11.UpdateTargetWeeklyArenaIndex - 1, RankingBattle11.UpdateTargetBlockIndex)]
+        public void ResetChallengeCount(int legacyWeeklyIndex, int blockIndex)
         {
-            var legacyWeeklyIndex = RankingBattle.UpdateTargetWeeklyArenaIndex - 1;
             var legacyWeekly = new WeeklyArenaState(legacyWeeklyIndex);
             legacyWeekly.Set(_avatarState, _tableSheets.CharacterSheet);
             legacyWeekly[_avatarState.address].Update(
@@ -257,8 +254,8 @@ namespace Lib9c.Tests.Action
 
             var migrationCtx = new ActionContext
             {
-                BlockIndex = RankingBattle.UpdateTargetBlockIndex,
-                PreviousStates = _baseState,
+                BlockIndex = blockIndex,
+                PreviousStates = state,
                 Miner = default,
             };
 
@@ -282,7 +279,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(4, prevInfo.DailyChallengeCount);
 
-            var blockIndex = RankingBattle.UpdateTargetBlockIndex + gameConfigState.DailyArenaInterval;
+            blockIndex += gameConfigState.DailyArenaInterval;
 
             var ctx = new ActionContext
             {
