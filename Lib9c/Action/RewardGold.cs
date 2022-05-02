@@ -20,7 +20,7 @@ namespace Nekoyume.Action
     {
         // Start filtering inactivate ArenaInfo
         // https://github.com/planetarium/lib9c/issues/946
-        public const long FilterInactiveArenaInfoBlockIndex = 3_976_000L;
+        public const long FilterInactiveArenaInfoBlockIndex = 4_210_000L;
         public override IValue PlainValue =>
             new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
             {
