@@ -19,7 +19,7 @@ namespace Nekoyume.Action
     {
         public string Code { get; internal set; }
 
-        public Address AvatarAddress {get; internal set; }
+        public Address AvatarAddress { get; internal set; }
 
         public RedeemCode()
         {
@@ -33,10 +33,10 @@ namespace Nekoyume.Action
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
-            var states = context.PreviousStates;
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
+            IAccountStateDelta states = context.PreviousStates;
+            Address inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
+            Address worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
+            Address questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
                 return states
@@ -50,14 +50,14 @@ namespace Nekoyume.Action
                     .MarkBalanceChanged(GoldCurrencyMock, context.Signer);
             }
 
-            var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
+            string addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
 
             if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out AvatarState avatarState))
             {
                 return states;
             }
 
-            var redeemState = states.GetRedeemCodeState();
+            RedeemCodeState redeemState = states.GetRedeemCodeState();
             if (redeemState is null)
             {
                 return states;
@@ -79,22 +79,31 @@ namespace Nekoyume.Action
                 throw;
             }
 
-            var row = states.GetSheet<RedeemRewardSheet>().Values.First(r => r.Id == redeemId);
-            var itemSheets = states.GetItemSheet();
+            RedeemRewardSheet.Row row = states.GetSheet<RedeemRewardSheet>().Values.First(r => r.Id == redeemId);
+            ItemSheet itemSheets = states.GetItemSheet();
 
             foreach (RedeemRewardSheet.RewardInfo info in row.Rewards)
             {
                 switch (info.Type)
                 {
                     case RewardType.Item:
-                        for (var i = 0; i < info.Quantity; i++)
+                        if (info.ItemId is int itemId)
                         {
-                            if (info.ItemId is int itemId)
+                            ItemSheet.Row itemRow = itemSheets[itemId];
+
+                            switch (itemRow.ItemType)
                             {
-                                ItemBase item = ItemFactory.CreateItem(itemSheets[itemId], context.Random);
-                                // We should fix count as 1 because ItemFactory.CreateItem
-                                // will create a new item every time.
-                                avatarState.inventory.AddItem(item, count: 1);
+                                case ItemType.Costume:
+                                case ItemType.Equipment:
+                                    AddNonFungibleItems(info, itemRow, context.Random, avatarState);
+                                    break;
+                                case ItemType.Material:
+                                    Material material = ItemFactory.CreateMaterial((MaterialItemSheet.Row)itemRow);
+                                    avatarState.inventory.AddFungibleItem(material, info.Quantity);
+                                    break;
+                                default:
+                                    // FIXME: We should raise exception here.
+                                    break;
                             }
                         }
                         break;
@@ -127,8 +136,23 @@ namespace Nekoyume.Action
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
-            Code = (Text) plainValue[nameof(Code)];
+            Code = (Text)plainValue[nameof(Code)];
             AvatarAddress = plainValue[nameof(AvatarAddress)].ToAddress();
+        }
+
+        private void AddNonFungibleItems(
+            RedeemRewardSheet.RewardInfo info,
+            ItemSheet.Row row,
+            IRandom random,
+            AvatarState avatarState)
+        {
+            for (int i = 0; i < info.Quantity; i++)
+            {
+                ItemBase nonFungibleItem = ItemFactory.CreateItem(row, random);
+                // We should fix count as 1 because
+                // ItemFactory.CreateItem will create a new item every time.
+                _ = avatarState.inventory.AddItem(nonFungibleItem, count: 1);
+            }
         }
     }
 }
