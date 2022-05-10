@@ -36,6 +36,11 @@ namespace Nekoyume.TableData
         {
         }
 
+        public SheetRowNotFoundException(string sheetName, long longKey)
+            : this(sheetName, longKey.ToString(CultureInfo.InvariantCulture))
+        {
+        }
+
         public SheetRowNotFoundException(string sheetName, string key) : this(sheetName, "Key", key)
         {
         }
@@ -51,6 +56,18 @@ namespace Nekoyume.TableData
         }
 
         protected SheetRowNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+    }
+
+    [Serializable]
+    public class RoundDoesNotExistException : Exception
+    {
+        public RoundDoesNotExistException(string message) : base(message)
+        {
+        }
+
+        protected RoundDoesNotExistException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
