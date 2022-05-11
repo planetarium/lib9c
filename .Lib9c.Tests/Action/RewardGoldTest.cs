@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Battle;
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -18,6 +19,7 @@ namespace Lib9c.Tests.Action
     public class RewardGoldTest
     {
         private readonly AvatarState _avatarState;
+        private readonly AvatarState _avatarState2;
         private readonly State _baseState;
         private readonly TableSheets _tableSheets;
 
@@ -44,6 +46,15 @@ namespace Lib9c.Tests.Action
                 default
             );
 
+            _avatarState2 = new AvatarState(
+                new PrivateKey().ToAddress(),
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                new GameConfigState(),
+                default
+            );
+
             var gold = new GoldCurrencyState(new Currency("NCG", 2, minter: null));
             _baseState = (State)new State()
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
@@ -60,7 +71,10 @@ namespace Lib9c.Tests.Action
         {
             var weekly = new WeeklyArenaState(0);
             weekly.Set(_avatarState, _tableSheets.CharacterSheet);
-            weekly[_avatarState.address].Update(weekly[_avatarState.address], BattleLog.Result.Lose);
+            weekly[_avatarState.address].Update(
+                weekly[_avatarState.address],
+                BattleLog.Result.Lose,
+                ArenaScoreHelper.GetScore);
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(_tableSheets.GameConfigSheet);
             var state = _baseState
@@ -131,55 +145,67 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void PrepareNextArena(bool afterUpdate)
+        // Migration from WeeklyArenaState.Map
+        [InlineData(67, 68, 3_808_000L, 2)]
+        // Update from WeeklyArenaList
+        [InlineData(68, 69, 3_864_000L, 2)]
+        // Filter deactivated ArenaInfo
+        [InlineData(70, 71, 3_976_000L, 1)]
+        public void PrepareNextArena(int prevWeeklyIndex, int targetWeeklyIndex, long blockIndex, int expectedCount)
         {
-            var weeklyIndex = RankingBattle.UpdateTargetWeeklyArenaIndex - 1;
-            if (afterUpdate)
-            {
-                weeklyIndex++;
-            }
-
-            var weekly = new WeeklyArenaState(weeklyIndex);
+            var prevWeekly = new WeeklyArenaState(prevWeeklyIndex);
             var avatarAddress = _avatarState.address;
+            var inactiveAvatarAddress = _avatarState2.address;
+            bool afterUpdate = prevWeeklyIndex >= 68;
+            bool filterInactive = blockIndex >= 3_976_000L;
             if (!afterUpdate)
             {
-                weekly.Set(_avatarState, _tableSheets.CharacterSheet);
-                weekly[avatarAddress].Update(weekly[avatarAddress], BattleLog.Result.Lose);
+                prevWeekly.Set(_avatarState, _tableSheets.CharacterSheet);
+                prevWeekly[avatarAddress].Update(
+                    prevWeekly[avatarAddress],
+                    BattleLog.Result.Lose,
+                    ArenaScoreHelper.GetScore);
+                prevWeekly.Set(_avatarState2, _tableSheets.CharacterSheet);
 
-                Assert.Equal(4, weekly[avatarAddress].DailyChallengeCount);
+                Assert.Equal(4, prevWeekly[avatarAddress].DailyChallengeCount);
+                Assert.False(prevWeekly[avatarAddress].Active);
+                Assert.False(prevWeekly[inactiveAvatarAddress].Active);
             }
 
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(_tableSheets.GameConfigSheet);
-            var nextWeekly = new WeeklyArenaState(weeklyIndex + 1);
+            var targetWeekly = new WeeklyArenaState(targetWeeklyIndex);
             var state = _baseState
-                .SetState(weekly.address, weekly.Serialize())
-                .SetState(nextWeekly.address, nextWeekly.Serialize())
+                .SetState(prevWeekly.address, prevWeekly.Serialize())
+                .SetState(targetWeekly.address, targetWeekly.Serialize())
                 .SetState(gameConfigState.address, gameConfigState.Serialize());
-
-            var blockIndex = RankingBattle.UpdateTargetBlockIndex;
 
             if (afterUpdate)
             {
                 var prevInfo = new ArenaInfo(_avatarState, _tableSheets.CharacterSheet, true);
-                prevInfo.Update(prevInfo, BattleLog.Result.Lose);
+                prevInfo.Update(
+                    prevInfo,
+                    BattleLog.Result.Lose,
+                    ArenaScoreHelper.GetScore);
 
                 Assert.Equal(4, prevInfo.DailyChallengeCount);
 
+                var inactiveInfo = new ArenaInfo(_avatarState2, _tableSheets.CharacterSheet, true);
                 state = state
                     .SetState(
-                        weekly.address.Derive(avatarAddress.ToByteArray()),
+                        prevWeekly.address.Derive(avatarAddress.ToByteArray()),
                         prevInfo.Serialize())
                     .SetState(
-                        weekly.address.Derive("address_list"),
-                        List.Empty.Add(avatarAddress.Serialize()));
-
-                blockIndex += gameConfigState.WeeklyArenaInterval;
+                        prevWeekly.address.Derive(inactiveAvatarAddress.ToByteArray()),
+                        inactiveInfo.Serialize())
+                    .SetState(
+                        prevWeekly.address.Derive("address_list"),
+                        List.Empty
+                            .Add(avatarAddress.Serialize())
+                            .Add(inactiveAvatarAddress.Serialize()));
             }
 
-            Assert.False(weekly.Ended);
+            Assert.False(prevWeekly.Ended);
 
             var action = new RewardGold();
 
@@ -191,14 +217,13 @@ namespace Lib9c.Tests.Action
             };
 
             var nextState = action.PrepareNextArena(ctx, state);
-            var currentWeeklyState = nextState.GetWeeklyArenaState(weeklyIndex);
-            var nextWeeklyState = nextState.GetWeeklyArenaState(weeklyIndex + 1);
+            var currentWeeklyState = nextState.GetWeeklyArenaState(prevWeeklyIndex);
+            var preparedWeeklyState = nextState.GetWeeklyArenaState(targetWeeklyIndex);
 
             Assert.True(currentWeeklyState.Ended);
-            Assert.Empty(nextWeeklyState.Map);
             Assert.True(
                 nextState.TryGetState(
-                    nextWeekly.address.Derive(avatarAddress.ToByteArray()),
+                    preparedWeeklyState.address.Derive(avatarAddress.ToByteArray()),
                     out Dictionary rawInfo
                 )
             );
@@ -207,26 +232,48 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(GameConfig.ArenaChallengeCountMax, info.DailyChallengeCount);
             Assert.Equal(1000, info.Score);
+
+            Assert.Equal(
+                !filterInactive,
+                nextState.TryGetState(
+                    preparedWeeklyState.address.Derive(inactiveAvatarAddress.ToByteArray()),
+                    out Dictionary inactiveRawInfo
+                )
+            );
+
+            if (!filterInactive)
+            {
+                var inactiveInfo = new ArenaInfo(inactiveRawInfo);
+
+                Assert.Equal(GameConfig.ArenaChallengeCountMax, inactiveInfo.DailyChallengeCount);
+                Assert.Equal(1000, inactiveInfo.Score);
+            }
+
+            Assert.Empty(preparedWeeklyState.Map);
             Assert.True(
                 nextState.TryGetState(
-                    nextWeekly.address.Derive("address_list"),
+                    targetWeekly.address.Derive("address_list"),
                     out List rawList
                 )
             );
 
             List<Address> addressList = rawList.ToList(StateExtensions.ToAddress);
 
-            Assert.Single(addressList);
-            Assert.Equal(avatarAddress, addressList.First());
+            Assert.Contains(avatarAddress, addressList);
+            Assert.Equal(!filterInactive, addressList.Contains(inactiveAvatarAddress));
+            Assert.Equal(expectedCount, addressList.Count);
         }
 
         [Fact]
         public void ResetChallengeCount()
         {
-            var legacyWeeklyIndex = RankingBattle.UpdateTargetWeeklyArenaIndex - 1;
+            var legacyWeeklyIndex = RankingBattle11.UpdateTargetWeeklyArenaIndex - 1;
             var legacyWeekly = new WeeklyArenaState(legacyWeeklyIndex);
             legacyWeekly.Set(_avatarState, _tableSheets.CharacterSheet);
-            legacyWeekly[_avatarState.address].Update(legacyWeekly[_avatarState.address], BattleLog.Result.Lose);
+            legacyWeekly[_avatarState.address].Update(
+                legacyWeekly[_avatarState.address],
+                BattleLog.Result.Lose,
+                ArenaScoreHelper.GetScore);
 
             Assert.Equal(4, legacyWeekly[_avatarState.address].DailyChallengeCount);
 
@@ -244,7 +291,7 @@ namespace Lib9c.Tests.Action
 
             var migrationCtx = new ActionContext
             {
-                BlockIndex = RankingBattle.UpdateTargetBlockIndex,
+                BlockIndex = RankingBattle11.UpdateTargetBlockIndex,
                 PreviousStates = _baseState,
                 Miner = default,
             };
@@ -262,11 +309,14 @@ namespace Lib9c.Tests.Action
             Assert.True(state.TryGetState(addressListAddress, out List _));
 
             var prevInfo = new ArenaInfo(prevRawInfo);
-            prevInfo.Update(prevInfo, BattleLog.Result.Lose);
+            prevInfo.Update(
+                prevInfo,
+                BattleLog.Result.Lose,
+                ArenaScoreHelper.GetScore);
 
             Assert.Equal(4, prevInfo.DailyChallengeCount);
 
-            var blockIndex = RankingBattle.UpdateTargetBlockIndex + gameConfigState.DailyArenaInterval;
+            var blockIndex = RankingBattle11.UpdateTargetBlockIndex + gameConfigState.DailyArenaInterval;
 
             var ctx = new ActionContext
             {
