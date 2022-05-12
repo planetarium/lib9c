@@ -81,9 +81,6 @@ namespace Nekoyume.Action
 
             if (round.EntranceFee > 0)
             {
-                // todo: 테스트용
-                // states = states.TransferAsset(context.Signer, arenaAddress,
-                //     states.GetGoldCurrency() * round.EntranceFee);
                 var costCrystal = round.EntranceFee * CrystalCalculator.CRYSTAL;
                 states = states.TransferAsset(context.Signer, arenaAddress, costCrystal);
             }
