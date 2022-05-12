@@ -8,14 +8,15 @@ namespace Nekoyume.Model.State
 {
     public class ArenaState : IState
     {
-        public static Address DeriveAddress(long index) => Addresses.Arena.Derive($"arena_{index}");
+        public static Address DeriveAddress(long startBlockIndex) =>
+            Addresses.Arena.Derive($"arena_{startBlockIndex}");
 
         public Address Address;
         public readonly List<Address> AvatarAddresses;
 
-        public ArenaState(long index)
+        public ArenaState(long startBlockIndex)
         {
-            Address = DeriveAddress(index);
+            Address = DeriveAddress(startBlockIndex);
             AvatarAddresses = new List<Address>();
         }
 
@@ -29,7 +30,8 @@ namespace Nekoyume.Model.State
         {
             return List.Empty
                 .Add(Address.Serialize())
-                .Add(AvatarAddresses.Aggregate(List.Empty, (list, address) => list.Add(address.Serialize())));
+                .Add(AvatarAddresses.Aggregate(List.Empty,
+                    (list, address) => list.Add(address.Serialize())));
         }
 
         public void Add(Address address)

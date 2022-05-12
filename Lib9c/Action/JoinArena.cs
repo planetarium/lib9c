@@ -16,16 +16,16 @@ namespace Nekoyume.Action
     public class JoinArena : GameAction
     {
         public Address avatarAddress;
-        public List<Guid> costumeIds;
-        public List<Guid> equipmentIds;
+        public List<Guid> costumes;
+        public List<Guid> equipments;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()
             {
                 ["avatarAddress"] = avatarAddress.Serialize(),
-                ["costume_ids"] = new List(costumeIds
+                ["costumes"] = new List(costumes
                     .OrderBy(element => element).Select(e => e.Serialize())),
-                ["equipment_ids"] = new List(equipmentIds
+                ["equipments"] = new List(equipments
                     .OrderBy(element => element).Select(e => e.Serialize())),
             }.ToImmutableDictionary();
 
@@ -33,21 +33,20 @@ namespace Nekoyume.Action
             IImmutableDictionary<string, IValue> plainValue)
         {
             avatarAddress = plainValue["avatarAddress"].ToAddress();
-            costumeIds = ((List)plainValue["costume_ids"]).Select(e => e.ToGuid()).ToList();
-            equipmentIds = ((List)plainValue["equipment_ids"]).Select(e => e.ToGuid()).ToList();
+            costumes = ((List)plainValue["costumes"]).Select(e => e.ToGuid()).ToList();
+            equipments = ((List)plainValue["equipments"]).Select(e => e.ToGuid()).ToList();
         }
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
             var states = context.PreviousStates;
-            var blockIndex = context.BlockIndex;
+            var currentBlockIndex = context.BlockIndex;
             var arenaAddress = Addresses.Arena;
 
-            var arenaStateAddress = ArenaState.DeriveAddress(blockIndex);
             var arenaAvatarStateAddress = ArenaAvatarState.DeriveAddress(avatarAddress);
             if (context.Rehearsal)
             {
-                return states.SetState(arenaStateAddress, MarkChanged)
+                return states.SetState(ArenaState.DeriveAddress(currentBlockIndex), MarkChanged)
                     .SetState(arenaAvatarStateAddress, MarkChanged)
                     .MarkBalanceChanged(GoldCurrencyMock, context.Signer, arenaAddress);
             }
@@ -57,57 +56,84 @@ namespace Nekoyume.Action
             if (!states.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress,
                     out var agentState, out var avatarState, out _))
             {
-                throw new FailedLoadStateException($"Aborted as the avatar state of the signer failed to load.");
+                throw new FailedLoadStateException(
+                    $"Aborted as the avatar state of the signer failed to load.");
             }
 
-            avatarState.ValidEquipmentAndCostume(costumeIds, equipmentIds,
+            avatarState.ValidEquipmentAndCostume(costumes, equipments,
                 states.GetSheet<ItemRequirementSheet>(),
                 states.GetSheet<EquipmentItemRecipeSheet>(),
                 states.GetSheet<EquipmentItemSubRecipeSheetV2>(),
                 states.GetSheet<EquipmentItemOptionSheet>(),
-                blockIndex, addressesHex);
+                currentBlockIndex, addressesHex);
 
             var sheet = states.GetSheet<ArenaSheet>();
-            if (!TryGetRow(sheet, blockIndex, out var row))
+            var row = sheet.Values.FirstOrDefault(x => x.IsIn(currentBlockIndex));
+            if (row is null)
             {
-                throw new SheetRowNotFoundException(nameof(ArenaSheet), blockIndex);
+                throw new SheetRowNotFoundException(nameof(ArenaSheet), currentBlockIndex);
             }
 
-            if (!row.TryGetRound(blockIndex, out var round))
+            if (!row.TryGetRound(currentBlockIndex, out var round))
             {
-                throw new RoundDoesNotExistException($"{nameof(JoinArena)} : {blockIndex}");
+                throw new RoundDoesNotExistException($"{nameof(JoinArena)} : {currentBlockIndex}");
             }
 
-            if (round.EntranceFee > 0) // transfer
+            if (round.EntranceFee > 0)
             {
-                states = states.TransferAsset(context.Signer, arenaAddress,
-                    states.GetGoldCurrency() * round.EntranceFee);
+                // todo: 테스트용
+                // states = states.TransferAsset(context.Signer, arenaAddress,
+                //     states.GetGoldCurrency() * round.EntranceFee);
+                var costCrystal = round.EntranceFee * CrystalCalculator.CRYSTAL;
+                states = states.TransferAsset(context.Signer, arenaAddress, costCrystal);
             }
 
-            var arenaState = GetArenaState(states, arenaStateAddress, blockIndex);
+            var arenaStateAddress = ArenaState.DeriveAddress(round.StartBlockIndex);
+            var arenaState = GetArenaState(states, arenaStateAddress, round.StartBlockIndex);
             arenaState.Add(avatarAddress);
 
             var arenaAvatarState = GetArenaAvatarState(states, arenaAvatarStateAddress, avatarState);
-            arenaAvatarState.UpdateCostumes(costumeIds);
-            arenaAvatarState.UpdateEquipment(equipmentIds);
+            if (arenaAvatarState.Records.IsExist(round.StartBlockIndex))
+            {
+                throw new AlreadyEnteredException($"{nameof(JoinArena)} : {round.StartBlockIndex}");
+            }
 
-            return states.SetState(arenaStateAddress, arenaState.Serialize())
+            var totalWin = GetTotalWin(row, arenaAvatarState);
+            if (totalWin < round.RequiredWins)
+            {
+                throw new NotEnoughWinException($"{addressesHex} {totalWin} < {round.RequiredWins}");
+            }
+
+            arenaAvatarState.Records.Add(round.StartBlockIndex);
+            arenaAvatarState.UpdateCostumes(costumes);
+            arenaAvatarState.UpdateEquipment(equipments);
+
+            return states
+                .SetState(arenaStateAddress, arenaState.Serialize())
                 .SetState(arenaAvatarStateAddress, arenaAvatarState.Serialize())
                 .SetState(context.Signer, agentState.Serialize());
         }
 
-        private static bool TryGetRow(ArenaSheet sheet, long blockIndex, out ArenaSheet.Row row)
+        private static int GetTotalWin(ArenaSheet.Row row, ArenaAvatarState arenaAvatarState)
         {
-            row = sheet.Values.FirstOrDefault(x => x.IsIn(blockIndex));
-            return row != null;
+            var totalWin = 0;
+            foreach (var roundData in row.Round)
+            {
+                if (arenaAvatarState.Records.TryGetRecord(roundData.StartBlockIndex, out var record))
+                {
+                    totalWin += record.Win;
+                }
+            }
+
+            return totalWin;
         }
 
         private static ArenaState GetArenaState(IAccountStateDelta states,
-            Address arenaStateAddress, long blockIndex)
+            Address arenaStateAddress, long startBlockIndex)
         {
             return states.TryGetState(arenaStateAddress, out List list)
                 ? new ArenaState(list)
-                : new ArenaState(blockIndex);
+                : new ArenaState(startBlockIndex);
         }
 
         private static ArenaAvatarState GetArenaAvatarState(IAccountStateDelta states,

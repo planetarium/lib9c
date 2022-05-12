@@ -10,7 +10,8 @@ namespace Nekoyume.Model.State
 {
     public class ArenaAvatarState : IState
     {
-        public static Address DeriveAddress(Address avatarAddress) => avatarAddress.Derive("arena_avatar");
+        public static Address DeriveAddress(Address avatarAddress) =>
+            avatarAddress.Derive("arena_avatar");
 
         public class ArenaRecords
         {
@@ -32,6 +33,23 @@ namespace Nekoyume.Model.State
                 new Dictionary(_records.ToDictionary(
                     pair => (IKey)pair.Key.Serialize(),
                     pair => pair.Value.Serialize()));
+
+            public bool IsExist(long index)
+            {
+                return _records.ContainsKey(index);
+            }
+
+            public bool TryGetRecord(long index, out ArenaRecord record)
+            {
+                if (!_records.ContainsKey(index))
+                {
+                    record = null;
+                    return false;
+                }
+
+                record = _records[index];
+                return true;
+            }
 
             public void Add(long index)
             {

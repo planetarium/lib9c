@@ -49,7 +49,7 @@ namespace Nekoyume.TableData
             base($"{sheetName}: {condition} - {value}")
         {
         }
-        
+
         public SheetRowNotFoundException(string addressesHex, string sheetName, int intKey)
             : base($"{addressesHex}{sheetName}: Key - {intKey.ToString(CultureInfo.InvariantCulture)}")
         {
@@ -68,6 +68,18 @@ namespace Nekoyume.TableData
         }
 
         protected RoundDoesNotExistException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+    }
+
+    [Serializable]
+    public class AlreadyEnteredException : Exception
+    {
+        public AlreadyEnteredException(string message) : base(message)
+        {
+        }
+
+        protected AlreadyEnteredException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

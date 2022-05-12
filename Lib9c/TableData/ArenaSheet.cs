@@ -14,23 +14,23 @@ namespace Nekoyume.TableData
             public int Id { get; }
             public int Round { get; }
             public int ArenaType { get; }
-            public long StartIndex { get; }
-            public long EndIndex { get; }
+            public long StartBlockIndex { get; }
+            public long EndBlockIndex { get; }
             public int RequiredWins { get; }
             public long EntranceFee { get; }
             public decimal TicketPrice { get; }
             public decimal AdditionalTicketPrice { get; }
 
             public RoundData(int id, int round, int arenaType,
-                long startIndex, long endIndex,
+                long startBlockIndex, long endBlockIndex,
                 int requiredWins, long entranceFee,
                 decimal ticketPrice, decimal additionalTicketPrice)
             {
                 Id = id;
                 Round = round;
                 ArenaType = arenaType;
-                StartIndex = startIndex;
-                EndIndex = endIndex;
+                StartBlockIndex = startBlockIndex;
+                EndBlockIndex = endBlockIndex;
                 RequiredWins = requiredWins;
                 EntranceFee = entranceFee;
                 TicketPrice = ticketPrice;
@@ -67,13 +67,13 @@ namespace Nekoyume.TableData
             public bool IsIn(long blockIndex)
             {
                 return Round.Exists(x =>
-                    x.StartIndex <= blockIndex && blockIndex < x.EndIndex);
+                    x.StartBlockIndex <= blockIndex && blockIndex < x.EndBlockIndex);
             }
 
             public bool TryGetRound(long blockIndex, out RoundData roundData)
             {
                 roundData = Round.FirstOrDefault(x =>
-                    x.StartIndex <= blockIndex && blockIndex < x.EndIndex);
+                    x.StartBlockIndex <= blockIndex && blockIndex < x.EndBlockIndex);
                 return !(roundData is null);
             }
         }
