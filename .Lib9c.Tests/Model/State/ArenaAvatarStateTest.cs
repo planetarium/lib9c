@@ -28,15 +28,9 @@ namespace Lib9c.Tests.Model.State
             var deserialized = new ArenaAvatarState(serialized);
 
             Assert.Equal(state.Records.Serialize(), deserialized.Records.Serialize());
-            var record = (List)state.Records.Serialize();
-            var arenaRecord = new ArenaRecord(record);
-            var serializedAR = (List)arenaRecord.Serialize();
-            var deserializedAR = new ArenaRecord(serializedAR);
-
-            Assert.Equal(arenaRecord.Win, deserializedAR.Win);
-            Assert.Equal(arenaRecord.Lose, deserializedAR.Lose);
-            Assert.Equal(arenaRecord.Score, deserializedAR.Score);
-
+            var records = (Dictionary)state.Records.Serialize();
+            var arenaRecords = new ArenaAvatarState.ArenaRecords(records);
+            Assert.Equal(records, arenaRecords.Serialize());
             Assert.Equal(state.Costumes, deserialized.Costumes);
             Assert.Equal(state.Equipments, deserialized.Equipments);
             Assert.Equal(state.Ticket, deserialized.Ticket);
