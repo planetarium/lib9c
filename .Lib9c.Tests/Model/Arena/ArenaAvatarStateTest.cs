@@ -1,4 +1,4 @@
-namespace Lib9c.Tests.Model.State
+namespace Lib9c.Tests.Model.Arena
 {
     using Bencodex.Types;
     using Libplanet;
@@ -27,21 +27,9 @@ namespace Lib9c.Tests.Model.State
             var serialized = (List)state.Serialize();
             var deserialized = new ArenaAvatarState(serialized);
 
-            Assert.Equal(state.Records.Serialize(), deserialized.Records.Serialize());
-            var records = (Dictionary)state.Records.Serialize();
-            var arenaRecords = new ArenaAvatarState.ArenaRecords(records);
-            Assert.Equal(records, arenaRecords.Serialize());
             Assert.Equal(state.Costumes, deserialized.Costumes);
             Assert.Equal(state.Equipments, deserialized.Equipments);
-            Assert.Equal(state.Ticket, deserialized.Ticket);
-            Assert.Equal(state.NcgTicket, deserialized.NcgTicket);
             Assert.Equal(state.Level, deserialized.Level);
-            Assert.Equal(state.NameWithHash, deserialized.NameWithHash);
-            Assert.Equal(state.CharacterId, deserialized.CharacterId);
-            Assert.Equal(state.HairIndex, deserialized.HairIndex);
-            Assert.Equal(state.LensIndex, deserialized.LensIndex);
-            Assert.Equal(state.EarIndex, deserialized.EarIndex);
-            Assert.Equal(state.TailIndex, deserialized.TailIndex);
         }
 
         private AvatarState GetNewAvatarState(Address avatarAddress, Address agentAddress)

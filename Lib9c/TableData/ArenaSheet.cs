@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nekoyume.Model.EnumType;
 
 namespace Nekoyume.TableData
 {
@@ -13,17 +14,17 @@ namespace Nekoyume.TableData
         {
             public int Id { get; }
             public int Round { get; }
-            public int ArenaType { get; }
+            public ArenaType? ArenaType { get; }
             public long StartBlockIndex { get; }
             public long EndBlockIndex { get; }
-            public int RequiredWins { get; }
+            public int RequiredMedalCount { get; }
             public long EntranceFee { get; }
             public decimal TicketPrice { get; }
             public decimal AdditionalTicketPrice { get; }
 
-            public RoundData(int id, int round, int arenaType,
+            public RoundData(int id, int round, ArenaType arenaType,
                 long startBlockIndex, long endBlockIndex,
-                int requiredWins, long entranceFee,
+                int requiredMedalCount, long entranceFee,
                 decimal ticketPrice, decimal additionalTicketPrice)
             {
                 Id = id;
@@ -31,7 +32,7 @@ namespace Nekoyume.TableData
                 ArenaType = arenaType;
                 StartBlockIndex = startBlockIndex;
                 EndBlockIndex = endBlockIndex;
-                RequiredWins = requiredWins;
+                RequiredMedalCount = requiredMedalCount;
                 EntranceFee = entranceFee;
                 TicketPrice = ticketPrice;
                 AdditionalTicketPrice = additionalTicketPrice;
@@ -49,7 +50,7 @@ namespace Nekoyume.TableData
             {
                 Id = ParseInt(fields[0]);
                 var round = ParseInt(fields[1]);
-                var arenaType = ParseInt(fields[2]);
+                var arenaType = (ArenaType)Enum.Parse(typeof(ArenaType), fields[2]);
                 var startIndex = ParseLong(fields[3]);
                 var endIndex = ParseLong(fields[4]);
                 var requiredWins = ParseInt(fields[5]);
@@ -64,17 +65,16 @@ namespace Nekoyume.TableData
                 };
             }
 
-            public bool IsIn(long blockIndex)
+            public bool TryGetRound(long blockIndex, int championshipId, int round, out RoundData roundData)
             {
-                return Round.Exists(x =>
-                    x.StartBlockIndex <= blockIndex && blockIndex < x.EndBlockIndex);
-            }
+                roundData = Round.FirstOrDefault(x => x.StartBlockIndex <= blockIndex &&
+                                                          blockIndex <= x.EndBlockIndex);
+                if (roundData is null)
+                {
+                    return false;
+                }
 
-            public bool TryGetRound(long blockIndex, out RoundData roundData)
-            {
-                roundData = Round.FirstOrDefault(x =>
-                    x.StartBlockIndex <= blockIndex && blockIndex < x.EndBlockIndex);
-                return !(roundData is null);
+                return roundData.Id.Equals(championshipId) && roundData.Round.Equals(round); // validation
             }
         }
 

@@ -3,24 +3,25 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Nekoyume.Action;
+using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.State
+namespace Nekoyume.Model.Arena
 {
-    public class ArenaState : IState
+    public class ArenaParticipants : IState
     {
-        public static Address DeriveAddress(long startBlockIndex) =>
-            Addresses.Arena.Derive($"arena_{startBlockIndex}");
+        public static Address DeriveAddress(int championshipId, int round) =>
+            Addresses.Arena.Derive($"arena_participants_{championshipId}_{round}");
 
         public Address Address;
         public readonly List<Address> AvatarAddresses;
 
-        public ArenaState(long startBlockIndex)
+        public ArenaParticipants(int championshipId, int round)
         {
-            Address = DeriveAddress(startBlockIndex);
+            Address = DeriveAddress(championshipId, round);
             AvatarAddresses = new List<Address>();
         }
 
-        public ArenaState(List serialized)
+        public ArenaParticipants(List serialized)
         {
             Address = serialized[0].ToAddress();
             AvatarAddresses = ((List)serialized[1]).Select(c => c.ToAddress()).ToList();

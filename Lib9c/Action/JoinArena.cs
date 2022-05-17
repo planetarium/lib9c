@@ -6,6 +6,8 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Helper;
+using Nekoyume.Model.Arena;
+using Nekoyume.Model.EnumType;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
@@ -15,7 +17,14 @@ namespace Nekoyume.Action
     [ActionType("join_arena")]
     public class JoinArena : GameAction
     {
+        public Address DeriveArenaAddress(ArenaSheet.RoundData data)
+        {
+            return Addresses.Arena.Derive($"_{data.Id}_{data.Round}");
+        }
+
         public Address avatarAddress;
+        public int championshipId;
+        public int round;
         public List<Guid> costumes;
         public List<Guid> equipments;
 
@@ -23,6 +32,8 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>()
             {
                 ["avatarAddress"] = avatarAddress.Serialize(),
+                ["championshipId"] = championshipId.Serialize(),
+                ["round"] = round.Serialize(),
                 ["costumes"] = new List(costumes
                     .OrderBy(element => element).Select(e => e.Serialize())),
                 ["equipments"] = new List(equipments
@@ -33,6 +44,8 @@ namespace Nekoyume.Action
             IImmutableDictionary<string, IValue> plainValue)
         {
             avatarAddress = plainValue["avatarAddress"].ToAddress();
+            championshipId = plainValue["championshipId"].ToInteger();
+            round = plainValue["round"].ToInteger();
             costumes = ((List)plainValue["costumes"]).Select(e => e.ToGuid()).ToList();
             equipments = ((List)plainValue["equipments"]).Select(e => e.ToGuid()).ToList();
         }
@@ -40,15 +53,9 @@ namespace Nekoyume.Action
         public override IAccountStateDelta Execute(IActionContext context)
         {
             var states = context.PreviousStates;
-            var currentBlockIndex = context.BlockIndex;
-            var arenaAddress = Addresses.Arena;
-
-            var arenaAvatarStateAddress = ArenaAvatarState.DeriveAddress(avatarAddress);
             if (context.Rehearsal)
             {
-                return states.SetState(ArenaState.DeriveAddress(currentBlockIndex), MarkChanged)
-                    .SetState(arenaAvatarStateAddress, MarkChanged)
-                    .MarkBalanceChanged(GoldCurrencyMock, context.Signer, arenaAddress);
+                return states;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
@@ -65,75 +72,109 @@ namespace Nekoyume.Action
                 states.GetSheet<EquipmentItemRecipeSheet>(),
                 states.GetSheet<EquipmentItemSubRecipeSheetV2>(),
                 states.GetSheet<EquipmentItemOptionSheet>(),
-                currentBlockIndex, addressesHex);
+                context.BlockIndex, addressesHex);
 
             var sheet = states.GetSheet<ArenaSheet>();
-            var row = sheet.Values.FirstOrDefault(x => x.IsIn(currentBlockIndex));
-            if (row is null)
+            if (!sheet.TryGetValue(championshipId, out var row))
             {
-                throw new SheetRowNotFoundException(nameof(ArenaSheet), currentBlockIndex);
+                throw new SheetRowNotFoundException(
+                    nameof(ArenaSheet), $"championship Id : {championshipId}");
             }
 
-            if (!row.TryGetRound(currentBlockIndex, out var round))
+            if (!row.TryGetRound(context.BlockIndex, championshipId, round, out var roundData))
             {
-                throw new RoundDoesNotExistException($"{nameof(JoinArena)} : {currentBlockIndex}");
+                throw new RoundDoesNotExistException(
+                    $"{nameof(JoinArena)} : championship Id({championshipId}) / round({round}) ");
             }
 
-            if (round.EntranceFee > 0)
+            // check fee
+            if (roundData.EntranceFee > 0)
             {
-                var costCrystal = round.EntranceFee * CrystalCalculator.CRYSTAL;
-                states = states.TransferAsset(context.Signer, arenaAddress, costCrystal);
+                var costCrystal = roundData.EntranceFee * CrystalCalculator.CRYSTAL;
+                var arenaAdr = DeriveArenaAddress(roundData);
+                states = states.TransferAsset(context.Signer, arenaAdr, costCrystal);
             }
 
-            var arenaStateAddress = ArenaState.DeriveAddress(round.StartBlockIndex);
-            var arenaState = GetArenaState(states, arenaStateAddress, round.StartBlockIndex);
-            arenaState.Add(avatarAddress);
-
-            var arenaAvatarState = GetArenaAvatarState(states, arenaAvatarStateAddress, avatarState);
-            if (arenaAvatarState.Records.IsExist(round.StartBlockIndex))
+            // check medal
+            if (roundData.ArenaType.Equals(ArenaType.Championship))
             {
-                throw new AlreadyEnteredException($"{nameof(JoinArena)} : {round.StartBlockIndex}");
-            }
-
-            var totalWin = GetTotalWin(row, arenaAvatarState);
-            if (totalWin < round.RequiredWins)
-            {
-                throw new NotEnoughWinException($"{addressesHex} {totalWin} < {round.RequiredWins}");
-            }
-
-            arenaAvatarState.Records.Add(round.StartBlockIndex);
-            arenaAvatarState.UpdateCostumes(costumes);
-            arenaAvatarState.UpdateEquipment(equipments);
-
-            return states
-                .SetState(arenaStateAddress, arenaState.Serialize())
-                .SetState(arenaAvatarStateAddress, arenaAvatarState.Serialize())
-                .SetState(context.Signer, agentState.Serialize());
-        }
-
-        private static int GetTotalWin(ArenaSheet.Row row, ArenaAvatarState arenaAvatarState)
-        {
-            var totalWin = 0;
-            foreach (var roundData in row.Round)
-            {
-                if (arenaAvatarState.Records.TryGetRecord(roundData.StartBlockIndex, out var record))
+                var medalCount = GetMedalTotalCount(row, avatarState);
+                if (medalCount < roundData.RequiredMedalCount)
                 {
-                    totalWin += record.Win;
+                    throw new NotEnoughMedalException(
+                        $"{nameof(JoinArena)} : have({medalCount}) < Required Medal Count({roundData.RequiredMedalCount}) ");
                 }
             }
 
-            return totalWin;
+            // create ArenaScore
+            var arenaScoreAdr = ArenaScore.DeriveAddress(avatarAddress, roundData.Id, roundData.Round);
+            if (states.TryGetState(arenaScoreAdr, out List _))
+            {
+                throw new AlreadyEnteredException(
+                    $"{nameof(ArenaScore)} : id({roundData.Id}) / round({roundData.Round})");
+            }
+
+            var arenaScore = new ArenaScore(avatarAddress, roundData.Id, roundData.Round);
+
+            // create ArenaInformation
+            var arenaInformationAdr = ArenaInformation.DeriveAddress(avatarAddress, roundData.Id, roundData.Round);
+            if (states.TryGetState(arenaInformationAdr, out List _))
+            {
+                throw new AlreadyEnteredException(
+                    $"{nameof(ArenaInformation)} : id({roundData.Id}) / round({roundData.Round})");
+            }
+
+            var arenaInformation = new ArenaInformation(avatarAddress, roundData.Id, roundData.Round);
+
+            // update ArenaParticipants
+            var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(roundData.Id, roundData.Round);
+            var arenaParticipants = GetArenaParticipants(states, arenaParticipantsAdr, roundData.Id, roundData.Round);
+            arenaParticipants.Add(avatarAddress);
+
+            // update ArenaAvatarState
+            var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(avatarAddress);
+            var arenaAvatarState = GetArenaAvatarState(states, arenaAvatarStateAdr, avatarState);
+            arenaAvatarState.UpdateCostumes(costumes);
+            arenaAvatarState.UpdateEquipment(equipments);
+            arenaAvatarState.UpdateLevel(avatarState.level);
+
+            return states
+                .SetState(arenaScoreAdr, arenaScore.Serialize())
+                .SetState(arenaInformationAdr, arenaInformation.Serialize())
+                .SetState(arenaParticipantsAdr, arenaParticipants.Serialize())
+                .SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
+                .SetState(context.Signer, agentState.Serialize());
         }
 
-        private static ArenaState GetArenaState(IAccountStateDelta states,
-            Address arenaStateAddress, long startBlockIndex)
+        public static int GetMedalTotalCount(ArenaSheet.Row row, AvatarState avatarState)
+        {
+            var count = 0;
+            foreach (var data in row.Round)
+            {
+                var itemId = GetMedalItemId(data.Id, data.Round);
+                if (avatarState.inventory.TryGetItem(itemId, out var item))
+                {
+                    count += item.count;
+                }
+            }
+
+            return count;
+        }
+
+        public static int GetMedalItemId(int id, int round)
+        {
+            return 700_000 + (id * 100) + round;
+        }
+
+        public static ArenaParticipants GetArenaParticipants(IAccountStateDelta states,
+            Address arenaStateAddress, int id, int round)
         {
             return states.TryGetState(arenaStateAddress, out List list)
-                ? new ArenaState(list)
-                : new ArenaState(startBlockIndex);
+                ? new ArenaParticipants(list)
+                : new ArenaParticipants(id, round);
         }
 
-        private static ArenaAvatarState GetArenaAvatarState(IAccountStateDelta states,
+        public static ArenaAvatarState GetArenaAvatarState(IAccountStateDelta states,
             Address arenaAvatarStateAddress, AvatarState avatarState)
         {
             return states.TryGetState(arenaAvatarStateAddress, out List list)
