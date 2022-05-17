@@ -10,6 +10,7 @@ using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
 using LruCacheNet;
+using Nekoyume.Model.Arena;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
@@ -763,7 +764,7 @@ namespace Nekoyume.Action
 
             return new ShopState((Dictionary)value);
         }
-        
+
         public static (Address arenaInfoAddress, ArenaInfo arenaInfo, bool isNewArenaInfo) GetArenaInfo(
             this IAccountStateDelta states,
             Address weeklyArenaAddress,
@@ -797,6 +798,22 @@ namespace Nekoyume.Action
 
             stakeState = null;
             return false;
+        }
+
+        public static ArenaParticipants GetArenaParticipants(this IAccountStateDelta states,
+            Address arenaStateAddress, int id, int round)
+        {
+            return states.TryGetState(arenaStateAddress, out List list)
+                ? new ArenaParticipants(list)
+                : new ArenaParticipants(id, round);
+        }
+
+        public static ArenaAvatarState GetArenaAvatarState(this IAccountStateDelta states,
+            Address arenaAvatarStateAddress, AvatarState avatarState)
+        {
+            return states.TryGetState(arenaAvatarStateAddress, out List list)
+                ? new ArenaAvatarState(list)
+                : new ArenaAvatarState(avatarState);
         }
     }
 }

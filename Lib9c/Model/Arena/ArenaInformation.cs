@@ -5,6 +5,9 @@ using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Arena
 {
+    /// <summary>
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1006
+    /// </summary>
     public class ArenaInformation : IState
     {
         public static Address DeriveAddress(Address avatarAddress, int championshipId, int round) =>

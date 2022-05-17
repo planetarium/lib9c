@@ -73,13 +73,13 @@ namespace Nekoyume.TableData
     }
 
     [Serializable]
-    public class AlreadyEnteredException : Exception
+    public class AlreadyEnteredArenaException : Exception
     {
-        public AlreadyEnteredException(string message) : base(message)
+        public AlreadyEnteredArenaException(string message) : base(message)
         {
         }
 
-        protected AlreadyEnteredException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected AlreadyEnteredArenaException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

@@ -5,6 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
@@ -13,6 +14,9 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1006
+    /// </summary>
     [Serializable]
     [ActionType("join_arena")]
     public class JoinArena : GameAction
@@ -67,14 +71,24 @@ namespace Nekoyume.Action
                     $"Aborted as the avatar state of the signer failed to load.");
             }
 
+            var sheets = states.GetSheets(
+                sheetTypes: new[]
+                {
+                    typeof(ItemRequirementSheet),
+                    typeof(EquipmentItemRecipeSheet),
+                    typeof(EquipmentItemSubRecipeSheetV2),
+                    typeof(EquipmentItemOptionSheet),
+                    typeof(ArenaSheet),
+                });
+
             avatarState.ValidEquipmentAndCostume(costumes, equipments,
-                states.GetSheet<ItemRequirementSheet>(),
-                states.GetSheet<EquipmentItemRecipeSheet>(),
-                states.GetSheet<EquipmentItemSubRecipeSheetV2>(),
-                states.GetSheet<EquipmentItemOptionSheet>(),
+                sheets.GetSheet<ItemRequirementSheet>(),
+                sheets.GetSheet<EquipmentItemRecipeSheet>(),
+                sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
+                sheets.GetSheet<EquipmentItemOptionSheet>(),
                 context.BlockIndex, addressesHex);
 
-            var sheet = states.GetSheet<ArenaSheet>();
+            var sheet = sheets.GetSheet<ArenaSheet>();
             if (!sheet.TryGetValue(championshipId, out var row))
             {
                 throw new SheetRowNotFoundException(
@@ -110,7 +124,7 @@ namespace Nekoyume.Action
             var arenaScoreAdr = ArenaScore.DeriveAddress(avatarAddress, roundData.Id, roundData.Round);
             if (states.TryGetState(arenaScoreAdr, out List _))
             {
-                throw new AlreadyEnteredException(
+                throw new AlreadyEnteredArenaException(
                     $"{nameof(ArenaScore)} : id({roundData.Id}) / round({roundData.Round})");
             }
 
@@ -120,7 +134,7 @@ namespace Nekoyume.Action
             var arenaInformationAdr = ArenaInformation.DeriveAddress(avatarAddress, roundData.Id, roundData.Round);
             if (states.TryGetState(arenaInformationAdr, out List _))
             {
-                throw new AlreadyEnteredException(
+                throw new AlreadyEnteredArenaException(
                     $"{nameof(ArenaInformation)} : id({roundData.Id}) / round({roundData.Round})");
             }
 
@@ -128,12 +142,12 @@ namespace Nekoyume.Action
 
             // update ArenaParticipants
             var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(roundData.Id, roundData.Round);
-            var arenaParticipants = GetArenaParticipants(states, arenaParticipantsAdr, roundData.Id, roundData.Round);
+            var arenaParticipants = states.GetArenaParticipants(arenaParticipantsAdr, roundData.Id, roundData.Round);
             arenaParticipants.Add(avatarAddress);
 
             // update ArenaAvatarState
             var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(avatarAddress);
-            var arenaAvatarState = GetArenaAvatarState(states, arenaAvatarStateAdr, avatarState);
+            var arenaAvatarState = states.GetArenaAvatarState(arenaAvatarStateAdr, avatarState);
             arenaAvatarState.UpdateCostumes(costumes);
             arenaAvatarState.UpdateEquipment(equipments);
             arenaAvatarState.UpdateLevel(avatarState.level);
@@ -166,20 +180,6 @@ namespace Nekoyume.Action
             return 700_000 + (id * 100) + round;
         }
 
-        public static ArenaParticipants GetArenaParticipants(IAccountStateDelta states,
-            Address arenaStateAddress, int id, int round)
-        {
-            return states.TryGetState(arenaStateAddress, out List list)
-                ? new ArenaParticipants(list)
-                : new ArenaParticipants(id, round);
-        }
 
-        public static ArenaAvatarState GetArenaAvatarState(IAccountStateDelta states,
-            Address arenaAvatarStateAddress, AvatarState avatarState)
-        {
-            return states.TryGetState(arenaAvatarStateAddress, out List list)
-                ? new ArenaAvatarState(list)
-                : new ArenaAvatarState(avatarState);
-        }
     }
 }
