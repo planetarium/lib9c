@@ -177,22 +177,10 @@ namespace Nekoyume.Action
         public static FungibleAssetValue GetCostCrystal(ArenaSheet.Row row,
             ArenaSheet.RoundData roundData, long currentBlockIndex)
         {
-            if (row.IsTheRoundOpened(currentBlockIndex, roundData.Id, roundData.Round))
-            {
-                if (roundData.EntranceFee > 0)
-                {
-                    return roundData.EntranceFee * CrystalCalculator.CRYSTAL;
-                }
-            }
-            else
-            {
-                if (roundData.DiscountedEntranceFee > 0)
-                {
-                    return roundData.DiscountedEntranceFee * CrystalCalculator.CRYSTAL;
-                }
-            }
-
-            return 0 * CrystalCalculator.CRYSTAL;
+            var fee = row.IsTheRoundOpened(currentBlockIndex, roundData.Id, roundData.Round)
+                ? roundData.EntranceFee
+                : roundData.DiscountedEntranceFee;
+            return fee * CrystalCalculator.CRYSTAL;
         }
 
         public static int GetMedalTotalCount(ArenaSheet.Row row, AvatarState avatarState)
