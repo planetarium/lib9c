@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.Arena;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -26,6 +27,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _signer;
         private readonly Address _avatarAddress;
         private readonly IRandom _random;
+        private readonly Currency _currency;
         private IAccountStateDelta _state;
 
         public JoinArenaTest(ITestOutputHelper outputHelper)
@@ -57,6 +59,7 @@ namespace Lib9c.Tests.Action
 
             var currency = new Currency("NCG", 2, minters: null);
             var goldCurrencyState = new GoldCurrencyState(currency);
+            _currency = new Currency("CRYSTAL", 18, minters: null);
 
             _state = _state
                 .SetState(_signer, agentState.Serialize())
@@ -102,36 +105,63 @@ namespace Lib9c.Tests.Action
             return (equipments, costumes);
         }
 
-        public AvatarState GetAvatarState(bool backward, out List<Guid> equipments, out List<Guid> costumes)
+        public AvatarState GetAvatarState(AvatarState avatarState, out List<Guid> equipments, out List<Guid> costumes)
         {
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
-
-            IAccountStateDelta state;
-            if (backward)
-            {
-                state = _state.SetState(_avatarAddress, avatarState.Serialize());
-            }
-            else
-            {
-                state = _state
-                    .SetState(_avatarAddress, avatarState.SerializeV2())
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize());
-            }
-
             avatarState.level = 999;
             (equipments, costumes) = GetDummyItems(avatarState);
+
+            _state = _state
+                .SetState(_avatarAddress, avatarState.SerializeV2())
+                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
+                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
+                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize());
+
+            return avatarState;
+        }
+
+        public AvatarState AddMedal(AvatarState avatarState, ArenaSheet.Row row)
+        {
+            var materialSheet = _state.GetSheet<MaterialItemSheet>();
+            foreach (var data in row.Round)
+            {
+                if (!data.ArenaType.Equals(ArenaType.Season))
+                {
+                    continue;
+                }
+
+                var itemId = JoinArena.GetMedalItemId(data.Id, data.Round);
+                var material = ItemFactory.CreateMaterial(materialSheet, itemId);
+                avatarState.inventory.AddItem(material);
+            }
+
+            _state = _state
+                .SetState(_avatarAddress, avatarState.SerializeV2())
+                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
+                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
+                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize());
+
             return avatarState;
         }
 
         [Theory]
-        [InlineData(true, 0, 1, 1)]
-        [InlineData(false, 0, 1, 1)]
-        public void Execute(bool backward, long blockIndex, int championshipId, int round)
+        [InlineData(0, 1, 1)]
+        [InlineData(0, 1, 2)]
+        [InlineData(7, 1, 2)]
+        [InlineData(100, 1, 8)]
+        public void Execute(long blockIndex, int championshipId, int round)
         {
-            var avatarState = GetAvatarState(backward, out var equipments, out var costumes);
-            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
+            var arenaSheet = _state.GetSheet<ArenaSheet>();
+            if (!arenaSheet.TryGetValue(championshipId, out var row))
+            {
+                throw new SheetRowNotFoundException(
+                    nameof(ArenaSheet), $"championship Id : {championshipId}");
+            }
+
+            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
+            avatarState = AddMedal(avatarState, row);
+            var preCurrency = 1000 * _currency;
+            var state = _state.MintAsset(_signer, preCurrency);
 
             var action = new JoinArena()
             {
@@ -150,18 +180,6 @@ namespace Lib9c.Tests.Action
                 Rehearsal = false,
                 BlockIndex = blockIndex,
             });
-
-            var arenaSheet = _state.GetSheet<ArenaSheet>();
-            if (!arenaSheet.TryGetValue(championshipId, out var row))
-            {
-                throw new SheetRowNotFoundException(
-                    nameof(ArenaSheet), $"championship Id : {championshipId}");
-            }
-
-            if (!row.TryGetRound(blockIndex, championshipId, round, out var roundData))
-            {
-                throw new RoundDoesNotExistException($"{nameof(JoinArena)} : {blockIndex}");
-            }
 
             // ArenaParticipants
             var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(championshipId, round);
@@ -197,7 +215,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(arenaScoreAdr, arenaScore.Address);
             Assert.Equal(GameConfig.ArenaScoreDefault, arenaScore.Score);
 
-            // Arenainfor
+            // ArenaInformation
             var arenaInformationAdr = ArenaInformation.DeriveAddress(_avatarAddress, championshipId, round);
             var serializedArenaInformation = (List)state.GetState(arenaInformationAdr);
             var arenaInformation = new ArenaInformation(serializedArenaInformation);
@@ -206,14 +224,30 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0, arenaInformation.Win);
             Assert.Equal(0, arenaInformation.Lose);
             Assert.Equal(GameConfig.ArenaChallengeCountMax, arenaInformation.Ticket);
+
+            if (!row.TryGetRound(championshipId, round, out var roundData))
+            {
+                throw new RoundNotFoundByIdsException($"{nameof(JoinArena)} : {championshipId} / {round}");
+            }
+
+            if (row.IsTheRoundOpened(blockIndex, championshipId, round))
+            {
+                var curCurrency = preCurrency - (roundData.EntranceFee * _currency);
+                Assert.Equal(curCurrency, state.GetBalance(_signer, _currency));
+            }
+            else
+            {
+                var curCurrency = preCurrency - (roundData.DiscountedEntranceFee * _currency);
+                Assert.Equal(curCurrency, state.GetBalance(_signer, _currency));
+            }
         }
 
         [Theory]
-        [InlineData(true, 9999)]
-        [InlineData(false, 9999)]
-        public void Execute_SheetRowNotFoundException(bool backward, int championshipId)
+        [InlineData(9999)]
+        public void Execute_SheetRowNotFoundException(int championshipId)
         {
-            var avatarState = GetAvatarState(backward, out var equipments, out var costumes);
+            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
             var action = new JoinArena()
@@ -234,11 +268,11 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(true, 9999999999)]
-        [InlineData(false, 9999999999)]
-        public void Execute_RoundDoesNotExistException(bool backward, long blockIndex)
+        [InlineData(9999999999)]
+        public void Execute_RoundNotFoundByBlockIndexException(long blockIndex)
         {
-            var avatarState = GetAvatarState(backward, out var equipments, out var costumes);
+            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
             var action = new JoinArena()
@@ -250,7 +284,7 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<RoundDoesNotExistException>(() => action.Execute(new ActionContext()
+            Assert.Throws<RoundNotFoundByBlockIndexException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _signer,
@@ -260,11 +294,11 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(true, 123)]
-        [InlineData(false, 123)]
-        public void Execute_RoundDoNotMatchException(bool backward, int round)
+        [InlineData(123)]
+        public void Execute_RoundNotFoundByIdsException(int round)
         {
-            var avatarState = GetAvatarState(backward, out var equipments, out var costumes);
+            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
             var action = new JoinArena()
@@ -276,7 +310,7 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<RoundDoNotMatchException>(() => action.Execute(new ActionContext()
+            Assert.Throws<RoundNotFoundByIdsException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _signer,
@@ -286,12 +320,13 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(true, 3)]
-        [InlineData(false, 3)]
-        public void Execute_NotEnoughMedalException(bool backward, int round)
+        [InlineData(8)]
+        public void Execute_NotEnoughMedalException(int round)
         {
-            var avatarState = GetAvatarState(backward, out var equipments, out var costumes);
-            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
+            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            GetAvatarState(avatarState, out var equipments, out var costumes);
+            var preCurrency = 1000 * _currency;
+            var state = _state.MintAsset(_signer, preCurrency);
 
             var action = new JoinArena()
             {
@@ -312,11 +347,37 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute_ArenaScoreAlreadyContainsException(bool backward)
+        [InlineData(6, 0)] // discounted_entrance_fee
+        [InlineData(8, 100)] // entrance_fee
+        public void Execute_NotEnoughFungibleAssetValueException(int round, long blockIndex)
         {
-            var avatarState = GetAvatarState(backward, out var equipments, out var costumes);
+            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            GetAvatarState(avatarState, out var equipments, out var costumes);
+            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
+
+            var action = new JoinArena()
+            {
+                championshipId = 1,
+                round = round,
+                costumes = costumes,
+                equipments = equipments,
+                avatarAddress = _avatarAddress,
+            };
+
+            Assert.Throws<NotEnoughFungibleAssetValueException>(() => action.Execute(new ActionContext()
+            {
+                PreviousStates = state,
+                Signer = _signer,
+                Random = new TestRandom(),
+                BlockIndex = blockIndex,
+            }));
+        }
+
+        [Fact]
+        public void Execute_ArenaScoreAlreadyContainsException()
+        {
+            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
             var action = new JoinArena()
@@ -346,15 +407,14 @@ namespace Lib9c.Tests.Action
             }));
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute_ArenaScoreAlreadyContainsException2(bool backward)
+        [Fact]
+        public void Execute_ArenaScoreAlreadyContainsException2()
         {
             const int championshipId = 1;
             const int round = 1;
 
-            var avatarState = GetAvatarState(backward, out var equipments, out var costumes);
+            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
             var arenaScoreAdr = ArenaScore.DeriveAddress(_avatarAddress, championshipId, round);
@@ -379,15 +439,14 @@ namespace Lib9c.Tests.Action
             }));
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute_ArenaInformationAlreadyContainsException(bool backward)
+        [Fact]
+        public void Execute_ArenaInformationAlreadyContainsException()
         {
             const int championshipId = 1;
             const int round = 1;
 
-            var avatarState = GetAvatarState(backward, out var equipments, out var costumes);
+            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
             var arenaInformationAdr = ArenaInformation.DeriveAddress(_avatarAddress, championshipId, round);

@@ -10,10 +10,10 @@ namespace Lib9c.Tests.TableData
         [Fact]
         public void SetToSheet()
         {
-            const string content = @"id,round,arena_type,start_block_index,end_block_index,required_medal_count,entrance_fee,ticket_price,additional_ticket_price
-1,1,OffSeason,0,5,0,0,5,2
-1,2,Season,6,10,0,0,5,2
-1,3,Championship,11,20000,1,0,5,2";
+            const string content = @"id,round,arena_type,start_block_index,end_block_index,required_medal_count,entrance_fee,discounted_entrance_fee,ticket_price,additional_ticket_price
+1,1,OffSeason,0,5,0,0,0,5,2
+1,2,Season,6,10,0,0,0,5,2
+1,3,Championship,11,20000,1,0,0,5,2";
 
             var sheet = new ArenaSheet();
             sheet.Set(content);

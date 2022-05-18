@@ -5,6 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Libplanet.Assets;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
@@ -21,10 +22,11 @@ namespace Nekoyume.Action
     [ActionType("join_arena")]
     public class JoinArena : GameAction
     {
-        public Address DeriveArenaAddress(ArenaSheet.RoundData data)
-        {
-            return Addresses.Arena.Derive($"_{data.Id}_{data.Round}");
-        }
+        public Address DeriveArenaAddress(int championshipId, int round) =>
+            Addresses.Arena.Derive($"_{championshipId}_{round}");
+
+        public static int GetMedalItemId(int championshipId, int round) =>
+            700_000 + (championshipId * 100) + round;
 
         public Address avatarAddress;
         public int championshipId;
@@ -95,19 +97,24 @@ namespace Nekoyume.Action
                     nameof(ArenaSheet), $"championship Id : {championshipId}");
             }
 
-            if (!row.TryGetRound(context.BlockIndex, championshipId, round, out var roundData))
+            if (!row.TryGetRound(championshipId, round, out var roundData))
             {
-                throw new RoundDoNotMatchException(
-                    $"[{nameof(JoinArena)}] " +
-                    $"ChampionshipId({championshipId}) and round({round}) do not match data" +
-                    $"round data : ChampionshipId({roundData.Id}) - round({roundData.Round})");
+                throw new RoundNotFoundByIdsException(
+                    $"[{nameof(JoinArena)}] ChampionshipId({championshipId}) - round({round})");
             }
 
             // check fee
-            if (roundData.EntranceFee > 0)
+            var costCrystal = GetCostCrystal(row, roundData, context.BlockIndex);
+            if (costCrystal > 0 * CrystalCalculator.CRYSTAL)
             {
-                var costCrystal = roundData.EntranceFee * CrystalCalculator.CRYSTAL;
-                var arenaAdr = DeriveArenaAddress(roundData);
+                var crystalBalance = states.GetBalance(context.Signer, CrystalCalculator.CRYSTAL);
+                if (costCrystal > crystalBalance)
+                {
+                    throw new NotEnoughFungibleAssetValueException(
+                        $"required {costCrystal}, but balance is {crystalBalance}");
+                }
+
+                var arenaAdr = DeriveArenaAddress(roundData.Id, roundData.Round);
                 states = states.TransferAsset(context.Signer, arenaAdr, costCrystal);
             }
 
@@ -134,18 +141,22 @@ namespace Nekoyume.Action
             var arenaScore = new ArenaScore(avatarAddress, roundData.Id, roundData.Round);
 
             // create ArenaInformation
-            var arenaInformationAdr = ArenaInformation.DeriveAddress(avatarAddress, roundData.Id, roundData.Round);
+            var arenaInformationAdr =
+                ArenaInformation.DeriveAddress(avatarAddress, roundData.Id, roundData.Round);
             if (states.TryGetState(arenaInformationAdr, out List _))
             {
                 throw new ArenaInformationAlreadyContainsException(
                     $"[{nameof(JoinArena)}] id({roundData.Id}) / round({roundData.Round})");
             }
 
-            var arenaInformation = new ArenaInformation(avatarAddress, roundData.Id, roundData.Round);
+            var arenaInformation =
+                new ArenaInformation(avatarAddress, roundData.Id, roundData.Round);
 
             // update ArenaParticipants
-            var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(roundData.Id, roundData.Round);
-            var arenaParticipants = states.GetArenaParticipants(arenaParticipantsAdr, roundData.Id, roundData.Round);
+            var arenaParticipantsAdr =
+                ArenaParticipants.DeriveAddress(roundData.Id, roundData.Round);
+            var arenaParticipants =
+                states.GetArenaParticipants(arenaParticipantsAdr, roundData.Id, roundData.Round);
             arenaParticipants.Add(avatarAddress);
 
             // update ArenaAvatarState
@@ -163,11 +174,37 @@ namespace Nekoyume.Action
                 .SetState(context.Signer, agentState.Serialize());
         }
 
+        public static FungibleAssetValue GetCostCrystal(ArenaSheet.Row row,
+            ArenaSheet.RoundData roundData, long currentBlockIndex)
+        {
+            if (row.IsTheRoundOpened(currentBlockIndex, roundData.Id, roundData.Round))
+            {
+                if (roundData.EntranceFee > 0)
+                {
+                    return roundData.EntranceFee * CrystalCalculator.CRYSTAL;
+                }
+            }
+            else
+            {
+                if (roundData.DiscountedEntranceFee > 0)
+                {
+                    return roundData.DiscountedEntranceFee * CrystalCalculator.CRYSTAL;
+                }
+            }
+
+            return 0 * CrystalCalculator.CRYSTAL;
+        }
+
         public static int GetMedalTotalCount(ArenaSheet.Row row, AvatarState avatarState)
         {
             var count = 0;
             foreach (var data in row.Round)
             {
+                if (!data.ArenaType.Equals(ArenaType.Season))
+                {
+                    continue;
+                }
+
                 var itemId = GetMedalItemId(data.Id, data.Round);
                 if (avatarState.inventory.TryGetItem(itemId, out var item))
                 {
@@ -176,11 +213,6 @@ namespace Nekoyume.Action
             }
 
             return count;
-        }
-
-        public static int GetMedalItemId(int id, int round)
-        {
-            return 700_000 + (id * 100) + round;
         }
     }
 }

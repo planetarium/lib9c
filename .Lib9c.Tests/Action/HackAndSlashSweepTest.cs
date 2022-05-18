@@ -130,8 +130,7 @@ namespace Lib9c.Tests.Action
                 gameConfigState,
                 _rankingMapAddress)
             {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), stageId),
+                worldInformation = new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), stageId),
                 level = 400,
             };
 

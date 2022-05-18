@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
-using NetMQ;
 
 namespace Nekoyume.TableData
 {
@@ -20,12 +20,14 @@ namespace Nekoyume.TableData
             public long EndBlockIndex { get; }
             public int RequiredMedalCount { get; }
             public long EntranceFee { get; }
+            public long DiscountedEntranceFee { get; }
             public decimal TicketPrice { get; }
             public decimal AdditionalTicketPrice { get; }
 
             public RoundData(int id, int round, ArenaType arenaType,
                 long startBlockIndex, long endBlockIndex,
-                int requiredMedalCount, long entranceFee,
+                int requiredMedalCount,
+                long entranceFee, long discountedEntranceFee,
                 decimal ticketPrice, decimal additionalTicketPrice)
             {
                 Id = id;
@@ -35,6 +37,7 @@ namespace Nekoyume.TableData
                 EndBlockIndex = endBlockIndex;
                 RequiredMedalCount = requiredMedalCount;
                 EntranceFee = entranceFee;
+                DiscountedEntranceFee = discountedEntranceFee;
                 TicketPrice = ticketPrice;
                 AdditionalTicketPrice = additionalTicketPrice;
             }
@@ -56,27 +59,35 @@ namespace Nekoyume.TableData
                 var endIndex = ParseLong(fields[4]);
                 var requiredWins = ParseInt(fields[5]);
                 var entranceFee = ParseLong(fields[6]);
-                var ticketPrice = ParseDecimal(fields[7]);
-                var additionalTicketPrice = ParseDecimal(fields[8]);
+                var discountedEntranceFee = ParseLong(fields[7]);
+                var ticketPrice = ParseDecimal(fields[8]);
+                var additionalTicketPrice = ParseDecimal(fields[9]);
                 Round = new List<RoundData>
                 {
                     new RoundData(Id, round, arenaType, startIndex, endIndex,
-                        requiredWins, entranceFee,
+                        requiredWins, entranceFee, discountedEntranceFee,
                         ticketPrice, additionalTicketPrice)
                 };
             }
 
-            public bool TryGetRound(long blockIndex, int championshipId, int round, out RoundData roundData)
+            public bool TryGetRound(int championshipId, int round, out RoundData roundData)
             {
-                roundData = Round.FirstOrDefault(x => x.StartBlockIndex <= blockIndex &&
-                                                          blockIndex <= x.EndBlockIndex);
+                roundData = Round.FirstOrDefault(x =>
+                    x.Id.Equals(championshipId) && x.Round.Equals(round));
+                return !(roundData is null);
+            }
+
+            public bool IsTheRoundOpened(long blockIndex, int championshipId, int round)
+            {
+                var roundData = Round.FirstOrDefault(x => x.StartBlockIndex <= blockIndex &&
+                                                      blockIndex <= x.EndBlockIndex);
                 if (roundData is null)
                 {
-                    throw new RoundDoesNotExistException(
-                        $"{nameof(ArenaSheet)} : block Index({blockIndex})");
+                    throw new RoundNotFoundByBlockIndexException(
+                        $"{nameof(ArenaSheet)} : block index({blockIndex})");
                 }
 
-                return roundData.Id.Equals(championshipId) && roundData.Round.Equals(round); // validation
+                return roundData.Id.Equals(championshipId) && roundData.Round.Equals(round);
             }
         }
 
