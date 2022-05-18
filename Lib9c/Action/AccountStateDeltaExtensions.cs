@@ -514,6 +514,7 @@ namespace Nekoyume.Action
             bool containQuestSheet = false,
             bool containStageSimulatorSheets = false,
             bool containRankingSimulatorSheets = false,
+            bool containArenaSimulatorSheets = false,
             IEnumerable<Type> sheetTypes = null)
         {
             var sheetTypeList = sheetTypes?.ToList() ?? new List<Type>();
@@ -575,6 +576,18 @@ namespace Nekoyume.Action
                 sheetTypeList.Add(typeof(CharacterLevelSheet));
                 sheetTypeList.Add(typeof(EquipmentItemSetEffectSheet));
                 sheetTypeList.Add(typeof(WeeklyArenaRewardSheet));
+            }
+
+            if (containArenaSimulatorSheets)
+            {
+                sheetTypeList.Add(typeof(MaterialItemSheet));
+                sheetTypeList.Add(typeof(SkillSheet));
+                sheetTypeList.Add(typeof(SkillBuffSheet));
+                sheetTypeList.Add(typeof(BuffSheet));
+                sheetTypeList.Add(typeof(CharacterSheet));
+                sheetTypeList.Add(typeof(CharacterLevelSheet));
+                sheetTypeList.Add(typeof(EquipmentItemSetEffectSheet));
+                sheetTypeList.Add(typeof(CostumeStatSheet));
             }
 
             return states.GetSheets(sheetTypeList.Distinct().ToArray());
@@ -801,9 +814,9 @@ namespace Nekoyume.Action
         }
 
         public static ArenaParticipants GetArenaParticipants(this IAccountStateDelta states,
-            Address arenaStateAddress, int id, int round)
+            Address arenaParticipantsAddress, int id, int round)
         {
-            return states.TryGetState(arenaStateAddress, out List list)
+            return states.TryGetState(arenaParticipantsAddress, out List list)
                 ? new ArenaParticipants(list)
                 : new ArenaParticipants(id, round);
         }

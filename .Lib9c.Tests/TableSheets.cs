@@ -204,6 +204,20 @@ namespace Lib9c.Tests
             );
         }
 
+        public ArenaSimulatorSheets GetArenaSimulatorSheets()
+        {
+            return new ArenaSimulatorSheets(
+                MaterialItemSheet,
+                SkillSheet,
+                SkillBuffSheet,
+                BuffSheet,
+                CharacterSheet,
+                CharacterLevelSheet,
+                EquipmentItemSetEffectSheet,
+                CostumeStatSheet
+            );
+        }
+
         public AvatarSheets GetAvatarSheets()
         {
             return new AvatarSheets(

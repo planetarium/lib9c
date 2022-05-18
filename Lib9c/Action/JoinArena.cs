@@ -153,10 +153,8 @@ namespace Nekoyume.Action
                 new ArenaInformation(avatarAddress, roundData.Id, roundData.Round);
 
             // update ArenaParticipants
-            var arenaParticipantsAdr =
-                ArenaParticipants.DeriveAddress(roundData.Id, roundData.Round);
-            var arenaParticipants =
-                states.GetArenaParticipants(arenaParticipantsAdr, roundData.Id, roundData.Round);
+            var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(roundData.Id, roundData.Round);
+            var arenaParticipants = states.GetArenaParticipants(arenaParticipantsAdr, roundData.Id, roundData.Round);
             arenaParticipants.Add(avatarAddress);
 
             // update ArenaAvatarState

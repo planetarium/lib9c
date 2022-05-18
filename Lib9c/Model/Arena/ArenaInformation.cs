@@ -1,6 +1,7 @@
 using Bencodex.Types;
 using Libplanet;
 using Nekoyume.Action;
+using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Arena
@@ -39,6 +40,28 @@ namespace Nekoyume.Model.Arena
                 .Add(Win)
                 .Add(Lose)
                 .Add(Ticket);
+        }
+
+        public void UseTicket(int value)
+        {
+            if (Ticket - value < 0)
+            {
+                // todo : 에러 처리
+            }
+
+            Ticket -= value;
+        }
+
+        public void UpdateRecord(BattleLog.Result result)
+        {
+            if (result.Equals(BattleLog.Result.Win))
+            {
+                Win++;
+            }
+            else
+            {
+                Lose++;
+            }
         }
     }
 }

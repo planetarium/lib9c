@@ -35,9 +35,9 @@ namespace Nekoyume.Model.Arena
                 .Add(Score);
         }
 
-        public void Update(int score)
+        public void AddScore(int score)
         {
-            Score = score;
+            Score += score;
         }
     }
 }
