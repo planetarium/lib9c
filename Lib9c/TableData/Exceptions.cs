@@ -83,4 +83,42 @@ namespace Nekoyume.TableData
         {
         }
     }
+
+    [Serializable]
+    public class RoundDoNotMatchException : Exception
+    {
+        public RoundDoNotMatchException(string message) : base(message)
+        {
+        }
+
+        protected RoundDoNotMatchException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+    }
+
+    [Serializable]
+    public class ArenaScoreAlreadyContainsException : Exception
+    {
+        public ArenaScoreAlreadyContainsException(string message) : base(message)
+        {
+        }
+
+        protected ArenaScoreAlreadyContainsException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+    }
+
+    [Serializable]
+    public class ArenaInformationAlreadyContainsException : Exception
+    {
+        public ArenaInformationAlreadyContainsException(string message) : base(message)
+        {
+        }
+
+        protected ArenaInformationAlreadyContainsException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+    }
+
+
 }

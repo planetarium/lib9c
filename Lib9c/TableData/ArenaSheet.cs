@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nekoyume.Model.EnumType;
+using NetMQ;
 
 namespace Nekoyume.TableData
 {
@@ -71,7 +72,8 @@ namespace Nekoyume.TableData
                                                           blockIndex <= x.EndBlockIndex);
                 if (roundData is null)
                 {
-                    return false;
+                    throw new RoundDoesNotExistException(
+                        $"{nameof(ArenaSheet)} : block Index({blockIndex})");
                 }
 
                 return roundData.Id.Equals(championshipId) && roundData.Round.Equals(round); // validation
