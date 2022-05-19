@@ -15,7 +15,7 @@ namespace Nekoyume.TableData
         {
             public int Id { get; }
             public int Round { get; }
-            public ArenaType? ArenaType { get; }
+            public ArenaType ArenaType { get; }
             public long StartBlockIndex { get; }
             public long EndBlockIndex { get; }
             public int RequiredMedalCount { get; }

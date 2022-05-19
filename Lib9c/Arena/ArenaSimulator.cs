@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Libplanet.Action;
+using Nekoyume.Battle;
 using Nekoyume.Model;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.BattleStatus;
@@ -9,7 +10,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.TableData;
 using Priority_Queue;
 
-namespace Nekoyume.Battle
+namespace Nekoyume.Arena
 {
     public class ArenaSimulator : Simulator
     {

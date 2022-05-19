@@ -60,7 +60,7 @@ namespace Nekoyume.Helper
                 var maxExp = row.Exp + row.ExpNeed;
                 var remainExp = maxExp - currentExp;
                 var stageExp = StageRewardExpHelper.GetExp(currentLevel, stageId);
-                var requiredCount = (int)Math.Ceiling(remainExp / (double)stageExp);
+                var requiredCount = (int)Math.Ceiling(remainExp / (decimal)stageExp);
                 if (remainCount - requiredCount > 0) // level up
                 {
                     currentExp += stageExp * requiredCount;

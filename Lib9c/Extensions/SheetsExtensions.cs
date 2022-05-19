@@ -202,7 +202,8 @@ namespace Nekoyume.Extensions
                 sheets.GetSheet<CharacterSheet>(),
                 sheets.GetSheet<CharacterLevelSheet>(),
                 sheets.GetSheet<EquipmentItemSetEffectSheet>(),
-                sheets.GetSheet<CostumeStatSheet>()
+                sheets.GetSheet<CostumeStatSheet>(),
+                sheets.GetSheet<WeeklyArenaRewardSheet>()
             );
         }
     }

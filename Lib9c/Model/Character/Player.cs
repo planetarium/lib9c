@@ -176,6 +176,7 @@ namespace Nekoyume.Model
             belt = null;
             necklace = null;
             ring = null;
+            Inventory = new Inventory();
             monsterMap = new CollectionMap();
             eventMap = new CollectionMap();
             hairIndex = enemyPlayerDigest.HairIndex;

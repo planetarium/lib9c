@@ -93,6 +93,7 @@ namespace Nekoyume.TableData
     public class ArenaSimulatorSheets : SimulatorSheets
     {
         public CostumeStatSheet CostumeStatSheet { get; }
+        public WeeklyArenaRewardSheet WeeklyArenaRewardSheet { get; }
 
         public ArenaSimulatorSheets(
             MaterialItemSheet materialItemSheet,
@@ -102,7 +103,8 @@ namespace Nekoyume.TableData
             CharacterSheet characterSheet,
             CharacterLevelSheet characterLevelSheet,
             EquipmentItemSetEffectSheet equipmentItemSetEffectSheet,
-            CostumeStatSheet costumeStatSheet
+            CostumeStatSheet costumeStatSheet,
+            WeeklyArenaRewardSheet weeklyArenaRewardSheet
         ) : base(materialItemSheet,
             skillSheet,
             skillBuffSheet,
@@ -112,6 +114,8 @@ namespace Nekoyume.TableData
             equipmentItemSetEffectSheet)
         {
             CostumeStatSheet = costumeStatSheet;
+            WeeklyArenaRewardSheet = weeklyArenaRewardSheet;
+
         }
     }
 }

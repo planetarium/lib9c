@@ -1,3 +1,4 @@
+using System;
 using Bencodex.Types;
 using Nekoyume.Model.State;
 using Libplanet;
@@ -13,13 +14,15 @@ namespace Nekoyume.Model.Arena
         public static Address DeriveAddress(Address avatarAddress, int championshipId, int round) =>
             avatarAddress.Derive($"arena_score_{championshipId}_{round}");
 
+        public const int ArenaScoreDefault = 1000;
+
         public Address Address;
         public int Score { get; private set; }
 
         public ArenaScore(Address avatarAddress, int championshipId, int round)
         {
             Address = DeriveAddress(avatarAddress, championshipId, round);
-            Score = GameConfig.ArenaScoreDefault;
+            Score = ArenaScoreDefault;
         }
 
         public ArenaScore(List serialized)
@@ -37,7 +40,7 @@ namespace Nekoyume.Model.Arena
 
         public void AddScore(int score)
         {
-            Score += score;
+            Score = Math.Max(Score + score, ArenaScoreDefault);
         }
     }
 }

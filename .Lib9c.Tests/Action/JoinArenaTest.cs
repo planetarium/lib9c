@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Arena;
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
@@ -129,7 +130,7 @@ namespace Lib9c.Tests.Action
                     continue;
                 }
 
-                var itemId = JoinArena.GetMedalItemId(data.Id, data.Round);
+                var itemId = ArenaHelper.GetMedalItemId(data.Id, data.Round);
                 var material = ItemFactory.CreateMaterial(materialSheet, itemId);
                 avatarState.inventory.AddItem(material);
             }

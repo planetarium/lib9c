@@ -587,6 +587,7 @@ namespace Nekoyume.Action
                 sheetTypeList.Add(typeof(CharacterSheet));
                 sheetTypeList.Add(typeof(CharacterLevelSheet));
                 sheetTypeList.Add(typeof(EquipmentItemSetEffectSheet));
+                sheetTypeList.Add(typeof(WeeklyArenaRewardSheet));
                 sheetTypeList.Add(typeof(CostumeStatSheet));
             }
 
@@ -827,6 +828,80 @@ namespace Nekoyume.Action
             return states.TryGetState(arenaAvatarStateAddress, out List list)
                 ? new ArenaAvatarState(list)
                 : new ArenaAvatarState(avatarState);
+        }
+
+        public static bool TryGetArenaParticipants(this IAccountStateDelta states,
+            Address arenaParticipantsAddress, out ArenaParticipants arenaParticipants)
+        {
+            if (states.TryGetState(arenaParticipantsAddress, out List list))
+            {
+                arenaParticipants = new ArenaParticipants(list);
+                return true;
+            }
+
+            arenaParticipants = null;
+            return false;
+        }
+
+        public static bool TryGetArenaAvatarState(this IAccountStateDelta states,
+            Address arenaAvatarStateAddress, out ArenaAvatarState arenaAvatarState)
+        {
+            if (states.TryGetState(arenaAvatarStateAddress, out List list))
+            {
+                arenaAvatarState = new ArenaAvatarState(list);
+                return true;
+            }
+
+            arenaAvatarState = null;
+            return false;
+        }
+
+        public static bool TryGetArenaScore(this IAccountStateDelta states,
+            Address arenaScoreAddress, out ArenaScore arenaScore)
+        {
+            if (states.TryGetState(arenaScoreAddress, out List list))
+            {
+                arenaScore = new ArenaScore(list);
+                return true;
+            }
+
+            arenaScore = null;
+            return false;
+        }
+
+        public static bool TryGetArenaInformation(this IAccountStateDelta states,
+            Address arenaInformationAddress, out ArenaInformation arenaInformation)
+        {
+            if (states.TryGetState(arenaInformationAddress, out List list))
+            {
+                arenaInformation = new ArenaInformation(list);
+                return true;
+            }
+
+            arenaInformation = null;
+            return false;
+        }
+
+        public static AvatarState GetEnemyAvatarState(this IAccountStateDelta states, Address avatarAddress)
+        {
+            AvatarState enemyAvatarState;
+            try
+            {
+                enemyAvatarState = states.GetAvatarStateV2(avatarAddress);
+            }
+            // BackWard compatible.
+            catch (FailedLoadStateException)
+            {
+                enemyAvatarState = states.GetAvatarState(avatarAddress);
+            }
+
+            if (enemyAvatarState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"Aborted as the avatar state of the opponent ({avatarAddress}) was failed to load.");
+            }
+
+            return enemyAvatarState;
         }
     }
 }

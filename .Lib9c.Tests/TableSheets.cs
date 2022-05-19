@@ -214,7 +214,8 @@ namespace Lib9c.Tests
                 CharacterSheet,
                 CharacterLevelSheet,
                 EquipmentItemSetEffectSheet,
-                CostumeStatSheet
+                CostumeStatSheet,
+                WeeklyArenaRewardSheet
             );
         }
 

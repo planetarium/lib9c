@@ -5,30 +5,42 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.BattleStatus;
+using Nekoyume.Model.EnumType;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1006
+    /// </summary>
     [Serializable]
     [ActionType("battle_arena")]
     public class BattleArena : GameAction
     {
         public Address myAvatarAddress;
         public Address enemyAvatarAddress;
-        public List<Guid> costumeIds;
-        public List<Guid> equipmentIds;
-        public int ticket;
         public int championshipId;
         public int round;
+        public int ticket;
 
-        public List<BattleLog.Result> Results = new List<BattleLog.Result>();
+        public List<Guid> costumes;
+        public List<Guid> equipments;
+
+        public readonly Dictionary<ArenaType, (int, int)> ScoreLimits =
+            new Dictionary<ArenaType, (int, int)>()
+            {
+                { ArenaType.Season, (50, -25) },
+                { ArenaType.Championship, (30, -25) }
+            };
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()
@@ -37,9 +49,10 @@ namespace Nekoyume.Action
                 ["enemyAvatarAddress"] = enemyAvatarAddress.Serialize(),
                 ["championshipId"] = championshipId.Serialize(),
                 ["round"] = round.Serialize(),
-                ["costume_ids"] = new List(costumeIds
+                ["ticket"] = ticket.Serialize(),
+                ["costumes"] = new List(costumes
                     .OrderBy(element => element).Select(e => e.Serialize())),
-                ["equipment_ids"] = new List(equipmentIds
+                ["equipments"] = new List(equipments
                     .OrderBy(element => element).Select(e => e.Serialize())),
             }.ToImmutableDictionary();
 
@@ -50,8 +63,9 @@ namespace Nekoyume.Action
             enemyAvatarAddress = plainValue["enemyAvatarAddress"].ToAddress();
             championshipId = plainValue["championshipId"].ToInteger();
             round = plainValue["round"].ToInteger();
-            costumeIds = ((List)plainValue["costume_ids"]).Select(e => e.ToGuid()).ToList();
-            equipmentIds = ((List)plainValue["equipment_ids"]).Select(e => e.ToGuid()).ToList();
+            ticket = plainValue["ticket"].ToInteger();
+            costumes = ((List)plainValue["costumes"]).Select(e => e.ToGuid()).ToList();
+            equipments = ((List)plainValue["equipments"]).Select(e => e.ToGuid()).ToList();
         }
 
         public override IAccountStateDelta Execute(IActionContext context)
@@ -71,8 +85,8 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the signer tried to battle for themselves.");
             }
 
-            if (!states.TryGetAvatarStateV2(context.Signer, myAvatarAddress, out var avatarState,
-                    out var _))
+            if (!states.TryGetAvatarStateV2(context.Signer, myAvatarAddress,
+                    out var avatarState, out var _))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -102,156 +116,218 @@ namespace Nekoyume.Action
                     typeof(EquipmentItemRecipeSheet),
                     typeof(EquipmentItemSubRecipeSheetV2),
                     typeof(EquipmentItemOptionSheet),
+                    typeof(MaterialItemSheet),
                 });
 
-            avatarState.ValidEquipmentAndCostume(costumeIds, equipmentIds,
+            avatarState.ValidEquipmentAndCostume(costumes, equipments,
                 sheets.GetSheet<ItemRequirementSheet>(),
                 sheets.GetSheet<EquipmentItemRecipeSheet>(),
                 sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
                 sheets.GetSheet<EquipmentItemOptionSheet>(),
                 context.BlockIndex, addressesHex);
 
-            var enemyAvatarState = GetEnemyAvatarState(states, enemyAvatarAddress);
-
-            var inventoryAddress = myAvatarAddress.Derive(LegacyInventoryKey);
-            var questListAddress = myAvatarAddress.Derive(LegacyQuestListKey);
-
-            var sheet = sheets.GetSheet<ArenaSheet>();
-            if (!sheet.TryGetValue(championshipId, out var row))
+            var arenaSheet = sheets.GetSheet<ArenaSheet>();
+            if (!arenaSheet.TryGetValue(championshipId, out var arenaRow))
             {
-                throw new SheetRowNotFoundException(
-                    nameof(ArenaSheet), $"championship Id : {championshipId}");
+                throw new SheetRowNotFoundException(nameof(ArenaSheet),
+                    $"championship Id : {championshipId}");
             }
 
-            if (!row.IsTheRoundOpened(context.BlockIndex, championshipId, round))
+            if (!arenaRow.IsTheRoundOpened(context.BlockIndex, championshipId, round))
             {
-                // todo: 시트값 + 현재 블록인덱스 체크해서 진행중인 아레나인지 체크
+                throw new RoundNotFoundByBlockIndexException(
+                    $"{nameof(BattleArena)} : block index({context.BlockIndex}) - " +
+                    $"championshipId({championshipId}) - round({round})");
             }
 
-            var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(championshipId, round);
-            if (!states.TryGetState(arenaParticipantsAdr, out List arenaParticipantsList))
+            if (!arenaRow.TryGetRound(championshipId, round, out var roundData))
             {
-                // todo : 참가자가 없네?
+                throw new RoundNotFoundByIdsException(
+                    $"[{nameof(BattleArena)}] ChampionshipId({championshipId}) - round({round})");
             }
 
-            var arenaParticipants = new ArenaParticipants(arenaParticipantsList);
+            var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(roundData.Id, roundData.Round);
+            if (!states.TryGetArenaParticipants(arenaParticipantsAdr, out var arenaParticipants))
+            {
+                throw new ArenaParticipantsNotFoundException(
+                    $"[{nameof(BattleArena)}] ChampionshipId({roundData.Id}) - round({roundData.Round})");
+            }
 
             if (!arenaParticipants.AvatarAddresses.Contains(myAvatarAddress))
             {
-                // todo : 나 참가안함
+                throw new AddressNotFoundInArenaParticipantsException(
+                    $"[{nameof(BattleArena)}] my avatar address : {myAvatarAddress}");
             }
 
             if (!arenaParticipants.AvatarAddresses.Contains(enemyAvatarAddress))
             {
-                // todo : 적 참가안함
+                throw new AddressNotFoundInArenaParticipantsException(
+                    $"[{nameof(BattleArena)}] enemy avatar address : {enemyAvatarAddress}");
             }
 
-            // get my arena avatar state
             var myArenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(myAvatarAddress);
-            if (states.TryGetState(myArenaAvatarStateAdr, out List myArenaAvatarStateList))
+            if (!states.TryGetArenaAvatarState(myArenaAvatarStateAdr, out var myArenaAvatarState))
             {
-                // todo : 나으 아레나 아바타 상태없음
+                throw new ArenaAvatarStateNotFoundException(
+                    $"[{nameof(BattleArena)}] my avatar address : {myAvatarAddress}");
             }
 
-            var myArenaAvatarState = new ArenaAvatarState(myArenaAvatarStateList);
-            myArenaAvatarState.UpdateEquipment(equipmentIds);
-            myArenaAvatarState.UpdateCostumes(costumeIds);
-
-            // get enemy arena avatar state
             var enemyArenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(enemyAvatarAddress);
-            if (states.TryGetState(enemyArenaAvatarStateAdr, out List enemyArenaAvatarStateList))
+            if (!states.TryGetArenaAvatarState(enemyArenaAvatarStateAdr,
+                    out var enemyArenaAvatarState))
             {
-                // todo : 적 아레나 아바타 상태없음
+                throw new ArenaAvatarStateNotFoundException(
+                    $"[{nameof(BattleArena)}] enemy avatar address : {enemyAvatarAddress}");
             }
 
-            var enemyArenaAvatarState = new ArenaAvatarState(enemyArenaAvatarStateList);
-
-
-            // get my arena score
-            var myArenaScoreAdr = ArenaScore.DeriveAddress(myAvatarAddress, championshipId, round);
-            if (!states.TryGetState(myArenaScoreAdr, out List myArenaScoreList))
+            var myArenaScoreAdr =
+                ArenaScore.DeriveAddress(myAvatarAddress, roundData.Id, roundData.Round);
+            if (!states.TryGetArenaScore(myArenaScoreAdr, out var myArenaScore))
             {
-                // todo : 나으 아레나 아바타 상태없음
+                throw new ArenaScoreNotFoundException(
+                    $"[{nameof(BattleArena)}] my avatar address : {myAvatarAddress}" +
+                    $" - ChampionshipId({roundData.Id}) - round({roundData.Round})");
             }
 
-            var myArenaScore = new ArenaScore(myArenaScoreList);
-
-            // // get enemy arena score
             var enemyArenaScoreAdr =
-                ArenaScore.DeriveAddress(enemyAvatarAddress, championshipId, round);
-            if (!states.TryGetState(enemyArenaScoreAdr, out List enemyArenaScoreList))
+                ArenaScore.DeriveAddress(enemyAvatarAddress, roundData.Id, roundData.Round);
+            if (!states.TryGetArenaScore(enemyArenaScoreAdr, out var enemyArenaScore))
             {
-                // todo : 나으 아레나 아바타 상태없음
+                throw new ArenaScoreNotFoundException(
+                    $"[{nameof(BattleArena)}] enemy avatar address : {enemyAvatarAddress}" +
+                    $" - ChampionshipId({roundData.Id}) - round({roundData.Round})");
             }
 
-            var enemyArenaScore = new ArenaScore(enemyArenaScoreList);
-
-            // get my arena information
-            var arenaInformationAdr =
-                ArenaInformation.DeriveAddress(enemyAvatarAddress, championshipId, round);
-            if (!states.TryGetState(arenaInformationAdr, out List arenaInformationList))
+            var arenaInformationAdr = ArenaInformation.DeriveAddress(myAvatarAddress, roundData.Id, roundData.Round);
+            if (!states.TryGetArenaInformation(arenaInformationAdr, out var arenaInformation))
             {
-                // todo : 내정보 없음
+                throw new ArenaInformationNotFoundException(
+                    $"[{nameof(BattleArena)}] my avatar address : {myAvatarAddress}" +
+                    $" - ChampionshipId({roundData.Id}) - round({roundData.Round})");
             }
 
-            // use ticket
-            var arenaInformation = new ArenaInformation(arenaInformationList);
-            arenaInformation.UseTicket(ticket); // 티켓은 한번에 빼줌?
+            if (!ArenaHelper.ValidateScoreDifference(ScoreLimits, roundData.ArenaType,
+                    myArenaScore.Score, enemyArenaScore.Score))
+            {
+                var diff = enemyArenaScore.Score - myArenaScore.Score;
+                throw new ValidateScoreDifferenceException(
+                    $"[{nameof(BattleArena)}] Arena Type({roundData.ArenaType}) : " +
+                    $"enemyScore({enemyArenaScore.Score}) - myScore({myArenaScore.Score}) = diff({diff})");
+            }
+
+            // update arena avatar state
+            myArenaAvatarState.UpdateEquipment(equipments);
+            myArenaAvatarState.UpdateCostumes(costumes);
 
             // simulate
+            var enemyAvatarState = states.GetEnemyAvatarState(enemyAvatarAddress);
             var myDigest = new ArenaPlayerDigest(avatarState, myArenaAvatarState);
             var enemyDigest = new ArenaPlayerDigest(enemyAvatarState, enemyArenaAvatarState);
             var arenaSheets = sheets.GetArenaSimulatorSheets();
+            var winCount = 0;
+            var defeatCount = 0;
+            var rewards = new List<ItemBase>();
 
             for (var i = 0; i < ticket; i++)
             {
-                var simulator =
-                    new ArenaSimulator(context.Random, myDigest, enemyDigest, arenaSheets);
+                var simulator = new ArenaSimulator(context.Random, myDigest, enemyDigest, arenaSheets);
                 simulator.Simulate();
-                var (myScore, enemyScore) = ArenaScoreHelper.GetScore(
-                    myArenaScore.Score, enemyArenaScore.Score, simulator.Result);
-                myArenaScore.AddScore(myScore);
-                enemyArenaScore.AddScore(enemyScore);
-                arenaInformation.UpdateRecord(simulator.Result);
-                Results.Add(simulator.Result);
 
-                // 바뀐 점수에따라 얻는 스코어가 다르다면 여기서 set state
-                states = states
-                    .SetState(myArenaScoreAdr, myArenaScore.Serialize())
-                    .SetState(enemyArenaScoreAdr, enemyArenaScore.Serialize());
+                if (simulator.Result.Equals(BattleLog.Result.Win))
+                {
+                    winCount++;
+                }
+                else
+                {
+                    defeatCount++;
+                }
+
+                var reward = RewardSelector.Select(
+                    context.Random,
+                    sheets.GetSheet<WeeklyArenaRewardSheet>(),
+                    sheets.GetSheet<MaterialItemSheet>(),
+                    myDigest.Level,
+                    maxCount:GetRewardCount(myArenaScore.Score));
+                rewards.AddRange(reward);
             }
 
-            // todo: 보상 아이템(메달) 처리 해줘야함
+            // add reward
+            foreach (var itemBase in rewards.OrderBy(x => x.Id))
+            {
+                avatarState.inventory.AddItem(itemBase);
+            }
+
+            // add medal
+            if (roundData.ArenaType != ArenaType.OffSeason)
+            {
+                var materialSheet = sheets.GetSheet<MaterialItemSheet>();
+                var medal = ArenaHelper.GetMedal(roundData.Id, roundData.Round, materialSheet);
+                avatarState.inventory.AddItem(medal, count: winCount);
+            }
+
+            // update arena score
+            var (myWinScore, myDefeatScore, enemyWinScore) = GetScores(myArenaScore.Score, enemyArenaScore.Score);
+            var myScore = (myWinScore * winCount) + (myDefeatScore * defeatCount);
+            myArenaScore.AddScore(myScore);
+            enemyArenaScore.AddScore(enemyWinScore * winCount);
+
+            // update arena information
+            arenaInformation.UseTicket(ticket);
+            arenaInformation.UpdateRecord(winCount, defeatCount);
+
+            var inventoryAddress = myAvatarAddress.Derive(LegacyInventoryKey);
+            var questListAddress = myAvatarAddress.Derive(LegacyQuestListKey);
 
             return states
                 .SetState(myArenaAvatarStateAdr, myArenaAvatarState.Serialize())
-                .SetState(enemyArenaAvatarStateAdr, enemyArenaAvatarState.Serialize())
+                .SetState(myArenaScoreAdr, myArenaScore.Serialize())
+                .SetState(enemyArenaScoreAdr, enemyArenaScore.Serialize())
                 .SetState(arenaInformationAdr, arenaInformation.Serialize())
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
                 .SetState(myAvatarAddress, avatarState.SerializeV2());
         }
 
-        private AvatarState GetEnemyAvatarState(IAccountStateDelta states, Address avatarAddress)
+        public static (int, int, int) GetScores(int myScore, int enemyScore)
         {
-            AvatarState enemyAvatarState;
-            try
-            {
-                enemyAvatarState = states.GetAvatarStateV2(avatarAddress);
-            }
-            // BackWard compatible.
-            catch (FailedLoadStateException)
-            {
-                enemyAvatarState = states.GetAvatarState(avatarAddress);
-            }
+            var (myWinScore, enemyWinScore) = ArenaScoreHelper.GetScore(
+                myScore, enemyScore, BattleLog.Result.Win);
 
-            if (enemyAvatarState is null)
-            {
-                throw new FailedLoadStateException(
-                    $"Aborted as the avatar state of the opponent ({avatarAddress}) was failed to load.");
-            }
+            var (myDefeatScore, _) = ArenaScoreHelper.GetScore(
+                myScore, enemyScore, BattleLog.Result.Lose);
 
-            return enemyAvatarState;
+            return (myWinScore, myDefeatScore, enemyWinScore);
         }
+
+        public static int GetRewardCount(int score)
+        {
+            if (score >= 1800)
+            {
+                return 6;
+            }
+
+            if (score >= 1400)
+            {
+                return 5;
+            }
+
+            if (score >= 1200)
+            {
+                return 4;
+            }
+
+            if (score >= 1100)
+            {
+                return 3;
+            }
+
+            if (score >= 1001)
+            {
+                return 2;
+            }
+
+            return 1;
+        }
+
     }
 }

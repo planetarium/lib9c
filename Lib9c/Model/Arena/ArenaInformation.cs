@@ -1,7 +1,6 @@
 using Bencodex.Types;
 using Libplanet;
 using Nekoyume.Action;
-using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Arena
@@ -14,6 +13,8 @@ namespace Nekoyume.Model.Arena
         public static Address DeriveAddress(Address avatarAddress, int championshipId, int round) =>
             avatarAddress.Derive($"arena_information_{championshipId}_{round}");
 
+        public const int MaxTicketCount = 8;
+
         public Address Address;
         public int Win { get; private set; }
         public int Lose { get; private set; }
@@ -22,7 +23,7 @@ namespace Nekoyume.Model.Arena
         public ArenaInformation(Address avatarAddress, int championshipId, int round)
         {
             Address = DeriveAddress(avatarAddress, championshipId, round);
-            Ticket = GameConfig.ArenaChallengeCountMax;
+            Ticket = MaxTicketCount;
         }
 
         public ArenaInformation(List serialized)
@@ -44,24 +45,19 @@ namespace Nekoyume.Model.Arena
 
         public void UseTicket(int value)
         {
-            if (Ticket - value < 0)
+            if (Ticket < value)
             {
-                // todo : 에러 처리
+                throw new NotEnoughTicketException(
+                    $"[{nameof(ArenaInformation)}] have({Ticket}) < use({value})");
             }
 
             Ticket -= value;
         }
 
-        public void UpdateRecord(BattleLog.Result result)
+        public void UpdateRecord(int win, int lose)
         {
-            if (result.Equals(BattleLog.Result.Win))
-            {
-                Win++;
-            }
-            else
-            {
-                Lose++;
-            }
+            Win += win;
+            Lose += lose;
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
-using Libplanet.Assets;
+using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
@@ -22,12 +22,6 @@ namespace Nekoyume.Action
     [ActionType("join_arena")]
     public class JoinArena : GameAction
     {
-        public Address DeriveArenaAddress(int championshipId, int round) =>
-            Addresses.Arena.Derive($"_{championshipId}_{round}");
-
-        public static int GetMedalItemId(int championshipId, int round) =>
-            700_000 + (championshipId * 100) + round;
-
         public Address avatarAddress;
         public int championshipId;
         public int round;
@@ -104,7 +98,7 @@ namespace Nekoyume.Action
             }
 
             // check fee
-            var costCrystal = GetCostCrystal(row, roundData, context.BlockIndex);
+            var costCrystal = ArenaHelper.GetEntranceFee(row, roundData, context.BlockIndex);
             if (costCrystal > 0 * CrystalCalculator.CRYSTAL)
             {
                 var crystalBalance = states.GetBalance(context.Signer, CrystalCalculator.CRYSTAL);
@@ -114,14 +108,14 @@ namespace Nekoyume.Action
                         $"required {costCrystal}, but balance is {crystalBalance}");
                 }
 
-                var arenaAdr = DeriveArenaAddress(roundData.Id, roundData.Round);
+                var arenaAdr = ArenaHelper.DeriveArenaAddress(roundData.Id, roundData.Round);
                 states = states.TransferAsset(context.Signer, arenaAdr, costCrystal);
             }
 
             // check medal
             if (roundData.ArenaType.Equals(ArenaType.Championship))
             {
-                var medalCount = GetMedalTotalCount(row, avatarState);
+                var medalCount = ArenaHelper.GetMedalTotalCount(row, avatarState);
                 if (medalCount < roundData.RequiredMedalCount)
                 {
                     throw new NotEnoughMedalException(
@@ -170,35 +164,6 @@ namespace Nekoyume.Action
                 .SetState(arenaParticipantsAdr, arenaParticipants.Serialize())
                 .SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
                 .SetState(context.Signer, agentState.Serialize());
-        }
-
-        public static FungibleAssetValue GetCostCrystal(ArenaSheet.Row row,
-            ArenaSheet.RoundData roundData, long currentBlockIndex)
-        {
-            var fee = row.IsTheRoundOpened(currentBlockIndex, roundData.Id, roundData.Round)
-                ? roundData.EntranceFee
-                : roundData.DiscountedEntranceFee;
-            return fee * CrystalCalculator.CRYSTAL;
-        }
-
-        public static int GetMedalTotalCount(ArenaSheet.Row row, AvatarState avatarState)
-        {
-            var count = 0;
-            foreach (var data in row.Round)
-            {
-                if (!data.ArenaType.Equals(ArenaType.Season))
-                {
-                    continue;
-                }
-
-                var itemId = GetMedalItemId(data.Id, data.Round);
-                if (avatarState.inventory.TryGetItem(itemId, out var item))
-                {
-                    count += item.count;
-                }
-            }
-
-            return count;
         }
     }
 }
