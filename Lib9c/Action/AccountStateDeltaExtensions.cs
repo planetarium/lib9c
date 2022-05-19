@@ -5,12 +5,12 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Bencodex.Types;
-using JetBrains.Annotations;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
 using LruCacheNet;
 using Nekoyume.Model.Arena;
+using Nekoyume.Helper;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
@@ -814,6 +814,7 @@ namespace Nekoyume.Action
             return false;
         }
 
+<<<<<<< HEAD
         public static ArenaParticipants GetArenaParticipants(this IAccountStateDelta states,
             Address arenaParticipantsAddress, int id, int round)
         {
@@ -903,5 +904,41 @@ namespace Nekoyume.Action
 
             return enemyAvatarState;
         }
+=======
+        public static CrystalCostState GetCrystalCostState(this IAccountStateDelta states,
+            Address address)
+        {
+            return states.TryGetState(address, out List rawState)
+                ? new CrystalCostState(address, rawState)
+                : new CrystalCostState(address, 0 * CrystalCalculator.CRYSTAL);
+        }
+
+        public static (
+            CrystalCostState DailyCostState,
+            CrystalCostState WeeklyCostState,
+            CrystalCostState PrevWeeklyCostState,
+            CrystalCostState BeforePrevWeeklyCostState
+            ) GetCrystalCostStates(this IAccountStateDelta states, long blockIndex)
+        {
+            int dailyCostIndex = (int) (blockIndex / CrystalCostState.DailyIntervalIndex);
+            int weeklyCostIndex = (int) (blockIndex / CrystalCostState.WeeklyIntervalIndex);
+            Address dailyCostAddress = Addresses.GetDailyCrystalCostAddress(dailyCostIndex);
+            CrystalCostState dailyCostState = states.GetCrystalCostState(dailyCostAddress);
+            Address weeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyCostIndex);
+            CrystalCostState weeklyCostState = states.GetCrystalCostState(weeklyCostAddress);
+            CrystalCostState prevWeeklyCostState = null;
+            CrystalCostState beforePrevWeeklyCostState = null;
+            if (weeklyCostIndex > 1)
+            {
+                Address prevWeeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyCostIndex - 1);
+                prevWeeklyCostState = states.GetCrystalCostState(prevWeeklyCostAddress);
+                Address beforePrevWeeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyCostIndex - 2);
+                beforePrevWeeklyCostState = states.GetCrystalCostState(beforePrevWeeklyCostAddress);
+            }
+
+            return (dailyCostState, weeklyCostState, prevWeeklyCostState, beforePrevWeeklyCostState);
+        }
+
+>>>>>>> 2022q2
     }
 }
