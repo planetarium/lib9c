@@ -814,7 +814,6 @@ namespace Nekoyume.Action
             return false;
         }
 
-<<<<<<< HEAD
         public static ArenaParticipants GetArenaParticipants(this IAccountStateDelta states,
             Address arenaParticipantsAddress, int id, int round)
         {
@@ -904,7 +903,7 @@ namespace Nekoyume.Action
 
             return enemyAvatarState;
         }
-=======
+
         public static CrystalCostState GetCrystalCostState(this IAccountStateDelta states,
             Address address)
         {
@@ -938,7 +937,5 @@ namespace Nekoyume.Action
 
             return (dailyCostState, weeklyCostState, prevWeeklyCostState, beforePrevWeeklyCostState);
         }
-
->>>>>>> 2022q2
     }
 }
