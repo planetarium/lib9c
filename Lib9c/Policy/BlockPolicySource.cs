@@ -84,7 +84,7 @@ namespace Nekoyume.BlockChain.Policy
         }.ToImmutableHashSet();
 
         public static readonly Address PreviewNetAdmin = new Address(
-            "0xC008c5DeD357e2f7638aA60a0Dcea0bbC08"
+            "C008c5DeD357e2f7638aA60a0Dcea0bbC08"
         );
 
         public readonly ActionRenderer ActionRenderer = new ActionRenderer();
