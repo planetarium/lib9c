@@ -36,7 +36,7 @@ namespace Nekoyume.Helper
             CrystalStageBuffGachaSheet stageBuffGachaSheet)
         {
             var cost = 0 * CRYSTAL;
-            cost *= stageBuffGachaSheet[stageId].CRYSTAL;
+            cost += CRYSTAL * stageBuffGachaSheet[stageId].CRYSTAL;
 
             return count == 5 ? cost : cost * 3;
         }

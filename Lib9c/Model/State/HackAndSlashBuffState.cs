@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bencodex.Types;
-using Libplanet;
 using Nekoyume.TableData.Crystal;
 using System.Linq;
 
 namespace Nekoyume.Model.State
 {
-    public class HackAndSlashBuffState : State
+    public class HackAndSlashBuffState : IState
     {
         public int StageId { get; }
         public int StarCount { get; private set; }
         public List<int> BuffIds { get; private set; }
 
-        public HackAndSlashBuffState(Address address, int stageId) : base(address)
+        public HackAndSlashBuffState(int stageId)
         {
             StageId = stageId;
             StarCount = 0;
             BuffIds = new List<int>();
         }
 
-        public HackAndSlashBuffState(List serialized) : base(serialized)
+        public HackAndSlashBuffState(List serialized)
         {
             StageId = serialized[0].ToInteger();
             StarCount = serialized[1].ToInteger();
@@ -37,7 +36,7 @@ namespace Nekoyume.Model.State
             BuffIds = buffIds;
         }
 
-        public override IValue Serialize()
+        public IValue Serialize()
         {
             return List.Empty
                 .Add(StageId.Serialize())
