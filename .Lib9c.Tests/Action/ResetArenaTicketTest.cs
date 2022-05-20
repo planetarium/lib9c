@@ -147,7 +147,7 @@ namespace Lib9c.Tests.Action
             if (!row.TryGetRound(round, out var roundData))
             {
                 throw new RoundNotFoundException(
-                    $"[{nameof(BattleArena)}] ChampionshipId({row.Id}) - round({round})");
+                    $"[{nameof(ResetArenaTicketTest)}] ChampionshipId({row.Id}) - round({round})");
             }
 
             var random = new TestRandom();
@@ -251,7 +251,7 @@ namespace Lib9c.Tests.Action
             if (!row.TryGetRound(round, out var roundData))
             {
                 throw new RoundNotFoundException(
-                    $"[{nameof(BattleArena)}] ChampionshipId({row.Id}) - round({round})");
+                    $"[{nameof(ResetArenaTicketTest)}] ChampionshipId({row.Id}) - round({round})");
             }
 
             var random = new TestRandom();
@@ -287,7 +287,7 @@ namespace Lib9c.Tests.Action
             if (!row.TryGetRound(round, out var roundData))
             {
                 throw new RoundNotFoundException(
-                    $"[{nameof(BattleArena)}] ChampionshipId({row.Id}) - round({round})");
+                    $"[{nameof(ResetArenaTicketTest)}] ChampionshipId({row.Id}) - round({round})");
             }
 
             var random = new TestRandom();
