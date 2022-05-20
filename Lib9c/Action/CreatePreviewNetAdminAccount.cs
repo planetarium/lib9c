@@ -11,7 +11,7 @@ namespace Nekoyume.Action
     /// <summary>
     /// </summary>
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.PreviewNetAllowIndex)]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.PreviewNetAdminAccountAllowIndex)]
     [ActionType("create_preview_net_admin_account")]
     public class CreatePreviewNetAdminAccount : ActionBase
     {
@@ -32,9 +32,8 @@ namespace Nekoyume.Action
         {
             var states = context.PreviousStates;
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.PreviewNetAllowIndex, context);
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.PreviewNetAdminAccountAllowIndex, context);
 
-            IEnumerable<GoldDistribution> goldDistributions = states.GetGoldDistribution();
             Currency goldCurrency = states.GetGoldCurrency();
             Address fund = GoldCurrencyState.Address;
 
@@ -49,6 +48,5 @@ namespace Nekoyume.Action
 
             return states;
         }
-
     }
 }
