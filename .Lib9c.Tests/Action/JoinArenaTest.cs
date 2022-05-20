@@ -224,7 +224,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(arenaInformationAdr, arenaInformation.Address);
             Assert.Equal(0, arenaInformation.Win);
             Assert.Equal(0, arenaInformation.Lose);
-            Assert.Equal(GameConfig.ArenaChallengeCountMax, arenaInformation.Ticket);
+            Assert.Equal(ArenaInformation.MaxTicketCount, arenaInformation.Ticket);
 
             if (!row.TryGetRound(championshipId, round, out var roundData))
             {
