@@ -28,10 +28,13 @@ namespace Lib9c.Tests.Action
 
         private readonly Address _agent1Address;
         private readonly Address _agent2Address;
+        private readonly Address _agent3Address;
         private readonly Address _avatar1Address;
         private readonly Address _avatar2Address;
+        private readonly Address _avatar3Address;
         private readonly AvatarState _avatar1;
         private readonly AvatarState _avatar2;
+        private readonly AvatarState _avatar3;
         private readonly Currency _currency;
         private IAccountStateDelta _state;
 
@@ -54,28 +57,41 @@ namespace Lib9c.Tests.Action
             _tableSheets = new TableSheets(_sheets);
             _currency = new Currency("CRYSTAL", 18, minters: null);
             var rankingMapAddress = new PrivateKey().ToAddress();
+            var clearStageId = Math.Max(
+                _tableSheets.StageSheet.First?.Id ?? 1,
+                GameConfig.RequireClearedStageLevel.ActionsInRankingBoard);
+
+            // account 1
             var (agent1State, avatar1State) = GetAgentStateWithAvatarState(
                 _sheets,
                 _tableSheets,
-                rankingMapAddress);
+                rankingMapAddress,
+                clearStageId);
 
             _agent1Address = agent1State.address;
             _avatar1 = avatar1State;
             _avatar1Address = avatar1State.address;
 
+            // account 2
             var (agent2State, avatar2State) = GetAgentStateWithAvatarState(
                 _sheets,
                 _tableSheets,
-                rankingMapAddress);
+                rankingMapAddress,
+                clearStageId);
             _agent2Address = agent2State.address;
             _avatar2 = avatar2State;
             _avatar2Address = avatar2State.address;
 
-            var weeklyAddressList = new List<Address>
-            {
-                _avatar1Address,
-                _avatar2Address,
-            };
+            // account 3
+            var (agent3State, avatar3State) = GetAgentStateWithAvatarState(
+                _sheets,
+                _tableSheets,
+                rankingMapAddress,
+                1);
+            _agent3Address = agent3State.address;
+            _avatar3 = avatar3State;
+            _avatar3Address = avatar3State.address;
+
             _state = _state
                 .SetState(_agent1Address, agent1State.Serialize())
                 .SetState(_avatar1Address.Derive(LegacyInventoryKey), _avatar1.inventory.Serialize())
@@ -84,6 +100,8 @@ namespace Lib9c.Tests.Action
                 .SetState(_avatar1Address, _avatar1.Serialize())
                 .SetState(_agent2Address, agent2State.Serialize())
                 .SetState(_avatar2Address, avatar2State.Serialize())
+                .SetState(_agent3Address, agent2State.Serialize())
+                .SetState(_avatar3Address, avatar2State.Serialize())
                 .SetState(Addresses.GameConfig, new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize());
 
             Log.Logger = new LoggerConfiguration()
@@ -95,7 +113,8 @@ namespace Lib9c.Tests.Action
         public static (AgentState AgentState, AvatarState AvatarState) GetAgentStateWithAvatarState(
             IReadOnlyDictionary<string, string> sheets,
             TableSheets tableSheets,
-            Address rankingMapAddress)
+            Address rankingMapAddress,
+            int clearStageId)
         {
             var agentAddress = new PrivateKey().ToAddress();
             var agentState = new AgentState(agentAddress);
@@ -112,9 +131,7 @@ namespace Lib9c.Tests.Action
                 worldInformation = new WorldInformation(
                     0,
                     tableSheets.WorldSheet,
-                    Math.Max(
-                        tableSheets.StageSheet.First?.Id ?? 1,
-                        GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)),
+                    clearStageId),
             };
             agentState.avatarAddresses.Add(0, avatarAddress);
 
@@ -191,10 +208,10 @@ namespace Lib9c.Tests.Action
                     nameof(ArenaSheet), $"championship Id : {championshipId}");
             }
 
-            if (!row.TryGetRound(championshipId, round, out var roundData))
+            if (!row.TryGetRound(round, out var roundData))
             {
-                throw new RoundNotFoundByIdsException(
-                    $"[{nameof(BattleArena)}] ChampionshipId({championshipId}) - round({round})");
+                throw new RoundNotFoundException(
+                    $"[{nameof(BattleArena)}] ChampionshipId({row.Id}) - round({round})");
             }
 
             var random = new TestRandom(randomSeed);
@@ -285,6 +302,233 @@ namespace Lib9c.Tests.Action
             var materialCount = avatarState.inventory.Materials.Count();
             var high = (BattleArena.GetRewardCount(beforeMyScore.Score) * ticket) + medalCount;
             Assert.InRange(materialCount, 0, high);
+        }
+
+        [Fact]
+        public void Execute_InvalidAddressException()
+        {
+            var action = new BattleArena()
+            {
+                myAvatarAddress = _avatar1Address,
+                enemyAvatarAddress = _avatar1Address,
+                championshipId = 1,
+                round = 1,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+            };
+
+            Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext()
+            {
+                PreviousStates = _state,
+                Signer = _agent1Address,
+                Random = new TestRandom(),
+            }));
+        }
+
+        [Fact]
+        public void Execute_FailedLoadStateException()
+        {
+            var action = new BattleArena()
+            {
+                myAvatarAddress = _avatar2Address,
+                enemyAvatarAddress = _avatar1Address,
+                championshipId = 1,
+                round = 1,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+            };
+
+            Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
+            {
+                PreviousStates = _state,
+                Signer = _agent1Address,
+                Random = new TestRandom(),
+            }));
+        }
+
+        [Fact]
+        public void Execute_NotEnoughClearedStageLevelException()
+        {
+            var action = new BattleArena()
+            {
+                myAvatarAddress = _avatar3Address,
+                enemyAvatarAddress = _avatar2Address,
+                championshipId = 1,
+                round = 1,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+            };
+
+            Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
+            {
+                PreviousStates = _state,
+                Signer = _agent3Address,
+                Random = new TestRandom(),
+            }));
+        }
+
+        [Fact]
+        public void Execute_SheetRowNotFoundException()
+        {
+            var action = new BattleArena()
+            {
+                myAvatarAddress = _avatar1Address,
+                enemyAvatarAddress = _avatar2Address,
+                championshipId = 9999999,
+                round = 1,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+            };
+
+            Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext()
+            {
+                PreviousStates = _state,
+                Signer = _agent1Address,
+                Random = new TestRandom(),
+            }));
+        }
+
+        [Fact]
+        public void Execute_ThisArenaIsClosedException()
+        {
+            var action = new BattleArena()
+            {
+                myAvatarAddress = _avatar1Address,
+                enemyAvatarAddress = _avatar2Address,
+                championshipId = 1,
+                round = 1,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+            };
+
+            Assert.Throws<ThisArenaIsClosedException>(() => action.Execute(new ActionContext()
+            {
+                PreviousStates = _state,
+                Signer = _agent1Address,
+                Random = new TestRandom(),
+                BlockIndex = 1000,
+            }));
+        }
+
+        [Fact]
+        public void Execute_ArenaParticipantsNotFoundException()
+        {
+            var action = new BattleArena()
+            {
+                myAvatarAddress = _avatar1Address,
+                enemyAvatarAddress = _avatar2Address,
+                championshipId = 1,
+                round = 1,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+            };
+
+            Assert.Throws<ArenaParticipantsNotFoundException>(() => action.Execute(new ActionContext()
+            {
+                PreviousStates = _state,
+                Signer = _agent1Address,
+                Random = new TestRandom(),
+            }));
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Execute_AddressNotFoundInArenaParticipantsException(bool excludeMe)
+        {
+            var championshipId = 1;
+            var round = 1;
+            var arenaSheet = _state.GetSheet<ArenaSheet>();
+            if (!arenaSheet.TryGetValue(championshipId, out var row))
+            {
+                throw new SheetRowNotFoundException(
+                    nameof(ArenaSheet), $"championship Id : {championshipId}");
+            }
+
+            if (!row.TryGetRound(round, out var roundData))
+            {
+                throw new RoundNotFoundException(
+                    $"[{nameof(BattleArena)}] ChampionshipId({row.Id}) - round({round})");
+            }
+
+            var random = new TestRandom();
+            _state = excludeMe
+                ? JoinArena(_agent2Address, _avatar2Address, roundData.StartBlockIndex, championshipId, round, random)
+                : JoinArena(_agent1Address, _avatar1Address, roundData.StartBlockIndex, championshipId, round, random);
+
+            var action = new BattleArena()
+            {
+                myAvatarAddress = _avatar1Address,
+                enemyAvatarAddress = _avatar2Address,
+                championshipId = championshipId,
+                round = round,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+            };
+
+            Assert.Throws<AddressNotFoundInArenaParticipantsException>(() => action.Execute(new ActionContext()
+            {
+                PreviousStates = _state,
+                Signer = _agent1Address,
+                Random = new TestRandom(),
+            }));
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Execute_ValidateScoreDifferenceException(bool isSigner)
+        {
+            var championshipId = 1;
+            var round = 2;
+            var arenaSheet = _state.GetSheet<ArenaSheet>();
+            if (!arenaSheet.TryGetValue(championshipId, out var row))
+            {
+                throw new SheetRowNotFoundException(
+                    nameof(ArenaSheet), $"championship Id : {championshipId}");
+            }
+
+            if (!row.TryGetRound(round, out var roundData))
+            {
+                throw new RoundNotFoundException(
+                    $"[{nameof(BattleArena)}] ChampionshipId({row.Id}) - round({round})");
+            }
+
+            var random = new TestRandom();
+            _state = JoinArena(_agent1Address, _avatar1Address, roundData.StartBlockIndex, championshipId, round, random);
+            _state = JoinArena(_agent2Address, _avatar2Address, roundData.StartBlockIndex, championshipId, round, random);
+
+            var arenaScoreAdr = ArenaScore.DeriveAddress(isSigner ? _avatar1Address : _avatar2Address, roundData.Id, roundData.Round);
+            _state.TryGetArenaScore(arenaScoreAdr, out var arenaScore);
+            arenaScore.AddScore(900);
+            _state = _state.SetState(arenaScoreAdr, arenaScore.Serialize());
+
+            var action = new BattleArena()
+            {
+                myAvatarAddress = _avatar1Address,
+                enemyAvatarAddress = _avatar2Address,
+                championshipId = championshipId,
+                round = round,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+            };
+
+            var blockIndex = roundData.StartBlockIndex + 1;
+            Assert.Throws<ValidateScoreDifferenceException>(() => action.Execute(new ActionContext()
+            {
+                BlockIndex = blockIndex,
+                PreviousStates = _state,
+                Signer = _agent1Address,
+                Random = new TestRandom(),
+            }));
         }
     }
 }

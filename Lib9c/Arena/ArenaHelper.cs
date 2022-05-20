@@ -49,10 +49,9 @@ namespace Nekoyume.Arena
             return count;
         }
 
-        public static FungibleAssetValue GetEntranceFee(ArenaSheet.Row row,
-            ArenaSheet.RoundData roundData, long currentBlockIndex)
+        public static FungibleAssetValue GetEntranceFee(ArenaSheet.RoundData roundData, long currentBlockIndex)
         {
-            var fee = row.IsTheRoundOpened(currentBlockIndex, roundData.Id, roundData.Round)
+            var fee = roundData.IsTheRoundOpened(currentBlockIndex)
                 ? roundData.EntranceFee
                 : roundData.DiscountedEntranceFee;
             return fee * CrystalCalculator.CRYSTAL;

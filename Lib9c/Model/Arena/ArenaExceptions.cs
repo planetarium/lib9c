@@ -4,27 +4,13 @@ using System.Runtime.Serialization;
 namespace Nekoyume.Model.Arena
 {
     [Serializable]
-    public class RoundNotFoundByBlockIndexException : Exception
+    public class RoundNotFoundException : Exception
     {
-        public RoundNotFoundByBlockIndexException(string message) : base(message)
+        public RoundNotFoundException(string message) : base(message)
         {
         }
 
-        protected RoundNotFoundByBlockIndexException(SerializationInfo info,
-            StreamingContext context) :
-            base(info, context)
-        {
-        }
-    }
-
-    [Serializable]
-    public class RoundNotFoundByIdsException : Exception
-    {
-        public RoundNotFoundByIdsException(string message) : base(message)
-        {
-        }
-
-        protected RoundNotFoundByIdsException(SerializationInfo info, StreamingContext context) :
+        protected RoundNotFoundException(SerializationInfo info, StreamingContext context) :
             base(info, context)
         {
         }
@@ -147,6 +133,20 @@ namespace Nekoyume.Model.Arena
         }
 
         protected ValidateScoreDifferenceException(SerializationInfo info,
+            StreamingContext context) :
+            base(info, context)
+        {
+        }
+    }
+
+    [Serializable]
+    public class ThisArenaIsClosedException : Exception
+    {
+        public ThisArenaIsClosedException(string message) : base(message)
+        {
+        }
+
+        protected ThisArenaIsClosedException(SerializationInfo info,
             StreamingContext context) :
             base(info, context)
         {

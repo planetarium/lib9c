@@ -91,14 +91,14 @@ namespace Nekoyume.Action
                     nameof(ArenaSheet), $"championship Id : {championshipId}");
             }
 
-            if (!row.TryGetRound(championshipId, round, out var roundData))
+            if (!row.TryGetRound(round, out var roundData))
             {
-                throw new RoundNotFoundByIdsException(
-                    $"[{nameof(JoinArena)}] ChampionshipId({championshipId}) - round({round})");
+                throw new RoundNotFoundException(
+                    $"[{nameof(JoinArena)}] ChampionshipId({row.Id}) - round({round})");
             }
 
             // check fee
-            var costCrystal = ArenaHelper.GetEntranceFee(row, roundData, context.BlockIndex);
+            var costCrystal = ArenaHelper.GetEntranceFee(roundData, context.BlockIndex);
             if (costCrystal > 0 * CrystalCalculator.CRYSTAL)
             {
                 var crystalBalance = states.GetBalance(context.Signer, CrystalCalculator.CRYSTAL);

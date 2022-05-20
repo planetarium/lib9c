@@ -41,6 +41,11 @@ namespace Nekoyume.TableData
                 TicketPrice = ticketPrice;
                 AdditionalTicketPrice = additionalTicketPrice;
             }
+
+            public bool IsTheRoundOpened(long blockIndex)
+            {
+                return StartBlockIndex <= blockIndex && blockIndex <= EndBlockIndex;
+            }
         }
 
         [Serializable]
@@ -70,24 +75,16 @@ namespace Nekoyume.TableData
                 };
             }
 
-            public bool TryGetRound(int championshipId, int round, out RoundData roundData)
+            public bool TryGetRound(int round, out RoundData roundData)
             {
-                roundData = Round.FirstOrDefault(x =>
-                    x.Id.Equals(championshipId) && x.Round.Equals(round));
+                roundData = Round.FirstOrDefault(x => x.Round.Equals(round));
                 return !(roundData is null);
             }
 
-            public bool IsTheRoundOpened(long blockIndex, int championshipId, int round)
+            public bool TryGetChampionshipRound(out RoundData roundData)
             {
-                var roundData = Round.FirstOrDefault(x => x.StartBlockIndex <= blockIndex &&
-                                                      blockIndex <= x.EndBlockIndex);
-                if (roundData is null)
-                {
-                    throw new RoundNotFoundByBlockIndexException(
-                        $"{nameof(ArenaSheet)} : block index({blockIndex})");
-                }
-
-                return roundData.Id.Equals(championshipId) && roundData.Round.Equals(round);
+                roundData = Round.FirstOrDefault(x => x.ArenaType.Equals(ArenaType.Championship));
+                return !(roundData is null);
             }
         }
 

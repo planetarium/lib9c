@@ -133,17 +133,17 @@ namespace Nekoyume.Action
                     $"championship Id : {championshipId}");
             }
 
-            if (!arenaRow.IsTheRoundOpened(context.BlockIndex, championshipId, round))
+            if (!arenaRow.TryGetRound(round, out var roundData))
             {
-                throw new RoundNotFoundByBlockIndexException(
-                    $"{nameof(BattleArena)} : block index({context.BlockIndex}) - " +
-                    $"championshipId({championshipId}) - round({round})");
+                throw new RoundNotFoundException(
+                    $"[{nameof(BattleArena)}] ChampionshipId({arenaRow.Id}) - round({round})");
             }
 
-            if (!arenaRow.TryGetRound(championshipId, round, out var roundData))
+            if (!roundData.IsTheRoundOpened(context.BlockIndex))
             {
-                throw new RoundNotFoundByIdsException(
-                    $"[{nameof(BattleArena)}] ChampionshipId({championshipId}) - round({round})");
+                throw new ThisArenaIsClosedException(
+                    $"{nameof(BattleArena)} : block index({context.BlockIndex}) - " +
+                    $"championshipId({roundData.Id}) - round({roundData.Round})");
             }
 
             var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(roundData.Id, roundData.Round);

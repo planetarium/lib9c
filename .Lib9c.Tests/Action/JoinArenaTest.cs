@@ -226,12 +226,12 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0, arenaInformation.Lose);
             Assert.Equal(ArenaInformation.MaxTicketCount, arenaInformation.Ticket);
 
-            if (!row.TryGetRound(championshipId, round, out var roundData))
+            if (!row.TryGetRound(round, out var roundData))
             {
-                throw new RoundNotFoundByIdsException($"{nameof(JoinArena)} : {championshipId} / {round}");
+                throw new RoundNotFoundException($"{nameof(JoinArena)} : {row.Id} / {round}");
             }
 
-            if (row.IsTheRoundOpened(blockIndex, championshipId, round))
+            if (roundData.IsTheRoundOpened(blockIndex))
             {
                 var curCurrency = preCurrency - (roundData.EntranceFee * _currency);
                 Assert.Equal(curCurrency, state.GetBalance(_signer, _currency));
@@ -269,32 +269,6 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(9999999999)]
-        public void Execute_RoundNotFoundByBlockIndexException(long blockIndex)
-        {
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
-            avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
-
-            var action = new JoinArena()
-            {
-                championshipId = 1,
-                round = 1,
-                costumes = costumes,
-                equipments = equipments,
-                avatarAddress = _avatarAddress,
-            };
-
-            Assert.Throws<RoundNotFoundByBlockIndexException>(() => action.Execute(new ActionContext()
-            {
-                PreviousStates = state,
-                Signer = _signer,
-                Random = new TestRandom(),
-                BlockIndex = blockIndex,
-            }));
-        }
-
-        [Theory]
         [InlineData(123)]
         public void Execute_RoundNotFoundByIdsException(int round)
         {
@@ -311,7 +285,7 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<RoundNotFoundByIdsException>(() => action.Execute(new ActionContext()
+            Assert.Throws<RoundNotFoundException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _signer,
