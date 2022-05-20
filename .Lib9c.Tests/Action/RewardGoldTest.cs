@@ -11,17 +11,24 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Battle;
+    using Nekoyume.Model;
+    using Nekoyume.Model.Arena;
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
+    using static Lib9c.SerializeKeys;
 
     public class RewardGoldTest
     {
         private readonly AvatarState _avatarState;
         private readonly AvatarState _avatarState2;
-        private readonly State _baseState;
         private readonly TableSheets _tableSheets;
+        private readonly Currency _crystal;
+        private IAccountStateDelta _baseState;
+
+        private Address _agent1Address;
+        private Address _avatar1Address;
 
         public RewardGoldTest()
         {
@@ -55,11 +62,71 @@ namespace Lib9c.Tests.Action
                 default
             );
 
+            _crystal = new Currency("CRYSTAL", 18, minters: null);
             var gold = new GoldCurrencyState(new Currency("NCG", 2, minter: null));
+
             _baseState = (State)new State()
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
                 .SetState(Addresses.GoldDistribution, GoldDistributionTest.Fixture.Select(v => v.Serialize()).Serialize())
                 .MintAsset(GoldCurrencyState.Address, gold.Currency * 100000000000);
+
+            foreach (var (key, value) in sheets)
+            {
+                _baseState = _baseState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var clearStageId = Math.Max(
+                _tableSheets.StageSheet.First?.Id ?? 1,
+                GameConfig.RequireClearedStageLevel.ActionsInRankingBoard);
+            var (agent1State, avatar1State) = GetAgentStateWithAvatarState(
+                sheets,
+                _tableSheets,
+                new PrivateKey().ToAddress(),
+                clearStageId);
+
+            _agent1Address = agent1State.address;
+            _avatar1Address = avatar1State.address;
+
+            _baseState = _baseState
+                .SetState(_agent1Address, agent1State.Serialize())
+                .SetState(
+                    _avatar1Address.Derive(LegacyInventoryKey),
+                    avatar1State.inventory.Serialize())
+                .SetState(
+                    _avatar1Address.Derive(LegacyWorldInformationKey),
+                    avatar1State.worldInformation.Serialize())
+                .SetState(
+                    _avatar1Address.Derive(LegacyQuestListKey),
+                    avatar1State.questList.Serialize())
+                .SetState(_avatar1Address, avatar1State.Serialize());
+        }
+
+        public static (AgentState AgentState, AvatarState AvatarState) GetAgentStateWithAvatarState(
+            IReadOnlyDictionary<string, string> sheets,
+            TableSheets tableSheets,
+            Address rankingMapAddress,
+            int clearStageId)
+        {
+            var agentAddress = new PrivateKey().ToAddress();
+            var agentState = new AgentState(agentAddress);
+
+            var avatarAddress = agentAddress.Derive("avatar");
+            var avatarState = new AvatarState(
+                avatarAddress,
+                agentAddress,
+                0,
+                tableSheets.GetAvatarSheets(),
+                new GameConfigState(sheets[nameof(GameConfigSheet)]),
+                rankingMapAddress)
+            {
+                worldInformation = new WorldInformation(
+                    0,
+                    tableSheets.WorldSheet,
+                    clearStageId),
+            };
+            agentState.avatarAddresses.Add(0, avatarAddress);
+
+            return (agentState, avatarState);
         }
 
         [Theory]
@@ -450,6 +517,93 @@ namespace Lib9c.Tests.Action
 
             // Rewardless era
             AssertMinerReward(50457601, "0");
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(3)]
+        public void RefillArenaTicket(long blockIndex)
+        {
+            var gameConfigState = new GameConfigState();
+            gameConfigState.Set(_tableSheets.GameConfigSheet);
+            _baseState = _baseState
+                .SetState(gameConfigState.address, gameConfigState.Serialize());
+
+            var championshipId = 1;
+            var round = 1;
+            var arenaSheet = _baseState.GetSheet<ArenaSheet>();
+            if (!arenaSheet.TryGetValue(championshipId, out var row))
+            {
+                throw new SheetRowNotFoundException(
+                    nameof(ArenaSheet), $"championship Id : {championshipId}");
+            }
+
+            if (!row.TryGetRound(round, out var roundData))
+            {
+                throw new RoundNotFoundException(
+                    $"[{nameof(BattleArena)}] ChampionshipId({row.Id}) - round({round})");
+            }
+
+            _baseState = JoinArena(_agent1Address, _avatar1Address, roundData.StartBlockIndex, championshipId, round);
+
+            var aiAdr = ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
+            if (!_baseState.TryGetArenaInformation(aiAdr, out var beforeArenaInfo))
+            {
+            }
+
+            Assert.Equal(ArenaInformation.MaxTicketCount, beforeArenaInfo.Ticket);
+            var usedTicket = 2;
+            beforeArenaInfo.UseTicket(usedTicket);
+            Assert.Equal(ArenaInformation.MaxTicketCount - usedTicket, beforeArenaInfo.Ticket);
+            _baseState = _baseState.SetState(aiAdr, beforeArenaInfo.Serialize());
+
+            var action = new RewardGold();
+            var ctx = new ActionContext()
+            {
+                BlockIndex = blockIndex,
+                PreviousStates = _baseState,
+                Miner = default,
+            };
+
+            var state = action.RefillArenaTicket(ctx, _baseState);
+
+            if (!state.TryGetArenaInformation(aiAdr, out var afterArenaInfo))
+            {
+            }
+
+            var arenaInterval = _baseState.GetGameConfigState().DailyArenaInterval;
+            var diff = blockIndex - roundData.StartBlockIndex;
+            var ticketCount = diff % arenaInterval == 0
+                ? ArenaInformation.MaxTicketCount
+                : ArenaInformation.MaxTicketCount - usedTicket;
+            Assert.Equal(ticketCount, afterArenaInfo.Ticket);
+        }
+
+        public IAccountStateDelta JoinArena(Address signer, Address avatarAddress, long blockIndex, int championshipId, int round)
+        {
+            var preCurrency = 1000 * _crystal;
+            _baseState = _baseState.MintAsset(signer, preCurrency);
+
+            var action = new JoinArena()
+            {
+                championshipId = championshipId,
+                round = round,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+                avatarAddress = avatarAddress,
+            };
+
+            _baseState = action.Execute(new ActionContext
+            {
+                PreviousStates = _baseState,
+                Signer = signer,
+                Random = new TestRandom(),
+                Rehearsal = false,
+                BlockIndex = blockIndex,
+            });
+            return _baseState;
         }
     }
 }
