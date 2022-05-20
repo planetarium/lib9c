@@ -43,6 +43,11 @@ namespace Nekoyume.Model.Arena
                 .Add(Ticket);
         }
 
+        public void RefillTicket()
+        {
+            Ticket = MaxTicketCount;
+        }
+
         public void UseTicket(int value)
         {
             if (Ticket < value)
