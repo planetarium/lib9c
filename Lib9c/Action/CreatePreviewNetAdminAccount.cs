@@ -9,6 +9,7 @@ using Nekoyume.Model.State;
 namespace Nekoyume.Action
 {
     /// <summary>
+    // https://github.com/planetarium/lib9c/pull/1028
     /// </summary>
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.PreviewNetAdminAccountAllowIndex)]
