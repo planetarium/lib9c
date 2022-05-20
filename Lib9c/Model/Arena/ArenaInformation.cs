@@ -19,7 +19,6 @@ namespace Nekoyume.Model.Arena
         public int Win { get; private set; }
         public int Lose { get; private set; }
         public int Ticket { get; private set; }
-
         public int TicketResetCount { get; private set; }
 
         public ArenaInformation(Address avatarAddress, int championshipId, int round)
@@ -34,6 +33,7 @@ namespace Nekoyume.Model.Arena
             Win = (Integer)serialized[1];
             Lose = (Integer)serialized[2];
             Ticket = (Integer)serialized[3];
+            TicketResetCount = (Integer)serialized[4];
         }
 
         public IValue Serialize()
@@ -42,7 +42,8 @@ namespace Nekoyume.Model.Arena
                 .Add(Address.Serialize())
                 .Add(Win)
                 .Add(Lose)
-                .Add(Ticket);
+                .Add(Ticket)
+                .Add(TicketResetCount);
         }
 
         public void UseTicket(int value)
@@ -62,10 +63,10 @@ namespace Nekoyume.Model.Arena
             Lose += lose;
         }
 
-        public void ResetTicket()
+        public void ResetTicket(int resetCount)
         {
             Ticket = MaxTicketCount;
-            TicketResetCount++;
+            TicketResetCount = resetCount;
         }
     }
 }

@@ -153,4 +153,17 @@ namespace Nekoyume.Model.Arena
         }
     }
 
+    [Serializable]
+    public class FailedToReachTicketResetBlockIndexException : Exception
+    {
+        public FailedToReachTicketResetBlockIndexException(string message) : base(message)
+        {
+        }
+
+        protected FailedToReachTicketResetBlockIndexException(SerializationInfo info,
+            StreamingContext context) :
+            base(info, context)
+        {
+        }
+    }
 }

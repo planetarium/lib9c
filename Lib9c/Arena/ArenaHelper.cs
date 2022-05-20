@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Libplanet;
 using Libplanet.Assets;
 using Nekoyume.Action;
@@ -49,7 +50,8 @@ namespace Nekoyume.Arena
             return count;
         }
 
-        public static FungibleAssetValue GetEntranceFee(ArenaSheet.RoundData roundData, long currentBlockIndex)
+        public static FungibleAssetValue GetEntranceFee(ArenaSheet.RoundData roundData,
+            long currentBlockIndex)
         {
             var fee = roundData.IsTheRoundOpened(currentBlockIndex)
                 ? roundData.EntranceFee
@@ -57,7 +59,8 @@ namespace Nekoyume.Arena
             return fee * CrystalCalculator.CRYSTAL;
         }
 
-        public static bool ValidateScoreDifference(IReadOnlyDictionary<ArenaType, (int, int)> scoreLimits,
+        public static bool ValidateScoreDifference(
+            IReadOnlyDictionary<ArenaType, (int, int)> scoreLimits,
             ArenaType arenaType, int myScore, int enemyScore)
         {
             if (arenaType.Equals(ArenaType.OffSeason))
@@ -68,6 +71,22 @@ namespace Nekoyume.Arena
             var (upper, lower) = scoreLimits[arenaType];
             var diff = enemyScore - myScore;
             return lower <= diff && diff <= upper;
+        }
+
+        public static bool TryGetOpenedRoundData(ArenaSheet arenaSheet, long blockIndex,
+            out ArenaSheet.RoundData roundData)
+        {
+            foreach (var row in arenaSheet.Values)
+            {
+                foreach (var data in row.Round.Where(data => data.IsTheRoundOpened(blockIndex)))
+                {
+                    roundData = data;
+                    return true;
+                }
+            }
+
+            roundData = null;
+            return false;
         }
     }
 }
