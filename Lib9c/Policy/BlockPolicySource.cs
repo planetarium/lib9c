@@ -44,6 +44,8 @@ namespace Nekoyume.BlockChain.Policy
 
         public const int MaxTransactionsPerBlock = 100;
 
+        public const long PreviewNetAllowIndex = 7_200;
+
         public const long V100080ObsoleteIndex = 2_448_000;
 
         public const long V100081ObsoleteIndex = 2_550_000;
@@ -80,6 +82,10 @@ namespace Nekoyume.BlockChain.Policy
             new Address("474CB59Dea21159CeFcC828b30a8D864e0b94a6B"),
             new Address("636d187B4d434244A92B65B06B5e7da14b3810A9"),
         }.ToImmutableHashSet();
+
+        public static readonly Address PreviewNetAdmin = new Address(
+            "temp"
+        );
 
         public readonly ActionRenderer ActionRenderer = new ActionRenderer();
 
