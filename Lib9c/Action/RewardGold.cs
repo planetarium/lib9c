@@ -6,7 +6,9 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.Model.Arena;
 using Nekoyume.Model.State;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Action
 {
@@ -21,6 +23,11 @@ namespace Nekoyume.Action
         // Start filtering inactivate ArenaInfo
         // https://github.com/planetarium/lib9c/issues/946
         public const long FilterInactiveArenaInfoBlockIndex = 3_976_000L;
+
+        // No more RankingBattle
+        // TODO : FIX IT
+        public const long InactiveRankingBattleBlockIndex = 5_000_000;
+
         public override IValue PlainValue =>
             new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
             {
@@ -34,17 +41,23 @@ namespace Nekoyume.Action
         {
             var states = context.PreviousStates;
             states = GenesisGoldDistribution(context, states);
-            states = WeeklyArenaRankingBoard2(context, states);
+            states = RefillArenaTicket(context, states);
+            if (context.BlockIndex < InactiveRankingBattleBlockIndex)
+            {
+                states = WeeklyArenaRankingBoard2(context, states);
+            }
+
             return MinerReward(context, states);
         }
 
-        public IAccountStateDelta GenesisGoldDistribution(IActionContext ctx, IAccountStateDelta states)
+        public IAccountStateDelta GenesisGoldDistribution(IActionContext ctx,
+            IAccountStateDelta states)
         {
             IEnumerable<GoldDistribution> goldDistributions = states.GetGoldDistribution();
             var index = ctx.BlockIndex;
             Currency goldCurrency = states.GetGoldCurrency();
             Address fund = GoldCurrencyState.Address;
-            foreach(GoldDistribution distribution in goldDistributions)
+            foreach (GoldDistribution distribution in goldDistributions)
             {
                 BigInteger amount = distribution.GetAmount(index);
                 if (amount <= 0) continue;
@@ -53,7 +66,7 @@ namespace Nekoyume.Action
                 // See also: https://github.com/planetarium/lib9c/pull/170#issuecomment-713380172
                 FungibleAssetValue fav = goldCurrency * amount;
                 var testAddresses = new HashSet<Address>(
-                    new []
+                    new[]
                     {
                         new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9"),
                         new Address("Fb90278C67f9b266eA309E6AE8463042f5461449"),
@@ -63,20 +76,23 @@ namespace Nekoyume.Action
                 {
                     fav = fav.DivRem(100, out FungibleAssetValue _);
                 }
+
                 states = states.TransferAsset(
                     fund,
                     distribution.Address,
                     fav
                 );
             }
+
             return states;
         }
 
         [Obsolete("Use WeeklyArenaRankingBoard2 for performance.")]
-        public IAccountStateDelta WeeklyArenaRankingBoard(IActionContext ctx, IAccountStateDelta states)
+        public IAccountStateDelta WeeklyArenaRankingBoard(IActionContext ctx,
+            IAccountStateDelta states)
         {
             var gameConfigState = states.GetGameConfigState();
-            var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
+            var index = Math.Max((int)ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
             var weekly = states.GetWeeklyArenaState(index);
             var nextIndex = index + 1;
             var nextWeekly = states.GetWeeklyArenaState(nextIndex);
@@ -103,10 +119,13 @@ namespace Nekoyume.Action
                 weekly.ResetCount(ctx.BlockIndex);
                 states = states.SetState(weekly.address, weekly.Serialize());
             }
+
             return states;
         }
 
-        public IAccountStateDelta WeeklyArenaRankingBoard2(IActionContext ctx, IAccountStateDelta states)
+        [Obsolete("No more ranking battle")]
+        public IAccountStateDelta WeeklyArenaRankingBoard2(IActionContext ctx,
+            IAccountStateDelta states)
         {
             states = PrepareNextArena(ctx, states);
             states = ResetChallengeCount(ctx, states);
@@ -116,9 +135,9 @@ namespace Nekoyume.Action
         public IAccountStateDelta PrepareNextArena(IActionContext ctx, IAccountStateDelta states)
         {
             var gameConfigState = states.GetGameConfigState();
-            var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
+            var index = Math.Max((int)ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
             var weeklyAddress = WeeklyArenaState.DeriveAddress(index);
-            var rawWeekly = (Dictionary) states.GetState(weeklyAddress);
+            var rawWeekly = (Dictionary)states.GetState(weeklyAddress);
             var nextIndex = index + 1;
             var nextWeekly = states.GetWeeklyArenaState(nextIndex);
             if (nextWeekly is null)
@@ -131,7 +150,7 @@ namespace Nekoyume.Action
             if (ctx.BlockIndex % gameConfigState.WeeklyArenaInterval == 0 && index > 0)
             {
                 var prevWeeklyAddress = WeeklyArenaState.DeriveAddress(index - 1);
-                var rawPrevWeekly = (Dictionary) states.GetState(prevWeeklyAddress);
+                var rawPrevWeekly = (Dictionary)states.GetState(prevWeeklyAddress);
                 if (!rawPrevWeekly["ended"].ToBoolean())
                 {
                     rawPrevWeekly = rawPrevWeekly.SetItem("ended", true.Serialize());
@@ -173,7 +192,8 @@ namespace Nekoyume.Action
                             if (states.TryGetState(prevListAddress, out List prevRawList))
                             {
                                 var prevList = prevRawList.ToList(StateExtensions.ToAddress);
-                                foreach (var address in prevList.Where(address => !addressList.Contains(address)))
+                                foreach (var address in prevList.Where(address =>
+                                             !addressList.Contains(address)))
                                 {
                                     addressList.Add(address);
                                 }
@@ -202,6 +222,7 @@ namespace Nekoyume.Action
                                 }
                             }
                         }
+
                         // Set address list.
                         states = states.SetState(listAddress, nextAddresses);
                     }
@@ -215,15 +236,16 @@ namespace Nekoyume.Action
                     states = states.SetState(weeklyAddress, weekly.Serialize());
                 }
             }
+
             return states;
         }
 
         public IAccountStateDelta ResetChallengeCount(IActionContext ctx, IAccountStateDelta states)
         {
             var gameConfigState = states.GetGameConfigState();
-            var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
+            var index = Math.Max((int)ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
             var weeklyAddress = WeeklyArenaState.DeriveAddress(index);
-            var rawWeekly = (Dictionary) states.GetState(weeklyAddress);
+            var rawWeekly = (Dictionary)states.GetState(weeklyAddress);
             var resetIndex = rawWeekly["resetIndex"].ToLong();
 
             if (ctx.BlockIndex - resetIndex >= gameConfigState.DailyArenaInterval)
@@ -254,8 +276,10 @@ namespace Nekoyume.Action
                     // Run legacy ResetCount.
                     weekly.ResetCount(ctx.BlockIndex);
                 }
+
                 states = states.SetState(weeklyAddress, weekly.Serialize());
             }
+
             return states;
         }
 
@@ -265,7 +289,8 @@ namespace Nekoyume.Action
             // https://www.notion.so/planetarium/Mining-Reward-b7024ef463c24ebca40a2623027d497d
             Currency currency = states.GetGoldCurrency();
             FungibleAssetValue defaultMiningReward = currency * 10;
-            var countOfHalfLife = (int)Math.Pow(2, Convert.ToInt64((ctx.BlockIndex - 1) / 12614400));
+            var countOfHalfLife =
+                (int)Math.Pow(2, Convert.ToInt64((ctx.BlockIndex - 1) / 12614400));
             FungibleAssetValue miningReward =
                 defaultMiningReward.DivRem(countOfHalfLife, out FungibleAssetValue _);
 
@@ -279,6 +304,67 @@ namespace Nekoyume.Action
             }
 
             return states;
+        }
+
+        public IAccountStateDelta RefillArenaTicket(IActionContext ctx, IAccountStateDelta states)
+        {
+            if (!TryGetRoundData(ctx, states, out var data))
+            {
+                return states;
+            }
+
+            var apsAdr = ArenaParticipants.DeriveAddress(data.Id, data.Round);
+            if (!states.TryGetArenaParticipants(apsAdr, out var arenaParticipants))
+            {
+                return states;
+            }
+
+            var diff = ctx.BlockIndex - data.StartBlockIndex;
+            var arenaInterval = states.GetGameConfigState().DailyArenaInterval;
+            if (arenaInterval == 0)
+            {
+                return states;
+            }
+
+            if (diff % arenaInterval == 0)
+            {
+                foreach (var aAdr in arenaParticipants.AvatarAddresses)
+                {
+                    var aiAdr = ArenaInformation.DeriveAddress(aAdr, data.Id, data.Round);
+                    if (states.TryGetArenaInformation(aiAdr, out var arenaInformation))
+                    {
+                        arenaInformation.RefillTicket();
+                        states = states.SetState(aiAdr, arenaInformation.Serialize());
+                    }
+                }
+            }
+
+            return states;
+        }
+
+        private bool TryGetRoundData(IActionContext ctx, IAccountStateDelta states,
+            out ArenaSheet.RoundData roundData)
+        {
+            roundData = null;
+
+            var sheet = states.GetSheet<ArenaSheet>();
+            if (sheet == null)
+            {
+                return false;
+            }
+
+#pragma warning disable LAA1002
+            foreach (var row in sheet)
+#pragma warning restore LAA1002
+            {
+                foreach (var data in row.Round.Where(data => data.IsTheRoundOpened(ctx.BlockIndex)))
+                {
+                    roundData = data;
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
