@@ -10,6 +10,7 @@ using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Crystal;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
@@ -28,6 +29,7 @@ namespace Nekoyume.Action
         public List<Guid> foods;
         public int worldId;
         public int stageId;
+        public int randomBuffId;
         public Address avatarAddress;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
@@ -39,6 +41,7 @@ namespace Nekoyume.Action
                 ["worldId"] = worldId.Serialize(),
                 ["stageId"] = stageId.Serialize(),
                 ["avatarAddress"] = avatarAddress.Serialize(),
+                ["randomBuffId"] = randomBuffId.Serialize(),
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(
@@ -50,6 +53,7 @@ namespace Nekoyume.Action
             worldId = plainValue["worldId"].ToInteger();
             stageId = plainValue["stageId"].ToInteger();
             avatarAddress = plainValue["avatarAddress"].ToAddress();
+            randomBuffId = plainValue["randomBuffId"].ToInteger();
         }
 
         public override IAccountStateDelta Execute(IActionContext context)
@@ -124,6 +128,7 @@ namespace Nekoyume.Action
                     typeof(EquipmentItemRecipeSheet),
                     typeof(EquipmentItemSubRecipeSheetV2),
                     typeof(EquipmentItemOptionSheet),
+                    typeof(CrystalStageBuffGachaSheet),
                 });
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Get Sheets: {Elapsed}", addressesHex, sw.Elapsed);
@@ -232,7 +237,29 @@ namespace Nekoyume.Action
                 Log.Verbose("{AddressesHex}HAS Update QuestList: {Elapsed}", addressesHex, sw.Elapsed);
             }
 
+            var buffStateAddress = avatarAddress.Derive(HackAndSlashBuffStateKey);
+            HackAndSlashBuffState buffState;
+            if (!worldInformation.IsStageCleared(stageId))
+            {
+                if (states.TryGetState<List>(buffStateAddress, out var serialized))
+                {
+                    var newBuffState = new HackAndSlashBuffState(buffStateAddress, serialized);
+                    buffState = newBuffState.StageId == stageId
+                        ? newBuffState
+                        : new HackAndSlashBuffState(buffStateAddress, stageId);
+                }
+                else
+                {
+                    buffState = new HackAndSlashBuffState(buffStateAddress, stageId);
+                }
+            }
+            else
+            {
+                buffState = null;
+            }
+
             sw.Restart();
+            // TODO: need add random buff id
             var simulator = new StageSimulator(
                 ctx.Random,
                 avatarState,
@@ -275,6 +302,15 @@ namespace Nekoyume.Action
                 );
                 sw.Stop();
                 Log.Verbose("{AddressesHex}HAS ClearStage: {Elapsed}", addressesHex, sw.Elapsed);
+            }
+            else
+            {
+                if (buffState != null)
+                {
+                    buffState.Update(simulator.Log.clearedWaveNumber,
+                        sheets.GetSheet<CrystalStageBuffGachaSheet>());
+                    states = states.SetState(buffStateAddress, buffState.Serialize());
+                }
             }
 
             sw.Restart();
