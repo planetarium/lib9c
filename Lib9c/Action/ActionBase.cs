@@ -14,6 +14,7 @@ using Libplanet.Action;
 using Serilog;
 using Nekoyume.Model.State;
 using Libplanet.Assets;
+using Nekoyume.Model;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
 #else
@@ -356,6 +357,49 @@ namespace Nekoyume.Action
             if (ctx.BlockIndex > obsoleteIndex)
             {
                 throw new ActionObsoletedException();
+            }
+        }
+
+        protected void CheckAsset(IActionContext ctx, Address sender, Address recipient,
+            FungibleAssetValue amount, bool checkTransferRecipient)
+        {
+            if (sender != ctx.Signer)
+            {
+                throw new InvalidTransferSignerException(ctx.Signer, sender, recipient);
+            }
+
+            // This works for block after 380000. Please take a look at
+            // https://github.com/planetarium/libplanet/pull/1133
+            if (checkTransferRecipient && sender == recipient)
+            {
+                throw new InvalidTransferRecipientException(sender, recipient);
+            }
+
+            var state = ctx.PreviousStates;
+            Address recipientAddress = recipient.Derive(ActivationKey.DeriveKey);
+
+            // Check new type of activation first.
+            if (state.GetState(recipientAddress) is null && state.GetState(Addresses.ActivatedAccount) is Dictionary asDict)
+            {
+                var activatedAccountsState = new ActivatedAccountsState(asDict);
+                var activatedAccounts = activatedAccountsState.Accounts;
+                // if ActivatedAccountsState is empty, all user is activate.
+                if (activatedAccounts.Count != 0
+                    && !activatedAccounts.Contains(recipient))
+                {
+                    throw new InvalidTransferUnactivatedRecipientException(sender, recipient);
+                }
+            }
+
+            Currency currency = amount.Currency;
+            if (!(currency.Minters is null) &&
+                (currency.Minters.Contains(sender) || currency.Minters.Contains(recipient)))
+            {
+                throw new InvalidTransferMinterException(
+                    currency.Minters,
+                    sender,
+                    recipient
+                );
             }
         }
     }

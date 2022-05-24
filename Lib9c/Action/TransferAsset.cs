@@ -77,43 +77,7 @@ namespace Nekoyume.Action
                 return state.MarkBalanceChanged(Amount.Currency, new[] { Sender, Recipient });
             }
 
-            if (Sender != context.Signer)
-            {
-                throw new InvalidTransferSignerException(context.Signer, Sender, Recipient);
-            }
-
-            // This works for block after 380000. Please take a look at
-            // https://github.com/planetarium/libplanet/pull/1133
-            if (context.BlockIndex > 380000 && Sender == Recipient)
-            {
-                throw new InvalidTransferRecipientException(Sender, Recipient);
-            }
-
-            Address recipientAddress = Recipient.Derive(ActivationKey.DeriveKey);
-
-            // Check new type of activation first.
-            if (state.GetState(recipientAddress) is null && state.GetState(Addresses.ActivatedAccount) is Dictionary asDict )
-            {
-                var activatedAccountsState = new ActivatedAccountsState(asDict);
-                var activatedAccounts = activatedAccountsState.Accounts;
-                // if ActivatedAccountsState is empty, all user is activate.
-                if (activatedAccounts.Count != 0
-                    && !activatedAccounts.Contains(Recipient))
-                {
-                    throw new InvalidTransferUnactivatedRecipientException(Sender, Recipient);
-                }
-            }
-
-            Currency currency = Amount.Currency;
-            if (!(currency.Minters is null) &&
-                (currency.Minters.Contains(Sender) || currency.Minters.Contains(Recipient)))
-            {
-                throw new InvalidTransferMinterException(
-                    currency.Minters,
-                    Sender,
-                    Recipient
-               );
-            }
+            CheckAsset(context, Sender, Recipient, Amount, context.BlockIndex > 380000);
 
             return state.TransferAsset(Sender, Recipient, Amount);
         }
