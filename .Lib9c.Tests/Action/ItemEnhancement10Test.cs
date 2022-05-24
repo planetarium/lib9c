@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action
     using Xunit;
     using static Lib9c.SerializeKeys;
 
-    public class ItemEnhancementTest
+    public class ItemEnhancement10Test
     {
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
@@ -29,7 +29,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _currency;
         private IAccountStateDelta _initialState;
 
-        public ItemEnhancementTest()
+        public ItemEnhancement10Test()
         {
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
@@ -132,7 +132,7 @@ namespace Lib9c.Tests.Action
                 );
             }
 
-            var action = new ItemEnhancement()
+            var action = new ItemEnhancement10()
             {
                 itemId = default,
                 materialId = materialId,
@@ -193,99 +193,10 @@ namespace Lib9c.Tests.Action
             Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, slotResult.CRYSTAL);
         }
 
-        [Theory]
-        [InlineData(0, true, 0, 0)]
-        [InlineData(6, true, 0, 0)]
-        [InlineData(0, false, 1, 0)]
-        [InlineData(6, false, 10, 0)]
-        [InlineData(6, false, 10, 1)]
-        public void Execute_CheckUnequip(int level, bool backward, int randomSeed, int monsterCollectLevel)
-        {
-            var row = _tableSheets.EquipmentItemSheet.Values.First(r => r.Grade == 1);
-            var equipment = (Equipment)ItemFactory.CreateItemUsable(row, default, 0, level);
-            var materialId = Guid.NewGuid();
-            var material = (Equipment)ItemFactory.CreateItemUsable(row, materialId, 0, level);
-
-            equipment.Equip();
-            material.Equip();
-            _avatarState.inventory.AddItem(equipment, count: 1);
-            _avatarState.inventory.AddItem(material, count: 1);
-
-            var result = new CombinationConsumable5.ResultModel()
-            {
-                id = default,
-                gold = 0,
-                actionPoint = 0,
-                recipeId = 1,
-                materials = new Dictionary<Material, int>(),
-                itemUsable = equipment,
-            };
-            var preItemUsable = new Equipment((Dictionary)equipment.Serialize());
-
-            for (var i = 0; i < 100; i++)
-            {
-                var mail = new CombinationMail(result, i, default, 0);
-                _avatarState.Update(mail);
-            }
-
-            _avatarState.worldInformation.ClearStage(1, 1, 1, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
-
-            if (backward)
-            {
-                _initialState = _initialState.SetState(_avatarAddress, _avatarState.Serialize());
-            }
-            else
-            {
-                _initialState = _initialState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, _avatarState.SerializeV2());
-            }
-
-            if (monsterCollectLevel > 0)
-            {
-                var mcAddress = MonsterCollectionState.DeriveAddress(_agentAddress, 0);
-                _initialState = _initialState.SetState(
-                    mcAddress,
-                    new MonsterCollectionState(mcAddress, monsterCollectLevel, 0).Serialize()
-                );
-            }
-
-            var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(_avatarAddress);
-            var beforeArenaAvatarState = _initialState.GetArenaAvatarState(arenaAvatarStateAdr, _avatarState);
-            beforeArenaAvatarState.UpdateEquipment(new List<Guid>() { equipment.ItemId });
-
-            _initialState =
-                _initialState.SetState(arenaAvatarStateAdr, beforeArenaAvatarState.Serialize());
-
-            var action = new ItemEnhancement()
-            {
-                itemId = default,
-                materialId = materialId,
-                avatarAddress = _avatarAddress,
-                slotIndex = 0,
-            };
-
-            var nextState = action.Execute(new ActionContext()
-            {
-                PreviousStates = _initialState,
-                Signer = _agentAddress,
-                BlockIndex = 1,
-                Random = new TestRandom(randomSeed),
-            });
-
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
-            Assert.Equal(0, nextAvatarState.inventory.Equipments.Count(x => x.Equipped));
-
-            var afterArenaAvatarState = nextState.GetArenaAvatarState(arenaAvatarStateAdr, _avatarState);
-            Assert.Empty(afterArenaAvatarState.Equipments);
-        }
-
         [Fact]
         public void Rehearsal()
         {
-            var action = new ItemEnhancement()
+            var action = new ItemEnhancement10()
             {
                 itemId = default,
                 materialId = default,

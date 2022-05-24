@@ -14,14 +14,13 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
-    public class SellTest
+    public class Sell10Test
     {
         private const long ProductPrice = 100;
 
@@ -32,7 +31,7 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private IAccountStateDelta _initialState;
 
-        public SellTest(ITestOutputHelper outputHelper)
+        public Sell10Test(ITestOutputHelper outputHelper)
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -149,7 +148,7 @@ namespace Lib9c.Tests.Action
             long blockIndex = 1;
             Assert.Null(previousStates.GetState(shardedShopAddress));
 
-            var sellAction = new Sell
+            var sellAction = new Sell10
             {
                 sellerAvatarAddress = _avatarAddress,
                 tradableId = tradableItem.TradableId,
@@ -219,7 +218,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InvalidPriceException()
         {
-            var action = new Sell
+            var action = new Sell10
             {
                 sellerAvatarAddress = _avatarAddress,
                 tradableId = default,
@@ -240,7 +239,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_FailedLoadStateException()
         {
-            var action = new Sell
+            var action = new Sell10
             {
                 sellerAvatarAddress = _avatarAddress,
                 tradableId = default,
@@ -272,7 +271,7 @@ namespace Lib9c.Tests.Action
 
             _initialState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
 
-            var action = new Sell
+            var action = new Sell10
             {
                 sellerAvatarAddress = _avatarAddress,
                 tradableId = default,
@@ -311,7 +310,7 @@ namespace Lib9c.Tests.Action
                 );
             }
 
-            var action = new Sell
+            var action = new Sell10
             {
                 sellerAvatarAddress = _avatarAddress,
                 tradableId = tradableId,
@@ -342,7 +341,7 @@ namespace Lib9c.Tests.Action
 
             _initialState = _initialState.SetState(_avatarAddress, _avatarState.Serialize());
 
-            var action = new Sell
+            var action = new Sell10
             {
                 sellerAvatarAddress = _avatarAddress,
                 tradableId = equipmentId,
@@ -393,7 +392,7 @@ namespace Lib9c.Tests.Action
                 .SetState(_avatarAddress, avatarState.Serialize())
                 .SetState(shardedShopAddress, shardedShopState.Serialize());
 
-            var action = new Sell
+            var action = new Sell10
             {
                 sellerAvatarAddress = _avatarAddress,
                 tradableId = tradableId,
@@ -412,159 +411,12 @@ namespace Lib9c.Tests.Action
             }));
         }
 
-        [Theory]
-        [InlineData(ItemType.Consumable, 1, true)]
-        [InlineData(ItemType.Costume, 1, true)]
-        [InlineData(ItemType.Equipment, 1, true)]
-        [InlineData(ItemType.Material, 1, true)]
-        [InlineData(ItemType.Consumable, 1, false)]
-        [InlineData(ItemType.Costume, 1, false)]
-        [InlineData(ItemType.Equipment, 1, false)]
-        [InlineData(ItemType.Material, 1, false)]
-        public void Execute_CheckUnequip(ItemType itemType, int itemCount, bool backward)
-        {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
-
-            ITradableItem tradableItem;
-            switch (itemType)
-            {
-                case ItemType.Consumable:
-                    tradableItem = ItemFactory.CreateItemUsable(
-                        _tableSheets.ConsumableItemSheet.First,
-                        Guid.NewGuid(),
-                        0);
-                    break;
-                case ItemType.Costume:
-                    tradableItem = ItemFactory.CreateCostume(
-                        _tableSheets.CostumeItemSheet.First,
-                        Guid.NewGuid());
-                    var costume = (IEquippableItem)tradableItem;
-                    costume.Equip();
-                    break;
-                case ItemType.Equipment:
-                    tradableItem = ItemFactory.CreateItemUsable(
-                        _tableSheets.EquipmentItemSheet.First,
-                        Guid.NewGuid(),
-                        0);
-                    var equipment = (IEquippableItem)tradableItem;
-                    equipment.Equip();
-                    break;
-                case ItemType.Material:
-                    var tradableMaterialRow = _tableSheets.MaterialItemSheet.OrderedList
-                        .First(row => row.ItemSubType == ItemSubType.Hourglass);
-                    tradableItem = ItemFactory.CreateTradableMaterial(tradableMaterialRow);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(itemType), itemType, null);
-            }
-
-            Assert.Equal(0, tradableItem.RequiredBlockIndex);
-            avatarState.inventory.AddItem((ItemBase)tradableItem, itemCount);
-
-            var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(_avatarAddress);
-            if (itemType.Equals(ItemType.Equipment) || itemType.Equals(ItemType.Costume))
-            {
-                var inventoryItems = new List<Guid>();
-                var equipments = avatarState.inventory.Equipments.Where(x => x.Equipped).Select(x => x.ItemId);
-                var costumes = avatarState.inventory.Costumes.Where(x => x.Equipped).Select(x => x.ItemId);
-                inventoryItems.AddRange(equipments);
-                inventoryItems.AddRange(costumes);
-                Assert.Single(inventoryItems);
-
-                var arenaAvatarState = _initialState.GetArenaAvatarState(arenaAvatarStateAdr, _avatarState);
-
-                if (itemType.Equals(ItemType.Equipment))
-                {
-                    arenaAvatarState.UpdateEquipment(new List<Guid>() { tradableItem.TradableId });
-                }
-
-                if (itemType.Equals(ItemType.Costume))
-                {
-                    arenaAvatarState.UpdateCostumes(new List<Guid>() { tradableItem.TradableId });
-                }
-
-                var items = new List<Guid>();
-                items.AddRange(arenaAvatarState.Costumes);
-                items.AddRange(arenaAvatarState.Equipments);
-                Assert.Single(items);
-                Assert.Equal(inventoryItems.First(), items.First());
-            }
-
-            var previousStates = _initialState;
-            if (backward)
-            {
-                previousStates = previousStates.SetState(_avatarAddress, avatarState.Serialize());
-            }
-            else
-            {
-                previousStates = previousStates
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
-            }
-
-            var currencyState = previousStates.GetGoldCurrency();
-            var price = new FungibleAssetValue(currencyState, ProductPrice, 0);
-            var orderId = new Guid("6f460c1a755d48e4ad6765d5f519dbc8");
-            var shardedShopAddress = ShardedShopStateV2.DeriveAddress(
-                tradableItem.ItemSubType,
-                orderId);
-            long blockIndex = 1;
-            Assert.Null(previousStates.GetState(shardedShopAddress));
-
-            var sellAction = new Sell
-            {
-                sellerAvatarAddress = _avatarAddress,
-                tradableId = tradableItem.TradableId,
-                count = itemCount,
-                price = price,
-                itemSubType = tradableItem.ItemSubType,
-                orderId = orderId,
-            };
-            var nextState = sellAction.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousStates = previousStates,
-                Rehearsal = false,
-                Signer = _agentAddress,
-                Random = new TestRandom(),
-            });
-
-            long expiredBlockIndex = Order.ExpirationInterval + blockIndex;
-
-            // Check AvatarState and Inventory
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
-            Assert.Single(nextAvatarState.inventory.Items);
-            Assert.True(nextAvatarState.inventory.TryGetLockedItem(new OrderLock(orderId), out var inventoryItem));
-            Assert.False(nextAvatarState.inventory.TryGetTradableItems(tradableItem.TradableId, blockIndex, itemCount, out _));
-            Assert.False(nextAvatarState.inventory.TryGetTradableItems(tradableItem.TradableId, expiredBlockIndex, itemCount, out _));
-            ITradableItem nextTradableItem = (ITradableItem)inventoryItem.item;
-            Assert.Equal(expiredBlockIndex, nextTradableItem.RequiredBlockIndex);
-
-            if (itemType.Equals(ItemType.Equipment) || itemType.Equals(ItemType.Costume))
-            {
-                var inventoryItems = new List<Guid>();
-                var equipments = nextAvatarState.inventory.Equipments.Where(x => x.Equipped).Select(x => x.ItemId);
-                var costumes = nextAvatarState.inventory.Costumes.Where(x => x.Equipped).Select(x => x.ItemId);
-                inventoryItems.AddRange(equipments);
-                inventoryItems.AddRange(costumes);
-                Assert.Empty(inventoryItems);
-
-                var arenaAvatarState = nextState.GetArenaAvatarState(arenaAvatarStateAdr, nextAvatarState);
-                var items = new List<Guid>();
-                items.AddRange(arenaAvatarState.Costumes);
-                items.AddRange(arenaAvatarState.Equipments);
-                Assert.Empty(items);
-            }
-        }
-
         [Fact]
         public void Rehearsal()
         {
             Guid tradableId = Guid.NewGuid();
             Guid orderId = Guid.NewGuid();
-            var action = new Sell
+            var action = new Sell10
             {
                 sellerAvatarAddress = _avatarAddress,
                 tradableId = tradableId,
