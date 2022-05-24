@@ -100,6 +100,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(Grinding))]
         [InlineData(typeof(UnlockEquipmentRecipe))]
         [InlineData(typeof(UnlockWorld))]
+        [InlineData(typeof(FaucetAsset))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -274,6 +275,7 @@ namespace Lib9c.Tests.Action
                         3,
                     },
                 },
+                FaucetAsset _ => new FaucetAsset(_sender, _signer, _currency * 10),
                 _ => throw new InvalidCastException(),
             };
         }

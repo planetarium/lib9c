@@ -17,6 +17,9 @@ namespace Nekoyume.Action
         public Address Recipient;
         public FungibleAssetValue Amount;
 
+        public FaucetAsset()
+        {
+        }
         public FaucetAsset(Address sender, Address recipient, FungibleAssetValue amount)
         {
             Sender = sender;

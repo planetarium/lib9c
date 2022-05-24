@@ -89,5 +89,20 @@ namespace Lib9c.Tests.Action
                 Assert.Throws(exc, () => action.Execute(context));
             }
         }
+
+        [Fact]
+        public void PlainValue()
+        {
+            var amount = 100 * new Currency("NCG", 2, minters: null);
+            var sender = new PrivateKey().ToAddress();
+            var recipient = new PrivateKey().ToAddress();
+            var plainValue = new FaucetAsset(sender, recipient, amount).PlainValue;
+            var action = new FaucetAsset();
+            action.LoadPlainValue(plainValue);
+
+            Assert.Equal(sender, action.Sender);
+            Assert.Equal(recipient, action.Recipient);
+            Assert.Equal(amount, action.Amount);
+        }
     }
 }
