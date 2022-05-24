@@ -20,6 +20,7 @@ namespace Nekoyume.Action
         public FaucetAsset()
         {
         }
+
         public FaucetAsset(Address sender, Address recipient, FungibleAssetValue amount)
         {
             Sender = sender;
