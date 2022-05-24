@@ -24,7 +24,7 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Updated at https://github.com/planetarium/lib9c/pull/
+    /// Updated at https://github.com/planetarium/lib9c/pull/1044
     /// </summary>
     [Serializable]
     [ActionType("item_enhancement11")]
