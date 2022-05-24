@@ -348,7 +348,6 @@ namespace Lib9c.Tests
                 genesis,
                 renderers: new[] { blockPolicySource.BlockRenderer }
             );
-            var minerObj = new Miner(blockChain, null, minerKey);
 
             var dateTimeOffset = DateTimeOffset.MinValue;
 
