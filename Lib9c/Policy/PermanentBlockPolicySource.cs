@@ -90,6 +90,17 @@ namespace Nekoyume.BlockChain.Policy
             new Address("Dcdffe41264A7f9e5E35fD120233A6673069F544"),
             new Address("2f8a40FD4F133568dFC84bd1e850D243c9c04afd"),
             new Address("CfaA743C6d3e957Dc7902057cD4b8217aA1BEBfc"),
+            new Address("499ca1F30dA36d33B08ad88Aa553D3C5897e54eF"),
+            new Address("B6610AbD6eb185D2E1987198d0a6Cb3A4AE1E8a2"),
+            new Address("9Fd2C40afC865613d9ECE52f6ECd3D0881225318"),
+            new Address("E8ADDD163f0d40B0f7DD504f9123D971770e3B74"),
+            new Address("Bc2999C08f920b58C4823c1b1e27A58583793881"),
+            new Address("5d45140cCc257AD7A9eCE607d3eC8b830a356020"),
+            new Address("751CF3E4d7C5f7E37D7770A076b99596A719c934"),
+            new Address("17c30886E68A18EB7fF57a5e8Fa981b47FB1C5bC"),
+            new Address("cD1D8ef767fb774c62Cd2cbda07Fe09935557341"),
+            new Address("8bf91e5ef37ee14bc13f52143af847aa82399dc9"),
+            new Address("804f4c0bFAaf6580446f199FCC198Dee86fD4f92"),
         }.ToImmutableHashSet();
     }
 }
