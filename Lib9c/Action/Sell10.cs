@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using Bencodex.Types;
 using Lib9c.Model.Order;
 using Libplanet;
@@ -20,8 +19,8 @@ namespace Nekoyume.Action
     /// Updated at https://github.com/planetarium/lib9c/pull/1045
     /// </summary>
     [Serializable]
-    [ActionType("sell11")]
-    public class Sell : GameAction
+    [ActionType("sell10")]
+    public class Sell10 : GameAction
     {
         public Address sellerAvatarAddress;
         public Guid tradableId;
@@ -126,23 +125,6 @@ namespace Nekoyume.Action
             order.Validate(avatarState, count);
 
             ITradableItem tradableItem = order.Sell(avatarState);
-            if (tradableItem is INonFungibleItem)
-            {
-                var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(sellerAvatarAddress);
-                var arenaAvatarState = states.GetArenaAvatarState(arenaAvatarStateAdr, avatarState);
-
-                var equipments = arenaAvatarState.Equipments
-                    .Where(id => !id.Equals(tradableItem.TradableId))
-                    .ToList();
-                arenaAvatarState.UpdateEquipment(equipments);
-
-                var costumes = arenaAvatarState.Costumes
-                    .Where(id => !id.Equals(tradableItem.TradableId))
-                    .ToList();
-                arenaAvatarState.UpdateCostumes(costumes);
-
-                states = states.SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize());
-            }
 
             var shardedShopState = states.TryGetState(shopAddress, out Dictionary serializedState)
                 ? new ShardedShopStateV2(serializedState)

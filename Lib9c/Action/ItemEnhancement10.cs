@@ -26,8 +26,8 @@ namespace Nekoyume.Action
     /// Updated at https://github.com/planetarium/lib9c/pull/1045
     /// </summary>
     [Serializable]
-    [ActionType("item_enhancement11")]
-    public class ItemEnhancement : GameAction
+    [ActionType("item_enhancement10")]
+    public class ItemEnhancement10 : GameAction
     {
         public static readonly Address BlacksmithAddress = Addresses.Blacksmith;
 
@@ -288,13 +288,6 @@ namespace Nekoyume.Action
             materialEquipment.Unequip();
             enhancementEquipment.Unequip();
 
-            var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(avatarAddress);
-            var arenaAvatarState = states.GetArenaAvatarState(arenaAvatarStateAdr, avatarState);
-            var equipments = arenaAvatarState.Equipments
-                .Where(id => !id.Equals(materialEquipment.ItemId) && !id.Equals(enhancementEquipment.ItemId))
-                .ToList();
-            arenaAvatarState.UpdateEquipment(equipments);
-
             // clone items
             var preItemUsable = new Equipment((Dictionary) enhancementEquipment.Serialize());
 
@@ -368,8 +361,7 @@ namespace Nekoyume.Action
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize());
+                .SetState(avatarAddress, avatarState.SerializeV2());
             sw.Stop();
             Log.Verbose("{AddressesHex}ItemEnhancement Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
