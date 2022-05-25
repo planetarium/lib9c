@@ -4,9 +4,23 @@ namespace Lib9c.Tests
     using System.Collections.Generic;
     using System.Text;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.Crystal;
 
     public class TableSheets
     {
+        public const string MockedStakeRegularRewardSheet = @"level,required_gold,item_id,rate
+0,0,0,0
+1,10,400000,10
+1,10,500000,200
+2,100,400000,8
+2,100,500000,200
+3,1000,400000,5
+3,1000,500000,180
+4,10000,400000,5
+4,10000,500000,180
+5,100000,400000,5
+5,100000,500000,160";
+
         public TableSheets(Dictionary<string, string> sheets)
         {
             foreach (var (key, value) in sheets)
@@ -134,7 +148,23 @@ namespace Lib9c.Tests
 
         public MonsterCollectionRewardSheet MonsterCollectionRewardSheet { get; private set; }
 
+        public StakeRegularRewardSheet StakeRegularRewardSheet { get; private set; }
+
+        public StakeAchievementRewardSheet StakeAchievementRewardSheet { get; private set; }
+
         public SweepRequiredCPSheet SweepRequiredCPSheet { get; private set; }
+
+        public CrystalEquipmentGrindingSheet CrystalEquipmentGrindingSheet { get; private set; }
+
+        public CrystalMonsterCollectionMultiplierSheet CrystalMonsterCollectionMultiplierSheet { get; private set; }
+
+        public CrystalMaterialCostSheet CrystalMaterialCostSheet { get; private set; }
+
+        public CrystalStageBuffGachaSheet CrystalStageBuffGachaSheet { get; private set; }
+
+        public CrystalRandomBuffSheet CrystalRandomBuffSheet { get; private set; }
+
+        public ArenaSheet ArenaSheet { get; private set; }
 
         public void ItemSheetInitialize()
         {
@@ -187,6 +217,21 @@ namespace Lib9c.Tests
                 CharacterSheet,
                 CharacterLevelSheet,
                 EquipmentItemSetEffectSheet,
+                WeeklyArenaRewardSheet
+            );
+        }
+
+        public ArenaSimulatorSheets GetArenaSimulatorSheets()
+        {
+            return new ArenaSimulatorSheets(
+                MaterialItemSheet,
+                SkillSheet,
+                SkillBuffSheet,
+                BuffSheet,
+                CharacterSheet,
+                CharacterLevelSheet,
+                EquipmentItemSetEffectSheet,
+                CostumeStatSheet,
                 WeeklyArenaRewardSheet
             );
         }
