@@ -52,8 +52,8 @@ namespace Nekoyume.Model.State
             }
         }
 
-        public const long RewardInterval = 50400;
-        public const long LockupInterval = 50400 * 4;
+        public const long RewardInterval = 7200;
+        public const long LockupInterval = 7200 * 4;
 
         public long CancellableBlockIndex { get; private set; }
         public long StartedBlockIndex { get; private set; }
