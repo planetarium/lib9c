@@ -35,8 +35,8 @@ namespace Lib9c.Tests
         }
 
         [Theory]
-        [InlineData(new[] { 2 }, 500)]
-        [InlineData(new[] { 2, 3 }, 1000)]
+        [InlineData(new[] { 2 }, 250)]
+        [InlineData(new[] { 2, 3 }, 20250)]
         public void CalculateWorldUnlockCost(IEnumerable<int> worldIds, int expected)
         {
             Assert.Equal(expected * CrystalCalculator.CRYSTAL, CrystalCalculator.CalculateWorldUnlockCost(worldIds, _worldUnlockSheet));
@@ -97,8 +97,8 @@ namespace Lib9c.Tests
         }
 
         [Theory]
-        [InlineData(302000, 1, 100, null)]
-        [InlineData(302003, 2, 200, null)]
+        [InlineData(302000, 1, 30, null)]
+        [InlineData(302003, 2, 60, null)]
         [InlineData(306068, 1, 100, typeof(ArgumentException))]
         public void CalculateMaterialCost(int materialId, int materialCount, int expected, Type exc)
         {
@@ -117,10 +117,10 @@ namespace Lib9c.Tests
         {
             private readonly List<object[]> _data = new List<object[]>
             {
-                // 100 + (2^0 - 1) * 100 = 100
+                // 10 + (2^0 - 1) * 100 = 10
                 // enchant level 2
-                // 200 + (2^2 - 1) * 100 = 500
-                // total 600
+                // 10 + (2^2 - 1) * 10 = 40
+                // total 50
                 new object[]
                 {
                     new[]
@@ -130,26 +130,26 @@ namespace Lib9c.Tests
                     },
                     0,
                     false,
-                    600,
+                    50,
                 },
                 new object[]
                 {
                     // enchant failed
-                    // 100 + (2^0 -1) * 100 % 2 = 50
-                    // total 50
+                    // (100 + (2^0 -1) * 10) / 2 = 5
+                    // total 5
                     new[]
                     {
                         (10100000, 0),
                     },
                     0,
                     true,
-                    50,
+                    5,
                 },
                 // enchant level 3 & failed
-                // (200 + (2^3 - 1) * 100) % 2 = 450
+                // (10 + (2^3 - 1) * 10) / 2 = 40
                 // multiply by staking
-                // 450 * 0.3 = 135
-                // total 585
+                // 40 * 0.3 = 12
+                // total 52
                 new object[]
                 {
                     new[]
@@ -158,15 +158,15 @@ namespace Lib9c.Tests
                     },
                     3,
                     true,
-                    585,
+                    52,
                 },
                 // enchant level 1
-                // 100 + (2^1 - 1) * 100 = 200
+                // 10 + (2^1 - 1) * 10 = 20
                 // enchant level 2
-                // 200 + (2^2 - 1) * 100 = 500
+                // 10 + (2^2 - 1) * 10 = 40
                 // multiply by staking
-                // 700 * 0.3 = 210
-                // total 910
+                // 60 * 0.3 = 18
+                // total 78
                 new object[]
                 {
                     new[]
@@ -176,10 +176,10 @@ namespace Lib9c.Tests
                     },
                     3,
                     false,
-                    910,
+                    78,
                 },
                 // enchant level 1
-                // 200 + (2^1 - 1) * 100 = 300
+                // 10 + (2^1 - 1) * 10 = 20
                 new object[]
                 {
                     new[]
@@ -188,7 +188,7 @@ namespace Lib9c.Tests
                     },
                     0,
                     false,
-                    300,
+                    20,
                 },
             };
 
