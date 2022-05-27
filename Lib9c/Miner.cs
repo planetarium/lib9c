@@ -42,6 +42,7 @@ namespace Nekoyume.BlockChain
         public Address Address => _privateKey.ToAddress();
 
         public async Task<Block<T>> MineBlockAsync(
+            BlockCommit? lastCommit,
             CancellationToken cancellationToken)
         {
             var txs = new HashSet<Transaction<T>>();
@@ -61,8 +62,8 @@ namespace Nekoyume.BlockChain
                 block = await _chain.MineBlock(
                     _privateKey,
                     DateTimeOffset.UtcNow,
-                    cancellationToken: cancellationToken,
-                    append: true);
+                    lastCommit: lastCommit,
+                    cancellationToken: cancellationToken);
 
                 if (_swarm is Swarm<T> s && s.Running)
                 {
