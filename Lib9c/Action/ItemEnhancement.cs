@@ -26,7 +26,7 @@ namespace Nekoyume.Action
     /// Updated at https://github.com/planetarium/lib9c/pull/1045
     /// </summary>
     [Serializable]
-    [ActionType("item_enhancement11")]
+    [ActionType("item_enhancement10")]
     public class ItemEnhancement : GameAction
     {
         public static readonly Address BlacksmithAddress = Addresses.Blacksmith;

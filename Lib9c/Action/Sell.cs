@@ -20,7 +20,7 @@ namespace Nekoyume.Action
     /// Updated at https://github.com/planetarium/lib9c/pull/1045
     /// </summary>
     [Serializable]
-    [ActionType("sell11")]
+    [ActionType("sell10")]
     public class Sell : GameAction
     {
         public Address sellerAvatarAddress;
