@@ -129,6 +129,7 @@ namespace Nekoyume.Action
                     typeof(EquipmentItemSubRecipeSheetV2),
                     typeof(EquipmentItemOptionSheet),
                     typeof(CrystalStageBuffGachaSheet),
+                    typeof(CrystalRandomBuffSheet),
                 });
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Get Sheets: {Elapsed}", addressesHex, sw.Elapsed);
@@ -239,6 +240,7 @@ namespace Nekoyume.Action
 
             var buffStateAddress = Addresses.GetBuffStateAddressFromAvatarAddress(avatarAddress);
             HackAndSlashBuffState buffState;
+            //bool useRandomBuff = false;
             if (!worldInformation.IsStageCleared(stageId))
             {
                 if (states.TryGetState<List>(buffStateAddress, out var serialized))
@@ -251,6 +253,16 @@ namespace Nekoyume.Action
                 else
                 {
                     buffState = new HackAndSlashBuffState(buffStateAddress, stageId);
+                }
+
+                if (buffState.BuffIds.Any())
+                {
+                    //useRandomBuff = true;
+                    var buffSheet = sheets.GetSheet<CrystalRandomBuffSheet>();
+                    if (!buffState.BuffIds.Contains(randomBuffId))
+                    {
+                        randomBuffId = buffState.BuffIds.OrderBy(id => buffSheet[id].Rank).First();
+                    }
                 }
             }
             else
@@ -268,7 +280,8 @@ namespace Nekoyume.Action
                 stageId,
                 sheets.GetStageSimulatorSheets(),
                 sheets.GetSheet<CostumeStatSheet>(),
-                StageSimulator.ConstructorVersionV100080);
+                StageSimulator.ConstructorVersionV100080
+                /*,useRandomBuff ? randomBuffId : 0*/);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Initialize Simulator: {Elapsed}", addressesHex, sw.Elapsed);
