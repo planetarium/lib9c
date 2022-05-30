@@ -237,7 +237,7 @@ namespace Nekoyume.Action
                 Log.Verbose("{AddressesHex}HAS Update QuestList: {Elapsed}", addressesHex, sw.Elapsed);
             }
 
-            var buffStateAddress = avatarAddress.Derive(HackAndSlashBuffStateKey);
+            var buffStateAddress = Addresses.GetBuffStateAddressFromAvatarAddress(avatarAddress);
             HackAndSlashBuffState buffState;
             if (!worldInformation.IsStageCleared(stageId))
             {

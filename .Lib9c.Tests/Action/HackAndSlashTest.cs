@@ -1019,6 +1019,94 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
+        public void CheckUpdatedHackAndSlashBuffState()
+        {
+            const int worldId = 1;
+            const int stageId = 5;
+            const int clearedStageId = 4;
+            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            previousAvatarState.actionPoint = 999999;
+            previousAvatarState.level = 3;
+            previousAvatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                clearedStageId);
+
+            var costumes = new List<Guid>();
+            var mailEquipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var mailEquipment = ItemFactory.CreateItemUsable(mailEquipmentRow, default, 0);
+            var result = new CombinationConsumable5.ResultModel
+            {
+                id = default,
+                gold = 0,
+                actionPoint = 0,
+                recipeId = 1,
+                materials = new Dictionary<Material, int>(),
+                itemUsable = mailEquipment,
+            };
+            for (var i = 0; i < 100; i++)
+            {
+                var mail = new CombinationMail(result, i, default, 0);
+                previousAvatarState.Update(mail);
+            }
+
+            var state = _initialState
+                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
+                .SetState(
+                    _avatarAddress.Derive(LegacyInventoryKey),
+                    previousAvatarState.inventory.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyWorldInformationKey),
+                    previousAvatarState.worldInformation.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyQuestListKey),
+                    previousAvatarState.questList.Serialize());
+
+            state = state.SetState(
+                _avatarAddress.Derive("world_ids"),
+                List.Empty.Add(worldId.Serialize())
+            );
+
+            var action = new HackAndSlash
+            {
+                costumes = costumes,
+                equipments = new List<Guid>(),
+                foods = new List<Guid>(),
+                worldId = worldId,
+                stageId = stageId,
+                avatarAddress = _avatarAddress,
+            };
+
+            var random = new TestRandom();
+            var ctx = new ActionContext
+            {
+                PreviousStates = state,
+                Signer = _agentAddress,
+                Random = random,
+                Rehearsal = false,
+                BlockIndex = 1,
+            };
+            var nextState = action.Execute(ctx);
+            var simulator = new StageSimulator(
+                new TestRandom(ctx.Random.Seed),
+                previousAvatarState,
+                new List<Guid>(),
+                worldId,
+                stageId,
+                _tableSheets.GetStageSimulatorSheets(),
+                _tableSheets.CostumeStatSheet,
+                StageSimulator.ConstructorVersionV100080);
+            simulator.Simulate(1);
+            var log = simulator.Log;
+
+            var nextBuffStateAddress = Addresses.GetBuffStateAddressFromAvatarAddress(_avatarAddress);
+            var nextBuffState = new HackAndSlashBuffState(
+                nextBuffStateAddress,
+                (List)nextState.GetState(nextBuffStateAddress));
+            Assert.Equal(nextBuffState.StarCount, log.clearedWaveNumber);
+        }
+
+        [Fact]
         public void Rehearsal()
         {
             var action = new HackAndSlash
