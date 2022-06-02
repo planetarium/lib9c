@@ -284,7 +284,7 @@ namespace Nekoyume.Battle
             TurnNumber = 0;
             for (var i = 0; i < _waves.Count; i++)
             {
-                Characters = new SimplePriorityQueue<CharacterBase, decimal>();
+                Characters = new SimplePriorityQueue<StageCharacter, decimal>();
                 Characters.Enqueue(Player, TurnPriority / Player.SPD);
 
                 WaveNumber = i + 1;
@@ -408,7 +408,7 @@ namespace Nekoyume.Battle
             TurnNumber = 0;
             for (var i = 0; i < _waves.Count; i++)
             {
-                Characters = new SimplePriorityQueue<CharacterBase, decimal>();
+                Characters = new SimplePriorityQueue<StageCharacter, decimal>();
                 Characters.Enqueue(Player, TurnPriority / Player.SPD);
 
                 WaveNumber = i + 1;
@@ -581,7 +581,7 @@ namespace Nekoyume.Battle
             TurnNumber = 0;
             for (var i = 0; i < _waves.Count; i++)
             {
-                Characters = new SimplePriorityQueue<CharacterBase, decimal>();
+                Characters = new SimplePriorityQueue<StageCharacter, decimal>();
                 Characters.Enqueue(Player, TurnPriority / Player.SPD);
 
                 WaveNumber = i + 1;
@@ -751,7 +751,7 @@ namespace Nekoyume.Battle
             TurnNumber = 0;
             for (var i = 0; i < _waves.Count; i++)
             {
-                Characters = new SimplePriorityQueue<CharacterBase, decimal>();
+                Characters = new SimplePriorityQueue<StageCharacter, decimal>();
                 Characters.Enqueue(Player, TurnPriority / Player.SPD);
 
                 WaveNumber = i + 1;
@@ -872,7 +872,7 @@ namespace Nekoyume.Battle
             TurnNumber = 0;
             for (var i = 0; i < _waves.Count; i++)
             {
-                Characters = new SimplePriorityQueue<CharacterBase, decimal>();
+                Characters = new SimplePriorityQueue<StageCharacter, decimal>();
                 Characters.Enqueue(Player, TurnPriority / Player.SPD);
 
                 WaveNumber = i + 1;
@@ -993,7 +993,7 @@ namespace Nekoyume.Battle
             TurnNumber = 0;
             for (var i = 0; i < _waves.Count; i++)
             {
-                Characters = new SimplePriorityQueue<CharacterBase, decimal>();
+                Characters = new SimplePriorityQueue<StageCharacter, decimal>();
                 Characters.Enqueue(Player, TurnPriority / Player.SPD);
 
                 WaveNumber = i + 1;

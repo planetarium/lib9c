@@ -6,7 +6,7 @@ namespace Nekoyume.Model.BattleStatus
     [Serializable]
     public class SpawnEnemyPlayer : EventBase
     {
-        public SpawnEnemyPlayer(CharacterBase character) : base(character)
+        public SpawnEnemyPlayer(StageCharacter stageCharacter) : base(stageCharacter)
         {
         }
 

@@ -255,11 +255,9 @@ namespace Nekoyume.Action
 
             for (var i = 0; i < ticket; i++)
             {
-                var simulator =
-                    new ArenaSimulator(context.Random, myDigest, enemyDigest, arenaSheets);
-                simulator.Simulate();
-
-                if (simulator.Result.Equals(BattleLog.Result.Win))
+                var simulator = new ArenaSimulator(context.Random);
+                var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets);
+                if (log.result.Equals(BattleLog.Result.Win))
                 {
                     winCount++;
                 }

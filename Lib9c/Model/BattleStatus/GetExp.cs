@@ -8,7 +8,7 @@ namespace Nekoyume.Model.BattleStatus
     {
         public long Exp { get; }
 
-        public GetExp(CharacterBase character, long exp) : base(character)
+        public GetExp(StageCharacter stageCharacter, long exp) : base(stageCharacter)
         {
             Exp = exp;
         }

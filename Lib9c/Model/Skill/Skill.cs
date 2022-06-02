@@ -2,14 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Nekoyume.Model.Character;
 using Nekoyume.Model.Elemental;
+using Nekoyume.Model.Skill.Arena;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Skill
 {
     [Serializable]
-    public abstract class Skill : IState
+    public class Skill : IState
     {
         public readonly SkillSheet.Row SkillRow;
         public int Power { get; private set; }
@@ -21,12 +23,6 @@ namespace Nekoyume.Model.Skill
             Power = power;
             Chance = chance;
         }
-
-        public abstract BattleStatus.Skill Use(
-            CharacterBase caster,
-            int simulatorWaveTurn,
-            IEnumerable<Buff.Buff> buffs
-        );
 
         protected bool Equals(Skill other)
         {
@@ -53,7 +49,7 @@ namespace Nekoyume.Model.Skill
         }
 
         protected IEnumerable<Model.BattleStatus.Skill.SkillInfo> ProcessBuff(
-            CharacterBase caster,
+            StageCharacter caster,
             int simulatorWaveTurn,
             IEnumerable<Buff.Buff> buffs
         )
@@ -65,10 +61,28 @@ namespace Nekoyume.Model.Skill
                 foreach (var target in targets.Where(target => target.GetChance(buff.RowData.Chance)))
                 {
                     target.AddBuff(buff);
-                    infos.Add(new Model.BattleStatus.Skill.SkillInfo((CharacterBase) target.Clone(), 0, false,
+                    infos.Add(new Model.BattleStatus.Skill.SkillInfo((StageCharacter) target.Clone(), 0, false,
                         SkillRow.SkillCategory, simulatorWaveTurn, ElementalType.Normal, SkillRow.SkillTargetType,
                         buff));
                 }
+            }
+
+            return infos;
+        }
+
+        protected IEnumerable<Model.BattleStatus.Skill.SkillInfo> ProcessBuffForArena(
+            ArenaPlayer target,
+            int simulatorWaveTurn,
+            IEnumerable<Buff.Buff> buffs
+        )
+        {
+            var infos = new List<Model.BattleStatus.Skill.SkillInfo>();
+            foreach (var buff in buffs)
+            {
+                target.AddBuff(buff);
+                infos.Add(new Model.BattleStatus.Skill.SkillInfo(target, 0, false,
+                    SkillRow.SkillCategory, simulatorWaveTurn, ElementalType.Normal, SkillRow.SkillTargetType,
+                    buff));
             }
 
             return infos;

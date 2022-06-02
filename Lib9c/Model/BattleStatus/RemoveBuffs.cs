@@ -6,7 +6,7 @@ namespace Nekoyume.Model.BattleStatus
     [Serializable]
     public class RemoveBuffs : EventBase
     {
-        public RemoveBuffs(CharacterBase character) : base(character)
+        public RemoveBuffs(StageCharacter stageCharacter) : base(stageCharacter)
         {
         }
 

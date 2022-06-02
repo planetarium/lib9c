@@ -9,7 +9,7 @@ namespace Nekoyume.Model.BattleStatus
         public readonly int TurnNumber;
         public readonly int WaveTurn;
         
-        public WaveTurnEnd(CharacterBase character, int turnNumber, int waveTurn) : base(character)
+        public WaveTurnEnd(StageCharacter stageCharacter, int turnNumber, int waveTurn) : base(stageCharacter)
         {   
             TurnNumber = turnNumber;
             WaveTurn = waveTurn;

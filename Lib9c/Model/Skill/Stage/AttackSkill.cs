@@ -4,12 +4,13 @@ using System.Linq;
 using Nekoyume.Model.Elemental;
 using Nekoyume.TableData;
 
-namespace Nekoyume.Model.Skill
+namespace Nekoyume.Model.Skill.Stage
 {
     [Serializable]
     public abstract class AttackSkill : Skill
     {
-        protected AttackSkill(SkillSheet.Row skillRow, int power, int chance) : base(skillRow, power, chance)
+        protected AttackSkill(SkillSheet.Row skillRow, int power, int chance)
+            : base(skillRow, power, chance)
         {
         }
 
@@ -21,7 +22,9 @@ namespace Nekoyume.Model.Skill
         /// <param name="simulatorWaveTurn"></param>
         /// <param name="isNormalAttack"></param>
         /// <returns></returns>
-        protected IEnumerable<BattleStatus.Skill.SkillInfo> ProcessDamage(CharacterBase caster, int simulatorWaveTurn,
+        protected IEnumerable<BattleStatus.Skill.SkillInfo> ProcessDamage(
+            StageCharacter caster,
+            int simulatorWaveTurn,
             bool isNormalAttack = false)
         {
             var infos = new List<BattleStatus.Skill.SkillInfo>();
@@ -59,7 +62,7 @@ namespace Nekoyume.Model.Skill
                             isCritical = caster.IsCritical(isNormalAttack);
                             if (isCritical)
                             {
-                                damage = (int) (damage * CharacterBase.CriticalMultiplier);
+                                damage = (int) (damage * StageCharacter.CriticalMultiplier);
                             }
 
                             // 연타공격은 항상 연출이 크리티컬로 보이도록 처리.
@@ -69,7 +72,7 @@ namespace Nekoyume.Model.Skill
                         target.CurrentHP -= damage;
                     }
 
-                    infos.Add(new BattleStatus.Skill.SkillInfo((CharacterBase) target.Clone(), damage, isCritical,
+                    infos.Add(new BattleStatus.Skill.SkillInfo((StageCharacter) target.Clone(), damage, isCritical,
                         SkillRow.SkillCategory, simulatorWaveTurn, SkillRow.ElementalType,
                         SkillRow.SkillTargetType));
                 }

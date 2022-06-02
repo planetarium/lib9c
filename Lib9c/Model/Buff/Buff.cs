@@ -27,28 +27,28 @@ namespace Nekoyume.Model.Buff
             RowData = value.RowData;
         }
 
-        public int Use(CharacterBase characterBase)
+        public int Use(StageCharacter stageCharacter)
         {
             var value = 0;
             switch (RowData.StatModifier.StatType)
             {
                 case StatType.HP:
-                    value = characterBase.HP;
+                    value = stageCharacter.HP;
                     break;
                 case StatType.ATK:
-                    value = characterBase.ATK;
+                    value = stageCharacter.ATK;
                     break;
                 case StatType.DEF:
-                    value = characterBase.DEF;
+                    value = stageCharacter.DEF;
                     break;
                 case StatType.CRI:
-                    value = characterBase.CRI;
+                    value = stageCharacter.CRI;
                     break;
                 case StatType.HIT:
-                    value = characterBase.HIT;
+                    value = stageCharacter.HIT;
                     break;
                 case StatType.SPD:
-                    value = characterBase.SPD;
+                    value = stageCharacter.SPD;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -57,7 +57,7 @@ namespace Nekoyume.Model.Buff
             return RowData.StatModifier.GetModifiedAll(value);
         }
 
-        public IEnumerable<CharacterBase> GetTarget(CharacterBase caster)
+        public IEnumerable<StageCharacter> GetTarget(StageCharacter caster)
         {
             return RowData.TargetType.GetTarget(caster);
         }

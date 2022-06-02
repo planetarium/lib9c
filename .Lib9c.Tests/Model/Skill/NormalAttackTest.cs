@@ -71,7 +71,6 @@ namespace Lib9c.Tests.Model.Skill
 
             var skillInfo = battleStatusSkill.SkillInfos.FirstOrDefault();
             Assert.NotNull(skillInfo);
-            Assert.Equal(enemy.Id, skillInfo.Target.Id);
         }
     }
 }

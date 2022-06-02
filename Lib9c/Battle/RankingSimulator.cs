@@ -100,7 +100,7 @@ namespace Nekoyume.Battle
 #endif
             Log.stageId = _stageId;
             Spawn();
-            Characters = new SimplePriorityQueue<CharacterBase, decimal>();
+            Characters = new SimplePriorityQueue<StageCharacter, decimal>();
             Characters.Enqueue(Player, TurnPriority / Player.SPD);
             Characters.Enqueue(_enemyPlayer, TurnPriority / _enemyPlayer.SPD);
             TurnNumber = 1;

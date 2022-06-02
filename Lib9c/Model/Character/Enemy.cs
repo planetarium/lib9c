@@ -9,14 +9,14 @@ using Nekoyume.TableData;
 namespace Nekoyume.Model
 {
     [Serializable]
-    public class Enemy : CharacterBase, ICloneable
+    public class Enemy : StageCharacter, ICloneable
     {
         public int spawnIndex = -1;
 
         [NonSerialized]
         public StageSimulator StageSimulator;
 
-        public Enemy(CharacterBase player, CharacterSheet.Row rowData, int monsterLevel,
+        public Enemy(StageCharacter player, CharacterSheet.Row rowData, int monsterLevel,
             IEnumerable<StatModifier> optionalStatModifiers = null)
             : base(
                 player.Simulator,

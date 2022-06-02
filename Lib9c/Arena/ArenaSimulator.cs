@@ -1,144 +1,103 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Libplanet.Action;
-using Nekoyume.Battle;
-using Nekoyume.Model;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.Item;
+using Nekoyume.Model.Character;
 using Nekoyume.TableData;
 using Priority_Queue;
 
 namespace Nekoyume.Arena
 {
     /// <summary>
-    /// Introduced at https://github.com/planetarium/lib9c/pull/1029
+    /// Introduced at https://github.com/planetarium/lib9c/pull/
     /// </summary>
-    public class ArenaSimulator : Simulator
+    public class ArenaSimulator
     {
-        private readonly EnemyPlayer _enemyPlayer;
+        private const decimal TurnPriority = 100m;
+        private const int MaxTurn = 200;
 
-        public ArenaSimulator(IRandom random,
-            ArenaPlayerDigest myDigest,
-            ArenaPlayerDigest enemyDigest,
-            ArenaSimulatorSheets simulatorSheets
-        ) : base(
-            random,
-            new Player(myDigest, simulatorSheets),
-            new List<Guid>(),
-            simulatorSheets
-        )
+        public IRandom Random { get; }
+        public int Turn { get; private set; }
+
+        public ArenaSimulator(IRandom random)
         {
-            _enemyPlayer = new EnemyPlayer(enemyDigest, simulatorSheets)
-            {
-                Simulator = this
-            };
+            Random = random;
+            Turn = 1;
         }
 
-        public Player Simulate()
+        public BattleLog Simulate(
+            ArenaPlayerDigest challenger,
+            ArenaPlayerDigest enemy,
+            ArenaSimulatorSheets sheets)
         {
-#if TEST_LOG
-            var sb = new System.Text.StringBuilder();
-#endif
-            Spawn();
-            Characters = new SimplePriorityQueue<CharacterBase, decimal>();
-            Characters.Enqueue(Player, TurnPriority / Player.SPD);
-            Characters.Enqueue(_enemyPlayer, TurnPriority / _enemyPlayer.SPD);
-            TurnNumber = 1;
-            WaveNumber = 1;
-            WaveTurn = 1;
-#if TEST_LOG
-            sb.Clear();
-            sb.Append($"{nameof(TurnNumber)}: {TurnNumber}");
-            sb.Append($" / {nameof(WaveNumber)}: {WaveNumber}");
-            sb.Append($" / {nameof(WaveTurn)}: {WaveTurn}");
-            sb.Append($" / {nameof(WaveNumber)} Start");
-            UnityEngine.Debug.LogWarning(sb.ToString());
-#endif
+            var log = new BattleLog();
+            var players = SpawnPlayers(this, challenger, enemy, sheets, log);
+            Turn = 1;
+
             while (true)
             {
-                if (TurnNumber > MaxTurn)
+                if (Turn > MaxTurn)
                 {
-                    Result = BattleLog.Result.TimeOver;
-#if TEST_LOG
-                    sb.Clear();
-                    sb.Append($"{nameof(TurnNumber)}: {TurnNumber}");
-                    sb.Append($" / {nameof(WaveNumber)}: {WaveNumber}");
-                    sb.Append($" / {nameof(WaveTurn)}: {WaveTurn}");
-                    sb.Append($" / {nameof(MaxTurn)}: {MaxTurn}");
-                    sb.Append($" / {nameof(Result)}: {Result.ToString()}");
-                    UnityEngine.Debug.LogWarning(sb.ToString());
-#endif
+                    // todo : 턴오버일경우 정책 필요함 일단 Lose
+                    log.result = BattleLog.Result.Lose;
                     break;
                 }
 
-                // 캐릭터 큐가 비어 있는 경우 break.
-                if (!Characters.TryDequeue(out var character))
-                    break;
-
-                character.Tick();
-
-                // 플레이어가 죽은 경우 break;
-                if (Player.IsDead)
+                if (!players.TryDequeue(out var selectedPlayer))
                 {
-                    Result = BattleLog.Result.Lose;
-#if TEST_LOG
-                    sb.Clear();
-                    sb.Append($"{nameof(TurnNumber)}: {TurnNumber}");
-                    sb.Append($" / {nameof(WaveNumber)}: {WaveNumber}");
-                    sb.Append($" / {nameof(WaveTurn)}: {WaveTurn}");
-                    sb.Append($" / {nameof(Player)} Dead");
-                    sb.Append($" / {nameof(Result)}: {Result.ToString()}");
-                    UnityEngine.Debug.LogWarning(sb.ToString());
-#endif
                     break;
                 }
 
-                // 플레이어의 타겟(적)이 없는 경우 break.
-                if (!Player.Targets.Any())
-                {
-                    Result = BattleLog.Result.Win;
-                    Log.clearedWaveNumber = WaveNumber;
+                selectedPlayer.Tick();
+                log.Add(selectedPlayer.SkillLog);
 
+                if (selectedPlayer.IsDead)
+                {
+                    log.Add(new Dead(selectedPlayer));
+                    log.result = selectedPlayer.IsEnemy
+                        ? BattleLog.Result.Win
+                        : BattleLog.Result.Lose;
                     break;
                 }
 
-                foreach (var other in Characters)
+                if (!selectedPlayer.IsEnemy)
                 {
-                    var current = Characters.GetPriority(other);
+                    Turn++;
+                    log.Add(new ArenaTurnEnd(selectedPlayer, Turn));
+                }
+
+                foreach (var other in players)
+                {
+                    var current = players.GetPriority(other);
                     var speed = current * 0.6m;
-                    Characters.UpdatePriority(other, speed);
+                    players.UpdatePriority(other, speed);
                 }
 
-                Characters.Enqueue(character, TurnPriority / character.SPD);
+                players.Enqueue(selectedPlayer, TurnPriority / selectedPlayer.SPD);
             }
 
-            Log.result = Result;
-#if TEST_LOG
-            sb.Clear();
-            sb.Append($"{nameof(TurnNumber)}: {TurnNumber}");
-            sb.Append($" / {nameof(WaveNumber)}: {WaveNumber}");
-            sb.Append($" / {nameof(WaveTurn)}: {WaveTurn}");
-            sb.Append($" / {nameof(Simulate)} End");
-            sb.Append($" / {nameof(Result)}: {Result.ToString()}");
-            UnityEngine.Debug.LogWarning(sb.ToString());
-#endif
-            return Player;
+            return log;
         }
 
-        private void Spawn()
+        private static SimplePriorityQueue<ArenaPlayer, decimal> SpawnPlayers(
+            ArenaSimulator simulator,
+            ArenaPlayerDigest challengerDigest,
+            ArenaPlayerDigest enemyDigest,
+            ArenaSimulatorSheets simulatorSheets,
+            BattleLog log)
         {
-            Player.Spawn();
-            _enemyPlayer.Spawn();
-            Player.Targets.Add(_enemyPlayer);
-            _enemyPlayer.Targets.Add(Player);
+            var challenger = new ArenaPlayer(simulator, challengerDigest, simulatorSheets);
+            var enemy = new ArenaPlayer(simulator, enemyDigest, simulatorSheets, true);
+
+            challenger.Spawn(enemy);
+            enemy.Spawn(challenger);
+
+            log.Add(new SpawnArenaPlayer(challenger));
+            log.Add(new SpawnArenaPlayer(enemy));
+
+            var players = new SimplePriorityQueue<ArenaPlayer, decimal>();
+            players.Enqueue(challenger, TurnPriority / challenger.SPD);
+            players.Enqueue(enemy, TurnPriority / enemy.SPD);
+            return players;
         }
-
-
-        /// <summary>
-        /// do not use it
-        /// </summary>
-        public override IEnumerable<ItemBase> Reward { get; }
     }
 }

@@ -10,7 +10,7 @@ namespace Nekoyume.Model.BattleStatus
     {
         public readonly List<ItemBase> Items;
 
-        public DropBox(CharacterBase character, List<ItemBase> items) : base(character)
+        public DropBox(StageCharacter stageCharacter, List<ItemBase> items) : base(stageCharacter)
         {
             Items = items;
         }

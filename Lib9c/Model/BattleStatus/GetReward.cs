@@ -10,7 +10,7 @@ namespace Nekoyume.Model.BattleStatus
     {
         public readonly List<ItemBase> Rewards;
 
-        public GetReward(CharacterBase character, List<ItemBase> rewards) : base(character)
+        public GetReward(StageCharacter stageCharacter, List<ItemBase> rewards) : base(stageCharacter)
         {
             Rewards = rewards;
         }

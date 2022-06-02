@@ -13,10 +13,10 @@ namespace Nekoyume.Model.Skill
 
     public static class SkillTargetTypeExtension
     {
-        public static IEnumerable<CharacterBase> GetTarget(this SkillTargetType value, CharacterBase caster)
+        public static IEnumerable<StageCharacter> GetTarget(this SkillTargetType value, StageCharacter caster)
         {
             var targets = caster.Targets;
-            IEnumerable<CharacterBase> target;
+            IEnumerable<StageCharacter> target;
             switch (value)
             {
                 case SkillTargetType.Enemy:

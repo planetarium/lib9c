@@ -1,4 +1,6 @@
 using Bencodex.Types;
+using Nekoyume.Model.Skill.Arena;
+using Nekoyume.Model.Skill.Stage;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
@@ -27,6 +29,35 @@ namespace Nekoyume.Model.Skill
                 case SkillType.Heal:
                     return new HealSkill(skillRow, power, chance);
                 // todo: 코드상에서 버프와 디버프를 버프로 함께 구분하고 있는데, 고도화 될 수록 디버프를 구분해주게 될 것으로 보임.
+                case SkillType.Buff:
+                case SkillType.Debuff:
+                    return new BuffSkill(skillRow, power, chance);
+            }
+
+            throw new UnexpectedOperationException(
+                $"{skillRow.Id}, {skillRow.SkillType}, {skillRow.SkillTargetType}, {skillRow.SkillCategory}");
+        }
+
+        public static Skill GetForArena(SkillSheet.Row skillRow, int power, int chance)
+        {
+            switch (skillRow.SkillType)
+            {
+                case SkillType.Attack:
+                    switch (skillRow.SkillCategory)
+                    {
+                        case SkillCategory.NormalAttack:
+                            return new ArenaNormalAttack(skillRow, power, chance);
+                        case SkillCategory.DoubleAttack:
+                            return new DoubleAttack(skillRow, power, chance);
+                        case SkillCategory.BlowAttack:
+                            return new ArenaBlowAttack(skillRow, power, chance);
+                        case SkillCategory.AreaAttack:
+                            return new ArenaAreaAttack(skillRow, power, chance);
+                        default:
+                            return new ArenaNormalAttack(skillRow, power, chance);
+                    }
+                case SkillType.Heal:
+                    return new HealSkill(skillRow, power, chance);
                 case SkillType.Buff:
                 case SkillType.Debuff:
                     return new BuffSkill(skillRow, power, chance);

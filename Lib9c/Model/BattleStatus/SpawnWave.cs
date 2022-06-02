@@ -12,7 +12,7 @@ namespace Nekoyume.Model.BattleStatus
         public readonly List<Enemy> Enemies;
         public readonly bool HasBoss;
 
-        public SpawnWave(CharacterBase character, int waveNumber, int waveTurn, List<Enemy> enemies, bool hasBoss) : base(character)
+        public SpawnWave(StageCharacter stageCharacter, int waveNumber, int waveTurn, List<Enemy> enemies, bool hasBoss) : base(stageCharacter)
         {
             WaveNumber = waveNumber;
             WaveTurn = waveTurn;

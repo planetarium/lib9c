@@ -2,25 +2,28 @@ using System;
 using System.Collections.Generic;
 using Nekoyume.TableData;
 
-namespace Nekoyume.Model.Skill
+namespace Nekoyume.Model.Skill.Stage
 {
     [Serializable]
-    public class DoubleAttack : AttackSkill
+    public class DoubleAttack : AttackSkill, IStageSkill
     {
-        public DoubleAttack(SkillSheet.Row skillRow, int power, int chance) : base(skillRow, power, chance)
+        public DoubleAttack(SkillSheet.Row skillRow, int power, int chance)
+            : base(skillRow, power, chance)
         {
         }
 
-        public override BattleStatus.Skill Use(
-            CharacterBase caster, 
+        public BattleStatus.Skill Use(
+            StageCharacter caster,
             int simulatorWaveTurn,
             IEnumerable<Buff.Buff> buffs)
         {
-            var clone = (CharacterBase) caster.Clone();
+            var clone = (StageCharacter) caster.Clone();
             var damage = ProcessDamage(caster, simulatorWaveTurn);
             var buff = ProcessBuff(caster, simulatorWaveTurn, buffs);
 
             return new Model.BattleStatus.DoubleAttack(clone, damage, buff);
         }
+
+
     }
 }

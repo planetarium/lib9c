@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Nekoyume.Model.Character;
 
 namespace Nekoyume.Model.BattleStatus
 {
@@ -11,7 +12,7 @@ namespace Nekoyume.Model.BattleStatus
             yield return stage.CoSpawnPlayer((Player)Character);
         }
 
-        public SpawnPlayer(CharacterBase character) : base(character)
+        public SpawnPlayer(ICharacter character) : base(character)
         {
         }
     }

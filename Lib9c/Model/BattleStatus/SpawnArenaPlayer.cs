@@ -5,15 +5,15 @@ using Nekoyume.Model.Character;
 namespace Nekoyume.Model.BattleStatus
 {
     [Serializable]
-    public class Dead : EventBase
+    public class SpawnArenaPlayer : EventBase
     {
-        public Dead(ICharacter character) : base(character)
+        public SpawnArenaPlayer(ICharacter character) : base(character)
         {
         }
 
         public override IEnumerator CoExecute(IStage stage)
         {
-            yield return stage.CoDead(Character);
+            yield return stage.CoSpawnArenaPlayer((ArenaPlayer)Character);
         }
     }
 }

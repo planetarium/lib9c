@@ -15,7 +15,7 @@ using Inventory = Nekoyume.Model.Item.Inventory;
 namespace Nekoyume.Model
 {
     [Serializable]
-    public class Player : CharacterBase
+    public class Player : StageCharacter
     {
         [Serializable]
         public class ExpData : ICloneable
@@ -206,7 +206,7 @@ namespace Nekoyume.Model
             equipments = value.equipments;
         }
 
-        public override bool IsHit(CharacterBase caster)
+        public override bool IsHit(StageCharacter caster)
         {
             return true;
         }
@@ -325,7 +325,7 @@ namespace Nekoyume.Model
 
             if (log)
             {
-                var getExp = new GetExp((CharacterBase) Clone(), waveExp);
+                var getExp = new GetExp((StageCharacter) Clone(), waveExp);
                 Simulator.Log.Add(getExp);
             }
 
@@ -350,7 +350,7 @@ namespace Nekoyume.Model
 
             if (log)
             {
-                var getExp = new GetExp((CharacterBase) Clone(), waveExp);
+                var getExp = new GetExp((StageCharacter) Clone(), waveExp);
                 Simulator.Log.Add(getExp);
             }
 
@@ -381,7 +381,7 @@ namespace Nekoyume.Model
 
             if (log)
             {
-                var getExp = new GetExp((CharacterBase) Clone(), waveExp);
+                var getExp = new GetExp((StageCharacter) Clone(), waveExp);
                 Simulator.Log.Add(getExp);
             }
 
@@ -426,7 +426,7 @@ namespace Nekoyume.Model
         public virtual void Spawn()
         {
             InitAI();
-            var spawn = new SpawnPlayer((CharacterBase) Clone());
+            var spawn = new SpawnPlayer((StageCharacter) Clone());
             Simulator.Log.Add(spawn);
         }
 
@@ -434,7 +434,7 @@ namespace Nekoyume.Model
         public virtual void SpawnV1()
         {
             InitAIV1();
-            var spawn = new SpawnPlayer((CharacterBase) Clone());
+            var spawn = new SpawnPlayer((StageCharacter) Clone());
             Simulator.Log.Add(spawn);
         }
 
@@ -442,7 +442,7 @@ namespace Nekoyume.Model
         public virtual void SpawnV2()
         {
             InitAIV2();
-            var spawn = new SpawnPlayer((CharacterBase) Clone());
+            var spawn = new SpawnPlayer((StageCharacter) Clone());
             Simulator.Log.Add(spawn);
         }
 
