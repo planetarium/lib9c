@@ -52,6 +52,13 @@ namespace Nekoyume.Action
                 throw new RequiredBlockIndexException();
             }
 
+            // Assume previewnet from the NCG's minter address.
+            bool isPreviewNet = context.PreviousStates.GetGoldCurrency().Minters
+                .Contains(new Address("340f110b91d0577a9ae0ea69ce15269436f217da"));
+
+            // https://github.com/planetarium/lib9c/pull/1073
+            bool addZeroItemForChainConsistency = isPreviewNet && context.BlockIndex < 1_200_000;
+
             var avatarState = states.GetAvatarStateV2(AvatarAddress);
             int level = stakeRegularRewardSheet.FindLevelByStakedAmount(stakedAmount);
             var rewards = stakeRegularRewardSheet[level].Rewards;
@@ -60,7 +67,7 @@ namespace Nekoyume.Action
             foreach (var reward in rewards)
             {
                 var (quantity, _) = stakedAmount.DivRem(currency * reward.Rate);
-                if (quantity < 1)
+                if (!addZeroItemForChainConsistency && quantity < 1)
                 {
                     // If the quantity is zero, it doesn't add the item into inventory.
                     continue;
