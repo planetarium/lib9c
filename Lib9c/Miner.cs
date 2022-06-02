@@ -62,6 +62,7 @@ namespace Nekoyume.BlockChain
                 block = await _chain.MineBlock(
                     _privateKey,
                     DateTimeOffset.UtcNow,
+                    append: false,
                     lastCommit: lastCommit,
                     cancellationToken: cancellationToken);
 
