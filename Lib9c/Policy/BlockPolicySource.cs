@@ -111,8 +111,9 @@ namespace Nekoyume.BlockChain.Policy
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
-                authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet);
+                authorizedMinersPolicy: AuthorizedMinersPolicy.Default,
+                permissionedMinersPolicy: PermissionedMinersPolicy.Default,
+                stakeIntervalPolicy: StakeIntervalPolicy.Mainnet);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-internal deployment.
@@ -126,7 +127,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet,
+                stakeIntervalPolicy: StakeIntervalPolicy.Mainnet);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-permanent-test deployment.
@@ -140,7 +142,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Permanent,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Permanent);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Permanent,
+                stakeIntervalPolicy: StakeIntervalPolicy.Permant);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance identical to the one deployed
@@ -155,7 +158,11 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet,
+                stakeIntervalPolicy: StakeIntervalPolicy.Mainnet);
+
+        public IEnumerable<IRenderer<NCAction>> GetRenderers() =>
+            new IRenderer<NCAction>[] { BlockRenderer, LoggedActionRenderer };
 
         /// <summary>
         /// Gets a <see cref="BlockPolicy"/> constructed from given parameters.
@@ -180,26 +187,29 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
             IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy,
-            IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy)
+            IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy,
+            IVariableSubPolicy<(long, long)> stakeIntervalPolicy)
         {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
              return new DebugPolicy(data.BlockDifficulty);
 #else
             hashAlgorithmTypePolicy = hashAlgorithmTypePolicy
-                ?? HashAlgorithmTypePolicy.Default;
+                                      ?? HashAlgorithmTypePolicy.Default;
             maxBlockBytesPolicy = maxBlockBytesPolicy
-                ?? MaxBlockBytesPolicy.Default;
+                                  ?? MaxBlockBytesPolicy.Default;
             minTransactionsPerBlockPolicy = minTransactionsPerBlockPolicy
-                ?? MinTransactionsPerBlockPolicy.Default;
+                                            ?? MinTransactionsPerBlockPolicy.Default;
             maxTransactionsPerBlockPolicy = maxTransactionsPerBlockPolicy
-                ?? MaxTransactionsPerBlockPolicy.Default;
+                                            ?? MaxTransactionsPerBlockPolicy.Default;
             maxTransactionsPerSignerPerBlockPolicy = maxTransactionsPerSignerPerBlockPolicy
-                ?? MaxTransactionsPerSignerPerBlockPolicy.Default;
+                                                     ?? MaxTransactionsPerSignerPerBlockPolicy.Default;
             authorizedMinersPolicy = authorizedMinersPolicy
-                ?? AuthorizedMinersPolicy.Default;
+                                     ?? AuthorizedMinersPolicy.Default;
             permissionedMinersPolicy = permissionedMinersPolicy
-                ?? PermissionedMinersPolicy.Default;
+                                       ?? PermissionedMinersPolicy.Default;
+            stakeIntervalPolicy = stakeIntervalPolicy
+                                  ?? StakeIntervalPolicy.Mainnet;
 
             // FIXME: Ad hoc solution to poorly defined tx validity.
             ImmutableHashSet<Address> allAuthorizedMiners =
@@ -250,6 +260,7 @@ namespace Nekoyume.BlockChain.Policy
                 minimumDifficulty: minimumDifficulty,
                 canonicalChainComparer: new TotalDifficultyComparer(),
                 hashAlgorithmGetter: getHashAlgorithmType,
+                getStakeInterval: stakeIntervalPolicy.Getter,
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,
                 getMaxBlockBytes: maxBlockBytesPolicy.Getter,
@@ -260,9 +271,6 @@ namespace Nekoyume.BlockChain.Policy
                 isAllowedToMine: isAllowedToMine);
 #endif
         }
-
-        public IEnumerable<IRenderer<NCAction>> GetRenderers() =>
-            new IRenderer<NCAction>[] { BlockRenderer, LoggedActionRenderer };
 
         internal static TxPolicyViolationException ValidateNextBlockTxRaw(
             BlockChain<NCAction> blockChain,

@@ -14,6 +14,7 @@ namespace Nekoyume.BlockChain.Policy
     {
         private readonly Func<BlockChain<NCAction>, long> _getNextBlockDifficulty;
         private readonly Func<Address, long, bool> _isAllowedToMine;
+        private readonly Func<long, (long RewardInterval, long LockupInterval)> _getStakeInterval;
 
         public BlockPolicy(
             IAction blockAction,
@@ -22,6 +23,7 @@ namespace Nekoyume.BlockChain.Policy
             long minimumDifficulty,
             IComparer<IBlockExcerpt> canonicalChainComparer,
             HashAlgorithmGetter hashAlgorithmGetter,
+            Func<long, (long, long)> getStakeInterval,
             Func<BlockChain<NCAction>, Transaction<NCAction>, TxPolicyViolationException>
                 validateNextBlockTx = null,
             Func<BlockChain<NCAction>, Block<NCAction>, BlockPolicyViolationException>
@@ -48,10 +50,15 @@ namespace Nekoyume.BlockChain.Policy
         {
             _getNextBlockDifficulty = getNextBlockDifficulty;
             _isAllowedToMine = isAllowedToMine;
+            _getStakeInterval = getStakeInterval;
         }
 
         public override long GetNextBlockDifficulty(BlockChain<NCAction> blockChain) =>
              _getNextBlockDifficulty(blockChain);
+
+        public long GetStakeRewardInterval(long index) => _getStakeInterval(index).RewardInterval;
+
+        public long GetStakeLockupInterval(long index) => _getStakeInterval(index).LockupInterval;
 
         public bool IsAllowedToMine(Address miner, long index) =>
             _isAllowedToMine(miner, index);
