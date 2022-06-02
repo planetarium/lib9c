@@ -19,7 +19,7 @@ namespace Lib9c.Tests.Action
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
-    using static SerializeKeys;
+    using static Lib9c.SerializeKeys;
 
     public class JoinArenaTest
     {
@@ -120,7 +120,7 @@ namespace Lib9c.Tests.Action
             return avatarState;
         }
 
-        public AvatarState AddMedal(AvatarState avatarState, ArenaSheet.Row row)
+        public AvatarState AddMedal(AvatarState avatarState, ArenaSheet.Row row, int count = 1)
         {
             var materialSheet = _state.GetSheet<MaterialItemSheet>();
             foreach (var data in row.Round)
@@ -130,9 +130,9 @@ namespace Lib9c.Tests.Action
                     continue;
                 }
 
-                var itemId = ArenaHelper.GetMedalItemId(data.Id, data.Round);
+                var itemId = ArenaHelper.GetMedalItemId(data.ChampionshipId, data.Round);
                 var material = ItemFactory.CreateMaterial(materialSheet, itemId);
-                avatarState.inventory.AddItem(material);
+                avatarState.inventory.AddItem(material, count);
             }
 
             _state = _state
@@ -160,8 +160,8 @@ namespace Lib9c.Tests.Action
 
             var avatarState = _state.GetAvatarStateV2(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            avatarState = AddMedal(avatarState, row);
-            var preCurrency = 1000 * _currency;
+            avatarState = AddMedal(avatarState, row, 20);
+            var preCurrency = 100_000 * _currency;
             var state = _state.MintAsset(_signer, preCurrency);
 
             var action = new JoinArena()
@@ -228,7 +228,7 @@ namespace Lib9c.Tests.Action
 
             if (!row.TryGetRound(round, out var roundData))
             {
-                throw new RoundNotFoundException($"{nameof(JoinArena)} : {row.Id} / {round}");
+                throw new RoundNotFoundException($"{nameof(JoinArena)} : {row.ChampionshipId} / {round}");
             }
 
             if (roundData.IsTheRoundOpened(blockIndex))
@@ -300,7 +300,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = _state.GetAvatarStateV2(_avatarAddress);
             GetAvatarState(avatarState, out var equipments, out var costumes);
-            var preCurrency = 1000 * _currency;
+            var preCurrency = 100_000 * _currency;
             var state = _state.MintAsset(_signer, preCurrency);
 
             var action = new JoinArena()

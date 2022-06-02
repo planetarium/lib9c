@@ -19,6 +19,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.TableData.Crystal;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -249,9 +250,9 @@ namespace Lib9c.Tests.Action
 
                 if (previousCostStateExist)
                 {
-                    var previousCostAddress = Addresses.GetWeeklyCrystalCostAddress(1);
+                    var previousCostAddress = Addresses.GetWeeklyCrystalCostAddress(6);
                     var previousCostState = new CrystalCostState(previousCostAddress, crystalBalance * CrystalCalculator.CRYSTAL * 2);
-                    var beforePreviousCostAddress = Addresses.GetWeeklyCrystalCostAddress(0);
+                    var beforePreviousCostAddress = Addresses.GetWeeklyCrystalCostAddress(5);
                     var beforePreviousCostState = new CrystalCostState(beforePreviousCostAddress, crystalBalance * CrystalCalculator.CRYSTAL);
 
                     state = state
@@ -265,7 +266,9 @@ namespace Lib9c.Tests.Action
 
             var dailyCostAddress =
                 Addresses.GetDailyCrystalCostAddress((int)(blockIndex / CrystalCostState.DailyIntervalIndex));
-            var weeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress((int)(blockIndex / CrystalCostState.WeeklyIntervalIndex));
+            var weeklyInterval = _tableSheets.CrystalFluctuationSheet.Values.First(r =>
+                r.Type == CrystalFluctuationSheet.ServiceType.Combination).BlockInterval;
+            var weeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress((int)(blockIndex / weeklyInterval));
 
             Assert.Null(state.GetState(dailyCostAddress));
             Assert.Null(state.GetState(weeklyCostAddress));

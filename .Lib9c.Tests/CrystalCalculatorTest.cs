@@ -3,7 +3,8 @@ namespace Lib9c.Tests
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Numerics;
+    using System.Linq;
+    using Libplanet.Assets;
     using Nekoyume.Helper;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
@@ -17,6 +18,7 @@ namespace Lib9c.Tests
         private readonly EquipmentItemRecipeSheet _equipmentItemRecipeSheet;
         private readonly WorldUnlockSheet _worldUnlockSheet;
         private readonly CrystalMaterialCostSheet _crystalMaterialCostSheet;
+        private readonly Currency _ncgCurrency;
 
         public CrystalCalculatorTest()
         {
@@ -24,19 +26,20 @@ namespace Lib9c.Tests
             _equipmentItemRecipeSheet = _tableSheets.EquipmentItemRecipeSheet;
             _worldUnlockSheet = _tableSheets.WorldUnlockSheet;
             _crystalMaterialCostSheet = _tableSheets.CrystalMaterialCostSheet;
+            _ncgCurrency = new Currency("NCG", 2, minters: null);
         }
 
         [Theory]
-        [InlineData(new[] { 2 }, 100)]
-        [InlineData(new[] { 2, 3 }, 200)]
+        [InlineData(new[] { 2 }, 19)]
+        [InlineData(new[] { 2, 3 }, 38)]
         public void CalculateRecipeUnlockCost(IEnumerable<int> recipeIds, int expected)
         {
             Assert.Equal(expected * CrystalCalculator.CRYSTAL, CrystalCalculator.CalculateRecipeUnlockCost(recipeIds, _equipmentItemRecipeSheet));
         }
 
         [Theory]
-        [InlineData(new[] { 2 }, 500)]
-        [InlineData(new[] { 2, 3 }, 1000)]
+        [InlineData(new[] { 2 }, 250)]
+        [InlineData(new[] { 2, 3 }, 20250)]
         public void CalculateWorldUnlockCost(IEnumerable<int> worldIds, int expected)
         {
             Assert.Equal(expected * CrystalCalculator.CRYSTAL, CrystalCalculator.CalculateWorldUnlockCost(worldIds, _worldUnlockSheet));
@@ -44,7 +47,7 @@ namespace Lib9c.Tests
 
         [Theory]
         [ClassData(typeof(CalculateCrystalData))]
-        public void CalculateCrystal((int EquipmentId, int Level)[] equipmentInfos, int monsterCollectionLevel, bool enhancementFailed, int expected)
+        public void CalculateCrystal((int EquipmentId, int Level)[] equipmentInfos, int stakedAmount, bool enhancementFailed, int expected)
         {
             var equipmentList = new List<Equipment>();
             foreach (var (equipmentId, level) in equipmentInfos)
@@ -56,11 +59,13 @@ namespace Lib9c.Tests
             }
 
             var actual = CrystalCalculator.CalculateCrystal(
+                default,
                 equipmentList,
+                stakedAmount * _ncgCurrency,
+                enhancementFailed,
                 _tableSheets.CrystalEquipmentGrindingSheet,
-                monsterCollectionLevel,
                 _tableSheets.CrystalMonsterCollectionMultiplierSheet,
-                enhancementFailed
+                _tableSheets.StakeRegularRewardSheet
             );
 
             Assert.Equal(
@@ -70,14 +75,19 @@ namespace Lib9c.Tests
 
         [Theory]
         [InlineData(2, 1, 200)]
+        [InlineData(9, 10, 90)]
+        // Minimum
         [InlineData(1, 2, 50)]
+        // Maximum
+        [InlineData(3, 1, 300)]
         public void CalculateCombinationCost(int psCount, int bpsCount, int expected)
         {
             var crystal = 100 * CrystalCalculator.CRYSTAL;
             var ps = new CrystalCostState(default, crystal * psCount);
             var bps = new CrystalCostState(default, crystal * bpsCount);
-
-            Assert.Equal(expected * CrystalCalculator.CRYSTAL, CrystalCalculator.CalculateCombinationCost(crystal, ps, bps));
+            var row = _tableSheets.CrystalFluctuationSheet.Values.First(r =>
+                r.Type == CrystalFluctuationSheet.ServiceType.Combination);
+            Assert.Equal(expected * CrystalCalculator.CRYSTAL, CrystalCalculator.CalculateCombinationCost(crystal, row, prevWeeklyCostState: ps, beforePrevWeeklyCostState: bps));
         }
 
         [Fact]
@@ -97,8 +107,8 @@ namespace Lib9c.Tests
         }
 
         [Theory]
-        [InlineData(302000, 1, 100, null)]
-        [InlineData(302003, 2, 200, null)]
+        [InlineData(302000, 1, 30, null)]
+        [InlineData(302003, 2, 60, null)]
         [InlineData(306068, 1, 100, typeof(ArgumentException))]
         public void CalculateMaterialCost(int materialId, int materialCount, int expected, Type exc)
         {
@@ -117,10 +127,10 @@ namespace Lib9c.Tests
         {
             private readonly List<object[]> _data = new List<object[]>
             {
-                // 100 + (2^0 - 1) * 100 = 100
+                // 1000 + (2^0 - 1) * 100 = 1000
                 // enchant level 2
-                // 200 + (2^2 - 1) * 100 = 500
-                // total 600
+                // 10 + (2^2 - 1) * 10 = 40
+                // total 1040
                 new object[]
                 {
                     new[]
@@ -128,45 +138,45 @@ namespace Lib9c.Tests
                         (10100000, 0),
                         (10110000, 2),
                     },
-                    0,
+                    10,
                     false,
-                    600,
+                    1040,
                 },
                 new object[]
                 {
                     // enchant failed
-                    // 100 + (2^0 -1) * 100 % 2 = 50
-                    // total 50
+                    // (1000 + (2^0 -1) * 1000) / 2 = 500
+                    // total 500
                     new[]
                     {
                         (10100000, 0),
                     },
-                    0,
+                    10,
                     true,
-                    50,
+                    500,
                 },
                 // enchant level 3 & failed
-                // (200 + (2^3 - 1) * 100) % 2 = 450
+                // (10 + (2^3 - 1) * 10) / 2 = 450
                 // multiply by staking
-                // 450 * 0.3 = 135
-                // total 585
+                // 40 * 0.2 = 8
+                // total 48
                 new object[]
                 {
                     new[]
                     {
                         (10110000, 3),
                     },
-                    3,
+                    100,
                     true,
-                    585,
+                    48,
                 },
                 // enchant level 1
-                // 100 + (2^1 - 1) * 100 = 200
+                // 1000 + (2^1 - 1) * 1000 = 2000
                 // enchant level 2
-                // 200 + (2^2 - 1) * 100 = 500
+                // 10 + (2^2 - 1) * 10 = 40
                 // multiply by staking
-                // 700 * 0.3 = 210
-                // total 910
+                // 2040 * 0.2 = 408
+                // total 2448
                 new object[]
                 {
                     new[]
@@ -174,12 +184,12 @@ namespace Lib9c.Tests
                         (10100000, 1),
                         (10110000, 2),
                     },
-                    3,
+                    100,
                     false,
-                    910,
+                    2448,
                 },
                 // enchant level 1
-                // 200 + (2^1 - 1) * 100 = 300
+                // 10 + (2^1 - 1) * 10 = 20
                 new object[]
                 {
                     new[]
@@ -188,7 +198,7 @@ namespace Lib9c.Tests
                     },
                     0,
                     false,
-                    300,
+                    20,
                 },
             };
 

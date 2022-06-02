@@ -198,17 +198,17 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(1, 1, 1, 1, 3)]
-        [InlineData(1, 1, 1, 1, 4)]
-        [InlineData(1, 1, 1, 5, 0)]
-        [InlineData(1, 1, 1, 5, 1)]
-        [InlineData(1, 1, 1, 8, 0)]
-        [InlineData(1, 1, 1, 8, 1)]
-        [InlineData(1, 1, 1, 12, 0)]
-        [InlineData(1, 1, 1, 12, 1)]
-        [InlineData(1, 1, 2, 5, 0)]
-        [InlineData(1, 1, 2, 5, 1)]
-        public void Execute(long nextBlockIndex, int championshipId, int round, int ticket, int randomSeed)
+        [InlineData(1, 1, 1, 1, 2, 3)]
+        [InlineData(1, 1, 1, 1, 2, 4)]
+        [InlineData(1, 1, 1, 5, 2, 0)]
+        [InlineData(1, 1, 1, 5, 2, 1)]
+        [InlineData(1, 1, 1, 8, 2, 0)]
+        [InlineData(1, 1, 1, 8, 2, 1)]
+        [InlineData(1, 1, 1, 12, 2, 0)]
+        [InlineData(1, 1, 1, 12, 2, 1)]
+        [InlineData(1, 1, 2, 5, 2, 0)]
+        [InlineData(1, 1, 2, 5, 2, 1)]
+        public void Execute(long nextBlockIndex, int championshipId, int round, int ticket, int arenaInterval, int randomSeed)
         {
             var arenaSheet = _state.GetSheet<ArenaSheet>();
             if (!arenaSheet.TryGetValue(championshipId, out var row))
@@ -220,7 +220,7 @@ namespace Lib9c.Tests.Action
             if (!row.TryGetRound(round, out var roundData))
             {
                 throw new RoundNotFoundException(
-                    $"[{nameof(BattleArena)}] ChampionshipId({row.Id}) - round({round})");
+                    $"[{nameof(BattleArena)}] ChampionshipId({row.ChampionshipId}) - round({round})");
             }
 
             var random = new TestRandom(randomSeed);
@@ -268,6 +268,9 @@ namespace Lib9c.Tests.Action
             }
 
             Assert.Empty(_avatar1.inventory.Materials);
+
+            var gameConfigState = SetArenaInterval(arenaInterval);
+            _state = _state.SetState(GameConfigState.Address, gameConfigState.Serialize());
 
             var blockIndex = roundData.StartBlockIndex + nextBlockIndex;
             _state = action.Execute(new ActionContext
@@ -327,6 +330,27 @@ namespace Lib9c.Tests.Action
             var materialCount = avatarState.inventory.Materials.Count();
             var high = (ArenaHelper.GetRewardCount(beforeMyScore.Score) * ticket) + medalCount;
             Assert.InRange(materialCount, 0, high);
+        }
+
+        public GameConfigState SetArenaInterval(int interval)
+        {
+            var gameConfigState = _state.GetGameConfigState();
+            var sheet = _tableSheets.GameConfigSheet;
+            foreach (var value in sheet.Values)
+            {
+                if (value.Key.Equals("daily_arena_interval"))
+                {
+                    IReadOnlyList<string> field = new[]
+                    {
+                        value.Key,
+                        interval.ToString(),
+                    };
+                    value.Set(field);
+                }
+            }
+
+            gameConfigState.Set(sheet);
+            return gameConfigState;
         }
 
         [Fact]
@@ -459,6 +483,7 @@ namespace Lib9c.Tests.Action
                 PreviousStates = _state,
                 Signer = _agent1Address,
                 Random = new TestRandom(),
+                BlockIndex = 1,
             }));
         }
 
@@ -479,7 +504,7 @@ namespace Lib9c.Tests.Action
             if (!row.TryGetRound(round, out var roundData))
             {
                 throw new RoundNotFoundException(
-                    $"[{nameof(BattleArena)}] ChampionshipId({row.Id}) - round({round})");
+                    $"[{nameof(BattleArena)}] ChampionshipId({row.ChampionshipId}) - round({round})");
             }
 
             var random = new TestRandom();
@@ -503,6 +528,7 @@ namespace Lib9c.Tests.Action
                 PreviousStates = _state,
                 Signer = _agent1Address,
                 Random = new TestRandom(),
+                BlockIndex = 1,
             }));
         }
 
@@ -523,14 +549,14 @@ namespace Lib9c.Tests.Action
             if (!row.TryGetRound(round, out var roundData))
             {
                 throw new RoundNotFoundException(
-                    $"[{nameof(BattleArena)}] ChampionshipId({row.Id}) - round({round})");
+                    $"[{nameof(BattleArena)}] ChampionshipId({row.ChampionshipId}) - round({round})");
             }
 
             var random = new TestRandom();
             _state = JoinArena(_agent1Address, _avatar1Address, roundData.StartBlockIndex, championshipId, round, random);
             _state = JoinArena(_agent2Address, _avatar2Address, roundData.StartBlockIndex, championshipId, round, random);
 
-            var arenaScoreAdr = ArenaScore.DeriveAddress(isSigner ? _avatar1Address : _avatar2Address, roundData.Id, roundData.Round);
+            var arenaScoreAdr = ArenaScore.DeriveAddress(isSigner ? _avatar1Address : _avatar2Address, roundData.ChampionshipId, roundData.Round);
             _state.TryGetArenaScore(arenaScoreAdr, out var arenaScore);
             arenaScore.AddScore(900);
             _state = _state.SetState(arenaScoreAdr, arenaScore.Serialize());
@@ -548,6 +574,49 @@ namespace Lib9c.Tests.Action
 
             var blockIndex = roundData.StartBlockIndex + 1;
             Assert.Throws<ValidateScoreDifferenceException>(() => action.Execute(new ActionContext()
+            {
+                BlockIndex = blockIndex,
+                PreviousStates = _state,
+                Signer = _agent1Address,
+                Random = new TestRandom(),
+            }));
+        }
+
+        [Fact]
+        public void Execute_NotEnoughFungibleAssetValueException()
+        {
+            var championshipId = 1;
+            var round = 2;
+            var arenaSheet = _state.GetSheet<ArenaSheet>();
+            if (!arenaSheet.TryGetValue(championshipId, out var row))
+            {
+                throw new SheetRowNotFoundException(
+                    nameof(ArenaSheet), $"championship Id : {championshipId}");
+            }
+
+            if (!row.TryGetRound(round, out var roundData))
+            {
+                throw new RoundNotFoundException(
+                    $"[{nameof(BattleArena)}] ChampionshipId({row.ChampionshipId}) - round({round})");
+            }
+
+            var random = new TestRandom();
+            _state = JoinArena(_agent1Address, _avatar1Address, roundData.StartBlockIndex, championshipId, round, random);
+            _state = JoinArena(_agent2Address, _avatar2Address, roundData.StartBlockIndex, championshipId, round, random);
+
+            var action = new BattleArena()
+            {
+                myAvatarAddress = _avatar1Address,
+                enemyAvatarAddress = _avatar2Address,
+                championshipId = championshipId,
+                round = round,
+                ticket = 100,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+            };
+
+            var blockIndex = roundData.StartBlockIndex + 1;
+            Assert.Throws<NotEnoughFungibleAssetValueException>(() => action.Execute(new ActionContext()
             {
                 BlockIndex = blockIndex,
                 PreviousStates = _state,
