@@ -9,7 +9,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Serialize()
         {
-            var state = new StakeState(default, 100);
+            var state = new StakeState(default, 100, 1400);
 
             var serialized = (Dictionary)state.Serialize();
             var deserialized = new StakeState(serialized);
@@ -23,7 +23,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void SerializeV2()
         {
-            var state = new StakeState(default, 100);
+            var state = new StakeState(default, 100, 1400);
 
             var serialized = (Dictionary)state.SerializeV2();
             var deserialized = new StakeState(serialized);

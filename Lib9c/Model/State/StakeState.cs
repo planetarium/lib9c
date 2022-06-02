@@ -61,10 +61,10 @@ namespace Nekoyume.Model.State
 
         public StakeAchievements Achievements { get; private set; }
 
-        public StakeState(Address address, long startedBlockIndex) : base(address)
+        public StakeState(Address address, long startedBlockIndex, long cancellableBlockIndex) : base(address)
         {
             StartedBlockIndex = startedBlockIndex;
-            CancellableBlockIndex = startedBlockIndex + LockupInterval;
+            CancellableBlockIndex = cancellableBlockIndex;
             Achievements = new StakeAchievements();
         }
 
@@ -92,14 +92,14 @@ namespace Nekoyume.Model.State
 
         public bool IsCancellable(long blockIndex) => blockIndex >= CancellableBlockIndex;
 
-        public bool IsClaimable(long blockIndex)
+        public bool IsClaimable(long blockIndex, long rewardInterval)
         {
             if (ReceivedBlockIndex == 0)
             {
-                return StartedBlockIndex + RewardInterval <= blockIndex;
+                return StartedBlockIndex + rewardInterval <= blockIndex;
             }
 
-            return ReceivedBlockIndex + RewardInterval <= blockIndex;
+            return ReceivedBlockIndex + rewardInterval <= blockIndex;
         }
 
         public void Claim(long blockIndex)

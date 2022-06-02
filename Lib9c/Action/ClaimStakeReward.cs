@@ -3,10 +3,12 @@ using System.Collections.Immutable;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Serilog;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
@@ -33,6 +35,14 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException(nameof(StakeState));
             }
 
+            var blockPolicySource = new BlockPolicySource(Log.Logger);
+            BlockPolicy blockPolicy = (BlockPolicy)(states.GetGoldCurrency().Minters
+                .Contains(new Address("340f110b91d0577a9ae0ea69ce15269436f217da"))
+                ? blockPolicySource.GetPermanentPolicy()
+                : blockPolicySource.GetPolicy());
+            long rewardInterval = blockPolicy.GetStakeRewardInterval(context.BlockIndex);
+
+
             var sheets = states.GetSheets(sheetTypes: new[]
             {
                 typeof(StakeRegularRewardSheet),
@@ -47,7 +57,7 @@ namespace Nekoyume.Action
             var currency = states.GetGoldCurrency();
             var stakedAmount = states.GetBalance(stakeState.address, currency);
 
-            if (!stakeState.IsClaimable(context.BlockIndex))
+            if (!stakeState.IsClaimable(context.BlockIndex, rewardInterval))
             {
                 throw new RequiredBlockIndexException();
             }

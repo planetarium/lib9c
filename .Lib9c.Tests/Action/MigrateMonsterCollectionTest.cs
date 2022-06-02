@@ -70,7 +70,7 @@ namespace Lib9c.Tests.Action
                 monsterCollectionAddress, 1, 0);
             Address stakeStateAddress = StakeState.DeriveAddress(_signer);
             var states = _state.SetState(
-                    stakeStateAddress, new StakeState(stakeStateAddress, 0).SerializeV2())
+                    stakeStateAddress, new StakeState(stakeStateAddress, 0, 50400).SerializeV2())
                 .SetState(monsterCollectionAddress, monsterCollectionState.SerializeV2());
             MigrateMonsterCollection action = new MigrateMonsterCollection(_avatarAddress);
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext

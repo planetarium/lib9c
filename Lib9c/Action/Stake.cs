@@ -2,9 +2,12 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
+using Libplanet;
 using Libplanet.Action;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Serilog;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
@@ -38,6 +41,13 @@ namespace Nekoyume.Action
         {
             IAccountStateDelta states = context.PreviousStates;
 
+            var blockPolicySource = new BlockPolicySource(Log.Logger);
+            BlockPolicy blockPolicy = (BlockPolicy)(states.GetGoldCurrency().Minters
+                .Contains(new Address("340f110b91d0577a9ae0ea69ce15269436f217da"))
+                ? blockPolicySource.GetPermanentPolicy()
+                : blockPolicySource.GetPolicy());
+            long lockupInterval = blockPolicy.GetStakeLockupInterval(context.BlockIndex);
+
             if (context.Rehearsal)
             {
                 return states.SetState(StakeState.DeriveAddress(context.Signer), MarkChanged)
@@ -69,7 +79,7 @@ namespace Nekoyume.Action
             if (!states.TryGetStakeState(context.Signer, out StakeState stakeState))
             {
                 var sheet = states.GetSheet<StakeAchievementRewardSheet>();
-                stakeState = new StakeState(stakeStateAddress, context.BlockIndex);
+                stakeState = new StakeState(stakeStateAddress, context.BlockIndex, context.BlockIndex + lockupInterval);
                 var orderedRows = sheet.Values.OrderBy(row => row.Steps[0].RequiredGold).ToList();
                 int FindLevel()
                 {
@@ -113,7 +123,8 @@ namespace Nekoyume.Action
                 .TransferAsset(context.Signer, stakeState.address, targetStakeBalance)
                 .SetState(
                     stakeState.address,
-                    new StakeState(stakeState.address, context.BlockIndex).SerializeV2());
+                    new StakeState(stakeState.address, context.BlockIndex,
+                        context.BlockIndex + lockupInterval).SerializeV2());
         }
     }
 }
