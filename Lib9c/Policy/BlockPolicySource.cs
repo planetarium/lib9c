@@ -234,11 +234,7 @@ namespace Nekoyume.BlockChain.Policy
                     authorizedMinersPolicy,
                     defaultAlgorithm: chain => DifficultyAdjustment<NCAction>.BaseAlgorithm(
                         chain, BlockInterval, DifficultyStability, minimumDifficulty));
-            Func<Address, long, bool> isAllowedToMine = (address, index) => IsAllowedToMineRaw(
-                address,
-                index,
-                authorizedMinersPolicy,
-                permissionedMinersPolicy);
+            Func<Address, long, bool> isAllowedToMine = (address, index) => true;
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
             HashAlgorithmGetter getHashAlgorithmType =
