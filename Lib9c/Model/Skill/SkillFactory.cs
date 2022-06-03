@@ -48,7 +48,7 @@ namespace Nekoyume.Model.Skill
                         case SkillCategory.NormalAttack:
                             return new ArenaNormalAttack(skillRow, power, chance);
                         case SkillCategory.DoubleAttack:
-                            return new DoubleAttack(skillRow, power, chance);
+                            return new ArenaDoubleAttack(skillRow, power, chance);
                         case SkillCategory.BlowAttack:
                             return new ArenaBlowAttack(skillRow, power, chance);
                         case SkillCategory.AreaAttack:

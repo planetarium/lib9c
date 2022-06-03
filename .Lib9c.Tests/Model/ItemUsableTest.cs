@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Model
     using Bencodex.Types;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Skill;
+    using Nekoyume.Model.Skill.Stage;
     using Xunit;
 
     public class ItemUsableTest

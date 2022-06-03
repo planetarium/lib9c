@@ -196,7 +196,7 @@ namespace Nekoyume.Model
         {
             var selectedSkill = Skills.Select(Simulator.Random);
 
-            if (selectedSkill is not IStageSkill stageSkill)
+            if (!(selectedSkill is IStageSkill stageSkill))
             {
                 return;
             }
@@ -237,7 +237,7 @@ namespace Nekoyume.Model
         {
             var selectedSkill = Skills.SelectV1(Simulator.Random);
 
-            if (selectedSkill is not IStageSkill stageSkill)
+            if (!(selectedSkill is IStageSkill stageSkill))
             {
                 return;
             }
@@ -274,7 +274,7 @@ namespace Nekoyume.Model
         {
             var selectedSkill = Skills.SelectV2(Simulator.Random);
 
-            if (selectedSkill is not IStageSkill stageSkill)
+            if (!(selectedSkill is IStageSkill stageSkill))
             {
                 return;
             }
