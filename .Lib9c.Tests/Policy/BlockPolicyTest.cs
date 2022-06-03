@@ -396,54 +396,6 @@ namespace Lib9c.Tests
 
             dateTimeOffset += TimeSpan.FromSeconds(1);
             await blockChain.MineBlock(minerKey, dateTimeOffset);
-
-            // Index 7
-            Assert.Equal(4098, policy.GetNextBlockDifficulty(blockChain));
-            blockChain.MakeTransaction(
-                adminPrivateKey,
-                new PolymorphicAction<ActionBase>[] { new DailyReward(), }
-            );
-            dateTimeOffset += TimeSpan.FromSeconds(1);
-            await blockChain.MineBlock(minerKey, dateTimeOffset);
-
-            // Index 8
-            Assert.Equal(4100, policy.GetNextBlockDifficulty(blockChain));
-            blockChain.MakeTransaction(
-                adminPrivateKey,
-                new PolymorphicAction<ActionBase>[] { new DailyReward(), }
-            );
-            dateTimeOffset += TimeSpan.FromSeconds(1);
-            await blockChain.MineBlock(minerKey, dateTimeOffset);
-
-            // Index 9
-            Assert.Equal(4102, policy.GetNextBlockDifficulty(blockChain));
-            blockChain.MakeTransaction(
-                adminPrivateKey,
-                new PolymorphicAction<ActionBase>[] { new DailyReward(), }
-            );
-            dateTimeOffset += TimeSpan.FromSeconds(1);
-            await blockChain.MineBlock(minerKey, dateTimeOffset);
-
-            // Index 10
-            Assert.Equal(4104, policy.GetNextBlockDifficulty(blockChain));
-            blockChain.MakeTransaction(
-                adminPrivateKey,
-                new PolymorphicAction<ActionBase>[] { new DailyReward(), }
-            );
-            dateTimeOffset += TimeSpan.FromSeconds(1);
-            await blockChain.MineBlock(minerKey, dateTimeOffset);
-
-            // Index 11
-            Assert.Equal(4106, policy.GetNextBlockDifficulty(blockChain));
-            blockChain.MakeTransaction(
-                adminPrivateKey,
-                new PolymorphicAction<ActionBase>[] { new DailyReward(), }
-            );
-            dateTimeOffset += TimeSpan.FromSeconds(20);
-            await blockChain.MineBlock(minerKey, dateTimeOffset);
-
-            // Index 12
-            Assert.Equal(4104, policy.GetNextBlockDifficulty(blockChain));
         }
 
         [Fact]

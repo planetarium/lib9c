@@ -115,8 +115,8 @@ namespace Nekoyume.BlockChain.Policy
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
-                authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet);
+                authorizedMinersPolicy: null,
+                permissionedMinersPolicy: null);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-internal deployment.
@@ -244,15 +244,6 @@ namespace Nekoyume.BlockChain.Policy
                     maxTransactionsPerSignerPerBlockPolicy,
                     authorizedMinersPolicy,
                     permissionedMinersPolicy);
-            Func<BlockChain<NCAction>, long> getNextBlockDifficulty = blockChain =>
-                GetNextBlockDifficultyRaw(
-                    blockChain,
-                    BlockInterval,
-                    DifficultyStability,
-                    minimumDifficulty,
-                    authorizedMinersPolicy,
-                    defaultAlgorithm: chain => DifficultyAdjustment<NCAction>.BaseAlgorithm(
-                        chain, BlockInterval, DifficultyStability, minimumDifficulty));
             Func<Address, long, bool> isAllowedToMine = (address, index) => true;
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
@@ -271,7 +262,7 @@ namespace Nekoyume.BlockChain.Policy
                 getMinTransactionsPerBlock: minTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerBlock: maxTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerSignerPerBlock: maxTransactionsPerSignerPerBlockPolicy.Getter,
-                getNextBlockDifficulty: getNextBlockDifficulty,
+                getNextBlockDifficulty: blockChain => blockChain.Count == 0 ? 0 : minimumDifficulty,
                 isAllowedToMine: isAllowedToMine);
 #endif
         }
