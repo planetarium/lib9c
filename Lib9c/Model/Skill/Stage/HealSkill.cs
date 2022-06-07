@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Character;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Skill.Stage
@@ -25,8 +24,6 @@ namespace Nekoyume.Model.Skill.Stage
             return new BattleStatus.HealSkill(clone, heal, buff);
         }
 
-
-
         protected IEnumerable<BattleStatus.Skill.SkillInfo> ProcessHeal(
             StageCharacter caster,
             int simulatorWaveTurn)
@@ -46,7 +43,5 @@ namespace Nekoyume.Model.Skill.Stage
 
             return infos;
         }
-
-
     }
 }

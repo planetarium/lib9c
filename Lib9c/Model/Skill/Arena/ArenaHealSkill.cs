@@ -17,10 +17,11 @@ namespace Nekoyume.Model.Skill.Arena
             int simulatorWaveTurn,
             IEnumerable<Buff.Buff> buffs)
         {
+            var clone = (ArenaCharacter)caster.Clone();
             var heal = ProcessHeal(caster, simulatorWaveTurn);
-            var buff = ProcessBuffForArena(target, simulatorWaveTurn, buffs);
+            var buff = ProcessBuff(caster, target, simulatorWaveTurn, buffs);
 
-            return new Model.BattleStatus.HealSkill(caster, heal, buff);
+            return new BattleStatus.HealSkill(clone, heal, buff);
         }
 
         private IEnumerable<BattleStatus.Skill.SkillInfo> ProcessHeal(
@@ -32,11 +33,12 @@ namespace Nekoyume.Model.Skill.Arena
             caster.Heal(healPoint);
 
             infos.Add(new BattleStatus.Skill.SkillInfo(
-                caster,
+                (ArenaCharacter)caster.Clone(),
                 healPoint,
                 caster.IsCritical(false),
                 SkillRow.SkillCategory,
                 simulatorWaveTurn));
+
             return infos;
         }
     }

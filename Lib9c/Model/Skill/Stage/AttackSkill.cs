@@ -69,11 +69,6 @@ namespace Nekoyume.Model.Skill.Stage
                             isCritical |= SkillRow.SkillCategory == SkillCategory.DoubleAttack;
                         }
 
-                        if (damage == 17)
-                        {
-                            var test = damage;
-                        }
-
                         target.CurrentHP -= damage;
                     }
 
@@ -81,7 +76,8 @@ namespace Nekoyume.Model.Skill.Stage
                         damage,
                         isCritical,
                         SkillRow.SkillCategory,
-                        simulatorWaveTurn, SkillRow.ElementalType,
+                        simulatorWaveTurn,
+                        SkillRow.ElementalType,
                         SkillRow.SkillTargetType));
                 }
             }

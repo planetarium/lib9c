@@ -20,7 +20,5 @@ namespace Nekoyume.Model.Skill.Stage
 
             return new BattleStatus.Buff(clone, buff);
         }
-
-
     }
 }

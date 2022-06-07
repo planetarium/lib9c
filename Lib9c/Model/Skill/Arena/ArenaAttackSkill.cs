@@ -61,10 +61,13 @@ namespace Nekoyume.Model.Skill.Arena
                     target.CurrentHP -= damage;
                 }
 
-                infos.Add(new BattleStatus.Skill.SkillInfo(target, damage, isCritical,
-                    SkillRow.SkillCategory, simulatorWaveTurn, SkillRow.ElementalType,
+                infos.Add(new BattleStatus.Skill.SkillInfo((ArenaCharacter)caster.Clone(),
+                    damage,
+                    isCritical,
+                    SkillRow.SkillCategory,
+                    simulatorWaveTurn,
+                    SkillRow.ElementalType,
                     SkillRow.SkillTargetType));
-
             }
 
             return infos;

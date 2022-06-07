@@ -87,10 +87,17 @@ namespace Nekoyume.Model.Character
             _buffSheet = value._buffSheet;
 
             _simulator = value._simulator;
-            _stats = value._stats;
+            _stats = new CharacterStats(value._stats);
             _skills = value._skills;
-            _attackCountMax = value._attackCount;
+            _buffs = new Dictionary<int, Buff.Buff>();
+#pragma warning disable LAA1002
+            foreach (var pair in value._buffs)
+#pragma warning restore LAA1002
+            {
+                _buffs.Add(pair.Key, (Buff.Buff) pair.Value.Clone());
+            }
 
+            _attackCountMax = value._attackCount;
             _target = value._target;
             _attackCount = value._attackCount;
         }

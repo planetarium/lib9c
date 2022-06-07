@@ -17,9 +17,10 @@ namespace Nekoyume.Model.Skill.Arena
             int simulatorWaveTurn,
             IEnumerable<Buff.Buff> buffs)
         {
-            var buff = ProcessBuffForArena(target, simulatorWaveTurn, buffs);
+            var clone = (ArenaCharacter)caster.Clone();
+            var buff = ProcessBuff(caster, target, simulatorWaveTurn, buffs);
 
-            return new Model.BattleStatus.Buff(target, buff);
+            return new Model.BattleStatus.Buff(clone, buff);
         }
     }
 }

@@ -48,11 +48,12 @@ namespace Nekoyume.Arena
                 }
 
                 selectedPlayer.Tick();
-                log.Add(selectedPlayer.SkillLog);
+                var clone = (ArenaCharacter)selectedPlayer.Clone();
+                log.Add(clone.SkillLog);
 
                 if (selectedPlayer.IsDead)
                 {
-                    log.Add(new Dead(selectedPlayer));
+                    log.Add(new Dead((ArenaCharacter)selectedPlayer.Clone()));
                     log.result = selectedPlayer.IsEnemy
                         ? BattleLog.Result.Win
                         : BattleLog.Result.Lose;
@@ -62,7 +63,7 @@ namespace Nekoyume.Arena
                 if (!selectedPlayer.IsEnemy)
                 {
                     Turn++;
-                    log.Add(new ArenaTurnEnd(selectedPlayer, Turn));
+                    log.Add(new ArenaTurnEnd((ArenaCharacter)selectedPlayer.Clone(), Turn));
                 }
 
                 foreach (var other in players)
@@ -91,8 +92,8 @@ namespace Nekoyume.Arena
             challenger.Spawn(enemy);
             enemy.Spawn(challenger);
 
-            log.Add(new SpawnArenaPlayer(challenger));
-            log.Add(new SpawnArenaPlayer(enemy));
+            log.Add(new SpawnArenaPlayer((ArenaCharacter)challenger.Clone()));
+            log.Add(new SpawnArenaPlayer((ArenaCharacter)enemy.Clone()));
 
             var players = new SimplePriorityQueue<ArenaCharacter, decimal>();
             players.Enqueue(challenger, TurnPriority / challenger.SPD);
