@@ -25,17 +25,7 @@ namespace Nekoyume.Model.Skill.Stage
             return new BattleStatus.HealSkill(clone, heal, buff);
         }
 
-        public BattleStatus.Skill UseForArena(
-            ArenaPlayer caster,
-            ArenaPlayer target,
-            int simulatorWaveTurn,
-            IEnumerable<Buff.Buff> buffs)
-        {
-            var heal = ProcessHealForArena(caster, simulatorWaveTurn);
-            var buff = ProcessBuffForArena(target, simulatorWaveTurn, buffs);
 
-            return new Model.BattleStatus.HealSkill(caster, heal, buff);
-        }
 
         protected IEnumerable<BattleStatus.Skill.SkillInfo> ProcessHeal(
             StageCharacter caster,
@@ -57,21 +47,6 @@ namespace Nekoyume.Model.Skill.Stage
             return infos;
         }
 
-        protected IEnumerable<BattleStatus.Skill.SkillInfo> ProcessHealForArena(
-            ArenaPlayer caster,
-            int simulatorWaveTurn)
-        {
-            var infos = new List<BattleStatus.Skill.SkillInfo>();
-            var healPoint = caster.ATK + Power;
-            caster.Heal(healPoint);
 
-            infos.Add(new BattleStatus.Skill.SkillInfo(
-                caster,
-                healPoint,
-                caster.IsCritical(false),
-                SkillRow.SkillCategory,
-                simulatorWaveTurn));
-            return infos;
-        }
     }
 }

@@ -69,11 +69,19 @@ namespace Nekoyume.Model.Skill.Stage
                             isCritical |= SkillRow.SkillCategory == SkillCategory.DoubleAttack;
                         }
 
+                        if (damage == 17)
+                        {
+                            var test = damage;
+                        }
+
                         target.CurrentHP -= damage;
                     }
 
-                    infos.Add(new BattleStatus.Skill.SkillInfo((StageCharacter) target.Clone(), damage, isCritical,
-                        SkillRow.SkillCategory, simulatorWaveTurn, SkillRow.ElementalType,
+                    infos.Add(new BattleStatus.Skill.SkillInfo((StageCharacter) target.Clone(),
+                        damage,
+                        isCritical,
+                        SkillRow.SkillCategory,
+                        simulatorWaveTurn, SkillRow.ElementalType,
                         SkillRow.SkillTargetType));
                 }
             }

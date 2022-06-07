@@ -14,8 +14,8 @@ namespace Nekoyume.Model.Skill.Arena
         }
 
         public BattleStatus.Skill Use(
-            ArenaPlayer caster,
-            ArenaPlayer target,
+            ArenaCharacter caster,
+            ArenaCharacter target,
             int simulatorWaveTurn,
             IEnumerable<Buff.Buff> buffs)
         {

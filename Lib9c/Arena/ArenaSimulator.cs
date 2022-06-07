@@ -78,15 +78,15 @@ namespace Nekoyume.Arena
             return log;
         }
 
-        private static SimplePriorityQueue<ArenaPlayer, decimal> SpawnPlayers(
+        private static SimplePriorityQueue<ArenaCharacter, decimal> SpawnPlayers(
             ArenaSimulator simulator,
             ArenaPlayerDigest challengerDigest,
             ArenaPlayerDigest enemyDigest,
             ArenaSimulatorSheets simulatorSheets,
             BattleLog log)
         {
-            var challenger = new ArenaPlayer(simulator, challengerDigest, simulatorSheets);
-            var enemy = new ArenaPlayer(simulator, enemyDigest, simulatorSheets, true);
+            var challenger = new ArenaCharacter(simulator, challengerDigest, simulatorSheets);
+            var enemy = new ArenaCharacter(simulator, enemyDigest, simulatorSheets, true);
 
             challenger.Spawn(enemy);
             enemy.Spawn(challenger);
@@ -94,7 +94,7 @@ namespace Nekoyume.Arena
             log.Add(new SpawnArenaPlayer(challenger));
             log.Add(new SpawnArenaPlayer(enemy));
 
-            var players = new SimplePriorityQueue<ArenaPlayer, decimal>();
+            var players = new SimplePriorityQueue<ArenaCharacter, decimal>();
             players.Enqueue(challenger, TurnPriority / challenger.SPD);
             players.Enqueue(enemy, TurnPriority / enemy.SPD);
             return players;

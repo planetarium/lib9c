@@ -71,7 +71,7 @@ namespace Nekoyume.Model.Skill
         }
 
         protected IEnumerable<Model.BattleStatus.Skill.SkillInfo> ProcessBuffForArena(
-            ArenaPlayer target,
+            ArenaCharacter target,
             int simulatorWaveTurn,
             IEnumerable<Buff.Buff> buffs
         )

@@ -13,7 +13,7 @@ namespace Nekoyume.Model.BattleStatus
 
         public override IEnumerator CoExecute(IStage stage)
         {
-            yield return stage.CoSpawnArenaPlayer((ArenaPlayer)Character);
+            yield return stage.CoSpawnArenaPlayer((ArenaCharacter)Character);
         }
     }
 }

@@ -6,8 +6,8 @@ namespace Nekoyume.Model.Skill
     public interface IArenaSkill
     {
         BattleStatus.Skill Use(
-            ArenaPlayer caster,
-            ArenaPlayer target,
+            ArenaCharacter caster,
+            ArenaCharacter target,
             int simulatorWaveTurn,
             IEnumerable<Buff.Buff> buffs);
     }

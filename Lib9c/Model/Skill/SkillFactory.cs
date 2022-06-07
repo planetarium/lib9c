@@ -57,10 +57,10 @@ namespace Nekoyume.Model.Skill
                             return new ArenaNormalAttack(skillRow, power, chance);
                     }
                 case SkillType.Heal:
-                    return new HealSkill(skillRow, power, chance);
+                    return new ArenaHealSkill(skillRow, power, chance);
                 case SkillType.Buff:
                 case SkillType.Debuff:
-                    return new BuffSkill(skillRow, power, chance);
+                    return new ArenaBuffSkill(skillRow, power, chance);
             }
 
             throw new UnexpectedOperationException(

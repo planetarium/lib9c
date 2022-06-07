@@ -33,7 +33,7 @@ namespace Nekoyume.Model
 
         #region Arena
 
-        IEnumerator CoSpawnArenaPlayer(ArenaPlayer character);
+        IEnumerator CoSpawnArenaPlayer(ArenaCharacter character);
         IEnumerator CoArenaTurnEnd(int turnNumber);
 
         #endregion

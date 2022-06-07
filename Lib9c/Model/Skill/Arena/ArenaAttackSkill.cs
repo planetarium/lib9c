@@ -15,8 +15,8 @@ namespace Nekoyume.Model.Skill.Arena
         }
 
          protected IEnumerable<BattleStatus.Skill.SkillInfo> ProcessDamage(
-            ArenaPlayer caster,
-            ArenaPlayer target,
+            ArenaCharacter caster,
+            ArenaCharacter target,
             int simulatorWaveTurn,
             bool isNormalAttack = false)
         {

@@ -10,23 +10,13 @@ using Nekoyume.Model.Buff;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Skill;
-using Nekoyume.Model.Skill.Arena;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Character
 {
-    public class ArenaPlayer : ICharacter, ICloneable
+    public class ArenaCharacter : ICharacter, ICloneable
     {
-        public object Clone()
-        {
-            return new ArenaPlayer(this);
-        }
-
-        public ArenaPlayer(ArenaPlayer value)
-        {
-        }
-
         private readonly SkillSheet _skillSheet;
         private readonly SkillBuffSheet _skillBuffSheet;
         private readonly BuffSheet _buffSheet;
@@ -36,10 +26,14 @@ namespace Nekoyume.Model.Character
         private readonly Dictionary<int, Buff.Buff> _buffs = new Dictionary<int, Buff.Buff>();
         private readonly int _attackCountMax;
 
-        private ArenaPlayer _target;
+        private ArenaCharacter _target;
         private int _attackCount;
 
-        // stat
+        public ElementalType OffensiveElementalType { get; }
+        public ElementalType DefenseElementalType { get; }
+        public bool IsEnemy { get; }
+        public BattleStatus.Skill SkillLog { get; private set; }
+
         public int Level
         {
             get => _stats.Level;
@@ -51,20 +45,17 @@ namespace Nekoyume.Model.Character
             get => _stats.CurrentHP;
             set => _stats.CurrentHP = value;
         }
-
         public int HP => _stats.HP;
         public int ATK => _stats.ATK;
         public int DEF => _stats.DEF;
         public int CRI => _stats.CRI;
         public int HIT => _stats.HIT;
         public int SPD => _stats.SPD;
-        public ElementalType OffensiveElementalType { get; }
-        public ElementalType DefenseElementalType { get; }
         public bool IsDead => CurrentHP <= 0;
-        public bool IsEnemy { get; }
-        public BattleStatus.Skill SkillLog { get; private set; }
 
-        public ArenaPlayer(
+        public object Clone() => new ArenaCharacter(this);
+
+        public ArenaCharacter(
             ArenaSimulator simulator,
             ArenaPlayerDigest digest,
             ArenaSimulatorSheets sheets,
@@ -77,12 +68,31 @@ namespace Nekoyume.Model.Character
             _skillSheet = sheets.SkillSheet;
             _skillBuffSheet = sheets.SkillBuffSheet;
             _buffSheet = sheets.BuffSheet;
-            _attackCountMax = AttackCountHelper.GetCountMax(digest.Level);
 
             _simulator = simulator;
             _stats = GetStat(digest, sheets);
             _skills = GetSkills(digest.Equipments, sheets.SkillSheet);
+            _attackCountMax = AttackCountHelper.GetCountMax(digest.Level);
+        }
 
+        private ArenaCharacter(ArenaCharacter value)
+        {
+            OffensiveElementalType = value.OffensiveElementalType;
+            DefenseElementalType = value.OffensiveElementalType;
+            IsEnemy = value.IsEnemy;
+            SkillLog = value.SkillLog;
+
+            _skillSheet = value._skillSheet;
+            _skillBuffSheet = value._skillBuffSheet;
+            _buffSheet = value._buffSheet;
+
+            _simulator = value._simulator;
+            _stats = value._stats;
+            _skills = value._skills;
+            _attackCountMax = value._attackCount;
+
+            _target = value._target;
+            _attackCount = value._attackCount;
         }
 
         private ElementalType GetElementalType(IEnumerable<Equipment> equipments, ItemSubType itemSubType)
@@ -246,7 +256,7 @@ namespace Nekoyume.Model.Character
         }
         #endregion
 
-        public void Spawn(ArenaPlayer target)
+        public void Spawn(ArenaCharacter target)
         {
             _target = target;
             InitAI();
@@ -279,7 +289,7 @@ namespace Nekoyume.Model.Character
             return CRI + additionalCriticalChance >= chance;
         }
 
-        public virtual bool IsHit(ArenaPlayer caster)
+        public virtual bool IsHit(ArenaCharacter caster)
         {
             var isHit = HitHelper.IsHit(
                 caster.Level,

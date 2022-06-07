@@ -5,7 +5,7 @@ using Nekoyume.TableData;
 namespace Nekoyume.Model.Skill.Stage
 {
     [Serializable]
-    public class BuffSkill : Skill
+    public class BuffSkill : Skill, IStageSkill
     {
         public BuffSkill(SkillSheet.Row skillRow, int power, int chance)
             : base(skillRow, power, chance)
@@ -21,15 +21,6 @@ namespace Nekoyume.Model.Skill.Stage
             return new BattleStatus.Buff(clone, buff);
         }
 
-        // public BattleStatus.Skill UseForArena(
-        //     ArenaPlayer caster,
-        //     ArenaPlayer target,
-        //     int simulatorWaveTurn,
-        //     IEnumerable<Buff.Buff> buffs)
-        // {
-        //     var buff = ProcessBuffForArena(target, simulatorWaveTurn, buffs);
-        //
-        //     return new Model.BattleStatus.Buff(target, buff);
-        // }
+
     }
 }
