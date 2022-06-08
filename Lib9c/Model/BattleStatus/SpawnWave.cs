@@ -12,7 +12,12 @@ namespace Nekoyume.Model.BattleStatus
         public readonly List<Enemy> Enemies;
         public readonly bool HasBoss;
 
-        public SpawnWave(StageCharacter stageCharacter, int waveNumber, int waveTurn, List<Enemy> enemies, bool hasBoss) : base(stageCharacter)
+        public SpawnWave(
+            StageCharacter stageCharacter,
+            int waveNumber, int waveTurn,
+            List<Enemy> enemies,
+            bool hasBoss)
+            : base(stageCharacter)
         {
             WaveNumber = waveNumber;
             WaveTurn = waveTurn;
@@ -20,9 +25,17 @@ namespace Nekoyume.Model.BattleStatus
             HasBoss = hasBoss;
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoSpawnWave(WaveNumber, WaveTurn, Enemies, HasBoss);
+            if (world is IStage stage)
+            {
+                yield return stage.CoSpawnWave(WaveNumber, WaveTurn, Enemies, HasBoss);
+            }
+            else
+            {
+                throw new InvalidCastException(nameof(world));
+            }
+
         }
     }
 }

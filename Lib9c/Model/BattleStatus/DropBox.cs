@@ -15,9 +15,16 @@ namespace Nekoyume.Model.BattleStatus
             Items = items;
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoDropBox(Items);
+            if (world is IStage stage)
+            {
+                yield return stage.CoDropBox(Items);
+            }
+            else
+            {
+                throw new InvalidCastException(nameof(world));
+            }
         }
     }
 }

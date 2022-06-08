@@ -7,13 +7,14 @@ using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.Buff;
+using Nekoyume.Model.Character;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
 
-namespace Nekoyume.Model.Character
+namespace Nekoyume.Model
 {
     public class ArenaCharacter : ICharacter, ICloneable
     {
@@ -23,35 +24,42 @@ namespace Nekoyume.Model.Character
         private readonly ArenaSimulator _simulator;
         private readonly CharacterStats _stats;
         private readonly Skills _skills;
-        private readonly Dictionary<int, Buff.Buff> _buffs = new Dictionary<int, Buff.Buff>();
+
         private readonly int _attackCountMax;
 
         private ArenaCharacter _target;
         private int _attackCount;
 
+        public Guid Id { get; } = Guid.NewGuid();
+        public BattleStatus.Skill SkillLog { get; private set; }
         public ElementalType OffensiveElementalType { get; }
         public ElementalType DefenseElementalType { get; }
+        public SizeType SizeType { get; }
+        public float RunSpeed { get; }
+        public float AttackRange { get; }
+        public int CharacterId { get; }
         public bool IsEnemy { get; }
-        public BattleStatus.Skill SkillLog { get; private set; }
 
         public int Level
         {
             get => _stats.Level;
             set => _stats.SetLevel(value);
         }
-
         public int CurrentHP
         {
             get => _stats.CurrentHP;
             set => _stats.CurrentHP = value;
         }
         public int HP => _stats.HP;
+        public int AdditionalHP => _stats.BuffStats.HP;
         public int ATK => _stats.ATK;
         public int DEF => _stats.DEF;
         public int CRI => _stats.CRI;
         public int HIT => _stats.HIT;
         public int SPD => _stats.SPD;
         public bool IsDead => CurrentHP <= 0;
+
+        public Dictionary<int, Buff.Buff> Buffs { get; } = new Dictionary<int, Buff.Buff>();
 
         public object Clone() => new ArenaCharacter(this);
 
@@ -63,6 +71,11 @@ namespace Nekoyume.Model.Character
         {
             OffensiveElementalType = GetElementalType(digest.Equipments, ItemSubType.Weapon);
             DefenseElementalType = GetElementalType(digest.Equipments, ItemSubType.Armor);
+            var row = CharacterRow(digest.CharacterId, sheets);
+            SizeType = row?.SizeType ?? SizeType.S;
+            RunSpeed = row?.RunSpeed ?? 1f;
+            AttackRange = row?.AttackRange ?? 1f;
+            CharacterId = digest.CharacterId;
             IsEnemy = isEnemy;
 
             _skillSheet = sheets.SkillSheet;
@@ -77,10 +90,15 @@ namespace Nekoyume.Model.Character
 
         private ArenaCharacter(ArenaCharacter value)
         {
+            Id = value.Id;
+            SkillLog = value.SkillLog;
             OffensiveElementalType = value.OffensiveElementalType;
             DefenseElementalType = value.OffensiveElementalType;
+            SizeType = value.SizeType;
+            RunSpeed = value.RunSpeed;
+            AttackRange = value.AttackRange;
+            CharacterId = value.CharacterId;
             IsEnemy = value.IsEnemy;
-            SkillLog = value.SkillLog;
 
             _skillSheet = value._skillSheet;
             _skillBuffSheet = value._skillBuffSheet;
@@ -89,17 +107,17 @@ namespace Nekoyume.Model.Character
             _simulator = value._simulator;
             _stats = new CharacterStats(value._stats);
             _skills = value._skills;
-            _buffs = new Dictionary<int, Buff.Buff>();
+            Buffs = new Dictionary<int, Buff.Buff>();
 #pragma warning disable LAA1002
-            foreach (var pair in value._buffs)
+            foreach (var pair in value.Buffs)
 #pragma warning restore LAA1002
             {
-                _buffs.Add(pair.Key, (Buff.Buff) pair.Value.Clone());
+                Buffs.Add(pair.Key, (Buff.Buff) pair.Value.Clone());
             }
 
             _attackCountMax = value._attackCount;
-            _target = value._target;
             _attackCount = value._attackCount;
+            _target = value._target;
         }
 
         private ElementalType GetElementalType(IEnumerable<Equipment> equipments, ItemSubType itemSubType)
@@ -108,15 +126,21 @@ namespace Nekoyume.Model.Character
             return equipment?.ElementalType ?? ElementalType.Normal;
         }
 
-        private static CharacterStats GetStat(ArenaPlayerDigest digest, ArenaSimulatorSheets sheets)
+        private static CharacterSheet.Row CharacterRow(int characterId, ArenaSimulatorSheets sheets)
         {
-            if (!sheets.CharacterSheet.TryGetValue(digest.CharacterId, out var row))
+            if (!sheets.CharacterSheet.TryGetValue(characterId, out var row))
             {
-                throw new SheetRowNotFoundException("CharacterSheet", digest.CharacterId);
+                throw new SheetRowNotFoundException("CharacterSheet", characterId);
             }
 
-            var stats = new CharacterStats(row, digest.Level);
+            return row;
+        }
 
+
+        private static CharacterStats GetStat(ArenaPlayerDigest digest, ArenaSimulatorSheets sheets)
+        {
+            var row = CharacterRow(digest.CharacterId, sheets);
+            var stats = new CharacterStats(row, digest.Level);
             stats.SetEquipments(digest.Equipments, sheets.EquipmentItemSetEffectSheet);
 
             var options = new List<StatModifier>();
@@ -201,7 +225,7 @@ namespace Nekoyume.Model.Character
         private void ReduceDurationOfBuffs()
         {
 #pragma warning disable LAA1002
-            foreach (var pair in _buffs)
+            foreach (var pair in Buffs)
 #pragma warning restore LAA1002
             {
                 pair.Value.remainedDuration--;
@@ -239,21 +263,21 @@ namespace Nekoyume.Model.Character
         {
             var isApply = false;
 
-            foreach (var key in _buffs.Keys.ToList())
+            foreach (var key in Buffs.Keys.ToList())
             {
-                var buff = _buffs[key];
+                var buff = Buffs[key];
                 if (buff.remainedDuration > 0)
                 {
                     continue;
                 }
 
-                _buffs.Remove(key);
+                Buffs.Remove(key);
                 isApply = true;
             }
 
             if (isApply)
             {
-                _stats.SetBuffs(_buffs.Values);
+                _stats.SetBuffs(Buffs.Values);
             }
         }
 
@@ -271,12 +295,12 @@ namespace Nekoyume.Model.Character
 
         public void AddBuff(Buff.Buff buff, bool updateImmediate = true)
         {
-            if (_buffs.TryGetValue(buff.RowData.GroupId, out var outBuff) &&
+            if (Buffs.TryGetValue(buff.RowData.GroupId, out var outBuff) &&
                 outBuff.RowData.Id > buff.RowData.Id)
                 return;
 
             var clone = (Buff.Buff) buff.Clone();
-            _buffs[buff.RowData.GroupId] = clone;
+            Buffs[buff.RowData.GroupId] = clone;
             _stats.AddBuff(clone, updateImmediate);
         }
 

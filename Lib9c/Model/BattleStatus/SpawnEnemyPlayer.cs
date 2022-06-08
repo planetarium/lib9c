@@ -10,9 +10,16 @@ namespace Nekoyume.Model.BattleStatus
         {
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoSpawnEnemyPlayer((EnemyPlayer)Character);
+            if (world is IStage stage)
+            {
+                yield return stage.CoSpawnEnemyPlayer((EnemyPlayer)Character);
+            }
+            else
+            {
+                throw new InvalidCastException(nameof(world));
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Nekoyume.Model
     {
         public const decimal CriticalMultiplier = 1.5m;
 
-        public readonly Guid Id = Guid.NewGuid();
+        public Guid Id { get; } = Guid.NewGuid();
 
         [NonSerialized]
         public Simulator Simulator;

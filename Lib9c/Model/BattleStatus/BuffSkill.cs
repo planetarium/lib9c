@@ -13,9 +13,9 @@ namespace Nekoyume.Model.BattleStatus
         {
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoBuff(Character, SkillInfos, BuffInfos);
+            yield return world.CoBuff(Character, SkillInfos, BuffInfos);
         }
     }
 }

@@ -1,4 +1,5 @@
 using Libplanet.Action;
+using Nekoyume.Model;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Character;

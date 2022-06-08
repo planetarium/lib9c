@@ -14,6 +14,6 @@ namespace Nekoyume.Model.BattleStatus
             Character = character;
         }
 
-        public abstract IEnumerator CoExecute(IStage stage);
+        public abstract IEnumerator CoExecute(IWorld world);
     }
 }

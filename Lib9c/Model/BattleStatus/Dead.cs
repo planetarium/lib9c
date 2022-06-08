@@ -11,9 +11,9 @@ namespace Nekoyume.Model.BattleStatus
         {
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoDead(Character);
+            yield return world.CoDead(Character);
         }
     }
 }

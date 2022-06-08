@@ -15,9 +15,16 @@ namespace Nekoyume.Model.BattleStatus
             Rewards = rewards;
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoGetReward(Rewards);
+            if (world is IStage stage)
+            {
+                yield return stage.CoGetReward(Rewards);
+            }
+            else
+            {
+                throw new InvalidCastException(nameof(world));
+            }
         }
     }
 }

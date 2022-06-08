@@ -8,16 +8,24 @@ namespace Nekoyume.Model.BattleStatus
     {
         public readonly int TurnNumber;
         public readonly int WaveTurn;
-        
-        public WaveTurnEnd(StageCharacter stageCharacter, int turnNumber, int waveTurn) : base(stageCharacter)
-        {   
+
+        public WaveTurnEnd(StageCharacter stageCharacter, int turnNumber, int waveTurn)
+            : base(stageCharacter)
+        {
             TurnNumber = turnNumber;
             WaveTurn = waveTurn;
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoWaveTurnEnd(TurnNumber, WaveTurn);
+            if (world is IStage stage)
+            {
+                yield return stage.CoWaveTurnEnd(TurnNumber, WaveTurn);
+            }
+            else
+            {
+                throw new InvalidCastException(nameof(world));
+            }
         }
     }
 }

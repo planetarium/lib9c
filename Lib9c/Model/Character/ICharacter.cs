@@ -1,7 +1,9 @@
-namespace Nekoyume.Model.Character
+using System;
+
+namespace Nekoyume.Model
 {
     public interface ICharacter
     {
-
+        Guid Id { get; }
     }
 }

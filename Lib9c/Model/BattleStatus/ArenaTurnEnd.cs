@@ -1,19 +1,27 @@
+using System;
 using System.Collections;
-using Nekoyume.Model.Character;
 
 namespace Nekoyume.Model.BattleStatus
 {
     public class ArenaTurnEnd : EventBase
     {
         public readonly int TurnNumber;
+
         public ArenaTurnEnd(ICharacter character, int turnNumber) : base(character)
         {
             TurnNumber = turnNumber;
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoArenaTurnEnd(TurnNumber);
+            if (world is IArena arena)
+            {
+                yield return arena.CoArenaTurnEnd(TurnNumber);
+            }
+            else
+            {
+                throw new InvalidCastException(nameof(world));
+            }
         }
     }
 }
