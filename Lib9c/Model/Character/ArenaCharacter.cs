@@ -185,11 +185,13 @@ namespace Nekoyume.Model
 
             foreach (var skill in equipments.SelectMany(equipment => equipment.Skills))
             {
-                skills.Add(skill);
+                var arenaSkill = SkillFactory.GetForArena(skill.SkillRow, skill.Power, skill.Chance);
+                skills.Add(arenaSkill);
             }
 
-            foreach (var buffSkill in equipments.SelectMany(equipment => equipment.BuffSkills))
+            foreach (var buff in equipments.SelectMany(equipment => equipment.BuffSkills))
             {
+                var buffSkill = SkillFactory.GetForArena(buff.SkillRow, buff.Power, buff.Chance);
                 skills.Add(buffSkill);
             }
 
