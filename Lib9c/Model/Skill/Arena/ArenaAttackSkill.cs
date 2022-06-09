@@ -61,7 +61,7 @@ namespace Nekoyume.Model.Skill.Arena
                     target.CurrentHP -= damage;
                 }
 
-                infos.Add(new BattleStatus.Skill.SkillInfo((ArenaCharacter)caster.Clone(),
+                infos.Add(new BattleStatus.Skill.SkillInfo((ArenaCharacter)target.Clone(),
                     damage,
                     isCritical,
                     SkillRow.SkillCategory,

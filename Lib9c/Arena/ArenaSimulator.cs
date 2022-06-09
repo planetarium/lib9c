@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Libplanet.Action;
 using Nekoyume.Model;
 using Nekoyume.Model.Arena;
@@ -52,19 +54,21 @@ namespace Nekoyume.Arena
                 var clone = (ArenaCharacter)selectedPlayer.Clone();
                 log.Add(clone.SkillLog);
 
-                if (selectedPlayer.IsDead)
+                var deadPlayers = players.Where(x => x.IsDead);
+                var arenaCharacters = deadPlayers as ArenaCharacter[] ?? deadPlayers.ToArray();
+                if (arenaCharacters.Any())
                 {
-                    log.Add(new Dead((ArenaCharacter)selectedPlayer.Clone()));
-                    log.result = selectedPlayer.IsEnemy
-                        ? BattleLog.Result.Win
-                        : BattleLog.Result.Lose;
+                    var (deadPlayer, result) = GetBattleResult(arenaCharacters);
+                    log.result = result;
+                    log.Add(new Dead((ArenaCharacter)deadPlayer.Clone()));
+                    log.Add(new ArenaTurnEnd((ArenaCharacter)selectedPlayer.Clone(), Turn));
                     break;
                 }
 
                 if (!selectedPlayer.IsEnemy)
                 {
-                    Turn++;
                     log.Add(new ArenaTurnEnd((ArenaCharacter)selectedPlayer.Clone(), Turn));
+                    Turn++;
                 }
 
                 foreach (var other in players)
@@ -78,6 +82,19 @@ namespace Nekoyume.Arena
             }
 
             return log;
+        }
+
+        private static (ArenaCharacter, BattleLog.Result) GetBattleResult(
+            IReadOnlyCollection<ArenaCharacter> deadPlayers)
+        {
+            if (deadPlayers.Count() > 1)
+            {
+                var enemy = deadPlayers.First(x => x.IsEnemy);
+                return (enemy, BattleLog.Result.Win);
+            }
+
+            var player = deadPlayers.First();
+            return (player, player.IsEnemy ? BattleLog.Result.Win : BattleLog.Result.Lose);
         }
 
         private static SimplePriorityQueue<ArenaCharacter, decimal> SpawnPlayers(
