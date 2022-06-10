@@ -305,7 +305,7 @@ namespace Nekoyume.Action
                 var (dailyCostState, weeklyCostState, prevWeeklyCostState, beforePrevWeeklyCostState) = states.GetCrystalCostStates(context.BlockIndex, row.BlockInterval);
                 // https://github.com/planetarium/lib9c/pull/1108
                 // https://github.com/planetarium/lib9c/pull/1109
-                if (context.BlockIndex >= 1_091_620L)
+                if (context.BlockIndex >= 1_095_000L)
                 {
                     // 1x fixed crystal cost.
                     costCrystal = CrystalCalculator.CalculateCombinationCost(costCrystal, row: row, prevWeeklyCostState: null, beforePrevWeeklyCostState: null);

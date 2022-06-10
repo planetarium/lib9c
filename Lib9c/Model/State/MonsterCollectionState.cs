@@ -27,7 +27,7 @@ namespace Nekoyume.Model.State
 
         public const string DeriveFormat = "monster-collection-{0}";
 
-        private const long HardforkIndex = 1_091_620;
+        private const long HardforkIndex = 1_095_000;
         private static long GetRewardInterval(long blockIndex)
         {
             if (blockIndex < HardforkIndex)
