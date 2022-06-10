@@ -43,7 +43,7 @@ namespace Nekoyume.Action
 
             bool isPreviewNet = states.GetGoldCurrency().Minters
                 .Contains(new Address("340f110b91d0577a9ae0ea69ce15269436f217da"));
-            const long hardforkIndex = 1_090_000;
+            const long hardforkIndex = 1_091_620;
             bool isBeforeHardfork = isPreviewNet && context.BlockIndex < hardforkIndex;
 
             // Restrict staking if there is a monster collection until now.
