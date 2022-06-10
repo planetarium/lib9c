@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Assets;
@@ -44,7 +45,11 @@ namespace Lib9c.Tests.Action
                 rankingMapAddress);
             agentState.avatarAddresses[0] = _avatarAddress;
 
-            var currency = new Currency("NCG", 2, minters: null);
+            var currency = new Currency(
+                "NCG",
+                2,
+                minters: ImmutableHashSet<Address>.Empty.Add(
+                    new Address("47d082a115c63e7b58b1532d20e631538eafadde")));
             var goldCurrencyState = new GoldCurrencyState(currency);
 
             _state = _state
