@@ -39,7 +39,13 @@ namespace Nekoyume.Action
         public override IAccountStateDelta Execute(IActionContext context)
         {
             var states = context.PreviousStates;
-            if (states.TryGetStakeState(context.Signer, out StakeState _))
+
+            bool isPreviewNet = states.GetGoldCurrency().Minters
+                .Contains(new Address("340f110b91d0577a9ae0ea69ce15269436f217da"));
+            const long hardforkIndex = 1_090_000;
+            bool isBeforeHardfork = isPreviewNet && context.BlockIndex < hardforkIndex;
+
+            if (!isBeforeHardfork && states.TryGetStakeState(context.Signer, out StakeState _))
             {
                 throw new InvalidOperationException("The user has already staked.");
             }
