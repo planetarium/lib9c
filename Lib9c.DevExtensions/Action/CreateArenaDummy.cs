@@ -4,12 +4,14 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.DevExtensions.Model;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Arena;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
@@ -20,6 +22,7 @@ namespace Lib9c.DevExtensions.Action
     [ActionType("create_arena_dummy")]
     public class CreateArenaDummy : GameAction
     {
+        public Address myAvatarAddress;
         public int accountCount;
         public int championshipId;
         public int round;
@@ -29,6 +32,7 @@ namespace Lib9c.DevExtensions.Action
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()
             {
+                ["myAvatarAddress"] = myAvatarAddress.Serialize(),
                 ["accountCount"] = championshipId.Serialize(),
                 ["championshipId"] = championshipId.Serialize(),
                 ["round"] = round.Serialize(),
@@ -41,6 +45,7 @@ namespace Lib9c.DevExtensions.Action
         protected override void LoadPlainValueInternal(
             IImmutableDictionary<string, IValue> plainValue)
         {
+            myAvatarAddress = plainValue["myAvatarAddress"].ToAddress();
             accountCount = plainValue["accountCount"].ToInteger();
             championshipId = plainValue["championshipId"].ToInteger();
             round = plainValue["round"].ToInteger();
@@ -91,6 +96,21 @@ namespace Lib9c.DevExtensions.Action
                 var rankingState = context.PreviousStates.GetRankingState();
                 var rankingMapAddress = rankingState.UpdateRankingMap(avatarAddress);
 
+                // create ArenaScore
+                var sheets = states.GetSheets(
+                    sheetTypes: new[]
+                    {
+                        typeof(ItemRequirementSheet),
+                        typeof(EquipmentItemRecipeSheet),
+                        typeof(EquipmentItemSubRecipeSheetV2),
+                        typeof(EquipmentItemOptionSheet),
+                        typeof(CostumeItemSheet),
+                        typeof(EquipmentItemSheet),
+                        typeof(MaterialItemSheet),
+                        typeof(ArenaSheet),
+                        typeof(SkillSheet),
+                    });
+
                 avatarState = TestbedHelper.CreateAvatarState(avatarAddress.ToHex().Substring(0, 4),
                     agentAddress,
                     avatarAddress,
@@ -100,6 +120,18 @@ namespace Lib9c.DevExtensions.Action
                     context.PreviousStates.GetGameConfigState(),
                     rankingMapAddress);
 
+                if (!states.TryGetAvatarStateV2(context.Signer, myAvatarAddress,
+                out var myAvatarState, out var _))
+                {
+                    throw new FailedLoadStateException($"error");
+                }
+
+                // copy item
+                foreach (var item in myAvatarState.inventory.Items)
+                {
+                    avatarState.inventory.AddItem(item.item);
+                }
+
                 // join arena
                 states = states.SetState(agentAddress, agentState.Serialize())
                     .SetState(avatarAddress, avatarState.SerializeV2())
@@ -107,16 +139,7 @@ namespace Lib9c.DevExtensions.Action
                     .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                     .SetState(questListAddress, avatarState.questList.Serialize());
 
-                // create ArenaScore
-                var sheets = states.GetSheets(
-                    sheetTypes: new[]
-                    {
-                        typeof(ItemRequirementSheet),
-                        typeof(EquipmentItemRecipeSheet),
-                        typeof(EquipmentItemSubRecipeSheetV2),
-                        typeof(EquipmentItemOptionSheet),
-                        typeof(ArenaSheet),
-                    });
+
                 var sheet = sheets.GetSheet<ArenaSheet>();
                 if (!sheet.TryGetValue(championshipId, out var row))
                 {
@@ -179,5 +202,6 @@ namespace Lib9c.DevExtensions.Action
 
             return states;
         }
+
     }
 }
