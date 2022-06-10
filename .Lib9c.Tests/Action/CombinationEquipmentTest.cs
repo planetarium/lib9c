@@ -96,10 +96,12 @@ namespace Lib9c.Tests.Action
         [InlineData(null, true, true, true, true, false, 11, 0, true, 0L, 2, 1, true, false, false, false, false)]
         // Mimisbrunnr Equipment.
         [InlineData(null, true, true, true, true, false, 11, 0, true, 0L, 2, 3, true, true, true, false, false)]
-        // Purchase CRYSTAL.
+        // Purchase CRYSTAL without previous states.
         [InlineData(null, true, true, true, true, false, 3, 0, true, 0L, 1, null, false, false, false, true, false)]
-        // Purchase CRYSTAL with calculate previous cost.
-        [InlineData(null, true, true, true, true, false, 3, 0, true, 100_800L, 1, null, false, false, true, true, true)]
+        // Purchase CRYSTAL after patched.
+        [InlineData(null, true, true, true, true, false, 3, 0, true, 1_090_000L, 1, null, false, false, true, true, true)]
+        // Exception for chain consistency.
+        [InlineData(typeof(DivideByZeroException), true, true, true, true, false, 3, 0, true, 100_800L, 1, null, false, false, true, true, true)]
         // UnlockEquipmentRecipe not executed.
         [InlineData(typeof(FailedLoadStateException), false, true, true, true, false, 11, 0, true, 0L, 2, 1, true, false, false, false, false)]
         // CRYSTAL not paid.
