@@ -99,7 +99,7 @@ namespace Lib9c.Tests.Action
         // Purchase CRYSTAL without previous states.
         [InlineData(null, true, true, true, true, false, 3, 0, true, 0L, 1, null, false, false, false, true, false)]
         // Purchase CRYSTAL after patched.
-        [InlineData(null, true, true, true, true, false, 3, 0, true, 1_091_620L, 1, null, false, false, true, true, true)]
+        [InlineData(null, true, true, true, true, false, 3, 0, true, 1_095_000L, 1, null, false, false, true, true, true)]
         // Exception for chain consistency.
         [InlineData(typeof(DivideByZeroException), true, true, true, true, false, 3, 0, true, 100_800L, 1, null, false, false, true, true, true)]
         // UnlockEquipmentRecipe not executed.
