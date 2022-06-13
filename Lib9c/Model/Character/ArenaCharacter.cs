@@ -242,7 +242,7 @@ namespace Nekoyume.Model
 
         private void UseSkill()
         {
-            var selectedSkill = _skills.Select(_simulator.Random);
+            var selectedSkill = _skills.SelectForArena(_simulator.Random);
             if (selectedSkill is IArenaSkill arenaSkill)
             {
                 SkillLog = arenaSkill.Use(

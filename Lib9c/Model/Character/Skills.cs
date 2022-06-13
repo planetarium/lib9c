@@ -100,6 +100,11 @@ namespace Nekoyume.Model
             return PostSelect(random, GetSelectableSkills());
         }
 
+        public Skill.Skill SelectForArena(IRandom random)
+        {
+            return PostSelectForArena(random, GetSelectableSkills());
+        }
+
         [Obsolete("Use Select")]
         public Skill.Skill SelectV1(IRandom random)
         {
@@ -151,6 +156,29 @@ namespace Nekoyume.Model
 
             var selectedSkill = itemSelector.Select(1);
             return selectedSkill.First();
+        }
+
+        private Skill.Skill PostSelectForArena(IRandom random, IEnumerable<Skill.Skill> skills)
+        {
+            var skillList = skills.ToList();
+            var defaultAttack = skillList.FirstOrDefault(x => x.SkillRow.Id == GameConfig.DefaultAttackId);
+            if (defaultAttack == null)
+            {
+                throw new Exception("There is no default attack");
+            }
+
+            if (skillList.Count == 1) // If there's only a default attack in skills
+            {
+                return defaultAttack;
+            }
+
+            var chance = random.Next(0, 100);
+            var selectedSkills  = skillList
+                .Where(x => x.SkillRow.Id != GameConfig.DefaultAttackId && chance < x.Chance)
+                .OrderBy(x => x.Power)
+                .ToList();
+
+            return selectedSkills.Any() ? selectedSkills.First() : defaultAttack;
         }
 
         [Obsolete("Use PostSelect")]
