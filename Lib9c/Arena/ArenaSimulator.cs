@@ -87,7 +87,7 @@ namespace Nekoyume.Arena
         private static (ArenaCharacter, BattleLog.Result) GetBattleResult(
             IReadOnlyCollection<ArenaCharacter> deadPlayers)
         {
-            if (deadPlayers.Count() > 1)
+            if (deadPlayers.Count > 1)
             {
                 var enemy = deadPlayers.First(x => x.IsEnemy);
                 return (enemy, BattleLog.Result.Win);
