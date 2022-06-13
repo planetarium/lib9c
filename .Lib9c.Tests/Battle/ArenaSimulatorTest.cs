@@ -61,7 +61,7 @@ namespace Lib9c.Tests
             Assert.Equal(_random, simulator.Random);
 
             var turn = log.events.OfType<ArenaTurnEnd>().Count();
-            Assert.Equal(simulator.Turn, turn + 1);
+            Assert.Equal(simulator.Turn, turn);
 
             var players = log.events.OfType<SpawnArenaPlayer>();
             var arenaCharacters = new List<ArenaCharacter>();
