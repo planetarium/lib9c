@@ -153,6 +153,7 @@ namespace Nekoyume.Model
             }
 
             stats.SetOption(options);
+            stats.IncreaseHpForArena();
             stats.EqualizeCurrentHPWithHP();
             return stats;
         }
