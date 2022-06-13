@@ -37,7 +37,7 @@ namespace Nekoyume.Action
 
         public ArenaPlayerDigest ExtraMyArenaPlayerDigest;
         public ArenaPlayerDigest ExtraEnemyArenaPlayerDigest;
-        
+
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()
             {
@@ -258,14 +258,9 @@ namespace Nekoyume.Action
 
             for (var i = 0; i < ticket; i++)
             {
-                var simulator = new ArenaSimulator(
-                    context.Random,
-                    ExtraMyArenaPlayerDigest,
-                    ExtraEnemyArenaPlayerDigest,
-                    arenaSheets);
-                simulator.Simulate();
-
-                if (simulator.Result.Equals(BattleLog.Result.Win))
+                var simulator = new ArenaSimulator(context.Random);
+                var log = simulator.Simulate(ExtraMyArenaPlayerDigest, ExtraEnemyArenaPlayerDigest, arenaSheets);
+                if (log.result.Equals(BattleLog.Result.Win))
                 {
                     winCount++;
                 }

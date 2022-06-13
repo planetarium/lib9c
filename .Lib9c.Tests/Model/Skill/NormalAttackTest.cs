@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Model.Skill
     using Nekoyume.Model;
     using Nekoyume.Model.Buff;
     using Nekoyume.Model.Skill;
+    using Nekoyume.Model.Skill.Stage;
     using Nekoyume.Model.State;
     using Serilog;
     using Xunit;
@@ -71,7 +72,6 @@ namespace Lib9c.Tests.Model.Skill
 
             var skillInfo = battleStatusSkill.SkillInfos.FirstOrDefault();
             Assert.NotNull(skillInfo);
-            Assert.Equal(enemy.Id, skillInfo.Target.Id);
         }
     }
 }

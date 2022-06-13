@@ -10,14 +10,21 @@ namespace Nekoyume.Model.BattleStatus
     {
         public readonly List<ItemBase> Rewards;
 
-        public GetReward(CharacterBase character, List<ItemBase> rewards) : base(character)
+        public GetReward(StageCharacter stageCharacter, List<ItemBase> rewards) : base(stageCharacter)
         {
             Rewards = rewards;
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoGetReward(Rewards);
+            if (world is IStage stage)
+            {
+                yield return stage.CoGetReward(Rewards);
+            }
+            else
+            {
+                throw new InvalidCastException(nameof(world));
+            }
         }
     }
 }

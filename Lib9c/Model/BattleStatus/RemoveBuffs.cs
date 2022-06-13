@@ -6,13 +6,13 @@ namespace Nekoyume.Model.BattleStatus
     [Serializable]
     public class RemoveBuffs : EventBase
     {
-        public RemoveBuffs(CharacterBase character) : base(character)
+        public RemoveBuffs(StageCharacter stageCharacter) : base(stageCharacter)
         {
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoRemoveBuffs(Character);
+            yield return world.CoRemoveBuffs(Character);
         }
     }
 }

@@ -6,13 +6,20 @@ namespace Nekoyume.Model.BattleStatus
     [Serializable]
     public class SpawnEnemyPlayer : EventBase
     {
-        public SpawnEnemyPlayer(CharacterBase character) : base(character)
+        public SpawnEnemyPlayer(StageCharacter stageCharacter) : base(stageCharacter)
         {
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoSpawnEnemyPlayer((EnemyPlayer)Character);
+            if (world is IStage stage)
+            {
+                yield return stage.CoSpawnEnemyPlayer((EnemyPlayer)Character);
+            }
+            else
+            {
+                throw new InvalidCastException(nameof(world));
+            }
         }
     }
 }

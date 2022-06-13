@@ -120,7 +120,7 @@ namespace Lib9c.Tests.Model
                 CurrentHP = 1,
             };
             player.Targets.Add(enemy);
-            simulator.Characters = new SimplePriorityQueue<CharacterBase, decimal>();
+            simulator.Characters = new SimplePriorityQueue<StageCharacter, decimal>();
             simulator.Characters.Enqueue(enemy, 0);
             player.InitAI();
             player.OverrideSkill(skill);

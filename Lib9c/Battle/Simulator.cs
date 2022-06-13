@@ -17,7 +17,7 @@ namespace Nekoyume.Battle
         public readonly BattleLog Log;
         public readonly Player Player;
         public BattleLog.Result Result { get; protected set; }
-        public SimplePriorityQueue<CharacterBase, decimal> Characters;
+        public SimplePriorityQueue<StageCharacter, decimal> Characters;
         public const decimal TurnPriority = 100m;
         public readonly MaterialItemSheet MaterialItemSheet;
         public readonly SkillSheet SkillSheet;

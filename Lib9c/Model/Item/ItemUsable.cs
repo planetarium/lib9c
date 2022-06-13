@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Bencodex.Types;
 using Nekoyume.Model.Skill;
+using Nekoyume.Model.Skill.Stage;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;

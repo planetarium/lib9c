@@ -2,21 +2,22 @@ using System;
 using System.Collections.Generic;
 using Nekoyume.TableData;
 
-namespace Nekoyume.Model.Skill
+namespace Nekoyume.Model.Skill.Stage
 {
     [Serializable]
-    public class NormalAttack : AttackSkill
+    public class NormalAttack : AttackSkill, IStageSkill
     {
-        public NormalAttack(SkillSheet.Row skillRow, int power, int chance) : base(skillRow, power, chance)
+        public NormalAttack(SkillSheet.Row skillRow, int power, int chance)
+            : base(skillRow, power, chance)
         {
         }
 
-        public override Model.BattleStatus.Skill Use(
-            CharacterBase caster,
+        public Model.BattleStatus.Skill Use(
+            StageCharacter caster,
             int simulatorWaveTurn,
             IEnumerable<Buff.Buff> buffs)
         {
-            var clone = (CharacterBase) caster.Clone();
+            var clone = (StageCharacter)caster.Clone();
             var damage = ProcessDamage(caster, simulatorWaveTurn, true);
             var buff = ProcessBuff(caster, simulatorWaveTurn, buffs);
 

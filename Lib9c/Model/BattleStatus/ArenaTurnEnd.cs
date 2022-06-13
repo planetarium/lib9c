@@ -1,21 +1,22 @@
 using System;
 using System.Collections;
-using Nekoyume.Model.Character;
 
 namespace Nekoyume.Model.BattleStatus
 {
-    [Serializable]
-    public class SpawnPlayer : EventBase
+    public class ArenaTurnEnd : EventBase
     {
-        public SpawnPlayer(ICharacter character) : base(character)
+        public readonly int TurnNumber;
+
+        public ArenaTurnEnd(ICharacter character, int turnNumber) : base(character)
         {
+            TurnNumber = turnNumber;
         }
 
         public override IEnumerator CoExecute(IWorld world)
         {
-            if (world is IStage stage)
+            if (world is IArena arena)
             {
-                yield return stage.CoSpawnPlayer((Player)Character);
+                yield return arena.CoArenaTurnEnd(TurnNumber);
             }
             else
             {

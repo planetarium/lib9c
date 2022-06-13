@@ -5,17 +5,17 @@ using Nekoyume.Model.Character;
 namespace Nekoyume.Model.BattleStatus
 {
     [Serializable]
-    public class SpawnPlayer : EventBase
+    public class SpawnArenaPlayer : EventBase
     {
-        public SpawnPlayer(ICharacter character) : base(character)
+        public SpawnArenaPlayer(ICharacter character) : base(character)
         {
         }
 
         public override IEnumerator CoExecute(IWorld world)
         {
-            if (world is IStage stage)
+            if (world is IArena arena)
             {
-                yield return stage.CoSpawnPlayer((Player)Character);
+                yield return arena.CoSpawnArenaPlayer((ArenaCharacter)Character);
             }
             else
             {

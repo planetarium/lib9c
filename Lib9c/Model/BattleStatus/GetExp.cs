@@ -8,14 +8,21 @@ namespace Nekoyume.Model.BattleStatus
     {
         public long Exp { get; }
 
-        public GetExp(CharacterBase character, long exp) : base(character)
+        public GetExp(StageCharacter stageCharacter, long exp) : base(stageCharacter)
         {
             Exp = exp;
         }
 
-        public override IEnumerator CoExecute(IStage stage)
+        public override IEnumerator CoExecute(IWorld world)
         {
-            yield return stage.CoGetExp(Exp);
+            if (world is IStage stage)
+            {
+                yield return stage.CoGetExp(Exp);
+            }
+            else
+            {
+                throw new InvalidCastException(nameof(world));
+            }
         }
     }
 }

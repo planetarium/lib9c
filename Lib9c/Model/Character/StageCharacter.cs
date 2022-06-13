@@ -15,11 +15,11 @@ using Nekoyume.TableData;
 namespace Nekoyume.Model
 {
     [Serializable]
-    public abstract class CharacterBase : ICloneable
+    public abstract class StageCharacter : ICharacter, ICloneable
     {
         public const decimal CriticalMultiplier = 1.5m;
 
-        public readonly Guid Id = Guid.NewGuid();
+        public Guid Id { get; } = Guid.NewGuid();
 
         [NonSerialized]
         public Simulator Simulator;
@@ -31,7 +31,7 @@ namespace Nekoyume.Model
         public readonly Skills Skills = new Skills();
         public readonly Skills BuffSkills = new Skills();
         public readonly Dictionary<int, Buff.Buff> Buffs = new Dictionary<int, Buff.Buff>();
-        public readonly List<CharacterBase> Targets = new List<CharacterBase>();
+        public readonly List<StageCharacter> Targets = new List<StageCharacter>();
 
         public CharacterSheet.Row RowData { get; }
         public int CharacterId { get; }
@@ -63,7 +63,7 @@ namespace Nekoyume.Model
         public int AttackCount { get; private set; }
         public int AttackCountMax { get; protected set; }
 
-        protected CharacterBase(Simulator simulator, CharacterSheet characterSheet, int characterId, int level,
+        protected StageCharacter(Simulator simulator, CharacterSheet characterSheet, int characterId, int level,
             IEnumerable<StatModifier> optionalStatModifiers = null)
         {
             Simulator = simulator;
@@ -88,7 +88,7 @@ namespace Nekoyume.Model
             AttackCountMax = 0;
         }
 
-        protected CharacterBase(CharacterBase value)
+        protected StageCharacter(StageCharacter value)
         {
             _root = value._root;
             Id = value.Id;
@@ -109,7 +109,7 @@ namespace Nekoyume.Model
             }
 
             // 타갯은 컨테이너만 옮기기.
-            Targets = new List<CharacterBase>(value.Targets);
+            Targets = new List<StageCharacter>(value.Targets);
             // 캐릭터 테이블 데이타는 변하지 않는다는 가정 하에 얕은 복사.
             RowData = value.RowData;
             Stats = new CharacterStats(value.Stats);
@@ -124,7 +124,7 @@ namespace Nekoyume.Model
         [NonSerialized]
         private Root _root;
 
-        protected CharacterBase(CharacterSheet.Row row)
+        protected StageCharacter(CharacterSheet.Row row)
         {
             RowData = row;
         }
@@ -195,7 +195,13 @@ namespace Nekoyume.Model
         private void UseSkill()
         {
             var selectedSkill = Skills.Select(Simulator.Random);
-            var usedSkill = selectedSkill.Use(
+
+            if (!(selectedSkill is IStageSkill stageSkill))
+            {
+                return;
+            }
+
+            var usedSkill = stageSkill.Use(
                 this,
                 Simulator.WaveTurn,
                 BuffFactory.GetBuffs(
@@ -215,11 +221,14 @@ namespace Nekoyume.Model
 
             foreach (var info in usedSkill.SkillInfos)
             {
-                if (!info.Target.IsDead)
-                    continue;
+                if (info.Target is StageCharacter stageCharacter)
+                {
+                    if (!stageCharacter.IsDead)
+                        continue;
 
-                var target = Targets.FirstOrDefault(i => i.Id == info.Target.Id);
-                target?.Die();
+                    var target = Targets.FirstOrDefault(i => i.Id == stageCharacter.Id);
+                    target?.Die();
+                }
             }
         }
 
@@ -228,7 +237,12 @@ namespace Nekoyume.Model
         {
             var selectedSkill = Skills.SelectV1(Simulator.Random);
 
-            var usedSkill = selectedSkill.Use(
+            if (!(selectedSkill is IStageSkill stageSkill))
+            {
+                return;
+            }
+
+            var usedSkill = stageSkill.Use(
                 this,
                 Simulator.WaveTurn,
                 BuffFactory.GetBuffs(
@@ -238,16 +252,20 @@ namespace Nekoyume.Model
                 )
             );
 
+
             Skills.SetCooldown(selectedSkill.SkillRow.Id, selectedSkill.SkillRow.Cooldown);
             Simulator.Log.Add(usedSkill);
 
             foreach (var info in usedSkill.SkillInfos)
             {
-                if (!info.Target.IsDead)
-                    continue;
+                if (info.Target is StageCharacter stageCharacter)
+                {
+                    if (!stageCharacter.IsDead)
+                        continue;
 
-                var target = Targets.FirstOrDefault(i => i.Id == info.Target.Id);
-                target?.Die();
+                    var target = Targets.FirstOrDefault(i => i.Id == stageCharacter.Id);
+                    target?.Die();
+                }
             }
         }
 
@@ -256,7 +274,12 @@ namespace Nekoyume.Model
         {
             var selectedSkill = Skills.SelectV2(Simulator.Random);
 
-            var usedSkill = selectedSkill.Use(
+            if (!(selectedSkill is IStageSkill stageSkill))
+            {
+                return;
+            }
+
+            var usedSkill = stageSkill.Use(
                 this,
                 Simulator.WaveTurn,
                 BuffFactory.GetBuffs(
@@ -271,11 +294,14 @@ namespace Nekoyume.Model
 
             foreach (var info in usedSkill.SkillInfos)
             {
-                if (!info.Target.IsDead)
-                    continue;
+                if (info.Target is StageCharacter stageCharacter)
+                {
+                    if (!stageCharacter.IsDead)
+                        continue;
 
-                var target = Targets.FirstOrDefault(i => i.Id == info.Target.Id);
-                target?.Die();
+                    var target = Targets.FirstOrDefault(i => i.Id == stageCharacter.Id);
+                    target?.Die();
+                }
             }
         }
 
@@ -298,7 +324,7 @@ namespace Nekoyume.Model
                 return;
 
             Stats.SetBuffs(Buffs.Values);
-            Simulator.Log.Add(new RemoveBuffs((CharacterBase) Clone()));
+            Simulator.Log.Add(new RemoveBuffs((StageCharacter) Clone()));
         }
 
         protected virtual void EndTurn()
@@ -343,7 +369,7 @@ namespace Nekoyume.Model
             return chance >= Stats.HIT + correction;
         }
 
-        public virtual bool IsHit(CharacterBase caster)
+        public virtual bool IsHit(StageCharacter caster)
         {
             var isHit = HitHelper.IsHit(caster.Level, caster.HIT, Level, HIT, Simulator.Random.Next(0, 100));
             if (!isHit)
@@ -387,7 +413,7 @@ namespace Nekoyume.Model
 
         protected virtual void OnDead()
         {
-            var dead = new Dead((CharacterBase) Clone());
+            var dead = new Dead((StageCharacter) Clone());
             Simulator.Log.Add(dead);
         }
 
