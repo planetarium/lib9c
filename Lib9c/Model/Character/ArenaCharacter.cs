@@ -324,7 +324,7 @@ namespace Nekoyume.Model
 
         public virtual bool IsHit(ArenaCharacter caster)
         {
-            var isHit = HitHelper.IsHit(
+            var isHit = HitHelper.IsHitForArena(
                 caster.Level,
                 caster.HIT,
                 Level,
