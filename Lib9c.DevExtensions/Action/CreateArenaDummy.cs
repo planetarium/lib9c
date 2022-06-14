@@ -190,7 +190,6 @@ namespace Lib9c.DevExtensions.Action
                 var arenaAvatarState = states.GetArenaAvatarState(arenaAvatarStateAdr, avatarState);
                 arenaAvatarState.UpdateCostumes(costumes);
                 arenaAvatarState.UpdateEquipment(equipments);
-                arenaAvatarState.UpdateLevel(avatarState.level);
 
                 states = states
                     .SetState(arenaScoreAdr, arenaScore.Serialize())
