@@ -10,7 +10,7 @@ using Priority_Queue;
 namespace Nekoyume.Arena
 {
     /// <summary>
-    /// Introduced at https://github.com/planetarium/lib9c/pull/
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1135
     /// </summary>
     public class ArenaSimulator
     {
