@@ -897,6 +897,19 @@ namespace Nekoyume.Action
             return false;
         }
 
+        public static bool TryGetArenaBoardInformation(this IAccountStateDelta states,
+            Address arenaBoardInformationAddress, out ArenaBoardInformation arenaBoardInformation)
+        {
+            if (states.TryGetState(arenaBoardInformationAddress, out List list))
+            {
+                arenaBoardInformation = new ArenaBoardInformation(list);
+                return true;
+            }
+
+            arenaBoardInformation = null;
+            return false;
+        }
+
         public static AvatarState GetEnemyAvatarState(this IAccountStateDelta states, Address avatarAddress)
         {
             AvatarState enemyAvatarState;

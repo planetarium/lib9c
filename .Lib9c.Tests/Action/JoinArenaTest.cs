@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Arena;
+    using Nekoyume.Battle;
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
@@ -226,6 +227,20 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0, arenaInformation.Lose);
             Assert.Equal(ArenaInformation.MaxTicketCount, arenaInformation.Ticket);
 
+            // ArenaInformation
+            var arenaBoardInformationAdr = ArenaBoardInformation.DeriveAddress(_avatarAddress, championshipId, round);
+            var serializedArenaBoardInformation = (List)state.GetState(arenaBoardInformationAdr);
+            var arenaBoardInformation = new ArenaBoardInformation(serializedArenaBoardInformation);
+
+            Assert.Equal(arenaBoardInformationAdr, arenaBoardInformation.Address);
+            Assert.Equal(avatarState.NameWithHash, arenaBoardInformation.NameWithHash);
+            Assert.Equal(avatarState.GetPortraitId(), arenaBoardInformation.PortraitId);
+            Assert.Equal(avatarState.level, arenaBoardInformation.Level);
+            var characterSheet = _state.GetSheet<CharacterSheet>();
+            var costumeStatSheet = _state.GetSheet<CostumeStatSheet>();
+            var cp = CPHelper.GetCPV2(avatarState, characterSheet, costumeStatSheet);
+            Assert.Equal(cp, arenaBoardInformation.CP);
+
             if (!row.TryGetRound(round, out var roundData))
             {
                 throw new RoundNotFoundException($"{nameof(JoinArena)} : {row.ChampionshipId} / {round}");
@@ -432,6 +447,38 @@ namespace Lib9c.Tests.Action
             };
 
             Assert.Throws<ArenaInformationAlreadyContainsException>(() => action.Execute(new ActionContext()
+            {
+                PreviousStates = state,
+                Signer = _signer,
+                Random = new TestRandom(),
+                BlockIndex = 1,
+            }));
+        }
+
+        [Fact]
+        public void Execute_ArenaBoardInformationAlreadyContainsException()
+        {
+            const int championshipId = 1;
+            const int round = 1;
+
+            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
+            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
+
+            var arenaBoardInformationAdr = ArenaBoardInformation.DeriveAddress(_avatarAddress, championshipId, round);
+            var arenaBoardInformation = new ArenaBoardInformation(_avatarAddress, championshipId, round);
+            state = state.SetState(arenaBoardInformationAdr, arenaBoardInformation.Serialize());
+
+            var action = new JoinArena()
+            {
+                championshipId = championshipId,
+                round = round,
+                costumes = costumes,
+                equipments = equipments,
+                avatarAddress = _avatarAddress,
+            };
+
+            Assert.Throws<ArenaBoardInformationAlreadyContainsException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _signer,

@@ -20,7 +20,7 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Introduced at https://github.com/planetarium/lib9c/pull/1135
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1137
     /// </summary>
     [Serializable]
     [ActionType("battle_arena2")]
@@ -113,6 +113,8 @@ namespace Nekoyume.Action
                     typeof(EquipmentItemSubRecipeSheetV2),
                     typeof(EquipmentItemOptionSheet),
                     typeof(MaterialItemSheet),
+                    typeof(CharacterSheet),
+                    typeof(CostumeStatSheet),
                 });
 
             avatarState.ValidEquipmentAndCostume(costumes, equipments,
@@ -204,6 +206,15 @@ namespace Nekoyume.Action
                     $" - ChampionshipId({roundData.ChampionshipId}) - round({roundData.Round})");
             }
 
+            var arenaBoardInformationAdr =
+                ArenaBoardInformation.DeriveAddress(myAvatarAddress, roundData.ChampionshipId, roundData.Round);
+            if (!states.TryGetArenaBoardInformation(arenaBoardInformationAdr, out var arenaBoardInformation))
+            {
+                throw new ArenaBoardInformationNotFoundException(
+                    $"[{nameof(BattleArena)}] my avatar address : {myAvatarAddress}" +
+                    $" - ChampionshipId({roundData.ChampionshipId}) - round({roundData.Round})");
+            }
+
             if (!ArenaHelper.ValidateScoreDifference(ArenaHelper.ScoreLimits, roundData.ArenaType,
                     myArenaScore.Score, enemyArenaScore.Score))
             {
@@ -222,6 +233,7 @@ namespace Nekoyume.Action
                 arenaInformation.ResetTicket(currentTicketResetCount);
             }
 
+            // use ticket
             arenaInformation.UseTicket(ticket);
 
             // update arena avatar state
@@ -282,6 +294,12 @@ namespace Nekoyume.Action
             enemyArenaScore.AddScore(enemyWinScore * winCount);
             arenaInformation.UpdateRecord(winCount, defeatCount);
 
+            // update arena board information
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+            var cp = CPHelper.GetCPV2(avatarState, characterSheet, costumeStatSheet);
+            arenaBoardInformation.Update(avatarState.NameWithHash, avatarState.GetPortraitId(), avatarState.level, cp);
+
             var inventoryAddress = myAvatarAddress.Derive(LegacyInventoryKey);
             var questListAddress = myAvatarAddress.Derive(LegacyQuestListKey);
 
@@ -290,6 +308,7 @@ namespace Nekoyume.Action
                 .SetState(myArenaScoreAdr, myArenaScore.Serialize())
                 .SetState(enemyArenaScoreAdr, enemyArenaScore.Serialize())
                 .SetState(arenaInformationAdr, arenaInformation.Serialize())
+                .SetState(arenaBoardInformationAdr, arenaBoardInformation.Serialize())
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
                 .SetState(myAvatarAddress, avatarState.SerializeV2());

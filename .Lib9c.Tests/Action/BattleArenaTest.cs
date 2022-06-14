@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Arena;
+    using Nekoyume.Battle;
     using Nekoyume.Model;
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.EnumType;
@@ -293,6 +294,12 @@ namespace Lib9c.Tests.Action
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
 
+            var arenaBoardInfoAdr = ArenaBoardInformation.DeriveAddress(_avatar1Address, championshipId, round);
+            if (!_state.TryGetArenaBoardInformation(arenaBoardInfoAdr, out var boardInfo))
+            {
+                throw new ArenaBoardInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
+            }
+
             var (myWinScore, myDefeatScore, enemyWinScore) =
                 ArenaHelper.GetScores(beforeMyScore.Score, beforeEnemyScore.Score);
 
@@ -326,6 +333,14 @@ namespace Lib9c.Tests.Action
             var materialCount = avatarState.inventory.Materials.Count();
             var high = (ArenaHelper.GetRewardCount(beforeMyScore.Score) * ticket) + medalCount;
             Assert.InRange(materialCount, 0, high);
+
+            Assert.Equal(avatarState.NameWithHash, boardInfo.NameWithHash);
+            Assert.Equal(avatarState.GetPortraitId(), boardInfo.PortraitId);
+            Assert.Equal(avatarState.level, boardInfo.Level);
+            var characterSheet = _state.GetSheet<CharacterSheet>();
+            var costumeStatSheet = _state.GetSheet<CostumeStatSheet>();
+            var cp = CPHelper.GetCPV2(avatarState, characterSheet, costumeStatSheet);
+            Assert.Equal(cp, boardInfo.CP);
         }
 
         public GameConfigState SetArenaInterval(int interval)

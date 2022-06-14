@@ -43,6 +43,19 @@ namespace Nekoyume.Model.Arena
     }
 
     [Serializable]
+    public class ArenaBoardInformationAlreadyContainsException : Exception
+    {
+        public ArenaBoardInformationAlreadyContainsException(string message) : base(message)
+        {
+        }
+
+        protected ArenaBoardInformationAlreadyContainsException(SerializationInfo info,
+            StreamingContext context) : base(info, context)
+        {
+        }
+    }
+
+    [Serializable]
     public class ArenaParticipantsNotFoundException : Exception
     {
         public ArenaParticipantsNotFoundException(string message) : base(message)
@@ -91,6 +104,20 @@ namespace Nekoyume.Model.Arena
         }
 
         protected ArenaInformationNotFoundException(SerializationInfo info,
+            StreamingContext context) :
+            base(info, context)
+        {
+        }
+    }
+
+    [Serializable]
+    public class ArenaBoardInformationNotFoundException : Exception
+    {
+        public ArenaBoardInformationNotFoundException(string message) : base(message)
+        {
+        }
+
+        protected ArenaBoardInformationNotFoundException(SerializationInfo info,
             StreamingContext context) :
             base(info, context)
         {

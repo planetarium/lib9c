@@ -559,6 +559,14 @@ namespace Nekoyume.Model.State
             return armor?.Id ?? GameConfig.DefaultAvatarArmorId;
         }
 
+        public int GetPortraitId()
+        {
+            var fullCostume = inventory.Costumes.FirstOrDefault(x =>
+                x.Equipped && x.ItemSubType == ItemSubType.FullCostume);
+
+            return fullCostume?.Id ?? GetArmorId();
+        }
+
         public void ValidateEquipments(List<Guid> equipmentIds, long blockIndex)
         {
             var ringCount = 0;

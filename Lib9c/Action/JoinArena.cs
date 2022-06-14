@@ -6,6 +6,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Arena;
+using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
@@ -16,7 +17,7 @@ using Nekoyume.TableData;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Introduced at https://github.com/planetarium/lib9c/pull/1135
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1137
     /// </summary>
     [Serializable]
     [ActionType("join_arena2")]
@@ -75,6 +76,8 @@ namespace Nekoyume.Action
                     typeof(EquipmentItemSubRecipeSheetV2),
                     typeof(EquipmentItemOptionSheet),
                     typeof(ArenaSheet),
+                    typeof(CharacterSheet),
+                    typeof(CostumeStatSheet),
                 });
 
             avatarState.ValidEquipmentAndCostume(costumes, equipments,
@@ -143,8 +146,22 @@ namespace Nekoyume.Action
                     $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
             }
 
-            var arenaInformation =
-                new ArenaInformation(avatarAddress, roundData.ChampionshipId, roundData.Round);
+            var arenaInformation = new ArenaInformation(avatarAddress, roundData.ChampionshipId, roundData.Round);
+
+            // create ArenaBoardInformation
+            var arenaBoardInformationAdr =
+                ArenaBoardInformation.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
+            if (states.TryGetState(arenaBoardInformationAdr, out List _))
+            {
+                throw new ArenaBoardInformationAlreadyContainsException(
+                    $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
+            }
+            var arenaBoardInformation = new ArenaBoardInformation(avatarAddress, roundData.ChampionshipId, roundData.Round);
+
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+            var cp = CPHelper.GetCPV2(avatarState, characterSheet, costumeStatSheet);
+            arenaBoardInformation.Update(avatarState.NameWithHash, avatarState.GetPortraitId(), avatarState.level, cp);
 
             // update ArenaParticipants
             var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(roundData.ChampionshipId, roundData.Round);
@@ -160,6 +177,7 @@ namespace Nekoyume.Action
             return states
                 .SetState(arenaScoreAdr, arenaScore.Serialize())
                 .SetState(arenaInformationAdr, arenaInformation.Serialize())
+                .SetState(arenaBoardInformationAdr, arenaBoardInformation.Serialize())
                 .SetState(arenaParticipantsAdr, arenaParticipants.Serialize())
                 .SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
                 .SetState(context.Signer, agentState.Serialize());
