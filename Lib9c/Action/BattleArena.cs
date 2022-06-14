@@ -10,7 +10,7 @@ using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
-using Nekoyume.Model.BattleStatus;
+using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
@@ -37,7 +37,7 @@ namespace Nekoyume.Action
 
         public ArenaPlayerDigest ExtraMyArenaPlayerDigest;
         public ArenaPlayerDigest ExtraEnemyArenaPlayerDigest;
-        
+
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()
             {
@@ -258,14 +258,9 @@ namespace Nekoyume.Action
 
             for (var i = 0; i < ticket; i++)
             {
-                var simulator = new ArenaSimulator(
-                    context.Random,
-                    ExtraMyArenaPlayerDigest,
-                    ExtraEnemyArenaPlayerDigest,
-                    arenaSheets);
-                simulator.Simulate();
-
-                if (simulator.Result.Equals(BattleLog.Result.Win))
+                var simulator = new ArenaSimulator(context.Random);
+                var log = simulator.Simulate(ExtraMyArenaPlayerDigest, ExtraEnemyArenaPlayerDigest, arenaSheets);
+                if (log.Result.Equals(ArenaLog.ArenaResult.Win))
                 {
                     winCount++;
                 }

@@ -29,14 +29,34 @@ namespace Nekoyume.Model.Buff
         }
 
         public static IList<Buff> GetBuffs(
-            Skill.Skill skill, 
-            SkillBuffSheet skillBuffSheet, 
+            Skill.Skill skill,
+            SkillBuffSheet skillBuffSheet,
             BuffSheet buffSheet)
         {
             var buffs = new List<Buff>();
             if (!skillBuffSheet.TryGetValue(skill.SkillRow.Id, out var skillBuffRow))
                 return buffs;
-            
+
+            foreach (var buffId in skillBuffRow.BuffIds)
+            {
+                if (!buffSheet.TryGetValue(buffId, out var buffRow))
+                    continue;
+
+                buffs.Add(Get(buffRow));
+            }
+
+            return buffs;
+        }
+
+        public static IList<Buff> GetBuffs(
+            Skill.Arena.ArenaSkill skill,
+            SkillBuffSheet skillBuffSheet,
+            BuffSheet buffSheet)
+        {
+            var buffs = new List<Buff>();
+            if (!skillBuffSheet.TryGetValue(skill.SkillRow.Id, out var skillBuffRow))
+                return buffs;
+
             foreach (var buffId in skillBuffRow.BuffIds)
             {
                 if (!buffSheet.TryGetValue(buffId, out var buffRow))
