@@ -16,10 +16,10 @@ using Nekoyume.TableData;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Introduced at https://github.com/planetarium/lib9c/pull/1027
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1135
     /// </summary>
     [Serializable]
-    [ActionType("join_arena")]
+    [ActionType("join_arena2")]
     public class JoinArena : GameAction
     {
         public Address avatarAddress;
@@ -98,18 +98,18 @@ namespace Nekoyume.Action
             }
 
             // check fee
-            var costCrystal = ArenaHelper.GetEntranceFee(roundData, context.BlockIndex);
-            if (costCrystal > 0 * CrystalCalculator.CRYSTAL)
+            var fee = roundData.EntranceFee * avatarState.level * avatarState.level * CrystalCalculator.CRYSTAL;
+            if (fee > 0 * CrystalCalculator.CRYSTAL)
             {
                 var crystalBalance = states.GetBalance(context.Signer, CrystalCalculator.CRYSTAL);
-                if (costCrystal > crystalBalance)
+                if (fee > crystalBalance)
                 {
                     throw new NotEnoughFungibleAssetValueException(
-                        $"required {costCrystal}, but balance is {crystalBalance}");
+                        $"required {fee}, but balance is {crystalBalance}");
                 }
 
                 var arenaAdr = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                states = states.TransferAsset(context.Signer, arenaAdr, costCrystal);
+                states = states.TransferAsset(context.Signer, arenaAdr, fee);
             }
 
             // check medal
@@ -156,7 +156,6 @@ namespace Nekoyume.Action
             var arenaAvatarState = states.GetArenaAvatarState(arenaAvatarStateAdr, avatarState);
             arenaAvatarState.UpdateCostumes(costumes);
             arenaAvatarState.UpdateEquipment(equipments);
-            arenaAvatarState.UpdateLevel(avatarState.level);
 
             return states
                 .SetState(arenaScoreAdr, arenaScore.Serialize())

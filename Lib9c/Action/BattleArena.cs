@@ -10,7 +10,7 @@ using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
-using Nekoyume.Model.BattleStatus;
+using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
@@ -20,10 +20,10 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Introduced at https://github.com/planetarium/lib9c/pull/1029
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1135
     /// </summary>
     [Serializable]
-    [ActionType("battle_arena")]
+    [ActionType("battle_arena2")]
     public class BattleArena : GameAction
     {
         public Address myAvatarAddress;
@@ -37,7 +37,7 @@ namespace Nekoyume.Action
 
         public ArenaPlayerDigest ExtraMyArenaPlayerDigest;
         public ArenaPlayerDigest ExtraEnemyArenaPlayerDigest;
-        
+
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()
             {
@@ -222,30 +222,11 @@ namespace Nekoyume.Action
                 arenaInformation.ResetTicket(currentTicketResetCount);
             }
 
-            // buy ticket
-            var buyTicket = Math.Max(ticket - arenaInformation.Ticket, 0);
-            if (buyTicket > 0)
-            {
-                var price = roundData.TicketPrice * buyTicket;
-                var ticketBalance = price * states.GetGoldCurrency();
-                var balance = states.GetBalance(context.Signer, states.GetGoldCurrency());
-                if (balance < ticketBalance)
-                {
-                    throw new NotEnoughFungibleAssetValueException(
-                        context.Signer.ToHex(), ticketBalance.RawValue, balance.RawValue);
-                }
-
-                var arenaAdr = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                states = states.TransferAsset(context.Signer, arenaAdr, ticketBalance);
-            }
-
-            var freeTicket = ticket - buyTicket;
-            arenaInformation.UseTicket(freeTicket);
+            arenaInformation.UseTicket(ticket);
 
             // update arena avatar state
             myArenaAvatarState.UpdateEquipment(equipments);
             myArenaAvatarState.UpdateCostumes(costumes);
-            myArenaAvatarState.UpdateLevel(avatarState.level);
 
             // simulate
             var enemyAvatarState = states.GetEnemyAvatarState(enemyAvatarAddress);
@@ -258,14 +239,9 @@ namespace Nekoyume.Action
 
             for (var i = 0; i < ticket; i++)
             {
-                var simulator = new ArenaSimulator(
-                    context.Random,
-                    ExtraMyArenaPlayerDigest,
-                    ExtraEnemyArenaPlayerDigest,
-                    arenaSheets);
-                simulator.Simulate();
-
-                if (simulator.Result.Equals(BattleLog.Result.Win))
+                var simulator = new ArenaSimulator(context.Random);
+                var log = simulator.Simulate(ExtraMyArenaPlayerDigest, ExtraEnemyArenaPlayerDigest, arenaSheets);
+                if (log.Result.Equals(ArenaLog.ArenaResult.Win))
                 {
                     winCount++;
                 }
