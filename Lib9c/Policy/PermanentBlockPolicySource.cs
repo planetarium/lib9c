@@ -112,6 +112,7 @@ namespace Nekoyume.BlockChain.Policy
             new Address("4db4ADb64FA9600713Ca5082cf3A469C926717eD"),
             new Address("9A3B4A8fddEaAFe1F27acC6fAd5BAD2BcD8d3915"),
             new Address("B4e3E8e33e623b1845E7B0e11407e297a0D7E5f3"),
+            new Address("2913946ad6Ed175c23e5aa46C9fCFAD4bBB9989b"),
         }.ToImmutableHashSet();
     }
 }
