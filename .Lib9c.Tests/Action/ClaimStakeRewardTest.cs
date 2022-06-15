@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Action
 {
+    using System.Collections.Immutable;
     using System.Linq;
     using Libplanet;
     using Libplanet.Action;
@@ -41,7 +42,11 @@ namespace Lib9c.Tests.Action
 
             _tableSheets = new TableSheets(sheets);
 
-            _currency = new Currency("NCG", 2, minters: null);
+            _currency = new Currency(
+                "NCG",
+                2,
+                minters: ImmutableHashSet<Address>.Empty.Add(
+                    new Address("47d082a115c63e7b58b1532d20e631538eafadde")));
             _goldCurrencyState = new GoldCurrencyState(_currency);
 
             _signerAddress = new PrivateKey().ToAddress();

@@ -26,6 +26,32 @@ namespace Nekoyume.Model.State
         }
 
         public const string DeriveFormat = "monster-collection-{0}";
+
+        private const long HardforkIndex = 1_095_000;
+        private static long GetRewardInterval(long blockIndex)
+        {
+            if (blockIndex < HardforkIndex)
+            {
+                return 50400;
+            }
+            else
+            {
+                return 50400 / 100;
+            }
+        }
+
+        private static long GetLockUpInterval(long blockIndex)
+        {
+            if (blockIndex < HardforkIndex)
+            {
+                return 50400 * 4;
+            }
+            else
+            {
+                return 50400 * 4 / 100;
+            }
+        }
+
         public const long RewardInterval = 50400;
         public const long LockUpInterval = 50400 * 4;
 
@@ -46,7 +72,7 @@ namespace Nekoyume.Model.State
         {
             Level = level;
             StartedBlockIndex = blockIndex;
-            ExpiredBlockIndex = blockIndex + LockUpInterval;
+            ExpiredBlockIndex = blockIndex + GetLockUpInterval(blockIndex);
             List<MonsterCollectionRewardSheet.RewardInfo> rewardInfos = monsterCollectionRewardSheet[level].Rewards;
         }
 
@@ -69,7 +95,7 @@ namespace Nekoyume.Model.State
 
         public bool IsLocked(long blockIndex)
         {
-            return StartedBlockIndex +  LockUpInterval > blockIndex;
+            return StartedBlockIndex + GetLockUpInterval(blockIndex) > blockIndex;
         }
 
         public void Claim(long blockIndex)
@@ -81,14 +107,14 @@ namespace Nekoyume.Model.State
         {
             int step = (int)Math.DivRem(
                 blockIndex - StartedBlockIndex,
-                RewardInterval,
+                GetRewardInterval(blockIndex),
                 out _
             );
             if (ReceivedBlockIndex > 0)
             {
                 int previousStep = (int)Math.DivRem(
                     ReceivedBlockIndex - StartedBlockIndex,
-                    RewardInterval,
+                    GetRewardInterval(blockIndex),
                     out _
                 );
                 step -= previousStep;

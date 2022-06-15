@@ -41,8 +41,14 @@ namespace Nekoyume.Action
         {
             IAccountStateDelta states = context.PreviousStates;
 
+            bool isPreviewNet = states.GetGoldCurrency().Minters
+                .Contains(new Address("340f110b91d0577a9ae0ea69ce15269436f217da"));
+            const long hardforkIndex = 1_095_000;
+            bool isBeforeHardfork = isPreviewNet && context.BlockIndex < hardforkIndex;
+
             // Restrict staking if there is a monster collection until now.
-            if (states.GetAgentState(context.Signer) is { } agentState &&
+            if (!isBeforeHardfork &&
+                states.GetAgentState(context.Signer) is { } agentState &&
                 states.TryGetState(MonsterCollectionState.DeriveAddress(
                     context.Signer,
                     agentState.MonsterCollectionRound), out Dictionary _))
@@ -88,7 +94,7 @@ namespace Nekoyume.Action
                     .TransferAsset(context.Signer, stakeStateAddress, targetStakeBalance);
             }
 
-            if (stakeState.IsClaimable(context.BlockIndex))
+            if (!isBeforeHardfork && stakeState.IsClaimable(context.BlockIndex))
             {
                 throw new StakeExistingClaimableException();
             }
