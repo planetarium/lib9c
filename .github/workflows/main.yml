@@ -92,3 +92,10 @@ jobs:
         targets: |
           ${{ github.repository_owner }}/NineChronicles:${{ github.ref_name }}?
           ${{ github.repository_owner }}/NineChronicles.Headless:${{ github.ref_name }}?
+
+  typos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check spelling of file.txt
+        uses: crate-ci/typos@master
