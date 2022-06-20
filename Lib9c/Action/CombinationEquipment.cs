@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
@@ -20,14 +20,12 @@ namespace Nekoyume.Action
 {
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/991
-    /// Updated at https://github.com/planetarium/lib9c/pull/991
+    /// Updated at https://github.com/planetarium/lib9c/pull/1069
     /// </summary>
     [Serializable]
     [ActionType("combination_equipment11")]
     public class CombinationEquipment : GameAction
     {
-        public static readonly Address BlacksmithAddress = ItemEnhancement.BlacksmithAddress;
-
         public const string AvatarAddressKey = "a";
         public Address avatarAddress;
 
@@ -84,7 +82,7 @@ namespace Nekoyume.Action
                     .SetState(inventoryAddress, MarkChanged)
                     .SetState(worldInformationAddress, MarkChanged)
                     .SetState(questListAddress, MarkChanged)
-                    .MarkBalanceChanged(GoldCurrencyMock, context.Signer, BlacksmithAddress, Addresses.MaterialCost);
+                    .MarkBalanceChanged(GoldCurrencyMock, context.Signer, ItemEnhancement.GetFeeStoreAddress());
             }
 
             if (recipeId != 1)
@@ -343,7 +341,7 @@ namespace Nekoyume.Action
             {
                 states = states.TransferAsset(
                     context.Signer,
-                    BlacksmithAddress,
+                    ItemEnhancement.GetFeeStoreAddress(),
                     states.GetGoldCurrency() * costNCG
                 );
             }

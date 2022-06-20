@@ -388,8 +388,7 @@ namespace Lib9c.Tests.Action
                 _avatarAddress.Derive(LegacyInventoryKey),
                 _avatarAddress.Derive(LegacyWorldInformationKey),
                 _avatarAddress.Derive(LegacyQuestListKey),
-                Addresses.Blacksmith,
-                Addresses.MaterialCost,
+                ItemEnhancement.GetFeeStoreAddress(),
             };
 
             var state = new State();
@@ -424,6 +423,192 @@ namespace Lib9c.Tests.Action
                 _tableSheets.SkillSheet
             );
             Assert.True(equipment.optionCountFromCombination > 0);
+        }
+
+        [Theory]
+        [InlineData(1, false, 375, false)]
+        [InlineData(1, false, 374, false)]
+        [InlineData(2, true, 3, true)]
+        [InlineData(2, true, 2, false)]
+        [InlineData(3, false, 6, false)]
+        [InlineData(3, false, 5, false)]
+        [InlineData(134, true, 313, false)]
+        [InlineData(134, true, 314, false)]
+        [InlineData(134, true, 315, true)]
+        public void MadeWithMimisbrunnrRecipe(
+            int recipeId,
+            bool isElementalTypeFire,
+            int? subRecipeId,
+            bool isMadeWithMimisbrunnrRecipe)
+        {
+            var currency = new Currency("NCG", 2, minter: null);
+            var row = _tableSheets.EquipmentItemRecipeSheet[recipeId];
+            var requiredStage = row.UnlockStage;
+            var materialRow = _tableSheets.MaterialItemSheet[row.MaterialId];
+            var material = ItemFactory.CreateItem(materialRow, _random);
+
+            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                requiredStage);
+
+            avatarState.inventory.AddItem(material, row.MaterialCount);
+
+            if (subRecipeId.HasValue)
+            {
+                var subRow = _tableSheets.EquipmentItemSubRecipeSheetV2[subRecipeId.Value];
+
+                foreach (var materialInfo in subRow.Materials)
+                {
+                    material = ItemFactory.CreateItem(_tableSheets.MaterialItemSheet[materialInfo.Id], _random);
+                    avatarState.inventory.AddItem(material, materialInfo.Count);
+                }
+            }
+
+            var previousState = _initialState
+                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyWorldInformationKey),
+                    avatarState.worldInformation.Serialize())
+                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
+                .SetState(_avatarAddress, avatarState.SerializeV2());
+
+            previousState = previousState.MintAsset(_agentAddress, 10_000 * currency);
+
+            var action = new CombinationEquipment
+            {
+                avatarAddress = _avatarAddress,
+                slotIndex = 0,
+                recipeId = recipeId,
+                subRecipeId = subRecipeId,
+            };
+
+            var nextState = action.Execute(new ActionContext
+            {
+                PreviousStates = previousState,
+                Signer = _agentAddress,
+                BlockIndex = 1,
+                Random = _random,
+            });
+
+            var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+            Assert.NotNull(slotState.Result);
+            Assert.NotNull(slotState.Result.itemUsable);
+            var isMadeWithMimisbrunnrRecipe_considerElementalType =
+                isElementalTypeFire &&
+                ((Equipment)slotState.Result.itemUsable).MadeWithMimisbrunnrRecipe;
+            Assert.Equal(
+                isMadeWithMimisbrunnrRecipe,
+                isMadeWithMimisbrunnrRecipe_considerElementalType);
+            Assert.Equal(
+                isMadeWithMimisbrunnrRecipe,
+                ((Equipment)slotState.Result.itemUsable).IsMadeWithMimisbrunnrRecipe(
+                    _tableSheets.EquipmentItemRecipeSheet,
+                    _tableSheets.EquipmentItemSubRecipeSheetV2,
+                    _tableSheets.EquipmentItemOptionSheet
+                ));
+        }
+
+        private void Execute(bool backward, int recipeId, int? subRecipeId, int mintNCG)
+        {
+            var currency = new Currency("NCG", 2, minter: null);
+            var row = _tableSheets.EquipmentItemRecipeSheet[recipeId];
+            var requiredStage = row.UnlockStage;
+            var costActionPoint = row.RequiredActionPoint;
+            var costNCG = row.RequiredGold * currency;
+            var materialRow = _tableSheets.MaterialItemSheet[row.MaterialId];
+            var material = ItemFactory.CreateItem(materialRow, _random);
+
+            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var previousActionPoint = avatarState.actionPoint;
+            var previousResultEquipmentCount =
+                avatarState.inventory.Equipments.Count(e => e.Id == row.ResultEquipmentId);
+            var previousMailCount = avatarState.mailBox.Count;
+
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                requiredStage);
+
+            avatarState.inventory.AddItem(material, row.MaterialCount);
+
+            if (subRecipeId.HasValue)
+            {
+                var subRow = _tableSheets.EquipmentItemSubRecipeSheetV2[subRecipeId.Value];
+                costActionPoint += subRow.RequiredActionPoint;
+                costNCG += subRow.RequiredGold * currency;
+
+                foreach (var materialInfo in subRow.Materials)
+                {
+                    material = ItemFactory.CreateItem(_tableSheets.MaterialItemSheet[materialInfo.Id], _random);
+                    avatarState.inventory.AddItem(material, materialInfo.Count);
+                }
+            }
+
+            IAccountStateDelta previousState;
+            if (backward)
+            {
+                previousState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            }
+            else
+            {
+                previousState = _initialState
+                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
+                    .SetState(
+                        _avatarAddress.Derive(LegacyWorldInformationKey),
+                        avatarState.worldInformation.Serialize())
+                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
+                    .SetState(_avatarAddress, avatarState.SerializeV2());
+            }
+
+            previousState = previousState.MintAsset(_agentAddress, mintNCG * currency);
+            var goldCurrencyState = previousState.GetGoldCurrency();
+            var previousNCG = previousState.GetBalance(_agentAddress, goldCurrencyState);
+            Assert.Equal(mintNCG * currency, previousNCG);
+
+            var action = new CombinationEquipment
+            {
+                avatarAddress = _avatarAddress,
+                slotIndex = 0,
+                recipeId = recipeId,
+                subRecipeId = subRecipeId,
+            };
+
+            var nextState = action.Execute(new ActionContext
+            {
+                PreviousStates = previousState,
+                Signer = _agentAddress,
+                BlockIndex = 1,
+                Random = _random,
+            });
+
+            var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+            Assert.NotNull(slotState.Result);
+            Assert.NotNull(slotState.Result.itemUsable);
+
+            if (subRecipeId.HasValue)
+            {
+                Assert.True(((Equipment)slotState.Result.itemUsable).optionCountFromCombination > 0);
+            }
+            else
+            {
+                Assert.Equal(0, ((Equipment)slotState.Result.itemUsable).optionCountFromCombination);
+            }
+
+            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            Assert.Equal(previousActionPoint - costActionPoint, nextAvatarState.actionPoint);
+            Assert.Equal(previousMailCount + 1, nextAvatarState.mailBox.Count);
+            Assert.IsType<CombinationMail>(nextAvatarState.mailBox.First());
+            Assert.Equal(
+                previousResultEquipmentCount + 1,
+                nextAvatarState.inventory.Equipments.Count(e => e.Id == row.ResultEquipmentId));
+
+            var agentGold = nextState.GetBalance(_agentAddress, goldCurrencyState);
+            Assert.Equal(previousNCG - costNCG, agentGold);
+            var fee = nextState.GetBalance(ItemEnhancement.GetFeeStoreAddress(), goldCurrencyState);
+            Assert.Equal(costNCG, fee);
         }
     }
 }

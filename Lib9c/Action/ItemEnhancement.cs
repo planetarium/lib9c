@@ -23,14 +23,13 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Hard forked at https://github.com/planetarium/lib9c/pull/637
-    /// Updated at https://github.com/planetarium/lib9c/pull/957
+    /// Updated at https://github.com/planetarium/lib9c/pull/1069
     /// </summary>
     [Serializable]
     [ActionType("item_enhancement10")]
     public class ItemEnhancement : GameAction
     {
-        public static readonly Address BlacksmithAddress = Addresses.Blacksmith;
+        public static Address GetFeeStoreAddress() => Addresses.Blacksmith.Derive("_0_0");
 
         public enum EnhancementResult
         {
@@ -134,7 +133,7 @@ namespace Nekoyume.Action
             if (ctx.Rehearsal)
             {
                 return states
-                    .MarkBalanceChanged(GoldCurrencyMock, ctx.Signer, BlacksmithAddress)
+                    .MarkBalanceChanged(GoldCurrencyMock, ctx.Signer, GetFeeStoreAddress())
                     .SetState(avatarAddress, MarkChanged)
                     .SetState(inventoryAddress, MarkChanged)
                     .SetState(worldInformationAddress, MarkChanged)
@@ -283,7 +282,7 @@ namespace Nekoyume.Action
             var requiredNcg = row.Cost;
             if (requiredNcg > 0)
             {
-                states = states.TransferAsset(ctx.Signer, BlacksmithAddress, states.GetGoldCurrency() * requiredNcg);
+                states = states.TransferAsset(ctx.Signer, GetFeeStoreAddress(), states.GetGoldCurrency() * requiredNcg);
             }
 
             // Unequip items

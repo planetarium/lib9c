@@ -187,7 +187,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(expectedGold * _currency, nextState.GetBalance(_agentAddress, _currency));
             Assert.Equal(
                 (1000 - expectedGold) * _currency,
-                nextState.GetBalance(Addresses.Blacksmith, _currency)
+                nextState.GetBalance(ItemEnhancement.GetFeeStoreAddress(), _currency)
             );
             Assert.Equal(30, nextAvatarState.mailBox.Count);
 
@@ -250,7 +250,7 @@ namespace Lib9c.Tests.Action
                 _avatarAddress.Derive(LegacyInventoryKey),
                 _avatarAddress.Derive(LegacyWorldInformationKey),
                 _avatarAddress.Derive(LegacyQuestListKey),
-                Addresses.Blacksmith,
+                ItemEnhancement.GetFeeStoreAddress(),
             };
 
             var state = new State();
