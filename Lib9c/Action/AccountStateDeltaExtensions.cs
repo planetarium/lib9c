@@ -220,6 +220,60 @@ namespace Nekoyume.Action
             }
         }
 
+        public static AvatarState UpdateAvatarStateV2(
+            this IAccountStateDelta states,
+            AvatarState avatarState,
+            Address address)
+        {
+            var addresses = new List<Address>
+            {
+                address,
+            };
+            string[] keys =
+            {
+                LegacyInventoryKey,
+                LegacyWorldInformationKey,
+                LegacyQuestListKey,
+            };
+            addresses.AddRange(keys.Select(key => address.Derive(key)));
+            var serializedValues = states.GetStates(addresses);
+            if (!(serializedValues[0] is Dictionary serializedAvatar))
+            {
+                Log.Warning("No avatar state ({AvatarAddress})", address.ToHex());
+                return null;
+            }
+
+            for (var i = 0; i < keys.Length; i++)
+            {
+                var key = keys[i];
+                var serializedValue = serializedValues[i + 1];
+                if (serializedValue is null)
+                {
+                    Log.Error(new FailedLoadStateException($"failed to load {key}."), "");
+                    continue;
+                }
+
+                serializedAvatar = serializedAvatar.SetItem(key, serializedValue);
+            }
+
+            var avatarDictionary = (Dictionary)avatarState.SerializeV2();
+            try
+            {
+                return new AvatarState(avatarDictionary.SetItems(serializedAvatar) as Dictionary);
+            }
+            catch (InvalidCastException e)
+            {
+                Log.Error(
+                    e,
+                    "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
+                    address.ToHex(),
+                    serializedAvatar
+                );
+
+                return null;
+            }
+        }
+
         public static bool TryGetAvatarState(
             this IAccountStateDelta states,
             Address agentAddress,
