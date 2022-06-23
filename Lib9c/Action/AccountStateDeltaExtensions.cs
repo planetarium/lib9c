@@ -259,7 +259,9 @@ namespace Nekoyume.Action
             var avatarDictionary = (Dictionary)avatarState.SerializeV2();
             try
             {
-                return new AvatarState(avatarDictionary.SetItems(serializedAvatar) as Dictionary);
+                avatarDictionary = serializedAvatar.Where(pair => pair.Value != null)
+                    .Aggregate(avatarDictionary,
+                        (current, pair) => (Dictionary) current.SetItem(pair.Key, pair.Value));
             }
             catch (InvalidCastException e)
             {
@@ -272,6 +274,8 @@ namespace Nekoyume.Action
 
                 return null;
             }
+
+            return new AvatarState(avatarDictionary);
         }
 
         public static bool TryGetAvatarState(
