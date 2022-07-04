@@ -154,6 +154,14 @@ namespace Nekoyume.TableData
             return false;
         }
 
+        public void Validate()
+        {
+            if (Count < 1)
+            {
+                throw new SheetRowValidateException();
+            }
+        }
+
         protected virtual void AddRow(TKey key, TValue value)
         {
             Add(key, value);

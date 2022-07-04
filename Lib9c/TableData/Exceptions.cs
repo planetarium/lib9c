@@ -26,6 +26,10 @@ namespace Nekoyume.TableData
         protected SheetRowValidateException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
+
+        public SheetRowValidateException()
+        {
+        }
     }
 
     [Serializable]
