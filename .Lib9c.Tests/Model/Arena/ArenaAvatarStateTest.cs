@@ -50,6 +50,18 @@ namespace Lib9c.Tests.Model.Arena
             Assert.Equal(state.CP, deserialized.CP);
         }
 
+        [Fact]
+        public void UpdateCP()
+        {
+            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().ToAddress();
+            var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
+            var state = new ArenaAvatarState(avatarState);
+            Assert.Equal(0, state.CP);
+            state.UpdateCP(100);
+            Assert.Equal(100, state.CP);
+        }
+
         private AvatarState GetNewAvatarState(Address avatarAddress, Address agentAddress)
         {
             var rankingState = new RankingState1();

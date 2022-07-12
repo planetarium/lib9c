@@ -19,7 +19,7 @@ namespace Nekoyume.Model.State
         public Address Address;
         public List<Guid> Costumes { get; }
         public List<Guid> Equipments { get; }
-        public int CP { get; }
+        public int CP { get; private set; }
 
         public ArenaAvatarState(AvatarState avatarState, int cp = 0)
         {
@@ -74,6 +74,11 @@ namespace Nekoyume.Model.State
 
             Equipments.Clear();
             Equipments.AddRange(equipments);
+        }
+
+        public void UpdateCP(int cp)
+        {
+            CP = cp;
         }
     }
 }
