@@ -184,8 +184,10 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
+        [InlineData(999, 500, 5, 4)]
         [InlineData(1_000, 500, 5, 5)]
-        [InlineData(1_000_000, 1_000, 10, 5_000)]
+        [InlineData(1_199, 500, 5, 5)]
+        [InlineData(1_200, 500, 5, 6)]
         public void GetMaxPurchasedTicketCount(
             int roundBlockRange,
             int dailyArenaInterval,
