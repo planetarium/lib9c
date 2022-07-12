@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Libplanet;
 using Libplanet.Assets;
@@ -21,12 +22,21 @@ namespace Nekoyume.Arena
         public static Address DeriveArenaAddress(int championshipId, int round) =>
             Addresses.Arena.Derive($"_{championshipId}_{round}");
 
+        [Obsolete("Use ScoreLimits instead.")]
+        public static readonly IReadOnlyDictionary<ArenaType, (int, int)> ScoreLimitsV1 =
+            new Dictionary<ArenaType, (int, int)>
+            {
+                { ArenaType.Season, (100, -100) },
+                { ArenaType.Championship, (100, -100) }
+            };
+
         public static readonly IReadOnlyDictionary<ArenaType, (int, int)> ScoreLimits =
-            new Dictionary<ArenaType, (int, int)>()
-        {
-            { ArenaType.Season, (100, -100) },
-            { ArenaType.Championship, (100, -100) }
-        };
+            new Dictionary<ArenaType, (int, int)>
+            {
+                { ArenaType.OffSeason, (100, -100) },
+                { ArenaType.Season, (100, -100) },
+                { ArenaType.Championship, (100, -100) }
+            };
 
         public static int GetMedalItemId(int championshipId, int round) =>
             700_000 + (championshipId * 100) + round;
