@@ -17,7 +17,8 @@ namespace Nekoyume.Battle
         /// <param name="avatarState"></param>
         /// <param name="characterSheet"></param>
         /// <returns></returns>
-        public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)
+        [Obsolete("Use `GetCP(AvatarState, CharacterSheet, CostumeStatSheet)` instead.")]
+        public static int GetCPV1(AvatarState avatarState, CharacterSheet characterSheet)
         {
             if (!characterSheet.TryGetValue(avatarState.characterId, out var row))
             {
@@ -35,12 +36,12 @@ namespace Nekoyume.Battle
             return DecimalToInt(levelStatsCP + equipmentsCP);
         }
 
-        public static int GetCPV2(
+        public static int GetCP(
             AvatarState avatarState,
             CharacterSheet characterSheet,
             CostumeStatSheet costumeStatSheet)
         {
-            var current = GetCP(avatarState, characterSheet);
+            var current = GetCPV1(avatarState, characterSheet);
             var costumeCP = avatarState.inventory.Costumes
                 .Where(c => c.equipped)
                 .Sum(c => GetCP(c, costumeStatSheet));

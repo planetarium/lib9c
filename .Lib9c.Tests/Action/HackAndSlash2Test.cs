@@ -136,7 +136,7 @@ namespace Lib9c.Tests.Action
             {
                 Assert.True(
                     newWeeklyState[_avatarAddress].CombatPoint >
-                    CPHelper.GetCP(nextAvatarState, _tableSheets.CharacterSheet)
+                    CPHelper.GetCPV1(nextAvatarState, _tableSheets.CharacterSheet)
                 );
             }
 

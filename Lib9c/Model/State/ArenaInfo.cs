@@ -67,7 +67,7 @@ namespace Nekoyume.Model.State
             Level = avatarState.level;
             var armor = avatarState.inventory.Items.Select(i => i.item).OfType<Armor>().FirstOrDefault(e => e.equipped);
             ArmorId = armor?.Id ?? GameConfig.DefaultAvatarArmorId;
-            CombatPoint = CPHelper.GetCP(avatarState, characterSheet);
+            CombatPoint = CPHelper.GetCPV1(avatarState, characterSheet);
             Active = active;
             DailyChallengeCount = GameConfig.ArenaChallengeCountMax;
             Score = GameConfig.ArenaScoreDefault;
@@ -76,7 +76,7 @@ namespace Nekoyume.Model.State
         public ArenaInfo(AvatarState avatarState, CharacterSheet characterSheet, CostumeStatSheet costumeStatSheet, bool active)
             : this(avatarState, characterSheet, active)
         {
-            CombatPoint = CPHelper.GetCPV2(avatarState, characterSheet, costumeStatSheet);
+            CombatPoint = CPHelper.GetCP(avatarState, characterSheet, costumeStatSheet);
         }
 
         public ArenaInfo(Dictionary serialized)
@@ -147,7 +147,7 @@ namespace Nekoyume.Model.State
         {
             ArmorId = state.GetArmorId();
             Level = state.level;
-            CombatPoint = CPHelper.GetCP(state, characterSheet);
+            CombatPoint = CPHelper.GetCPV1(state, characterSheet);
         }
 
         [Obsolete("Use Update()")]
@@ -155,7 +155,7 @@ namespace Nekoyume.Model.State
         {
             ArmorId = state.GetArmorId();
             Level = state.level;
-            CombatPoint = CPHelper.GetCPV2(state, characterSheet, costumeStatSheet);
+            CombatPoint = CPHelper.GetCP(state, characterSheet, costumeStatSheet);
         }
 
         [Obsolete("Use Update()")]
