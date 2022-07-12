@@ -19,12 +19,14 @@ namespace Nekoyume.Model.State
         public Address Address;
         public List<Guid> Costumes { get; }
         public List<Guid> Equipments { get; }
+        public int CP { get; }
 
-        public ArenaAvatarState(AvatarState avatarState)
+        public ArenaAvatarState(AvatarState avatarState, int cp = 0)
         {
             Address = DeriveAddress(avatarState.address);
             Costumes = new List<Guid>();
             Equipments = new List<Guid>();
+            CP = cp;
         }
 
         public ArenaAvatarState(List serialized)
@@ -32,14 +34,24 @@ namespace Nekoyume.Model.State
             Address = serialized[0].ToAddress();
             Costumes = serialized[1].ToList(StateExtensions.ToGuid);
             Equipments = serialized[2].ToList(StateExtensions.ToGuid);
+            CP = serialized.Count > 3
+                ? serialized[3].ToInteger()
+                : 0;
         }
 
         public IValue Serialize()
         {
-            return List.Empty
+            var result = List.Empty
                 .Add(Address.Serialize())
                 .Add(Costumes.OrderBy(x => x).Select(x => x.Serialize()).Serialize())
                 .Add(Equipments.OrderBy(x => x).Select(x => x.Serialize()).Serialize());
+
+            if (CP > 0)
+            {
+                result = result.Add(CP.Serialize());
+            }
+
+            return result;
         }
 
         public void UpdateCostumes([NotNull] List<Guid> costumes)
