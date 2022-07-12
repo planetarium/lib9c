@@ -25,6 +25,20 @@ namespace Lib9c.Tests.Action
                     }.OrderBy(tuple => tuple.EquipmentSlotLevel)
                     .ToArray();
 
+        public static readonly (int CostumeSlotLevel, ItemSubType ItemSubType)[]
+            OrderedCostumeSlotLevelAndItemSubType
+                =
+                new (int CostumeSlotLevel, ItemSubType ItemSubType)[]
+                    {
+                        (GameConfig.RequireCharacterLevel.CharacterEarCostumeSlot, ItemSubType.EarCostume),
+                        (GameConfig.RequireCharacterLevel.CharacterEyeCostumeSlot, ItemSubType.EyeCostume),
+                        (GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, ItemSubType.FullCostume),
+                        (GameConfig.RequireCharacterLevel.CharacterHairCostumeSlot, ItemSubType.HairCostume),
+                        (GameConfig.RequireCharacterLevel.CharacterTailCostumeSlot, ItemSubType.TailCostume),
+                        (GameConfig.RequireCharacterLevel.CharacterTitleSlot, ItemSubType.Title),
+                    }.OrderBy(tuple => tuple.CostumeSlotLevel)
+                    .ToArray();
+
         public static Equipment GetOne(
             TableSheets tableSheets,
             int avatarLevel = 1,
@@ -68,6 +82,30 @@ namespace Lib9c.Tests.Action
             return (Equipment)ItemFactory.CreateItemUsable(row, Guid.NewGuid(), 0, 10);
         }
 
+        public static Costume GetCostumeOne(
+            TableSheets tableSheets,
+            int avatarLevel = 1,
+            ItemSubType itemSubType = ItemSubType.FullCostume)
+        {
+            var requirementSheet = tableSheets.ItemRequirementSheet;
+            var costumeStatSheet = tableSheets.CostumeStatSheet;
+            var row = tableSheets.CostumeItemSheet.OrderedList
+                .Where(e =>
+                    e.ItemSubType == itemSubType &&
+                    (!requirementSheet.TryGetValue(e.Id, out var requirementRow) ||
+                     avatarLevel >= requirementRow.Level))
+                .Aggregate((row1, row2) =>
+                {
+                    var statRow1 = costumeStatSheet.OrderedList.FirstOrDefault(e => e.CostumeId == row1.Id);
+                    var statRow2 = costumeStatSheet.OrderedList.FirstOrDefault(e => e.CostumeId == row2.Id);
+                    return (statRow1?.Stat ?? 0m) >= (statRow2?.Stat ?? 0m)
+                        ? row1
+                        : row2;
+                });
+            Assert.NotNull(row);
+            return ItemFactory.CreateCostume(row, Guid.NewGuid());
+        }
+
         public static List<Equipment> GetAllParts(
             TableSheets tableSheets,
             int avatarLevel = 1,
@@ -86,6 +124,28 @@ namespace Lib9c.Tests.Action
                 }
 
                 result.Add(GetOne(tableSheets, avatarLevel, itemSubType, elementalType));
+            }
+
+            return result;
+        }
+
+        public static List<Costume> GetAllCostumes(
+            TableSheets tableSheets,
+            int avatarLevel = 1,
+            int? totalCount = null)
+        {
+            var result = new List<Costume>();
+            var tuples = OrderedCostumeSlotLevelAndItemSubType;
+            var count = totalCount.HasValue ? Math.Min(totalCount.Value, tuples.Length) : tuples.Length;
+            for (var i = 0; i < count; i++)
+            {
+                var (equipmentSlotLevel, itemSubType) = tuples[i];
+                if (avatarLevel < equipmentSlotLevel)
+                {
+                    break;
+                }
+
+                result.Add(GetCostumeOne(tableSheets, avatarLevel, itemSubType));
             }
 
             return result;

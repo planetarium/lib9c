@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Nekoyume.Model;
 using Nekoyume.Model.Item;
@@ -10,6 +11,26 @@ namespace Nekoyume.Battle
 {
     public static class CPHelper
     {
+        public static int GetCP(
+            int characterId,
+            int avatarLevel,
+            IEnumerable<Equipment> equipments,
+            IEnumerable<Costume> costumes,
+            CharacterSheet characterSheet,
+            CostumeStatSheet costumeStatSheet)
+        {
+            if (!characterSheet.TryGetValue(characterId, out var row))
+            {
+                throw new SheetRowNotFoundException("CharacterSheet", characterId);
+            }
+
+            var levelStats = row.ToStats(avatarLevel);
+            var levelStatsCP = GetStatsCP(levelStats, avatarLevel);
+            var equipmentsCP = equipments.Sum(GetCP);
+            var costumeCP = costumes.Sum(c => GetCP(c, costumeStatSheet));
+            return DecimalToInt(levelStatsCP + equipmentsCP + costumeCP);
+        }
+
         /// <summary>
         /// `AvatarState`의 CP를 반환한다.
         /// 레벨 스탯, 그리고 장착한 장비의 스탯과 스킬을 고려합니다.
@@ -36,6 +57,8 @@ namespace Nekoyume.Battle
             return DecimalToInt(levelStatsCP + equipmentsCP);
         }
 
+        // NOTE: Use `GetCP(characterId, avatarLevel, equipments, costumes, characterSheet, costumeStatSheet)`
+        //       if you can.
         public static int GetCP(
             AvatarState avatarState,
             CharacterSheet characterSheet,
