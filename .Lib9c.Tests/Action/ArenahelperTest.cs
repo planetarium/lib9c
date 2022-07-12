@@ -176,6 +176,16 @@ namespace Lib9c.Tests.Action
         [InlineData(ArenaType.OffSeason, 2000, 2000, true)]
         [InlineData(ArenaType.OffSeason, 2000, 2100, true)]
         [InlineData(ArenaType.OffSeason, 2000, 2101, false)]
+        [InlineData(ArenaType.Season, 2000, 1899, false)]
+        [InlineData(ArenaType.Season, 2000, 1900, true)]
+        [InlineData(ArenaType.Season, 2000, 2000, true)]
+        [InlineData(ArenaType.Season, 2000, 2100, true)]
+        [InlineData(ArenaType.Season, 2000, 2101, false)]
+        [InlineData(ArenaType.Championship, 2000, 1899, false)]
+        [InlineData(ArenaType.Championship, 2000, 1900, true)]
+        [InlineData(ArenaType.Championship, 2000, 2000, true)]
+        [InlineData(ArenaType.Championship, 2000, 2100, true)]
+        [InlineData(ArenaType.Championship, 2000, 2101, false)]
         public void ValidateScoreDifference(
             ArenaType arenaType,
             int myScore,
