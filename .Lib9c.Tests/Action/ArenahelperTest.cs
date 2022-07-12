@@ -126,7 +126,7 @@ namespace Lib9c.Tests.Action
                     }
 
                     var arenaInformation = new ArenaInformation(_avatar1Address, roundData.ChampionshipId, roundData.Round);
-                    var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
+                    var max = ArenaHelper.GetMaxPurchasedTicketCountV1(roundData);
                     for (var i = 0; i < max; i++)
                     {
                         arenaInformation.BuyTicket(roundData);
@@ -161,6 +161,23 @@ namespace Lib9c.Tests.Action
                     }
                 }
             }
+        }
+
+        [Theory]
+        [InlineData(1_000, 500, 5, 5)]
+        [InlineData(1_000_000, 1_000, 10, 5_000)]
+        public void GetMaxPurchasedTicketCount(
+            int roundBlockRange,
+            int dailyArenaInterval,
+            int dailyArenaTicketCount,
+            int expected)
+        {
+            Assert.Equal(
+                expected,
+                ArenaHelper.GetMaxPurchasedTicketCount(
+                    roundBlockRange,
+                    dailyArenaInterval,
+                    dailyArenaTicketCount));
         }
     }
 }

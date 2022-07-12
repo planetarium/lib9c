@@ -753,7 +753,7 @@ namespace Lib9c.Tests.Action
             }
 
             beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
-            var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
+            var max = ArenaHelper.GetMaxPurchasedTicketCountV1(roundData);
             for (var i = 0; i < max; i++)
             {
                 beforeInfo.BuyTicket(roundData);

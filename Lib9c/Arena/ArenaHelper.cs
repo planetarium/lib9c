@@ -177,10 +177,16 @@ namespace Nekoyume.Arena
             return price;
         }
 
-        public static long GetMaxPurchasedTicketCount(ArenaSheet.RoundData roundData)
+        public static long GetMaxPurchasedTicketCountV1(ArenaSheet.RoundData roundData)
         {
             var result = (roundData.EndBlockIndex - roundData.StartBlockIndex + 1) / 1260;
             return result;
         }
+
+        public static int GetMaxPurchasedTicketCount(
+            int roundBlockRange,
+            int dailyArenaInterval,
+            int dailyArenaTicketCount) =>
+            roundBlockRange / (dailyArenaInterval / dailyArenaTicketCount) / 2;
     }
 }

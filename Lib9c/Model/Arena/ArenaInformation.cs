@@ -64,7 +64,7 @@ namespace Nekoyume.Model.Arena
 
         public void BuyTicket(ArenaSheet.RoundData roundData)
         {
-            var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
+            var max = ArenaHelper.GetMaxPurchasedTicketCountV1(roundData);
             if (PurchasedTicketCount >= max)
             {
                 throw new ExceedTicketPurchaseLimitException(
