@@ -205,6 +205,9 @@ namespace Lib9c.Tests.Action
         [InlineData(1_000L, 500, 5, 5)]
         [InlineData(1_199L, 500, 5, 5)]
         [InlineData(1_200L, 500, 5, 6)]
+        [InlineData(1_000_000L, 0, 0, 0)]
+        [InlineData(1_000_000L, 500, 0, 0)]
+        [InlineData(1_000_000L, 0, 500, 0)]
         public void GetMaxPurchasedTicketCount(
             long roundBlockRange,
             int dailyArenaInterval,

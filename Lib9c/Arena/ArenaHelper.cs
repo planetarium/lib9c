@@ -186,7 +186,21 @@ namespace Nekoyume.Arena
         public static int GetMaxPurchasedTicketCount(
             long roundBlockRange,
             int dailyArenaInterval,
-            int dailyArenaTicketCount) =>
-            (int)roundBlockRange / (dailyArenaInterval / dailyArenaTicketCount) / 2;
+            int dailyArenaTicketCount)
+        {
+            if (dailyArenaInterval == 0 ||
+                dailyArenaTicketCount == 0)
+            {
+                return 0;
+            }
+
+            var middle = dailyArenaInterval / dailyArenaTicketCount;
+            if (middle == 0)
+            {
+                return 0;
+            }
+
+            return (int)roundBlockRange / middle / 2;
+        }
     }
 }
