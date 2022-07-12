@@ -353,7 +353,7 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var target in targets)
             {
                 var targetScore = GetScore(target, data);
-                if (ArenaHelper.ValidateScoreDifferenceV1(ArenaHelper.ScoreLimitsV1, data.ArenaType, myScore, targetScore))
+                if (ArenaHelper.ValidateScoreDifference(data.ArenaType, myScore, targetScore))
                 {
                     targetAddress = target;
                     return true;

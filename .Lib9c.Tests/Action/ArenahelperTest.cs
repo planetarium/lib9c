@@ -112,6 +112,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteGetTicketPrice()
         {
+            var gameConfigState = _state.GetGameConfigState();
             var arenaSheet = _state.GetSheet<ArenaSheet>();
             foreach (var row in arenaSheet)
             {
@@ -126,7 +127,10 @@ namespace Lib9c.Tests.Action
                     }
 
                     var arenaInformation = new ArenaInformation(_avatar1Address, roundData.ChampionshipId, roundData.Round);
-                    var max = ArenaHelper.GetMaxPurchasedTicketCountV1(roundData);
+                    var max = ArenaHelper.GetMaxPurchasedTicketCount(
+                        roundData.EndBlockIndex - roundData.StartBlockIndex,
+                        gameConfigState.DailyArenaInterval,
+                        ArenaInformation.MaxTicketCount);
                     for (var i = 0; i < max; i++)
                     {
                         arenaInformation.BuyTicket(roundData);
@@ -184,12 +188,12 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(999, 500, 5, 4)]
-        [InlineData(1_000, 500, 5, 5)]
-        [InlineData(1_199, 500, 5, 5)]
-        [InlineData(1_200, 500, 5, 6)]
+        [InlineData(999L, 500, 5, 4)]
+        [InlineData(1_000L, 500, 5, 5)]
+        [InlineData(1_199L, 500, 5, 5)]
+        [InlineData(1_200L, 500, 5, 6)]
         public void GetMaxPurchasedTicketCount(
-            int roundBlockRange,
+            long roundBlockRange,
             int dailyArenaInterval,
             int dailyArenaTicketCount,
             int expected)
