@@ -164,6 +164,26 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
+        [InlineData(ArenaType.OffSeason, 2000, 1899, false)]
+        [InlineData(ArenaType.OffSeason, 2000, 1900, true)]
+        [InlineData(ArenaType.OffSeason, 2000, 2000, true)]
+        [InlineData(ArenaType.OffSeason, 2000, 2100, true)]
+        [InlineData(ArenaType.OffSeason, 2000, 2101, false)]
+        public void ValidateScoreDifference(
+            ArenaType arenaType,
+            int myScore,
+            int enemyScore,
+            bool expected)
+        {
+            Assert.Equal(
+                expected,
+                ArenaHelper.ValidateScoreDifference(
+                    arenaType,
+                    myScore,
+                    enemyScore));
+        }
+
+        [Theory]
         [InlineData(1_000, 500, 5, 5)]
         [InlineData(1_000_000, 1_000, 10, 5_000)]
         public void GetMaxPurchasedTicketCount(
