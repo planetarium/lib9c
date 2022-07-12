@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Action
     using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
-    public class JoinArenaTest
+    public class JoinArena1Test
     {
         private readonly Dictionary<string, string> _sheets;
         private readonly TableSheets _tableSheets;
@@ -34,7 +34,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _currency;
         private IAccountStateDelta _state;
 
-        public JoinArenaTest(ITestOutputHelper outputHelper)
+        public JoinArena1Test(ITestOutputHelper outputHelper)
         {
             _random = new TestRandom();
             _sheets = TableSheetsImporter.ImportSheets();
@@ -198,7 +198,7 @@ namespace Lib9c.Tests.Action
 
             var state = _state.MintAsset(_signer, FungibleAssetValue.Parse(_currency, balance));
 
-            var action = new JoinArena
+            var action = new JoinArena1()
             {
                 championshipId = championshipId,
                 round = round,
@@ -261,7 +261,7 @@ namespace Lib9c.Tests.Action
 
             if (!row.TryGetRound(round, out var roundData))
             {
-                throw new RoundNotFoundException($"{nameof(JoinArena)} : {row.ChampionshipId} / {round}");
+                throw new RoundNotFoundException($"{nameof(JoinArena1)} : {row.ChampionshipId} / {round}");
             }
 
             Assert.Equal(0 * _currency, state.GetBalance(_signer, _currency));
@@ -275,7 +275,7 @@ namespace Lib9c.Tests.Action
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
-            var action = new JoinArena
+            var action = new JoinArena1()
             {
                 championshipId = championshipId,
                 round = 1,
@@ -284,7 +284,7 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext
+            Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _signer,
@@ -300,7 +300,7 @@ namespace Lib9c.Tests.Action
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
-            var action = new JoinArena
+            var action = new JoinArena1()
             {
                 championshipId = 1,
                 round = round,
@@ -309,7 +309,7 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<RoundNotFoundException>(() => action.Execute(new ActionContext
+            Assert.Throws<RoundNotFoundException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _signer,
@@ -327,7 +327,7 @@ namespace Lib9c.Tests.Action
             var preCurrency = 99800100000 * _currency;
             var state = _state.MintAsset(_signer, preCurrency);
 
-            var action = new JoinArena
+            var action = new JoinArena1()
             {
                 championshipId = 1,
                 round = round,
@@ -336,7 +336,7 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<NotEnoughMedalException>(() => action.Execute(new ActionContext
+            Assert.Throws<NotEnoughMedalException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _signer,
@@ -354,7 +354,7 @@ namespace Lib9c.Tests.Action
             GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
-            var action = new JoinArena
+            var action = new JoinArena1()
             {
                 championshipId = 1,
                 round = round,
@@ -363,7 +363,7 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() => action.Execute(new ActionContext
+            Assert.Throws<NotEnoughFungibleAssetValueException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _signer,
@@ -379,7 +379,7 @@ namespace Lib9c.Tests.Action
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
-            var action = new JoinArena
+            var action = new JoinArena1()
             {
                 championshipId = 1,
                 round = 1,
@@ -397,7 +397,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 1,
             });
 
-            Assert.Throws<ArenaScoreAlreadyContainsException>(() => action.Execute(new ActionContext
+            Assert.Throws<ArenaScoreAlreadyContainsException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _signer,
@@ -420,7 +420,7 @@ namespace Lib9c.Tests.Action
             var arenaScore = new ArenaScore(_avatarAddress, championshipId, round);
             state = state.SetState(arenaScoreAdr, arenaScore.Serialize());
 
-            var action = new JoinArena
+            var action = new JoinArena1()
             {
                 championshipId = championshipId,
                 round = round,
@@ -429,7 +429,7 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<ArenaScoreAlreadyContainsException>(() => action.Execute(new ActionContext
+            Assert.Throws<ArenaScoreAlreadyContainsException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _signer,
@@ -452,7 +452,7 @@ namespace Lib9c.Tests.Action
             var arenaInformation = new ArenaInformation(_avatarAddress, championshipId, round);
             state = state.SetState(arenaInformationAdr, arenaInformation.Serialize());
 
-            var action = new JoinArena
+            var action = new JoinArena1()
             {
                 championshipId = championshipId,
                 round = round,
@@ -461,7 +461,7 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<ArenaInformationAlreadyContainsException>(() => action.Execute(new ActionContext
+            Assert.Throws<ArenaInformationAlreadyContainsException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = state,
                 Signer = _signer,
@@ -473,7 +473,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_NotEnoughClearedStageLevelException()
         {
-            var action = new JoinArena
+            var action = new JoinArena1()
             {
                 championshipId = 1,
                 round = 1,
@@ -482,7 +482,7 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatar2Address,
             };
 
-            Assert.Throws<NotEnoughClearedStageLevelException>(() => action.Execute(new ActionContext
+            Assert.Throws<NotEnoughClearedStageLevelException>(() => action.Execute(new ActionContext()
             {
                 PreviousStates = _state,
                 Signer = _signer2,

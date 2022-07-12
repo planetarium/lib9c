@@ -6,7 +6,6 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Arena;
-using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
@@ -17,11 +16,11 @@ using Nekoyume.TableData;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Hard forked at https://github.com/planetarium/lib9c/pull/1206
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1156
     /// </summary>
     [Serializable]
-    [ActionType("join_arena2")]
-    public class JoinArena : GameAction
+    [ActionType("join_arena")]
+    public class JoinArena1 : GameAction
     {
         public Address avatarAddress;
         public int championshipId;
@@ -65,7 +64,7 @@ namespace Nekoyume.Action
                     out var agentState, out var avatarState, out _))
             {
                 throw new FailedLoadStateException(
-                    $"[{nameof(JoinArena)}] Aborted as the avatar state of the signer failed to load.");
+                    $"[{nameof(JoinArena1)}] Aborted as the avatar state of the signer failed to load.");
             }
 
             if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(
@@ -91,8 +90,6 @@ namespace Nekoyume.Action
                     typeof(EquipmentItemSubRecipeSheetV2),
                     typeof(EquipmentItemOptionSheet),
                     typeof(ArenaSheet),
-                    typeof(CharacterSheet),
-                    typeof(CostumeStatSheet),
                 });
 
             avatarState.ValidEquipmentAndCostume(costumes, equipments,
@@ -112,7 +109,7 @@ namespace Nekoyume.Action
             if (!row.TryGetRound(round, out var roundData))
             {
                 throw new RoundNotFoundException(
-                    $"[{nameof(JoinArena)}] ChampionshipId({row.ChampionshipId}) - round({round})");
+                    $"[{nameof(JoinArena1)}] ChampionshipId({row.ChampionshipId}) - round({round})");
             }
 
             // check fee
@@ -138,7 +135,7 @@ namespace Nekoyume.Action
                 if (medalCount < roundData.RequiredMedalCount)
                 {
                     throw new NotEnoughMedalException(
-                        $"[{nameof(JoinArena)}] have({medalCount}) < Required Medal Count({roundData.RequiredMedalCount}) ");
+                        $"[{nameof(JoinArena1)}] have({medalCount}) < Required Medal Count({roundData.RequiredMedalCount}) ");
                 }
             }
 
@@ -148,7 +145,7 @@ namespace Nekoyume.Action
             if (states.TryGetState(arenaScoreAdr, out List _))
             {
                 throw new ArenaScoreAlreadyContainsException(
-                    $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
+                    $"[{nameof(JoinArena1)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
             }
 
             var arenaScore = new ArenaScore(avatarAddress, roundData.ChampionshipId, roundData.Round);
@@ -159,7 +156,7 @@ namespace Nekoyume.Action
             if (states.TryGetState(arenaInformationAdr, out List _))
             {
                 throw new ArenaInformationAlreadyContainsException(
-                    $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
+                    $"[{nameof(JoinArena1)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
             }
 
             var arenaInformation =
@@ -175,14 +172,6 @@ namespace Nekoyume.Action
             var arenaAvatarState = states.GetArenaAvatarState(arenaAvatarStateAdr, avatarState);
             arenaAvatarState.UpdateCostumes(costumes);
             arenaAvatarState.UpdateEquipment(equipments);
-            var cp = CPHelper.GetCP(
-                avatarState.characterId,
-                avatarState.level,
-                avatarState.inventory.Equipments.Where(e => equipments.Contains(e.NonFungibleId)),
-                avatarState.inventory.Costumes.Where(e => costumes.Contains(e.NonFungibleId)),
-                sheets.GetSheet<CharacterSheet>(),
-                sheets.GetSheet<CostumeStatSheet>());
-            arenaAvatarState.UpdateCP(cp);
 
             return states
                 .SetState(arenaScoreAdr, arenaScore.Serialize())
