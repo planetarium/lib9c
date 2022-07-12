@@ -82,7 +82,8 @@ namespace Nekoyume.Arena
                 : fee.DivRem(100, out _) * 50;
         }
 
-        public static bool ValidateScoreDifference(
+        [Obsolete("Use ValidateScoreDifference instead.")]
+        public static bool ValidateScoreDifferenceV1(
             IReadOnlyDictionary<ArenaType, (int, int)> scoreLimits,
             ArenaType arenaType,
             int myScore,
@@ -94,6 +95,22 @@ namespace Nekoyume.Arena
             }
 
             var (upper, lower) = scoreLimits[arenaType];
+            var diff = enemyScore - myScore;
+            return lower <= diff && diff <= upper;
+        }
+        
+        public static bool ValidateScoreDifference(
+            ArenaType arenaType,
+            int myScore,
+            int enemyScore)
+        {
+            // NOTE: There is no limits when the `ScoreLimits` does not contain the `arenaType`.
+            if (!ScoreLimits.ContainsKey(arenaType))
+            {
+                return true;
+            }
+        
+            var (upper, lower) = ScoreLimits[arenaType];
             var diff = enemyScore - myScore;
             return lower <= diff && diff <= upper;
         }
