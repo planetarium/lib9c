@@ -264,7 +264,7 @@ namespace Lib9c.Tests.Action
                 {
                     var price = ArenaHelper.GetTicketPrice(roundData, beforeInfo, _state.GetGoldCurrency());
                     _state = _state.MintAsset(_agent1Address, price);
-                    beforeInfo.BuyTicket(roundData);
+                    beforeInfo.BuyTicketV1(roundData);
                 }
             }
 
@@ -756,7 +756,7 @@ namespace Lib9c.Tests.Action
             var max = ArenaHelper.GetMaxPurchasedTicketCountV1(roundData);
             for (var i = 0; i < max; i++)
             {
-                beforeInfo.BuyTicket(roundData);
+                beforeInfo.BuyTicketV1(roundData);
             }
 
             _state = _state.SetState(arenaInfoAdr, beforeInfo.Serialize());

@@ -133,7 +133,10 @@ namespace Lib9c.Tests.Action
                         ArenaInformation.MaxTicketCount);
                     for (var i = 0; i < max; i++)
                     {
-                        arenaInformation.BuyTicket(roundData);
+                        arenaInformation.BuyTicket(
+                            roundData.EndBlockIndex - roundData.StartBlockIndex,
+                            gameConfigState.DailyArenaInterval,
+                            ArenaInformation.MaxTicketCount);
 
                         var ticketPrice = 0;
                         var additionalTicketPrice = 0;

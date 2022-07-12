@@ -22,7 +22,7 @@ namespace Nekoyume.Arena
         public static Address DeriveArenaAddress(int championshipId, int round) =>
             Addresses.Arena.Derive($"_{championshipId}_{round}");
 
-        [Obsolete("Use ScoreLimits instead.")]
+        [Obsolete("Use `ScoreLimits` instead.")]
         public static readonly IReadOnlyDictionary<ArenaType, (int, int)> ScoreLimitsV1 =
             new Dictionary<ArenaType, (int, int)>
             {
@@ -82,7 +82,7 @@ namespace Nekoyume.Arena
                 : fee.DivRem(100, out _) * 50;
         }
 
-        [Obsolete("Use ValidateScoreDifference instead.")]
+        [Obsolete("Use `ValidateScoreDifference()` instead.")]
         public static bool ValidateScoreDifferenceV1(
             IReadOnlyDictionary<ArenaType, (int, int)> scoreLimits,
             ArenaType arenaType,

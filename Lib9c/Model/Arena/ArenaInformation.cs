@@ -1,3 +1,4 @@
+using System;
 using Bencodex.Types;
 using Libplanet;
 using Nekoyume.Action;
@@ -62,13 +63,32 @@ namespace Nekoyume.Model.Arena
             Ticket -= ticketCount;
         }
 
-        public void BuyTicket(ArenaSheet.RoundData roundData)
+        [Obsolete("Use `BuyTicket()` instead.")]
+        public void BuyTicketV1(ArenaSheet.RoundData roundData)
         {
             var max = ArenaHelper.GetMaxPurchasedTicketCountV1(roundData);
             if (PurchasedTicketCount >= max)
             {
                 throw new ExceedTicketPurchaseLimitException(
                     $"[{nameof(ArenaInformation)}] PurchasedTicketCount({PurchasedTicketCount}) >= MAX({{max}})");
+            }
+
+            PurchasedTicketCount++;
+        }
+
+        public void BuyTicket(
+            long roundBlockRange,
+            int dailyArenaInterval,
+            int dailyArenaTicketCount)
+        {
+            var max = ArenaHelper.GetMaxPurchasedTicketCount(
+                roundBlockRange,
+                dailyArenaInterval,
+                dailyArenaTicketCount);
+            if (PurchasedTicketCount >= max)
+            {
+                throw new ExceedTicketPurchaseLimitException(
+                    $"[{nameof(ArenaInformation)}] PurchasedTicketCount({PurchasedTicketCount}) >= MAX({max})");
             }
 
             PurchasedTicketCount++;

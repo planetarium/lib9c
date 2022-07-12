@@ -23,5 +23,49 @@ namespace Lib9c.Tests.Model.Arena
             Assert.Equal(state.TicketResetCount, deserialized.TicketResetCount);
             Assert.Equal(state.PurchasedTicketCount, deserialized.PurchasedTicketCount);
         }
+
+        [Theory]
+        [InlineData(999L, 500, 5, 4)]
+        [InlineData(1_000L, 500, 5, 5)]
+        [InlineData(1_199L, 500, 5, 5)]
+        [InlineData(1_200L, 500, 5, 6)]
+        public void BuyTicket(
+            long roundBlockRange,
+            int dailyArenaInterval,
+            int dailyArenaTicketCount,
+            int expectedMax)
+        {
+            var ai = new ArenaInformation(new PrivateKey().ToAddress(), 1, 1);
+            for (var i = 0; i < expectedMax; i++)
+            {
+                ai.BuyTicket(
+                    roundBlockRange,
+                    dailyArenaInterval,
+                    dailyArenaTicketCount);
+
+                Assert.Equal(i + 1, ai.PurchasedTicketCount);
+            }
+        }
+
+        [Theory]
+        [InlineData(999L, 500, 5, 4)]
+        [InlineData(1_000L, 500, 5, 5)]
+        [InlineData(1_199L, 500, 5, 5)]
+        [InlineData(1_200L, 500, 5, 6)]
+        public void BuyTicket_Throw_ExceedTicketPurchaseLimitException(
+            long roundBlockRange,
+            int dailyArenaInterval,
+            int dailyArenaTicketCount,
+            int expectedMax)
+        {
+            Assert.Throws<ExceedTicketPurchaseLimitException>(() =>
+            {
+                BuyTicket(
+                    roundBlockRange,
+                    dailyArenaInterval,
+                    dailyArenaTicketCount,
+                    expectedMax + 1);
+            });
+        }
     }
 }
