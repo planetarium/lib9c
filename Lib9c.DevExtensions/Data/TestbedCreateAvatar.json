@@ -1,7 +1,7 @@
 {
-    "BlockDifficulty": 200000,
+    "BlockDifficulty": 10,
     "TradableMaterialCount": 9999,
-    "MaterialCount": 10,
+    "MaterialCount": 9999,
     "CustomEquipmentItems": [
         {
             "ID": 10143001,
@@ -31,24 +31,63 @@
             ]
         },
         {
-            "ID": 10110000,
-            "Level": 1,
+            "ID": 10141000,
+            "Level": 4,
             "OptionIds": [
-                7
+                169,
+                170,
+                171,
+                172
             ]
         },
         {
-            "ID": 10110000,
-            "Level": 1,
+            "ID": 10241000,
+            "Level": 9,
             "OptionIds": [
-                11
+                521,
+                522,
+                523,
+                524
             ]
         },
         {
-            "ID": 10110000,
-            "Level": 1,
+            "ID": 10351000,
+            "Level": 4,
             "OptionIds": [
-                14
+                862,
+                863,
+                864,
+                865
+            ]
+        },
+        {
+            "ID": 10451000,
+            "Level": 4,
+            "OptionIds": [
+                1060,
+                1061,
+                1062,
+                1063
+            ]
+        },
+        {
+            "ID": 10541000,
+            "Level": 4,
+            "OptionIds": [
+                1269,
+                1270,
+                1271,
+                1272
+            ]
+        },
+        {
+            "ID": 10541000,
+            "Level": 4,
+            "OptionIds": [
+                1269,
+                1270,
+                1271,
+                1272
             ]
         }
     ]

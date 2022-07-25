@@ -21,7 +21,7 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10133001,무거운 검(땅),Weapon,3,Land,14,ATK,908,2,10133001
 10134001,무거운 검(바람),Weapon,3,Wind,15,ATK,967,2,10134001
 10140000,전쟁 검,Weapon,4,Normal,11,ATK,493,2,10140000
-10141000,전쟁 검(불),Weapon,4,Fire,12,ATK,499,2,10141000
+10141000,전쟁 검(불),Weapon,4,Fire,12,ATK,1934,2,10141000
 10142000,전쟁 검(물),Weapon,4,Water,13,ATK,506,2,10142000
 10143000,전쟁 검(땅),Weapon,4,Land,14,ATK,769,2,10143000
 10144000,전쟁 검(바람),Weapon,4,Wind,15,ATK,954,2,10144000
@@ -63,7 +63,7 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10233001,헤르메스의 옷(땅),Armor,3,Land,14,HP,11482,2,Character/Player/10233001
 10234001,헤르메스의 옷(바람),Armor,3,Wind,15,HP,12302,2,Character/Player/10234001
 10240000,전쟁 갑옷,Armor,4,Normal,11,HP,6895,2,Character/Player/10240000
-10241000,전쟁 갑옷(불),Armor,4,Fire,12,HP,6994,2,Character/Player/10241000
+10241000,전쟁 갑옷(불),Armor,4,Fire,12,HP,24604,2,Character/Player/10241000
 10242000,전쟁 갑옷(물),Armor,4,Water,13,HP,7093,2,Character/Player/10242000
 10243000,전쟁 갑옷(땅),Armor,4,Land,14,HP,10788,2,Character/Player/10243000
 10244000,전쟁 갑옷(바람),Armor,4,Wind,15,HP,13395,2,Character/Player/10244000
@@ -104,7 +104,7 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10343000,전쟁 벨트(땅),Belt,4,Land,14,SPD,2292,2,10343000
 10344000,전쟁 벨트(바람),Belt,4,Wind,15,SPD,2292,2,10344000
 10350000,전설의 벨트,Belt,5,Normal,11,SPD,3993,2,10350000
-10351000,전설의 벨트(불),Belt,5,Fire,12,SPD,4071,2,10351000
+10351000,전설의 벨트(불),Belt,5,Fire,12,SPD,4584,2,10351000
 10352000,전설의 벨트(물),Belt,5,Water,13,SPD,4149,2,10352000
 10353000,전설의 벨트(땅),Belt,5,Land,14,SPD,6341,2,10353000
 10354000,전설의 벨트(바람),Belt,5,Wind,15,SPD,7910,2,10354000
@@ -129,7 +129,7 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10443000,전사의 목걸이(땅),Necklace,4,Land,14,HIT,3047,0,10443000
 10444000,전사의 목걸이(바람),Necklace,4,Wind,15,HIT,3047,0,10444000
 10450000,전설의 목걸이,Necklace,5,Normal,11,HIT,5636,0,10450000
-10451000,전설의 목걸이(불),Necklace,5,Fire,12,HIT,5736,0,10451000
+10451000,전설의 목걸이(불),Necklace,5,Fire,12,HIT,4666,0,10451000
 10452000,전설의 목걸이(물),Necklace,5,Water,13,HIT,5837,0,10452000
 10453000,전설의 목걸이(땅),Necklace,5,Land,14,HIT,8906,0,10453000
 10454000,전설의 목걸이(바람),Necklace,5,Wind,15,HIT,11113,0,10454000
@@ -149,7 +149,7 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10533000,마나 반지(땅),Ring,3,Land,14,DEF,251,0,10533000
 10534000,마나 반지(바람),Ring,3,Wind,15,DEF,270,0,10534000
 10540000,전사의 반지,Ring,4,Normal,11,DEF,263,0,10540000
-10541000,전사의 반지(불),Ring,4,Fire,12,DEF,266,0,10541000
+10541000,전사의 반지(불),Ring,4,Fire,12,DEF,540,0,10541000
 10542000,전사의 반지(물),Ring,4,Water,13,DEF,269,0,10542000
 10543000,전사의 반지(땅),Ring,4,Land,14,DEF,409,0,10543000
 10544000,전사의 반지(바람),Ring,4,Wind,15,DEF,507,0,10544000
