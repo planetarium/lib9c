@@ -1,5 +1,5 @@
 {
-    "BlockDifficulty": 10,
+    "BlockDifficulty": 200000,
     "TradableMaterialCount": 9999,
     "MaterialCount": 9999,
     "CustomEquipmentItems": [
@@ -34,10 +34,10 @@
             "ID": 10141000,
             "Level": 4,
             "OptionIds": [
-                169,
-                170,
-                171,
-                172
+                180,
+                181,
+                182,
+                183
             ]
         },
         {
@@ -54,10 +54,10 @@
             "ID": 10351000,
             "Level": 4,
             "OptionIds": [
-                862,
-                863,
-                864,
-                865
+                884,
+                885,
+                886,
+                887
             ]
         },
         {
