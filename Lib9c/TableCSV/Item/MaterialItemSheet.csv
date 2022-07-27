@@ -20,6 +20,10 @@ id,_name,item_sub_type,grade,elemental_type
 302016,아몬드,FoodMaterial,2,Normal
 302017,꿀,FoodMaterial,3,Normal
 302018,간장,FoodMaterial,4,Normal
+302019,토마토 소스,FoodMaterial,3,Normal
+302020,장작,FoodMaterial,3,Normal
+302021,꿀,FoodMaterial,4,Normal
+302022,간장,FoodMaterial,5,Normal
 303000,녹슨 칼,EquipmentMaterial,1,Normal
 303001,버려진 검,EquipmentMaterial,2,Normal
 303002,단단한 검,EquipmentMaterial,3,Normal
