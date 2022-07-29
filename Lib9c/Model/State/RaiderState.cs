@@ -24,6 +24,7 @@ namespace Nekoyume.Model.State
         public int IconId;
         public Address AvatarAddress;
         public string AvatarNameWithHash;
+        public int LatestBossLevel;
 
         public RaiderState()
         {
@@ -49,6 +50,7 @@ namespace Nekoyume.Model.State
             IconId = rawState[10].ToInteger();
             AvatarAddress = rawState[11].ToAddress();
             AvatarNameWithHash = rawState[12].ToDotnetString();
+            LatestBossLevel = rawState[13].ToInteger();
         }
 
         public void Update(AvatarState avatarState, int cp, int score, bool payNcg)
@@ -86,7 +88,8 @@ namespace Nekoyume.Model.State
                 .Add(Level.Serialize())
                 .Add(IconId.Serialize())
                 .Add(AvatarAddress.Serialize())
-                .Add(AvatarNameWithHash.Serialize());
+                .Add(AvatarNameWithHash.Serialize())
+                .Add(LatestBossLevel.Serialize());
         }
     }
 }
