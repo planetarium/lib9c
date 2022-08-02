@@ -101,6 +101,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(UnlockEquipmentRecipe))]
         [InlineData(typeof(UnlockWorld))]
         [InlineData(typeof(Raid))]
+        [InlineData(typeof(TransferAssetToAvatar))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -282,6 +283,7 @@ namespace Lib9c.Tests.Action
                     EquipmentIds = new List<Guid>(),
                     FoodIds = new List<Guid>(),
                 },
+                TransferAssetToAvatar _ => new TransferAssetToAvatar(_sender, _signer, _sender, new List<FungibleAssetValue> { _currency * 100 }, "memo"),
                 _ => throw new InvalidCastException(),
             };
         }

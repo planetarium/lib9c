@@ -20,7 +20,7 @@ namespace Nekoyume.Action
     [ActionType("transfer_asset2")]
     public class TransferAsset : ActionBase, ISerializable
     {
-        private const int MemoMaxLength = 80;
+        public const int MemoMaxLength = 80;
 
         public TransferAsset()
         {
@@ -135,7 +135,7 @@ namespace Nekoyume.Action
             info.AddValue("serialized", new Codec().Encode(PlainValue));
         }
 
-        private void CheckMemoLength(string memo)
+        public static void CheckMemoLength(string memo)
         {
             if (memo?.Length > MemoMaxLength)
             {
