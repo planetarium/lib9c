@@ -1,3 +1,5 @@
+#nullable enable
+
 using Bencodex;
 using Bencodex.Types;
 using Cocona;
@@ -12,11 +14,9 @@ using Nekoyume.Model;
 using Nekoyume.Model.State;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Libplanet.Action;
 using Nekoyume.TableData;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
@@ -281,13 +281,17 @@ namespace Lib9c.Tools.SubCommand
             Console.WriteLine(ByteUtil.Hex(raw));
         }
 
-        [Command(Description = "Create ActvationKey-nonce pairs and dump them as csv")]
-        public void CreateActivationKeys(
-            [Argument("COUNT", Description = "An amount of pairs")] int count
+        [Command(Description = "Create ActivationKey-nonce pairs and dump them as csv")]
+        public static void CreateActivationKeys(
+            [Argument("COUNT", Description = "An amount of pairs")]
+            int count,
+            [Argument("CSV-PATH", Description = "Path to save activation key list to csv")]
+            string? csvPath = null
         )
         {
             var rng = new Random();
             var nonce = new byte[4];
+            var activationKeyList = new List<string>();
             Console.WriteLine("EncodedActivationKey,NonceHex");
             foreach (int i in Enumerable.Range(0, count))
             {
@@ -304,6 +308,13 @@ namespace Lib9c.Tools.SubCommand
                 rng.NextBytes(nonce);
                 var (ak, _) = ActivationKey.Create(key, nonce);
                 Console.WriteLine($"{ak.Encode()},{ByteUtil.Hex(nonce)}");
+                activationKeyList.Add($"{ak.Encode()},{ByteUtil.Hex(nonce)}");
+            }
+
+            if (!string.IsNullOrEmpty(csvPath))
+            {
+                File.WriteAllText(csvPath, "EncodedActivationKey,NonceHex\n");
+                File.AppendAllLines(csvPath, activationKeyList);
             }
         }
     }
