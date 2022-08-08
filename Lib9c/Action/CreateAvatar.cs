@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Libplanet.Action;
 using Nekoyume.Helper;
+using Nekoyume.Model.BattleStatus;
+using Nekoyume.Model.Item;
+using Nekoyume.Model.Skill;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
@@ -30,6 +35,14 @@ namespace Nekoyume.Action
         public int ear;
         public int tail;
         public string name;
+        public List<int> recipeIds = new List<int> {
+            20,
+            61,
+            106,
+            127,
+            147,
+            147,
+        };
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>()
         {
@@ -39,6 +52,7 @@ namespace Nekoyume.Action
             ["ear"] = (Integer) ear,
             ["tail"] = (Integer) tail,
             ["name"] = (Text) name,
+            ["r"] = new List(recipeIds.Select(r => r.Serialize()))
         }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
@@ -49,6 +63,7 @@ namespace Nekoyume.Action
             ear = (int) ((Integer) plainValue["ear"]).Value;
             tail = (int) ((Integer) plainValue["tail"]).Value;
             name = (Text) plainValue["name"];
+            recipeIds = plainValue["r"].ToList(StateExtensions.ToInteger);
         }
 
         public override IAccountStateDelta Execute(IActionContext context)
@@ -149,6 +164,62 @@ namespace Nekoyume.Action
 
             avatarState.UpdateQuestRewards(materialItemSheet);
 
+            // Prepare internal test
+            // Clear stage.
+            for (int i = 0; i < GameConfig.RequireClearedStageLevel.ActionsInRaid; i++)
+            {
+                avatarState.worldInformation.ClearStage(1, i + 1, 0, ctx.PreviousStates.GetSheet<WorldSheet>(), ctx.PreviousStates.GetSheet<WorldUnlockSheet>());
+            }
+            // Level ip.
+            avatarState.level = 250;
+            var equipmentSheet = states.GetSheet<EquipmentItemSheet>();
+            var recipeSheet = states.GetSheet<EquipmentItemRecipeSheet>();
+            var subRecipeSheet = states.GetSheet<EquipmentItemSubRecipeSheetV2>();
+            var optionSheet = states.GetSheet<EquipmentItemOptionSheet>();
+            var skillSheet = states.GetSheet<SkillSheet>();
+            // Prepare equipment
+            foreach (var recipeId in recipeIds)
+            {
+                var row = recipeSheet[recipeId];
+                var subRecipeId = row.SubRecipeIds.Max();
+                var subRecipeRow = subRecipeSheet.Values.FirstOrDefault(r => r.Id == subRecipeId);
+                var equipmentRow = equipmentSheet[row.ResultEquipmentId];
+                // Create Equipment
+                var equipment = (Equipment) ItemFactory.CreateItemUsable(
+                    equipmentRow,
+                    context.Random.GenerateRandomGuid(),
+                    0L,
+                    madeWithMimisbrunnrRecipe: row.IsMimisBrunnrSubRecipe(subRecipeId));
+                foreach (var option in subRecipeRow.Options)
+                {
+                    var optionRow = optionSheet[option.Id];
+                    // Add stats.
+                    if (optionRow.StatType != StatType.NONE)
+                    {
+                        var statMap = new StatMap(optionRow.StatType, optionRow.StatMax);
+                        equipment.StatsMap.AddStatAdditionalValue(statMap.StatType, statMap.Value);
+                        equipment.optionCountFromCombination++;
+                    }
+                    // Add skills.
+                    else
+                    {
+                        var skillRow = skillSheet.OrderedList.First(r => r.Id == optionRow.SkillId);
+                        var skill = SkillFactory.Get(skillRow, optionRow.SkillDamageMax, optionRow.SkillChanceMax);
+                        if (!(skill is null))
+                        {
+                            equipment.Skills.Add(skill);
+                            equipment.optionCountFromCombination++;
+                        }
+                    }
+                }
+
+                avatarState.inventory.AddItem(equipment);
+
+            }
+            // NCG
+            var goldCurrency = states.GetGoldCurrency();
+            states = states.MintAsset(ctx.Signer, 500 * goldCurrency);
+
             sw.Stop();
             Log.Verbose("{AddressesHex}CreateAvatar CreateAvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
@@ -159,7 +230,7 @@ namespace Nekoyume.Action
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
                 .SetState(avatarAddress, avatarState.SerializeV2())
-                .MintAsset(ctx.Signer, 50 * CrystalCalculator.CRYSTAL);
+                .MintAsset(ctx.Signer, 100_000 * CrystalCalculator.CRYSTAL);
         }
     }
 }
