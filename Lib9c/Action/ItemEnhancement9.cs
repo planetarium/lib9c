@@ -140,7 +140,7 @@ namespace Nekoyume.Action
             sw.Start();
             var started = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}ItemEnhancement exec started", addressesHex);
-            if (!states.TryGetAgentAvatarStatesV2(ctx.Signer, avatarAddress, out var agentState, out var avatarState))
+            if (!states.TryGetAgentAvatarStatesV2(ctx.Signer, avatarAddress, out var agentState, out var avatarState, out _))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
@@ -359,7 +359,10 @@ namespace Nekoyume.Action
             var grade = equipment.Grade;
             var level = equipment.level + 1;
             var itemSubType = equipment.ItemSubType;
-            row = sheet.OrderedList.FirstOrDefault(x => x.Grade == grade  && x.Level == level && x.ItemSubType == itemSubType);
+            row = sheet.OrderedList.FirstOrDefault(x =>
+                x.Grade == grade &&
+                x.Level == level &&
+                x.ItemSubType == itemSubType);
             return row != null;
         }
 

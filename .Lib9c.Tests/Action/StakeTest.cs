@@ -132,19 +132,31 @@ namespace Lib9c.Tests.Action
                 Signer = _signerAddress,
                 BlockIndex = 1,
             }));
-        }
 
-        [Fact]
-        public void Execute_Throws_WhenStakeLessThanMinimumRequiredGold()
-        {
-            Assert.True(_tableSheets.StakeRegularRewardSheet.Min(x => x.Value.RequiredGold) > 10);
-            var action = new Stake(10);
-            Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(new ActionContext
+            // Same (since 4611070)
+            if (states.TryGetStakeState(_signerAddress, out StakeState stakeState))
             {
-                PreviousStates = _initialState,
+                states = states.SetState(
+                    stakeState.address,
+                    new StakeState(stakeState.address, 4611070 - 100).Serialize());
+            }
+
+            updateAction = new Stake(51);
+            Assert.Throws<RequiredBlockIndexException>(() => updateAction.Execute(new ActionContext
+            {
+                PreviousStates = states,
                 Signer = _signerAddress,
-                BlockIndex = 1,
+                BlockIndex = 4611070,
             }));
+
+            // At 4611070 - 99, it should be updated.
+            Assert.True(updateAction.Execute(new ActionContext
+            {
+                PreviousStates = states,
+                Signer = _signerAddress,
+                BlockIndex = 4611070 - 99,
+            }).TryGetStakeState(_signerAddress, out stakeState));
+            Assert.Equal(4611070 - 99, stakeState.StartedBlockIndex);
         }
 
         [Fact]

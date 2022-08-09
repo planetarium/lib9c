@@ -87,7 +87,6 @@ namespace Nekoyume.Action
             // Stake if it doesn't exist yet.
             if (!states.TryGetStakeState(context.Signer, out StakeState stakeState))
             {
-                var sheet = states.GetSheet<StakeAchievementRewardSheet>();
                 stakeState = new StakeState(stakeStateAddress, context.BlockIndex);
                 return states
                     .SetState(
@@ -101,7 +100,10 @@ namespace Nekoyume.Action
                 throw new StakeExistingClaimableException();
             }
 
-            if (!stakeState.IsCancellable(context.BlockIndex) && targetStakeBalance < stakedBalance)
+            if (!stakeState.IsCancellable(context.BlockIndex) &&
+                (context.BlockIndex >= 4611070
+                    ? targetStakeBalance <= stakedBalance
+                    : targetStakeBalance < stakedBalance))
             {
                 throw new RequiredBlockIndexException();
             }
