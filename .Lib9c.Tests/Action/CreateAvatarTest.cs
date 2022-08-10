@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Helper;
+    using Nekoyume.Model;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
@@ -82,6 +83,20 @@ namespace Lib9c.Tests.Action
 
             // internal test
             Assert.Equal(6, nextAvatarState.inventory.Equipments.Count());
+            Assert.Equal(250, nextAvatarState.level);
+            var player = new Player(nextAvatarState, _tableSheets.CharacterSheet, _tableSheets.CharacterLevelSheet, _tableSheets.EquipmentItemSetEffectSheet);
+            Assert.Equal(250, player.Level);
+            player.GetExp(0);
+            Assert.Equal(250, player.Level);
+            var equipmentList = nextAvatarState.inventory.Equipments.ToList();
+            nextAvatarState.ValidateItemRequirement(
+                equipmentList.Select(e => e.Id).ToList(),
+                equipmentList,
+                _tableSheets.ItemRequirementSheet,
+                _tableSheets.EquipmentItemRecipeSheet,
+                _tableSheets.EquipmentItemSubRecipeSheetV2,
+                _tableSheets.EquipmentItemOptionSheet,
+                string.Empty);
         }
 
         [Theory]

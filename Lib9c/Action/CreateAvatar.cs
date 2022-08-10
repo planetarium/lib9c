@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Libplanet.Action;
+using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Item;
@@ -38,7 +39,7 @@ namespace Nekoyume.Action
         public List<int> recipeIds = new List<int> {
             20,
             61,
-            106,
+            102,
             127,
             147,
             147,
@@ -177,6 +178,8 @@ namespace Nekoyume.Action
             var subRecipeSheet = states.GetSheet<EquipmentItemSubRecipeSheetV2>();
             var optionSheet = states.GetSheet<EquipmentItemOptionSheet>();
             var skillSheet = states.GetSheet<SkillSheet>();
+            var characterLevelSheet = states.GetSheet<CharacterLevelSheet>();
+            avatarState.exp = characterLevelSheet[250].Exp;
             // Prepare equipment
             foreach (var recipeId in recipeIds)
             {
