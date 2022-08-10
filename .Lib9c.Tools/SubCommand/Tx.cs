@@ -282,7 +282,7 @@ namespace Lib9c.Tools.SubCommand
         }
 
         [Command(Description = "Create ActivationKey-nonce pairs and dump them as csv")]
-        public static void CreateActivationKeys(
+        public void CreateActivationKeys(
             [Argument("COUNT", Description = "An amount of pairs")]
             int count,
             [Argument("CSV-PATH", Description = "Path to save activation key list to csv")]
