@@ -216,9 +216,6 @@ namespace Nekoyume.Action
                 avatarState.inventory.AddItem(equipment);
 
             }
-            // NCG
-            var goldCurrency = states.GetGoldCurrency();
-            states = states.MintAsset(ctx.Signer, 500 * goldCurrency);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}CreateAvatar CreateAvatarState: {Elapsed}", addressesHex, sw.Elapsed);
