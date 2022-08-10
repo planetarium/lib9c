@@ -54,9 +54,6 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0 * CrystalCalculator.CRYSTAL, state.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
 
-            var gold = new GoldCurrencyState(new Currency("NCG", 2, minter: null));
-            state = state.SetState(Addresses.GoldCurrency, gold.Serialize());
-
             var nextState = action.Execute(new ActionContext()
             {
                 PreviousStates = state,
@@ -84,8 +81,6 @@ namespace Lib9c.Tests.Action
             Assert.Equal(100_000 * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
 
             // internal test
-            var goldCurrency = nextState.GetGoldCurrency();
-            Assert.Equal(500 * goldCurrency, nextState.GetBalance(_agentAddress, goldCurrency));
             Assert.Equal(6, nextAvatarState.inventory.Equipments.Count());
         }
 
