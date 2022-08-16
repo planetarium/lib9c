@@ -1,7 +1,8 @@
 {
     "BlockDifficulty": 200000,
     "TradableMaterialCount": 9999,
-    "MaterialCount": 9999,
+    "MaterialCount": 10,
+    "FoodCount": 10,
     "CustomEquipmentItems": [
         {
             "ID": 10143001,
@@ -588,6 +589,27 @@
                 1710,
                 1711,
                 1712
+            ]
+        },
+        {
+            "ID": 10240000,
+            "Level": 1,
+            "OptionIds": [
+                14
+            ]
+        },
+        {
+            "ID": 10240000,
+            "Level": 1,
+            "OptionIds": [
+                11
+            ]
+        },
+        {
+            "ID": 10240000,
+            "Level": 1,
+            "OptionIds": [
+                7
             ]
         }
     ]
