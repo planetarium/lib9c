@@ -31,3 +31,6 @@ id,_name,item_sub_type,grade,elemental_type,stat_type_1,stat_value_1,stat_type_2
 201025,바베큐 치킨,Food,3,Normal,HP,4653,,
 201026,윤기나는 바베큐 치킨,Food,4,Normal,HP,5318,,
 201027,전설의 바베큐 치킨,Food,5,Normal,HP,6618,,
+900101,몬스터펀치,Food,3,Normal,HP,834,ATK,46
+900102,시원한 몬스터펀치,Food,4,Normal,HP,1799,ATK,98
+900103,위대한 몬스터펀치,Food,5,Normal,HP,3629,ATK,202
