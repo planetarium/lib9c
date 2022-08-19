@@ -58,8 +58,6 @@ namespace Lib9c.Tests.Action
         [InlineData(new[] { 2 }, true, false, false, true, 500, null)]
         // Migration AvatarState.
         [InlineData(new[] { 2, 3, 4, 5 }, true, true, false, true, 153000, null)]
-        // TODO: add world 6 unlock
-        //[InlineData(new[] { 2, 3, 4, 5, 6 }, true, true, false, true, 153000, null)]
         // Try open Yggdrasil.
         [InlineData(new[] { 1 }, false, true, false, true, 0, typeof(InvalidWorldException))]
         // Try open Mimisbrunnr.
@@ -180,6 +178,58 @@ namespace Lib9c.Tests.Action
                     Random = _random,
                 }));
             }
+        }
+
+        [Fact]
+        public void ExecuteWithNewWorld()
+        {
+            var state = _initialState.MintAsset(_agentAddress, 999_999_999 * _currency);
+            var worldIds = new[] { 2 };
+            var worldInformation = _avatarState.worldInformation;
+            var row = _tableSheets.WorldUnlockSheet.OrderedList
+                .First(r =>
+                    r.WorldIdToUnlock == worldIds.First());
+            var worldRow = _tableSheets.WorldSheet[row.WorldId];
+            var prevRow =
+                _tableSheets.WorldUnlockSheet.OrderedList
+                    .FirstOrDefault(r => r.WorldIdToUnlock == row.WorldId);
+            // Clear prev world.
+            if (!(prevRow is null))
+            {
+                var prevWorldRow = _tableSheets.WorldSheet[prevRow.WorldId];
+                for (int i = prevWorldRow.StageBegin; i < prevWorldRow.StageEnd + 1; i++)
+                {
+                    worldInformation.ClearStage(prevWorldRow.Id, i, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
+                }
+            }
+
+            for (int i = worldRow.StageBegin; i < worldRow.StageEnd + 1; i++)
+            {
+                worldInformation.ClearStage(worldRow.Id, i, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
+            }
+
+            state = state.SetState(_avatarAddress, _avatarState.Serialize());
+            var unlockedWorldIdsAddress = _avatarAddress.Derive("world_ids");
+            var unlockIds = List.Empty.Add(1.Serialize());
+            state = state.SetState(unlockedWorldIdsAddress, unlockIds);
+
+            var action = new UnlockWorld
+            {
+                WorldIds = worldIds.ToList(),
+                AvatarAddress = _avatarAddress,
+            };
+            IAccountStateDelta nextState = action.Execute(new ActionContext
+            {
+                PreviousStates = state,
+                Signer = _agentAddress,
+                BlockIndex = 1,
+                Random = _random,
+            });
+
+            Assert.True(nextState.TryGetState(unlockedWorldIdsAddress, out List rawIds));
+
+            var unlockedIds = rawIds.ToList(StateExtensions.ToInteger);
+            Assert.All(worldIds, worldId => Assert.Contains(worldId, unlockedIds));
         }
     }
 }
