@@ -185,7 +185,10 @@ namespace Lib9c.Tests.Action
         {
             var state = _initialState.MintAsset(_agentAddress, 999_999_999 * _currency);
             var worldIds = new[] { 2 };
-            var worldInformation = _avatarState.worldInformation;
+            var worldSheet = _tableSheets.WorldSheet;
+            var wi = new WorldInformation(Dictionary.Empty);
+            wi.TryAddWorld(worldSheet.OrderedList[0], out _);
+
             var row = _tableSheets.WorldUnlockSheet.OrderedList
                 .First(r =>
                     r.WorldIdToUnlock == worldIds.First());
@@ -199,19 +202,30 @@ namespace Lib9c.Tests.Action
                 var prevWorldRow = _tableSheets.WorldSheet[prevRow.WorldId];
                 for (int i = prevWorldRow.StageBegin; i < prevWorldRow.StageEnd + 1; i++)
                 {
-                    worldInformation.ClearStage(prevWorldRow.Id, i, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
+                    wi.ClearStage(prevWorldRow.Id, i, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                 }
             }
 
             for (int i = worldRow.StageBegin; i < worldRow.StageEnd + 1; i++)
             {
-                worldInformation.ClearStage(worldRow.Id, i, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
+                wi.ClearStage(worldRow.Id, i, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            state = state.SetState(_avatarAddress, _avatarState.Serialize());
+            wi.UnlockWorld(worldRow.Id, 0, worldSheet);
             var unlockedWorldIdsAddress = _avatarAddress.Derive("world_ids");
-            var unlockIds = List.Empty.Add(1.Serialize());
-            state = state.SetState(unlockedWorldIdsAddress, unlockIds);
+            state = state
+                .SetState(
+                    _avatarAddress.Derive(LegacyInventoryKey),
+                    _avatarState.inventory.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyWorldInformationKey),
+                    wi.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyQuestListKey),
+                    _avatarState.questList.Serialize())
+                .SetState(
+                    _avatarAddress,
+                    _avatarState.SerializeV2());
 
             var action = new UnlockWorld
             {
