@@ -79,6 +79,8 @@ namespace Nekoyume.Extensions
                 return IsMadeWithSpecificMimisbrunnrRecipe(equipment, itemOptionInfo, true);
             }
 
+            // If optionRows has temporary value, This method not works.
+            // All of equipments would make by MimisBrunnr recipe.
             switch (uniqueStatOption.count)
             {
                 case 1 when uniqueStatOption.value >= optionRows[0].StatMin:
