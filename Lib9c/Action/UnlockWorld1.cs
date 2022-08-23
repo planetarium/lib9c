@@ -89,10 +89,20 @@ namespace Nekoyume.Action
                     throw new FailedToUnlockWorldException($"unlock ${row.WorldId} first.");
                 }
 
-                // Check stage cleared in HackAndSlash.
-                if (!worldInformation.IsWorldUnlocked(worldId))
+                if (context.BlockIndex <= 4789615)
                 {
-                    throw new FailedToUnlockWorldException($"{worldId} is locked.");
+                    if (!worldInformation.IsWorldUnlocked(worldId))
+                    {
+                        throw new FailedToUnlockWorldException($"{worldId} is locked.");
+                    }
+                }
+                else
+                {
+                    // Check stage cleared in HackAndSlash.
+                    if (!worldInformation.IsWorldUnlocked(worldId) && !worldInformation.IsStageCleared(row.StageId))
+                    {
+                        throw new FailedToUnlockWorldException($"{worldId} is locked.");
+                    }
                 }
 
                 unlockedIds.Add(worldId);
