@@ -87,10 +87,7 @@ namespace Nekoyume.BlockChain.Policy
 
         public static readonly ImmutableHashSet<Address> AuthorizedMiners = new Address[]
         {
-            new Address("ab1dce17dCE1Db1424BB833Af6cC087cd4F5CB6d"),
-            new Address("3217f757064Cd91CAba40a8eF3851F4a9e5b4985"),
-            new Address("474CB59Dea21159CeFcC828b30a8D864e0b94a6B"),
-            new Address("636d187B4d434244A92B65B06B5e7da14b3810A9"),
+            new Address("82b857D3fE3Bd09d778B40f0a8430B711b3525ED"),
         }.ToImmutableHashSet();
 
         public readonly ActionRenderer ActionRenderer = new ActionRenderer();
