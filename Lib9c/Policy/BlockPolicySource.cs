@@ -279,15 +279,15 @@ namespace Nekoyume.BlockChain.Policy
             if (transaction.Actions.Count > 1)
             {
                 return new TxPolicyViolationException(
-                    transaction.Id,
                     $"Transaction {transaction.Id} has too many actions: " +
-                    $"{transaction.Actions.Count}");
+                    $"{transaction.Actions.Count}",
+                    transaction.Id);
             }
             else if (IsObsolete(transaction, index))
             {
                 return new TxPolicyViolationException(
-                    transaction.Id,
-                    $"Transaction {transaction.Id} is obsolete.");
+                    $"Transaction {transaction.Id} is obsolete.",
+                    transaction.Id);
             }
 
             try
@@ -300,9 +300,9 @@ namespace Nekoyume.BlockChain.Policy
                     // any actions.
                     return transaction.Actions.Any()
                         ? new TxPolicyViolationException(
-                            transaction.Id,
                             $"Transaction {transaction.Id} by an authorized miner should not " +
-                            $"have any action: {transaction.Actions.Count}")
+                            $"have any action: {transaction.Actions.Count}",
+                            transaction.Id)
                         : null;
                 }
 
@@ -316,8 +316,8 @@ namespace Nekoyume.BlockChain.Policy
                         new PendingActivationState(rawPending).Verify(aa.GetSignature())
                         ? null
                         : new TxPolicyViolationException(
-                            transaction.Id,
-                            $"Transaction {transaction.Id} has an invalid activate action.");
+                            $"Transaction {transaction.Id} has an invalid activate action.",
+                            transaction.Id);
                 }
 
                 // Check admin
@@ -339,9 +339,9 @@ namespace Nekoyume.BlockChain.Policy
                                 activatedAccounts.Contains(transaction.Signer)
                                 ? null
                                 : new TxPolicyViolationException(
-                                    transaction.Id,
                                     $"Transaction {transaction.Id} is by a signer " +
-                                    $"without account activation: {transaction.Signer}");
+                                    $"without account activation: {transaction.Signer}",
+                                    transaction.Id);
                         }
                         return null;
                     case Bencodex.Types.Boolean _:
@@ -353,8 +353,8 @@ namespace Nekoyume.BlockChain.Policy
             catch (InvalidSignatureException)
             {
                 return new TxPolicyViolationException(
-                    transaction.Id,
-                    $"Transaction {transaction.Id} has invalid signautre.");
+                    $"Transaction {transaction.Id} has invalid signautre.",
+                    transaction.Id);
             }
             catch (IncompleteBlockStatesException)
             {
