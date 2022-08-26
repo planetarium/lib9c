@@ -87,9 +87,15 @@ namespace Lib9c.Tests.Action
                     1),
             };
             agent2State.avatarAddresses[0] = _avatar2Address;
-            var currency = new Currency("NCG", 2, minters: null);
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            var currency = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(currency);
-            _currency = new Currency("CRYSTAL", 18, minters: null);
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            _currency = Currency.Legacy("CRYSTAL", 18, null);
+#pragma warning restore CS0618
 
             _state = _state
                 .SetState(_signer, agentState.Serialize())
@@ -180,9 +186,9 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         [InlineData(0, 1, 1, "0")]
-        [InlineData(4_479_999L, 1, 2, "499000.5")]
+        [InlineData(4_479_999L, 1, 2, "998001")]
         [InlineData(4_480_001L, 1, 2, "998001")]
-        [InlineData(100, 1, 8, "1996002")]
+        [InlineData(100, 1, 8, "998001")]
         public void Execute(long blockIndex, int championshipId, int round, string balance)
         {
             var arenaSheet = _state.GetSheet<ArenaSheet>();

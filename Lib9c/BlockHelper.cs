@@ -23,7 +23,7 @@ namespace Nekoyume
             IDictionary<string, string> tableSheets,
             GoldDistribution[] goldDistributions,
             PendingActivationState[] pendingActivationStates,
-            AdminState adminState,
+            AdminState adminState = null,
             AuthorizedMinersState authorizedMinersState = null,
             IImmutableSet<Address> activatedAccounts = null,
             bool isActivateAdminAddress = false,
@@ -46,7 +46,10 @@ namespace Nekoyume
                 privateKey = new PrivateKey();
             }
 
-            var ncg = new Currency("NCG", 2, privateKey.ToAddress());
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            var ncg = Currency.Legacy("NCG", 2, privateKey.ToAddress());
+#pragma warning restore CS0618
             activatedAccounts = activatedAccounts ?? ImmutableHashSet<Address>.Empty;
             var initialStatesAction = new InitializeStates
             (
@@ -57,7 +60,7 @@ namespace Nekoyume
                 redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: adminState,
                 activatedAccountsState: new ActivatedAccountsState(
-                    isActivateAdminAddress
+                    isActivateAdminAddress && !(adminState is null)
                     ? activatedAccounts.Add(adminState.AdminAddress)
                     : activatedAccounts),
                 goldCurrencyState: new GoldCurrencyState(ncg),
@@ -79,7 +82,6 @@ namespace Nekoyume
             var blockAction = new BlockPolicySource(Log.Logger).GetPolicy().BlockAction;
             return
                 BlockChain<PolymorphicAction<ActionBase>>.MakeGenesisBlock(
-                    HashAlgorithmType.Of<SHA256>(),
                     actions,
                     privateKey: privateKey,
                     blockAction: blockAction,

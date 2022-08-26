@@ -26,7 +26,10 @@ namespace Lib9c.Tests.Action
 
         public ActionEvaluationTest()
         {
-            _currency = new Currency("NCG", 2, minters: null);
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            _currency = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
             _signer = new PrivateKey().ToAddress();
             _sender = new PrivateKey().ToAddress();
             _states = new State()
@@ -100,6 +103,8 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(Grinding))]
         [InlineData(typeof(UnlockEquipmentRecipe))]
         [InlineData(typeof(UnlockWorld))]
+        [InlineData(typeof(EventDungeonBattle))]
+        [InlineData(typeof(EventConsumableItemCrafts))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -155,12 +160,12 @@ namespace Lib9c.Tests.Action
                 },
                 HackAndSlash _ => new HackAndSlash
                 {
-                    costumes = new List<Guid>(),
-                    equipments = new List<Guid>(),
-                    foods = new List<Guid>(),
-                    worldId = 0,
-                    stageId = 0,
-                    avatarAddress = new PrivateKey().ToAddress(),
+                    Costumes = new List<Guid>(),
+                    Equipments = new List<Guid>(),
+                    Foods = new List<Guid>(),
+                    WorldId = 0,
+                    StageId = 0,
+                    AvatarAddress = new PrivateKey().ToAddress(),
                 },
                 ActivateAccount _ => new ActivateAccount(new PrivateKey().ToAddress(), new byte[] { 0x0 }),
                 AddActivatedAccount _ => new AddActivatedAccount(),
@@ -179,7 +184,10 @@ namespace Lib9c.Tests.Action
                             _signer,
                             new PrivateKey().ToAddress(),
                             ItemSubType.Armor,
-                            new Currency("NCG", 2, minters: null) * 10
+#pragma warning disable CS0618
+                    // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+                            Currency.Legacy("NCG", 2, null) * 10
+#pragma warning restore CS0618
                         ),
                     },
                 },
@@ -242,7 +250,18 @@ namespace Lib9c.Tests.Action
                 SellCancellation _ => new SellCancellation(),
                 UpdateSell _ => new UpdateSell
                 {
-                    price = _currency * 100,
+                    sellerAvatarAddress = new PrivateKey().ToAddress(),
+                    updateSellInfos = new[]
+                    {
+                        new UpdateSellInfo(
+                            Guid.NewGuid(),
+                            Guid.NewGuid(),
+                            Guid.NewGuid(),
+                            ItemSubType.Armor,
+                            _currency * 100,
+                            1
+                        ),
+                    },
                 },
                 CreatePendingActivations _ => new CreatePendingActivations
                 {
@@ -273,6 +292,23 @@ namespace Lib9c.Tests.Action
                         2,
                         3,
                     },
+                },
+                EventDungeonBattle _ => new EventDungeonBattle
+                {
+                    AvatarAddress = default,
+                    EventScheduleId = 0,
+                    EventDungeonId = 0,
+                    EventDungeonStageId = 0,
+                    Equipments = new List<Guid>(),
+                    Costumes = new List<Guid>(),
+                    Foods = new List<Guid>(),
+                },
+                EventConsumableItemCrafts _ => new EventConsumableItemCrafts
+                {
+                    AvatarAddress = default,
+                    EventScheduleId = 0,
+                    EventConsumableItemRecipeId = 0,
+                    SlotIndex = 0,
                 },
                 _ => throw new InvalidCastException(),
             };

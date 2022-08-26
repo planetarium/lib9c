@@ -162,6 +162,20 @@ namespace Nekoyume.Extensions
             return questSheet;
         }
 
+        public static SimulatorSheets GetSimulatorSheets(
+            this Dictionary<Type, (Address address, ISheet sheet)> sheets)
+        {
+            return new SimulatorSheets(
+                sheets.GetSheet<MaterialItemSheet>(),
+                sheets.GetSheet<SkillSheet>(),
+                sheets.GetSheet<SkillBuffSheet>(),
+                sheets.GetSheet<BuffSheet>(),
+                sheets.GetSheet<CharacterSheet>(),
+                sheets.GetSheet<CharacterLevelSheet>(),
+                sheets.GetSheet<EquipmentItemSetEffectSheet>()
+            );
+        }
+
         public static StageSimulatorSheets GetStageSimulatorSheets(
             this Dictionary<Type, (Address address, ISheet sheet)> sheets)
         {
@@ -221,7 +235,7 @@ namespace Nekoyume.Extensions
             {
                 var msg = $"The account {agentAddress}'s balance of {balance.Currency} is insufficient to " +
                           $"staked minimum amount: {balance} < {minimumRequired}.";
-                throw new InsufficientBalanceException(agentAddress, balance, msg);
+                throw new InsufficientBalanceException(msg, agentAddress, balance);
             }
             for (int i = 0; i < orderedRows.Count - 1; ++i)
             {
