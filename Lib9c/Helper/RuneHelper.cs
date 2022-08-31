@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Globalization;
 using System.Linq;
 using JetBrains.Annotations;
 using Libplanet;
@@ -43,7 +42,11 @@ namespace Nekoyume.Helper
         {
             var row = sheet.Values.First(r => r.Rank == rank && r.BossId == bossId);
             var rewardRow = rewardSheet.OrderedRows.First(r => r.Rank == rank && r.BossId == bossId);
-            if (rewardRow is WorldBossKillRewardSheet.Row rr)
+            if (rewardRow is WorldBossKillRewardSheet.Row kr)
+            {
+                kr.SetRune(random);
+            }
+            else if (rewardRow is WorldBossBattleRewardSheet.Row rr)
             {
                 rr.SetRune(random);
             }
@@ -78,7 +81,11 @@ namespace Nekoyume.Helper
 #pragma warning restore LAA1002
                 .Select(kv => ToFungibleAssetValue(runeSheet[kv.Key], kv.Value))
                 .ToList();
-            result.Add(rewardRow.Crystal * CrystalCalculator.CRYSTAL);
+
+            if (rewardRow.Crystal > 0)
+            {
+                result.Add(rewardRow.Crystal * CrystalCalculator.CRYSTAL);
+            }
             return result;
         }
     }
