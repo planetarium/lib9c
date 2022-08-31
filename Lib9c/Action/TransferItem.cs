@@ -72,7 +72,7 @@ namespace Nekoyume.Action
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
-            var state = context.PreviousStates;
+            var states = context.PreviousStates;
             if (context.Rehearsal)
             {
                 return state;
@@ -86,7 +86,7 @@ namespace Nekoyume.Action
             Address recipientAddress = RecipientAvatarAddress.Derive(ActivationKey.DeriveKey);
 
             // Check new type of activation first.
-            if (state.GetState(recipientAddress) is null && state.GetState(Addresses.ActivatedAccount) is Dictionary asDict )
+            if (states.GetState(recipientAddress) is null && states.GetState(Addresses.ActivatedAccount) is Dictionary asDict )
             {
                 var activatedAccountsState = new ActivatedAccountsState(asDict);
                 var activatedAccounts = activatedAccountsState.Accounts;
@@ -96,6 +96,23 @@ namespace Nekoyume.Action
                 {
                     throw new InvalidTransferUnactivatedRecipientException(Sender, RecipientAvatarAddress);
                 }
+            }
+            var recipientInventoryAddress = RecipientAvatarAddress.Derive(LegacyInventoryKey);
+            var recipientWorldInformationAddress = RecipientAvatarAddress.Derive(LegacyWorldInformationKey);
+            var recipientQuestListAddress = RecipientAvatarAddress.Derive(LegacyQuestListKey);
+            var addressesHex = GetSignerAndOtherAddressesHex(context, RecipientAvatarAddress);
+
+            if (!states.TryGetAvatarStateV2(ctx.Signer, RecipientAvatarAddress, out var recipientAvatarState, out _))
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the avatar state of the buyer was failed to load.");
+            }
+
+            if (!recipientAvatarState.worldInformation.IsStageCleared(GameConfig.RequireClearedStageLevel.ActionsInShop))
+            {
+                recipientAvatarState.worldInformation.TryGetLastClearedStageId(out var current);
+                throw new NotEnoughClearedStageLevelException(addressesHex,
+                    GameConfig.RequireClearedStageLevel.ActionsInShop, current);
             }
 
             //Currency currency = Amount.Currency;
