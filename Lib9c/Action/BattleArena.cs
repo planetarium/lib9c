@@ -21,10 +21,10 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Introduced at https://github.com/planetarium/lib9c/pull/1190
+    /// Hard forked at https://github.com/planetarium/lib9c/pull/1330
     /// </summary>
     [Serializable]
-    [ActionType("battle_arena3")]
+    [ActionType("battle_arena4")]
     public class BattleArena : GameAction
     {
         public Address myAvatarAddress;
@@ -170,6 +170,13 @@ namespace Nekoyume.Action
                 throw new ArenaAvatarStateNotFoundException(
                     $"[{nameof(BattleArena)}] my avatar address : {myAvatarAddress}");
             }
+            
+            if (context.BlockIndex - myArenaAvatarState.LastBattleBlockIndex < 2)
+            {
+                throw new CoolDownBlockException(
+                    $"[{nameof(BattleArena)}] LastBattleBlockIndex : {myArenaAvatarState.LastBattleBlockIndex} " +
+                    $"CurrentBlockIndex : {context.BlockIndex}");
+            }
 
             var enemyArenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(enemyAvatarAddress);
             if (!states.TryGetArenaAvatarState(enemyArenaAvatarStateAdr,
@@ -249,6 +256,7 @@ namespace Nekoyume.Action
             // update arena avatar state
             myArenaAvatarState.UpdateEquipment(equipments);
             myArenaAvatarState.UpdateCostumes(costumes);
+            myArenaAvatarState.LastBattleBlockIndex = context.BlockIndex;
 
             // simulate
             var enemyAvatarState = states.GetEnemyAvatarState(enemyAvatarAddress);

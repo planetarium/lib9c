@@ -6,6 +6,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Libplanet.Assets;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -19,12 +20,10 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Hard forked at https://github.com/planetarium/lib9c/pull/1229
-    /// Updated at https://github.com/planetarium/lib9c/pull/1241
-    /// Updated at https://github.com/planetarium/lib9c/pull/1244
+    /// Hard forked at https://github.com/planetarium/lib9c/pull/1338
     /// </summary>
     [Serializable]
-    [ActionType("hack_and_slash16")]
+    [ActionType("hack_and_slash18")]
     public class HackAndSlash : GameAction
     {
         public List<Guid> Costumes;
@@ -146,6 +145,7 @@ namespace Nekoyume.Action
                     typeof(EquipmentItemOptionSheet),
                     typeof(CrystalStageBuffGachaSheet),
                     typeof(CrystalRandomBuffSheet),
+                    typeof(StakeActionPointCoefficientSheet),
                 });
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Get Sheets: {Elapsed}", addressesHex, sw.Elapsed);
@@ -165,9 +165,26 @@ namespace Nekoyume.Action
 
             var items = Equipments.Concat(Costumes);
             avatarState.EquipItems(items);
-            avatarState.actionPoint -= sheets.GetSheet<StageSheet>()[StageId].CostAP * PlayCount;
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Unequip items: {Elapsed}", addressesHex, sw.Elapsed);
+
+            sw.Restart();
+            var costAp = sheets.GetSheet<StageSheet>()[StageId].CostAP;
+            if (states.TryGetStakeState(signer, out var stakeState))
+            {
+                var currency = states.GetGoldCurrency();
+                var stakedAmount = states.GetBalance(stakeState.address, currency);
+                var actionPointCoefficientSheet = sheets.GetSheet<StakeActionPointCoefficientSheet>();
+                var level = actionPointCoefficientSheet.FindLevelByStakedAmount(signer, stakedAmount);
+                costAp = actionPointCoefficientSheet.GetActionPointByStaking(
+                    costAp,
+                    PlayCount,
+                    level);
+            }
+
+            avatarState.actionPoint -= costAp;
+            sw.Stop();
+            Log.Verbose("{AddressesHex}HAS use ActionPoint: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
             var questSheet = sheets.GetQuestSheet();

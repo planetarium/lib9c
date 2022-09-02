@@ -309,5 +309,13 @@ namespace Nekoyume.Extensions
             WorldBossListSheet.Row row = sheet.FindPreviousRowByBlockIndex(blockIndex);
             return row.Id;
         }
+
+        public static int GetActionPointByStaking(this StakeActionPointCoefficientSheet sheet,
+            int originAp,
+            int playCount,
+            int level)
+        {
+            return (int)(originAp * playCount * sheet[level].Coefficient * 0.01m);
+        }
     }
 }

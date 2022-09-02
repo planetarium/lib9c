@@ -80,6 +80,10 @@ namespace Nekoyume.BlockChain.Policy
 
         public const long V100270ObsoleteIndex = 4_841_774;
 
+        public const long V100282ObsoleteIndex = 4_835_445;
+
+        public const long V100290ObsoleteIndex = 4_913_153;
+
         public const long PermissionedMiningStartIndex = 2_225_500;
 
 
@@ -118,7 +122,6 @@ namespace Nekoyume.BlockChain.Policy
         public IBlockPolicy<NCAction> GetPolicy() =>
             GetPolicy(
                 minimumDifficulty: MinimumDifficulty,
-                hashAlgorithmTypePolicy: HashAlgorithmTypePolicy.Mainnet,
                 maxBlockBytesPolicy: MaxBlockBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
@@ -132,7 +135,6 @@ namespace Nekoyume.BlockChain.Policy
         public IBlockPolicy<NCAction> GetInternalPolicy() =>
             GetPolicy(
                 minimumDifficulty: MinimumDifficulty,
-                hashAlgorithmTypePolicy: HashAlgorithmTypePolicy.Mainnet,
                 maxBlockBytesPolicy: MaxBlockBytesPolicy.Internal,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
@@ -146,7 +148,6 @@ namespace Nekoyume.BlockChain.Policy
         public IBlockPolicy<NCAction> GetPermanentPolicy() =>
             GetPolicy(
                 minimumDifficulty: DifficultyStability,
-                hashAlgorithmTypePolicy: HashAlgorithmTypePolicy.Mainnet,
                 maxBlockBytesPolicy: MaxBlockBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
@@ -161,7 +162,6 @@ namespace Nekoyume.BlockChain.Policy
         public IBlockPolicy<NCAction> GetTestPolicy() =>
             GetPolicy(
                 minimumDifficulty: DifficultyStability,
-                hashAlgorithmTypePolicy: HashAlgorithmTypePolicy.Mainnet,
                 maxBlockBytesPolicy: MaxBlockBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
@@ -176,7 +176,6 @@ namespace Nekoyume.BlockChain.Policy
         public IBlockPolicy<NCAction> GetDefaultPolicy() =>
             GetPolicy(
                 minimumDifficulty: DifficultyStability,
-                hashAlgorithmTypePolicy: HashAlgorithmTypePolicy.Default,
                 maxBlockBytesPolicy: MaxBlockBytesPolicy.Default,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Default,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Default,
@@ -201,7 +200,6 @@ namespace Nekoyume.BlockChain.Policy
         /// <returns>A <see cref="BlockPolicy"/> constructed from given parameters.</returns>
         internal IBlockPolicy<NCAction> GetPolicy(
             long minimumDifficulty,
-            IVariableSubPolicy<HashAlgorithmType> hashAlgorithmTypePolicy,
             IVariableSubPolicy<long> maxBlockBytesPolicy,
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
@@ -213,8 +211,6 @@ namespace Nekoyume.BlockChain.Policy
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
              return new DebugPolicy(data.BlockDifficulty);
 #else
-            hashAlgorithmTypePolicy = hashAlgorithmTypePolicy
-                ?? HashAlgorithmTypePolicy.Default;
             maxBlockBytesPolicy = maxBlockBytesPolicy
                 ?? MaxBlockBytesPolicy.Default;
             minTransactionsPerBlockPolicy = minTransactionsPerBlockPolicy
@@ -245,7 +241,6 @@ namespace Nekoyume.BlockChain.Policy
                 (blockChain, block) => ValidateNextBlockRaw(
                     blockChain,
                     block,
-                    hashAlgorithmTypePolicy,
                     maxBlockBytesPolicy,
                     minTransactionsPerBlockPolicy,
                     maxTransactionsPerBlockPolicy,
@@ -268,15 +263,12 @@ namespace Nekoyume.BlockChain.Policy
                 permissionedMinersPolicy);
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
-            HashAlgorithmGetter getHashAlgorithmType =
-                index => hashAlgorithmTypePolicy.Getter(index);
             return new BlockPolicy(
                 new RewardGold(),
                 blockInterval: BlockInterval,
                 difficultyStability: DifficultyStability,
                 minimumDifficulty: minimumDifficulty,
                 canonicalChainComparer: new TotalDifficultyComparer(),
-                hashAlgorithmGetter: getHashAlgorithmType,
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,
                 getMaxBlockBytes: maxBlockBytesPolicy.Getter,
@@ -332,8 +324,9 @@ namespace Nekoyume.BlockChain.Policy
                 }
 
                 // Check ActivateAccount
-                if (transaction.Actions.Count == 1 &&
-                    transaction.Actions.First().InnerAction is IActivateAction aa)
+                if (transaction.CustomActions is { } customActions &&
+                    customActions.Count == 1 &&
+                    customActions.First().InnerAction is IActivateAction aa)
                 {
                     return transaction.Nonce == 0 &&
                         blockChain.GetState(aa.GetPendingAddress()) is Dictionary rawPending &&
@@ -395,7 +388,6 @@ namespace Nekoyume.BlockChain.Policy
         internal static BlockPolicyViolationException ValidateNextBlockRaw(
             BlockChain<NCAction> blockChain,
             Block<NCAction> nextBlock,
-            IVariableSubPolicy<HashAlgorithmType> hashAlgorithmTypePolicy,
             IVariableSubPolicy<long> maxBlockBytesPolicy,
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
@@ -403,13 +395,7 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy,
             IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy)
         {
-            if (ValidateHashAlgorithmTypeRaw(
-                nextBlock,
-                hashAlgorithmTypePolicy) is InvalidBlockHashAlgorithmTypeException ibhate)
-            {
-                return ibhate;
-            }
-            else if (ValidateBlockBytesRaw(
+            if (ValidateBlockBytesRaw(
                 nextBlock,
                 maxBlockBytesPolicy) is InvalidBlockBytesLengthException ibble)
             {
