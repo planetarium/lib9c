@@ -10,6 +10,7 @@ using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
+using Nekoyume.Model;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.EnumType;
@@ -24,6 +25,7 @@ namespace Nekoyume.Action
     /// Introduced at https://github.com/planetarium/lib9c/pull/1190
     /// </summary>
     [Serializable]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100290ObsoleteIndex)]
     [ActionType("battle_arena2")]
     public class BattleArena2 : GameAction
     {
@@ -73,6 +75,8 @@ namespace Nekoyume.Action
             {
                 return states;
             }
+
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100290ObsoleteIndex, context);
 
             var addressesHex =
                 GetSignerAndOtherAddressesHex(context, myAvatarAddress, enemyAvatarAddress);

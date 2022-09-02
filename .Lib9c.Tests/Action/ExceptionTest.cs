@@ -60,6 +60,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(AlreadyRecipeUnlockedException))]
         [InlineData(typeof(InvalidRecipeIdException))]
         [InlineData(typeof(AlreadyWorldUnlockedException))]
+        [InlineData(typeof(InvalidClaimException))]
         [InlineData(typeof(InvalidActionFieldException))]
         [InlineData(typeof(NotEnoughEventDungeonTicketsException))]
         public void Exception_Serializable(Type excType)
