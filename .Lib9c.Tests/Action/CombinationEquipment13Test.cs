@@ -68,7 +68,8 @@
                 default
             );
 
-            var gold = new GoldCurrencyState(new Currency("NCG", 2, minter: null));
+            var gold = new GoldCurrencyState(
+                Currency.Legacy("NCG", 2, minter: new PrivateKey().PublicKey.ToAddress()));
 
             var combinationSlotState = new CombinationSlotState(
                 _slotAddress,
