@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Nekoyume.Model;
+using static Lib9c.SerializeKeys;
+using Nekoyume.Model.Item;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Action
 {
@@ -21,6 +24,7 @@ namespace Nekoyume.Action
     public class TransferItem : ActionBase, ISerializable
     {
         private const int MemoMaxLength = 80;
+        private const int transferFee = 10;
         
 
         public TransferItem()
@@ -29,7 +33,7 @@ namespace Nekoyume.Action
 
         public TransferItem(Address sender, Address recipient, Guid itemId, string memo = null)
         {
-            Sender = sender;
+            SenderAvatarAddress = sender;
             RecipientAvatarAddress = recipient;
             ItemId = itemId;
 
@@ -45,7 +49,7 @@ namespace Nekoyume.Action
             LoadPlainValue(pv);
         }
 
-        public Address Sender { get; private set; }
+        public Address SenderAvatarAddress { get; private set; }
         public Address RecipientAvatarAddress { get; private set; }
         public Guid ItemId;
         public string Memo { get; private set; }
@@ -56,7 +60,7 @@ namespace Nekoyume.Action
             {
                 IEnumerable<KeyValuePair<IKey, IValue>> pairs = new[]
                 {
-                    new KeyValuePair<IKey, IValue>((Text) "sender", Sender.Serialize()),
+                    new KeyValuePair<IKey, IValue>((Text) "sender", SenderAvatarAddress.Serialize()),
                     new KeyValuePair<IKey, IValue>((Text) "recipient", RecipientAvatarAddress.Serialize()),
                     new KeyValuePair<IKey, IValue>((Text) "itemId", ItemId.Serialize()),
                 };
@@ -75,12 +79,12 @@ namespace Nekoyume.Action
             var states = context.PreviousStates;
             if (context.Rehearsal)
             {
-                return state;
+                return states;
             }
 
-            if (Sender != context.Signer)
+            if (SenderAvatarAddress != context.Signer)
             {
-                throw new InvalidTransferSignerException(context.Signer, Sender, RecipientAvatarAddress);
+                throw new InvalidTransferSignerException(context.Signer, SenderAvatarAddress, RecipientAvatarAddress);
             }
 
             Address recipientAddress = RecipientAvatarAddress.Derive(ActivationKey.DeriveKey);
@@ -94,18 +98,44 @@ namespace Nekoyume.Action
                 if (activatedAccounts.Count != 0
                     && !activatedAccounts.Contains(RecipientAvatarAddress))
                 {
-                    throw new InvalidTransferUnactivatedRecipientException(Sender, RecipientAvatarAddress);
+                    throw new InvalidTransferUnactivatedRecipientException(SenderAvatarAddress, RecipientAvatarAddress);
                 }
             }
             var recipientInventoryAddress = RecipientAvatarAddress.Derive(LegacyInventoryKey);
             var recipientWorldInformationAddress = RecipientAvatarAddress.Derive(LegacyWorldInformationKey);
             var recipientQuestListAddress = RecipientAvatarAddress.Derive(LegacyQuestListKey);
+            var senderInventoryAddress = SenderAvatarAddress.Derive(LegacyInventoryKey);
             var addressesHex = GetSignerAndOtherAddressesHex(context, RecipientAvatarAddress);
-
-            if (!states.TryGetAvatarStateV2(ctx.Signer, RecipientAvatarAddress, out var recipientAvatarState, out _))
+            AvatarState senderAvatarState;
+            try
+            {
+                senderAvatarState = states.GetAvatarStateV2(SenderAvatarAddress);
+            }
+            // BackWard compatible.
+            catch (FailedLoadStateException)
+            {
+                senderAvatarState = states.GetAvatarState(SenderAvatarAddress);
+            }
+            if (senderAvatarState is null)
             {
                 throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the avatar state of the buyer was failed to load.");
+                    $"Aborted as the avatar state of the sender ({senderAvatarState}) was failed to load.");
+            }
+
+            AvatarState recipientAvatarState;
+            try
+            {
+                recipientAvatarState = states.GetAvatarStateV2(RecipientAvatarAddress);
+            }
+            // BackWard compatible.
+            catch (FailedLoadStateException)
+            {
+                recipientAvatarState = states.GetAvatarState(RecipientAvatarAddress);
+            }
+            if (recipientAvatarState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"Aborted as the avatar state of the sender ({recipientAvatarState}) was failed to load.");
             }
 
             if (!recipientAvatarState.worldInformation.IsStageCleared(GameConfig.RequireClearedStageLevel.ActionsInShop))
@@ -115,25 +145,61 @@ namespace Nekoyume.Action
                     GameConfig.RequireClearedStageLevel.ActionsInShop, current);
             }
 
-            //Currency currency = Amount.Currency;
-            //if (!(currency.Minters is null) &&
-            //    (currency.Minters.Contains(Sender) || currency.Minters.Contains(RecipientAvatarAddress)))
-            //{
-            //    throw new InvalidTransferMinterException(
-            //        currency.Minters,
-            //        Sender,
-            //        RecipientAvatarAddress
-            //   );
-            //}
+            if (!senderAvatarState.worldInformation.IsStageCleared(GameConfig.RequireClearedStageLevel.ActionsInShop))
+            {
+                senderAvatarState.worldInformation.TryGetLastClearedStageId(out var current);
+                throw new NotEnoughClearedStageLevelException(addressesHex,
+                    GameConfig.RequireClearedStageLevel.ActionsInShop, current);
+            }
 
-            return state;//.TransferAsset(Sender, RecipientAvatarAddress, Amount);
+            if(senderAvatarState.agentAddress != context.Signer)
+            {
+                throw new InvalidAddressException("Signer doesn't match sending agent address");
+            }
+
+            if(!senderAvatarState.inventory.TryGetTradableItem(ItemId,context.BlockIndex, 1, out var item))
+            {
+                throw new InvalidAddressException("Unable to get item from inventory");
+            }
+            if (item.Locked)
+            {
+                throw new Exception("Item is current locked, unable to send while on the market");
+            }
+            if(item is INonFungibleItem nonFungibleItem)
+            {
+                nonFungibleItem.RequiredBlockIndex = context.BlockIndex;
+                senderAvatarState.inventory.RemoveNonFungibleItem(nonFungibleItem);
+                if (nonFungibleItem is Costume costume)
+                {
+                    recipientAvatarState.UpdateFromAddCostume(costume, false);
+                }
+                else
+                {
+                    recipientAvatarState.UpdateFromAddItem((ItemUsable)nonFungibleItem, false);
+                }
+                //Transfer fee
+                var arenaSheet = states.GetSheet<ArenaSheet>();
+                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
+                var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+                var goldCurrency = states.GetGoldCurrency();
+                var fee = transferFee * goldCurrency;
+                states = states.TransferAsset(context.Signer, feeStoreAddress, fee);
+            }
+            else
+            {
+                throw new InvalidItemTypeException("Unable to load item to send");
+            }
+            states = states
+                .SetState(recipientInventoryAddress, recipientAvatarState.inventory.Serialize())
+                .SetState(senderInventoryAddress, senderAvatarState.inventory.Serialize());
+            return states;//.TransferAsset(Sender, RecipientAvatarAddress, Amount);
         }
 
         public override void LoadPlainValue(IValue plainValue)
         {
             var asDict = (Dictionary) plainValue;
 
-            Sender = asDict["sender"].ToAddress();
+            SenderAvatarAddress = asDict["sender"].ToAddress();
             RecipientAvatarAddress = asDict["recipient"].ToAddress();
             ItemId = asDict["itemid"].ToGuid();
             Memo = asDict.TryGetValue((Text) "memo", out IValue memo) ? memo.ToDotnetString() : null;
