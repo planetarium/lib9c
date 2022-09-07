@@ -251,16 +251,12 @@ namespace Nekoyume.BlockChain.Policy
             return new BlockPolicy(
                 new RewardGold(),
                 blockInterval: BlockInterval,
-                difficultyStability: DifficultyStability,
-                minimumDifficulty: minimumDifficulty,
-                canonicalChainComparer: new TotalDifficultyComparer(),
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,
                 getMaxBlockBytes: maxBlockBytesPolicy.Getter,
                 getMinTransactionsPerBlock: minTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerBlock: maxTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerSignerPerBlock: maxTransactionsPerSignerPerBlockPolicy.Getter,
-                getNextBlockDifficulty: blockChain => blockChain.Count == 0 ? 0 : minimumDifficulty,
                 isAllowedToMine: isAllowedToMine);
 #endif
         }
@@ -420,84 +416,6 @@ namespace Nekoyume.BlockChain.Policy
             }
 
             return null;
-        }
-
-        // FIXME: Although the intention is to use a slight variant of the algorithm provided,
-        // this allows a wildly different implementation for special cases.
-        internal static long GetNextBlockDifficultyRaw(
-            BlockChain<NCAction> blockChain,
-            TimeSpan targetBlockInterval,
-            long difficultyStability,
-            long minimumDifficulty,
-            IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy,
-            Func<BlockChain<NCAction>, long> defaultAlgorithm)
-        {
-            long index = blockChain.Count;
-            Func<long, bool> isAuthorizedMiningIndex = authorizedMinersPolicy.IsTargetIndex;
-
-            // FIXME: Uninstantiated blockChain can be passed as an argument.
-            // Until this is fixed, it is crucial block index is checked first.
-            // Authorized minor validity is only checked for certain indices.
-            if (index < 0)
-            {
-                throw new InvalidBlockIndexException(
-                    $"Value of {nameof(index)} must be non-negative: {index}");
-            }
-            else if (index <= 1)
-            {
-                return index == 0 ? 0 : minimumDifficulty;
-            }
-            else if (isAuthorizedMiningIndex(index))
-            {
-                return minimumDifficulty;
-            }
-            else
-            {
-                long prevIndex = !isAuthorizedMiningIndex(index - 1)
-                    ? index - 1
-                    : index - 2;
-                long prevPrevIndex = !isAuthorizedMiningIndex(prevIndex - 1)
-                    ? prevIndex - 1
-                    : prevIndex - 2;
-
-                // Arbitrary condition not strictly necessary, but already hardcoded.
-                if (prevPrevIndex <= 1)
-                {
-                    return minimumDifficulty;
-                }
-                // Blocks with index, prevIndex, and prevPrevIndex are all
-                // non-authorized mining blocks.
-                else if (prevPrevIndex == index - 2)
-                {
-                    return defaultAlgorithm(blockChain);
-                }
-                // At least one of previous blocks involved is authorized mining block.
-                // This can happen if two or more consecutive blocks are authorized mining blocks.
-                else if (isAuthorizedMiningIndex(prevIndex)
-                    || isAuthorizedMiningIndex(prevPrevIndex))
-                {
-                    return minimumDifficulty;
-                }
-                else
-                {
-                    Block<NCAction> prevBlock = blockChain[prevIndex];
-                    Block<NCAction> prevPrevBlock = blockChain[prevPrevIndex];
-                    TimeSpan prevTimeDiff = prevBlock.Timestamp - prevPrevBlock.Timestamp;
-                    const long minimumAdjustmentMultiplier = -99;
-
-                    long adjustmentMultiplier = Math.Max(
-                        1 - ((long)prevTimeDiff.TotalMilliseconds /
-                            (long)targetBlockInterval.TotalMilliseconds),
-                        minimumAdjustmentMultiplier);
-                    long difficultyAdjustment =
-                        prevBlock.Difficulty / difficultyStability * adjustmentMultiplier;
-
-                    long nextDifficulty = Math.Max(
-                        prevBlock.Difficulty + difficultyAdjustment, minimumDifficulty);
-
-                    return nextDifficulty;
-                }
-            }
         }
     }
 }

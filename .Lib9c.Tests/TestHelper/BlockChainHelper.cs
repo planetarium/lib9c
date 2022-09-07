@@ -59,7 +59,7 @@
             }
 
             var sheets = TableSheetsImporter.ImportSheets();
-            return BlockHelper.MineGenesisBlock(
+            return BlockHelper.ProposeGenesisBlock(
                 sheets,
                 new GoldDistribution[0],
                 pendingActivations,
