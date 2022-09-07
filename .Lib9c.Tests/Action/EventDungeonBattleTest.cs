@@ -158,8 +158,10 @@ namespace Lib9c.Tests.Action
 
             Assert.True(previousStates.GetSheet<EventScheduleSheet>()
                 .TryGetValue(eventScheduleId, out var newScheduleRow));
-            var ncgHas = newScheduleRow.GetDungeonTicketCost(numberOfTicketPurchases);
-            previousStates = previousStates.MintAsset(_agentAddress, ncgHas * _ncgCurrency);
+            var ncgHas = newScheduleRow.GetDungeonTicketCost(
+                numberOfTicketPurchases,
+                _ncgCurrency);
+            previousStates = previousStates.MintAsset(_agentAddress, ncgHas);
 
             var nextStates = Execute(
                 previousStates,
@@ -173,6 +175,14 @@ namespace Lib9c.Tests.Action
             Assert.Equal(
                 numberOfTicketPurchases + 1,
                 nextEventDungeonInfoList[2].ToInteger());
+            Assert.True(
+                nextStates.TryGetGoldBalance(
+                    _agentAddress,
+                    _ncgCurrency,
+                    out FungibleAssetValue balance
+                )
+            );
+            Assert.Equal(0 * _ncgCurrency, balance);
         }
 
         [Theory]
@@ -298,8 +308,10 @@ namespace Lib9c.Tests.Action
 
             Assert.True(_tableSheets.EventScheduleSheet
                 .TryGetValue(eventScheduleId, out var scheduleRow));
-            var ncgHas = scheduleRow.GetDungeonTicketCost(numberOfTicketPurchases) - 1;
-            previousStates = previousStates.MintAsset(_agentAddress, ncgHas * _ncgCurrency);
+            var ncgHas = scheduleRow.GetDungeonTicketCost(
+                numberOfTicketPurchases,
+                _ncgCurrency) - 1 * _ncgCurrency;
+            previousStates = previousStates.MintAsset(_agentAddress, ncgHas);
 
             Assert.Throws<InsufficientBalanceException>(() =>
                 Execute(

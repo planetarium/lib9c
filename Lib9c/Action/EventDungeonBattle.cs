@@ -20,13 +20,13 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Introduced at https://github.com/planetarium/lib9c/pull/1218
+    /// Hard forked at https://github.com/planetarium/lib9c/pull/1321
     /// </summary>
     [Serializable]
     [ActionType(ActionTypeText)]
     public class EventDungeonBattle : GameAction
     {
-        private const string ActionTypeText = "event_dungeon_battle";
+        private const string ActionTypeText = "event_dungeon_battle2";
         public const int PlayCount = 1;
 
         public Address AvatarAddress;
@@ -243,13 +243,14 @@ namespace Nekoyume.Action
 
                 var currency = states.GetGoldCurrency();
                 var cost = scheduleRow.GetDungeonTicketCost(
-                    eventDungeonInfo.NumberOfTicketPurchases);
-                if (cost > 0L)
+                    eventDungeonInfo.NumberOfTicketPurchases,
+                    currency);
+                if (cost.Sign > 0)
                 {
                     states = states.TransferAsset(
                         context.Signer,
                         Addresses.EventDungeon,
-                        cost * currency);
+                        cost);
                 }
 
                 // NOTE: The number of ticket purchases should be increased
