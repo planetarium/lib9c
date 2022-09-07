@@ -103,6 +103,22 @@ namespace Nekoyume.Model
             return usedSkill;
         }
 
+        public override bool IsHit(CharacterBase caster)
+        {
+            var isHit = HitHelper.IsHitWithoutLevelCorrection(
+                caster.Level,
+                caster.HIT,
+                Level,
+                HIT,
+                Simulator.Random.Next(0, 100));
+            if (!isHit)
+            {
+                caster.AttackCount = 0;
+            }
+
+            return isHit;
+        }
+
         public void Enrage()
         {
             Enraged = true;
