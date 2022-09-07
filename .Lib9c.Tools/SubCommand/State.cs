@@ -99,11 +99,7 @@ namespace Lib9c.Tools.SubCommand
 
                 Block<NCAction> block =
                     store.GetBlock<NCAction>(blockHash);
-                var preEvalBlock = new PreEvaluationBlock<NCAction>(
-                    block,
-                    block.Nonce,
-                    block.PreEvaluationHash
-                );
+                var preEvalBlock = new BlockContent<NCAction>(block).Propose();
                 stderr.WriteLine(
                     "[{0}/{1}] Executing block #{2} {3}...",
                     block.Index - bottom.Index + 1L,

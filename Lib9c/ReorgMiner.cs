@@ -42,10 +42,10 @@ namespace Nekoyume.BlockChain
             _reorgInterval = reorgInterval;
         }
 
-        public async Task<(
+        public (
                 Block<PolymorphicAction<ActionBase>> MainBlock,
-                Block<PolymorphicAction<ActionBase>> SubBlock)>
-            MineBlockAsync(CancellationToken cancellationToken)
+                Block<PolymorphicAction<ActionBase>> SubBlock)
+            ProposeAndAppendBlock(CancellationToken cancellationToken)
         {
             var txs = new HashSet<Transaction<PolymorphicAction<ActionBase>>>();
 
@@ -54,15 +54,15 @@ namespace Nekoyume.BlockChain
             Block<PolymorphicAction<ActionBase>> subBlock = null;
             try
             {
-                mainBlock = await _mainChain.MineBlock(
+                mainBlock = _mainChain.ProposeBlock(
                     _privateKey,
-                    DateTimeOffset.UtcNow,
-                    cancellationToken: cancellationToken);
+                    DateTimeOffset.UtcNow);
+                _mainChain.Append(mainBlock);
 
-                subBlock = await _subChain.MineBlock(
+                subBlock = _subChain.ProposeBlock(
                     _privateKey,
-                    DateTimeOffset.UtcNow,
-                    cancellationToken: cancellationToken);
+                    DateTimeOffset.UtcNow);
+                _subChain.Append(subBlock);
 
                 if (_reorgInterval != 0 && subBlock.Index % _reorgInterval == 0)
                 {

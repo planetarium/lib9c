@@ -19,7 +19,7 @@ namespace Nekoyume
 {
     public static class BlockHelper
     {
-        public static Block<PolymorphicAction<ActionBase>> MineGenesisBlock(
+        public static Block<PolymorphicAction<ActionBase>> ProposeGenesisBlock(
             IDictionary<string, string> tableSheets,
             GoldDistribution[] goldDistributions,
             PendingActivationState[] pendingActivationStates,
@@ -81,7 +81,7 @@ namespace Nekoyume
 
             var blockAction = new BlockPolicySource(Log.Logger).GetPolicy().BlockAction;
             return
-                BlockChain<PolymorphicAction<ActionBase>>.MakeGenesisBlock(
+                BlockChain<PolymorphicAction<ActionBase>>.ProposeGenesisBlock(
                     actions,
                     privateKey: privateKey,
                     blockAction: blockAction,

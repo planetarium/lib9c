@@ -522,7 +522,7 @@ namespace Lib9c.Tests.Action
                     tableSheets: TableSheetsImporter.ImportSheets(),
                     pendingActivationStates: pendingActivationStates.ToArray()
                 );
-                genesis = BlockChain<PolymorphicAction<ActionBase>>.MakeGenesisBlock(
+                genesis = BlockChain<PolymorphicAction<ActionBase>>.ProposeGenesisBlock(
                     new PolymorphicAction<ActionBase>[] { initializeStates }
                 );
             }

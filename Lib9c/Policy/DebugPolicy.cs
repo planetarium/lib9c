@@ -20,8 +20,6 @@ namespace Nekoyume.BlockChain.Policy
             _blockDifficulty = blockDifficulty;
         }
 
-        public IComparer<IBlockExcerpt> CanonicalChainComparer { get; } = new TotalDifficultyComparer();
-
         public IAction BlockAction { get; } = new RewardGold();
 
         private readonly long _blockDifficulty;
@@ -46,9 +44,6 @@ namespace Nekoyume.BlockChain.Policy
         }
 
         public long GetMaxBlockBytes(long index) => long.MaxValue;
-
-        public HashAlgorithmType GetHashAlgorithm(long index) =>
-            HashAlgorithmType.Of<SHA256>();
 
         public int GetMinTransactionsPerBlock(long index) => 0;
 
