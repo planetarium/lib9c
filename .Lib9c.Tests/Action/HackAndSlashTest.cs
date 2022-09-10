@@ -8,10 +8,12 @@
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
+    using Libplanet.Assets;
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Battle;
+    using Nekoyume.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
@@ -68,10 +70,11 @@
             _worldInformationAddress = _avatarAddress.Derive(LegacyWorldInformationKey);
             _questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
             agentState.avatarAddresses.Add(0, _avatarAddress);
-
             _weeklyArenaState = new WeeklyArenaState(0);
-
+            var currency = new Currency("NCG", 2, minters: null);
+            var goldCurrencyState = new GoldCurrencyState(currency);
             _initialState = new State()
+                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetState(_agentAddress, agentState.SerializeV2())
                 .SetState(_avatarAddress, _avatarState.SerializeV2())
@@ -1214,6 +1217,74 @@
             }
 
             Assert.Empty(nextSkillState.SkillIds);
+        }
+
+        [Theory]
+        [InlineData(1, 24)]
+        [InlineData(2, 24)]
+        [InlineData(3, 30)]
+        [InlineData(4, 30)]
+        [InlineData(5, 40)]
+        public void CheckUsedApByStaking(int level, int playCount)
+        {
+            const int worldId = 1;
+            const int stageId = 5;
+            const int clearedStageId = 4;
+            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            previousAvatarState.actionPoint = 120;
+            previousAvatarState.level = 400;
+            previousAvatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                clearedStageId);
+
+            var stakeStateAddress = StakeState.DeriveAddress(_agentAddress);
+            var stakeState = new StakeState(stakeStateAddress, 1);
+            var requiredGold = _tableSheets.StakeRegularRewardSheet.OrderedRows
+                .FirstOrDefault(r => r.Level == level)?.RequiredGold ?? 0;
+            var state = _initialState
+                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
+                .SetState(
+                    _avatarAddress.Derive(LegacyInventoryKey),
+                    previousAvatarState.inventory.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyWorldInformationKey),
+                    previousAvatarState.worldInformation.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyQuestListKey),
+                    previousAvatarState.questList.Serialize())
+                .SetState(stakeStateAddress, stakeState.SerializeV2())
+                .SetState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(worldId.Serialize()))
+                .MintAsset(stakeStateAddress, requiredGold * _initialState.GetGoldCurrency());
+
+            var expectedAp = previousAvatarState.actionPoint -
+                             _tableSheets.StakeActionPointCoefficientSheet.GetActionPointByStaking(
+                                 _tableSheets.StageSheet[stageId].CostAP, playCount, level);
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = new List<Guid>(),
+                Foods = new List<Guid>(),
+                WorldId = worldId,
+                StageId = stageId,
+                AvatarAddress = _avatarAddress,
+                StageBuffId = null,
+                PlayCount = playCount,
+            };
+
+            var ctx = new ActionContext
+            {
+                PreviousStates = state,
+                Signer = _agentAddress,
+                Random = new TestRandom(),
+                Rehearsal = false,
+                BlockIndex = 1,
+            };
+            var nextState = action.Execute(ctx);
+            var nextAvatar = nextState.GetAvatarStateV2(_avatarAddress);
+            Assert.Equal(expectedAp, nextAvatar.actionPoint);
         }
 
         private static void SerializeException<T>(Exception exec)

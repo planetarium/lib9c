@@ -371,6 +371,8 @@
         [InlineData(null, false, false, 1)]
         [InlineData(typeof(NotEnoughFungibleAssetValueException), true, true, 1)]
         [InlineData(null, true, true, 1)]
+        [InlineData(typeof(ArgumentException), true, false, 1)]
+        [InlineData(typeof(NotEnoughHammerPointException), true, true, 1)]
         public void ExecuteBySuperCraft(
             Type exc,
             bool doSuperCraft,
@@ -392,6 +394,11 @@
             var material = ItemFactory.CreateItem(materialRow, _random);
             _avatarState.inventory.AddItem(material, row.MaterialCount);
             int? subRecipeId = useBasicRecipe ? row.SubRecipeIds.First() : row.SubRecipeIds.Skip(1).First();
+            if (exc?.FullName?.Contains(nameof(ArgumentException)) ?? false)
+            {
+                subRecipeId = row.SubRecipeIds.Last();
+            }
+
             var subRow = _tableSheets.EquipmentItemSubRecipeSheetV2[subRecipeId.Value];
             foreach (var materialInfo in subRow.Materials)
             {
@@ -432,6 +439,11 @@
                     state = state.MintAsset(
                         _agentAddress,
                         costCrystal);
+                }
+                else if (exc.FullName!.Contains(nameof(NotEnoughHammerPointException)))
+                {
+                    hammerPointState.ResetHammerPoint();
+                    state = state.SetState(hammerPointAddress, hammerPointState.Serialize());
                 }
             }
 
