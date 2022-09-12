@@ -181,7 +181,7 @@ namespace Nekoyume.Action
                 else
                 {
                     recipientAvatarState.UpdateFromAddItem((ItemUsable)nonFungibleItem, false);
-                    baseFee = CPHelper.GetCP((ItemUsable)nonFungibleItem)/1000;
+                    baseFee = CPHelper.GetCP((ItemUsable)nonFungibleItem)/10;
                     if (baseFee == 0) baseFee = 1;
                 }
                 
