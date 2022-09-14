@@ -11,6 +11,7 @@ namespace Nekoyume.BlockChain
     {
         private readonly Secp256k1 _instance = new Secp256k1();
         private readonly object _instanceLock = new object();
+        private readonly DefaultCryptoBackend<T> defaultCryptoBackend = new DefaultCryptoBackend<T>();
 
         public byte[] Sign(HashDigest<T> messageHash, PrivateKey privateKey)
         {
@@ -54,6 +55,16 @@ namespace Nekoyume.BlockChain
 
                 return _instance.Verify(secp256K1Signature, messageHash.ToByteArray(), secp256K1PublicKey);
             }
+        }
+
+        public (byte[], byte[]) VrfEvaluate(byte[] alphaBytes, PrivateKey privateKey)
+        {
+            return defaultCryptoBackend.VrfEvaluate(alphaBytes, privateKey);
+        }
+
+        public (bool, byte[]) VrfVerify(byte[] piBytes, byte[] alphaBytes, PublicKey publicKey)
+        {
+            return defaultCryptoBackend.VrfVerify(piBytes, alphaBytes, publicKey);
         }
     }
 }
