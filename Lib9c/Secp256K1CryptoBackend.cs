@@ -12,16 +12,16 @@ namespace Nekoyume.BlockChain
         private readonly Secp256k1 _instance = new Secp256k1();
         private readonly object _instanceLock = new object();
 
-        public byte[] Sign(HashDigest<T> messageHash, PrivateKey privateKey)
+        public byte[] Sign(HashDigest<T> messageHash, IPrivateKey privateKey)
         {
             lock (_instanceLock)
             {
                 var secp256K1Signature = new byte[Secp256k1.SIGNATURE_LENGTH];
                 var privateKeyBytes = new byte[Secp256k1.PRIVKEY_LENGTH];
 
-                privateKey.ByteArray.CopyTo(
+                privateKey.KeyBytes.CopyTo(
                     privateKeyBytes,
-                    Secp256k1.PRIVKEY_LENGTH - privateKey.ByteArray.Length);
+                    Secp256k1.PRIVKEY_LENGTH - privateKey.KeyBytes.Length);
 
                 _instance.Sign(
                     secp256K1Signature,
@@ -41,7 +41,7 @@ namespace Nekoyume.BlockChain
         public bool Verify(
             HashDigest<T> messageHash,
             byte[] signature,
-            PublicKey publicKey)
+            IPublicKey publicKey)
         {
             lock (_instanceLock)
             {
@@ -49,7 +49,7 @@ namespace Nekoyume.BlockChain
                 _instance.SignatureParseDer(secp256K1Signature, signature);
 
                 byte[] secp256K1PublicKey = new byte[64];
-                byte[] serializedPublicKey = publicKey.Format(false);
+                byte[] serializedPublicKey = publicKey.KeyBytes.ToArray();
                 _instance.PublicKeyParse(secp256K1PublicKey, serializedPublicKey);
 
                 return _instance.Verify(secp256K1Signature, messageHash.ToByteArray(), secp256K1PublicKey);
