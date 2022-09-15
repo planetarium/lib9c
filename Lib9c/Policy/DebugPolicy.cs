@@ -43,7 +43,7 @@ namespace Nekoyume.BlockChain.Policy
             return blockChain.Count > 0 ? _blockDifficulty : 0;
         }
 
-        public long GetMaxBlockBytes(long index) => long.MaxValue;
+        public long GetMaxTransactionsBytes(long index) => long.MaxValue;
 
         public int GetMinTransactionsPerBlock(long index) => 0;
 

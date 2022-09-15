@@ -270,7 +270,7 @@ namespace Nekoyume.Action
 
             serializedSharedShopState = serializedSharedShopState.SetItem(
                 ProductsKey,
-                new List<IValue>(serializedProductList));
+                serializedProductList);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Get Register Item: {Elapsed}", addressesHex,
