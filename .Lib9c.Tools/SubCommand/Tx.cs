@@ -71,6 +71,7 @@ namespace Lib9c.Tools.SubCommand
                 {
                     if (File.Exists(a))
                     {
+                        Console.WriteLine($"Read all text from {a}");
                         a = File.ReadAllText(a);
                     }
 
@@ -195,13 +196,26 @@ namespace Lib9c.Tools.SubCommand
         [Argument("output-path", Description = "path of the output file dumped action.")] string outputPath
         )
         {
-            var files = Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories);
-            var avatarStates = files.Select(a =>
-            {
-                var raw = File.ReadAllText(a);
-                return (Dictionary)_codec.Decode(ByteUtil.ParseHex(raw));
-            }).ToList();
-            var action = new MigrationAvatarState()
+            Console.WriteLine("> directory path: " + directoryPath);
+            Console.WriteLine("> output path: " + outputPath);
+            var avatarStates = Directory
+                .GetFiles(directoryPath, "*", SearchOption.TopDirectoryOnly)
+                .Where(filePath => !filePath.ToLower().EndsWith(".ds_store"))
+                .Select(filePath =>
+                {
+                    Console.WriteLine("> file path: " + filePath);
+                    var raw = File.ReadAllText(filePath);
+                    var dict = (Dictionary)_codec.Decode(ByteUtil.ParseHex(raw));
+                    Console.WriteLine($">> {SerializeKeys.LegacyInventoryKey}:" +
+                                      $" {(dict.ContainsKey(SerializeKeys.LegacyInventoryKey) ? "not null" : "null")}");
+                    Console.WriteLine($">> {SerializeKeys.LegacyWorldInformationKey}:" +
+                                      $" {(dict.ContainsKey(SerializeKeys.LegacyWorldInformationKey) ? "not null" : "null")}");
+                    Console.WriteLine($">> {SerializeKeys.LegacyQuestListKey}:" +
+                                      $" {(dict.ContainsKey(SerializeKeys.LegacyQuestListKey) ? "not null" : "null")}");
+                    return dict;
+                })
+                .ToList();
+            var action = new MigrationAvatarState
             {
                 avatarStates = avatarStates
             };
@@ -211,8 +225,8 @@ namespace Lib9c.Tools.SubCommand
                 action.PlainValue
             );
 
-            byte[] raw = _codec.Encode(encoded);
-            File.WriteAllText(outputPath, ByteUtil.Hex(raw));
+            var bytes = _codec.Encode(encoded);
+            File.WriteAllText(outputPath, ByteUtil.Hex(bytes));
         }
 
         [Command(Description = "Create AddRedeemCode action and dump it.")]
