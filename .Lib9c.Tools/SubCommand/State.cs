@@ -111,7 +111,8 @@ namespace Lib9c.Tools.SubCommand
                 HashDigest<SHA256> stateRootHash = block.Index < 1
                     ? preEvalBlock.DetermineStateRootHash(
                         policy.BlockAction,
-                        policy.NativeTokens.Contains,
+                        policy.UpdateValidatorSetAction,
+                        policy.NativeTokens,
                         stateStore,
                         out delta)
                     : preEvalBlock.DetermineStateRootHash(

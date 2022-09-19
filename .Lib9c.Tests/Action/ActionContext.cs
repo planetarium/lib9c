@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Action
 {
+    using System.Collections.Immutable;
     using System.Security.Cryptography;
     using Libplanet;
     using Libplanet.Action;
@@ -31,7 +32,9 @@ namespace Lib9c.Tests.Action
 
         public bool BlockAction { get; }
 
-        public bool IsNativeToken(Currency currency) => false;
+        public BlockCommit? LastCommit { get; set; }
+
+        public IImmutableSet<Currency> NativeTokens { get; set; }
 
         public IActionContext GetUnconsumedContext()
         {
