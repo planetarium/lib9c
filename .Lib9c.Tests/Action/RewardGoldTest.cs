@@ -17,6 +17,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Blockchain.Policies;
     using Libplanet.Blocks;
     using Libplanet.Crypto;
+    using Libplanet.PoS;
     using Libplanet.Store;
     using Libplanet.Store.Trie;
     using Nekoyume;
@@ -72,7 +73,8 @@ namespace Lib9c.Tests.Action
 
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var gold = new GoldCurrencyState(Currency.Legacy("NCG", 2, null));
+            // temporal asset
+            var gold = new GoldCurrencyState(Asset.GovernanceToken);
 #pragma warning restore CS0618
             _baseState = (State)new State()
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
@@ -363,7 +365,8 @@ namespace Lib9c.Tests.Action
         {
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            Currency currency = Currency.Legacy("NCG", 2, null);
+            // Currency currency = Currency.Legacy("NCG", 2, null);
+            Currency currency = Asset.GovernanceToken;
 #pragma warning restore CS0618
             Address fund = GoldCurrencyState.Address;
             Address address1 = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
@@ -449,7 +452,9 @@ namespace Lib9c.Tests.Action
             {
                 ctx.BlockIndex = blockIndex;
                 IAccountStateDelta delta = action.MinerReward(ctx, _baseState);
-                Assert.Equal(FungibleAssetValue.Parse(currency, expected), delta.GetBalance(miner, currency));
+                Assert.Equal(
+                    FungibleAssetValue.Parse(currency, expected),
+                    delta.GetBalance(ReservedAddress.RewardPool, currency));
             }
 
             // Before halving (10 / 2^0 = 10)
@@ -516,7 +521,8 @@ namespace Lib9c.Tests.Action
                     activatedAccountsState: new ActivatedAccountsState(activatedAccounts),
 #pragma warning disable CS0618
                     // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-                    goldCurrencyState: new GoldCurrencyState(Currency.Legacy("NCG", 2, null)),
+                    // temporal asset
+                    goldCurrencyState: new GoldCurrencyState(Asset.GovernanceToken),
 #pragma warning restore CS0618
                     goldDistributions: new GoldDistribution[0],
                     tableSheets: TableSheetsImporter.ImportSheets(),

@@ -1,11 +1,12 @@
 using Libplanet;
 using Libplanet.Action;
+using Libplanet.Assets;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
 using Libplanet.Blocks;
 using Libplanet.Tx;
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
 namespace Nekoyume.BlockChain.Policy
@@ -25,6 +26,9 @@ namespace Nekoyume.BlockChain.Policy
             Func<long, int> getMinTransactionsPerBlock = null,
             Func<long, int> getMaxTransactionsPerBlock = null,
             Func<long, int> getMaxTransactionsPerSignerPerBlock = null,
+#pragma warning disable CS8632
+            IImmutableSet<Currency>? nativeTokens = null,
+#pragma warning restore CS8632
             Func<Address, long, bool> isAllowedToMine = null)
             : base(
                 blockAction: blockAction,
@@ -34,7 +38,8 @@ namespace Nekoyume.BlockChain.Policy
                 getMaxBlockBytes: getMaxBlockBytes,
                 getMinTransactionsPerBlock: getMinTransactionsPerBlock,
                 getMaxTransactionsPerBlock: getMaxTransactionsPerBlock,
-                getMaxTransactionsPerSignerPerBlock: getMaxTransactionsPerSignerPerBlock)
+                getMaxTransactionsPerSignerPerBlock: getMaxTransactionsPerSignerPerBlock,
+                nativeTokens: nativeTokens)
         {
             _isAllowedToMine = isAllowedToMine;
         }

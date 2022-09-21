@@ -9,11 +9,15 @@ namespace Lib9c.Tests
     using System.Threading.Tasks;
     using Libplanet;
     using Libplanet.Action;
+    using Libplanet.Action.Sys;
     using Libplanet.Assets;
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
     using Libplanet.Blocks;
+    using Libplanet.Consensus;
     using Libplanet.Crypto;
+    using Libplanet.PoS;
+    using Libplanet.PoS.Model;
     using Libplanet.Store;
     using Libplanet.Store.Trie;
     using Libplanet.Tx;
@@ -36,7 +40,8 @@ namespace Lib9c.Tests
             _privateKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            _currency = Currency.Legacy("NCG", 2, _privateKey.ToAddress());
+            // Temporal asset
+            _currency = Asset.GovernanceToken;
 #pragma warning restore CS0618
         }
 
@@ -48,7 +53,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                10_000, null, null, null, null, null, null);
+                10_000, null, null, null, null, null, null, nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -140,7 +145,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                10_000, null, null, null, null, null, null);
+                10_000, null, null, null, null, null, null, nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -187,7 +192,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                10_000, null, null, null, null, null, null);
+                10_000, null, null, null, null, null, null, nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -214,13 +219,41 @@ namespace Lib9c.Tests
 
             blockChain.MakeTransaction(
                 adminPrivateKey,
-                new PolymorphicAction<ActionBase>[] { new DailyReward(), }
+                new Mint(adminAddress, Asset.GovernanceToken * 200)
             );
-
             blockChain.Append(blockChain.ProposeBlock(adminPrivateKey));
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new PromoteValidator(adminPrivateKey.PublicKey, Asset.GovernanceToken * 100)
+            );
+            blockChain.Append(blockChain.ProposeBlock(adminPrivateKey));
+
+            Block<PolymorphicAction<ActionBase>> block1 = blockChain.ProposeBlock(adminPrivateKey);
+            blockChain.Append(block1);
+
+            ImmutableArray<Vote> votes =
+                new Vote[]
+                {
+                    new Vote(3, 0, block1.Hash, block1.Timestamp, adminPrivateKey.PublicKey, VoteFlag.Commit, null)
+                    .Sign(adminPrivateKey),
+                }.ToImmutableArray();
+            BlockCommit commit = new BlockCommit(3, 0, block1.Hash, votes);
+            blockChain.Append(blockChain.ProposeBlock(adminPrivateKey, lastCommit: commit));
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new WithdrawValidator()
+            );
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new WithdrawDelegator(Validator.DeriveAddress(adminAddress))
+            );
+            blockChain.Append(blockChain.ProposeBlock(adminPrivateKey));
+
             FungibleAssetValue actualBalance = blockChain.GetBalance(adminAddress, _currency);
-            FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 10, 0);
-            Assert.True(expectedBalance.Equals(actualBalance));
+            FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 110, 0);
+            Assert.Equal(expectedBalance, actualBalance);
         }
 
         [Fact]
@@ -246,7 +279,8 @@ namespace Lib9c.Tests
                         endIndex: 4,
                         filter: index => index % 2 == 0,
                         value: miners.ToImmutableHashSet())),
-                permissionedMinersPolicy: null);
+                permissionedMinersPolicy: null,
+                nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -326,7 +360,8 @@ namespace Lib9c.Tests
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
                 maxTransactionsPerSignerPerBlockPolicy: null,
                 authorizedMinersPolicy: null,
-                permissionedMinersPolicy: null);
+                permissionedMinersPolicy: null,
+                nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
@@ -412,7 +447,8 @@ namespace Lib9c.Tests
                     .Default
                     .Add(new SpannedSubPolicy<int>(2, null, null, 5)),
                 authorizedMinersPolicy: null,
-                permissionedMinersPolicy: null);
+                permissionedMinersPolicy: null,
+                nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
@@ -526,7 +562,8 @@ namespace Lib9c.Tests
                             endIndex: null,
                             filter: null,
                             value: new Address[] { permissionedMinerKey.ToAddress() }
-                                .ToImmutableHashSet()))),
+                                .ToImmutableHashSet())),
+                    nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet()),
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>(),
                 store,
                 stateStore,
@@ -613,7 +650,8 @@ namespace Lib9c.Tests
                             endIndex: 10,
                             filter: index => index % 3 == 0,
                             value: new Address[] { permissionedMinerKey.ToAddress() }
-                                .ToImmutableHashSet()))),
+                                .ToImmutableHashSet())),
+                    nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet()),
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>(),
                 store,
                 stateStore,

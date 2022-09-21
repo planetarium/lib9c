@@ -4,12 +4,14 @@ using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c.Renderer;
+using Libplanet.Assets;
 using Libplanet.Blocks;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
 using Libplanet.Tx;
 using Libplanet;
 using Libplanet.Blockchain.Renderers;
+using Libplanet.PoS;
 using Nekoyume.Action;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
@@ -125,7 +127,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: null,
-                permissionedMinersPolicy: null);
+                permissionedMinersPolicy: null,
+                nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-internal deployment.
@@ -203,7 +206,10 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
             IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy,
-            IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy)
+            IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy,
+#pragma warning disable CS8632
+            IImmutableSet<Currency>? nativeTokens = null)
+#pragma warning restore CS8632
         {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
@@ -257,6 +263,7 @@ namespace Nekoyume.BlockChain.Policy
                 getMinTransactionsPerBlock: minTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerBlock: maxTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerSignerPerBlock: maxTransactionsPerSignerPerBlockPolicy.Getter,
+                nativeTokens: nativeTokens,
                 isAllowedToMine: isAllowedToMine);
 #endif
         }

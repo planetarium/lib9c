@@ -9,6 +9,7 @@ using Libplanet.Assets;
 using Libplanet.Blockchain;
 using Libplanet.Blocks;
 using Libplanet.Crypto;
+using Libplanet.PoS;
 using Nekoyume.Action;
 using Nekoyume.BlockChain.Policy;
 using Nekoyume.Model.State;
@@ -85,7 +86,8 @@ namespace Nekoyume
                     actions,
                     privateKey: privateKey,
                     blockAction: blockAction,
-                    timestamp: timestamp);
+                    timestamp: timestamp,
+                    nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
         }
     }
 }

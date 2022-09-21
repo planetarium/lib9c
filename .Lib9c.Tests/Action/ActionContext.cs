@@ -32,9 +32,13 @@ namespace Lib9c.Tests.Action
 
         public bool BlockAction { get; }
 
+        public Address? PreviousMiner { get; set; }
+
         public BlockCommit? LastCommit { get; set; }
 
         public IImmutableSet<Currency> NativeTokens { get; set; }
+
+        public bool IsNativeToken(Currency currency) => false;
 
         public IActionContext GetUnconsumedContext()
         {
@@ -50,6 +54,9 @@ namespace Lib9c.Tests.Action
                 PreviousStates = PreviousStates,
                 Random = Random,
                 PreviousStateRootHash = PreviousStateRootHash,
+                PreviousMiner = PreviousMiner,
+                LastCommit = LastCommit,
+                NativeTokens = NativeTokens,
             };
         }
     }
