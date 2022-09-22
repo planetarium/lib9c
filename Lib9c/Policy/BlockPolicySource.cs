@@ -141,7 +141,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet,
+                nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-permanent-test deployment.
@@ -154,7 +155,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Permanent,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Permanent);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Permanent,
+                nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance identical to the one deployed
@@ -168,7 +170,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet,
+                nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for networks
@@ -182,7 +185,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Default,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Default,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Default,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Default);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Default,
+                nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
 
         /// <summary>
         /// Gets a <see cref="BlockPolicy"/> constructed from given parameters.

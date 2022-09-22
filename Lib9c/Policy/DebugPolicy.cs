@@ -8,6 +8,7 @@ using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
 using Libplanet.Blocks;
 using Libplanet.Crypto;
+using Libplanet.PoS;
 using Libplanet.Tx;
 using Nekoyume.Action;
 
@@ -56,7 +57,7 @@ namespace Nekoyume.BlockChain.Policy
             throw new System.NotImplementedException();
         }
 
-        public IImmutableSet<Currency> NativeTokens => ImmutableHashSet<Currency>.Empty;
+        public IImmutableSet<Currency> NativeTokens => new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet();
 
         public IAction UpdateValidatorSetAction => null;
     }
