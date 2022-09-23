@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.Model.State
+﻿#nullable disable
+namespace Lib9c.Tests.Model.State
 {
     using System;
     using Bencodex.Types;

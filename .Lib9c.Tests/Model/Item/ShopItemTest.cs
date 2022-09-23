@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.Model.Item
+﻿#nullable disable
+namespace Lib9c.Tests.Model.Item
 {
     using System;
     using System.Collections.Generic;

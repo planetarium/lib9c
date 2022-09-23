@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.TableData.Crystal
+﻿#nullable disable
+namespace Lib9c.Tests.TableData.Crystal
 {
     using System.Linq;
     using Nekoyume.TableData.Crystal;

@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.Action
+﻿#nullable disable
+namespace Lib9c.Tests.Action
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;

@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.TableData
+﻿#nullable disable
+namespace Lib9c.Tests.TableData
 {
     using Libplanet.Action;
     using Libplanet.Assets;

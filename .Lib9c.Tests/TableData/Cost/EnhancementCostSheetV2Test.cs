@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.TableData.Cost
+﻿#nullable disable
+namespace Lib9c.Tests.TableData.Cost
 {
     using Nekoyume.Model.Item;
     using Nekoyume.TableData;

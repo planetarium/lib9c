@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.Action.Scenario
+﻿#nullable disable
+namespace Lib9c.Tests.Action.Scenario
 {
     using System.Globalization;
     using System.Linq;

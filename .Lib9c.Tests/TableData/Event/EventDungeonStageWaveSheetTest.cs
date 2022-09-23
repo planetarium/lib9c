@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.TableData.Event
+﻿#nullable disable
+namespace Lib9c.Tests.TableData.Event
 {
     using Nekoyume.TableData.Event;
     using Xunit;

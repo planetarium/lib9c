@@ -1,3 +1,4 @@
+#nullable disable
 namespace Lib9c.Tests.TableData.Crystal
 {
     using System.Linq;

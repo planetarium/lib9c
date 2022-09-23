@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.TableData.Item
+﻿#nullable disable
+namespace Lib9c.Tests.TableData.Item
 {
     using Nekoyume.Model.Stat;
     using Nekoyume.TableData;

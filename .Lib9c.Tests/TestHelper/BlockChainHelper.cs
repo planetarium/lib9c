@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.TestHelper
+﻿#nullable disable
+namespace Lib9c.Tests.TestHelper
 {
     using System;
     using System.Collections.Generic;

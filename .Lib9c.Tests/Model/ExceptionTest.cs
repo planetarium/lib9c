@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.Model
+﻿#nullable disable
+namespace Lib9c.Tests.Model
 {
     using System;
     using System.IO;

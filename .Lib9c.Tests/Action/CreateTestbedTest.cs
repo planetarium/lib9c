@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.Action
+﻿#nullable disable
+namespace Lib9c.Tests.Action
 {
     using System.Linq;
     using Lib9c.Tests.TestHelper;

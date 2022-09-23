@@ -1,4 +1,5 @@
-﻿namespace Lib9c.Tests.Extensions
+﻿#nullable disable
+namespace Lib9c.Tests.Extensions
 {
     using System;
     using System.Linq;
