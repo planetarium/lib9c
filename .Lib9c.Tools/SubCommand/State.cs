@@ -112,6 +112,7 @@ namespace Lib9c.Tools.SubCommand
                     ? preEvalBlock.DetermineStateRootHash(
                         policy.BlockAction,
                         policy.UpdateValidatorSetAction,
+                        policy.NativeTokens.Contains,
                         policy.NativeTokens,
                         stateStore,
                         out delta)

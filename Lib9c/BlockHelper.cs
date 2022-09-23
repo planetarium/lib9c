@@ -81,13 +81,15 @@ namespace Nekoyume
             }
 
             var blockAction = new BlockPolicySource(Log.Logger).GetPolicy().BlockAction;
+            var nativeTokens = new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet();
             return
                 BlockChain<PolymorphicAction<ActionBase>>.ProposeGenesisBlock(
                     actions,
                     privateKey: privateKey,
                     blockAction: blockAction,
                     timestamp: timestamp,
-                    nativeTokens: new Currency[] { Asset.GovernanceToken }.ToImmutableHashSet());
+                    nativeTokenPredicate: nativeTokens.Contains,
+                    nativeTokens: nativeTokens);
         }
     }
 }
