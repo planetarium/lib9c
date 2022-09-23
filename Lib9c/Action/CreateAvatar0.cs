@@ -20,6 +20,7 @@ using Lib9c.DevExtensions;
 using Lib9c.DevExtensions.Model;
 #endif
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

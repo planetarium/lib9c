@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Bencodex.Types;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Model.Stat
 {
     // todo: `DecimalStat`나 `StatModifier`으로 대체되어야 함.

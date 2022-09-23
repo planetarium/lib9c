@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nekoyume.Model.Item;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     [Serializable]

@@ -17,6 +17,7 @@ using static Lib9c.SerializeKeys;
 using BxDictionary = Bencodex.Types.Dictionary;
 using BxList = Bencodex.Types.List;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     /// <summary>

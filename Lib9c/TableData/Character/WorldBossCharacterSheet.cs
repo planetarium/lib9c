@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     [Serializable]

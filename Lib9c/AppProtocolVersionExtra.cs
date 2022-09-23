@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Bencodex.Types;
 
+#nullable disable
 namespace Nekoyume
 {
     public readonly struct AppProtocolVersionExtra

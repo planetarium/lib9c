@@ -9,6 +9,7 @@ using Nekoyume.Action;
 using Nekoyume.BlockChain.Policy;
 using static Lib9c.SerializeKeys;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     public class StakeState : State

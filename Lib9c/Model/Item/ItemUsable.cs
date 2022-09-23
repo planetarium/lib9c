@@ -8,6 +8,7 @@ using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Item
 {
     // todo: 소모품과 장비가 함께 쓰기에는 장비 위주의 모델이 된 느낌. 아이템 정리하면서 정리를 흐음..

@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Libplanet;
 using Nekoyume.TableData.Crystal;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     public class HammerPointState : IState

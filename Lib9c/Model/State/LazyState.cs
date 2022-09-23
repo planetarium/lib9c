@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Bencodex.Types;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     [Serializable]

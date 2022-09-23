@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public static class StageRewardExpHelper

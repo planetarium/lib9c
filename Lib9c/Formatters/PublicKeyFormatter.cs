@@ -4,6 +4,7 @@ using Libplanet.Crypto;
 using MessagePack;
 using MessagePack.Formatters;
 
+#nullable disable
 namespace Lib9c.Formatters
 {
     public class PublicKeyFormatter : IMessagePackFormatter<PublicKey>

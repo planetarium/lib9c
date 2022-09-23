@@ -7,6 +7,7 @@ using Nekoyume.Action;
 using Nekoyume.Model.Item;
 using static Lib9c.SerializeKeys;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     public class ShardedShopState : State

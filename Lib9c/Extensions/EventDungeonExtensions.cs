@@ -7,6 +7,7 @@ using Nekoyume.Model.Event;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Event;
 
+#nullable disable
 namespace Nekoyume.Extensions
 {
     public static class EventDungeonExtensions

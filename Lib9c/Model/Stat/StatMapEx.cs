@@ -4,6 +4,7 @@ using System.Linq;
 using Bencodex.Types;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Model.Stat
 {
     // todo: 없어질 대상.

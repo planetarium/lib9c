@@ -4,6 +4,7 @@ using Libplanet.Action;
 using Nekoyume.Model.Item;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public static class RewardSelector

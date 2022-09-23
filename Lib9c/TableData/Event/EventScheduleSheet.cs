@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData.Event
 {
     public class EventScheduleSheet : Sheet<int, EventScheduleSheet.Row>

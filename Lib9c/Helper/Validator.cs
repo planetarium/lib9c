@@ -9,6 +9,7 @@ using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
 
+#nullable disable
 namespace Nekoyume.Helper
 {
     public static class Validator

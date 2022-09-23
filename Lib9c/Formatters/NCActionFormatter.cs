@@ -11,6 +11,7 @@ using MessagePack.Formatters;
 using Nekoyume.Action;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
+#nullable disable
 namespace Lib9c.Formatters
 {
     public class NCActionFormatter : IMessagePackFormatter<NCAction>

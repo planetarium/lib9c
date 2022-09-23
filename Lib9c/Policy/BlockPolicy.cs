@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
+#nullable disable
 namespace Nekoyume.BlockChain.Policy
 {
     public class BlockPolicy : BlockPolicy<NCAction>

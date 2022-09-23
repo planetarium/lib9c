@@ -5,6 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using MessagePack;
 using MessagePack.Formatters;
 
+#nullable disable
 namespace Lib9c.Formatters
 {
     public class ExceptionFormatter<T> : IMessagePackFormatter<T> where T : Exception

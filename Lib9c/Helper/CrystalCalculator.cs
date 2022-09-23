@@ -11,6 +11,7 @@ using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 
+#nullable disable
 namespace Nekoyume.Helper
 {
     public static class CrystalCalculator

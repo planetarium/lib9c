@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Nekoyume.Model;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     /// <summary>

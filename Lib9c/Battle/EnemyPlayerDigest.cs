@@ -5,6 +5,7 @@ using Nekoyume.Model;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public readonly struct EnemyPlayerDigest: IState

@@ -13,6 +13,7 @@ using Nekoyume.Model.Buff;
 using Nekoyume.TableData;
 using Priority_Queue;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public class StageSimulatorV1 : Simulator, IStageSimulator

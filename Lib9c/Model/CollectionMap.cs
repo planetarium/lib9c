@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using Bencodex.Types;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Model
 {
     [Serializable]

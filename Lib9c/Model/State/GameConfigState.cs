@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Libplanet;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     [Serializable]

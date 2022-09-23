@@ -12,6 +12,7 @@ using Libplanet.Tx;
 using Nekoyume.Action;
 using Serilog;
 
+#nullable disable
 namespace Nekoyume.BlockChain
 {
     /// <summary>

@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.Contracts;
 
+#nullable disable
 namespace Nekoyume.BlockChain.Policy
 {
     public class SpannedSubPolicy<T>

@@ -8,6 +8,7 @@ using Libplanet.Assets;
 using Nekoyume.Battle;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Helper
 {
     public static class RuneHelper

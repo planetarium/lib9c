@@ -4,6 +4,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet.Assets;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     public class WorldBossKillRewardRecord : IDictionary<int, bool>, IState

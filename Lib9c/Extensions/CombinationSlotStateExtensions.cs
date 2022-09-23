@@ -3,6 +3,7 @@ using Nekoyume.Action;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Extensions
 {
     public static class CombinationSlotStateExtensions

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Skill.Arena
 {
     [Serializable]

@@ -8,6 +8,7 @@ using Nekoyume.Action;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     [Obsolete("This class is reserved for backwards compatibility with MonsterCollection0 only.", false)]

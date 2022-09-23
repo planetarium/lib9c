@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     /// <summary>

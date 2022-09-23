@@ -1,5 +1,6 @@
 using System.Collections;
 
+#nullable disable
 namespace Nekoyume.Model.BattleStatus.Arena
 {
     public class ArenaSpawnCharacter : ArenaEventBase

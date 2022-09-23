@@ -10,6 +10,7 @@ using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
 using Serilog;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

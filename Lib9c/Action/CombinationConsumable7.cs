@@ -16,6 +16,7 @@ using Serilog;
 using Material = Nekoyume.Model.Item.Material;
 using static Lib9c.SerializeKeys;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

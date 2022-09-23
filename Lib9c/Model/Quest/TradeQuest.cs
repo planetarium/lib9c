@@ -6,6 +6,7 @@ using Bencodex.Types;
 using Nekoyume.Model.EnumType;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Quest
 {
     [Serializable]

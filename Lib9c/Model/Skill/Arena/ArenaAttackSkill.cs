@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nekoyume.Model.Elemental;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Skill.Arena
 {
     [Serializable]

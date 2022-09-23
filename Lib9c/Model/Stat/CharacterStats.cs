@@ -4,6 +4,7 @@ using System.Linq;
 using Nekoyume.Model.Item;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Stat
 {
     /// <summary>

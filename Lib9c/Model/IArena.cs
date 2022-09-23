@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Nekoyume.Model.BattleStatus.Arena;
 
+#nullable disable
 namespace Nekoyume.Model
 {
     public interface IArena

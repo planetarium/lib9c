@@ -15,6 +15,7 @@ using Nekoyume.TableData;
 using Serilog;
 using Material = Nekoyume.Model.Item.Material;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

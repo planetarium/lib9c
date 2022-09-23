@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Nekoyume.Model.Item;
 
+#nullable disable
 namespace Nekoyume.Model.BattleStatus
 {
     [Serializable]

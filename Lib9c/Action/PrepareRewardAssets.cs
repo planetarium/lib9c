@@ -6,6 +6,7 @@ using Libplanet.Action;
 using Libplanet.Assets;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [ActionType("prepare_reward_assets")]

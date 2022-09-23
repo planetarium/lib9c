@@ -1,5 +1,6 @@
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Skill
 {
     public interface ISkill

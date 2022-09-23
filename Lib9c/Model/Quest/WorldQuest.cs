@@ -2,6 +2,7 @@ using System;
 using Bencodex.Types;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Quest
 {
     [Serializable]

@@ -1,6 +1,7 @@
 using System.Linq;
 using Nekoyume.Model.Item;
 
+#nullable disable
 namespace Nekoyume.Helper
 {
     public static class InventoryExtensions

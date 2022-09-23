@@ -13,6 +13,7 @@ using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

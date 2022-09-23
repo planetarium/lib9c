@@ -10,6 +10,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.TableData;
 using Priority_Queue;
 
+#nullable disable
 namespace Nekoyume.Arena
 {
     /// <summary>

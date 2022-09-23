@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Extensions
 {
     public static class MaterialItemSheetExtensions

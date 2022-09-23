@@ -1,3 +1,4 @@
+#nullable disable
 namespace Nekoyume.BlockChain.Policy
 {
     public sealed class GenericSubPolicy<T> : VariableSubPolicy<T>

@@ -10,6 +10,7 @@ using Libplanet.Blocks;
 using Libplanet.Tx;
 using Nekoyume.Action;
 
+#nullable disable
 namespace Nekoyume.BlockChain.Policy
 {
     public class DebugPolicy : IBlockPolicy<PolymorphicAction<ActionBase>>

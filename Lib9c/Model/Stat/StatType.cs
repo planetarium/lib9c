@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Bencodex.Types;
 
+#nullable disable
 namespace Nekoyume.Model.Stat
 {
     public enum StatType

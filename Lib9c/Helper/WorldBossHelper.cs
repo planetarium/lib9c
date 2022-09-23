@@ -3,6 +3,7 @@ using Libplanet.Assets;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Helper
 {
     public static class WorldBossHelper

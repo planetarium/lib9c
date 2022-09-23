@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nekoyume.Model.Skill;
 
+#nullable disable
 namespace Nekoyume.Model.Buff
 {
     [Serializable]

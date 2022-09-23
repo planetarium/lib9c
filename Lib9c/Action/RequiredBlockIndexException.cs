@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using Libplanet;
 using Libplanet.Blocks;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

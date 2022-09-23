@@ -14,6 +14,7 @@ using Libplanet.Tx;
 using Serilog;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
+#nullable disable
 namespace Nekoyume.BlockChain
 {
     public class Miner

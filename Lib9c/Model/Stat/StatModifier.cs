@@ -1,5 +1,6 @@
 using System;
 
+#nullable disable
 namespace Nekoyume.Model.Stat
 {
     [Serializable]

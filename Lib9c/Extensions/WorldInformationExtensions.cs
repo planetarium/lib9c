@@ -1,6 +1,7 @@
 ﻿using Nekoyume.Action;
 using Nekoyume.Model;
 
+#nullable disable
 namespace Nekoyume.Extensions
 {
     public static class WorldInformationExtensions

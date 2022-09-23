@@ -1,3 +1,4 @@
+#nullable disable
 namespace Nekoyume.Model.Character
 {
     public enum SizeType

@@ -1,3 +1,4 @@
+#nullable disable
 namespace Nekoyume.BlockChain.Policy
 {
     public sealed class MinTransactionsPerBlockPolicy : VariableSubPolicy<int>

@@ -5,6 +5,7 @@ using System.Collections;
 using System.Linq;
 using Nekoyume.Battle;
 
+#nullable disable
 namespace Nekoyume.Model
 {
     [Serializable]

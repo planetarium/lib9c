@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Nekoyume.Model.BattleStatus;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public static class ArenaScoreHelper

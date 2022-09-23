@@ -1,3 +1,4 @@
+#nullable disable
 namespace Nekoyume.Model.Item
 {
     public interface IEquippableItem: IItem

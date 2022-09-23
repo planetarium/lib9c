@@ -8,6 +8,7 @@ using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Item;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     public class ArenaInfo : IState

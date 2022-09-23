@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Libplanet;
 using Nekoyume.Model.Item;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     /// <summary>

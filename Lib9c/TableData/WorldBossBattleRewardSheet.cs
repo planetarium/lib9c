@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Libplanet.Action;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     public class WorldBossBattleRewardSheet : Sheet<int, WorldBossBattleRewardSheet.Row>, IWorldBossRewardSheet

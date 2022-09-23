@@ -21,6 +21,7 @@ using System.Reactive.Subjects;
 using System.Reactive.Linq;
 #endif
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

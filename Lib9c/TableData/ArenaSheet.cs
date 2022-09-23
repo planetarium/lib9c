@@ -4,6 +4,7 @@ using System.Linq;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     using static TableExtensions;

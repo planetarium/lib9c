@@ -6,6 +6,7 @@ using Libplanet.Action;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

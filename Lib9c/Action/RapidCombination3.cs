@@ -10,6 +10,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

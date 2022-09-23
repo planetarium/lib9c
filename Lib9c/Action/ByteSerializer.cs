@@ -1,6 +1,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     public static class ByteSerializer

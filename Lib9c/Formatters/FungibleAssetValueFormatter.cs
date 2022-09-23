@@ -7,6 +7,7 @@ using MessagePack;
 using MessagePack.Formatters;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Lib9c.Formatters
 {
     public class FungibleAssetValueFormatter : IMessagePackFormatter<FungibleAssetValue>

@@ -4,6 +4,7 @@ using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Item;
 using Priority_Queue;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public interface ISimulator

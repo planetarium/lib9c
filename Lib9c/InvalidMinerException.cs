@@ -3,6 +3,7 @@ using Libplanet.Blocks;
 using System;
 using System.Runtime.Serialization;
 
+#nullable disable
 namespace Lib9c
 {
     [Serializable]

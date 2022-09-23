@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Libplanet;
 using Nekoyume.Helper;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     [Serializable]

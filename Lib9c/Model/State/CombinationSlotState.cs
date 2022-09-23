@@ -6,6 +6,7 @@ using Libplanet;
 using Nekoyume.Action;
 using Nekoyume.Model.Item;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     public class CombinationSlotState : State

@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

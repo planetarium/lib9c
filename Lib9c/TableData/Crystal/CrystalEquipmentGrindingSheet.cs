@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData.Crystal
 {
     public class CrystalEquipmentGrindingSheet: Sheet<int, CrystalEquipmentGrindingSheet.Row>

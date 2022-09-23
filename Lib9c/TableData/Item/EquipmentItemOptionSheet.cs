@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nekoyume.Model.Stat;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     public class EquipmentItemOptionSheet : Sheet<int, EquipmentItemOptionSheet.Row>

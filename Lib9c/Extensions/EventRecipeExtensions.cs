@@ -4,6 +4,7 @@ using Nekoyume.Exceptions;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Event;
 
+#nullable disable
 namespace Nekoyume.Extensions
 {
     public static class EventRecipeExtensions

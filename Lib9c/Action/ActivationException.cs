@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     public abstract class ActivationException : Exception

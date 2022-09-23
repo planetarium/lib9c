@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Skill;
 
+#nullable disable
 namespace Nekoyume.Model.BattleStatus.Arena
 {
     [Serializable]

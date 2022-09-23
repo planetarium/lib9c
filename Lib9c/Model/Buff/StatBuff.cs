@@ -2,6 +2,7 @@ using System;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Buff
 {
     [Serializable]

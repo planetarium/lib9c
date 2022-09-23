@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Libplanet;
 using Libplanet.Assets;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     [Serializable]

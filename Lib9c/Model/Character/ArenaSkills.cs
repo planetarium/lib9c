@@ -5,6 +5,7 @@ using System.Collections;
 using System.Linq;
 using Nekoyume.Model.Skill.Arena;
 
+#nullable disable
 namespace Nekoyume.Model
 {
     [Serializable]

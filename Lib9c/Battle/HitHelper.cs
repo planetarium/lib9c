@@ -3,6 +3,7 @@
 using System;
 using System.Text;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public static class HitHelper

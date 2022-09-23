@@ -12,6 +12,7 @@ using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     /// <summary>

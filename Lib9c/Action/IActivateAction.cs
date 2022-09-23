@@ -1,5 +1,6 @@
 using Libplanet;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     internal interface IActivateAction

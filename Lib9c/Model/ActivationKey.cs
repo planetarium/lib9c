@@ -4,6 +4,7 @@ using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Model
 {
     public struct ActivationKey

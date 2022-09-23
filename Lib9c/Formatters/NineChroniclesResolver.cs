@@ -1,6 +1,7 @@
 using MessagePack;
 using MessagePack.Formatters;
 
+#nullable disable
 namespace Lib9c.Formatters
 {
     public class NineChroniclesResolver : IFormatterResolver

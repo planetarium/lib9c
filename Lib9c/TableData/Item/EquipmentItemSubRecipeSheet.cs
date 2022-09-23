@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     using static TableExtensions;

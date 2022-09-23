@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Runtime.Serialization;
 using Libplanet.Assets;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

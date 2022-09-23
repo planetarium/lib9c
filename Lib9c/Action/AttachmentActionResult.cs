@@ -8,6 +8,7 @@ using Serilog;
 using BxDictionary = Bencodex.Types.Dictionary;
 using BxText = Bencodex.Types.Text;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
+#nullable disable
 namespace Nekoyume.Model.Mail
 {
     [Serializable]

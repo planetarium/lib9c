@@ -10,6 +10,7 @@ using CsvHelper.Configuration.Attributes;
 using Libplanet;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

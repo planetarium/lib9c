@@ -4,6 +4,7 @@ using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Buff
 {
     public static class BuffFactory

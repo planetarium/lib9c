@@ -1,3 +1,4 @@
+#nullable disable
 namespace Nekoyume.Model.Mail
 {
     public interface IMail

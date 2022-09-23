@@ -16,6 +16,7 @@ using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     public static class StateExtensions

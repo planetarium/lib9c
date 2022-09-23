@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData.Crystal
 {
     public class CrystalFluctuationSheet : Sheet<int, CrystalFluctuationSheet.Row>

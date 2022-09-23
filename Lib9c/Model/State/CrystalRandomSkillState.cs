@@ -7,6 +7,7 @@ using Libplanet;
 using Nekoyume.TableData;
 using Nekoyume.Model.Skill;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     public class CrystalRandomSkillState : IState

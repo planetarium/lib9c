@@ -1,6 +1,7 @@
 using System;
 using Nekoyume.Action;
 
+#nullable disable
 namespace Nekoyume.Model.Mail
 {
     [Serializable]

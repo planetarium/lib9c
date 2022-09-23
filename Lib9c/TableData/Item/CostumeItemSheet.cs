@@ -4,6 +4,7 @@ using System.Linq;
 using Bencodex.Types;
 using Nekoyume.Model.Item;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     [Serializable]

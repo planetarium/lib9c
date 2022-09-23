@@ -7,6 +7,7 @@ using Libplanet;
 using Libplanet.Action;
 using Serilog;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

@@ -4,6 +4,7 @@ using System.Linq;
 using Libplanet.Action;
 using Serilog;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public class WeightedSelector<T>

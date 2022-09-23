@@ -3,6 +3,7 @@ using Nekoyume.Model.Skill.Arena;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Skill
 {
     public static class SkillFactory

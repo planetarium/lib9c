@@ -4,6 +4,7 @@ using System.Linq;
 using Bencodex.Types;
 using Nekoyume.Action;
 
+#nullable disable
 namespace Nekoyume.Model.Mail
 {
     [Serializable]

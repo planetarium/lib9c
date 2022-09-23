@@ -9,6 +9,7 @@ using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
+#nullable disable
 namespace Lib9c.Model.Order
 {
     [Serializable]

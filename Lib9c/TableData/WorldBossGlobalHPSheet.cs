@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     [Serializable]

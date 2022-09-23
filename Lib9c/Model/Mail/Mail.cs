@@ -6,6 +6,7 @@ using Bencodex.Types;
 using Nekoyume.Model.State;
 using Serilog;
 
+#nullable disable
 namespace Nekoyume.Model.Mail
 {
     public enum MailType

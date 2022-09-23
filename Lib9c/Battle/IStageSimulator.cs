@@ -1,6 +1,7 @@
 ﻿using Nekoyume.Model;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public interface IStageSimulator : ISimulator

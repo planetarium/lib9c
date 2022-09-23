@@ -12,6 +12,7 @@ using Nekoyume.Model.State;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [Serializable]

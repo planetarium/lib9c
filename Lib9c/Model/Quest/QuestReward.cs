@@ -5,6 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Model.Quest
 {
     [Serializable]

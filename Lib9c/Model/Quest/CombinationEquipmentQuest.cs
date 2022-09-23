@@ -6,6 +6,7 @@ using Bencodex.Types;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Quest
 {
     public class CombinationEquipmentQuest : Quest

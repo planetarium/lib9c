@@ -9,6 +9,7 @@ using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Priority_Queue;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public abstract class Simulator : ISimulator

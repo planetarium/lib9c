@@ -1,4 +1,5 @@
-﻿namespace Nekoyume.Extensions
+﻿#nullable disable
+namespace Nekoyume.Extensions
 {
     public static class IntegerExtensions
     {

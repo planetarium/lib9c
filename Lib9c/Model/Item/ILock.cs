@@ -1,5 +1,6 @@
 using Bencodex.Types;
 
+#nullable disable
 namespace Nekoyume.Model.Item
 {
     public interface ILock

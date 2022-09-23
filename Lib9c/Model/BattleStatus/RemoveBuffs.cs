@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 
+#nullable disable
 namespace Nekoyume.Model.BattleStatus
 {
     [Serializable]

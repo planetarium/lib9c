@@ -12,6 +12,7 @@ using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Inventory = Nekoyume.Model.Item.Inventory;
 
+#nullable disable
 namespace Nekoyume.Model
 {
     [Serializable]

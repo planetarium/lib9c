@@ -5,6 +5,7 @@ using Bencodex.Types;
 using MessagePack;
 using MessagePack.Formatters;
 
+#nullable disable
 namespace Lib9c.Formatters
 {
     public class BencodexFormatter<T> : IMessagePackFormatter<T> where T: IValue

@@ -14,6 +14,7 @@ using Serilog;
 using Serilog;
 #endif
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     [Serializable]

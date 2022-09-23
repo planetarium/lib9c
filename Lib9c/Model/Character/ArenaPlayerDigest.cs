@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Model
 {
     /// <summary>

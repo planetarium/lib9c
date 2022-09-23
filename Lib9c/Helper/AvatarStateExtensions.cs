@@ -8,6 +8,7 @@ using Nekoyume.Model.Quest;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Helper
 {
     public static class AvatarStateExtensions

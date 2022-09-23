@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     public class RuneSheet : Sheet<int, RuneSheet.Row>

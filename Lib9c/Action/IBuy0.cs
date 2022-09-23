@@ -2,6 +2,7 @@ using System;
 using Libplanet;
 using Libplanet.Action;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     /// <summary>

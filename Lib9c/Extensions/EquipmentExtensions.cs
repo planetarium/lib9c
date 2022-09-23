@@ -7,6 +7,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Extensions
 {
     public static class EquipmentExtensions

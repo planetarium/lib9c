@@ -1,3 +1,4 @@
+#nullable disable
 namespace Nekoyume.TableData
 {
     public class SimulatorSheets

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+#nullable disable
 namespace Nekoyume.Model.Stat
 {
     public interface IStats

@@ -8,6 +8,7 @@ using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.TableData;
 using Priority_Queue;
 
+#nullable disable
 namespace Nekoyume.Arena
 {
     /// <summary>

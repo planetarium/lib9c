@@ -8,6 +8,7 @@ using Libplanet.Crypto;
 using MessagePack.Formatters;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
+#nullable disable
 namespace Lib9c.Formatters
 {
     public static class NineChroniclesResolverGetFormatterHelper

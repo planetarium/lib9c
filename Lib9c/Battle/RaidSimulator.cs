@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public class RaidSimulator : Simulator

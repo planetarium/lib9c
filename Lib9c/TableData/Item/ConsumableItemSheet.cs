@@ -7,6 +7,7 @@ using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     [Serializable]

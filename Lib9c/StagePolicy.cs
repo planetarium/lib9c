@@ -1,3 +1,4 @@
+#nullable disable
 namespace Nekoyume.BlockChain
 {
     using System;

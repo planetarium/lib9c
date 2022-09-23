@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.Serialization;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     [Serializable]

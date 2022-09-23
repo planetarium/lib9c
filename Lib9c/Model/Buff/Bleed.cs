@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nekoyume.Model.Skill;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.Buff
 {
     [Serializable]

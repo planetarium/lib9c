@@ -9,6 +9,7 @@ using Libplanet.Action;
 using MessagePack;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     [MessagePackObject]

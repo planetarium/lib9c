@@ -14,6 +14,7 @@ using Nekoyume.TableData.Crystal;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     /// <summary>

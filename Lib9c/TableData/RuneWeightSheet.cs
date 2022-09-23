@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     public class RuneWeightSheet : Sheet<int, RuneWeightSheet.Row>

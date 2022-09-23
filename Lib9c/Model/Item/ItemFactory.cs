@@ -6,6 +6,7 @@ using Nekoyume.TableData;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
+#nullable disable
 namespace Nekoyume.Model.Item
 {
     public static class ItemFactory

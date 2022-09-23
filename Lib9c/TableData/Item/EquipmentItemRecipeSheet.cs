@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nekoyume.Model.Item;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     public class EquipmentItemRecipeSheet : Sheet<int, EquipmentItemRecipeSheet.Row>

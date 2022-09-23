@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Libplanet.Assets;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Model.Mail
 {
     public class GrindingMail : Mail

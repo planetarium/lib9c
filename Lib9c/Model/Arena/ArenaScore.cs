@@ -4,6 +4,7 @@ using Nekoyume.Model.State;
 using Libplanet;
 using Nekoyume.Action;
 
+#nullable disable
 namespace Nekoyume.Model.Arena
 {
     /// <summary>

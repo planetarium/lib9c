@@ -11,6 +11,7 @@ using MessagePack.Formatters;
 using Nekoyume;
 using Nekoyume.Action;
 
+#nullable disable
 namespace Lib9c.Formatters
 {
     public class AccountStateDeltaFormatter : IMessagePackFormatter<IAccountStateDelta>

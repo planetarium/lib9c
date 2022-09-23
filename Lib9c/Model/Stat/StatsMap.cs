@@ -4,6 +4,7 @@ using System.Linq;
 using Bencodex.Types;
 using Nekoyume.Model.State;
 
+#nullable disable
 namespace Nekoyume.Model.Stat
 {
     // todo: `Stats`나 `StatModifier`로 대체되어야 함.

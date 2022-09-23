@@ -4,6 +4,7 @@ using System.Linq;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus;
 
+#nullable disable
 namespace Nekoyume.Battle
 {
     public class Wave

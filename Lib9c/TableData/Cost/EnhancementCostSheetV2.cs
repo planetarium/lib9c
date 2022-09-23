@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Nekoyume.Model.Item;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     using static TableExtensions;

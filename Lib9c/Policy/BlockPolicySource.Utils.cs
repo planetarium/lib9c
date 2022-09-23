@@ -11,6 +11,7 @@ using Nekoyume.Model.State;
 using static Libplanet.Blocks.BlockMarshaler;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
+#nullable disable
 namespace Nekoyume.BlockChain.Policy
 {
     // Collection of helper methods not directly used as a pluggable component.

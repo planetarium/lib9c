@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nekoyume.Model.Buff;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData.Crystal
 {
     [Serializable]

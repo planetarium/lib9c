@@ -5,6 +5,7 @@ using Libplanet.Assets;
 using Nekoyume.Helper;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     // This sheet not on-chain data. don't call this sheet in `IAction.Execute()`

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Libplanet;
 
+#nullable disable
 namespace Nekoyume.BlockChain.Policy
 {
     public static class PermanentBlockPolicySource

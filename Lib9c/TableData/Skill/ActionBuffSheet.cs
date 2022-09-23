@@ -4,6 +4,7 @@ using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Skill;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     [Serializable]

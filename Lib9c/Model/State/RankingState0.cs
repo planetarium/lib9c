@@ -8,6 +8,7 @@ using Bencodex.Types;
 using Libplanet;
 using Nekoyume.Action;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     [Serializable]

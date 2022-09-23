@@ -4,6 +4,7 @@ using System.Numerics;
 using Nekoyume.Model.Item;
 using static Nekoyume.TableData.TableExtensions;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     public class EnhancementCostSheet : Sheet<int, EnhancementCostSheet.Row>

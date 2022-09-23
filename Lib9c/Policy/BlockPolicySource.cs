@@ -27,6 +27,7 @@ using Lib9c.DevExtensions;
 using Lib9c.DevExtensions.Model;
 #endif
 
+#nullable disable
 namespace Nekoyume.BlockChain.Policy
 {
     public partial class BlockPolicySource

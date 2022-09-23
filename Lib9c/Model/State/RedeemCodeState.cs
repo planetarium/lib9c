@@ -8,6 +8,7 @@ using Libplanet;
 using Libplanet.Crypto;
 using Nekoyume.TableData;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     [Serializable]

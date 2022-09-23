@@ -3,6 +3,7 @@ using Libplanet;
 using Libplanet.Assets;
 using Nekoyume.Model.Item;
 
+#nullable disable
 namespace Nekoyume.Action
 {
     public interface IPurchaseInfo

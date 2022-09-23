@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Numerics;
 
+#nullable disable
 namespace Nekoyume.TableData
 {
     public static class TableExtensions

@@ -1,4 +1,5 @@
-﻿namespace Nekoyume.Action
+﻿#nullable disable
+namespace Nekoyume.Action
 {
     public enum ShopErrorType
     {

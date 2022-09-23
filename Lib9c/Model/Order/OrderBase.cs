@@ -4,6 +4,7 @@ using Bencodex.Types;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
+#nullable disable
 namespace Lib9c.Model.Order
 {
     [Serializable]

@@ -11,6 +11,7 @@ using Nekoyume.TableData;
 using LazyArenaInfo =
     Nekoyume.Model.State.LazyState<Nekoyume.Model.State.ArenaInfo, Bencodex.Types.Dictionary>;
 
+#nullable disable
 namespace Nekoyume.Model.State
 {
     [Serializable]
