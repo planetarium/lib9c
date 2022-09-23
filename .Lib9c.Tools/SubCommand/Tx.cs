@@ -325,7 +325,7 @@ namespace Lib9c.Tools.SubCommand
                 var amount = BigInteger.Parse(args[0]);
                 var ticker = args[1];
                 var decimalPlaces = args.Length == 3 ? (byte)int.Parse(args[2]) : (byte)0;
-                var currency = new Currency(ticker, decimalPlaces, minters: null);
+                var currency = Currency.Legacy(ticker, decimalPlaces, minters: null);
                 favs.Add(amount * currency);
             }
             var action = new PrepareRewardAssets(poolAddress, favs);
