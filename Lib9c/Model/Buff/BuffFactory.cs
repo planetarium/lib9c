@@ -50,7 +50,8 @@ namespace Nekoyume.Model.Buff
         {
             var buffs = new List<Buff>();
 
-            if (skillBuffSheet.TryGetValue(skill.SkillRow.Id, out var skillStatBuffRow))
+            if (skillBuffSheet != null &&
+                skillBuffSheet.TryGetValue(skill.SkillRow.Id, out var skillStatBuffRow))
             {
                 foreach (var buffId in skillStatBuffRow.BuffIds)
                 {
@@ -61,7 +62,8 @@ namespace Nekoyume.Model.Buff
                 }
             }
 
-            if (skillActionBuffSheet.TryGetValue(skill.SkillRow.Id, out var skillActionBuffRow))
+            if (skillActionBuffSheet != null &&
+                skillActionBuffSheet.TryGetValue(skill.SkillRow.Id, out var skillActionBuffRow))
             {
                 foreach (var buffId in skillActionBuffRow.BuffIds)
                 {
