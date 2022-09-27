@@ -680,7 +680,8 @@ namespace Nekoyume.Action
                 var csvValue = csvValues[i];
                 if (csvValue is null)
                 {
-                    throw new FailedLoadStateException(address, sheetType);
+                    // throw new FailedLoadStateException(address, sheetType);
+                    continue;
                 }
 
                 var csv = csvValue.ToDotnetString();
