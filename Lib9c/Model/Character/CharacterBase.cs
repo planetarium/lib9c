@@ -234,7 +234,7 @@ namespace Nekoyume.Model
                     ATK,
                     selectedSkill,
                     Simulator.SkillBuffSheet,
-                    Simulator.StatBuffSheet,
+                    Simulator.BuffSheet,
                     Simulator.SkillActionBuffSheet,
                     Simulator.ActionBuffSheet
                 )
@@ -262,7 +262,7 @@ namespace Nekoyume.Model
                     ATK,
                     selectedSkill,
                     Simulator.SkillBuffSheet,
-                    Simulator.StatBuffSheet,
+                    Simulator.BuffSheet,
                     Simulator.SkillActionBuffSheet,
                     Simulator.ActionBuffSheet
                 )
@@ -285,7 +285,7 @@ namespace Nekoyume.Model
                     ATK,
                     selectedSkill,
                     Simulator.SkillBuffSheet,
-                    Simulator.StatBuffSheet,
+                    Simulator.BuffSheet,
                     Simulator.SkillActionBuffSheet,
                     Simulator.ActionBuffSheet
                 )

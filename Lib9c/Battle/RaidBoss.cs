@@ -93,7 +93,7 @@ namespace Nekoyume.Model
                     ATK,
                     skill,
                     Simulator.SkillBuffSheet,
-                    Simulator.StatBuffSheet,
+                    Simulator.BuffSheet,
                     Simulator.SkillActionBuffSheet,
                     Simulator.ActionBuffSheet
                 )
@@ -113,7 +113,7 @@ namespace Nekoyume.Model
                     ATK,
                     _enrageSkill,
                     Simulator.SkillBuffSheet,
-                    Simulator.StatBuffSheet,
+                    Simulator.BuffSheet,
                     Simulator.SkillActionBuffSheet,
                     Simulator.ActionBuffSheet
                 )

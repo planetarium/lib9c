@@ -7,7 +7,7 @@ using static Nekoyume.TableData.TableExtensions;
 namespace Nekoyume.TableData
 {
     [Serializable]
-    public class StatBuffSheet : Sheet<int, StatBuffSheet.Row>
+    public class BuffSheet : Sheet<int, BuffSheet.Row>
     {
         [Serializable]
         public class Row : SheetRow<int>
@@ -51,7 +51,7 @@ namespace Nekoyume.TableData
             }
         }
 
-        public StatBuffSheet() : base(nameof(StatBuffSheet))
+        public BuffSheet() : base(nameof(BuffSheet))
         {
         }
     }

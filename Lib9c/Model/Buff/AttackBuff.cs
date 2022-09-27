@@ -6,7 +6,7 @@ namespace Nekoyume.Model.Buff
     [Serializable]
     public class AttackBuff : StatBuff
     {
-        public AttackBuff(StatBuffSheet.Row row) : base(row)
+        public AttackBuff(BuffSheet.Row row) : base(row)
         {
         }
     }

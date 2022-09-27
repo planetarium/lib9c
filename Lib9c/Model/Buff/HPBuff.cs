@@ -6,7 +6,7 @@ namespace Nekoyume.Model.Buff
     [Serializable]
     public class HPBuff : StatBuff
     {
-        public HPBuff(StatBuffSheet.Row row) : base(row)
+        public HPBuff(BuffSheet.Row row) : base(row)
         {
         }
     }

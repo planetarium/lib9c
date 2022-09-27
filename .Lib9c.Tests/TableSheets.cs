@@ -54,7 +54,7 @@ namespace Lib9c.Tests
 
         public SkillSheet SkillSheet { get; private set; }
 
-        public StatBuffSheet StatBuffSheet { get; private set; }
+        public BuffSheet BuffSheet { get; private set; }
 
         public ItemSheet ItemSheet { get; private set; }
 
@@ -227,7 +227,7 @@ namespace Lib9c.Tests
                 MaterialItemSheet,
                 SkillSheet,
                 SkillBuffSheet,
-                StatBuffSheet,
+                BuffSheet,
                 SkillActionBuffSheet,
                 ActionBuffSheet,
                 CharacterSheet,
@@ -242,7 +242,7 @@ namespace Lib9c.Tests
                 MaterialItemSheet,
                 SkillSheet,
                 SkillBuffSheet,
-                StatBuffSheet,
+                BuffSheet,
                 SkillActionBuffSheet,
                 ActionBuffSheet,
                 CharacterSheet,
@@ -260,7 +260,7 @@ namespace Lib9c.Tests
                 MaterialItemSheet,
                 SkillSheet,
                 SkillBuffSheet,
-                StatBuffSheet,
+                BuffSheet,
                 SkillActionBuffSheet,
                 ActionBuffSheet,
                 CharacterSheet,
@@ -276,7 +276,7 @@ namespace Lib9c.Tests
                 MaterialItemSheet,
                 SkillSheet,
                 SkillBuffSheet,
-                StatBuffSheet,
+                BuffSheet,
                 SkillActionBuffSheet,
                 ActionBuffSheet,
                 CharacterSheet,
@@ -293,7 +293,7 @@ namespace Lib9c.Tests
                 MaterialItemSheet,
                 SkillSheet,
                 SkillBuffSheet,
-                StatBuffSheet,
+                BuffSheet,
                 SkillActionBuffSheet,
                 ActionBuffSheet,
                 CharacterSheet,
