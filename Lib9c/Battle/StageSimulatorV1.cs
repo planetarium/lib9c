@@ -326,7 +326,7 @@ namespace Nekoyume.Battle
                         Player.ATK,
                         skill,
                         SkillBuffSheet,
-                        StatBuffSheet,
+                        BuffSheet,
                         SkillActionBuffSheet,
                         ActionBuffSheet
                     );

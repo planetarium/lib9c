@@ -6,7 +6,7 @@ namespace Nekoyume.Model.Buff
     [Serializable]
     public class SpeedBuff : StatBuff
     {
-        public SpeedBuff(StatBuffSheet.Row row) : base(row)
+        public SpeedBuff(BuffSheet.Row row) : base(row)
         {
         }
     }

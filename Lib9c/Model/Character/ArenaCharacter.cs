@@ -22,7 +22,7 @@ namespace Nekoyume.Model
 
         private readonly SkillSheet _skillSheet;
         private readonly SkillBuffSheet _skillBuffSheet;
-        private readonly StatBuffSheet _statBuffSheet;
+        private readonly BuffSheet _buffSheet;
         private readonly SkillActionBuffSheet _skillActionBuffSheet;
         private readonly ActionBuffSheet _actionBuffSheet;
         private readonly ArenaSimulator _simulator;
@@ -85,7 +85,7 @@ namespace Nekoyume.Model
 
             _skillSheet = sheets.SkillSheet;
             _skillBuffSheet = sheets.SkillBuffSheet;
-            _statBuffSheet = sheets.StatBuffSheet;
+            _buffSheet = sheets.BuffSheet;
             _skillActionBuffSheet = sheets.SkillActionBuffSheet;
             _actionBuffSheet = sheets.ActionBuffSheet;
 
@@ -109,7 +109,7 @@ namespace Nekoyume.Model
 
             _skillSheet = value._skillSheet;
             _skillBuffSheet = value._skillBuffSheet;
-            _statBuffSheet = value._statBuffSheet;
+            _buffSheet = value._buffSheet;
             _skillActionBuffSheet = value._skillActionBuffSheet;
             _actionBuffSheet = value._actionBuffSheet;
 
@@ -283,7 +283,7 @@ namespace Nekoyume.Model
                     ATK,
                     selectedSkill,
                     _skillBuffSheet,
-                    _statBuffSheet,
+                    _buffSheet,
                     _skillActionBuffSheet,
                     _actionBuffSheet)
             );
@@ -309,7 +309,7 @@ namespace Nekoyume.Model
                     ATK,
                     selectedSkill,
                     _skillBuffSheet,
-                    _statBuffSheet,
+                    _buffSheet,
                     _skillActionBuffSheet,
                     _actionBuffSheet)
             );

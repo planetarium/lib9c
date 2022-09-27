@@ -8,7 +8,7 @@ namespace Nekoyume.Model.Buff
 {
     public static class BuffFactory
     {
-        public static StatBuff GetStatBuff(StatBuffSheet.Row row)
+        public static StatBuff GetStatBuff(BuffSheet.Row row)
         {
             switch (row.StatModifier.StatType)
             {
@@ -44,7 +44,7 @@ namespace Nekoyume.Model.Buff
             int power,
             ISkill skill,
             SkillBuffSheet skillBuffSheet,
-            StatBuffSheet statBuffSheet,
+            BuffSheet buffSheet,
             SkillActionBuffSheet skillActionBuffSheet,
             ActionBuffSheet actionBuffSheet)
         {
@@ -54,7 +54,7 @@ namespace Nekoyume.Model.Buff
             {
                 foreach (var buffId in skillStatBuffRow.BuffIds)
                 {
-                    if (!statBuffSheet.TryGetValue(buffId, out var buffRow))
+                    if (!buffSheet.TryGetValue(buffId, out var buffRow))
                         continue;
 
                     buffs.Add(GetStatBuff(buffRow));

@@ -7,9 +7,9 @@ namespace Nekoyume.Model.Buff
     [Serializable]
     public class StatBuff : Buff
     {
-        public StatBuffSheet.Row RowData { get; }
+        public BuffSheet.Row RowData { get; }
 
-        protected StatBuff(StatBuffSheet.Row row) : base(
+        protected StatBuff(BuffSheet.Row row) : base(
             new BuffInfo(row.Id, row.GroupId, row.Chance, row.Duration, row.TargetType))
         {
             RowData = row;

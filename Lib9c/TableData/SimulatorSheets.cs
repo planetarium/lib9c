@@ -7,7 +7,7 @@ namespace Nekoyume.TableData
         public readonly SkillBuffSheet SkillBuffSheet;
         public readonly SkillActionBuffSheet SkillActionBuffSheet;
         public readonly ActionBuffSheet ActionBuffSheet;
-        public readonly StatBuffSheet StatBuffSheet;
+        public readonly BuffSheet BuffSheet;
         public readonly CharacterSheet CharacterSheet;
         public readonly CharacterLevelSheet CharacterLevelSheet;
         public readonly EquipmentItemSetEffectSheet EquipmentItemSetEffectSheet;
@@ -16,7 +16,7 @@ namespace Nekoyume.TableData
             MaterialItemSheet materialItemSheet,
             SkillSheet skillSheet,
             SkillBuffSheet skillBuffSheet,
-            StatBuffSheet statBuffSheet,
+            BuffSheet buffSheet,
             SkillActionBuffSheet skillActionBuffSheet,
             ActionBuffSheet actionBuffSheet,
             CharacterSheet characterSheet,
@@ -27,7 +27,7 @@ namespace Nekoyume.TableData
             MaterialItemSheet = materialItemSheet;
             SkillSheet = skillSheet;
             SkillBuffSheet = skillBuffSheet;
-            StatBuffSheet = statBuffSheet;
+            BuffSheet = buffSheet;
             SkillActionBuffSheet = skillActionBuffSheet;
             ActionBuffSheet = actionBuffSheet;
             CharacterSheet = characterSheet;
@@ -46,7 +46,7 @@ namespace Nekoyume.TableData
             MaterialItemSheet materialItemSheet,
             SkillSheet skillSheet,
             SkillBuffSheet skillBuffSheet,
-            StatBuffSheet statBuffSheet,
+            BuffSheet buffSheet,
             SkillActionBuffSheet skillActionBuffSheet,
             ActionBuffSheet actionBuffSheet,
             CharacterSheet characterSheet,
@@ -59,7 +59,7 @@ namespace Nekoyume.TableData
             materialItemSheet,
             skillSheet,
             skillBuffSheet,
-            statBuffSheet,
+            buffSheet,
             skillActionBuffSheet,
             actionBuffSheet,
             characterSheet,
@@ -81,7 +81,7 @@ namespace Nekoyume.TableData
             MaterialItemSheet materialItemSheet,
             SkillSheet skillSheet,
             SkillBuffSheet skillBuffSheet,
-            StatBuffSheet statBuffSheet,
+            BuffSheet buffSheet,
             SkillActionBuffSheet skillActionBuffSheet,
             ActionBuffSheet actionBuffSheet,
             CharacterSheet characterSheet,
@@ -92,7 +92,7 @@ namespace Nekoyume.TableData
             materialItemSheet,
             skillSheet,
             skillBuffSheet,
-            statBuffSheet,
+            buffSheet,
             skillActionBuffSheet,
             actionBuffSheet,
             characterSheet,
@@ -113,7 +113,7 @@ namespace Nekoyume.TableData
             MaterialItemSheet materialItemSheet,
             SkillSheet skillSheet,
             SkillBuffSheet skillBuffSheet,
-            StatBuffSheet statBuffSheet,
+            BuffSheet buffSheet,
             SkillActionBuffSheet skillActionBuffSheet,
             ActionBuffSheet actionBuffSheet,
             CharacterSheet characterSheet,
@@ -124,7 +124,7 @@ namespace Nekoyume.TableData
         ) : base(materialItemSheet,
             skillSheet,
             skillBuffSheet,
-            statBuffSheet,
+            buffSheet,
             skillActionBuffSheet,
             actionBuffSheet,
             characterSheet,
@@ -149,7 +149,7 @@ namespace Nekoyume.TableData
             MaterialItemSheet materialItemSheet,
             SkillSheet skillSheet,
             SkillBuffSheet skillBuffSheet,
-            StatBuffSheet statBuffSheet,
+            BuffSheet buffSheet,
             SkillActionBuffSheet skillActionBuffSheet,
             ActionBuffSheet actionBuffSheet,
             CharacterSheet characterSheet,
@@ -163,7 +163,7 @@ namespace Nekoyume.TableData
         ) : base(materialItemSheet,
             skillSheet,
             skillBuffSheet,
-            statBuffSheet,
+            buffSheet,
             skillActionBuffSheet,
             actionBuffSheet,
             characterSheet,
