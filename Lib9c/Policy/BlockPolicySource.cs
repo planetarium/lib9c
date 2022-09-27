@@ -125,7 +125,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet,
+                minBlockProtocolVersionPolicy: MinBlockProtocolVersionPolicy.Mainnet);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-internal deployment.
@@ -138,7 +139,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet,
+                minBlockProtocolVersionPolicy: MinBlockProtocolVersionPolicy.Mainnet);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-permanent-test deployment.
@@ -151,7 +153,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Permanent,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Permanent);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Permanent,
+                minBlockProtocolVersionPolicy: MinBlockProtocolVersionPolicy.Mainnet);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance identical to the one deployed
@@ -165,7 +168,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet,
+                minBlockProtocolVersionPolicy: MinBlockProtocolVersionPolicy.Mainnet);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for networks
@@ -179,7 +183,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Default,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Default,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Default,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Default);
+                permissionedMinersPolicy: PermissionedMinersPolicy.Default,
+                minBlockProtocolVersionPolicy: MinBlockProtocolVersionPolicy.Default);
 
         /// <summary>
         /// Gets a <see cref="BlockPolicy"/> constructed from given parameters.
@@ -203,7 +208,8 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
             IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy,
-            IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy)
+            IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy,
+            IVariableSubPolicy<int> minBlockProtocolVersionPolicy)
         {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
@@ -221,6 +227,8 @@ namespace Nekoyume.BlockChain.Policy
                 ?? AuthorizedMinersPolicy.Default;
             permissionedMinersPolicy = permissionedMinersPolicy
                 ?? PermissionedMinersPolicy.Default;
+            minBlockProtocolVersionPolicy = minBlockProtocolVersionPolicy
+                ?? MinBlockProtocolVersionPolicy.Default;
 
             // FIXME: Ad hoc solution to poorly defined tx validity.
             ImmutableHashSet<Address> allAuthorizedMiners =
@@ -244,7 +252,8 @@ namespace Nekoyume.BlockChain.Policy
                     maxTransactionsPerBlockPolicy,
                     maxTransactionsPerSignerPerBlockPolicy,
                     authorizedMinersPolicy,
-                    permissionedMinersPolicy);
+                    permissionedMinersPolicy,
+                    minBlockProtocolVersionPolicy);
             Func<BlockChain<NCAction>, long> getNextBlockDifficulty = blockChain =>
                 GetNextBlockDifficultyRaw(
                     blockChain,
@@ -274,7 +283,8 @@ namespace Nekoyume.BlockChain.Policy
                 getMaxTransactionsPerBlock: maxTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerSignerPerBlock: maxTransactionsPerSignerPerBlockPolicy.Getter,
                 getNextBlockDifficulty: getNextBlockDifficulty,
-                isAllowedToMine: isAllowedToMine);
+                isAllowedToMine: isAllowedToMine,
+                getMinBlockProtocolVersion: minBlockProtocolVersionPolicy.Getter);
 #endif
         }
 
@@ -391,9 +401,16 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
             IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy,
-            IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy)
+            IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy,
+            IVariableSubPolicy<int> minBlockProtocolVersionPolicy)
         {
-            if (ValidateBlockBytesRaw(
+            if (ValidateBlockProtocolVersionRaw(
+                nextBlock,
+                minBlockProtocolVersionPolicy) is BlockPolicyViolationException bpve)
+            {
+                return bpve;
+            }
+            else if (ValidateBlockBytesRaw(
                 nextBlock,
                 maxBlockBytesPolicy) is InvalidBlockBytesLengthException ibble)
             {
