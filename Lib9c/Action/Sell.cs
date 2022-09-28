@@ -7,6 +7,7 @@ using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -83,9 +84,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}Sell exec started", addressesHex);
 
             var ncg = states.GetGoldCurrency();
-            if (!price.Currency.Equals(ncg) ||
-                !price.MinorUnit.IsZero ||
-                price.Sign < 0)
+            if (!price.IsAvailableInMarket(ncg))
             {
                 throw new InvalidPriceException(
                     $"{addressesHex}Aborted as the price is less than zero: {price}.");
