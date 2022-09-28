@@ -222,70 +222,28 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InvalidPriceException_DueTo_InvalidCurrencyPrice()
         {
-            var action = new Sell
-            {
-                sellerAvatarAddress = _avatarAddress,
-                tradableId = default,
-                count = 1,
-                price = new FungibleAssetValue(
+            var price = new FungibleAssetValue(
 #pragma warning disable CS0618
-                    // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-                    Currency.Legacy("KRW", 0, null),
+                // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+                Currency.Legacy("KRW", 0, null),
 #pragma warning restore CS0618
-                    1,
-                    0),
-                itemSubType = default,
-                orderId = default,
-            };
-
-            Assert.Throws<InvalidPriceException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = 0,
-                PreviousStates = _initialState,
-                Signer = _agentAddress,
-            }));
+                1,
+                0);
+            Assert.Throws<InvalidPriceException>(() => ExecuteWithPrice(price));
         }
 
         [Fact]
         public void Execute_Throw_InvalidPriceException_DueTo_NonZeroMinorUnitPrice()
         {
-            var action = new Sell
-            {
-                sellerAvatarAddress = _avatarAddress,
-                tradableId = default,
-                count = 1,
-                price = new FungibleAssetValue(_currency, 1, 1),
-                itemSubType = default,
-                orderId = default,
-            };
-
-            Assert.Throws<InvalidPriceException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = 0,
-                PreviousStates = _initialState,
-                Signer = _agentAddress,
-            }));
+            var price = new FungibleAssetValue(_currency, 1, 1);
+            Assert.Throws<InvalidPriceException>(() => ExecuteWithPrice(price));
         }
 
         [Fact]
         public void Execute_Throw_InvalidPriceException_DueTo_NegativePrice()
         {
-            var action = new Sell
-            {
-                sellerAvatarAddress = _avatarAddress,
-                tradableId = default,
-                count = 1,
-                price = new FungibleAssetValue(_currency, -1, 0),
-                itemSubType = default,
-                orderId = default,
-            };
-
-            Assert.Throws<InvalidPriceException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = 0,
-                PreviousStates = _initialState,
-                Signer = _agentAddress,
-            }));
+            var price = new FungibleAssetValue(_currency, -1, 0);
+            Assert.Throws<InvalidPriceException>(() => ExecuteWithPrice(price));
         }
 
         [Fact]
@@ -502,6 +460,26 @@ namespace Lib9c.Tests.Action
             });
 
             Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.UpdatedAddresses);
+        }
+
+        private IAccountStateDelta ExecuteWithPrice(FungibleAssetValue price)
+        {
+            var action = new Sell
+            {
+                sellerAvatarAddress = _avatarAddress,
+                tradableId = default,
+                count = 1,
+                price = price,
+                itemSubType = default,
+                orderId = default,
+            };
+
+            return action.Execute(new ActionContext
+            {
+                BlockIndex = 0,
+                PreviousStates = _initialState,
+                Signer = _agentAddress,
+            });
         }
     }
 }
