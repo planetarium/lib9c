@@ -15,7 +15,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using Lib9c.DevExtensions;
+using Libplanet.Blockchain;
+using Libplanet.Store;
+using Libplanet.Store.Trie;
 using Nekoyume.TableData;
+using Serilog;
+using Serilog.Core;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
 namespace Lib9c.Tools.SubCommand
@@ -302,6 +308,42 @@ namespace Lib9c.Tools.SubCommand
                 rng.NextBytes(nonce);
                 var (ak, _) = ActivationKey.Create(key, nonce);
                 Console.WriteLine($"{ak.Encode()},{ByteUtil.Hex(nonce)}");
+            }
+        }
+
+        [Command(Description = "For debug purpose")]
+        public void AppendBlock(string storePath, string blockHash)
+        {
+            using Logger logger = Utils.ConfigureLogger(true);
+            TextWriter stderr = Console.Error;
+            (
+                BlockChain<NCAction> chain,
+                IStore store,
+                IKeyValueStore stateKvStore,
+                IStateStore stateStore
+            ) = Utils.GetBlockChain(
+                logger,
+                storePath
+            );
+
+            Log.Logger = logger;
+
+            Console.WriteLine($"Tip: {chain.Tip.Hash}");
+            var target = store.GetBlock<NCAction>(
+                Utils.ParseBlockHash(blockHash)
+            );
+            Console.WriteLine($"Target: {target.Hash}");
+            var prev = store.GetBlock<NCAction>(target.PreviousHash!.Value);
+            Console.WriteLine($"Previous: {prev.Hash}");
+            chain = chain.Fork(prev.Hash);
+
+            if (chain.Tip.Index + 1 == target.Index)
+            {
+                chain.Append(target);
+            }
+            else
+            {
+                Console.Error.WriteLine("Something went wrong.");
             }
         }
     }

@@ -34,7 +34,7 @@ namespace Lib9c.DevExtensions
             var logConfig = new LoggerConfiguration();
             if (verbose)
             {
-                logConfig = logConfig.WriteTo.Console();
+                logConfig = logConfig.MinimumLevel.Verbose().WriteTo.Console();
             }
             return logConfig.CreateLogger();
         }
