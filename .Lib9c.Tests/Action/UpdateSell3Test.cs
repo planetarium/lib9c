@@ -21,7 +21,7 @@
     using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
-    public class UpdateSellTest
+    public class UpdateSell3Test
     {
         private const long ProductPrice = 100;
         private readonly Address _agentAddress;
@@ -32,7 +32,7 @@
         private readonly GoldCurrencyState _goldCurrencyState;
         private IAccountStateDelta _initialState;
 
-        public UpdateSellTest(ITestOutputHelper outputHelper)
+        public UpdateSell3Test(ITestOutputHelper outputHelper)
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -223,7 +223,7 @@
                 itemCount
             );
 
-            var action = new UpdateSell
+            var action = new UpdateSell3
             {
                 sellerAvatarAddress = _avatarAddress,
                 updateSellInfos = new[] { updateSellInfo },
@@ -250,7 +250,7 @@
         [Fact]
         public void Execute_Throw_ListEmptyException()
         {
-            var action = new UpdateSell
+            var action = new UpdateSell3
             {
                 sellerAvatarAddress = _avatarAddress,
                 updateSellInfos = new List<UpdateSellInfo>(),
@@ -275,7 +275,7 @@
                 0 * _currency,
                 1);
 
-            var action = new UpdateSell
+            var action = new UpdateSell3
             {
                 sellerAvatarAddress = _avatarAddress,
                 updateSellInfos = new[] { updateSellInfo },
@@ -311,7 +311,7 @@
                 0 * _currency,
                 1);
 
-            var action = new UpdateSell
+            var action = new UpdateSell3
             {
                 sellerAvatarAddress = _avatarAddress,
                 updateSellInfos = new[] { updateSellInfo },
@@ -326,28 +326,7 @@
         }
 
         [Fact]
-        public void Execute_Throw_InvalidPriceException_DueTo_InvalidCurrencyPrice()
-        {
-            var invalidCurrency = Currency.Legacy("KRW", 0, null);
-            var price = new FungibleAssetValue(invalidCurrency, 1, 0);
-            Assert.Throws<InvalidPriceException>(() => ExecuteWithPrice(price));
-        }
-
-        [Fact]
-        public void Execute_Throw_InvalidPriceException_DueTo_NonZeroMinorUnitPrice()
-        {
-            var price = new FungibleAssetValue(_currency, 1, 1);
-            Assert.Throws<InvalidPriceException>(() => ExecuteWithPrice(price));
-        }
-
-        [Fact]
-        public void Execute_Throw_InvalidPriceException_DueTo_NegativePrice()
-        {
-            var price = -1 * _currency;
-            Assert.Throws<InvalidPriceException>(() => ExecuteWithPrice(price));
-        }
-
-        private IAccountStateDelta ExecuteWithPrice(FungibleAssetValue price)
+        public void Execute_Throw_InvalidPriceException()
         {
             var avatarState = new AvatarState(_avatarState)
             {
@@ -368,21 +347,21 @@
                 default,
                 default,
                 default,
-                price,
+                -1 * _currency,
                 1);
 
-            var action = new UpdateSell
+            var action = new UpdateSell3
             {
                 sellerAvatarAddress = _avatarAddress,
                 updateSellInfos = new[] { updateSellInfo },
             };
 
-            return action.Execute(new ActionContext
+            Assert.Throws<InvalidPriceException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
                 PreviousStates = _initialState,
                 Signer = _agentAddress,
-            });
+            }));
         }
     }
 }

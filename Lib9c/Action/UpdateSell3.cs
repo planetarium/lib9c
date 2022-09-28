@@ -19,11 +19,12 @@ using BxList = Bencodex.Types.List;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Hard forked at https://github.com/planetarium/lib9c/pull/1404
+    /// Hard forked at https://github.com/planetarium/lib9c/pull/1022
+    /// Updated at https://github.com/planetarium/lib9c/pull/1022
     /// </summary>
     [Serializable]
-    [ActionType("update_sell4")]
-    public class UpdateSell : GameAction
+    [ActionType("update_sell3")]
+    public class UpdateSell3 : GameAction
     {
         public Address sellerAvatarAddress;
         public IEnumerable<UpdateSellInfo> updateSellInfos;
@@ -95,17 +96,13 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException(
                     $"{addressesHex} failed to load {nameof(OrderDigest)}({digestListAddress}).");
             }
-
             var digestList = new OrderDigestListState(rawList);
-            var ncg = states.GetGoldCurrency();
+
             foreach (var updateSellInfo in updateSellInfos)
             {
-                if (!updateSellInfo.price.Currency.Equals(ncg) ||
-                    !updateSellInfo.price.MinorUnit.IsZero ||
-                    updateSellInfo.price.Sign < 0)
+                if (updateSellInfo.price.Sign < 0)
                 {
-                    throw new InvalidPriceException(
-                        $"{addressesHex}Aborted as the price is less than zero: {updateSellInfo.price}.");
+                    throw new InvalidPriceException($"{addressesHex} Aborted as the price is less than zero: {updateSellInfo.price}.");
                 }
 
                 var shopAddress = ShardedShopStateV2.DeriveAddress(updateSellInfo.itemSubType, updateSellInfo.orderId);
