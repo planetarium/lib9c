@@ -23,6 +23,7 @@ namespace Nekoyume.Action
     /// Updated at https://github.com/planetarium/lib9c/pull/1022
     /// </summary>
     [Serializable]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex)]
     [ActionType("update_sell3")]
     public class UpdateSell3 : GameAction
     {
@@ -55,6 +56,8 @@ namespace Nekoyume.Action
             {
                 return states;
             }
+
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex, context);
 
             // common
             var addressesHex = GetSignerAndOtherAddressesHex(context, sellerAvatarAddress);
