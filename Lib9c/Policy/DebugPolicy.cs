@@ -57,5 +57,7 @@ namespace Nekoyume.BlockChain.Policy
         }
 
         public IImmutableSet<Currency> NativeTokens => ImmutableHashSet<Currency>.Empty;
+
+        public IEnumerable<PublicKey> GetValidators(long index) => ImmutableArray<PublicKey>.Empty;
     }
 }

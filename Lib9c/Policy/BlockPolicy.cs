@@ -3,6 +3,7 @@ using Libplanet.Action;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
 using Libplanet.Blocks;
+using Libplanet.Crypto;
 using Libplanet.Tx;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,8 @@ namespace Nekoyume.BlockChain.Policy
             Func<long, int> getMinTransactionsPerBlock = null,
             Func<long, int> getMaxTransactionsPerBlock = null,
             Func<long, int> getMaxTransactionsPerSignerPerBlock = null,
-            Func<Address, long, bool> isAllowedToMine = null)
+            Func<Address, long, bool> isAllowedToMine = null,
+            Func<long, IEnumerable<PublicKey>> getValidators = null)
             : base(
                 blockAction: blockAction,
                 blockInterval: blockInterval,
@@ -34,7 +36,8 @@ namespace Nekoyume.BlockChain.Policy
                 getMaxTransactionsBytes: getMaxTransactionsBytes,
                 getMinTransactionsPerBlock: getMinTransactionsPerBlock,
                 getMaxTransactionsPerBlock: getMaxTransactionsPerBlock,
-                getMaxTransactionsPerSignerPerBlock: getMaxTransactionsPerSignerPerBlock)
+                getMaxTransactionsPerSignerPerBlock: getMaxTransactionsPerSignerPerBlock,
+                getValidators: getValidators)
         {
             _isAllowedToMine = isAllowedToMine;
         }
