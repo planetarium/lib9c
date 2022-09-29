@@ -48,7 +48,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                10_000, null, null, null, null, null, null);
+                10_000, null, null, null, null, null, null, null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -140,7 +140,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                10_000, null, null, null, null, null, null);
+                10_000, null, null, null, null, null, null, null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -187,7 +187,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                10_000, null, null, null, null, null, null);
+                10_000, null, null, null, null, null, null, null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -246,7 +246,8 @@ namespace Lib9c.Tests
                         endIndex: 4,
                         filter: index => index % 2 == 0,
                         value: miners.ToImmutableHashSet())),
-                permissionedMinersPolicy: null);
+                permissionedMinersPolicy: null,
+                validatorsPolicy: null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -326,7 +327,8 @@ namespace Lib9c.Tests
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
                 maxTransactionsPerSignerPerBlockPolicy: null,
                 authorizedMinersPolicy: null,
-                permissionedMinersPolicy: null);
+                permissionedMinersPolicy: null,
+                validatorsPolicy: null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
@@ -412,7 +414,8 @@ namespace Lib9c.Tests
                     .Default
                     .Add(new SpannedSubPolicy<int>(2, null, null, 5)),
                 authorizedMinersPolicy: null,
-                permissionedMinersPolicy: null);
+                permissionedMinersPolicy: null,
+                validatorsPolicy: null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
@@ -526,7 +529,8 @@ namespace Lib9c.Tests
                             endIndex: null,
                             filter: null,
                             value: new Address[] { permissionedMinerKey.ToAddress() }
-                                .ToImmutableHashSet()))),
+                                .ToImmutableHashSet())),
+                    validatorsPolicy: null),
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>(),
                 store,
                 stateStore,
@@ -613,7 +617,8 @@ namespace Lib9c.Tests
                             endIndex: 10,
                             filter: index => index % 3 == 0,
                             value: new Address[] { permissionedMinerKey.ToAddress() }
-                                .ToImmutableHashSet()))),
+                                .ToImmutableHashSet())),
+                    validatorsPolicy: null),
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>(),
                 store,
                 stateStore,
