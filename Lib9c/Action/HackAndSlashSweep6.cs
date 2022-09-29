@@ -20,6 +20,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("hack_and_slash_sweep6")]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex)]
     public class HackAndSlashSweep6 : GameAction
     {
         public const int UsableApStoneCount = 10;
@@ -65,6 +66,8 @@ namespace Nekoyume.Action
             {
                 return states;
             }
+
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 

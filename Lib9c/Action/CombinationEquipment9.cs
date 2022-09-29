@@ -17,6 +17,7 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("combination_equipment9")]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex)]
     public class CombinationEquipment9 : GameAction
     {
         public static readonly Address BlacksmithAddress = ItemEnhancement9.BlacksmithAddress;
@@ -75,6 +76,8 @@ namespace Nekoyume.Action
                     .SetState(questListAddress, MarkChanged)
                     .MarkBalanceChanged(GoldCurrencyMock, context.Signer, BlacksmithAddress);
             }
+
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 

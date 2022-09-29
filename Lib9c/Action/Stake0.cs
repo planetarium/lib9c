@@ -13,6 +13,7 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [ActionType("stake")]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex)]
     public class Stake0 : ActionBase
     {
         internal BigInteger Amount { get; set; }
@@ -58,6 +59,8 @@ namespace Nekoyume.Action
                         context.Signer,
                         StakeState.DeriveAddress(context.Signer));
             }
+
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex, context);
 
             if (Amount < 0)
             {

@@ -25,6 +25,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("hack_and_slash16")]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex)]
     public class HackAndSlash16 : GameAction
     {
         public List<Guid> Costumes;
@@ -81,6 +82,8 @@ namespace Nekoyume.Action
             {
                 return context.PreviousStates;
             }
+
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex, context);
 
             return Execute(
                 context.PreviousStates,

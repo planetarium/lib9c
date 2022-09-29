@@ -12,6 +12,7 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [ActionType("claim_stake_reward")]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex)]
     public class ClaimStakeReward1 : GameAction
     {
         internal Address AvatarAddress { get; private set; }
@@ -27,6 +28,8 @@ namespace Nekoyume.Action
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex, context);
+
             var states = context.PreviousStates;
             if (!states.TryGetStakeState(context.Signer, out StakeState stakeState))
             {

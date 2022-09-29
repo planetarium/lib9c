@@ -23,6 +23,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("hack_and_slash15")]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex)]
     public class HackAndSlash15 : GameAction
     {
         public List<Guid> costumes;
@@ -72,6 +73,8 @@ namespace Nekoyume.Action
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex, context);
+
             return Execute(context.PreviousStates,
                 context.Signer,
                 context.BlockIndex,

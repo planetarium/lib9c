@@ -14,6 +14,7 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [ActionType("unlock_world")]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex)]
     public class UnlockWorld1: GameAction
     {
         public List<int> WorldIds;
@@ -34,6 +35,8 @@ namespace Nekoyume.Action
                     .SetState(AvatarAddress, MarkChanged)
                     .MarkBalanceChanged(GoldCurrencyMock, context.Signer, Addresses.UnlockWorld);
             }
+
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex, context);
 
             if (!WorldIds.Any() || WorldIds.Any(i => i < 2 || i == GameConfig.MimisbrunnrWorldId))
             {

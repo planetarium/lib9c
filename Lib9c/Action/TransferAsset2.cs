@@ -18,6 +18,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("transfer_asset2")]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex)]
     public class TransferAsset2 : ActionBase, ISerializable, ITransferAsset
     {
         private const int MemoMaxLength = 80;
@@ -76,6 +77,8 @@ namespace Nekoyume.Action
             {
                 return state.MarkBalanceChanged(Amount.Currency, new[] { Sender, Recipient });
             }
+
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex, context);
 
             if (Sender != context.Signer)
             {
