@@ -21,6 +21,7 @@ namespace Nekoyume.Action
 {
     /// <summary>
     /// Introduced at https://github.com/planetarium/lib9c/pull/1218
+    /// Updated at https://github.com/planetarium/lib9c/pull/1412
     /// </summary>
     [Serializable]
     [ActionType(ActionTypeText)]

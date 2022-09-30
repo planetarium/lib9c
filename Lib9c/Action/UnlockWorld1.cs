@@ -13,6 +13,9 @@ using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Updated at https://github.com/planetarium/lib9c/pull/1412
+    /// </summary>
     [ActionType("unlock_world")]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex)]
     public class UnlockWorld1: GameAction

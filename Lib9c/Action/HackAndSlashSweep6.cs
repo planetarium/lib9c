@@ -17,6 +17,7 @@ namespace Nekoyume.Action
 {
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/1338
+    /// Updated at https://github.com/planetarium/lib9c/pull/1412
     /// </summary>
     [Serializable]
     [ActionType("hack_and_slash_sweep6")]

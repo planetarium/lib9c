@@ -15,7 +15,7 @@ namespace Nekoyume.Action
 {
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/823
-    /// Updated at https://github.com/planetarium/lib9c/pull/957
+    /// Updated at https://github.com/planetarium/lib9c/pull/1412
     /// </summary>
     [Serializable]
     [ActionType("create_avatar7")]

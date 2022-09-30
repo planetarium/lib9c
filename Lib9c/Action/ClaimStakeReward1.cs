@@ -11,6 +11,9 @@ using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Updated at https://github.com/planetarium/lib9c/pull/1412
+    /// </summary>
     [ActionType("claim_stake_reward")]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100310ObsoleteIndex)]
     public class ClaimStakeReward1 : GameAction

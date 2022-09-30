@@ -19,7 +19,7 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Updated at https://github.com/planetarium/lib9c/pull/1164
+    /// Updated at https://github.com/planetarium/lib9c/pull/1412
     /// </summary>
     [Serializable]
     [ActionType("combination_equipment12")]
