@@ -163,7 +163,7 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Permanent,
                 permissionedMinersPolicy: PermissionedMinersPolicy.Permanent,
-                validatorsPolicy: ValidatorsPolicy.Mainnet);
+                validatorsPolicy: ValidatorsPolicy.Permanent);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance identical to the one deployed
@@ -237,6 +237,8 @@ namespace Nekoyume.BlockChain.Policy
                 ?? AuthorizedMinersPolicy.Default;
             permissionedMinersPolicy = permissionedMinersPolicy
                 ?? PermissionedMinersPolicy.Default;
+            validatorsPolicy = validatorsPolicy
+                ?? ValidatorsPolicy.Default;
 
 
             // FIXME: Ad hoc solution to poorly defined tx validity.
@@ -274,7 +276,8 @@ namespace Nekoyume.BlockChain.Policy
                 getMinTransactionsPerBlock: minTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerBlock: maxTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerSignerPerBlock: maxTransactionsPerSignerPerBlockPolicy.Getter,
-                isAllowedToMine: isAllowedToMine);
+                isAllowedToMine: isAllowedToMine,
+                getValidators: validatorsPolicy.Getter);
 #endif
         }
 
