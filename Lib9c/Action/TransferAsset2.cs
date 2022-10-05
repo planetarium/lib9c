@@ -15,10 +15,10 @@ namespace Nekoyume.Action
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/636
     /// Updated at https://github.com/planetarium/lib9c/pull/1412
+    /// Do not add `ActionObsolete` attribute while the Onboarding-portal uses this feature.
     /// </summary>
     [Serializable]
     [ActionType("transfer_asset2")]
-    // Do not add `ActionObsolete` attribute while the Onboarding-portal uses this feature.
     public class TransferAsset2 : ActionBase, ISerializable, ITransferAsset
     {
         private const int MemoMaxLength = 80;
