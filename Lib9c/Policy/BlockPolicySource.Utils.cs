@@ -133,10 +133,13 @@ namespace Nekoyume.BlockChain.Policy
             return null;
         }
 
+#pragma warning disable S1172
         private static BlockPolicyViolationException ValidateMinerAuthorityRaw(
             Block<NCAction> block,
             IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy)
         {
+            return null;
+
             // For genesis block, any miner can mine.
             if (block.Index == 0)
             {
@@ -163,6 +166,8 @@ namespace Nekoyume.BlockChain.Policy
             Block<NCAction> block,
             IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy)
         {
+            return null;
+
             // If the set of permissioned miners is empty, any miner can mine.
             if (!permissionedMinersPolicy.IsTargetIndex(block.Index))
             {
