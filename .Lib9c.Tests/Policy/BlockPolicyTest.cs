@@ -13,6 +13,7 @@ namespace Lib9c.Tests
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
     using Libplanet.Blocks;
+    using Libplanet.Consensus;
     using Libplanet.Crypto;
     using Libplanet.Store;
     using Libplanet.Store.Trie;
@@ -247,7 +248,9 @@ namespace Lib9c.Tests
                         filter: index => index % 2 == 0,
                         value: miners.ToImmutableHashSet())),
                 permissionedMinersPolicy: null,
-                validatorsPolicy: null);
+                validatorsPolicy: ValidatorsPolicy.Default
+                    .Add(new SpannedSubPolicy<IEnumerable<PublicKey>>(
+                        0, null, null, new List<PublicKey> { adminPrivateKey.PublicKey })));
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -264,6 +267,14 @@ namespace Lib9c.Tests
                 renderers: new[] { blockPolicySource.BlockRenderer }
             );
 
+            BlockCommit GenerateBlockCommit(long height, BlockHash hash)
+            {
+                ImmutableArray<Vote> votes = ImmutableArray<Vote>.Empty
+                    .Add(new VoteMetadata(
+                        height, 0, hash, DateTimeOffset.UtcNow, adminPrivateKey.PublicKey, VoteFlag.Commit).Sign(adminPrivateKey));
+                return new BlockCommit(height, 0, hash, votes);
+            }
+
             blockChain.MakeTransaction(
                 adminPrivateKey,
                 new PolymorphicAction<ActionBase>[] { new DailyReward(), }
@@ -275,17 +286,23 @@ namespace Lib9c.Tests
             // Index 2. Only authorized miner can mine.
             Assert.Throws<BlockPolicyViolationException>(() =>
             {
-                blockChain.Append(blockChain.ProposeBlock(stranger));
+                blockChain.Append(blockChain.ProposeBlock(
+                    stranger,
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
             });
             // Old proof mining still works.
-            blockChain.Append(blockChain.ProposeBlock(minerKeys[0]));
+            blockChain.Append(blockChain.ProposeBlock(
+                minerKeys[0],
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
             // Index 3. Anyone can mine.
             blockChain.MakeTransaction(
                 adminPrivateKey,
                 new PolymorphicAction<ActionBase>[] { new DailyReward(), }
             );
-            blockChain.Append(blockChain.ProposeBlock(stranger));
+            blockChain.Append(blockChain.ProposeBlock(
+                stranger,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
             // Index 4. Again, only authorized miner can mine.
             blockChain.MakeTransaction(
@@ -294,22 +311,30 @@ namespace Lib9c.Tests
             );
             Assert.Throws<BlockPolicyViolationException>(() =>
             {
-                blockChain.Append(blockChain.ProposeBlock(stranger));
+                blockChain.Append(blockChain.ProposeBlock(
+                    stranger,
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
             });
             // No proof is required.
             blockChain.MakeTransaction(
                 adminPrivateKey,
                 new PolymorphicAction<ActionBase>[] { new DailyReward(), }
             );
-            blockChain.Append(blockChain.ProposeBlock(minerKeys[1]));
+            blockChain.Append(blockChain.ProposeBlock(
+                minerKeys[1],
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
             // Index 5, 6. Anyone can mine.
-            blockChain.Append(blockChain.ProposeBlock(stranger));
+            blockChain.Append(blockChain.ProposeBlock(
+                stranger,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
             blockChain.MakeTransaction(
                 adminPrivateKey,
                 new PolymorphicAction<ActionBase>[] { new DailyReward(), }
             );
-            blockChain.Append(blockChain.ProposeBlock(stranger));
+            blockChain.Append(blockChain.ProposeBlock(
+                stranger,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
         }
 
         [Fact]
@@ -328,7 +353,9 @@ namespace Lib9c.Tests
                 maxTransactionsPerSignerPerBlockPolicy: null,
                 authorizedMinersPolicy: null,
                 permissionedMinersPolicy: null,
-                validatorsPolicy: null);
+                validatorsPolicy: ValidatorsPolicy.Default
+                    .Add(new SpannedSubPolicy<IEnumerable<PublicKey>>(
+                        0, null, null, new List<PublicKey> { adminPublicKey })));
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
@@ -361,37 +388,52 @@ namespace Lib9c.Tests
                 return list;
             }
 
-            Assert.Equal(1, blockChain.Count);
-            Block<PolymorphicAction<ActionBase>> block1 = new BlockContent<PolymorphicAction<ActionBase>>
+            BlockCommit GenerateBlockCommit(long height, BlockHash hash)
             {
-                Index = 1,
-                PublicKey = adminPublicKey,
-                PreviousHash = blockChain.Tip.Hash,
-                Timestamp = DateTimeOffset.MinValue,
-                Transactions = GenerateTransactions(5),
-            }.Propose().Evaluate(adminPrivateKey, blockChain);
+                ImmutableArray<Vote> votes = ImmutableArray<Vote>.Empty
+                    .Add(new VoteMetadata(
+                        height, 0, hash, DateTimeOffset.UtcNow, adminPublicKey, VoteFlag.Commit)
+                        .Sign(adminPrivateKey));
+                return new BlockCommit(height, 0, hash, votes);
+            }
+
+            Assert.Equal(1, blockChain.Count);
+            var txs = GenerateTransactions(5).OrderBy(tx => tx.Id).ToList();
+            Block<PolymorphicAction<ActionBase>> block1 = new BlockContent<PolymorphicAction<ActionBase>>(
+                new BlockMetadata(
+                    index: 1,
+                    timestamp: DateTimeOffset.MinValue,
+                    publicKey: adminPublicKey,
+                    previousHash: blockChain.Tip.Hash,
+                    txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
+                    lastCommit: null),
+                transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
             blockChain.Append(block1);
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
-            Block<PolymorphicAction<ActionBase>> block2 = new BlockContent<PolymorphicAction<ActionBase>>
-            {
-                Index = 2,
-                PublicKey = adminPublicKey,
-                PreviousHash = blockChain.Tip.Hash,
-                Timestamp = DateTimeOffset.MinValue,
-                Transactions = GenerateTransactions(10),
-            }.Propose().Evaluate(adminPrivateKey, blockChain);
+            txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
+            Block<PolymorphicAction<ActionBase>> block2 = new BlockContent<PolymorphicAction<ActionBase>>(
+                new BlockMetadata(
+                    index: 2,
+                    timestamp: DateTimeOffset.MinValue,
+                    publicKey: adminPublicKey,
+                    previousHash: blockChain.Tip.Hash,
+                    txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)),
+                transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
             blockChain.Append(block2);
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block2.Hash));
-            Block<PolymorphicAction<ActionBase>> block3 = new BlockContent<PolymorphicAction<ActionBase>>
-            {
-                Index = 3,
-                PublicKey = adminPublicKey,
-                PreviousHash = blockChain.Tip.Hash,
-                Timestamp = DateTimeOffset.MinValue,
-                Transactions = GenerateTransactions(11),
-            }.Propose().Evaluate(adminPrivateKey, blockChain);
+            txs = GenerateTransactions(11).OrderBy(tx => tx.Id).ToList();
+            Block<PolymorphicAction<ActionBase>> block3 = new BlockContent<PolymorphicAction<ActionBase>>(
+                new BlockMetadata(
+                    index: 3,
+                    timestamp: DateTimeOffset.MinValue,
+                    publicKey: adminPublicKey,
+                    previousHash: blockChain.Tip.Hash,
+                    txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)),
+                transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
             Assert.Throws<InvalidBlockTxCountException>(() => blockChain.Append(block3));
             Assert.Equal(3, blockChain.Count);
             Assert.False(blockChain.ContainsBlock(block3.Hash));
@@ -415,7 +457,9 @@ namespace Lib9c.Tests
                     .Add(new SpannedSubPolicy<int>(2, null, null, 5)),
                 authorizedMinersPolicy: null,
                 permissionedMinersPolicy: null,
-                validatorsPolicy: null);
+                validatorsPolicy: ValidatorsPolicy.Default
+                    .Add(new SpannedSubPolicy<IEnumerable<PublicKey>>(
+                        0, null, null, new List<PublicKey> { adminPublicKey })));
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
@@ -448,29 +492,42 @@ namespace Lib9c.Tests
                 return list;
             }
 
-            Assert.Equal(1, blockChain.Count);
-            Block<PolymorphicAction<ActionBase>> block1 = new BlockContent<PolymorphicAction<ActionBase>>
+            BlockCommit GenerateBlockCommit(long height, BlockHash hash)
             {
-                Index = 1,
-                PublicKey = adminPublicKey,
-                PreviousHash = blockChain.Tip.Hash,
-                Timestamp = DateTimeOffset.MinValue,
-                Transactions = GenerateTransactions(10),
-            }.Propose().Evaluate(adminPrivateKey, blockChain);
+                ImmutableArray<Vote> votes = ImmutableArray<Vote>.Empty
+                    .Add(new VoteMetadata(
+                        height, 0, hash, DateTimeOffset.UtcNow, adminPublicKey, VoteFlag.Commit)
+                            .Sign(adminPrivateKey));
+                return new BlockCommit(height, 0, hash, votes);
+            }
+
+            Assert.Equal(1, blockChain.Count);
+            var txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
+            Block<PolymorphicAction<ActionBase>> block1 = new BlockContent<PolymorphicAction<ActionBase>>(
+                new BlockMetadata(
+                    index: 1,
+                    timestamp: DateTimeOffset.MinValue,
+                    publicKey: adminPublicKey,
+                    previousHash: blockChain.Tip.Hash,
+                    txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
+                    lastCommit: null),
+                transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
 
             // Should be fine since policy hasn't kicked in yet.
             blockChain.Append(block1);
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
 
-            Block<PolymorphicAction<ActionBase>> block2 = new BlockContent<PolymorphicAction<ActionBase>>
-            {
-                Index = 2,
-                PublicKey = adminPublicKey,
-                PreviousHash = blockChain.Tip.Hash,
-                Timestamp = DateTimeOffset.MinValue,
-                Transactions = GenerateTransactions(10),
-            }.Propose().Evaluate(adminPrivateKey, blockChain);
+            txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
+            Block<PolymorphicAction<ActionBase>> block2 = new BlockContent<PolymorphicAction<ActionBase>>(
+                new BlockMetadata(
+                    index: 2,
+                    timestamp: DateTimeOffset.MinValue,
+                    publicKey: adminPublicKey,
+                    previousHash: blockChain.Tip.Hash,
+                    txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)),
+                transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
 
             // Subpolicy kicks in.
             Assert.Throws<InvalidBlockTxCountPerSignerException>(() => blockChain.Append(block2));
@@ -480,14 +537,16 @@ namespace Lib9c.Tests
             nonce -= 10;
 
             // Limit should also pass.
-            Block<PolymorphicAction<ActionBase>> block3 = new BlockContent<PolymorphicAction<ActionBase>>
-            {
-                Index = 2,
-                PublicKey = adminPublicKey,
-                PreviousHash = blockChain.Tip.Hash,
-                Timestamp = DateTimeOffset.MinValue,
-                Transactions = GenerateTransactions(5),
-            }.Propose().Evaluate(adminPrivateKey, blockChain);
+            txs = GenerateTransactions(5).OrderBy(tx => tx.Id).ToList();
+            Block<PolymorphicAction<ActionBase>> block3 = new BlockContent<PolymorphicAction<ActionBase>>(
+                new BlockMetadata(
+                    index: 2,
+                    timestamp: DateTimeOffset.MinValue,
+                    publicKey: adminPublicKey,
+                    previousHash: blockChain.Tip.Hash,
+                    txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)),
+                transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
 
             blockChain.Append(block3);
             Assert.Equal(3, blockChain.Count);
@@ -530,13 +589,24 @@ namespace Lib9c.Tests
                             filter: null,
                             value: new Address[] { permissionedMinerKey.ToAddress() }
                                 .ToImmutableHashSet())),
-                    validatorsPolicy: null),
+                    validatorsPolicy: ValidatorsPolicy.Default
+                    .Add(new SpannedSubPolicy<IEnumerable<PublicKey>>(
+                        0, null, null, new List<PublicKey> { permissionedMinerKey.PublicKey }))),
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>(),
                 store,
                 stateStore,
                 genesis,
                 renderers: new[] { blockPolicySource.BlockRenderer }
             );
+
+            BlockCommit GenerateBlockCommit(long height, BlockHash hash)
+            {
+                ImmutableArray<Vote> votes = ImmutableArray<Vote>.Empty
+                    .Add(new VoteMetadata(
+                        height, 0, hash, DateTimeOffset.UtcNow, permissionedMinerKey.PublicKey, VoteFlag.Commit)
+                            .Sign(permissionedMinerKey));
+                return new BlockCommit(height, 0, hash, votes);
+            }
 
             // Old proof mining is still allowed.
             blockChain.StageTransaction(Transaction<PolymorphicAction<ActionBase>>.Create(
@@ -554,13 +624,19 @@ namespace Lib9c.Tests
                 genesis.Hash,
                 new PolymorphicAction<ActionBase>[] { }
             ));
-            blockChain.Append(blockChain.ProposeBlock(permissionedMinerKey));
+            blockChain.Append(blockChain.ProposeBlock(
+                permissionedMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
-            blockChain.Append(blockChain.ProposeBlock(permissionedMinerKey));
+            blockChain.Append(blockChain.ProposeBlock(
+                permissionedMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
             // Error, it isn't permissioned miner.
             Assert.Throws<BlockPolicyViolationException>(
-                () => blockChain.Append(blockChain.ProposeBlock(nonPermissionedMinerKey)));
+                () => blockChain.Append(blockChain.ProposeBlock(
+                    nonPermissionedMinerKey,
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash))));
         }
 
         [Fact]
@@ -618,13 +694,24 @@ namespace Lib9c.Tests
                             filter: index => index % 3 == 0,
                             value: new Address[] { permissionedMinerKey.ToAddress() }
                                 .ToImmutableHashSet())),
-                    validatorsPolicy: null),
+                    validatorsPolicy: ValidatorsPolicy.Default
+                    .Add(new SpannedSubPolicy<IEnumerable<PublicKey>>(
+                        0, null, null, new List<PublicKey> { authorizedMinerKey.PublicKey }))),
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>(),
                 store,
                 stateStore,
                 genesis,
                 renderers: new[] { blockPolicySource.BlockRenderer }
             );
+
+            BlockCommit GenerateBlockCommit(long height, BlockHash hash)
+            {
+                ImmutableArray<Vote> votes = ImmutableArray<Vote>.Empty
+                    .Add(new VoteMetadata(
+                        height, 0, hash, DateTimeOffset.UtcNow, authorizedMinerKey.PublicKey, VoteFlag.Commit)
+                            .Sign(authorizedMinerKey));
+                return new BlockCommit(height, 0, hash, votes);
+            }
 
             Transaction<PolymorphicAction<ActionBase>> proof;
 
@@ -633,53 +720,95 @@ namespace Lib9c.Tests
 
             // Index 2: Only authorized miner can mine.
             Assert.Throws<BlockPolicyViolationException>(
-                () => blockChain.Append(blockChain.ProposeBlock(permissionedMinerKey)));
+                () => blockChain.Append(blockChain.ProposeBlock(
+                    permissionedMinerKey,
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash))));
             Assert.Throws<BlockPolicyViolationException>(
-                () => blockChain.Append(blockChain.ProposeBlock(someMinerKey)));
-            blockChain.Append(blockChain.ProposeBlock(authorizedMinerKey));
+                () => blockChain.Append(blockChain.ProposeBlock(
+                    someMinerKey,
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash))));
+            blockChain.Append(blockChain.ProposeBlock(
+                authorizedMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
             // Index 3: Only permissioned miner can mine.
             Assert.Throws<BlockPolicyViolationException>(
-                () => blockChain.Append(blockChain.ProposeBlock(authorizedMinerKey)));
+                () => blockChain.Append(blockChain.ProposeBlock(
+                    authorizedMinerKey,
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash))));
             Assert.Throws<BlockPolicyViolationException>(
-                () => blockChain.Append(blockChain.ProposeBlock(someMinerKey)));
-            blockChain.Append(blockChain.ProposeBlock(permissionedMinerKey));
+                () => blockChain.Append(blockChain.ProposeBlock(
+                    someMinerKey,
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash))));
+            blockChain.Append(blockChain.ProposeBlock(
+                permissionedMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
             // Index 4: Only authorized miner can mine.
             Assert.Throws<BlockPolicyViolationException>(
-                () => blockChain.Append(blockChain.ProposeBlock(permissionedMinerKey)));
+                () => blockChain.Append(blockChain.ProposeBlock(
+                    permissionedMinerKey,
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash))));
             Assert.Throws<BlockPolicyViolationException>(
-                () => blockChain.Append(blockChain.ProposeBlock(someMinerKey)));
-            blockChain.Append(blockChain.ProposeBlock(authorizedMinerKey));
+                () => blockChain.Append(blockChain.ProposeBlock(
+                    someMinerKey,
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash))));
+            blockChain.Append(blockChain.ProposeBlock(
+                authorizedMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
             // Index 5: Anyone can mine again.
-            blockChain.Append(blockChain.ProposeBlock(someMinerKey));
+            blockChain.Append(blockChain.ProposeBlock(
+                someMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
             // Index 6: In case both authorized mining and permissioned mining apply,
             // only authorized miner can mine.
             Assert.Throws<BlockPolicyViolationException>(
-                () => blockChain.Append(blockChain.ProposeBlock(permissionedMinerKey)));
-            blockChain.Append(blockChain.ProposeBlock(authorizedMinerKey));
+                () => blockChain.Append(blockChain.ProposeBlock(
+                    permissionedMinerKey,
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash))));
+            blockChain.Append(blockChain.ProposeBlock(
+                authorizedMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
             // Index 7, 8, 9: Check authorized mining ended.
-            blockChain.Append(blockChain.ProposeBlock(someMinerKey));
-            blockChain.Append(blockChain.ProposeBlock(someMinerKey));
+            blockChain.Append(blockChain.ProposeBlock(
+                someMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
+            blockChain.Append(blockChain.ProposeBlock(
+                someMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
             Assert.Throws<BlockPolicyViolationException>(
-                () => blockChain.Append(blockChain.ProposeBlock(someMinerKey)));
+                () => blockChain.Append(blockChain.ProposeBlock(
+                    someMinerKey,
+                    lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash))));
             proof = blockChain.MakeTransaction(
                 permissionedMinerKey,
                 new PolymorphicAction<ActionBase>[] { action });
-            blockChain.Append(blockChain.ProposeBlock(permissionedMinerKey));
+            blockChain.Append(blockChain.ProposeBlock(
+                permissionedMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
             // Index 10, 11, 12: Check permissioned mining ended.
-            blockChain.Append(blockChain.ProposeBlock(someMinerKey));
-            blockChain.Append(blockChain.ProposeBlock(someMinerKey));
-            blockChain.Append(blockChain.ProposeBlock(someMinerKey));
+            blockChain.Append(blockChain.ProposeBlock(
+                someMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
+            blockChain.Append(blockChain.ProposeBlock(
+                someMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
+            blockChain.Append(blockChain.ProposeBlock(
+                someMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
 
             // Index 13, 14: Check authorized miner and permissioned miner can also mine
             // when policy is allowed for all miners.
-            blockChain.Append(blockChain.ProposeBlock(authorizedMinerKey));
-            blockChain.Append(blockChain.ProposeBlock(permissionedMinerKey));
+            blockChain.Append(blockChain.ProposeBlock(
+                authorizedMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
+            blockChain.Append(blockChain.ProposeBlock(
+                permissionedMinerKey,
+                lastCommit: GenerateBlockCommit(blockChain.Tip.Index, blockChain.Tip.Hash)));
         }
 
         private Block<PolymorphicAction<ActionBase>> MakeGenesisBlock(
