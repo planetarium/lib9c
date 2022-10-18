@@ -45,8 +45,10 @@ namespace Nekoyume.BlockChain
         {
             lock (_instanceLock)
             {
-                var secp256K1Signature = new byte[64];
-                _instance.SignatureParseDer(secp256K1Signature, signature);
+                var normalizedSignature = new byte[Secp256k1.SERIALIZED_DER_SIGNATURE_MAX_SIZE];
+                var secp256K1Signature = new byte[Secp256k1.SIGNATURE_LENGTH];
+                _instance.SignatureNormalize(normalizedSignature, signature);
+                _instance.SignatureParseDer(secp256K1Signature, normalizedSignature);
 
                 byte[] secp256K1PublicKey = new byte[64];
                 byte[] serializedPublicKey = publicKey.Format(false);
