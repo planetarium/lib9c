@@ -178,7 +178,7 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
                 permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet,
-                validatorsPolicy: ValidatorsPolicy.Mainnet);
+                validatorsPolicy: ValidatorsPolicy.Test);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for networks
