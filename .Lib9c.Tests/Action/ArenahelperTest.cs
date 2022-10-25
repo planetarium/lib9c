@@ -132,7 +132,7 @@ namespace Lib9c.Tests.Action
                     var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
                     for (var i = 0; i < max; i++)
                     {
-                        arenaInformation.BuyTicket(roundData);
+                        arenaInformation.BuyTicketV1(roundData);
 
                         var ticketPrice = 0;
                         var additionalTicketPrice = 0;

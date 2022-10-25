@@ -177,6 +177,7 @@ namespace Nekoyume.Arena
             return price;
         }
 
+        [Obsolete("not use since v100320, battle_arena6")]
         public static long GetMaxPurchasedTicketCount(ArenaSheet.RoundData roundData)
         {
             var result = (roundData.EndBlockIndex - roundData.StartBlockIndex + 1) / 1260;

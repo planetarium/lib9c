@@ -226,7 +226,7 @@ namespace Nekoyume.Action
                 context.BlockIndex, roundData.StartBlockIndex, interval);
             if (arenaInformation.TicketResetCount < currentTicketResetCount)
             {
-                arenaInformation.ResetTicket(currentTicketResetCount);
+                arenaInformation.ResetTicketV1(currentTicketResetCount);
             }
 
             if (roundData.ArenaType != ArenaType.OffSeason && ticket > 1)
@@ -247,7 +247,7 @@ namespace Nekoyume.Action
                 {
                     var ticketBalance = ArenaHelper.GetTicketPrice(roundData, arenaInformation, goldCurrency);
                     states = states.TransferAsset(context.Signer, arenaAdr, ticketBalance);
-                    arenaInformation.BuyTicket(roundData);
+                    arenaInformation.BuyTicketV1(roundData);
                 }
             }
 

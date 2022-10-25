@@ -1,3 +1,4 @@
+using System;
 using Bencodex.Types;
 using Libplanet;
 using Nekoyume.Action;
@@ -23,6 +24,7 @@ namespace Nekoyume.Model.Arena
         public int Ticket { get; private set; }
         public int TicketResetCount { get; private set; }
         public int PurchasedTicketCount { get; private set; }
+        public int PurchasedTicketCountDuringResetInterval { get; private set; }
 
         public ArenaInformation(Address avatarAddress, int championshipId, int round)
         {
@@ -38,6 +40,10 @@ namespace Nekoyume.Model.Arena
             Ticket = (Integer)serialized[3];
             TicketResetCount = (Integer)serialized[4];
             PurchasedTicketCount = (Integer)serialized[5];
+            if (serialized.Count > 6)
+            {
+                PurchasedTicketCountDuringResetInterval = (Integer)serialized[6];
+            }
         }
 
         public IValue Serialize()
@@ -48,7 +54,8 @@ namespace Nekoyume.Model.Arena
                 .Add(Lose)
                 .Add(Ticket)
                 .Add(TicketResetCount)
-                .Add(PurchasedTicketCount);
+                .Add(PurchasedTicketCount)
+                .Add(PurchasedTicketCountDuringResetInterval);
         }
 
         public void UseTicket(int ticketCount)
@@ -63,6 +70,27 @@ namespace Nekoyume.Model.Arena
         }
 
         public void BuyTicket(ArenaSheet.RoundData roundData)
+        {
+            var max = roundData.MaxPurchaseCount;
+            if (PurchasedTicketCount >= max)
+            {
+                throw new ExceedTicketPurchaseLimitException(
+                    $"[{nameof(ArenaInformation)}] PurchasedTicketCount({PurchasedTicketCount}) >= MAX({max})");
+            }
+
+            var intervalMax = roundData.MaxPurchaseCountWithInterval;
+            if (PurchasedTicketCountDuringResetInterval >= intervalMax)
+            {
+                throw new ExceedTicketPurchaseLimitException(
+                    $"[{nameof(ArenaInformation)}] PurchasedTicketCountDuringResetInterval({PurchasedTicketCountDuringResetInterval}) >= MAX({intervalMax})");
+            }
+
+            PurchasedTicketCount++;
+            PurchasedTicketCountDuringResetInterval++;
+        }
+
+        [Obsolete("not use since v100320, battle_arena6")]
+        public void BuyTicketV1(ArenaSheet.RoundData roundData)
         {
             var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
             if (PurchasedTicketCount >= max)
@@ -81,6 +109,14 @@ namespace Nekoyume.Model.Arena
         }
 
         public void ResetTicket(int resetCount)
+        {
+            Ticket = MaxTicketCount;
+            TicketResetCount = resetCount;
+            PurchasedTicketCountDuringResetInterval = 0;
+        }
+
+        [Obsolete("not use since v100320, battle_arena6")]
+        public void ResetTicketV1(int resetCount)
         {
             Ticket = MaxTicketCount;
             TicketResetCount = resetCount;

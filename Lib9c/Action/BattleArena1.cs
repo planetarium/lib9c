@@ -224,7 +224,7 @@ namespace Nekoyume.Action
                 context.BlockIndex, roundData.StartBlockIndex, interval);
             if (arenaInformation.TicketResetCount < currentTicketResetCount)
             {
-                arenaInformation.ResetTicket(currentTicketResetCount);
+                arenaInformation.ResetTicketV1(currentTicketResetCount);
             }
 
             arenaInformation.UseTicket(ticket);
