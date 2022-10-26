@@ -620,7 +620,92 @@ namespace Lib9c.Tests.Action
             }
 
             beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
-            var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
+            var max = roundData.MaxPurchaseCount;
+            for (var i = 0; i < max; i++)
+            {
+                try
+                {
+                    beforeInfo.BuyTicket(roundData);
+                }
+                catch (ExceedTicketPurchaseLimitDuringIntervalException)
+                {
+                    beforeInfo.ResetTicket(0);
+                    beforeInfo.BuyTicket(roundData);
+                }
+            }
+
+            beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
+            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            var price = ArenaHelper.GetTicketPrice(
+                roundData,
+                beforeInfo,
+                previousStates.GetGoldCurrency());
+            previousStates = previousStates.MintAsset(_agent1Address, price);
+
+            var action = new BattleArena
+            {
+                myAvatarAddress = _avatar1Address,
+                enemyAvatarAddress = _avatar2Address,
+                championshipId = championshipId,
+                round = round,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+            };
+
+            var blockIndex = roundData.StartBlockIndex + 1;
+            Assert.Throws<ExceedTicketPurchaseLimitException>(() => action.Execute(new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousStates = previousStates,
+                Signer = _agent1Address,
+                Random = new TestRandom(),
+            }));
+        }
+
+        [Fact]
+        public void Execute_ExceedTicketPurchaseLimitDuringIntervalException()
+        {
+            const int championshipId = 1;
+            const int round = 2;
+            var previousStates = _initialStates;
+            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+                championshipId,
+                out var row));
+
+            if (!row.TryGetRound(round, out var roundData))
+            {
+                throw new RoundNotFoundException(
+                    $"[{nameof(BattleArena)}] ChampionshipId({row.ChampionshipId}) - round({round})");
+            }
+
+            var random = new TestRandom();
+            previousStates = JoinArena(
+                previousStates,
+                _agent1Address,
+                _avatar1Address,
+                roundData.StartBlockIndex,
+                championshipId,
+                round,
+                random);
+            previousStates = JoinArena(
+                previousStates,
+                _agent2Address,
+                _avatar2Address,
+                roundData.StartBlockIndex,
+                championshipId,
+                round,
+                random);
+
+            var arenaInfoAdr =
+                ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
+            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            {
+                throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
+            }
+
+            beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
+            var max = roundData.MaxPurchaseCountWithInterval;
             for (var i = 0; i < max; i++)
             {
                 beforeInfo.BuyTicket(roundData);
@@ -645,7 +730,7 @@ namespace Lib9c.Tests.Action
             };
 
             var blockIndex = roundData.StartBlockIndex + 1;
-            Assert.Throws<ExceedTicketPurchaseLimitException>(() => action.Execute(new ActionContext
+            Assert.Throws<ExceedTicketPurchaseLimitDuringIntervalException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
                 PreviousStates = previousStates,
@@ -696,7 +781,7 @@ namespace Lib9c.Tests.Action
             }
 
             beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
-            var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
+            var max = roundData.MaxPurchaseCountWithInterval;
             previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
             for (var i = 0; i < max; i++)
             {

@@ -81,7 +81,7 @@ namespace Nekoyume.Model.Arena
             var intervalMax = roundData.MaxPurchaseCountWithInterval;
             if (PurchasedTicketCountDuringResetInterval >= intervalMax)
             {
-                throw new ExceedTicketPurchaseLimitException(
+                throw new ExceedTicketPurchaseLimitDuringIntervalException(
                     $"[{nameof(ArenaInformation)}] PurchasedTicketCountDuringResetInterval({PurchasedTicketCountDuringResetInterval}) >= MAX({intervalMax})");
             }
 
@@ -89,7 +89,7 @@ namespace Nekoyume.Model.Arena
             PurchasedTicketCountDuringResetInterval++;
         }
 
-        [Obsolete("not use since v100320, battle_arena6")]
+        [Obsolete("not use since v100320, battle_arena6. Use BuyTicket().")]
         public void BuyTicketV1(ArenaSheet.RoundData roundData)
         {
             var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
