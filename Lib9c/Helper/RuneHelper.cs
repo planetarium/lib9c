@@ -92,5 +92,11 @@ namespace Nekoyume.Helper
             }
             return result;
         }
+
+        public static FungibleAssetValue CalculateStakeReward(FungibleAssetValue stakeAmount)
+        {
+            var (quantity, _) = stakeAmount.DivRem(stakeAmount.Currency * 6000);
+            return Currency.Legacy("RUNE_GOLDENLEAF", 0, null) * quantity;
+        }
     }
 }

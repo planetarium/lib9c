@@ -51,5 +51,18 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(expectedRune, rune);
             }
         }
+
+        [Theory]
+        [InlineData(50, 0)]
+        [InlineData(500, 0)]
+        [InlineData(5000, 0)]
+        [InlineData(50000, 8)]
+        [InlineData(500000, 83)]
+        public void CalculateStakeReward(int amountGold, int expected)
+        {
+            var ncgCurrency = Currency.Legacy("NCG", 2, null);
+            var runeCurrency = Currency.Legacy("RUNE_GOLDENLEAF", 0, null);
+            Assert.Equal(expected * runeCurrency, RuneHelper.CalculateStakeReward(amountGold * ncgCurrency));
+        }
     }
 }
