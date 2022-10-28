@@ -12,9 +12,9 @@ namespace Lib9c.Tests.Model.Arena
         public void Serialize()
         {
             var avatarAddress = new PrivateKey().ToAddress();
-            var state = new ArenaInformation(avatarAddress, 1, 1);
+            var state = new ArenaInformationV1(avatarAddress, 1, 1);
             var serialized = (List)state.Serialize();
-            var deserialized = new ArenaInformation(serialized);
+            var deserialized = new ArenaInformationV1(serialized);
 
             Assert.Equal(state.Address, deserialized.Address);
             Assert.Equal(state.Win, deserialized.Win);

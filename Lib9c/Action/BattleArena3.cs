@@ -203,8 +203,8 @@ namespace Nekoyume.Action
             }
 
             var arenaInformationAdr =
-                ArenaInformation.DeriveAddress(myAvatarAddress, roundData.ChampionshipId, roundData.Round);
-            if (!states.TryGetArenaInformation(arenaInformationAdr, out var arenaInformation))
+                ArenaInformationV1.DeriveAddress(myAvatarAddress, roundData.ChampionshipId, roundData.Round);
+            if (!states.TryGetArenaInformationV1(arenaInformationAdr, out var arenaInformation))
             {
                 throw new ArenaInformationNotFoundException(
                     $"[{nameof(BattleArena3)}] my avatar address : {myAvatarAddress}" +
@@ -226,7 +226,7 @@ namespace Nekoyume.Action
                 context.BlockIndex, roundData.StartBlockIndex, interval);
             if (arenaInformation.TicketResetCount < currentTicketResetCount)
             {
-                arenaInformation.ResetTicketV1(currentTicketResetCount);
+                arenaInformation.ResetTicket(currentTicketResetCount);
             }
 
             if (roundData.ArenaType != ArenaType.OffSeason && ticket > 1)
@@ -245,9 +245,9 @@ namespace Nekoyume.Action
                 var goldCurrency = states.GetGoldCurrency();
                 for (var i = 0; i < ticket; i++)
                 {
-                    var ticketBalance = ArenaHelper.GetTicketPrice(roundData, arenaInformation, goldCurrency);
+                    var ticketBalance = ArenaHelper.GetTicketPrice(roundData, arenaInformation.PurchasedTicketCount, goldCurrency);
                     states = states.TransferAsset(context.Signer, arenaAdr, ticketBalance);
-                    arenaInformation.BuyTicketV1(roundData);
+                    arenaInformation.BuyTicket(roundData);
                 }
             }
 

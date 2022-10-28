@@ -930,6 +930,20 @@ namespace Nekoyume.Action
             return false;
         }
 
+        [Obsolete("not use since V100320. Use TryGetArenaInformation().")]
+        public static bool TryGetArenaInformationV1(this IAccountStateView states,
+            Address arenaInformationAddress, out ArenaInformationV1 arenaInformationV1)
+        {
+            if (states.TryGetState(arenaInformationAddress, out List list))
+            {
+                arenaInformationV1 = new ArenaInformationV1(list);
+                return true;
+            }
+
+            arenaInformationV1 = null;
+            return false;
+        }
+
         public static AvatarState GetEnemyAvatarState(this IAccountStateView states, Address avatarAddress)
         {
             AvatarState enemyAvatarState;

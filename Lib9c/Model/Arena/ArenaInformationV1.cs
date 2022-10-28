@@ -1,6 +1,8 @@
+using System;
 using Bencodex.Types;
 using Libplanet;
 using Nekoyume.Action;
+using Nekoyume.Arena;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
@@ -9,7 +11,7 @@ namespace Nekoyume.Model.Arena
     /// <summary>
     /// Introduced at https://github.com/planetarium/lib9c/pull/1029
     /// </summary>
-    public class ArenaInformation : IState
+    public class ArenaInformationV1 : IState
     {
         public static Address DeriveAddress(Address avatarAddress, int championshipId, int round) =>
             avatarAddress.Derive($"arena_information_{championshipId}_{round}");
@@ -22,15 +24,14 @@ namespace Nekoyume.Model.Arena
         public int Ticket { get; private set; }
         public int TicketResetCount { get; private set; }
         public int PurchasedTicketCount { get; private set; }
-        public int PurchasedTicketCountDuringResetInterval { get; private set; }
 
-        public ArenaInformation(Address avatarAddress, int championshipId, int round)
+        public ArenaInformationV1(Address avatarAddress, int championshipId, int round)
         {
             Address = DeriveAddress(avatarAddress, championshipId, round);
             Ticket = MaxTicketCount;
         }
 
-        public ArenaInformation(List serialized)
+        public ArenaInformationV1(List serialized)
         {
             Address = serialized[0].ToAddress();
             Win = (Integer)serialized[1];
@@ -38,7 +39,6 @@ namespace Nekoyume.Model.Arena
             Ticket = (Integer)serialized[3];
             TicketResetCount = (Integer)serialized[4];
             PurchasedTicketCount = (Integer)serialized[5];
-            PurchasedTicketCountDuringResetInterval = (Integer)serialized[6];
         }
 
         public IValue Serialize()
@@ -49,8 +49,7 @@ namespace Nekoyume.Model.Arena
                 .Add(Lose)
                 .Add(Ticket)
                 .Add(TicketResetCount)
-                .Add(PurchasedTicketCount)
-                .Add(PurchasedTicketCountDuringResetInterval);
+                .Add(PurchasedTicketCount);
         }
 
         public void UseTicket(int ticketCount)
@@ -58,7 +57,7 @@ namespace Nekoyume.Model.Arena
             if (Ticket < ticketCount)
             {
                 throw new NotEnoughTicketException(
-                    $"[{nameof(ArenaInformation)}] have({Ticket}) < use({ticketCount})");
+                    $"[{nameof(ArenaInformationV1)}] have({Ticket}) < use({ticketCount})");
             }
 
             Ticket -= ticketCount;
@@ -66,22 +65,14 @@ namespace Nekoyume.Model.Arena
 
         public void BuyTicket(ArenaSheet.RoundData roundData)
         {
-            var max = roundData.MaxPurchaseCount;
+            var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
             if (PurchasedTicketCount >= max)
             {
                 throw new ExceedTicketPurchaseLimitException(
-                    $"[{nameof(ArenaInformation)}] PurchasedTicketCount({PurchasedTicketCount}) >= MAX({max})");
-            }
-
-            var intervalMax = roundData.MaxPurchaseCountWithInterval;
-            if (PurchasedTicketCountDuringResetInterval >= intervalMax)
-            {
-                throw new ExceedTicketPurchaseLimitDuringIntervalException(
-                    $"[{nameof(ArenaInformation)}] PurchasedTicketCountDuringResetInterval({PurchasedTicketCountDuringResetInterval}) >= MAX({intervalMax})");
+                    $"[{nameof(ArenaInformationV1)}] PurchasedTicketCount({PurchasedTicketCount}) >= MAX({{max}})");
             }
 
             PurchasedTicketCount++;
-            PurchasedTicketCountDuringResetInterval++;
         }
 
         public void UpdateRecord(int win, int lose)
@@ -90,11 +81,11 @@ namespace Nekoyume.Model.Arena
             Lose += lose;
         }
 
+        [Obsolete("not use since v100320, battle_arena6")]
         public void ResetTicket(int resetCount)
         {
             Ticket = MaxTicketCount;
             TicketResetCount = resetCount;
-            PurchasedTicketCountDuringResetInterval = 0;
         }
     }
 }

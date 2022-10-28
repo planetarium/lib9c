@@ -167,13 +167,13 @@ namespace Nekoyume.Arena
 
         public static FungibleAssetValue GetTicketPrice(
             ArenaSheet.RoundData roundData,
-            ArenaInformation arenaInformation,
+            int purchasedTicketCount,
             Currency currency)
         {
             var ticketPrice = currency * roundData.TicketPrice;
             var addTicketPrice = currency * roundData.AdditionalTicketPrice;
             var price = ticketPrice.DivRem(100, out _) +
-                       (addTicketPrice.DivRem(100, out _) * arenaInformation.PurchasedTicketCount);
+                       (addTicketPrice.DivRem(100, out _) * purchasedTicketCount);
             return price;
         }
 

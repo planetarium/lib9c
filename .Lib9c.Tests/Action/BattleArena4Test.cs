@@ -251,8 +251,8 @@ namespace Lib9c.Tests.Action
             _state = JoinArena(_agent1Address, _avatar1Address, roundData.StartBlockIndex, championshipId, round, random);
             _state = JoinArena(_agent2Address, _avatar2Address, roundData.StartBlockIndex, championshipId, round, random);
 
-            var arenaInfoAdr = ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!_state.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            var arenaInfoAdr = ArenaInformationV1.DeriveAddress(_avatar1Address, championshipId, round);
+            if (!_state.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -263,9 +263,9 @@ namespace Lib9c.Tests.Action
                 _state = _state.SetState(arenaInfoAdr, beforeInfo.Serialize());
                 for (var i = 0; i < ticket; i++)
                 {
-                    var price = ArenaHelper.GetTicketPrice(roundData, beforeInfo, _state.GetGoldCurrency());
+                    var price = ArenaHelper.GetTicketPrice(roundData, beforeInfo.PurchasedTicketCount, _state.GetGoldCurrency());
                     _state = _state.MintAsset(_agent1Address, price);
-                    beforeInfo.BuyTicketV1(roundData);
+                    beforeInfo.BuyTicket(roundData);
                 }
             }
 
@@ -322,7 +322,7 @@ namespace Lib9c.Tests.Action
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            if (!_state.TryGetArenaInformation(arenaInfoAdr, out var afterInfo))
+            if (!_state.TryGetArenaInformationV1(arenaInfoAdr, out var afterInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -337,7 +337,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(expectedMyScore, myAfterScore.Score);
             Assert.Equal(expectedEnemyScore, enemyAfterScore.Score);
-            Assert.Equal(isPurchased ? 0 : ArenaInformation.MaxTicketCount, beforeInfo.Ticket);
+            Assert.Equal(isPurchased ? 0 : ArenaInformationV1.MaxTicketCount, beforeInfo.Ticket);
             Assert.Equal(0, beforeInfo.Win);
             Assert.Equal(0, beforeInfo.Lose);
 
@@ -643,8 +643,8 @@ namespace Lib9c.Tests.Action
             _state = JoinArena(_agent1Address, _avatar1Address, roundData.StartBlockIndex, championshipId, round, random);
             _state = JoinArena(_agent2Address, _avatar2Address, roundData.StartBlockIndex, championshipId, round, random);
 
-            var arenaInfoAdr = ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!_state.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            var arenaInfoAdr = ArenaInformationV1.DeriveAddress(_avatar1Address, championshipId, round);
+            if (!_state.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -693,8 +693,8 @@ namespace Lib9c.Tests.Action
             _state = JoinArena(_agent1Address, _avatar1Address, roundData.StartBlockIndex, championshipId, round, random);
             _state = JoinArena(_agent2Address, _avatar2Address, roundData.StartBlockIndex, championshipId, round, random);
 
-            var arenaInfoAdr = ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!_state.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            var arenaInfoAdr = ArenaInformationV1.DeriveAddress(_avatar1Address, championshipId, round);
+            if (!_state.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -740,21 +740,21 @@ namespace Lib9c.Tests.Action
             _state = JoinArena(_agent1Address, _avatar1Address, roundData.StartBlockIndex, championshipId, round, random);
             _state = JoinArena(_agent2Address, _avatar2Address, roundData.StartBlockIndex, championshipId, round, random);
 
-            var arenaInfoAdr = ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!_state.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            var arenaInfoAdr = ArenaInformationV1.DeriveAddress(_avatar1Address, championshipId, round);
+            if (!_state.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
 
-            beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
+            beforeInfo.UseTicket(ArenaInformationV1.MaxTicketCount);
             var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
             for (var i = 0; i < max; i++)
             {
-                beforeInfo.BuyTicketV1(roundData);
+                beforeInfo.BuyTicket(roundData);
             }
 
             _state = _state.SetState(arenaInfoAdr, beforeInfo.Serialize());
-            var price = ArenaHelper.GetTicketPrice(roundData, beforeInfo, _state.GetGoldCurrency());
+            var price = ArenaHelper.GetTicketPrice(roundData, beforeInfo.PurchasedTicketCount, _state.GetGoldCurrency());
             _state = _state.MintAsset(_agent1Address, price);
 
             var action = new BattleArena4()
@@ -798,20 +798,20 @@ namespace Lib9c.Tests.Action
             _state = JoinArena(_agent1Address, _avatar1Address, roundData.StartBlockIndex, championshipId, round, random);
             _state = JoinArena(_agent2Address, _avatar2Address, roundData.StartBlockIndex, championshipId, round, random);
 
-            var arenaInfoAdr = ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!_state.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            var arenaInfoAdr = ArenaInformationV1.DeriveAddress(_avatar1Address, championshipId, round);
+            if (!_state.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
 
-            beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
+            beforeInfo.UseTicket(ArenaInformationV1.MaxTicketCount);
             var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
             _state = _state.SetState(arenaInfoAdr, beforeInfo.Serialize());
             for (var i = 0; i < max; i++)
             {
-                var price = ArenaHelper.GetTicketPrice(roundData, beforeInfo, _state.GetGoldCurrency());
+                var price = ArenaHelper.GetTicketPrice(roundData, beforeInfo.PurchasedTicketCount, _state.GetGoldCurrency());
                 _state = _state.MintAsset(_agent1Address, price);
-                beforeInfo.BuyTicketV1(roundData);
+                beforeInfo.BuyTicket(roundData);
             }
 
             var action = new BattleArena4()
@@ -873,8 +873,8 @@ namespace Lib9c.Tests.Action
             _state = JoinArena(_agent1Address, _avatar1Address, roundData.StartBlockIndex, championshipId, round, random);
             _state = JoinArena(_agent2Address, _avatar2Address, roundData.StartBlockIndex, championshipId, round, random);
 
-            var arenaInfoAdr = ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!_state.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            var arenaInfoAdr = ArenaInformationV1.DeriveAddress(_avatar1Address, championshipId, round);
+            if (!_state.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -934,7 +934,7 @@ namespace Lib9c.Tests.Action
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            if (!_state.TryGetArenaInformation(arenaInfoAdr, out var afterInfo))
+            if (!_state.TryGetArenaInformationV1(arenaInfoAdr, out var afterInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }

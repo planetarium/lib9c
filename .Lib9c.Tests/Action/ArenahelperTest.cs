@@ -170,7 +170,7 @@ namespace Lib9c.Tests.Action
                         var major = sum / 100;
                         var miner = sum % 100;
                         var expectedPrice = new FungibleAssetValue(_state.GetGoldCurrency(), major, miner);
-                        var price = ArenaHelper.GetTicketPrice(roundData, arenaInformation, _state.GetGoldCurrency());
+                        var price = ArenaHelper.GetTicketPrice(roundData, arenaInformation.PurchasedTicketCount, _state.GetGoldCurrency());
 
                         Assert.Equal(expectedPrice, price);
                     }

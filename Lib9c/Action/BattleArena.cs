@@ -272,7 +272,7 @@ namespace Nekoyume.Action
                 for (var i = 0; i < ticket; i++)
                 {
                     var ticketBalance =
-                        ArenaHelper.GetTicketPrice(roundData, arenaInformation, goldCurrency);
+                        ArenaHelper.GetTicketPrice(roundData, arenaInformation.PurchasedTicketCount, goldCurrency);
                     states = states.TransferAsset(
                         context.Signer,
                         arenaAdr,
