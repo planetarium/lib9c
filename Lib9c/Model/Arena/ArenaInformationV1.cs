@@ -11,6 +11,7 @@ namespace Nekoyume.Model.Arena
     /// <summary>
     /// Introduced at https://github.com/planetarium/lib9c/pull/1029
     /// </summary>
+    [Obsolete("Use ArenaInformation")]
     public class ArenaInformationV1 : IState
     {
         public static Address DeriveAddress(Address avatarAddress, int championshipId, int round) =>

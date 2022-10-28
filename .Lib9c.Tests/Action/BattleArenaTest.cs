@@ -487,7 +487,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
+            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -552,7 +552,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
+            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -614,7 +614,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
+            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -699,7 +699,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
+            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -775,7 +775,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
+            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -895,7 +895,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(myAvatarAddress, championshipId, round);
-            if (!previousStates.TryGetArenaInformationV1(arenaInfoAdr, out var beforeInfo))
+            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -974,7 +974,7 @@ namespace Lib9c.Tests.Action
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            if (!nextStates.TryGetArenaInformationV1(arenaInfoAdr, out var afterInfo))
+            if (!nextStates.TryGetArenaInformation(arenaInfoAdr, out var afterInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }

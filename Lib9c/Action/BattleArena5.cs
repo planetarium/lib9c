@@ -78,12 +78,6 @@ namespace Nekoyume.Action
 
             CheckObsolete(BlockChain.Policy.BlockPolicySource.V100320ObsoleteIndex, context);
 
-            if (championshipId > 2 || championshipId == 2 && round >= 6)
-            {
-                throw new ActionObsoletedException(
-                    "battle_arena5 action is obsoleted. please use new action.");
-            }
-
             var addressesHex = GetSignerAndOtherAddressesHex(
                 context,
                 myAvatarAddress,
@@ -160,6 +154,12 @@ namespace Nekoyume.Action
                 throw new ThisArenaIsClosedException(
                     $"{nameof(BattleArena5)} : block index({context.BlockIndex}) - " +
                     $"championshipId({roundData.ChampionshipId}) - round({roundData.Round})");
+            }
+
+            if (championshipId > 2 || championshipId == 2 && round >= 6)
+            {
+                throw new ActionObsoletedException(
+                    "battle_arena5 action is obsoleted. please use new action.");
             }
 
             var arenaParticipantsAdr =

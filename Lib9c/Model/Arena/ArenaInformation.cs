@@ -7,7 +7,7 @@ using Nekoyume.TableData;
 namespace Nekoyume.Model.Arena
 {
     /// <summary>
-    /// Introduced at https://github.com/planetarium/lib9c/pull/1029
+    /// Hard forked at https://github.com/planetarium/lib9c/pull/1455
     /// </summary>
     public class ArenaInformation : IState
     {

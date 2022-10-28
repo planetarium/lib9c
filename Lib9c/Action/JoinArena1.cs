@@ -17,11 +17,11 @@ using Serilog;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Hard forked at https://github.com/planetarium/lib9c/pull/1455
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1156
     /// </summary>
     [Serializable]
-    [ActionType("join_arena2")]
-    public class JoinArena : GameAction
+    [ActionType("join_arena")]
+    public class JoinArena1 : GameAction
     {
         public Address avatarAddress;
         public int championshipId;
@@ -67,7 +67,7 @@ namespace Nekoyume.Action
                     out var agentState, out var avatarState, out _))
             {
                 throw new FailedLoadStateException(
-                    $"[{nameof(JoinArena)}] Aborted as the avatar state of the signer failed to load.");
+                    $"[{nameof(JoinArena1)}] Aborted as the avatar state of the signer failed to load.");
             }
 
             if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(
@@ -112,7 +112,7 @@ namespace Nekoyume.Action
             if (!row.TryGetRound(round, out var roundData))
             {
                 throw new RoundNotFoundException(
-                    $"[{nameof(JoinArena)}] ChampionshipId({row.ChampionshipId}) - round({round})");
+                    $"[{nameof(JoinArena1)}] ChampionshipId({row.ChampionshipId}) - round({round})");
             }
 
             // check fee
@@ -138,7 +138,7 @@ namespace Nekoyume.Action
                 if (medalCount < roundData.RequiredMedalCount)
                 {
                     throw new NotEnoughMedalException(
-                        $"[{nameof(JoinArena)}] have({medalCount}) < Required Medal Count({roundData.RequiredMedalCount}) ");
+                        $"[{nameof(JoinArena1)}] have({medalCount}) < Required Medal Count({roundData.RequiredMedalCount}) ");
                 }
             }
 
@@ -148,22 +148,22 @@ namespace Nekoyume.Action
             if (states.TryGetState(arenaScoreAdr, out List _))
             {
                 throw new ArenaScoreAlreadyContainsException(
-                    $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
+                    $"[{nameof(JoinArena1)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
             }
 
             var arenaScore = new ArenaScore(avatarAddress, roundData.ChampionshipId, roundData.Round);
 
             // create ArenaInformation
             var arenaInformationAdr =
-                ArenaInformation.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
+                ArenaInformationV1.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
             if (states.TryGetState(arenaInformationAdr, out List _))
             {
                 throw new ArenaInformationAlreadyContainsException(
-                    $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
+                    $"[{nameof(JoinArena1)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
             }
 
             var arenaInformation =
-                new ArenaInformation(avatarAddress, roundData.ChampionshipId, roundData.Round);
+                new ArenaInformationV1(avatarAddress, roundData.ChampionshipId, roundData.Round);
 
             // update ArenaParticipants
             var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(roundData.ChampionshipId, roundData.Round);
