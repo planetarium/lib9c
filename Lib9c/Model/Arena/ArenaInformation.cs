@@ -38,7 +38,10 @@ namespace Nekoyume.Model.Arena
             Ticket = (Integer)serialized[3];
             TicketResetCount = (Integer)serialized[4];
             PurchasedTicketCount = (Integer)serialized[5];
-            PurchasedTicketCountDuringResetInterval = (Integer)serialized[6];
+            if (serialized.Count > 6)
+            {
+                PurchasedTicketCountDuringResetInterval = (Integer) serialized[6];
+            }
         }
 
         public IValue Serialize()

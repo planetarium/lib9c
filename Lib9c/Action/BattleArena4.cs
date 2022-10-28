@@ -24,6 +24,7 @@ namespace Nekoyume.Action
     /// Hard forked at https://github.com/planetarium/lib9c/pull/1330
     /// </summary>
     [Serializable]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100320ObsoleteIndex)]
     [ActionType("battle_arena4")]
     public class BattleArena4 : GameAction
     {
@@ -72,6 +73,14 @@ namespace Nekoyume.Action
             if (context.Rehearsal)
             {
                 return states;
+            }
+
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100320ObsoleteIndex, context);
+
+            if (championshipId > 2 || championshipId == 2 && round >= 6)
+            {
+                throw new ActionObsoletedException(
+                    "battle_arena4 action is obsoleted. please use new action.");
             }
 
             var addressesHex =
