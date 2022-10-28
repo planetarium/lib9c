@@ -132,8 +132,8 @@ namespace Lib9c.Tests.Action
                     var max = roundData.MaxPurchaseCount;
                     for (var i = 0; i < max; i++)
                     {
-                        if (arenaInformation.PurchasedTicketCountDuringResetInterval >=
-                            roundData.MaxPurchaseCountWithInterval)
+                        if (arenaInformation.PurchasedTicketCountDuringInterval >=
+                            roundData.MaxPurchaseCountDuringInterval)
                         {
                             arenaInformation.ResetTicket(0);
                         }

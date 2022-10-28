@@ -705,7 +705,7 @@ namespace Lib9c.Tests.Action
             }
 
             beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
-            var max = roundData.MaxPurchaseCountWithInterval;
+            var max = roundData.MaxPurchaseCountDuringInterval;
             for (var i = 0; i < max; i++)
             {
                 beforeInfo.BuyTicket(roundData);
@@ -781,7 +781,7 @@ namespace Lib9c.Tests.Action
             }
 
             beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
-            var max = roundData.MaxPurchaseCountWithInterval;
+            var max = roundData.MaxPurchaseCountDuringInterval;
             previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
             for (var i = 0; i < max; i++)
             {

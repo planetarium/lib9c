@@ -24,7 +24,7 @@ namespace Nekoyume.TableData
             public long TicketPrice { get; }
             public long AdditionalTicketPrice { get; }
             public int MaxPurchaseCount { get; }
-            public int MaxPurchaseCountWithInterval { get; }
+            public int MaxPurchaseCountDuringInterval { get; }
 
             public RoundData(int championshipId,
                 int round,
@@ -36,7 +36,7 @@ namespace Nekoyume.TableData
                 long ticketPrice,
                 long additionalTicketPrice,
                 int maxPurchaseCount,
-                int maxPurchaseCountWithInterval)
+                int maxPurchaseCountDuringInterval)
             {
                 ChampionshipId = championshipId;
                 Round = round;
@@ -48,7 +48,7 @@ namespace Nekoyume.TableData
                 TicketPrice = ticketPrice;
                 AdditionalTicketPrice = additionalTicketPrice;
                 MaxPurchaseCount = maxPurchaseCount;
-                MaxPurchaseCountWithInterval = maxPurchaseCountWithInterval;
+                MaxPurchaseCountDuringInterval = maxPurchaseCountDuringInterval;
             }
 
             public bool IsTheRoundOpened(long blockIndex)

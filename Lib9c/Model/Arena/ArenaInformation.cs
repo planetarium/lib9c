@@ -22,7 +22,7 @@ namespace Nekoyume.Model.Arena
         public int Ticket { get; private set; }
         public int TicketResetCount { get; private set; }
         public int PurchasedTicketCount { get; private set; }
-        public int PurchasedTicketCountDuringResetInterval { get; private set; }
+        public int PurchasedTicketCountDuringInterval { get; private set; }
 
         public ArenaInformation(Address avatarAddress, int championshipId, int round)
         {
@@ -40,7 +40,7 @@ namespace Nekoyume.Model.Arena
             PurchasedTicketCount = (Integer)serialized[5];
             if (serialized.Count > 6)
             {
-                PurchasedTicketCountDuringResetInterval = (Integer) serialized[6];
+                PurchasedTicketCountDuringInterval = (Integer) serialized[6];
             }
         }
 
@@ -53,7 +53,7 @@ namespace Nekoyume.Model.Arena
                 .Add(Ticket)
                 .Add(TicketResetCount)
                 .Add(PurchasedTicketCount)
-                .Add(PurchasedTicketCountDuringResetInterval);
+                .Add(PurchasedTicketCountDuringInterval);
         }
 
         public void UseTicket(int ticketCount)
@@ -76,15 +76,15 @@ namespace Nekoyume.Model.Arena
                     $"[{nameof(ArenaInformation)}] PurchasedTicketCount({PurchasedTicketCount}) >= MAX({max})");
             }
 
-            var intervalMax = roundData.MaxPurchaseCountWithInterval;
-            if (PurchasedTicketCountDuringResetInterval >= intervalMax)
+            var intervalMax = roundData.MaxPurchaseCountDuringInterval;
+            if (PurchasedTicketCountDuringInterval >= intervalMax)
             {
                 throw new ExceedTicketPurchaseLimitDuringIntervalException(
-                    $"[{nameof(ArenaInformation)}] PurchasedTicketCountDuringResetInterval({PurchasedTicketCountDuringResetInterval}) >= MAX({intervalMax})");
+                    $"[{nameof(ArenaInformation)}] PurchasedTicketCountDuringResetInterval({PurchasedTicketCountDuringInterval}) >= MAX({intervalMax})");
             }
 
             PurchasedTicketCount++;
-            PurchasedTicketCountDuringResetInterval++;
+            PurchasedTicketCountDuringInterval++;
         }
 
         public void UpdateRecord(int win, int lose)
@@ -97,7 +97,7 @@ namespace Nekoyume.Model.Arena
         {
             Ticket = MaxTicketCount;
             TicketResetCount = resetCount;
-            PurchasedTicketCountDuringResetInterval = 0;
+            PurchasedTicketCountDuringInterval = 0;
         }
     }
 }
