@@ -24,16 +24,16 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("hack_and_slash18")]
-    public class HackAndSlash18 : GameAction
+    public class HackAndSlash18 : GameAction, IHackAndSlash18
     {
-        public List<Guid> Costumes;
-        public List<Guid> Equipments;
-        public List<Guid> Foods;
-        public int WorldId;
-        public int StageId;
-        public int? StageBuffId;
-        public Address AvatarAddress;
-        public int PlayCount = 1;
+        public List<Guid> Costumes { get; set; }
+        public List<Guid> Equipments { get; set; }
+        public List<Guid> Foods { get; set; }
+        public int WorldId { get; set; }
+        public int StageId { get; set; }
+        public int? StageBuffId { get; set; }
+        public Address AvatarAddress { get; set; }
+        public int PlayCount { get; set; } = 1;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {
