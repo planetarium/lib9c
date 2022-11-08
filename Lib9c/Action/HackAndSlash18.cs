@@ -26,14 +26,14 @@ namespace Nekoyume.Action
     [ActionType("hack_and_slash18")]
     public class HackAndSlash18 : IHackAndSlash18
     {
-        public List<Guid> Costumes { get; set; }
-        public List<Guid> Equipments { get; set; }
-        public List<Guid> Foods { get; set; }
-        public int WorldId { get; set; }
-        public int StageId { get; set; }
-        public int? StageBuffId { get; set; }
-        public Address AvatarAddress { get; set; }
-        public int PlayCount { get; set; } = 1;
+        public override List<Guid> Costumes { get; set; }
+        public override List<Guid> Equipments { get; set; }
+        public override List<Guid> Foods { get; set; }
+        public override int WorldId { get; set; }
+        public override int StageId { get; set; }
+        public override int? StageBuffId { get; set; }
+        public override Address AvatarAddress { get; set; }
+        public override int PlayCount { get; set; } = 1;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {

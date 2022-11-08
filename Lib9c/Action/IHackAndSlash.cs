@@ -4,16 +4,18 @@ using Libplanet;
 
 namespace Nekoyume.Action
 {
+#pragma warning disable S101
     public abstract class IHackAndSlash : GameAction
+#pragma warning restore S101
     {
-        public List<Guid> Costumes { get; set; }
-        public List<Guid> Equipments { get; set; }
-        public List<Guid> Foods { get; set; }
-        public List<int> Runes { get; set; }
-        public int WorldId { get; set; }
-        public int StageId { get; set; }
-        public int? StageBuffId { get; set; }
-        public Address AvatarAddress { get; set; }
-        public int PlayCount { get; set; }
+        public abstract List<Guid> Costumes { get; set; }
+        public abstract List<Guid> Equipments { get; set; }
+        public abstract List<Guid> Foods { get; set; }
+        public abstract List<int> Runes { get; set; }
+        public abstract int WorldId { get; set; }
+        public abstract int StageId { get; set; }
+        public abstract int? StageBuffId { get; set; }
+        public abstract Address AvatarAddress { get; set; }
+        public abstract int PlayCount { get; set; }
     }
 }
