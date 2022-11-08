@@ -4,15 +4,15 @@ using Libplanet;
 
 namespace Nekoyume.Action
 {
-    public interface IHackAndSlash18
+    public abstract class IHackAndSlash18 : GameAction
     {
-        List<Guid> Costumes { get; set; }
-        List<Guid> Equipments { get; set; }
-        List<Guid> Foods { get; set; }
-        int WorldId { get; set; }
-        int StageId { get; set; }
-        int? StageBuffId { get; set; }
-        Address AvatarAddress { get; set; }
-        int PlayCount { get; set; }
+        public List<Guid> Costumes { get; set; }
+        public List<Guid> Equipments { get; set; }
+        public List<Guid> Foods { get; set; }
+        public int WorldId { get; set; }
+        public int StageId { get; set; }
+        public int? StageBuffId { get; set; }
+        public Address AvatarAddress { get; set; }
+        public int PlayCount { get; set; }
     }
 }

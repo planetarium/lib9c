@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -27,7 +27,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("hack_and_slash19")]
-    public class HackAndSlash : GameAction, IHackAndSlash
+    public class HackAndSlash : IHackAndSlash
     {
         public List<Guid> Costumes { get; set; }
         public List<Guid> Equipments { get; set; }

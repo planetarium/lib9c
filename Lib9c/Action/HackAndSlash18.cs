@@ -24,7 +24,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("hack_and_slash18")]
-    public class HackAndSlash18 : GameAction, IHackAndSlash18
+    public class HackAndSlash18 : IHackAndSlash18
     {
         public List<Guid> Costumes { get; set; }
         public List<Guid> Equipments { get; set; }

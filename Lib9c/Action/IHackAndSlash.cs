@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
 using Libplanet;
-using Libplanet.Action;
 
 namespace Nekoyume.Action
 {
-    public interface IHackAndSlash
+    public abstract class IHackAndSlash : GameAction
     {
-        List<Guid> Costumes { get; set; }
-        List<Guid> Equipments { get; set; }
-        List<Guid> Foods { get; set; }
-        List<int> Runes { get; set; }
-        int WorldId { get; set; }
-        int StageId { get; set; }
-        int? StageBuffId { get; set; }
-        Address AvatarAddress { get; set; }
-        int PlayCount { get; set; }
+        public List<Guid> Costumes { get; set; }
+        public List<Guid> Equipments { get; set; }
+        public List<Guid> Foods { get; set; }
+        public List<int> Runes { get; set; }
+        public int WorldId { get; set; }
+        public int StageId { get; set; }
+        public int? StageBuffId { get; set; }
+        public Address AvatarAddress { get; set; }
+        public int PlayCount { get; set; }
     }
 }
