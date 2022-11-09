@@ -10,6 +10,7 @@ using Libplanet.Blockchain.Policies;
 using Libplanet.Tx;
 using Libplanet;
 using Libplanet.Blockchain.Renderers;
+using Libplanet.Consensus;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Model;
@@ -96,13 +97,13 @@ namespace Nekoyume.BlockChain.Policy
             new Address("636d187B4d434244A92B65B06B5e7da14b3810A9"),
         }.ToImmutableHashSet();
 
-        public static readonly ImmutableArray<PublicKey> Validators = new PublicKey[]
+        public static readonly ValidatorSet Validators = new ValidatorSet(new List<PublicKey>()
         {
             new PublicKey(ByteUtil.ParseHex("03c5053b7bc6f1718ef95442f508f0f44196ef36b2dd712768828daa4c25608efe")),
             new PublicKey(ByteUtil.ParseHex("03c43a4bccc99dca6206cf6d6070f2eaa72a544e503a70318cf1ac5db94fcb30b7")),
             new PublicKey(ByteUtil.ParseHex("03b2996c69e8064953bbaeac29d5043225607a1db8a3fd359863b9de440d002ee6")),
             new PublicKey(ByteUtil.ParseHex("034749ddaaec8548ac1c7d402611b9270aad07b861a0705944ed7a9f56be4ecc65")),
-        }.ToImmutableArray();
+        });
 
         public readonly ActionRenderer ActionRenderer = new ActionRenderer();
 
@@ -219,7 +220,7 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
             IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy,
             IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy,
-            IVariableSubPolicy<IEnumerable<PublicKey>> validatorsPolicy)
+            IVariableSubPolicy<ValidatorSet> validatorsPolicy)
         {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
@@ -277,7 +278,7 @@ namespace Nekoyume.BlockChain.Policy
                 getMaxTransactionsPerBlock: maxTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerSignerPerBlock: maxTransactionsPerSignerPerBlockPolicy.Getter,
                 isAllowedToMine: isAllowedToMine,
-                getValidators: validatorsPolicy.Getter);
+                getValidatorSet: validatorsPolicy.Getter);
 #endif
         }
 

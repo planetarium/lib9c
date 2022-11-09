@@ -249,8 +249,14 @@ namespace Lib9c.Tests
                         value: miners.ToImmutableHashSet())),
                 permissionedMinersPolicy: null,
                 validatorsPolicy: ValidatorsPolicy.Default
-                    .Add(new SpannedSubPolicy<IEnumerable<PublicKey>>(
-                        0, null, null, new List<PublicKey> { adminPrivateKey.PublicKey })));
+                    .Add(new SpannedSubPolicy<ValidatorSet>(
+                        0,
+                        null,
+                        null,
+                        new ValidatorSet(new List<PublicKey>
+                        {
+                            adminPrivateKey.PublicKey,
+                        }))));
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -271,7 +277,7 @@ namespace Lib9c.Tests
             {
                 ImmutableArray<Vote> votes = ImmutableArray<Vote>.Empty
                     .Add(new VoteMetadata(
-                        height, 0, hash, DateTimeOffset.UtcNow, adminPrivateKey.PublicKey, VoteFlag.Commit).Sign(adminPrivateKey));
+                        height, 0, hash, DateTimeOffset.UtcNow, adminPrivateKey.PublicKey, VoteFlag.PreCommit).Sign(adminPrivateKey));
                 return new BlockCommit(height, 0, hash, votes);
             }
 
@@ -354,8 +360,14 @@ namespace Lib9c.Tests
                 authorizedMinersPolicy: null,
                 permissionedMinersPolicy: null,
                 validatorsPolicy: ValidatorsPolicy.Default
-                    .Add(new SpannedSubPolicy<IEnumerable<PublicKey>>(
-                        0, null, null, new List<PublicKey> { adminPublicKey })));
+                    .Add(new SpannedSubPolicy<ValidatorSet>(
+                        0,
+                        null,
+                        null,
+                        new ValidatorSet(new List<PublicKey>
+                        {
+                            adminPublicKey,
+                        }))));
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
@@ -392,7 +404,7 @@ namespace Lib9c.Tests
             {
                 ImmutableArray<Vote> votes = ImmutableArray<Vote>.Empty
                     .Add(new VoteMetadata(
-                        height, 0, hash, DateTimeOffset.UtcNow, adminPublicKey, VoteFlag.Commit)
+                        height, 0, hash, DateTimeOffset.UtcNow, adminPublicKey, VoteFlag.PreCommit)
                         .Sign(adminPrivateKey));
                 return new BlockCommit(height, 0, hash, votes);
             }
@@ -458,8 +470,14 @@ namespace Lib9c.Tests
                 authorizedMinersPolicy: null,
                 permissionedMinersPolicy: null,
                 validatorsPolicy: ValidatorsPolicy.Default
-                    .Add(new SpannedSubPolicy<IEnumerable<PublicKey>>(
-                        0, null, null, new List<PublicKey> { adminPublicKey })));
+                    .Add(new SpannedSubPolicy<ValidatorSet>(
+                        0,
+                        null,
+                        null,
+                        new ValidatorSet(new List<PublicKey>
+                        {
+                            adminPublicKey,
+                        }))));
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
@@ -496,7 +514,7 @@ namespace Lib9c.Tests
             {
                 ImmutableArray<Vote> votes = ImmutableArray<Vote>.Empty
                     .Add(new VoteMetadata(
-                        height, 0, hash, DateTimeOffset.UtcNow, adminPublicKey, VoteFlag.Commit)
+                        height, 0, hash, DateTimeOffset.UtcNow, adminPublicKey, VoteFlag.PreCommit)
                             .Sign(adminPrivateKey));
                 return new BlockCommit(height, 0, hash, votes);
             }
@@ -590,8 +608,14 @@ namespace Lib9c.Tests
                             value: new Address[] { permissionedMinerKey.ToAddress() }
                                 .ToImmutableHashSet())),
                     validatorsPolicy: ValidatorsPolicy.Default
-                    .Add(new SpannedSubPolicy<IEnumerable<PublicKey>>(
-                        0, null, null, new List<PublicKey> { permissionedMinerKey.PublicKey }))),
+                    .Add(new SpannedSubPolicy<ValidatorSet>(
+                        0,
+                        null,
+                        null,
+                        new ValidatorSet(new List<PublicKey>
+                        {
+                            permissionedMinerKey.PublicKey,
+                        })))),
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>(),
                 store,
                 stateStore,
@@ -603,7 +627,7 @@ namespace Lib9c.Tests
             {
                 ImmutableArray<Vote> votes = ImmutableArray<Vote>.Empty
                     .Add(new VoteMetadata(
-                        height, 0, hash, DateTimeOffset.UtcNow, permissionedMinerKey.PublicKey, VoteFlag.Commit)
+                        height, 0, hash, DateTimeOffset.UtcNow, permissionedMinerKey.PublicKey, VoteFlag.PreCommit)
                             .Sign(permissionedMinerKey));
                 return new BlockCommit(height, 0, hash, votes);
             }
@@ -695,8 +719,14 @@ namespace Lib9c.Tests
                             value: new Address[] { permissionedMinerKey.ToAddress() }
                                 .ToImmutableHashSet())),
                     validatorsPolicy: ValidatorsPolicy.Default
-                    .Add(new SpannedSubPolicy<IEnumerable<PublicKey>>(
-                        0, null, null, new List<PublicKey> { authorizedMinerKey.PublicKey }))),
+                    .Add(new SpannedSubPolicy<ValidatorSet>(
+                        0,
+                        null,
+                        null,
+                        new ValidatorSet(new List<PublicKey>
+                        {
+                            authorizedMinerKey.PublicKey,
+                        })))),
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>(),
                 store,
                 stateStore,
@@ -708,7 +738,7 @@ namespace Lib9c.Tests
             {
                 ImmutableArray<Vote> votes = ImmutableArray<Vote>.Empty
                     .Add(new VoteMetadata(
-                        height, 0, hash, DateTimeOffset.UtcNow, authorizedMinerKey.PublicKey, VoteFlag.Commit)
+                        height, 0, hash, DateTimeOffset.UtcNow, authorizedMinerKey.PublicKey, VoteFlag.PreCommit)
                             .Sign(authorizedMinerKey));
                 return new BlockCommit(height, 0, hash, votes);
             }

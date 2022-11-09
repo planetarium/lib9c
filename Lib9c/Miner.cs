@@ -46,7 +46,7 @@ namespace Nekoyume.BlockChain
         /// </summary>
         /// <param name="lastCommit">List of lastCommits to be included.</param>
         /// <returns></returns>
-        public Block<T> ProposeBlock(BlockCommit? lastCommit)
+        public Block<T> ProposeBlock(BlockCommit lastCommit)
         {
             var txs = new HashSet<Transaction<T>>();
             var invalidTxs = txs;
