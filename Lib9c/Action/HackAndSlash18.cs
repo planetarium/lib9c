@@ -24,8 +24,9 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("hack_and_slash18")]
-    public class HackAndSlash18 : IHackAndSlash18
+    public class HackAndSlash18 : HackAndSlash18Base, IHackAndSlash
     {
+        public const long ObsoletedBlockIndex = 1L;
         public override List<Guid> Costumes { get; set; }
         public override List<Guid> Equipments { get; set; }
         public override List<Guid> Foods { get; set; }

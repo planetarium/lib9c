@@ -10,9 +10,10 @@ namespace Lib9c.Tests.Action
     public class HackAndSlashFactoryTest
     {
         [Theory]
-        [InlineData(null)]
-        [InlineData(1)]
-        public void HackAndSlash(int? stageBuffId)
+        [InlineData(18, null)]
+        [InlineData(19, 1)]
+        [InlineData(20, 1)]
+        public void HackAndSlash(int version, int? stageBuffId)
         {
             var costumes = new List<Guid>();
             var equipments = new List<Guid>();
@@ -20,7 +21,7 @@ namespace Lib9c.Tests.Action
             var runes = new List<int>();
             var avatarAddress = new PrivateKey().ToAddress();
             var action = HackAndSlashFactory.HackAndSlash(
-                2L,
+                version,
                 costumes,
                 equipments,
                 foods,
@@ -31,10 +32,25 @@ namespace Lib9c.Tests.Action
                 1,
                 stageBuffId
             );
-            Assert.IsType<HackAndSlash>(action);
-            var action2 = new HackAndSlash();
-            action2.LoadPlainValue(action.PlainValue);
-            Assert.Equal(action.PlainValue, action2.PlainValue);
+            IHackAndSlash action2 = null;
+            if (version == 18)
+            {
+                action2 = new HackAndSlash18();
+            }
+
+            if (version == 19)
+            {
+                action2 = new HackAndSlash();
+            }
+
+            if (version == 20)
+            {
+                action2 = new HackAndSlash20();
+            }
+
+            var ga = (GameAction)action2;
+            ga!.LoadPlainValue(action.PlainValue);
+            Assert.Equal(action.PlainValue, ga.PlainValue);
         }
     }
 }

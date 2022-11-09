@@ -7,7 +7,7 @@ namespace Nekoyume.Action
     public static class HackAndSlashFactory
     {
         public static GameAction HackAndSlash(
-            long blockIndex,
+            int version,
             List<Guid> costumes,
             List<Guid> equipments,
             List<Guid> foods,
@@ -19,17 +19,47 @@ namespace Nekoyume.Action
             int? stageBuffId = null
         )
         {
-            if (blockIndex > 1L)
+            switch (version)
             {
-                return (GameAction)HackAndSlash(costumes, equipments, foods, runes, worldId, stageId,
-                    avatarAddress, playCount, stageBuffId);
+                case 18:
+                    return HackAndSlash18(costumes, equipments, foods, worldId, stageId, avatarAddress,
+                        playCount, stageBuffId);
+                case 19:
+                    return HackAndSlash19(costumes, equipments, foods, runes, worldId, stageId,
+                        avatarAddress, playCount, stageBuffId);
+                default:
+                    return HackAndSlash20(costumes, equipments, foods, runes, worldId, stageId,
+                        avatarAddress, playCount, stageBuffId);
             }
-
-            return (GameAction)HackAndSlash18(costumes, equipments, foods, worldId, stageId, avatarAddress,
-                playCount, stageBuffId);
         }
 
-        public static IHackAndSlash HackAndSlash(
+        private static HackAndSlash19Base HackAndSlash20(
+            List<Guid> costumes,
+            List<Guid> equipments,
+            List<Guid> foods,
+            List<int> runes,
+            int worldId,
+            int stageId,
+            Address avatarAddress,
+            int playCount = 1,
+            int? stageBuffId = null
+        )
+        {
+            return new HackAndSlash20
+            {
+                Costumes = costumes,
+                Equipments = equipments,
+                Foods = foods,
+                Runes = runes,
+                WorldId = worldId,
+                StageId = stageId,
+                AvatarAddress = avatarAddress,
+                PlayCount = playCount,
+                StageBuffId = stageBuffId
+            };
+        }
+
+        private static HackAndSlash19Base HackAndSlash19(
             List<Guid> costumes,
             List<Guid> equipments,
             List<Guid> foods,
@@ -55,7 +85,7 @@ namespace Nekoyume.Action
             };
         }
 
-        public static IHackAndSlash18 HackAndSlash18(
+        private static HackAndSlash18Base HackAndSlash18(
             List<Guid> costumes,
             List<Guid> equipments,
             List<Guid> foods,

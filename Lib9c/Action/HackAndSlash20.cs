@@ -26,8 +26,8 @@ namespace Nekoyume.Action
     /// Hard forked at https://github.com/planetarium/lib9c/pull/1434
     /// </summary>
     [Serializable]
-    [ActionType("hack_and_slash19")]
-    public class HackAndSlash : HackAndSlash19Base, IHackAndSlash
+    [ActionType("hack_and_slash20")]
+    public class HackAndSlash20 : HackAndSlash19Base, IHackAndSlash
     {
         public override List<Guid> Costumes { get; set; }
         public override List<Guid> Equipments { get; set; }
