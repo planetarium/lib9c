@@ -7,6 +7,7 @@ using Libplanet.Assets;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
 using Libplanet.Blocks;
+using Libplanet.Consensus;
 using Libplanet.Crypto;
 using Libplanet.Tx;
 using Nekoyume.Action;
@@ -51,13 +52,8 @@ namespace Nekoyume.BlockChain.Policy
 
         public int GetMaxTransactionsPerSignerPerBlock(long index) => int.MaxValue;
 
-        public IEnumerable<PublicKey> GetValidators()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public IImmutableSet<Currency> NativeTokens => ImmutableHashSet<Currency>.Empty;
 
-        public IEnumerable<PublicKey> GetValidators(long index) => ImmutableArray<PublicKey>.Empty;
+        public ValidatorSet GetValidatorSet(long index) => new ValidatorSet(new List<PublicKey>());
     }
 }
