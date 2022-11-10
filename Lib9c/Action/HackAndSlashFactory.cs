@@ -33,7 +33,7 @@ namespace Nekoyume.Action
             }
         }
 
-        private static HackAndSlash19Base HackAndSlash20(
+        private static GameAction HackAndSlash20(
             List<Guid> costumes,
             List<Guid> equipments,
             List<Guid> foods,
@@ -59,7 +59,7 @@ namespace Nekoyume.Action
             };
         }
 
-        private static HackAndSlash19Base HackAndSlash19(
+        private static GameAction HackAndSlash19(
             List<Guid> costumes,
             List<Guid> equipments,
             List<Guid> foods,
@@ -85,7 +85,7 @@ namespace Nekoyume.Action
             };
         }
 
-        private static HackAndSlash18Base HackAndSlash18(
+        private static GameAction HackAndSlash18(
             List<Guid> costumes,
             List<Guid> equipments,
             List<Guid> foods,

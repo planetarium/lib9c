@@ -62,9 +62,9 @@ namespace Nekoyume.Action
             Extra = extra;
         }
 
-        public ActionBase.ActionEvaluation<ActionBase> ToActionEvaluation()
+        public ActionBase.ActionEvaluation<IAction> ToActionEvaluation()
         {
-            return new ActionBase.ActionEvaluation<ActionBase>
+            return new ActionBase.ActionEvaluation<IAction>
             {
                 Action =  Action is null ? new RewardGold() : Action.InnerAction,
                 Signer = Signer,
