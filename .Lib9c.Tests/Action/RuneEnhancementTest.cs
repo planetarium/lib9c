@@ -37,6 +37,7 @@ namespace Lib9c.Tests.Action
                 .OrderBy(x => x.StartedBlockIndex)
                 .First()
                 .StartedBlockIndex;
+            blockIndex = Math.Max(blockIndex, RuneEnhancement.AvailableBlockIndex);
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new State()
@@ -156,6 +157,104 @@ namespace Lib9c.Tests.Action
             Assert.Equal(runeState.Level + 1, nextRunState.Level);
         }
 
+        [Theory]
+        [InlineData(RuneEnhancement.AvailableBlockIndex - 1)]
+        public void Execute_Throw_ActionUnavailableException(long blockIndex)
+        {
+            var agentAddress = new PrivateKey().ToAddress();
+            var avatarAddress = new PrivateKey().ToAddress();
+            var sheets = TableSheetsImporter.ImportSheets();
+            var tableSheets = new TableSheets(sheets);
+
+            var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
+            var state = new State()
+                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetState(agentAddress, new AgentState(agentAddress).Serialize());
+
+            foreach (var (key, value) in sheets)
+            {
+                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var avatarState = new AvatarState(
+                avatarAddress,
+                agentAddress,
+                0,
+                tableSheets.GetAvatarSheets(),
+                new GameConfigState(),
+                default
+            );
+
+            var runeListSheet = state.GetSheet<RuneListSheet>();
+            var runeId = runeListSheet.First().Value.Id;
+            var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
+            var runeState = new RuneState(runeId);
+            state = state.SetState(runeStateAddress, runeState.Serialize());
+
+            var costSheet = state.GetSheet<RuneCostSheet>();
+            if (!costSheet.TryGetValue(runeId, out var costRow))
+            {
+                throw new RuneCostNotFoundException($"[{nameof(Execute)}] ");
+            }
+
+            if (!costRow.TryGetCost(runeState.Level + 1, out var cost))
+            {
+                throw new RuneCostDataNotFoundException($"[{nameof(Execute)}] ");
+            }
+
+            var runeSheet = state.GetSheet<RuneSheet>();
+            if (!runeSheet.TryGetValue(cost.RuneStoneId, out var runeRow))
+            {
+                throw new RuneNotFoundException($"[{nameof(Execute)}] ");
+            }
+
+            var ncgCurrency = state.GetGoldCurrency();
+            var crystalCurrency = CrystalCalculator.CRYSTAL;
+            var runeCurrency = Currency.Legacy(runeRow.Ticker, 0, minters: null);
+
+            var ncgBal = cost.NcgQuantity * ncgCurrency * 10000;
+            var crystalBal = cost.CrystalQuantity * crystalCurrency * 10000;
+            var runeBal = cost.RuneStoneQuantity * runeCurrency * 10000;
+
+            var rand = new TestRandom();
+            if (!RuneHelper.TryEnhancement(
+                    ncgBal,
+                    crystalBal,
+                    runeBal,
+                    ncgCurrency,
+                    crystalCurrency,
+                    runeCurrency,
+                    cost,
+                    rand,
+                    99,
+                    out var tryCount))
+            {
+                throw new RuneNotFoundException($"[{nameof(Execute)}] ");
+            }
+
+            state = state.MintAsset(agentAddress, ncgBal);
+            state = state.MintAsset(agentAddress, crystalBal);
+            state = state.MintAsset(avatarState.address, runeBal);
+
+            var action = new RuneEnhancement
+            {
+                AvatarAddress = avatarState.address,
+                RuneId = runeId,
+                TryCount = tryCount,
+            };
+            var ctx = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousStates = state,
+                Random = rand,
+                Rehearsal = false,
+                Signer = agentAddress,
+            };
+
+            Assert.Throws<ActionUnavailableException>(() =>
+                action.Execute(ctx));
+        }
+
         [Fact]
         public void Execute_RuneCostNotFoundException()
         {
@@ -167,6 +266,7 @@ namespace Lib9c.Tests.Action
                 .OrderBy(x => x.StartedBlockIndex)
                 .First()
                 .StartedBlockIndex;
+            blockIndex = Math.Max(blockIndex, RuneEnhancement.AvailableBlockIndex);
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new State()
@@ -220,6 +320,7 @@ namespace Lib9c.Tests.Action
                 .OrderBy(x => x.StartedBlockIndex)
                 .First()
                 .StartedBlockIndex;
+            blockIndex = Math.Max(blockIndex, RuneEnhancement.AvailableBlockIndex);
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new State()
@@ -288,6 +389,7 @@ namespace Lib9c.Tests.Action
                 .OrderBy(x => x.StartedBlockIndex)
                 .First()
                 .StartedBlockIndex;
+            blockIndex = Math.Max(blockIndex, RuneEnhancement.AvailableBlockIndex);
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new State()
@@ -401,6 +503,7 @@ namespace Lib9c.Tests.Action
                 .OrderBy(x => x.StartedBlockIndex)
                 .First()
                 .StartedBlockIndex;
+            blockIndex = Math.Max(blockIndex, RuneEnhancement.AvailableBlockIndex);
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new State()
