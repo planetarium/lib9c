@@ -13,6 +13,9 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1502
+    /// </summary>
     [Serializable]
     [ActionType("runeEnhancement")]
     public class RuneEnhancement : GameAction
