@@ -17,6 +17,11 @@ namespace Nekoyume.Action
     [ActionType("runeEnhancement")]
     public class RuneEnhancement : GameAction
     {
+        // NOTE:
+        // Current block index of main-net is 5_403_245(Mon Nov 14 2022 17:28:17 GMT+0900).
+        // Target release date of v100340 is Dec 14 2022 10:00:00 GMT+0900.
+        public const long AvailableBlockIndex = 5_617_000;
+
         public Address AvatarAddress;
         public int RuneId;
         public int TryCount = 1;
@@ -44,6 +49,9 @@ namespace Nekoyume.Action
             {
                 return states;
             }
+
+            // NOTE: This action is available since `BlockPolicySource.V100340ObsoleteIndex`.
+            CheckActionAvailable(AvailableBlockIndex - 1, context);
 
             var sheets = states.GetSheets(
                 sheetTypes: new[]
@@ -108,7 +116,8 @@ namespace Nekoyume.Action
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            var feeStoreAddress =
+                Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
 
             var ncgCost = cost.NcgQuantity * tryCount * ncgCurrency;
             if (cost.NcgQuantity > 0)
