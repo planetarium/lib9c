@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Helper;
+    using Nekoyume.Model;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
@@ -20,11 +21,13 @@ namespace Lib9c.Tests.Action
     {
         private readonly Address _agentAddress;
         private readonly TableSheets _tableSheets;
+        private readonly Currency _currency;
 
         public CreateAvatarTest()
         {
             _agentAddress = default;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
+            _currency = Currency.Legacy("NCG", 2, minters: null);
         }
 
         [Fact]
@@ -45,7 +48,8 @@ namespace Lib9c.Tests.Action
                 .SetState(
                     Addresses.GameConfig,
                     new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
-                );
+                )
+                .SetState(Addresses.GoldCurrency, new GoldCurrencyState(_currency).Serialize());
 
             foreach (var (key, value) in sheets)
             {
@@ -59,6 +63,7 @@ namespace Lib9c.Tests.Action
                 PreviousStates = state,
                 Signer = _agentAddress,
                 BlockIndex = 0,
+                Random = new TestRandom(),
             });
 
             var avatarAddress = _agentAddress.Derive(
@@ -77,7 +82,51 @@ namespace Lib9c.Tests.Action
             );
             Assert.True(agentState.avatarAddresses.Any());
             Assert.Equal("test", nextAvatarState.name);
-            Assert.Equal(50 * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
+            Assert.Equal(1_000_000_000 * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
+
+            // internal test
+            Assert.Equal(60, nextAvatarState.inventory.Equipments.Count());
+            Assert.All(nextAvatarState.inventory.Equipments, equipment => Assert.Equal(3, equipment.level));
+            Assert.Equal(290, nextAvatarState.level);
+            var player = new Player(nextAvatarState, _tableSheets.CharacterSheet, _tableSheets.CharacterLevelSheet, _tableSheets.EquipmentItemSetEffectSheet);
+            Assert.Equal(290, player.Level);
+            player.GetExp(0);
+            Assert.Equal(290, player.Level);
+            var equipmentList = nextAvatarState.inventory.Equipments.ToList();
+            nextAvatarState.ValidateItemRequirement(
+                equipmentList.Select(e => e.Id).ToList(),
+                equipmentList,
+                _tableSheets.ItemRequirementSheet,
+                _tableSheets.EquipmentItemRecipeSheet,
+                _tableSheets.EquipmentItemSubRecipeSheetV2,
+                _tableSheets.EquipmentItemOptionSheet,
+                string.Empty);
+            var soulStones = new List<(int id, int count)>
+            {
+                // Soulstone_1001
+                (1001, 2_500),
+                // Soulstone_1002
+                (1002, 2_500),
+                // Solustone_1003
+                (1003, 8_000),
+                // Solustone_1004
+                (1004, 8_000),
+            };
+            var petSheet = _tableSheets.PetSheet;
+            foreach (var values in soulStones)
+            {
+                var row = petSheet[values.id];
+                var soulStoneCurrency = Currency.Legacy(
+                    row.SoulStoneTicker,
+                    0,
+                    minters: null);
+                var soulStone = values.count * soulStoneCurrency;
+                Assert.Equal(soulStone, nextState.GetBalance(avatarAddress, soulStoneCurrency));
+            }
+
+            Assert.Equal(50_000 * _currency, nextState.GetBalance(_agentAddress, _currency));
+            Assert.True(nextAvatarState.worldInformation.IsWorldUnlocked(5));
+            Assert.True(nextAvatarState.worldInformation.IsStageCleared(250));
         }
 
         [Theory]
