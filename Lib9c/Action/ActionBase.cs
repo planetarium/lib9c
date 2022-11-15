@@ -15,7 +15,7 @@ using Serilog;
 using Nekoyume.Model.State;
 using Libplanet.Assets;
 using Nekoyume.BlockChain.Policy;
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID
 using UniRx;
 #else
 using System.Reactive.Subjects;

@@ -6,7 +6,7 @@ using Libplanet.Blocks;
 using Nekoyume.Action;
 using static Nekoyume.Action.ActionBase;
 using Serilog;
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID
 using UniRx;
 #else
 using System.Reactive.Subjects;
@@ -105,8 +105,10 @@ namespace Lib9c.Renderer
             // RenderReorgEnd should be handled by BlockRenderer
         }
 
-        public IObservable<ActionEvaluation<T>> EveryRender<T>() where T : ActionBase =>
-            ActionRenderSubject
+        public IObservable<ActionEvaluation<T>> EveryRender<T>() where T : ActionBase
+        {
+            UnityEngine.Debug.Log($"ActionRender.EveryRender<{typeof(T).Name}>()");
+            return ActionRenderSubject
                 .AsObservable()
                 .Where(eval => eval.Action is T)
                 .Select(eval => new ActionEvaluation<T>
@@ -120,7 +122,7 @@ namespace Lib9c.Renderer
                     RandomSeed = eval.RandomSeed,
                     Extra = eval.Extra,
                 });
-
+        }
         public IObservable<ActionEvaluation<T>> EveryUnrender<T>() where T : ActionBase =>
             ActionUnrenderSubject
                 .AsObservable()

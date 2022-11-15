@@ -124,7 +124,8 @@ namespace Nekoyume.Action
 
             sw.Restart();
             // FIXME Delete this check next hard fork.
-            bool useV100291Sheets = UseV100291Sheets(blockIndex);
+            //bool useV100291Sheets = UseV100291Sheets(blockIndex);
+            bool useV100291Sheets = false;
             var sheets = useV100291Sheets
                 ? states.GetSheetsV100291(
                     containQuestSheet: true,

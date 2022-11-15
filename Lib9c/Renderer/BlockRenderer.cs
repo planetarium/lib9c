@@ -3,7 +3,7 @@ using Libplanet.Action;
 using Libplanet.Blockchain.Renderers;
 using Libplanet.Blocks;
 using Nekoyume.Action;
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID
 using UniRx;
 #else
 using System.Reactive.Subjects;

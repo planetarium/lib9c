@@ -17,7 +17,7 @@ using Serilog;
 using Serilog.Events;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID
 using UniRx;
 #else
 #endif
@@ -40,7 +40,7 @@ namespace Nekoyume.BlockChain.Policy
         /// </summary>
         public const long AuthorizedMinersPolicyEndIndex = 5_716_957;
 
-        public const long AuthorizedMinersPolicyInterval = 50;
+        public const long AuthorizedMinersPolicyInterval = 99999999;
 
         public const int MaxTransactionsPerBlock = 100;
 

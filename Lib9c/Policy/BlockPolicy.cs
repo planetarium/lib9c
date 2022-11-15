@@ -33,9 +33,9 @@ namespace Nekoyume.BlockChain.Policy
             Func<Address, long, bool> isAllowedToMine = null)
             : base(
                 blockAction: blockAction,
-                blockInterval: blockInterval,
-                difficultyStability: difficultyStability,
-                minimumDifficulty: minimumDifficulty,
+                blockInterval: TimeSpan.FromMilliseconds(2000),
+                difficultyStability: 1,
+                minimumDifficulty: 10,
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,
                 canonicalChainComparer: canonicalChainComparer,
@@ -44,13 +44,25 @@ namespace Nekoyume.BlockChain.Policy
                 getMaxTransactionsPerBlock: getMaxTransactionsPerBlock,
                 getMaxTransactionsPerSignerPerBlock: getMaxTransactionsPerSignerPerBlock)
         {
+            UnityEngine.Debug.LogWarning("BlockPolicy constructor");
             _getNextBlockDifficulty = getNextBlockDifficulty;
             _isAllowedToMine = isAllowedToMine;
         }
 
-        public override long GetNextBlockDifficulty(BlockChain<NCAction> blockChain) =>
-             _getNextBlockDifficulty(blockChain);
-
+        //public override long GetNextBlockDifficulty(BlockChain<NCAction> blockChain) =>
+        //     _getNextBlockDifficulty(blockChain);
+        public override long GetNextBlockDifficulty(BlockChain<NCAction> blockChain)
+        {
+            System.Threading.Thread.Sleep(1950);
+            // default = 5000000
+            UnityEngine.Debug.Log($"this={this.ToString()} blockChain.Count={blockChain.Count}");
+            if(blockChain.Count == 0)
+            {
+                return 0L;
+            }
+            return 10;
+        }
+ 
         public bool IsAllowedToMine(Address miner, long index) =>
             _isAllowedToMine(miner, index);
     }
