@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Libplanet.Action;
+using Libplanet.Assets;
 using Nekoyume.Helper;
+using Nekoyume.Model.Item;
+using Nekoyume.Model.Skill;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
@@ -149,6 +154,110 @@ namespace Nekoyume.Action
 
             avatarState.UpdateQuestRewards(materialItemSheet);
 
+            // Prepare internal test
+            // Clear stage.
+            for (int i = 0; i < 100; i++)
+            {
+                avatarState.worldInformation.ClearStage(
+                    worldId: (i / 50) + 1,
+                    stageId: i + 1,
+                    clearedAt: 0,
+                    ctx.PreviousStates.GetSheet<WorldSheet>(),
+                    ctx.PreviousStates.GetSheet<WorldUnlockSheet>());
+            }
+
+            var recipeIds = new int[] {
+                9,      // 10123000, gladiator sword (land)
+                46,     // 10214000, casual clothes (wind)
+                95,     // 10332000, solid belt (water)
+                120,    // 10432000, mana necklace (water)
+                136,    // 10513000, thin ring (land)
+                136,    // 10513000, thin ring (land)
+            };
+            var equipmentSheet = states.GetSheet<EquipmentItemSheet>();
+            var recipeSheet = states.GetSheet<EquipmentItemRecipeSheet>();
+            var subRecipeSheet = states.GetSheet<EquipmentItemSubRecipeSheetV2>();
+            var optionSheet = states.GetSheet<EquipmentItemOptionSheet>();
+            var skillSheet = states.GetSheet<SkillSheet>();
+            var characterLevelSheet = states.GetSheet<CharacterLevelSheet>();
+            var enhancementCostSheet = states.GetSheet<EnhancementCostSheetV2>();
+
+            avatarState.level = 100;
+            avatarState.exp = characterLevelSheet[100].Exp;
+
+            // prepare equipments for test
+            foreach (var recipeId in recipeIds)
+            {
+                var recipeRow = recipeSheet[recipeId];
+                var subRecipeId = recipeRow.SubRecipeIds[1];
+                var subRecipeRow = subRecipeSheet[subRecipeId];
+                var equipmentRow = equipmentSheet[recipeRow.ResultEquipmentId];
+
+                var equipment = (Equipment)ItemFactory.CreateItemUsable(
+                    equipmentRow,
+                    context.Random.GenerateRandomGuid(),
+                    0L,
+                    madeWithMimisbrunnrRecipe: recipeRow.IsMimisBrunnrSubRecipe(subRecipeId));
+
+                foreach (var option in subRecipeRow.Options)
+                {
+                    var optionRow = optionSheet[option.Id];
+                    // Add stats.
+                    if (optionRow.StatType != StatType.NONE)
+                    {
+                        var statMap = new StatMap(optionRow.StatType, optionRow.StatMax);
+                        equipment.StatsMap.AddStatAdditionalValue(statMap.StatType, statMap.Value);
+                        equipment.optionCountFromCombination++;
+                    }
+                    // Add skills.
+                    else
+                    {
+                        var skillRow = skillSheet.OrderedList.First(r => r.Id == optionRow.SkillId);
+                        var skill = SkillFactory.Get(skillRow, optionRow.SkillDamageMax, optionRow.SkillChanceMax);
+                        if (skill != null)
+                        {
+                            equipment.Skills.Add(skill);
+                            equipment.optionCountFromCombination++;
+                        }
+                    }
+                }
+
+                for (int i = 1; i <= 3; ++i)
+                {
+                    var subType = equipment.ItemSubType;
+                    var grade = equipment.Grade;
+                    var costRow = enhancementCostSheet.Values
+                        .First(x => x.ItemSubType == subType &&
+                                    x.Grade == grade &&
+                                    x.Level == i);
+                    equipment.LevelUpV2(ctx.Random, costRow, true);
+                }
+
+                avatarState.inventory.AddItem(equipment);
+            }
+
+            // mint assets.
+            var ncgCurrency = states.GetGoldCurrency();
+            states = states.MintAsset(ctx.Signer, 100_000 * ncgCurrency);
+            var runes = new List<(int id, int count)>
+            {
+                // RUNE_ADVENTURER
+                (3001, 100_000),
+                // RUNE_FENRIR1
+                (1001, 100_000),
+                // RUNE_FENRIR2
+                (1002, 2_5000),
+                // RUNE_FENRIR3
+                (1003, 5_000)
+            };
+            var runeSheet = states.GetSheet<RuneSheet>();
+            foreach (var values in runes)
+            {
+                var row = runeSheet[values.id];
+                var rune = RuneHelper.ToFungibleAssetValue(row, values.count);
+                states = states.MintAsset(avatarAddress, rune);
+            }
+
             sw.Stop();
             Log.Verbose("{AddressesHex}CreateAvatar CreateAvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
@@ -159,7 +268,7 @@ namespace Nekoyume.Action
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
                 .SetState(avatarAddress, avatarState.SerializeV2())
-                .MintAsset(ctx.Signer, 50 * CrystalCalculator.CRYSTAL);
+                .MintAsset(ctx.Signer, 500_000_000 * CrystalCalculator.CRYSTAL);
         }
     }
 }
