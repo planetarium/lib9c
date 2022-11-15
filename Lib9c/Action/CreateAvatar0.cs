@@ -180,7 +180,7 @@ namespace Nekoyume.Action
             );
 
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
-            var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
+            var data = TestbedHelper.LoadTestbedCreateAvatarForQA();
             var costumeItemSheet = ctx.PreviousStates.GetSheet<CostumeItemSheet>();
             var equipmentItemSheet = ctx.PreviousStates.GetSheet<EquipmentItemSheet>();
             var consumableItemSheet = ctx.PreviousStates.GetSheet<ConsumableItemSheet>();

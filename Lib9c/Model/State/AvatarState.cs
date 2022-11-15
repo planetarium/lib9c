@@ -37,7 +37,15 @@ namespace Nekoyume.Model.State
         public MailBox mailBox;
         public long blockIndex;
         public long dailyRewardReceivedIndex;
+
+#if LIB9C_DEV_EXTENSIONS
+        // Infinite point for QA
+        public int actionPoint { get { return 120; } set { } }
+#else
         public int actionPoint;
+#endif
+
+
         public CollectionMap stageMap;
         public CollectionMap monsterMap;
         public CollectionMap itemMap;

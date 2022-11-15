@@ -177,6 +177,17 @@ namespace Lib9c.DevExtensions
             }
         }
 
+        private static TestbedCreateAvatar buffer = null;
+        public static TestbedCreateAvatar LoadTestbedCreateAvatarForQA()
+        {           
+            if (buffer is not null)
+            {
+                return buffer;
+            }
+            buffer = LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
+            return buffer;
+        }
+
         public static T LoadData<T>(string fileName)
         {
             var path = GetDataPath(fileName);

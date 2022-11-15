@@ -40,6 +40,7 @@ namespace Nekoyume.BlockChain.Policy
         /// </summary>
         public const long AuthorizedMinersPolicyEndIndex = 5_716_957;
 
+        // no limit to block quantity
         public const long AuthorizedMinersPolicyInterval = 99999999;
 
         public const int MaxTransactionsPerBlock = 100;
@@ -217,9 +218,9 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy)
         {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
-            var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
-             return new DebugPolicy(data.BlockDifficulty);
-#else
+            //var data = TestbedHelper.LoadTestbedCreateAvatarForQA();
+             //return new DebugPolicy(data.BlockDifficulty);
+//#else
             maxBlockBytesPolicy = maxBlockBytesPolicy
                 ?? MaxBlockBytesPolicy.Default;
             minTransactionsPerBlockPolicy = minTransactionsPerBlockPolicy
