@@ -48,7 +48,7 @@ namespace Nekoyume
 
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, privateKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minters: null);
 #pragma warning restore CS0618
             activatedAccounts = activatedAccounts ?? ImmutableHashSet<Address>.Empty;
             var initialStatesAction = new InitializeStates

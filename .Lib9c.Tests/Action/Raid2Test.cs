@@ -86,10 +86,7 @@ namespace Lib9c.Tests.Action
             bool raiderListExist
         )
         {
-            var blockIndex = _tableSheets.WorldBossListSheet.Values
-                .OrderBy(x => x.StartedBlockIndex)
-                .First()
-                .StartedBlockIndex;
+            var blockIndex = 7200L;
 
             var action = new Raid1
             {
