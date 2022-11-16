@@ -7,6 +7,7 @@ using Libplanet.Action;
 using Libplanet.Assets;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
+using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -53,7 +54,7 @@ namespace Nekoyume.Action
                 return states;
             }
 
-            // NOTE: This action is available since `BlockPolicySource.V100340ObsoleteIndex`.
+            // NOTE: This action is available since `AvailableBlockIndex`.
             CheckActionAvailable(AvailableBlockIndex - 1, context);
 
             var sheets = states.GetSheets(
@@ -98,7 +99,7 @@ namespace Nekoyume.Action
             }
 
             var runeSheet = sheets.GetSheet<RuneSheet>();
-            if (!runeSheet.TryGetValue(cost.RuneStoneId, out var runeRow))
+            if (!runeSheet.TryGetValue(runeState.RuneId, out var runeRow))
             {
                 throw new RuneNotFoundException(
                     $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress}");
@@ -115,12 +116,24 @@ namespace Nekoyume.Action
                     cost, context.Random, TryCount, out var tryCount))
             {
                 runeState.LevelUp();
+                states = states.SetState(runeStateAddress, runeState.Serialize());
+            }
+
+            // update rune slot
+            for (var i = 1; i < (int)BattleType.End; i++)
+            {
+                var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, (BattleType)i);
+                if (states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState))
+                {
+                    var runeSlotState = new RuneSlotState(rawRuneSlotState);
+                    runeSlotState.UpdateSlotItem(runeState);
+                    states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+                }
             }
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress =
-                Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
 
             var ncgCost = cost.NcgQuantity * tryCount * ncgCurrency;
             if (cost.NcgQuantity > 0)
@@ -140,7 +153,7 @@ namespace Nekoyume.Action
                 states = states.TransferAsset(AvatarAddress, feeStoreAddress, runeCost);
             }
 
-            return states.SetState(runeStateAddress, runeState.Serialize());
+            return states;
         }
     }
 }
