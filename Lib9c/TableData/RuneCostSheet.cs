@@ -14,7 +14,6 @@ namespace Nekoyume.TableData
         public class RuneCostData
         {
             public int Level { get; }
-            public int RuneStoneId { get; }
             public int RuneStoneQuantity { get; }
             public int CrystalQuantity { get; }
             public int NcgQuantity { get; }
@@ -22,14 +21,12 @@ namespace Nekoyume.TableData
 
             public RuneCostData(
                 int level,
-                int runeStoneId,
                 int runeStoneQuantity,
                 int crystalQuantity,
                 int ncgQuantity,
                 int levelUpSuccessRate)
             {
                 Level = level;
-                RuneStoneId = runeStoneId;
                 RuneStoneQuantity = runeStoneQuantity;
                 CrystalQuantity = crystalQuantity;
                 NcgQuantity = ncgQuantity;
@@ -50,14 +47,13 @@ namespace Nekoyume.TableData
             {
                 RuneId = ParseInt(fields[0]);
                 var level = ParseInt(fields[1]);
-                var runeStoneId = ParseInt(fields[2]);
-                var runeStoneQuantity = ParseInt(fields[3]);
-                var crystal = ParseInt(fields[4]);
-                var ncg = ParseInt(fields[5]);
-                var successRate = ParseInt(fields[6]);
+                var runeStoneQuantity = ParseInt(fields[2]);
+                var crystal = ParseInt(fields[3]);
+                var ncg = ParseInt(fields[4]);
+                var successRate = ParseInt(fields[5]);
                 Cost = new List<RuneCostData>
                 {
-                   new RuneCostData(level, runeStoneId, runeStoneQuantity, crystal, ncg, successRate)
+                   new RuneCostData(level, runeStoneQuantity, crystal, ncg, successRate)
                 };
             }
 

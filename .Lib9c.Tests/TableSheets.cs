@@ -209,6 +209,8 @@ namespace Lib9c.Tests
 
         public RuneCostSheet RuneCostSheet { get; private set; }
 
+        public RuneOptionSheet RuneOptionSheet { get; private set; }
+
         public void ItemSheetInitialize()
         {
             ItemSheet ??= new ItemSheet();
