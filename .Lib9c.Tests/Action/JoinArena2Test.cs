@@ -186,9 +186,7 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         [InlineData(0, 1, 1, "0")]
-        [InlineData(4_479_999L, 1, 2, "998001")]
-        [InlineData(4_480_001L, 1, 2, "998001")]
-        [InlineData(100, 1, 8, "998001")]
+        [InlineData(100, 1, 1, "0")]
         public void Execute(long blockIndex, int championshipId, int round, string balance)
         {
             var arenaSheet = _state.GetSheet<ArenaSheet>();
@@ -324,62 +322,6 @@ namespace Lib9c.Tests.Action
                 Signer = _signer,
                 Random = new TestRandom(),
                 BlockIndex = 1,
-            }));
-        }
-
-        [Theory]
-        [InlineData(8)]
-        public void Execute_NotEnoughMedalException(int round)
-        {
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
-            GetAvatarState(avatarState, out var equipments, out var costumes);
-            var preCurrency = 99800100000 * _currency;
-            var state = _state.MintAsset(_signer, preCurrency);
-
-            var action = new JoinArena()
-            {
-                championshipId = 1,
-                round = round,
-                costumes = costumes,
-                equipments = equipments,
-                runeInfos = new List<RuneSlotInfo>(),
-                avatarAddress = _avatarAddress,
-            };
-
-            Assert.Throws<NotEnoughMedalException>(() => action.Execute(new ActionContext()
-            {
-                PreviousStates = state,
-                Signer = _signer,
-                Random = new TestRandom(),
-                BlockIndex = 100,
-            }));
-        }
-
-        [Theory]
-        [InlineData(6, 0)] // discounted_entrance_fee
-        [InlineData(8, 100)] // entrance_fee
-        public void Execute_NotEnoughFungibleAssetValueException(int round, long blockIndex)
-        {
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
-            GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
-
-            var action = new JoinArena()
-            {
-                championshipId = 1,
-                round = round,
-                costumes = costumes,
-                equipments = equipments,
-                runeInfos = new List<RuneSlotInfo>(),
-                avatarAddress = _avatarAddress,
-            };
-
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() => action.Execute(new ActionContext()
-            {
-                PreviousStates = state,
-                Signer = _signer,
-                Random = new TestRandom(),
-                BlockIndex = blockIndex,
             }));
         }
 

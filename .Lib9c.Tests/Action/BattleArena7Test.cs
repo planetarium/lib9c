@@ -150,8 +150,6 @@ namespace Lib9c.Tests.Action
         [InlineData(4, 1, 1, false, 5, 5, 3)]
         [InlineData(4, 1, 1, true, 1, 5, 3)]
         [InlineData(4, 1, 1, true, 3, 5, 3)]
-        [InlineData(1, 1, 2, false, 1, 5, 3)]
-        [InlineData(1, 1, 2, true, 1, 5, 3)]
         public void Execute_Success(
             long nextBlockIndex,
             int championshipId,
@@ -179,9 +177,9 @@ namespace Lib9c.Tests.Action
         public void Execute_Backward_Compatibility_Success()
         {
             Execute(
+                4,
                 1,
                 1,
-                2,
                 default,
                 1,
                 2,
@@ -399,7 +397,7 @@ namespace Lib9c.Tests.Action
         public void Execute_ValidateScoreDifferenceException(bool isSigner)
         {
             const int championshipId = 1;
-            const int round = 2;
+            const int round = 1;
             var previousStates = _initialStates;
             Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
@@ -450,7 +448,7 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            var blockIndex = roundData.StartBlockIndex + 1;
+            var blockIndex = roundData.StartBlockIndex + 4;
             Assert.Throws<ValidateScoreDifferenceException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
@@ -464,7 +462,7 @@ namespace Lib9c.Tests.Action
         public void Execute_InsufficientBalanceException()
         {
             const int championshipId = 1;
-            const int round = 2;
+            const int round = 1;
             var previousStates = _initialStates;
             Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
@@ -516,71 +514,8 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            var blockIndex = roundData.StartBlockIndex + 1;
+            var blockIndex = roundData.StartBlockIndex + 4;
             Assert.Throws<InsufficientBalanceException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousStates = previousStates,
-                Signer = _agent1Address,
-                Random = new TestRandom(),
-            }));
-        }
-
-        [Fact]
-        public void Execute_ExceedPlayCountException()
-        {
-            const int championshipId = 1;
-            const int round = 2;
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
-                championshipId,
-                out var row));
-
-            if (!row.TryGetRound(round, out var roundData))
-            {
-                throw new RoundNotFoundException(
-                    $"[{nameof(BattleArena6)}] ChampionshipId({row.ChampionshipId}) - round({round})");
-            }
-
-            var random = new TestRandom();
-            previousStates = JoinArena(
-                previousStates,
-                _agent1Address,
-                _avatar1Address,
-                roundData.StartBlockIndex,
-                championshipId,
-                round,
-                random);
-            previousStates = JoinArena(
-                previousStates,
-                _agent2Address,
-                _avatar2Address,
-                roundData.StartBlockIndex,
-                championshipId,
-                round,
-                random);
-
-            var arenaInfoAdr =
-                ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
-            {
-                throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
-            }
-
-            var action = new BattleArena
-            {
-                myAvatarAddress = _avatar1Address,
-                enemyAvatarAddress = _avatar2Address,
-                championshipId = championshipId,
-                round = round,
-                ticket = 2,
-                costumes = new List<Guid>(),
-                equipments = new List<Guid>(),
-                runeInfos = new List<RuneSlotInfo>(),
-            };
-
-            var blockIndex = roundData.StartBlockIndex + 1;
-            Assert.Throws<ExceedPlayCountException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
                 PreviousStates = previousStates,
@@ -593,7 +528,7 @@ namespace Lib9c.Tests.Action
         public void Execute_ExceedTicketPurchaseLimitException()
         {
             const int championshipId = 1;
-            const int round = 2;
+            const int round = 1;
             var previousStates = _initialStates;
             Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
@@ -656,7 +591,7 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            var blockIndex = roundData.StartBlockIndex + 1;
+            var blockIndex = roundData.StartBlockIndex + 4;
             Assert.Throws<ExceedTicketPurchaseLimitException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
@@ -670,7 +605,7 @@ namespace Lib9c.Tests.Action
         public void Execute_ExceedTicketPurchaseLimitDuringIntervalException()
         {
             const int championshipId = 1;
-            const int round = 2;
+            const int round = 1;
             var previousStates = _initialStates;
             Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
@@ -738,7 +673,7 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            var blockIndex = roundData.StartBlockIndex + 1;
+            var blockIndex = roundData.StartBlockIndex + 4;
             Assert.Throws<ExceedTicketPurchaseLimitDuringIntervalException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
@@ -752,7 +687,7 @@ namespace Lib9c.Tests.Action
         public void Execute_CoolDownBlockException()
         {
             const int championshipId = 1;
-            const int round = 2;
+            const int round = 1;
             var previousStates = _initialStates;
             Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
@@ -814,7 +749,7 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            var blockIndex = roundData.StartBlockIndex + 1;
+            var blockIndex = roundData.StartBlockIndex + 4;
 
             var nextStates = action.Execute(new ActionContext
             {
