@@ -22,6 +22,8 @@ namespace Nekoyume.Action
     [ActionType("runeEnhancement01")]
     public class RuneEnhancement01 : GameAction, IRuneEnhancement
     {
+        public const int Version = 1;
+
         // NOTE:
         // Current block index of main-net is 5_403_245(Mon Nov 14 2022 17:28:17 GMT+0900).
         // Target release date of v100340 is Dec 14 2022 10:00:00 GMT+0900.

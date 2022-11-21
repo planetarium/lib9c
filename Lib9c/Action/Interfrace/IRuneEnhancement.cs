@@ -5,8 +5,10 @@ namespace Nekoyume.Action.Interface
 {
     public interface IRuneEnhancement: IAction
     {
-        public Address AvatarAddress { get; set; }
-        public int RuneId { get; set; }
-        public int TryCount { get; set; }
+        static int Version { get; }
+        static long AvailableBlockIndex { get; }
+        Address AvatarAddress { get; set; }
+        int RuneId { get; set; }
+        int TryCount { get; set; }
     }
 }
