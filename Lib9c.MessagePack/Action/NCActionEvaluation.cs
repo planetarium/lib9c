@@ -1,8 +1,4 @@
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
@@ -62,9 +58,9 @@ namespace Nekoyume.Action
             Extra = extra;
         }
 
-        public ActionBase.ActionEvaluation<ActionBase> ToActionEvaluation()
+        public ActionBase.ActionEvaluation<IAction> ToActionEvaluation()
         {
-            return new ActionBase.ActionEvaluation<ActionBase>
+            return new ActionBase.ActionEvaluation<IAction>
             {
                 Action =  Action is null ? new RewardGold() : Action.InnerAction,
                 Signer = Signer,

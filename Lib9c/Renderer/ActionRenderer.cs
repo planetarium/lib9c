@@ -20,17 +20,17 @@ namespace Lib9c.Renderer
 
     public class ActionRenderer : IActionRenderer<NCAction>
     {
-        public Subject<ActionEvaluation<ActionBase>> ActionRenderSubject { get; }
-            = new Subject<ActionEvaluation<ActionBase>>();
+        public Subject<ActionEvaluation<IAction>> ActionRenderSubject { get; }
+            = new Subject<ActionEvaluation<IAction>>();
 
-        public Subject<ActionEvaluation<ActionBase>> ActionUnrenderSubject { get; }
-            = new Subject<ActionEvaluation<ActionBase>>();
+        public Subject<ActionEvaluation<IAction>> ActionUnrenderSubject { get; }
+            = new Subject<ActionEvaluation<IAction>>();
 
         public readonly Subject<(NCBlock OldTip, NCBlock NewTip)> BlockEndSubject =
             new Subject<(NCBlock OldTip, NCBlock NewTip)>();
 
         public void RenderAction(IAction action, IActionContext context, IAccountStateDelta nextStates) =>
-            ActionRenderSubject.OnNext(new ActionEvaluation<ActionBase>
+            ActionRenderSubject.OnNext(new ActionEvaluation<IAction>
             {
                 Action = GetActionBase(action),
                 Signer = context.Signer,
@@ -42,7 +42,7 @@ namespace Lib9c.Renderer
             });
 
         public void UnrenderAction(IAction action, IActionContext context, IAccountStateDelta nextStates) =>
-            ActionUnrenderSubject.OnNext(new ActionEvaluation<ActionBase>
+            ActionUnrenderSubject.OnNext(new ActionEvaluation<IAction>
             {
                 Action = GetActionBase(action),
                 Signer = context.Signer,
@@ -60,7 +60,7 @@ namespace Lib9c.Renderer
         )
         {
             Log.Error(exception, "{action} execution failed.", action);
-            ActionRenderSubject.OnNext(new ActionEvaluation<ActionBase>
+            ActionRenderSubject.OnNext(new ActionEvaluation<IAction>
             {
                 Action = GetActionBase(action),
                 Signer = context.Signer,
@@ -74,7 +74,7 @@ namespace Lib9c.Renderer
         }
 
         public void UnrenderActionError(IAction action, IActionContext context, Exception exception) =>
-            ActionUnrenderSubject.OnNext(new ActionEvaluation<ActionBase>
+            ActionUnrenderSubject.OnNext(new ActionEvaluation<IAction>
             {
                 Action = GetActionBase(action),
                 Signer = context.Signer,
@@ -109,7 +109,7 @@ namespace Lib9c.Renderer
             // RenderReorgEnd should be handled by BlockRenderer
         }
 
-        public IObservable<ActionEvaluation<T>> EveryRender<T>() where T : ActionBase =>
+        public IObservable<ActionEvaluation<T>> EveryRender<T>() =>
             ActionRenderSubject
                 .AsObservable()
                 .Where(eval => eval.Action is T)
@@ -126,7 +126,7 @@ namespace Lib9c.Renderer
                     Extra = eval.Extra,
                 });
 
-        public IObservable<ActionEvaluation<T>> EveryUnrender<T>() where T : ActionBase =>
+        public IObservable<ActionEvaluation<T>> EveryUnrender<T>() =>
             ActionUnrenderSubject
                 .AsObservable()
                 .Where(eval => eval.Action is T)
@@ -142,11 +142,11 @@ namespace Lib9c.Renderer
                     RandomSeed = eval.RandomSeed
                 });
 
-        public IObservable<ActionEvaluation<ActionBase>> EveryRender(Address updatedAddress) =>
+        public IObservable<ActionEvaluation<IAction>> EveryRender(Address updatedAddress) =>
             ActionRenderSubject
                 .AsObservable()
                 .Where(eval => eval.OutputStates.UpdatedAddresses.Contains(updatedAddress))
-                .Select(eval => new ActionEvaluation<ActionBase>
+                .Select(eval => new ActionEvaluation<IAction>
                 {
                     Action = eval.Action,
                     Signer = eval.Signer,
@@ -159,11 +159,11 @@ namespace Lib9c.Renderer
                     Extra = eval.Extra,
                 });
 
-        public IObservable<ActionEvaluation<ActionBase>> EveryUnrender(Address updatedAddress) =>
+        public IObservable<ActionEvaluation<IAction>> EveryUnrender(Address updatedAddress) =>
             ActionUnrenderSubject
                 .AsObservable()
                 .Where(eval => eval.OutputStates.UpdatedAddresses.Contains(updatedAddress))
-                .Select(eval => new ActionEvaluation<ActionBase>
+                .Select(eval => new ActionEvaluation<IAction>
                 {
                     Action = eval.Action,
                     Signer = eval.Signer,
@@ -176,14 +176,14 @@ namespace Lib9c.Renderer
                     Extra = eval.Extra,
                 });
 
-        private static ActionBase GetActionBase(IAction action)
+        private static IAction GetActionBase(IAction action)
         {
             if (action is NCAction polymorphicAction)
             {
                 return polymorphicAction.InnerAction;
             }
 
-            return (ActionBase)action;
+            return action;
         }
     }
 }

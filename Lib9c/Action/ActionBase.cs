@@ -254,7 +254,6 @@ namespace Nekoyume.Action
         }
 
         public struct ActionEvaluation<T>
-            where T : ActionBase
         {
             public T Action { get; set; }
 
