@@ -1,7 +1,6 @@
 namespace Lib9c.Tests.Action
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
     using Libplanet;
@@ -14,12 +13,14 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
+    using static Nekoyume.Action.Factory.RuneEnhancementFactory;
 
-    public class RuneEnhancementTest
+    public class RuneEnhancement01Test
     {
+        private const int Version = 1;
         private readonly Currency _goldCurrency;
 
-        public RuneEnhancementTest()
+        public RuneEnhancement01Test()
         {
             _goldCurrency = Currency.Legacy("NCG", 2, null);
         }
@@ -37,7 +38,9 @@ namespace Lib9c.Tests.Action
                 .OrderBy(x => x.StartedBlockIndex)
                 .First()
                 .StartedBlockIndex;
-            blockIndex = Math.Max(blockIndex, RuneEnhancement.AvailableBlockIndex);
+            blockIndex = Math.Max(
+                blockIndex, GetAvailableBlockIndex(1)
+            );
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new State()
@@ -90,7 +93,18 @@ namespace Lib9c.Tests.Action
             var runeBal = cost.RuneStoneQuantity * runeCurrency * 10000;
 
             var rand = new TestRandom(seed);
-            if (!RuneHelper.TryEnhancement(ncgBal, crystalBal, runeBal, ncgCurrency, crystalCurrency, runeCurrency, cost, rand, 99, out var tryCount))
+            if (!RuneHelper.TryEnhancement(
+                    ncgBal,
+                    crystalBal,
+                    runeBal,
+                    ncgCurrency,
+                    crystalCurrency,
+                    runeCurrency,
+                    cost,
+                    rand,
+                    99,
+                    out var tryCount
+                ))
             {
                 throw new RuneNotFoundException($"[{nameof(Execute)}] ");
             }
@@ -99,12 +113,12 @@ namespace Lib9c.Tests.Action
             state = state.MintAsset(agentAddress, crystalBal);
             state = state.MintAsset(avatarState.address, runeBal);
 
-            var action = new RuneEnhancement()
-            {
-                AvatarAddress = avatarState.address,
-                RuneId = runeId,
-                TryCount = tryCount,
-            };
+            var action = RuneEnhancement(
+                version: Version,
+                avatarAddress: avatarState.address,
+                runeId: runeId,
+                tryCount: tryCount
+            );
             var ctx = new ActionContext
             {
                 BlockIndex = blockIndex,
@@ -157,10 +171,10 @@ namespace Lib9c.Tests.Action
             Assert.Equal(runeState.Level + 1, nextRunState.Level);
         }
 
-        [Theory]
-        [InlineData(RuneEnhancement.AvailableBlockIndex - 1)]
-        public void Execute_Throw_ActionUnavailableException(long blockIndex)
+        [Fact]
+        public void Execute_Throw_ActionUnavailableException()
         {
+            long blockIndex = GetAvailableBlockIndex(Version) - 1;
             var agentAddress = new PrivateKey().ToAddress();
             var avatarAddress = new PrivateKey().ToAddress();
             var sheets = TableSheetsImporter.ImportSheets();
@@ -236,12 +250,12 @@ namespace Lib9c.Tests.Action
             state = state.MintAsset(agentAddress, crystalBal);
             state = state.MintAsset(avatarState.address, runeBal);
 
-            var action = new RuneEnhancement
-            {
-                AvatarAddress = avatarState.address,
-                RuneId = runeId,
-                TryCount = tryCount,
-            };
+            var action = RuneEnhancement(
+                version: Version,
+                avatarAddress: avatarState.address,
+                runeId: runeId,
+                tryCount: tryCount
+            );
             var ctx = new ActionContext
             {
                 BlockIndex = blockIndex,
@@ -266,7 +280,7 @@ namespace Lib9c.Tests.Action
                 .OrderBy(x => x.StartedBlockIndex)
                 .First()
                 .StartedBlockIndex;
-            blockIndex = Math.Max(blockIndex, RuneEnhancement.AvailableBlockIndex);
+            blockIndex = Math.Max(blockIndex, GetAvailableBlockIndex(version: Version));
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new State()
@@ -292,12 +306,12 @@ namespace Lib9c.Tests.Action
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new RuneState(128381293);
             state = state.SetState(runeStateAddress, runeState.Serialize());
-            var action = new RuneEnhancement()
-            {
-                AvatarAddress = avatarState.address,
-                RuneId = runeId,
-                TryCount = 1,
-            };
+            var action = RuneEnhancement(
+                version: Version,
+                avatarAddress: avatarState.address,
+                runeId: runeId,
+                tryCount: 1
+            );
 
             Assert.Throws<RuneCostNotFoundException>(() =>
                 action.Execute(new ActionContext()
@@ -320,7 +334,7 @@ namespace Lib9c.Tests.Action
                 .OrderBy(x => x.StartedBlockIndex)
                 .First()
                 .StartedBlockIndex;
-            blockIndex = Math.Max(blockIndex, RuneEnhancement.AvailableBlockIndex);
+            blockIndex = Math.Max(blockIndex, GetAvailableBlockIndex(version: Version));
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new State()
@@ -358,12 +372,12 @@ namespace Lib9c.Tests.Action
 
             state = state.SetState(runeStateAddress, runeState.Serialize());
 
-            var action = new RuneEnhancement()
-            {
-                AvatarAddress = avatarState.address,
-                RuneId = runeId,
-                TryCount = 1,
-            };
+            var action = RuneEnhancement(
+                version: Version,
+                avatarAddress: avatarState.address,
+                runeId: runeId,
+                tryCount: 1
+            );
 
             Assert.Throws<RuneCostDataNotFoundException>(() =>
                 action.Execute(new ActionContext()
@@ -389,7 +403,7 @@ namespace Lib9c.Tests.Action
                 .OrderBy(x => x.StartedBlockIndex)
                 .First()
                 .StartedBlockIndex;
-            blockIndex = Math.Max(blockIndex, RuneEnhancement.AvailableBlockIndex);
+            blockIndex = Math.Max(blockIndex, GetAvailableBlockIndex(version: Version));
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new State()
@@ -452,12 +466,12 @@ namespace Lib9c.Tests.Action
                 state = state.MintAsset(avatarState.address, cost.RuneStoneQuantity * runeCurrency);
             }
 
-            var action = new RuneEnhancement()
-            {
-                AvatarAddress = avatarState.address,
-                RuneId = runeId,
-                TryCount = 1,
-            };
+            var action = RuneEnhancement(
+                version: Version,
+                avatarAddress: avatarState.address,
+                runeId: runeId,
+                tryCount: 1
+            );
             var ctx = new ActionContext
             {
                 BlockIndex = blockIndex,
@@ -503,7 +517,7 @@ namespace Lib9c.Tests.Action
                 .OrderBy(x => x.StartedBlockIndex)
                 .First()
                 .StartedBlockIndex;
-            blockIndex = Math.Max(blockIndex, RuneEnhancement.AvailableBlockIndex);
+            blockIndex = Math.Max(blockIndex, GetAvailableBlockIndex(version: Version));
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new State()
@@ -530,12 +544,12 @@ namespace Lib9c.Tests.Action
             var runeState = new RuneState(runeId);
             state = state.SetState(runeStateAddress, runeState.Serialize());
 
-            var action = new RuneEnhancement()
-            {
-                AvatarAddress = avatarState.address,
-                RuneId = runeId,
-                TryCount = 0,
-            };
+            var action = RuneEnhancement(
+                version: Version,
+                avatarAddress: avatarState.address,
+                runeId: runeId,
+                tryCount: 0
+            );
 
             Assert.Throws<TryCountIsZeroException>(() =>
                 action.Execute(new ActionContext()

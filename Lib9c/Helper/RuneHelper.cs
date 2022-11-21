@@ -5,6 +5,7 @@ using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
 using Nekoyume.Action;
+using Nekoyume.Action.Interface;
 using Nekoyume.Battle;
 using Nekoyume.TableData;
 
@@ -145,7 +146,7 @@ namespace Nekoyume.Helper
             {
                 if (tryCount == 1)
                 {
-                    throw new NotEnoughFungibleAssetValueException($"{nameof(RuneEnhancement)}" +
+                    throw new NotEnoughFungibleAssetValueException($"{nameof(IRuneEnhancement)}" +
                         $"[ncg:{ncg} < {ncgCost}] [crystal:{crystal} < {crystalCost}] [rune:{rune} < {runeCost}]");
                 }
 

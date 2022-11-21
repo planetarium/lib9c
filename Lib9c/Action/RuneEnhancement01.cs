@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.Action.Interface;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.EnumType;
@@ -18,17 +19,17 @@ namespace Nekoyume.Action
     /// Introduced at https://github.com/planetarium/lib9c/pull/1502
     /// </summary>
     [Serializable]
-    [ActionType("runeEnhancement")]
-    public class RuneEnhancement : GameAction
+    [ActionType("runeEnhancement01")]
+    public class RuneEnhancement01 : GameAction, IRuneEnhancement
     {
         // NOTE:
         // Current block index of main-net is 5_403_245(Mon Nov 14 2022 17:28:17 GMT+0900).
         // Target release date of v100340 is Dec 14 2022 10:00:00 GMT+0900.
         public const long AvailableBlockIndex = 5_617_000;
 
-        public Address AvatarAddress;
-        public int RuneId;
-        public int TryCount = 1;
+        public Address AvatarAddress { get; set; }
+        public int RuneId { get; set; }
+        public int TryCount { get; set; } = 1;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
@@ -88,21 +89,21 @@ namespace Nekoyume.Action
             if (!costSheet.TryGetValue(runeState.RuneId, out var costRow))
             {
                 throw new RuneCostNotFoundException(
-                    $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress}");
+                    $"[{nameof(RuneEnhancement01)}] my avatar address : {AvatarAddress}");
             }
 
             var targetLevel = runeState.Level + 1;
             if (!costRow.TryGetCost(targetLevel, out var cost))
             {
                 throw new RuneCostDataNotFoundException(
-                    $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress}");
+                    $"[{nameof(RuneEnhancement01)}] my avatar address : {AvatarAddress}");
             }
 
             var runeSheet = sheets.GetSheet<RuneSheet>();
             if (!runeSheet.TryGetValue(runeState.RuneId, out var runeRow))
             {
                 throw new RuneNotFoundException(
-                    $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress}");
+                    $"[{nameof(RuneEnhancement01)}] my avatar address : {AvatarAddress}");
             }
 
             var ncgCurrency = states.GetGoldCurrency();
