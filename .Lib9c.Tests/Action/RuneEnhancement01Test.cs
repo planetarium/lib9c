@@ -174,7 +174,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_ActionUnavailableException()
         {
-            long blockIndex = GetAvailableBlockIndex(Version) - 1;
+            var blockIndex = GetAvailableBlockIndex(Version) - 1;
             var agentAddress = new PrivateKey().ToAddress();
             var avatarAddress = new PrivateKey().ToAddress();
             var sheets = TableSheetsImporter.ImportSheets();
@@ -251,7 +251,7 @@ namespace Lib9c.Tests.Action
             state = state.MintAsset(avatarState.address, runeBal);
 
             var action = RuneEnhancement(
-                version: Version,
+                blockIndex: blockIndex,
                 avatarAddress: avatarState.address,
                 runeId: runeId,
                 tryCount: tryCount

@@ -16,6 +16,36 @@ namespace Nekoyume.Action.Factory
             }
         }
 
+        public static int GetAvailableVersion(long blockIndex)
+        {
+            if (blockIndex >= RuneEnhancement01.AvailableBlockIndex)
+            {
+                return RuneEnhancement01.Version;
+            }
+
+            return -1;
+        }
+
+        public static GameAction RuneEnhancement(
+            long blockIndex,
+            Address avatarAddress,
+            int runeId,
+            int tryCount
+        )
+        {
+            if (blockIndex >= RuneEnhancement01.AvailableBlockIndex)
+            {
+                return new RuneEnhancement01()
+                {
+                    AvatarAddress = avatarAddress,
+                    RuneId = runeId,
+                    TryCount = tryCount
+                };
+            }
+
+            return null;
+        }
+
         public static GameAction RuneEnhancement(
             int version,
             Address avatarAddress,
