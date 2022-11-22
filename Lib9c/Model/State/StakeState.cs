@@ -134,7 +134,7 @@ namespace Nekoyume.Model.State
 
         public int CalculateAccumulatedRuneRewards(long blockIndex)
         {
-            long startedBlockIndex = Math.Max(StartedBlockIndex, ClaimStakeReward.ObsoletedIndex);
+            long startedBlockIndex = Math.Max(StartedBlockIndex, ClaimStakeReward2.ObsoletedIndex);
             return CalculateStep(blockIndex, startedBlockIndex);
         }
 

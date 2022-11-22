@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Immutable;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Extensions;
-using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -16,18 +14,19 @@ namespace Nekoyume.Action
     /// Hard forked at https://github.com/planetarium/lib9c/pull/1371
     /// </summary>
     [ActionType(ActionTypeText)]
-    public class ClaimStakeReward3 : GameAction
+    public class ClaimStakeReward2 : GameAction
     {
-        private const string ActionTypeText = "claim_stake_reward3";
+        public const long ObsoletedIndex = 5_599_601L;
+        private const string ActionTypeText = "claim_stake_reward2";
 
         internal Address AvatarAddress { get; private set; }
 
-        public ClaimStakeReward3(Address avatarAddress)
+        public ClaimStakeReward2(Address avatarAddress)
         {
             AvatarAddress = avatarAddress;
         }
 
-        public ClaimStakeReward3()
+        public ClaimStakeReward2()
         {
         }
 
@@ -39,7 +38,7 @@ namespace Nekoyume.Action
             }
 
             var states = context.PreviousStates;
-            CheckActionAvailable(ClaimStakeReward.ObsoletedIndex, context);
+            CheckObsolete(ClaimStakeReward2.ObsoletedIndex, context);
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             if (!states.TryGetStakeState(context.Signer, out StakeState stakeState))
             {
@@ -90,34 +89,18 @@ namespace Nekoyume.Action
             var accumulatedRewards = stakeState.CalculateAccumulatedRewards(context.BlockIndex);
             foreach (var reward in rewards)
             {
-                switch (reward.Type)
+                var (quantity, _) = stakedAmount.DivRem(currency * reward.Rate);
+                if (quantity < 1 || reward.Type != StakeRegularRewardSheet.StakeRewardType.Item)
                 {
-                    case StakeRegularRewardSheet.StakeRewardType.Item:
-                        var (quantity, _) = stakedAmount.DivRem(currency * reward.Rate);
-                        if (quantity < 1)
-                        {
-                            // If the quantity is zero, it doesn't add the item into inventory.
-                            continue;
-                        }
-                        ItemSheet.Row row = itemSheet[reward.ItemId];
-                        ItemBase item = row is MaterialItemSheet.Row materialRow
-                            ? ItemFactory.CreateTradableMaterial(materialRow)
-                            : ItemFactory.CreateItem(row, context.Random);
-                        avatarState.inventory.AddItem(item, (int)quantity * accumulatedRewards);
-                        break;
-                    case StakeRegularRewardSheet.StakeRewardType.Rune:
-                        var accumulatedRuneRewards =
-                            stakeState.CalculateAccumulatedRuneRewards(context.BlockIndex);
-                        var runeReward = accumulatedRuneRewards * RuneHelper.CalculateStakeReward(stakedAmount, reward.Rate);
-                        if (runeReward < 1 * RuneHelper.StakeRune)
-                        {
-                            continue;
-                        }
-                        states = states.MintAsset(AvatarAddress, runeReward);
-                        break;
-                    default:
-                        break;
+                    // If the quantity is zero, it doesn't add the item into inventory.
+                    continue;
                 }
+
+                ItemSheet.Row row = itemSheet[reward.ItemId];
+                ItemBase item = row is MaterialItemSheet.Row materialRow
+                    ? ItemFactory.CreateTradableMaterial(materialRow)
+                    : ItemFactory.CreateItem(row, context.Random);
+                avatarState.inventory.AddItem(item, (int)quantity * accumulatedRewards);
             }
 
             if (states.TryGetSheet<StakeRegularFixedRewardSheet>(
