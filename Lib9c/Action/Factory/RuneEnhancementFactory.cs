@@ -43,7 +43,13 @@ namespace Nekoyume.Action.Factory
                 };
             }
 
-            return null;
+            // default: Version 1
+            return new RuneEnhancement01()
+            {
+                AvatarAddress = avatarAddress,
+                RuneId = runeId,
+                TryCount = tryCount
+            };
         }
 
         public static GameAction RuneEnhancement(
@@ -55,15 +61,13 @@ namespace Nekoyume.Action.Factory
         {
             switch (version)
             {
-                case 1:
+                default: // Version 1
                     return new RuneEnhancement01()
                     {
                         AvatarAddress = avatarAddress,
                         RuneId = runeId,
                         TryCount = tryCount
                     };
-                default:
-                    return null;
             }
         }
     }
