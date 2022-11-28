@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Blockchain;
 using Libplanet.Blocks;
+using Libplanet.Consensus;
 using Libplanet.Crypto;
 using Libplanet.Net;
 using Libplanet.Tx;
@@ -57,12 +60,12 @@ namespace Nekoyume.BlockChain
                 mainBlock = _mainChain.ProposeBlock(
                     _privateKey,
                     DateTimeOffset.UtcNow);
-                _mainChain.Append(mainBlock);
+                _mainChain.Append(mainBlock, _mainChain.GetBlockCommit(mainBlock.Index));
 
                 subBlock = _subChain.ProposeBlock(
                     _privateKey,
                     DateTimeOffset.UtcNow);
-                _subChain.Append(subBlock);
+                _subChain.Append(subBlock, _subChain.GetBlockCommit(subBlock.Index));
 
                 if (_reorgInterval != 0 && subBlock.Index % _reorgInterval == 0)
                 {
