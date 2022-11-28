@@ -76,7 +76,7 @@ namespace Nekoyume.Arena
             long currentBlockIndex,
             int avatarLevel)
         {
-            var fee = roundData.EntranceFee * avatarLevel * avatarLevel * CrystalCalculator.CRYSTAL;
+            var fee = CrystalCalculator.CalculateEntranceFee(avatarLevel, roundData.EntranceFee);
             return roundData.IsTheRoundOpened(currentBlockIndex)
                 ? fee
                 : fee.DivRem(100, out _) * 50;
@@ -177,6 +177,7 @@ namespace Nekoyume.Arena
             return price;
         }
 
+        [Obsolete("not use since v100320, battle_arena6. Use `ArenaSheet.RoundData.MaxPurchaseCount`")]
         public static long GetMaxPurchasedTicketCount(ArenaSheet.RoundData roundData)
         {
             var result = (roundData.EndBlockIndex - roundData.StartBlockIndex + 1) / 1260;

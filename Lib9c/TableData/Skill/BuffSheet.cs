@@ -51,7 +51,7 @@ namespace Nekoyume.TableData
             }
         }
 
-        public BuffSheet() : base(nameof(BuffSheet))
+        public BuffSheet() : base(nameof(StatBuffSheet))
         {
         }
     }

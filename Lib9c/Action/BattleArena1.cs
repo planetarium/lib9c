@@ -9,6 +9,7 @@ using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
+using Nekoyume.Model;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.EnumType;
@@ -23,6 +24,7 @@ namespace Nekoyume.Action
     /// Introduced at https://github.com/planetarium/lib9c/pull/1156
     /// </summary>
     [Serializable]
+    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100290ObsoleteIndex)]
     [ActionType("battle_arena")]
     public class BattleArena1 : GameAction
     {
@@ -73,6 +75,8 @@ namespace Nekoyume.Action
                 return states;
             }
 
+            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100290ObsoleteIndex, context);
+
             var addressesHex =
                 GetSignerAndOtherAddressesHex(context, myAvatarAddress, enemyAvatarAddress);
 
@@ -104,7 +108,7 @@ namespace Nekoyume.Action
                     world.StageClearedId);
             }
 
-            var sheets = states.GetSheets(
+            var sheets =states.GetSheetsV100291(
                 containArenaSimulatorSheets: true,
                 sheetTypes: new[]
                 {
@@ -234,7 +238,7 @@ namespace Nekoyume.Action
             ExtraMyArenaPlayerDigest = new ArenaPlayerDigest(avatarState, myArenaAvatarState);
             ExtraEnemyArenaPlayerDigest = new ArenaPlayerDigest(enemyAvatarState, enemyArenaAvatarState);
             ExtraPreviousMyScore = myArenaScore.Score;
-            var arenaSheets = sheets.GetArenaSimulatorSheets();
+            var arenaSheets = sheets.GetArenaSimulatorSheets_v100291();
             var winCount = 0;
             var defeatCount = 0;
             var rewards = new List<ItemBase>();

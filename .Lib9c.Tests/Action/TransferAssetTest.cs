@@ -46,14 +46,36 @@ namespace Lib9c.Tests.Action
                 new TransferAsset(_sender, _recipient, _currency * 100, new string(' ', 100)));
         }
 
-        [Fact]
-        public void Execute()
+        [Theory]
+        // activation by derive address.
+        [InlineData(true, false, false)]
+        // activation by ActivatedAccountsState.
+        [InlineData(false, true, false)]
+        // state exist.
+        [InlineData(false, false, true)]
+        public void Execute(bool activate, bool legacyActivate, bool stateExist)
         {
             var balance = ImmutableDictionary<(Address, Currency), FungibleAssetValue>.Empty
                 .Add((_sender, _currency), _currency * 1000)
                 .Add((_recipient, _currency), _currency * 10);
-            var state = ImmutableDictionary<Address, IValue>.Empty
-                .Add(_recipient.Derive(ActivationKey.DeriveKey), true.Serialize());
+            var state = ImmutableDictionary<Address, IValue>.Empty;
+            if (activate)
+            {
+                state = state.Add(_recipient.Derive(ActivationKey.DeriveKey), true.Serialize());
+            }
+
+            if (legacyActivate)
+            {
+                var activatedAccountState = new ActivatedAccountsState();
+                activatedAccountState = activatedAccountState.AddAccount(_recipient);
+                state = state.Add(activatedAccountState.address, activatedAccountState.Serialize());
+            }
+
+            if (stateExist)
+            {
+                state = state.Add(_recipient, new AgentState(_recipient).Serialize());
+            }
+
             var prevState = new State(
                 state: state,
                 balance: balance
@@ -122,15 +144,6 @@ namespace Lib9c.Tests.Action
                 amount: _currency * 100
             );
 
-            // No exception should be thrown when its index is less then 380000.
-            _ = action.Execute(new ActionContext()
-            {
-                PreviousStates = prevState,
-                Signer = _sender,
-                Rehearsal = false,
-                BlockIndex = 1,
-            });
-
             var exc = Assert.Throws<InvalidTransferRecipientException>(() =>
             {
                 _ = action.Execute(new ActionContext()
@@ -138,7 +151,7 @@ namespace Lib9c.Tests.Action
                     PreviousStates = prevState,
                     Signer = _sender,
                     Rehearsal = false,
-                    BlockIndex = 380001,
+                    BlockIndex = 1,
                 });
             });
 
@@ -154,7 +167,7 @@ namespace Lib9c.Tests.Action
                 .Add((_recipient, _currency), _currency * 10);
             var prevState = new State(
                 balance: balance
-            );
+            ).SetState(_recipient, new AgentState(_recipient).Serialize());
             var action = new TransferAsset(
                 sender: _sender,
                 recipient: _recipient,
@@ -185,7 +198,7 @@ namespace Lib9c.Tests.Action
                 .Add((_recipient, currencyBySender), _currency * 10);
             var prevState = new State(
                 balance: balance
-            );
+            ).SetState(_recipient, new AgentState(_recipient).Serialize());
             var action = new TransferAsset(
                 sender: _sender,
                 recipient: _recipient,
@@ -219,7 +232,7 @@ namespace Lib9c.Tests.Action
                 .Add((_recipient, currencyByRecipient), _currency * 10);
             var prevState = new State(
                 balance: balance
-            );
+            ).SetState(_recipient, new AgentState(_recipient).Serialize());
             var action = new TransferAsset(
                 sender: _sender,
                 recipient: _recipient,

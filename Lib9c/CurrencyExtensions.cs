@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
@@ -20,14 +21,14 @@ namespace Nekoyume
             if (currency.TotalSupplyTrackable)
             {
                 serialized = serialized.Add("totalSupplyTrackable", true);
-                if (currency.MaximumSupply.HasValue)
+                if (currency.MaximumSupply is { } maximumSupply)
                 {
                     serialized = serialized.Add(
                         "maximumSupplyMajor",
-                        (IValue)new Integer(currency.MaximumSupply!.Value.MajorUnit)
+                        (IValue)new Integer(maximumSupply.MajorUnit)
                         ).Add(
                         "maximumSupplyMinor",
-                        (IValue)new Integer(currency.MaximumSupply!.Value.MinorUnit));
+                        (IValue)new Integer(maximumSupply.MinorUnit));
                 }
             }
 
@@ -44,7 +45,8 @@ namespace Nekoyume
 
             if (serialized.ContainsKey("totalSupplyTrackable"))
             {
-                if (serialized.ContainsKey("maximumSupplyMajor"))
+                if (serialized.ContainsKey("maximumSupplyMajor")
+                    && serialized.ContainsKey("maximumSupplyMinor"))
                 {
                     return Currency.Capped(
                         (Text)serialized["ticker"],
@@ -56,11 +58,35 @@ namespace Nekoyume
                         minters);
                 }
 
-                return Currency.Uncapped((Text)serialized["ticker"], ((Binary)serialized["decimalPlaces"]).First(), minters);
+                if (!serialized.ContainsKey("maximumSupplyMajor")
+                    && !serialized.ContainsKey("maximumSupplyMinor"))
+                {
+                    return Currency.Uncapped(
+                        (Text)serialized["ticker"],
+                        ((Binary)serialized["decimalPlaces"]).First(),
+                        minters);
+                }
+
+                throw new ArgumentException(
+                    "Both \"maximumSupplyMajor\" and \"maximumSupplyMinor\" must be "
+                    + " omitted or be non-negative integers.",
+                    nameof(serialized));
+            }
+
+            if (serialized.ContainsKey("maximumSupplyMajor")
+                || serialized.ContainsKey("maximumSupplyMinor"))
+            {
+                throw new ArgumentException(
+                    "\"maximumSupplyMajor\" and \"maximumSupplyMinor\" may only be present "
+                    + " on non-legacy trackable currencies.",
+                    nameof(serialized));
             }
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            return Currency.Legacy((Text)serialized["ticker"], ((Binary)serialized["decimalPlaces"]).First(), minters);
+            return Currency.Legacy(
+                (Text)serialized["ticker"],
+                ((Binary)serialized["decimalPlaces"]).First(),
+                minters);
 #pragma warning restore CS0618
         }
     }
