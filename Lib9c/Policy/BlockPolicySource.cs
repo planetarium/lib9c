@@ -134,7 +134,6 @@ namespace Nekoyume.BlockChain.Policy
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
-                authorizedMinersPolicy: null,
                 validatorsPolicy: ValidatorsPolicy.Mainnet);
 
         /// <summary>
@@ -147,7 +146,6 @@ namespace Nekoyume.BlockChain.Policy
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal,
-                authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
                 validatorsPolicy: ValidatorsPolicy.Mainnet);
 
         /// <summary>
@@ -160,7 +158,6 @@ namespace Nekoyume.BlockChain.Policy
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
-                authorizedMinersPolicy: AuthorizedMinersPolicy.Permanent,
                 validatorsPolicy: ValidatorsPolicy.Permanent);
 
         /// <summary>
@@ -174,7 +171,6 @@ namespace Nekoyume.BlockChain.Policy
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
-                authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
                 validatorsPolicy: ValidatorsPolicy.Test);
 
         /// <summary>
@@ -188,7 +184,6 @@ namespace Nekoyume.BlockChain.Policy
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Default,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Default,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Default,
-                authorizedMinersPolicy: AuthorizedMinersPolicy.Default,
                 validatorsPolicy: ValidatorsPolicy.Default);
 
         /// <summary>
@@ -203,7 +198,6 @@ namespace Nekoyume.BlockChain.Policy
         /// <param name="maxTransactionsPerSignerPerBlockPolicy">The maximum number of
         /// <see cref="Transaction{T}"/>s from a single miner that a <see cref="Block{T}"/>
         /// can have.</param>
-        /// <param name="authorizedMinersPolicy">Used for authorized mining.</param>
         /// <param name="validatorsPolicy">Used for PBFT.</param>
         /// <returns>A <see cref="BlockPolicy"/> constructed from given parameters.</returns>
         internal IBlockPolicy<NCAction> GetPolicy(
@@ -212,7 +206,6 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
-            IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy,
             IVariableSubPolicy<ValidatorSet> validatorsPolicy)
         {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
@@ -227,25 +220,12 @@ namespace Nekoyume.BlockChain.Policy
                 ?? MaxTransactionsPerBlockPolicy.Default;
             maxTransactionsPerSignerPerBlockPolicy = maxTransactionsPerSignerPerBlockPolicy
                 ?? MaxTransactionsPerSignerPerBlockPolicy.Default;
-            authorizedMinersPolicy = authorizedMinersPolicy
-                ?? AuthorizedMinersPolicy.Default;
             validatorsPolicy = validatorsPolicy
                 ?? ValidatorsPolicy.Default;
 
-
-            // FIXME: Ad hoc solution to poorly defined tx validity.
-            ImmutableHashSet<Address> allAuthorizedMiners =
-                authorizedMinersPolicy.SpannedSubPolicies
-                    .Select(spannedSubPolicy => spannedSubPolicy.Value)
-#pragma warning disable LAA1002
-                    .Aggregate(
-                        authorizedMinersPolicy.DefaultValue,
-                        (union, next) => union.Union(next));
-#pragma warning restore LAA1002
-
             Func<BlockChain<NCAction>, Transaction<NCAction>, TxPolicyViolationException> validateNextBlockTx =
                 (blockChain, transaction) => ValidateNextBlockTxRaw(
-                    blockChain, transaction, allAuthorizedMiners);
+                    blockChain, transaction);
             Func<BlockChain<NCAction>, Block<NCAction>, BlockPolicyViolationException> validateNextBlock =
                 (blockChain, block) => ValidateNextBlockRaw(
                     blockChain,
@@ -253,8 +233,7 @@ namespace Nekoyume.BlockChain.Policy
                     maxBlockBytesPolicy,
                     minTransactionsPerBlockPolicy,
                     maxTransactionsPerBlockPolicy,
-                    maxTransactionsPerSignerPerBlockPolicy,
-                    authorizedMinersPolicy);
+                    maxTransactionsPerSignerPerBlockPolicy);
             Func<Address, long, bool> isAllowedToMine = (address, index) => true;
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
@@ -277,8 +256,7 @@ namespace Nekoyume.BlockChain.Policy
 
         internal static TxPolicyViolationException ValidateNextBlockTxRaw(
             BlockChain<NCAction> blockChain,
-            Transaction<NCAction> transaction,
-            ImmutableHashSet<Address> allAuthorizedMiners)
+            Transaction<NCAction> transaction)
         {
             // Avoid NRE when genesis block appended
             // Here, index is the index of a prospective block that transaction
@@ -301,20 +279,6 @@ namespace Nekoyume.BlockChain.Policy
 
             try
             {
-                // Check if it is a no-op transaction to prove it's made by the authorized miner.
-                if (IsAuthorizedMinerTransactionRaw(transaction, allAuthorizedMiners))
-                {
-                    // FIXME: This works under a strong assumption that any miner that was ever
-                    // in a set of authorized miners can only create transactions without
-                    // any actions.
-                    return transaction.Actions.Any()
-                        ? new TxPolicyViolationException(
-                            $"Transaction {transaction.Id} by an authorized miner should not " +
-                            $"have any action: {transaction.Actions.Count}",
-                            transaction.Id)
-                        : null;
-                }
-
                 // Check ActivateAccount
                 if (transaction.CustomActions is { } customActions &&
                     customActions.Count == 1 &&
@@ -383,8 +347,7 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<long> maxBlockBytesPolicy,
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
-            IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
-            IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy)
+            IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy)
         {
             if (ValidateBlockBytesRaw(
                 nextBlock,
@@ -404,19 +367,6 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerSignerPerBlockPolicy) is InvalidBlockTxCountPerSignerException ibtcpse)
             {
                 return ibtcpse;
-            }
-            else
-            {
-                if (nextBlock.Index == 0)
-                {
-                    return null;
-                }
-                else if (authorizedMinersPolicy.IsTargetIndex(nextBlock.Index))
-                {
-                    return ValidateMinerAuthorityRaw(
-                        nextBlock,
-                        authorizedMinersPolicy);
-                }
             }
 
             return null;

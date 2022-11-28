@@ -49,7 +49,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                10_000, null, null, null, null, null, ValidatorsPolicy.Test);
+                10_000, null, null, null, null, ValidatorsPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -142,7 +142,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                10_000, null, null, null, null, null, null);
+                10_000, null, null, null, null, null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -189,7 +189,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                10_000, null, null, null, null, null, ValidatorsPolicy.Test);
+                10_000, null, null, null, null, ValidatorsPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -227,117 +227,6 @@ namespace Lib9c.Tests
         }
 
         [Fact]
-        public void ValidateNextBlockWithAuthorizedMinersPolicy()
-        {
-            var adminPrivateKey = new PrivateKey();
-            var adminAddress = adminPrivateKey.ToAddress();
-            var minerKeys = new[] { new PrivateKey(), new PrivateKey() };
-            Address[] miners = minerKeys.Select(AddressExtensions.ToAddress).ToArray();
-            var stranger = new PrivateKey();
-
-            var blockPolicySource = new BlockPolicySource(Logger.None);
-            IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                minimumDifficulty: 10_000,
-                maxBlockBytesPolicy: null,
-                minTransactionsPerBlockPolicy: null,
-                maxTransactionsPerBlockPolicy: null,
-                maxTransactionsPerSignerPerBlockPolicy: null,
-                authorizedMinersPolicy: AuthorizedMinersPolicy
-                    .Default
-                    .Add(new SpannedSubPolicy<ImmutableHashSet<Address>>(
-                        startIndex: 0,
-                        endIndex: 4,
-                        filter: index => index % 2 == 0,
-                        value: miners.ToImmutableHashSet())),
-                validatorsPolicy: ValidatorsPolicy.Test);
-            IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
-                new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
-            Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
-                adminAddress,
-                ImmutableHashSet<Address>.Empty);
-            using var store = new DefaultStore(null);
-            using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
-            var blockChain = new BlockChain<PolymorphicAction<ActionBase>>(
-                policy,
-                stagePolicy,
-                store,
-                stateStore,
-                genesis,
-                renderers: new[] { blockPolicySource.BlockRenderer }
-            );
-
-            blockChain.MakeTransaction(
-                adminPrivateKey,
-                new PolymorphicAction<ActionBase>[] { new DailyReward(), }
-            );
-
-            // Index 1. Anyone can mine.
-            Block<PolymorphicAction<ActionBase>> block = blockChain.ProposeBlock(stranger);
-            blockChain.Append(block, GenerateBlockCommit(block));
-
-            // Index 2. Only authorized miner can mine.
-            block = blockChain.ProposeBlock(
-                stranger,
-                lastCommit: GenerateBlockCommit(blockChain.Tip));
-            Assert.Throws<BlockPolicyViolationException>(() =>
-            {
-                blockChain.Append(block, GenerateBlockCommit(block));
-            });
-            // Old proof mining still works.
-            block = blockChain.ProposeBlock(
-                minerKeys[0],
-                lastCommit: GenerateBlockCommit(blockChain.Tip));
-            blockChain.Append(block, GenerateBlockCommit(block));
-
-            // Index 3. Anyone can mine.
-            blockChain.MakeTransaction(
-                adminPrivateKey,
-                new PolymorphicAction<ActionBase>[] { new DailyReward(), }
-            );
-            block = blockChain.ProposeBlock(
-                stranger,
-                lastCommit: GenerateBlockCommit(blockChain.Tip));
-            blockChain.Append(block, GenerateBlockCommit(block));
-
-            // Index 4. Again, only authorized miner can mine.
-            blockChain.MakeTransaction(
-                adminPrivateKey,
-                new PolymorphicAction<ActionBase>[] { new DailyReward(), }
-            );
-
-            block = blockChain.ProposeBlock(
-                stranger,
-                lastCommit: GenerateBlockCommit(blockChain.Tip));
-            Assert.Throws<BlockPolicyViolationException>(() =>
-            {
-                blockChain.Append(block, GenerateBlockCommit(block));
-            });
-            // No proof is required.
-            blockChain.MakeTransaction(
-                adminPrivateKey,
-                new PolymorphicAction<ActionBase>[] { new DailyReward(), }
-            );
-            block = blockChain.ProposeBlock(
-                minerKeys[1],
-                lastCommit: GenerateBlockCommit(blockChain.Tip));
-            blockChain.Append(block, GenerateBlockCommit(block));
-
-            // Index 5, 6. Anyone can mine.
-            block = blockChain.ProposeBlock(
-                stranger,
-                lastCommit: GenerateBlockCommit(blockChain.Tip));
-            blockChain.Append(block, GenerateBlockCommit(block));
-            blockChain.MakeTransaction(
-                adminPrivateKey,
-                new PolymorphicAction<ActionBase>[] { new DailyReward(), }
-            );
-            block = blockChain.ProposeBlock(
-                stranger,
-                lastCommit: GenerateBlockCommit(blockChain.Tip));
-            blockChain.Append(block, GenerateBlockCommit(block));
-        }
-
-        [Fact]
         public void ValidateNextBlockWithManyTransactions()
         {
             var adminPrivateKey = new PrivateKey();
@@ -351,7 +240,6 @@ namespace Lib9c.Tests
                     .Default
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
                 maxTransactionsPerSignerPerBlockPolicy: null,
-                authorizedMinersPolicy: null,
                 validatorsPolicy: ValidatorsPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
@@ -444,7 +332,6 @@ namespace Lib9c.Tests
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy
                     .Default
                     .Add(new SpannedSubPolicy<int>(2, null, null, 5)),
-                authorizedMinersPolicy: null,
                 validatorsPolicy: ValidatorsPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
