@@ -135,7 +135,6 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: null,
-                permissionedMinersPolicy: null,
                 validatorsPolicy: ValidatorsPolicy.Mainnet);
 
         /// <summary>
@@ -149,7 +148,6 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet,
                 validatorsPolicy: ValidatorsPolicy.Mainnet);
 
         /// <summary>
@@ -163,7 +161,6 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Permanent,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Permanent,
                 validatorsPolicy: ValidatorsPolicy.Permanent);
 
         /// <summary>
@@ -178,7 +175,6 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Mainnet,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Mainnet,
                 validatorsPolicy: ValidatorsPolicy.Test);
 
         /// <summary>
@@ -193,7 +189,6 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Default,
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Default,
                 authorizedMinersPolicy: AuthorizedMinersPolicy.Default,
-                permissionedMinersPolicy: PermissionedMinersPolicy.Default,
                 validatorsPolicy: ValidatorsPolicy.Default);
 
         /// <summary>
@@ -209,7 +204,6 @@ namespace Nekoyume.BlockChain.Policy
         /// <see cref="Transaction{T}"/>s from a single miner that a <see cref="Block{T}"/>
         /// can have.</param>
         /// <param name="authorizedMinersPolicy">Used for authorized mining.</param>
-        /// <param name="permissionedMinersPolicy">Used for permissioned mining.</param>
         /// <param name="validatorsPolicy">Used for PBFT.</param>
         /// <returns>A <see cref="BlockPolicy"/> constructed from given parameters.</returns>
         internal IBlockPolicy<NCAction> GetPolicy(
@@ -219,7 +213,6 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
             IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy,
-            IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy,
             IVariableSubPolicy<ValidatorSet> validatorsPolicy)
         {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
@@ -236,8 +229,6 @@ namespace Nekoyume.BlockChain.Policy
                 ?? MaxTransactionsPerSignerPerBlockPolicy.Default;
             authorizedMinersPolicy = authorizedMinersPolicy
                 ?? AuthorizedMinersPolicy.Default;
-            permissionedMinersPolicy = permissionedMinersPolicy
-                ?? PermissionedMinersPolicy.Default;
             validatorsPolicy = validatorsPolicy
                 ?? ValidatorsPolicy.Default;
 
@@ -263,8 +254,7 @@ namespace Nekoyume.BlockChain.Policy
                     minTransactionsPerBlockPolicy,
                     maxTransactionsPerBlockPolicy,
                     maxTransactionsPerSignerPerBlockPolicy,
-                    authorizedMinersPolicy,
-                    permissionedMinersPolicy);
+                    authorizedMinersPolicy);
             Func<Address, long, bool> isAllowedToMine = (address, index) => true;
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
@@ -394,8 +384,7 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
-            IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy,
-            IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy)
+            IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy)
         {
             if (ValidateBlockBytesRaw(
                 nextBlock,
@@ -427,12 +416,6 @@ namespace Nekoyume.BlockChain.Policy
                     return ValidateMinerAuthorityRaw(
                         nextBlock,
                         authorizedMinersPolicy);
-                }
-                else if (permissionedMinersPolicy.IsTargetIndex(nextBlock.Index))
-                {
-                    return ValidateMinerPermissionRaw(
-                        nextBlock,
-                        permissionedMinersPolicy);
                 }
             }
 

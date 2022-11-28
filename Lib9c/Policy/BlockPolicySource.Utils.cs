@@ -158,26 +158,5 @@ namespace Nekoyume.BlockChain.Policy
                     $"The block #{block.Index} {block.Hash} is not mined by an authorized miner.");
             }
         }
-
-        private static BlockPolicyViolationException ValidateMinerPermissionRaw(
-            Block<NCAction> block,
-            IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy)
-        {
-            // If the set of permissioned miners is empty, any miner can mine.
-            if (!permissionedMinersPolicy.IsTargetIndex(block.Index))
-            {
-                return null;
-            }
-            else if (permissionedMinersPolicy.Getter(block.Index).Contains(block.Miner))
-            {
-                return null;
-            }
-            else
-            {
-                return new BlockPolicyViolationException(
-                    $"Block #{block.Index} {block.Hash} is not mined by " +
-                    $"a permissioned miner: {block.Miner}");
-            }
-        }
     }
 }
