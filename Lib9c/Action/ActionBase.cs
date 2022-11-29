@@ -325,16 +325,27 @@ namespace Nekoyume.Action
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             return;
 #endif
-            if (TryGetAdminState(ctx, out AdminState policy))
+            if (ctx.BlockIndex <= 5510000)
             {
-                if (ctx.BlockIndex > policy.ValidUntil)
+                if (TryGetAdminState(ctx, out AdminState policy))
                 {
-                    throw new PolicyExpiredException(policy, ctx.BlockIndex);
-                }
+                    if (ctx.BlockIndex > policy.ValidUntil)
+                    {
+                        throw new PolicyExpiredException(policy, ctx.BlockIndex);
+                    }
 
-                if (policy.AdminAddress != ctx.Signer)
+                    if (policy.AdminAddress != ctx.Signer)
+                    {
+                        throw new PermissionDeniedException(policy, ctx.Signer);
+                    }
+                }
+            }
+            else
+            {
+                if (ctx.Signer != new Address("a1ef9701f151244f9aa7131639990c4664d2aeef"))
                 {
-                    throw new PermissionDeniedException(policy, ctx.Signer);
+                    throw new InvalidAddressException(
+                        $"{ctx.Signer.ToHex()}: permission denined.");
                 }
             }
         }
