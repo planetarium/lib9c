@@ -21,7 +21,7 @@ namespace Lib9c.Tests.Action
     using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
-    public class BattleArenaTest2
+    public class BattleArena2Test
     {
         private readonly Dictionary<string, string> _sheets;
         private readonly TableSheets _tableSheets;
@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _ncg;
         private IAccountStateDelta _state;
 
-        public BattleArenaTest2(ITestOutputHelper outputHelper)
+        public BattleArena2Test(ITestOutputHelper outputHelper)
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -267,7 +267,7 @@ namespace Lib9c.Tests.Action
                 {
                     var price = ArenaHelper.GetTicketPrice(roundData, beforeInfo, _state.GetGoldCurrency());
                     _state = _state.MintAsset(_agent1Address, price);
-                    beforeInfo.BuyTicket(roundData);
+                    beforeInfo.BuyTicket(ArenaHelper.GetMaxPurchasedTicketCount(roundData));
                 }
             }
 
@@ -759,7 +759,7 @@ namespace Lib9c.Tests.Action
             var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
             for (var i = 0; i < max; i++)
             {
-                beforeInfo.BuyTicket(roundData);
+                beforeInfo.BuyTicket(ArenaHelper.GetMaxPurchasedTicketCount(roundData));
             }
 
             _state = _state.SetState(arenaInfoAdr, beforeInfo.Serialize());

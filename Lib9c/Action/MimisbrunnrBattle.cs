@@ -7,12 +7,16 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Battle;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Extensions;
+using Nekoyume.Model;
+using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Item;
-using Nekoyume.Model.Skill;
+using Nekoyume.Model.Quest;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
+using Skill = Nekoyume.Model.Skill.Skill;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
@@ -72,7 +76,7 @@ namespace Nekoyume.Action
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;
-            Log.Verbose(
+            Log.Debug(
                 "{AddressesHex}Mimisbrunnr exec started",
                 addressesHex);
 
@@ -93,23 +97,44 @@ namespace Nekoyume.Action
                 sw.Elapsed);
 
             sw.Restart();
-            var sheets = states.GetSheets(
-                containSimulatorSheets: true,
-                sheetTypes: new[]
-                {
-                    typeof(WorldSheet),
-                    typeof(StageSheet),
-                    typeof(StageWaveSheet),
-                    typeof(EnemySkillSheet),
-                    typeof(CostumeStatSheet),
-                    typeof(WorldUnlockSheet),
-                    typeof(MimisbrunnrSheet),
-                    typeof(ItemRequirementSheet),
-                    typeof(EquipmentItemRecipeSheet),
-                    typeof(EquipmentItemSubRecipeSheetV2),
-                    typeof(EquipmentItemOptionSheet),
-                    typeof(MaterialItemSheet),
-                });
+
+            // FIXME Delete this check next hard fork.
+            bool useV100291Sheets = UseV100291Sheets(context.BlockIndex);
+            var sheets = useV100291Sheets
+                ? states.GetSheetsV100291(
+                    containSimulatorSheets: true,
+                    sheetTypes: new[]
+                    {
+                        typeof(WorldSheet),
+                        typeof(StageSheet),
+                        typeof(StageWaveSheet),
+                        typeof(EnemySkillSheet),
+                        typeof(CostumeStatSheet),
+                        typeof(WorldUnlockSheet),
+                        typeof(MimisbrunnrSheet),
+                        typeof(ItemRequirementSheet),
+                        typeof(EquipmentItemRecipeSheet),
+                        typeof(EquipmentItemSubRecipeSheetV2),
+                        typeof(EquipmentItemOptionSheet),
+                        typeof(MaterialItemSheet),
+                    })
+                : states.GetSheets(
+                    containSimulatorSheets: true,
+                    sheetTypes: new[]
+                    {
+                        typeof(WorldSheet),
+                        typeof(StageSheet),
+                        typeof(StageWaveSheet),
+                        typeof(EnemySkillSheet),
+                        typeof(CostumeStatSheet),
+                        typeof(WorldUnlockSheet),
+                        typeof(MimisbrunnrSheet),
+                        typeof(ItemRequirementSheet),
+                        typeof(EquipmentItemRecipeSheet),
+                        typeof(EquipmentItemSubRecipeSheetV2),
+                        typeof(EquipmentItemOptionSheet),
+                        typeof(MaterialItemSheet),
+                    });
             sw.Stop();
             Log.Verbose(
                 "{AddressesHex}Get Sheets: {Elapsed}",
@@ -264,6 +289,9 @@ namespace Nekoyume.Action
                 sw.Elapsed);
 
             sw.Restart();
+            var simulatorSheets = useV100291Sheets
+                ? sheets.GetSimulatorSheetsV100291()
+                : sheets.GetSimulatorSheets();
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var simulator = new StageSimulator(
                 context.Random,
@@ -276,7 +304,7 @@ namespace Nekoyume.Action
                 sheets.GetSheet<StageWaveSheet>()[stageId],
                 avatarState.worldInformation.IsStageCleared(stageId),
                 0,
-                sheets.GetSimulatorSheets(),
+                simulatorSheets,
                 sheets.GetSheet<EnemySkillSheet>(),
                 sheets.GetSheet<CostumeStatSheet>(),
                 StageSimulator.GetWaveRewards(context.Random, stageRow, materialSheet, playCount));
@@ -326,6 +354,26 @@ namespace Nekoyume.Action
                 sw.Elapsed);
             sw.Restart();
 
+            // This conditional logic is same as written in the
+            // HackAndSlash("hack_and_slash18") action.
+            if (context.BlockIndex < BlockPolicySource.V100310ExecutedBlockIndex)
+            {
+                var player = simulator.Player;
+                foreach (var key in player.monsterMapForBeforeV100310.Keys)
+                {
+                    player.monsterMap.Add(key, player.monsterMapForBeforeV100310[key]);
+                }
+
+                player.monsterMapForBeforeV100310.Clear();
+
+                foreach (var key in player.eventMapForBeforeV100310.Keys)
+                {
+                    player.eventMap.Add(key, player.eventMapForBeforeV100310[key]);
+                }
+
+                player.eventMapForBeforeV100310.Clear();
+            }
+
             avatarState.Update(simulator);
             avatarState.UpdateQuestRewards(materialSheet);
 
@@ -345,7 +393,7 @@ namespace Nekoyume.Action
             sw.Restart();
 
             var ended = DateTimeOffset.UtcNow;
-            Log.Verbose(
+            Log.Debug(
                 "{AddressesHex}Mimisbrunnr Total Executed Time: {Elapsed}",
                 addressesHex,
                 ended - started);

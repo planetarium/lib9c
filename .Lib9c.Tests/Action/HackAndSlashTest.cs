@@ -8,10 +8,13 @@
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
+    using Libplanet.Assets;
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Battle;
+    using Nekoyume.BlockChain.Policy;
+    using Nekoyume.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
@@ -68,10 +71,14 @@
             _worldInformationAddress = _avatarAddress.Derive(LegacyWorldInformationKey);
             _questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
             agentState.avatarAddresses.Add(0, _avatarAddress);
-
             _weeklyArenaState = new WeeklyArenaState(0);
-
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            var currency = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
+            var goldCurrencyState = new GoldCurrencyState(currency);
             _initialState = new State()
+                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetState(_agentAddress, agentState.SerializeV2())
                 .SetState(_avatarAddress, _avatarState.SerializeV2())
@@ -199,7 +206,7 @@
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
-                BlockIndex = 1,
+                BlockIndex = BlockPolicySource.V100301ExecutedBlockIndex,
             });
 
             var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
@@ -916,6 +923,102 @@
             }
         }
 
+        [Fact]
+        public void Execute_V100291()
+        {
+            var initialState = _initialState;
+            var keys = new List<string>
+            {
+                nameof(SkillActionBuffSheet),
+                nameof(ActionBuffSheet),
+                nameof(StatBuffSheet),
+            };
+            foreach (var (key, value) in _sheets)
+            {
+                if (keys.Contains(key))
+                {
+                    initialState = initialState.SetState(Addresses.TableSheet.Derive(key), null!);
+                }
+            }
+
+            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var costumes = new List<Guid>();
+            IRandom random = new TestRandom();
+            var costumeId = _tableSheets
+                .CostumeItemSheet
+                .Values
+                .First(r => r.ItemSubType == ItemSubType.FullCostume)
+                .Id;
+
+            var costume = (Costume)ItemFactory.CreateItem(
+                    _tableSheets.ItemSheet[costumeId], random);
+            previousAvatarState.inventory.AddItem(costume);
+            costumes.Add(costume.ItemId);
+            var equipments = Doomfist.GetAllParts(_tableSheets, previousAvatarState.level);
+            foreach (var equipment in equipments)
+            {
+                previousAvatarState.inventory.AddItem(equipment);
+            }
+
+            var mailEquipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var mailEquipment = ItemFactory.CreateItemUsable(mailEquipmentRow, default, 0);
+            var result = new CombinationConsumable5.ResultModel
+            {
+                id = default,
+                gold = 0,
+                actionPoint = 0,
+                recipeId = 1,
+                materials = new Dictionary<Material, int>(),
+                itemUsable = mailEquipment,
+            };
+            for (var i = 0; i < 100; i++)
+            {
+                var mail = new CombinationMail(result, i, default, 0);
+                previousAvatarState.Update(mail);
+            }
+
+            initialState = initialState
+                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
+                .SetState(_avatarAddress.Derive(LegacyInventoryKey), previousAvatarState.inventory.Serialize())
+                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), previousAvatarState.worldInformation.Serialize())
+                .SetState(_avatarAddress.Derive(LegacyQuestListKey), previousAvatarState.questList.Serialize());
+
+            initialState = initialState.SetState(
+                _avatarAddress.Derive("world_ids"),
+                List.Empty.Add(1)
+            );
+
+            foreach (var key in keys)
+            {
+                Assert.Null(initialState.GetState(Addresses.GetSheetAddress(key)));
+            }
+
+            Assert.NotNull(initialState.GetState(Addresses.GetSheetAddress<BuffSheet>()));
+
+            var action = new HackAndSlash
+            {
+                Costumes = costumes,
+                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid>(),
+                WorldId = 1,
+                StageId = 1,
+                AvatarAddress = _avatarAddress,
+            };
+
+            var nextState = action.Execute(new ActionContext
+            {
+                PreviousStates = initialState,
+                Signer = _agentAddress,
+                Random = new TestRandom(),
+                Rehearsal = false,
+                BlockIndex = 1,
+            });
+
+            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+
+            Assert.True(nextAvatarState.worldInformation.IsStageCleared(1));
+        }
+
         [Theory]
         [InlineData(true, 1, 15)]
         [InlineData(true, 2, 55)]
@@ -1061,20 +1164,26 @@
         }
 
         [Theory]
-        [InlineData(false, false, false)]
-        [InlineData(false, true, true)]
-        [InlineData(false, true, false)]
-        [InlineData(true, false, false)]
-        [InlineData(true, true, false)]
-        [InlineData(true, true, true)]
-        public void CheckCrystalRandomSkillState(bool clear, bool skillStateExist, bool hasCrystalSkill)
+        [InlineData(false, false, false, false)]
+        [InlineData(false, true, true, false)]
+        [InlineData(false, true, true, true)]
+        [InlineData(false, true, false, false)]
+        [InlineData(true, false, false, false)]
+        [InlineData(true, true, false, false)]
+        [InlineData(true, true, true, false)]
+        [InlineData(true, true, true, true)]
+        public void CheckCrystalRandomSkillState(
+            bool clear,
+            bool skillStateExist,
+            bool useCrystalSkill,
+            bool setSkillByArgument)
         {
             const int worldId = 1;
-            const int stageId = 5;
-            const int clearedStageId = 4;
+            const int stageId = 10;
+            const int clearedStageId = 9;
             var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
             previousAvatarState.actionPoint = 999999;
-            previousAvatarState.level = clear ? 400 : 3;
+            previousAvatarState.level = clear ? 400 : 1;
             previousAvatarState.worldInformation = new WorldInformation(
                 0,
                 _tableSheets.WorldSheet,
@@ -1138,12 +1247,26 @@
             if (skillStateExist)
             {
                 skillState = new CrystalRandomSkillState(skillStateAddress, stageId);
-                if (hasCrystalSkill)
+                if (useCrystalSkill)
                 {
                     skillState.Update(int.MaxValue, _tableSheets.CrystalStageBuffGachaSheet);
+                    skillState.Update(_tableSheets.CrystalRandomBuffSheet
+                        .Select(pair => pair.Value.Id).ToList());
                 }
 
                 state = state.SetState(skillStateAddress, skillState.Serialize());
+            }
+
+            int? stageBuffId = null;
+            if (useCrystalSkill)
+            {
+                stageBuffId = skillState?.GetHighestRankSkill(_tableSheets.CrystalRandomBuffSheet);
+                Assert.NotNull(stageBuffId);
+            }
+
+            if (clear)
+            {
+                previousAvatarState.EquipItems(costumes.Concat(equipments.Select(e => e.ItemId)));
             }
 
             var action = new HackAndSlash
@@ -1156,9 +1279,9 @@
                 WorldId = worldId,
                 StageId = stageId,
                 AvatarAddress = _avatarAddress,
-                StageBuffId = skillState?.SkillIds
-                    .OrderBy(key => _tableSheets.CrystalRandomBuffSheet[key].Rank)
-                    .FirstOrDefault(),
+                StageBuffId = setSkillByArgument
+                    ? stageBuffId
+                    : null,
             };
 
             var ctx = new ActionContext
@@ -1170,12 +1293,25 @@
                 BlockIndex = 1,
             };
             var nextState = action.Execute(ctx);
+            var skillsOnWaveStart = new List<Skill>();
+            if (useCrystalSkill)
+            {
+                var skill = _tableSheets
+                    .SkillSheet
+                    .FirstOrDefault(pair => pair.Key == _tableSheets
+                        .CrystalRandomBuffSheet[stageBuffId.Value].SkillId);
+                if (skill.Value != null)
+                {
+                    skillsOnWaveStart.Add(SkillFactory.Get(skill.Value, default, 100));
+                }
+            }
+
             var contextRandom = new TestRandom(ctx.Random.Seed);
             var simulator = new StageSimulator(
                 contextRandom,
                 previousAvatarState,
                 new List<Guid>(),
-                new List<Skill>(),
+                skillsOnWaveStart,
                 worldId,
                 stageId,
                 _tableSheets.StageSheet[stageId],
@@ -1197,7 +1333,6 @@
             Assert.NotNull(serialized);
             var nextSkillState = new CrystalRandomSkillState(skillStateAddress, serialized);
             Assert.Equal(skillStateAddress, nextSkillState.Address);
-
             if (log.IsClear)
             {
                 Assert.Equal(stageId + 1, nextSkillState.StageId);
@@ -1206,14 +1341,79 @@
             else
             {
                 Assert.Equal(stageId, nextSkillState.StageId);
-                Assert.Equal(
-                    hasCrystalSkill
-                        ? _tableSheets.CrystalStageBuffGachaSheet[stageId].MaxStar
-                        : log.clearedWaveNumber,
-                    nextSkillState.StarCount);
+                skillState?.Update(log.clearedWaveNumber, _tableSheets.CrystalStageBuffGachaSheet);
+                Assert.Equal(skillState?.StarCount ?? log.clearedWaveNumber, nextSkillState.StarCount);
             }
 
             Assert.Empty(nextSkillState.SkillIds);
+        }
+
+        [Theory]
+        [InlineData(1, 24)]
+        [InlineData(2, 24)]
+        [InlineData(3, 30)]
+        [InlineData(4, 30)]
+        [InlineData(5, 40)]
+        public void CheckUsedApByStaking(int level, int playCount)
+        {
+            const int worldId = 1;
+            const int stageId = 5;
+            const int clearedStageId = 4;
+            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            previousAvatarState.actionPoint = 120;
+            previousAvatarState.level = 400;
+            previousAvatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                clearedStageId);
+
+            var stakeStateAddress = StakeState.DeriveAddress(_agentAddress);
+            var stakeState = new StakeState(stakeStateAddress, 1);
+            var requiredGold = _tableSheets.StakeRegularRewardSheet.OrderedRows
+                .FirstOrDefault(r => r.Level == level)?.RequiredGold ?? 0;
+            var state = _initialState
+                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
+                .SetState(
+                    _avatarAddress.Derive(LegacyInventoryKey),
+                    previousAvatarState.inventory.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyWorldInformationKey),
+                    previousAvatarState.worldInformation.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyQuestListKey),
+                    previousAvatarState.questList.Serialize())
+                .SetState(stakeStateAddress, stakeState.SerializeV2())
+                .SetState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(worldId.Serialize()))
+                .MintAsset(stakeStateAddress, requiredGold * _initialState.GetGoldCurrency());
+
+            var expectedAp = previousAvatarState.actionPoint -
+                             _tableSheets.StakeActionPointCoefficientSheet.GetActionPointByStaking(
+                                 _tableSheets.StageSheet[stageId].CostAP, playCount, level);
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = new List<Guid>(),
+                Foods = new List<Guid>(),
+                WorldId = worldId,
+                StageId = stageId,
+                AvatarAddress = _avatarAddress,
+                StageBuffId = null,
+                PlayCount = playCount,
+            };
+
+            var ctx = new ActionContext
+            {
+                PreviousStates = state,
+                Signer = _agentAddress,
+                Random = new TestRandom(),
+                Rehearsal = false,
+                BlockIndex = 1,
+            };
+            var nextState = action.Execute(ctx);
+            var nextAvatar = nextState.GetAvatarStateV2(_avatarAddress);
+            Assert.Equal(expectedAp, nextAvatar.actionPoint);
         }
 
         private static void SerializeException<T>(Exception exec)

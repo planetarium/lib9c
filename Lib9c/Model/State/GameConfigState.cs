@@ -16,6 +16,8 @@ namespace Nekoyume.Model.State
         public int DailyRewardInterval { get; private set; }
         public int DailyArenaInterval { get; private set; }
         public int WeeklyArenaInterval { get; private set; }
+        public int RequiredAppraiseBlock { get; private set; }
+        public int BattleArenaInterval { get; private set; }
 
         public GameConfigState() : base(Address)
         {
@@ -43,6 +45,14 @@ namespace Nekoyume.Model.State
             {
                 WeeklyArenaInterval = value5.ToInteger();
             }
+            if (serialized.TryGetValue((Text)"required_appraise_block", out var value6))
+            {
+                RequiredAppraiseBlock = value6.ToInteger();
+            }
+            if (serialized.TryGetValue((Text)"battle_arena_interval", out var value7))
+            {
+                BattleArenaInterval = value7.ToInteger();
+            }
         }
 
         public GameConfigState(string csv) : base(Address)
@@ -64,7 +74,12 @@ namespace Nekoyume.Model.State
                 [(Text) "daily_reward_interval"] = DailyRewardInterval.Serialize(),
                 [(Text) "daily_arena_interval"] = DailyArenaInterval.Serialize(),
                 [(Text) "weekly_arena_interval"] = WeeklyArenaInterval.Serialize(),
+                [(Text) "required_appraise_block"] = RequiredAppraiseBlock.Serialize(),
             };
+            if (BattleArenaInterval > 0)
+            {
+                values.Add((Text)"battle_arena_interval", BattleArenaInterval.Serialize());
+            }
 #pragma warning disable LAA1002
             return new Dictionary(values.Union((Dictionary) base.Serialize()));
 #pragma warning restore LAA1002
@@ -96,6 +111,12 @@ namespace Nekoyume.Model.State
                     break;
                 case "weekly_arena_interval":
                     WeeklyArenaInterval = TableExtensions.ParseInt(row.Value);
+                    break;
+                case "required_appraise_block":
+                    RequiredAppraiseBlock = TableExtensions.ParseInt(row.Value);
+                    break;
+                case "battle_arena_interval":
+                    BattleArenaInterval = TableExtensions.ParseInt(row.Value);
                     break;
             }
         }

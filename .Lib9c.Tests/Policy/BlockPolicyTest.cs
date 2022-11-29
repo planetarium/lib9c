@@ -234,7 +234,7 @@ namespace Lib9c.Tests
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
                 minimumDifficulty: 10_000,
-                maxBlockBytesPolicy: null,
+                maxTransactionsBytesPolicy: null,
                 minTransactionsPerBlockPolicy: null,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy
                     .Default
@@ -324,7 +324,7 @@ namespace Lib9c.Tests
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
                 minimumDifficulty: 10_000,
-                maxBlockBytesPolicy: null,
+                maxTransactionsBytesPolicy: null,
                 minTransactionsPerBlockPolicy: null,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy
                     .Default
