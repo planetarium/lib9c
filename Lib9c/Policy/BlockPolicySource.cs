@@ -217,7 +217,7 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<ImmutableHashSet<Address>> authorizedMinersPolicy,
             IVariableSubPolicy<ImmutableHashSet<Address>> permissionedMinersPolicy)
         {
-#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+//#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             //var data = TestbedHelper.LoadTestbedCreateAvatarForQA();
              //return new DebugPolicy(data.BlockDifficulty);
 //#else
@@ -287,7 +287,7 @@ namespace Nekoyume.BlockChain.Policy
                 getMaxTransactionsPerSignerPerBlock: maxTransactionsPerSignerPerBlockPolicy.Getter,
                 getNextBlockDifficulty: getNextBlockDifficulty,
                 isAllowedToMine: isAllowedToMine);
-#endif
+//#endif
         }
 
         public IEnumerable<IRenderer<NCAction>> GetRenderers() =>
