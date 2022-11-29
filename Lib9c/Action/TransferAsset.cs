@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Nekoyume.Model;
+using Serilog;
 
 namespace Nekoyume.Action
 {
@@ -17,8 +18,8 @@ namespace Nekoyume.Action
     /// Updated at https://github.com/planetarium/lib9c/pull/957
     /// </summary>
     [Serializable]
-    [ActionType("transfer_asset2")]
-    public class TransferAsset : ActionBase, ISerializable
+    [ActionType("transfer_asset3")]
+    public class TransferAsset : ActionBase, ISerializable, ITransferAsset
     {
         private const int MemoMaxLength = 80;
 
@@ -77,14 +78,15 @@ namespace Nekoyume.Action
                 return state.MarkBalanceChanged(Amount.Currency, new[] { Sender, Recipient });
             }
 
+            var addressesHex = GetSignerAndOtherAddressesHex(context, context.Signer);
+            var started = DateTimeOffset.UtcNow;
+            Log.Debug("{AddressesHex}TransferAsset3 exec started", addressesHex);
             if (Sender != context.Signer)
             {
                 throw new InvalidTransferSignerException(context.Signer, Sender, Recipient);
             }
 
-            // This works for block after 380000. Please take a look at
-            // https://github.com/planetarium/libplanet/pull/1133
-            if (context.BlockIndex > 380000 && Sender == Recipient)
+            if (Sender == Recipient)
             {
                 throw new InvalidTransferRecipientException(Sender, Recipient);
             }
@@ -92,13 +94,19 @@ namespace Nekoyume.Action
             Address recipientAddress = Recipient.Derive(ActivationKey.DeriveKey);
 
             // Check new type of activation first.
-            if (state.GetState(recipientAddress) is null && state.GetState(Addresses.ActivatedAccount) is Dictionary asDict )
+            // If result of GetState is not null, it is assumed that it has been activated.
+            if (
+                state.GetState(recipientAddress) is null &&
+                state.GetState(Addresses.ActivatedAccount) is Dictionary asDict &&
+                state.GetState(Recipient) is null
+            )
             {
                 var activatedAccountsState = new ActivatedAccountsState(asDict);
                 var activatedAccounts = activatedAccountsState.Accounts;
                 // if ActivatedAccountsState is empty, all user is activate.
                 if (activatedAccounts.Count != 0
-                    && !activatedAccounts.Contains(Recipient))
+                    && !activatedAccounts.Contains(Recipient)
+                    && state.GetState(Recipient) is null)
                 {
                     throw new InvalidTransferUnactivatedRecipientException(Sender, Recipient);
                 }
@@ -115,6 +123,8 @@ namespace Nekoyume.Action
                );
             }
 
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug("{AddressesHex}TransferAsset3 Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return state.TransferAsset(Sender, Recipient, Amount);
         }
 
