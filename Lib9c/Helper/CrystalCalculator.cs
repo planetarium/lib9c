@@ -15,7 +15,10 @@ namespace Nekoyume.Helper
 {
     public static class CrystalCalculator
     {
-        public static readonly Currency CRYSTAL = new Currency("CRYSTAL", 18, minters: null);
+#pragma warning disable CS0618
+        // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+        public static readonly Currency CRYSTAL = Currency.Legacy("CRYSTAL", 18, minters: null);
+#pragma warning restore CS0618
 
         public static FungibleAssetValue CalculateRecipeUnlockCost(IEnumerable<int> recipeIds, EquipmentItemRecipeSheet equipmentItemRecipeSheet)
         {
@@ -130,6 +133,11 @@ namespace Nekoyume.Helper
             }
 
             return crystal;
+        }
+
+        public static FungibleAssetValue CalculateEntranceFee(int level, BigInteger entranceFee)
+        {
+            return entranceFee * level * level * CRYSTAL;
         }
     }
 }

@@ -6,6 +6,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Action;
+using Nekoyume.BlockChain.Policy;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Model.State
@@ -108,6 +109,11 @@ namespace Nekoyume.Model.State
 
         public bool IsClaimable(long blockIndex)
         {
+            if (blockIndex >= BlockPolicySource.V100290ObsoleteIndex)
+            {
+                return CalculateAccumulatedRewards(blockIndex) > 0;
+            }
+
             if (ReceivedBlockIndex == 0)
             {
                 return StartedBlockIndex + RewardInterval <= blockIndex;
@@ -123,15 +129,26 @@ namespace Nekoyume.Model.State
 
         public int CalculateAccumulatedRewards(long blockIndex)
         {
+            return CalculateStep(blockIndex, StartedBlockIndex);
+        }
+
+        public int CalculateAccumulatedRuneRewards(long blockIndex)
+        {
+            long startedBlockIndex = Math.Max(StartedBlockIndex, ClaimStakeReward.ObsoletedIndex);
+            return CalculateStep(blockIndex, startedBlockIndex);
+        }
+
+        private int CalculateStep(long blockIndex, long startedBlockIndex)
+        {
             int step = (int)Math.DivRem(
-                blockIndex - StartedBlockIndex,
+                blockIndex - startedBlockIndex,
                 RewardInterval,
                 out _
             );
             if (ReceivedBlockIndex > 0)
             {
                 int previousStep = (int)Math.DivRem(
-                    ReceivedBlockIndex - StartedBlockIndex,
+                    ReceivedBlockIndex - startedBlockIndex,
                     RewardInterval,
                     out _
                 );

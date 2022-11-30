@@ -26,7 +26,10 @@ namespace Lib9c.Tests.Action
 
         public ActionEvaluationTest()
         {
-            _currency = new Currency("NCG", 2, minters: null);
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            _currency = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
             _signer = new PrivateKey().ToAddress();
             _sender = new PrivateKey().ToAddress();
             _states = new State()
@@ -102,6 +105,10 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(UnlockWorld))]
         [InlineData(typeof(EventDungeonBattle))]
         [InlineData(typeof(EventConsumableItemCrafts))]
+        [InlineData(typeof(Raid))]
+        [InlineData(typeof(ClaimRaidReward))]
+        [InlineData(typeof(ClaimWordBossKillReward))]
+        [InlineData(typeof(PrepareRewardAssets))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -181,7 +188,10 @@ namespace Lib9c.Tests.Action
                             _signer,
                             new PrivateKey().ToAddress(),
                             ItemSubType.Armor,
-                            new Currency("NCG", 2, minters: null) * 10
+#pragma warning disable CS0618
+                    // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+                            Currency.Legacy("NCG", 2, null) * 10
+#pragma warning restore CS0618
                         ),
                     },
                 },
@@ -303,6 +313,27 @@ namespace Lib9c.Tests.Action
                     EventScheduleId = 0,
                     EventConsumableItemRecipeId = 0,
                     SlotIndex = 0,
+                },
+                Raid _ => new Raid
+                {
+                    AvatarAddress = new PrivateKey().ToAddress(),
+                    CostumeIds = new List<Guid>(),
+                    EquipmentIds = new List<Guid>(),
+                    FoodIds = new List<Guid>(),
+                    PayNcg = true,
+                },
+                ClaimRaidReward _ => new ClaimRaidReward(_sender),
+                ClaimWordBossKillReward _ => new ClaimWordBossKillReward
+                {
+                    AvatarAddress = _sender,
+                },
+                PrepareRewardAssets _ => new PrepareRewardAssets
+                {
+                    RewardPoolAddress = _sender,
+                    Assets = new List<FungibleAssetValue>
+                    {
+                        _currency * 100,
+                    },
                 },
                 _ => throw new InvalidCastException(),
             };
