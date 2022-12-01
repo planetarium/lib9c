@@ -35,7 +35,7 @@ namespace Nekoyume.BlockChain.Policy
                     filter: null,
                     value: BlockPolicySource.ValidatorSet01))
                 .Add(new SpannedSubPolicy<ValidatorSet>(
-                    startIndex: 500,
+                    startIndex: 100,
                     endIndex: null,
                     filter: null,
                     value: BlockPolicySource.ValidatorSet02));
@@ -46,7 +46,12 @@ namespace Nekoyume.BlockChain.Policy
                     startIndex: 0,
                     endIndex: null,
                     filter: null,
-                    value: BlockPolicySource.ValidatorSet01));
+                    value: BlockPolicySource.ValidatorSet01))
+                .Add(new SpannedSubPolicy<ValidatorSet>(
+                    startIndex: 100,
+                    endIndex: null,
+                    filter: null,
+                    value: BlockPolicySource.ValidatorSet02));
 
         public static IVariableSubPolicy<ValidatorSet> Test =>
             Default
