@@ -134,9 +134,9 @@ namespace Nekoyume.BlockChain.Policy
             new PublicKey(ByteUtil.ParseHex("027dc1a98fde710b833f54df8b759b139b3911968a85354302037ad995990c8cb8")), // validator20
         }.ToImmutableList();
 
-        public static readonly ValidatorSet ValidatorSet01 = new ValidatorSet(Validators.Take(13).ToList());            // 01 ~ 13
+        public static readonly ValidatorSet ValidatorSet01 = new ValidatorSet(Validators.Take(7).ToList());         // 01 ~ 07
 
-        public static readonly ValidatorSet ValidatorSet02 = new ValidatorSet(Validators.Skip(2).Take(16).ToList());    // 03 ~ 18
+        public static readonly ValidatorSet ValidatorSet02 = new ValidatorSet(Validators.Skip(2).Take(7).ToList()); // 03 ~ 09
 
         public readonly ActionRenderer ActionRenderer = new ActionRenderer();
 
