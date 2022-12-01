@@ -61,8 +61,6 @@ namespace Lib9c.Benchmarks
             var policySource = new BlockPolicySource(Log.Logger, LogEventLevel.Verbose);
             IBlockPolicy<NCAction> policy =
                 policySource.GetPolicy(
-                    // Explicitly set to lowest possible difficulty.
-                    minimumDifficulty: BlockPolicySource.DifficultyStability,
                     maxTransactionsBytesPolicy: null,
                     minTransactionsPerBlockPolicy: null,
                     maxTransactionsPerBlockPolicy: null,

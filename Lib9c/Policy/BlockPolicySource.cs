@@ -162,7 +162,6 @@ namespace Nekoyume.BlockChain.Policy
         /// </summary>
         public IBlockPolicy<NCAction> GetPolicy() =>
             GetPolicy(
-                minimumDifficulty: MinimumDifficulty,
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
@@ -174,7 +173,6 @@ namespace Nekoyume.BlockChain.Policy
         /// </summary>
         public IBlockPolicy<NCAction> GetInternalPolicy() =>
             GetPolicy(
-                minimumDifficulty: MinimumDifficulty,
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Internal,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
@@ -186,7 +184,6 @@ namespace Nekoyume.BlockChain.Policy
         /// </summary>
         public IBlockPolicy<NCAction> GetPermanentPolicy() =>
             GetPolicy(
-                minimumDifficulty: DifficultyStability,
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
@@ -199,7 +196,6 @@ namespace Nekoyume.BlockChain.Policy
         /// </summary>
         public IBlockPolicy<NCAction> GetTestPolicy() =>
             GetPolicy(
-                minimumDifficulty: DifficultyStability,
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
@@ -212,7 +208,6 @@ namespace Nekoyume.BlockChain.Policy
         /// </summary>
         public IBlockPolicy<NCAction> GetDefaultPolicy() =>
             GetPolicy(
-                minimumDifficulty: DifficultyStability,
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Default,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Default,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Default,
@@ -234,7 +229,6 @@ namespace Nekoyume.BlockChain.Policy
         /// <param name="validatorsPolicy">Used for PBFT.</param>
         /// <returns>A <see cref="BlockPolicy"/> constructed from given parameters.</returns>
         internal IBlockPolicy<NCAction> GetPolicy(
-            long minimumDifficulty,
             IVariableSubPolicy<long> maxTransactionsBytesPolicy,
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
