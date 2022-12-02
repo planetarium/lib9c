@@ -16,14 +16,13 @@ using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
 namespace Nekoyume.BlockChain
 {
-    public class Miner<T>
-        where T : IAction, new()
+    public class Miner
     {
-        private readonly BlockChain<T> _chain;
-        private readonly Swarm<T> _swarm;
+        private readonly BlockChain<NCAction> _chain;
+        private readonly Swarm<NCAction> _swarm;
         private readonly PrivateKey _privateKey;
         // TODO we must justify it.
-        private readonly ImmutableHashSet<Address> _bannedAccounts = new[]
+        private static readonly ImmutableHashSet<Address> _bannedAccounts = new[]
         {
             new Address("de96aa7702a7a1fd18ee0f84a5a0c7a2c28ec840"),
             new Address("153281c93274bEB9726A03C33d3F19a8D78ad805"),
@@ -41,23 +40,18 @@ namespace Nekoyume.BlockChain
 
         public Address Address => _privateKey.ToAddress();
 
-        /// <summary>
-        /// Propose and broadcast block without appending.
-        /// </summary>
-        /// <param name="lastCommit">List of lastCommits to be included.</param>
-        /// <returns></returns>
-        public Block<T> ProposeBlock(BlockCommit lastCommit)
+        public Block<NCAction> ProposeBlock(BlockCommit lastCommit)
         {
-            var txs = new HashSet<Transaction<T>>();
+            var txs = new HashSet<Transaction<NCAction>>();
             var invalidTxs = txs;
 
-            Block<T> block = null;
+            Block<NCAction> block = null;
             try
             {
-                IEnumerable<Transaction<T>> bannedTxs = _chain.GetStagedTransactionIds()
+                IEnumerable<Transaction<NCAction>> bannedTxs = _chain.GetStagedTransactionIds()
                     .Select(txId => _chain.GetTransaction(txId))
                     .Where(tx => _bannedAccounts.Contains(tx.Signer));
-                foreach (Transaction<T> tx in bannedTxs)
+                foreach (Transaction<NCAction> tx in bannedTxs)
                 {
                     _chain.UnstageTransaction(tx);
                 }
@@ -67,7 +61,7 @@ namespace Nekoyume.BlockChain
                     DateTimeOffset.UtcNow,
                     lastCommit: lastCommit);
 
-                if (_swarm is Swarm<T> s && s.Running)
+                if (_swarm is Swarm<NCAction> s && s.Running)
                 {
                     s.BroadcastBlock(block);
                 }
@@ -111,8 +105,8 @@ namespace Nekoyume.BlockChain
         }
 
         public Miner(
-            BlockChain<T> chain,
-            Swarm<T> swarm,
+            BlockChain<NCAction> chain,
+            Swarm<NCAction> swarm,
             PrivateKey privateKey
         )
         {
