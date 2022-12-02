@@ -56,5 +56,7 @@ namespace Nekoyume.BlockChain.Policy
         public int GetMaxTransactionsPerSignerPerBlock(long index) => int.MaxValue;
 
         public IImmutableSet<Currency> NativeTokens => ImmutableHashSet<Currency>.Empty;
+
+        public int GetMinBlockProtocolVersion(long index) => 0;
     }
 }
