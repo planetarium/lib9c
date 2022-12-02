@@ -20,7 +20,7 @@ namespace Nekoyume.BlockChain.Policy
         public static IVariableSubPolicy<int> Mainnet =>
             Default
                 .Add(new SpannedSubPolicy<int>(
-                    startIndex: 4_000L,
+                    startIndex: 5_468_000L,
                     value: 4));
     }
 }
