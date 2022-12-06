@@ -45,12 +45,12 @@ namespace Nekoyume.BlockChain
         // FIXME: Temporary method to allow Unity Editor testing.
         // This should only be called under a development environment inside Unity
         // with DebugPolicy as blockchain's policy.
-        public Block<NCAction>? ProposeBlock()
+        public Block<NCAction> ProposeBlock()
         {
             var txs = new HashSet<Transaction<NCAction>>();
             var invalidTxs = txs;
 
-            Block<NCAction>? block = null;
+            Block<NCAction> block = null;
             try
             {
                 IEnumerable<Transaction<NCAction>> bannedTxs = _chain.GetStagedTransactionIds()
@@ -67,7 +67,7 @@ namespace Nekoyume.BlockChain
                     _privateKey,
                     DateTimeOffset.UtcNow,
                     lastCommit: lastCommit);
-                BlockCommit? commit = block.Index > 0
+                BlockCommit commit = block.Index > 0
                     ? new BlockCommit(
                         block.Index,
                         0,
