@@ -54,6 +54,6 @@ namespace Nekoyume.BlockChain.Policy
 
         public IImmutableSet<Currency> NativeTokens => ImmutableHashSet<Currency>.Empty;
 
-        public ValidatorSet GetValidatorSet(long index) => new ValidatorSet(new List<PublicKey>());
+        public ValidatorSet GetValidatorSet(long index) => BlockPolicySource.DebugValidatorSet;
     }
 }
