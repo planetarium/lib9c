@@ -138,6 +138,12 @@ namespace Nekoyume.BlockChain.Policy
 
         public static readonly ValidatorSet ValidatorSet02 = new ValidatorSet(Validators.Skip(2).Take(7).ToList()); // 03 ~ 09
 
+        public static readonly PrivateKey DebugValidatorKey =
+            new PrivateKey("0000000000000000000000000000000000000000000000000000000000000001");
+
+        public static readonly ValidatorSet DebugValidatorSet =
+            new ValidatorSet(new List<PublicKey> { DebugValidatorKey.PublicKey });
+
         public readonly ActionRenderer ActionRenderer = new ActionRenderer();
 
         public readonly BlockRenderer BlockRenderer = new BlockRenderer();
