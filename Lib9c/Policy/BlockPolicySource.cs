@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Numerics;
 using Bencodex.Types;
 using Lib9c.Renderer;
+using Libplanet.Action.Sys;
 using Libplanet.Blocks;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
@@ -366,6 +368,15 @@ namespace Nekoyume.BlockChain.Policy
                 if (IsAdminTransaction(blockChain, transaction))
                 {
                     return null;
+                }
+
+                if (transaction.SystemAction is SetValidator &&
+                    !transaction.PublicKey.Equals(ValidatorAdmin))
+                {
+                    return new TxPolicyViolationException(
+                        $"Transaction {transaction.Id} of SetValidator action is " +
+                        $"expected to be signed by validator admin {ValidatorAdmin}," +
+                        $"but signed by {transaction.PublicKey}", transaction.Id);
                 }
 
                 switch (blockChain.GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
