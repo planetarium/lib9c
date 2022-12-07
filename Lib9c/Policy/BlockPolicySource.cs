@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Numerics;
 using Bencodex.Types;
 using Lib9c.Renderer;
+using Libplanet.Action.Sys;
 using Libplanet.Blocks;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
@@ -110,7 +112,10 @@ namespace Nekoyume.BlockChain.Policy
             new Address("636d187B4d434244A92B65B06B5e7da14b3810A9"),
         }.ToImmutableHashSet();
 
-        public static readonly ImmutableList<PublicKey> Validators = new List<PublicKey>
+        public static readonly PublicKey ValidatorAdmin = new PublicKey(
+            ByteUtil.ParseHex("03c5053b7bc6f1718ef95442f508f0f44196ef36b2dd712768828daa4c25608efe"));
+
+        public static readonly ImmutableList<PublicKey> ValidatorAllowlist = new List<PublicKey>
         {
             new PublicKey(ByteUtil.ParseHex("03c5053b7bc6f1718ef95442f508f0f44196ef36b2dd712768828daa4c25608efe")), // validator01
             new PublicKey(ByteUtil.ParseHex("03c43a4bccc99dca6206cf6d6070f2eaa72a544e503a70318cf1ac5db94fcb30b7")), // validator02
@@ -134,15 +139,11 @@ namespace Nekoyume.BlockChain.Policy
             new PublicKey(ByteUtil.ParseHex("027dc1a98fde710b833f54df8b759b139b3911968a85354302037ad995990c8cb8")), // validator20
         }.ToImmutableList();
 
-        public static readonly ValidatorSet ValidatorSet01 = new ValidatorSet(Validators.Take(7).ToList());         // 01 ~ 07
-
-        public static readonly ValidatorSet ValidatorSet02 = new ValidatorSet(Validators.Skip(2).Take(7).ToList()); // 03 ~ 09
-
         public static readonly PrivateKey DebugValidatorKey =
             new PrivateKey("0000000000000000000000000000000000000000000000000000000000000001");
 
         public static readonly ValidatorSet DebugValidatorSet =
-            new ValidatorSet(new List<PublicKey> { DebugValidatorKey.PublicKey });
+            new ValidatorSet(new List<Validator> { new Validator(DebugValidatorKey.PublicKey, BigInteger.One) });
 
         public readonly ActionRenderer ActionRenderer = new ActionRenderer();
 
@@ -171,8 +172,7 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
-                validatorsPolicy: ValidatorsPolicy.Mainnet);
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-internal deployment.
@@ -182,8 +182,7 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Internal,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal,
-                validatorsPolicy: ValidatorsPolicy.Mainnet);
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-permanent-test deployment.
@@ -193,8 +192,7 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
-                validatorsPolicy: ValidatorsPolicy.Permanent);
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance identical to the one deployed
@@ -205,8 +203,7 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
-                validatorsPolicy: ValidatorsPolicy.Test);
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for networks
@@ -217,8 +214,7 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Default,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Default,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Default,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Default,
-                validatorsPolicy: ValidatorsPolicy.Default);
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Default);
 
         /// <summary>
         /// Gets a <see cref="BlockPolicy"/> constructed from given parameters.
@@ -238,8 +234,7 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<long> maxTransactionsBytesPolicy,
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
-            IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
-            IVariableSubPolicy<ValidatorSet> validatorsPolicy)
+            IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy)
         {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
@@ -253,8 +248,6 @@ namespace Nekoyume.BlockChain.Policy
                 ?? MaxTransactionsPerBlockPolicy.Default;
             maxTransactionsPerSignerPerBlockPolicy = maxTransactionsPerSignerPerBlockPolicy
                 ?? MaxTransactionsPerSignerPerBlockPolicy.Default;
-            validatorsPolicy = validatorsPolicy
-                ?? ValidatorsPolicy.Default;
 
             Func<BlockChain<NCAction>, Transaction<NCAction>, TxPolicyViolationException> validateNextBlockTx =
                 (blockChain, transaction) => ValidateNextBlockTxRaw(
@@ -279,8 +272,7 @@ namespace Nekoyume.BlockChain.Policy
                 getMinTransactionsPerBlock: minTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerBlock: maxTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerSignerPerBlock: maxTransactionsPerSignerPerBlockPolicy.Getter,
-                isAllowedToMine: isAllowedToMine,
-                getValidatorSet: validatorsPolicy.Getter);
+                isAllowedToMine: isAllowedToMine);
 #endif
         }
 
@@ -330,6 +322,15 @@ namespace Nekoyume.BlockChain.Policy
                 if (IsAdminTransaction(blockChain, transaction))
                 {
                     return null;
+                }
+
+                if (transaction.SystemAction is SetValidator &&
+                    !transaction.PublicKey.Equals(ValidatorAdmin))
+                {
+                    return new TxPolicyViolationException(
+                        $"Transaction {transaction.Id} of SetValidator action is " +
+                        $"expected to be signed by validator admin {ValidatorAdmin}," +
+                        $"but signed by {transaction.PublicKey}", transaction.Id);
                 }
 
                 switch (blockChain.GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
