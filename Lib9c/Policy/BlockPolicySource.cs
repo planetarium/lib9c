@@ -115,6 +115,9 @@ namespace Nekoyume.BlockChain.Policy
             new Address("636d187B4d434244A92B65B06B5e7da14b3810A9"),
         }.ToImmutableHashSet();
 
+        public static readonly PublicKey ValidatorAdmin = new PublicKey(
+            ByteUtil.ParseHex("03c5053b7bc6f1718ef95442f508f0f44196ef36b2dd712768828daa4c25608efe"));
+
         public readonly ActionRenderer ActionRenderer = new ActionRenderer();
 
         public readonly BlockRenderer BlockRenderer = new BlockRenderer();
@@ -378,6 +381,15 @@ namespace Nekoyume.BlockChain.Policy
                 if (IsAdminTransaction(blockChain, transaction))
                 {
                     return null;
+                }
+
+                if (transaction.SystemAction is SetValidator &&
+                    !transaction.PublicKey.Equals(ValidatorAdmin))
+                {
+                    return new TxPolicyViolationException(
+                        $"Transaction {transaction.Id} of SetValidator action is " +
+                        $"expected to be signed by validator admin {ValidatorAdmin}," +
+                        $"but signed by {transaction.PublicKey}", transaction.Id);
                 }
 
                 switch (blockChain.GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
