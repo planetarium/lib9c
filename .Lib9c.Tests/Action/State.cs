@@ -9,6 +9,8 @@ namespace Lib9c.Tests.Action
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Assets;
+    using Libplanet.Consensus;
+    using Libplanet.Crypto;
 
     public class State : IAccountStateDelta
     {
@@ -139,5 +141,12 @@ namespace Lib9c.Tests.Action
                 .SetItem((recipient, currency), recipientBalance + value);
             return new State(_state, newBalance);
         }
+
+        public IAccountStateDelta SetValidator(PublicKey validatorKey, BigInteger power)
+        {
+            return new State(_state);
+        }
+
+        public virtual ValidatorSet GetValidatorSet() => new ValidatorSet();
     }
 }

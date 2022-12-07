@@ -49,7 +49,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                null, null, null, null, ValidatorsPolicy.Test);
+                null, null, null, null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -142,7 +142,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                null, null, null, null, null);
+                null, null, null, null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -189,7 +189,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                null, null, null, null, ValidatorsPolicy.Test);
+                null, null, null, null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -238,8 +238,7 @@ namespace Lib9c.Tests
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy
                     .Default
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
-                maxTransactionsPerSignerPerBlockPolicy: null,
-                validatorsPolicy: ValidatorsPolicy.Test);
+                maxTransactionsPerSignerPerBlockPolicy: null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
@@ -329,8 +328,7 @@ namespace Lib9c.Tests
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy
                     .Default
-                    .Add(new SpannedSubPolicy<int>(2, null, null, 5)),
-                validatorsPolicy: ValidatorsPolicy.Test);
+                    .Add(new SpannedSubPolicy<int>(2, null, null, 5)));
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
@@ -419,7 +417,7 @@ namespace Lib9c.Tests
         private BlockCommit GenerateBlockCommit<T>(Block<T> block, PrivateKey key = null)
             where T : IAction, new()
         {
-            PrivateKey privateKey = key ?? ValidatorsPolicy.TestValidatorKey;
+            PrivateKey privateKey = key;
             return block.Index != 0
                 ? new BlockCommit(
                     block.Index,
