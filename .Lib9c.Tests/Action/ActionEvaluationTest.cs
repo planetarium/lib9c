@@ -83,6 +83,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(ClaimRaidReward))]
         [InlineData(typeof(ClaimWordBossKillReward))]
         [InlineData(typeof(PrepareRewardAssets))]
+        [InlineData(typeof(ChangeAvatarName))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -312,6 +313,11 @@ namespace Lib9c.Tests.Action
                     {
                         _currency * 100,
                     },
+                },
+                ChangeAvatarName _ => new ChangeAvatarName
+                {
+                    TargetAvatarAddr = _sender,
+                    Name = "Joy",
                 },
                 _ => throw new InvalidCastException(),
             };
