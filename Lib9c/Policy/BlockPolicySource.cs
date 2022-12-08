@@ -172,7 +172,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
+                validatorAdminPolicy: ValidatorAdminPolicy.Mainnet);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-internal deployment.
@@ -182,7 +183,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Internal,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal);
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal,
+                validatorAdminPolicy: ValidatorAdminPolicy.Mainnet);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-permanent-test deployment.
@@ -192,7 +194,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
+                validatorAdminPolicy: ValidatorAdminPolicy.Permanent);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance identical to the one deployed
@@ -203,7 +206,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet,
+                validatorAdminPolicy: ValidatorAdminPolicy.Test);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for networks
@@ -214,7 +218,8 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Default,
                 minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Default,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Default,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Default);
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Default,
+                validatorAdminPolicy: ValidatorAdminPolicy.Default);
 
         /// <summary>
         /// Gets a <see cref="BlockPolicy"/> constructed from given parameters.
@@ -234,7 +239,8 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<long> maxTransactionsBytesPolicy,
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
-            IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy)
+            IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
+            IVariableSubPolicy<PublicKey> validatorAdminPolicy)
         {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
@@ -248,6 +254,8 @@ namespace Nekoyume.BlockChain.Policy
                 ?? MaxTransactionsPerBlockPolicy.Default;
             maxTransactionsPerSignerPerBlockPolicy = maxTransactionsPerSignerPerBlockPolicy
                 ?? MaxTransactionsPerSignerPerBlockPolicy.Default;
+            validatorAdminPolicy = validatorAdminPolicy
+                ?? ValidatorAdminPolicy.Default;
 
             Func<BlockChain<NCAction>, Transaction<NCAction>, TxPolicyViolationException> validateNextBlockTx =
                 (blockChain, transaction) => ValidateNextBlockTxRaw(
@@ -259,7 +267,8 @@ namespace Nekoyume.BlockChain.Policy
                     maxTransactionsBytesPolicy,
                     minTransactionsPerBlockPolicy,
                     maxTransactionsPerBlockPolicy,
-                    maxTransactionsPerSignerPerBlockPolicy);
+                    maxTransactionsPerSignerPerBlockPolicy,
+                    validatorAdminPolicy);
             Func<Address, long, bool> isAllowedToMine = (address, index) => true;
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
@@ -324,15 +333,6 @@ namespace Nekoyume.BlockChain.Policy
                     return null;
                 }
 
-                if (transaction.SystemAction is SetValidator &&
-                    !transaction.PublicKey.Equals(ValidatorAdmin))
-                {
-                    return new TxPolicyViolationException(
-                        $"Transaction {transaction.Id} of SetValidator action is " +
-                        $"expected to be signed by validator admin {ValidatorAdmin}," +
-                        $"but signed by {transaction.PublicKey}", transaction.Id);
-                }
-
                 switch (blockChain.GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
                 {
                     case null:
@@ -381,7 +381,8 @@ namespace Nekoyume.BlockChain.Policy
             IVariableSubPolicy<long> maxTransactionsBytesPolicy,
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
-            IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy)
+            IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
+            IVariableSubPolicy<PublicKey> validatorAdminPolicy)
         {
             if (ValidateTransactionsBytesRaw(
                 nextBlock,
@@ -401,6 +402,13 @@ namespace Nekoyume.BlockChain.Policy
                 maxTransactionsPerSignerPerBlockPolicy) is InvalidBlockTxCountPerSignerException ibtcpse)
             {
                 return ibtcpse;
+            }
+
+            else if (ValidateSetValidatorActionRaw(
+                nextBlock,
+                validatorAdminPolicy) is BlockPolicyViolationException bpve)
+            {
+                return bpve;
             }
 
             return null;

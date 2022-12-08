@@ -64,7 +64,8 @@ namespace Lib9c.Benchmarks
                     maxTransactionsBytesPolicy: null,
                     minTransactionsPerBlockPolicy: null,
                     maxTransactionsPerBlockPolicy: null,
-                    maxTransactionsPerSignerPerBlockPolicy: null);
+                    maxTransactionsPerSignerPerBlockPolicy: null,
+                    validatorAdminPolicy: null);
             IStagePolicy<NCAction> stagePolicy = new VolatileStagePolicy<NCAction>();
             var store = new RocksDBStore(storePath);
             if (!(store.GetCanonicalChainId() is Guid chainId))
