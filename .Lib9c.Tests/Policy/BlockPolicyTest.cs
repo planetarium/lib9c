@@ -49,7 +49,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                null, null, null, null);
+                null, null, null, null, ValidatorAdminPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -86,7 +86,7 @@ namespace Lib9c.Tests
                 new PolymorphicAction<ActionBase>[] { new AddActivatedAccount(newActivatedAddress) }
             );
             Block<PolymorphicAction<ActionBase>> block = blockChain.ProposeBlock(adminPrivateKey);
-            blockChain.Append(block, GenerateBlockCommit(block));
+            blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
 
             Transaction<PolymorphicAction<ActionBase>> txByNewActivated =
                 Transaction<PolymorphicAction<ActionBase>>.Create(
@@ -142,7 +142,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                null, null, null, null);
+                null, null, null, null, null);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -189,7 +189,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                null, null, null, null);
+                null, null, null, null, ValidatorAdminPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -220,7 +220,7 @@ namespace Lib9c.Tests
             );
 
             Block<PolymorphicAction<ActionBase>> block = blockChain.ProposeBlock(adminPrivateKey);
-            blockChain.Append(block, GenerateBlockCommit(block));
+            blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
             FungibleAssetValue actualBalance = blockChain.GetBalance(adminAddress, _currency);
             FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 10, 0);
             Assert.True(expectedBalance.Equals(actualBalance));
@@ -238,7 +238,8 @@ namespace Lib9c.Tests
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy
                     .Default
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
-                maxTransactionsPerSignerPerBlockPolicy: null);
+                maxTransactionsPerSignerPerBlockPolicy: null,
+                validatorAdminPolicy: ValidatorAdminPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
@@ -328,7 +329,8 @@ namespace Lib9c.Tests
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy
                     .Default
-                    .Add(new SpannedSubPolicy<int>(2, null, null, 5)));
+                    .Add(new SpannedSubPolicy<int>(2, null, null, 5)),
+                validatorAdminPolicy: ValidatorAdminPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
