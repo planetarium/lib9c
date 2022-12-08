@@ -383,15 +383,6 @@ namespace Nekoyume.BlockChain.Policy
                     return null;
                 }
 
-                if (transaction.SystemAction is SetValidator &&
-                    !transaction.PublicKey.Equals(ValidatorAdmin))
-                {
-                    return new TxPolicyViolationException(
-                        $"Transaction {transaction.Id} of SetValidator action is " +
-                        $"expected to be signed by validator admin {ValidatorAdmin}," +
-                        $"but signed by {transaction.PublicKey}", transaction.Id);
-                }
-
                 switch (blockChain.GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
                 {
                     case null:
@@ -495,6 +486,13 @@ namespace Nekoyume.BlockChain.Policy
                         nextBlock,
                         permissionedMinersPolicy);
                 }
+            }
+
+            else if (ValidateSetValidatorActionRaw(
+                nextBlock,
+                validatorAdminPolicy) is BlockPolicyViolationException bpve)
+            {
+                return bpve;
             }
 
             return null;
