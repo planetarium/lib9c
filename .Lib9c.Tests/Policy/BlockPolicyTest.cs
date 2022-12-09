@@ -4,9 +4,7 @@ namespace Lib9c.Tests
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
-    using System.Reflection;
-    using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
+    using System.Numerics;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Assets;
@@ -20,7 +18,6 @@ namespace Lib9c.Tests
     using Libplanet.Tx;
     using Nekoyume;
     using Nekoyume.Action;
-    using Nekoyume.BlockChain;
     using Nekoyume.BlockChain.Policy;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
@@ -34,7 +31,7 @@ namespace Lib9c.Tests
 
         public BlockPolicyTest()
         {
-            _privateKey = new PrivateKey();
+            _privateKey = ValidatorAdminPolicy.TestValidatorAdminKey;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             _currency = Currency.Legacy("NCG", 2, _privateKey.ToAddress());
@@ -54,7 +51,9 @@ namespace Lib9c.Tests
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
                 adminAddress,
-                ImmutableHashSet.Create(adminAddress)
+                ImmutableHashSet.Create(adminAddress),
+                initialValidators: new Dictionary<PublicKey, BigInteger>
+                { { adminPrivateKey.PublicKey, BigInteger.One } }
             );
             using var store = new DefaultStore(null);
             using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
@@ -200,6 +199,7 @@ namespace Lib9c.Tests
                     5,
                     10
                 ),
+                new Dictionary<PublicKey, BigInteger> { { adminPrivateKey.PublicKey, BigInteger.One } },
                 pendingActivations: new[] { ps }
             );
 
@@ -243,7 +243,11 @@ namespace Lib9c.Tests
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
-                MakeGenesisBlock(adminPublicKey.ToAddress(), ImmutableHashSet<Address>.Empty);
+                MakeGenesisBlock(
+                    adminPublicKey.ToAddress(),
+                    ImmutableHashSet<Address>.Empty,
+                    initialValidators: new Dictionary<PublicKey, BigInteger>
+                    { { adminPrivateKey.PublicKey, BigInteger.One } });
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
@@ -283,7 +287,7 @@ namespace Lib9c.Tests
                     txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
                     lastCommit: null),
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
-            blockChain.Append(block1, GenerateBlockCommit(block1));
+            blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
             txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
@@ -294,9 +298,9 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip)),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
-            blockChain.Append(block2, GenerateBlockCommit(block2));
+            blockChain.Append(block2, GenerateBlockCommit(block2, adminPrivateKey));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block2.Hash));
             txs = GenerateTransactions(11).OrderBy(tx => tx.Id).ToList();
@@ -307,10 +311,10 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip)),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
             Assert.Throws<InvalidBlockTxCountException>(
-                () => blockChain.Append(block3, GenerateBlockCommit(block3)));
+                () => blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey)));
             Assert.Equal(3, blockChain.Count);
             Assert.False(blockChain.ContainsBlock(block3.Hash));
         }
@@ -334,7 +338,11 @@ namespace Lib9c.Tests
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
-                MakeGenesisBlock(adminPublicKey.ToAddress(), ImmutableHashSet<Address>.Empty);
+                MakeGenesisBlock(
+                    adminPublicKey.ToAddress(),
+                    ImmutableHashSet<Address>.Empty,
+                    initialValidators: new Dictionary<PublicKey, BigInteger>
+                    { { adminPrivateKey.PublicKey, BigInteger.One } });
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
@@ -376,7 +384,7 @@ namespace Lib9c.Tests
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
 
             // Should be fine since policy hasn't kicked in yet.
-            blockChain.Append(block1, GenerateBlockCommit(block1));
+            blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
 
@@ -388,12 +396,12 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip)),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
 
             // Subpolicy kicks in.
             Assert.Throws<InvalidBlockTxCountPerSignerException>(
-                () => blockChain.Append(block2, GenerateBlockCommit(block2)));
+                () => blockChain.Append(block2, GenerateBlockCommit(block2, adminPrivateKey)));
             Assert.Equal(2, blockChain.Count);
             Assert.False(blockChain.ContainsBlock(block2.Hash));
             // Since failed, roll back nonce.
@@ -408,10 +416,10 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip)),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
 
-            blockChain.Append(block3, GenerateBlockCommit(block3));
+            blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block3.Hash));
         }
@@ -439,6 +447,7 @@ namespace Lib9c.Tests
             Address adminAddress,
             IImmutableSet<Address> activatedAddresses,
             AuthorizedMinersState authorizedMinersState = null,
+            Dictionary<PublicKey, BigInteger> initialValidators = null,
             DateTimeOffset? timestamp = null,
             PendingActivationState[] pendingActivations = null
         )
@@ -459,6 +468,7 @@ namespace Lib9c.Tests
                 new AdminState(adminAddress, 1500000),
                 authorizedMinersState: authorizedMinersState,
                 activatedAccounts: activatedAddresses,
+                initialValidators: initialValidators,
                 isActivateAdminAddress: false,
                 credits: null,
                 privateKey: _privateKey,
