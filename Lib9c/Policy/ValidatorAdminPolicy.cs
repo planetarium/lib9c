@@ -47,11 +47,6 @@ namespace Nekoyume.BlockChain.Policy
                     value: BlockPolicySource.ValidatorAdmin));
 
         public static IVariableSubPolicy<PublicKey> Test =>
-            Default
-                .Add(new SpannedSubPolicy<PublicKey>(
-                    startIndex: 0,
-                    endIndex: null,
-                    filter: null,
-                    value: TestValidatorAdminKey.PublicKey));
+            new ValidatorAdminPolicy(TestValidatorAdminKey.PublicKey);
     }
 }
