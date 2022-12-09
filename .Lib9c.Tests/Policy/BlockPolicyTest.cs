@@ -424,7 +424,7 @@ namespace Lib9c.Tests
             Assert.True(blockChain.ContainsBlock(block3.Hash));
         }
 
-        private BlockCommit GenerateBlockCommit<T>(Block<T> block, PrivateKey key = null)
+        private BlockCommit GenerateBlockCommit<T>(Block<T> block, PrivateKey key)
             where T : IAction, new()
         {
             PrivateKey privateKey = key;
