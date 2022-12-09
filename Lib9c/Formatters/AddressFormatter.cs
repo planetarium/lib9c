@@ -20,6 +20,24 @@ namespace Lib9c.Formatters
             writer.Write(value.ToByteArray());
         }
 
+        public Address Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.TryReadNil())
+            {
+                return default;
+            }
+
+            options.Security.DepthStep(ref reader);
+
+            var bytes = reader.ReadBytes()?.ToArray();
+            if (bytes is null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return new Address(bytes);
+        }
+
         Address IMessagePackFormatter<Address>.Deserialize(ref MessagePackReader reader,
             MessagePackSerializerOptions options)
         {

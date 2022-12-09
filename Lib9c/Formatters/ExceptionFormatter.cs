@@ -26,6 +26,24 @@ namespace Lib9c.Formatters
             }
         }
 
+        public T Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.TryReadNil())
+            {
+                return null;
+            }
+
+            options.Security.DepthStep(ref reader);
+            var formatter = new BinaryFormatter();
+            byte[] bytes = reader.ReadBytes()?.ToArray();
+            using (var stream = new MemoryStream(bytes))
+            {
+#pragma warning disable SYSLIB0011
+                return (T)formatter.Deserialize(stream);
+#pragma warning restore SYSLIB0011
+            }
+        }
+
         T IMessagePackFormatter<T>.Deserialize(ref MessagePackReader reader,
             MessagePackSerializerOptions options)
         {

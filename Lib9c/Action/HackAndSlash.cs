@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -124,8 +124,7 @@ namespace Nekoyume.Action
 
             sw.Restart();
             // FIXME Delete this check next hard fork.
-            //bool useV100291Sheets = UseV100291Sheets(blockIndex);
-            bool useV100291Sheets = false;
+            bool useV100291Sheets = UseV100291Sheets(blockIndex);
             var sheets = useV100291Sheets
                 ? states.GetSheetsV100291(
                     containQuestSheet: true,
