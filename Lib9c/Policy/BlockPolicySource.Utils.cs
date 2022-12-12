@@ -241,9 +241,10 @@ namespace Nekoyume.BlockChain.Policy
                 }
             }
 
-            if (logDict.Any())
+            var sortedLogDict = logDict.OrderBy(item => item.Value.ToAddress());
+            if (sortedLogDict.Any())
             {
-                string logStr = logDict.Aggregate("", (total, next)
+                string logStr = sortedLogDict.Aggregate("", (total, next)
                     => total + $"On transaction {next.Key.Id}, " +
                     $"expected to be signed by validor admin {validatorAdmin}, " +
                     $"but signed by {next.Value}\n");
