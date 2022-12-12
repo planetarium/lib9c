@@ -78,7 +78,8 @@ namespace Nekoyume
             {
                 initialStatesAction,
             };
-            IEnumerable<IAction> systemActions = initialValidators.Select(
+            IEnumerable<IAction> systemActions = initialValidators.OrderBy(
+                item => item.Key.ToAddress()).Select(
                 item => new SetValidator(item.Key, item.Value));
 
             if (!(actionBases is null))
