@@ -136,9 +136,14 @@ namespace Nekoyume.BlockChain.Policy
             new PublicKey(ByteUtil.ParseHex("027dc1a98fde710b833f54df8b759b139b3911968a85354302037ad995990c8cb8")), // validator20
         }.ToImmutableList();
 
+        public static readonly ImmutableList<PublicKey> ExternalValidators = new List<PublicKey>
+        {
+            new PublicKey(ByteUtil.ParseHex("035206890fd8736555ce667672b8183efacd9bf840b6c5ee8eb7f5703e7bddf38c")), // FioX
+        }.ToImmutableList();
+
         public static readonly ValidatorSet ValidatorSet01 = new ValidatorSet(Validators.Take(7).ToList());         // 01 ~ 07
 
-        public static readonly ValidatorSet ValidatorSet02 = new ValidatorSet(Validators.Skip(2).Take(7).ToList()); // 03 ~ 09
+        public static readonly ValidatorSet ValidatorSet02 = new ValidatorSet(Validators.Skip(2).Take(7).Concat(ExternalValidators).ToList()); // 03 ~ 09 + External
 
         public static readonly PrivateKey DebugValidatorKey =
             new PrivateKey("0000000000000000000000000000000000000000000000000000000000000001");
