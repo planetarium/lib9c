@@ -139,11 +139,18 @@ namespace Nekoyume.BlockChain.Policy
         public static readonly ImmutableList<PublicKey> ExternalValidators = new List<PublicKey>
         {
             new PublicKey(ByteUtil.ParseHex("035206890fd8736555ce667672b8183efacd9bf840b6c5ee8eb7f5703e7bddf38c")), // FioX
+            new PublicKey(ByteUtil.ParseHex("02d25568df5edd893dae2fadd02cf9fc3a281642553eaceab39ec15e01c990200f")), // Se2on
+            new PublicKey(ByteUtil.ParseHex("02dfdc95a830bcc4f23953964916e94593beef325821589c03bec5c22463e56240")), // TarogStar
         }.ToImmutableList();
 
-        public static readonly ValidatorSet ValidatorSet01 = new ValidatorSet(Validators.Take(7).ToList());         // 01 ~ 07
+        public static readonly ValidatorSet ValidatorSet01 =
+            new ValidatorSet(Validators.Take(7).ToList());                                              // 01 ~ 07
 
-        public static readonly ValidatorSet ValidatorSet02 = new ValidatorSet(Validators.Skip(2).Take(7).Concat(ExternalValidators).ToList()); // 03 ~ 09 + External
+        public static readonly ValidatorSet ValidatorSet02 =
+            new ValidatorSet(Validators.Skip(2).Take(7).Concat(ExternalValidators.Take(1)).ToList());   // 03 ~ 09 + Fiox
+
+        public static readonly ValidatorSet ValidatorSet03 =
+            new ValidatorSet(Validators.Take(9).Concat(ExternalValidators).ToList());                   // 01 ~ 09 + External
 
         public static readonly PrivateKey DebugValidatorKey =
             new PrivateKey("0000000000000000000000000000000000000000000000000000000000000001");
