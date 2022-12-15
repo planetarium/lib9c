@@ -7,6 +7,7 @@ namespace Lib9c.Tests
     using System.Numerics;
     using Libplanet;
     using Libplanet.Action;
+    using Libplanet.Action.Sys;
     using Libplanet.Assets;
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
@@ -125,6 +126,88 @@ namespace Lib9c.Tests
             // Transaction with more than two actions is rejected.
             Assert.Null(policy.ValidateNextBlockTx(blockChain, txWithSingleAction));
             Assert.NotNull(policy.ValidateNextBlockTx(blockChain, txWithManyActions));
+        }
+
+        [Fact]
+        public void SetValidatorWithInvalidValidatorAdmin()
+        {
+            var adminPrivateKey = new PrivateKey();
+            var invalidAdminPrivateKey = new PrivateKey();
+            var adminAddress = adminPrivateKey.ToAddress();
+            var validatorCandidate = new PrivateKey();
+
+            var blockPolicySource = new BlockPolicySource(Logger.None);
+            IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
+                null, null, null, null, ValidatorAdminPolicy.Test);
+            IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
+                new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
+            Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
+                adminAddress,
+                ImmutableHashSet.Create(adminAddress),
+                initialValidators: new Dictionary<PublicKey, BigInteger>
+                { { adminPrivateKey.PublicKey, BigInteger.One } }
+            );
+            using var store = new DefaultStore(null);
+            using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
+            var blockChain = new BlockChain<PolymorphicAction<ActionBase>>(
+                policy,
+                stagePolicy,
+                store,
+                stateStore,
+                genesis,
+                renderers: new[] { blockPolicySource.BlockRenderer }
+            );
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new PolymorphicAction<ActionBase>[] { new AddActivatedAccount(invalidAdminPrivateKey.ToAddress()) }
+            );
+            Block<PolymorphicAction<ActionBase>> block1 = blockChain.ProposeBlock(adminPrivateKey);
+            blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
+
+            blockChain.MakeTransaction(
+                invalidAdminPrivateKey,
+                new SetValidator(validatorCandidate.PublicKey, BigInteger.One)
+            );
+            Block<PolymorphicAction<ActionBase>> block = blockChain.ProposeBlock(adminPrivateKey);
+            Assert.Throws<BlockPolicyViolationException>(
+                () => blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey)));
+        }
+
+        [Fact]
+        public void BlockCommitFromNonValidator()
+        {
+            var adminPrivateKey = new PrivateKey();
+            var adminAddress = adminPrivateKey.ToAddress();
+            var nonValidator = new PrivateKey();
+
+            var blockPolicySource = new BlockPolicySource(Logger.None);
+            IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
+                null, null, null, null, ValidatorAdminPolicy.Test);
+            IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
+                new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
+            Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
+                adminAddress,
+                ImmutableHashSet.Create(adminAddress),
+                initialValidators: new Dictionary<PublicKey, BigInteger>
+                { { adminPrivateKey.PublicKey, BigInteger.One } }
+            );
+            using var store = new DefaultStore(null);
+            using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
+            var blockChain = new BlockChain<PolymorphicAction<ActionBase>>(
+                policy,
+                stagePolicy,
+                store,
+                stateStore,
+                genesis,
+                renderers: new[] { blockPolicySource.BlockRenderer }
+            );
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new PolymorphicAction<ActionBase>[] { new AddActivatedAccount(adminPrivateKey.ToAddress()) }
+            );
+            Block<PolymorphicAction<ActionBase>> block1 = blockChain.ProposeBlock(adminPrivateKey);
+            Assert.Throws<InvalidBlockCommitException>(
+                () => blockChain.Append(block1, GenerateBlockCommit(block1, nonValidator)));
         }
 
         [Fact]
