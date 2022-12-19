@@ -9,7 +9,8 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on:
+      labels: ["linux", "8cores"]
     steps:
     - uses: actions/checkout@v3
       with:
