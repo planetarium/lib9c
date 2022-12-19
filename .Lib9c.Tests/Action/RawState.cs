@@ -4,10 +4,13 @@ namespace Lib9c.Tests.Action
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Numerics;
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Assets;
+    using Libplanet.Consensus;
+    using Libplanet.Crypto;
 
     /// <summary>
     /// An implementation of <see cref="IAccountStateDelta"/> for test. It handles states as raw like Libplanet does.
@@ -134,6 +137,13 @@ namespace Lib9c.Tests.Action
 
             return new RawState(rawStates);
         }
+
+        public IAccountStateDelta SetValidator(PublicKey validatorKey, BigInteger power)
+        {
+            return new RawState(_rawStates);
+        }
+
+        public virtual ValidatorSet GetValidatorSet() => new ValidatorSet();
 
         private string ToStateKey(Address address) => address.ToHex().ToLowerInvariant();
 
