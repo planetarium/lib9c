@@ -152,6 +152,9 @@ namespace Nekoyume.BlockChain.Policy
         public static readonly ValidatorSet ValidatorSet03 =
             new ValidatorSet(Validators.Take(9).Concat(ExternalValidators).ToList());                   // 01 ~ 09 + External
 
+        public static readonly ValidatorSet ValidatorSet04 =
+            new ValidatorSet(Validators.Take(13).Concat(ExternalValidators).ToList());                  // 01 ~ 13 + External
+
         public static readonly PrivateKey DebugValidatorKey =
             new PrivateKey("0000000000000000000000000000000000000000000000000000000000000001");
 
