@@ -29,29 +29,39 @@ namespace Lib9c.Renderer
         public readonly Subject<(NCBlock OldTip, NCBlock NewTip)> BlockEndSubject =
             new Subject<(NCBlock OldTip, NCBlock NewTip)>();
 
-        public void RenderAction(IAction action, IActionContext context, IAccountStateDelta nextStates) =>
-            ActionRenderSubject.OnNext(new ActionEvaluation<ActionBase>
+        public void RenderAction(IAction action, IActionContext context, IAccountStateDelta nextStates)
+        {
+            if (action is NCAction)
             {
-                Action = GetActionBase(action),
-                Signer = context.Signer,
-                BlockIndex = context.BlockIndex,
-                TxId = context.TxId,
-                OutputStates = nextStates,
-                PreviousStates = context.PreviousStates,
-                RandomSeed = context.Random.Seed
-            });
+                ActionRenderSubject.OnNext(new ActionEvaluation<ActionBase>
+                {
+                    Action = GetActionBase(action),
+                    Signer = context.Signer,
+                    BlockIndex = context.BlockIndex,
+                    TxId = context.TxId,
+                    OutputStates = nextStates,
+                    PreviousStates = context.PreviousStates,
+                    RandomSeed = context.Random.Seed
+                });
+            }
+        }
 
-        public void UnrenderAction(IAction action, IActionContext context, IAccountStateDelta nextStates) =>
-            ActionUnrenderSubject.OnNext(new ActionEvaluation<ActionBase>
+        public void UnrenderAction(IAction action, IActionContext context, IAccountStateDelta nextStates)
+        {
+            if (action is NCAction)
             {
-                Action = GetActionBase(action),
-                Signer = context.Signer,
-                BlockIndex = context.BlockIndex,
-                TxId = context.TxId,
-                OutputStates = nextStates,
-                PreviousStates = context.PreviousStates,
-                RandomSeed = context.Random.Seed
-            });
+                ActionUnrenderSubject.OnNext(new ActionEvaluation<ActionBase>
+                {
+                    Action = GetActionBase(action),
+                    Signer = context.Signer,
+                    BlockIndex = context.BlockIndex,
+                    TxId = context.TxId,
+                    OutputStates = nextStates,
+                    PreviousStates = context.PreviousStates,
+                    RandomSeed = context.Random.Seed
+                });
+            }
+        }
 
         public void RenderActionError(
             IAction action,
@@ -59,32 +69,40 @@ namespace Lib9c.Renderer
             Exception exception
         )
         {
-            Log.Error(exception, "{action} execution failed.", action);
-            ActionRenderSubject.OnNext(new ActionEvaluation<ActionBase>
+            if (action is NCAction)
             {
-                Action = GetActionBase(action),
-                Signer = context.Signer,
-                BlockIndex = context.BlockIndex,
-                TxId = context.TxId,
-                OutputStates = context.PreviousStates,
-                Exception = exception,
-                PreviousStates = context.PreviousStates,
-                RandomSeed = context.Random.Seed
-            });
+                Log.Error(exception, "{action} execution failed.", action);
+                ActionRenderSubject.OnNext(new ActionEvaluation<ActionBase>
+                {
+                    Action = GetActionBase(action),
+                    Signer = context.Signer,
+                    BlockIndex = context.BlockIndex,
+                    TxId = context.TxId,
+                    OutputStates = context.PreviousStates,
+                    Exception = exception,
+                    PreviousStates = context.PreviousStates,
+                    RandomSeed = context.Random.Seed
+                });
+            }   
         }
 
-        public void UnrenderActionError(IAction action, IActionContext context, Exception exception) =>
-            ActionUnrenderSubject.OnNext(new ActionEvaluation<ActionBase>
+        public void UnrenderActionError(IAction action, IActionContext context, Exception exception)
+        {
+            if (action is NCAction)
             {
-                Action = GetActionBase(action),
-                Signer = context.Signer,
-                BlockIndex = context.BlockIndex,
-                TxId = context.TxId,
-                OutputStates = context.PreviousStates,
-                Exception = exception,
-                PreviousStates = context.PreviousStates,
-                RandomSeed = context.Random.Seed
-            });
+                ActionUnrenderSubject.OnNext(new ActionEvaluation<ActionBase>
+                {
+                    Action = GetActionBase(action),
+                    Signer = context.Signer,
+                    BlockIndex = context.BlockIndex,
+                    TxId = context.TxId,
+                    OutputStates = context.PreviousStates,
+                    Exception = exception,
+                    PreviousStates = context.PreviousStates,
+                    RandomSeed = context.Random.Seed
+                });
+            }
+        }
 
         [Obsolete("Use BlockRenderer.RenderBlock(oldTip, newTip)")]
         public void RenderBlock(NCBlock oldTip, NCBlock newTip)
