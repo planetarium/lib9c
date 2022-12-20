@@ -115,31 +115,7 @@ namespace Nekoyume.BlockChain.Policy
         }.ToImmutableHashSet();
 
         public static readonly PublicKey ValidatorAdmin = new PublicKey(
-            ByteUtil.ParseHex("03c5053b7bc6f1718ef95442f508f0f44196ef36b2dd712768828daa4c25608efe"));
-
-        public static readonly ImmutableList<PublicKey> ValidatorAllowlist = new List<PublicKey>
-        {
-            new PublicKey(ByteUtil.ParseHex("03c5053b7bc6f1718ef95442f508f0f44196ef36b2dd712768828daa4c25608efe")), // validator01
-            new PublicKey(ByteUtil.ParseHex("03c43a4bccc99dca6206cf6d6070f2eaa72a544e503a70318cf1ac5db94fcb30b7")), // validator02
-            new PublicKey(ByteUtil.ParseHex("03b2996c69e8064953bbaeac29d5043225607a1db8a3fd359863b9de440d002ee6")), // validator03
-            new PublicKey(ByteUtil.ParseHex("034749ddaaec8548ac1c7d402611b9270aad07b861a0705944ed7a9f56be4ecc65")), // validator04
-            new PublicKey(ByteUtil.ParseHex("02b73af503b82c5beffb9fdc4f3498a507abd0bfdee5efab2a3edd11eebac02069")), // validator05
-            new PublicKey(ByteUtil.ParseHex("03c85cedc87085f79e081680397a3983528e20fb042a9ed2bb1090ff04955728fb")), // validator06
-            new PublicKey(ByteUtil.ParseHex("0324fc4511544ad3173b75e60343a30ca5042a65a30ea45d607452da3e6a42d554")), // validator07
-            new PublicKey(ByteUtil.ParseHex("02b0de184d1908a47225a4a594aa5334551c17db05ec32ec166e006305fbf136c6")), // validator08
-            new PublicKey(ByteUtil.ParseHex("028a9963ffe2ebbc016a2c36fa799304f37ff3dd5ebb9b70cc0926b08fec3ed457")), // validator09
-            new PublicKey(ByteUtil.ParseHex("02fab92bb7555f44d545436876e114abe73975e3e2565883032caeb459a0462e43")), // validator10
-            new PublicKey(ByteUtil.ParseHex("032ee2db53722995dda649de7bea748978d4255f9eed1dd298d620af4e42f0ef2f")), // validator11
-            new PublicKey(ByteUtil.ParseHex("02fd07205b908c4c65758fddf1a2f1b38c6f76b3ef2b8546a7370dd22ad34d6476")), // validator12
-            new PublicKey(ByteUtil.ParseHex("032c4e43ade2c60ab0cc3e6bd75289b89e3c5160bc9a7519787714cb27478f1467")), // validator13
-            new PublicKey(ByteUtil.ParseHex("03ea2a447cb66028cb33bfea203b031c128e58dd8fccb642148cd4bbbeef05f373")), // validator14
-            new PublicKey(ByteUtil.ParseHex("03e429ccdb8739104636509b2231665683bf91749521ddc09cf3710709b2a0764b")), // validator15
-            new PublicKey(ByteUtil.ParseHex("02cf138bb22ee06df988dc7019534d919e5d70e31bca7e3cf4e663064a92f20dc7")), // validator16
-            new PublicKey(ByteUtil.ParseHex("033b926e3ca5f62ea6458e2ce35063d257063ea9d3766ed9c53c2d38fd14db9540")), // validator17
-            new PublicKey(ByteUtil.ParseHex("02dd45e04cddef18607a2eff4662c4157a38177c422200914d521216bc0dc8f7dc")), // validator18
-            new PublicKey(ByteUtil.ParseHex("03ebbbc4f1ae2ed659648ca154e3563a520d70054ba16fff63fb27b7526d88b4e3")), // validator19
-            new PublicKey(ByteUtil.ParseHex("027dc1a98fde710b833f54df8b759b139b3911968a85354302037ad995990c8cb8")), // validator20
-        }.ToImmutableList();
+            ByteUtil.ParseHex("02d20de0afd2231b17b3a7189c3e897796b3b31378c7b1689a6131d904bab08e5c"));
 
         public static readonly PrivateKey DebugValidatorKey =
             new PrivateKey("0000000000000000000000000000000000000000000000000000000000000001");
