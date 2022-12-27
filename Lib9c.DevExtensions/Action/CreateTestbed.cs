@@ -22,7 +22,7 @@ namespace Lib9c.DevExtensions.Action
 {
     [Serializable]
     [ActionType("create_testbed")]
-    public class CreateTestbed : GameAction
+    public class CreateTestbed : TestGameAction
     {
         private int _slotIndex = 0;
         private PrivateKey _privateKey = new PrivateKey();

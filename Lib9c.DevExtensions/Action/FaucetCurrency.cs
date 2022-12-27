@@ -12,7 +12,7 @@ namespace Lib9c.DevExtensions.Action
 {
     [Serializable]
     [ActionType("faucet_currency")]
-    public class FaucetCurrency : GameAction, IFaucetCurrency
+    public class FaucetCurrency : TestGameAction, IFaucetCurrency
     {
         public Libplanet.Address AgentAddress { get; set; }
         public int FaucetNcg { get; set; }

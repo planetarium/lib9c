@@ -20,7 +20,7 @@ namespace Lib9c.DevExtensions.Action
 {
     [Serializable]
     [ActionType("create_arena_dummy")]
-    public class CreateArenaDummy : GameAction
+    public class CreateArenaDummy : TestGameAction
     {
         public Address myAvatarAddress;
         public int accountCount;

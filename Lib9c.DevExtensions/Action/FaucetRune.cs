@@ -15,7 +15,7 @@ namespace Lib9c.DevExtensions.Action;
 
 [Serializable]
 [ActionType("faucet_rune")]
-public class FaucetRune : GameAction, IFaucetRune
+public class FaucetRune : TestGameAction, IFaucetRune
 {
     public Libplanet.Address AvatarAddress { get; set; }
     public List<FaucetRuneInfo> FaucetRuneInfos { get; set; }
