@@ -68,7 +68,10 @@ namespace Lib9c.Tests.Action
             _questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            var currency = new Currency("NCG", 2, minters: null);
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            var currency = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(currency);
             _weeklyArenaState = new WeeklyArenaState(0);
             _initialState = new State()
@@ -715,8 +718,8 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(1, 3, true)]
-        [InlineData(1, 3, false)]
+        [InlineData(1, 24, true)]
+        [InlineData(1, 24, false)]
         public void Execute_NotEnoughCombatPointException(int worldId, int stageId, bool backward)
         {
             var gameConfigState = _initialState.GetGameConfigState();

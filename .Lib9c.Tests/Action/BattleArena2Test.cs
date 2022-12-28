@@ -59,8 +59,11 @@ namespace Lib9c.Tests.Action
             }
 
             _tableSheets = new TableSheets(_sheets);
-            _crystal = new Currency("CRYSTAL", 18, minters: null);
-            _ncg = new Currency("NCG", 2, minters: null);
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            _crystal = Currency.Legacy("CRYSTAL", 18, null);
+            _ncg = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(_ncg);
 
             var rankingMapAddress = new PrivateKey().ToAddress();
@@ -196,7 +199,7 @@ namespace Lib9c.Tests.Action
             var preCurrency = 1000 * _crystal;
             _state = _state.MintAsset(signer, preCurrency);
 
-            var action = new JoinArena()
+            var action = new JoinArena0()
             {
                 championshipId = championshipId,
                 round = round,
@@ -264,7 +267,7 @@ namespace Lib9c.Tests.Action
                 {
                     var price = ArenaHelper.GetTicketPrice(roundData, beforeInfo, _state.GetGoldCurrency());
                     _state = _state.MintAsset(_agent1Address, price);
-                    beforeInfo.BuyTicket(roundData);
+                    beforeInfo.BuyTicket(ArenaHelper.GetMaxPurchasedTicketCount(roundData));
                 }
             }
 
@@ -756,7 +759,7 @@ namespace Lib9c.Tests.Action
             var max = ArenaHelper.GetMaxPurchasedTicketCount(roundData);
             for (var i = 0; i < max; i++)
             {
-                beforeInfo.BuyTicket(roundData);
+                beforeInfo.BuyTicket(ArenaHelper.GetMaxPurchasedTicketCount(roundData));
             }
 
             _state = _state.SetState(arenaInfoAdr, beforeInfo.Serialize());

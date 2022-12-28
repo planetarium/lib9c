@@ -47,8 +47,11 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             _tableSheets = new TableSheets(_sheets);
-            _crystal = new Currency("CRYSTAL", 18, minters: null);
-            _ncg = new Currency("NCG", 2, minters: null);
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            _crystal = Currency.Legacy("CRYSTAL", 18, null);
+            _ncg = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(_ncg);
             _rankingMapAddress = new PrivateKey().ToAddress();
             var clearStageId = Math.Max(
@@ -98,7 +101,7 @@ namespace Lib9c.Tests.Action.Scenario
             var preCurrency = roundData.EntranceFee * _crystal;
             _state = _state.MintAsset(signer, preCurrency);
 
-            var action = new JoinArena()
+            var action = new JoinArena0()
             {
                 championshipId = roundData.ChampionshipId,
                 round = roundData.Round,
@@ -127,7 +130,7 @@ namespace Lib9c.Tests.Action.Scenario
             int ticket,
             long blockIndex)
         {
-            var action = new BattleArena()
+            var action = new BattleArena6()
             {
                 myAvatarAddress = myAvatarAddress,
                 enemyAvatarAddress = enemyAvatarAddress,

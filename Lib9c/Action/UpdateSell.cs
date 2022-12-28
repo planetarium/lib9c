@@ -23,9 +23,10 @@ namespace Nekoyume.Action
     /// Updated at https://github.com/planetarium/lib9c/pull/1022
     /// </summary>
     [Serializable]
-    [ActionType("update_sell3")]
+    [ActionType("update_sell4")]
     public class UpdateSell : GameAction
     {
+        private const int UpdateCapacity = 100;
         public Address sellerAvatarAddress;
         public IEnumerable<UpdateSellInfo> updateSellInfos;
 
@@ -56,12 +57,16 @@ namespace Nekoyume.Action
                 return states;
             }
 
+            if (updateSellInfos.Count() > UpdateCapacity)
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(updateSellInfos)} must be less than or equal 100.");
+            }
             // common
             var addressesHex = GetSignerAndOtherAddressesHex(context, sellerAvatarAddress);
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;
-            Log.Verbose("{AddressesHex} updateSell exec started", addressesHex);
+            Log.Debug("{AddressesHex} updateSell exec started", addressesHex);
 
             if (!updateSellInfos.Any())
             {
@@ -196,7 +201,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex} UpdateSell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
 
             var ended = DateTimeOffset.UtcNow;
-            Log.Verbose("{AddressesHex} UpdateSell Total Executed Time: {Elapsed}", addressesHex, ended - started);
+            Log.Debug("{AddressesHex} UpdateSell Total Executed Time: {Elapsed}", addressesHex, ended - started);
 
             return states;
         }

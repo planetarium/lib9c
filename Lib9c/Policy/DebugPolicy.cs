@@ -44,7 +44,7 @@ namespace Nekoyume.BlockChain.Policy
             return blockChain.Count > 0 ? _blockDifficulty : 0;
         }
 
-        public long GetMaxBlockBytes(long index) => long.MaxValue;
+        public long GetMaxTransactionsBytes(long index) => long.MaxValue;
 
         public HashAlgorithmType GetHashAlgorithm(long index) =>
             HashAlgorithmType.Of<SHA256>();
@@ -54,6 +54,8 @@ namespace Nekoyume.BlockChain.Policy
         public int GetMaxTransactionsPerBlock(long index) => int.MaxValue;
 
         public int GetMaxTransactionsPerSignerPerBlock(long index) => int.MaxValue;
+
+        public int GetMinBlockProtocolVersion(long index) => 0;
 
         public IImmutableSet<Currency> NativeTokens => ImmutableHashSet<Currency>.Empty;
     }

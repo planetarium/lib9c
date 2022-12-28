@@ -10,16 +10,18 @@ using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
+using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Serilog;
 
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Introduced at https://github.com/planetarium/lib9c/pull/1156
+    /// Introduced at https://github.com/planetarium/lib9c/pull/1495
     /// </summary>
     [Serializable]
-    [ActionType("join_arena")]
+    [ActionType("join_arena2")]
     public class JoinArena : GameAction
     {
         public Address avatarAddress;
@@ -27,6 +29,7 @@ namespace Nekoyume.Action
         public int round;
         public List<Guid> costumes;
         public List<Guid> equipments;
+        public List<RuneSlotInfo> runeInfos;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()
@@ -38,6 +41,7 @@ namespace Nekoyume.Action
                     .OrderBy(element => element).Select(e => e.Serialize())),
                 ["equipments"] = new List(equipments
                     .OrderBy(element => element).Select(e => e.Serialize())),
+                ["runeInfos"] = runeInfos.OrderBy(x => x.SlotIndex).Select(x=> x.Serialize()).Serialize(),
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(
@@ -48,6 +52,7 @@ namespace Nekoyume.Action
             round = plainValue["round"].ToInteger();
             costumes = ((List)plainValue["costumes"]).Select(e => e.ToGuid()).ToList();
             equipments = ((List)plainValue["equipments"]).Select(e => e.ToGuid()).ToList();
+            runeInfos = plainValue["runeInfos"].ToList(x => new RuneSlotInfo((List)x));
         }
 
         public override IAccountStateDelta Execute(IActionContext context)
@@ -59,6 +64,8 @@ namespace Nekoyume.Action
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
+            var started = DateTimeOffset.UtcNow;
+            Log.Debug("{AddressesHex}JoinArena exec started", addressesHex);
 
             if (!states.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress,
                     out var agentState, out var avatarState, out _))
@@ -90,6 +97,7 @@ namespace Nekoyume.Action
                     typeof(EquipmentItemSubRecipeSheetV2),
                     typeof(EquipmentItemOptionSheet),
                     typeof(ArenaSheet),
+                    typeof(RuneListSheet),
                 });
 
             avatarState.ValidEquipmentAndCostume(costumes, equipments,
@@ -98,6 +106,24 @@ namespace Nekoyume.Action
                 sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
                 sheets.GetSheet<EquipmentItemOptionSheet>(),
                 context.BlockIndex, addressesHex);
+
+            // update rune slot
+            var runeSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
+            var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+                ? new RuneSlotState(rawRuneSlotState)
+                : new RuneSlotState(BattleType.Arena);
+            var runeListSheet = sheets.GetSheet<RuneListSheet>();
+            runeSlotState.UpdateSlot(runeInfos, runeListSheet);
+            states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+
+            // update item slot
+            var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
+            var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+                ? new ItemSlotState(rawItemSlotState)
+                : new ItemSlotState(BattleType.Arena);
+            itemSlotState.UpdateEquipment(equipments);
+            itemSlotState.UpdateCostumes(costumes);
+            states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
 
             var sheet = sheets.GetSheet<ArenaSheet>();
             if (!sheet.TryGetValue(championshipId, out var row))
@@ -173,6 +199,8 @@ namespace Nekoyume.Action
             arenaAvatarState.UpdateCostumes(costumes);
             arenaAvatarState.UpdateEquipment(equipments);
 
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug("{AddressesHex}JoinArena Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetState(arenaScoreAdr, arenaScore.Serialize())
                 .SetState(arenaInformationAdr, arenaInformation.Serialize())

@@ -26,7 +26,10 @@ namespace Lib9c.Tests.Action
 
         public ActionEvaluationTest()
         {
-            _currency = new Currency("NCG", 2, minters: null);
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            _currency = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
             _signer = new PrivateKey().ToAddress();
             _sender = new PrivateKey().ToAddress();
             _states = new State()
@@ -39,32 +42,6 @@ namespace Lib9c.Tests.Action
             );
             var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
             MessagePackSerializer.DefaultOptions = options;
-        }
-
-        [Fact]
-        public void Serialize_With_DotnetAPI()
-        {
-            var formatter = new BinaryFormatter();
-            using var ms = new MemoryStream();
-            var evaluation = new ActionBase.ActionEvaluation<ActionBase>()
-            {
-                Action = GetAction(typeof(TransferAsset)),
-                Signer = _signer,
-                BlockIndex = 1234,
-                PreviousStates = _states,
-                OutputStates = _states,
-            };
-            formatter.Serialize(ms, evaluation);
-
-            ms.Seek(0, SeekOrigin.Begin);
-            var deserialized = (ActionBase.ActionEvaluation<ActionBase>)formatter.Deserialize(ms);
-
-            // FIXME We should equality check more precisely.
-            Assert.Equal(evaluation.Signer, deserialized.Signer);
-            Assert.Equal(evaluation.BlockIndex, deserialized.BlockIndex);
-            var dict = (Dictionary)deserialized.OutputStates.GetState(default)!;
-            Assert.Equal("value", (Text)dict["key"]);
-            Assert.Equal(_currency * 10000, deserialized.OutputStates.GetBalance(_signer, _currency));
         }
 
         [Theory]
@@ -164,6 +141,7 @@ namespace Lib9c.Tests.Action
                     Costumes = new List<Guid>(),
                     Equipments = new List<Guid>(),
                     Foods = new List<Guid>(),
+                    RuneInfos = new List<RuneSlotInfo>(),
                     WorldId = 0,
                     StageId = 0,
                     AvatarAddress = new PrivateKey().ToAddress(),
@@ -185,7 +163,10 @@ namespace Lib9c.Tests.Action
                             _signer,
                             new PrivateKey().ToAddress(),
                             ItemSubType.Armor,
-                            new Currency("NCG", 2, minters: null) * 10
+#pragma warning disable CS0618
+                    // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+                            Currency.Legacy("NCG", 2, null) * 10
+#pragma warning restore CS0618
                         ),
                     },
                 },
@@ -212,13 +193,14 @@ namespace Lib9c.Tests.Action
                 MigrationLegacyShop _ => new MigrationLegacyShop(),
                 MimisbrunnrBattle _ => new MimisbrunnrBattle
                 {
-                    costumes = new List<Guid>(),
-                    equipments = new List<Guid>(),
-                    foods = new List<Guid>(),
-                    worldId = 0,
-                    stageId = 0,
-                    playCount = 0,
-                    avatarAddress = default,
+                    Costumes = new List<Guid>(),
+                    Equipments = new List<Guid>(),
+                    Foods = new List<Guid>(),
+                    RuneInfos = new List<RuneSlotInfo>(),
+                    WorldId = 0,
+                    StageId = 0,
+                    PlayCount = 0,
+                    AvatarAddress = default,
                 },
                 MonsterCollect _ => new MonsterCollect(),
                 PatchTableSheet _ => new PatchTableSheet
@@ -300,6 +282,7 @@ namespace Lib9c.Tests.Action
                     Equipments = new List<Guid>(),
                     Costumes = new List<Guid>(),
                     Foods = new List<Guid>(),
+                    RuneInfos = new List<RuneSlotInfo>(),
                 },
                 EventConsumableItemCrafts _ => new EventConsumableItemCrafts
                 {
@@ -314,6 +297,7 @@ namespace Lib9c.Tests.Action
                     CostumeIds = new List<Guid>(),
                     EquipmentIds = new List<Guid>(),
                     FoodIds = new List<Guid>(),
+                    RuneInfos = new List<RuneSlotInfo>(),
                     PayNcg = true,
                 },
                 ClaimRaidReward _ => new ClaimRaidReward(_sender),

@@ -25,12 +25,13 @@ namespace Nekoyume.BlockChain.Policy
                 validateNextBlockTx = null,
             Func<BlockChain<NCAction>, Block<NCAction>, BlockPolicyViolationException>
                 validateNextBlock = null,
-            Func<long, long> getMaxBlockBytes = null,
+            Func<long, long> getMaxTransactionsBytes = null,
             Func<long, int> getMinTransactionsPerBlock = null,
             Func<long, int> getMaxTransactionsPerBlock = null,
             Func<long, int> getMaxTransactionsPerSignerPerBlock = null,
             Func<BlockChain<NCAction>, long> getNextBlockDifficulty = null,
-            Func<Address, long, bool> isAllowedToMine = null)
+            Func<Address, long, bool> isAllowedToMine = null,
+            Func<long, int> getMinBlockProtocolVersion = null)
             : base(
                 blockAction: blockAction,
                 blockInterval: TimeSpan.FromMilliseconds(1500D),
@@ -39,10 +40,11 @@ namespace Nekoyume.BlockChain.Policy
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,
                 canonicalChainComparer: canonicalChainComparer,
-                getMaxBlockBytes: getMaxBlockBytes,
+                getMaxTransactionsBytes: getMaxTransactionsBytes,
                 getMinTransactionsPerBlock: getMinTransactionsPerBlock,
                 getMaxTransactionsPerBlock: getMaxTransactionsPerBlock,
-                getMaxTransactionsPerSignerPerBlock: getMaxTransactionsPerSignerPerBlock)
+                getMaxTransactionsPerSignerPerBlock: getMaxTransactionsPerSignerPerBlock,
+                getMinBlockProtocolVersion: getMinBlockProtocolVersion)
         {
             UnityEngine.Debug.LogWarning("BlockPolicy constructor");
             _getNextBlockDifficulty = getNextBlockDifficulty;

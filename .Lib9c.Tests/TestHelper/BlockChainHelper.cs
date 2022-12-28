@@ -20,7 +20,9 @@
     using Nekoyume.Model;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
+#pragma warning disable SA1135
     using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
+#pragma warning restore SA1135
 
     public static class BlockChainHelper
     {
@@ -74,7 +76,10 @@
 
         public static MakeInitialStateResult MakeInitialState()
         {
-            var goldCurrencyState = new GoldCurrencyState(new Currency("NCG", 2, minter: null));
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            var goldCurrencyState = new GoldCurrencyState(Currency.Legacy("NCG", 2, null));
+#pragma warning restore CS0618
             var ranking = new RankingState1();
             for (var i = 0; i < RankingState1.RankingMapCapacity; i++)
             {

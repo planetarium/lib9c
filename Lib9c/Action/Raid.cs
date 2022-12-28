@@ -10,14 +10,21 @@ using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
+using Nekoyume.Model.EnumType;
+using Nekoyume.Model.Item;
+using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Serilog;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Hard forked at https://github.com/planetarium/lib9c/pull/1495
+    /// </summary>
     [Serializable]
-    [ActionType("raid")]
+    [ActionType("raid3")]
     public class Raid : GameAction
     {
         public const long RequiredInterval = 5L;
@@ -25,6 +32,7 @@ namespace Nekoyume.Action
         public List<Guid> EquipmentIds;
         public List<Guid> CostumeIds;
         public List<Guid> FoodIds;
+        public List<RuneSlotInfo> RuneInfos;
         public bool PayNcg;
 
         public override IAccountStateDelta Execute(IActionContext context)
@@ -35,6 +43,9 @@ namespace Nekoyume.Action
                 return states;
             }
 
+            var addressHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
+            var started = DateTimeOffset.UtcNow;
+            Log.Debug("{AddressHex}Raid exec started", addressHex);
             if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress,
                     out AvatarState avatarState,
                     out var migrationRequired))
@@ -72,6 +83,7 @@ namespace Nekoyume.Action
                 typeof(RuneWeightSheet),
                 typeof(WorldBossKillRewardSheet),
                 typeof(RuneSheet),
+                typeof(RuneListSheet),
             });
             var worldBossListSheet = sheets.GetSheet<WorldBossListSheet>();
             var row = worldBossListSheet.FindRowByBlockIndex(context.BlockIndex);
@@ -89,6 +101,14 @@ namespace Nekoyume.Action
                 raiderState = new RaiderState();
                 FungibleAssetValue crystalCost = CrystalCalculator.CalculateEntranceFee(avatarState.level, row.EntranceFee);
                 states = states.TransferAsset(context.Signer, worldBossAddress, crystalCost);
+                Address raiderListAddress = Addresses.GetRaiderListAddress(raidId);
+                List<Address> raiderList =
+                    states.TryGetState(raiderListAddress, out List rawRaiderList)
+                        ? rawRaiderList.ToList(StateExtensions.ToAddress)
+                        : new List<Address>();
+                raiderList.Add(raiderAddress);
+                states = states.SetState(raiderListAddress,
+                    new List(raiderList.Select(a => a.Serialize())));
             }
 
             if (context.BlockIndex - raiderState.UpdatedBlockIndex < RequiredInterval)
@@ -125,6 +145,25 @@ namespace Nekoyume.Action
             var equipmentList = avatarState.ValidateEquipmentsV2(EquipmentIds, context.BlockIndex);
             var foodIds = avatarState.ValidateConsumable(FoodIds, context.BlockIndex);
             var costumeIds = avatarState.ValidateCostume(CostumeIds);
+
+            // Update rune slot
+            var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Raid);
+            var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+                ? new RuneSlotState(rawRuneSlotState)
+                : new RuneSlotState(BattleType.Raid);
+            var runeListSheet = sheets.GetSheet<RuneListSheet>();
+            runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
+            states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+
+            // Update item slot
+            var itemSlotStateAddress = ItemSlotState.DeriveAddress(AvatarAddress, BattleType.Raid);
+            var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+                ? new ItemSlotState(rawItemSlotState)
+                : new ItemSlotState(BattleType.Raid);
+            itemSlotState.UpdateEquipment(EquipmentIds);
+            itemSlotState.UpdateCostumes(CostumeIds);
+            states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+
             int previousHighScore = raiderState.HighScore;
             WorldBossState bossState;
             WorldBossGlobalHpSheet hpSheet = sheets.GetSheet<WorldBossGlobalHpSheet>();
@@ -150,6 +189,14 @@ namespace Nekoyume.Action
                 addressesHex);
 
             var raidSimulatorSheets = sheets.GetRaidSimulatorSheets();
+            var runeStates = new List<RuneState>();
+            foreach (var address in RuneInfos.Select(info => RuneState.DeriveAddress(AvatarAddress, info.RuneId)))
+            {
+                if (states.TryGetState(address, out List rawRuneState))
+                {
+                    runeStates.Add(new RuneState(rawRuneState));
+                }
+            }
 
             // Simulate.
             var simulator = new RaidSimulator(
@@ -157,14 +204,51 @@ namespace Nekoyume.Action
                 context.Random,
                 avatarState,
                 FoodIds,
+                runeStates,
                 raidSimulatorSheets,
                 sheets.GetSheet<CostumeStatSheet>());
             simulator.Simulate();
             avatarState.inventory = simulator.Player.Inventory;
 
+            var costumeList = new List<Costume>();
+            foreach (var guid in CostumeIds)
+            {
+                var costume = avatarState.inventory.Costumes.FirstOrDefault(x => x.ItemId == guid);
+                if (costume != null)
+                {
+                    costumeList.Add(costume);
+                }
+            }
+
+            var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
+            var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
+            foreach (var runeState in runeStates)
+            {
+                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
+                }
+
+                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
+                }
+
+                runeOptions.Add(option);
+            }
+
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            if (!characterSheet.TryGetValue(avatarState.characterId, out var characterRow))
+            {
+                throw new SheetRowNotFoundException("CharacterSheet", avatarState.characterId);
+            }
+
+            var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+            var cp = CPHelper.TotalCP(
+                equipmentList, costumeList,
+                runeOptions, avatarState.level,
+                characterRow, costumeStatSheet);
             int score = simulator.DamageDealt;
-            int cp = CPHelper.GetCPV2(avatarState, sheets.GetSheet<CharacterSheet>(),
-                sheets.GetSheet<CostumeStatSheet>());
             raiderState.Update(avatarState, cp, score, PayNcg, context.BlockIndex);
 
             // Reward.
@@ -177,8 +261,6 @@ namespace Nekoyume.Action
                 }
                 bossState.CurrentHp = hpSheet[bossState.Level].Hp;
             }
-
-            // Update State.
 
             // battle reward
             foreach (var battleReward in simulator.AssetReward)
@@ -244,6 +326,8 @@ namespace Nekoyume.Action
                     .SetState(questListAddress, avatarState.questList.Serialize());
             }
 
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);
             return states
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldBossAddress, bossState.Serialize())
@@ -257,6 +341,7 @@ namespace Nekoyume.Action
                     ["e"] = new List(EquipmentIds.Select(e => e.Serialize())),
                     ["c"] = new List(CostumeIds.Select(c => c.Serialize())),
                     ["f"] = new List(FoodIds.Select(f => f.Serialize())),
+                    ["r"] = RuneInfos.OrderBy(x => x.SlotIndex).Select(x=> x.Serialize()).Serialize(),
                     ["p"] = PayNcg.Serialize(),
                 }
                 .ToImmutableDictionary();
@@ -266,6 +351,7 @@ namespace Nekoyume.Action
             EquipmentIds = plainValue["e"].ToList(StateExtensions.ToGuid);
             CostumeIds = plainValue["c"].ToList(StateExtensions.ToGuid);
             FoodIds = plainValue["f"].ToList(StateExtensions.ToGuid);
+            RuneInfos = plainValue["r"].ToList(x => new RuneSlotInfo((List)x));
             PayNcg = plainValue["p"].ToBoolean();
         }
     }

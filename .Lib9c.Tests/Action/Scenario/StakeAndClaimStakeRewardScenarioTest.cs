@@ -35,15 +35,29 @@ namespace Lib9c.Tests.Action.Scenario
             _initialState = new State();
 
             var sheets = TableSheetsImporter.ImportSheets();
+            var sheet = @"level,required_gold,item_id,rate
+1,50,400000,10
+1,50,500000,800
+2,500,400000,8
+2,500,500000,800
+3,5000,400000,5
+3,5000,500000,800
+4,50000,400000,5
+4,50000,500000,800
+5,500000,400000,5
+5,500000,500000,800".Serialize();
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetState(Addresses.TableSheet.Derive(key), key == nameof(StakeRegularRewardSheet) ? sheet : value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
 
-            _currency = new Currency("NCG", 2, minters: null);
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            _currency = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
             _goldCurrencyState = new GoldCurrencyState(_currency);
 
             _signerAddress = new PrivateKey().ToAddress();
@@ -228,8 +242,8 @@ namespace Lib9c.Tests.Action.Scenario
                 50,
                 new[]
                 {
-                    (400000, 2),
-                    (500000, 0),
+                    (400000, 45),
+                    (500000, 9),
                 },
                 500800,
             };
@@ -238,8 +252,8 @@ namespace Lib9c.Tests.Action.Scenario
                 499,
                 new[]
                 {
-                    (400000, 18),
-                    (500000, 0),
+                    (400000, 441),
+                    (500000, 9),
                 },
                 500800,
             };
@@ -255,8 +269,8 @@ namespace Lib9c.Tests.Action.Scenario
                 500,
                 new[]
                 {
-                    (400000, 24),
-                    (500000, 0),
+                    (400000, 558),
+                    (500000, 18),
                 },
                 500800,
             };
@@ -265,8 +279,8 @@ namespace Lib9c.Tests.Action.Scenario
                 799,
                 new[]
                 {
-                    (400000, 50),
-                    (500000, 2),
+                    (400000, 891),
+                    (500000, 18),
                 },
                 500800,
             };
@@ -275,8 +289,8 @@ namespace Lib9c.Tests.Action.Scenario
                 4999,
                 new[]
                 {
-                    (400000, 248),
-                    (500000, 8),
+                    (400000, 5616),
+                    (500000, 72),
                 },
                 500800,
             };
@@ -292,8 +306,8 @@ namespace Lib9c.Tests.Action.Scenario
                 5000,
                 new[]
                 {
-                    (400000, 1000),
-                    (500000, 6),
+                    (400000, 9000),
+                    (500000, 72),
                 },
                 500800,
             };
@@ -302,8 +316,8 @@ namespace Lib9c.Tests.Action.Scenario
                 49999,
                 new[]
                 {
-                    (400000, 9999),
-                    (500000, 62),
+                    (400000, 89991),
+                    (500000, 576),
                 },
                 500800,
             };
@@ -319,8 +333,8 @@ namespace Lib9c.Tests.Action.Scenario
                 50000,
                 new[]
                 {
-                    (400000, 10000),
-                    (500000, 62),
+                    (400000, 90000),
+                    (500000, 576),
                 },
                 500800,
             };
@@ -329,8 +343,8 @@ namespace Lib9c.Tests.Action.Scenario
                 499999,
                 new[]
                 {
-                    (400000, 99999),
-                    (500000, 626),
+                    (400000, 899991),
+                    (500000, 5634),
                 },
                 500800,
             };
@@ -350,8 +364,8 @@ namespace Lib9c.Tests.Action.Scenario
                 500000,
                 new[]
                 {
-                    (400000, 100000),
-                    (500000, 627),
+                    (400000, 900000),
+                    (500000, 5643),
                 },
                 500800,
             };
@@ -360,8 +374,8 @@ namespace Lib9c.Tests.Action.Scenario
                 4999999,
                 new[]
                 {
-                    (400000, 999999),
-                    (500000, 6251),
+                    (400000, 8999991),
+                    (500000, 56259),
                 },
                 500800,
             };
