@@ -2,8 +2,7 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
+    using System.Linq;
     using Bencodex.Types;
     using Lib9c.Formatters;
     using Libplanet;
@@ -44,45 +43,24 @@ namespace Lib9c.Tests.Action
             MessagePackSerializer.DefaultOptions = options;
         }
 
+        public static IEnumerable<object[]> Get_Serialize_With_MessagePack_MemberData()
+        {
+            var actionBaseType = typeof(ActionBase);
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly =>
+                    assembly.GetTypes().Where(t =>
+                        t.IsClass &&
+                        t.IsSubclassOf(actionBaseType) &&
+                        !int.TryParse(t.Name[^1..], out _)))
+                .ToArray();
+            foreach (var type in types)
+            {
+                yield return new object[] { type };
+            }
+        }
+
         [Theory]
-        [InlineData(typeof(TransferAsset))]
-        [InlineData(typeof(CreateAvatar))]
-        [InlineData(typeof(HackAndSlash))]
-        [InlineData(typeof(ActivateAccount))]
-        [InlineData(typeof(AddActivatedAccount))]
-        [InlineData(typeof(AddRedeemCode))]
-        [InlineData(typeof(Buy))]
-        [InlineData(typeof(ChargeActionPoint))]
-        [InlineData(typeof(ClaimMonsterCollectionReward))]
-        [InlineData(typeof(CombinationConsumable))]
-        [InlineData(typeof(CombinationEquipment))]
-        [InlineData(typeof(CreatePendingActivation))]
-        [InlineData(typeof(DailyReward))]
-        [InlineData(typeof(InitializeStates))]
-        [InlineData(typeof(ItemEnhancement))]
-        [InlineData(typeof(MigrationActivatedAccountsState))]
-        [InlineData(typeof(MigrationAvatarState))]
-        [InlineData(typeof(MigrationLegacyShop))]
-        [InlineData(typeof(MimisbrunnrBattle))]
-        [InlineData(typeof(MonsterCollect))]
-        [InlineData(typeof(PatchTableSheet))]
-        [InlineData(typeof(RankingBattle))]
-        [InlineData(typeof(RapidCombination))]
-        [InlineData(typeof(RedeemCode))]
-        [InlineData(typeof(RewardGold))]
-        [InlineData(typeof(Sell))]
-        [InlineData(typeof(SellCancellation))]
-        [InlineData(typeof(UpdateSell))]
-        [InlineData(typeof(CreatePendingActivations))]
-        [InlineData(typeof(Grinding))]
-        [InlineData(typeof(UnlockEquipmentRecipe))]
-        [InlineData(typeof(UnlockWorld))]
-        [InlineData(typeof(EventDungeonBattle))]
-        [InlineData(typeof(EventConsumableItemCrafts))]
-        [InlineData(typeof(Raid))]
-        [InlineData(typeof(ClaimRaidReward))]
-        [InlineData(typeof(ClaimWordBossKillReward))]
-        [InlineData(typeof(PrepareRewardAssets))]
+        [MemberData(nameof(Get_Serialize_With_MessagePack_MemberData))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
