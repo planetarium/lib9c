@@ -29,7 +29,9 @@ namespace Lib9c.Renderer
         public readonly Subject<(NCBlock OldTip, NCBlock NewTip)> BlockEndSubject =
             new Subject<(NCBlock OldTip, NCBlock NewTip)>();
 
-        public void RenderAction(IAction action, IActionContext context, IAccountStateDelta nextStates) =>
+        public void RenderAction(IAction action, IActionContext context, IAccountStateDelta nextStates)
+        {
+            UnityEngine.Debug.Log($"RenderAction callback, action = {action.ToString()}");
             ActionRenderSubject.OnNext(new ActionEvaluation<ActionBase>
             {
                 Action = GetActionBase(action),
@@ -40,6 +42,7 @@ namespace Lib9c.Renderer
                 PreviousStates = context.PreviousStates,
                 RandomSeed = context.Random.Seed
             });
+        }
 
         public void UnrenderAction(IAction action, IActionContext context, IAccountStateDelta nextStates) =>
             ActionUnrenderSubject.OnNext(new ActionEvaluation<ActionBase>
