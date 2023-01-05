@@ -141,19 +141,24 @@ namespace Nekoyume.BlockChain.Policy
             new PublicKey(ByteUtil.ParseHex("035206890fd8736555ce667672b8183efacd9bf840b6c5ee8eb7f5703e7bddf38c")), // FioX
             new PublicKey(ByteUtil.ParseHex("02d25568df5edd893dae2fadd02cf9fc3a281642553eaceab39ec15e01c990200f")), // Se2on
             new PublicKey(ByteUtil.ParseHex("02dfdc95a830bcc4f23953964916e94593beef325821589c03bec5c22463e56240")), // TarogStar
+            new PublicKey(ByteUtil.ParseHex("02a553be962eebc60d7a5ad534990a8eb73f400ae9006b2e5b91a8622184a1f4a3")), // OMS
+            new PublicKey(ByteUtil.ParseHex("02787d037d09fb6c3c2b4a7aee94b4e06dbf10543920575e2f96d74ffabe55415c")), // RTDragon
         }.ToImmutableList();
 
         public static readonly ValidatorSet ValidatorSet01 =
             new ValidatorSet(Validators.Take(7).ToList());                                              // 01 ~ 07
 
         public static readonly ValidatorSet ValidatorSet02 =
-            new ValidatorSet(Validators.Skip(2).Take(7).Concat(ExternalValidators.Take(1)).ToList());   // 03 ~ 09 + Fiox
+            new ValidatorSet(Validators.Skip(2).Take(7).Concat(ExternalValidators.Take(1)).ToList());   // 03 ~ 09 + 1 External
 
         public static readonly ValidatorSet ValidatorSet03 =
-            new ValidatorSet(Validators.Take(9).Concat(ExternalValidators).ToList());                   // 01 ~ 09 + External
+            new ValidatorSet(Validators.Take(9).Concat(ExternalValidators.Take(3)).ToList());           // 01 ~ 09 + 3 External
 
         public static readonly ValidatorSet ValidatorSet04 =
-            new ValidatorSet(Validators.Take(13).Concat(ExternalValidators).ToList());                  // 01 ~ 13 + External
+            new ValidatorSet(Validators.Take(13).Concat(ExternalValidators.Take(3)).ToList());          // 01 ~ 13 + 3 External
+
+        public static readonly ValidatorSet ValidatorSet05 =
+            new ValidatorSet(Validators.Take(17).Concat(ExternalValidators.Take(5)).ToList());          // 01 ~ 17 + 5 External
 
         public static readonly PrivateKey DebugValidatorKey =
             new PrivateKey("0000000000000000000000000000000000000000000000000000000000000001");
