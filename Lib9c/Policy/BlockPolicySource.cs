@@ -471,6 +471,12 @@ namespace Nekoyume.BlockChain.Policy
             {
                 return ibtcpse;
             }
+            else if (ValidateSetValidatorActionRaw(
+                nextBlock,
+                validatorAdminPolicy) is BlockPolicyViolationException bpve2)
+            {
+                return bpve2;
+            }
             else
             {
                 if (nextBlock.Index == 0)
@@ -489,13 +495,6 @@ namespace Nekoyume.BlockChain.Policy
                         nextBlock,
                         permissionedMinersPolicy);
                 }
-            }
-
-            else if (ValidateSetValidatorActionRaw(
-                nextBlock,
-                validatorAdminPolicy) is BlockPolicyViolationException bpve)
-            {
-                return bpve;
             }
 
             return null;
