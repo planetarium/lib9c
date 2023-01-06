@@ -7,11 +7,9 @@ using MessagePack.Formatters;
 
 namespace Lib9c.Formatters
 {
-    // FIXME: This class must be removed and replaced with other way for serialization.
-    // https://github.com/dotnet/designs/blob/main/accepted/2020/better-obsoletion/binaryformatter-obsoletion.md
-    public class ExceptionFormatter<T> : IMessagePackFormatter<T?> where T : Exception
+    public class ExceptionFormatter<T> : IMessagePackFormatter<T> where T : Exception
     {
-        public void Serialize(ref MessagePackWriter writer, T? value,
+        public void Serialize(ref MessagePackWriter writer, T value,
             MessagePackSerializerOptions options)
         {
             if (value is null)
@@ -22,15 +20,31 @@ namespace Lib9c.Formatters
             var formatter = new BinaryFormatter();
             using (var stream = new MemoryStream())
             {
-#pragma warning disable SYSLIB0011
                 formatter.Serialize(stream, value);
-#pragma warning restore SYSLIB0011
                 var bytes = stream.ToArray();
                 writer.Write(bytes);
             }
         }
 
-        T? IMessagePackFormatter<T?>.Deserialize(ref MessagePackReader reader,
+        public T Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        {
+            if (reader.TryReadNil())
+            {
+                return null;
+            }
+
+            options.Security.DepthStep(ref reader);
+            var formatter = new BinaryFormatter();
+            byte[] bytes = reader.ReadBytes()?.ToArray();
+            using (var stream = new MemoryStream(bytes))
+            {
+#pragma warning disable SYSLIB0011
+                return (T)formatter.Deserialize(stream);
+#pragma warning restore SYSLIB0011
+            }
+        }
+
+        T IMessagePackFormatter<T>.Deserialize(ref MessagePackReader reader,
             MessagePackSerializerOptions options)
         {
             if (reader.TryReadNil())
@@ -40,8 +54,7 @@ namespace Lib9c.Formatters
 
             options.Security.DepthStep(ref reader);
             var formatter = new BinaryFormatter();
-            byte[] bytes = reader.ReadBytes()?.ToArray()
-                ?? throw new MessagePackSerializationException();
+            byte[] bytes = reader.ReadBytes()?.ToArray();
             using (var stream = new MemoryStream(bytes))
             {
 #pragma warning disable SYSLIB0011
