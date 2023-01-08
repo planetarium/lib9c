@@ -10,10 +10,10 @@ namespace Nekoyume.BlockChain.Policy
     public sealed class ValidatorAdminPolicy : VariableSubPolicy<PublicKey>
     {
         public static readonly PrivateKey DefaultValidatorAdminKey = new PrivateKey(
-            "0000000000000000000000000000000000000000000000000000000000000001");
+            "1d3d794aff817f1d170e67ea20f7ce8f718081fbb181e7d550980d0b686a607d");
 
         public static readonly PrivateKey TestValidatorAdminKey = new PrivateKey(
-            "0000000000000000000000000000000000000000000000000000000000000002");
+            "79ab752e92df361eb9af5a3fa024e358a0ad9324fcdee5fd2bf1debaec455623");
 
         private ValidatorAdminPolicy(PublicKey defaultValue)
             : base(defaultValue)

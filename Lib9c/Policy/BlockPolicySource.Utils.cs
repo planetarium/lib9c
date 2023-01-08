@@ -227,6 +227,7 @@ namespace Nekoyume.BlockChain.Policy
         }
 
         private static BlockPolicyViolationException ValidateSetValidatorActionRaw(
+            BlockChain<NCAction> blockChain,
             Block<NCAction> block,
             IVariableSubPolicy<PublicKey> validatorAdminPolicy)
         {
@@ -238,6 +239,7 @@ namespace Nekoyume.BlockChain.Policy
                     !transaction.PublicKey.Equals(validatorAdmin))
                 {
                     logDict.Add(transaction, transaction.PublicKey);
+                    blockChain.UnstageTransaction(transaction);
                 }
             }
 

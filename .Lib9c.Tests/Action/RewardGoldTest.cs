@@ -484,7 +484,7 @@ namespace Lib9c.Tests.Action
             Block<PolymorphicAction<ActionBase>> genesis;
             if (mainnet)
             {
-                const string genesisBlockPath = "https://release.nine-chronicles.com/genesis-block-9c-main";
+                const string genesisBlockPath = "https://s3.us-east-2.amazonaws.com/9c-test.planetarium-dev.com/genesis-block-pow-dynamic-validator";
                 var uri = new Uri(genesisBlockPath);
                 using var client = new HttpClient();
                 var rawBlock = await client.GetByteArrayAsync(uri);
