@@ -383,6 +383,7 @@ namespace Nekoyume.BlockChain.Policy
             }
 
             else if (ValidateSetValidatorActionRaw(
+                blockChain,
                 nextBlock,
                 validatorAdminPolicy) is BlockPolicyViolationException bpve)
             {
