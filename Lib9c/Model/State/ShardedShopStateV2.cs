@@ -31,6 +31,7 @@ namespace Nekoyume.Model.State
                 case ItemSubType.Food:
                 case ItemSubType.Hourglass:
                 case ItemSubType.ApStone:
+                case ItemSubType.FungibleAssetValue:
                     return Addresses.Shop.Derive($"order-{itemSubType}-{nonce}");
                 case ItemSubType.FullCostume:
                 case ItemSubType.HairCostume:

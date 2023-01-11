@@ -25,6 +25,11 @@ namespace Nekoyume.Action
         public override IAccountStateDelta Execute(IActionContext context)
         {
             var states = context.PreviousStates;
+            if (context.Rehearsal)
+            {
+                return states;
+            }
+
             var addressesHex = GetSignerAndOtherAddressesHex(context, SellerAvatarAddress);
 
             var sw = new Stopwatch();
