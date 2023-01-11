@@ -145,7 +145,7 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"{addressesHex}failed to load {nameof(Order)}({Order.DeriveAddress(orderId)}).");
             }
 
-            Order order = OrderFactory.Deserialize(orderDict);
+            Order order = (Order)OrderFactory.Deserialize(orderDict);
             bool fromPreviousAction = false;
             try
             {

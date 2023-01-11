@@ -134,7 +134,7 @@ namespace Nekoyume.Action
                     throw new FailedLoadStateException($"{addressesHex} failed to load {nameof(Order)}({Order.DeriveAddress(updateSellInfo.orderId)}).");
                 }
 
-                var orderOnSale = OrderFactory.Deserialize(orderDict);
+                var orderOnSale = (IItemOrder)OrderFactory.Deserialize(orderDict);
                 orderOnSale.ValidateCancelOrder(avatarState, updateSellInfo.tradableId);
                 orderOnSale.Cancel(avatarState, context.BlockIndex);
                 if (context.BlockIndex < orderOnSale.ExpiredBlockIndex)

@@ -12,7 +12,7 @@ using static Lib9c.SerializeKeys;
 namespace Lib9c.Model.Order
 {
     [Serializable]
-    public abstract class Order: OrderBase
+    public abstract class Order: OrderBase, IItemOrder
     {
         public const long ExpirationInterval = 36000;
 
@@ -25,6 +25,7 @@ namespace Lib9c.Model.Order
         {
             Fungible,
             NonFungible,
+            FungibleAssetValue,
         }
 
         public abstract OrderType Type { get; }

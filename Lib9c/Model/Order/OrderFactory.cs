@@ -62,11 +62,31 @@ namespace Lib9c.Model.Order
             return new FungibleOrder(sellerAgentAddress, sellerAvatarAddress, orderId, price, itemId, startedBlockIndex, itemSubType, count);
         }
 
-        public static Order Deserialize(Dictionary dictionary)
+        public static FungibleAssetValueOrder CreateFungibleAssetValueOrder(Address sellerAgentAddress,
+            Address sellerAvatarAddress,
+            Guid orderId,
+            FungibleAssetValue price,
+            Guid itemId,
+            long startedBlockIndex,
+            FungibleAssetValue fav)
         {
-            return dictionary[OrderTypeKey].ToEnum<Order.OrderType>().Equals(Order.OrderType.Fungible)
-                ? (Order) new FungibleOrder(dictionary)
-                : new NonFungibleOrder(dictionary);
+            return new FungibleAssetValueOrder(sellerAgentAddress, sellerAvatarAddress, orderId, price, itemId, startedBlockIndex, fav);
+        }
+
+        public static IOrder Deserialize(Dictionary dictionary)
+        {
+            Order.OrderType orderType = dictionary[OrderTypeKey].ToEnum<Order.OrderType>();
+            switch (orderType)
+            {
+                case Order.OrderType.Fungible:
+                    return new FungibleOrder(dictionary);
+                case Order.OrderType.NonFungible:
+                    return new NonFungibleOrder(dictionary);
+                case Order.OrderType.FungibleAssetValue:
+                    return new FungibleAssetValueOrder(dictionary);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
     }

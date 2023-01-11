@@ -9,8 +9,8 @@ namespace Lib9c.Model.Order
     [Serializable]
     public class OrderBase
     {
-        public readonly Guid OrderId;
-        public readonly Guid TradableId;
+        public Guid OrderId { get; }
+        public Guid TradableId { get; }
         private long _startedBlockIndex;
         private long _expiredBlockIndex;
 

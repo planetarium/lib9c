@@ -42,6 +42,9 @@ namespace Nekoyume.Model.Item
 
         // Costume
         Title = 18,
+
+        // FungibleAssetValue
+        FungibleAssetValue = 19,
     }
 
     public class ItemTypeComparer : IEqualityComparer<ItemType>

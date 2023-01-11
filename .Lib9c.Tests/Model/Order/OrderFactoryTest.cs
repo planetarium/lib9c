@@ -13,10 +13,16 @@ namespace Lib9c.Tests.Model.Order
     public class OrderFactoryTest
     {
         private readonly TableSheets _tableSheets;
+        private readonly Currency _currency;
 
         public OrderFactoryTest()
         {
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            _currency = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
+
         }
 
         [Theory]
@@ -57,17 +63,13 @@ namespace Lib9c.Tests.Model.Order
                     throw new ArgumentOutOfRangeException(nameof(itemType), itemType, null);
             }
 
-#pragma warning disable CS0618
-            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var currency = Currency.Legacy("NCG", 2, null);
-#pragma warning restore CS0618
             Guid orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
 
             Order order = OrderFactory.Create(
                 Addresses.Admin,
                 Addresses.Blacksmith,
                 orderId,
-                new FungibleAssetValue(currency, 1, 0),
+                new FungibleAssetValue(_currency, 1, 0),
                 tradableItem.TradableId,
                 blockIndex,
                 tradableItem.ItemSubType,
@@ -76,7 +78,7 @@ namespace Lib9c.Tests.Model.Order
 
             Assert.Equal(orderType, order.Type);
             Assert.Equal(blockIndex, order.StartedBlockIndex);
-            Assert.Equal(currency * 1, order.Price);
+            Assert.Equal(_currency * 1, order.Price);
             Assert.Equal(Addresses.Admin, order.SellerAgentAddress);
             Assert.Equal(Addresses.Blacksmith, order.SellerAvatarAddress);
             Assert.Equal(orderId, order.OrderId);
@@ -92,10 +94,44 @@ namespace Lib9c.Tests.Model.Order
         [InlineData(ItemSubType.FoodMaterial)]
         [InlineData(ItemSubType.MonsterPart)]
         [InlineData(ItemSubType.NormalMaterial)]
+        [InlineData(ItemSubType.FungibleAssetValue)]
         public void Create_Throw_InvalidItemTypeException(ItemSubType itemSubType)
         {
             Assert.Throws<InvalidItemTypeException>(() =>
                 OrderFactory.Create(default, default, default, default, default, default, itemSubType, 1));
+        }
+
+        [Theory]
+        [InlineData("CRYSTAL", 18)]
+        [InlineData("RUNESTONE_FENRIR1", 0)]
+        public void Create_FungibleAssetValueOrder(string ticker, byte decimalPlaces)
+        {
+            var orderId = Guid.NewGuid();
+            var tradableId = Guid.NewGuid();
+            var fav = Currency.Legacy(ticker, decimalPlaces, minters: null) * 100;
+            var order = OrderFactory.CreateFungibleAssetValueOrder(
+                Addresses.Admin,
+                Addresses.Blacksmith,
+                orderId,
+                new FungibleAssetValue(_currency, 1, 0),
+                tradableId,
+                0L,
+                fav
+            );
+
+            Assert.Equal(Order.OrderType.FungibleAssetValue, order.Type);
+            Assert.Equal(0L, order.StartedBlockIndex);
+            Assert.Equal(_currency * 1, order.Price);
+            Assert.Equal(Addresses.Admin, order.SellerAgentAddress);
+            Assert.Equal(Addresses.Blacksmith, order.SellerAvatarAddress);
+            Assert.Equal(orderId, order.OrderId);
+            Assert.Equal(tradableId, order.TradableId);
+            Assert.Equal(fav, order.Asset);
+
+            Dictionary serialized = (Dictionary)order.Serialize();
+            IOrder deserialized = OrderFactory.Deserialize(serialized);
+            Assert.Equal(order, deserialized);
+            Assert.Equal(Order.OrderType.FungibleAssetValue, deserialized.Type);
         }
 
         [Theory]
@@ -150,7 +186,7 @@ namespace Lib9c.Tests.Model.Order
             );
 
             Dictionary serialized = (Dictionary)order.Serialize();
-            Order deserialized = OrderFactory.Deserialize(serialized);
+            IOrder deserialized = OrderFactory.Deserialize(serialized);
             Assert.Equal(order, deserialized);
             Assert.Equal(orderType, deserialized.Type);
         }

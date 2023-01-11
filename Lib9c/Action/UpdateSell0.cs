@@ -135,7 +135,7 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"{addressesHex} failed to load {nameof(Order)}({Order.DeriveAddress(orderId)}).");
             }
 
-            var orderOnSale = OrderFactory.Deserialize(orderDict);
+            var orderOnSale = (IItemOrder)OrderFactory.Deserialize(orderDict);
             var fromPreviousAction = false;
             try
             {
@@ -143,12 +143,12 @@ namespace Nekoyume.Action
             }
             catch (Exception)
             {
-                orderOnSale.ValidateCancelOrder2(avatarState, tradableId);
+                ((Order)orderOnSale).ValidateCancelOrder2(avatarState, tradableId);
                 fromPreviousAction = true;
             }
 
             var itemOnSale = fromPreviousAction
-                ? orderOnSale.Cancel2(avatarState, context.BlockIndex)
+                ? ((Order)orderOnSale).Cancel2(avatarState, context.BlockIndex)
                 : orderOnSale.Cancel(avatarState, context.BlockIndex);
             if (context.BlockIndex < orderOnSale.ExpiredBlockIndex)
             {

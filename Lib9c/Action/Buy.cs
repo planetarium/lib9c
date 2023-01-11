@@ -129,7 +129,7 @@ namespace Nekoyume.Action
                     continue;
                 }
 
-                Order order = OrderFactory.Deserialize(rawOrder);
+                IItemOrder order = (IItemOrder) OrderFactory.Deserialize(rawOrder);
 
                 var shardedShopState = new ShardedShopStateV2(shopStateDict);
 

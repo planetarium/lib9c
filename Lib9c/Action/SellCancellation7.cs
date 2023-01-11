@@ -134,7 +134,7 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"{addressesHex}failed to load {nameof(Order)}({Order.DeriveAddress(orderId)}).");
             }
 
-            Order order = OrderFactory.Deserialize(orderDict);
+            Order order = (Order)OrderFactory.Deserialize(orderDict);
             order.ValidateCancelOrder2(avatarState, tradableId);
             ITradableItem sellItem = order.Cancel2(avatarState, context.BlockIndex);
             var shardedShopState = new ShardedShopStateV2(shopStateDict);

@@ -67,7 +67,7 @@ namespace Nekoyume.Model.State
             CleanUp(blockIndex);
         }
 
-        public void Remove(Order order, long blockIndex)
+        public void Remove(IOrder order, long blockIndex)
         {
             OrderDigest orderDigest = _orderDigestList
                 .FirstOrDefault(o =>

@@ -421,7 +421,7 @@
                     ShardedShopStateV2.DeriveAddress(purchaseInfo.ItemSubType, purchaseInfo.OrderId);
                 var nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(shardedShopAddress));
                 Assert.DoesNotContain(nextShopState.OrderDigestList, o => o.OrderId.Equals(purchaseInfo.OrderId));
-                Order order =
+                IOrder order =
                     OrderFactory.Deserialize(
                         (Dictionary)nextState.GetState(Order.DeriveAddress(purchaseInfo.OrderId)));
                 FungibleAssetValue tax = order.GetTax();
