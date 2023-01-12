@@ -1,6 +1,6 @@
 using System;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     public class ActionObsoleteAttribute : Attribute
     {

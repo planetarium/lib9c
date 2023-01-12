@@ -1,9 +1,9 @@
 ﻿using System;
-using Nekoyume.Action;
-using Nekoyume.Model.Mail;
-using Nekoyume.Model.State;
+using Lib9c.Action;
+using Lib9c.Model.Mail;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class CombinationSlotStateExtensions
     {
@@ -27,7 +27,7 @@ namespace Nekoyume.Extensions
                     $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {slotIndex}");
             }
         }
-        
+
         public static bool TryGetResultId(this CombinationSlotState state, out Guid resultId)
         {
             if (state?.Result is null)

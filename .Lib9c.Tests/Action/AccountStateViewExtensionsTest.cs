@@ -1,24 +1,24 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Helper;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Crystal;
+using Lib9c.Tests.Extensions;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Xunit;
+using static Lib9c.SerializeKeys;
+using Boolean = Bencodex.Types.Boolean;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using Bencodex.Types;
-    using Lib9c.Tests.Extensions;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Nekoyume.TableData.Crystal;
-    using Xunit;
-    using static Lib9c.SerializeKeys;
-
     public class AccountStateViewExtensionsTest
     {
         private readonly Address _agentAddress;
@@ -76,10 +76,10 @@ namespace Lib9c.Tests.Action
         {
             var states = new State()
                 .SetState(
-                default,
-                Dictionary.Empty
-                    .Add("agentAddress", default(Address).Serialize())
-            );
+                    default,
+                    Dictionary.Empty
+                        .Add("agentAddress", default(Address).Serialize())
+                );
 
             Assert.False(states.TryGetAvatarState(default, default, out _));
         }
@@ -189,8 +189,8 @@ namespace Lib9c.Tests.Action
             var dict = new Dictionary<Address, IValue>
             {
                 { new PrivateKey().ToAddress(), Null.Value },
-                { new PrivateKey().ToAddress(), new Bencodex.Types.Boolean(false) },
-                { new PrivateKey().ToAddress(), new Bencodex.Types.Boolean(true) },
+                { new PrivateKey().ToAddress(), new Boolean(false) },
+                { new PrivateKey().ToAddress(), new Boolean(true) },
                 { new PrivateKey().ToAddress(), new Integer(int.MinValue) },
                 { new PrivateKey().ToAddress(), new Integer(0) },
                 { new PrivateKey().ToAddress(), new Integer(int.MaxValue) },

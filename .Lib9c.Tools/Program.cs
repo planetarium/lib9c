@@ -1,7 +1,6 @@
 using System;
 using Cocona;
 using Lib9c.Tools.SubCommand;
-using Action = Lib9c.Tools.SubCommand.Action;
 
 namespace Lib9c.Tools
 {
@@ -9,7 +8,7 @@ namespace Lib9c.Tools
     [HasSubCommands(typeof(Market), Description = "Query about market.")]
     [HasSubCommands(typeof(State), Description = "Manage states.")]
     [HasSubCommands(typeof(Tx), Description = "Manage transactions.")]
-    [HasSubCommands(typeof(Action), Description = "Get metadata of actions.")]
+    [HasSubCommands(typeof(Lib9c.Tools.SubCommand.Action), Description = "Get metadata of actions.")]
     class Program
     {
         static void Main(string[] args)

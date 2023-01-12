@@ -1,15 +1,15 @@
+using System;
+using System.Collections.Generic;
+using Lib9c.Battle;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.State;
+using Lib9c.Tests.Action;
+using Libplanet;
+using Libplanet.Action;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using System;
-    using System.Collections.Generic;
-    using Lib9c.Tests.Action;
-    using Libplanet;
-    using Libplanet.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class BattleLogTest
     {
         private readonly TableSheets _tableSheets;
@@ -38,7 +38,7 @@ namespace Lib9c.Tests.Model
                 avatarState,
                 new List<Guid>(),
                 null,
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],

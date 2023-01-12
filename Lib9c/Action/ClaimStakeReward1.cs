@@ -1,15 +1,15 @@
-using System;
 using System.Collections.Immutable;
 using Bencodex.Types;
+using Lib9c.Extensions;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Extensions;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [ActionType("claim_stake_reward")]
     public class ClaimStakeReward1 : GameAction, IClaimStakeReward

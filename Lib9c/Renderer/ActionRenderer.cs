@@ -1,10 +1,10 @@
 using System;
+using Lib9c.Action;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Blockchain.Renderers;
 using Libplanet.Blocks;
-using Nekoyume.Action;
-using static Nekoyume.Action.ActionBase;
+using static Lib9c.Action.ActionBase;
 using Serilog;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;

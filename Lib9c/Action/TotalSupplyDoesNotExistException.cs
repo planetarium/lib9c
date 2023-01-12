@@ -1,9 +1,8 @@
-using Libplanet;
-using Libplanet.Assets;
 using System;
 using System.Runtime.Serialization;
+using Libplanet.Assets;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public class TotalSupplyDoesNotExistException : Exception

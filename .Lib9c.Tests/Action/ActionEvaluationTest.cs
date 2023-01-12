@@ -1,22 +1,21 @@
+using System;
+using System.Collections.Generic;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Formatters;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using MessagePack;
+using MessagePack.Resolvers;
+using Nekoyume.Action;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Lib9c.Formatters;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using MessagePack;
-    using MessagePack.Resolvers;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class ActionEvaluationTest
     {
         private readonly Currency _currency;
@@ -36,7 +35,7 @@ namespace Lib9c.Tests.Action
                 .SetState(_signer, (Text)"ANYTHING")
                 .SetState(default, Dictionary.Empty.Add("key", "value"))
                 .MintAsset(_signer, _currency * 10000);
-            var resolver = MessagePack.Resolvers.CompositeResolver.Create(
+            var resolver = CompositeResolver.Create(
                 NineChroniclesResolver.Instance,
                 StandardResolver.Instance
             );

@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Bencodex.Types;
 
-namespace Nekoyume
+namespace Lib9c
 {
     public readonly struct AppProtocolVersionExtra
     {

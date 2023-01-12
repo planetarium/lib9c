@@ -1,12 +1,13 @@
 using System;
 using System.Globalization;
 using Bencodex.Types;
+using Lib9c.Model.State;
+using Lib9c.TableData.Cost;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
-using Nekoyume.TableData;
-using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     public static class ItemFactory
     {

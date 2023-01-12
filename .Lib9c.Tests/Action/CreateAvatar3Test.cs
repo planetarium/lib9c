@@ -1,20 +1,19 @@
-﻿namespace Lib9c.Tests.Action
-{
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Libplanet;
-    using Libplanet.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-    using static Lib9c.SerializeKeys;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet;
+using Libplanet.Assets;
+using Xunit;
+using static Lib9c.SerializeKeys;
 
+namespace Lib9c.Tests.Action
+{
     public class CreateAvatar3Test
     {
         private readonly Address _agentAddress;

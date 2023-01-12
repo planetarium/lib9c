@@ -3,8 +3,8 @@ using System.Linq;
 using System.Reflection;
 using Cocona;
 using Cocona.Help;
+using Lib9c.Action;
 using Libplanet.Action;
-using Nekoyume.Action;
 
 namespace Lib9c.Tools.SubCommand
 {
@@ -21,7 +21,7 @@ namespace Lib9c.Tools.SubCommand
             )] long blockIndex = 0
         )
         {
-            Type baseType = typeof(Nekoyume.Action.ActionBase);
+            Type baseType = typeof(ActionBase);
             Type attrType = typeof(ActionTypeAttribute);
             Type obsoleteType = typeof(ActionObsoleteAttribute);
 

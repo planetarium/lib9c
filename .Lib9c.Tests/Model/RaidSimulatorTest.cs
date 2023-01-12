@@ -1,15 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Lib9c.Battle;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.State;
+using Lib9c.Tests.Action;
+using Libplanet.Action;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Lib9c.Tests.Action;
-    using Libplanet.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class RaidSimulatorTest
     {
         private readonly TableSheets _tableSheets;

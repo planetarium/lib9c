@@ -1,23 +1,22 @@
-﻿namespace Lib9c.Tests.Action
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.State;
-    using Serilog;
-    using Xunit;
-    using Xunit.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Serilog;
+using Xunit;
+using Xunit.Abstractions;
 
+namespace Lib9c.Tests.Action
+{
     public class Sell4Test
     {
         private const long ProductPrice = 100;

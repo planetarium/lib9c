@@ -1,8 +1,8 @@
-﻿namespace Lib9c.Tests.TableData.Event
-{
-    using Nekoyume.TableData.Event;
-    using Xunit;
+﻿using Lib9c.TableData.Event;
+using Xunit;
 
+namespace Lib9c.Tests.TableData.Event
+{
     public class EventDungeonStageWaveSheetTest
     {
         [Fact]

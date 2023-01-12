@@ -1,18 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using Lib9c.Action;
+using Lib9c.Helper;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class PrepareRewardAssetsTest
     {
         [Theory]

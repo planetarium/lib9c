@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public abstract class GameAction : ActionBase
@@ -36,7 +36,7 @@ namespace Nekoyume.Action
             Id = dict["id"].ToGuid();
             LoadPlainValueInternal(dict);
         }
-        
+
         protected abstract void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue);
     }
 }

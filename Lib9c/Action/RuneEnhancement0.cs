@@ -2,20 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Bencodex.Types;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.Rune;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Lib9c.TableData;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Rune;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100360ObsoleteIndex)]
+    [ActionObsolete(BlockPolicySource.V100360ObsoleteIndex)]
     [ActionType("runeEnhancement")]
     public class RuneEnhancement0 : GameAction
     {
@@ -47,7 +47,7 @@ namespace Nekoyume.Action
                 return states;
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100360ObsoleteIndex, context);
+            CheckObsolete(BlockPolicySource.V100360ObsoleteIndex, context);
 
             var sheets = states.GetSheets(
                 sheetTypes: new[]

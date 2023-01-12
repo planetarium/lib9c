@@ -1,19 +1,18 @@
+using System.Linq;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Serilog;
+using Xunit;
+using Xunit.Abstractions;
+using static Lib9c.SerializeKeys;
+
 namespace Lib9c.Tests.Action
 {
-    using System.Linq;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Serilog;
-    using Xunit;
-    using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
-
     public class ClaimStakeReward1Test
     {
         private readonly IAccountStateDelta _initialState;

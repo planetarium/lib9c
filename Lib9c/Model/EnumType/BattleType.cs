@@ -1,6 +1,6 @@
 using System;
 
-namespace Nekoyume.Model.EnumType
+namespace Lib9c.Model.EnumType
 {
     public enum BattleType
     {

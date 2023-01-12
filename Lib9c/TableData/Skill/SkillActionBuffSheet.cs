@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Skill
 {
     [Serializable]
     public class SkillActionBuffSheet : Sheet<int, SkillActionBuffSheet.Row>
@@ -30,7 +30,7 @@ namespace Nekoyume.TableData
                 });
             }
         }
-        
+
         public SkillActionBuffSheet() : base(nameof(SkillActionBuffSheet))
         {
         }

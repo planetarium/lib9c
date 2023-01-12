@@ -1,11 +1,10 @@
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.TableData;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using System.Linq;
-    using Bencodex.Types;
-    using Nekoyume.Model.Item;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class RedeemRewardSheetTest
     {
         [Fact]

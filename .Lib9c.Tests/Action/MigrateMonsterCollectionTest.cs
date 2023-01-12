@@ -1,22 +1,21 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Serilog;
+using Xunit;
+using Xunit.Abstractions;
+using static Lib9c.SerializeKeys;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.BlockChain.Policy;
-    using Nekoyume.Model.State;
-    using Serilog;
-    using Xunit;
-    using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
-
     public class MigrateMonsterCollectionTest
     {
         private readonly Address _signer;

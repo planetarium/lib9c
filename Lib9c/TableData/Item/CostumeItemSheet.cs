@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.Item;
+using Lib9c.Model.Item;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
     [Serializable]
     public class CostumeItemSheet : Sheet<int, CostumeItemSheet.Row>

@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Bencodex.Types;
-using Libplanet.Assets;
-using Nekoyume.Model.State;
-using static Nekoyume.TableData.TableExtensions;
-using static Lib9c.SerializeKeys;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     [Serializable]
     public class StakeRegularFixedRewardSheet : Sheet<int, StakeRegularFixedRewardSheet.Row>, IStakeRewardSheet

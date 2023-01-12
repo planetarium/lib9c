@@ -1,24 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using Bencodex;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.Quest;
+using Lib9c.Model.State;
+using Lib9c.Tests.Model.Item;
+using Libplanet;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Model.State
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using System.Security.Cryptography;
-    using System.Threading.Tasks;
-    using Bencodex;
-    using Bencodex.Types;
-    using Lib9c.Tests.Model.Item;
-    using Libplanet;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.Quest;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class AvatarStateTest
     {
         private readonly TableSheets _tableSheets;
@@ -95,7 +94,7 @@ namespace Lib9c.Tests.Model.State
             };
 
             var serialized = (Dictionary)avatarState.questList.OfType<WorldQuest>().First().Serialize();
-            serialized = serialized.SetItem("reward", new Nekoyume.Model.Quest.QuestReward(map).Serialize());
+            serialized = serialized.SetItem("reward", new QuestReward(map).Serialize());
 
             var quest = new WorldQuest(serialized);
 

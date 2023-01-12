@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Lib9c.Action;
+using Lib9c.Extensions;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.WorldAndStage;
 using Libplanet;
-using Nekoyume.Action;
-using Nekoyume.Extensions;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using Serilog;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     public static class Validator
     {

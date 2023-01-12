@@ -1,11 +1,11 @@
-﻿namespace Lib9c.Tests.TestHelper
-{
-    using Lib9c.DevExtensions.Action;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Nekoyume.Model.State;
+﻿using Lib9c.DevExtensions.Action;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
 
+namespace Lib9c.Tests.TestHelper
+{
     public class MakeInitialStateResult
     {
         private readonly IAccountStateDelta _state;

@@ -3,29 +3,30 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Arena;
+using Lib9c.Battle;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.Arena;
+using Lib9c.Model.BattleStatus.Arena;
+using Lib9c.Model.Character;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
 using Libplanet;
 using Libplanet.Action;
-using Libplanet.Assets;
-using Nekoyume.Arena;
-using Nekoyume.Battle;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model;
-using Nekoyume.Model.Arena;
-using Nekoyume.Model.BattleStatus.Arena;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Introduced at https://github.com/planetarium/lib9c/pull/1190
     /// </summary>
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100290ObsoleteIndex)]
+    [ActionObsolete(BlockPolicySource.V100290ObsoleteIndex)]
     [ActionType("battle_arena3")]
     public class BattleArena3 : GameAction
     {
@@ -76,7 +77,7 @@ namespace Nekoyume.Action
                 return states;
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100290ObsoleteIndex, context);
+            CheckObsolete(BlockPolicySource.V100290ObsoleteIndex, context);
 
             var addressesHex =
                 GetSignerAndOtherAddressesHex(context, myAvatarAddress, enemyAvatarAddress);

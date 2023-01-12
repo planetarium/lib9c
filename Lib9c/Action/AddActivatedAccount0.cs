@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Bencodex.Types;
+using Lib9c.Model.State;
+using Lib9c.Policy;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
+    [ActionObsolete(BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("add_activated_account")]
     public class AddActivatedAccount0 : ActionBase
     {
@@ -46,7 +47,7 @@ namespace Nekoyume.Action
                 throw new ActivatedAccountsDoesNotExistsException();
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex, context);
+            CheckObsolete(BlockPolicySource.V100080ObsoleteIndex, context);
             CheckPermission(context);
 
             var accounts = new ActivatedAccountsState(accountsAsDict);

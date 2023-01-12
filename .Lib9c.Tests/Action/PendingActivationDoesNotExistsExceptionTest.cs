@@ -1,11 +1,11 @@
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Lib9c.Action;
+using Libplanet;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Libplanet;
-    using Nekoyume.Action;
-    using Xunit;
-
     public class PendingActivationDoesNotExistsExceptionTest
     {
         [Fact]

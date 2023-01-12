@@ -1,22 +1,19 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Lib9c.Policy;
+using Lib9c.Tests.TestHelper;
+using Libplanet;
+using Libplanet.Blockchain;
+using Libplanet.Blockchain.Policies;
+using Libplanet.Crypto;
+using Libplanet.Tx;
+using Serilog.Core;
+using Xunit;
+using NCAction = Libplanet.Action.PolymorphicAction<Lib9c.Action.ActionBase>;
+
 namespace Lib9c.Tests
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Lib9c.Tests.TestHelper;
-    using Libplanet;
-    using Libplanet.Blockchain;
-    using Libplanet.Blockchain.Policies;
-    using Libplanet.Crypto;
-    using Libplanet.Tx;
-    using Nekoyume.BlockChain;
-    using Nekoyume.BlockChain.Policy;
-    using Serilog.Core;
-    using Xunit;
-#pragma warning disable SA1135
-    using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
-#pragma warning restore SA1135
-
     public class StagePolicyTest
     {
         private readonly PrivateKey[] _accounts;

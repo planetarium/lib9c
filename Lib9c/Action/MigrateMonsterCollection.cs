@@ -1,12 +1,12 @@
 using System;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Model.State;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// An action to claim remained monster collection rewards and to migrate

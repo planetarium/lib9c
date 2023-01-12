@@ -1,18 +1,17 @@
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Crypto;
+using Serilog;
+using Xunit;
+using Xunit.Abstractions;
+using static Lib9c.SerializeKeys;
+
 namespace Lib9c.Tests.Action
 {
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Serilog;
-    using Xunit;
-    using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
-
     public class DailyReward5Test
     {
         private readonly Address _agentAddress;

@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model.Character
 {
     /// <summary>
     /// Introduced at https://github.com/planetarium/lib9c/pull/1156

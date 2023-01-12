@@ -1,6 +1,7 @@
 ﻿using System;
+using Lib9c.TableData.WorldAndStage;
 
-namespace Nekoyume.TableData.Event
+namespace Lib9c.TableData.Event
 {
     [Serializable]
     public class EventDungeonStageWaveSheet : Sheet<int, EventDungeonStageWaveSheet.Row>

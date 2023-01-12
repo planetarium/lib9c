@@ -1,18 +1,18 @@
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Lib9c.Action;
+using Lib9c.Exceptions;
+using Lib9c.Formatters;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet;
+using MessagePack;
+using MessagePack.Resolvers;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Lib9c.Formatters;
-    using Libplanet;
-    using MessagePack;
-    using MessagePack.Resolvers;
-    using Nekoyume.Action;
-    using Nekoyume.Exceptions;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class ExceptionTest
     {
         public ExceptionTest()

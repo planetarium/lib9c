@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using Bencodex.Types;
-using Libplanet;
+using Lib9c.Model;
+using Lib9c.Model.State;
 using Libplanet.Action;
-using Nekoyume.Model;
-using Nekoyume.Model.State;
 using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     [ActionType("migration_activated_accounts_state")]
@@ -20,13 +18,13 @@ namespace Nekoyume.Action
             var states = context.PreviousStates;
             if (context.Rehearsal)
             {
-                return states.SetState(Nekoyume.Addresses.ActivatedAccount, MarkChanged);
+                return states.SetState(Addresses.ActivatedAccount, MarkChanged);
             }
 
             CheckPermission(context);
 
             Log.Debug($"Start {nameof(MigrationActivatedAccountsState)}");
-            if (states.TryGetState(Nekoyume.Addresses.ActivatedAccount, out Dictionary rawState))
+            if (states.TryGetState(Addresses.ActivatedAccount, out Dictionary rawState))
             {
                 var activatedAccountsState = new ActivatedAccountsState(rawState);
                 var accounts = activatedAccountsState.Accounts;

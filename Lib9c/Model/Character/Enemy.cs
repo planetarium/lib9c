@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Battle;
-using Nekoyume.Model.Character;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
+using Lib9c.Battle;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Skill;
+using Lib9c.Model.Stat;
+using Lib9c.TableData.Character;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model.Character
 {
     [Serializable]
     public class Enemy : CharacterBase, ICloneable
     {
         public int spawnIndex = -1;
-        
+
         [NonSerialized]
         private IStageSimulator _stageSimulator;
 

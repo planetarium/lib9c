@@ -1,18 +1,17 @@
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Lib9c.Action;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class CombinationEquipment0Test
     {
         private readonly Address _agentAddress;

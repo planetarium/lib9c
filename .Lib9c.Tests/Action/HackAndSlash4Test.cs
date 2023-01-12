@@ -1,26 +1,26 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Battle;
+using Lib9c.Model;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Lib9c.TableData;
+using Lib9c.TableData.WorldAndStage;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.BlockChain;
-    using Nekoyume.Model;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class HackAndSlash4Test
     {
         private readonly TableSheets _tableSheets;
@@ -778,7 +778,7 @@ namespace Lib9c.Tests.Action
                 PreviousStates = _initialState,
                 Signer = _agentAddress,
                 Random = new TestRandom(),
-                BlockIndex = Nekoyume.BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex + 100000,
+                BlockIndex = BlockPolicySource.V100080ObsoleteIndex + 100000,
             }));
         }
 

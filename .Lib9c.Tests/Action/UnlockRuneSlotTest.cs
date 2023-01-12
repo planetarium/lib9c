@@ -1,19 +1,18 @@
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Rune;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System.Linq;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Rune;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class UnlockRuneSlotTest
     {
         private readonly Currency _goldCurrency;

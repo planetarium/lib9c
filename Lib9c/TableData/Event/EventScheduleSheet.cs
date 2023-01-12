@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData.Event
+namespace Lib9c.TableData.Event
 {
     public class EventScheduleSheet : Sheet<int, EventScheduleSheet.Row>
     {

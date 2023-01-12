@@ -1,16 +1,16 @@
+using System.Collections.Generic;
+using Bencodex.Types;
+using Lib9c.Model.State;
+using Lib9c.Tests.TestHelper;
+using Libplanet;
+using Xunit;
+using LazySampleState = Lib9c.Model.State.LazyState<
+    Lib9c.Tests.Model.State.LazyStateTest.SampleState,
+    Bencodex.Types.Dictionary
+>;
+
 namespace Lib9c.Tests.Model.State
 {
-    using System.Collections.Generic;
-    using Bencodex.Types;
-    using Lib9c.Tests.TestHelper;
-    using Libplanet;
-    using Nekoyume.Model.State;
-    using Xunit;
-    using LazySampleState = Nekoyume.Model.State.LazyState<
-        Lib9c.Tests.Model.State.LazyStateTest.SampleState,
-        Bencodex.Types.Dictionary
-    >;
-
     public class LazyStateTest
     {
         private readonly Address _address;
@@ -95,7 +95,7 @@ namespace Lib9c.Tests.Model.State
             Assert.Same(unloadedPair.Value, unloadedPair2.Value);
         }
 
-        public class SampleState : State
+        public class SampleState : Lib9c.Model.State.State
         {
             public SampleState(Address address, long foo, string bar)
                 : base(address)

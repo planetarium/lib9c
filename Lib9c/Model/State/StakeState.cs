@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Policy;
 using Libplanet;
-using Libplanet.Action;
-using Nekoyume.Action;
-using Nekoyume.BlockChain.Policy;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class StakeState : State
     {

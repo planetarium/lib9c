@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
     using static TableExtensions;
-    
+
     public class EquipmentItemSubRecipeSheet : Sheet<int, EquipmentItemSubRecipeSheet.Row>
     {
         public readonly struct MaterialInfo

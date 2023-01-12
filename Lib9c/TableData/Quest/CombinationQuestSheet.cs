@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Item;
+using Lib9c.Model.Item;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Quest
 {
     [Serializable]
     public class CombinationQuestSheet : Sheet<int, CombinationQuestSheet.Row>
@@ -12,7 +12,7 @@ namespace Nekoyume.TableData
         {
             public ItemType ItemType { get; private set; }
             public ItemSubType ItemSubType { get; private set; }
-            
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 base.Set(fields);
@@ -20,7 +20,7 @@ namespace Nekoyume.TableData
                 ItemSubType = (ItemSubType) Enum.Parse(typeof(ItemSubType), fields[4]);
             }
         }
-        
+
         public CombinationQuestSheet() : base(nameof(CombinationQuestSheet))
         {
         }

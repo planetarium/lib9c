@@ -1,20 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Lib9c.Action;
+using Lib9c.Model;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.WorldAndStage;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Action.Scenario
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class WorldUnlockScenarioTest
     {
         private TableSheets _tableSheets;
@@ -50,7 +50,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             _weeklyArenaState = new WeeklyArenaState(0);
 
-            _initialState = new Lib9c.Tests.Action.State()
+            _initialState = new State()
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(_avatarAddress, avatarState.Serialize())

@@ -1,27 +1,26 @@
-﻿namespace Lib9c.Tests.Action
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using System.Numerics;
-    using Bencodex.Types;
-    using Lib9c.Model.Order;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.State;
-    using Serilog;
-    using Xunit;
-    using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Numerics;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.Order;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Serilog;
+using Xunit;
+using Xunit.Abstractions;
+using static Lib9c.SerializeKeys;
 
+namespace Lib9c.Tests.Action
+{
     public class Buy9Test
     {
         private readonly Address _sellerAgentAddress;

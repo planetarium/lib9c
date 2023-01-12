@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData;
+using Lib9c.Model.Item;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.Model.Stat
+namespace Lib9c.Model.Stat
 {
     /// <summary>
     /// 캐릭터의 스탯을 관리한다.
@@ -96,7 +97,7 @@ namespace Nekoyume.Model.Stat
             SetStats(stat.Level);
             EqualizeCurrentHPWithHP();
         }
-            
+
         public CharacterStats(CharacterStats value) : base(value)
         {
             _row = value._row;

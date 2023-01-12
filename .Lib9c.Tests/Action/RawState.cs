@@ -1,14 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using Bencodex.Types;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-
     /// <summary>
     /// An implementation of <see cref="IAccountStateDelta"/> for test. It handles states as raw like Libplanet does.
     /// </summary>

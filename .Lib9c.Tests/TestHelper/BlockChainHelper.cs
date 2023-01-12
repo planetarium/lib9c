@@ -1,29 +1,26 @@
-﻿namespace Lib9c.Tests.TestHelper
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using Lib9c.DevExtensions.Action;
-    using Lib9c.Renderer;
-    using Lib9c.Tests.Action;
-    using Libplanet;
-    using Libplanet.Assets;
-    using Libplanet.Blockchain;
-    using Libplanet.Blockchain.Policies;
-    using Libplanet.Blocks;
-    using Libplanet.Crypto;
-    using Libplanet.Store;
-    using Libplanet.Store.Trie;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-#pragma warning disable SA1135
-    using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
-#pragma warning restore SA1135
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using Lib9c.Action;
+using Lib9c.DevExtensions.Action;
+using Lib9c.Model;
+using Lib9c.Model.State;
+using Lib9c.Renderer;
+using Lib9c.TableData;
+using Lib9c.Tests.Action;
+using Libplanet;
+using Libplanet.Assets;
+using Libplanet.Blockchain;
+using Libplanet.Blockchain.Policies;
+using Libplanet.Blocks;
+using Libplanet.Crypto;
+using Libplanet.Store;
+using Libplanet.Store.Trie;
+using NCAction = Libplanet.Action.PolymorphicAction<Lib9c.Action.ActionBase>;
 
+namespace Lib9c.Tests.TestHelper
+{
     public static class BlockChainHelper
     {
         public static BlockChain<NCAction> MakeBlockChain(

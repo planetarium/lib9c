@@ -3,7 +3,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class RankingMapState : State
     {

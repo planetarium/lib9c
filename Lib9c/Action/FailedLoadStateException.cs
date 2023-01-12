@@ -2,7 +2,7 @@ using System;
 using System.Runtime.Serialization;
 using Libplanet;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public class FailedLoadStateException : Exception
@@ -10,12 +10,12 @@ namespace Nekoyume.Action
         public FailedLoadStateException(string message) : base(message)
         {
         }
-        
+
         public FailedLoadStateException(Address address, Type stateType) :
             base($"address: {address.ToHex()}, state type: {stateType.FullName}")
         {
         }
-        
+
         public FailedLoadStateException(
             string actionType,
             string addressesHex,

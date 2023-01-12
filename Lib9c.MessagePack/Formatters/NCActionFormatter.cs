@@ -5,11 +5,12 @@ using System.Linq;
 using System.Reflection;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Action;
 using Libplanet.Action;
 using MessagePack;
 using MessagePack.Formatters;
 using Nekoyume.Action;
-using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
+using NCAction = Libplanet.Action.PolymorphicAction<Lib9c.Action.ActionBase>;
 
 namespace Lib9c.Formatters
 {

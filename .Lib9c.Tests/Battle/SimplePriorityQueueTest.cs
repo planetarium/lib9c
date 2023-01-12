@@ -1,11 +1,11 @@
+using System;
+using System.Collections.Generic;
+using Lib9c.Model.Character;
+using Priority_Queue;
+using Xunit;
+
 namespace Lib9c.Tests
 {
-    using System;
-    using System.Collections.Generic;
-    using Nekoyume.Model;
-    using Priority_Queue;
-    using Xunit;
-
     public class SimplePriorityQueueTest
     {
         [Theory]

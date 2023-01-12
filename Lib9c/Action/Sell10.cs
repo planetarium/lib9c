@@ -3,24 +3,25 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Bencodex.Types;
+using Lib9c.Model.Item;
 using Lib9c.Model.Order;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Lib9c.TableData.Item;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/602
     /// Updated at https://github.com/planetarium/lib9c/pull/957
     /// </summary>
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100300ObsoleteIndex)]
+    [ActionObsolete(BlockPolicySource.V100300ObsoleteIndex)]
     [ActionType("sell10")]
     public class Sell10 : GameAction
     {
@@ -77,7 +78,7 @@ namespace Nekoyume.Action
                     .SetState(sellerAvatarAddress, MarkChanged);
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100300ObsoleteIndex, context);
+            CheckObsolete(BlockPolicySource.V100300ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, sellerAvatarAddress);
 

@@ -5,17 +5,17 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using Bencodex.Types;
+using Lib9c.Model.State;
+using Serilog;
 #if UNITY_EDITOR
 using System.Text;
 #endif
-using Bencodex.Types;
-using Nekoyume.Model.State;
-using Serilog;
 #if UNITY_EDITOR
 using Serilog;
 #endif
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     [Serializable]
     public abstract class Sheet<TKey, TValue> : IDictionary<TKey, TValue>, ISheet
@@ -32,10 +32,10 @@ namespace Nekoyume.TableData
 
         public IReadOnlyList<TValue>? OrderedList => _orderedList;
 
-        
+
         public TValue? First { get; private set; }
 
-        
+
         public TValue? Last { get; private set; }
 
         public ICollection<TKey> Keys => ((IDictionary<TKey, TValue>)_impl).Keys;

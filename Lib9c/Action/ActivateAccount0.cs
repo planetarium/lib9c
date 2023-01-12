@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Model.State;
+using Lib9c.Policy;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Model.State;
 using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
+    [ActionObsolete(BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("activate_account")]
     public class ActivateAccount0 : ActionBase, IActivateAccount
     {
@@ -48,7 +49,7 @@ namespace Nekoyume.Action
                     .SetState(PendingAddress, MarkChanged);
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex, context);
+            CheckObsolete(BlockPolicySource.V100080ObsoleteIndex, context);
 
             if (!state.TryGetState(ActivatedAccountsState.Address, out Dictionary accountsAsDict))
             {

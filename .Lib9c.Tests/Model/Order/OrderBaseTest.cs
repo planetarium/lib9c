@@ -1,14 +1,14 @@
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Bencodex.Types;
+using Lib9c.Model.Order;
+using Lib9c.Model.State;
+using Xunit;
+using static Lib9c.SerializeKeys;
+
 namespace Lib9c.Tests.Model.Order
 {
-    using System;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Lib9c.Model.Order;
-    using Nekoyume.Model.State;
-    using Xunit;
-    using static Lib9c.SerializeKeys;
-
     public class OrderBaseTest
     {
         [Theory]

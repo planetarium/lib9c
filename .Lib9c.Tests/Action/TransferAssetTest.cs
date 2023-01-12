@@ -1,22 +1,20 @@
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.IO;
-    using System.Linq;
-    using System.Numerics;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class TransferAssetTest
     {
         private static readonly Address _sender = new Address(

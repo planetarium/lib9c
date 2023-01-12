@@ -1,15 +1,15 @@
+using System;
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.Model.State
 {
-    using System;
-    using System.Linq;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Assets;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class ShardedShopStateTest
     {
         private readonly TableSheets _tableSheets;

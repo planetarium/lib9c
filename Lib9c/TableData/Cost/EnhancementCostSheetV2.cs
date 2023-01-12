@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Numerics;
-using Nekoyume.Model.Item;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Cost
 {
     using static TableExtensions;
 

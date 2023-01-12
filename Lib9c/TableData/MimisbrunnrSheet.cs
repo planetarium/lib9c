@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Elemental;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Elemental;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     [Serializable]
     public class MimisbrunnrSheet : Sheet<int, MimisbrunnrSheet.Row>
@@ -14,7 +14,7 @@ namespace Nekoyume.TableData
             public override int Key => Id;
             public int Id { get; private set; }
             public List<ElementalType> ElementalTypes { get; private set; }
-        
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
@@ -29,7 +29,7 @@ namespace Nekoyume.TableData
                 }
             }
         }
-        
+
         public MimisbrunnrSheet() : base(nameof(MimisbrunnrSheet))
         {
         }

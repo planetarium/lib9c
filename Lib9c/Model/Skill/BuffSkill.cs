@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.TableData;
+using Lib9c.Model.Character;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Skill
+namespace Lib9c.Model.Skill
 {
     [Serializable]
     public class BuffSkill : Skill

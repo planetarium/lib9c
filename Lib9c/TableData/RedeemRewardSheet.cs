@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.State;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.State;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     [Serializable]
     public class RedeemRewardSheet : Sheet<int, RedeemRewardSheet.Row>

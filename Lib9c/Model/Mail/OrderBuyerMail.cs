@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Model.State;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.Mail
+namespace Lib9c.Model.Mail
 {
     [Serializable]
     public class OrderBuyerMail : Mail

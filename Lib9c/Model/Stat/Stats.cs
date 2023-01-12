@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Nekoyume.Model.Stat
+namespace Lib9c.Model.Stat
 {
     [Serializable]
     public class Stats : IStats, ICloneable
@@ -85,7 +85,7 @@ namespace Nekoyume.Model.Stat
         }
 
         /// <summary>
-        /// baseStatsArray의 모든 능력치의 합을 바탕으로, statModifiers를 통해서 추가되는 부분 만으로 초기화한다. 
+        /// baseStatsArray의 모든 능력치의 합을 바탕으로, statModifiers를 통해서 추가되는 부분 만으로 초기화한다.
         /// </summary>
         /// <param name="statModifiers"></param>
         /// <param name="baseStatsArray"></param>

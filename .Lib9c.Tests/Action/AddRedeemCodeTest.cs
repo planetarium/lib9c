@@ -1,15 +1,14 @@
+using System.Collections.Immutable;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System.Collections.Immutable;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class AddRedeemCodeTest
     {
         [Fact]

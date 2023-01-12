@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.TableData;
+using Lib9c.Model.Character;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Skill
+namespace Lib9c.Model.Skill
 {
     [Serializable]
     public class AreaAttack : AttackSkill
@@ -12,8 +13,8 @@ namespace Nekoyume.Model.Skill
         }
 
         public override Model.BattleStatus.Skill Use(
-            CharacterBase caster, 
-            int simulatorWaveTurn, 
+            CharacterBase caster,
+            int simulatorWaveTurn,
             IEnumerable<Buff.Buff> buffs)
         {
             var clone = (CharacterBase) caster.Clone();

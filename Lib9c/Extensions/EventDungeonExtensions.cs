@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Nekoyume.Exceptions;
-using Nekoyume.Model.Event;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Event;
+using Lib9c.Exceptions;
+using Lib9c.Model.Event;
+using Lib9c.TableData;
+using Lib9c.TableData.Event;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class EventDungeonExtensions
     {

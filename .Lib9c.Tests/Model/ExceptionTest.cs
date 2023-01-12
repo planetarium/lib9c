@@ -1,10 +1,10 @@
-﻿namespace Lib9c.Tests.Model
-{
-    using System;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Xunit;
+﻿using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Xunit;
 
+namespace Lib9c.Tests.Model
+{
     public class ExceptionTest
     {
         public static void AssertException(params Exception[] exceptions)

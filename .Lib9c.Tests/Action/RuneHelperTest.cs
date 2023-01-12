@@ -1,12 +1,12 @@
+using System;
+using System.Linq;
+using Lib9c.Helper;
+using Lib9c.TableData;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Linq;
-    using Libplanet.Assets;
-    using Nekoyume.Helper;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class RuneHelperTest
     {
         private readonly Currency _crystalCurrency = CrystalCalculator.CRYSTAL;

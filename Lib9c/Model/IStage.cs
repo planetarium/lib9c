@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using Nekoyume.Model.Item;
+using Lib9c.Model.Character;
+using Lib9c.Model.Item;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model
 {
     public interface IStage
     {
@@ -19,11 +20,11 @@ namespace Nekoyume.Model
         IEnumerator CoHeal(CharacterBase caster, int skillId, IEnumerable<BattleStatus.Skill.SkillInfo> skillInfos, IEnumerable<BattleStatus.Skill.SkillInfo> buffInfos);
         IEnumerator CoBuff(CharacterBase caster, int skillId, IEnumerable<BattleStatus.Skill.SkillInfo> skillInfos, IEnumerable<BattleStatus.Skill.SkillInfo> buffInfos);
         IEnumerator CoTickDamage(CharacterBase affectedCharacter, int skillId, IEnumerable<BattleStatus.Skill.SkillInfo> skillInfos);
-        
+
         #endregion
-        
+
         IEnumerator CoRemoveBuffs(CharacterBase caster);
-        
+
         IEnumerator CoDropBox(List<ItemBase> items);
         IEnumerator CoGetReward(List<ItemBase> rewards);
         IEnumerator CoSpawnWave(int waveNumber, int waveTurn, List<Enemy> enemies, bool hasBoss);

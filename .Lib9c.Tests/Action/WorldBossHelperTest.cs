@@ -1,11 +1,11 @@
+using Lib9c.Helper;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using Libplanet.Assets;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class WorldBossHelperTest
     {
         [Theory]

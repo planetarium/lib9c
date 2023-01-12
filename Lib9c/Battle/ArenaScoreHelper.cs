@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Model.BattleStatus;
+using Lib9c.Model.BattleStatus;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public static class ArenaScoreHelper
     {
@@ -100,7 +100,7 @@ namespace Nekoyume.Battle
                 (400, 4, 0, -5),
                 (500, 2, 0, -5),
             }.OrderBy(tuple => tuple.differ);
-        
+
         #endregion
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Nekoyume.Battle
                 ? 1
                 : -30;
         }
-        
+
         [Obsolete("Use GetScore()")]
         public static (int challengerScore, int defenderScore) GetScoreV3(int challengerRating, int defenderRating, BattleLog.Result result)
         {

@@ -1,8 +1,8 @@
+using Lib9c.TableData.WorldAndStage;
+using Xunit;
+
 namespace Lib9c.Tests.TableData.WorldAndStage
 {
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class WorldUnlockSheetTest
     {
         [Theory]

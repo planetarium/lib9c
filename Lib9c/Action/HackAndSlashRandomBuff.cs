@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Battle;
+using Lib9c.Helper;
+using Lib9c.Model.State;
+using Lib9c.TableData.Crystal;
 using Libplanet;
 using Libplanet.Action;
-using Libplanet.Assets;
-using Nekoyume.Battle;
-using Nekoyume.Helper;
-using Nekoyume.Model.State;
-using Nekoyume.TableData.Crystal;
 using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Created at https://github.com/planetarium/lib9c/pull/1031

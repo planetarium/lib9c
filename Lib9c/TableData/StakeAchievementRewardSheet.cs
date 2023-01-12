@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Libplanet.Assets;
-using Nekoyume.Model.State;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.State;
+using static Lib9c.TableData.TableExtensions;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     [Serializable]
     public class StakeAchievementRewardSheet : Sheet<int, StakeAchievementRewardSheet.Row>, IStakeRewardSheet

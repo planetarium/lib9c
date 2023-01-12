@@ -1,7 +1,7 @@
 using Libplanet;
 using Libplanet.Action;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     public static class ActionContextExtensions
     {

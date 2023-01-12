@@ -1,4 +1,4 @@
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     public interface ISheet
     {

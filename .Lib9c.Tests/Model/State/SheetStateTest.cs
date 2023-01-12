@@ -1,14 +1,13 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Lib9c.TableData;
+using Libplanet;
+using Xunit;
+using Xunit.Abstractions;
+
 namespace Lib9c.Tests.Model.State
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using Libplanet;
-    using Nekoyume;
-    using Nekoyume.TableData;
-    using Xunit;
-    using Xunit.Abstractions;
-
     public class SheetStateTest
     {
         private readonly ITestOutputHelper _testOutputHelper;

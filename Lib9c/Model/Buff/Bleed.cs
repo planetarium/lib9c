@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.BattleStatus.Arena;
-using Nekoyume.Model.Skill;
-using Nekoyume.TableData;
+using Lib9c.Model.BattleStatus.Arena;
+using Lib9c.Model.Character;
+using Lib9c.Model.Skill;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Buff
+namespace Lib9c.Model.Buff
 {
     [Serializable]
     public class Bleed : ActionBuff

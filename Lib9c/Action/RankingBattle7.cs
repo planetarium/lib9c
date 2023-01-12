@@ -5,19 +5,21 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
+using Lib9c.Battle;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Battle;
-using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100086ObsoleteIndex)]
+    [ActionObsolete(BlockPolicySource.V100086ObsoleteIndex)]
     [ActionType("ranking_battle7")]
     public class RankingBattle7 : GameAction
     {
@@ -49,7 +51,7 @@ namespace Nekoyume.Action
                     .SetState(questListAddress, MarkChanged);
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100086ObsoleteIndex, context);
+            CheckObsolete(BlockPolicySource.V100086ObsoleteIndex, context);
 
             // Avoid InvalidBlockStateRootHashException
             if (ctx.BlockIndex == 680341 && Id.Equals(new Guid("df37dbd8-5703-4dff-918b-ad22ee4c34c6")))

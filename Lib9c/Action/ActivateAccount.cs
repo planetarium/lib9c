@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Model;
+using Lib9c.Model.State;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Model;
-using Nekoyume.Model.State;
 using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     [ActionType("activate_account2")]

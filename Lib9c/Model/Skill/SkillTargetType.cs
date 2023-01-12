@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using Lib9c.Model.Character;
 
-namespace Nekoyume.Model.Skill
+namespace Lib9c.Model.Skill
 {
     public enum SkillTargetType
     {

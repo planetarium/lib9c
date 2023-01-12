@@ -1,9 +1,9 @@
-﻿namespace Lib9c.Tests.TableData.Cost
-{
-    using Nekoyume.Model.Item;
-    using Nekoyume.TableData;
-    using Xunit;
+﻿using Lib9c.Model.Item;
+using Lib9c.TableData.Cost;
+using Xunit;
 
+namespace Lib9c.Tests.TableData.Cost
+{
     public class EnhancementCostSheetTest
     {
         private const string _csv = @"id,item_sub_type,grade,level,cost

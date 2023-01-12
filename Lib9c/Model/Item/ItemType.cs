@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     public enum ItemType
     {

@@ -1,11 +1,11 @@
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Xunit;
+
 namespace Lib9c.Tests.Model.State
 {
-    using Bencodex.Types;
-    using Nekoyume.Action;
-    using Nekoyume.BlockChain.Policy;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class StakeStateTest
     {
         [Fact]

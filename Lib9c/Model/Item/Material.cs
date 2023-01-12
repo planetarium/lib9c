@@ -2,11 +2,11 @@ using System;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using Bencodex.Types;
+using Lib9c.Model.State;
+using Lib9c.TableData.Item;
 using Libplanet;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     [Serializable]
     public class Material : ItemBase, ISerializable, IFungibleItem

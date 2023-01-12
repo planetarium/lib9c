@@ -1,18 +1,17 @@
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Lib9c.Action;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Xunit;
+using static Lib9c.SerializeKeys;
+
 namespace Lib9c.Tests.Action
 {
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using Libplanet;
-    using Libplanet.Action;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.State;
-    using Xunit;
-    using static Lib9c.SerializeKeys;
-
     public class CombinationConsumable7Test
     {
         private readonly Address _agentAddress;

@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using Bencodex.Types;
 using Cocona;
+using Lib9c.Action;
 using Lib9c.DevExtensions;
+using Lib9c.Model.Item;
 using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Assets;
@@ -13,10 +15,8 @@ using Libplanet.Blocks;
 using Libplanet.RocksDBStore;
 using Libplanet.Store;
 using Libplanet.Tx;
-using Nekoyume.Action;
-using Nekoyume.Model.Item;
 using Serilog.Core;
-using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
+using NCAction = Libplanet.Action.PolymorphicAction<Lib9c.Action.ActionBase>;
 
 namespace Lib9c.Tools.SubCommand
 {

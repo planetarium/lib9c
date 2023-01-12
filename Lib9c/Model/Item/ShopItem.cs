@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet;
 using Libplanet.Assets;
-using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     [Serializable]
     public class ShopItem

@@ -1,12 +1,11 @@
-using Nekoyume.Model.Character;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Stat;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Stat;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Character
 {
     [Serializable]
     public class WorldBossCharacterSheet : Sheet<int, WorldBossCharacterSheet.Row>
@@ -34,7 +33,7 @@ namespace Nekoyume.TableData
             public override int Key => BossId;
             public int BossId { get; private set; }
             public List<WaveStatData> WaveStats { get; private set; }
-            
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 BossId = int.Parse(fields[0], CultureInfo.InvariantCulture);
@@ -68,7 +67,7 @@ namespace Nekoyume.TableData
                 });
             }
         }
-        
+
         public WorldBossCharacterSheet() : base(nameof(WorldBossCharacterSheet))
         {
         }

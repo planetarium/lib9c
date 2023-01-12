@@ -1,9 +1,9 @@
 using System;
-using System.Diagnostics.Contracts;
 using System.Collections.Immutable;
+using System.Diagnostics.Contracts;
 using Libplanet.Blocks;
 
-namespace Nekoyume.BlockChain.Policy
+namespace Lib9c.Policy
 {
     public interface IVariableSubPolicy<T>
     {

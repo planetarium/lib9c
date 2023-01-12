@@ -1,10 +1,10 @@
+using System.Collections.Generic;
+using Bencodex.Types;
+using Lib9c.Model.Quest;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using System.Collections.Generic;
-    using Bencodex.Types;
-    using Nekoyume.Model.Quest;
-    using Xunit;
-
     public class QuestRewardTest
     {
         [Fact]

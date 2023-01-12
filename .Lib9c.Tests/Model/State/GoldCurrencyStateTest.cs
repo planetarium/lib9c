@@ -1,13 +1,13 @@
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Bencodex.Types;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.Model.State
 {
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Assets;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class GoldCurrencyStateTest
     {
         [Fact]

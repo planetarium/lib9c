@@ -3,17 +3,16 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.State;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Blockchain;
 using Libplanet.Blocks;
 using Libplanet.Tx;
-using Nekoyume.Action;
-using Nekoyume.Model.State;
-using static Libplanet.Blocks.BlockMarshaler;
-using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
+using NCAction = Libplanet.Action.PolymorphicAction<Lib9c.Action.ActionBase>;
 
-namespace Nekoyume.BlockChain.Policy
+namespace Lib9c.Policy
 {
     // Collection of helper methods not directly used as a pluggable component.
     public partial class BlockPolicySource

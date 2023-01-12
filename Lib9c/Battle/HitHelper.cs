@@ -1,9 +1,8 @@
 // #define TEST_LOG
 
 using System;
-using System.Text;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public static class HitHelper
     {

@@ -1,14 +1,15 @@
+using System;
+using Libplanet.Action;
+
 namespace Lib9c.Tests.Action
 {
-    using Libplanet.Action;
-
     public class TestRandom : IRandom
     {
-        private readonly System.Random _random;
+        private readonly Random _random;
 
         public TestRandom(int seed = default)
         {
-            _random = new System.Random(seed);
+            _random = new Random(seed);
         }
 
         public int Seed => 0;

@@ -1,9 +1,8 @@
-using Libplanet;
-using Libplanet.Tx;
 using System;
 using System.Runtime.Serialization;
+using Libplanet;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public class InvalidTransferSignerException : Exception
@@ -17,7 +16,7 @@ namespace Nekoyume.Action
             Sender = sender;
             Recipient = recipient;
         }
-        
+
         public InvalidTransferSignerException(
             SerializationInfo info, StreamingContext context
         ) : base(info, context)

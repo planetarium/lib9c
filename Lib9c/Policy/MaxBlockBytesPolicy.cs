@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-
-namespace Nekoyume.BlockChain.Policy
+namespace Lib9c.Policy
 {
     public sealed class MaxTransactionsBytesPolicy : VariableSubPolicy<long>
     {

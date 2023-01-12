@@ -1,6 +1,10 @@
 using Bencodex.Types;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Skill;
+using Lib9c.TableData.WorldAndStage;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     public class SimulatorSheetsV100291
     {

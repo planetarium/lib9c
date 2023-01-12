@@ -2,11 +2,11 @@ using System;
 using System.Runtime.Serialization;
 using Bencodex;
 using Bencodex.Types;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.State;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     [Serializable]
     public abstract class ItemBase : IItem

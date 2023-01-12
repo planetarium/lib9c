@@ -2,23 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using Bencodex.Types;
+using Lib9c.Abstractions;
+using Lib9c.Action;
+using Lib9c.Model;
+using Lib9c.Model.State;
 using Lib9c.Renderer;
-using Libplanet.Blocks;
+using Libplanet;
+using Libplanet.Action;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
-using Libplanet.Tx;
-using Libplanet;
 using Libplanet.Blockchain.Renderers;
-using Nekoyume.Action;
-using Nekoyume.Model;
-using Nekoyume.Model.State;
+using Libplanet.Blocks;
+using Libplanet.Tx;
 using Serilog;
 using Serilog.Events;
-using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
-using Libplanet.Action;
-using Lib9c.Abstractions;
-using System.Reflection;
+using NCAction = Libplanet.Action.PolymorphicAction<Lib9c.Action.ActionBase>;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
@@ -30,7 +30,7 @@ using Lib9c.DevExtensions;
 using Lib9c.DevExtensions.Model;
 #endif
 
-namespace Nekoyume.BlockChain.Policy
+namespace Lib9c.Policy
 {
     public partial class BlockPolicySource
     {

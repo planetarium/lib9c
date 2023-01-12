@@ -1,19 +1,18 @@
-﻿namespace Lib9c.Tests.Extensions
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Extensions;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Extensions;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet;
+using Libplanet.Action;
+using Xunit;
 
+namespace Lib9c.Tests.Extensions
+{
     public class SheetsExtensionsTest
     {
         private IAccountStateDelta _states;

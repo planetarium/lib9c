@@ -1,9 +1,9 @@
-﻿namespace Lib9c.Tests.Extensions
-{
-    using System;
-    using Nekoyume.Extensions;
-    using Xunit;
+﻿using System;
+using Lib9c.Extensions;
+using Xunit;
 
+namespace Lib9c.Tests.Extensions
+{
     public class EventDungeonExtensionsTest
     {
         [Theory]

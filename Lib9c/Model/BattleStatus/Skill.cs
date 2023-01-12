@@ -1,10 +1,11 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Skill;
+using Lib9c.Model.Character;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Skill;
 
-namespace Nekoyume.Model.BattleStatus
+namespace Lib9c.Model.BattleStatus
 {
     [Serializable]
     public abstract class Skill : EventBase
@@ -20,7 +21,7 @@ namespace Nekoyume.Model.BattleStatus
             public readonly SkillTargetType SkillTargetType;
             public readonly int WaveTurn;
 
-            
+
             public readonly Model.Buff.Buff? Buff;
 
             public SkillInfo(CharacterBase character, int effect, bool critical, SkillCategory skillCategory,
@@ -42,7 +43,7 @@ namespace Nekoyume.Model.BattleStatus
 
         public readonly IEnumerable<SkillInfo> SkillInfos;
 
-        
+
         public readonly IEnumerable<SkillInfo>? BuffInfos;
 
         protected Skill(int skillId, CharacterBase character, IEnumerable<SkillInfo> skillInfos,

@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Bencodex.Types;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Item;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Item;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
     [Serializable]
     public class ItemSheet : Sheet<int, ItemSheet.Row>

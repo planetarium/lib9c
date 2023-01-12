@@ -4,19 +4,17 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
 using Libplanet;
 using Libplanet.Assets;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public static class StateExtensions
     {

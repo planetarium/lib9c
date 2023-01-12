@@ -1,20 +1,19 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Lib9c.Action;
+using Lib9c.Model;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class RankingBattle0Test
     {
         private readonly IAccountStateDelta _initialState;

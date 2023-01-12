@@ -1,13 +1,13 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Lib9c.Model.Item;
+using Lib9c.Model.Quest;
+using Lib9c.TableData.Quest;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Quest;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class QuestListTest
     {
         private readonly TableSheets _tableSheets;

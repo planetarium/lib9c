@@ -1,7 +1,7 @@
-using Nekoyume.Model.Item;
 using System.Collections.Generic;
+using Lib9c.Model.Item;
 
-namespace Nekoyume
+namespace Lib9c.TableData
 {
     public static class UnlockHelper
     {

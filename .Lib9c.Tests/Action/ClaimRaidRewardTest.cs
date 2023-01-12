@@ -1,16 +1,15 @@
+using System;
+using System.Linq;
+using Lib9c.Action;
+using Lib9c.Helper;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Linq;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class ClaimRaidRewardTest
     {
         private readonly TableSheets _tableSheets;

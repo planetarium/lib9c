@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     [Serializable]
     public class SheetRowColumnException : Exception

@@ -1,14 +1,14 @@
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Bencodex.Types;
+using Lib9c.Model.Item;
+using Lib9c.TableData.Item;
+using Xunit;
+using static Lib9c.SerializeKeys;
+
 namespace Lib9c.Tests.Model.Item
 {
-    using System;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Nekoyume.Model.Item;
-    using Nekoyume.TableData;
-    using Xunit;
-    using static Lib9c.SerializeKeys;
-
     public class CostumeTest
     {
         private readonly CostumeItemSheet.Row _costumeRow;

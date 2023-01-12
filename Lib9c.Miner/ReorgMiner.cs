@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Lib9c.Action;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Blockchain;
@@ -9,7 +10,6 @@ using Libplanet.Blocks;
 using Libplanet.Crypto;
 using Libplanet.Net;
 using Libplanet.Tx;
-using Nekoyume.Action;
 using Serilog;
 
 namespace Nekoyume.BlockChain

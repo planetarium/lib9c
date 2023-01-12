@@ -1,12 +1,12 @@
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Bencodex.Types;
+using Lib9c.Model.Mail;
+using Xunit;
+
 namespace Lib9c.Tests.Model.Mail
 {
-    using System;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Nekoyume.Model.Mail;
-    using Xunit;
-
     public class CancelOrderMailTest
     {
         [Fact]
@@ -15,7 +15,7 @@ namespace Lib9c.Tests.Model.Mail
             var orderId = Guid.NewGuid();
             var mail = new CancelOrderMail(1, Guid.NewGuid(), 2, orderId);
             var serialized = (Dictionary)mail.Serialize();
-            var deserialized = (CancelOrderMail)Mail.Deserialize(serialized);
+            var deserialized = (CancelOrderMail)Lib9c.Model.Mail.Mail.Deserialize(serialized);
 
             Assert.Equal(1, deserialized.blockIndex);
             Assert.Equal(2, deserialized.requiredBlockIndex);

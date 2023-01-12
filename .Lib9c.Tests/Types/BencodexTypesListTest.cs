@@ -1,14 +1,14 @@
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Types
 {
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Crypto;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class BencodexTypesListTest
     {
         private readonly Bencodex.Types.List _integerList;

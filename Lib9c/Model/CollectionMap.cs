@@ -6,9 +6,9 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model
 {
     [Serializable]
     public class CollectionMap : IState, IDictionary<int, int>, ISerializable

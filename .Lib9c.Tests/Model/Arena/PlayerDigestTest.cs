@@ -1,19 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Model.Character;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.Tests.Action;
+using Libplanet;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Model.Arena
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Bencodex.Types;
-    using Lib9c.Tests.Action;
-    using Libplanet;
-    using Libplanet.Crypto;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Arena;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class PlayerDigestTest
     {
         private readonly AvatarState _avatarState;

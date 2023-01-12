@@ -1,20 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Lib9c.Battle;
+using Lib9c.Model.Buff;
+using Lib9c.Model.Character;
+using Lib9c.Model.Skill;
+using Lib9c.Model.State;
+using Lib9c.Tests.Action;
+using Libplanet;
+using Libplanet.Crypto;
+using Serilog;
+using Xunit;
+using Xunit.Abstractions;
+
 namespace Lib9c.Tests.Model.Skill
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Lib9c.Tests.Action;
-    using Libplanet;
-    using Libplanet.Crypto;
-    using Nekoyume.Battle;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Buff;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.State;
-    using Serilog;
-    using Xunit;
-    using Xunit.Abstractions;
-
     public class NormalAttackTest
     {
         public NormalAttackTest(ITestOutputHelper outputHelper)
@@ -51,7 +51,7 @@ namespace Lib9c.Tests.Model.Skill
                 avatarState,
                 new List<Guid>(),
                 null,
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 tableSheets.StageSheet[1],

@@ -1,12 +1,12 @@
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Libplanet;
+using Xunit;
+
 namespace Lib9c.Tests.Model.State
 {
-    using System.Linq;
-    using Bencodex.Types;
-    using Libplanet;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class RankingMapStateTest
     {
         private readonly TableSheets _tableSheets;

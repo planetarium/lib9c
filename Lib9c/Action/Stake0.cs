@@ -1,16 +1,13 @@
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
-using Libplanet;
+using Lib9c.Model.State;
+using Lib9c.TableData;
 using Libplanet.Action;
-using Nekoyume.Extensions;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [ActionType("stake")]
     public class Stake0 : ActionBase

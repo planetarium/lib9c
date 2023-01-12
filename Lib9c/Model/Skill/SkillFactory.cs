@@ -1,9 +1,9 @@
 using Bencodex.Types;
-using Nekoyume.Model.Skill.Arena;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Model.Skill.Arena;
+using Lib9c.Model.State;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Skill
+namespace Lib9c.Model.Skill
 {
     public static class SkillFactory
     {

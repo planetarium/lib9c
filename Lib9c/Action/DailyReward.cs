@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 using Bencodex.Types;
+using Lib9c.Helper;
+using Lib9c.Model.State;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Helper;
-using Nekoyume.Model.State;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/615

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Nekoyume.Model.Stat
+namespace Lib9c.Model.Stat
 {
     public interface IBaseAndAdditionalStats
     {

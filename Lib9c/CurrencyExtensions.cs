@@ -5,7 +5,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Assets;
 
-namespace Nekoyume
+namespace Lib9c
 {
     public static class CurrencyExtensions
     {

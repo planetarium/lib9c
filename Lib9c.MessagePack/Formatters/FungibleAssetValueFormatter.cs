@@ -2,10 +2,10 @@ using System;
 using System.Buffers;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Assets;
 using MessagePack;
 using MessagePack.Formatters;
-using Nekoyume.Model.State;
 
 namespace Lib9c.Formatters
 {

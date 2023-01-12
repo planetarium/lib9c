@@ -1,12 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
+using Lib9c.Battle;
+using Lib9c.Tests.Action;
+using Libplanet.Action;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using Lib9c.Tests.Action;
-    using Libplanet.Action;
-    using Nekoyume.Battle;
-    using Xunit;
-
     public class WeightedSelectorTest
     {
         private readonly IRandom _random;

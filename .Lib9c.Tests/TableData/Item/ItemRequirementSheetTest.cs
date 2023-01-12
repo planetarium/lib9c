@@ -1,8 +1,8 @@
-﻿namespace Lib9c.Tests.TableData.Item
-{
-    using Nekoyume.TableData;
-    using Xunit;
+﻿using Lib9c.TableData.Item;
+using Xunit;
 
+namespace Lib9c.Tests.TableData.Item
+{
     public class ItemRequirementSheetTest
     {
         private const string _csv =

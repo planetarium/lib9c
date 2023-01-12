@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Rune;
+using Lib9c.TableData;
 using Libplanet;
-using Nekoyume.Action;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Rune;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class RuneSlotState : IState
     {

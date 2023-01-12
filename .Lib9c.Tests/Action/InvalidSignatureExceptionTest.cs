@@ -1,12 +1,12 @@
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Libplanet.Crypto;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class InvalidSignatureExceptionTest
     {
         [Fact]

@@ -1,36 +1,32 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Bencodex;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Battle;
+using Lib9c.Model;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Lib9c.TableData.Character;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Blockchain;
+using Libplanet.Blockchain.Policies;
+using Libplanet.Blocks;
+using Libplanet.Crypto;
+using Libplanet.Store;
+using Libplanet.Store.Trie;
+using Serilog.Core;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using System.Net.Http;
-    using System.Security.Cryptography;
-    using System.Threading.Tasks;
-    using Bencodex;
-    using Bencodex.Types;
-    using Lib9c.Tests.TestHelper;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Blockchain;
-    using Libplanet.Blockchain.Policies;
-    using Libplanet.Blocks;
-    using Libplanet.Crypto;
-    using Libplanet.Store;
-    using Libplanet.Store.Trie;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.BlockChain;
-    using Nekoyume.BlockChain.Policy;
-    using Nekoyume.Model;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Serilog.Core;
-    using Xunit;
-
     public class RewardGoldTest
     {
         private readonly AvatarState _avatarState;

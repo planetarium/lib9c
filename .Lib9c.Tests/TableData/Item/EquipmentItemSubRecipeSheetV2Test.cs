@@ -1,8 +1,8 @@
-﻿namespace Lib9c.Tests.TableData.Item
-{
-    using Nekoyume.TableData;
-    using Xunit;
+﻿using Lib9c.TableData.Item;
+using Xunit;
 
+namespace Lib9c.Tests.TableData.Item
+{
     public class EquipmentItemSubRecipeSheetV2Test
     {
         private const string _csv = @"id,required_action_point,required_gold,required_block_index,material_id,material_count,material_2_id,material_2_count,material_3_id,material_3_count,option_id,option_ratio,option_1_required_block_index,option_2_id,option_2_ratio,option_2_required_block_index,option_3_id,option_3_ratio,option_3_required_block_index,option_4_id,option_4_ratio,option_4_required_block_index

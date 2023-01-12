@@ -1,20 +1,19 @@
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Lib9c.TableData.Item;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Xunit;
+using static Lib9c.Model.State.RedeemCodeState;
+using static Lib9c.SerializeKeys;
+
 namespace Lib9c.Tests.Action
 {
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-    using static Lib9c.SerializeKeys;
-    using static Nekoyume.Model.State.RedeemCodeState;
-
     public class RedeemCodeTest
     {
         private readonly Address _agentAddress = new Address(new byte[]

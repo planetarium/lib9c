@@ -1,25 +1,24 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Lib9c.Action;
+using Lib9c.Exceptions;
+using Lib9c.Extensions;
+using Lib9c.Model.Event;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Lib9c.TableData;
+using Lib9c.TableData.Event;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Xunit;
+using static Lib9c.SerializeKeys;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.BlockChain.Policy;
-    using Nekoyume.Exceptions;
-    using Nekoyume.Extensions;
-    using Nekoyume.Model.Event;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Nekoyume.TableData.Event;
-    using Xunit;
-    using static Lib9c.SerializeKeys;
-
     public class EventDungeonBattleV3Test
     {
         private readonly Currency _ncgCurrency;

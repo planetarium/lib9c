@@ -6,7 +6,7 @@ using Libplanet.Action;
 using Libplanet.Assets;
 using Libplanet.Crypto;
 using MessagePack.Formatters;
-using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
+using NCAction = Libplanet.Action.PolymorphicAction<Lib9c.Action.ActionBase>;
 
 namespace Lib9c.Formatters
 {

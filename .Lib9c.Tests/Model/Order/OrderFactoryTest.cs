@@ -1,15 +1,14 @@
+using System;
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.Item;
+using Lib9c.Model.Order;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.Model.Order
 {
-    using System;
-    using System.Linq;
-    using Bencodex.Types;
-    using Lib9c.Model.Order;
-    using Libplanet.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Item;
-    using Xunit;
-
     public class OrderFactoryTest
     {
         private readonly TableSheets _tableSheets;
@@ -20,11 +19,11 @@ namespace Lib9c.Tests.Model.Order
         }
 
         [Theory]
-        [InlineData(ItemType.Consumable, 1, Order.OrderType.NonFungible)]
-        [InlineData(ItemType.Costume, 2, Order.OrderType.NonFungible)]
-        [InlineData(ItemType.Equipment, 3, Order.OrderType.NonFungible)]
-        [InlineData(ItemType.Material, 4, Order.OrderType.Fungible)]
-        public void Create(ItemType itemType, long blockIndex, Order.OrderType orderType)
+        [InlineData(ItemType.Consumable, 1, Lib9c.Model.Order.Order.OrderType.NonFungible)]
+        [InlineData(ItemType.Costume, 2, Lib9c.Model.Order.Order.OrderType.NonFungible)]
+        [InlineData(ItemType.Equipment, 3, Lib9c.Model.Order.Order.OrderType.NonFungible)]
+        [InlineData(ItemType.Material, 4, Lib9c.Model.Order.Order.OrderType.Fungible)]
+        public void Create(ItemType itemType, long blockIndex, Lib9c.Model.Order.Order.OrderType orderType)
         {
             ITradableItem tradableItem;
             Guid itemId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
@@ -63,7 +62,7 @@ namespace Lib9c.Tests.Model.Order
 #pragma warning restore CS0618
             Guid orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
 
-            Order order = OrderFactory.Create(
+            Lib9c.Model.Order.Order order = OrderFactory.Create(
                 Addresses.Admin,
                 Addresses.Blacksmith,
                 orderId,
@@ -81,7 +80,7 @@ namespace Lib9c.Tests.Model.Order
             Assert.Equal(Addresses.Blacksmith, order.SellerAvatarAddress);
             Assert.Equal(orderId, order.OrderId);
             Assert.Equal(itemId, order.TradableId);
-            if (orderType == Order.OrderType.Fungible)
+            if (orderType == Lib9c.Model.Order.Order.OrderType.Fungible)
             {
                 Assert.Equal(1, ((FungibleOrder)order).ItemCount);
             }
@@ -99,11 +98,11 @@ namespace Lib9c.Tests.Model.Order
         }
 
         [Theory]
-        [InlineData(ItemType.Consumable, 1, Order.OrderType.NonFungible)]
-        [InlineData(ItemType.Costume, 2, Order.OrderType.NonFungible)]
-        [InlineData(ItemType.Equipment, 3, Order.OrderType.NonFungible)]
-        [InlineData(ItemType.Material, 4, Order.OrderType.Fungible)]
-        public void Deserialize(ItemType itemType, long blockIndex, Order.OrderType orderType)
+        [InlineData(ItemType.Consumable, 1, Lib9c.Model.Order.Order.OrderType.NonFungible)]
+        [InlineData(ItemType.Costume, 2, Lib9c.Model.Order.Order.OrderType.NonFungible)]
+        [InlineData(ItemType.Equipment, 3, Lib9c.Model.Order.Order.OrderType.NonFungible)]
+        [InlineData(ItemType.Material, 4, Lib9c.Model.Order.Order.OrderType.Fungible)]
+        public void Deserialize(ItemType itemType, long blockIndex, Lib9c.Model.Order.Order.OrderType orderType)
         {
             ITradableItem tradableItem;
             switch (itemType)
@@ -138,7 +137,7 @@ namespace Lib9c.Tests.Model.Order
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
-            Order order = OrderFactory.Create(
+            Lib9c.Model.Order.Order order = OrderFactory.Create(
                 Addresses.Admin,
                 Addresses.Blacksmith,
                 default,
@@ -150,7 +149,7 @@ namespace Lib9c.Tests.Model.Order
             );
 
             Dictionary serialized = (Dictionary)order.Serialize();
-            Order deserialized = OrderFactory.Deserialize(serialized);
+            Lib9c.Model.Order.Order deserialized = OrderFactory.Deserialize(serialized);
             Assert.Equal(order, deserialized);
             Assert.Equal(orderType, deserialized.Type);
         }

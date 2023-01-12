@@ -1,11 +1,11 @@
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Model.Item;
+using Lib9c.Model.Skill;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using System.Linq;
-    using Bencodex.Types;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Skill;
-    using Xunit;
-
     public class ItemUsableTest
     {
         private readonly TableSheets _tableSheets;

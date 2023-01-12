@@ -1,9 +1,9 @@
-﻿namespace Lib9c.Tests.TableData.Item
-{
-    using Nekoyume.Model.Stat;
-    using Nekoyume.TableData;
-    using Xunit;
+﻿using Lib9c.Model.Stat;
+using Lib9c.TableData.Item;
+using Xunit;
 
+namespace Lib9c.Tests.TableData.Item
+{
     public class EquipmentItemOptionSheetTest
     {
         private const string _csv =

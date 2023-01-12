@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Bencodex.Types;
+using Lib9c.Extensions;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.TableData.Cost;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
-using Nekoyume.Action;
-using Nekoyume.Extensions;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     [Serializable]
     public class Equipment : ItemUsable, IEquippableItem

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Bencodex.Types;
-using Nekoyume.Model.State;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.State;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Quest
 {
     [Serializable]
     public class QuestSheet : Sheet<int, QuestSheet.Row>
@@ -16,7 +16,7 @@ namespace Nekoyume.TableData
             public int Id { get; private set; }
             public int Goal { get; private set; }
             public int QuestRewardId { get; private set; }
-            
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
@@ -42,7 +42,7 @@ namespace Nekoyume.TableData
                 };
             }
         }
-        
+
         public QuestSheet() : base(nameof(QuestSheet))
         {
         }

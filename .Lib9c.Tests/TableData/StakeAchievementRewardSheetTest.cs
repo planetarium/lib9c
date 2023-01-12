@@ -1,11 +1,11 @@
+using Lib9c.Extensions;
+using Lib9c.TableData;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.TableData
 {
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Nekoyume.Extensions;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class StakeAchievementRewardSheetTest
     {
         private readonly StakeAchievementRewardSheet _sheet;

@@ -1,9 +1,9 @@
+using System.Text;
+using Lib9c.TableData.Event;
+using Xunit;
+
 namespace Lib9c.Tests.TableData.Event
 {
-    using System.Text;
-    using Nekoyume.TableData.Event;
-    using Xunit;
-
     public class EventMaterialItemRecipeSheetTest
     {
         [Fact]

@@ -1,7 +1,7 @@
 using System.Linq;
-using Nekoyume.Model.Item;
+using Lib9c.Model.Item;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     public static class InventoryExtensions
     {

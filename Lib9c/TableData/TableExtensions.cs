@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Numerics;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     public static class TableExtensions
     {

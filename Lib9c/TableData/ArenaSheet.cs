@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Model.Arena;
-using Nekoyume.Model.EnumType;
+using Lib9c.Model.Arena;
+using Lib9c.Model.EnumType;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     using static TableExtensions;
 

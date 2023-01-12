@@ -1,9 +1,9 @@
+using Bencodex.Types;
+using Lib9c.Model.Arena;
+using Xunit;
+
 namespace Lib9c.Tests.Model.Arena
 {
-    using Bencodex.Types;
-    using Nekoyume.Model.Arena;
-    using Xunit;
-
     public class ArenaParticipantsTest
     {
         [Fact]

@@ -1,5 +1,5 @@
 ﻿using System;
-using Nekoyume.Model.Item;
+using Lib9c.Model.Item;
 
 namespace Lib9c.DevExtensions.Model
 {

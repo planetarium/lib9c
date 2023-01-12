@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Model.Rune
+namespace Lib9c.Model.Rune
 {
     [Serializable]
     public class RuneNotFoundException : Exception

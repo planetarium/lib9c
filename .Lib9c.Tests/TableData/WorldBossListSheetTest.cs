@@ -1,10 +1,10 @@
+using System;
+using Lib9c.Extensions;
+using Lib9c.TableData;
+using Xunit;
+
 namespace Lib9c.Tests.TableData
 {
-    using System;
-    using Nekoyume.Extensions;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class WorldBossListSheetTest
     {
         private const string Csv = @"id,boss_id,started_block_index,ended_block_index,fee,ticket_price,additional_ticket_price,max_purchase_count

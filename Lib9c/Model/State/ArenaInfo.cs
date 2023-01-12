@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Battle;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.Item;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
 using Libplanet;
-using Nekoyume.Battle;
-using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class ArenaInfo : IState
     {
@@ -109,7 +110,7 @@ namespace Nekoyume.Model.State
             Active = false;
             ArenaRecord = new Record();
         }
-        
+
         public ArenaInfo Clone() => new ArenaInfo(this)
         {
             Score = Score,
@@ -258,7 +259,7 @@ namespace Nekoyume.Model.State
                 default:
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
             }
-        
+
             var (challengerScore, defenderScore) = scoreGetter(Score, enemyInfo.Score, result);
             Score = Math.Max(1000, Score + challengerScore);
             enemyInfo.Score = Math.Max(1000, enemyInfo.Score + defenderScore);

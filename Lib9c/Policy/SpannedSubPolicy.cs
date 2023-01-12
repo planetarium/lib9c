@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics.Contracts;
 
-namespace Nekoyume.BlockChain.Policy
+namespace Lib9c.Policy
 {
     public class SpannedSubPolicy<T>
     {

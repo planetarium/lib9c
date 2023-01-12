@@ -1,16 +1,15 @@
+using System.Collections.Generic;
+using System.Linq;
+using Lib9c.Arena;
+using Lib9c.Model.BattleStatus.Arena;
+using Lib9c.Model.Character;
+using Lib9c.Model.State;
+using Lib9c.Tests.Action;
+using Libplanet.Action;
+using Xunit;
+
 namespace Lib9c.Tests
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using Lib9c.Tests.Action;
-    using Libplanet.Action;
-    using Nekoyume.Arena;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Arena;
-    using Nekoyume.Model.BattleStatus.Arena;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class ArenaSimulatorV1Test
     {
         private readonly TableSheets _tableSheets;

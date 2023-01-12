@@ -1,8 +1,8 @@
+using System.Collections.Generic;
+using System.IO;
+
 namespace Lib9c.Tests
 {
-    using System.Collections.Generic;
-    using System.IO;
-
     public static class TableSheetsImporter
     {
         public static Dictionary<string, string> ImportSheets(string path = null)

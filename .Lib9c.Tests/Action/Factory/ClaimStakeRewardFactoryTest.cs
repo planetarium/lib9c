@@ -1,12 +1,12 @@
+using System;
+using Lib9c.Action;
+using Lib9c.Action.Factory;
+using Libplanet;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Action.Factory
 {
-    using System;
-    using Libplanet;
-    using Libplanet.Crypto;
-    using Nekoyume.Action;
-    using Nekoyume.Action.Factory;
-    using Xunit;
-
     public class ClaimStakeRewardFactoryTest
     {
         [Theory]

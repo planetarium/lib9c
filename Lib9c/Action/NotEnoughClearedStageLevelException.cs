@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public class NotEnoughClearedStageLevelException : Exception
@@ -21,7 +21,7 @@ namespace Nekoyume.Action
                 $" {current} < {require}.")
         {
         }
-        
+
         public NotEnoughClearedStageLevelException(
             string actionType,
             string addressesHex,

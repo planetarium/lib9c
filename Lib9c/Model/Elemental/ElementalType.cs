@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Nekoyume.Model.Elemental
+namespace Lib9c.Model.Elemental
 {
     public enum ElementalType
     {

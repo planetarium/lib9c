@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Bencodex.Types;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.State;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Skill;
+using Lib9c.Model.State;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Skill
 {
     [Serializable]
     public class SkillSheet : Sheet<int, SkillSheet.Row>

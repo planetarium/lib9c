@@ -1,27 +1,24 @@
+#if UNITY_EDITOR || UNITY_STANDALONE
+using UniRx;
+#else
+#endif
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Runtime.Serialization;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Model.State;
+using Lib9c.Policy;
 using Libplanet;
 using Libplanet.Action;
-using Serilog;
-using Nekoyume.Model.State;
 using Libplanet.Assets;
 using Libplanet.Tx;
-using Nekoyume.BlockChain.Policy;
-#if UNITY_EDITOR || UNITY_STANDALONE
-using UniRx;
-#else
-using System.Reactive.Subjects;
-using System.Reactive.Linq;
-#endif
+using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public abstract class ActionBase : IAction

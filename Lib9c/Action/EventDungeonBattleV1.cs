@@ -4,20 +4,21 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Battle;
+using Lib9c.Exceptions;
+using Lib9c.Extensions;
+using Lib9c.Model.Event;
+using Lib9c.Model.Skill;
+using Lib9c.Model.State;
+using Lib9c.TableData.Event;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Skill;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Battle;
-using Nekoyume.Exceptions;
-using Nekoyume.Extensions;
-using Nekoyume.Model.Event;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Event;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Introduced at https://github.com/planetarium/lib9c/pull/1218

@@ -4,7 +4,7 @@ using System.Linq;
 using Libplanet.Action;
 using Serilog;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public class WeightedSelector<T>
     {

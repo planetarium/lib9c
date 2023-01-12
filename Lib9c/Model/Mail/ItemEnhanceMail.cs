@@ -1,7 +1,7 @@
 using System;
-using Nekoyume.Action;
+using Lib9c.Action;
 
-namespace Nekoyume.Model.Mail
+namespace Lib9c.Model.Mail
 {
     [Serializable]
     public class ItemEnhanceMail : AttachmentMail

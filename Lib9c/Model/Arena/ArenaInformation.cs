@@ -1,11 +1,9 @@
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.State;
 using Libplanet;
-using Nekoyume.Action;
-using Nekoyume.Arena;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model.Arena
+namespace Lib9c.Model.Arena
 {
     /// <summary>
     /// Introduced at https://github.com/planetarium/lib9c/pull/1029

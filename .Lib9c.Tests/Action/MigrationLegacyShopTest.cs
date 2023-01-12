@@ -1,16 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Lib9c.Action;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Libplanet;
-    using Libplanet.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class MigrationLegacyShopTest
     {
         private readonly TableSheets _tableSheets;

@@ -1,28 +1,29 @@
-﻿namespace Lib9c.Tests.Action
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.Model;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.Quest;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-    using static Lib9c.SerializeKeys;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Battle;
+using Lib9c.Model;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.Quest;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Quest;
+using Lib9c.TableData.WorldAndStage;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Crypto;
+using Xunit;
+using static Lib9c.SerializeKeys;
 
+namespace Lib9c.Tests.Action
+{
     public class HackAndSlash7Test
     {
         private readonly Dictionary<string, string> _sheets;

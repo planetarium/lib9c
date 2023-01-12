@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Numerics;
 using Bencodex.Types;
+using Lib9c.Model.EnumType;
+using Lib9c.TableData.Quest;
 using Libplanet.Assets;
-using Nekoyume.Model.EnumType;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     [Serializable]
     public class GoldQuest : Quest

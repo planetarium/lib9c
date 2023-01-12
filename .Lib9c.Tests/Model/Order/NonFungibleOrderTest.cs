@@ -1,22 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Battle;
+using Lib9c.Model.Item;
+using Lib9c.Model.Order;
+using Lib9c.Model.State;
+using Lib9c.Tests.Action;
+using Libplanet;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.Model.Order
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Lib9c.Model.Order;
-    using Lib9c.Tests.Action;
-    using Libplanet;
-    using Libplanet.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class NonFungibleOrderTest
     {
         private readonly TableSheets _tableSheets;
@@ -58,7 +57,7 @@ namespace Lib9c.Tests.Model.Order
 
             Assert.Equal(1, order.StartedBlockIndex);
             Assert.Equal(_currency * 10, order.Price);
-            Assert.Equal(Order.OrderType.NonFungible, order.Type);
+            Assert.Equal(Lib9c.Model.Order.Order.OrderType.NonFungible, order.Type);
             Assert.Equal(Addresses.Admin, order.SellerAgentAddress);
             Assert.Equal(Addresses.Blacksmith, order.SellerAvatarAddress);
             Assert.Equal(orderId, order.OrderId);
@@ -91,7 +90,7 @@ namespace Lib9c.Tests.Model.Order
 
             Assert.Equal(1, order.StartedBlockIndex);
             Assert.Equal(currency * 10, order.Price);
-            Assert.Equal(Order.OrderType.NonFungible, order.Type);
+            Assert.Equal(Lib9c.Model.Order.Order.OrderType.NonFungible, order.Type);
             Assert.Equal(Addresses.Admin, order.SellerAgentAddress);
             Assert.Equal(Addresses.Blacksmith, order.SellerAvatarAddress);
             Assert.Equal(orderId, order.OrderId);

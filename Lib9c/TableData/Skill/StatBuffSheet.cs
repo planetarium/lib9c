@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.Skill;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Skill;
+using Lib9c.Model.Stat;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Skill
 {
     [Serializable]
     public class StatBuffSheet : Sheet<int, StatBuffSheet.Row>

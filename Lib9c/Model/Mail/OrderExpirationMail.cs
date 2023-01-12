@@ -2,22 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Model.State;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.Mail
+namespace Lib9c.Model.Mail
 {
     [Serializable]
     public class OrderExpirationMail : Mail
     {
         public readonly Guid OrderId;
-        public OrderExpirationMail(long blockIndex, Guid id, long requiredBlockIndex, Guid orderId) 
+        public OrderExpirationMail(long blockIndex, Guid id, long requiredBlockIndex, Guid orderId)
             : base(blockIndex, id, requiredBlockIndex)
         {
             OrderId = orderId;
         }
 
-        public OrderExpirationMail(Dictionary serialized) 
+        public OrderExpirationMail(Dictionary serialized)
             : base(serialized)
         {
             OrderId = serialized[OrderIdKey].ToGuid();

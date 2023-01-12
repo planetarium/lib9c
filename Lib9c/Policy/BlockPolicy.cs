@@ -1,16 +1,17 @@
+using System;
+using System.Collections.Generic;
+using Lib9c.Action;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
 using Libplanet.Blocks;
 using Libplanet.Tx;
-using System;
-using System.Collections.Generic;
-using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
+using NCAction = Libplanet.Action.PolymorphicAction<Lib9c.Action.ActionBase>;
 
-namespace Nekoyume.BlockChain.Policy
+namespace Lib9c.Policy
 {
-    public class BlockPolicy : BlockPolicy<NCAction>
+    public class BlockPolicy : BlockPolicy<PolymorphicAction<ActionBase>>
     {
         private readonly Func<BlockChain<NCAction>, long> _getNextBlockDifficulty;
         private readonly Func<Address, long, bool> _isAllowedToMine;

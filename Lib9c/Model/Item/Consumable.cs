@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Bencodex.Types;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     [Serializable]
     public class Consumable : ItemUsable
@@ -28,7 +28,7 @@ namespace Nekoyume.Model.Item
                 Stats = stats.ToList(i => new StatMap((Dictionary) i));
             }
         }
-        
+
         protected Consumable(SerializationInfo info, StreamingContext _)
             : this((Dictionary) Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
         {

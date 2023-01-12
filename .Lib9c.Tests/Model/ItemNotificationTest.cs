@@ -1,17 +1,16 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Lib9c.Action;
+using Lib9c.Battle;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Libplanet;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class ItemNotificationTest
     {
         private readonly Address _agentAddress;

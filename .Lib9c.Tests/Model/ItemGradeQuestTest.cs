@@ -1,14 +1,14 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Bencodex.Types;
+using Lib9c.Model.Item;
+using Lib9c.Model.Quest;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Quest;
-    using Xunit;
-
     public class ItemGradeQuestTest
     {
         private readonly TableSheets _tableSheets;

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Model.Arena
+namespace Lib9c.Model.Arena
 {
     [Serializable]
     public class RoundNotFoundException : Exception

@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Lib9c.TableData.Item;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Mail;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
+    [ActionObsolete(BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("daily_reward2")]
     public class DailyReward2 : GameAction
     {
@@ -31,7 +32,7 @@ namespace Nekoyume.Action
                 return states.SetState(avatarAddress, MarkChanged);
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex, context);
+            CheckObsolete(BlockPolicySource.V100080ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
@@ -62,10 +63,10 @@ namespace Nekoyume.Action
             {
                 materials = materials,
             };
-            
+
             // create mail
-            var mail = new DailyRewardMail(result, 
-                                           ctx.BlockIndex, 
+            var mail = new DailyRewardMail(result,
+                                           ctx.BlockIndex,
                                            ctx.Random.GenerateRandomGuid(),
                                            ctx.BlockIndex);
 
@@ -85,8 +86,8 @@ namespace Nekoyume.Action
         {
             avatarAddress = plainValue["avatarAddress"].ToAddress();
         }
-        
-        
+
+
         [Serializable]
         public class DailyRewardResult : AttachmentActionResult
         {

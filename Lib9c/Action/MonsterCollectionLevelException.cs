@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public class MonsterCollectionLevelException : InvalidOperationException
@@ -10,12 +10,12 @@ namespace Nekoyume.Action
         {
         }
 
-        public MonsterCollectionLevelException(string msg) 
+        public MonsterCollectionLevelException(string msg)
             : base(msg)
         {
         }
 
-        protected MonsterCollectionLevelException(SerializationInfo info, StreamingContext context) 
+        protected MonsterCollectionLevelException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

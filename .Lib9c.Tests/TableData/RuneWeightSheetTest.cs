@@ -1,8 +1,8 @@
+using System.Linq;
+using Xunit;
+
 namespace Lib9c.Tests.TableData
 {
-    using System.Linq;
-    using Xunit;
-
     public class RuneWeightSheetTest
     {
         [Fact]

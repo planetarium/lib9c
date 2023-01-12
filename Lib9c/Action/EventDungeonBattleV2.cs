@@ -4,26 +4,28 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Battle;
+using Lib9c.Exceptions;
+using Lib9c.Extensions;
+using Lib9c.Model.Event;
+using Lib9c.Model.Skill;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Lib9c.TableData.Event;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Skill;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Battle;
-using Nekoyume.Exceptions;
-using Nekoyume.Extensions;
-using Nekoyume.Model.Event;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Event;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/1321
     /// </summary>
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex)]
+    [ActionObsolete(BlockPolicySource.V100340ObsoleteIndex)]
     [ActionType(ActionTypeText)]
     public class EventDungeonBattleV2 : GameAction
     {
@@ -105,7 +107,7 @@ namespace Nekoyume.Action
                 return states;
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex, context);
+            CheckObsolete(BlockPolicySource.V100340ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;

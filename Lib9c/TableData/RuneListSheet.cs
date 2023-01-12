@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Nekoyume.Model.EnumType;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     public class RuneListSheet : Sheet<int, RuneListSheet.Row>
     {

@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using Libplanet;
 
-namespace Nekoyume.BlockChain.Policy
+namespace Lib9c.Policy
 {
     public sealed class PermissionedMinersPolicy : VariableSubPolicy<ImmutableHashSet<Address>>
     {

@@ -1,12 +1,12 @@
+using System.Collections.Generic;
+using System.Numerics;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Model.State
 {
-    using System.Collections.Generic;
-    using System.Numerics;
-    using Libplanet;
-    using Libplanet.Crypto;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class StateExtensionsTest
     {
         public static IEnumerable<object[]> Get_Long_MemberData()

@@ -1,8 +1,9 @@
 using System;
-using Nekoyume.Model.Skill;
-using Nekoyume.TableData;
+using Lib9c.Model.Character;
+using Lib9c.Model.Skill;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Buff
+namespace Lib9c.Model.Buff
 {
     [Serializable]
     public abstract class ActionBuff : Buff

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Extensions;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Rune;
+using Lib9c.Model.State;
+using Lib9c.TableData;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Extensions;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Rune;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     [ActionType("unlock_rune_slot")]

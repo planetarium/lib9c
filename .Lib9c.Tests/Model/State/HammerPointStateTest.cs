@@ -1,12 +1,12 @@
-﻿namespace Lib9c.Tests.Model.State
-{
-    using System;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Crypto;
-    using Nekoyume.Model.State;
-    using Xunit;
+﻿using System;
+using Bencodex.Types;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Crypto;
+using Xunit;
 
+namespace Lib9c.Tests.Model.State
+{
     public class HammerPointStateTest
     {
         private readonly TableSheets _tableSheets;

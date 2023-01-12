@@ -1,32 +1,27 @@
+using System;
+using System.Globalization;
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.State;
+using Lib9c.TableData.Crystal;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Serilog;
+using Xunit;
+using Xunit.Abstractions;
+using static Lib9c.SerializeKeys;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Globalization;
-    using System.Linq;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Arena;
-    using Nekoyume.Extensions;
-    using Nekoyume.Helper;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Arena;
-    using Nekoyume.Model.Elemental;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData.Crystal;
-    using Serilog;
-    using Xunit;
-    using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
-
     public class CombinationEquipment12Test
     {
         private readonly Address _agentAddress;

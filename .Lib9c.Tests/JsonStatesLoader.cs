@@ -1,14 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Abstractions;
+using System.Linq;
+using System.Text.Json;
+using Bencodex;
+using Bencodex.Types;
+
 namespace Lib9c.Tests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.IO.Abstractions;
-    using System.Linq;
-    using Bencodex;
-    using Bencodex.Types;
-    using JsonSerializer = System.Text.Json.JsonSerializer;
-
     public class JsonStatesLoader
     {
         private readonly IFileSystem _fileSystem;

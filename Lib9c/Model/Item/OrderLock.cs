@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Immutable;
-using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     [Serializable]
     public struct OrderLock : ILock

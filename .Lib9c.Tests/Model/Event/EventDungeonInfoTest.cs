@@ -1,9 +1,9 @@
+using System;
+using Lib9c.Model.Event;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using System;
-    using Nekoyume.Model.Event;
-    using Xunit;
-
     public class EventDungeonInfoTest
     {
         [Fact]

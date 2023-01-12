@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Helper;
+using Lib9c.Model;
+using Lib9c.Model.State;
+using Lib9c.TableData.Item;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [ActionType("unlock_equipment_recipe")]
     public class UnlockEquipmentRecipe: GameAction

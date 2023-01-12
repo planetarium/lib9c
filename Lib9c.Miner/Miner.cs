@@ -13,7 +13,7 @@ using Libplanet.Crypto;
 using Libplanet.Net;
 using Libplanet.Tx;
 using Serilog;
-using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
+using NCAction = Libplanet.Action.PolymorphicAction<Lib9c.Action.ActionBase>;
 
 namespace Nekoyume.BlockChain
 {

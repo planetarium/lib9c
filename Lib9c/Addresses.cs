@@ -1,11 +1,10 @@
 using System;
 using System.Globalization;
+using Lib9c.Action;
+using Lib9c.TableData;
 using Libplanet;
-using Nekoyume.Action;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 
-namespace Nekoyume
+namespace Lib9c
 {
     public static class Addresses
     {

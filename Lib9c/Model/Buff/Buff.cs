@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Skill;
+using Lib9c.Model.Character;
+using Lib9c.Model.Skill;
 
-namespace Nekoyume.Model.Buff
+namespace Lib9c.Model.Buff
 {
     [Serializable]
     public abstract class Buff : ICloneable

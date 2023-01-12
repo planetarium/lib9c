@@ -4,27 +4,31 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Battle;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.Skill;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Lib9c.TableData;
+using Lib9c.TableData.Crystal;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Quest;
+using Lib9c.TableData.Skill;
+using Lib9c.TableData.WorldAndStage;
 using Libplanet;
 using Libplanet.Action;
-using Libplanet.Assets;
-using Nekoyume.Battle;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Crystal;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/1338
     /// </summary>
     [Serializable]
     [ActionType("hack_and_slash18")]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex)]
+    [ActionObsolete(BlockPolicySource.V100340ObsoleteIndex)]
     public class HackAndSlash18 : GameAction
     {
         public List<Guid> Costumes;
@@ -82,7 +86,7 @@ namespace Nekoyume.Action
                 return context.PreviousStates;
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex, context);
+            CheckObsolete(BlockPolicySource.V100340ObsoleteIndex, context);
 
             return Execute(
                 context.PreviousStates,

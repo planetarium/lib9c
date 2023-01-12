@@ -1,9 +1,9 @@
+using Bencodex.Types;
+using Lib9c.Model;
+using Xunit;
+
 namespace Lib9c.Tests.Model.State
 {
-    using Bencodex.Types;
-    using Nekoyume.Model;
-    using Xunit;
-
     public class CollectionMapTest
     {
         [Fact]

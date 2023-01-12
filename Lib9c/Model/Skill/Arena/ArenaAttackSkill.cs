@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Elemental;
-using Nekoyume.TableData;
+using Lib9c.Model.Character;
+using Lib9c.Model.Elemental;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Skill.Arena
+namespace Lib9c.Model.Skill.Arena
 {
     [Serializable]
     public abstract class ArenaAttackSkill : ArenaSkill

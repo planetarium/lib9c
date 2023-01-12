@@ -1,12 +1,10 @@
+using Bencodex.Types;
+using Lib9c.Model.State;
+using Libplanet;
+using Xunit;
+
 namespace Lib9c.Tests.Model.State
 {
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Libplanet;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class AuthorizedMinersStateTest
     {
         [Fact]

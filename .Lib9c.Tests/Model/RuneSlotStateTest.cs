@@ -1,10 +1,10 @@
+using Bencodex.Types;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.State;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using Bencodex.Types;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class RuneSlotStateTest
     {
         [Fact]

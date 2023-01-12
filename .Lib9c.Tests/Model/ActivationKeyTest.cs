@@ -1,11 +1,11 @@
+using Lib9c.Model;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using Libplanet;
-    using Libplanet.Crypto;
-    using Nekoyume.Model;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class ActivationKeyTest
     {
         [Fact]

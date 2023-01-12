@@ -1,15 +1,14 @@
-﻿namespace Lib9c.Tests.Action
-{
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Serilog;
-    using Xunit;
-    using Xunit.Abstractions;
+﻿using Lib9c.Action;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Crypto;
+using Serilog;
+using Xunit;
+using Xunit.Abstractions;
 
+namespace Lib9c.Tests.Action
+{
     public class DailyReward0Test
     {
         private readonly IAccountStateDelta _initialState;

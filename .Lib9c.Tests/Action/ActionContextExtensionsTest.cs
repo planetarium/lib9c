@@ -1,15 +1,14 @@
+using System.Collections.Generic;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System.Collections.Generic;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class ActionContextExtensionsTest
     {
         public static IEnumerable<object[]> IsMainNetTestcases()

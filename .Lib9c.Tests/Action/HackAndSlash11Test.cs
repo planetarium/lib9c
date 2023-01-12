@@ -1,27 +1,29 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Lib9c.Action;
+using Lib9c.Battle;
+using Lib9c.Model;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.Quest;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Quest;
+using Lib9c.TableData.WorldAndStage;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Crypto;
+using Xunit;
+using static Lib9c.SerializeKeys;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.Quest;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-    using static Lib9c.SerializeKeys;
-
     public class HackAndSlash11Test
     {
         private readonly Dictionary<string, string> _sheets;
@@ -128,10 +130,10 @@ namespace Lib9c.Tests.Action
             if (avatarLevel >= GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot)
             {
                 var costumeId = _tableSheets
-                .CostumeItemSheet
-                .Values
-                .First(r => r.ItemSubType == ItemSubType.FullCostume)
-                .Id;
+                    .CostumeItemSheet
+                    .Values
+                    .First(r => r.ItemSubType == ItemSubType.FullCostume)
+                    .Id;
 
                 var costume = (Costume)ItemFactory.CreateItem(
                     _tableSheets.ItemSheet[costumeId], random);
@@ -144,16 +146,16 @@ namespace Lib9c.Tests.Action
             if (avatarLevel >= GameConfig.RequireCharacterLevel.CharacterEquipmentSlotWeapon)
             {
                 var weaponId = _tableSheets
-                .EquipmentItemSheet
-                .Values
-                .Where(r => r.ItemSubType == ItemSubType.Weapon)
-                .OrderBy(r => r.Stat.ValueAsInt)
-                .Last()
-                .Id;
+                    .EquipmentItemSheet
+                    .Values
+                    .Where(r => r.ItemSubType == ItemSubType.Weapon)
+                    .OrderBy(r => r.Stat.ValueAsInt)
+                    .Last()
+                    .Id;
 
                 var weapon = ItemFactory.CreateItem(
-                    _tableSheets.EquipmentItemSheet[weaponId],
-                    random)
+                        _tableSheets.EquipmentItemSheet[weaponId],
+                        random)
                     as Equipment;
                 equipments.Add(weapon.ItemId);
                 OrderLock? orderLock = null;
@@ -168,16 +170,16 @@ namespace Lib9c.Tests.Action
             if (avatarLevel >= GameConfig.RequireCharacterLevel.CharacterEquipmentSlotArmor)
             {
                 var armorId = _tableSheets
-                .EquipmentItemSheet
-                .Values
-                .Where(r => r.ItemSubType == ItemSubType.Armor)
-                .OrderBy(r => r.Stat.ValueAsInt)
-                .Last()
-                .Id;
+                    .EquipmentItemSheet
+                    .Values
+                    .Where(r => r.ItemSubType == ItemSubType.Armor)
+                    .OrderBy(r => r.Stat.ValueAsInt)
+                    .Last()
+                    .Id;
 
                 var armor = ItemFactory.CreateItem(
-                    _tableSheets.EquipmentItemSheet[armorId],
-                    random)
+                        _tableSheets.EquipmentItemSheet[armorId],
+                        random)
                     as Equipment;
                 equipments.Add(armor.ItemId);
                 previousAvatarState.inventory.AddItem(armor);
@@ -329,12 +331,12 @@ namespace Lib9c.Tests.Action
 
             var stageId = _tableSheets.StageSheet
                 .FirstOrDefault(row =>
-                (previousAvatarState.level - row.Value.Id) <= StageRewardExpHelper.DifferLowerLimit ||
-                (previousAvatarState.level - row.Value.Id) > StageRewardExpHelper.DifferUpperLimit)
+                    (previousAvatarState.level - row.Value.Id) <= StageRewardExpHelper.DifferLowerLimit ||
+                    (previousAvatarState.level - row.Value.Id) > StageRewardExpHelper.DifferUpperLimit)
                 .Value.Id;
             var worldRow = _tableSheets.WorldSheet
                 .FirstOrDefault(row => stageId >= row.Value.StageBegin &&
-                stageId <= row.Value.StageEnd);
+                                       stageId <= row.Value.StageEnd);
             var worldId = worldRow.Value.Id;
 
             previousAvatarState.worldInformation = new WorldInformation(
@@ -394,8 +396,8 @@ namespace Lib9c.Tests.Action
             foreach (var row in weaponRows)
             {
                 var equipment = ItemFactory.CreateItem(
-                    _tableSheets.EquipmentItemSheet[row.Id],
-                    new TestRandom())
+                        _tableSheets.EquipmentItemSheet[row.Id],
+                        new TestRandom())
                     as Equipment;
 
                 equipments.Add(equipment.ItemId);
@@ -819,10 +821,10 @@ namespace Lib9c.Tests.Action
             }
 
             IAccountStateDelta state = _initialState
-            .SetState(_avatarAddress, previousAvatarState.SerializeV2())
-            .SetState(_avatarAddress.Derive(LegacyInventoryKey), previousAvatarState.inventory.Serialize())
-            .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), previousAvatarState.worldInformation.Serialize())
-            .SetState(_avatarAddress.Derive(LegacyQuestListKey), previousAvatarState.questList.Serialize());
+                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
+                .SetState(_avatarAddress.Derive(LegacyInventoryKey), previousAvatarState.inventory.Serialize())
+                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), previousAvatarState.worldInformation.Serialize())
+                .SetState(_avatarAddress.Derive(LegacyQuestListKey), previousAvatarState.questList.Serialize());
 
             var action = new HackAndSlash11
             {

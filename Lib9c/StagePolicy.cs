@@ -1,13 +1,14 @@
-namespace Nekoyume.BlockChain
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using Libplanet;
+using Libplanet.Blockchain;
+using Libplanet.Blockchain.Policies;
+using Libplanet.Tx;
+
+namespace Lib9c
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Libplanet;
-    using Libplanet.Blockchain;
-    using Libplanet.Blockchain.Policies;
-    using Libplanet.Tx;
     using NCAction = Libplanet.Action.PolymorphicAction<Action.ActionBase>;
 
     public class StagePolicy : IStagePolicy<NCAction>

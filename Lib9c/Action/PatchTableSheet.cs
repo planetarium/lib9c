@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Immutable;
 using Bencodex.Types;
+using Lib9c.Model.State;
+using Lib9c.TableData;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Introduced at Initial commit(2e645be18a4e2caea031c347f00777fbad5dbcc6)

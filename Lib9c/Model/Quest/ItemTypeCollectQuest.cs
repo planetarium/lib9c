@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData.Quest;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     [Serializable]
     public class ItemTypeCollectQuest : Quest
@@ -15,7 +15,7 @@ namespace Nekoyume.Model.Quest
         public readonly ItemType ItemType;
         public readonly List<int> ItemIds = new List<int>();
 
-        public ItemTypeCollectQuest(ItemTypeCollectQuestSheet.Row data, QuestReward reward) 
+        public ItemTypeCollectQuest(ItemTypeCollectQuestSheet.Row data, QuestReward reward)
             : base(data, reward)
         {
             ItemType = data.ItemType;

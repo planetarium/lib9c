@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Security.Cryptography;
+using Lib9c.Action;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
@@ -8,9 +9,8 @@ using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
 using Libplanet.Blocks;
 using Libplanet.Tx;
-using Nekoyume.Action;
 
-namespace Nekoyume.BlockChain.Policy
+namespace Lib9c.Policy
 {
     public class DebugPolicy : IBlockPolicy<PolymorphicAction<ActionBase>>
     {

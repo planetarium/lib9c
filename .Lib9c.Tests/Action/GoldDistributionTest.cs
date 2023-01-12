@@ -1,10 +1,10 @@
+using System.IO;
+using Lib9c.Action;
+using Libplanet;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System.IO;
-    using Libplanet;
-    using Nekoyume.Action;
-    using Xunit;
-
     public class GoldDistributionTest
     {
         public static readonly GoldDistribution[] Fixture =

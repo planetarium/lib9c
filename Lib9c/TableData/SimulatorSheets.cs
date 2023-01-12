@@ -1,5 +1,11 @@
 
-namespace Nekoyume.TableData
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Rune;
+using Lib9c.TableData.Skill;
+using Lib9c.TableData.WorldAndStage;
+
+namespace Lib9c.TableData
 {
     public class SimulatorSheets : SimulatorSheetsV1
     {

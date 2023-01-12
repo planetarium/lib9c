@@ -1,17 +1,17 @@
-using Bencodex.Types;
-using Libplanet;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Bencodex.Types;
+using Libplanet;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class CreditsState : State
     {
         public static readonly Address Address = Addresses.Credits;
-        
+
         public CreditsState(IEnumerable<string> names)
             : base(Addresses.Credits)
         {

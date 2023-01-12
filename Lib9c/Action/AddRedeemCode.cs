@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Immutable;
 using Bencodex.Types;
+using Lib9c.Model.State;
+using Lib9c.TableData;
 using Libplanet.Action;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     [ActionType("add_redeem_code")]

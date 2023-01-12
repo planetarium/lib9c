@@ -1,10 +1,10 @@
+using System;
+using Lib9c.Battle;
+using Lib9c.Model.BattleStatus;
+using Xunit;
+
 namespace Lib9c.Tests
 {
-    using System;
-    using Nekoyume.Battle;
-    using Xunit;
-    using Result = Nekoyume.Model.BattleStatus.BattleLog.Result;
-
     public class ArenaScoreHelperTest
     {
         [Fact]
@@ -12,25 +12,25 @@ namespace Lib9c.Tests
         {
             const int challengerRating = 10000;
             var defenderRating = challengerRating + Math.Abs(ArenaScoreHelper.DifferLowerLimit);
-            var score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, Result.Win);
+            var score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, BattleLog.Result.Win);
             Assert.Equal(ArenaScoreHelper.WinScoreMax, score);
-            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, Result.Lose);
+            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, BattleLog.Result.Lose);
             Assert.Equal(ArenaScoreHelper.LoseScoreMin, score);
             defenderRating++;
-            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, Result.Win);
+            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, BattleLog.Result.Win);
             Assert.Equal(ArenaScoreHelper.WinScoreMax, score);
-            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, Result.Lose);
+            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, BattleLog.Result.Lose);
             Assert.Equal(ArenaScoreHelper.LoseScoreMin, score);
 
             defenderRating = challengerRating - Math.Abs(ArenaScoreHelper.DifferUpperLimit);
-            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, Result.Win);
+            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, BattleLog.Result.Win);
             Assert.Equal(ArenaScoreHelper.WinScoreMin, score);
-            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, Result.Lose);
+            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, BattleLog.Result.Lose);
             Assert.Equal(ArenaScoreHelper.LoseScoreMax, score);
             defenderRating--;
-            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, Result.Win);
+            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, BattleLog.Result.Win);
             Assert.Equal(ArenaScoreHelper.WinScoreMin, score);
-            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, Result.Lose);
+            score = ArenaScoreHelper.GetScoreV1(challengerRating, defenderRating, BattleLog.Result.Lose);
             Assert.Equal(ArenaScoreHelper.LoseScoreMax, score);
         }
 
@@ -52,9 +52,9 @@ namespace Lib9c.Tests
         [InlineData(1000, int.MinValue, 0, 0, 0)]
         public void GetScoreV2(int challengerScore, int defenderScore, int winScore, int timeOver, int loseScore)
         {
-            Assert.Equal(winScore, ArenaScoreHelper.GetScoreV2(challengerScore, defenderScore, Result.Win));
-            Assert.Equal(timeOver, ArenaScoreHelper.GetScoreV2(challengerScore, defenderScore, Result.TimeOver));
-            Assert.Equal(loseScore, ArenaScoreHelper.GetScoreV2(challengerScore, defenderScore, Result.Lose));
+            Assert.Equal(winScore, ArenaScoreHelper.GetScoreV2(challengerScore, defenderScore, BattleLog.Result.Win));
+            Assert.Equal(timeOver, ArenaScoreHelper.GetScoreV2(challengerScore, defenderScore, BattleLog.Result.TimeOver));
+            Assert.Equal(loseScore, ArenaScoreHelper.GetScoreV2(challengerScore, defenderScore, BattleLog.Result.Lose));
         }
 
         [Theory]
@@ -80,10 +80,10 @@ namespace Lib9c.Tests
             int defenderLoseScore,
             int loseScore)
         {
-            var result = ArenaScoreHelper.GetScoreV3(challengerScore, defenderScore, Result.Win);
+            var result = ArenaScoreHelper.GetScoreV3(challengerScore, defenderScore, BattleLog.Result.Win);
             Assert.Equal(winScore, result.challengerScore);
             Assert.Equal(defenderLoseScore, result.defenderScore);
-            result = ArenaScoreHelper.GetScoreV3(challengerScore, defenderScore, Result.Lose);
+            result = ArenaScoreHelper.GetScoreV3(challengerScore, defenderScore, BattleLog.Result.Lose);
             Assert.Equal(loseScore, result.challengerScore);
         }
 
@@ -103,10 +103,10 @@ namespace Lib9c.Tests
         public void GetScore(int challengerScore, int defenderScore, int winPoint, int losePoint, int defenderLosePoint)
         {
             var (challengerScoreDelta, defenderScoreDelta) =
-                ArenaScoreHelper.GetScore(challengerScore, defenderScore, Result.Win);
+                ArenaScoreHelper.GetScore(challengerScore, defenderScore, BattleLog.Result.Win);
             Assert.Equal(winPoint, challengerScoreDelta);
             Assert.Equal(defenderLosePoint, defenderScoreDelta);
-            (challengerScoreDelta, _) = ArenaScoreHelper.GetScore(challengerScore, defenderScore, Result.Lose);
+            (challengerScoreDelta, _) = ArenaScoreHelper.GetScore(challengerScore, defenderScore, BattleLog.Result.Lose);
             Assert.Equal(losePoint, challengerScoreDelta);
         }
     }

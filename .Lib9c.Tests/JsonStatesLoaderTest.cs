@@ -1,16 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
+using Bencodex;
+using Bencodex.Types;
+using Xunit;
+
 namespace Lib9c.Tests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.IO.Abstractions;
-    using System.IO.Abstractions.TestingHelpers;
-    using System.Text;
-    using Bencodex;
-    using Bencodex.Types;
-    using Libplanet;
-    using Xunit;
-
     public class JsonStatesLoaderTest
     {
         [Fact]

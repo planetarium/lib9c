@@ -1,13 +1,13 @@
+using System;
+using System.Linq;
+using Lib9c.Model.Arena;
+using Lib9c.Model.EnumType;
+using Lib9c.TableData;
+using Lib9c.Tests.Action;
+using Xunit;
+
 namespace Lib9c.Tests.TableData
 {
-    using System;
-    using System.Linq;
-    using Lib9c.Tests.Action;
-    using Nekoyume.Model.Arena;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class ArenaSheetTest
     {
         private readonly ArenaSheet _arenaSheet;

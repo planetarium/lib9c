@@ -1,16 +1,16 @@
-﻿namespace Lib9c.Tests.Model.Item
-{
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Lib9c.Tests.Action;
-    using Nekoyume.Model.Item;
-    using Nekoyume.TableData;
-    using Xunit;
-    using BxList = Bencodex.Types.List;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Lib9c.Model.Item;
+using Lib9c.TableData.Item;
+using Lib9c.Tests.Action;
+using Xunit;
+using BxList = Bencodex.Types.List;
 
+namespace Lib9c.Tests.Model.Item
+{
     public class InventoryTest
     {
         private static readonly TableSheets TableSheets;

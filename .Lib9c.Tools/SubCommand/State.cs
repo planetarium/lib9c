@@ -18,7 +18,7 @@ using Libplanet.Blocks;
 using Libplanet.Store;
 using Libplanet.Store.Trie;
 using Serilog.Core;
-using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
+using NCAction = Libplanet.Action.PolymorphicAction<Lib9c.Action.ActionBase>;
 
 namespace Lib9c.Tools.SubCommand
 {

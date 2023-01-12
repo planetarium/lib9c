@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Model.Stat
+namespace Lib9c.Model.Stat
 {
     // todo: `DecimalStat`나 `StatModifier`으로 대체되어야 함.
     [Serializable]

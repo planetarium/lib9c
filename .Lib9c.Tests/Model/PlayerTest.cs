@@ -1,22 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Lib9c.Battle;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.Character;
+using Lib9c.Model.Item;
+using Lib9c.Model.Quest;
+using Lib9c.Model.Skill;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.Tests.Action;
+using Libplanet.Action;
+using Priority_Queue;
+using Xunit;
+
 namespace Lib9c.Tests.Model
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Lib9c.Tests.Action;
-    using Libplanet.Action;
-    using Nekoyume;
-    using Nekoyume.Battle;
-    using Nekoyume.Model;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Quest;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
-    using Priority_Queue;
-    using Xunit;
-
     public class PlayerTest
     {
         private readonly IRandom _random;
@@ -45,7 +44,7 @@ namespace Lib9c.Tests.Model
                 _avatarState,
                 new List<Guid>(),
                 null,
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -78,7 +77,7 @@ namespace Lib9c.Tests.Model
                 _avatarState,
                 new List<Guid>(),
                 null,
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -128,7 +127,7 @@ namespace Lib9c.Tests.Model
                 _avatarState,
                 new List<Guid>(),
                 null,
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -255,7 +254,7 @@ namespace Lib9c.Tests.Model
                 _avatarState,
                 new List<Guid>(),
                 null,
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],

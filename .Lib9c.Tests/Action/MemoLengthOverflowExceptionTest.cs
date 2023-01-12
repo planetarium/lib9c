@@ -1,10 +1,10 @@
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Lib9c.Action;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Nekoyume.Action;
-    using Xunit;
-
     public class MemoLengthOverflowExceptionTest
     {
         [Fact]

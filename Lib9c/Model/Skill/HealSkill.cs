@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.TableData;
+using Lib9c.Model.Character;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Skill
+namespace Lib9c.Model.Skill
 {
     [Serializable]
     public class HealSkill : Skill
@@ -12,14 +13,14 @@ namespace Nekoyume.Model.Skill
         }
 
         public override BattleStatus.Skill Use(
-            CharacterBase caster, 
+            CharacterBase caster,
             int simulatorWaveTurn,
             IEnumerable<Buff.Buff> buffs)
         {
             var clone = (CharacterBase) caster.Clone();
             var heal = ProcessHeal(caster, simulatorWaveTurn);
             var buff = ProcessBuff(caster, simulatorWaveTurn, buffs);
-            
+
             return new BattleStatus.HealSkill(SkillRow.Id, clone, heal, buff);
         }
 

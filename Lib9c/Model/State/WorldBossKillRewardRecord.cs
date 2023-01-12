@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Libplanet.Assets;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class WorldBossKillRewardRecord : IDictionary<int, bool>, IState
     {

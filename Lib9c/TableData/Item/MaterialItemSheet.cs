@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Model.Item;
 using Libplanet;
-using Nekoyume.Model.Item;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
     [Serializable]
     public class MaterialItemSheet : Sheet<int, MaterialItemSheet.Row>

@@ -1,15 +1,14 @@
-﻿namespace Lib9c.Tests.Model
-{
-    using System;
-    using System.Linq;
-    using Lib9c.Tests.Action;
-    using Libplanet.Action;
-    using Nekoyume;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.TableData;
-    using Xunit;
+﻿using System;
+using System.Linq;
+using Lib9c.Model.Character;
+using Lib9c.Model.Skill;
+using Lib9c.TableData.Skill;
+using Lib9c.Tests.Action;
+using Libplanet.Action;
+using Xunit;
 
+namespace Lib9c.Tests.Model
+{
     public class SkillsTest
     {
         private readonly SkillSheet _skillSheet;
@@ -22,7 +21,7 @@
             _random = new TestRandom();
         }
 
-        public Nekoyume.Model.Skill.Skill GetDefaultAttackSkill()
+        public Lib9c.Model.Skill.Skill GetDefaultAttackSkill()
         {
             var skillRow = _skillSheet.First().Value;
             Assert.NotNull(skillRow);

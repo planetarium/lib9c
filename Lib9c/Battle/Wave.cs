@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Model;
-using Nekoyume.Model.BattleStatus;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.Character;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public class Wave
     {

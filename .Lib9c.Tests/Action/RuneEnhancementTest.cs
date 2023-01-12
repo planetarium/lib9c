@@ -1,21 +1,19 @@
+using System;
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Helper;
+using Lib9c.Model.Rune;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Xunit;
+using static Lib9c.SerializeKeys;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.Rune;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Xunit;
-    using static Lib9c.SerializeKeys;
-
     public class RuneEnhancementTest
     {
         private readonly Currency _goldCurrency;

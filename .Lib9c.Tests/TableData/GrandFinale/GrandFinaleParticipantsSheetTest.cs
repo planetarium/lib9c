@@ -1,10 +1,10 @@
-﻿namespace Lib9c.Tests.TableData.GrandFinale
-{
-    using System;
-    using Libplanet;
-    using Nekoyume.TableData.GrandFinale;
-    using Xunit;
+﻿using System;
+using Lib9c.TableData.GrandFinale;
+using Libplanet;
+using Xunit;
 
+namespace Lib9c.Tests.TableData.GrandFinale
+{
     public class GrandFinaleParticipantsSheetTest
     {
         public GrandFinaleParticipantsSheetTest()

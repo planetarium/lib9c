@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Nekoyume.Model.Item;
+using Lib9c.Model.Character;
+using Lib9c.Model.Item;
 
-namespace Nekoyume.Model.BattleStatus
+namespace Lib9c.Model.BattleStatus
 {
     [Serializable]
     public class GetReward : EventBase

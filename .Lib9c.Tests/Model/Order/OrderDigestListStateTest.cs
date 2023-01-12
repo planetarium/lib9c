@@ -1,15 +1,15 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.Order;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.Model.Order
 {
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Lib9c.Model.Order;
-    using Libplanet.Assets;
-    using Nekoyume.Action;
-    using Xunit;
-
     public class OrderDigestListStateTest
     {
         private readonly OrderDigest _orderDigest;

@@ -1,11 +1,11 @@
+using Lib9c.Action;
+using Lib9c.Formatters;
+using MessagePack;
+using MessagePack.Resolvers;
+using Xunit;
+
 namespace Lib9c.Tests
 {
-    using Lib9c.Formatters;
-    using MessagePack;
-    using MessagePack.Resolvers;
-    using Nekoyume.Action;
-    using Xunit;
-
     public static class ActionSerializer
     {
         static ActionSerializer()

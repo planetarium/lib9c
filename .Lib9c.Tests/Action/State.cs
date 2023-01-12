@@ -1,15 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using Bencodex.Types;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using System.Numerics;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-
     public class State : IAccountStateDelta
     {
         private readonly IImmutableDictionary<Address, IValue> _state;

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Stat;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Stat;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
     public class EquipmentItemOptionSheet : Sheet<int, EquipmentItemOptionSheet.Row>
     {

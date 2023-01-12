@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
 using Serilog;
 using BxDictionary = Bencodex.Types.Dictionary;
 using BxText = Bencodex.Types.Text;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public abstract class AttachmentActionResult : IState

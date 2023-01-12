@@ -1,15 +1,15 @@
+using System.Threading.Tasks;
+using Lib9c.Action;
+using Lib9c.Helper;
+using Libplanet;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using VerifyXunit;
+using Xunit;
+using static Lib9c.Tests.Action.Snapshot.ActionUtils;
+
 namespace Lib9c.Tests.Action.Snapshot
 {
-    using System.Threading.Tasks;
-    using Libplanet;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume.Action;
-    using Nekoyume.Helper;
-    using VerifyXunit;
-    using Xunit;
-    using static ActionUtils;
-
     [UsesVerify]
     public class TransferAsset0SnapshotTest
     {

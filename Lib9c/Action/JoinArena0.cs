@@ -3,24 +3,26 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Arena;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.Arena;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Arena;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model.Arena;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Introduced at https://github.com/planetarium/lib9c/pull/1495
     /// </summary>
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex)]
+    [ActionObsolete(BlockPolicySource.V100340ObsoleteIndex)]
     [ActionType("join_arena")]
     public class JoinArena0 : GameAction
     {
@@ -65,7 +67,7 @@ namespace Nekoyume.Action
                 throw new ActionObsoletedException();
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex, context);
+            CheckObsolete(BlockPolicySource.V100340ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;

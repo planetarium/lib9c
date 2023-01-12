@@ -1,4 +1,4 @@
-namespace Nekoyume.BlockChain.Policy
+namespace Lib9c.Policy
 {
     public sealed class MaxTransactionsPerSignerPerBlockPolicy : VariableSubPolicy<int>
     {

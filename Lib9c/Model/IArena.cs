@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using Nekoyume.Model.BattleStatus.Arena;
+using Lib9c.Model.BattleStatus.Arena;
+using Lib9c.Model.Character;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model
 {
     public interface IArena
     {

@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData.Quest;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     [Serializable]
     public class ItemGradeQuest : Quest
     {
         public readonly int Grade;
         public readonly List<int> ItemIds = new List<int>();
-        public ItemGradeQuest(ItemGradeQuestSheet.Row data, QuestReward reward) 
+        public ItemGradeQuest(ItemGradeQuestSheet.Row data, QuestReward reward)
             : base(data, reward)
         {
             Grade = data.Grade;

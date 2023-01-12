@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
-using Libplanet.Action;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Battle;
+using Lib9c.Battle;
+using Libplanet.Action;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model.Character
 {
     [Serializable]
     public class Skills : IEnumerable<Skill.Skill>

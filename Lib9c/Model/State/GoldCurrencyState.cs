@@ -7,7 +7,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Assets;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class GoldCurrencyState : State, ISerializable

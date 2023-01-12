@@ -1,23 +1,22 @@
-﻿namespace Lib9c.Tests.Action.Scenario
-{
-    using System.Globalization;
-    using System.Linq;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Serilog;
-    using Xunit;
-    using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
+﻿using System.Globalization;
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Serilog;
+using Xunit;
+using Xunit.Abstractions;
+using static Lib9c.SerializeKeys;
 
+namespace Lib9c.Tests.Action.Scenario
+{
     public class CombinationAndRapidCombinationTest
     {
         private readonly IAccountStateDelta _initialState;
@@ -80,7 +79,7 @@
             _worldInformationAddress = _avatarAddress.Derive(LegacyWorldInformationKey);
             _questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
 
-            _initialState = new Tests.Action.State()
+            _initialState = new State()
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
                 .SetState(gameConfigState.address, gameConfigState.Serialize())
                 .SetState(_agentAddress, agentState.Serialize())

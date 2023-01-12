@@ -1,18 +1,17 @@
-﻿namespace Lib9c.Tests.Model.Item
-{
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Assets;
-    using Libplanet.Crypto;
-    using Nekoyume.Model.Item;
-    using Xunit;
-    using BxDictionary = Bencodex.Types.Dictionary;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using Lib9c.Model.Item;
+using Libplanet;
+using Libplanet.Assets;
+using Libplanet.Crypto;
+using Xunit;
+using BxDictionary = Bencodex.Types.Dictionary;
 
+namespace Lib9c.Tests.Model.Item
+{
     public class ShopItemTest
     {
         private static Currency _currency;
@@ -118,7 +117,7 @@
                 new FungibleAssetValue(_currency, 100, 0),
                 0,
                 equipment);
-            Dictionary serialized = (Dictionary)shopItem.Serialize();
+            BxDictionary serialized = (BxDictionary)shopItem.Serialize();
             serialized = serialized.SetItem(ShopItem.ExpiredBlockIndexKey, "-1");
             Assert.Throws<ArgumentOutOfRangeException>(() => new ShopItem(serialized));
         }

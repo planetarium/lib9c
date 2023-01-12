@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class DeletedAvatarState : AvatarState

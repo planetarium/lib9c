@@ -1,9 +1,10 @@
 using System;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
 using Libplanet.Assets;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     public static class WorldBossHelper
     {

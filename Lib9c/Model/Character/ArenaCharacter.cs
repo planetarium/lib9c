@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using BTAI;
-using Nekoyume.Action;
-using Nekoyume.Arena;
-using Nekoyume.Battle;
-using Nekoyume.Model.Buff;
-using Nekoyume.Model.Character;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Arena;
+using Lib9c.Battle;
+using Lib9c.Model.Buff;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Item;
+using Lib9c.Model.Skill;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Rune;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model.Character
 {
     public class ArenaCharacter : ICloneable
     {

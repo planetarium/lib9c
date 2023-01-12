@@ -1,14 +1,14 @@
+using System.Collections.Immutable;
+using System.Linq;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Crypto;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System.Collections.Immutable;
-    using System.Linq;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Crypto;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class CreatePendingActivationsTest
     {
         [Fact]

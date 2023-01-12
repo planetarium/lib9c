@@ -4,9 +4,8 @@ using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
-using Libplanet.Blocks;
 
-namespace Nekoyume.BlockChain.Policy
+namespace Lib9c.Policy
 {
     public abstract class VariableSubPolicy<T> : IVariableSubPolicy<T>
     {

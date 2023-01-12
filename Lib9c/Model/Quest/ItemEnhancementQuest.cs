@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData;
+using Lib9c.Model.Item;
+using Lib9c.TableData.Quest;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     [Serializable]
     public class ItemEnhancementQuest : Quest
@@ -16,7 +16,7 @@ namespace Nekoyume.Model.Quest
         public int Count => _count;
         public override float Progress => (float) _current / _count;
 
-        public ItemEnhancementQuest(ItemEnhancementQuestSheet.Row data, QuestReward reward) 
+        public ItemEnhancementQuest(ItemEnhancementQuestSheet.Row data, QuestReward reward)
             : base(data, reward)
         {
             _count = data.Count;

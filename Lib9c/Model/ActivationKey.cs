@@ -1,10 +1,10 @@
 using System;
+using Lib9c.Action;
+using Lib9c.Model.State;
 using Libplanet;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model
 {
     public struct ActivationKey
     {

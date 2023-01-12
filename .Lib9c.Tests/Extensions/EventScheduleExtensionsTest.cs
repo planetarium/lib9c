@@ -1,11 +1,11 @@
+using System;
+using Lib9c.Extensions;
+using Lib9c.TableData.Event;
+using Libplanet.Assets;
+using Xunit;
+
 namespace Lib9c.Tests.Extensions
 {
-    using System;
-    using Libplanet.Assets;
-    using Nekoyume.Extensions;
-    using Nekoyume.TableData.Event;
-    using Xunit;
-
     public class EventScheduleExtensionsTest
     {
         [Theory]

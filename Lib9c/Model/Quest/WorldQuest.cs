@@ -1,13 +1,13 @@
 using System;
 using Bencodex.Types;
-using Nekoyume.TableData;
+using Lib9c.TableData.Quest;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     [Serializable]
     public class WorldQuest : Quest
     {
-        public WorldQuest(WorldQuestSheet.Row data, QuestReward reward) 
+        public WorldQuest(WorldQuestSheet.Row data, QuestReward reward)
             : base(data, reward)
         {
         }

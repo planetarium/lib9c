@@ -1,11 +1,10 @@
+using System.Linq;
+using Lib9c.TableData;
+using Lib9c.Tests.Action;
+using Xunit;
+
 namespace Lib9c.Tests.TableData
 {
-    using System;
-    using System.Linq;
-    using Lib9c.Tests.Action;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class RuneCostSheetTest
     {
         [Fact]

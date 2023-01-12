@@ -1,17 +1,17 @@
-using Bencodex;
-using Bencodex.Types;
-using Libplanet;
-using Libplanet.Action;
-using Libplanet.Assets;
-using Nekoyume.Model.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Nekoyume.Model;
+using Bencodex;
+using Bencodex.Types;
+using Lib9c.Model;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
 using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/636

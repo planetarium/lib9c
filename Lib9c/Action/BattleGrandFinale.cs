@@ -4,23 +4,24 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Arena;
+using Lib9c.Exceptions;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.Arena;
+using Lib9c.Model.BattleStatus.Arena;
+using Lib9c.Model.Character;
+using Lib9c.Model.GrandFinale;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.GrandFinale;
+using Lib9c.TableData.Item;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Arena;
-using Nekoyume.Exceptions;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model;
-using Nekoyume.Model.Arena;
-using Nekoyume.Model.BattleStatus.Arena;
-using Nekoyume.Model.GrandFinale;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Nekoyume.TableData.GrandFinale;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Introduced at ...

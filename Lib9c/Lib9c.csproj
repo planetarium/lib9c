@@ -7,13 +7,15 @@
     <CodeAnalysisRuleSet>Lib9c.ruleset</CodeAnalysisRuleSet>
     <OutputPath>.bin</OutputPath>
     <IntermediateOutputPath>.obj</IntermediateOutputPath>
-    <RootNamespace>Nekoyume</RootNamespace>
+    <RootNamespace>Lib9c</RootNamespace>
     <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="..\stylecop.json"/>
     <Compile Include="..\BTAI\*.cs" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="DecimalMath.DecimalEx" Version="1.0.2" />
     <PackageReference Include="OptimizedPriorityQueue" Version="4.2.0" />

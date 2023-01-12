@@ -8,6 +8,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Bencodex;
 using Cocona;
+using Lib9c.Action;
+using Lib9c.Model;
+using Lib9c.Model.State;
+using Lib9c.Policy;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Blockchain;
@@ -17,13 +21,9 @@ using Libplanet.Crypto;
 using Libplanet.RocksDBStore;
 using Libplanet.Store;
 using Libplanet.Store.Trie;
-using Nekoyume.Action;
-using Nekoyume.BlockChain.Policy;
-using Nekoyume.Model;
-using Nekoyume.Model.State;
 using Serilog;
 using Serilog.Core;
-using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
+using NCAction = Libplanet.Action.PolymorphicAction<Lib9c.Action.ActionBase>;
 
 namespace Lib9c.DevExtensions
 {

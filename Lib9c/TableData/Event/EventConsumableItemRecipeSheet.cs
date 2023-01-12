@@ -1,6 +1,7 @@
 using System;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.TableData.Event
+namespace Lib9c.TableData.Event
 {
     [Serializable]
     public class EventConsumableItemRecipeSheet

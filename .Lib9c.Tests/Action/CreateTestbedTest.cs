@@ -1,9 +1,9 @@
-﻿namespace Lib9c.Tests.Action
-{
-    using System.Linq;
-    using Lib9c.Tests.TestHelper;
-    using Xunit;
+﻿using System.Linq;
+using Lib9c.Tests.TestHelper;
+using Xunit;
 
+namespace Lib9c.Tests.Action
+{
     public class CreateTestbedTest
     {
         [Fact]

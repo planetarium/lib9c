@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.EnumType;
-using Nekoyume.TableData;
+using Lib9c.Model.EnumType;
+using Lib9c.TableData.Quest;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     [Serializable]
     public class TradeQuest : Quest
@@ -14,7 +14,7 @@ namespace Nekoyume.Model.Quest
         public override QuestType QuestType => QuestType.Exchange;
         public readonly TradeType Type;
 
-        public TradeQuest(TradeQuestSheet.Row data, QuestReward reward) 
+        public TradeQuest(TradeQuestSheet.Row data, QuestReward reward)
             : base(data, reward)
         {
             Type = data.Type;

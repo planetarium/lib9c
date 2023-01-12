@@ -1,15 +1,15 @@
+using System;
+using System.Collections.Immutable;
+using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Action;
+using Xunit;
+
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Collections.Immutable;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Action;
-    using Nekoyume.Action;
-    using Nekoyume.Model;
-    using Nekoyume.Model.State;
-    using Xunit;
-
     public class AddActivatedAccountTest
     {
         [Theory]

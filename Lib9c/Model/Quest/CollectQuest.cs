@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.TableData;
+using Lib9c.TableData.Quest;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     [Serializable]
     public class CollectQuest : Quest
@@ -14,7 +14,7 @@ namespace Nekoyume.Model.Quest
 
         public readonly int ItemId;
 
-        public CollectQuest(CollectQuestSheet.Row data, QuestReward reward) 
+        public CollectQuest(CollectQuestSheet.Row data, QuestReward reward)
             : base(data, reward)
         {
             ItemId = data.ItemId;

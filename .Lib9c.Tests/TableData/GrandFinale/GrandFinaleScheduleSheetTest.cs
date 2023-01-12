@@ -1,11 +1,11 @@
-﻿namespace Lib9c.Tests.TableData.GrandFinale
-{
-    using System;
-    using System.Linq;
-    using Lib9c.Tests.Action;
-    using Nekoyume.TableData.GrandFinale;
-    using Xunit;
+﻿using System;
+using System.Linq;
+using Lib9c.TableData.GrandFinale;
+using Lib9c.Tests.Action;
+using Xunit;
 
+namespace Lib9c.Tests.TableData.GrandFinale
+{
     public class GrandFinaleScheduleSheetTest
     {
         private readonly GrandFinaleScheduleSheet _sheet;

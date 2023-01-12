@@ -1,13 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Bencodex.Types;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
+using Xunit.Sdk;
+
 namespace Lib9c.Tests.TestHelper
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Bencodex.Types;
-    using DiffPlex.DiffBuilder;
-    using DiffPlex.DiffBuilder.Model;
-    using Xunit.Sdk;
-
     public static class BencodexHelper
     {
         public static void ShouldBe(this IValue actual, IValue expected) =>

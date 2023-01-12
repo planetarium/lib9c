@@ -1,12 +1,12 @@
-﻿namespace Lib9c.Tests.Model.State
-{
-    using System.Collections.Generic;
-    using Bencodex.Types;
-    using Libplanet;
-    using Libplanet.Crypto;
-    using Nekoyume.Model.State;
-    using Xunit;
+﻿using System.Collections.Generic;
+using Bencodex.Types;
+using Lib9c.Model.State;
+using Libplanet;
+using Libplanet.Crypto;
+using Xunit;
 
+namespace Lib9c.Tests.Model.State
+{
     public class CrystalRandomSkillStateTest
     {
         private readonly TableSheets _tableSheets;

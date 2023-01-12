@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Nekoyume.Model.BattleStatus
+namespace Lib9c.Model.BattleStatus
 {
     [Serializable]
     public class BattleLog : IEnumerable<EventBase>

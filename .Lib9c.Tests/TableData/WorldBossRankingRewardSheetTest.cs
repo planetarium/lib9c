@@ -1,9 +1,9 @@
+using System;
+using Lib9c.TableData;
+using Xunit;
+
 namespace Lib9c.Tests.TableData
 {
-    using System;
-    using Nekoyume.TableData;
-    using Xunit;
-
     public class WorldBossRankingRewardSheetTest
     {
         private const string Csv =

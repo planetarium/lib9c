@@ -11,7 +11,7 @@
     <CodeAnalysisRuleSet>.\Lib9c.Tests.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
-  <PropertyGroup Condition="&#xD;&#xA;    '$([System.Runtime.InteropServices.RuntimeInformation]::&#xD;&#xA;      OSArchitecture.ToString())' == 'Arm64' ">
+  <PropertyGroup Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString())' == 'Arm64' ">
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <Content Include="Data/**/*.*" CopyToOutputDirectory="Always" />
+    <AdditionalFiles Include="..\stylecop.json"/>
   </ItemGroup>
 
 </Project>

@@ -1,18 +1,19 @@
-using Bencodex;
-using Bencodex.Types;
-using Libplanet;
-using Libplanet.Action;
-using Libplanet.Assets;
-using Nekoyume.Model.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Bencodex;
+using Bencodex.Types;
+using Lib9c.Model.State;
+using Lib9c.Policy;
+using Libplanet;
+using Libplanet.Action;
+using Libplanet.Assets;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
+    [ActionObsolete(BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("transfer_asset")]
     public class TransferAsset0 : ActionBase, ISerializable, ITransferAsset
     {
@@ -73,7 +74,7 @@ namespace Nekoyume.Action
                 return state.MarkBalanceChanged(Amount.Currency, new[] { Sender, Recipient });
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex, context);
+            CheckObsolete(BlockPolicySource.V100080ObsoleteIndex, context);
 
             if (Sender != context.Signer)
             {

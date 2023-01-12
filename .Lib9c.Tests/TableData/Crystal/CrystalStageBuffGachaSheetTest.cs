@@ -1,9 +1,9 @@
-﻿namespace Lib9c.Tests.TableData.Crystal
-{
-    using System.Linq;
-    using Nekoyume.TableData.Crystal;
-    using Xunit;
+﻿using System.Linq;
+using Lib9c.TableData.Crystal;
+using Xunit;
 
+namespace Lib9c.Tests.TableData.Crystal
+{
     public class CrystalStageBuffGachaSheetTest
     {
         [Fact]
