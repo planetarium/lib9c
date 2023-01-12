@@ -56,7 +56,7 @@ namespace Nekoyume.BlockChain
                     .Where(tx => _bannedAccounts.Contains(tx.Signer));
                 foreach (Transaction<NCAction> tx in bannedTxs)
                 {
-                    _chain.UnstageTransaction(tx);
+                    _chain.StagePolicy.Ignore(_chain, tx.Id);
                 }
 
                 block = await _chain.MineBlock(
