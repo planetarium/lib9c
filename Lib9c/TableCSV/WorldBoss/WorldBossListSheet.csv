@@ -1,3 +1,4 @@
 id,boss_id,started_block_index,ended_block_index,fee,ticket_price,additional_ticket_price,max_purchase_count
-1,900002,5000001,5500001,1,1,1,40
-2,900002,5500002,5500003,1,1,1,40
+1,900002,200,3000,1,1,1,40
+2,900002,3200,6000,1,1,1,40
+3,900002,6200,9000,1,1,1,40

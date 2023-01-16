@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -149,10 +150,51 @@ namespace Nekoyume.Action
 
             avatarState.UpdateQuestRewards(materialItemSheet);
 
-            // Add Runes when executing on editor mode.
-#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
-            states = CreateAvatar0.AddRunesForTest(avatarAddress, states);
-#endif
+            // Prepare internal test
+            // Clear stage.
+            for (int i = 0; i < 300; i++)
+            {
+                avatarState.worldInformation.ClearStage(
+                    worldId: (i / 50) + 1,
+                    stageId: i + 1,
+                    clearedAt: 0,
+                    ctx.PreviousStates.GetSheet<WorldSheet>(),
+                    ctx.PreviousStates.GetSheet<WorldUnlockSheet>());
+            }
+
+            var runes = new List<(int id, int count, int initialLevel)>
+            {
+                // RUNE_ADVENTURER
+                (30001, 100_000, 140),
+                // RUNE_FENRIR1
+                (10001, 100_000, 140),
+                // RUNE_FENRIR2
+                (10002, 2_5000, 70),
+                // RUNE_FENRIR3
+                (10003, 5_000, 30),
+                (10011, 100_000, 140),
+                (10012, 2_5000, 70),
+                (10013, 5_000, 30),
+                (20001, 5_000, 30)
+            };
+            var runeSheet = states.GetSheet<RuneSheet>();
+            foreach (var (id, count, initialLevel) in runes)
+            {
+                var row = runeSheet[id];
+                var rune = RuneHelper.ToFungibleAssetValue(row, count);
+                states = states.MintAsset(avatarAddress, rune);
+                var runeState = new RuneState(id);
+                foreach (var _ in Enumerable.Range(0, initialLevel))
+                {
+                    runeState.LevelUp();
+                }
+                var runeStateAddress = RuneState.DeriveAddress(avatarAddress, id);
+                states = states.SetState(runeStateAddress, runeState.Serialize());
+            }
+
+            var characterLevelSheet = states.GetSheet<CharacterLevelSheet>();
+            avatarState.level = 110;
+            avatarState.exp = characterLevelSheet[110].Exp;
 
             sw.Stop();
             Log.Verbose("{AddressesHex}CreateAvatar CreateAvatarState: {Elapsed}", addressesHex, sw.Elapsed);
@@ -164,7 +206,7 @@ namespace Nekoyume.Action
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
                 .SetState(avatarAddress, avatarState.SerializeV2())
-                .MintAsset(ctx.Signer, 50 * CrystalCalculator.CRYSTAL);
+                .MintAsset(ctx.Signer, 500_000_000 * CrystalCalculator.CRYSTAL);
         }
     }
 }
