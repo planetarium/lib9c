@@ -7,6 +7,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.Action.Interface;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -25,7 +26,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionType("hack_and_slash18")]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex)]
-    public class HackAndSlash18 : GameAction
+    public class HackAndSlash18 : GameAction, IHackAndSlash
     {
         public List<Guid> Costumes;
         public List<Guid> Equipments;
