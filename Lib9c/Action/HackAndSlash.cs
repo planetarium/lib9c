@@ -27,7 +27,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("hack_and_slash20")]
-    public class HackAndSlash : GameAction
+    public class HackAndSlash : GameAction, IHackAndSlash
 {
         public const int UsableApStoneCount = 10;
 

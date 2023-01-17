@@ -20,6 +20,18 @@ namespace Lib9c.Tests.Action.Factory
         )]
         [InlineData(
             Nekoyume.BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex + 1,
+            typeof(HackAndSlash19)
+        )]
+        [InlineData(
+            Nekoyume.BlockChain.Policy.BlockPolicySource.V100360ObsoleteIndex - 1,
+            typeof(HackAndSlash19)
+        )]
+        [InlineData(
+            Nekoyume.BlockChain.Policy.BlockPolicySource.V100360ObsoleteIndex,
+            typeof(HackAndSlash19)
+        )]
+        [InlineData(
+            Nekoyume.BlockChain.Policy.BlockPolicySource.V100360ObsoleteIndex + 1,
             typeof(HackAndSlash)
         )]
         public void CreateByBlockIndex_Success(long blockIndex, Type type)
@@ -31,7 +43,8 @@ namespace Lib9c.Tests.Action.Factory
 
         [Theory]
         [InlineData(18, typeof(HackAndSlash18))]
-        [InlineData(19, typeof(HackAndSlash))]
+        [InlineData(19, typeof(HackAndSlash19))]
+        [InlineData(20, typeof(HackAndSlash))]
         public void CreateByVersion_Success(int version, Type type)
         {
             var addr = new PrivateKey().ToAddress();
@@ -41,7 +54,7 @@ namespace Lib9c.Tests.Action.Factory
 
         [Theory]
         [InlineData(17)]
-        [InlineData(20)]
+        [InlineData(21)]
         public void CreateByVersion_Failure(int version)
         {
             var addr = new PrivateKey().ToAddress();
