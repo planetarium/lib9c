@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using Libplanet;
@@ -12,10 +14,10 @@ namespace Nekoyume.Action.Factory
             Address avatarAddress,
             int worldId,
             int stageId,
-            List<Guid> costumeIds = null,
-            List<Guid> equipmentIds = null,
-            List<Guid> consumableIds = null,
-            List<RuneSlotInfo> runeSlotInfos = null,
+            List<Guid>? costumeIds = null,
+            List<Guid>? equipmentIds = null,
+            List<Guid>? consumableIds = null,
+            List<RuneSlotInfo>? runeSlotInfos = null,
             int? stageBuffId = null
         )
         {
@@ -51,10 +53,10 @@ namespace Nekoyume.Action.Factory
             Address avatarAddress,
             int worldId,
             int stageId,
-            List<Guid> costumeIds = null,
-            List<Guid> equipmentIds = null,
-            List<Guid> consumableIds = null,
-            List<RuneSlotInfo> runeSlotInfos = null,
+            List<Guid>? costumeIds = null,
+            List<Guid>? equipmentIds = null,
+            List<Guid>? consumableIds = null,
+            List<RuneSlotInfo>? runeSlotInfos = null,
             int? stageBuffId = null
         ) => version switch
         {
