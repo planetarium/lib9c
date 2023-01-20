@@ -220,5 +220,109 @@ namespace Lib9c.Tests.Action.Scenario
 
             Assert.Equal(0 * _currency, latestState.GetBalance(_buyerAgentAddress, _currency));
         }
+
+        [Fact]
+        public void Register_And_Cancel()
+        {
+            var materialRow = _tableSheets.MaterialItemSheet.Values.First();
+            var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var tradableMaterial = ItemFactory.CreateTradableMaterial(materialRow);
+            _sellerAvatarState.inventory.AddItem(tradableMaterial);
+            var id = Guid.NewGuid();
+            var equipment = ItemFactory.CreateItemUsable(equipmentRow, id, 0L);
+            _sellerAvatarState.inventory.AddItem(equipment);
+            Assert.Equal(2, _sellerAvatarState.inventory.Items.Count);
+            _initialState = _initialState.SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize());
+            var action = new RegisterItem
+            {
+                RegisterInfos = new List<RegisterInfo>
+                {
+                    new RegisterInfo
+                    {
+                        AvatarAddress = _sellerAvatarAddress,
+                        ItemCount = 1,
+                        Price = 1 * _currency,
+                        TradableId = tradableMaterial.TradableId,
+                        Type = ProductType.Fungible,
+                    },
+                    new RegisterInfo
+                    {
+                        AvatarAddress = _sellerAvatarAddress,
+                        ItemCount = 1,
+                        Price = 1 * _currency,
+                        TradableId = equipment.TradableId,
+                        Type = ProductType.NonFungible,
+                    },
+                },
+            };
+            var nextState = action.Execute(new ActionContext
+            {
+                BlockIndex = 1L,
+                PreviousStates = _initialState,
+                Random = new TestRandom(),
+                Signer = _sellerAgentAddress,
+            });
+
+            var nextAvatarState = nextState.GetAvatarStateV2(_sellerAvatarAddress);
+            Assert.Empty(nextAvatarState.inventory.Items);
+
+            var marketState = new MarketState(nextState.GetState(Addresses.Market));
+            Assert.Contains(_sellerAvatarAddress, marketState.AvatarAddressList);
+
+            var productListAddress = ProductList.DeriveAddress(_sellerAvatarAddress);
+            var productList = new ProductList((List)nextState.GetState(productListAddress));
+            var random = new TestRandom();
+            for (int i = 0; i < 2; i++)
+            {
+                var guid = random.GenerateRandomGuid();
+                Assert.Contains(guid, productList.ProductIdList);
+                var productAddress = Product.DeriveAddress(guid);
+                var product = new Product((List)nextState.GetState(productAddress));
+                Assert.Equal(product.ProductId, guid);
+                Assert.Equal(1 * _currency, product.Price);
+                Assert.Equal(1, product.ItemCount);
+                Assert.NotNull(product.TradableItem);
+            }
+
+            var action2 = new CancelItemRegistration
+            {
+                AvatarAddress = _sellerAvatarAddress,
+                ProductInfoList = new List<ProductInfo>
+                {
+                    new ProductInfo
+                    {
+                        AvatarAddress = _sellerAvatarAddress,
+                        AgentAddress = _sellerAgentAddress,
+                        Price = 1 * _currency,
+                        ProductId = productList.ProductIdList.First(),
+                    },
+                    new ProductInfo
+                    {
+                        AvatarAddress = _sellerAvatarAddress,
+                        AgentAddress = _sellerAgentAddress,
+                        Price = 1 * _currency,
+                        ProductId = productList.ProductIdList.Last(),
+                    },
+                },
+            };
+            var latestState = action.Execute(new ActionContext
+            {
+                BlockIndex = 2L,
+                PreviousStates = nextState,
+                Random = new TestRandom(),
+                Signer = _sellerAgentAddress,
+            });
+
+            var latestAvatarState = latestState.GetAvatarStateV2(_sellerAvatarAddress);
+            var sellProductList = new ProductList((List)latestState.GetState(productListAddress));
+            Assert.Empty(sellProductList.ProductIdList);
+
+            foreach (var productAddress in action2.ProductInfoList.Select(productInfo => Product.DeriveAddress(productInfo.ProductId)))
+            {
+                Assert.Equal(Null.Value, latestState.GetState(productAddress));
+                var product = new Product((List)nextState.GetState(productAddress));
+                Assert.True(latestAvatarState.inventory.HasTradableItem(product.TradableItem.TradableId, 1L, product.ItemCount));
+            }
+        }
     }
 }
