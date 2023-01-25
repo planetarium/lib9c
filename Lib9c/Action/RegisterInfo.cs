@@ -19,9 +19,9 @@ namespace Nekoyume.Action
         {
             AvatarAddress = serialized[0].ToAddress();
             Price = serialized[1].ToFungibleAssetValue();
-            TradableId = serialized[2].ToGuid();
-            ItemCount = serialized[3].ToInteger();
-            Type = serialized[4].ToEnum<ProductType>();
+            Type = serialized[2].ToEnum<ProductType>();
+            TradableId = serialized[3].ToGuid();
+            ItemCount = serialized[4].ToInteger();
         }
 
         public RegisterInfo()
@@ -33,9 +33,9 @@ namespace Nekoyume.Action
             return List.Empty
                 .Add(AvatarAddress.Serialize())
                 .Add(Price.Serialize())
+                .Add(Type.Serialize())
                 .Add(TradableId.Serialize())
-                .Add(ItemCount.Serialize())
-                .Add(Type.Serialize());
+                .Add(ItemCount.Serialize());
         }
     }
 }

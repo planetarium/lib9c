@@ -22,8 +22,8 @@ namespace Nekoyume.Action
         {
             AvatarAddress = serialized[0].ToAddress();
             Price = serialized[1].ToFungibleAssetValue();
-            Asset = serialized[2].ToFungibleAssetValue();
-            Type = serialized[3].ToEnum<ProductType>();
+            Type = serialized[2].ToEnum<ProductType>();
+            Asset = serialized[3].ToFungibleAssetValue();
         }
 
         public IValue Serialize()
@@ -31,8 +31,8 @@ namespace Nekoyume.Action
             return List.Empty
                 .Add(AvatarAddress.Serialize())
                 .Add(Price.Serialize())
-                .Add(Asset.Serialize())
-                .Add(Type.Serialize());
+                .Add(Type.Serialize())
+                .Add(Asset.Serialize());
         }
     }
 }
