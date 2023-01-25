@@ -124,9 +124,9 @@ namespace Lib9c.Tests.Action.Scenario
                 .MintAsset(_buyerAgentAddress, 2 * _currency);
 
             var random = new TestRandom();
-            var action = new RegisterItem
+            var action = new RegisterProduct
             {
-                RegisterInfos = new List<RegisterInfo>
+                RegisterInfoList = new List<RegisterInfo>
                 {
                     new RegisterInfo
                     {
@@ -151,9 +151,9 @@ namespace Lib9c.Tests.Action.Scenario
                 new ProductList((List)nextState.GetState(ProductList.DeriveAddress(_sellerAvatarAddress)));
             var productId = Assert.Single(productList.ProductIdList);
 
-            var action2 = new RegisterItem
+            var action2 = new RegisterProduct
             {
-                RegisterInfos = new List<RegisterInfo>
+                RegisterInfoList = new List<RegisterInfo>
                 {
                     new RegisterInfo
                     {
@@ -189,6 +189,7 @@ namespace Lib9c.Tests.Action.Scenario
                         AvatarAddress = _sellerAvatarAddress,
                         Price = 1 * _currency,
                         ProductId = productId,
+                        Type = ProductType.Fungible,
                     },
                     new ProductInfo
                     {
@@ -196,6 +197,7 @@ namespace Lib9c.Tests.Action.Scenario
                         AvatarAddress = _sellerAvatarAddress2,
                         Price = 1 * _currency,
                         ProductId = productId2,
+                        Type = ProductType.NonFungible,
                     },
                 },
             };
@@ -234,9 +236,9 @@ namespace Lib9c.Tests.Action.Scenario
             _sellerAvatarState.inventory.AddItem(equipment);
             Assert.Equal(2, _sellerAvatarState.inventory.Items.Count);
             _initialState = _initialState.SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize());
-            var action = new RegisterItem
+            var action = new RegisterProduct
             {
-                RegisterInfos = new List<RegisterInfo>
+                RegisterInfoList = new List<RegisterInfo>
                 {
                     new RegisterInfo
                     {
@@ -296,6 +298,7 @@ namespace Lib9c.Tests.Action.Scenario
                         AgentAddress = _sellerAgentAddress,
                         Price = 1 * _currency,
                         ProductId = productList.ProductIdList.First(),
+                        Type = ProductType.Fungible,
                     },
                     new ProductInfo
                     {
@@ -303,6 +306,7 @@ namespace Lib9c.Tests.Action.Scenario
                         AgentAddress = _sellerAgentAddress,
                         Price = 1 * _currency,
                         ProductId = productList.ProductIdList.Last(),
+                        Type = ProductType.NonFungible,
                     },
                 },
             };
@@ -338,9 +342,9 @@ namespace Lib9c.Tests.Action.Scenario
             _sellerAvatarState.inventory.AddItem(equipment);
             Assert.Equal(2, _sellerAvatarState.inventory.Items.Count);
             _initialState = _initialState.SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize());
-            var action = new RegisterItem
+            var action = new RegisterProduct
             {
-                RegisterInfos = new List<RegisterInfo>
+                RegisterInfoList = new List<RegisterInfo>
                 {
                     new RegisterInfo
                     {
@@ -377,14 +381,25 @@ namespace Lib9c.Tests.Action.Scenario
             var productListAddress = ProductList.DeriveAddress(_sellerAvatarAddress);
             var productList = new ProductList((List)nextState.GetState(productListAddress));
             var random = new TestRandom();
+            Guid fungibleProductId = default;
+            Guid nonFungibleProductId = default;
             for (int i = 0; i < 2; i++)
             {
                 var guid = random.GenerateRandomGuid();
+                if (i == 0)
+                {
+                    fungibleProductId = guid;
+                }
+                else
+                {
+                    nonFungibleProductId = guid;
+                }
+
                 Assert.Contains(guid, productList.ProductIdList);
                 var productAddress = Product.DeriveAddress(guid);
                 var product = new ItemProduct((List)nextState.GetState(productAddress));
                 var registerInfo =
-                    action.RegisterInfos.First(r =>
+                    action.RegisterInfoList.OfType<RegisterInfo>().First(r =>
                         r.TradableId == product.TradableItem.TradableId);
                 Assert.Equal(product.ProductId, guid);
                 Assert.Equal(registerInfo.Price, product.Price);
@@ -403,7 +418,8 @@ namespace Lib9c.Tests.Action.Scenario
                             AvatarAddress = _sellerAvatarAddress,
                             AgentAddress = _sellerAgentAddress,
                             Price = 1 * _currency,
-                            ProductId = productList.ProductIdList.First(),
+                            ProductId = nonFungibleProductId,
+                            Type = ProductType.NonFungible,
                         },
                         new RegisterInfo
                         {
@@ -420,7 +436,8 @@ namespace Lib9c.Tests.Action.Scenario
                             AvatarAddress = _sellerAvatarAddress,
                             AgentAddress = _sellerAgentAddress,
                             Price = 1 * _currency,
-                            ProductId = productList.ProductIdList.Last(),
+                            ProductId = fungibleProductId,
+                            Type = ProductType.Fungible,
                         },
                         new RegisterInfo
                         {
@@ -474,9 +491,9 @@ namespace Lib9c.Tests.Action.Scenario
                 .MintAsset(_sellerAvatarAddress2, 1 * RuneHelper.DailyRewardRune);
 
             var random = new TestRandom();
-            var action = new RegisterAsset
+            var action = new RegisterProduct
             {
-                AssetInfoList = new List<AssetInfo>
+                RegisterInfoList = new List<AssetInfo>
                 {
                     new AssetInfo
                     {
@@ -500,9 +517,9 @@ namespace Lib9c.Tests.Action.Scenario
             var productId = Assert.Single(productList.ProductIdList);
             Assert.Equal(1 * RuneHelper.StakeRune, nextState.GetBalance(Product.DeriveAddress(productId), RuneHelper.StakeRune));
 
-            var action2 = new RegisterAsset
+            var action2 = new RegisterProduct
             {
-                AssetInfoList = new List<AssetInfo>
+                RegisterInfoList = new List<AssetInfo>
                 {
                     new AssetInfo
                     {
@@ -537,6 +554,7 @@ namespace Lib9c.Tests.Action.Scenario
                         AvatarAddress = _sellerAvatarAddress,
                         Price = 1 * _currency,
                         ProductId = productId,
+                        Type = ProductType.FungibleAssetValue,
                     },
                     new ProductInfo
                     {
@@ -544,6 +562,7 @@ namespace Lib9c.Tests.Action.Scenario
                         AvatarAddress = _sellerAvatarAddress2,
                         Price = 1 * _currency,
                         ProductId = productId2,
+                        Type = ProductType.FungibleAssetValue,
                     },
                 },
             };
