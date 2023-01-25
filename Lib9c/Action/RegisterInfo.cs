@@ -7,13 +7,13 @@ using Nekoyume.Model.State;
 
 namespace Nekoyume.Action
 {
-    public class RegisterInfo
+    public class RegisterInfo: IRegisterInfo
     {
-        public Address AvatarAddress;
-        public FungibleAssetValue Price;
-        public Guid TradableId;
-        public int ItemCount;
-        public ProductType Type;
+        public Address AvatarAddress { get; set; }
+        public FungibleAssetValue Price { get; set; }
+        public Guid TradableId { get; set; }
+        public int ItemCount { get; set; }
+        public ProductType Type { get; set; }
 
         public RegisterInfo(List serialized)
         {

@@ -17,7 +17,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.State;
     using Xunit;
 
-    public class RegisterItemTest
+    public class RegisterProductTest
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _currency;
         private IAccountStateDelta _initialState;
 
-        public RegisterItemTest()
+        public RegisterProductTest()
         {
             _agentAddress = new PrivateKey().ToAddress();
             var agentState = new AgentState(_agentAddress);
@@ -67,9 +67,9 @@ namespace Lib9c.Tests.Action
             _avatarState.inventory.AddItem(equipment);
             Assert.Equal(2, _avatarState.inventory.Items.Count);
             _initialState = _initialState.SetState(_avatarAddress, _avatarState.Serialize());
-            var action = new RegisterItem
+            var action = new RegisterProduct
             {
-                RegisterInfos = new List<RegisterInfo>
+                RegisterInfoList = new List<RegisterInfo>
                 {
                     new RegisterInfo
                     {

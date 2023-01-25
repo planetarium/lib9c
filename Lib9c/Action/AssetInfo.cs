@@ -7,12 +7,12 @@ using Nekoyume.Model.State;
 
 namespace Nekoyume.Action
 {
-    public class AssetInfo
+    public class AssetInfo: IRegisterInfo
     {
-        public Address AvatarAddress;
-        public FungibleAssetValue Price;
-        public FungibleAssetValue Asset;
-        public ProductType Type;
+        public Address AvatarAddress { get; set; }
+        public FungibleAssetValue Price { get; set; }
+        public FungibleAssetValue Asset { get; set; }
+        public ProductType Type { get; set; }
 
         public AssetInfo()
         {
