@@ -235,10 +235,12 @@ namespace Lib9c.Tests.Action.Scenario
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, id, 0L);
             _sellerAvatarState.inventory.AddItem(equipment);
             Assert.Equal(2, _sellerAvatarState.inventory.Items.Count);
-            _initialState = _initialState.SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize());
+            _initialState = _initialState
+                    .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize())
+                    .MintAsset(_sellerAvatarAddress, 1 * RuneHelper.StakeRune);
             var action = new RegisterProduct
             {
-                RegisterInfoList = new List<RegisterInfo>
+                RegisterInfoList = new List<IRegisterInfo>
                 {
                     new RegisterInfo
                     {
@@ -255,6 +257,13 @@ namespace Lib9c.Tests.Action.Scenario
                         Price = 1 * _currency,
                         TradableId = equipment.TradableId,
                         Type = ProductType.NonFungible,
+                    },
+                    new AssetInfo
+                    {
+                        AvatarAddress = _sellerAvatarAddress,
+                        Price = 1 * _currency,
+                        Type = ProductType.FungibleAssetValue,
+                        Asset = 1 * RuneHelper.StakeRune,
                     },
                 },
             };
@@ -275,19 +284,43 @@ namespace Lib9c.Tests.Action.Scenario
             var productListAddress = ProductList.DeriveAddress(_sellerAvatarAddress);
             var productList = new ProductList((List)nextState.GetState(productListAddress));
             var random = new TestRandom();
-            for (int i = 0; i < 2; i++)
+            Guid fungibleProductId = default;
+            Guid nonFungibleProductId = default;
+            Guid assetProductId = default;
+            for (int i = 0; i < 3; i++)
             {
                 var guid = random.GenerateRandomGuid();
+                switch (i)
+                {
+                    case 0:
+                        fungibleProductId = guid;
+                        break;
+                    case 1:
+                        nonFungibleProductId = guid;
+                        break;
+                    case 2:
+                        assetProductId = guid;
+                        break;
+                }
+
                 Assert.Contains(guid, productList.ProductIdList);
                 var productAddress = Product.DeriveAddress(guid);
-                var product = new ItemProduct((List)nextState.GetState(productAddress));
+                var product = Product.Deserialize((List)nextState.GetState(productAddress));
                 Assert.Equal(product.ProductId, guid);
                 Assert.Equal(1 * _currency, product.Price);
-                Assert.Equal(1, product.ItemCount);
-                Assert.NotNull(product.TradableItem);
+                switch (product)
+                {
+                    case FavProduct favProduct:
+                        Assert.Equal(1 * RuneHelper.StakeRune, favProduct.Asset);
+                        break;
+                    case ItemProduct itemProduct:
+                        Assert.Equal(1, itemProduct.ItemCount);
+                        Assert.NotNull(itemProduct.TradableItem);
+                        break;
+                }
             }
 
-            var action2 = new CancelItemRegistration
+            var action2 = new CancelProductRegistration
             {
                 AvatarAddress = _sellerAvatarAddress,
                 ProductInfoList = new List<ProductInfo>
@@ -297,7 +330,7 @@ namespace Lib9c.Tests.Action.Scenario
                         AvatarAddress = _sellerAvatarAddress,
                         AgentAddress = _sellerAgentAddress,
                         Price = 1 * _currency,
-                        ProductId = productList.ProductIdList.First(),
+                        ProductId = fungibleProductId,
                         Type = ProductType.Fungible,
                     },
                     new ProductInfo
@@ -305,8 +338,16 @@ namespace Lib9c.Tests.Action.Scenario
                         AvatarAddress = _sellerAvatarAddress,
                         AgentAddress = _sellerAgentAddress,
                         Price = 1 * _currency,
-                        ProductId = productList.ProductIdList.Last(),
+                        ProductId = nonFungibleProductId,
                         Type = ProductType.NonFungible,
+                    },
+                    new ProductInfo
+                    {
+                        AvatarAddress = _sellerAvatarAddress,
+                        AgentAddress = _sellerAgentAddress,
+                        Price = 1 * _currency,
+                        ProductId = assetProductId,
+                        Type = ProductType.FungibleAssetValue,
                     },
                 },
             };
@@ -325,8 +366,17 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var productAddress in action2.ProductInfoList.Select(productInfo => Product.DeriveAddress(productInfo.ProductId)))
             {
                 Assert.Equal(Null.Value, latestState.GetState(productAddress));
-                var product = new ItemProduct((List)nextState.GetState(productAddress));
-                Assert.True(latestAvatarState.inventory.HasTradableItem(product.TradableItem.TradableId, 1L, product.ItemCount));
+                var product = Product.Deserialize((List)nextState.GetState(productAddress));
+                switch (product)
+                {
+                    case FavProduct favProduct:
+                        Assert.Equal(0 * RuneHelper.StakeRune, latestState.GetBalance(Product.DeriveAddress(favProduct.ProductId), RuneHelper.StakeRune));
+                        Assert.Equal(favProduct.Asset, latestState.GetBalance(_sellerAvatarAddress, RuneHelper.StakeRune));
+                        break;
+                    case ItemProduct itemProduct:
+                        Assert.True(latestAvatarState.inventory.HasTradableItem(itemProduct.TradableItem.TradableId, 1L, itemProduct.ItemCount));
+                        break;
+                }
             }
         }
 

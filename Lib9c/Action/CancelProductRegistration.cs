@@ -12,8 +12,8 @@ using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
-    [ActionType("cancel_item_registration")]
-    public class CancelItemRegistration : GameAction
+    [ActionType("cancel_product_registration")]
+    public class CancelProductRegistration : GameAction
     {
         public Address AvatarAddress;
         public List<ProductInfo> ProductInfoList;
@@ -50,20 +50,31 @@ namespace Nekoyume.Action
                 productList.ProductIdList.Remove(productId);
 
                 var productAddress = Product.DeriveAddress(productId);
-                var product = new ItemProduct((List) states.GetState(productAddress));
-                switch (product.TradableItem)
+                var product = Product.Deserialize((List) states.GetState(productAddress));
+                switch (product)
                 {
-                    case Costume costume:
-                        avatarState.UpdateFromAddCostume(costume, true);
+                    case FavProduct favProduct:
+                        states = states.TransferAsset(productAddress, AvatarAddress,
+                            favProduct.Asset);
                         break;
-                    case ItemUsable itemUsable:
-                        avatarState.UpdateFromAddItem(itemUsable, true);
+                    case ItemProduct itemProduct:
+                        switch (itemProduct.TradableItem)
+                        {
+                            case Costume costume:
+                                avatarState.UpdateFromAddCostume(costume, true);
+                                break;
+                            case ItemUsable itemUsable:
+                                avatarState.UpdateFromAddItem(itemUsable, true);
+                                break;
+                            case TradableMaterial tradableMaterial:
+                            {
+                                avatarState.UpdateFromAddItem(tradableMaterial, itemProduct.ItemCount, true);
+                                break;
+                            }
+                        }
                         break;
-                    case TradableMaterial tradableMaterial:
-                    {
-                        avatarState.UpdateFromAddItem(tradableMaterial, product.ItemCount, true);
-                        break;
-                    }
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(product));
                 }
                 states = states.SetState(productAddress, Null.Value);
             }
