@@ -15,14 +15,24 @@ namespace Nekoyume.Model.Market
             return Addresses.Market.Derive(productId.ToString());
         }
 
+        public static Product Deserialize(List serialized)
+        {
+            if (serialized.Count == 3)
+            {
+                return new FavProduct(serialized);
+            }
+
+            return new ItemProduct(serialized);
+        }
+
         public Guid ProductId;
         public FungibleAssetValue Price;
 
-        public Product()
+        protected Product()
         {
         }
 
-        public Product(List serialized)
+        protected Product(List serialized)
         {
             ProductId = serialized[0].ToGuid();
             Price = serialized[1].ToFungibleAssetValue();
