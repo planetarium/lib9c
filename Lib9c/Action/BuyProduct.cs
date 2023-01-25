@@ -7,15 +7,16 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
-using Serilog;
 using static Lib9c.SerializeKeys;
+using Log = Serilog.Log;
 
 namespace Nekoyume.Action
 {
-    [ActionType("buy_asset")]
-    public class BuyAsset : GameAction
+    [ActionType("buy_product")]
+    public class BuyProduct : GameAction
     {
         public Address AvatarAddress;
         public IEnumerable<ProductInfo> ProductInfoList;
@@ -30,7 +31,7 @@ namespace Nekoyume.Action
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;
-            Log.Debug("BuyItem exec started");
+            Log.Debug("BuyProduct exec started");
 
             if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState, out var migrationRequired))
             {
@@ -58,14 +59,38 @@ namespace Nekoyume.Action
                 productList.ProductIdList.Remove(productId);
 
                 var productAddress = Product.DeriveAddress(productId);
-                var product = new FavProduct((List) states.GetState(productAddress));
-                FungibleAssetValue asset = product.Asset;
+                var product = Product.Deserialize((List) states.GetState(productAddress));
+                switch (product)
+                {
+                    case FavProduct favProduct:
+                        states = states.TransferAsset(productAddress, AvatarAddress, favProduct.Asset);
+                        break;
+                    case ItemProduct itemProduct:
+                    {
+                        switch (itemProduct.TradableItem)
+                        {
+                            case Costume costume:
+                                avatarState.UpdateFromAddCostume(costume, false);
+                                break;
+                            case ItemUsable itemUsable:
+                                avatarState.UpdateFromAddItem(itemUsable, false);
+                                break;
+                            case TradableMaterial tradableMaterial:
+                            {
+                                avatarState.UpdateFromAddItem(tradableMaterial, itemProduct.ItemCount, false);
+                                break;
+                            }
+                        }
+                    }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(product));
+                }
 
                 states = states
                     .SetState(productAddress, Null.Value)
                     .SetState(productListAddress, productList.Serialize())
-                    .TransferAsset(context.Signer, sellerAgentAddress, product.Price)
-                    .TransferAsset(productAddress, AvatarAddress, asset);
+                    .TransferAsset(context.Signer, sellerAgentAddress, product.Price);
             }
 
             if (migrationRequired)
@@ -78,7 +103,7 @@ namespace Nekoyume.Action
 
             states = states.SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize());
             var ended = DateTimeOffset.UtcNow;
-            Log.Debug("BuyAsset Total Executed Time: {Elapsed}", ended - started);
+            Log.Debug("BuyProduct Total Executed Time: {Elapsed}", ended - started);
             return states;
         }
 
