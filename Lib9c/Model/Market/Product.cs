@@ -17,8 +17,6 @@ namespace Nekoyume.Model.Market
 
         public Guid ProductId;
         public FungibleAssetValue Price;
-        public ITradableItem TradableItem;
-        public int ItemCount;
 
         public Product()
         {
@@ -28,17 +26,13 @@ namespace Nekoyume.Model.Market
         {
             ProductId = serialized[0].ToGuid();
             Price = serialized[1].ToFungibleAssetValue();
-            TradableItem = (ITradableItem) ItemFactory.Deserialize((Dictionary)serialized[2]);
-            ItemCount = serialized[3].ToInteger();
         }
 
-        public IValue Serialize()
+        public virtual IValue Serialize()
         {
             return List.Empty
                 .Add(ProductId.Serialize())
-                .Add(Price.Serialize())
-                .Add(TradableItem.Serialize())
-                .Add(ItemCount.Serialize());
+                .Add(Price.Serialize());
         }
     }
 }

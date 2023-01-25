@@ -51,7 +51,7 @@ namespace Nekoyume.Action
                 productList.ProductIdList.Remove(productId);
 
                 var productAddress = Product.DeriveAddress(productId);
-                var product = new Product((List) states.GetState(productAddress));
+                var product = new ItemProduct((List) states.GetState(productAddress));
                 switch (product.TradableItem)
                 {
                     case Costume costume:
@@ -120,7 +120,7 @@ namespace Nekoyume.Action
                 }
 
                 Guid newProductId = context.Random.GenerateRandomGuid();
-                var newProduct = new Product
+                var newProduct = new ItemProduct
                 {
                     ProductId = newProductId,
                     Price = registerInfo.Price,
