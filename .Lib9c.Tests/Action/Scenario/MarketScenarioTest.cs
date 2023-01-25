@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
@@ -214,7 +215,7 @@ namespace Lib9c.Tests.Action.Scenario
                 var sellProductList = new ProductList((List)latestState.GetState(ProductList.DeriveAddress(productInfo.AvatarAddress)));
                 Assert.Empty(sellProductList.ProductIdList);
                 Assert.Equal(Null.Value, latestState.GetState(Product.DeriveAddress(productInfo.ProductId)));
-                var product = new Product((List)nextState2.GetState(Product.DeriveAddress(productInfo.ProductId)));
+                var product = new ItemProduct((List)nextState2.GetState(Product.DeriveAddress(productInfo.ProductId)));
                 Assert.True(buyerAvatarState.inventory.HasTradableItem(product.TradableItem.TradableId, 1L, product.ItemCount));
             }
 
@@ -277,7 +278,7 @@ namespace Lib9c.Tests.Action.Scenario
                 var guid = random.GenerateRandomGuid();
                 Assert.Contains(guid, productList.ProductIdList);
                 var productAddress = Product.DeriveAddress(guid);
-                var product = new Product((List)nextState.GetState(productAddress));
+                var product = new ItemProduct((List)nextState.GetState(productAddress));
                 Assert.Equal(product.ProductId, guid);
                 Assert.Equal(1 * _currency, product.Price);
                 Assert.Equal(1, product.ItemCount);
@@ -305,7 +306,7 @@ namespace Lib9c.Tests.Action.Scenario
                     },
                 },
             };
-            var latestState = action.Execute(new ActionContext
+            var latestState = action2.Execute(new ActionContext
             {
                 BlockIndex = 2L,
                 PreviousStates = nextState,
@@ -320,7 +321,7 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var productAddress in action2.ProductInfoList.Select(productInfo => Product.DeriveAddress(productInfo.ProductId)))
             {
                 Assert.Equal(Null.Value, latestState.GetState(productAddress));
-                var product = new Product((List)nextState.GetState(productAddress));
+                var product = new ItemProduct((List)nextState.GetState(productAddress));
                 Assert.True(latestAvatarState.inventory.HasTradableItem(product.TradableItem.TradableId, 1L, product.ItemCount));
             }
         }
@@ -381,7 +382,7 @@ namespace Lib9c.Tests.Action.Scenario
                 var guid = random.GenerateRandomGuid();
                 Assert.Contains(guid, productList.ProductIdList);
                 var productAddress = Product.DeriveAddress(guid);
-                var product = new Product((List)nextState.GetState(productAddress));
+                var product = new ItemProduct((List)nextState.GetState(productAddress));
                 var registerInfo =
                     action.RegisterInfos.First(r =>
                         r.TradableId == product.TradableItem.TradableId);
@@ -454,12 +455,121 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var newProductId in sellProductList.ProductIdList)
             {
                 var productAddress = Product.DeriveAddress(newProductId);
-                var product = new Product((List)latestState.GetState(productAddress));
+                var product = new ItemProduct((List)latestState.GetState(productAddress));
                 Assert.Equal(product.ProductId, newProductId);
                 Assert.Equal(1 * _currency, product.Price);
                 Assert.Equal(1, product.ItemCount);
                 Assert.NotNull(product.TradableItem);
             }
+        }
+
+        [Fact]
+        public void Register_And_BuyAsset()
+        {
+            _initialState = _initialState
+                .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize())
+                .SetState(_sellerAvatarAddress2, _sellerAvatarState2.Serialize())
+                .MintAsset(_buyerAgentAddress, 2 * _currency)
+                .MintAsset(_sellerAvatarAddress, 1 * RuneHelper.StakeRune)
+                .MintAsset(_sellerAvatarAddress2, 1 * RuneHelper.DailyRewardRune);
+
+            var random = new TestRandom();
+            var action = new RegisterAsset
+            {
+                AssetInfoList = new List<AssetInfo>
+                {
+                    new AssetInfo
+                    {
+                        AvatarAddress = _sellerAvatarAddress,
+                        Price = 1 * _currency,
+                        Asset = 1 * RuneHelper.StakeRune,
+                        Type = ProductType.FungibleAssetValue,
+                    },
+                },
+            };
+            var nextState = action.Execute(new ActionContext
+            {
+                BlockIndex = 1L,
+                PreviousStates = _initialState,
+                Random = random,
+                Signer = _sellerAgentAddress,
+            });
+            Assert.Equal(0 * RuneHelper.StakeRune, nextState.GetBalance(_sellerAvatarAddress, RuneHelper.StakeRune));
+            var productList =
+                new ProductList((List)nextState.GetState(ProductList.DeriveAddress(_sellerAvatarAddress)));
+            var productId = Assert.Single(productList.ProductIdList);
+            Assert.Equal(1 * RuneHelper.StakeRune, nextState.GetBalance(Product.DeriveAddress(productId), RuneHelper.StakeRune));
+
+            var action2 = new RegisterAsset
+            {
+                AssetInfoList = new List<AssetInfo>
+                {
+                    new AssetInfo
+                    {
+                        AvatarAddress = _sellerAvatarAddress2,
+                        Price = 1 * _currency,
+                        Asset = 1 * RuneHelper.DailyRewardRune,
+                        Type = ProductType.FungibleAssetValue,
+                    },
+                },
+            };
+            var nextState2 = action2.Execute(new ActionContext
+            {
+                BlockIndex = 2L,
+                PreviousStates = nextState,
+                Random = random,
+                Signer = _sellerAgentAddress2,
+            });
+            Assert.Equal(0 * RuneHelper.DailyRewardRune, nextState2.GetBalance(_sellerAvatarAddress2, RuneHelper.DailyRewardRune));
+            var productList2 =
+                new ProductList((List)nextState2.GetState(ProductList.DeriveAddress(_sellerAvatarAddress2)));
+            var productId2 = Assert.Single(productList2.ProductIdList);
+            Assert.Equal(1 * RuneHelper.DailyRewardRune, nextState2.GetBalance(Product.DeriveAddress(productId2), RuneHelper.DailyRewardRune));
+
+            var action3 = new BuyAsset
+            {
+                AvatarAddress = _buyerAvatarAddress,
+                ProductInfoList = new List<ProductInfo>
+                {
+                    new ProductInfo
+                    {
+                        AgentAddress = _sellerAgentAddress,
+                        AvatarAddress = _sellerAvatarAddress,
+                        Price = 1 * _currency,
+                        ProductId = productId,
+                    },
+                    new ProductInfo
+                    {
+                        AgentAddress = _sellerAgentAddress2,
+                        AvatarAddress = _sellerAvatarAddress2,
+                        Price = 1 * _currency,
+                        ProductId = productId2,
+                    },
+                },
+            };
+
+            var latestState = action3.Execute(new ActionContext
+            {
+                BlockIndex = 3L,
+                PreviousStates = nextState2,
+                Random = random,
+                Signer = _buyerAgentAddress,
+            });
+
+            foreach (var productInfo in action3.ProductInfoList)
+            {
+                Assert.Equal(1 * _currency, latestState.GetBalance(productInfo.AgentAddress, _currency));
+                var sellProductList = new ProductList((List)latestState.GetState(ProductList.DeriveAddress(productInfo.AvatarAddress)));
+                Assert.Empty(sellProductList.ProductIdList);
+                Address productAddress = Product.DeriveAddress(productInfo.ProductId);
+                Assert.Equal(Null.Value, latestState.GetState(productAddress));
+                var product = new FavProduct((List)nextState2.GetState(productAddress));
+                var currency = product.Asset.Currency;
+                Assert.Equal(product.Asset, latestState.GetBalance(_buyerAvatarAddress, currency));
+                Assert.Equal(0 * currency, latestState.GetBalance(productAddress, currency));
+            }
+
+            Assert.Equal(0 * _currency, latestState.GetBalance(_buyerAgentAddress, _currency));
         }
     }
 }

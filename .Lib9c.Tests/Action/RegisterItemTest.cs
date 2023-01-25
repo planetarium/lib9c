@@ -111,7 +111,7 @@ namespace Lib9c.Tests.Action
                 var guid = random.GenerateRandomGuid();
                 Assert.Contains(guid, productList.ProductIdList);
                 var productAddress = Product.DeriveAddress(guid);
-                var product = new Product((List)nextState.GetState(productAddress));
+                var product = new ItemProduct((List)nextState.GetState(productAddress));
                 Assert.Equal(product.ProductId, guid);
                 Assert.Equal(1 * _currency, product.Price);
                 Assert.Equal(1, product.ItemCount);

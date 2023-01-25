@@ -6,16 +6,16 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
-using Nekoyume.Model.Item;
+using Libplanet.Assets;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
+using Serilog;
 using static Lib9c.SerializeKeys;
-using Log = Serilog.Log;
 
 namespace Nekoyume.Action
 {
-    [ActionType("buy_item")]
-    public class BuyItem : GameAction
+    [ActionType("buy_asset")]
+    public class BuyAsset : GameAction
     {
         public Address AvatarAddress;
         public IEnumerable<ProductInfo> ProductInfoList;
@@ -58,26 +58,14 @@ namespace Nekoyume.Action
                 productList.ProductIdList.Remove(productId);
 
                 var productAddress = Product.DeriveAddress(productId);
-                var product = new ItemProduct((List) states.GetState(productAddress));
-                switch (product.TradableItem)
-                {
-                    case Costume costume:
-                        avatarState.UpdateFromAddCostume(costume, false);
-                        break;
-                    case ItemUsable itemUsable:
-                        avatarState.UpdateFromAddItem(itemUsable, false);
-                        break;
-                    case TradableMaterial tradableMaterial:
-                    {
-                        avatarState.UpdateFromAddItem(tradableMaterial, product.ItemCount, false);
-                        break;
-                    }
-                }
+                var product = new FavProduct((List) states.GetState(productAddress));
+                FungibleAssetValue asset = product.Asset;
 
                 states = states
                     .SetState(productAddress, Null.Value)
                     .SetState(productListAddress, productList.Serialize())
-                    .TransferAsset(context.Signer, sellerAgentAddress, product.Price);
+                    .TransferAsset(context.Signer, sellerAgentAddress, product.Price)
+                    .TransferAsset(productAddress, AvatarAddress, asset);
             }
 
             if (migrationRequired)
@@ -90,7 +78,7 @@ namespace Nekoyume.Action
 
             states = states.SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize());
             var ended = DateTimeOffset.UtcNow;
-            Log.Debug("BuyItem Total Executed Time: {Elapsed}", ended - started);
+            Log.Debug("BuyAsset Total Executed Time: {Elapsed}", ended - started);
             return states;
         }
 

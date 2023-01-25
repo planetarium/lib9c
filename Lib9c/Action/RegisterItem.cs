@@ -113,7 +113,7 @@ namespace Nekoyume.Action
                 }
 
                 Guid productId = context.Random.GenerateRandomGuid();
-                var product = new Product
+                var product = new ItemProduct
                 {
                     ProductId = productId,
                     Price = registerInfo.Price,
