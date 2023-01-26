@@ -10,6 +10,7 @@ using Libplanet.Action.Sys;
 using Libplanet.Assets;
 using Libplanet.Blockchain;
 using Libplanet.Blocks;
+using Libplanet.Consensus;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.BlockChain.Policy;
@@ -80,7 +81,7 @@ namespace Nekoyume
             };
             IEnumerable<IAction> systemActions = initialValidators.OrderBy(
                 item => item.Key.ToAddress()).Select(
-                item => new SetValidator(item.Key, item.Value));
+                item => new SetValidator(new Validator(item.Key, item.Value)));
 
             if (!(actionBases is null))
             {

@@ -166,7 +166,7 @@ namespace Lib9c.Tests
 
             blockChain.MakeTransaction(
                 invalidAdminPrivateKey,
-                new SetValidator(validatorCandidate.PublicKey, BigInteger.One)
+                new SetValidator(new Validator(validatorCandidate.PublicKey, BigInteger.One))
             );
             Block<PolymorphicAction<ActionBase>> block = blockChain.ProposeBlock(adminPrivateKey);
             Assert.Throws<BlockPolicyViolationException>(
