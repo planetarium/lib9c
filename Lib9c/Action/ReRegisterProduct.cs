@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Action;
-using Libplanet.Assets;
-using Nekoyume.Model.Item;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
@@ -41,162 +41,73 @@ namespace Nekoyume.Action
             }
 
             var productListAddress = ProductList.DeriveAddress(AvatarAddress);
-            var productList = new ProductList((List) states.GetState(productListAddress));
+            ProductList productList;
+            if (states.TryGetState(productListAddress, out List rawProductList))
+            {
+                productList = new ProductList(rawProductList);
+            }
+            else
+            {
+                var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
+                    ? new MarketState(rawMarketList)
+                    : new MarketState();
+                productList = new ProductList();
+                marketState.AvatarAddressList.Add(AvatarAddress);
+                states = states.SetState(Addresses.Market, marketState.Serialize());
+            }
             foreach (var (productInfo, info) in ReRegisterInfoList.OrderBy(tuple => tuple.Item2.Type).ThenBy(tuple => tuple.Item2.Price))
             {
-                var productId = productInfo.ProductId;
-                if (!productList.ProductIdList.Contains(productId))
+                if (productInfo.Legacy)
                 {
-                    throw new Exception();
-                }
-
-                productList.ProductIdList.Remove(productId);
-
-                var productAddress = Product.DeriveAddress(productId);
-                var product = Product.Deserialize((List) states.GetState(productAddress));
-                switch (product)
-                {
-                    case FavProduct favProduct:
-                        states = states.TransferAsset(productAddress, AvatarAddress,
-                            favProduct.Asset);
-                        break;
-                    case ItemProduct itemProduct:
+                    if (info.Type == ProductType.FungibleAssetValue)
                     {
-                        switch (itemProduct.TradableItem)
-                        {
-                            case Costume costume:
-                                avatarState.UpdateFromAddCostume(costume, true);
-                                break;
-                            case ItemUsable itemUsable:
-                                avatarState.UpdateFromAddItem(itemUsable, true);
-                                break;
-                            case TradableMaterial tradableMaterial:
-                            {
-                                avatarState.UpdateFromAddItem(tradableMaterial,
-                                    itemProduct.ItemCount, true);
-                                break;
-                            }
-                        }
-
-                        break;
+                        // 잘못된 타입
+                        throw new Exception();
                     }
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(product));
-                }
-
-                switch (info)
-                {
-                    case RegisterInfo registerInfo:
-                        switch (info.Type)
-                        {
-                            case ProductType.Fungible:
-                            case ProductType.NonFungible:
-                            {
-                                var tradableId = registerInfo.TradableId;
-                                var itemCount = registerInfo.ItemCount;
-                                var type = registerInfo.Type;
-                                ITradableItem tradableItem = null;
-                                switch (type)
-                                {
-                                    case ProductType.Fungible:
-                                        if (avatarState.inventory.TryGetTradableItems(tradableId,
-                                                context.BlockIndex, itemCount, out var items))
-                                        {
-                                            int totalCount = itemCount;
-                                            tradableItem = (ITradableItem) items.First().item;
-                                            foreach (var inventoryItem in items)
-                                            {
-                                                int removeCount = Math.Min(totalCount,
-                                                    inventoryItem.count);
-                                                ITradableFungibleItem tradableFungibleItem =
-                                                    (ITradableFungibleItem) inventoryItem.item;
-                                                if (!avatarState.inventory.RemoveTradableItem(
-                                                        tradableId,
-                                                        tradableFungibleItem.RequiredBlockIndex,
-                                                        removeCount))
-                                                {
-                                                    throw new ItemDoesNotExistException("");
-                                                }
-
-                                                totalCount -= removeCount;
-                                                if (totalCount < 1)
-                                                {
-                                                    break;
-                                                }
-                                            }
-
-                                            if (totalCount != 0)
-                                            {
-                                                // 삭제처리 오류
-                                                throw new Exception();
-                                            }
-                                        }
-
-                                        break;
-                                    case ProductType.NonFungible:
-                                        if (avatarState.inventory.TryGetNonFungibleItem(tradableId,
-                                                out var item) &&
-                                            avatarState.inventory.RemoveNonFungibleItem(tradableId))
-                                        {
-                                            tradableItem = (ITradableItem) item.item;
-                                        }
-
-                                        break;
-                                    case ProductType.FungibleAssetValue:
-                                    default:
-                                        throw new ArgumentOutOfRangeException();
-                                }
-
-                                if (tradableItem is null)
-                                {
-                                    throw new ItemDoesNotExistException("");
-                                }
-
-                                Guid newProductId = context.Random.GenerateRandomGuid();
-                                var newProduct = new ItemProduct
-                                {
-                                    ProductId = newProductId,
-                                    Price = registerInfo.Price,
-                                    TradableItem = tradableItem,
-                                    ItemCount = itemCount,
-                                };
-                                productList.ProductIdList.Add(newProductId);
-                                states = states
-                                    .SetState(productAddress, Null.Value)
-                                    .SetState(Product.DeriveAddress(newProductId),
-                                        newProduct.Serialize());
-                                break;
-                            }
-                            case ProductType.FungibleAssetValue:
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-
-                        break;
-                    case AssetInfo assetInfo:
+                    var digestListAddress = OrderDigestListState.DeriveAddress(AvatarAddress);
+                    var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
+                    if (!states.TryGetState(digestListAddress, out Dictionary rawList))
                     {
-                        if (assetInfo.Type == ProductType.FungibleAssetValue)
-                        {
-                            Guid newProductId = context.Random.GenerateRandomGuid();
-                            Address newProductAddress = Product.DeriveAddress(newProductId);
-                            FungibleAssetValue asset = assetInfo.Asset;
-                            var newProduct = new FavProduct
+                        throw new FailedLoadStateException(
+                            $"{addressesHex} failed to load {nameof(OrderDigest)}({digestListAddress}).");
+                    }
+                    var digestList = new OrderDigestListState(rawList);
+                    var orderAddress = Order.DeriveAddress(productInfo.ProductId);
+                    if (!states.TryGetState(orderAddress, out Dictionary rawOrder))
+                    {
+                        throw new FailedLoadStateException(
+                            $"{addressesHex} failed to load {nameof(Order)}({orderAddress}).");
+                    }
+                    var order = OrderFactory.Deserialize(rawOrder);
+                    switch (order)
+                    {
+                        case FungibleOrder _:
+                            if (info.Type == ProductType.NonFungible)
                             {
-                                ProductId = newProductId,
-                                Price = assetInfo.Price,
-                                Asset = asset,
-                            };
-                            states = states
-                                .TransferAsset(AvatarAddress, newProductAddress, asset)
-                                .SetState(productAddress, Null.Value)
-                                .SetState(newProductAddress, newProduct.Serialize());
-                            productList.ProductIdList.Add(newProductId);
+                                throw new Exception();
+                            }
                             break;
-                        }
-
-                        throw new ArgumentOutOfRangeException();
+                        case NonFungibleOrder _:
+                            if (info.Type == ProductType.Fungible)
+                            {
+                                throw new Exception();
+                            }
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(order));
                     }
+                    var updateSellInfo = new UpdateSellInfo(productInfo.ProductId, productInfo.ProductId, order.TradableId, order.ItemSubType, info.Price, 1);
+                    states = UpdateSell.Cancel(states, updateSellInfo, addressesHex,
+                        avatarState, digestList, context,
+                        avatarState.address, new Stopwatch());
                 }
+                else
+                {
+                    states = CancelProductRegistration.Cancel(productList, productInfo.ProductId,
+                        states, avatarState);
+                }
+
+                states = RegisterProduct.Register(context, info, avatarState, productList, states);
             }
 
             states = states

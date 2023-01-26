@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action.Scenario
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Model.Order;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Assets;
@@ -29,7 +30,6 @@ namespace Lib9c.Tests.Action.Scenario
         private readonly AvatarState _sellerAvatarState2;
         private readonly Address _buyerAgentAddress;
         private readonly Address _buyerAvatarAddress;
-        private readonly AvatarState _buyerAvatarState;
         private readonly TableSheets _tableSheets;
         private readonly Currency _currency;
         private IAccountStateDelta _initialState;
@@ -82,7 +82,7 @@ namespace Lib9c.Tests.Action.Scenario
             _buyerAgentAddress = new PrivateKey().ToAddress();
             var agentState3 = new AgentState(_buyerAgentAddress);
             _buyerAvatarAddress = new PrivateKey().ToAddress();
-            _buyerAvatarState = new AvatarState(
+            var buyerAvatarState = new AvatarState(
                 _buyerAvatarAddress,
                 _buyerAgentAddress,
                 0,
@@ -105,7 +105,7 @@ namespace Lib9c.Tests.Action.Scenario
                 .SetState(_sellerAgentAddress2, agentState2.Serialize())
                 .SetState(_sellerAvatarAddress2, _sellerAvatarState2.Serialize())
                 .SetState(_buyerAgentAddress, agentState3.Serialize())
-                .SetState(_buyerAvatarAddress, _buyerAvatarState.Serialize());
+                .SetState(_buyerAvatarAddress, buyerAvatarState.Serialize());
         }
 
         [Fact]
@@ -647,6 +647,116 @@ namespace Lib9c.Tests.Action.Scenario
                         break;
                     }
                 }
+            }
+        }
+
+        [Fact]
+        public void ReRegister_Order()
+        {
+            var materialRow = _tableSheets.MaterialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Hourglass);
+            var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var tradableMaterial = ItemFactory.CreateTradableMaterial(materialRow);
+            _sellerAvatarState.inventory.AddItem(tradableMaterial);
+            var id = Guid.NewGuid();
+            var equipment = ItemFactory.CreateItemUsable(equipmentRow, id, 0L);
+            _sellerAvatarState.inventory.AddItem(equipment);
+            _initialState = _initialState
+                .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize());
+
+            var digestListAddress = OrderDigestListState.DeriveAddress(_sellerAvatarAddress);
+            var orderDigestList = new OrderDigestListState(digestListAddress);
+            var reRegisterInfoList = new List<(ProductInfo, IRegisterInfo)>();
+            var shopAddressList = new List<Address>();
+            foreach (var inventoryItem in _sellerAvatarState.inventory.Items.ToList())
+            {
+                var tradableItem = (ITradableItem)inventoryItem.item;
+                var itemSubType = tradableItem.ItemSubType;
+                var orderId = Guid.NewGuid();
+                var shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
+                var shopState = new ShardedShopStateV2(shardedShopAddress);
+                var order = OrderFactory.Create(
+                    _sellerAgentAddress,
+                    _sellerAvatarAddress,
+                    orderId,
+                    _currency * 1,
+                    tradableItem.TradableId,
+                    Order.ExpirationInterval,
+                    itemSubType,
+                    1
+                );
+                var sellItem = order.Sell(_sellerAvatarState);
+                var orderDigest = order.Digest(_sellerAvatarState, _tableSheets.CostumeStatSheet);
+                shopState.Add(orderDigest, Order.ExpirationInterval);
+                orderDigestList.Add(orderDigest);
+                Assert.True(_sellerAvatarState.inventory.TryGetLockedItem(new OrderLock(orderId), out _));
+                _initialState = _initialState.SetState(Addresses.GetItemAddress(tradableItem.TradableId), sellItem.Serialize())
+                    .SetState(Order.DeriveAddress(order.OrderId), order.Serialize())
+                    .SetState(digestListAddress, orderDigestList.Serialize())
+                    .SetState(shardedShopAddress, shopState.Serialize())
+                    .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize());
+
+                var productType = tradableItem is TradableMaterial
+                    ? ProductType.Fungible
+                    : ProductType.NonFungible;
+                var productInfo = new ProductInfo
+                {
+                    AgentAddress = _sellerAgentAddress,
+                    AvatarAddress = _sellerAvatarAddress,
+                    Price = 1 * _currency,
+                    ProductId = orderId,
+                    Type = productType,
+                    Legacy = true,
+                };
+                var registerInfo = new RegisterInfo
+                {
+                    AvatarAddress = _sellerAvatarAddress,
+                    ItemCount = 1,
+                    Price = 100 * _currency,
+                    TradableId = tradableItem.TradableId,
+                    Type = productType,
+                };
+
+                reRegisterInfoList.Add((productInfo, registerInfo));
+                shopAddressList.Add(shardedShopAddress);
+            }
+
+            var action = new ReRegisterProduct
+            {
+                AvatarAddress = _sellerAvatarAddress,
+                ReRegisterInfoList = reRegisterInfoList,
+            };
+            var nextState = action.Execute(new ActionContext
+            {
+                BlockIndex = 2L,
+                PreviousStates = _initialState,
+                Random = new TestRandom(),
+                Signer = _sellerAgentAddress,
+            });
+
+            Assert.Empty(new OrderDigestListState((Dictionary)nextState.GetState(digestListAddress)).OrderDigestList);
+            Assert.Contains(
+                _sellerAvatarAddress,
+                new MarketState((List)nextState.GetState(Addresses.Market)).AvatarAddressList
+            );
+            var productList =
+                new ProductList(
+                    (List)nextState.GetState(ProductList.DeriveAddress(_sellerAvatarAddress)));
+            Assert.Equal(2, productList.ProductIdList.Count);
+            foreach (var productId in productList.ProductIdList)
+            {
+                var productAddress = Product.DeriveAddress(productId);
+                var product = Product.Deserialize((List)nextState.GetState(productAddress));
+                Assert.Equal(100 * _currency, product.Price);
+            }
+
+            var nextAvatarState = nextState.GetAvatarStateV2(_sellerAvatarAddress);
+            Assert.Empty(nextAvatarState.inventory.Items);
+
+            foreach (var shopAddress in shopAddressList)
+            {
+                var shopState =
+                    new ShardedShopStateV2((Dictionary)nextState.GetState(shopAddress));
+                Assert.Empty(shopState.OrderDigestList);
             }
         }
     }
