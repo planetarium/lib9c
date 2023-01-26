@@ -42,41 +42,7 @@ namespace Nekoyume.Action
             var productList = new ProductList((List) states.GetState(productListAddress));
             foreach (var productId in ProductInfoList.Select(productInfo => productInfo.ProductId))
             {
-                if (!productList.ProductIdList.Contains(productId))
-                {
-                    throw new Exception();
-                }
-
-                productList.ProductIdList.Remove(productId);
-
-                var productAddress = Product.DeriveAddress(productId);
-                var product = Product.Deserialize((List) states.GetState(productAddress));
-                switch (product)
-                {
-                    case FavProduct favProduct:
-                        states = states.TransferAsset(productAddress, AvatarAddress,
-                            favProduct.Asset);
-                        break;
-                    case ItemProduct itemProduct:
-                        switch (itemProduct.TradableItem)
-                        {
-                            case Costume costume:
-                                avatarState.UpdateFromAddCostume(costume, true);
-                                break;
-                            case ItemUsable itemUsable:
-                                avatarState.UpdateFromAddItem(itemUsable, true);
-                                break;
-                            case TradableMaterial tradableMaterial:
-                            {
-                                avatarState.UpdateFromAddItem(tradableMaterial, itemProduct.ItemCount, true);
-                                break;
-                            }
-                        }
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(product));
-                }
-                states = states.SetState(productAddress, Null.Value);
+                states = Cancel(productList, productId, states, avatarState);
             }
 
             states = states
@@ -93,6 +59,49 @@ namespace Nekoyume.Action
                         avatarState.worldInformation.Serialize());
             }
 
+            return states;
+        }
+
+        public static IAccountStateDelta Cancel(ProductList productList, Guid productId, IAccountStateDelta states,
+            AvatarState avatarState)
+        {
+            if (!productList.ProductIdList.Contains(productId))
+            {
+                throw new Exception();
+            }
+
+            productList.ProductIdList.Remove(productId);
+
+            var productAddress = Product.DeriveAddress(productId);
+            var product = Product.Deserialize((List) states.GetState(productAddress));
+            switch (product)
+            {
+                case FavProduct favProduct:
+                    states = states.TransferAsset(productAddress, avatarState.address,
+                        favProduct.Asset);
+                    break;
+                case ItemProduct itemProduct:
+                    switch (itemProduct.TradableItem)
+                    {
+                        case Costume costume:
+                            avatarState.UpdateFromAddCostume(costume, true);
+                            break;
+                        case ItemUsable itemUsable:
+                            avatarState.UpdateFromAddItem(itemUsable, true);
+                            break;
+                        case TradableMaterial tradableMaterial:
+                        {
+                            avatarState.UpdateFromAddItem(tradableMaterial, itemProduct.ItemCount, true);
+                            break;
+                        }
+                    }
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(product));
+            }
+
+            states = states.SetState(productAddress, Null.Value);
             return states;
         }
 

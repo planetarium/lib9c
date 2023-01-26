@@ -14,6 +14,7 @@ namespace Nekoyume.Action
         public Address AgentAddress;
         public Address AvatarAddress;
         public ProductType Type;
+        public bool Legacy;
 
         public ProductInfo()
         {
@@ -26,6 +27,7 @@ namespace Nekoyume.Action
             AgentAddress = serialized[2].ToAddress();
             AvatarAddress = serialized[3].ToAddress();
             Type = serialized[4].ToEnum<ProductType>();
+            Legacy = serialized[5].ToBoolean();
         }
 
         public IValue Serialize()
@@ -35,7 +37,8 @@ namespace Nekoyume.Action
                 .Add(Price.Serialize())
                 .Add(AvatarAddress.Serialize())
                 .Add(AgentAddress.Serialize())
-                .Add(Type.Serialize());
+                .Add(Type.Serialize())
+                .Add(Legacy.Serialize());
         }
     }
 }
