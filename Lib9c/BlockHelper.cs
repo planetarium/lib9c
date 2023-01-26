@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 using Libplanet;
 using Libplanet.Action;
+using Libplanet.Action.Sys;
 using Libplanet.Assets;
 using Libplanet.Blockchain;
 using Libplanet.Blocks;
+using Libplanet.Consensus;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.BlockChain.Policy;
@@ -26,6 +29,7 @@ namespace Nekoyume
             AdminState adminState = null,
             AuthorizedMinersState authorizedMinersState = null,
             IImmutableSet<Address> activatedAccounts = null,
+            Dictionary<PublicKey, BigInteger> initialValidators = null,
             bool isActivateAdminAddress = false,
             IEnumerable<string> credits = null,
             PrivateKey privateKey = null,
@@ -45,6 +49,8 @@ namespace Nekoyume
             {
                 privateKey = new PrivateKey();
             }
+
+            initialValidators ??= new Dictionary<PublicKey, BigInteger>();
 
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
@@ -73,6 +79,10 @@ namespace Nekoyume
             {
                 initialStatesAction,
             };
+            IEnumerable<IAction> systemActions = initialValidators.OrderBy(
+                item => item.Key.ToAddress()).Select(
+                item => new SetValidator(new Validator(item.Key, item.Value)));
+
             if (!(actionBases is null))
             {
                 actions.AddRange(actionBases.Select(actionBase =>
@@ -83,6 +93,7 @@ namespace Nekoyume
             return
                 BlockChain<PolymorphicAction<ActionBase>>.ProposeGenesisBlock(
                     actions,
+                    systemActions,
                     privateKey: privateKey,
                     blockAction: blockAction,
                     timestamp: timestamp);

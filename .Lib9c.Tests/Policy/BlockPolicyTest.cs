@@ -4,11 +4,10 @@ namespace Lib9c.Tests
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
-    using System.Reflection;
-    using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
+    using System.Numerics;
     using Libplanet;
     using Libplanet.Action;
+    using Libplanet.Action.Sys;
     using Libplanet.Assets;
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
@@ -20,7 +19,6 @@ namespace Lib9c.Tests
     using Libplanet.Tx;
     using Nekoyume;
     using Nekoyume.Action;
-    using Nekoyume.BlockChain;
     using Nekoyume.BlockChain.Policy;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
@@ -34,7 +32,7 @@ namespace Lib9c.Tests
 
         public BlockPolicyTest()
         {
-            _privateKey = new PrivateKey();
+            _privateKey = ValidatorAdminPolicy.TestValidatorAdminKey;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             _currency = Currency.Legacy("NCG", 2, _privateKey.ToAddress());
@@ -49,12 +47,14 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                null, null, null, null, ValidatorsPolicy.Test);
+                null, null, null, null, ValidatorAdminPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
                 adminAddress,
-                ImmutableHashSet.Create(adminAddress)
+                ImmutableHashSet.Create(adminAddress),
+                initialValidators: new Dictionary<PublicKey, BigInteger>
+                { { adminPrivateKey.PublicKey, BigInteger.One } }
             );
             using var store = new DefaultStore(null);
             using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
@@ -86,7 +86,7 @@ namespace Lib9c.Tests
                 new PolymorphicAction<ActionBase>[] { new AddActivatedAccount(newActivatedAddress) }
             );
             Block<PolymorphicAction<ActionBase>> block = blockChain.ProposeBlock(adminPrivateKey);
-            blockChain.Append(block, GenerateBlockCommit(block));
+            blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
 
             Transaction<PolymorphicAction<ActionBase>> txByNewActivated =
                 Transaction<PolymorphicAction<ActionBase>>.Create(
@@ -126,6 +126,88 @@ namespace Lib9c.Tests
             // Transaction with more than two actions is rejected.
             Assert.Null(policy.ValidateNextBlockTx(blockChain, txWithSingleAction));
             Assert.NotNull(policy.ValidateNextBlockTx(blockChain, txWithManyActions));
+        }
+
+        [Fact]
+        public void SetValidatorWithInvalidValidatorAdmin()
+        {
+            var adminPrivateKey = new PrivateKey();
+            var invalidAdminPrivateKey = new PrivateKey();
+            var adminAddress = adminPrivateKey.ToAddress();
+            var validatorCandidate = new PrivateKey();
+
+            var blockPolicySource = new BlockPolicySource(Logger.None);
+            IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
+                null, null, null, null, ValidatorAdminPolicy.Test);
+            IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
+                new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
+            Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
+                adminAddress,
+                ImmutableHashSet.Create(adminAddress),
+                initialValidators: new Dictionary<PublicKey, BigInteger>
+                { { adminPrivateKey.PublicKey, BigInteger.One } }
+            );
+            using var store = new DefaultStore(null);
+            using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
+            var blockChain = new BlockChain<PolymorphicAction<ActionBase>>(
+                policy,
+                stagePolicy,
+                store,
+                stateStore,
+                genesis,
+                renderers: new[] { blockPolicySource.BlockRenderer }
+            );
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new PolymorphicAction<ActionBase>[] { new AddActivatedAccount(invalidAdminPrivateKey.ToAddress()) }
+            );
+            Block<PolymorphicAction<ActionBase>> block1 = blockChain.ProposeBlock(adminPrivateKey);
+            blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
+
+            blockChain.MakeTransaction(
+                invalidAdminPrivateKey,
+                new SetValidator(new Validator(validatorCandidate.PublicKey, BigInteger.One))
+            );
+            Block<PolymorphicAction<ActionBase>> block = blockChain.ProposeBlock(adminPrivateKey);
+            Assert.Throws<BlockPolicyViolationException>(
+                () => blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey)));
+        }
+
+        [Fact]
+        public void BlockCommitFromNonValidator()
+        {
+            var adminPrivateKey = new PrivateKey();
+            var adminAddress = adminPrivateKey.ToAddress();
+            var nonValidator = new PrivateKey();
+
+            var blockPolicySource = new BlockPolicySource(Logger.None);
+            IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
+                null, null, null, null, ValidatorAdminPolicy.Test);
+            IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
+                new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
+            Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
+                adminAddress,
+                ImmutableHashSet.Create(adminAddress),
+                initialValidators: new Dictionary<PublicKey, BigInteger>
+                { { adminPrivateKey.PublicKey, BigInteger.One } }
+            );
+            using var store = new DefaultStore(null);
+            using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
+            var blockChain = new BlockChain<PolymorphicAction<ActionBase>>(
+                policy,
+                stagePolicy,
+                store,
+                stateStore,
+                genesis,
+                renderers: new[] { blockPolicySource.BlockRenderer }
+            );
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new PolymorphicAction<ActionBase>[] { new AddActivatedAccount(adminPrivateKey.ToAddress()) }
+            );
+            Block<PolymorphicAction<ActionBase>> block1 = blockChain.ProposeBlock(adminPrivateKey);
+            Assert.Throws<InvalidBlockCommitException>(
+                () => blockChain.Append(block1, GenerateBlockCommit(block1, nonValidator)));
         }
 
         [Fact]
@@ -189,7 +271,7 @@ namespace Lib9c.Tests
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy<PolymorphicAction<ActionBase>> policy = blockPolicySource.GetPolicy(
-                null, null, null, null, ValidatorsPolicy.Test);
+                null, null, null, null, ValidatorAdminPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis = MakeGenesisBlock(
@@ -200,6 +282,7 @@ namespace Lib9c.Tests
                     5,
                     10
                 ),
+                new Dictionary<PublicKey, BigInteger> { { adminPrivateKey.PublicKey, BigInteger.One } },
                 pendingActivations: new[] { ps }
             );
 
@@ -220,7 +303,7 @@ namespace Lib9c.Tests
             );
 
             Block<PolymorphicAction<ActionBase>> block = blockChain.ProposeBlock(adminPrivateKey);
-            blockChain.Append(block, GenerateBlockCommit(block));
+            blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
             FungibleAssetValue actualBalance = blockChain.GetBalance(adminAddress, _currency);
             FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 10, 0);
             Assert.True(expectedBalance.Equals(actualBalance));
@@ -239,11 +322,15 @@ namespace Lib9c.Tests
                     .Default
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
                 maxTransactionsPerSignerPerBlockPolicy: null,
-                validatorsPolicy: ValidatorsPolicy.Test);
+                validatorAdminPolicy: ValidatorAdminPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
-                MakeGenesisBlock(adminPublicKey.ToAddress(), ImmutableHashSet<Address>.Empty);
+                MakeGenesisBlock(
+                    adminPublicKey.ToAddress(),
+                    ImmutableHashSet<Address>.Empty,
+                    initialValidators: new Dictionary<PublicKey, BigInteger>
+                    { { adminPrivateKey.PublicKey, BigInteger.One } });
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
@@ -283,7 +370,7 @@ namespace Lib9c.Tests
                     txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
                     lastCommit: null),
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
-            blockChain.Append(block1, GenerateBlockCommit(block1));
+            blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
             txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
@@ -294,9 +381,9 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip)),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
-            blockChain.Append(block2, GenerateBlockCommit(block2));
+            blockChain.Append(block2, GenerateBlockCommit(block2, adminPrivateKey));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block2.Hash));
             txs = GenerateTransactions(11).OrderBy(tx => tx.Id).ToList();
@@ -307,10 +394,10 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip)),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
             Assert.Throws<InvalidBlockTxCountException>(
-                () => blockChain.Append(block3, GenerateBlockCommit(block3)));
+                () => blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey)));
             Assert.Equal(3, blockChain.Count);
             Assert.False(blockChain.ContainsBlock(block3.Hash));
         }
@@ -330,11 +417,15 @@ namespace Lib9c.Tests
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy
                     .Default
                     .Add(new SpannedSubPolicy<int>(2, null, null, 5)),
-                validatorsPolicy: ValidatorsPolicy.Test);
+                validatorAdminPolicy: ValidatorAdminPolicy.Test);
             IStagePolicy<PolymorphicAction<ActionBase>> stagePolicy =
                 new VolatileStagePolicy<PolymorphicAction<ActionBase>>();
             Block<PolymorphicAction<ActionBase>> genesis =
-                MakeGenesisBlock(adminPublicKey.ToAddress(), ImmutableHashSet<Address>.Empty);
+                MakeGenesisBlock(
+                    adminPublicKey.ToAddress(),
+                    ImmutableHashSet<Address>.Empty,
+                    initialValidators: new Dictionary<PublicKey, BigInteger>
+                    { { adminPrivateKey.PublicKey, BigInteger.One } });
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
@@ -376,7 +467,7 @@ namespace Lib9c.Tests
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
 
             // Should be fine since policy hasn't kicked in yet.
-            blockChain.Append(block1, GenerateBlockCommit(block1));
+            blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
 
@@ -388,12 +479,12 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip)),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
 
             // Subpolicy kicks in.
             Assert.Throws<InvalidBlockTxCountPerSignerException>(
-                () => blockChain.Append(block2, GenerateBlockCommit(block2)));
+                () => blockChain.Append(block2, GenerateBlockCommit(block2, adminPrivateKey)));
             Assert.Equal(2, blockChain.Count);
             Assert.False(blockChain.ContainsBlock(block2.Hash));
             // Since failed, roll back nonce.
@@ -408,18 +499,18 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent<PolymorphicAction<ActionBase>>.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip)),
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose().Evaluate(adminPrivateKey, blockChain);
 
-            blockChain.Append(block3, GenerateBlockCommit(block3));
+            blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block3.Hash));
         }
 
-        private BlockCommit GenerateBlockCommit<T>(Block<T> block, PrivateKey key = null)
+        private BlockCommit GenerateBlockCommit<T>(Block<T> block, PrivateKey key)
             where T : IAction, new()
         {
-            PrivateKey privateKey = key ?? ValidatorsPolicy.TestValidatorKey;
+            PrivateKey privateKey = key;
             return block.Index != 0
                 ? new BlockCommit(
                     block.Index,
@@ -439,6 +530,7 @@ namespace Lib9c.Tests
             Address adminAddress,
             IImmutableSet<Address> activatedAddresses,
             AuthorizedMinersState authorizedMinersState = null,
+            Dictionary<PublicKey, BigInteger> initialValidators = null,
             DateTimeOffset? timestamp = null,
             PendingActivationState[] pendingActivations = null
         )
@@ -459,6 +551,7 @@ namespace Lib9c.Tests
                 new AdminState(adminAddress, 1500000),
                 authorizedMinersState: authorizedMinersState,
                 activatedAccounts: activatedAddresses,
+                initialValidators: initialValidators,
                 isActivateAdminAddress: false,
                 credits: null,
                 privateKey: _privateKey,
