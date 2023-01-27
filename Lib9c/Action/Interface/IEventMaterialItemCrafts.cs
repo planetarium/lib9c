@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using Libplanet;
-using Libplanet.Action;
 
 namespace Nekoyume.Action.Interface
 {
-    public interface IEventMaterialItemCrafts : IAction
+    public interface IEventMaterialItemCrafts : IEventMaterialItemCraftsFamily
     {
         Address AvatarAddress { get; }
         int EventScheduleId { get; }
