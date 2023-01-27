@@ -6,6 +6,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Action.Interface;
 using Nekoyume.BlockChain.Policy;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
@@ -15,10 +16,13 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionObsolete(BlockPolicySource.V100083ObsoleteIndex)]
-    [ActionType("rapid_combination5")]
-    public class RapidCombination5 : GameAction
+    [ActionObsolete(ObsoleteIndex)]
+    [ActionType(ActionTypeIdentifier)]
+    public class RapidCombination5 : GameAction, IRapidCombination
     {
+        public const string ActionTypeIdentifier = "rapid_combination5";
+        public const long ObsoleteIndex = BlockPolicySource.V100083ObsoleteIndex;
+
         [Serializable]
         public class ResultModel : AttachmentActionResult
         {
@@ -49,6 +53,13 @@ namespace Nekoyume.Action
         public Address avatarAddress;
         public int slotIndex;
 
+#region IRapidCombination
+
+        Address IRapidCombination.AvatarAddress => avatarAddress;
+        int IRapidCombination.SlotIndex => slotIndex;
+
+#endregion
+
         public override IAccountStateDelta Execute(IActionContext context)
         {
             var states = context.PreviousStates;
@@ -72,7 +83,7 @@ namespace Nekoyume.Action
                     .SetState(slotAddress, MarkChanged);
             }
 
-            CheckObsolete(BlockPolicySource.V100083ObsoleteIndex, context);
+            CheckObsolete(ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 

@@ -6,6 +6,8 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Action.Interface;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -14,10 +16,13 @@ using Serilog;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
-    [ActionType("rapid_combination")]
-    public class RapidCombination0 : GameAction
+    [ActionObsolete(ObsoleteIndex)]
+    [ActionType(ActionTypeIdentifier)]
+    public class RapidCombination0 : GameAction, IRapidCombination
     {
+        public const string ActionTypeIdentifier = "rapid_combination";
+        public const long ObsoleteIndex = BlockPolicySource.V100080ObsoleteIndex;
+
         [Serializable]
         public class ResultModel : CombinationConsumable5.ResultModel
         {
@@ -45,6 +50,13 @@ namespace Nekoyume.Action
         public Address avatarAddress;
         public int slotIndex;
 
+#region IRapidCombination
+
+        Address IRapidCombination.AvatarAddress => avatarAddress;
+        int IRapidCombination.SlotIndex => slotIndex;
+
+#endregion
+
         public override IAccountStateDelta Execute(IActionContext context)
         {
             var states = context.PreviousStates;
@@ -62,11 +74,14 @@ namespace Nekoyume.Action
                     .SetState(slotAddress, MarkChanged);
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex, context);
+            CheckObsolete(ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
-            Log.Warning("{AddressesHex}rapid_combination is deprecated. Please use rapid_combination2", addressesHex);
+            Log.Warning(
+                "{AddressesHex}{ActionTypeIdentifier} is deprecated. Please use rapid_combination2",
+                addressesHex,
+                ActionTypeIdentifier);
             if (!states.TryGetAgentAvatarStates(
                 context.Signer,
                 avatarAddress,

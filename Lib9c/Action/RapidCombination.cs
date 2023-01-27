@@ -6,6 +6,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Action.Interface;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
@@ -19,11 +20,20 @@ namespace Nekoyume.Action
     /// Hard forked at https://github.com/planetarium/lib9c/pull/1378
     /// </summary>
     [Serializable]
-    [ActionType("rapid_combination8")]
-    public class RapidCombination : GameAction
+    [ActionType(ActionTypeIdentifier)]
+    public class RapidCombination : GameAction, IRapidCombination
     {
+        public const string ActionTypeIdentifier = "rapid_combination8";
+
         public Address avatarAddress;
         public int slotIndex;
+
+#region IRapidCombination
+
+        Address IRapidCombination.AvatarAddress => avatarAddress;
+        int IRapidCombination.SlotIndex => slotIndex;
+
+#endregion
 
         public override IAccountStateDelta Execute(IActionContext context)
         {

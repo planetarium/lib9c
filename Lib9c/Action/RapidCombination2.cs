@@ -6,6 +6,8 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Action.Interface;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -13,12 +15,22 @@ using Nekoyume.TableData;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
-    [ActionType("rapid_combination2")]
-    public class RapidCombination2 : GameAction
+    [ActionObsolete(ObsoleteIndex)]
+    [ActionType(ActionTypeIdentifier)]
+    public class RapidCombination2 : GameAction, IRapidCombination
     {
+        public const string ActionTypeIdentifier = "rapid_combination2";
+        public const long ObsoleteIndex = BlockPolicySource.V100080ObsoleteIndex;
+
         public Address avatarAddress;
         public int slotIndex;
+
+#region IRapidCombination
+
+        Address IRapidCombination.AvatarAddress => avatarAddress;
+        int IRapidCombination.SlotIndex => slotIndex;
+
+#endregion
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
@@ -37,7 +49,7 @@ namespace Nekoyume.Action
                     .SetState(slotAddress, MarkChanged);
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex, context);
+            CheckObsolete(ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
