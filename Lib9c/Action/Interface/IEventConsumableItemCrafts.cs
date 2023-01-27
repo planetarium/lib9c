@@ -1,9 +1,8 @@
 using Libplanet;
-using Libplanet.Action;
 
 namespace Nekoyume.Action.Interface
 {
-    public interface IEventConsumableItemCrafts : IAction
+    public interface IEventConsumableItemCrafts : IEventConsumableItemCraftsFamily
     {
         Address AvatarAddress { get; }
         int EventScheduleId { get; }
