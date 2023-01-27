@@ -91,7 +91,7 @@ namespace Lib9c.Tests.Action
                 .First()
                 .StartedBlockIndex;
 
-            var action = new Raid1
+            var action = new Raid2
             {
                 AvatarAddress = _avatarAddress,
                 EquipmentIds = new List<Guid>(),
@@ -377,7 +377,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_With_Reward()
         {
-            var action = new Raid1
+            var action = new Raid2
             {
                 AvatarAddress = _avatarAddress,
                 EquipmentIds = new List<Guid>(),
