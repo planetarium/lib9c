@@ -6,6 +6,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Action.Interface;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
@@ -19,7 +20,7 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType(ActionTypeText)]
-    public class EventConsumableItemCrafts : GameAction
+    public class EventConsumableItemCrafts : GameAction, IEventConsumableItemCrafts
     {
         private const string ActionTypeText = "event_consumable_item_crafts";
 
@@ -27,6 +28,19 @@ namespace Nekoyume.Action
         public int EventScheduleId;
         public int EventConsumableItemRecipeId;
         public int SlotIndex;
+
+#region IEventConsumableItemCrafts
+
+        Address IEventConsumableItemCrafts.AvatarAddress =>
+            AvatarAddress;
+        int IEventConsumableItemCrafts.EventScheduleId =>
+            EventScheduleId;
+        int IEventConsumableItemCrafts.EventConsumableItemRecipeId =>
+            EventConsumableItemRecipeId;
+        int IEventConsumableItemCrafts.SlotIndex =>
+            SlotIndex;
+
+#endregion
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {
