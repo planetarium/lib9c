@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Numerics;
-using System.Security.Cryptography;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Action.Interface;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -25,7 +23,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("combination_consumable8")]
-    public class CombinationConsumable : GameAction
+    public class CombinationConsumable : GameAction, ICombinationConsumable
     {
         public const string AvatarAddressKey = "a";
         public Address avatarAddress;
@@ -35,6 +33,14 @@ namespace Nekoyume.Action
 
         public const string RecipeIdKey = "r";
         public int recipeId;
+
+        #region ICombinationConsumable
+
+        Address ICombinationConsumable.AvatarAddress => avatarAddress;
+        int ICombinationConsumable.SlotIndex => slotIndex;
+        int ICombinationConsumable.RecipeId => recipeId;
+
+        #endregion
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>

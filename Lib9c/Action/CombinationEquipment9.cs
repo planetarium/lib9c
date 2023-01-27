@@ -6,6 +6,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Action.Interface;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.Stat;
@@ -17,7 +18,7 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionType("combination_equipment9")]
-    public class CombinationEquipment9 : GameAction
+    public class CombinationEquipment9 : GameAction, ICombinationEquipment
     {
         public static readonly Address BlacksmithAddress = ItemEnhancement9.BlacksmithAddress;
 
@@ -32,6 +33,15 @@ namespace Nekoyume.Action
 
         public const string SubRecipeIdKey = "i";
         public int? subRecipeId;
+
+        #region ICombinationEquipment
+
+        Address ICombinationEquipment.AvatarAddress => avatarAddress;
+        int ICombinationEquipment.SlotIndex => slotIndex;
+        int ICombinationEquipment.RecipeId => recipeId;
+        int? ICombinationEquipment.SubRecipeId => subRecipeId;
+
+        #endregion
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>

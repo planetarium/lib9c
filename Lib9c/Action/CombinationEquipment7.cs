@@ -8,6 +8,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.Action.Interface;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.Skill;
@@ -21,7 +22,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("combination_equipment7")]
-    public class CombinationEquipment7 : GameAction
+    public class CombinationEquipment7 : GameAction, ICombinationEquipment
     {
         public static readonly Address BlacksmithAddress = ItemEnhancement9.BlacksmithAddress;
 
@@ -29,6 +30,15 @@ namespace Nekoyume.Action
         public int RecipeId;
         public int SlotIndex;
         public int? SubRecipeId;
+
+        #region ICombinationEquipment
+
+        Address ICombinationEquipment.AvatarAddress => AvatarAddress;
+        int ICombinationEquipment.SlotIndex => SlotIndex;
+        int ICombinationEquipment.RecipeId => RecipeId;
+        int? ICombinationEquipment.SubRecipeId => SubRecipeId;
+
+        #endregion
 
         public override IAccountStateDelta Execute(IActionContext context)
         {

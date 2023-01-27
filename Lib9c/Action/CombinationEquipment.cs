@@ -6,6 +6,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Action.Interface;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -25,7 +26,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("combination_equipment14")]
-    public class CombinationEquipment : GameAction
+    public class CombinationEquipment : GameAction, ICombinationEquipmentV3
     {
         public const string AvatarAddressKey = "a";
         public Address avatarAddress;
@@ -44,6 +45,17 @@ namespace Nekoyume.Action
         public bool useHammerPoint;
         public const int BasicSubRecipeHammerPoint = 1;
         public const int SpecialSubRecipeHammerPoint = 2;
+
+        #region ICombinationEquipment
+
+        Address ICombinationEquipmentV3.AvatarAddress => avatarAddress;
+        int ICombinationEquipmentV3.SlotIndex => slotIndex;
+        int ICombinationEquipmentV3.RecipeId => recipeId;
+        int? ICombinationEquipmentV3.SubRecipeId => subRecipeId;
+        bool ICombinationEquipmentV3.PayByCrystal => payByCrystal;
+        bool ICombinationEquipmentV3.UseHammerPoint => useHammerPoint;
+
+        #endregion
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
