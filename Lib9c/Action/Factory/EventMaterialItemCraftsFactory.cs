@@ -27,6 +27,7 @@ namespace Nekoyume.Action.Factory
                     blockIndex);
             }
 
+            // NOTE: There is only one type of EventMaterialItemCrafts.
             return new EventMaterialItemCrafts
             {
                 AvatarAddress = avatarAddr,

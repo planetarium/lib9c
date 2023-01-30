@@ -26,6 +26,7 @@ namespace Nekoyume.Action.Factory
                     blockIndex);
             }
 
+            // NOTE: There is only one type of EventConsumableItemCrafts.
             return new EventConsumableItemCrafts
             {
                 AvatarAddress = avatarAddr,
