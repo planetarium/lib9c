@@ -3,7 +3,11 @@ using Libplanet.Action;
 
 namespace Nekoyume.Action.Interface
 {
-    public interface ICombinationConsumable : IAction
+    public interface ICombinationConsumableFamily : IAction
+    {
+    }
+
+    public interface ICombinationConsumable : ICombinationConsumableFamily
     {
         Address AvatarAddress { get; }
         int SlotIndex { get; }
