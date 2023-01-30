@@ -23,5 +23,58 @@ namespace Nekoyume.Action.Factory
                 .Where(tuple => !string.IsNullOrEmpty(tuple.actionType))
                 .ToArray();
         }
+
+        public static T CreateInstance<T>(
+            string actionTypeIdentifier,
+            (Type type, string actionTypeIdentifier)[] tuples)
+        {
+            if (string.IsNullOrEmpty(actionTypeIdentifier))
+            {
+                throw new NotMatchFoundException(
+                    typeof(T),
+                    actionTypeIdentifier);
+            }
+
+            var (type, _) = tuples.FirstOrDefault(tuple =>
+                tuple.actionTypeIdentifier == actionTypeIdentifier);
+            if (type is null)
+            {
+                throw new NotMatchFoundException(
+                    typeof(T),
+                    actionTypeIdentifier);
+            }
+
+            try
+            {
+                return (T)Activator.CreateInstance(type);
+            }
+            catch (Exception e)
+            {
+                throw new NotMatchFoundException(
+                    typeof(T),
+                    actionTypeIdentifier,
+                    e);
+            }
+        }
+
+        public static void SetField(
+            object action,
+            Type type,
+            string fieldName,
+            object value)
+        {
+            var itemIdFi = type.GetField(
+                fieldName,
+                BindingFlags.Public |
+                BindingFlags.SetField |
+                BindingFlags.Instance);
+            if (itemIdFi is null)
+            {
+                throw new NullReferenceException(
+                    $"Field {fieldName} is not found in {type.FullName}.");
+            }
+
+            itemIdFi.SetValue(action, value);
+        }
     }
 }
