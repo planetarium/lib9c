@@ -24,9 +24,7 @@ namespace Nekoyume.Action.Factory
                     blockIndex);
             }
 
-            // NOTE: RapidCombination0.ObsoleteIndex equals to RapidCombination2.ObsoleteIndex.
-            // NOTE: RapidCombination2.ObsoleteIndex equals to RapidCombination3.ObsoleteIndex.
-            // NOTE: RapidCombination3.ObsoleteIndex equals to RapidCombination4.ObsoleteIndex.
+            // NOTE: RapidCombination(0~4).ObsoleteIndex are same.
             if (blockIndex < RapidCombination4.ObsoleteIndex)
             {
                 return new RapidCombination4
@@ -45,7 +43,7 @@ namespace Nekoyume.Action.Factory
                 };
             }
 
-            // NOTE: RapidCombination6.ObsoleteIndex equals to RapidCombination7.ObsoleteIndex.
+            // NOTE: RapidCombination(6~7).ObsoleteIndex are same.
             if (blockIndex < RapidCombination7.ObsoleteIndex)
             {
                 return new RapidCombination7
