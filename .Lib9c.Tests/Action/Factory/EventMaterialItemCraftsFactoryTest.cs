@@ -10,6 +10,21 @@ namespace Lib9c.Tests.Action.Factory
 
     public class EventMaterialItemCraftsFactoryTest
     {
+        public static IEnumerable<object[]> Get_Create_By_ActionType_Success_MemberData()
+        {
+            const string prefix = "event_material_item_crafts";
+            for (var i = 0; i < 1; i++)
+            {
+                if (i == 0)
+                {
+                    yield return new object[] { prefix };
+                    continue;
+                }
+
+                yield return new object[] { $"{prefix}{i + 1}" };
+            }
+        }
+
         [Theory]
         [InlineData(0L, int.MinValue, int.MinValue, null)]
         [InlineData(long.MaxValue, int.MaxValue, int.MaxValue, null)]
@@ -48,28 +63,23 @@ namespace Lib9c.Tests.Action.Factory
         }
 
         [Theory]
-        [InlineData("event_material_item_crafts", int.MinValue, int.MinValue, null)]
-        [InlineData("event_material_item_crafts", int.MaxValue, int.MaxValue, null)]
-        public void Create_By_ActionType_Success(
-            string actionType,
-            int eventScheduleId,
-            int eventMaterialItemRecipeId,
-            Dictionary<int, int> materialsToUse)
+        [MemberData(nameof(Get_Create_By_ActionType_Success_MemberData))]
+        public void Create_By_ActionType_Success(string actionType)
         {
             var avatarAddr = new PrivateKey().ToAddress();
             var action = EventMaterialItemCraftsFactory.Create(
                 actionType,
                 avatarAddr,
-                eventScheduleId,
-                eventMaterialItemRecipeId,
-                materialsToUse);
+                0,
+                0,
+                null);
             var attr = action.GetType().GetCustomAttribute(typeof(ActionTypeAttribute))
                 as ActionTypeAttribute;
             Assert.Equal(actionType, attr?.TypeIdentifier);
             Assert.Equal(avatarAddr, action.AvatarAddress);
-            Assert.Equal(eventScheduleId, action.EventScheduleId);
-            Assert.Equal(eventMaterialItemRecipeId, action.EventMaterialItemRecipeId);
-            Assert.Equal(materialsToUse, action.MaterialsToUse);
+            Assert.Equal(0, action.EventScheduleId);
+            Assert.Equal(0, action.EventMaterialItemRecipeId);
+            Assert.Null(action.MaterialsToUse);
         }
 
         [Theory]
