@@ -9,6 +9,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.Action.Interface;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -28,8 +29,7 @@ namespace Nekoyume.Action
     /// Updated at https://github.com/planetarium/lib9c/pull/1164
     /// </summary>
     [Serializable]
-    [ActionType("item_enhancement11")]
-    public class ItemEnhancement : GameAction
+    [ActionType(ActionTypeIdentifier)]
     public class ItemEnhancement : GameAction, IItemEnhancementV2
     {
         public enum EnhancementResult
@@ -38,6 +38,8 @@ namespace Nekoyume.Action
             Success = 1,
             Fail = 2,
         }
+
+        public const string ActionTypeIdentifier = "item_enhancement11";
 
         public Guid itemId;
         public Guid materialId;

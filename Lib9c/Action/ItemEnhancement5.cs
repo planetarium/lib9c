@@ -17,9 +17,11 @@ namespace Nekoyume.Action
 {
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
-    [ActionType("item_enhancement5")]
+    [ActionType(ActionTypeIdentifier)]
     public class ItemEnhancement5 : GameAction, IItemEnhancementV2
     {
+        public const string ActionTypeIdentifier = "item_enhancement5";
+        public const long ObsoleteIndex = BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex;
         public const int RequiredBlockCount = 1;
 
         public static readonly Address BlacksmithAddress = Addresses.Blacksmith;
@@ -57,7 +59,7 @@ namespace Nekoyume.Action
                     .SetState(slotAddress, MarkChanged);
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex, context);
+            CheckObsolete(ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
