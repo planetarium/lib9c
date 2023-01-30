@@ -8,6 +8,7 @@ using System.Numerics;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Nekoyume.Action.Interface;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -21,7 +22,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100220ObsoleteIndex)]
     [ActionType("item_enhancement9")]
-    public class ItemEnhancement9 : GameAction
+    public class ItemEnhancement9 : GameAction, IItemEnhancementV2
     {
         public static readonly Address BlacksmithAddress = Addresses.Blacksmith;
 
@@ -36,6 +37,15 @@ namespace Nekoyume.Action
         public Guid materialId;
         public Address avatarAddress;
         public int slotIndex;
+
+#region IItemEnhancement
+
+        Guid IItemEnhancementV2.ItemId => itemId;
+        Guid IItemEnhancementV2.MaterialId => materialId;
+        Address IItemEnhancementV2.AvatarAddress => avatarAddress;
+        int IItemEnhancementV2.SlotIndex => slotIndex;
+
+#endregion
 
         [Serializable]
         public class ResultModel : AttachmentActionResult

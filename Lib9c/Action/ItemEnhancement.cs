@@ -30,6 +30,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionType("item_enhancement11")]
     public class ItemEnhancement : GameAction
+    public class ItemEnhancement : GameAction, IItemEnhancementV2
     {
         public enum EnhancementResult
         {
@@ -42,6 +43,15 @@ namespace Nekoyume.Action
         public Guid materialId;
         public Address avatarAddress;
         public int slotIndex;
+
+#region IItemEnhancement
+
+        Guid IItemEnhancementV2.ItemId => itemId;
+        Guid IItemEnhancementV2.MaterialId => materialId;
+        Address IItemEnhancementV2.AvatarAddress => avatarAddress;
+        int IItemEnhancementV2.SlotIndex => slotIndex;
+
+#endregion
 
         [Serializable]
         public class ResultModel : AttachmentActionResult
