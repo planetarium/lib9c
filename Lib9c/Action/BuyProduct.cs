@@ -59,7 +59,7 @@ namespace Nekoyume.Action
                 productList.ProductIdList.Remove(productId);
 
                 var productAddress = Product.DeriveAddress(productId);
-                var product = Product.Deserialize((List) states.GetState(productAddress));
+                var product = ProductFactory.Deserialize((List) states.GetState(productAddress));
                 switch (product)
                 {
                     case FavProduct favProduct:
