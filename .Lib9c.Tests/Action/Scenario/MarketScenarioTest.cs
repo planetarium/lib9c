@@ -163,7 +163,7 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var productId in productList.ProductIdList)
             {
                 var product =
-                    Product.Deserialize((List)nextState.GetState(Product.DeriveAddress(productId)));
+                    ProductFactory.Deserialize((List)nextState.GetState(Product.DeriveAddress(productId)));
                 ProductType productType;
                 switch (product)
                 {
@@ -225,7 +225,7 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var productId in productList2.ProductIdList)
             {
                 var product =
-                    Product.Deserialize((List)nextState2.GetState(Product.DeriveAddress(productId)));
+                    ProductFactory.Deserialize((List)nextState2.GetState(Product.DeriveAddress(productId)));
                 ProductType productType;
                 switch (product)
                 {
@@ -272,7 +272,7 @@ namespace Lib9c.Tests.Action.Scenario
                 var sellProductList = new ProductList((List)latestState.GetState(ProductList.DeriveAddress(productInfo.AvatarAddress)));
                 Assert.Empty(sellProductList.ProductIdList);
                 Assert.Equal(Null.Value, latestState.GetState(Product.DeriveAddress(productInfo.ProductId)));
-                var product = Product.Deserialize((List)nextState2.GetState(Product.DeriveAddress(productInfo.ProductId)));
+                var product = ProductFactory.Deserialize((List)nextState2.GetState(Product.DeriveAddress(productInfo.ProductId)));
                 switch (product)
                 {
                     case FavProduct favProduct:
@@ -368,7 +368,7 @@ namespace Lib9c.Tests.Action.Scenario
 
                 Assert.Contains(guid, productList.ProductIdList);
                 var productAddress = Product.DeriveAddress(guid);
-                var product = Product.Deserialize((List)nextState.GetState(productAddress));
+                var product = ProductFactory.Deserialize((List)nextState.GetState(productAddress));
                 Assert.Equal(product.ProductId, guid);
                 Assert.Equal(1 * _currency, product.Price);
                 switch (product)
@@ -429,7 +429,7 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var productAddress in action2.ProductInfoList.Select(productInfo => Product.DeriveAddress(productInfo.ProductId)))
             {
                 Assert.Equal(Null.Value, latestState.GetState(productAddress));
-                var product = Product.Deserialize((List)nextState.GetState(productAddress));
+                var product = ProductFactory.Deserialize((List)nextState.GetState(productAddress));
                 switch (product)
                 {
                     case FavProduct favProduct:
@@ -524,7 +524,7 @@ namespace Lib9c.Tests.Action.Scenario
 
                 Assert.Contains(guid, productList.ProductIdList);
                 var productAddress = Product.DeriveAddress(guid);
-                var product = Product.Deserialize((List)nextState.GetState(productAddress));
+                var product = ProductFactory.Deserialize((List)nextState.GetState(productAddress));
                 switch (product)
                 {
                     case FavProduct favProduct:
@@ -627,7 +627,7 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var newProductId in sellProductList.ProductIdList)
             {
                 var productAddress = Product.DeriveAddress(newProductId);
-                var product = Product.Deserialize((List)latestState.GetState(productAddress));
+                var product = ProductFactory.Deserialize((List)latestState.GetState(productAddress));
                 switch (product)
                 {
                     case FavProduct favProduct:
@@ -745,7 +745,7 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var productId in productList.ProductIdList)
             {
                 var productAddress = Product.DeriveAddress(productId);
-                var product = Product.Deserialize((List)nextState.GetState(productAddress));
+                var product = ProductFactory.Deserialize((List)nextState.GetState(productAddress));
                 Assert.Equal(100 * _currency, product.Price);
             }
 
