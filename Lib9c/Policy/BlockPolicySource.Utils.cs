@@ -1,12 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
+using Libplanet.Action.Sys;
 using Libplanet.Blockchain;
 using Libplanet.Blocks;
+using Libplanet.Crypto;
 using Libplanet.Tx;
 using Nekoyume.Action;
 using Nekoyume.Model.State;
@@ -235,6 +238,40 @@ namespace Nekoyume.BlockChain.Policy
 
             // If none of the conditions apply, any miner is allowed to mine.
             return true;
+        }
+
+        private static BlockPolicyViolationException ValidateSetValidatorActionRaw(
+            BlockChain<NCAction> blockChain,
+            Block<NCAction> block,
+            IVariableSubPolicy<PublicKey> validatorAdminPolicy)
+        {
+            PublicKey validatorAdmin = validatorAdminPolicy.Getter(block.Index);
+            var logDict = new Dictionary<Transaction<NCAction>, PublicKey>();
+            foreach (Transaction<NCAction> transaction in block.Transactions)
+            {
+                if (transaction.SystemAction is SetValidator &&
+                    !transaction.PublicKey.Equals(validatorAdmin))
+                {
+                    logDict.Add(transaction, transaction.PublicKey);
+                    blockChain.UnstageTransaction(transaction);
+                }
+            }
+
+            var sortedLogDict = logDict.OrderBy(item => item.Value.ToAddress());
+            if (sortedLogDict.Any())
+            {
+                string logStr = sortedLogDict.Aggregate("", (total, next)
+                    => total + $"On transaction {next.Key.Id}, " +
+                    $"expected to be signed by validor admin {validatorAdmin}, " +
+                    $"but signed by {next.Value}\n");
+
+                return new BlockPolicyViolationException(
+                    $"Block #{block.Index} {block.Hash} includes " +
+                    $"transactions that contains invalid SetValidator action : \n" +
+                    $"{logStr}");
+            }
+
+            return null;
         }
     }
 }
