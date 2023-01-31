@@ -151,6 +151,7 @@ namespace Nekoyume.Action
                                 Price = registerInfo.Price,
                                 TradableItem = tradableItem,
                                 ItemCount = itemCount,
+                                RegisteredBlockIndex = context.BlockIndex,
                             };
                             productList.ProductIdList.Add(productId);
                             states = states.SetState(Product.DeriveAddress(productId),
@@ -175,6 +176,7 @@ namespace Nekoyume.Action
                             ProductId = productId,
                             Price = assetInfo.Price,
                             Asset = asset,
+                            RegisteredBlockIndex = context.BlockIndex,
                         };
                         states = states
                             .TransferAsset(avatarState.address, productAddress, asset)

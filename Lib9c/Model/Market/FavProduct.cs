@@ -14,7 +14,7 @@ namespace Nekoyume.Model.Market
 
         public FavProduct(List serialized) : base(serialized)
         {
-            Asset = serialized[2].ToFungibleAssetValue();
+            Asset = serialized[3].ToFungibleAssetValue();
         }
 
         public override IValue Serialize()
