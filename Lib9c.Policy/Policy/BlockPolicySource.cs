@@ -61,6 +61,9 @@ namespace Nekoyume.BlockChain.Policy
             new Address("636d187B4d434244A92B65B06B5e7da14b3810A9"),
         }.ToImmutableHashSet();
 
+        public static readonly PublicKey ValidatorAdmin = new PublicKey(
+            ByteUtil.ParseHex("0326e7f518eadfb1addc320755eeb78e385cf4b9d56986677a092a708c86990ae1"));
+
         private readonly IActionTypeLoader _actionTypeLoader;
 
         // FIXME: Why does BlockPolicySource have renderers?
