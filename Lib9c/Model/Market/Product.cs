@@ -27,6 +27,7 @@ namespace Nekoyume.Model.Market
 
         public Guid ProductId;
         public FungibleAssetValue Price;
+        public long RegisteredBlockIndex;
 
         protected Product()
         {
@@ -36,13 +37,15 @@ namespace Nekoyume.Model.Market
         {
             ProductId = serialized[0].ToGuid();
             Price = serialized[1].ToFungibleAssetValue();
+            RegisteredBlockIndex = serialized[2].ToLong();
         }
 
         public virtual IValue Serialize()
         {
             return List.Empty
                 .Add(ProductId.Serialize())
-                .Add(Price.Serialize());
+                .Add(Price.Serialize())
+                .Add(RegisteredBlockIndex.Serialize());
         }
     }
 }
