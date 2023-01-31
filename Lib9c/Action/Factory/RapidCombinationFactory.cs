@@ -12,6 +12,8 @@ namespace Nekoyume.Action.Factory
         private static (Type type, string actionType)[] Tuples =>
             _tuples ??= FactoryUtils.GetTuples<IRapidCombination>();
 
+        #region By block index
+
         public static IRapidCombination Create(
             long blockIndex,
             Address avatarAddr,
@@ -25,7 +27,7 @@ namespace Nekoyume.Action.Factory
             }
 
             // NOTE: RapidCombination(0~4).ObsoleteIndex are same.
-            if (blockIndex < RapidCombination4.ObsoleteIndex)
+            if (blockIndex <= RapidCombination4.ObsoleteIndex)
             {
                 return new RapidCombination4
                 {
@@ -34,7 +36,7 @@ namespace Nekoyume.Action.Factory
                 };
             }
 
-            if (blockIndex < RapidCombination5.ObsoleteIndex)
+            if (blockIndex <= RapidCombination5.ObsoleteIndex)
             {
                 return new RapidCombination5
                 {
@@ -44,7 +46,7 @@ namespace Nekoyume.Action.Factory
             }
 
             // NOTE: RapidCombination(6~7).ObsoleteIndex are same.
-            if (blockIndex < RapidCombination7.ObsoleteIndex)
+            if (blockIndex <= RapidCombination7.ObsoleteIndex)
             {
                 return new RapidCombination7
                 {
@@ -59,6 +61,10 @@ namespace Nekoyume.Action.Factory
                 slotIndex = slotIndex,
             };
         }
+
+        #endregion
+
+        #region By action type identifier
 
         public static IRapidCombination Create(
             string actionType,
@@ -128,5 +134,7 @@ namespace Nekoyume.Action.Factory
                         new NotImplementedException());
             }
         }
+
+        #endregion
     }
 }

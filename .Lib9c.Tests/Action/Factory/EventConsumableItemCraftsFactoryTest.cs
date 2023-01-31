@@ -1,16 +1,33 @@
 namespace Lib9c.Tests.Action.Factory
 {
+    using System;
     using System.Collections.Generic;
     using System.Reflection;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Crypto;
+    using Nekoyume.Action;
     using Nekoyume.Action.Factory;
+    using Nekoyume.Action.Interface;
     using Xunit;
 
     public class EventConsumableItemCraftsFactoryTest
     {
-        public static IEnumerable<object[]> Get_Create_By_ActionType_Success_MemberData()
+        public static IEnumerable<object[]>
+            Get_Create_By_BlockIndex_Success_MemberData()
+        {
+            yield return new object[]
+            {
+                0L, typeof(EventConsumableItemCrafts),
+            };
+            yield return new object[]
+            {
+                long.MaxValue, typeof(EventConsumableItemCrafts),
+            };
+        }
+
+        public static IEnumerable<object[]>
+            Get_Create_By_ActionTypeIdentifier_Success_MemberData()
         {
             const string prefix = "event_consumable_item_crafts";
             for (var i = 0; i < 1; i++)
@@ -26,25 +43,35 @@ namespace Lib9c.Tests.Action.Factory
         }
 
         [Theory]
-        [InlineData(0L, int.MinValue, int.MinValue, int.MinValue)]
-        [InlineData(long.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue)]
+        [MemberData(nameof(Get_Create_By_BlockIndex_Success_MemberData))]
         public void Create_By_BlockIndex_Success(
             long blockIndex,
-            int eventScheduleId,
-            int eventConsumableItemRecipeId,
-            int slotIndex)
+            Type expectedType)
         {
             var avatarAddr = new PrivateKey().ToAddress();
+            var random = new Random();
+            var eventScheduleId = random.Next(2) == 0
+                ? int.MinValue
+                : int.MaxValue;
+            int eventConsumableItemRecipeId = random.Next(2) == 0
+                ? int.MinValue
+                : int.MaxValue;
+            int slotIndex = random.Next(2) == 0
+                ? int.MinValue
+                : int.MaxValue;
             var action = EventConsumableItemCraftsFactory.Create(
                 blockIndex,
                 avatarAddr,
                 eventScheduleId,
                 eventConsumableItemRecipeId,
                 slotIndex);
-            Assert.Equal(avatarAddr, action.AvatarAddress);
-            Assert.Equal(eventScheduleId, action.EventScheduleId);
-            Assert.Equal(eventConsumableItemRecipeId, action.EventConsumableItemRecipeId);
-            Assert.Equal(slotIndex, action.SlotIndex);
+            AssertEquals(
+                avatarAddr,
+                eventScheduleId,
+                eventConsumableItemRecipeId,
+                slotIndex,
+                action);
+            Assert.IsType(expectedType, action);
         }
 
         [Theory]
@@ -63,39 +90,67 @@ namespace Lib9c.Tests.Action.Factory
         }
 
         [Theory]
-        [MemberData(nameof(Get_Create_By_ActionType_Success_MemberData))]
-        public void Create_By_ActionType_Success(string actionType)
+        [MemberData(nameof(Get_Create_By_ActionTypeIdentifier_Success_MemberData))]
+        public void Create_By_ActionTypeIdentifier_Success(string actionTypeIdentifier)
         {
             var avatarAddr = new PrivateKey().ToAddress();
+            var random = new Random();
+            var eventScheduleId = random.Next(2) == 0
+                ? int.MinValue
+                : int.MaxValue;
+            int eventConsumableItemRecipeId = random.Next(2) == 0
+                ? int.MinValue
+                : int.MaxValue;
+            int slotIndex = random.Next(2) == 0
+                ? int.MinValue
+                : int.MaxValue;
             var action = EventConsumableItemCraftsFactory.Create(
-                actionType,
+                actionTypeIdentifier,
                 avatarAddr,
-                0,
-                0,
-                0);
+                eventScheduleId,
+                eventConsumableItemRecipeId,
+                slotIndex);
             var attr = action.GetType().GetCustomAttribute(typeof(ActionTypeAttribute))
                 as ActionTypeAttribute;
-            Assert.Equal(actionType, attr?.TypeIdentifier);
-            Assert.Equal(avatarAddr, action.AvatarAddress);
-            Assert.Equal(0, action.EventScheduleId);
-            Assert.Equal(0, action.EventConsumableItemRecipeId);
-            Assert.Equal(0, action.SlotIndex);
+            Assert.Equal(actionTypeIdentifier, attr?.TypeIdentifier);
+            AssertEquals(
+                avatarAddr,
+                eventScheduleId,
+                eventConsumableItemRecipeId,
+                slotIndex,
+                action);
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("hack_and_slash")]
-        public void Create_By_ActionType_Throw_NotMatchFoundException(string actionType)
+        public void Create_By_ActionTypeIdentifier_Throw_NotMatchFoundException(
+            string actionTypeIdentifier)
         {
             var avatarAddr = new PrivateKey().ToAddress();
             Assert.Throws<NotMatchFoundException>(() =>
                 EventConsumableItemCraftsFactory.Create(
-                    actionType,
+                    actionTypeIdentifier,
                     avatarAddr,
                     0,
                     0,
                     0));
+        }
+
+        private static void AssertEquals(
+            Address avatarAddr,
+            int eventScheduleId,
+            int eventConsumableItemRecipeId,
+            int slotIndex,
+            IEventConsumableItemCrafts action)
+        {
+            Assert.Equal(avatarAddr, action.AvatarAddress);
+            Assert.Equal(eventScheduleId, action.EventScheduleId);
+            Assert.Equal(
+                eventConsumableItemRecipeId,
+                action.EventConsumableItemRecipeId);
+            Assert.Equal(slotIndex, action.SlotIndex);
         }
     }
 }

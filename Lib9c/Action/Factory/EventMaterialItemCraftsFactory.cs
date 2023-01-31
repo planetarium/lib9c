@@ -38,25 +38,26 @@ namespace Nekoyume.Action.Factory
         }
 
         public static IEventMaterialItemCrafts Create(
-            string actionType,
+            string actionTypeIdentifier,
             Address avatarAddr,
             int eventScheduleId,
             int eventMaterialItemRecipeId,
             Dictionary<int, int> materialsToUse)
         {
-            if (string.IsNullOrEmpty(actionType))
+            if (string.IsNullOrEmpty(actionTypeIdentifier))
             {
                 throw new NotMatchFoundException(
                     typeof(IEventMaterialItemCrafts),
-                    actionType);
+                    actionTypeIdentifier);
             }
 
-            var (type, _) = Tuples.FirstOrDefault(tuple => tuple.actionType == actionType);
+            var (type, _) = Tuples.FirstOrDefault(tuple =>
+                tuple.actionType == actionTypeIdentifier);
             if (type is null)
             {
                 throw new NotMatchFoundException(
                     typeof(IEventMaterialItemCrafts),
-                    actionType);
+                    actionTypeIdentifier);
             }
 
             var action = Activator.CreateInstance(type) as IEventMaterialItemCrafts;
@@ -64,7 +65,7 @@ namespace Nekoyume.Action.Factory
             {
                 throw new NotMatchFoundException(
                     typeof(IEventMaterialItemCrafts),
-                    actionType);
+                    actionTypeIdentifier);
             }
 
             switch (action)
@@ -77,7 +78,7 @@ namespace Nekoyume.Action.Factory
                     return a;
                 default:
                     throw new NotMatchFoundException(
-                        $"{actionType} is not supported.",
+                        $"{actionTypeIdentifier} is not supported.",
                         new NotImplementedException());
             }
         }

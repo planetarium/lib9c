@@ -12,6 +12,8 @@ namespace Nekoyume.Action.Factory
         private static (Type type, string actionType)[] Tuples =>
             _tuples ??= FactoryUtils.GetTuples<IEventConsumableItemCrafts>();
 
+        #region By block index
+
         public static IEventConsumableItemCrafts Create(
             long blockIndex,
             Address avatarAddr,
@@ -36,26 +38,31 @@ namespace Nekoyume.Action.Factory
             };
         }
 
+        #endregion
+
+        #region By action type identifier
+
         public static IEventConsumableItemCrafts Create(
-            string actionType,
+            string actionTypeIdentifier,
             Address avatarAddr,
             int eventScheduleId,
             int eventConsumableItemRecipeId,
             int slotIndex)
         {
-            if (string.IsNullOrEmpty(actionType))
+            if (string.IsNullOrEmpty(actionTypeIdentifier))
             {
                 throw new NotMatchFoundException(
                     typeof(IEventConsumableItemCrafts),
-                    actionType);
+                    actionTypeIdentifier);
             }
 
-            var (type, _) = Tuples.FirstOrDefault(tuple => tuple.actionType == actionType);
+            var (type, _) = Tuples.FirstOrDefault(tuple =>
+                tuple.actionType == actionTypeIdentifier);
             if (type is null)
             {
                 throw new NotMatchFoundException(
                     typeof(IEventMaterialItemCrafts),
-                    actionType);
+                    actionTypeIdentifier);
             }
 
             var action = Activator.CreateInstance(type) as IEventConsumableItemCrafts;
@@ -63,7 +70,7 @@ namespace Nekoyume.Action.Factory
             {
                 throw new NotMatchFoundException(
                     typeof(IEventConsumableItemCrafts),
-                    actionType);
+                    actionTypeIdentifier);
             }
 
             switch (action)
@@ -76,9 +83,11 @@ namespace Nekoyume.Action.Factory
                     return a;
                 default:
                     throw new NotMatchFoundException(
-                        $"{actionType} is not supported.",
+                        $"{actionTypeIdentifier} is not supported.",
                         new NotImplementedException());
             }
         }
+
+        #endregion
     }
 }
