@@ -68,7 +68,7 @@ namespace Nekoyume.BlockChain
                         var nextBlockIndex = _chain.Tip.Header.Index + 1;
                         var types = actionTypeLoader.Load(new ActionTypeLoaderContext(nextBlockIndex));
 
-                        return tx.CustomActions?.All(ca =>
+                        return !(tx.SystemAction is null) || tx.CustomActions?.All(ca =>
                             ca is Dictionary dictionary &&
                             dictionary.TryGetValue((Text)"type_id", out IValue value) &&
                             value is Text typeId &&
