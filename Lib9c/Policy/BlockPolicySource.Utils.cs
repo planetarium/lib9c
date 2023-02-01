@@ -141,6 +141,12 @@ namespace Nekoyume.BlockChain.Policy
             Block<NCAction> block,
             IVariableSubPolicy<PublicKey> validatorAdminPolicy)
         {
+            // Skip admin check if given block is the genesis block.
+            if (block.Index == 0)
+            {
+                return null;
+            }
+
             PublicKey validatorAdmin = validatorAdminPolicy.Getter(block.Index);
             var logDict = new Dictionary<Transaction<NCAction>, PublicKey>();
             foreach (Transaction<NCAction> transaction in block.Transactions)
