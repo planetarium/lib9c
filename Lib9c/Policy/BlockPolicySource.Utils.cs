@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using Bencodex.Types;
 using Libplanet;
+using Libplanet.Action;
 using Libplanet.Action.Sys;
 using Libplanet.Blockchain;
 using Libplanet.Blocks;
@@ -19,17 +21,29 @@ namespace Nekoyume.BlockChain.Policy
     // Collection of helper methods not directly used as a pluggable component.
     public partial class BlockPolicySource
     {
-        internal static bool IsObsolete(Transaction<NCAction> transaction, long blockIndex) =>
-            transaction.CustomActions is { } customActions &&
-            customActions
-                .Select(action => action.InnerAction.GetType())
-                .Any(
-                    at =>
-                    at.IsDefined(typeof(ActionObsoleteAttribute), false) &&
-                    at.GetCustomAttributes()
+        internal static bool IsObsolete(
+            ITransaction transaction,
+            IActionTypeLoader actionTypeLoader,
+            long blockIndex
+        )
+        {
+            if (!(transaction.CustomActions is { } customActions))
+            {
+                return false;
+            }
+
+            var types = actionTypeLoader.Load(new ActionTypeLoaderContext(blockIndex));
+            return customActions.Any(
+                ca => ca is Dictionary dictionary
+                    && dictionary.TryGetValue((Text)"type_id", out IValue typeIdValue)
+                    && typeIdValue is Text typeId
+                    && types.TryGetValue(typeId, out Type actionType)
+                    && actionType.IsDefined(typeof(ActionObsoleteAttribute), false)
+                    && actionType.GetCustomAttributes()
                         .OfType<ActionObsoleteAttribute>()
                         .FirstOrDefault()?.ObsoleteIndex < blockIndex
-                );
+            );
+        }
 
         internal static bool IsAdminTransaction(
             BlockChain<NCAction> blockChain, Transaction<NCAction> transaction)
@@ -141,6 +155,12 @@ namespace Nekoyume.BlockChain.Policy
             Block<NCAction> block,
             IVariableSubPolicy<PublicKey> validatorAdminPolicy)
         {
+            // Skip admin check if given block is the genesis block.
+            if (block.Index == 0)
+            {
+                return null;
+            }
+
             PublicKey validatorAdmin = validatorAdminPolicy.Getter(block.Index);
             var logDict = new Dictionary<Transaction<NCAction>, PublicKey>();
             foreach (Transaction<NCAction> transaction in block.Transactions)

@@ -20,6 +20,9 @@ using Nekoyume.Model.State;
 using Serilog;
 using Serilog.Events;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
+using Libplanet.Action;
+using Lib9c.Abstractions;
+using System.Reflection;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
@@ -98,6 +101,10 @@ namespace Nekoyume.BlockChain.Policy
 
         public const long V100340ObsoleteIndex = 5_800_000;
 
+        public const long V100351ObsoleteIndex = 5_828_750;
+
+        public const long V100360ObsoleteIndex = 6_020_000;
+
         public const long PermissionedMiningStartIndex = 2_225_500;
 
         public const long V100301ExecutedBlockIndex = 5_048_399L;
@@ -114,6 +121,7 @@ namespace Nekoyume.BlockChain.Policy
             new Address("636d187B4d434244A92B65B06B5e7da14b3810A9"),
         }.ToImmutableHashSet();
 
+
         public static readonly PublicKey ValidatorAdmin = new PublicKey(
             ByteUtil.ParseHex("02d20de0afd2231b17b3a7189c3e897796b3b31378c7b1689a6131d904bab08e5c"));
 
@@ -122,6 +130,8 @@ namespace Nekoyume.BlockChain.Policy
 
         public static readonly ValidatorSet DebugValidatorSet =
             new ValidatorSet(new List<Validator> { new Validator(DebugValidatorKey.PublicKey, BigInteger.One) });
+
+        private readonly IActionTypeLoader _actionTypeLoader;
 
         public readonly ActionRenderer ActionRenderer = new ActionRenderer();
 
@@ -133,8 +143,16 @@ namespace Nekoyume.BlockChain.Policy
 
         public BlockPolicySource(
             ILogger logger,
-            LogEventLevel logEventLevel = LogEventLevel.Verbose)
+            LogEventLevel logEventLevel = LogEventLevel.Verbose,
+            IActionTypeLoader actionTypeLoader = null)
         {
+            _actionTypeLoader = actionTypeLoader ?? new StaticActionTypeLoader(
+                Assembly.GetEntryAssembly() is Assembly entryAssembly
+                    ? new[] { typeof(ActionBase).Assembly, entryAssembly }
+                    : new[] { typeof(ActionBase).Assembly },
+                typeof(ActionBase)
+            );
+
             LoggedActionRenderer =
                 new LoggedActionRenderer<NCAction>(ActionRenderer, logger, logEventLevel);
 
@@ -237,7 +255,7 @@ namespace Nekoyume.BlockChain.Policy
 
             Func<BlockChain<NCAction>, Transaction<NCAction>, TxPolicyViolationException> validateNextBlockTx =
                 (blockChain, transaction) => ValidateNextBlockTxRaw(
-                    blockChain, transaction);
+                    blockChain, _actionTypeLoader, transaction);
             Func<BlockChain<NCAction>, Block<NCAction>, BlockPolicyViolationException> validateNextBlock =
                 (blockChain, block) => ValidateNextBlockRaw(
                     blockChain,
@@ -268,6 +286,7 @@ namespace Nekoyume.BlockChain.Policy
 
         internal static TxPolicyViolationException ValidateNextBlockTxRaw(
             BlockChain<NCAction> blockChain,
+            IActionTypeLoader actionTypeLoader,
             Transaction<NCAction> transaction)
         {
             // Avoid NRE when genesis block appended
@@ -275,14 +294,14 @@ namespace Nekoyume.BlockChain.Policy
             // will be included.
             long index = blockChain.Count > 0 ? blockChain.Tip.Index : 0;
 
-            if (transaction.Actions.Count > 1)
+            if (((ITransaction)transaction).CustomActions?.Count > 1)
             {
                 return new TxPolicyViolationException(
                     $"Transaction {transaction.Id} has too many actions: " +
-                    $"{transaction.Actions.Count}",
+                    $"{((ITransaction)transaction).CustomActions?.Count}",
                     transaction.Id);
             }
-            else if (IsObsolete(transaction, index))
+            else if (IsObsolete(transaction, actionTypeLoader, index))
             {
                 return new TxPolicyViolationException(
                     $"Transaction {transaction.Id} is obsolete.",
@@ -291,14 +310,35 @@ namespace Nekoyume.BlockChain.Policy
 
             try
             {
+                var actionTypes = actionTypeLoader.Load(new ActionTypeLoaderContext(index));
                 // Check ActivateAccount
-                if (transaction.CustomActions is { } customActions &&
+                if (((ITransaction)transaction).CustomActions is { } customActions &&
                     customActions.Count == 1 &&
-                    customActions.First().InnerAction is IActivateAction aa)
+                    customActions.First() is Dictionary dictionary &&
+                    dictionary.TryGetValue((Text)"type_id", out IValue typeIdValue) &&
+                    typeIdValue is Text typeId &&
+                    (typeId == "activate_account2" || typeId == "activate_account"))
                 {
+                    if (!(dictionary.TryGetValue((Text)"values", out IValue valuesValue) &&
+                          valuesValue is Dictionary values))
+                    {
+                        return new TxPolicyViolationException(
+                            $"Transaction {transaction.Id} has an invalid action.",
+                            transaction.Id);
+                    }
+
+                    IAction action = (IAction)Activator.CreateInstance(actionTypes[typeId]);
+                    if (!(action is IActivateAccount activateAccount))
+                    {
+                        return new TxPolicyViolationException(
+                            $"Transaction {transaction.Id} has an invalid action.",
+                            transaction.Id);
+                    }
+                    action.LoadPlainValue(values);
+
                     return transaction.Nonce == 0 &&
-                        blockChain.GetState(aa.GetPendingAddress()) is Dictionary rawPending &&
-                        new PendingActivationState(rawPending).Verify(aa.GetSignature())
+                           blockChain.GetState(activateAccount.PendingAddress) is Dictionary rawPending &&
+                           new PendingActivationState(rawPending).Verify(activateAccount.Signature)
                         ? null
                         : new TxPolicyViolationException(
                             $"Transaction {transaction.Id} has an invalid activate action.",
@@ -391,6 +431,16 @@ namespace Nekoyume.BlockChain.Policy
             }
 
             return null;
+        }
+
+        private class ActionTypeLoaderContext : IActionTypeLoaderContext
+        {
+            public ActionTypeLoaderContext(long index)
+            {
+                Index = index;
+            }
+
+            public long Index { get; }
         }
     }
 }

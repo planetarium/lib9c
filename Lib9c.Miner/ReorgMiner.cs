@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -46,15 +46,15 @@ namespace Nekoyume.BlockChain
         }
 
         public (
-                Block<PolymorphicAction<ActionBase>> MainBlock,
-                Block<PolymorphicAction<ActionBase>> SubBlock)
+                Block<PolymorphicAction<ActionBase>>? MainBlock,
+                Block<PolymorphicAction<ActionBase>>? SubBlock)
             ProposeAndAppendBlock(CancellationToken cancellationToken)
         {
             var txs = new HashSet<Transaction<PolymorphicAction<ActionBase>>>();
 
             var invalidTxs = txs;
-            Block<PolymorphicAction<ActionBase>> mainBlock = null;
-            Block<PolymorphicAction<ActionBase>> subBlock = null;
+            Block<PolymorphicAction<ActionBase>>? mainBlock = null;
+            Block<PolymorphicAction<ActionBase>>? subBlock = null;
             try
             {
                 mainBlock = _mainChain.ProposeBlock(
