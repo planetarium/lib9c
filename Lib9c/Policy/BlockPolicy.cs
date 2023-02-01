@@ -36,8 +36,7 @@ namespace Nekoyume.BlockChain.Policy
                 getMaxTransactionsBytes: getMaxTransactionsBytes,
                 getMinTransactionsPerBlock: getMinTransactionsPerBlock,
                 getMaxTransactionsPerBlock: getMaxTransactionsPerBlock,
-                getMaxTransactionsPerSignerPerBlock: getMaxTransactionsPerSignerPerBlock,
-                getMinBlockProtocolVersion: getMinBlockProtocolVersion)
+                getMaxTransactionsPerSignerPerBlock: getMaxTransactionsPerSignerPerBlock)
         {
             _isAllowedToMine = isAllowedToMine;
         }
