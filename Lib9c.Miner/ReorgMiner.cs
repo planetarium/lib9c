@@ -53,8 +53,8 @@ namespace Nekoyume.BlockChain
             var txs = new HashSet<Transaction<PolymorphicAction<ActionBase>>>();
 
             var invalidTxs = txs;
-            Block<PolymorphicAction<ActionBase>> mainBlock = null;
-            Block<PolymorphicAction<ActionBase>> subBlock = null;
+            Block<PolymorphicAction<ActionBase>>? mainBlock = null;
+            Block<PolymorphicAction<ActionBase>>? subBlock = null;
             try
             {
                 mainBlock = _mainChain.ProposeBlock(

@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Blockchain;
@@ -23,6 +24,9 @@ namespace Nekoyume.BlockChain
         private readonly BlockChain<NCAction> _chain;
         private readonly Swarm<NCAction> _swarm;
         private readonly PrivateKey _privateKey;
+
+        private readonly IActionTypeLoader? _actionTypeLoader;
+
         // TODO we must justify it.
         private static readonly ImmutableHashSet<Address> _bannedAccounts = new[]
         {
@@ -38,6 +42,8 @@ namespace Nekoyume.BlockChain
             new Address("b8D7bD4394980dcc2579019C39bA6b41cb6424E1"),
             new Address("555221D1CEA826C55929b8A559CA929574f7C6B3"),
             new Address("B892052f1E10bf700143dd9bEcd81E31CD7f7095"),
+            // v100351
+            new Address("0xd7e1b90dea34108fb2d3a6ac7dbf3f33bae2c77d"),
         }.ToImmutableHashSet();
 
         public Address Address => _privateKey.ToAddress();
@@ -50,15 +56,41 @@ namespace Nekoyume.BlockChain
             var txs = new HashSet<Transaction<NCAction>>();
             var invalidTxs = txs;
 
-            Block<NCAction> block = null;
+            Block<NCAction>? block = null;
             try
             {
-                IEnumerable<Transaction<NCAction>> bannedTxs = _chain.GetStagedTransactionIds()
-                    .Select(txId => _chain.GetTransaction(txId))
-                    .Where(tx => _bannedAccounts.Contains(tx.Signer));
-                foreach (Transaction<NCAction> tx in bannedTxs)
+                // Each validator should return true when the transaction can be mined.
+                var txValidators = new List<Predicate<ITransaction>>
                 {
-                    _chain.UnstageTransaction(tx);
+                    tx => !_bannedAccounts.Contains(tx.Signer),
+                };
+
+                if (_actionTypeLoader is { } actionTypeLoader)
+                {
+                    txValidators.Add(tx =>
+                    {
+                        var nextBlockIndex = _chain.Tip.Header.Index + 1;
+                        var types = actionTypeLoader.Load(new ActionTypeLoaderContext(nextBlockIndex));
+
+                        return !(tx.SystemAction is null) || tx.CustomActions?.All(ca =>
+                            ca is Dictionary dictionary &&
+                            dictionary.TryGetValue((Text)"type_id", out IValue value) &&
+                            value is Text typeId &&
+                            types.ContainsKey(typeId)) == true;
+                    });
+                }
+
+                foreach (Transaction<NCAction> tx in _chain.GetStagedTransactionIds()
+                             .Select(txId => _chain.GetTransaction(txId)))
+                {
+                    foreach (var validator in txValidators)
+                    {
+                        if (!validator(tx))
+                        {
+                            _chain.UnstageTransaction(tx);
+                            break;
+                        }
+                    }
                 }
 
                 var lastCommit = _chain.GetBlockCommit(_chain.Tip.Hash);
@@ -129,12 +161,25 @@ namespace Nekoyume.BlockChain
         public Miner(
             BlockChain<NCAction> chain,
             Swarm<NCAction> swarm,
-            PrivateKey privateKey
+            PrivateKey privateKey,
+            IActionTypeLoader? actionTypeLoader = null
         )
         {
             _chain = chain ?? throw new ArgumentNullException(nameof(chain));
             _swarm = swarm;
             _privateKey = privateKey;
+            _actionTypeLoader = actionTypeLoader;
+        }
+
+
+        private class ActionTypeLoaderContext : IActionTypeLoaderContext
+        {
+            public ActionTypeLoaderContext(long index)
+            {
+                Index = index;
+            }
+
+            public long Index { get; }
         }
     }
 }

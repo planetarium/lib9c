@@ -83,7 +83,7 @@ namespace Lib9c.Renderer
                     PreviousStates = context.PreviousStates,
                     RandomSeed = context.Random.Seed
                 });
-            }   
+            }
         }
 
         public void UnrenderActionError(IAction action, IActionContext context, Exception exception)
