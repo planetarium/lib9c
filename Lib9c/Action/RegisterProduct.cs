@@ -206,7 +206,12 @@ namespace Nekoyume.Action
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
-            RegisterInfoList = plainValue["r"].ToList(s => new RegisterInfo((List) s));
+            var serialized = (List) plainValue["r"];
+            RegisterInfoList = serialized.Cast<List>()
+                .Select(registerList =>
+                    registerList[2].ToEnum<ProductType>() == ProductType.FungibleAssetValue
+                        ? (IRegisterInfo) new AssetInfo(registerList)
+                        : new RegisterInfo(registerList)).ToList();
         }
     }
 }
