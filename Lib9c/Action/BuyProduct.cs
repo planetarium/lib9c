@@ -6,7 +6,6 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
-using Libplanet.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
@@ -60,6 +59,12 @@ namespace Nekoyume.Action
 
                 var productAddress = Product.DeriveAddress(productId);
                 var product = ProductFactory.Deserialize((List) states.GetState(productAddress));
+                if (product.SellerAgentAddress != sellerAgentAddress ||
+                    product.SellerAvatarAddress != sellerAvatarAddress)
+                {
+                    throw new InvalidAddressException();
+                }
+
                 switch (product)
                 {
                     case FavProduct favProduct:

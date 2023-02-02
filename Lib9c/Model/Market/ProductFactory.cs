@@ -1,4 +1,5 @@
 using Bencodex.Types;
+using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Market
 {
@@ -6,7 +7,7 @@ namespace Nekoyume.Model.Market
     {
         public static Product Deserialize(List serialized)
         {
-            if (serialized.Count == 4)
+            if (serialized[1].ToEnum<ProductType>() == ProductType.FungibleAssetValue)
             {
                 return new FavProduct(serialized);
             }

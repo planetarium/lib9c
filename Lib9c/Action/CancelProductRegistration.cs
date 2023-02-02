@@ -74,6 +74,11 @@ namespace Nekoyume.Action
 
             var productAddress = Product.DeriveAddress(productId);
             var product = ProductFactory.Deserialize((List) states.GetState(productAddress));
+            if (product.SellerAgentAddress != avatarState.agentAddress || product.SellerAvatarAddress != avatarState.address)
+            {
+                throw new Exception();
+            }
+
             switch (product)
             {
                 case FavProduct favProduct:
