@@ -35,8 +35,8 @@ namespace Nekoyume.Action
             return List.Empty
                 .Add(ProductId.Serialize())
                 .Add(Price.Serialize())
-                .Add(AvatarAddress.Serialize())
                 .Add(AgentAddress.Serialize())
+                .Add(AvatarAddress.Serialize())
                 .Add(Type.Serialize())
                 .Add(Legacy.Serialize());
         }
