@@ -51,7 +51,7 @@ namespace Lib9c.Tests
         [Fact]
         public void Stage()
         {
-            StagePolicy stagePolicy = new StagePolicy(default, 2);
+            StagePolicy stagePolicy = new StagePolicy(System.TimeSpan.FromDays(1), 2);
             BlockChain<NCAction> chain = MakeChainWithStagePolicy(stagePolicy);
 
             stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][0]);
@@ -72,7 +72,7 @@ namespace Lib9c.Tests
         [Fact]
         public void StageOverQuota()
         {
-            StagePolicy stagePolicy = new StagePolicy(default, 2);
+            StagePolicy stagePolicy = new StagePolicy(System.TimeSpan.FromDays(1), 2);
             BlockChain<NCAction> chain = MakeChainWithStagePolicy(stagePolicy);
 
             stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][0]);
@@ -91,7 +91,7 @@ namespace Lib9c.Tests
         [Fact]
         public void StageOverQuotaInverseOrder()
         {
-            StagePolicy stagePolicy = new StagePolicy(default, 2);
+            StagePolicy stagePolicy = new StagePolicy(System.TimeSpan.FromDays(1), 2);
             BlockChain<NCAction> chain = MakeChainWithStagePolicy(stagePolicy);
 
             stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][3]);
@@ -110,7 +110,7 @@ namespace Lib9c.Tests
         [Fact]
         public void StageOverQuotaOutOfOrder()
         {
-            StagePolicy stagePolicy = new StagePolicy(default, 2);
+            StagePolicy stagePolicy = new StagePolicy(System.TimeSpan.FromDays(1), 2);
             BlockChain<NCAction> chain = MakeChainWithStagePolicy(stagePolicy);
 
             stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][2]);
@@ -129,7 +129,7 @@ namespace Lib9c.Tests
         [Fact]
         public void StageSameNonce()
         {
-            StagePolicy stagePolicy = new StagePolicy(default, 2);
+            StagePolicy stagePolicy = new StagePolicy(System.TimeSpan.FromDays(1), 2);
             BlockChain<NCAction> chain = MakeChainWithStagePolicy(stagePolicy);
             var txA = Transaction<NCAction>.Create(0, _accounts[0], default, new NCAction[0]);
             var txB = Transaction<NCAction>.Create(0, _accounts[0], default, new NCAction[0]);
@@ -145,7 +145,7 @@ namespace Lib9c.Tests
         [Fact]
         public async Task StateFromMultiThread()
         {
-            StagePolicy stagePolicy = new StagePolicy(default, 2);
+            StagePolicy stagePolicy = new StagePolicy(System.TimeSpan.FromDays(1), 2);
             BlockChain<NCAction> chain = MakeChainWithStagePolicy(stagePolicy);
 
             await Task.WhenAll(
@@ -173,7 +173,7 @@ namespace Lib9c.Tests
         [Fact]
         public void IterateAfterUnstage()
         {
-            StagePolicy stagePolicy = new StagePolicy(default, 2);
+            StagePolicy stagePolicy = new StagePolicy(System.TimeSpan.FromDays(1), 2);
             BlockChain<NCAction> chain = MakeChainWithStagePolicy(stagePolicy);
 
             stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][0]);
@@ -201,7 +201,7 @@ namespace Lib9c.Tests
         [Fact]
         public void CalculateNextTxNonceCorrectWhenTxOverQuota()
         {
-            StagePolicy stagePolicy = new StagePolicy(default, 2);
+            StagePolicy stagePolicy = new StagePolicy(System.TimeSpan.FromDays(1), 2);
             BlockChain<NCAction> chain = MakeChainWithStagePolicy(stagePolicy);
 
             long nextTxNonce = chain.GetNextTxNonce(_accounts[0].ToAddress());
