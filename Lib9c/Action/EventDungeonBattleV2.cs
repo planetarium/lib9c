@@ -24,11 +24,14 @@ namespace Nekoyume.Action
     /// Hard forked at https://github.com/planetarium/lib9c/pull/1321
     /// </summary>
     [Serializable]
-    [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex)]
     [ActionType(ActionTypeText)]
+    [ActionObsolete(ObsoleteBlockIndex)]
     public class EventDungeonBattleV2 : GameAction, IEventDungeonBattleV1
     {
-        private const string ActionTypeText = "event_dungeon_battle2";
+        public const string ActionTypeText = "event_dungeon_battle2";
+        public const long ObsoleteBlockIndex =
+            BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex;
+
         public const int PlayCount = 1;
 
         public Address AvatarAddress;
@@ -115,7 +118,7 @@ namespace Nekoyume.Action
                 return states;
             }
 
-            CheckObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex, context);
+            CheckObsolete(ObsoleteBlockIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
