@@ -11,6 +11,7 @@ using Libplanet.Assets;
 using LruCacheNet;
 using Nekoyume.Model.Arena;
 using Nekoyume.Helper;
+using Nekoyume.Model;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
@@ -1314,5 +1315,48 @@ namespace Nekoyume.Action
 
             return states.GetSheets(sheetTypeList.Distinct().ToArray());
         }
+
+        /// <summary>
+        /// Returns the versioned state of the given <paramref name="address"/>.
+        /// It returns non-versioned state if the state is not versioned.
+        /// It returns <see cref="IVersionedState.Data"/> part of the versioned state.
+        /// </summary>
+        /// <param name="moniker"><see cref="IVersionedState.Moniker"/></param>
+        /// <param name="version"><see cref="IVersionedState.Version"/></param>
+#pragma warning disable CS8632
+        public static IValue? GetVersionedState(
+            this IAccountStateView states,
+            Address address,
+            out string moniker,
+            out uint? version)
+        {
+            IValue? value = states.GetState(address);
+            if (value is null ||
+                !VersionedStateFormatter.TryDeconstruct(value, out var result))
+            {
+                moniker = null;
+                version = null;
+                return value;
+            }
+
+            moniker = result.moniker;
+            version = result.version;
+            return result.data;
+        }
+#pragma warning restore CS8632
+
+        /// <summary>
+        /// Returns the versioned state of the given <paramref name="address"/>.
+        /// It returns non-versioned state if the state is not versioned.
+        /// It returns <see cref="IVersionedState.Data"/> part of the versioned state.
+        /// </summary>
+#pragma warning disable CS8632
+        public static IValue? GetVersionedState(
+            this IAccountStateView states,
+            Address address)
+        {
+            return GetVersionedState(states, address, out _, out _);
+        }
+#pragma warning restore CS8632
     }
 }
