@@ -1,0 +1,24 @@
+﻿[
+  {
+    "Value": "",
+    "Kind": "Text",
+    "Fingerprint": {
+      "Kind": 4,
+      "EncodingLength": 3,
+      "Digest": ""
+    },
+    "EncodingLength": 3,
+    "Inspection": "\"\""
+  },
+  {
+    "Value": 0,
+    "Kind": "Integer",
+    "Fingerprint": {
+      "Kind": 2,
+      "EncodingLength": 3,
+      "Digest": "AA=="
+    },
+    "EncodingLength": 3,
+    "Inspection": "0"
+  }
+]
