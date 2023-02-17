@@ -37,6 +37,10 @@ namespace Nekoyume.Model.Event
 
         public int ClearedStageId { get; private set; }
 
+        public EventDungeonInfo() : this(0)
+        {
+        }
+
         public EventDungeonInfo(
             int resetTicketsInterval = 0,
             int remainingTickets = 0,
