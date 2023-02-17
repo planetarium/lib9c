@@ -38,16 +38,16 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException("");
             }
 
-            var productListAddress = ProductList.DeriveAddress(AvatarAddress);
-            var productList = new ProductList((List) states.GetState(productListAddress));
+            var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
+            var productsState = new ProductsState((List) states.GetState(productsStateAddress));
             foreach (var productId in ProductInfoList.Select(productInfo => productInfo.ProductId))
             {
-                states = Cancel(productList, productId, states, avatarState);
+                states = Cancel(productsState, productId, states, avatarState);
             }
 
             states = states
                 .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(productListAddress, productList.Serialize());
+                .SetState(productsStateAddress, productsState.Serialize());
 
             if (migrationRequired)
             {
@@ -62,15 +62,15 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public static IAccountStateDelta Cancel(ProductList productList, Guid productId, IAccountStateDelta states,
+        public static IAccountStateDelta Cancel(ProductsState productsState, Guid productId, IAccountStateDelta states,
             AvatarState avatarState)
         {
-            if (!productList.ProductIdList.Contains(productId))
+            if (!productsState.ProductIds.Contains(productId))
             {
                 throw new Exception();
             }
 
-            productList.ProductIdList.Remove(productId);
+            productsState.ProductIds.Remove(productId);
 
             var productAddress = Product.DeriveAddress(productId);
             var product = ProductFactory.Deserialize((List) states.GetState(productAddress));

@@ -69,7 +69,7 @@ namespace Lib9c.Tests.Action
             _initialState = _initialState.SetState(_avatarAddress, _avatarState.Serialize());
             var action = new RegisterProduct
             {
-                RegisterInfoList = new List<RegisterInfo>
+                RegisterInfos = new List<IRegisterInfo>
                 {
                     new RegisterInfo
                     {
@@ -101,15 +101,15 @@ namespace Lib9c.Tests.Action
             Assert.Empty(nextAvatarState.inventory.Items);
 
             var marketState = new MarketState(nextState.GetState(Addresses.Market));
-            Assert.Contains(_avatarAddress, marketState.AvatarAddressList);
+            Assert.Contains(_avatarAddress, marketState.AvatarAddresses);
 
-            var productList =
-                new ProductList((List)nextState.GetState(ProductList.DeriveAddress(_avatarAddress)));
+            var productsState =
+                new ProductsState((List)nextState.GetState(ProductsState.DeriveAddress(_avatarAddress)));
             var random = new TestRandom();
             for (int i = 0; i < 2; i++)
             {
                 var guid = random.GenerateRandomGuid();
-                Assert.Contains(guid, productList.ProductIdList);
+                Assert.Contains(guid, productsState.ProductIds);
                 var productAddress = Product.DeriveAddress(guid);
                 var product = new ItemProduct((List)nextState.GetState(productAddress));
                 Assert.Equal(product.ProductId, guid);

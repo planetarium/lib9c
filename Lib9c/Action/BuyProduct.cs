@@ -19,6 +19,7 @@ namespace Nekoyume.Action
     {
         public Address AvatarAddress;
         public IEnumerable<ProductInfo> ProductInfoList;
+
         public override IAccountStateDelta Execute(IActionContext context)
         {
             IAccountStateDelta states = context.PreviousStates;
@@ -44,18 +45,19 @@ namespace Nekoyume.Action
                 var sellerAgentState = states.GetAgentState(sellerAgentAddress);
                 if (!sellerAgentState.avatarAddresses.Values.Contains(sellerAvatarAddress))
                 {
-                    throw new InvalidAddressException();
+                    context.PutLog($"{productInfo.ProductId}: {Buy.ErrorCodeInvalidAddress}");
+                    continue;
                 }
                 var productId = productInfo.ProductId;
-                var productListAddress = ProductList.DeriveAddress(sellerAvatarAddress);
-                var productList = new ProductList((List)states.GetState(productListAddress));
-                if (!productList.ProductIdList.Contains(productId))
+                var productsStateAddress = ProductsState.DeriveAddress(sellerAvatarAddress);
+                var productsState = new ProductsState((List)states.GetState(productsStateAddress));
+                if (!productsState.ProductIds.Contains(productId))
                 {
                     // 이미 팔렸거나 잘못된 건
                     throw new Exception();
                 }
 
-                productList.ProductIdList.Remove(productId);
+                productsState.ProductIds.Remove(productId);
 
                 var productAddress = Product.DeriveAddress(productId);
                 var product = ProductFactory.Deserialize((List) states.GetState(productAddress));
@@ -94,7 +96,7 @@ namespace Nekoyume.Action
 
                 states = states
                     .SetState(productAddress, Null.Value)
-                    .SetState(productListAddress, productList.Serialize())
+                    .SetState(productsStateAddress, productsState.Serialize())
                     .TransferAsset(context.Signer, sellerAgentAddress, product.Price);
             }
 

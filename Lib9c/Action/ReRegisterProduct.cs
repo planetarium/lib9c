@@ -40,19 +40,19 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException("");
             }
 
-            var productListAddress = ProductList.DeriveAddress(AvatarAddress);
-            ProductList productList;
-            if (states.TryGetState(productListAddress, out List rawProductList))
+            var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
+            ProductsState productsState;
+            if (states.TryGetState(productsStateAddress, out List rawProductList))
             {
-                productList = new ProductList(rawProductList);
+                productsState = new ProductsState(rawProductList);
             }
             else
             {
                 var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
                     ? new MarketState(rawMarketList)
                     : new MarketState();
-                productList = new ProductList();
-                marketState.AvatarAddressList.Add(AvatarAddress);
+                productsState = new ProductsState();
+                marketState.AvatarAddresses.Add(AvatarAddress);
                 states = states.SetState(Addresses.Market, marketState.Serialize());
             }
             foreach (var (productInfo, info) in ReRegisterInfoList.OrderBy(tuple => tuple.Item2.Type).ThenBy(tuple => tuple.Item2.Price))
@@ -103,16 +103,16 @@ namespace Nekoyume.Action
                 }
                 else
                 {
-                    states = CancelProductRegistration.Cancel(productList, productInfo.ProductId,
+                    states = CancelProductRegistration.Cancel(productsState, productInfo.ProductId,
                         states, avatarState);
                 }
 
-                states = RegisterProduct.Register(context, info, avatarState, productList, states);
+                states = RegisterProduct.Register(context, info, avatarState, productsState, states);
             }
 
             states = states
                 .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(productListAddress, productList.Serialize());
+                .SetState(productsStateAddress, productsState.Serialize());
 
             if (migrationRequired)
             {

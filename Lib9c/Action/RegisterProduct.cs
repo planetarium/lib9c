@@ -16,7 +16,7 @@ namespace Nekoyume.Action
     [ActionType("register_product")]
     public class RegisterProduct : GameAction
     {
-        public IEnumerable<IRegisterInfo> RegisterInfoList;
+        public IEnumerable<IRegisterInfo> RegisterInfos;
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
@@ -26,42 +26,42 @@ namespace Nekoyume.Action
                 return states;
             }
 
-            if (RegisterInfoList.Select(r => r.AvatarAddress).Distinct().Count() != 1)
+            if (RegisterInfos.Select(r => r.AvatarAddress).Distinct().Count() != 1)
             {
                 // 판매자는 동일해야함
                 throw new Exception();
             }
 
-            var avatarAddress = RegisterInfoList.First().AvatarAddress;
+            var avatarAddress = RegisterInfos.First().AvatarAddress;
             if (!states.TryGetAvatarStateV2(context.Signer, avatarAddress, out var avatarState,
                     out var migrationRequired))
             {
                 throw new FailedLoadStateException("");
             }
 
-            var productListAddress = ProductList.DeriveAddress(avatarAddress);
-            ProductList productList;
-            if (states.TryGetState(productListAddress, out List rawProductList))
+            var productsStateAddress = ProductsState.DeriveAddress(avatarAddress);
+            ProductsState productsState;
+            if (states.TryGetState(productsStateAddress, out List rawProducts))
             {
-                productList = new ProductList(rawProductList);
+                productsState = new ProductsState(rawProducts);
             }
             else
             {
-                productList = new ProductList();
+                productsState = new ProductsState();
                 var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
                     ? new MarketState(rawMarketList)
                     : new MarketState();
-                marketState.AvatarAddressList.Add(avatarAddress);
+                marketState.AvatarAddresses.Add(avatarAddress);
                 states = states.SetState(Addresses.Market, marketState.Serialize());
             }
-            foreach (var info in RegisterInfoList.OrderBy(r => r.Type).ThenBy(r => r.Price))
+            foreach (var info in RegisterInfos.OrderBy(r => r.Type).ThenBy(r => r.Price))
             {
-                states = Register(context, info, avatarState, productList, states);
+                states = Register(context, info, avatarState, productsState, states);
             }
 
             states = states
                 .SetState(avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(productListAddress, productList.Serialize());
+                .SetState(productsStateAddress, productsState.Serialize());
             if (migrationRequired)
             {
                 states = states
@@ -74,7 +74,7 @@ namespace Nekoyume.Action
         }
 
         public static IAccountStateDelta Register(IActionContext context, IRegisterInfo info, AvatarState avatarState,
-            ProductList productList, IAccountStateDelta states)
+            ProductsState productsState, IAccountStateDelta states)
         {
             switch (info)
             {
@@ -156,7 +156,7 @@ namespace Nekoyume.Action
                                 SellerAgentAddress = context.Signer,
                                 SellerAvatarAddress = registerInfo.AvatarAddress,
                             };
-                            productList.ProductIdList.Add(productId);
+                            productsState.ProductIds.Add(productId);
                             states = states.SetState(Product.DeriveAddress(productId),
                                 product.Serialize());
                             break;
@@ -187,7 +187,7 @@ namespace Nekoyume.Action
                         states = states
                             .TransferAsset(avatarState.address, productAddress, asset)
                             .SetState(productAddress, product.Serialize());
-                        productList.ProductIdList.Add(productId);
+                        productsState.ProductIds.Add(productId);
                         break;
                     }
 
@@ -201,13 +201,13 @@ namespace Nekoyume.Action
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
             {
-                ["r"] = new List(RegisterInfoList.Select(r => r.Serialize())),
+                ["r"] = new List(RegisterInfos.Select(r => r.Serialize())),
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             var serialized = (List) plainValue["r"];
-            RegisterInfoList = serialized.Cast<List>()
+            RegisterInfos = serialized.Cast<List>()
                 .Select(registerList =>
                     registerList[2].ToEnum<ProductType>() == ProductType.FungibleAssetValue
                         ? (IRegisterInfo) new AssetInfo(registerList)

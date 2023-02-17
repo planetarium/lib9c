@@ -129,7 +129,7 @@ namespace Lib9c.Tests.Action.Scenario
             var productInfoList = new List<ProductInfo>();
             var action = new RegisterProduct
             {
-                RegisterInfoList = new List<IRegisterInfo>
+                RegisterInfos = new List<IRegisterInfo>
                 {
                     new RegisterInfo
                     {
@@ -157,10 +157,10 @@ namespace Lib9c.Tests.Action.Scenario
             });
             var nextAvatarState = nextState.GetAvatarStateV2(_sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
-            var productList =
-                new ProductList((List)nextState.GetState(ProductList.DeriveAddress(_sellerAvatarAddress)));
-            Assert.Equal(2, productList.ProductIdList.Count);
-            foreach (var productId in productList.ProductIdList)
+            var productsState =
+                new ProductsState((List)nextState.GetState(ProductsState.DeriveAddress(_sellerAvatarAddress)));
+            Assert.Equal(2, productsState.ProductIds.Count);
+            foreach (var productId in productsState.ProductIds)
             {
                 var product =
                     ProductFactory.Deserialize((List)nextState.GetState(Product.DeriveAddress(productId)));
@@ -191,7 +191,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             var action2 = new RegisterProduct
             {
-                RegisterInfoList = new List<IRegisterInfo>
+                RegisterInfos = new List<IRegisterInfo>
                 {
                     new RegisterInfo
                     {
@@ -220,9 +220,9 @@ namespace Lib9c.Tests.Action.Scenario
             var nextAvatarState2 = nextState2.GetAvatarStateV2(_sellerAvatarAddress2);
             Assert.Empty(nextAvatarState2.inventory.Items);
             var productList2 =
-                new ProductList((List)nextState2.GetState(ProductList.DeriveAddress(_sellerAvatarAddress2)));
-            Assert.Equal(2, productList2.ProductIdList.Count);
-            foreach (var productId in productList2.ProductIdList)
+                new ProductsState((List)nextState2.GetState(ProductsState.DeriveAddress(_sellerAvatarAddress2)));
+            Assert.Equal(2, productList2.ProductIds.Count);
+            foreach (var productId in productList2.ProductIds)
             {
                 var product =
                     ProductFactory.Deserialize((List)nextState2.GetState(Product.DeriveAddress(productId)));
@@ -269,8 +269,8 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var productInfo in action3.ProductInfoList)
             {
                 Assert.Equal(2 * _currency, latestState.GetBalance(productInfo.AgentAddress, _currency));
-                var sellProductList = new ProductList((List)latestState.GetState(ProductList.DeriveAddress(productInfo.AvatarAddress)));
-                Assert.Empty(sellProductList.ProductIdList);
+                var sellProductList = new ProductsState((List)latestState.GetState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));
+                Assert.Empty(sellProductList.ProductIds);
                 Assert.Equal(Null.Value, latestState.GetState(Product.DeriveAddress(productInfo.ProductId)));
                 var product = ProductFactory.Deserialize((List)nextState2.GetState(Product.DeriveAddress(productInfo.ProductId)));
                 switch (product)
@@ -303,7 +303,7 @@ namespace Lib9c.Tests.Action.Scenario
                     .MintAsset(_sellerAvatarAddress, 1 * RuneHelper.StakeRune);
             var action = new RegisterProduct
             {
-                RegisterInfoList = new List<IRegisterInfo>
+                RegisterInfos = new List<IRegisterInfo>
                 {
                     new RegisterInfo
                     {
@@ -342,10 +342,10 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Empty(nextAvatarState.inventory.Items);
 
             var marketState = new MarketState(nextState.GetState(Addresses.Market));
-            Assert.Contains(_sellerAvatarAddress, marketState.AvatarAddressList);
+            Assert.Contains(_sellerAvatarAddress, marketState.AvatarAddresses);
 
-            var productListAddress = ProductList.DeriveAddress(_sellerAvatarAddress);
-            var productList = new ProductList((List)nextState.GetState(productListAddress));
+            var productsStateAddress = ProductsState.DeriveAddress(_sellerAvatarAddress);
+            var productsState = new ProductsState((List)nextState.GetState(productsStateAddress));
             var random = new TestRandom();
             Guid fungibleProductId = default;
             Guid nonFungibleProductId = default;
@@ -366,7 +366,7 @@ namespace Lib9c.Tests.Action.Scenario
                         break;
                 }
 
-                Assert.Contains(guid, productList.ProductIdList);
+                Assert.Contains(guid, productsState.ProductIds);
                 var productAddress = Product.DeriveAddress(guid);
                 var product = ProductFactory.Deserialize((List)nextState.GetState(productAddress));
                 Assert.Equal(product.ProductId, guid);
@@ -423,8 +423,8 @@ namespace Lib9c.Tests.Action.Scenario
             });
 
             var latestAvatarState = latestState.GetAvatarStateV2(_sellerAvatarAddress);
-            var sellProductList = new ProductList((List)latestState.GetState(productListAddress));
-            Assert.Empty(sellProductList.ProductIdList);
+            var sellProductList = new ProductsState((List)latestState.GetState(productsStateAddress));
+            Assert.Empty(sellProductList.ProductIds);
 
             foreach (var productAddress in action2.ProductInfoList.Select(productInfo => Product.DeriveAddress(productInfo.ProductId)))
             {
@@ -459,7 +459,7 @@ namespace Lib9c.Tests.Action.Scenario
                 .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize());
             var action = new RegisterProduct
             {
-                RegisterInfoList = new List<IRegisterInfo>
+                RegisterInfos = new List<IRegisterInfo>
                 {
                     new RegisterInfo
                     {
@@ -498,10 +498,10 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Empty(nextAvatarState.inventory.Items);
 
             var marketState = new MarketState(nextState.GetState(Addresses.Market));
-            Assert.Contains(_sellerAvatarAddress, marketState.AvatarAddressList);
+            Assert.Contains(_sellerAvatarAddress, marketState.AvatarAddresses);
 
-            var productListAddress = ProductList.DeriveAddress(_sellerAvatarAddress);
-            var productList = new ProductList((List)nextState.GetState(productListAddress));
+            var productsStateAddress = ProductsState.DeriveAddress(_sellerAvatarAddress);
+            var productsState = new ProductsState((List)nextState.GetState(productsStateAddress));
             var random = new TestRandom();
             Guid fungibleProductId = default;
             Guid nonFungibleProductId = default;
@@ -522,7 +522,7 @@ namespace Lib9c.Tests.Action.Scenario
                         break;
                 }
 
-                Assert.Contains(guid, productList.ProductIdList);
+                Assert.Contains(guid, productsState.ProductIds);
                 var productAddress = Product.DeriveAddress(guid);
                 var product = ProductFactory.Deserialize((List)nextState.GetState(productAddress));
                 switch (product)
@@ -534,7 +534,7 @@ namespace Lib9c.Tests.Action.Scenario
                     case ItemProduct itemProduct:
                     {
                         var registerInfo =
-                            action.RegisterInfoList.OfType<RegisterInfo>().First(r =>
+                            action.RegisterInfos.OfType<RegisterInfo>().First(r =>
                                 r.TradableId == itemProduct.TradableItem.TradableId);
                         Assert.Equal(product.ProductId, guid);
                         Assert.Equal(registerInfo.Price, product.Price);
@@ -617,14 +617,14 @@ namespace Lib9c.Tests.Action.Scenario
             var inventoryItem = Assert.Single(latestAvatarState.inventory.Items);
             Assert.Equal(1, inventoryItem.count);
             Assert.IsType<TradableMaterial>(inventoryItem.item);
-            var sellProductList = new ProductList((List)latestState.GetState(productListAddress));
-            Assert.Equal(3, sellProductList.ProductIdList.Count);
-            foreach (var prevProductId in productList.ProductIdList)
+            var sellProductList = new ProductsState((List)latestState.GetState(productsStateAddress));
+            Assert.Equal(3, sellProductList.ProductIds.Count);
+            foreach (var prevProductId in productsState.ProductIds)
             {
-                Assert.DoesNotContain(prevProductId, sellProductList.ProductIdList);
+                Assert.DoesNotContain(prevProductId, sellProductList.ProductIds);
             }
 
-            foreach (var newProductId in sellProductList.ProductIdList)
+            foreach (var newProductId in sellProductList.ProductIds)
             {
                 var productAddress = Product.DeriveAddress(newProductId);
                 var product = ProductFactory.Deserialize((List)latestState.GetState(productAddress));
@@ -736,13 +736,13 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Empty(new OrderDigestListState((Dictionary)nextState.GetState(digestListAddress)).OrderDigestList);
             Assert.Contains(
                 _sellerAvatarAddress,
-                new MarketState((List)nextState.GetState(Addresses.Market)).AvatarAddressList
+                new MarketState((List)nextState.GetState(Addresses.Market)).AvatarAddresses
             );
-            var productList =
-                new ProductList(
-                    (List)nextState.GetState(ProductList.DeriveAddress(_sellerAvatarAddress)));
-            Assert.Equal(2, productList.ProductIdList.Count);
-            foreach (var productId in productList.ProductIdList)
+            var productsState =
+                new ProductsState(
+                    (List)nextState.GetState(ProductsState.DeriveAddress(_sellerAvatarAddress)));
+            Assert.Equal(2, productsState.ProductIds.Count);
+            foreach (var productId in productsState.ProductIds)
             {
                 var productAddress = Product.DeriveAddress(productId);
                 var product = ProductFactory.Deserialize((List)nextState.GetState(productAddress));

@@ -9,25 +9,25 @@ using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Market
 {
-    public class ProductList
+    public class ProductsState
     {
         public static Address DeriveAddress(Address avatarAddress) =>
-            avatarAddress.Derive(nameof(ProductList));
+            avatarAddress.Derive(nameof(ProductsState));
 
-        public List<Guid> ProductIdList = new List<Guid>();
+        public List<Guid> ProductIds = new List<Guid>();
 
-        public ProductList()
+        public ProductsState()
         {
         }
 
-        public ProductList(List serialized)
+        public ProductsState(List serialized)
         {
-            ProductIdList = serialized.ToList(StateExtensions.ToGuid);
+            ProductIds = serialized.ToList(StateExtensions.ToGuid);
         }
 
         public IValue Serialize()
         {
-            return ProductIdList
+            return ProductIds
                 .Aggregate(
                     List.Empty,
                     (current, productId) => current.Add(productId.Serialize())

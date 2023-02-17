@@ -321,7 +321,7 @@ namespace Lib9c.Tests.Action
                 },
                 RegisterProduct _ => new RegisterProduct
                 {
-                    RegisterInfoList = new List<IRegisterInfo>
+                    RegisterInfos = new List<IRegisterInfo>
                     {
                         new RegisterInfo
                         {

@@ -7,11 +7,11 @@ namespace Nekoyume.Model.State
 {
     public class MarketState
     {
-        public List<Address> AvatarAddressList = new List<Address>();
+        public List<Address> AvatarAddresses = new List<Address>();
 
         public MarketState(IValue rawList)
         {
-            AvatarAddressList = rawList.ToList(StateExtensions.ToAddress);
+            AvatarAddresses = rawList.ToList(StateExtensions.ToAddress);
         }
 
         public MarketState()
@@ -20,7 +20,7 @@ namespace Nekoyume.Model.State
 
         public IValue Serialize()
         {
-            return AvatarAddressList
+            return AvatarAddresses
                 .Aggregate(
                     List.Empty,
                     (current, avatarAddress) => current.Add(avatarAddress.Serialize())
