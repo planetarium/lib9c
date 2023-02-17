@@ -6,6 +6,22 @@ using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Event
 {
+    [VersionedState(Moniker, Version)]
+    public interface IEventDungeonInfo
+    {
+        public const string Moniker = "event_dungeon_info";
+        public const uint Version = 1;
+
+        Integer ResetTicketsInterval { get; }
+
+        Integer RemainingTickets { get; }
+
+        Integer NumberOfTicketPurchases { get; }
+
+        Integer ClearedStageId { get; }
+    }
+
+    [VersionedStateImpl(typeof(IEventDungeonInfo))]
     public class EventDungeonInfo : IState
     {
         public static Address DeriveAddress(Address address, int dungeonId)

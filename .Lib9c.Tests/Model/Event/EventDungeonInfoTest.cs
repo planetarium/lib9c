@@ -1,4 +1,4 @@
-namespace Lib9c.Tests.Model
+namespace Lib9c.Tests.Model.Event
 {
     using System;
     using Nekoyume.Model.Event;
