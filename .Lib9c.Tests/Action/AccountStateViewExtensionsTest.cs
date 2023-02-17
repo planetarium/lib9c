@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using Bencodex.Types;
     using Lib9c.Tests.Extensions;
+    using Lib9c.Tests.Fixture.States;
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Assets;
@@ -30,7 +31,7 @@ namespace Lib9c.Tests.Action
         public AccountStateViewExtensionsTest()
         {
             _agentAddress = default;
-            _avatarAddress = _agentAddress.Derive(string.Format(CultureInfo.InvariantCulture, CreateAvatar2.DeriveFormat, 0));
+            _avatarAddress = Addresses.GetAvatarAddress(_agentAddress, 0);
             _agentState = new AgentState(_agentAddress);
             _agentState.avatarAddresses[0] = _avatarAddress;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
@@ -50,7 +51,10 @@ namespace Lib9c.Tests.Action
             var states = new State();
             states = (State)states.SetState(_avatarAddress, _avatarState.Serialize());
 
-            Assert.True(states.TryGetAvatarState(_agentAddress, _avatarAddress, out var avatarState2));
+            Assert.True(states.TryGetAvatarState(
+                _agentAddress,
+                _avatarAddress,
+                out var avatarState2));
             Assert.Equal(_avatarAddress, avatarState2.address);
             Assert.Equal(_agentAddress, avatarState2.agentAddress);
         }
@@ -76,10 +80,10 @@ namespace Lib9c.Tests.Action
         {
             var states = new State()
                 .SetState(
-                default,
-                Dictionary.Empty
-                    .Add("agentAddress", default(Address).Serialize())
-            );
+                    default,
+                    Dictionary.Empty
+                        .Add("agentAddress", default(Address).Serialize())
+                );
 
             Assert.False(states.TryGetAvatarState(default, default, out _));
         }
@@ -106,9 +110,15 @@ namespace Lib9c.Tests.Action
             var states = new State();
             states = (State)states
                 .SetState(_avatarAddress, _avatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
+                .SetState(
+                    _avatarAddress.Derive(LegacyInventoryKey),
+                    _avatarState.inventory.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyWorldInformationKey),
+                    _avatarState.worldInformation.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyQuestListKey),
+                    _avatarState.questList.Serialize());
 
             var v2 = states.GetAvatarStateV2(_avatarAddress);
             Assert.NotNull(v2.inventory);
@@ -125,11 +135,18 @@ namespace Lib9c.Tests.Action
             var states = new State();
             states = (State)states
                 .SetState(_avatarAddress, _avatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
+                .SetState(
+                    _avatarAddress.Derive(LegacyInventoryKey),
+                    _avatarState.inventory.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyWorldInformationKey),
+                    _avatarState.worldInformation.Serialize())
+                .SetState(
+                    _avatarAddress.Derive(LegacyQuestListKey),
+                    _avatarState.questList.Serialize());
             states = (State)states.SetState(_avatarAddress.Derive(key), null);
-            var exc = Assert.Throws<FailedLoadStateException>(() => states.GetAvatarStateV2(_avatarAddress));
+            var exc = Assert.Throws<FailedLoadStateException>(() =>
+                states.GetAvatarStateV2(_avatarAddress));
             Assert.Contains(key, exc.Message);
         }
 
@@ -148,12 +165,22 @@ namespace Lib9c.Tests.Action
             {
                 states = (State)states
                     .SetState(_avatarAddress, _avatarState.SerializeV2())
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
+                    .SetState(
+                        _avatarAddress.Derive(LegacyInventoryKey),
+                        _avatarState.inventory.Serialize())
+                    .SetState(
+                        _avatarAddress.Derive(LegacyWorldInformationKey),
+                        _avatarState.worldInformation.Serialize())
+                    .SetState(
+                        _avatarAddress.Derive(LegacyQuestListKey),
+                        _avatarState.questList.Serialize());
             }
 
-            Assert.True(states.TryGetAvatarStateV2(_agentAddress, _avatarAddress, out _, out bool migrationRequired));
+            Assert.True(states.TryGetAvatarStateV2(
+                _agentAddress,
+                _avatarAddress,
+                out _,
+                out bool migrationRequired));
             Assert.Equal(backward, migrationRequired);
         }
 
@@ -173,12 +200,23 @@ namespace Lib9c.Tests.Action
             {
                 states = (State)states
                     .SetState(_avatarAddress, _avatarState.SerializeV2())
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
+                    .SetState(
+                        _avatarAddress.Derive(LegacyInventoryKey),
+                        _avatarState.inventory.Serialize())
+                    .SetState(
+                        _avatarAddress.Derive(LegacyWorldInformationKey),
+                        _avatarState.worldInformation.Serialize())
+                    .SetState(
+                        _avatarAddress.Derive(LegacyQuestListKey),
+                        _avatarState.questList.Serialize());
             }
 
-            Assert.True(states.TryGetAgentAvatarStatesV2(_agentAddress, _avatarAddress, out _, out _, out bool avatarMigrationRequired));
+            Assert.True(states.TryGetAgentAvatarStatesV2(
+                _agentAddress,
+                _avatarAddress,
+                out _,
+                out _,
+                out bool avatarMigrationRequired));
             Assert.Equal(backward, avatarMigrationRequired);
         }
 
@@ -264,19 +302,25 @@ namespace Lib9c.Tests.Action
         [InlineData(151_200L, true)]
         public void GetCrystalCostStates(long blockIndex, bool previousWeeklyExist)
         {
-            long interval = _tableSheets.CrystalFluctuationSheet.Values.First(r => r.Type == CrystalFluctuationSheet.ServiceType.Combination).BlockInterval;
+            long interval = _tableSheets.CrystalFluctuationSheet.Values
+                .First(r => r.Type == CrystalFluctuationSheet.ServiceType.Combination)
+                .BlockInterval;
             var weeklyIndex = (int)(blockIndex / interval);
             Address dailyCostAddress =
-                Addresses.GetDailyCrystalCostAddress((int)(blockIndex / CrystalCostState.DailyIntervalIndex));
+                Addresses.GetDailyCrystalCostAddress(
+                    (int)(blockIndex / CrystalCostState.DailyIntervalIndex));
             Address weeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex);
             Address previousCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 1);
-            Address beforePreviousCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 2);
+            Address beforePreviousCostAddress =
+                Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 2);
             var crystalCostState = new CrystalCostState(default, 100 * CrystalCalculator.CRYSTAL);
             IAccountStateDelta state = new State()
                 .SetState(dailyCostAddress, crystalCostState.Serialize())
                 .SetState(weeklyCostAddress, crystalCostState.Serialize())
                 .SetState(previousCostAddress, crystalCostState.Serialize())
-                .SetState(Addresses.GetSheetAddress<CrystalFluctuationSheet>(), _tableSheets.CrystalFluctuationSheet.Serialize())
+                .SetState(
+                    Addresses.GetSheetAddress<CrystalFluctuationSheet>(),
+                    _tableSheets.CrystalFluctuationSheet.Serialize())
                 .SetState(beforePreviousCostAddress, crystalCostState.Serialize());
             var (daily, weekly, previousWeekly, beforePreviousWeekly) =
                 state.GetCrystalCostStates(blockIndex, interval);
@@ -297,6 +341,48 @@ namespace Lib9c.Tests.Action
                 Assert.Null(previousWeekly);
                 Assert.Null(beforePreviousWeekly);
             }
+        }
+
+        [Fact]
+        public void GetVersionedState()
+        {
+            IAccountStateDelta states = new State();
+            var addr = new PrivateKey().ToAddress();
+
+            var v1 = new TestStateV1(0);
+            var v1Ser = v1.Serialize();
+            states = states.SetState(addr, v1Ser);
+            var v1Val = states.GetVersionedState(addr);
+            Assert.Equal(v1Ser, v1Val);
+
+            states = states.SetState(addr, "test", 1, v1Ser);
+            v1Val = states.GetVersionedState(addr);
+            Assert.Equal(v1Ser, v1Val);
+
+            states = states.SetState(addr, v1Ser);
+            v1Val = states.GetVersionedState(addr);
+            Assert.Equal(v1Ser, v1Val);
+        }
+
+        [Fact]
+        public void GetVersionedState_With_OutParams()
+        {
+            IAccountStateDelta states = new State();
+            var addr = new PrivateKey().ToAddress();
+
+            var v1 = new TestStateV1(0);
+            var v1Ser = v1.Serialize();
+            states = states.SetState(addr, ITestStateV1.Moniker, ITestStateV1.Version, v1Ser);
+            var v1Val = states.GetVersionedState(addr, out var moniker, out var version);
+            Assert.Equal(v1Ser, v1Val);
+            Assert.Equal(ITestStateV1.Moniker, moniker);
+            Assert.Equal(ITestStateV1.Version, version);
+
+            states = states.SetState(addr, v1Ser);
+            v1Val = states.GetVersionedState(addr, out moniker, out version);
+            Assert.Equal(v1Ser, v1Val);
+            Assert.Null(moniker);
+            Assert.Null(version);
         }
     }
 }

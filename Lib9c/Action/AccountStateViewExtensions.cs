@@ -11,6 +11,7 @@ using Libplanet.Assets;
 using LruCacheNet;
 using Nekoyume.Model.Arena;
 using Nekoyume.Helper;
+using Nekoyume.Model;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
@@ -1313,6 +1314,50 @@ namespace Nekoyume.Action
             }
 
             return states.GetSheets(sheetTypeList.Distinct().ToArray());
+        }
+
+        /// <summary>
+        /// Returns the versioned state of the given <paramref name="address"/>.
+        /// It returns non-versioned state if the state is not versioned.
+        /// It returns <see cref="IVersionedState.Data"/> part of the versioned state.
+        /// </summary>
+#pragma warning disable CS8632
+        public static IValue? GetVersionedState(
+#pragma warning restore CS8632
+            this IAccountStateView states,
+            Address address)
+        {
+            return GetVersionedState(states, address, out _, out _);
+        }
+
+        /// <summary>
+        /// Returns the versioned state of the given <paramref name="address"/>.
+        /// It returns non-versioned state if the state is not versioned.
+        /// It returns <see cref="IVersionedState.Data"/> part of the versioned state.
+        /// </summary>
+        /// <param name="moniker"><see cref="IVersionedState.Moniker"/></param>
+        /// <param name="version"><see cref="IVersionedState.Version"/></param>
+#pragma warning disable CS8632
+        public static IValue? GetVersionedState(
+#pragma warning restore CS8632
+            this IAccountStateView states,
+            Address address,
+            out string moniker,
+            out uint? version)
+        {
+            var value = states.GetState(address);
+            if (value is null ||
+                !VersionedStateFormatter.TryDeconstruct(value, out var result) ||
+                !result.HasValue)
+            {
+                moniker = null;
+                version = null;
+                return value;
+            }
+
+            moniker = result.Value.moniker;
+            version = result.Value.version;
+            return result.Value.data;
         }
     }
 }
