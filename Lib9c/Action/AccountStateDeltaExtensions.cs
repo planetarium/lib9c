@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
 using LruCacheNet;
 using Nekoyume.Helper;
+using Nekoyume.Model;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
@@ -87,6 +89,75 @@ namespace Nekoyume.Action
             }
 
             return states.SetState(rewardInfoAddress, rewardRecord.Serialize());
+        }
+
+        public static IAccountStateDelta SetState(
+            this IAccountStateDelta states,
+            Address address,
+            Text moniker,
+            Integer version,
+            IValue data)
+        {
+            return states.SetState(
+                address,
+                VersionedStateFormatter.Serialize(
+                    moniker,
+                    version,
+                    data));
+        }
+
+        public static IAccountStateDelta SetState(
+            this IAccountStateDelta states,
+            Address address,
+            string moniker,
+            uint version,
+            IValue data)
+        {
+            return states.SetState(
+                address,
+                VersionedStateFormatter.Serialize(
+                    moniker,
+                    version,
+                    data));
+        }
+
+        public static IAccountStateDelta SetState(
+            this IAccountStateDelta states,
+            Address address,
+            string moniker,
+            uint version,
+            IState state)
+        {
+            return states.SetState(
+                address,
+                VersionedStateFormatter.Serialize(
+                    moniker,
+                    version,
+                    state));
+        }
+
+        public static IAccountStateDelta SetState<T>(
+            this IAccountStateDelta states,
+            Address address,
+            T state)
+            where T : IState
+        {
+            if (!VersionedStateFormatter.TryDeconstruct(
+                    state,
+                    out var result,
+                    out var serialized) ||
+                !result.HasValue)
+            {
+                return serialized != null
+                    ? states.SetState(address, serialized)
+                    : states.SetState(address, state.Serialize());
+            }
+
+            return states.SetState(
+                address,
+                result.Value.moniker,
+                result.Value.version,
+                result.Value.data);
         }
     }
 }
