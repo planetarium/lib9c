@@ -8,6 +8,7 @@ using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Battle;
+using Nekoyume.BlockChain.Policy;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Event;
@@ -25,9 +26,12 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType(ActionTypeText)]
+    [ActionObsolete(ObsoleteBlockIndex)]
     public class EventDungeonBattleV1 : GameAction, IEventDungeonBattleV1
     {
-        private const string ActionTypeText = "event_dungeon_battle";
+        public const string ActionTypeText = "event_dungeon_battle";
+        public const long ObsoleteBlockIndex = BlockPolicySource.V100370ObsoleteIndex;
+
         public const int PlayCount = 1;
 
         public Address AvatarAddress;
@@ -113,6 +117,8 @@ namespace Nekoyume.Action
             {
                 return states;
             }
+
+            CheckObsolete(ObsoleteBlockIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
