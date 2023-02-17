@@ -101,6 +101,9 @@ namespace Nekoyume.BlockChain.Policy
 
         public const long V100360ObsoleteIndex = 6_020_000;
 
+        // FIXME: This value is temporary.
+        public const long V100370ObsoleteIndex = 6_300_000;
+
         public const long PermissionedMiningStartIndex = 2_225_500;
 
         public const long V100301ExecutedBlockIndex = 5_048_399L;

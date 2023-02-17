@@ -26,9 +26,13 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType(ActionTypeText)]
-    public class EventDungeonBattle : GameAction, IEventDungeonBattleV2
+    [ActionObsolete(ObsoleteBlockIndex)]
+    public class EventDungeonBattleV4 : GameAction, IEventDungeonBattleV2
     {
-        private const string ActionTypeText = "event_dungeon_battle5";
+        public const string ActionTypeText = "event_dungeon_battle4";
+        public const long ObsoleteBlockIndex =
+            BlockChain.Policy.BlockPolicySource.V100370ObsoleteIndex;
+
         public const int PlayCount = 1;
 
         public Address AvatarAddress;
@@ -120,6 +124,8 @@ namespace Nekoyume.Action
             {
                 return states;
             }
+
+            CheckObsolete(ObsoleteBlockIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -223,13 +229,13 @@ namespace Nekoyume.Action
 
             // Validate avatar's event dungeon info.
             sw.Restart();
-            var ediAddr = EventDungeonInfo.DeriveAddress(
+            var eventDungeonInfoAddr = EventDungeonInfo.DeriveAddress(
                 AvatarAddress,
                 EventDungeonId);
-            var ediVal = states.GetVersionedState(ediAddr);
-            var edi = ediVal is null
-                ? new EventDungeonInfo(remainingTickets: scheduleRow.DungeonTicketsMax)
-                : new EventDungeonInfo(ediVal);
+            var eventDungeonInfo = states.GetState(eventDungeonInfoAddr)
+                is Bencodex.Types.List serializedEventDungeonInfoList
+                ? new EventDungeonInfo(serializedEventDungeonInfoList)
+                : new EventDungeonInfo(remainingTickets: scheduleRow.DungeonTicketsMax);
 
             // Update tickets.
             {
@@ -238,9 +244,9 @@ namespace Nekoyume.Action
                 {
                     var interval =
                         (int)(blockRange / scheduleRow.DungeonTicketsResetIntervalBlockRange);
-                    if (interval > edi.ResetTicketsInterval)
+                    if (interval > eventDungeonInfo.ResetTicketsInterval)
                     {
-                        edi.ResetTickets(
+                        eventDungeonInfo.ResetTickets(
                             interval,
                             scheduleRow.DungeonTicketsMax);
                     }
@@ -248,7 +254,7 @@ namespace Nekoyume.Action
             }
             // ~Update tickets.
 
-            if (!edi.TryUseTickets(PlayCount))
+            if (!eventDungeonInfo.TryUseTickets(PlayCount))
             {
                 if (!BuyTicketIfNeeded)
                 {
@@ -256,12 +262,12 @@ namespace Nekoyume.Action
                         ActionTypeText,
                         addressesHex,
                         PlayCount,
-                        edi.RemainingTickets);
+                        eventDungeonInfo.RemainingTickets);
                 }
 
                 var currency = states.GetGoldCurrency();
                 var cost = scheduleRow.GetDungeonTicketCost(
-                    edi.NumberOfTicketPurchases,
+                    eventDungeonInfo.NumberOfTicketPurchases,
                     currency);
                 if (cost.Sign > 0)
                 {
@@ -273,17 +279,17 @@ namespace Nekoyume.Action
 
                 // NOTE: The number of ticket purchases should be increased
                 //       even if [`cost`] is 0.
-                edi.IncreaseNumberOfTicketPurchases();
+                eventDungeonInfo.IncreaseNumberOfTicketPurchases();
             }
 
             if (EventDungeonStageId != dungeonRow.StageBegin &&
-                !edi.IsCleared(EventDungeonStageId - 1))
+                !eventDungeonInfo.IsCleared(EventDungeonStageId - 1))
             {
                 throw new StageNotClearedException(
                     ActionTypeText,
                     addressesHex,
                     EventDungeonStageId - 1,
-                    edi.ClearedStageId);
+                    eventDungeonInfo.ClearedStageId);
             }
 
             sw.Stop();
@@ -337,7 +343,7 @@ namespace Nekoyume.Action
                 EventDungeonStageId,
                 stageRow,
                 sheets.GetSheet<EventDungeonStageWaveSheet>()[EventDungeonStageId],
-                edi.IsCleared(EventDungeonStageId),
+                eventDungeonInfo.IsCleared(EventDungeonStageId),
                 exp,
                 simulatorSheets,
                 sheets.GetSheet<EnemySkillSheet>(),
@@ -360,7 +366,7 @@ namespace Nekoyume.Action
             if (simulator.Log.IsClear)
             {
                 sw.Restart();
-                edi.ClearStage(EventDungeonStageId);
+                eventDungeonInfo.ClearStage(EventDungeonStageId);
                 sw.Stop();
                 Log.Verbose(
                     "[{ActionTypeString}][{AddressesHex}] Update event dungeon info: {Elapsed}",
@@ -386,20 +392,27 @@ namespace Nekoyume.Action
             if (migrationRequired)
             {
                 states = states
+                    .SetState(AvatarAddress, avatarState.SerializeV2())
+                    .SetState(
+                        AvatarAddress.Derive(LegacyInventoryKey),
+                        avatarState.inventory.Serialize())
                     .SetState(
                         AvatarAddress.Derive(LegacyWorldInformationKey),
                         avatarState.worldInformation.Serialize())
                     .SetState(
                         AvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize());
+                        avatarState.questList.Serialize())
+                    .SetState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
             }
-
-            states = states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    AvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(ediAddr, IEventDungeonInfo.Moniker, IEventDungeonInfo.Version, edi);
+            else
+            {
+                states = states
+                    .SetState(AvatarAddress, avatarState.SerializeV2())
+                    .SetState(
+                        AvatarAddress.Derive(LegacyInventoryKey),
+                        avatarState.inventory.Serialize())
+                    .SetState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+            }
 
             sw.Stop();
             Log.Verbose(

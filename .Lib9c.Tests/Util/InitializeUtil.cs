@@ -18,7 +18,8 @@ namespace Lib9c.Tests.Util
             Address agentAddress,
             Address avatarAddress,
             IAccountStateDelta initialStatesWithAvatarStateV1,
-            IAccountStateDelta initialStatesWithAvatarStateV2) InitializeStates()
+            IAccountStateDelta initialStatesWithAvatarStateV2) InitializeStates(
+                int avatarLevel = 1)
         {
             IAccountStateDelta states = new State();
             var sheets = TableSheetsImporter.ImportSheets();
@@ -48,7 +49,10 @@ namespace Lib9c.Tests.Util
                 0,
                 tableSheets.GetAvatarSheets(),
                 new GameConfigState(),
-                avatarAddr.Derive("ranking_map"));
+                avatarAddr.Derive("ranking_map"))
+            {
+                level = avatarLevel,
+            };
             agentState.avatarAddresses.Add(0, avatarAddr);
 
             var initialStatesWithAvatarStateV1 = states
