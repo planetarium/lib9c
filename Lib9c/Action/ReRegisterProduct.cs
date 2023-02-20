@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c.Model.Order;
@@ -61,8 +60,73 @@ namespace Nekoyume.Action
                 if (productInfo.Legacy)
                 {
                     // if product is order. it move to products state from sharded shop state.
-                    states = CancelProductRegistration.Cancel_Order(productInfo, states,
-                        avatarState, context, addressesHex);
+                    var productType = productInfo.Type;
+                    var avatarAddress = avatarState.address;
+                    if (productType == ProductType.FungibleAssetValue)
+                    {
+                        // 잘못된 타입
+                        throw new InvalidProductTypeException(
+                            $"Order not support {productType}");
+                    }
+
+                    var digestListAddress =
+                        OrderDigestListState.DeriveAddress(avatarAddress);
+                    if (!states.TryGetState(digestListAddress, out Dictionary rawList))
+                    {
+                        throw new FailedLoadStateException(
+                            $"{addressesHex} failed to load {nameof(OrderDigest)}({digestListAddress}).");
+                    }
+
+                    var digestList = new OrderDigestListState(rawList);
+                    var orderAddress = Order.DeriveAddress(productInfo.ProductId);
+                    if (!states.TryGetState(orderAddress, out Dictionary rawOrder))
+                    {
+                        throw new FailedLoadStateException(
+                            $"{addressesHex} failed to load {nameof(Order)}({orderAddress}).");
+                    }
+
+                    var order = OrderFactory.Deserialize(rawOrder);
+                    var itemCount = 1;
+                    switch (order)
+                    {
+                        case FungibleOrder fungibleOrder:
+                            itemCount = fungibleOrder.ItemCount;
+                            if (productInfo.Type == ProductType.NonFungible)
+                            {
+                                throw new InvalidProductTypeException(
+                                    $"FungibleOrder not support {productType}");
+                            }
+
+                            break;
+                        case NonFungibleOrder _:
+                            if (productInfo.Type == ProductType.Fungible)
+                            {
+                                throw new InvalidProductTypeException(
+                                    $"NoneFungibleOrder not support {productType}");
+                            }
+
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(order));
+                    }
+
+                    if (order.SellerAvatarAddress != avatarAddress ||
+                        order.SellerAgentAddress != context.Signer)
+                    {
+                        throw new InvalidAddressException();
+                    }
+
+                    if (!order.Price.Equals(productInfo.Price))
+                    {
+                        throw new InvalidPriceException("");
+                    }
+
+                    var updateSellInfo = new UpdateSellInfo(productInfo.ProductId,
+                        productInfo.ProductId, order.TradableId,
+                        order.ItemSubType, productInfo.Price, itemCount);
+                    states = UpdateSell.Cancel(states, updateSellInfo, addressesHex,
+                        avatarState, digestList, context,
+                        avatarState.address);
                 }
                 else
                 {

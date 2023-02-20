@@ -356,6 +356,7 @@ namespace Lib9c.Tests.Action
                     {
                         AvatarAddress = _avatarAddress,
                         Type = type,
+                        Price = 1 * _currency,
                     });
                     break;
                 case ProductType.FungibleAssetValue:
@@ -363,6 +364,7 @@ namespace Lib9c.Tests.Action
                     {
                         AvatarAddress = _avatarAddress,
                         Type = type,
+                        Price = 1 * _currency,
                     });
                     break;
                 default:
