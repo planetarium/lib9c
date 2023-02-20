@@ -403,7 +403,7 @@ namespace Lib9c.Tests.Action
                 CancelProductRegistration _ => new CancelProductRegistration
                 {
                     AvatarAddress = new PrivateKey().ToAddress(),
-                    ProductInfoList = new List<ProductInfo>
+                    ProductInfos = new List<ProductInfo>
                     {
                         new ProductInfo
                         {

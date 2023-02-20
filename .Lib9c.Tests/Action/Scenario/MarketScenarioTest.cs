@@ -414,7 +414,7 @@ namespace Lib9c.Tests.Action.Scenario
             var action2 = new CancelProductRegistration
             {
                 AvatarAddress = _sellerAvatarAddress,
-                ProductInfoList = new List<ProductInfo>
+                ProductInfos = new List<ProductInfo>
                 {
                     new ProductInfo
                     {
@@ -454,7 +454,7 @@ namespace Lib9c.Tests.Action.Scenario
             var sellProductList = new ProductsState((List)latestState.GetState(productsStateAddress));
             Assert.Empty(sellProductList.ProductIds);
 
-            foreach (var productAddress in action2.ProductInfoList.Select(productInfo => Product.DeriveAddress(productInfo.ProductId)))
+            foreach (var productAddress in action2.ProductInfos.Select(productInfo => Product.DeriveAddress(productInfo.ProductId)))
             {
                 Assert.Equal(Null.Value, latestState.GetState(productAddress));
                 var product = ProductFactory.Deserialize((List)nextState.GetState(productAddress));

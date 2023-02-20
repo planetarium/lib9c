@@ -16,7 +16,7 @@ namespace Nekoyume.Action
     public class CancelProductRegistration : GameAction
     {
         public Address AvatarAddress;
-        public List<ProductInfo> ProductInfoList;
+        public List<ProductInfo> ProductInfos;
         public override IAccountStateDelta Execute(IActionContext context)
         {
             IAccountStateDelta states = context.PreviousStates;
@@ -26,8 +26,8 @@ namespace Nekoyume.Action
             }
 
             // 주소 검증
-            if (ProductInfoList.Any(p => p.AvatarAddress != AvatarAddress) ||
-                ProductInfoList.Any(p => p.AgentAddress != context.Signer))
+            if (ProductInfos.Any(p => p.AvatarAddress != AvatarAddress) ||
+                ProductInfos.Any(p => p.AgentAddress != context.Signer))
             {
                 throw new Exception();
             }
@@ -40,7 +40,7 @@ namespace Nekoyume.Action
 
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             var productsState = new ProductsState((List) states.GetState(productsStateAddress));
-            foreach (var productId in ProductInfoList.Select(productInfo => productInfo.ProductId))
+            foreach (var productId in ProductInfos.Select(productInfo => productInfo.ProductId))
             {
                 states = Cancel(productsState, productId, states, avatarState);
             }
@@ -114,13 +114,13 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>
             {
                 ["a"] = AvatarAddress.Serialize(),
-                ["p"] = new List(ProductInfoList.Select(p => p.Serialize())),
+                ["p"] = new List(ProductInfos.Select(p => p.Serialize())),
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             AvatarAddress = plainValue["a"].ToAddress();
-            ProductInfoList = plainValue["p"].ToList(s => new ProductInfo((List) s));
+            ProductInfos = plainValue["p"].ToList(s => new ProductInfo((List) s));
         }
     }
 }
