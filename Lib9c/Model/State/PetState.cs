@@ -63,6 +63,14 @@ namespace Nekoyume.Model.State
 
         public void Update(long unlockedIndex)
         {
+            if (unlockedIndex < 0)
+            {
+                throw new System.ArgumentOutOfRangeException(
+                    nameof(unlockedIndex),
+                    "Unlocked block index must be greater than or equal to 0."
+                );
+            }
+
             UnlockedBlockIndex = unlockedIndex;
         }
 

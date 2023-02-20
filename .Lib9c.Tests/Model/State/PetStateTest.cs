@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Model.State
 {
+    using System;
     using Bencodex.Types;
     using Libplanet;
     using Libplanet.Crypto;
@@ -21,9 +22,20 @@ namespace Lib9c.Tests.Model.State
             var deserialized = new PetState((List)serialized);
             Assert.Equal(state.PetId, deserialized.PetId);
             Assert.Equal(state.Level, deserialized.Level);
+            Assert.Equal(state.UnlockedBlockIndex, deserialized.UnlockedBlockIndex);
 
             var serialized2 = deserialized.Serialize();
             Assert.Equal(serialized, serialized2);
+        }
+
+        [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        public void DeriveAddress(int petId)
+        {
+            var avatarAddress = new PrivateKey().ToAddress();
+            var expectedAddress = avatarAddress.Derive($"pet-{petId}");
+            Assert.Equal(expectedAddress, PetState.DeriveAddress(avatarAddress, petId));
         }
 
         [Theory]
@@ -54,13 +66,22 @@ namespace Lib9c.Tests.Model.State
         }
 
         [Theory]
-        [InlineData(int.MinValue)]
-        [InlineData(int.MaxValue)]
-        public void DeriveAddress(int petId)
+        [InlineData(0)]
+        [InlineData(long.MaxValue)]
+        public void Update(long blockIndex)
         {
-            var avatarAddress = new PrivateKey().ToAddress();
-            var expectedAddress = avatarAddress.Derive($"pet-{petId}");
-            Assert.Equal(expectedAddress, PetState.DeriveAddress(avatarAddress, petId));
+            var state = new PetState();
+            state.Update(blockIndex);
+            Assert.Equal(blockIndex, state.UnlockedBlockIndex);
+        }
+
+        [Theory]
+        [InlineData(long.MinValue)]
+        [InlineData(-1)]
+        public void Update_Throws_ArgumentOutOfRangeException(long blockIndex)
+        {
+            var state = new PetState();
+            Assert.Throws<ArgumentOutOfRangeException>(() => state.Update(blockIndex));
         }
     }
 }
