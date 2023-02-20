@@ -6,6 +6,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
@@ -29,7 +30,16 @@ namespace Nekoyume.Action
             if (RegisterInfos.Select(r => r.AvatarAddress).Distinct().Count() != 1)
             {
                 // 판매자는 동일해야함
-                throw new Exception();
+                throw new InvalidAddressException();
+            }
+
+            var ncg = states.GetGoldCurrency();
+            if (RegisterInfos.Any(r => !r.Price.Currency.Equals(ncg) ||
+                !r.Price.MinorUnit.IsZero ||
+                r.Price < 1 * ncg))
+            {
+                throw new InvalidPriceException(
+                    $"product price must be greater than zero.");
             }
 
             var avatarAddress = RegisterInfos.First().AvatarAddress;
@@ -37,6 +47,16 @@ namespace Nekoyume.Action
                     out var migrationRequired))
             {
                 throw new FailedLoadStateException("");
+            }
+
+            if (!avatarState.worldInformation.IsStageCleared(
+                    GameConfig.RequireClearedStageLevel.ActionsInShop))
+            {
+                avatarState.worldInformation.TryGetLastClearedStageId(out var current);
+                throw new NotEnoughClearedStageLevelException(
+                    avatarAddress.ToHex(),
+                    GameConfig.RequireClearedStageLevel.ActionsInShop,
+                    current);
             }
 
             var productsStateAddress = ProductsState.DeriveAddress(avatarAddress);
@@ -91,6 +111,7 @@ namespace Nekoyume.Action
                             switch (type)
                             {
                                 case ProductType.Fungible:
+                                {
                                     if (avatarState.inventory.TryGetTradableItems(tradableId,
                                             context.BlockIndex, itemCount, out var items))
                                     {
@@ -107,7 +128,8 @@ namespace Nekoyume.Action
                                                     tradableFungibleItem.RequiredBlockIndex,
                                                     removeCount))
                                             {
-                                                throw new ItemDoesNotExistException("");
+                                                throw new ItemDoesNotExistException(
+                                                    $"failed to remove tradable material {tradableId}/{itemCount}");
                                             }
 
                                             totalCount -= removeCount;
@@ -120,12 +142,14 @@ namespace Nekoyume.Action
                                         if (totalCount != 0)
                                         {
                                             // 삭제처리 오류
-                                            throw new Exception();
+                                            throw new InvalidItemCountException();
                                         }
                                     }
 
                                     break;
+                                }
                                 case ProductType.NonFungible:
+                                {
                                     if (avatarState.inventory.TryGetNonFungibleItem(tradableId,
                                             out var item) &&
                                         avatarState.inventory.RemoveNonFungibleItem(tradableId))
@@ -134,14 +158,12 @@ namespace Nekoyume.Action
                                     }
 
                                     break;
-                                case ProductType.FungibleAssetValue:
-                                default:
-                                    throw new ArgumentOutOfRangeException();
+                                }
                             }
 
                             if (tradableItem is null)
                             {
-                                throw new ItemDoesNotExistException("");
+                                throw new ItemDoesNotExistException($"can't find item: {tradableId}");
                             }
 
                             Guid productId = context.Random.GenerateRandomGuid();
@@ -163,7 +185,7 @@ namespace Nekoyume.Action
                         }
                         case ProductType.FungibleAssetValue:
                         default:
-                            throw new ArgumentOutOfRangeException();
+                            throw new InvalidProductTypeException($"register item does not support {ProductType.FungibleAssetValue}");
                     }
 
                     break;
@@ -171,6 +193,11 @@ namespace Nekoyume.Action
                 {
                     if (assetInfo.Type == ProductType.FungibleAssetValue)
                     {
+                        if (assetInfo.Asset.Currency.Equals(CrystalCalculator.CRYSTAL))
+                        {
+                            throw new InvalidCurrencyException($"{CrystalCalculator.CRYSTAL} does not allow register.");
+                        }
+
                         Guid productId = context.Random.GenerateRandomGuid();
                         Address productAddress = Product.DeriveAddress(productId);
                         FungibleAssetValue asset = assetInfo.Asset;
@@ -190,8 +217,7 @@ namespace Nekoyume.Action
                         productsState.ProductIds.Add(productId);
                         break;
                     }
-
-                    throw new ArgumentOutOfRangeException();
+                    throw new InvalidProductTypeException($"register asset does not support {assetInfo.Type}");
                 }
             }
 
