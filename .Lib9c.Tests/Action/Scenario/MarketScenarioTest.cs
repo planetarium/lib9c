@@ -451,6 +451,14 @@ namespace Lib9c.Tests.Action.Scenario
             });
 
             var latestAvatarState = latestState.GetAvatarStateV2(_sellerAvatarAddress);
+            foreach (var productInfo in action2.ProductInfos)
+            {
+                Assert.Contains(
+                    latestAvatarState.mailBox.OfType<ProductCancelMail>(),
+                    m => m.ProductId == productInfo.ProductId
+                );
+            }
+
             var sellProductList = new ProductsState((List)latestState.GetState(productsStateAddress));
             Assert.Empty(sellProductList.ProductIds);
 

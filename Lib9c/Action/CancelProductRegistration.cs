@@ -6,6 +6,7 @@ using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Mail;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
@@ -29,7 +30,7 @@ namespace Nekoyume.Action
             if (ProductInfos.Any(p => p.AvatarAddress != AvatarAddress) ||
                 ProductInfos.Any(p => p.AgentAddress != context.Signer))
             {
-                throw new Exception();
+                throw new InvalidAddressException();
             }
 
             if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
@@ -38,21 +39,28 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException("");
             }
 
+            if (!avatarState.worldInformation.IsStageCleared(GameConfig.RequireClearedStageLevel.ActionsInShop))
+            {
+                avatarState.worldInformation.TryGetLastClearedStageId(out var current);
+                throw new NotEnoughClearedStageLevelException(AvatarAddress.ToHex(),
+                    GameConfig.RequireClearedStageLevel.ActionsInShop, current);
+            }
+
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             var productsState = new ProductsState((List) states.GetState(productsStateAddress));
             foreach (var productId in ProductInfos.Select(productInfo => productInfo.ProductId))
             {
-                states = Cancel(productsState, productId, states, avatarState);
+                states = Cancel(productsState, productId, states, avatarState, context.BlockIndex);
             }
 
             states = states
+                .SetState(AvatarAddress, avatarState.SerializeV2())
                 .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
                 .SetState(productsStateAddress, productsState.Serialize());
 
             if (migrationRequired)
             {
                 states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
                     .SetState(AvatarAddress.Derive(LegacyQuestListKey),
                         avatarState.questList.Serialize())
                     .SetState(AvatarAddress.Derive(LegacyWorldInformationKey),
@@ -63,11 +71,11 @@ namespace Nekoyume.Action
         }
 
         public static IAccountStateDelta Cancel(ProductsState productsState, Guid productId, IAccountStateDelta states,
-            AvatarState avatarState)
+            AvatarState avatarState, long blockIndex)
         {
             if (!productsState.ProductIds.Contains(productId))
             {
-                throw new Exception();
+                throw new ProductNotFoundException($"can't find product {productId}");
             }
 
             productsState.ProductIds.Remove(productId);
@@ -76,7 +84,7 @@ namespace Nekoyume.Action
             var product = ProductFactory.Deserialize((List) states.GetState(productAddress));
             if (product.SellerAgentAddress != avatarState.agentAddress || product.SellerAvatarAddress != avatarState.address)
             {
-                throw new Exception();
+                throw new InvalidAddressException();
             }
 
             switch (product)
@@ -106,6 +114,8 @@ namespace Nekoyume.Action
                     throw new ArgumentOutOfRangeException(nameof(product));
             }
 
+            var mail = new ProductCancelMail(blockIndex, productId, blockIndex, productId);
+            avatarState.Update(mail);
             states = states.SetState(productAddress, Null.Value);
             return states;
         }
