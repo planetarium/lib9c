@@ -31,7 +31,7 @@ namespace Nekoyume.Action
                     tuple.Item1.AvatarAddress != AvatarAddress ||
                     tuple.Item2.AvatarAddress != AvatarAddress))
             {
-                throw new Exception();
+                throw new InvalidAddressException();
             }
 
             if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
@@ -57,56 +57,18 @@ namespace Nekoyume.Action
             }
             foreach (var (productInfo, info) in ReRegisterInfos.OrderBy(tuple => tuple.Item2.Type).ThenBy(tuple => tuple.Item2.Price))
             {
+                var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
                 if (productInfo.Legacy)
                 {
-                    if (info.Type == ProductType.FungibleAssetValue)
-                    {
-                        // 잘못된 타입
-                        throw new Exception();
-                    }
-                    var digestListAddress = OrderDigestListState.DeriveAddress(AvatarAddress);
-                    var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
-                    if (!states.TryGetState(digestListAddress, out Dictionary rawList))
-                    {
-                        throw new FailedLoadStateException(
-                            $"{addressesHex} failed to load {nameof(OrderDigest)}({digestListAddress}).");
-                    }
-                    var digestList = new OrderDigestListState(rawList);
-                    var orderAddress = Order.DeriveAddress(productInfo.ProductId);
-                    if (!states.TryGetState(orderAddress, out Dictionary rawOrder))
-                    {
-                        throw new FailedLoadStateException(
-                            $"{addressesHex} failed to load {nameof(Order)}({orderAddress}).");
-                    }
-                    var order = OrderFactory.Deserialize(rawOrder);
-                    switch (order)
-                    {
-                        case FungibleOrder _:
-                            if (info.Type == ProductType.NonFungible)
-                            {
-                                throw new Exception();
-                            }
-                            break;
-                        case NonFungibleOrder _:
-                            if (info.Type == ProductType.Fungible)
-                            {
-                                throw new Exception();
-                            }
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(order));
-                    }
-                    var updateSellInfo = new UpdateSellInfo(productInfo.ProductId, productInfo.ProductId, order.TradableId, order.ItemSubType, info.Price, 1);
-                    states = UpdateSell.Cancel(states, updateSellInfo, addressesHex,
-                        avatarState, digestList, context,
-                        avatarState.address, new Stopwatch());
+                    // if product is order. it move to products state from sharded shop state.
+                    states = CancelProductRegistration.Cancel_Order(productInfo, states,
+                        avatarState, context, addressesHex);
                 }
                 else
                 {
-                    states = CancelProductRegistration.Cancel(productsState, productInfo.ProductId,
-                        states, avatarState, context.BlockIndex);
+                    states = CancelProductRegistration.Cancel(productsState, productInfo,
+                        states, avatarState, context);
                 }
-
                 states = RegisterProduct.Register(context, info, avatarState, productsState, states);
             }
 

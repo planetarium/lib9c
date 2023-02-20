@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.Item;
@@ -47,10 +49,73 @@ namespace Nekoyume.Action
             }
 
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
-            var productsState = new ProductsState((List) states.GetState(productsStateAddress));
-            foreach (var productId in ProductInfos.Select(productInfo => productInfo.ProductId))
+            ProductsState productsState;
+            if (states.TryGetState(productsStateAddress, out List rawProductList))
             {
-                states = Cancel(productsState, productId, states, avatarState, context.BlockIndex);
+                productsState = new ProductsState(rawProductList);
+            }
+            else
+            {
+                var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
+                    ? new MarketState(rawMarketList)
+                    : new MarketState();
+                productsState = new ProductsState();
+                marketState.AvatarAddresses.Add(AvatarAddress);
+                states = states.SetState(Addresses.Market, marketState.Serialize());
+            }
+            var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
+            foreach (var productInfo in ProductInfos)
+            {
+                if (productInfo.Legacy)
+                {
+                    var productType = productInfo.Type;
+                    var avatarAddress = avatarState.address;
+                    if (productType == ProductType.FungibleAssetValue)
+                    {
+                        // 잘못된 타입
+                        throw new InvalidProductTypeException($"Order not support {productType}");
+                    }
+                    var orderAddress = Order.DeriveAddress(productInfo.ProductId);
+                    if (!states.TryGetState(orderAddress, out Dictionary rawOrder))
+                    {
+                        throw new FailedLoadStateException(
+                            $"{addressesHex} failed to load {nameof(Order)}({orderAddress}).");
+                    }
+
+                    var order = OrderFactory.Deserialize(rawOrder);
+                    switch (order)
+                    {
+                        case FungibleOrder _:
+                            if (productInfo.Type == ProductType.NonFungible)
+                            {
+                                throw new InvalidProductTypeException($"FungibleOrder not support {productType}");
+                            }
+
+                            break;
+                        case NonFungibleOrder _:
+                            if (productInfo.Type == ProductType.Fungible)
+                            {
+                                throw new InvalidProductTypeException($"NoneFungibleOrder not support {productType}");
+                            }
+
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(order));
+                    }
+
+                    if (order.SellerAvatarAddress != avatarAddress ||
+                        order.SellerAgentAddress != context.Signer)
+                    {
+                        throw new InvalidAddressException();
+                    }
+
+                    states = SellCancellation.Cancel(context, states, avatarState, addressesHex,
+                        order);
+                }
+                else
+                {
+                    states = Cancel(productsState, productInfo, states, avatarState, context);
+                }
             }
 
             states = states
@@ -70,9 +135,10 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public static IAccountStateDelta Cancel(ProductsState productsState, Guid productId, IAccountStateDelta states,
-            AvatarState avatarState, long blockIndex)
+        public static IAccountStateDelta Cancel(ProductsState productsState, ProductInfo productInfo, IAccountStateDelta states,
+            AvatarState avatarState, IActionContext context)
         {
+            var productId = productInfo.ProductId;
             if (!productsState.ProductIds.Contains(productId))
             {
                 throw new ProductNotFoundException($"can't find product {productId}");
@@ -114,11 +180,12 @@ namespace Nekoyume.Action
                     throw new ArgumentOutOfRangeException(nameof(product));
             }
 
-            var mail = new ProductCancelMail(blockIndex, productId, blockIndex, productId);
+            var mail = new ProductCancelMail(context.BlockIndex, productId, context.BlockIndex, productId);
             avatarState.Update(mail);
             states = states.SetState(productAddress, Null.Value);
             return states;
         }
+
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
