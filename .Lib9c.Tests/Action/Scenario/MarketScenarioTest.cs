@@ -584,7 +584,7 @@ namespace Lib9c.Tests.Action.Scenario
             var action2 = new ReRegisterProduct
             {
                 AvatarAddress = _sellerAvatarAddress,
-                ReRegisterInfoList = new List<(ProductInfo, IRegisterInfo)>
+                ReRegisterInfos = new List<(ProductInfo, IRegisterInfo)>
                 {
                     (
                         new ProductInfo
@@ -674,7 +674,7 @@ namespace Lib9c.Tests.Action.Scenario
                     case ItemProduct itemProduct:
                     {
                         var registerInfo =
-                            action2.ReRegisterInfoList.Select(r => r.Item2).OfType<RegisterInfo>().First(r =>
+                            action2.ReRegisterInfos.Select(r => r.Item2).OfType<RegisterInfo>().First(r =>
                                 r.TradableId == itemProduct.TradableItem.TradableId);
                         Assert.Equal(product.ProductId, newProductId);
                         Assert.Equal(registerInfo.Price, product.Price);
@@ -759,7 +759,7 @@ namespace Lib9c.Tests.Action.Scenario
             var action = new ReRegisterProduct
             {
                 AvatarAddress = _sellerAvatarAddress,
-                ReRegisterInfoList = reRegisterInfoList,
+                ReRegisterInfos = reRegisterInfoList,
             };
             var nextState = action.Execute(new ActionContext
             {

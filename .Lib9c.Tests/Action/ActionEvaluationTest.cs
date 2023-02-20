@@ -343,7 +343,7 @@ namespace Lib9c.Tests.Action
                 ReRegisterProduct _ => new ReRegisterProduct
                 {
                     AvatarAddress = new PrivateKey().ToAddress(),
-                    ReRegisterInfoList = new List<(ProductInfo, IRegisterInfo)>
+                    ReRegisterInfos = new List<(ProductInfo, IRegisterInfo)>
                     {
                         (
                             new ProductInfo

@@ -17,7 +17,7 @@ namespace Nekoyume.Action
     public class ReRegisterProduct : GameAction
     {
         public Address AvatarAddress;
-        public List<(ProductInfo, IRegisterInfo)> ReRegisterInfoList;
+        public List<(ProductInfo, IRegisterInfo)> ReRegisterInfos;
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
@@ -27,7 +27,7 @@ namespace Nekoyume.Action
                 return states;
             }
 
-            if (ReRegisterInfoList.Any(tuple =>
+            if (ReRegisterInfos.Any(tuple =>
                     tuple.Item1.AvatarAddress != AvatarAddress ||
                     tuple.Item2.AvatarAddress != AvatarAddress))
             {
@@ -55,7 +55,7 @@ namespace Nekoyume.Action
                 marketState.AvatarAddresses.Add(AvatarAddress);
                 states = states.SetState(Addresses.Market, marketState.Serialize());
             }
-            foreach (var (productInfo, info) in ReRegisterInfoList.OrderBy(tuple => tuple.Item2.Type).ThenBy(tuple => tuple.Item2.Price))
+            foreach (var (productInfo, info) in ReRegisterInfos.OrderBy(tuple => tuple.Item2.Type).ThenBy(tuple => tuple.Item2.Price))
             {
                 if (productInfo.Legacy)
                 {
@@ -130,14 +130,14 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>
             {
                 ["a"] = AvatarAddress.Serialize(),
-                ["r"] = new List(ReRegisterInfoList.Select(tuple =>
+                ["r"] = new List(ReRegisterInfos.Select(tuple =>
                     List.Empty.Add(tuple.Item1.Serialize()).Add(tuple.Item2.Serialize()))),
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             AvatarAddress = plainValue["a"].ToAddress();
-            ReRegisterInfoList = new List<(ProductInfo, IRegisterInfo)>();
+            ReRegisterInfos = new List<(ProductInfo, IRegisterInfo)>();
             var serialized = (List) plainValue["r"];
             foreach (var value in serialized)
             {
@@ -147,7 +147,7 @@ namespace Nekoyume.Action
                     registerList[2].ToEnum<ProductType>() == ProductType.FungibleAssetValue
                         ? (IRegisterInfo) new AssetInfo(registerList)
                         : new RegisterInfo(registerList);
-                ReRegisterInfoList.Add((new ProductInfo((List)innerList[0]), info));
+                ReRegisterInfos.Add((new ProductInfo((List)innerList[0]), info));
             }
         }
     }
