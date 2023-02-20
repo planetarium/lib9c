@@ -14,8 +14,10 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Mail;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.TableData;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -119,6 +121,8 @@ namespace Lib9c.Tests.Action.Scenario
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, id, 0L);
             _sellerAvatarState2.inventory.AddItem(equipment);
             _initialState = _initialState
+                .SetState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
+                .SetState(Addresses.GetSheetAddress<ArenaSheet>(), _tableSheets.ArenaSheet.Serialize())
                 .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize())
                 .SetState(_sellerAvatarAddress2, _sellerAvatarState2.Serialize())
                 .MintAsset(_buyerAgentAddress, 4 * _currency)
@@ -266,25 +270,49 @@ namespace Lib9c.Tests.Action.Scenario
             });
 
             var buyerAvatarState = latestState.GetAvatarStateV2(_buyerAvatarAddress);
-            foreach (var productInfo in action3.ProductInfos)
+            var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(3L);
+            var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            var totalTax = 0 * _currency;
+            foreach (var group in action3.ProductInfos.GroupBy(p => p.AgentAddress))
             {
-                Assert.Equal(2 * _currency, latestState.GetBalance(productInfo.AgentAddress, _currency));
-                var sellProductList = new ProductsState((List)latestState.GetState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));
-                Assert.Empty(sellProductList.ProductIds);
-                Assert.Equal(Null.Value, latestState.GetState(Product.DeriveAddress(productInfo.ProductId)));
-                var product = ProductFactory.Deserialize((List)nextState2.GetState(Product.DeriveAddress(productInfo.ProductId)));
-                switch (product)
+                var sellerAgentAddress = group.Key;
+                var totalPrice = 2 * _currency;
+                var tax = totalPrice.DivRem(100, out _) * Buy.TaxRate;
+                totalTax += tax;
+                var taxedPrice = totalPrice - tax;
+                Assert.Equal(taxedPrice, latestState.GetBalance(sellerAgentAddress, _currency));
+                foreach (var productInfo in group)
                 {
-                    case FavProduct favProduct:
-                        Assert.Equal(favProduct.Asset, latestState.GetBalance(_buyerAvatarAddress, favProduct.Asset.Currency));
-                        break;
-                    case ItemProduct itemProduct:
-                        Assert.True(buyerAvatarState.inventory.HasTradableItem(itemProduct.TradableItem.TradableId, 1L, itemProduct.ItemCount));
-                        break;
+                    var sellerAvatarState = latestState.GetAvatarStateV2(productInfo.AvatarAddress);
+                    var sellProductList = new ProductsState((List)latestState.GetState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));
+                    var productId = productInfo.ProductId;
+                    Assert.Empty(sellProductList.ProductIds);
+                    Assert.Equal(Null.Value, latestState.GetState(Product.DeriveAddress(productId)));
+                    var product = ProductFactory.Deserialize((List)nextState2.GetState(Product.DeriveAddress(productId)));
+                    switch (product)
+                    {
+                        case FavProduct favProduct:
+                            Assert.Equal(favProduct.Asset, latestState.GetBalance(_buyerAvatarAddress, favProduct.Asset.Currency));
+                            break;
+                        case ItemProduct itemProduct:
+                            Assert.True(buyerAvatarState.inventory.HasTradableItem(itemProduct.TradableItem.TradableId, 1L, itemProduct.ItemCount));
+                            break;
+                    }
+
+                    var receipt = new ProductReceipt((List)latestState.GetState(ProductReceipt.DeriveAddress(productId)));
+                    Assert.Equal(productId, receipt.ProductId);
+                    Assert.Equal(productInfo.AvatarAddress, receipt.SellerAvatarAddress);
+                    Assert.Equal(_buyerAvatarAddress, receipt.BuyerAvatarAddress);
+                    Assert.Equal(1 * _currency, receipt.Price);
+                    Assert.Equal(3L, receipt.PurchasedBlockIndex);
+                    Assert.Contains(sellerAvatarState.mailBox.OfType<ProductSellerMail>(), m => m.ProductId == productInfo.ProductId);
+                    Assert.Contains(buyerAvatarState.mailBox.OfType<ProductBuyerMail>(), m => m.ProductId == productInfo.ProductId);
                 }
             }
 
+            Assert.True(totalTax > 0 * _currency);
             Assert.Equal(0 * _currency, latestState.GetBalance(_buyerAgentAddress, _currency));
+            Assert.Equal(totalTax, latestState.GetBalance(feeStoreAddress, _currency));
         }
 
         [Fact]
