@@ -35,9 +35,9 @@ namespace Lib9c.Tests.Model.State
             const int petId = 1001;
             const long blockIndex = 0;
             var serialized = new List(
-                petId.Serialize(),
-                initialLevel.Serialize(),
-                blockIndex.Serialize());
+                (Integer)petId,
+                (Integer)initialLevel,
+                (Integer)blockIndex);
             var state = new PetState(serialized);
             Assert.Equal(petId, state.PetId);
             Assert.Equal(initialLevel, state.Level);

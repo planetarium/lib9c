@@ -4,6 +4,18 @@ using Nekoyume.Action;
 
 namespace Nekoyume.Model.State
 {
+    [VersionedState(Moniker, Version)]
+    public interface IPetStateV1
+    {
+        public const string Moniker = "pet";
+        public const int Version = 1;
+
+        Integer PetId { get; }
+        Integer Level { get; }
+        Integer UnlockedBlockIndex { get; }
+    }
+
+    [VersionedStateImpl(typeof(IPetStateV1))]
     public class PetState : IState
     {
         public static Address DeriveAddress(Address avatarAddress, int petId) =>
@@ -12,6 +24,10 @@ namespace Nekoyume.Model.State
         public int PetId { get; }
         public int Level { get; private set; }
         public long UnlockedBlockIndex { get; private set; }
+
+        public PetState() : this(0)
+        {
+        }
 
         public PetState(int petId)
         {
@@ -22,17 +38,17 @@ namespace Nekoyume.Model.State
 
         public PetState(List serialized)
         {
-            PetId = serialized[0].ToInteger();
-            Level = serialized[1].ToInteger();
-            UnlockedBlockIndex = serialized[2].ToLong();
+            PetId = (Integer)serialized[0];
+            Level = (Integer)serialized[1];
+            UnlockedBlockIndex = (Integer)serialized[2];
         }
 
         public IValue Serialize()
         {
             return List.Empty
-                .Add(PetId.Serialize())
-                .Add(Level.Serialize())
-                .Add(UnlockedBlockIndex.Serialize());
+                .Add((Integer)PetId)
+                .Add((Integer)Level)
+                .Add((Integer)UnlockedBlockIndex);
         }
 
         public void LevelUp()
