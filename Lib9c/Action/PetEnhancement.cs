@@ -78,8 +78,9 @@ namespace Nekoyume.Action
             }
 
             var petStateAddress = PetState.DeriveAddress(AvatarAddress, PetId);
-            var petState = states.TryGetState(petStateAddress, out List rawState)
-                ? new PetState(rawState)
+            var petVal = states.GetVersionedState(petStateAddress);
+            var petState = petVal is List petList
+                ? new PetState(petList)
                 : new PetState(PetId);
             if (TargetLevel <= petState.Level)
             {
@@ -178,7 +179,11 @@ namespace Nekoyume.Action
                 petState.LevelUp();
             }
 
-            return states.SetState(petStateAddress, petState.Serialize());
+            return states.SetState(
+                petStateAddress,
+                IPetStateV1.Moniker,
+                IPetStateV1.Version,
+                petState);
         }
     }
 }
