@@ -254,7 +254,7 @@ namespace Lib9c.Tests.Action.Scenario
             var action3 = new BuyProduct
             {
                 AvatarAddress = _buyerAvatarAddress,
-                ProductInfoList = productInfoList,
+                ProductInfos = productInfoList,
             };
 
             var latestState = action3.Execute(new ActionContext
@@ -266,7 +266,7 @@ namespace Lib9c.Tests.Action.Scenario
             });
 
             var buyerAvatarState = latestState.GetAvatarStateV2(_buyerAvatarAddress);
-            foreach (var productInfo in action3.ProductInfoList)
+            foreach (var productInfo in action3.ProductInfos)
             {
                 Assert.Equal(2 * _currency, latestState.GetBalance(productInfo.AgentAddress, _currency));
                 var sellProductList = new ProductsState((List)latestState.GetState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));

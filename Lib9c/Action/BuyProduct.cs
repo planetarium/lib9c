@@ -18,7 +18,7 @@ namespace Nekoyume.Action
     public class BuyProduct : GameAction
     {
         public Address AvatarAddress;
-        public IEnumerable<ProductInfo> ProductInfoList;
+        public IEnumerable<ProductInfo> ProductInfos;
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
@@ -38,15 +38,14 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException("");
             }
 
-            foreach (var productInfo in ProductInfoList.OrderBy(p => p.ProductId).ThenBy(p =>p.Price))
+            foreach (var productInfo in ProductInfos.OrderBy(p => p.ProductId).ThenBy(p =>p.Price))
             {
                 var sellerAgentAddress = productInfo.AgentAddress;
                 var sellerAvatarAddress = productInfo.AvatarAddress;
                 var sellerAgentState = states.GetAgentState(sellerAgentAddress);
                 if (!sellerAgentState.avatarAddresses.Values.Contains(sellerAvatarAddress))
                 {
-                    context.PutLog($"{productInfo.ProductId}: {Buy.ErrorCodeInvalidAddress}");
-                    continue;
+                    throw new InvalidAddressException();
                 }
                 var productId = productInfo.ProductId;
                 var productsStateAddress = ProductsState.DeriveAddress(sellerAvatarAddress);
@@ -118,12 +117,12 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>
             {
                 ["a"] = AvatarAddress.Serialize(),
-                ["p"] = new List(ProductInfoList.Select(p => p.Serialize())),
+                ["p"] = new List(ProductInfos.Select(p => p.Serialize())),
             }.ToImmutableDictionary();
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             AvatarAddress = plainValue["a"].ToAddress();
-            ProductInfoList = plainValue["p"].ToList(s => new ProductInfo((List) s));
+            ProductInfos = plainValue["p"].ToList(s => new ProductInfo((List) s));
         }
     }
 }

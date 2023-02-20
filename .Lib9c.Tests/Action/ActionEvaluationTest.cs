@@ -418,7 +418,7 @@ namespace Lib9c.Tests.Action
                 BuyProduct _ => new BuyProduct
                 {
                     AvatarAddress = new PrivateKey().ToAddress(),
-                    ProductInfoList = new List<ProductInfo>
+                    ProductInfos = new List<ProductInfo>
                     {
                         new ProductInfo
                         {
