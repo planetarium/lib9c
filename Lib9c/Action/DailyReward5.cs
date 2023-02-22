@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.State;
@@ -12,10 +13,12 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("daily_reward5")]
-    public class DailyReward5 : GameAction
+    public class DailyReward5 : GameAction, IDailyRewardV1
     {
         public Address avatarAddress;
         public const string AvatarAddressKey = "a";
+
+        Address IDailyRewardV1.AvatarAddress => avatarAddress;
 
         public override IAccountStateDelta Execute(IActionContext context)
         {

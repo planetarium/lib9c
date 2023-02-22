@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Action;
@@ -22,7 +23,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("update_sell")]
-    public class UpdateSell0 : GameAction
+    public class UpdateSell0 : GameAction, IUpdateSellV1
     {
         public Guid orderId;
         public Guid updateSellOrderId;
@@ -31,6 +32,14 @@ namespace Nekoyume.Action
         public ItemSubType itemSubType;
         public FungibleAssetValue price;
         public int count;
+
+        Guid IUpdateSellV1.OrderId => orderId;
+        Guid IUpdateSellV1.UpdateSellOrderId => updateSellOrderId;
+        Guid IUpdateSellV1.TradableId => tradableId;
+        Address IUpdateSellV1.SellerAvatarAddress => sellerAvatarAddress;
+        string IUpdateSellV1.ItemSubType => itemSubType.ToString();
+        FungibleAssetValue IUpdateSellV1.Price => price;
+        int IUpdateSellV1.Count => count;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>

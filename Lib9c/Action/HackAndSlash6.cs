@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Battle;
@@ -18,7 +19,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("hack_and_slash6")]
-    public class HackAndSlash6 : GameAction
+    public class HackAndSlash6 : GameAction, IHackAndSlashV2
     {
         public List<Guid> costumes;
         public List<Guid> equipments;
@@ -29,6 +30,15 @@ namespace Nekoyume.Action
         public Address WeeklyArenaAddress;
         public Address RankingMapAddress;
         public BattleLog Result { get; private set; }
+
+        IEnumerable<Guid> IHackAndSlashV2.Costumes => costumes;
+        IEnumerable<Guid> IHackAndSlashV2.Equipments => equipments;
+        IEnumerable<Guid> IHackAndSlashV2.Foods => foods;
+        int IHackAndSlashV2.WorldId => worldId;
+        int IHackAndSlashV2.StageId => stageId;
+        Address IHackAndSlashV2.AvatarAddress => avatarAddress;
+        Address IHackAndSlashV2.WeeklyArenaAddress => WeeklyArenaAddress;
+        Address IHackAndSlashV2.RankingMapAddress => RankingMapAddress;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>

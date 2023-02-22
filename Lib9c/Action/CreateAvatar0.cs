@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.Item;
@@ -26,7 +27,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("create_avatar")]
-    public class CreateAvatar0 : GameAction
+    public class CreateAvatar0 : GameAction, ICreateAvatarV1
     {
         public Address avatarAddress;
         public int index;
@@ -35,6 +36,14 @@ namespace Nekoyume.Action
         public int ear;
         public int tail;
         public string name;
+
+        Address ICreateAvatarV1.AvatarAddress => avatarAddress;
+        int ICreateAvatarV1.Index => index;
+        int ICreateAvatarV1.Hair => hair;
+        int ICreateAvatarV1.Lens => lens;
+        int ICreateAvatarV1.Ear => ear;
+        int ICreateAvatarV1.Tail => tail;
+        string ICreateAvatarV1.Name => name;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>()
         {

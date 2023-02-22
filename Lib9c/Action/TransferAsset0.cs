@@ -8,13 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Lib9c.Abstractions;
 
 namespace Nekoyume.Action
 {
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("transfer_asset")]
-    public class TransferAsset0 : ActionBase, ISerializable, ITransferAsset
+    public class TransferAsset0 : ActionBase, ISerializable, ITransferAsset, ITransferAssetV1
     {
         private const int MemoMaxLength = 80;
 
@@ -44,6 +45,11 @@ namespace Nekoyume.Action
         public Address Recipient { get; private set; }
         public FungibleAssetValue Amount { get; private set; }
         public string Memo { get; private set; }
+
+        Address ITransferAssetV1.Sender => Sender;
+        Address ITransferAssetV1.Recipient => Recipient;
+        FungibleAssetValue ITransferAssetV1.Amount => Amount;
+        string ITransferAssetV1.Memo => Memo;
 
         public override IValue PlainValue
         {

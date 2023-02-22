@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.Item;
@@ -15,10 +16,13 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("rapid_combination2")]
-    public class RapidCombination2 : GameAction
+    public class RapidCombination2 : GameAction, IRapidCombinationV1
     {
         public Address avatarAddress;
         public int slotIndex;
+
+        Address IRapidCombinationV1.AvatarAddress => avatarAddress;
+        int IRapidCombinationV1.SlotIndex => slotIndex;
 
         public override IAccountStateDelta Execute(IActionContext context)
         {

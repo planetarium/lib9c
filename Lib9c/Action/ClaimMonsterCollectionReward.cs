@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.BlockChain.Policy;
@@ -22,10 +23,13 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionType("claim_monster_collection_reward3")]
     [ActionObsolete(BlockPolicySource.V100220ObsoleteIndex)]
-    public class ClaimMonsterCollectionReward : GameAction
+    public class ClaimMonsterCollectionReward : GameAction, IClaimMonsterCollectionRewardV2
     {
         public const long MonsterCollectionRewardEndBlockIndex = 4_481_909;
         public Address avatarAddress;
+
+        Address IClaimMonsterCollectionRewardV2.AvatarAddress => avatarAddress;
+
         public override IAccountStateDelta Execute(IActionContext context)
         {
             IAccountStateDelta states = context.PreviousStates;

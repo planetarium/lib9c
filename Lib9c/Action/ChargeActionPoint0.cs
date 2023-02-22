@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.Item;
@@ -15,9 +16,11 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("charge_action_point")]
-    public class ChargeActionPoint0 : GameAction
+    public class ChargeActionPoint0 : GameAction, IChargeActionPointV1
     {
         public Address avatarAddress;
+
+        Address IChargeActionPointV1.AvatarAddress => avatarAddress;
 
         public override IAccountStateDelta Execute(IActionContext context)
         {

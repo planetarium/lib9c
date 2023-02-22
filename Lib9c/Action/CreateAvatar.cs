@@ -5,10 +5,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet.Action;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Pet;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
@@ -20,7 +22,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("create_avatar8")]
-    public class CreateAvatar : GameAction
+    public class CreateAvatar : GameAction, ICreateAvatarV2
     {
         public const string DeriveFormat = "avatar-state-{0}";
 
@@ -30,6 +32,13 @@ namespace Nekoyume.Action
         public int ear;
         public int tail;
         public string name;
+
+        int ICreateAvatarV2.Index => index;
+        int ICreateAvatarV2.Hair => hair;
+        int ICreateAvatarV2.Lens => lens;
+        int ICreateAvatarV2.Ear => ear;
+        int ICreateAvatarV2.Tail => tail;
+        string ICreateAvatarV2.Name => name;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>()
         {
@@ -152,6 +161,18 @@ namespace Nekoyume.Action
             // Add Runes when executing on editor mode.
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             states = CreateAvatar0.AddRunesForTest(avatarAddress, states);
+
+            // Add pets for test
+            if (states.TryGetSheet(out PetSheet petSheet))
+            {
+                foreach (var row in petSheet)
+                {
+                    var petState = new PetState(row.Id);
+                    petState.LevelUp();
+                    var petStateAddress = PetState.DeriveAddress(avatarAddress, row.Id);
+                    states = states.SetState(petStateAddress, petState.Serialize());
+                }
+            }
 #endif
 
             sw.Stop();

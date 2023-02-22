@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Serilog;
@@ -12,7 +13,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("migration_legacy_shop")]
-    public class MigrationLegacyShop0 : GameAction
+    public class MigrationLegacyShop0 : GameAction, IMigrationLegacyShopV1
     {
         public override IAccountStateDelta Execute(IActionContext context)
         {

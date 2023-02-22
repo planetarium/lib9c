@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.Item;
@@ -16,11 +17,14 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("redeem_code2")]
-    public class RedeemCode2 : GameAction
+    public class RedeemCode2 : GameAction, IRedeemCodeV1
     {
         public string Code { get; internal set; }
 
         public Address AvatarAddress {get; internal set; }
+
+        string IRedeemCodeV1.Code => Code;
+        Address IRedeemCodeV1.AvatarAddress => AvatarAddress;
 
         public RedeemCode2()
         {

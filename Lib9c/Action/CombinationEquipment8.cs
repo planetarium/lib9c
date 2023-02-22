@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.BlockChain.Policy;
@@ -19,7 +20,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockPolicySource.V100086ObsoleteIndex)]
     [ActionType("combination_equipment8")]
-    public class CombinationEquipment8 : GameAction
+    public class CombinationEquipment8 : GameAction, ICombinationEquipmentV1
     {
         public static readonly Address BlacksmithAddress = ItemEnhancement9.BlacksmithAddress;
 
@@ -34,6 +35,11 @@ namespace Nekoyume.Action
 
         public const string SubRecipeIdKey = "i";
         public int? subRecipeId;
+
+        Address ICombinationEquipmentV1.AvatarAddress => avatarAddress;
+        int ICombinationEquipmentV1.RecipeId => recipeId;
+        int ICombinationEquipmentV1.SlotIndex => slotIndex;
+        int? ICombinationEquipmentV1.SubRecipeId => subRecipeId;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>

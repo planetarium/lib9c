@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.Item;
@@ -20,11 +21,15 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("combination_consumable3")]
-    public class CombinationConsumable3 : GameAction
+    public class CombinationConsumable3 : GameAction, ICombinationConsumableV1
     {
         public Address AvatarAddress;
         public int recipeId;
         public int slotIndex;
+
+        Address ICombinationConsumableV1.AvatarAddress => AvatarAddress;
+        int ICombinationConsumableV1.RecipeId => recipeId;
+        int ICombinationConsumableV1.SlotIndex => slotIndex;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {

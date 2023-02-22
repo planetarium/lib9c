@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Battle;
@@ -25,7 +26,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex)]
     [ActionType(ActionTypeText)]
-    public class EventDungeonBattleV2 : GameAction
+    public class EventDungeonBattleV2 : GameAction, IEventDungeonBattleV1
     {
         private const string ActionTypeText = "event_dungeon_battle2";
         public const int PlayCount = 1;
@@ -38,6 +39,15 @@ namespace Nekoyume.Action
         public List<Guid> Costumes;
         public List<Guid> Foods;
         public bool BuyTicketIfNeeded;
+
+        Address IEventDungeonBattleV1.AvatarAddress => AvatarAddress;
+        int IEventDungeonBattleV1.EventScheduleId => EventScheduleId;
+        int IEventDungeonBattleV1.EventDungeonId => EventDungeonId;
+        int IEventDungeonBattleV1.EventDungeonStageId => EventDungeonStageId;
+        IEnumerable<Guid> IEventDungeonBattleV1.Equipments => Equipments;
+        IEnumerable<Guid> IEventDungeonBattleV1.Costumes => Costumes;
+        IEnumerable<Guid> IEventDungeonBattleV1.Foods => Foods;
+        bool IEventDungeonBattleV1.BuyTicketIfNeeded => BuyTicketIfNeeded;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {

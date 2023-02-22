@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.Item;
@@ -19,7 +20,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("item_enhancement6")]
-    public class ItemEnhancement6 : GameAction
+    public class ItemEnhancement6 : GameAction, IItemEnhancementV2
     {
         public const int RequiredBlockCount = 1;
 
@@ -29,6 +30,11 @@ namespace Nekoyume.Action
         public Guid materialId;
         public Address avatarAddress;
         public int slotIndex;
+
+        Guid IItemEnhancementV2.ItemId => itemId;
+        Guid IItemEnhancementV2.MaterialId => materialId;
+        Address IItemEnhancementV2.AvatarAddress => avatarAddress;
+        int IItemEnhancementV2.SlotIndex => slotIndex;
 
         public override IAccountStateDelta Execute(IActionContext context)
         {

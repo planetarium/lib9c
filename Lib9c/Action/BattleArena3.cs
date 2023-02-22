@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
@@ -27,7 +28,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100290ObsoleteIndex)]
     [ActionType("battle_arena3")]
-    public class BattleArena3 : GameAction
+    public class BattleArena3 : GameAction, IBattleArenaV1
     {
         public Address myAvatarAddress;
         public Address enemyAvatarAddress;
@@ -41,6 +42,20 @@ namespace Nekoyume.Action
         public ArenaPlayerDigest ExtraMyArenaPlayerDigest;
         public ArenaPlayerDigest ExtraEnemyArenaPlayerDigest;
         public int ExtraPreviousMyScore;
+
+        Address IBattleArenaV1.MyAvatarAddress => myAvatarAddress;
+
+        Address IBattleArenaV1.EnemyAvatarAddress => enemyAvatarAddress;
+
+        int IBattleArenaV1.ChampionshipId => championshipId;
+
+        int IBattleArenaV1.Round => round;
+
+        int IBattleArenaV1.Ticket => ticket;
+
+        IEnumerable<Guid> IBattleArenaV1.Costumes => costumes;
+
+        IEnumerable<Guid> IBattleArenaV1.Equipments => equipments;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()

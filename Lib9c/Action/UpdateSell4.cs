@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Lib9c.Model.Order;
 using Libplanet;
 using Libplanet.Action;
@@ -26,11 +27,15 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionType("update_sell4")]
     [ActionObsolete(BlockPolicySource.V100351ObsoleteIndex)]
-    public class UpdateSell4 : GameAction
+    public class UpdateSell4 : GameAction, IUpdateSellV2
     {
         private const int UpdateCapacity = 100;
         public Address sellerAvatarAddress;
         public IEnumerable<UpdateSellInfo> updateSellInfos;
+
+        Address IUpdateSellV2.SellerAvatarAddress => sellerAvatarAddress;
+        IEnumerable<IValue> IUpdateSellV2.UpdateSellInfos =>
+            updateSellInfos.Select(x => x.Serialize());
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>

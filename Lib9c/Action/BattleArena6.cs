@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Arena;
@@ -27,7 +28,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex)]
     [ActionType("battle_arena6")]
-    public class BattleArena6 : GameAction
+    public class BattleArena6 : GameAction, IBattleArenaV1
     {
         public const string PurchasedCountKey = "purchased_count_during_interval";
         public Address myAvatarAddress;
@@ -42,6 +43,20 @@ namespace Nekoyume.Action
         public ArenaPlayerDigest ExtraMyArenaPlayerDigest;
         public ArenaPlayerDigest ExtraEnemyArenaPlayerDigest;
         public int ExtraPreviousMyScore;
+
+        Address IBattleArenaV1.MyAvatarAddress => myAvatarAddress;
+
+        Address IBattleArenaV1.EnemyAvatarAddress => enemyAvatarAddress;
+
+        int IBattleArenaV1.ChampionshipId => championshipId;
+
+        int IBattleArenaV1.Round => round;
+
+        int IBattleArenaV1.Ticket => ticket;
+
+        IEnumerable<Guid> IBattleArenaV1.Costumes => costumes;
+
+        IEnumerable<Guid> IBattleArenaV1.Equipments => equipments;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()

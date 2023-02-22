@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Arena;
@@ -30,7 +31,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockPolicySource.V100360ObsoleteIndex)]
     [ActionType("battle_arena7")]
-    public class BattleArena7 : GameAction
+    public class BattleArena7 : GameAction, IBattleArenaV1
     {
         public const string PurchasedCountKey = "purchased_count_during_interval";
         public Address myAvatarAddress;
@@ -46,6 +47,23 @@ namespace Nekoyume.Action
         public ArenaPlayerDigest ExtraMyArenaPlayerDigest;
         public ArenaPlayerDigest ExtraEnemyArenaPlayerDigest;
         public int ExtraPreviousMyScore;
+
+        Address IBattleArenaV1.MyAvatarAddress => myAvatarAddress;
+
+        Address IBattleArenaV1.EnemyAvatarAddress => enemyAvatarAddress;
+
+        int IBattleArenaV1.ChampionshipId => championshipId;
+
+        int IBattleArenaV1.Round => round;
+
+        int IBattleArenaV1.Ticket => ticket;
+
+        IEnumerable<Guid> IBattleArenaV1.Costumes => costumes;
+
+        IEnumerable<Guid> IBattleArenaV1.Equipments => equipments;
+
+        IEnumerable<IValue> IBattleArenaV1.RuneSlotInfos => runeInfos
+            .Select(x => x.Serialize());
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()
@@ -376,7 +394,7 @@ namespace Nekoyume.Action
             var rewards = new List<ItemBase>();
             for (var i = 0; i < ticket; i++)
             {
-                var simulator = new ArenaSimulator(context.Random);
+                var simulator = new ArenaSimulatorV2(context.Random);
                 var log = simulator.Simulate(
                     ExtraMyArenaPlayerDigest,
                     ExtraEnemyArenaPlayerDigest,

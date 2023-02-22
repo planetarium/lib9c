@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
@@ -20,7 +21,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("buy6")]
-    public class Buy6 : GameAction, IBuy5
+    public class Buy6 : GameAction, IBuy5, IBuyV2
     {
         public const int TaxRate = 8;
         public const int ErrorCodeFailedLoadingState = 1;
@@ -34,6 +35,9 @@ namespace Nekoyume.Action
         IEnumerable<IPurchaseInfo> IBuy5.purchaseInfos => purchaseInfos.Cast<IPurchaseInfo>();
         public Buy7.BuyerMultipleResult buyerMultipleResult;
         public Buy7.SellerMultipleResult sellerMultipleResult;
+
+        Address IBuyV2.BuyerAvatarAddress => buyerAvatarAddress;
+        IEnumerable<IValue> IBuyV2.PurchaseInfos => purchaseInfos.Select(x => x.Serialize());
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
         {

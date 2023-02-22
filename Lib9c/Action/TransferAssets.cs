@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Lib9c.Abstractions;
 using Nekoyume.Model;
 using Serilog;
 
@@ -19,7 +20,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("transfer_assets")]
-    public class TransferAssets : ActionBase, ISerializable, ITransferAssets
+    public class TransferAssets : ActionBase, ISerializable, ITransferAssets, ITransferAssetsV1
     {
         public const int RecipientsCapacity = 100;
         private const int MemoMaxLength = 80;
@@ -48,6 +49,12 @@ namespace Nekoyume.Action
         public Address Sender { get; private set; }
         public List<(Address recipient, FungibleAssetValue amount)> Recipients { get; private set; }
         public string Memo { get; private set; }
+
+        Address ITransferAssetsV1.Sender => Sender;
+
+        List<(Address recipient, FungibleAssetValue amount)> ITransferAssetsV1.Recipients =>
+            Recipients;
+        string ITransferAssetsV1.Memo => Memo;
 
         public override IValue PlainValue
         {

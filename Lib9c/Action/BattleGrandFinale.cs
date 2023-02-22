@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Arena;
@@ -23,13 +24,13 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Introduced at ...
+    /// Hard forked at https://github.com/planetarium/lib9c/pull/1679
     /// </summary>
     [Serializable]
     [ActionType(ActionTypeName)]
-    public class BattleGrandFinale : GameAction
+    public class BattleGrandFinale : GameAction, IBattleGrandFinaleV1
     {
-        private const string ActionTypeName = "battle_grand_finale";
+        private const string ActionTypeName = "battle_grand_finale2";
         public const int WinScore = 20;
         public const int LoseScore = 1;
         public const int DefaultScore = 1000;
@@ -44,6 +45,12 @@ namespace Nekoyume.Action
 
         public ArenaPlayerDigest ExtraMyArenaPlayerDigest;
         public ArenaPlayerDigest ExtraEnemyArenaPlayerDigest;
+
+        Address IBattleGrandFinaleV1.MyAvatarAddress => myAvatarAddress;
+        Address IBattleGrandFinaleV1.EnemyAvatarAddress => enemyAvatarAddress;
+        int IBattleGrandFinaleV1.GrandFinaleId => grandFinaleId;
+        IEnumerable<Guid> IBattleGrandFinaleV1.Costumes => costumes;
+        IEnumerable<Guid> IBattleGrandFinaleV1.Equipments => equipments;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()

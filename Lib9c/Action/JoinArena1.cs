@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Arena;
@@ -22,13 +23,19 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100340ObsoleteIndex)]
     [ActionType("join_arena")]
-    public class JoinArena1 : GameAction
+    public class JoinArena1 : GameAction, IJoinArenaV1
     {
         public Address avatarAddress;
         public int championshipId;
         public int round;
         public List<Guid> costumes;
         public List<Guid> equipments;
+
+        Address IJoinArenaV1.AvatarAddress => avatarAddress;
+        int IJoinArenaV1.ChampionshipId => championshipId;
+        int IJoinArenaV1.Round => round;
+        IEnumerable<Guid> IJoinArenaV1.Costumes => costumes;
+        IEnumerable<Guid> IJoinArenaV1.Equipments => equipments;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()

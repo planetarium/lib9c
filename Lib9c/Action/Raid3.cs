@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Assets;
@@ -26,7 +27,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockPolicySource.V100360ObsoleteIndex)]
     [ActionType("raid3")]
-    public class Raid3 : GameAction
+    public class Raid3 : GameAction, IRaidV2
     {
         public Address AvatarAddress;
         public List<Guid> EquipmentIds;
@@ -34,6 +35,13 @@ namespace Nekoyume.Action
         public List<Guid> FoodIds;
         public List<RuneSlotInfo> RuneInfos;
         public bool PayNcg;
+
+        Address IRaidV2.AvatarAddress => AvatarAddress;
+        IEnumerable<Guid> IRaidV2.EquipmentIds => EquipmentIds;
+        IEnumerable<Guid> IRaidV2.CostumeIds => CostumeIds;
+        IEnumerable<Guid> IRaidV2.FoodIds => FoodIds;
+        IEnumerable<IValue> IRaidV2.RuneSlotInfos => RuneInfos.Select(x => x.Serialize());
+        bool IRaidV2.PayNcg => PayNcg;
 
         public override IAccountStateDelta Execute(IActionContext context)
         {

@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.Item;
@@ -16,7 +17,7 @@ namespace Nekoyume.Action
     [Serializable]
     [ActionObsolete(BlockChain.Policy.BlockPolicySource.V100080ObsoleteIndex)]
     [ActionType("rapid_combination")]
-    public class RapidCombination0 : GameAction
+    public class RapidCombination0 : GameAction, IRapidCombinationV1
     {
         [Serializable]
         public class ResultModel : CombinationConsumable5.ResultModel
@@ -44,6 +45,9 @@ namespace Nekoyume.Action
 
         public Address avatarAddress;
         public int slotIndex;
+
+        Address IRapidCombinationV1.AvatarAddress => avatarAddress;
+        int IRapidCombinationV1.SlotIndex => slotIndex;
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
@@ -135,13 +139,18 @@ namespace Nekoyume.Action
 
         public static int CalculateHourglassCount(GameConfigState state, long diff)
         {
+            return CalculateHourglassCount(state.HourglassPerBlock, diff);
+        }
+
+        public static int CalculateHourglassCount(decimal hourglassPerBlock, long diff)
+        {
             if (diff <= 0)
             {
                 return 0;
             }
 
-            var cost = Math.Ceiling((decimal) diff / state.HourglassPerBlock);
-            return Math.Max(1, (int) cost);
+            var cost = Math.Ceiling(diff / hourglassPerBlock);
+            return Math.Max(1, (int)cost);
         }
     }
 }
