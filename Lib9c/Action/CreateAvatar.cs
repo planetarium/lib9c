@@ -250,17 +250,6 @@ namespace Nekoyume.Action
                         }
                     }
 
-                    for (int level = 1; level <= 3; ++level)
-                    {
-                        var subType = equipment.ItemSubType;
-                        var grade = equipment.Grade;
-                        var costRow = enhancementCostSheet.Values
-                            .First(x => x.ItemSubType == subType &&
-                                        x.Grade == grade &&
-                                        x.Level == level);
-                        equipment.LevelUpV2(ctx.Random, costRow, true);
-                    }
-
                     avatarState.inventory.AddItem(equipment);
                 }
             }

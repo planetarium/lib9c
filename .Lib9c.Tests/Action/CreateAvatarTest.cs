@@ -86,7 +86,7 @@ namespace Lib9c.Tests.Action
 
             // internal test
             Assert.Equal(60, nextAvatarState.inventory.Equipments.Count());
-            Assert.All(nextAvatarState.inventory.Equipments, equipment => Assert.Equal(3, equipment.level));
+            Assert.All(nextAvatarState.inventory.Equipments, equipment => Assert.Equal(0, equipment.level));
             Assert.Equal(290, nextAvatarState.level);
             var player = new Player(nextAvatarState, _tableSheets.CharacterSheet, _tableSheets.CharacterLevelSheet, _tableSheets.EquipmentItemSetEffectSheet);
             Assert.Equal(290, player.Level);
