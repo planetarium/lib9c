@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         // Pet level range test (1~30)
         [Theory]
         [InlineData(0)] // Min. level of pet is 1
-        [InlineData(31)] // Max. level of pet is 30
+        [InlineData(101)] // Max. level of pet is 100
         public void PetLevelRangeTest(int petLevel)
         {
             foreach (var petOptionType in Enum.GetValues<PetOptionType>())

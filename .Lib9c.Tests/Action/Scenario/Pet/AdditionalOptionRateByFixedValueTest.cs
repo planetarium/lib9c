@@ -43,12 +43,13 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         }
 
         [Theory]
-        [InlineData(73, 10114000, 1)]
-        [InlineData(37, 10114000, 30)]
+        [InlineData(73, 10114000, 1, 2)]
+        [InlineData(37, 10114000, 30, 2)]
         public void CombinationEquipmentTest(
             int randomSeed,
             int targetItemId,
-            int petLevel
+            int petLevel,
+            int expectedOptionCount
         )
         {
             var (beforeResult, afterResult) = (false, false);
@@ -175,10 +176,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var petSlotState = stateV2.GetCombinationSlotState(_avatarAddr, 1);
             // TEST: One additional option added (2 star)
             Assert.Equal(
-                recipe.RequiredBlockIndex + subRecipe.RequiredBlockIndex +
-                subRecipe.Options[0].RequiredBlockIndex +
-                subRecipe.Options[1].RequiredBlockIndex,
-                petSlotState.RequiredBlockIndex
+                expectedOptionCount,
+                petSlotState.Result.itemUsable.GetOptionCount()
             );
         }
     }
