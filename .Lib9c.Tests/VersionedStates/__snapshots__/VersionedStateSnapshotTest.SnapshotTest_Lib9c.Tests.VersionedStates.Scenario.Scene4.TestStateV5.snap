@@ -1,0 +1,56 @@
+﻿[
+  {
+    "Value": "test",
+    "Kind": "Text",
+    "Fingerprint": {
+      "Kind": 4,
+      "EncodingLength": 7,
+      "Digest": "dGVzdA=="
+    },
+    "EncodingLength": 7,
+    "Inspection": "\"test\""
+  },
+  {
+    "Value": 5,
+    "Kind": "Integer",
+    "Fingerprint": {
+      "Kind": 2,
+      "EncodingLength": 3,
+      "Digest": "BQ=="
+    },
+    "EncodingLength": 3,
+    "Inspection": "5"
+  },
+  [
+    {
+      "Kind": "Null",
+      "Fingerprint": {
+        "Kind": 0,
+        "EncodingLength": 1,
+        "Digest": ""
+      },
+      "EncodingLength": 1,
+      "Inspection": "null"
+    },
+    {
+      "Kind": "Null",
+      "Fingerprint": {
+        "Kind": 0,
+        "EncodingLength": 1,
+        "Digest": ""
+      },
+      "EncodingLength": 1,
+      "Inspection": "null"
+    },
+    {
+      "Kind": "Null",
+      "Fingerprint": {
+        "Kind": 0,
+        "EncodingLength": 1,
+        "Digest": ""
+      },
+      "EncodingLength": 1,
+      "Inspection": "null"
+    }
+  ]
+]

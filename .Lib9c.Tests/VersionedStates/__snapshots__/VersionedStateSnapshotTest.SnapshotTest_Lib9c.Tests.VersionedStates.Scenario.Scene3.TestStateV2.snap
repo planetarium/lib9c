@@ -1,0 +1,47 @@
+﻿[
+  {
+    "Value": "test",
+    "Kind": "Text",
+    "Fingerprint": {
+      "Kind": 4,
+      "EncodingLength": 7,
+      "Digest": "dGVzdA=="
+    },
+    "EncodingLength": 7,
+    "Inspection": "\"test\""
+  },
+  {
+    "Value": 2,
+    "Kind": "Integer",
+    "Fingerprint": {
+      "Kind": 2,
+      "EncodingLength": 3,
+      "Digest": "Ag=="
+    },
+    "EncodingLength": 3,
+    "Inspection": "2"
+  },
+  [
+    {
+      "Value": 0,
+      "Kind": "Integer",
+      "Fingerprint": {
+        "Kind": 2,
+        "EncodingLength": 3,
+        "Digest": "AA=="
+      },
+      "EncodingLength": 3,
+      "Inspection": "0"
+    },
+    {
+      "Kind": "Null",
+      "Fingerprint": {
+        "Kind": 0,
+        "EncodingLength": 1,
+        "Digest": ""
+      },
+      "EncodingLength": 1,
+      "Inspection": "null"
+    }
+  ]
+]

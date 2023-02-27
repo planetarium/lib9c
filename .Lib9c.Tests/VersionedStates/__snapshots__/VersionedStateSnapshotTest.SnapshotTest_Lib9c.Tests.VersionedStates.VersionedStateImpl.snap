@@ -1,0 +1,47 @@
+﻿[
+  {
+    "Value": "versioned_state",
+    "Kind": "Text",
+    "Fingerprint": {
+      "Kind": 4,
+      "EncodingLength": 19,
+      "Digest": "dmVyc2lvbmVkX3N0YXRl"
+    },
+    "EncodingLength": 19,
+    "Inspection": "\"versioned_state\""
+  },
+  {
+    "Value": 1,
+    "Kind": "Integer",
+    "Fingerprint": {
+      "Kind": 2,
+      "EncodingLength": 3,
+      "Digest": "AQ=="
+    },
+    "EncodingLength": 3,
+    "Inspection": "1"
+  },
+  [
+    {
+      "Kind": "Null",
+      "Fingerprint": {
+        "Kind": 0,
+        "EncodingLength": 1,
+        "Digest": ""
+      },
+      "EncodingLength": 1,
+      "Inspection": "null"
+    },
+    {
+      "Value": "",
+      "Kind": "Text",
+      "Fingerprint": {
+        "Kind": 4,
+        "EncodingLength": 3,
+        "Digest": ""
+      },
+      "EncodingLength": 3,
+      "Inspection": "\"\""
+    }
+  ]
+]
