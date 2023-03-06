@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
-        <AssemblyName>9c-tools</AssemblyName>
+      <OutputType>Exe</OutputType>
+      <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+      <AssemblyName>9c-tools</AssemblyName>
     </PropertyGroup>
 
     <PropertyGroup Condition="&#xA;      '$([System.Runtime.InteropServices.RuntimeInformation]::&#xA;        OSArchitecture.ToString())' == 'Arm64' ">
