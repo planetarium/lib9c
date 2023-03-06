@@ -2,31 +2,19 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
         <AssemblyName>9c-tools</AssemblyName>
-        <Configurations>Debug;Release;DevEx</Configurations>
-        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <PropertyGroup Condition="&#xA;      '$([System.Runtime.InteropServices.RuntimeInformation]::&#xA;        OSArchitecture.ToString())' == 'Arm64' ">
       <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'DevEx' ">
-      <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
-      <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
-    </PropertyGroup>
-
     <ItemGroup>
       <ProjectReference Include="..\.Libplanet\Libplanet.RocksDBStore\Libplanet.RocksDBStore.csproj" />
       <ProjectReference Include="..\Lib9c\Lib9c.csproj" />
+      <ProjectReference Include="..\Lib9c.Policy\Lib9c.Policy.csproj" />
     </ItemGroup>
-
-  <ItemGroup Condition=" '$(Configuration)' != 'DevEx' ">
-    <!-- NOTE: Lib9c.DevExtensions project will be contained by Lib9c project
-             when the configuration is 'DevEx'.-->
-    <ProjectReference Include="..\Lib9c.DevExtensions\Lib9c.DevExtensions.csproj" />
-  </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Cocona.Lite" Version="1.5.0" />

@@ -25,7 +25,7 @@ using Serilog;
 using Serilog.Core;
 using NCAction = Libplanet.Action.PolymorphicAction<Nekoyume.Action.ActionBase>;
 
-namespace Lib9c.DevExtensions
+namespace Lib9c.Tools
 {
     public static class Utils
     {

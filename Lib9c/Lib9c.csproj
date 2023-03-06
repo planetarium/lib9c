@@ -24,7 +24,7 @@
     <Compile Include="..\BTAI\*.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)' == 'DevEx' ">
+  <ItemGroup Condition=" '$(Configuration)' == 'DevEx' ">
     <Compile Include="..\Lib9c.DevExtensions\**\*.cs" Exclude="..\Lib9c.DevExtensions\.*\**\*.cs" />
   </ItemGroup>
 
