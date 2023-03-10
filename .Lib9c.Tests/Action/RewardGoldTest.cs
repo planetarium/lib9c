@@ -92,7 +92,7 @@ namespace Lib9c.Tests.Action
             weekly[_avatarState.address].Update(
                 weekly[_avatarState.address],
                 BattleLog.Result.Lose,
-                ArenaScoreHelper.GetScoreV4);
+                ArenaScoreHelper.GetScore);
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(_tableSheets.GameConfigSheet);
             var state = _baseState
@@ -182,7 +182,7 @@ namespace Lib9c.Tests.Action
                 prevWeekly[avatarAddress].Update(
                     prevWeekly[avatarAddress],
                     BattleLog.Result.Lose,
-                    ArenaScoreHelper.GetScoreV4);
+                    ArenaScoreHelper.GetScore);
                 prevWeekly.Set(_avatarState2, _tableSheets.CharacterSheet);
 
                 Assert.Equal(4, prevWeekly[avatarAddress].DailyChallengeCount);
@@ -204,7 +204,7 @@ namespace Lib9c.Tests.Action
                 prevInfo.Update(
                     prevInfo,
                     BattleLog.Result.Lose,
-                    ArenaScoreHelper.GetScoreV4);
+                    ArenaScoreHelper.GetScore);
 
                 Assert.Equal(4, prevInfo.DailyChallengeCount);
 
@@ -291,7 +291,7 @@ namespace Lib9c.Tests.Action
             legacyWeekly[_avatarState.address].Update(
                 legacyWeekly[_avatarState.address],
                 BattleLog.Result.Lose,
-                ArenaScoreHelper.GetScoreV4);
+                ArenaScoreHelper.GetScore);
 
             Assert.Equal(4, legacyWeekly[_avatarState.address].DailyChallengeCount);
 
@@ -330,7 +330,7 @@ namespace Lib9c.Tests.Action
             prevInfo.Update(
                 prevInfo,
                 BattleLog.Result.Lose,
-                ArenaScoreHelper.GetScoreV4);
+                ArenaScoreHelper.GetScore);
 
             Assert.Equal(4, prevInfo.DailyChallengeCount);
 
@@ -484,7 +484,7 @@ namespace Lib9c.Tests.Action
             Block<PolymorphicAction<ActionBase>> genesis;
             if (mainnet)
             {
-                const string genesisBlockPath = "https://release.nine-chronicles.com/genesis-block-9c-main";
+                const string genesisBlockPath = "https://s3.us-east-2.amazonaws.com/9c-test.planetarium-dev.com/genesis-block-pbft-dynamic-validator";
                 var uri = new Uri(genesisBlockPath);
                 using var client = new HttpClient();
                 var rawBlock = await client.GetByteArrayAsync(uri);
@@ -522,7 +522,7 @@ namespace Lib9c.Tests.Action
                     tableSheets: TableSheetsImporter.ImportSheets(),
                     pendingActivationStates: pendingActivationStates.ToArray()
                 );
-                genesis = BlockChain<PolymorphicAction<ActionBase>>.MakeGenesisBlock(
+                genesis = BlockChain<PolymorphicAction<ActionBase>>.ProposeGenesisBlock(
                     new PolymorphicAction<ActionBase>[] { initializeStates }
                 );
             }

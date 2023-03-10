@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.TestHelper
+namespace Lib9c.Tests.TestHelper
 {
     using System;
     using System.Collections.Generic;
@@ -61,7 +61,7 @@
             }
 
             var sheets = TableSheetsImporter.ImportSheets();
-            return BlockHelper.MineGenesisBlock(
+            return BlockHelper.ProposeGenesisBlock(
                 sheets,
                 new GoldDistribution[0],
                 pendingActivations,
