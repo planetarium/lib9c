@@ -62,14 +62,10 @@ namespace Lib9c.Benchmarks
             IBlockPolicy<NCAction> policy =
                 policySource.GetPolicy(
                     // Explicitly set to lowest possible difficulty.
-                    minimumDifficulty: BlockPolicySource.DifficultyStability,
                     maxTransactionsBytesPolicy: null,
                     minTransactionsPerBlockPolicy: null,
                     maxTransactionsPerBlockPolicy: null,
                     maxTransactionsPerSignerPerBlockPolicy: null,
-                    authorizedMinersPolicy: null,
-                    permissionedMinersPolicy: null,
-                    minBlockProtocolVersionPolicy: null,
                     validatorAdminPolicy: null);
             IStagePolicy<NCAction> stagePolicy = new VolatileStagePolicy<NCAction>();
             var store = new RocksDBStore(storePath);

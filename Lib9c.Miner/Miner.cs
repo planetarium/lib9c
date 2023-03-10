@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Blockchain;
 using Libplanet.Blocks;
+using Libplanet.Consensus;
 using Libplanet.Crypto;
 using Libplanet.Net;
 using Libplanet.Tx;
@@ -44,10 +43,15 @@ namespace Nekoyume.BlockChain
             new Address("0xd7e1b90dea34108fb2d3a6ac7dbf3f33bae2c77d"),
         }.ToImmutableHashSet();
 
+        public static readonly PrivateKey _debugValidatorKey =
+            new PrivateKey("0000000000000000000000000000000000000000000000000000000000000001");
+
         public Address Address => _privateKey.ToAddress();
 
-        public async Task<Block<NCAction>?> MineBlockAsync(
-            CancellationToken cancellationToken)
+        // FIXME: Temporary method to allow Unity Editor testing.
+        // This should only be called under a development environment inside Unity
+        // with DebugPolicy as blockchain's policy.
+        public Block<NCAction>? ProposeBlock()
         {
             var txs = new HashSet<Transaction<NCAction>>();
             var invalidTxs = txs;
@@ -63,10 +67,17 @@ namespace Nekoyume.BlockChain
 
                 if (_actionTypeLoader is { } actionTypeLoader)
                 {
-                    txValidators.Add(
-                        new CustomActionsDeserializableValidator(
-                            actionTypeLoader,
-                            _chain.Tip.Header.Index + 1).Validate);
+                    txValidators.Add(tx =>
+                    {
+                        var nextBlockIndex = _chain.Tip.Header.Index + 1;
+                        var types = actionTypeLoader.Load(new ActionTypeLoaderContext(nextBlockIndex));
+
+                        return !(tx.SystemAction is null) || tx.CustomActions?.All(ca =>
+                            ca is Dictionary dictionary &&
+                            dictionary.TryGetValue((Text)"type_id", out IValue value) &&
+                            value is Text typeId &&
+                            types.ContainsKey(typeId)) == true;
+                    });
                 }
 
                 foreach (Transaction<NCAction> tx in _chain.GetStagedTransactionIds()
@@ -76,17 +87,33 @@ namespace Nekoyume.BlockChain
                     {
                         if (!validator(tx))
                         {
-                            _chain.StagePolicy.Ignore(_chain, tx.Id);
+                            _chain.UnstageTransaction(tx);
                             break;
                         }
                     }
                 }
 
-                block = await _chain.MineBlock(
+                var lastCommit = _chain.GetBlockCommit(_chain.Tip.Hash);
+                var validatorKey = _debugValidatorKey;
+                block = _chain.ProposeBlock(
                     _privateKey,
                     DateTimeOffset.UtcNow,
-                    cancellationToken: cancellationToken,
-                    append: true);
+                    lastCommit: lastCommit);
+                BlockCommit? commit = block.Index > 0
+                    ? new BlockCommit(
+                        block.Index,
+                        0,
+                        block.Hash,
+                        ImmutableArray<Vote>.Empty
+                            .Add(new VoteMetadata(
+                                block.Index,
+                                0,
+                                block.Hash,
+                                DateTimeOffset.UtcNow,
+                                validatorKey.PublicKey,
+                                VoteFlag.PreCommit).Sign(validatorKey)))
+                    : null;
+                _chain.Append(block, commit);
 
                 if (_swarm is Swarm<NCAction> s && s.Running)
                 {

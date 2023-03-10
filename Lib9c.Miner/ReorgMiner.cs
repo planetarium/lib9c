@@ -1,11 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Libplanet;
 using Libplanet.Action;
 using Libplanet.Blockchain;
 using Libplanet.Blocks;
+using Libplanet.Consensus;
 using Libplanet.Crypto;
 using Libplanet.Net;
 using Libplanet.Tx;
@@ -42,10 +45,10 @@ namespace Nekoyume.BlockChain
             _reorgInterval = reorgInterval;
         }
 
-        public async Task<(
+        public (
                 Block<PolymorphicAction<ActionBase>>? MainBlock,
-                Block<PolymorphicAction<ActionBase>>? SubBlock)>
-            MineBlockAsync(CancellationToken cancellationToken)
+                Block<PolymorphicAction<ActionBase>>? SubBlock)
+            ProposeAndAppendBlock(CancellationToken cancellationToken)
         {
             var txs = new HashSet<Transaction<PolymorphicAction<ActionBase>>>();
 
@@ -54,15 +57,15 @@ namespace Nekoyume.BlockChain
             Block<PolymorphicAction<ActionBase>>? subBlock = null;
             try
             {
-                mainBlock = await _mainChain.MineBlock(
+                mainBlock = _mainChain.ProposeBlock(
                     _privateKey,
-                    DateTimeOffset.UtcNow,
-                    cancellationToken: cancellationToken);
+                    DateTimeOffset.UtcNow);
+                _mainChain.Append(mainBlock, _mainChain.GetBlockCommit(mainBlock.Index));
 
-                subBlock = await _subChain.MineBlock(
+                subBlock = _subChain.ProposeBlock(
                     _privateKey,
-                    DateTimeOffset.UtcNow,
-                    cancellationToken: cancellationToken);
+                    DateTimeOffset.UtcNow);
+                _subChain.Append(subBlock, _subChain.GetBlockCommit(subBlock.Index));
 
                 if (_reorgInterval != 0 && subBlock.Index % _reorgInterval == 0)
                 {
