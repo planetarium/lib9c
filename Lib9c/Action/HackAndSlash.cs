@@ -601,7 +601,7 @@ namespace Nekoyume.Action
             var totalElapsed = DateTimeOffset.UtcNow - started;
             Log
                 .ForContext("Tag", "Metric")
-                .ForContext("SubTag", "HackAndSlashDuration")
+                .ForContext("Subtag", "HackAndSlashDuration")
                 .Debug(
                 "{AddressesHex} HAS Total Executed Time: {Elapsed}, " +
                 "Total GetState Call Count: {GetStateCount}, " +

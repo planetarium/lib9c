@@ -249,7 +249,7 @@ namespace Nekoyume.Action
 
             Log
                 .ForContext("Tag", "Metric")
-                .ForContext("SubTag", "UpdateSellDuration")
+                .ForContext("Subtag", "UpdateSellDuration")
                 .Debug(
                     "{AddressesHex} UpdateSell Total Executed Time: {Elapsed}, " +
                     "Total GetState Call Count: {GetStateCount}, " +
