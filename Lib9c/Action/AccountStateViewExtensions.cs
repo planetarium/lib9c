@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
@@ -147,7 +148,15 @@ namespace Nekoyume.Action
             }
         }
 
-        public static AvatarState GetAvatarStateV2(this IAccountStateView states, Address address)
+        public static AvatarState GetAvatarStateV2(
+            this IAccountStateView states,
+            Address address) => GetAvatarStateV2(states, address, new Stopwatch(), out _);
+
+        public static AvatarState GetAvatarStateV2(
+            this IAccountStateView states,
+            Address address,
+            Stopwatch getStateSw,
+            out int getStateCount)
         {
             var addresses = new List<Address>
             {
@@ -160,7 +169,10 @@ namespace Nekoyume.Action
                 LegacyQuestListKey,
             };
             addresses.AddRange(keys.Select(key => address.Derive(key)));
+            getStateCount = addresses.Count;
+            getStateSw.Start();
             var serializedValues = states.GetStates(addresses);
+            getStateSw.Stop();
             if (!(serializedValues[0] is Dictionary serializedAvatar))
             {
                 Log.Warning("No avatar state ({AvatarAddress})", address.ToHex());
@@ -237,11 +249,31 @@ namespace Nekoyume.Action
             Address avatarAddress,
             out AvatarState avatarState,
             out bool migrationRequired
+        ) => TryGetAvatarStateV2(
+            states,
+            agentAddress,
+            avatarAddress,
+            new Stopwatch(),
+            out avatarState,
+            out migrationRequired,
+            out _);
+
+        public static bool TryGetAvatarStateV2(
+            this IAccountStateView states,
+            Address agentAddress,
+            Address avatarAddress,
+            Stopwatch getStateSw,
+            out AvatarState avatarState,
+            out bool migrationRequired,
+            out int getStateCount
         )
         {
             avatarState = null;
             migrationRequired = false;
-            if (states.GetState(avatarAddress) is Dictionary serializedAvatar)
+            getStateCount = 1;
+            getStateSw.Start();
+            var tempAvatarState = states.GetState(avatarAddress);
+            if (tempAvatarState is Dictionary serializedAvatar)
             {
                 try
                 {
@@ -250,7 +282,8 @@ namespace Nekoyume.Action
                         return false;
                     }
 
-                    avatarState = GetAvatarStateV2(states, avatarAddress);
+                    avatarState = GetAvatarStateV2(states, avatarAddress, getStateSw, out int gsc);
+                    getStateCount += gsc;
                     return true;
                 }
                 catch (Exception e)
@@ -319,7 +352,7 @@ namespace Nekoyume.Action
 
             try
             {
-                avatarState = states.GetAvatarStateV2(avatarAddress);
+                avatarState = states.GetAvatarStateV2(avatarAddress, new Stopwatch(), out _);
             }
             catch (FailedLoadStateException)
             {
@@ -976,7 +1009,7 @@ namespace Nekoyume.Action
             AvatarState enemyAvatarState;
             try
             {
-                enemyAvatarState = states.GetAvatarStateV2(avatarAddress);
+                enemyAvatarState = states.GetAvatarStateV2(avatarAddress, new Stopwatch(), out _);
             }
             // BackWard compatible.
             catch (FailedLoadStateException)

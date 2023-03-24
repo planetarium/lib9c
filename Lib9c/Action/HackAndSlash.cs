@@ -152,14 +152,14 @@ namespace Nekoyume.Action
             int getStateCount = 0;
             var setStateSw = new Stopwatch();
             sw.Start();
-            getStateCount++;
-            getStateSw.Start();
             getStateSuccess = states.TryGetAvatarStateV2(
                 signer,
                 AvatarAddress,
+                getStateSw,
                 out AvatarState avatarState,
-                out _);
-            getStateSw.Stop();
+                out _,
+                out int gsc);
+            getStateCount += gsc;
             if (!getStateSuccess)
             {
                 throw new FailedLoadStateException(

@@ -81,14 +81,14 @@ namespace Nekoyume.Action
                 throw new ListEmptyException($"{addressesHex} List - UpdateSell infos was empty.");
             }
 
-            getStateCount++;
-            getStateSw.Start();
             getStateSuccess = states.TryGetAvatarStateV2(
                 context.Signer,
                 sellerAvatarAddress,
+                getStateSw,
                 out var avatarState,
-                out _);
-            getStateSw.Stop();
+                out _,
+                out int gsc);
+            getStateCount += gsc;
             if (!getStateSuccess)
             {
                 throw new FailedLoadStateException(
