@@ -150,7 +150,7 @@ namespace Nekoyume.Action
 
         public static AvatarState GetAvatarStateV2(
             this IAccountStateView states,
-            Address address) => GetAvatarStateV2(states, address, new Stopwatch(), out _);
+            Address address) => states.GetAvatarStateV2(address, new Stopwatch(), out _);
 
         public static AvatarState GetAvatarStateV2(
             this IAccountStateView states,
@@ -249,8 +249,7 @@ namespace Nekoyume.Action
             Address avatarAddress,
             out AvatarState avatarState,
             out bool migrationRequired
-        ) => TryGetAvatarStateV2(
-            states,
+        ) => states.TryGetAvatarStateV2(
             agentAddress,
             avatarAddress,
             new Stopwatch(),
@@ -544,6 +543,33 @@ namespace Nekoyume.Action
             bool containArenaSimulatorSheets = false,
             bool containValidateItemRequirementSheets = false,
             bool containRaidSimulatorSheets = false,
+            IEnumerable<Type> sheetTypes = null) => states.GetSheets(
+            new Stopwatch(),
+            out _,
+            containAvatarSheets,
+            containItemSheet,
+            containQuestSheet,
+            containSimulatorSheets,
+            containStageSimulatorSheets,
+            containRankingSimulatorSheets,
+            containArenaSimulatorSheets,
+            containValidateItemRequirementSheets,
+            containRaidSimulatorSheets,
+            sheetTypes);
+
+        public static Dictionary<Type, (Address address, ISheet sheet)> GetSheets(
+            this IAccountStateView states,
+            Stopwatch getStateSw,
+            out int getStateCount,
+            bool containAvatarSheets = false,
+            bool containItemSheet = false,
+            bool containQuestSheet = false,
+            bool containSimulatorSheets = false,
+            bool containStageSimulatorSheets = false,
+            bool containRankingSimulatorSheets = false,
+            bool containArenaSimulatorSheets = false,
+            bool containValidateItemRequirementSheets = false,
+            bool containRaidSimulatorSheets = false,
             IEnumerable<Type> sheetTypes = null)
         {
             var sheetTypeList = sheetTypes?.ToList() ?? new List<Type>();
@@ -670,13 +696,19 @@ namespace Nekoyume.Action
                 sheetTypeList.Add(typeof(RuneOptionSheet));
             }
 
-            return states.GetSheets(sheetTypeList.Distinct().ToArray());
+            return states.GetSheets(getStateSw, out getStateCount, sheetTypeList.Distinct().ToArray());
         }
 
         public static Dictionary<Type, (Address address, ISheet sheet)> GetSheets(
             this IAccountStateView states,
-            params Type[] sheetTypes)
-        {
+            params Type[] sheetTypes) => states.GetSheets(new Stopwatch(), out _, sheetTypes);
+
+        public static Dictionary<Type, (Address address, ISheet sheet)> GetSheets(
+                this IAccountStateView states,
+                Stopwatch getStateSw,
+                out int getStateCount,
+                params Type[] sheetTypes)
+            {
             Dictionary<Type, (Address address, ISheet sheet)> result = sheetTypes.ToDictionary(
                 sheetType => sheetType,
                 sheetType => (Addresses.GetSheetAddress(sheetType.Name), (ISheet)null));
@@ -685,7 +717,10 @@ namespace Nekoyume.Action
                 .Select(tuple => tuple.Value.address)
                 .ToArray();
 #pragma warning restore LAA1002
+            getStateCount = addresses.Length;
+            getStateSw.Start();
             var csvValues = states.GetStates(addresses);
+            getStateSw.Stop();
             for (var i = 0; i < sheetTypes.Length; i++)
             {
                 var sheetType = sheetTypes[i];
@@ -1210,7 +1245,7 @@ namespace Nekoyume.Action
                 sheetTypeList.Add(typeof(EquipmentItemOptionSheet));
             }
 
-            return states.GetSheets(sheetTypeList.Distinct().ToArray());
+            return states.GetSheets(new Stopwatch(), out _, sheetTypeList.Distinct().ToArray());
         }
 
         public static Dictionary<Type, (Address address, ISheet sheet)> GetSheetsV1(
@@ -1345,7 +1380,7 @@ namespace Nekoyume.Action
                 sheetTypeList.Add(typeof(RuneSheet));
             }
 
-            return states.GetSheets(sheetTypeList.Distinct().ToArray());
+            return states.GetSheets(new Stopwatch(), out _, sheetTypeList.Distinct().ToArray());
         }
     }
 }

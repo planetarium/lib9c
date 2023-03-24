@@ -111,10 +111,10 @@ namespace Nekoyume.Action
             avatarState.updatedAt = context.BlockIndex;
             avatarState.blockIndex = context.BlockIndex;
 
-            sw.Restart();
+            getStateCount++;
+            getStateSw.Start();
             var costumeStatSheet = states.GetSheet<CostumeStatSheet>();
-            sw.Stop();
-            var getSheetElapsed = sw.Elapsed;
+            getStateSw.Stop();
 
             getStateCount++;
             getStateSw.Start();
@@ -252,13 +252,11 @@ namespace Nekoyume.Action
                 .ForContext("SubTag", "UpdateSellDuration")
                 .Debug(
                     "{AddressesHex} UpdateSell Total Executed Time: {Elapsed}, " +
-                    "Total GetSheet Duration: {GetSheetDuration}, " +
                     "Total GetState Call Count: {GetStateCount}, " +
                     "Total GetState Duration: {GetStateElapsed}, " +
                     "Total SetState Duration: {SetStateElapsed}",
                     addressesHex,
                     ended - started,
-                    getSheetElapsed,
                     getStateCount,
                     getStateSw.Elapsed,
                     setStateSw.Elapsed);

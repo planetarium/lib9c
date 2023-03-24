@@ -158,8 +158,8 @@ namespace Nekoyume.Action
                 getStateSw,
                 out AvatarState avatarState,
                 out _,
-                out int gsc);
-            getStateCount += gsc;
+                out int gsc1);
+            getStateCount += gsc1;
             if (!getStateSuccess)
             {
                 throw new FailedLoadStateException(
@@ -173,6 +173,8 @@ namespace Nekoyume.Action
             var sheets = states.GetSheets(
                     containQuestSheet: true,
                     containSimulatorSheets: true,
+                    getStateSw: getStateSw,
+                    getStateCount: out int gsc2,
                     sheetTypes: new[]
                     {
                         typeof(WorldSheet),
@@ -195,9 +197,9 @@ namespace Nekoyume.Action
                         typeof(StakeActionPointCoefficientSheet),
                         typeof(RuneListSheet),
                     });
+            getStateCount += gsc2;
             sw.Stop();
-            var getSheetElapsed = sw.Elapsed;
-            Log.Verbose("{AddressesHex} HAS Get Sheets: {Elapsed}", addressesHex, getSheetElapsed);
+            Log.Verbose("{AddressesHex} HAS Get Sheets: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
             var stakingLevel = 0;
@@ -602,13 +604,11 @@ namespace Nekoyume.Action
                 .ForContext("SubTag", "HackAndSlashDuration")
                 .Debug(
                 "{AddressesHex} HAS Total Executed Time: {Elapsed}, " +
-                "Total GetSheet Duration: {GetSheetDuration}, " +
                 "Total GetState Call Count: {GetStateCount}, " +
                 "Total GetState Duration: {GetStateElapsed}, " +
                 "Total SetState Duration: {SetStateElapsed}",
                 addressesHex,
                 totalElapsed,
-                getSheetElapsed,
                 getStateCount,
                 getStateSw.Elapsed,
                 setStateSw.Elapsed);
