@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
@@ -147,7 +148,15 @@ namespace Nekoyume.Action
             }
         }
 
-        public static AvatarState GetAvatarStateV2(this IAccountStateView states, Address address)
+        public static AvatarState GetAvatarStateV2(
+            this IAccountStateView states,
+            Address address) => states.GetAvatarStateV2(address, new Stopwatch(), out _);
+
+        public static AvatarState GetAvatarStateV2(
+            this IAccountStateView states,
+            Address address,
+            Stopwatch getStateSw,
+            out int getStateCount)
         {
             var addresses = new List<Address>
             {
@@ -160,7 +169,10 @@ namespace Nekoyume.Action
                 LegacyQuestListKey,
             };
             addresses.AddRange(keys.Select(key => address.Derive(key)));
+            getStateCount = addresses.Count;
+            getStateSw.Start();
             var serializedValues = states.GetStates(addresses);
+            getStateSw.Stop();
             if (!(serializedValues[0] is Dictionary serializedAvatar))
             {
                 Log.Warning("No avatar state ({AvatarAddress})", address.ToHex());
@@ -237,11 +249,30 @@ namespace Nekoyume.Action
             Address avatarAddress,
             out AvatarState avatarState,
             out bool migrationRequired
+        ) => states.TryGetAvatarStateV2(
+            agentAddress,
+            avatarAddress,
+            new Stopwatch(),
+            out avatarState,
+            out migrationRequired,
+            out _);
+
+        public static bool TryGetAvatarStateV2(
+            this IAccountStateView states,
+            Address agentAddress,
+            Address avatarAddress,
+            Stopwatch getStateSw,
+            out AvatarState avatarState,
+            out bool migrationRequired,
+            out int getStateCount
         )
         {
             avatarState = null;
             migrationRequired = false;
-            if (states.GetState(avatarAddress) is Dictionary serializedAvatar)
+            getStateCount = 1;
+            getStateSw.Start();
+            var tempAvatarState = states.GetState(avatarAddress);
+            if (tempAvatarState is Dictionary serializedAvatar)
             {
                 try
                 {
@@ -250,7 +281,8 @@ namespace Nekoyume.Action
                         return false;
                     }
 
-                    avatarState = GetAvatarStateV2(states, avatarAddress);
+                    avatarState = GetAvatarStateV2(states, avatarAddress, getStateSw, out int gsc);
+                    getStateCount += gsc;
                     return true;
                 }
                 catch (Exception e)
@@ -319,7 +351,7 @@ namespace Nekoyume.Action
 
             try
             {
-                avatarState = states.GetAvatarStateV2(avatarAddress);
+                avatarState = states.GetAvatarStateV2(avatarAddress, new Stopwatch(), out _);
             }
             catch (FailedLoadStateException)
             {
@@ -511,6 +543,33 @@ namespace Nekoyume.Action
             bool containArenaSimulatorSheets = false,
             bool containValidateItemRequirementSheets = false,
             bool containRaidSimulatorSheets = false,
+            IEnumerable<Type> sheetTypes = null) => states.GetSheets(
+            new Stopwatch(),
+            out _,
+            containAvatarSheets,
+            containItemSheet,
+            containQuestSheet,
+            containSimulatorSheets,
+            containStageSimulatorSheets,
+            containRankingSimulatorSheets,
+            containArenaSimulatorSheets,
+            containValidateItemRequirementSheets,
+            containRaidSimulatorSheets,
+            sheetTypes);
+
+        public static Dictionary<Type, (Address address, ISheet sheet)> GetSheets(
+            this IAccountStateView states,
+            Stopwatch getStateSw,
+            out int getStateCount,
+            bool containAvatarSheets = false,
+            bool containItemSheet = false,
+            bool containQuestSheet = false,
+            bool containSimulatorSheets = false,
+            bool containStageSimulatorSheets = false,
+            bool containRankingSimulatorSheets = false,
+            bool containArenaSimulatorSheets = false,
+            bool containValidateItemRequirementSheets = false,
+            bool containRaidSimulatorSheets = false,
             IEnumerable<Type> sheetTypes = null)
         {
             var sheetTypeList = sheetTypes?.ToList() ?? new List<Type>();
@@ -637,13 +696,19 @@ namespace Nekoyume.Action
                 sheetTypeList.Add(typeof(RuneOptionSheet));
             }
 
-            return states.GetSheets(sheetTypeList.Distinct().ToArray());
+            return states.GetSheets(getStateSw, out getStateCount, sheetTypeList.Distinct().ToArray());
         }
 
         public static Dictionary<Type, (Address address, ISheet sheet)> GetSheets(
             this IAccountStateView states,
-            params Type[] sheetTypes)
-        {
+            params Type[] sheetTypes) => states.GetSheets(new Stopwatch(), out _, sheetTypes);
+
+        public static Dictionary<Type, (Address address, ISheet sheet)> GetSheets(
+                this IAccountStateView states,
+                Stopwatch getStateSw,
+                out int getStateCount,
+                params Type[] sheetTypes)
+            {
             Dictionary<Type, (Address address, ISheet sheet)> result = sheetTypes.ToDictionary(
                 sheetType => sheetType,
                 sheetType => (Addresses.GetSheetAddress(sheetType.Name), (ISheet)null));
@@ -652,7 +717,10 @@ namespace Nekoyume.Action
                 .Select(tuple => tuple.Value.address)
                 .ToArray();
 #pragma warning restore LAA1002
+            getStateCount = addresses.Length;
+            getStateSw.Start();
             var csvValues = states.GetStates(addresses);
+            getStateSw.Stop();
             for (var i = 0; i < sheetTypes.Length; i++)
             {
                 var sheetType = sheetTypes[i];
@@ -976,7 +1044,7 @@ namespace Nekoyume.Action
             AvatarState enemyAvatarState;
             try
             {
-                enemyAvatarState = states.GetAvatarStateV2(avatarAddress);
+                enemyAvatarState = states.GetAvatarStateV2(avatarAddress, new Stopwatch(), out _);
             }
             // BackWard compatible.
             catch (FailedLoadStateException)
@@ -1177,7 +1245,7 @@ namespace Nekoyume.Action
                 sheetTypeList.Add(typeof(EquipmentItemOptionSheet));
             }
 
-            return states.GetSheets(sheetTypeList.Distinct().ToArray());
+            return states.GetSheets(new Stopwatch(), out _, sheetTypeList.Distinct().ToArray());
         }
 
         public static Dictionary<Type, (Address address, ISheet sheet)> GetSheetsV1(
@@ -1312,7 +1380,7 @@ namespace Nekoyume.Action
                 sheetTypeList.Add(typeof(RuneSheet));
             }
 
-            return states.GetSheets(sheetTypeList.Distinct().ToArray());
+            return states.GetSheets(new Stopwatch(), out _, sheetTypeList.Distinct().ToArray());
         }
     }
 }

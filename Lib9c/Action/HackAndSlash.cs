@@ -121,7 +121,7 @@ namespace Nekoyume.Action
 
             var addressesHex = $"[{signer.ToHex()}, {AvatarAddress.ToHex()}]";
             var started = DateTimeOffset.UtcNow;
-            Log.Debug("{AddressesHex}HAS exec started", addressesHex);
+            Log.Debug("{AddressesHex} HAS exec started", addressesHex);
 
             if (ApStoneCount > UsableApStoneCount)
             {
@@ -140,27 +140,41 @@ namespace Nekoyume.Action
             if (TotalPlayCount <= 0)
             {
                 throw new PlayCountIsZeroException(
-                    $"{addressesHex}playCount must not be zero or negative. " +
+                    $"{addressesHex} playCount must not be zero or negative. " +
                     $"Total play count : {TotalPlayCount}");
             }
 
             states.ValidateWorldId(AvatarAddress, WorldId);
 
             var sw = new Stopwatch();
+            var getStateSw = new Stopwatch();
+            bool getStateSuccess = false;
+            int getStateCount = 0;
+            var setStateSw = new Stopwatch();
             sw.Start();
-            if (!states.TryGetAvatarStateV2(signer, AvatarAddress, out AvatarState avatarState, out _))
+            getStateSuccess = states.TryGetAvatarStateV2(
+                signer,
+                AvatarAddress,
+                getStateSw,
+                out AvatarState avatarState,
+                out _,
+                out int gsc1);
+            getStateCount += gsc1;
+            if (!getStateSuccess)
             {
                 throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                    $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
             }
 
             sw.Stop();
-            Log.Verbose("{AddressesHex}HAS Get AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose("{AddressesHex} HAS Get AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
             var sheets = states.GetSheets(
                     containQuestSheet: true,
                     containSimulatorSheets: true,
+                    getStateSw: getStateSw,
+                    getStateCount: out int gsc2,
                     sheetTypes: new[]
                     {
                         typeof(WorldSheet),
@@ -183,22 +197,29 @@ namespace Nekoyume.Action
                         typeof(StakeActionPointCoefficientSheet),
                         typeof(RuneListSheet),
                     });
+            getStateCount += gsc2;
             sw.Stop();
-            Log.Verbose("{AddressesHex}HAS Get Sheets: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose("{AddressesHex} HAS Get Sheets: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
             var stakingLevel = 0;
             StakeActionPointCoefficientSheet actionPointCoefficientSheet = null;
-            if (states.TryGetStakeState(signer, out var stakeState) &&
-                sheets.TryGetSheet(out actionPointCoefficientSheet))
+            getStateCount++;
+            getStateSw.Start();
+            getStateSuccess = states.TryGetStakeState(signer, out var stakeState);
+            getStateSw.Stop();
+            if (getStateSuccess && sheets.TryGetSheet(out actionPointCoefficientSheet))
             {
+                getStateCount+=2;
+                getStateSw.Start();
                 var currency = states.GetGoldCurrency();
                 var stakedAmount = states.GetBalance(stakeState.address, currency);
+                getStateSw.Stop();
                 stakingLevel = actionPointCoefficientSheet.FindLevelByStakedAmount(signer, stakedAmount);
             }
 
             sw.Stop();
-            Log.Verbose("{AddressesHex}HAS Check StakeState: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose("{AddressesHex} HAS Check StakeState: {Elapsed}", addressesHex, sw.Elapsed);
 
             var worldSheet = sheets.GetSheet<WorldSheet>();
             if (!worldSheet.TryGetValue(WorldId, out var worldRow, false))
@@ -210,7 +231,7 @@ namespace Nekoyume.Action
                 StageId > worldRow.StageEnd)
             {
                 throw new SheetRowColumnException(
-                    $"{addressesHex}{WorldId} world is not contains {worldRow.Id} stage: " +
+                    $"{addressesHex} {WorldId} world is not contains {worldRow.Id} stage: " +
                     $"{worldRow.StageBegin}-{worldRow.StageEnd}");
             }
 
@@ -221,7 +242,7 @@ namespace Nekoyume.Action
             }
 
             sw.Stop();
-            Log.Verbose("{AddressesHex}HAS Get StageSheet: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose("{AddressesHex} HAS Get StageSheet: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
             var worldInformation = avatarState.worldInformation;
@@ -234,7 +255,7 @@ namespace Nekoyume.Action
 
             if (!world.IsUnlocked)
             {
-                throw new InvalidWorldException($"{addressesHex}{WorldId} is locked.");
+                throw new InvalidWorldException($"{addressesHex} {WorldId} is locked.");
             }
 
             if (world.StageBegin != worldRow.StageBegin ||
@@ -246,7 +267,7 @@ namespace Nekoyume.Action
             if (!world.IsStageCleared && StageId != world.StageBegin)
             {
                 throw new InvalidStageException(
-                    $"{addressesHex}Aborted as the stage ({WorldId}/{StageId - 1}) is not cleared; " +
+                    $"{addressesHex} Aborted as the stage ({WorldId}/{StageId - 1}) is not cleared; " +
                     $"clear the stage ({world.Id}/{world.StageBegin}) first"
                 );
             }
@@ -254,21 +275,21 @@ namespace Nekoyume.Action
             if (world.IsStageCleared && StageId - 1 > world.StageClearedId)
             {
                 throw new InvalidStageException(
-                    $"{addressesHex}Aborted as the stage ({WorldId}/{StageId - 1}) is not cleared; " +
+                    $"{addressesHex} Aborted as the stage ({WorldId}/{StageId - 1}) is not cleared; " +
                     $"cleared stage is ({world.Id}/{world.StageClearedId}), so you can play stage " +
                     $"({world.Id}/{world.StageClearedId + 1})"
                 );
             }
 
             sw.Stop();
-            Log.Verbose("{AddressesHex}HAS Validate World: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose("{AddressesHex} HAS Validate World: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
             var equipmentList = avatarState.ValidateEquipmentsV2(Equipments, blockIndex);
             var foodIds = avatarState.ValidateConsumable(Foods, blockIndex);
             var costumeIds = avatarState.ValidateCostume(Costumes);
             sw.Stop();
-            Log.Verbose("{AddressesHex}HAS Validate Items: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose("{AddressesHex} HAS Validate Items: {Elapsed}", addressesHex, sw.Elapsed);
 
             var materialItemSheet = sheets.GetSheet<MaterialItemSheet>();
             var apPlayCount = TotalPlayCount;
@@ -283,11 +304,14 @@ namespace Nekoyume.Action
 
             if (ApStoneCount > 0)
             {
+                getStateCount++;
+                getStateSw.Start();
                 var gameConfigState = states.GetGameConfigState();
+                getStateSw.Stop();
                 if (gameConfigState is null)
                 {
                     throw new FailedLoadStateException(
-                        $"{addressesHex}Aborted as the game config state was failed to load.");
+                        $"{addressesHex} Aborted as the game config state was failed to load.");
                 }
 
                 // use apStone
@@ -296,7 +320,7 @@ namespace Nekoyume.Action
                         count: ApStoneCount))
                 {
                     throw new NotEnoughMaterialException(
-                        $"{addressesHex}Aborted as the player has no enough material ({row.Id})");
+                        $"{addressesHex} Aborted as the player has no enough material ({row.Id})");
                 }
 
                 var apStonePlayCount =
@@ -305,13 +329,13 @@ namespace Nekoyume.Action
                 if (apPlayCount < 0)
                 {
                     throw new InvalidRepeatPlayException(
-                        $"{addressesHex}Invalid TotalPlayCount({TotalPlayCount}) and ApStoneCount({ApStoneCount}). " +
+                        $"{addressesHex} Invalid TotalPlayCount({TotalPlayCount}) and ApStoneCount({ApStoneCount}). " +
                         $"TotalPlayCount must be at least calculated apStonePlayCount({apStonePlayCount}). " +
                         $"Calculated ap play count: {apPlayCount}");
                 }
 
                 Log.Verbose(
-                    "{AddressesHex}TotalPlayCount: {TotalPlayCount}, " +
+                    "{AddressesHex} TotalPlayCount: {TotalPlayCount}, " +
                     "ApStoneCount: {ApStoneCount}, PlayCount by Ap stone: {ApStonePlayCount}, " +
                     "Ap cost per 1 play: {MinimumCostAp}, " +
                     "PlayCount by action point: {ApPlayCount}, Used AP: {UsedAp}",
@@ -327,7 +351,7 @@ namespace Nekoyume.Action
             if (avatarState.actionPoint < minimumCostAp * apPlayCount)
             {
                 throw new NotEnoughActionPointException(
-                    $"{addressesHex}Aborted due to insufficient action point: " +
+                    $"{addressesHex} Aborted due to insufficient action point: " +
                     $"{avatarState.actionPoint} < cost({minimumCostAp * apPlayCount}))"
                 );
             }
@@ -345,12 +369,12 @@ namespace Nekoyume.Action
             var items = Equipments.Concat(Costumes);
             avatarState.EquipItems(items);
             sw.Stop();
-            Log.Verbose("{AddressesHex}HAS Unequip items: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose("{AddressesHex} HAS Unequip items: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
             var questSheet = sheets.GetQuestSheet();
             sw.Stop();
-            Log.Verbose("{AddressesHex}HAS GetQuestSheet: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose("{AddressesHex} HAS GetQuestSheet: {Elapsed}", addressesHex, sw.Elapsed);
 
             // Update QuestList only when QuestSheet.Count is greater than QuestList.Count
             var questList = avatarState.questList;
@@ -363,7 +387,7 @@ namespace Nekoyume.Action
                     sheets.GetSheet<QuestItemRewardSheet>(),
                     sheets.GetSheet<EquipmentItemRecipeSheet>());
                 sw.Stop();
-                Log.Verbose("{AddressesHex}HAS Update QuestList: {Elapsed}", addressesHex, sw.Elapsed);
+                Log.Verbose("{AddressesHex} HAS Update QuestList: {Elapsed}", addressesHex, sw.Elapsed);
             }
 
             sw.Restart();
@@ -375,7 +399,11 @@ namespace Nekoyume.Action
             if (isNotClearedStage)
             {
                 // It has state, get CrystalRandomSkillState. If not, newly make.
-                skillState = states.TryGetState<List>(skillStateAddress, out var serialized)
+                getStateCount++;
+                getStateSw.Start();
+                getStateSuccess = states.TryGetState<List>(skillStateAddress, out var serialized);
+                getStateSw.Stop();
+                skillState = getStateSuccess
                     ? new CrystalRandomSkillState(skillStateAddress, serialized)
                     : new CrystalRandomSkillState(skillStateAddress, StageId);
 
@@ -402,7 +430,7 @@ namespace Nekoyume.Action
             }
 
             sw.Stop();
-            Log.Verbose("{AddressesHex}HAS Get skillState : {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose("{AddressesHex} HAS Get skillState : {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
             var worldUnlockSheet = sheets.GetSheet<WorldUnlockSheet>();
@@ -413,26 +441,43 @@ namespace Nekoyume.Action
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+            getStateCount++;
+            getStateSw.Start();
+            getStateSuccess = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState);
+            getStateSw.Stop();
+            var runeSlotState = getStateSuccess
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Adventure);
+
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
+            setStateSw.Start();
             states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            setStateSw.Stop();
 
             // update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+            getStateCount++;
+            getStateSw.Start();
+            getStateSuccess = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState);
+            getStateSw.Stop();
+            var itemSlotState = getStateSuccess
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Adventure);
             itemSlotState.UpdateEquipment(Equipments);
             itemSlotState.UpdateCostumes(Costumes);
+            setStateSw.Start();
             states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            setStateSw.Stop();
 
             var runeStates = new List<RuneState>();
             foreach (var address in RuneInfos.Select(info => RuneState.DeriveAddress(AvatarAddress, info.RuneId)))
             {
-                if (states.TryGetState(address, out List rawRuneState))
+                getStateCount++;
+                getStateSw.Start();
+                getStateSuccess = states.TryGetState(address, out List rawRuneState);
+                getStateSw.Stop();
+                if (getStateSuccess)
                 {
                     runeStates.Add(new RuneState(rawRuneState));
                 }
@@ -460,12 +505,12 @@ namespace Nekoyume.Action
                     sheets.GetSheet<CostumeStatSheet>(),
                     StageSimulator.GetWaveRewards(random, stageRow, materialItemSheet));
                 sw.Stop();
-                Log.Verbose("{AddressesHex}HAS Initialize Simulator: {Elapsed}", addressesHex, sw.Elapsed);
+                Log.Verbose("{AddressesHex} HAS Initialize Simulator: {Elapsed}", addressesHex, sw.Elapsed);
 
                 sw.Restart();
                 simulator.Simulate();
                 sw.Stop();
-                Log.Verbose("{AddressesHex}HAS Simulator.Simulate(): {Elapsed}", addressesHex, sw.Elapsed);
+                Log.Verbose("{AddressesHex} HAS Simulator.Simulate(): {Elapsed}", addressesHex, sw.Elapsed);
 
                 sw.Restart();
                 if (simulator.Log.IsClear)
@@ -478,7 +523,7 @@ namespace Nekoyume.Action
                         worldUnlockSheet
                     );
                     sw.Stop();
-                    Log.Verbose("{AddressesHex}HAS ClearStage: {Elapsed}", addressesHex, sw.Elapsed);
+                    Log.Verbose("{AddressesHex} HAS ClearStage: {Elapsed}", addressesHex, sw.Elapsed);
                 }
 
                 sw.Restart();
@@ -509,7 +554,7 @@ namespace Nekoyume.Action
 
                 sw.Stop();
                 Log.Verbose(
-                    "{AddressesHex}Update avatar by simulator({AvatarAddress}); " +
+                    "{AddressesHex} Update avatar by simulator({AvatarAddress}); " +
                     "worldId: {WorldId}, stageId: {StageId}, result: {Result}, " +
                     "clearWave: {ClearWave}, totalWave: {TotalWave}",
                     addressesHex,
@@ -522,7 +567,7 @@ namespace Nekoyume.Action
                 );
             }
             sw.Stop();
-            Log.Verbose("{AddressesHex}HAS loop Simulate: {Elapsed}, Count: {PlayCount}",
+            Log.Verbose("{AddressesHex} HAS loop Simulate: {Elapsed}, Count: {PlayCount}",
                 addressesHex, sw.Elapsed, TotalPlayCount);
 
             sw.Restart();
@@ -530,9 +575,9 @@ namespace Nekoyume.Action
             avatarState.updatedAt = blockIndex;
             avatarState.mailBox.CleanUp();
             sw.Stop();
-            Log.Verbose("{AddressesHex}HAS Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose("{AddressesHex} HAS Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
 
-            sw.Restart();
+            setStateSw.Start();
             if (isNotClearedStage)
             {
                 avatarState.worldInformation.TryGetLastClearedStageId(out var lastClearedStageId);
@@ -551,11 +596,22 @@ namespace Nekoyume.Action
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize());
-            sw.Stop();
-            Log.Verbose("{AddressesHex}HAS Set States: {Elapsed}", addressesHex, sw.Elapsed);
+            setStateSw.Stop();
 
             var totalElapsed = DateTimeOffset.UtcNow - started;
-            Log.Debug("{AddressesHex}HAS Total Executed Time: {Elapsed}", addressesHex, totalElapsed);
+            Log
+                .ForContext("Tag", "Metric")
+                .ForContext("SubTag", "HackAndSlashDuration")
+                .Debug(
+                "{AddressesHex} HAS Total Executed Time: {Elapsed}, " +
+                "Total GetState Call Count: {GetStateCount}, " +
+                "Total GetState Duration: {GetStateElapsed}, " +
+                "Total SetState Duration: {SetStateElapsed}",
+                addressesHex,
+                totalElapsed,
+                getStateCount,
+                getStateSw.Elapsed,
+                setStateSw.Elapsed);
             return states;
         }
 
