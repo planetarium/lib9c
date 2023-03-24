@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
 using Nekoyume.Model.State;
@@ -107,11 +108,32 @@ namespace Nekoyume.Model.Mail
     [Serializable]
     public class MailBox : IEnumerable<Mail>, IState
     {
-        private List<Mail> _mails = new List<Mail>();
+        private List<Mail> _mails;
+        private List<Mail> Mails
+        {
+            get
+            {
+                if (_serialized is List list)
+                {
+                    _mails = list.Select(d => Mail.Deserialize((Dictionary) d)).ToList();
+                    _serialized = null;
+                    return _mails;
+                }
 
-        public int Count => _mails.Count;
+                return _mails;
 
-        public Mail this[int idx] => _mails[idx];
+            }
+            set
+            {
+                _mails = value;
+                _serialized = null;
+            }
+        }
+        private List _serialized;
+
+        public int Count => Mails.Count;
+
+        public Mail this[int idx] => Mails[idx];
 
         public MailBox()
         {
@@ -119,14 +141,12 @@ namespace Nekoyume.Model.Mail
 
         public MailBox(List serialized) : this()
         {
-            _mails = serialized.Select(
-                d => Mail.Deserialize((Dictionary)d)
-            ).ToList();
+            _serialized = serialized;
         }
 
         public IEnumerator<Mail> GetEnumerator()
         {
-            return _mails.OrderByDescending(i => i.blockIndex).GetEnumerator();
+            return Mails.OrderByDescending(i => i.blockIndex).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -136,14 +156,14 @@ namespace Nekoyume.Model.Mail
 
         public void Add(Mail mail)
         {
-            _mails.Add(mail);
+            Mails.Add(mail);
         }
 
         public void CleanUp()
         {
-            if (_mails.Count > 30)
+            if (Mails.Count > 30)
             {
-                _mails = _mails
+                Mails = Mails
                     .OrderByDescending(m => m.blockIndex)
                     .ThenBy(m => m.id)
                     .Take(30)
@@ -154,26 +174,26 @@ namespace Nekoyume.Model.Mail
         [Obsolete("Use CleanUp")]
         public void CleanUp2()
         {
-            if (_mails.Count > 30)
+            if (Mails.Count > 30)
             {
-                _mails = _mails.OrderByDescending(m => m.blockIndex).Take(30).ToList();
+                Mails = Mails.OrderByDescending(m => m.blockIndex).Take(30).ToList();
             }
         }
 
         [Obsolete("No longer in use.")]
         public void CleanUpTemp(long blockIndex)
         {
-            _mails = _mails
+            Mails = Mails
                 .Where(m => m.requiredBlockIndex >= blockIndex)
                 .ToList();
         }
 
         public void Remove(Mail mail)
         {
-            _mails.Remove(mail);
+            Mails.Remove(mail);
         }
 
-        public IValue Serialize() => new List(_mails
+        public IValue Serialize() => new List(Mails
             .OrderBy(i => i.id)
             .Select(m => m.Serialize()));
     }
