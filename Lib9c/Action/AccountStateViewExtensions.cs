@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -16,6 +17,8 @@ using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
 using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Nekoyume.Model.Coupons;
 
 namespace Nekoyume.Action
@@ -663,20 +666,15 @@ namespace Nekoyume.Action
             this IAccountStateView states,
             params Type[] sheetTypes)
         {
-            Dictionary<Type, (Address address, ISheet sheet)> result = sheetTypes.ToDictionary(
-                sheetType => sheetType,
-                sheetType => (Addresses.GetSheetAddress(sheetType.Name), (ISheet)null));
-#pragma warning disable LAA1002
-            var addresses = result
-                .Select(tuple => tuple.Value.address)
-                .ToArray();
-#pragma warning restore LAA1002
-            var csvValues = states.GetStates(addresses);
-            for (var i = 0; i < sheetTypes.Length; i++)
+            ConcurrentDictionary<Type, (Address address, ISheet sheet)> result =
+                new ConcurrentDictionary<Type, (Address address, ISheet sheet)>();
+            var sw = new Stopwatch();
+            sw.Start();
+            Parallel.For(0, sheetTypes.Length, i =>
             {
                 var sheetType = sheetTypes[i];
-                var address = addresses[i];
-                var csvValue = csvValues[i];
+                var address = Addresses.GetSheetAddress(sheetType.Name);
+                var csvValue = states.GetState(address);
                 if (csvValue is null)
                 {
                     throw new FailedLoadStateException(address, sheetType);
@@ -692,8 +690,8 @@ namespace Nekoyume.Action
                 var cacheKey = address.ToHex() + ByteUtil.Hex(hash);
                 if (SheetsCache.TryGetValue(cacheKey, out var cached))
                 {
-                    result[sheetType] = (address, cached);
-                    continue;
+                    result.TryAdd(sheetType, (address, cached));
+                    return;
                 }
 
                 var sheetConstructorInfo = sheetType.GetConstructor(Type.EmptyTypes);
@@ -701,13 +699,13 @@ namespace Nekoyume.Action
                 {
                     throw new FailedLoadSheetException(sheetType);
                 }
-
                 sheet.Set(csv);
                 SheetsCache.AddOrUpdate(cacheKey, sheet);
-                result[sheetType] = (address, sheet);
-            }
-
-            return result;
+                result.TryAdd(sheetType, (address, sheet));
+            });
+            sw.Stop();
+            Log.Verbose("get sheets({SheetTypesLength}): {SwElapsed}", sheetTypes.Length, sw.Elapsed);
+            return result.ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
         public static string GetSheetCsv<T>(this IAccountStateView states) where T : ISheet, new()
