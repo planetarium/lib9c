@@ -68,6 +68,10 @@ namespace Nekoyume.Action
             // common
             var addressesHex = GetSignerAndOtherAddressesHex(context, sellerAvatarAddress);
             var sw = new Stopwatch();
+            var getStateSw = new Stopwatch();
+            bool getStateSuccess = false;
+            int getStateCount = 0;
+            var setStateSw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex} updateSell exec started", addressesHex);
@@ -76,7 +80,16 @@ namespace Nekoyume.Action
             {
                 throw new ListEmptyException($"{addressesHex} List - UpdateSell infos was empty.");
             }
-            if (!states.TryGetAvatarStateV2(context.Signer, sellerAvatarAddress, out var avatarState, out _))
+
+            getStateCount++;
+            getStateSw.Start();
+            getStateSuccess = states.TryGetAvatarStateV2(
+                context.Signer,
+                sellerAvatarAddress,
+                out var avatarState,
+                out _);
+            getStateSw.Stop();
+            if (!getStateSuccess)
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
@@ -98,9 +111,16 @@ namespace Nekoyume.Action
             avatarState.updatedAt = context.BlockIndex;
             avatarState.blockIndex = context.BlockIndex;
 
+            sw.Restart();
             var costumeStatSheet = states.GetSheet<CostumeStatSheet>();
+            sw.Stop();
+            var getSheetElapsed = sw.Elapsed;
 
-            if (!states.TryGetState(digestListAddress, out Dictionary rawList))
+            getStateCount++;
+            getStateSw.Start();
+            getStateSuccess = states.TryGetState(digestListAddress, out Dictionary rawList);
+            getStateSw.Stop();
+            if (!getStateSuccess)
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} failed to load {nameof(OrderDigest)}({digestListAddress}).");
@@ -127,7 +147,11 @@ namespace Nekoyume.Action
 
                 // for sell cancel
                 sw.Restart();
-                if (!states.TryGetState(shopAddress, out BxDictionary shopStateDict))
+                getStateCount++;
+                getStateSw.Start();
+                getStateSuccess = states.TryGetState(shopAddress, out BxDictionary shopStateDict);
+                getStateSw.Stop();
+                if (!getStateSuccess)
                 {
                     throw new FailedLoadStateException($"{addressesHex}failed to load {nameof(ShardedShopStateV2)}({shopAddress}).");
                 }
@@ -135,7 +159,13 @@ namespace Nekoyume.Action
                 sw.Stop();
                 Log.Verbose("{AddressesHex} UpdateSell Sell Cancel Get ShopState: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();
-                if (!states.TryGetState(Order.DeriveAddress(updateSellInfo.orderId), out Dictionary orderDict))
+                getStateCount++;
+                getStateSw.Start();
+                getStateSuccess = states.TryGetState(
+                    Order.DeriveAddress(updateSellInfo.orderId),
+                    out Dictionary orderDict);
+                getStateSw.Stop();
+                if (!getStateSuccess)
                 {
                     throw new FailedLoadStateException($"{addressesHex} failed to load {nameof(Order)}({Order.DeriveAddress(updateSellInfo.orderId)}).");
                 }
@@ -147,7 +177,9 @@ namespace Nekoyume.Action
                 {
                     var shardedShopState = new ShardedShopStateV2(shopStateDict);
                     shardedShopState.Remove(orderOnSale, context.BlockIndex);
+                    setStateSw.Start();
                     states = states.SetState(shopAddress, shardedShopState.Serialize());
+                    setStateSw.Stop();
                 }
 
                 digestList.Remove(orderOnSale.OrderId);
@@ -161,8 +193,13 @@ namespace Nekoyume.Action
                 }
 
                 // for updateSell
-                var updateSellShopState =
-                    states.TryGetState(updateSellShopAddress, out Dictionary serializedState)
+                getStateCount++;
+                getStateSw.Start();
+                getStateSuccess = states.TryGetState(
+                    updateSellShopAddress,
+                    out Dictionary serializedState);
+                getStateSw.Stop();
+                var updateSellShopState = getStateSuccess
                         ? new ShardedShopStateV2(serializedState)
                         : new ShardedShopStateV2(updateSellShopAddress);
 
@@ -187,25 +224,44 @@ namespace Nekoyume.Action
 
                 digestList.Add(orderDigest);
 
+                setStateSw.Start();
                 states = states
                     .SetState(itemAddress, tradableItem.Serialize())
                     .SetState(updateSellOrderAddress, newOrder.Serialize())
                     .SetState(updateSellShopAddress, updateSellShopState.Serialize());
+                setStateSw.Stop();
                 sw.Stop();
                 Log.Verbose("{AddressesHex} UpdateSell Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
             }
 
             sw.Restart();
+            setStateSw.Start();
             states = states.SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
                 .SetState(sellerAvatarAddress, avatarState.SerializeV2())
                 .SetState(digestListAddress, digestList.Serialize());
+            setStateSw.Stop();
             sw.Stop();
             Log.Verbose("{AddressesHex} UpdateSell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
 
             var ended = DateTimeOffset.UtcNow;
-            Log.Debug("{AddressesHex} UpdateSell Total Executed Time: {Elapsed}", addressesHex, ended - started);
+
+            Log
+                .ForContext("Tag", "Metric")
+                .ForContext("SubTag", "UpdateSellDuration")
+                .Debug(
+                    "{AddressesHex} UpdateSell Total Executed Time: {Elapsed}, " +
+                    "Total GetSheet Duration: {GetSheetDuration}, " +
+                    "Total GetState Call Count: {GetStateCount}, " +
+                    "Total GetState Duration: {GetStateElapsed}, " +
+                    "Total SetState Duration: {SetStateElapsed}",
+                    addressesHex,
+                    ended - started,
+                    getSheetElapsed,
+                    getStateCount,
+                    getStateSw.Elapsed,
+                    setStateSw.Elapsed);
 
             return states;
         }
