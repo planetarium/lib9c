@@ -151,6 +151,7 @@ namespace Nekoyume.Action
             bool getStateSuccess = false;
             int getStateCount = 0;
             var setStateSw = new Stopwatch();
+            var serializeSw = new Stopwatch();
             sw.Start();
             getStateSuccess = states.TryGetAvatarStateV2(
                 signer,
@@ -451,8 +452,11 @@ namespace Nekoyume.Action
 
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
+            serializeSw.Start();
+            var runeSlotStateSerialized = runeSlotState.Serialize();
+            serializeSw.Stop();
             setStateSw.Start();
-            states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            states = states.SetState(runeSlotStateAddress, runeSlotStateSerialized);
             setStateSw.Stop();
 
             // update item slot
@@ -466,8 +470,11 @@ namespace Nekoyume.Action
                 : new ItemSlotState(BattleType.Adventure);
             itemSlotState.UpdateEquipment(Equipments);
             itemSlotState.UpdateCostumes(Costumes);
+            serializeSw.Start();
+            var itemSlotStateSerialized = itemSlotState.Serialize();
+            serializeSw.Stop();
             setStateSw.Start();
-            states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            states = states.SetState(itemSlotStateAddress, itemSlotStateSerialized);
             setStateSw.Stop();
 
             var runeStates = new List<RuneState>();
@@ -577,7 +584,6 @@ namespace Nekoyume.Action
             sw.Stop();
             Log.Verbose("{AddressesHex} HAS Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
 
-            setStateSw.Start();
             if (isNotClearedStage)
             {
                 avatarState.worldInformation.TryGetLastClearedStageId(out var lastClearedStageId);
@@ -588,14 +594,29 @@ namespace Nekoyume.Action
                 }
 
                 skillState.Update(new List<int>());
-                states = states.SetState(skillStateAddress, skillState.Serialize());
+                serializeSw.Start();
+                var skillStateSerialized = skillState.Serialize();
+                serializeSw.Stop();
+                setStateSw.Start();
+                states = states.SetState(skillStateAddress, skillStateSerialized);
+                setStateSw.Stop();
             }
 
+            serializeSw.Start();
+            sw.Restart();
+            var avatarStateSerialized = avatarState.SerializeV2();
+            sw.Stop();
+            Log.Verbose("{AddressesHex} HAS Serialize AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
+            var inventorySerialized = avatarState.inventory.Serialize();
+            var worldInformationSerialized = avatarState.worldInformation.Serialize();
+            var questListSerialized = avatarState.questList.Serialize();
+            serializeSw.Stop();
+            setStateSw.Start();
             states = states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+                .SetState(AvatarAddress, avatarStateSerialized)
+                .SetState(inventoryAddress, inventorySerialized)
+                .SetState(worldInformationAddress, worldInformationSerialized)
+                .SetState(questListAddress, questListSerialized);
             setStateSw.Stop();
 
             var totalElapsed = DateTimeOffset.UtcNow - started;
@@ -606,12 +627,14 @@ namespace Nekoyume.Action
                 "{AddressesHex} HAS Total Executed Time: {Elapsed}, " +
                 "Total GetState Call Count: {GetStateCount}, " +
                 "Total GetState Duration: {GetStateElapsed}, " +
-                "Total SetState Duration: {SetStateElapsed}",
+                "Total SetState Duration: {SetStateElapsed}, " +
+                "Total Serialization Duration: {SerializeElapsed}",
                 addressesHex,
                 totalElapsed,
                 getStateCount,
                 getStateSw.Elapsed,
-                setStateSw.Elapsed);
+                setStateSw.Elapsed,
+                serializeSw.Elapsed);
             return states;
         }
 
