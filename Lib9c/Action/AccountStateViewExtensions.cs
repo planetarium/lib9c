@@ -202,7 +202,12 @@ namespace Nekoyume.Action
 
             try
             {
-                return new AvatarState(serializedAvatar);
+                var sw = new Stopwatch();
+                sw.Start();
+                var avatarState = new AvatarState(serializedAvatar);
+                sw.Stop();
+                Log.Verbose("Deserialize AvatarState: {Elapsed}", sw.Elapsed);
+                return avatarState;
             }
             catch (InvalidCastException e)
             {
@@ -281,6 +286,7 @@ namespace Nekoyume.Action
             getStateCount = 1;
             getStateSw.Start();
             var tempAvatarState = states.GetState(avatarAddress);
+            getStateSw.Stop();
             if (tempAvatarState is Dictionary serializedAvatar)
             {
                 try
