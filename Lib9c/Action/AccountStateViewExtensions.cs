@@ -230,23 +230,32 @@ namespace Nekoyume.Action
             }
         }
 
-        public static bool TryGetAvatarState(
-            this IAccountStateView states,
+        public static bool TryGetAvatarState(this IAccountStateView states,
             Address agentAddress,
             Address avatarAddress,
-            out AvatarState avatarState
-        )
+            out AvatarState avatarState, Dictionary serializedAvatar = null)
         {
             avatarState = null;
-            var value = states.GetState(avatarAddress);
-            if (value is null)
+            if (serializedAvatar is null)
             {
-                return false;
+                var value = states.GetState(avatarAddress);
+                if (value is null)
+                {
+                    return false;
+                }
+
+                try
+                {
+                    serializedAvatar = (Dictionary) value;
+                }
+                catch (InvalidCastException)
+                {
+                    return false;
+                }
             }
 
             try
             {
-                var serializedAvatar = (Dictionary)value;
                 if (serializedAvatar["agentAddress"].ToAddress() != agentAddress)
                 {
                     return false;
@@ -314,8 +323,8 @@ namespace Nekoyume.Action
                     if (e is KeyNotFoundException || e is FailedLoadStateException)
                     {
                         migrationRequired = true;
-                        avatarState = new AvatarState(serializedAvatar);
-                        return true;
+                        return states.TryGetAvatarState(agentAddress, avatarAddress,
+                            out avatarState, serializedAvatar);
                     }
 
                     return false;
