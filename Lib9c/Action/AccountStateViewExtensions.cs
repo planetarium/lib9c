@@ -152,11 +152,10 @@ namespace Nekoyume.Action
             this IAccountStateView states,
             Address address) => states.GetAvatarStateV2(address, new Stopwatch(), out _);
 
-        public static AvatarState GetAvatarStateV2(
-            this IAccountStateView states,
+        public static AvatarState GetAvatarStateV2(this IAccountStateView states,
             Address address,
             Stopwatch getStateSw,
-            out int getStateCount)
+            out int getStateCount, Dictionary avatarDictionary = null)
         {
             string[] keys =
             {
@@ -164,6 +163,7 @@ namespace Nekoyume.Action
                 LegacyWorldInformationKey,
                 LegacyQuestListKey,
             };
+            bool avatarDictExist = !(avatarDictionary is null);
             var addressMap = new Dictionary<int, Address>()
             {
                 [0] = address
@@ -174,10 +174,18 @@ namespace Nekoyume.Action
                 addressMap[i + 1] = address.Derive(key);
             }
             var serializedValues = new ConcurrentDictionary<int, IValue>();
-            getStateCount = addressMap.Count;
+            if (avatarDictExist)
+            {
+                serializedValues.TryAdd(0, avatarDictionary);
+            }
+            getStateCount = avatarDictExist ? addressMap.Count - 1 : addressMap.Count;
             getStateSw.Start();
             Parallel.For(0, addressMap.Count, i =>
             {
+                if (serializedValues.ContainsKey(i))
+                {
+                    return;
+                }
                 var value = states.GetState(addressMap[i]);
                 serializedValues.TryAdd(i, value);
             });
@@ -296,7 +304,7 @@ namespace Nekoyume.Action
                         return false;
                     }
 
-                    avatarState = GetAvatarStateV2(states, avatarAddress, getStateSw, out int gsc);
+                    avatarState = GetAvatarStateV2(states, avatarAddress, getStateSw, out int gsc, serializedAvatar);
                     getStateCount += gsc;
                     return true;
                 }
@@ -306,7 +314,8 @@ namespace Nekoyume.Action
                     if (e is KeyNotFoundException || e is FailedLoadStateException)
                     {
                         migrationRequired = true;
-                        return states.TryGetAvatarState(agentAddress, avatarAddress, out avatarState);
+                        avatarState = new AvatarState(serializedAvatar);
+                        return true;
                     }
 
                     return false;
