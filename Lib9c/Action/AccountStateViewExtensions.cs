@@ -149,12 +149,16 @@ namespace Nekoyume.Action
             }
         }
 
-        public static AvatarState GetAvatarStateV2(this IAccountStateView states, Address address)
+        public static AvatarState GetAvatarStateV2(this IAccountStateView states, Address address, Dictionary avatarDictionary = null)
         {
-            var addresses = new List<Address>
+            bool avatarDictExist = !(avatarDictionary is null);
+            var addresses = new List<Address>();
+            int offset = 0;
+            if (!avatarDictExist)
             {
-                address,
-            };
+                addresses.Add(address);
+                offset = 1;
+            }
             string[] keys =
             {
                 LegacyInventoryKey,
@@ -163,16 +167,26 @@ namespace Nekoyume.Action
             };
             addresses.AddRange(keys.Select(key => address.Derive(key)));
             var serializedValues = states.GetStates(addresses);
-            if (!(serializedValues[0] is Dictionary serializedAvatar))
+            Dictionary serializedAvatar;
+            if (avatarDictExist)
             {
-                Log.Warning("No avatar state ({AvatarAddress})", address.ToHex());
-                return null;
+                serializedAvatar = avatarDictionary;
+            }
+            else
+            {
+                if (!(serializedValues[0] is Dictionary serializedValue))
+                {
+                    Log.Warning("No avatar state ({AvatarAddress})", address.ToHex());
+                    return null;
+                }
+
+                serializedAvatar = serializedValue;
             }
 
             for (var i = 0; i < keys.Length; i++)
             {
                 var key = keys[i];
-                var serializedValue = serializedValues[i + 1];
+                var serializedValue = serializedValues[i + offset];
                 if (serializedValue is null)
                 {
                     throw new FailedLoadStateException($"failed to load {key}.");
@@ -198,23 +212,32 @@ namespace Nekoyume.Action
             }
         }
 
-        public static bool TryGetAvatarState(
-            this IAccountStateView states,
+        public static bool TryGetAvatarState(this IAccountStateView states,
             Address agentAddress,
             Address avatarAddress,
-            out AvatarState avatarState
-        )
+            out AvatarState avatarState, Dictionary serializedAvatar = null)
         {
             avatarState = null;
-            var value = states.GetState(avatarAddress);
-            if (value is null)
+            if (serializedAvatar is null)
             {
-                return false;
+                var value = states.GetState(avatarAddress);
+                if (value is null)
+                {
+                    return false;
+                }
+
+                try
+                {
+                    serializedAvatar = (Dictionary) value;
+                }
+                catch (InvalidCastException)
+                {
+                    return false;
+                }
             }
 
             try
             {
-                var serializedAvatar = (Dictionary)value;
                 if (serializedAvatar["agentAddress"].ToAddress() != agentAddress)
                 {
                     return false;
@@ -252,7 +275,7 @@ namespace Nekoyume.Action
                         return false;
                     }
 
-                    avatarState = GetAvatarStateV2(states, avatarAddress);
+                    avatarState = GetAvatarStateV2(states, avatarAddress, serializedAvatar);
                     return true;
                 }
                 catch (Exception e)
@@ -261,7 +284,8 @@ namespace Nekoyume.Action
                     if (e is KeyNotFoundException || e is FailedLoadStateException)
                     {
                         migrationRequired = true;
-                        return states.TryGetAvatarState(agentAddress, avatarAddress, out avatarState);
+                        return states.TryGetAvatarState(agentAddress, avatarAddress,
+                            out avatarState, serializedAvatar);
                     }
 
                     return false;
