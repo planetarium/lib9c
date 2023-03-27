@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using Bencodex.Types;
 using Libplanet;
 using Libplanet.Action;
@@ -45,17 +47,15 @@ namespace Nekoyume.Action
             return false;
         }
 
-        public static Dictionary<Address, IValue> GetStatesAsDict(this IAccountStateView states, params Address[] addresses)
+        public static IDictionary<Address, IValue> GetStatesAsDict(this IAccountStateView states, params Address[] addresses)
         {
-            var result = new Dictionary<Address, IValue>();
-            var values = states.GetStates(addresses);
-            for (var i = 0; i < addresses.Length; i++)
+            var result = new ConcurrentDictionary<Address, IValue>();
+            Parallel.For(0, addresses.Length, i =>
             {
                 var address = addresses[i];
-                var value = values[i];
-                result[address] = value ?? Null.Value;
-            }
-
+                var value = states.GetState(address);
+                result.TryAdd(address, value ?? Null.Value);
+            });
             return result;
         }
 
@@ -158,20 +158,29 @@ namespace Nekoyume.Action
             Stopwatch getStateSw,
             out int getStateCount)
         {
-            var addresses = new List<Address>
-            {
-                address,
-            };
             string[] keys =
             {
                 LegacyInventoryKey,
                 LegacyWorldInformationKey,
                 LegacyQuestListKey,
             };
-            addresses.AddRange(keys.Select(key => address.Derive(key)));
-            getStateCount = addresses.Count;
+            var addressMap = new Dictionary<int, Address>()
+            {
+                [0] = address
+            };
+            for (int i = 0; i < keys.Length; i++)
+            {
+                var key = keys[i];
+                addressMap[i + 1] = address.Derive(key);
+            }
+            var serializedValues = new ConcurrentDictionary<int, IValue>();
+            getStateCount = addressMap.Count;
             getStateSw.Start();
-            var serializedValues = states.GetStates(addresses);
+            Parallel.For(0, addressMap.Count, i =>
+            {
+                var value = states.GetState(addressMap[i]);
+                serializedValues.TryAdd(i, value);
+            });
             getStateSw.Stop();
             if (!(serializedValues[0] is Dictionary serializedAvatar))
             {
@@ -709,23 +718,14 @@ namespace Nekoyume.Action
                 out int getStateCount,
                 params Type[] sheetTypes)
             {
-            Dictionary<Type, (Address address, ISheet sheet)> result = sheetTypes.ToDictionary(
-                sheetType => sheetType,
-                sheetType => (Addresses.GetSheetAddress(sheetType.Name), (ISheet)null));
-#pragma warning disable LAA1002
-            var addresses = result
-                .Select(tuple => tuple.Value.address)
-                .ToArray();
-#pragma warning restore LAA1002
-            getStateCount = addresses.Length;
+                ConcurrentDictionary<Type, (Address address, ISheet sheet)> result = new ConcurrentDictionary<Type, (Address address, ISheet sheet)>();
+            getStateCount = sheetTypes.Length;
             getStateSw.Start();
-            var csvValues = states.GetStates(addresses);
-            getStateSw.Stop();
-            for (var i = 0; i < sheetTypes.Length; i++)
+            Parallel.For(0, sheetTypes.Length, i =>
             {
                 var sheetType = sheetTypes[i];
-                var address = addresses[i];
-                var csvValue = csvValues[i];
+                var address = Addresses.GetSheetAddress(sheetType.Name);
+                var csvValue = states.GetState(address);
                 if (csvValue is null)
                 {
                     throw new FailedLoadStateException(address, sheetType);
@@ -741,8 +741,8 @@ namespace Nekoyume.Action
                 var cacheKey = address.ToHex() + ByteUtil.Hex(hash);
                 if (SheetsCache.TryGetValue(cacheKey, out var cached))
                 {
-                    result[sheetType] = (address, cached);
-                    continue;
+                    result.TryAdd(sheetType, (address, cached));
+                    return;
                 }
 
                 var sheetConstructorInfo = sheetType.GetConstructor(Type.EmptyTypes);
@@ -753,10 +753,11 @@ namespace Nekoyume.Action
 
                 sheet.Set(csv);
                 SheetsCache.AddOrUpdate(cacheKey, sheet);
-                result[sheetType] = (address, sheet);
-            }
+                result.TryAdd(sheetType, (address, sheet));
+            });
+            getStateSw.Stop();
 
-            return result;
+            return result.ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
         public static string GetSheetCsv<T>(this IAccountStateView states) where T : ISheet, new()
