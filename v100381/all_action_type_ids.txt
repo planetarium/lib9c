@@ -154,7 +154,7 @@ mimisbrunnr_battle9
 monster_collect
 monster_collect2
 monster_collect3
-op_validator_set_1
+op_validator_set
 patch_table_sheet
 pet_enhancement
 prepare_reward_assets
