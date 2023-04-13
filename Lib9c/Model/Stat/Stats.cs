@@ -20,9 +20,9 @@ namespace Nekoyume.Model.Stat
         public int HP => hp.Value;
         public int ATK => atk.Value;
         public int DEF => def.Value;
-        public int CRI => cri.ValueAsInt;
-        public int HIT => hit.ValueAsInt;
-        public int SPD => spd.ValueAsInt;
+        public int CRI => cri.Value;
+        public int HIT => hit.Value;
+        public int SPD => spd.Value;
         public int DRV => drv.Value;
         public int DRR => drr.Value;
         public int CDMG => cdmg.Value;
@@ -91,7 +91,7 @@ namespace Nekoyume.Model.Stat
         }
 
         /// <summary>
-        /// baseStatsArray의 모든 능력치의 합을 바탕으로, statModifiers를 통해서 추가되는 부분 만으로 초기화한다. 
+        /// baseStatsArray의 모든 능력치의 합을 바탕으로, statModifiers를 통해서 추가되는 부분 만으로 초기화한다.
         /// </summary>
         /// <param name="statModifiers"></param>
         /// <param name="baseStatsArray"></param>

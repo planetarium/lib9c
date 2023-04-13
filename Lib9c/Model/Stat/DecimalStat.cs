@@ -8,26 +8,21 @@ namespace Nekoyume.Model.Stat
         private decimal _value;
 
         public readonly StatType Type;
-        public decimal Value
+        public int Value
         {
-            get => _value;
-            private set
-            {
-                _value = value;
-                ValueAsInt = (int)_value;
-            }
+            get => (int)(_value / 100);
+            private set => _value = value;
         }
-        public int ValueAsInt { get; private set; }
 
         public DecimalStat(StatType type, decimal value = 0m)
         {
             Type = type;
-            Value = value;
+            Value = (int) (value * 100);
         }
 
         public virtual void Reset()
         {
-            Value = 0m;
+            Value = 0;
         }
 
         protected DecimalStat(DecimalStat value)
@@ -38,7 +33,7 @@ namespace Nekoyume.Model.Stat
 
         public void SetValue(decimal value)
         {
-            Value = value;
+            Value = (int) (value * 100);
         }
 
         public void AddValue(decimal value)
