@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Libplanet;
@@ -35,9 +37,48 @@ namespace Nekoyume
         public static readonly Address Rune                  = new Address("0000000000000000000000000000000000000016");
         public static readonly Address Market                = new Address("0000000000000000000000000000000000000017");
 
-        public static Address GetSheetAddress<T>() where T : ISheet => GetSheetAddress(typeof(T).Name);
+        private static readonly ImmutableDictionary<string, ImmutableSortedDictionary<int, long>>
+            TableSheetVersionControlDict =
+                new Dictionary<string, ImmutableSortedDictionary<int, long>>
+                {
+                    {
+                        "StakeRegularRewardSheet", new Dictionary<int, long>
+                        {
+                            // {1, 0},
+                            { 2, TableDataVersionConfig.StakeRegularRewardSheetV2Index },
+                        }.ToImmutableSortedDictionary()
+                    },
+                }.ToImmutableDictionary();
 
-        public static Address GetSheetAddress(string sheetName) => TableSheet.Derive(sheetName);
+        private static Address DeriveSheetAddress(string sheetName, long? blockIndex = 0L)
+        {
+            var derivedAddress = TableSheet.Derive(sheetName);
+            if (TableSheetVersionControlDict.ContainsKey(sheetName))
+            {
+                try
+                {
+                    var version = TableSheetVersionControlDict[sheetName]
+                        .Last(pair => blockIndex >= pair.Value).Key;
+                    derivedAddress = TableSheet.Derive($"{sheetName}-V{version}");
+                }
+                catch (InvalidOperationException)
+                {
+                    // No version-blockIndex pair exists for version control.
+                    // Do nothing. use default derived address.
+                }
+            }
+
+            return derivedAddress;
+        }
+
+        public static Address GetSheetAddress<T>() where T : ISheet =>
+            GetSheetAddress(typeof(T).Name);
+
+        public static Address GetSheetAddress<T>(long? blockIndex) where T : ISheet =>
+            GetSheetAddress(typeof(T).Name, blockIndex);
+
+        public static Address GetSheetAddress(string sheetName, long? blockIndex = 0L) =>
+            DeriveSheetAddress(sheetName, blockIndex);
 
         public static Address GetItemAddress(Guid itemId) => Blacksmith.Derive(itemId.ToString());
 

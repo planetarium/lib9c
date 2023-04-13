@@ -4,9 +4,8 @@ using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet;
-using Libplanet.Action;
 using Nekoyume.Action;
-
+using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Model.State

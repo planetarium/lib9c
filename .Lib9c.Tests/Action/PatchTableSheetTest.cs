@@ -149,5 +149,34 @@ namespace Lib9c.Tests.Action
 
             Assert.NotNull(nextState.GetSheet<CostumeStatSheet>());
         }
+
+        [Theory]
+        // Addresses.TableSheet.Derive("StakeRegularRewardSheet")
+        [InlineData(TableDataVersionConfig.StakeRegularRewardSheetV2Index - 1, "0x6Cae7459207B0551170b931Cb1D15E286E661646")]
+        // Addresses.TableSheet.Derive("StakeRegularRewardSheet-V2")
+        [InlineData(TableDataVersionConfig.StakeRegularRewardSheetV2Index, "0x547c58B88C6B144E0ABc5406f5105ae57E13b10a")]
+        [InlineData(TableDataVersionConfig.StakeRegularRewardSheetV2Index + 1, "0x547c58B88C6B144E0ABc5406f5105ae57E13b10a")]
+        public void DeriveAddress(long blockIndex, string targetAddress)
+        {
+            const string tableName = "StakeRegularRewardSheet";
+            var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
+            var adminState = new AdminState(adminAddress, 999_999_999_999L);
+            var initialStates = ImmutableDictionary<Address, IValue>.Empty
+                .Add(adminAddress, adminState.Serialize());
+            var state = new State(initialStates, ImmutableDictionary<(Address, Currency), FungibleAssetValue>.Empty);
+            var action = new PatchTableSheet
+            {
+                TableName = tableName,
+                TableCsv = "level,required_gold,item-id,rate,type\n1,50,400000,10,Item",
+            };
+            var nextState = action.Execute(new ActionContext
+            {
+                PreviousStates = state,
+                Signer = adminAddress,
+                BlockIndex = blockIndex,
+            });
+            Assert.NotNull(nextState.GetState(new Address(targetAddress)));
+            Assert.NotNull(nextState.GetSheet<StakeRegularRewardSheet>(blockIndex));
+        }
     }
 }

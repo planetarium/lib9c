@@ -38,7 +38,7 @@ namespace Nekoyume.Action
         {
             IActionContext ctx = context;
             var states = ctx.PreviousStates;
-            var sheetAddress = Addresses.TableSheet.Derive(TableName);
+            var sheetAddress = Addresses.GetSheetAddress(TableName, ctx.BlockIndex);
             if (ctx.Rehearsal)
             {
                 return states

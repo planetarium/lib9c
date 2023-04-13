@@ -474,13 +474,13 @@ namespace Nekoyume.Action
             }
         }
 
-        public static T GetSheet<T>(this IAccountStateView states) where T : ISheet, new()
+        public static T GetSheet<T>(this IAccountStateView states, long? blockIndex = 0L) where T : ISheet, new()
         {
-            var address = Addresses.GetSheetAddress<T>();
+            var address = Addresses.GetSheetAddress<T>(blockIndex);
 
             try
             {
-                var csv = GetSheetCsv<T>(states);
+                var csv = GetSheetCsv<T>(states, blockIndex);
                 byte[] hash;
                 using (var sha256 = SHA256.Create())
                 {
@@ -710,9 +710,9 @@ namespace Nekoyume.Action
             return result;
         }
 
-        public static string GetSheetCsv<T>(this IAccountStateView states) where T : ISheet, new()
+        public static string GetSheetCsv<T>(this IAccountStateView states, long? blockIndex = 0L) where T : ISheet, new()
         {
-            var address = Addresses.GetSheetAddress<T>();
+            var address = Addresses.GetSheetAddress<T>(blockIndex);
             var value = states.GetState(address);
             if (value is null)
             {
