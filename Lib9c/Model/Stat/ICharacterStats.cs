@@ -18,6 +18,9 @@ namespace Nekoyume.Model.Stat
         public Dictionary<int, StatModifier> buffStatModifiers { get; }
         public List<StatModifier> optionalStatModifiers { get; }
         public IStats BaseStats { get; }
+        public IStats EquipmentStats { get; }
+        public IStats BuffStats { get; }
+        public IStats OptionalStats { get; }
 
         public int Level { get; set; }
         public int CurrentHP { get; set; }
@@ -45,5 +48,6 @@ namespace Nekoyume.Model.Stat
         public void SetOption(IEnumerable<StatModifier> statModifiers);
 
         public void EqualizeCurrentHPWithHP();
+        void SetStatForTest(StatType p0, int p1);
     }
 }

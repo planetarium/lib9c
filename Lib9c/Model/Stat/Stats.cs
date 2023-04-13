@@ -29,9 +29,9 @@ namespace Nekoyume.Model.Stat
         public int HP => Hp.Value;
         public int ATK => Atk.Value;
         public int DEF => Def.Value;
-        public int CRI => Cri.Value;
-        public int HIT => Hit.Value;
-        public int SPD => Spd.Value;
+        public int CRI => Cri.ValueAsInt;
+        public int HIT => Hit.ValueAsInt;
+        public int SPD => Spd.ValueAsInt;
         public int DRV => Drv.Value;
         public int DRR => Drr.Value;
         public int CDMG => Cdmg.Value;
