@@ -4,6 +4,16 @@ namespace Nekoyume.Model.Stat
 {
     public interface IStats
     {
+        IIntStatWithCurrent hp { get; }
+        IIntStat atk { get; }
+        IIntStat def { get; }
+        IDecimalStat cri { get; }
+        IDecimalStat hit { get; }
+        IDecimalStat spd { get; }
+        IIntStat drv { get; }
+        IIntStat drr { get; }
+        IIntStat cdmg { get; }
+
         int HP { get; }
         int ATK { get; }
         int DEF { get; }

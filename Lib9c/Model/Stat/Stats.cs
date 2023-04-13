@@ -7,25 +7,34 @@ namespace Nekoyume.Model.Stat
     [Serializable]
     public class Stats : IStats, ICloneable
     {
-        protected readonly IntStatWithCurrent hp = new IntStatWithCurrent(StatType.HP);
-        protected readonly IntStat atk = new IntStat(StatType.ATK);
-        protected readonly IntStat def = new IntStat(StatType.DEF);
-        protected readonly DecimalStat cri = new DecimalStat(StatType.CRI);
-        protected readonly DecimalStat hit = new DecimalStat(StatType.HIT);
-        protected readonly DecimalStat spd = new DecimalStat(StatType.SPD);
-        protected readonly IntStat drv = new IntStat(StatType.DRV);
-        protected readonly IntStat drr = new IntStat(StatType.DRR);
-        protected readonly IntStat cdmg = new IntStat(StatType.CDMG);
+        protected readonly IIntStatWithCurrent Hp = new IntStatWithCurrent(StatType.HP);
+        protected readonly IIntStat Atk = new IntStat(StatType.ATK);
+        protected readonly IIntStat Def = new IntStat(StatType.DEF);
+        protected readonly IDecimalStat Cri = new DecimalStat(StatType.CRI);
+        protected readonly IDecimalStat Hit = new DecimalStat(StatType.HIT);
+        protected readonly IDecimalStat Spd = new DecimalStat(StatType.SPD);
+        protected readonly IIntStat Drv = new IntStat(StatType.DRV);
+        protected readonly IIntStat Drr = new IntStat(StatType.DRR);
+        protected readonly IntStat Cdmg = new IntStat(StatType.CDMG);
 
-        public int HP => hp.Value;
-        public int ATK => atk.Value;
-        public int DEF => def.Value;
-        public int CRI => cri.Value;
-        public int HIT => hit.Value;
-        public int SPD => spd.Value;
-        public int DRV => drv.Value;
-        public int DRR => drr.Value;
-        public int CDMG => cdmg.Value;
+        public IIntStatWithCurrent hp => Hp;
+        public IIntStat atk => Atk;
+        public IIntStat def => Def;
+        public IDecimalStat cri => Cri;
+        public IDecimalStat hit => Hit;
+        public IDecimalStat spd => Spd;
+        public IIntStat drv => Drv;
+        public IIntStat drr => Drr;
+        public IIntStat cdmg => Cdmg;
+        public int HP => Hp.Value;
+        public int ATK => Atk.Value;
+        public int DEF => Def.Value;
+        public int CRI => Cri.Value;
+        public int HIT => Hit.Value;
+        public int SPD => Spd.Value;
+        public int DRV => Drv.Value;
+        public int DRR => Drr.Value;
+        public int CDMG => Cdmg.Value;
 
         public bool HasHP => HP > 0;
         public bool HasATK => ATK > 0;
@@ -39,38 +48,38 @@ namespace Nekoyume.Model.Stat
 
         public int CurrentHP
         {
-            get => hp.Current;
-            set => hp.SetCurrent(value);
+            get => Hp.Current;
+            set => Hp.SetCurrent(value);
         }
 
         public Stats()
         {
         }
 
-        public Stats(Stats value)
+        public Stats(IStats value)
         {
-            hp = (IntStatWithCurrent)value.hp.Clone();
-            atk = (IntStat)value.atk.Clone();
-            def = (IntStat)value.def.Clone();
-            cri = (DecimalStat)value.cri.Clone();
-            hit = (DecimalStat)value.hit.Clone();
-            spd = (DecimalStat)value.spd.Clone();
-            drv = (IntStat)value.drv.Clone();
-            drr = (IntStat)value.drr.Clone();
-            cdmg = (IntStat)value.cdmg.Clone();
+            Hp = (IntStatWithCurrent) value.hp.Clone();
+            Atk = (IntStat)value.atk.Clone();
+            Def = (IntStat)value.def.Clone();
+            Cri = (DecimalStat)value.cri.Clone();
+            Hit = (DecimalStat)value.hit.Clone();
+            Spd = (DecimalStat)value.spd.Clone();
+            Drv = (IntStat)value.drv.Clone();
+            Drr = (IntStat)value.drr.Clone();
+            Cdmg = (IntStat)value.cdmg.Clone();
         }
 
         public void Reset()
         {
-            hp.Reset();
-            atk.Reset();
-            def.Reset();
-            cri.Reset();
-            hit.Reset();
-            spd.Reset();
-            drv.Reset();
-            drr.Reset();
-            cdmg.Reset();
+            Hp.Reset();
+            Atk.Reset();
+            Def.Reset();
+            Cri.Reset();
+            Hit.Reset();
+            Spd.Reset();
+            Drv.Reset();
+            Drr.Reset();
+            Cdmg.Reset();
         }
 
         /// <summary>
@@ -79,15 +88,15 @@ namespace Nekoyume.Model.Stat
         /// <param name="statsArray"></param>
         public void Set(params Stats[] statsArray)
         {
-            hp.SetValue(statsArray.Sum(stats => stats.hp.Value));
-            atk.SetValue(statsArray.Sum(stats => stats.atk.Value));
-            def.SetValue(statsArray.Sum(stats => stats.def.Value));
-            cri.SetValue(statsArray.Sum(stats => stats.cri.Value));
-            hit.SetValue(statsArray.Sum(stats => stats.hit.Value));
-            spd.SetValue(statsArray.Sum(stats => stats.spd.Value));
-            drv.SetValue(statsArray.Sum(stats => stats.drv.Value));
-            drr.SetValue(statsArray.Sum(stats => stats.drr.Value));
-            cdmg.SetValue(statsArray.Sum(stats => stats.cdmg.Value));
+            Hp.SetValue(statsArray.Sum(stats => stats.Hp.Value));
+            Atk.SetValue(statsArray.Sum(stats => stats.Atk.Value));
+            Def.SetValue(statsArray.Sum(stats => stats.Def.Value));
+            Cri.SetValue(statsArray.Sum(stats => stats.Cri.Value));
+            Hit.SetValue(statsArray.Sum(stats => stats.Hit.Value));
+            Spd.SetValue(statsArray.Sum(stats => stats.Spd.Value));
+            Drv.SetValue(statsArray.Sum(stats => stats.Drv.Value));
+            Drr.SetValue(statsArray.Sum(stats => stats.Drr.Value));
+            Cdmg.SetValue(statsArray.Sum(stats => stats.Cdmg.Value));
         }
 
         /// <summary>
@@ -105,31 +114,31 @@ namespace Nekoyume.Model.Stat
                 switch (statModifier.StatType)
                 {
                     case StatType.HP:
-                        hp.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.hp.Value)));
+                        Hp.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.Hp.Value)));
                         break;
                     case StatType.ATK:
-                        atk.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.atk.Value)));
+                        Atk.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.Atk.Value)));
                         break;
                     case StatType.DEF:
-                        def.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.def.Value)));
+                        Def.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.Def.Value)));
                         break;
                     case StatType.CRI:
-                        cri.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.cri.Value)));
+                        Cri.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.Cri.Value)));
                         break;
                     case StatType.HIT:
-                        hit.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.hit.Value)));
+                        Hit.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.Hit.Value)));
                         break;
                     case StatType.SPD:
-                        spd.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.spd.Value)));
+                        Spd.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.Spd.Value)));
                         break;
                     case StatType.DRV:
-                        drv.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.drv.Value)));
+                        Drv.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.Drv.Value)));
                         break;
                     case StatType.DRR:
-                        drr.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.drr.Value)));
+                        Drr.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.Drr.Value)));
                         break;
                     case StatType.CDMG:
-                        cdmg.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.cdmg.Value)));
+                        Cdmg.AddValue(statModifier.GetModifiedPart(baseStatsArray.Sum(stats => stats.Cdmg.Value)));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -143,15 +152,15 @@ namespace Nekoyume.Model.Stat
         /// <param name="value"></param>
         public void Set(StatsMap value)
         {
-            hp.SetValue(value.HP);
-            atk.SetValue(value.ATK);
-            def.SetValue(value.DEF);
-            cri.SetValue(value.CRI);
-            hit.SetValue(value.HIT);
-            spd.SetValue(value.SPD);
-            drv.SetValue(value.DRV);
-            drr.SetValue(value.DRR);
-            cdmg.SetValue(value.CDMG);
+            Hp.SetValue(value.HP);
+            Atk.SetValue(value.ATK);
+            Def.SetValue(value.DEF);
+            Cri.SetValue(value.CRI);
+            Hit.SetValue(value.HIT);
+            Spd.SetValue(value.SPD);
+            Drv.SetValue(value.DRV);
+            Drr.SetValue(value.DRR);
+            Cdmg.SetValue(value.CDMG);
         }
 
         /// <summary>
@@ -165,31 +174,31 @@ namespace Nekoyume.Model.Stat
             switch (statType)
             {
                 case StatType.HP:
-                    hp.SetValue(value);
+                    Hp.SetValue(value);
                     break;
                 case StatType.ATK:
-                    atk.SetValue(value);
+                    Atk.SetValue(value);
                     break;
                 case StatType.DEF:
-                    def.SetValue(value);
+                    Def.SetValue(value);
                     break;
                 case StatType.CRI:
-                    cri.SetValue(value);
+                    Cri.SetValue(value);
                     break;
                 case StatType.HIT:
-                    hit.SetValue(value);
+                    Hit.SetValue(value);
                     break;
                 case StatType.SPD:
-                    spd.SetValue(value);
+                    Spd.SetValue(value);
                     break;
                 case StatType.DRV:
-                    drv.SetValue(value);
+                    Drv.SetValue(value);
                     break;
                 case StatType.DRR:
-                    drr.SetValue(value);
+                    Drr.SetValue(value);
                     break;
                 case StatType.CDMG:
-                    cdmg.SetValue(value);
+                    Cdmg.SetValue(value);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(statType), statType, null);
@@ -235,7 +244,7 @@ namespace Nekoyume.Model.Stat
 
         public void EqualizeCurrentHPWithHP()
         {
-            hp.EqualizeCurrentWithValue();
+            Hp.EqualizeCurrentWithValue();
         }
 
         public virtual object Clone()

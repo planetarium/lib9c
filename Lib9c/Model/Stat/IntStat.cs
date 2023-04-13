@@ -3,10 +3,10 @@ using System;
 namespace Nekoyume.Model.Stat
 {
     [Serializable]
-    public class IntStat : ICloneable
+    public class IntStat : IIntStat
     {
-        public readonly StatType Type;
-        public int Value { get; private set; }
+        public StatType Type { get; }
+        public int Value { get; set; }
 
         public IntStat()
         {

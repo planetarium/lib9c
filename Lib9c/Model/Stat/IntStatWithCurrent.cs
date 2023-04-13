@@ -1,11 +1,12 @@
 using System;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Stat
 {
     [Serializable]
-    public class IntStatWithCurrent : IntStat, ICloneable
+    public class IntStatWithCurrent : IntStat, IIntStatWithCurrent
     {
-        public int Current { get; private set; }
+        public int Current { get; set; }
 
         public IntStatWithCurrent(StatType type, int value = 0, int current = 0) : base(type, value)
         {

@@ -40,7 +40,7 @@ namespace Nekoyume.Model
         public int CharacterId { get; }
         public SizeType SizeType { get; }
         public float RunSpeed { get; }
-        public CharacterStats Stats { get; }
+        public ICharacterStats Stats { get; }
 
         public int Level
         {
@@ -216,7 +216,7 @@ namespace Nekoyume.Model
                 pair.Value.RemainedDuration--;
             }
         }
-        
+
         protected virtual void ReduceSkillCooldown()
         {
             Skills.ReduceCooldown();

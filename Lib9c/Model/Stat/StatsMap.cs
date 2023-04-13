@@ -10,6 +10,15 @@ namespace Nekoyume.Model.Stat
     [Serializable]
     public class StatsMap : IStats, IBaseAndAdditionalStats, IState
     {
+        public IIntStatWithCurrent hp { get; }
+        public IIntStat atk { get; }
+        public IIntStat def { get; }
+        public IDecimalStat cri { get; }
+        public IDecimalStat hit { get; }
+        public IDecimalStat spd { get; }
+        public IIntStat drv { get; }
+        public IIntStat drr { get; }
+        public IIntStat cdmg { get; }
         public int HP => HasHP ? _statMaps[StatType.HP].TotalValueAsInt : 0;
         public int ATK => HasATK ? _statMaps[StatType.ATK].TotalValueAsInt : 0;
         public int DEF => HasDEF ? _statMaps[StatType.DEF].TotalValueAsInt : 0;

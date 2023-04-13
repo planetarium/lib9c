@@ -3,7 +3,7 @@ using System;
 namespace Nekoyume.Model.Stat
 {
     [Serializable]
-    public class DecimalStat : ICloneable
+    public class DecimalStat : IDecimalStat
     {
         private decimal _value;
 
@@ -11,7 +11,7 @@ namespace Nekoyume.Model.Stat
         public int Value
         {
             get => (int)(_value / 100);
-            private set => _value = value;
+            set => _value = value;
         }
 
         public DecimalStat(StatType type, decimal value = 0m)

@@ -16,7 +16,7 @@ namespace Nekoyume.Model.Stat
     /// 마지막으로 모든 스탯을 합한 CharacterStats 순서로 계산한다.
     /// </summary>
     [Serializable]
-    public class CharacterStats : Stats, IBaseAndAdditionalStats, ICloneable
+    public class CharacterStats : Stats, ICharacterStats
     {
         private readonly CharacterSheet.Row _row;
 
@@ -31,7 +31,17 @@ namespace Nekoyume.Model.Stat
         private readonly Dictionary<int, StatModifier> _buffStatModifiers = new Dictionary<int, StatModifier>();
         private readonly List<StatModifier> _optionalStatModifiers = new List<StatModifier>();
 
-        public int Level { get; private set; }
+        public CharacterSheet.Row row { get; set; }
+        IStats ICharacterStats.baseStats => _baseStats;
+        IStats ICharacterStats.equipmentStats => _equipmentStats;
+        IStats ICharacterStats.consumableStats => _consumableStats;
+        IStats ICharacterStats.buffStats => _buffStats;
+        IStats ICharacterStats.optionalStats => _optionalStats;
+        public List<StatModifier> equipmentStatModifiers { get; }
+        public List<StatModifier> consumableStatModifiers { get; }
+        public Dictionary<int, StatModifier> buffStatModifiers { get; }
+        public List<StatModifier> optionalStatModifiers { get; }
+        public int Level { get; set; }
 
         public IStats BaseStats => _baseStats;
         public IStats EquipmentStats => _equipmentStats;
@@ -101,21 +111,21 @@ namespace Nekoyume.Model.Stat
             SetStats(stat.Level);
             EqualizeCurrentHPWithHP();
         }
-            
-        public CharacterStats(CharacterStats value) : base(value)
+
+        public CharacterStats(ICharacterStats value) : base(value)
         {
-            _row = value._row;
+            _row = value.row;
 
-            _baseStats = new Stats(value._baseStats);
-            _equipmentStats = new Stats(value._equipmentStats);
-            _consumableStats = new Stats(value._consumableStats);
-            _buffStats = new Stats(value._buffStats);
-            _optionalStats = new Stats(value._optionalStats);
+            _baseStats = new Stats(value.baseStats);
+            _equipmentStats = new Stats(value.equipmentStats);
+            _consumableStats = new Stats(value.consumableStats);
+            _buffStats = new Stats(value.buffStats);
+            _optionalStats = new Stats(value.optionalStats);
 
-            _equipmentStatModifiers = value._equipmentStatModifiers;
-            _consumableStatModifiers = value._consumableStatModifiers;
-            _buffStatModifiers = value._buffStatModifiers;
-            _optionalStatModifiers = value._optionalStatModifiers;
+            _equipmentStatModifiers = value.equipmentStatModifiers;
+            _consumableStatModifiers = value.consumableStatModifiers;
+            _buffStatModifiers = value.buffStatModifiers;
+            _optionalStatModifiers = value.optionalStatModifiers;
 
             Level = value.Level;
         }
@@ -144,7 +154,7 @@ namespace Nekoyume.Model.Stat
         /// <param name="level"></param>
         /// <param name="updateImmediate"></param>
         /// <returns></returns>
-        public CharacterStats SetStats(int level, bool updateImmediate = true)
+        public ICharacterStats SetStats(int level, bool updateImmediate = true)
         {
             if (level == Level)
                 return this;
@@ -165,7 +175,7 @@ namespace Nekoyume.Model.Stat
         /// <param name="value"></param>
         /// <param name="updateImmediate"></param>
         /// <returns></returns>
-        public CharacterStats SetEquipments(
+        public ICharacterStats SetEquipments(
             IEnumerable<Equipment> value,
             EquipmentItemSetEffectSheet sheet,
             bool updateImmediate = true
@@ -402,7 +412,7 @@ namespace Nekoyume.Model.Stat
 
         public void IncreaseHpForArena()
         {
-            hp.SetValue(Math.Max(0, hp.Value * 2));
+            Hp.SetValue(Math.Max(0, Hp.Value * 2));
         }
 
         private void UpdateBaseStats()
@@ -444,15 +454,15 @@ namespace Nekoyume.Model.Stat
         {
             Set(_baseStats, _equipmentStats, _consumableStats, _buffStats, _optionalStats);
             // 최소값 보정
-            hp.SetValue(Math.Max(0, hp.Value));
-            atk.SetValue(Math.Max(0, atk.Value));
-            def.SetValue(Math.Max(0, def.Value));
-            cri.SetValue(Math.Max(0, cri.Value));
-            hit.SetValue(Math.Max(0, hit.Value));
-            spd.SetValue(Math.Max(0, spd.Value));
-            drv.SetValue(Math.Max(0, drv.Value));
-            drr.SetValue(Math.Max(0, drr.Value));
-            cdmg.SetValue(Math.Max(0, cdmg.Value));
+            Hp.SetValue(Math.Max(0, Hp.Value));
+            Atk.SetValue(Math.Max(0, Atk.Value));
+            Def.SetValue(Math.Max(0, Def.Value));
+            Cri.SetValue(Math.Max(0, Cri.Value));
+            Hit.SetValue(Math.Max(0, Hit.Value));
+            Spd.SetValue(Math.Max(0, Spd.Value));
+            Drv.SetValue(Math.Max(0, Drv.Value));
+            Drr.SetValue(Math.Max(0, Drr.Value));
+            Cdmg.SetValue(Math.Max(0, Cdmg.Value));
         }
 
         public override object Clone()
