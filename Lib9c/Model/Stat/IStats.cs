@@ -35,5 +35,8 @@ namespace Nekoyume.Model.Stat
         bool HasCDMG { get; }
 
         IEnumerable<(StatType statType, int value)> GetStats(bool ignoreZero = false);
+        public void Set(params IStats[] statsArray);
+        public void Set(StatsMap value);
+        public void Set(IEnumerable<StatModifier> statModifiers, params IStats[] baseStatsArray);
     }
 }

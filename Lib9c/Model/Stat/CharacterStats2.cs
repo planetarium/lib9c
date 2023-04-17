@@ -16,15 +16,15 @@ namespace Nekoyume.Model.Stat
     /// 마지막으로 모든 스탯을 합한 CharacterStats 순서로 계산한다.
     /// </summary>
     [Serializable]
-    public class CharacterStats : Stats, ICharacterStats
+    public class CharacterStats2 : Stats2, ICharacterStats
     {
         private readonly CharacterSheet.Row _row;
 
-        private readonly IStats _baseStats = new Stats();
-        private readonly IStats _equipmentStats = new Stats();
-        private readonly IStats _consumableStats = new Stats();
-        private readonly IStats _buffStats = new Stats();
-        private readonly IStats _optionalStats = new Stats();
+        private readonly IStats _baseStats = new Stats2();
+        private readonly IStats _equipmentStats = new Stats2();
+        private readonly IStats _consumableStats = new Stats2();
+        private readonly IStats _buffStats = new Stats2();
+        private readonly IStats _optionalStats = new Stats2();
 
         private readonly List<StatModifier> _equipmentStatModifiers = new List<StatModifier>();
         private readonly List<StatModifier> _consumableStatModifiers = new List<StatModifier>();
@@ -94,7 +94,7 @@ namespace Nekoyume.Model.Stat
                                           HasAdditionalHIT || HasAdditionalSPD || HasAdditionalDRV || HasAdditionalDRR ||
                                           HasAdditionalCDMG;
 
-        public CharacterStats(
+        public CharacterStats2(
             CharacterSheet.Row row,
             int level
         )
@@ -104,7 +104,7 @@ namespace Nekoyume.Model.Stat
             EqualizeCurrentHPWithHP();
         }
 
-        public CharacterStats(WorldBossCharacterSheet.WaveStatData stat)
+        public CharacterStats2(WorldBossCharacterSheet.WaveStatData stat)
         {
             var stats = stat.ToStats();
             _baseStats.Set(stats);
@@ -112,7 +112,7 @@ namespace Nekoyume.Model.Stat
             EqualizeCurrentHPWithHP();
         }
 
-        public CharacterStats(ICharacterStats value) : base(value)
+        public CharacterStats2(ICharacterStats value) : base(value)
         {
             _row = value.row;
 
@@ -130,7 +130,7 @@ namespace Nekoyume.Model.Stat
             Level = value.Level;
         }
 
-        public CharacterStats SetAll(
+        public CharacterStats2 SetAll(
             int level,
             IEnumerable<Equipment> equipments,
             IEnumerable<Costume> costumes,
@@ -419,7 +419,7 @@ namespace Nekoyume.Model.Stat
         {
             if (_row != null)
             {
-                var statsData = _row.ToStats(Level);
+                var statsData = _row.ToStats2(Level);
                 _baseStats.Set(statsData);
             }
 

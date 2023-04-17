@@ -29,7 +29,7 @@ namespace Nekoyume.Model.Stat
 
         public void AddOption(IEnumerable<StatModifier> statModifiers);
 
-        public CharacterStats SetBuffs(IEnumerable<Buff.StatBuff> value,
+        public ICharacterStats SetBuffs(IEnumerable<Buff.StatBuff> value,
             bool updateImmediate = true);
 
         public void AddBuff(Buff.StatBuff buff, bool updateImmediate = true);
@@ -42,7 +42,7 @@ namespace Nekoyume.Model.Stat
             bool updateImmediate = true
         );
 
-        public CharacterStats SetConsumables(IEnumerable<Consumable> value,
+        public ICharacterStats SetConsumables(IEnumerable<Consumable> value,
             bool updateImmediate = true);
 
         public void SetOption(IEnumerable<StatModifier> statModifiers);

@@ -8,7 +8,7 @@ namespace Nekoyume.Model.Stat
 {
     // todo: 없어질 대상.
     [Serializable]
-    public class StatMapEx : StatMap
+    public class StatMapEx : StatMap, IStatMapEx
     {
         private decimal _additionalValue;
 
@@ -24,7 +24,7 @@ namespace Nekoyume.Model.Stat
             }
         }
 
-        public int AdditionalValueAsInt { get; private set; }
+        public int AdditionalValueAsInt { get; set; }
 
         public decimal TotalValue => Value + AdditionalValueAsInt;
         public int TotalValueAsInt => ValueAsInt + AdditionalValueAsInt;

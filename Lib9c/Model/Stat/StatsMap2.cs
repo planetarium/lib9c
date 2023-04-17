@@ -8,7 +8,7 @@ namespace Nekoyume.Model.Stat
 {
     // todo: `Stats`나 `StatModifier`로 대체되어야 함.
     [Serializable]
-    public class StatsMap : IStats, IBaseAndAdditionalStats, IState
+    public class StatsMap2 : IStats, IBaseAndAdditionalStats, IState
     {
         public IIntStatWithCurrent hp { get; }
         public IIntStat atk { get; }
@@ -116,10 +116,10 @@ namespace Nekoyume.Model.Stat
                                           HasAdditionalHIT || HasAdditionalSPD || HasAdditionalDRV || HasAdditionalDRR ||
                                           HasAdditionalCDMG;
 
-        private readonly Dictionary<StatType, StatMapEx> _statMaps =
-            new Dictionary<StatType, StatMapEx>(StatTypeComparer.Instance);
+        private readonly Dictionary<StatType, IStatMapEx> _statMaps =
+            new Dictionary<StatType, IStatMapEx>(StatTypeComparer.Instance);
 
-        protected bool Equals(StatsMap other)
+        protected bool Equals(StatsMap2 other)
         {
             return Equals(_statMaps, other._statMaps);
         }
@@ -141,7 +141,7 @@ namespace Nekoyume.Model.Stat
         {
             if (!_statMaps.ContainsKey(key))
             {
-                _statMaps.Add(key, new StatMapEx(key));
+                _statMaps.Add(key, new StatMapEx2(key));
             }
 
             _statMaps[key].Value += value;
@@ -402,7 +402,7 @@ namespace Nekoyume.Model.Stat
             }
         }
 
-        public IEnumerable<StatMapEx> GetStats()
+        public IEnumerable<IStatMapEx> GetStats()
         {
             if (HasHP)
                 yield return _statMaps[StatType.HP];
@@ -428,7 +428,7 @@ namespace Nekoyume.Model.Stat
         /// 추가 스탯이 붙어 있는 스탯맵을 열거형으로 반환합니다.
         /// 이 스탯맵에는 기본 스탯이 포함되어 있기 때문에 구분해서 사용해야 합니다.
         /// </summery>
-        public IEnumerable<StatMapEx> GetAdditionalStats()
+        public IEnumerable<IStatMapEx> GetAdditionalStats()
         {
             if (HasAdditionalHP)
                 yield return _statMaps[StatType.HP];

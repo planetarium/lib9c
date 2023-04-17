@@ -56,7 +56,7 @@ namespace Nekoyume.TableData
                 RunSpeed = TryParseFloat(fields[16], out var runSpeed) ? runSpeed : 1f;
             }
         }
-        
+
         public CharacterSheet() : base(nameof(CharacterSheet))
         {
         }
@@ -84,6 +84,36 @@ namespace Nekoyume.TableData
             }
 
             var stats = new StatsMap();
+            stats.AddStatValue(StatType.HP, hp);
+            stats.AddStatValue(StatType.ATK, atk);
+            stats.AddStatValue(StatType.DEF, def);
+            stats.AddStatValue(StatType.CRI, cri);
+            stats.AddStatValue(StatType.HIT, hit);
+            stats.AddStatValue(StatType.SPD, spd);
+
+            return stats;
+        }
+
+        public static StatsMap2 ToStats2(this CharacterSheet.Row row, int level)
+        {
+            var hp = row.HP;
+            var atk = row.ATK;
+            var def = row.DEF;
+            var cri = row.CRI;
+            var hit = row.HIT;
+            var spd = row.SPD;
+            if (level > 1)
+            {
+                var multiplier = level - 1;
+                hp += row.LvHP * multiplier;
+                atk += row.LvATK * multiplier;
+                def += row.LvDEF * multiplier;
+                cri += row.LvCRI * multiplier;
+                hit += row.LvHIT * multiplier;
+                spd += row.LvSPD * multiplier;
+            }
+
+            var stats = new StatsMap2();
             stats.AddStatValue(StatType.HP, hp);
             stats.AddStatValue(StatType.ATK, atk);
             stats.AddStatValue(StatType.DEF, def);

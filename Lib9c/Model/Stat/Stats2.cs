@@ -5,10 +5,10 @@ using System.Linq;
 namespace Nekoyume.Model.Stat
 {
     [Serializable]
-    public class Stats : IStats, ICloneable
+    public class Stats2 : IStats, ICloneable
     {
         protected readonly IIntStatWithCurrent Hp = new IntStatWithCurrent(StatType.HP);
-        protected readonly IIntStat Atk = new IntStat(StatType.ATK);
+        protected readonly IIntStat Atk = new IntStat2(StatType.ATK);
         protected readonly IIntStat Def = new IntStat(StatType.DEF);
         protected readonly IDecimalStat Cri = new DecimalStat(StatType.CRI);
         protected readonly IDecimalStat Hit = new DecimalStat(StatType.HIT);
@@ -52,14 +52,14 @@ namespace Nekoyume.Model.Stat
             set => Hp.SetCurrent(value);
         }
 
-        public Stats()
+        public Stats2()
         {
         }
 
-        public Stats(IStats value)
+        public Stats2(IStats value)
         {
             Hp = (IntStatWithCurrent) value.hp.Clone();
-            Atk = (IntStat)value.atk.Clone();
+            Atk = (IntStat2)value.atk.Clone();
             Def = (IntStat)value.def.Clone();
             Cri = (DecimalStat)value.cri.Clone();
             Hit = (DecimalStat)value.hit.Clone();
@@ -249,7 +249,7 @@ namespace Nekoyume.Model.Stat
 
         public virtual object Clone()
         {
-            return new Stats(this);
+            return new Stats2(this);
         }
     }
 }

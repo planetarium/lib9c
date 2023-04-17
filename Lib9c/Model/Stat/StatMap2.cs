@@ -7,7 +7,7 @@ namespace Nekoyume.Model.Stat
 {
     // todo: `DecimalStat`나 `StatModifier`으로 대체되어야 함.
     [Serializable]
-    public class StatMap : IState, IStatMap
+    public class StatMap2 : IState, IStatMap
     {
         private decimal _value;
 
@@ -21,19 +21,19 @@ namespace Nekoyume.Model.Stat
             set
             {
                 _value = value;
-                ValueAsInt = (int)_value;
+                ValueAsInt = (int)(_value * 100);
             }
         }
 
         public int ValueAsInt { get; set; }
 
-        public StatMap(StatType statType, decimal value = 0m)
+        public StatMap2(StatType statType, decimal value = 0m)
         {
             StatType = statType;
             Value = value;
         }
 
-        public StatMap(Dictionary serialized)
+        public StatMap2(Dictionary serialized)
             : this(
                 StatTypeExtension.Deserialize((Binary)serialized["statType"]),
                 serialized["value"].ToDecimal()
@@ -41,7 +41,7 @@ namespace Nekoyume.Model.Stat
         {
         }
 
-        protected bool Equals(StatMap other)
+        protected bool Equals(StatMap2 other)
         {
             return _value == other._value && StatType == other.StatType;
         }
@@ -51,7 +51,7 @@ namespace Nekoyume.Model.Stat
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((StatMap)obj);
+            return Equals((StatMap2)obj);
         }
 
         public override int GetHashCode()

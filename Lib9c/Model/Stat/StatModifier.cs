@@ -22,7 +22,7 @@ namespace Nekoyume.Model.Stat
             Value = value;
         }
 
-        public StatModifier(StatMap statMap) : this(statMap.StatType, OperationType.Add, statMap.ValueAsInt)
+        public StatModifier(IStatMap statMap) : this(statMap.StatType, OperationType.Add, statMap.ValueAsInt)
         {
         }
 
@@ -65,6 +65,19 @@ namespace Nekoyume.Model.Stat
                     return Value;
                 case OperationType.Percentage:
                     return (int) (value * Value / 100m);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public int GetModifiedPart2(int value)
+        {
+            switch (Operation)
+            {
+                case OperationType.Add:
+                    return Value;
+                case OperationType.Percentage:
+                    return value * Value / 100;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
