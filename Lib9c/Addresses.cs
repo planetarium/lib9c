@@ -42,10 +42,19 @@ namespace Nekoyume
                 new Dictionary<string, ImmutableSortedDictionary<int, long>>
                 {
                     {
-                        "StakeRegularRewardSheet", new Dictionary<int, long>
+                        "StakeRegularFixedRewardSheet",
+                        new Dictionary<int, long>
                         {
-                            // {1, 0},
-                            { 2, TableDataVersionConfig.StakeRegularRewardSheetV2Index },
+                            // {1, 0L},
+                            {2, TableDataVersionConfig.StakeRewardSheetV2Index},
+                        }.ToImmutableSortedDictionary()
+                    },
+                    {
+                        "StakeRegularRewardSheet",
+                        new Dictionary<int, long>
+                        {
+                            // {1, 0L},
+                            { 2, TableDataVersionConfig.StakeRewardSheetV2Index },
                         }.ToImmutableSortedDictionary()
                     },
                 }.ToImmutableDictionary();
