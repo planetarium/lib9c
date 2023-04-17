@@ -24,14 +24,14 @@ namespace Nekoyume.Model.State
             public StakeAchievements(Dictionary serialized)
             {
                 _achievements = serialized.ToDictionary(
-                    pair => int.Parse(((Text) pair.Key).Value, CultureInfo.InvariantCulture),
-                    pair => (int) (Integer) pair.Value);
+                    pair => int.Parse(((Text)pair.Key).Value, CultureInfo.InvariantCulture),
+                    pair => (int)(Integer)pair.Value);
             }
 
             public IValue Serialize() =>
                 new Dictionary(_achievements.ToDictionary(
-                    pair => (IKey)(Text) pair.Key.ToString(CultureInfo.InvariantCulture),
-                    pair => (IValue)(Integer) pair.Value));
+                    pair => (IKey)(Text)pair.Key.ToString(CultureInfo.InvariantCulture),
+                    pair => (IValue)(Integer)pair.Value));
 
             public bool Check(int level, int step)
             {

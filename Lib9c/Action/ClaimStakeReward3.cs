@@ -18,6 +18,8 @@ namespace Nekoyume.Action
     [ActionType(ActionTypeText)]
     public class ClaimStakeReward3 : GameAction, IClaimStakeReward, IClaimStakeRewardV1
     {
+        // FIXME: Change this value when target block height is determined
+        public const long ObsoletedIndex = 7_000_000L;
         private const string ActionTypeText = "claim_stake_reward3";
 
         internal Address AvatarAddress { get; private set; }
@@ -42,6 +44,7 @@ namespace Nekoyume.Action
 
             var states = context.PreviousStates;
             CheckActionAvailable(ClaimStakeReward2.ObsoletedIndex, context);
+            CheckObsolete(ObsoletedIndex, context);
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             if (!states.TryGetStakeState(context.Signer, out StakeState stakeState))
             {

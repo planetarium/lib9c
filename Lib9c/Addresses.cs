@@ -37,7 +37,7 @@ namespace Nekoyume
         public static readonly Address Rune                  = new Address("0000000000000000000000000000000000000016");
         public static readonly Address Market                = new Address("0000000000000000000000000000000000000017");
 
-        private static readonly ImmutableDictionary<string, ImmutableSortedDictionary<int, long>>
+        public static readonly ImmutableDictionary<string, ImmutableSortedDictionary<int, long>>
             TableSheetVersionControlDict =
                 new Dictionary<string, ImmutableSortedDictionary<int, long>>
                 {
@@ -59,7 +59,7 @@ namespace Nekoyume
                     },
                 }.ToImmutableDictionary();
 
-        private static Address DeriveSheetAddress(string sheetName, long? blockIndex = 0L)
+        public static Address DeriveSheetAddress(string sheetName, long? blockIndex = 0L)
         {
             var derivedAddress = TableSheet.Derive(sheetName);
             if (TableSheetVersionControlDict.ContainsKey(sheetName))

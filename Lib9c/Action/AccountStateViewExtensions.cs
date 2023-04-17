@@ -505,11 +505,11 @@ namespace Nekoyume.Action
             }
         }
 
-        public static bool TryGetSheet<T>(this IAccountStateView states, out T sheet) where T : ISheet, new()
+        public static bool TryGetSheet<T>(this IAccountStateView states, out T sheet, long? blockIndex = 0L) where T : ISheet, new()
         {
             try
             {
-                sheet = states.GetSheet<T>();
+                sheet = states.GetSheet<T>(blockIndex);
                 return true;
             }
             catch (Exception)
