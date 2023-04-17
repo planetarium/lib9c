@@ -152,10 +152,10 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         // Addresses.TableSheet.Derive("StakeRegularRewardSheet")
-        [InlineData(TableDataVersionConfig.StakeRegularRewardSheetV2Index - 1, "0x6Cae7459207B0551170b931Cb1D15E286E661646")]
+        [InlineData(TableDataVersionConfig.StakeRewardSheetV2Index - 1, "0x6Cae7459207B0551170b931Cb1D15E286E661646")]
         // Addresses.TableSheet.Derive("StakeRegularRewardSheet-V2")
-        [InlineData(TableDataVersionConfig.StakeRegularRewardSheetV2Index, "0x547c58B88C6B144E0ABc5406f5105ae57E13b10a")]
-        [InlineData(TableDataVersionConfig.StakeRegularRewardSheetV2Index + 1, "0x547c58B88C6B144E0ABc5406f5105ae57E13b10a")]
+        [InlineData(TableDataVersionConfig.StakeRewardSheetV2Index, "0x547c58B88C6B144E0ABc5406f5105ae57E13b10a")]
+        [InlineData(TableDataVersionConfig.StakeRewardSheetV2Index + 1, "0x547c58B88C6B144E0ABc5406f5105ae57E13b10a")]
         public void DeriveAddress(long blockIndex, string targetAddress)
         {
             const string tableName = "StakeRegularRewardSheet";

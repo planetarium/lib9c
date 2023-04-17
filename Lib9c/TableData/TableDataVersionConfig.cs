@@ -4,6 +4,6 @@ namespace Nekoyume.TableData
     {
         // PatchTableSheet version update without changing model version
         // FIXME: Set block index to real block index to change reward version
-        public const long StakeRegularRewardSheetV2Index = 7_000_000L;
+        public const long StakeRewardSheetV2Index = 7_000_000L;
     }
 }
