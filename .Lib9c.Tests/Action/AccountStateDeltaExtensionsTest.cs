@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Libplanet;
     using Libplanet.Action;
     using Libplanet.Crypto;
+    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Helper;
     using Nekoyume.Model.Coupons;
@@ -153,6 +154,33 @@ namespace Lib9c.Tests.Action
                 Bencodex.Types.List.Empty
                     .Add(coupon3.Serialize()),
                 states.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
+        }
+
+        [Fact]
+        public void Mead()
+        {
+            var valkyrie = new PrivateKey().ToAddress();
+            var valkyrieContractAddress = valkyrie.Derive(nameof(BringEinheri));
+            var agentContractAddress = _agentAddress.Derive(nameof(BringEinheri));
+            var mead = Currencies.Mead;
+            var price = 1 * mead;
+            IAccountStateDelta states = new State()
+                .SetState(
+                    valkyrieContractAddress,
+                    List.Empty.Add(Addresses.Heidrun.Serialize()).Add(true.Serialize()))
+                .SetState(
+                    agentContractAddress,
+                    List.Empty.Add(valkyrie.Serialize()).Add(true.Serialize()));
+
+            var addresses = new[] { _agentAddress, valkyrie, Addresses.Heidrun };
+            foreach (var signer in addresses)
+            {
+                Assert.Throws<InsufficientBalanceException>(() => states.Mead(signer, 1));
+
+                states = states.MintAsset(signer, price);
+                states = states.Mead(_agentAddress, 1);
+                Assert.All(addresses, address => Assert.Equal(0 * mead, states.GetBalance(address, mead)));
+            }
         }
     }
 }
