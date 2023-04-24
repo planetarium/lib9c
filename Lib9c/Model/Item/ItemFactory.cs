@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using Bencodex.Types;
+using Lib9c.Arguments;
 using Libplanet.Action;
 using Nekoyume.TableData;
 using Nekoyume.Model.State;
@@ -10,6 +11,20 @@ namespace Nekoyume.Model.Item
 {
     public static class ItemFactory
     {
+        public static ItemBase CreateItem(
+            IItemArgs itemArgs,
+            ItemSheet itemSheet,
+            IRandom random)
+        {
+            if (itemArgs.SheetId is null ||
+                !itemSheet.TryGetValue(itemArgs.SheetId.Value, out var row))
+            {
+                return null;
+            }
+
+            return CreateItem(row, random);
+        }
+
         public static ItemBase CreateItem(ItemSheet.Row row, IRandom random)
         {
             switch (row)
