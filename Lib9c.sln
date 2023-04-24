@@ -49,6 +49,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib9c.Utils", "Lib9c.Utils\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib9c.Proposer", "Lib9c.Proposer\Lib9c.Proposer.csproj", "{7DC1D595-095D-462A-864D-0CE57915901A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib9c.Parser", "Lib9c.Parser\Lib9c.Parser.csproj", "{4A7B9F70-9E86-42D8-BA92-67F6F76B691D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib9c.Parser.Tests", ".Lib9c.Parser.Tests\Lib9c.Parser.Tests.csproj", "{1152846F-EC0E-4DF7-A7F2-B8AAB1DBD49D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +139,14 @@ Global
 		{7DC1D595-095D-462A-864D-0CE57915901A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DC1D595-095D-462A-864D-0CE57915901A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DC1D595-095D-462A-864D-0CE57915901A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A7B9F70-9E86-42D8-BA92-67F6F76B691D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A7B9F70-9E86-42D8-BA92-67F6F76B691D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A7B9F70-9E86-42D8-BA92-67F6F76B691D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A7B9F70-9E86-42D8-BA92-67F6F76B691D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1152846F-EC0E-4DF7-A7F2-B8AAB1DBD49D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1152846F-EC0E-4DF7-A7F2-B8AAB1DBD49D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1152846F-EC0E-4DF7-A7F2-B8AAB1DBD49D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1152846F-EC0E-4DF7-A7F2-B8AAB1DBD49D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
