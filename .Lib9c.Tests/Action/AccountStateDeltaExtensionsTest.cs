@@ -156,8 +156,11 @@ namespace Lib9c.Tests.Action
                 states.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
         }
 
-        [Fact]
-        public void Mead()
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public void Mead(bool mintValkyrie, bool mintAgent)
         {
             var valkyrie = new PrivateKey().ToAddress();
             var valkyrieContractAddress = valkyrie.Derive(nameof(BringEinheri));
@@ -170,17 +173,26 @@ namespace Lib9c.Tests.Action
                     List.Empty.Add(Addresses.Heidrun.Serialize()).Add(true.Serialize()))
                 .SetState(
                     agentContractAddress,
-                    List.Empty.Add(valkyrie.Serialize()).Add(true.Serialize()));
+                    List.Empty.Add(valkyrie.Serialize()).Add(true.Serialize()))
+                .MintAsset(Addresses.Heidrun, price);
 
-            var addresses = new[] { _agentAddress, valkyrie, Addresses.Heidrun };
-            foreach (var signer in addresses)
+            var expectedHeidrunBalance = mintValkyrie ? price : 0 * mead;
+            var expectedValkyrieBalance = mintAgent ? price : 0 * mead;
+
+            if (mintValkyrie)
             {
-                Assert.Throws<InsufficientBalanceException>(() => states.Mead(signer, 1));
-
-                states = states.MintAsset(signer, price);
-                states = states.Mead(_agentAddress, 1);
-                Assert.All(addresses, address => Assert.Equal(0 * mead, states.GetBalance(address, mead)));
+                states = states.MintAsset(valkyrie, price);
             }
+
+            if (mintAgent)
+            {
+                states = states.MintAsset(_agentAddress, price);
+            }
+
+            states = states.Mead(_agentAddress, 1);
+            Assert.Equal(expectedHeidrunBalance, states.GetBalance(Addresses.Heidrun, mead));
+            Assert.Equal(expectedValkyrieBalance, states.GetBalance(valkyrie, mead));
+            Assert.Equal(price, states.GetBalance(_agentAddress, mead));
         }
     }
 }

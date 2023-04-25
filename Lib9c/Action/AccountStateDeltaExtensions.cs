@@ -128,14 +128,23 @@ namespace Nekoyume.Action
                     if (states.GetState(contractAddress) is List contract && contract[1].ToBoolean())
                     {
                         var valkyrie = contract[0].ToAddress();
-                        signer = valkyrie;
-                        continue;
+                        try
+                        {
+                            states = states.TransferAsset(valkyrie, signer, price);
+                        }
+                        catch (InsufficientBalanceException)
+                        {
+                            states = states.Mead(valkyrie, rawValue);
+                            continue;
+                        }
                     }
-
-                    throw new InsufficientBalanceException("", signer, balance);
+                    else
+                    {
+                        throw new InsufficientBalanceException("", signer, balance);
+                    }
                 }
 
-                return states.BurnAsset(signer, price);
+                return states;
             }
         }
     }

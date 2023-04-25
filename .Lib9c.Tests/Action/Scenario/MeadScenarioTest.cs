@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = Addresses.Valkyrie,
                 PreviousStates = states,
             });
-            Assert.Equal(89 * mead, states1.GetBalance(Addresses.Heidrun, mead));
+            Assert.Equal(90 * mead, states1.GetBalance(Addresses.Heidrun, mead));
             Assert.Equal(10 * mead, states1.GetBalance(Addresses.Valkyrie, mead));
 
             var agentAddress = new PrivateKey().ToAddress();
@@ -35,8 +35,8 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = Addresses.Valkyrie,
                 PreviousStates = states1,
             });
-            Assert.Equal(89 * mead, states2.GetBalance(Addresses.Heidrun, mead));
-            Assert.Equal(8 * mead, states2.GetBalance(Addresses.Valkyrie, mead));
+            Assert.Equal(90 * mead, states2.GetBalance(Addresses.Heidrun, mead));
+            Assert.Equal(9 * mead, states2.GetBalance(Addresses.Valkyrie, mead));
             Assert.Equal(1 * mead, states2.GetBalance(agentAddress, mead));
 
             var takeSides = new TakeSides
@@ -48,9 +48,9 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
                 PreviousStates = states2,
             });
-            Assert.Equal(89 * mead, states3.GetBalance(Addresses.Heidrun, mead));
-            Assert.Equal(8 * mead, states3.GetBalance(Addresses.Valkyrie, mead));
-            Assert.Equal(0 * mead, states3.GetBalance(agentAddress, mead));
+            Assert.Equal(90 * mead, states3.GetBalance(Addresses.Heidrun, mead));
+            Assert.Equal(9 * mead, states3.GetBalance(Addresses.Valkyrie, mead));
+            Assert.Equal(1 * mead, states3.GetBalance(agentAddress, mead));
         }
     }
 }
