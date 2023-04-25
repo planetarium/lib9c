@@ -24,7 +24,7 @@ namespace Nekoyume.Action
         {
             Address signer = context.Signer;
             var states = context.PreviousStates.Mead(signer, 1);
-            var contractAddress = signer.Derive(nameof(BringEinheri));
+            var contractAddress = EinheriAddress.Derive(nameof(BringEinheri));
             if (states.TryGetState(contractAddress, out List contract))
             {
                 if (signer != contract[0].ToAddress())

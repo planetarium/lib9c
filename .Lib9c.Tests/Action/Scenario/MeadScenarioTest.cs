@@ -51,6 +51,39 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Equal(90 * mead, states3.GetBalance(Addresses.Heidrun, mead));
             Assert.Equal(9 * mead, states3.GetBalance(Addresses.Valkyrie, mead));
             Assert.Equal(1 * mead, states3.GetBalance(agentAddress, mead));
+
+            // release and return einheri mead
+            var releaseEinheri = new ReleaseEinheri
+            {
+                EinheriAddress = agentAddress,
+            };
+            var states4 = releaseEinheri.Execute(new ActionContext
+            {
+                Signer = Addresses.Valkyrie,
+                PreviousStates = states3,
+            });
+            Assert.Equal(90 * mead, states4.GetBalance(Addresses.Heidrun, mead));
+            Assert.Equal(10 * mead, states4.GetBalance(Addresses.Valkyrie, mead));
+            Assert.Equal(0 * mead, states4.GetBalance(agentAddress, mead));
+
+            // re-contract with Bencodex.Null
+            var states5 = bringEinheri.Execute(new ActionContext
+            {
+                Signer = Addresses.Valkyrie,
+                PreviousStates = states4,
+            });
+            Assert.Equal(90 * mead, states5.GetBalance(Addresses.Heidrun, mead));
+            Assert.Equal(9 * mead, states5.GetBalance(Addresses.Valkyrie, mead));
+            Assert.Equal(1 * mead, states5.GetBalance(agentAddress, mead));
+
+            var states6 = takeSides.Execute(new ActionContext
+            {
+                Signer = agentAddress,
+                PreviousStates = states5,
+            });
+            Assert.Equal(90 * mead, states6.GetBalance(Addresses.Heidrun, mead));
+            Assert.Equal(9 * mead, states6.GetBalance(Addresses.Valkyrie, mead));
+            Assert.Equal(1 * mead, states6.GetBalance(agentAddress, mead));
         }
     }
 }
