@@ -37,7 +37,7 @@ namespace Nekoyume.Model.Item
         public override IValue Serialize() => ((Dictionary)base.Serialize())
             .Add("stats", new List(Stats
                 .OrderBy(i => i.StatType)
-                .ThenByDescending(i => i.Value)
+                .ThenByDescending(i => i.BaseValue)
                 .Select(s => s.SerializeWithoutAdditional())));
     }
 }
