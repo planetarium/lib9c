@@ -28,18 +28,16 @@ namespace Nekoyume.Model.Item
                 Stats = stats.ToList(i => new DecimalStat((Dictionary) i));
             }
         }
-        
+
         protected Consumable(SerializationInfo info, StreamingContext _)
             : this((Dictionary) Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
         {
         }
 
-#pragma warning disable LAA1002
         public override IValue Serialize() => ((Dictionary)base.Serialize())
             .Add("stats", new List(Stats
                 .OrderBy(i => i.StatType)
-                .ThenByDescending(i => i.BaseValue)
+                .ThenByDescending(i => i.Value)
                 .Select(s => s.SerializeWithoutAdditional())));
-#pragma warning restore LAA1002
     }
 }
