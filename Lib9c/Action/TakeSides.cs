@@ -1,4 +1,5 @@
 using Bencodex.Types;
+using Lib9c;
 using Libplanet;
 using Libplanet.Action;
 using Nekoyume.Model.State;
@@ -22,7 +23,7 @@ namespace Nekoyume.Action
         public override IAccountStateDelta Execute(IActionContext context)
         {
             Address signer = context.Signer;
-            var states = context.PreviousStates.Mead(signer, 1);
+            var states = context.PreviousStates.TransferAsset(ValkyrieAddress, signer, 1 * Currencies.Mead);
             var contractAddress = signer.Derive(nameof(BringEinheri));
             if (!states.TryGetState(contractAddress, out List contract))
             {
