@@ -2,7 +2,7 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,re
 101000,101000,체력 강화,20,10,Self,HP,Percentage,50,
 101001,101000,체력 강화,100,25,Self,HP,Percentage,50,
 102000,102000,공격 강화,20,10,Self,ATK,Percentage,25,
-102001,102000,공격 강화,100,25,Self,ATK,Percentage,50,ATK
+102001,102000,공격 강화,100,25,Self,ATK,Percentage,50,
 102002,102000,공격 강화,100,10,Self,ATK,Percentage,25,
 103000,103000,방어 강화,20,10,Self,DEF,Percentage,25,
 103001,103000,방어 강화,100,25,Self,DEF,Percentage,50,
