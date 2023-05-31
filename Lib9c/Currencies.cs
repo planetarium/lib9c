@@ -1,6 +1,7 @@
 #nullable enable
 
 using System;
+using System.Globalization;
 using System.Linq;
 using Libplanet.Assets;
 using Nekoyume.TableData;
@@ -56,6 +57,15 @@ namespace Lib9c
                     .Select(row => row.Ticker)
                     .Select(GetRune)
                     .OrderBy(rune => rune.Hash.GetHashCode());
+
+        public static bool IsRuneTicker(string ticker)
+        {
+            ticker = ticker.ToLower(CultureInfo.InvariantCulture);
+            return ticker.StartsWith("rune_") || ticker.StartsWith("runestone_");
+        }
+
+        public static bool IsSoulstoneTicker(string ticker) =>
+            ticker.ToLower(CultureInfo.InvariantCulture).StartsWith("soulstone_");
 
         public static Currency GetSoulStone(string? ticker) =>
             string.IsNullOrEmpty(ticker)
