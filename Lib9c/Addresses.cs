@@ -98,7 +98,9 @@ namespace Nekoyume
                 ));
         }
 
-        public static bool IsContainedInAgent(Address agentAddr, Address avatarAddr) =>
+        public static bool CheckAvatarAddrIsContainedInAgent(
+            Address agentAddr,
+            Address avatarAddr) =>
             Enumerable.Range(0, Nekoyume.GameConfig.SlotCount)
                 .Select(index => GetAvatarAddress(agentAddr, index))
                 .Contains(avatarAddr);
