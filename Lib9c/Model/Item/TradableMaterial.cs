@@ -30,6 +30,7 @@ namespace Nekoyume.Model.Item
 
         private long _requiredBlockIndex;
 
+        // FIXME: Move this to ITradableFungibleItemExtensions.
         public static Guid DeriveTradableId(HashDigest<SHA256> fungibleId) =>
             new Guid(HashDigest<MD5>.DeriveFrom(fungibleId.ToByteArray()).ToByteArray());
 
