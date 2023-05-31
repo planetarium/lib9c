@@ -80,22 +80,20 @@ namespace Nekoyume
                     $"Index must be between 0 and {Nekoyume.GameConfig.SlotCount - 1}.");
             }
 
-            return agentAddr.Derive(
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    CreateAvatar.DeriveFormat,
-                    index
-                ));
+            var deriveKey = string.Format(
+                CultureInfo.InvariantCulture,
+                CreateAvatar.DeriveFormat,
+                index);
+            return agentAddr.Derive(deriveKey);
         }
 
         public static Address GetCombinationSlotAddress(Address avatarAddr, int index)
         {
-            return avatarAddr.Derive(
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    CombinationSlotState.DeriveFormat,
-                    index
-                ));
+            var deriveKey = string.Format(
+                CultureInfo.InvariantCulture,
+                CombinationSlotState.DeriveFormat,
+                index);
+            return avatarAddr.Derive(deriveKey);
         }
 
         public static bool CheckAvatarAddrIsContainedInAgent(
