@@ -1,10 +1,12 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using Libplanet;
 using Nekoyume.Action;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using static Lib9c.SerializeKeys;
 
 namespace Nekoyume
 {
@@ -87,6 +89,12 @@ namespace Nekoyume
             return agentAddr.Derive(deriveKey);
         }
 
+        public static Address GetInventoryAddress(Address agentAddr, int avatarIndex)
+        {
+            return GetAvatarAddress(agentAddr, avatarIndex)
+                .Derive(LegacyInventoryKey);
+        }
+
         public static Address GetCombinationSlotAddress(Address avatarAddr, int index)
         {
             var deriveKey = string.Format(
@@ -96,11 +104,42 @@ namespace Nekoyume
             return avatarAddr.Derive(deriveKey);
         }
 
+        public static Address GetGarageBalanceAddress(Address agentAddr)
+        {
+            return agentAddr.Derive("garage-balance");
+        }
+
+        public static Address GetGarageAddress(
+            Address agentAddr,
+            HashDigest<SHA256> fungibleId)
+        {
+            return agentAddr
+                .Derive("garage")
+                .Derive(fungibleId.ToString());
+        }
+
         public static bool CheckAvatarAddrIsContainedInAgent(
             Address agentAddr,
             Address avatarAddr) =>
             Enumerable.Range(0, Nekoyume.GameConfig.SlotCount)
                 .Select(index => GetAvatarAddress(agentAddr, index))
                 .Contains(avatarAddr);
+
+        public static bool CheckAgentHasPermissionOnBalanceAddr(
+            Address agentAddr,
+            Address balanceAddr) =>
+            agentAddr == balanceAddr ||
+            Enumerable.Range(0, Nekoyume.GameConfig.SlotCount)
+                .Select(index => GetAvatarAddress(agentAddr, index))
+                .Contains(balanceAddr);
+
+        public static bool CheckInventoryAddrIsContainedInAgent(
+            Address agentAddr,
+            Address inventoryAddr) =>
+            Enumerable.Range(0, Nekoyume.GameConfig.SlotCount)
+                .Select(index => GetInventoryAddress(agentAddr, index))
+                .Contains(inventoryAddr);
+
+
     }
 }
