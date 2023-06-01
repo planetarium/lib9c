@@ -19,6 +19,7 @@ namespace Lib9c.Tests
                 Currencies.Crystal,
                 Currencies.StakeRune,
                 Currencies.DailyRewardRune,
+                Currencies.Garage,
                 Currencies.GetRune("RUNE_FOR_TEST"),
                 Currencies.GetRune("RUNESTONE_FOR_TEST"),
                 Currencies.GetSoulStone("Soulstone_FOR_TEST"),

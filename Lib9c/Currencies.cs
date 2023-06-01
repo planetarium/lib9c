@@ -37,6 +37,11 @@ namespace Lib9c
             0,
             minters: null);
 
+        public static readonly Currency Garage = Currency.Uncapped(
+            "Garage",
+            18,
+            minters: null);
+
         public static Currency GetRune(string? ticker) =>
             string.IsNullOrEmpty(ticker)
                 ? throw new ArgumentNullException(nameof(ticker))
