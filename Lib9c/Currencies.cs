@@ -42,6 +42,36 @@ namespace Lib9c
             18,
             minters: null);
 
+        // NOTE: This can be a cause of the hard-fork.
+        private static readonly Currency[] CurrencyTypesOfFields = typeof(Currencies)
+            .GetFields(System.Reflection.BindingFlags.Instance |
+                       System.Reflection.BindingFlags.Static |
+                       System.Reflection.BindingFlags.Public)
+            .Select(fi => fi.GetValue(null))
+            .OfType<Currency>()
+            .ToArray();
+
+        public static Currency? GetCurrency(string ticker)
+        {
+            var currencyTypes = CurrencyTypesOfFields.Where(c => c.Ticker == ticker).ToArray();
+            if (currencyTypes.Any())
+            {
+                return currencyTypes.First();
+            }
+
+            if (IsRuneTicker(ticker))
+            {
+                return GetRune(ticker);
+            }
+
+            if (IsSoulstoneTicker(ticker))
+            {
+                return GetSoulStone(ticker);
+            }
+
+            return null;
+        }
+
         public static Currency GetRune(string? ticker) =>
             string.IsNullOrEmpty(ticker)
                 ? throw new ArgumentNullException(nameof(ticker))
