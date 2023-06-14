@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Numerics;
 using Bencodex.Types;
 using Lib9c.Renderers;
 using Libplanet.Action.Loader;
@@ -267,7 +268,15 @@ namespace Nekoyume.BlockChain.Policy
                         TxPolicyViolationException("Transaction has no gas price or limit.",
                         transaction.Id);
                 }
-                if (transaction.MaxGasPrice * transaction.GasLimit > blockChain.GetBalance(transaction.Signer, Currencies.Mead))
+
+                long requiredGasLimit = transaction.Actions is { } actions &&
+                                         actions.Count == 1 &&
+                                         actionLoader.LoadAction(index, actions.First()) is
+                                             PolymorphicAction<ActionBase> pa &&
+                                         pa.InnerAction is ApprovePledge _
+                    ? 1L
+                    : transaction.GasLimit.Value;
+                if (transaction.MaxGasPrice * requiredGasLimit > blockChain.GetBalance(transaction.Signer, Currencies.Mead))
                 {
                     return new TxPolicyViolationException(
                         $"Transaction {transaction.Id} signer insufficient transaction fee",

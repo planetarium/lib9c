@@ -224,7 +224,7 @@ namespace Lib9c.Tests
                     1,
                     adminPrivateKey,
                     genesis.Hash,
-                    gasLimit: 1,
+                    gasLimit: 4,
                     maxGasPrice: new FungibleAssetValue(Currencies.Mead, 10, 10),
                     actions: new PolymorphicAction<ActionBase>[] { action }
                 );
@@ -235,11 +235,22 @@ namespace Lib9c.Tests
                     2,
                     adminPrivateKey,
                     genesis.Hash,
-                    gasLimit: 1,
-                    maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0),
+                    gasLimit: 4,
+                    maxGasPrice: new FungibleAssetValue(Currencies.Mead, 1, 0),
                     actions: new PolymorphicAction<ActionBase>[] { action }
                 );
-            Assert.Null(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txByAdmin3));
+            Assert.IsType<TxPolicyViolationException>(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txByAdmin2));
+
+            Transaction txByAdmin4 =
+                Transaction.Create(
+                    3,
+                    adminPrivateKey,
+                    genesis.Hash,
+                    gasLimit: 4,
+                    maxGasPrice: new FungibleAssetValue(Currencies.Mead, 1, 0),
+                    actions: new PolymorphicAction<ActionBase>[] { new ApprovePledge() }
+                );
+            Assert.Null(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txByAdmin4));
         }
 
         [Fact]
