@@ -438,6 +438,8 @@ namespace Nekoyume.Action
                 }
             }
 
+            var simulationSw = new Stopwatch();
+            simulationSw.Start();
             for (var i = 0; i < TotalPlayCount; i++)
             {
                 sw.Restart();
@@ -522,8 +524,9 @@ namespace Nekoyume.Action
                 );
             }
             sw.Stop();
+            simulationSw.Stop();
             Log.Debug("{AddressesHex}HAS loop Simulate: {Elapsed}, Count: {PlayCount}",
-                addressesHex, sw.Elapsed, TotalPlayCount);
+                addressesHex, simulationSw.Elapsed, TotalPlayCount);
 
             sw.Restart();
             avatarState.UpdateQuestRewards(materialItemSheet);
