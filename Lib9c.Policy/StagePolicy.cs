@@ -5,10 +5,15 @@ namespace Nekoyume.BlockChain
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Reflection;
+    using Bencodex.Types;
     using Libplanet;
+    using Libplanet.Action;
+    using Libplanet.Action.Loader;
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
     using Libplanet.Tx;
+    using Nekoyume.Action;
     using NCAction = Libplanet.Action.PolymorphicAction<Action.ActionBase>;
 
     public class StagePolicy : IStagePolicy<NCAction>
@@ -35,7 +40,13 @@ namespace Nekoyume.BlockChain
             new Address("0xd7e1b90dea34108fb2d3a6ac7dbf3f33bae2c77d"),
         }.ToImmutableHashSet();
 
-        public StagePolicy(TimeSpan txLifeTime, int quotaPerSigner)
+        private static readonly IActionLoader _actionLoader =
+            new SingleActionLoader(typeof(PolymorphicAction<ActionBase>));
+
+        public StagePolicy(
+            TimeSpan txLifeTime,
+            int quotaPerSigner,
+            IActionLoader? actionLoader = null)
         {
             if (quotaPerSigner < 1)
             {
@@ -96,6 +107,30 @@ namespace Nekoyume.BlockChain
             if (_bannedAccounts.Contains(transaction.Signer))
             {
                 return false;
+            }
+
+            foreach (IValue rawAction in transaction.Actions)
+            {
+                try
+                {
+                    long index = blockChain.Count > 0 ? blockChain.Tip.Index + 1: 0;
+                    var action = _actionLoader.LoadAction(blockChain.Count + 1, rawAction);
+                    if (!(action is PolymorphicAction<ActionBase> polymorphicAction))
+                    {
+                        return false;
+                    }
+
+                    if (polymorphicAction.InnerAction.GetType()
+                        .GetCustomAttribute<ActionObsoleteAttribute>(false) is { } attribute &&
+                            attribute.ObsoleteIndex + 2 <= index)
+                    {
+                        return false;
+                    }
+                }
+                catch (InvalidActionException)
+                {
+                    return false;
+                }
             }
 
             return _impl.Stage(blockChain, transaction);

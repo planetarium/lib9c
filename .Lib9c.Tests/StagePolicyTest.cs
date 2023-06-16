@@ -4,6 +4,7 @@ namespace Lib9c.Tests
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Bencodex.Types;
     using Lib9c.Tests.TestHelper;
     using Libplanet;
     using Libplanet.Action;
@@ -175,6 +176,29 @@ namespace Lib9c.Tests
         }
 
         [Fact]
+        public void StageTransactionWithObsoletedAction()
+        {
+            StagePolicy stagePolicy = new StagePolicy(TimeSpan.FromHours(1), 2);
+            BlockChain<NCAction> chain = MakeChainWithStagePolicy(stagePolicy);
+
+            PolymorphicAction<ActionBase>.ReloadLoader(
+                assemblies: new[] { typeof(ObsoletedAction).Assembly });
+
+            var obsoletedAction = new ObsoletedAction();
+
+            Assert.False(stagePolicy.Stage(
+                chain,
+                Transaction.Create(
+                    0,
+                    new PrivateKey(),
+                    null,
+                    new NCAction[] { obsoletedAction, }
+                )
+            ));
+            Assert.Empty(stagePolicy.Iterate(chain));
+        }
+
+        [Fact]
         public void IterateAfterUnstage()
         {
             StagePolicy stagePolicy = new StagePolicy(TimeSpan.FromHours(1), 2);
@@ -256,6 +280,26 @@ namespace Lib9c.Tests
                     policy: policy,
                     stagePolicy: stagePolicy);
             return chain;
+        }
+
+        [ActionObsolete(-1)]
+        [ActionType("obsoleted_action")]
+        private class ObsoletedAction : ActionBase
+        {
+            public ObsoletedAction()
+            {
+            }
+
+            public override IValue PlainValue => Null.Value;
+
+            public override void LoadPlainValue(IValue plainValue)
+            {
+            }
+
+            public override IAccountStateDelta Execute(IActionContext context)
+            {
+                return context.PreviousStates;
+            }
         }
     }
 }
