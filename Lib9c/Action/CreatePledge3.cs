@@ -12,9 +12,9 @@ using Log = Serilog.Log;
 namespace Nekoyume.Action
 {
     [ActionType(TypeIdentifier)]
-    public class CreatePledge : ActionBase
+    public class CreatePledge3 : ActionBase
     {
-        public const string TypeIdentifier = "create_pledge";
+        public const string TypeIdentifier = "create_pledge3";
         public Address PatronAddress;
         public int Mead;
         public IEnumerable<(Address, Address)> AgentAddresses;
@@ -53,11 +53,7 @@ namespace Nekoyume.Action
             sw.Start();
             context.UseGas(1);
             sw.Stop();
-            Log.Debug("CreatePledge UseGas: {SwElapsed}", sw.Elapsed);
-            sw.Restart();
-            CheckPermission(context);
-            sw.Stop();
-            Log.Debug("CreatePledge CheckPermission: {SwElapsed}", sw.Elapsed);
+            Log.Debug("CreatePledge3 UseGas: {SwElapsed}", sw.Elapsed);
             sw.Restart();
             var states = context.PreviousStates;
             var mead = Mead * Currencies.Mead;
@@ -73,7 +69,7 @@ namespace Nekoyume.Action
             }
             sw.Stop();
             Log.Debug(
-                "CreatePledge Prepare Pledge({Count}): {SwElapsed}",
+                "CreatePledge3 Prepare Pledge({Count}): {SwElapsed}",
                 AgentAddresses.Count(),
                 sw.Elapsed);
             return states;

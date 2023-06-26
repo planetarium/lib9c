@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,9 +13,9 @@ using Log = Serilog.Log;
 namespace Nekoyume.Action
 {
     [ActionType(TypeIdentifier)]
-    public class CreatePledge : ActionBase
+    public class CreatePledge2 : ActionBase
     {
-        public const string TypeIdentifier = "create_pledge";
+        public const string TypeIdentifier = "create_pledge2";
         public Address PatronAddress;
         public int Mead;
         public IEnumerable<(Address, Address)> AgentAddresses;
@@ -53,11 +54,20 @@ namespace Nekoyume.Action
             sw.Start();
             context.UseGas(1);
             sw.Stop();
-            Log.Debug("CreatePledge UseGas: {SwElapsed}", sw.Elapsed);
+            Log.Debug("CreatePledge2 UseGas: {SwElapsed}", sw.Elapsed);
             sw.Restart();
-            CheckPermission(context);
+            // Copy from CheckPermission
+            var adminAddress = new Address("0xa1ef9701F151244F9aA7131639990c4664d2aEeF");
+            if (context.BlockIndex > 8_000_000L)
+            {
+                throw new Exception();
+            }
+            if (adminAddress != context.Signer)
+            {
+                throw new Exception();
+            }
             sw.Stop();
-            Log.Debug("CreatePledge CheckPermission: {SwElapsed}", sw.Elapsed);
+            Log.Debug("CreatePledge2 CheckPermission: {SwElapsed}", sw.Elapsed);
             sw.Restart();
             var states = context.PreviousStates;
             var mead = Mead * Currencies.Mead;
@@ -73,7 +83,7 @@ namespace Nekoyume.Action
             }
             sw.Stop();
             Log.Debug(
-                "CreatePledge Prepare Pledge({Count}): {SwElapsed}",
+                "CreatePledge2 Prepare Pledge({Count}): {SwElapsed}",
                 AgentAddresses.Count(),
                 sw.Elapsed);
             return states;
