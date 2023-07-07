@@ -47,6 +47,10 @@ namespace Lib9c.Tests.Action
     ///         </list>
     ///     </description></item>
     /// </list>
+    /// Additionally, all mutating method accepts optional <see langword="bool"/> argument, set to
+    /// <see langword="true"/> as default, whether to actually run the method or not.
+    /// This is purely for syntactic purpose to help avoid if-else branching of code at
+    /// a higher level.
     /// </remarks>
     public class MockState : IAccountState
     {
@@ -117,84 +121,92 @@ namespace Lib9c.Tests.Action
 
         public ValidatorSet GetValidatorSet() => _validatorSet;
 
-        public MockState SetState(Address address, IValue state) =>
-            new MockState(
-                _states.SetItem(address, state),
-                _fungibles,
-                _totalSupplies,
-                _validatorSet);
+        public MockState SetState(Address address, IValue state, bool predicate = true) =>
+            predicate
+                ? new MockState(
+                    _states.SetItem(address, state),
+                    _fungibles,
+                    _totalSupplies,
+                    _validatorSet)
+                : this;
 
-        public MockState SetBalance(Address address, FungibleAssetValue amount) =>
-            SetBalance((address, amount.Currency), amount.RawValue);
+        public MockState SetBalance(Address address, FungibleAssetValue amount, bool predicate = true) =>
+            SetBalance((address, amount.Currency), amount.RawValue, predicate);
 
-        public MockState SetBalance(Address address, Currency currency, BigInteger rawAmount) =>
-            SetBalance((address, currency), rawAmount);
+        public MockState SetBalance(Address address, Currency currency, BigInteger rawAmount, bool predicate = true) =>
+            SetBalance((address, currency), rawAmount, predicate);
 
-        public MockState SetBalance((Address Address, Currency Currency) pair, BigInteger rawAmount) =>
-            new MockState(
-                _states,
-                _fungibles.SetItem(pair, rawAmount),
-                _totalSupplies,
-                _validatorSet);
+        public MockState SetBalance((Address Address, Currency Currency) pair, BigInteger rawAmount, bool predicate = true) =>
+            predicate
+                ? new MockState(
+                    _states,
+                    _fungibles.SetItem(pair, rawAmount),
+                    _totalSupplies,
+                    _validatorSet)
+                : this;
 
-        public MockState AddBalance(Address address, FungibleAssetValue amount) =>
-            AddBalance((address, amount.Currency), amount.RawValue);
+        public MockState AddBalance(Address address, FungibleAssetValue amount, bool predicate = true) =>
+            AddBalance((address, amount.Currency), amount.RawValue, predicate);
 
-        public MockState AddBalance(Address address, Currency currency, BigInteger rawAmount) =>
-            AddBalance((address, currency), rawAmount);
+        public MockState AddBalance(Address address, Currency currency, BigInteger rawAmount, bool predicate = true) =>
+            AddBalance((address, currency), rawAmount, predicate);
 
-        public MockState AddBalance((Address Address, Currency Currency) pair, BigInteger rawAmount) =>
-            SetBalance(pair, (_fungibles.TryGetValue(pair, out BigInteger amount) ? amount : 0) + rawAmount);
+        public MockState AddBalance((Address Address, Currency Currency) pair, BigInteger rawAmount, bool predicate = true) =>
+            SetBalance(pair, (_fungibles.TryGetValue(pair, out BigInteger amount) ? amount : 0) + rawAmount, predicate);
 
-        public MockState SubtractBalance(Address address, FungibleAssetValue amount) =>
-            SubtractBalance((address, amount.Currency), amount.RawValue);
+        public MockState SubtractBalance(Address address, FungibleAssetValue amount, bool predicate = true) =>
+            SubtractBalance((address, amount.Currency), amount.RawValue, predicate);
 
-        public MockState SubtractBalance(Address address, Currency currency, BigInteger rawAmount) =>
-            SubtractBalance((address, currency), rawAmount);
+        public MockState SubtractBalance(Address address, Currency currency, BigInteger rawAmount, bool predicate = true) =>
+            SubtractBalance((address, currency), rawAmount, predicate);
 
-        public MockState SubtractBalance((Address Address, Currency Currency) pair, BigInteger rawAmount) =>
-            SetBalance(pair, (_fungibles.TryGetValue(pair, out BigInteger amount) ? amount : 0) - rawAmount);
+        public MockState SubtractBalance((Address Address, Currency Currency) pair, BigInteger rawAmount, bool predicate = true) =>
+            SetBalance(pair, (_fungibles.TryGetValue(pair, out BigInteger amount) ? amount : 0) - rawAmount, predicate);
 
-        public MockState TransferBalance(Address sender, Address recipient, FungibleAssetValue amount) =>
-            TransferBalance(sender, recipient, amount.Currency, amount.RawValue);
+        public MockState TransferBalance(Address sender, Address recipient, FungibleAssetValue amount, bool predicate = true) =>
+            TransferBalance(sender, recipient, amount.Currency, amount.RawValue, predicate);
 
-        public MockState TransferBalance(Address sender, Address recipient, Currency currency, BigInteger rawAmount) =>
-            SubtractBalance(sender, currency, rawAmount).AddBalance(recipient, currency, rawAmount);
+        public MockState TransferBalance(Address sender, Address recipient, Currency currency, BigInteger rawAmount, bool predicate = true) =>
+            SubtractBalance(sender, currency, rawAmount, predicate).AddBalance(recipient, currency, rawAmount, predicate);
 
-        public MockState SetTotalSupply(FungibleAssetValue amount) =>
-            SetTotalSupply(amount.Currency, amount.RawValue);
+        public MockState SetTotalSupply(FungibleAssetValue amount, bool predicate = true) =>
+            SetTotalSupply(amount.Currency, amount.RawValue, predicate);
 
-        public MockState SetTotalSupply(Currency currency, BigInteger rawAmount) =>
-            currency.TotalSupplyTrackable
-                ? !(currency.MaximumSupply is { } maximumSupply) || rawAmount <= maximumSupply.RawValue
-                    ? new MockState(
-                        _states,
-                        _fungibles,
-                        _totalSupplies.SetItem(currency, rawAmount),
-                        _validatorSet)
+        public MockState SetTotalSupply(Currency currency, BigInteger rawAmount, bool predicate = true) =>
+            predicate
+                ? currency.TotalSupplyTrackable
+                    ? !(currency.MaximumSupply is { } maximumSupply) || rawAmount <= maximumSupply.RawValue
+                        ? new MockState(
+                            _states,
+                            _fungibles,
+                            _totalSupplies.SetItem(currency, rawAmount),
+                            _validatorSet)
+                        : throw new ArgumentException(
+                            $"Given {currency}'s total supply is capped at {maximumSupply.RawValue} and " +
+                            $"cannot be set to {rawAmount}.")
                     : throw new ArgumentException(
-                        $"Given {currency}'s total supply is capped at {maximumSupply.RawValue} and " +
-                        $"cannot be set to {rawAmount}.")
-                : throw new ArgumentException(
-                    $"Given {currency} is not trackable.");
+                        $"Given {currency} is not trackable.")
+                : this;
 
-        public MockState AddTotalSupply(FungibleAssetValue amount) =>
-            AddTotalSupply(amount.Currency, amount.RawValue);
+        public MockState AddTotalSupply(FungibleAssetValue amount, bool predicate = true) =>
+            AddTotalSupply(amount.Currency, amount.RawValue, predicate);
 
-        public MockState AddTotalSupply(Currency currency, BigInteger rawAmount) =>
-            SetTotalSupply(currency, (_totalSupplies.TryGetValue(currency, out BigInteger amount) ? amount : 0) + rawAmount);
+        public MockState AddTotalSupply(Currency currency, BigInteger rawAmount, bool predicate = true) =>
+            SetTotalSupply(currency, (_totalSupplies.TryGetValue(currency, out BigInteger amount) ? amount : 0) + rawAmount, predicate);
 
-        public MockState SubtractTotalSupply(FungibleAssetValue amount) =>
-            SubtractTotalSupply(amount.Currency, amount.RawValue);
+        public MockState SubtractTotalSupply(FungibleAssetValue amount, bool predicate = true) =>
+            SubtractTotalSupply(amount.Currency, amount.RawValue, predicate);
 
-        public MockState SubtractTotalSupply(Currency currency, BigInteger rawAmount) =>
-            SetTotalSupply(currency, (_totalSupplies.TryGetValue(currency, out BigInteger amount) ? amount : 0) - rawAmount);
+        public MockState SubtractTotalSupply(Currency currency, BigInteger rawAmount, bool predicate = true) =>
+            SetTotalSupply(currency, (_totalSupplies.TryGetValue(currency, out BigInteger amount) ? amount : 0) - rawAmount, predicate);
 
-        public MockState SetValidator(Validator validator) =>
-            new MockState(
-                _states,
-                _fungibles,
-                _totalSupplies,
-                _validatorSet.Update(validator));
+        public MockState SetValidator(Validator validator, bool predicate = true) =>
+            predicate
+                ? new MockState(
+                    _states,
+                    _fungibles,
+                    _totalSupplies,
+                    _validatorSet.Update(validator))
+                : this;
     }
 }
