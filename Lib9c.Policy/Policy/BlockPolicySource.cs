@@ -36,6 +36,7 @@ namespace Nekoyume.Blockchain.Policy
     public partial class BlockPolicySource
     {
         public const int MaxTransactionsPerBlock = 100;
+        public const long MainnetNCIP15StartedBlockIndex = 7_097_335L;
 
         public static readonly TimeSpan BlockInterval = TimeSpan.FromSeconds(8);
 
@@ -150,10 +151,14 @@ namespace Nekoyume.Blockchain.Policy
                 ?? MaxTransactionsPerBlockPolicy.Default;
             maxTransactionsPerSignerPerBlockPolicy = maxTransactionsPerSignerPerBlockPolicy
                 ?? MaxTransactionsPerSignerPerBlockPolicy.Default;
-
+            // FIXME check network type instead of subPolicy.
+            bool checkGas = maxTransactionsPerSignerPerBlockPolicy !=
+                             MaxTransactionsPerSignerPerBlockPolicy.Default;
             Func<BlockChain, Transaction, TxPolicyViolationException> validateNextBlockTx =
                 (blockChain, transaction) => ValidateNextBlockTxRaw(
-                    blockChain, _actionLoader, transaction);
+                    blockChain, _actionLoader, transaction, blockChain.Count > 0 && checkGas,
+                    blockChain.Count > 0 ? blockChain.Tip.Index + 1: 0
+                );
             Func<BlockChain, Block, BlockPolicyViolationException> validateNextBlock =
                 (blockchain, block) => ValidateNextBlockRaw(
                     block,
@@ -181,11 +186,10 @@ namespace Nekoyume.Blockchain.Policy
         internal static TxPolicyViolationException ValidateNextBlockTxRaw(
             BlockChain blockChain,
             IActionLoader actionLoader,
-            Transaction transaction)
+            Transaction transaction,
+            bool checkGas,
+            long index)
         {
-            // Avoid NRE when genesis block appended
-            long index = blockChain.Count > 0 ? blockChain.Tip.Index + 1: 0;
-
             if (((ITransaction)transaction).Actions?.Count > 1)
             {
                 return new TxPolicyViolationException(
@@ -202,7 +206,14 @@ namespace Nekoyume.Blockchain.Policy
 
             try
             {
-                if (blockChain.GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
+                // Network is not Main or Internal
+                // NCIP15 migration not completed block index
+                // Patrons gas empty
+                if (
+                    !checkGas ||
+                    index < MainnetNCIP15StartedBlockIndex ||
+                    blockChain.GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead
+                )
                 {
                     // Check Activation
                     try

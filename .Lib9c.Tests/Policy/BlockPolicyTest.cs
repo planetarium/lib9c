@@ -40,20 +40,46 @@ namespace Lib9c.Tests
 #pragma warning restore CS0618
         }
 
-        [Fact]
-        public void ValidateNextBlockTx()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ValidateNextBlockTx(bool mintMead)
         {
             var adminPrivateKey = new PrivateKey();
             var adminAddress = adminPrivateKey.ToAddress();
 
             var blockPolicySource = new BlockPolicySource(Logger.None);
             IBlockPolicy policy = blockPolicySource.GetPolicy(null, null, null, null);
+            var actionBases = new List<ActionBase>();
+            if (mintMead)
+            {
+                var mint = new PrepareRewardAssets
+                {
+                    RewardPoolAddress = adminAddress,
+                    Assets = new List<FungibleAssetValue>
+                    {
+                        1 * Currencies.Mead,
+                    },
+                };
+                var mint2 = new PrepareRewardAssets
+                {
+                    RewardPoolAddress = MeadConfig.PatronAddress,
+                    Assets = new List<FungibleAssetValue>
+                    {
+                        1 * Currencies.Mead,
+                    },
+                };
+                actionBases.Add(mint);
+                actionBases.Add(mint2);
+            }
+
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis = MakeGenesisBlock(
                 adminAddress,
                 ImmutableHashSet.Create(adminAddress),
                 initialValidators: new Dictionary<PublicKey, BigInteger>
-                { { adminPrivateKey.PublicKey, BigInteger.One } }
+                { { adminPrivateKey.PublicKey, BigInteger.One } },
+                actionBases: actionBases
             );
             using var store = new DefaultStore(null);
             using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
@@ -188,6 +214,8 @@ namespace Lib9c.Tests
             {
                 avatarAddress = adminAddress,
             };
+            // Avoid NRE when genesis block appended
+            long index = blockChain.Count > 0 ? blockChain.Tip.Index + 1 : 0;
 
             Transaction txEmpty =
                 Transaction.Create(
@@ -196,27 +224,27 @@ namespace Lib9c.Tests
                     genesis.Hash,
                     new ActionBase[] { }
                 );
-            Assert.IsType<TxPolicyViolationException>(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txEmpty));
+            Assert.IsType<TxPolicyViolationException>(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txEmpty, true, BlockPolicySource.MainnetNCIP15StartedBlockIndex));
 
-            Transaction txByAdmin =
+            Transaction txMultipleActions =
                 Transaction.Create(
                     0,
                     adminPrivateKey,
                     genesis.Hash,
                     new ActionBase[] { action, action }
                 );
-            Assert.IsType<TxPolicyViolationException>(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txByAdmin));
+            Assert.IsType<TxPolicyViolationException>(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txMultipleActions, true, index));
 
-            Transaction txByStranger =
+            Transaction txWithoutGas =
                 Transaction.Create(
                     0,
                     new PrivateKey(),
                     genesis.Hash,
                     new ActionBase[] { action }
                 );
-            Assert.IsType<TxPolicyViolationException>(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txByStranger));
+            Assert.IsType<TxPolicyViolationException>(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txWithoutGas, true, BlockPolicySource.MainnetNCIP15StartedBlockIndex));
 
-            Transaction txByAdmin2 =
+            Transaction txInsufficientGas =
                 Transaction.Create(
                     1,
                     adminPrivateKey,
@@ -225,9 +253,9 @@ namespace Lib9c.Tests
                     maxGasPrice: new FungibleAssetValue(Currencies.Mead, 10, 10),
                     actions: new ActionBase[] { action }
                 );
-            Assert.IsType<TxPolicyViolationException>(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txByAdmin2));
+            Assert.IsType<TxPolicyViolationException>(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txInsufficientGas, true, BlockPolicySource.MainnetNCIP15StartedBlockIndex));
 
-            Transaction txByAdmin3 =
+            Transaction tx =
                 Transaction.Create(
                     2,
                     adminPrivateKey,
@@ -236,7 +264,87 @@ namespace Lib9c.Tests
                     maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0),
                     actions: new ActionBase[] { action }
                 );
-            Assert.Null(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txByAdmin3));
+            Assert.Null(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, tx, true, BlockPolicySource.MainnetNCIP15StartedBlockIndex));
+        }
+
+        [Theory]
+        // Migration index not reached
+        [InlineData(true, true, 0L)]
+        // Patron mead 0
+        [InlineData(false, true, BlockPolicySource.MainnetNCIP15StartedBlockIndex)]
+        // use default policy
+        [InlineData(true, false, BlockPolicySource.MainnetNCIP15StartedBlockIndex)]
+        public void ValidateNextBlockTx_NCIP15_BackwardCompatibility(bool mintMead, bool checkGas, long index)
+        {
+            var adminPrivateKey = new PrivateKey();
+            var adminAddress = adminPrivateKey.ToAddress();
+            var blockPolicySource = new BlockPolicySource(Logger.None);
+            var actionTypeLoader = new NCActionLoader();
+            IBlockPolicy policy = blockPolicySource.GetPolicy(null, null, null, null);
+            IStagePolicy stagePolicy = new VolatileStagePolicy();
+            var actionBases = new List<ActionBase>();
+            if (mintMead)
+            {
+                var mint = new PrepareRewardAssets
+                {
+                    RewardPoolAddress = adminAddress,
+                    Assets = new List<FungibleAssetValue>
+                    {
+                        1 * Currencies.Mead,
+                    },
+                };
+                var mint2 = new PrepareRewardAssets
+                {
+                    RewardPoolAddress = MeadConfig.PatronAddress,
+                    Assets = new List<FungibleAssetValue>
+                    {
+                        1 * Currencies.Mead,
+                    },
+                };
+                actionBases.Add(mint);
+                actionBases.Add(mint2);
+            }
+
+            Block genesis = MakeGenesisBlock(
+                adminAddress,
+                ImmutableHashSet.Create(adminAddress),
+                initialValidators: new Dictionary<PublicKey, BigInteger>
+                    { { adminPrivateKey.PublicKey, BigInteger.One } },
+                actionBases: actionBases,
+                privateKey: adminPrivateKey
+            );
+            using var store = new DefaultStore(null);
+            using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
+            var blockChain = BlockChain.Create(
+                policy,
+                stagePolicy,
+                store,
+                stateStore,
+                genesis,
+                new ActionEvaluator(
+                    policyBlockActionGetter: _ => policy.BlockAction,
+                    blockChainStates: new BlockChainStates(store, stateStore),
+                    actionTypeLoader: new NCActionLoader(),
+                    feeCalculator: null
+                ),
+                renderers: new[] { blockPolicySource.BlockRenderer }
+            );
+            int expectedMead = mintMead ? 1 : 0;
+            Assert.Equal(expectedMead * Currencies.Mead, blockChain.GetBalance(adminAddress, Currencies.Mead));
+            Assert.Equal(expectedMead * Currencies.Mead, blockChain.GetBalance(MeadConfig.PatronAddress, Currencies.Mead));
+            var action = new DailyReward
+            {
+                avatarAddress = adminAddress,
+            };
+
+            Transaction txWithoutGas =
+                Transaction.Create(
+                    0,
+                    adminPrivateKey,
+                    genesis.Hash,
+                    new ActionBase[] { action }
+                );
+            Assert.Null(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txWithoutGas, checkGas, index));
         }
 
         [Fact]
