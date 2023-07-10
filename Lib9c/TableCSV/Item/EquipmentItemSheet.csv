@@ -108,11 +108,6 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10352000,전설의 벨트(물),Belt,4,Water,13,SPD,5272,2,10352000
 10353000,전설의 벨트(땅),Belt,4,Land,14,SPD,5959,2,10353000
 10354000,전설의 벨트(바람),Belt,4,Wind,15,SPD,6647,2,10354000
-10350001,고대의 벨트,Belt,5,Normal,15,SPD,14373,2,10350000
-10351001,고대의 벨트(불),Belt,5,Fire,15,SPD,10267,2,10351000
-10352001,고대의 벨트(물),Belt,5,Water,15,SPD,10267,2,10352000
-10353001,고대의 벨트(땅),Belt,5,Land,15,SPD,14373,2,10353000
-10354001,고대의 벨트(바람),Belt,5,Wind,15,SPD,14373,2,10354000
 10410000,얇은 목걸이,Necklace,1,Normal,1,HIT,70,0,10410000
 10411000,얇은 목걸이(불),Necklace,1,Fire,2,HIT,81,0,10411000
 10412000,얇은 목걸이(물),Necklace,1,Water,3,HIT,99,0,10412000
@@ -138,11 +133,6 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10452000,전설의 목걸이(물),Necklace,4,Water,13,HIT,5366,0,10452000
 10453000,전설의 목걸이(땅),Necklace,4,Land,14,HIT,6066,0,10453000
 10454000,전설의 목걸이(바람),Necklace,4,Wind,15,HIT,6766,0,10454000
-10450001,고대의 목걸이,Necklace,5,Normal,15,HIT,15363,0,10450000
-10451001,고대의 목걸이(불),Necklace,5,Fire,15,HIT,10452,0,10451000
-10452001,고대의 목걸이(물),Necklace,5,Water,15,HIT,10452,0,10452000
-10453001,고대의 목걸이(땅),Necklace,5,Land,15,HIT,15363,0,10453000
-10454001,고대의 목걸이(바람),Necklace,5,Wind,15,HIT,15363,0,10454000
 10510000,얇은 반지,Ring,1,Normal,1,DEF,8,0,10510000
 10511000,얇은 반지(불),Ring,1,Fire,2,DEF,9,0,10511000
 10512000,얇은 반지(물),Ring,1,Water,3,DEF,11,0,10512000
@@ -174,3 +164,13 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 12001001,Special Crystal Belt,Belt,2,Normal,0,ATK,1,0,12001001
 12001002,Special Crystal Necklace,Necklace,3,Normal,1,ATK,1,0,12001002
 12001003,Special Crystal Ring,Ring,4,Normal,2,ATK,1,0,12001003
+10350001,고대의 벨트,Belt,5,Normal,15,SPD,14373,2,10350001
+10351001,고대의 벨트(불),Belt,5,Fire,15,SPD,10267,2,10351001
+10352001,고대의 벨트(물),Belt,5,Water,15,SPD,10267,2,10352001
+10353001,고대의 벨트(땅),Belt,5,Land,15,SPD,14373,2,10353001
+10354001,고대의 벨트(바람),Belt,5,Wind,15,SPD,14373,2,10354001
+10450001,고대의 목걸이,Necklace,5,Normal,15,HIT,15363,0,10450001
+10451001,고대의 목걸이(불),Necklace,5,Fire,15,HIT,10452,0,10451001
+10452001,고대의 목걸이(물),Necklace,5,Water,15,HIT,10452,0,10452001
+10453001,고대의 목걸이(땅),Necklace,5,Land,15,HIT,15363,0,10453001
+10454001,고대의 목걸이(바람),Necklace,5,Wind,15,HIT,15363,0,10454001
