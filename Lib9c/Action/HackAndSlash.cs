@@ -159,39 +159,9 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}HAS Get AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
-            var sheets = states.GetSheets(
-                    containQuestSheet: true,
-                    containSimulatorSheets: true,
-                    sheetTypes: new[]
-                    {
-                        typeof(WorldSheet),
-                        typeof(StageSheet),
-                        typeof(StageWaveSheet),
-                        typeof(EnemySkillSheet),
-                        typeof(CostumeStatSheet),
-                        typeof(SkillSheet),
-                        typeof(QuestRewardSheet),
-                        typeof(QuestItemRewardSheet),
-                        typeof(EquipmentItemRecipeSheet),
-                        typeof(WorldUnlockSheet),
-                        typeof(MaterialItemSheet),
-                        typeof(ItemRequirementSheet),
-                        typeof(EquipmentItemRecipeSheet),
-                        typeof(EquipmentItemSubRecipeSheetV2),
-                        typeof(EquipmentItemOptionSheet),
-                        typeof(CrystalStageBuffGachaSheet),
-                        typeof(CrystalRandomBuffSheet),
-                        typeof(StakeActionPointCoefficientSheet),
-                        typeof(RuneListSheet),
-                    });
-            sw.Stop();
-            Log.Verbose("{AddressesHex}HAS Get Sheets: {Elapsed}", addressesHex, sw.Elapsed);
-
-            sw.Restart();
             var stakingLevel = 0;
-            StakeActionPointCoefficientSheet actionPointCoefficientSheet = null;
-            if (states.TryGetStakeState(signer, out var stakeState) &&
-                sheets.TryGetSheet(out actionPointCoefficientSheet))
+            StakeActionPointCoefficientSheet actionPointCoefficientSheet = StaticSheets.StakeActionPointCoefficientSheet;
+            if (states.TryGetStakeState(signer, out var stakeState))
             {
                 var currency = states.GetGoldCurrency();
                 var stakedAmount = states.GetBalance(stakeState.address, currency);
@@ -201,7 +171,7 @@ namespace Nekoyume.Action
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Check StakeState: {Elapsed}", addressesHex, sw.Elapsed);
 
-            var worldSheet = sheets.GetSheet<WorldSheet>();
+            var worldSheet = StaticSheets.WorldSheet;
             if (!worldSheet.TryGetValue(WorldId, out var worldRow, false))
             {
                 throw new SheetRowNotFoundException(addressesHex, nameof(WorldSheet), WorldId);
@@ -216,7 +186,7 @@ namespace Nekoyume.Action
             }
 
             sw.Restart();
-            if (!sheets.GetSheet<StageSheet>().TryGetValue(StageId, out var stageRow))
+            if (!StaticSheets.StageSheet.TryGetValue(StageId, out var stageRow))
             {
                 throw new SheetRowNotFoundException(addressesHex, nameof(StageSheet), StageId);
             }
@@ -271,7 +241,7 @@ namespace Nekoyume.Action
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Validate Items: {Elapsed}", addressesHex, sw.Elapsed);
 
-            var materialItemSheet = sheets.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = StaticSheets.MaterialItemSheet;
             var apPlayCount = TotalPlayCount;
             var minimumCostAp = stageRow.CostAP;
             if (actionPointCoefficientSheet != null && stakingLevel > 0)
@@ -337,10 +307,10 @@ namespace Nekoyume.Action
             avatarState.ValidateItemRequirement(
                 costumeIds.Concat(foodIds).ToList(),
                 equipmentList,
-                sheets.GetSheet<ItemRequirementSheet>(),
-                sheets.GetSheet<EquipmentItemRecipeSheet>(),
-                sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
-                sheets.GetSheet<EquipmentItemOptionSheet>(),
+                StaticSheets.ItemRequirementSheet,
+                StaticSheets.EquipmentItemRecipeSheet,
+                StaticSheets.EquipmentItemSubRecipeSheetV2,
+                StaticSheets.EquipmentItemOptionSheet,
                 addressesHex);
 
             var items = Equipments.Concat(Costumes);
@@ -349,7 +319,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}HAS Unequip items: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
-            var questSheet = sheets.GetQuestSheet();
+            var questSheet = StaticSheets.QuestSheet;
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS GetQuestSheet: {Elapsed}", addressesHex, sw.Elapsed);
 
@@ -360,9 +330,9 @@ namespace Nekoyume.Action
                 sw.Restart();
                 questList.UpdateList(
                     questSheet,
-                    sheets.GetSheet<QuestRewardSheet>(),
-                    sheets.GetSheet<QuestItemRewardSheet>(),
-                    sheets.GetSheet<EquipmentItemRecipeSheet>());
+                    StaticSheets.QuestRewardSheet,
+                    StaticSheets.QuestItemRewardSheet,
+                    StaticSheets.EquipmentItemRecipeSheet);
                 sw.Stop();
                 Log.Verbose("{AddressesHex}HAS Update QuestList: {Elapsed}", addressesHex, sw.Elapsed);
             }
@@ -382,8 +352,8 @@ namespace Nekoyume.Action
 
                 if (skillState.SkillIds.Any())
                 {
-                    var crystalRandomBuffSheet = sheets.GetSheet<CrystalRandomBuffSheet>();
-                    var skillSheet = sheets.GetSheet<SkillSheet>();
+                    var crystalRandomBuffSheet = StaticSheets.CrystalRandomBuffSheet;
+                    var skillSheet = StaticSheets.SkillSheet;
                     int selectedId;
                     if (StageBuffId.HasValue && skillState.SkillIds.Contains(StageBuffId.Value))
                     {
@@ -406,18 +376,18 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}HAS Get skillState : {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
-            var worldUnlockSheet = sheets.GetSheet<WorldUnlockSheet>();
-            var crystalStageBuffSheet = sheets.GetSheet<CrystalStageBuffGachaSheet>();
+            var worldUnlockSheet = StaticSheets.WorldUnlockSheet;
+            var crystalStageBuffSheet = StaticSheets.CrystalStageBuffGachaSheet;
             sw.Restart();
             // if PlayCount > 1, it is Multi-HAS.
-            var simulatorSheets = sheets.GetSimulatorSheets();
+            var simulatorSheets = StaticSheets.GetSimulatorSheets();
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
             var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Adventure);
-            var runeListSheet = sheets.GetSheet<RuneListSheet>();
+            var runeListSheet = StaticSheets.RuneListSheet;
             runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
             states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
 
@@ -439,9 +409,9 @@ namespace Nekoyume.Action
                 }
             }
 
-            var stageWaveRow =  sheets.GetSheet<StageWaveSheet>()[StageId];
-            var enemySkillSheet = sheets.GetSheet<EnemySkillSheet>();
-            var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+            var stageWaveRow =  StaticSheets.StageWaveSheet[StageId];
+            var enemySkillSheet = StaticSheets.EnemySkillSheet;
+            var costumeStatSheet = StaticSheets.CostumeStatSheet;
             var stageCleared = !isNotClearedStage;
             var starCount = 0;
             for (var i = 0; i < TotalPlayCount; i++)
