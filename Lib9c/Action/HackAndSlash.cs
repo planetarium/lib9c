@@ -242,6 +242,7 @@ namespace Nekoyume.Action
             sw.Stop();
             Log.Debug("{AddressesHex} {Tag} HAS {Process}: {Elapsed}", addressesHex, tag, "Validate Items", sw.ElapsedMilliseconds);
 
+            sw.Restart();
             var materialItemSheet = StaticSheets.MaterialItemSheet;
             var apPlayCount = TotalPlayCount;
             var minimumCostAp = stageRow.CostAP;
@@ -379,7 +380,7 @@ namespace Nekoyume.Action
             sw.Restart();
             var worldUnlockSheet = StaticSheets.WorldUnlockSheet;
             var crystalStageBuffSheet = StaticSheets.CrystalStageBuffGachaSheet;
-            sw.Restart();
+
             // if PlayCount > 1, it is Multi-HAS.
             var simulatorSheets = StaticSheets.GetSimulatorSheets();
 
@@ -409,6 +410,9 @@ namespace Nekoyume.Action
                     runeStates.Add(new RuneState(rawRuneState));
                 }
             }
+
+            sw.Stop();
+            Log.Debug("{AddressesHex} {Tag} HAS {Process}: {Elapsed}", addressesHex, tag, "Update slotState", sw.ElapsedMilliseconds);
 
             var stageWaveRow =  StaticSheets.StageWaveSheet[StageId];
             var enemySkillSheet = StaticSheets.EnemySkillSheet;
