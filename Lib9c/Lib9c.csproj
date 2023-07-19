@@ -41,6 +41,10 @@
       <!-- https://github.com/dotnet/roslyn/issues/18093#issuecomment-405702631 -->
     </ProjectReference>
     <ProjectReference Include="..\Lib9c.Abstractions\Lib9c.Abstractions.csproj" />
+    <ProjectReference Include="..\.Libplanet\Libplanet.Action\Libplanet.Action.csproj" />
+    <ProjectReference Include="..\.Libplanet\Libplanet.Common\Libplanet.Common.csproj" />
+    <ProjectReference Include="..\.Libplanet\Libplanet.Crypto\Libplanet.Crypto.csproj" />
+    <ProjectReference Include="..\.Libplanet\Libplanet.Types\Libplanet.Types.csproj" />
   </ItemGroup>
 
 </Project>
