@@ -58,9 +58,14 @@ namespace Nekoyume.Model.Quest
 
         public override IValue Serialize()
         {
-            return ((Dictionary) base.Serialize())
-                .Add("recipe_id", RecipeId.Serialize())
-                .Add("stage_id", StageId.Serialize());
+            var dict = new Dictionary<IKey, IValue>
+            {
+                [(Text) "recipe_id"] = RecipeId.Serialize(),
+                [(Text) "stage_id"] = StageId.Serialize(),
+            };
+#pragma warning disable LAA1002
+            return new Dictionary(dict.Union((Dictionary) base.Serialize()));
+#pragma warning restore LAA1002
         }
     }
 }

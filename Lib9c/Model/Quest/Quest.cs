@@ -82,14 +82,16 @@ namespace Nekoyume.Model.Quest
         public abstract string GetProgressText();
 
         public virtual IValue Serialize() =>
-            Dictionary.Empty
-                .Add("typeId", (Text) TypeId)
-                .Add("complete", new Bencodex.Types.Boolean(Complete))
-                .Add("goal", (Integer) Goal)
-                .Add("current", (Integer) _current)
-                .Add("id", (Integer) Id)
-                .Add("reward", Reward.Serialize())
-                .Add("isPaidInAction", new Bencodex.Types.Boolean(IsPaidInAction));
+            new Dictionary(new Dictionary<IKey, IValue>
+            {
+                [(Text) "typeId"] = (Text) TypeId,
+                [(Text) "complete"] = new Bencodex.Types.Boolean(Complete),
+                [(Text) "goal"] = (Integer) Goal,
+                [(Text) "current"] = (Integer) _current,
+                [(Text) "id"] = (Integer) Id,
+                [(Text) "reward"] = Reward.Serialize(),
+                [(Text) "isPaidInAction"] = new Bencodex.Types.Boolean(IsPaidInAction),
+            });
 
         public static Quest Deserialize(Dictionary serialized)
         {

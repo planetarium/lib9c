@@ -14,6 +14,5 @@ namespace Nekoyume.Battle
         IEnumerable<ItemBase> Reward { get; }
         int WaveNumber { get; }
         int WaveTurn { get; }
-        bool LogEvent { get; }
     }
 }

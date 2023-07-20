@@ -25,12 +25,9 @@ namespace Nekoyume.Battle
                 enemy.InitAI();
             }
 
-            if (simulator.LogEvent)
-            {
-                var enemies = _enemies.Select(enemy => new Enemy(enemy)).ToList();
-                var spawnWave = new SpawnWave(null, simulator.WaveNumber, simulator.WaveTurn, enemies, HasBoss);
-                simulator.Log.Add(spawnWave);
-            }
+            var enemies = _enemies.Select(enemy => new Enemy(enemy)).ToList();
+            var spawnWave = new SpawnWave(null, simulator.WaveNumber, simulator.WaveTurn, enemies, HasBoss);
+            simulator.Log.Add(spawnWave);
         }
 
         [Obsolete("Use Spawn")]

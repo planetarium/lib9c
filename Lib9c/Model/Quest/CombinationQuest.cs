@@ -16,7 +16,7 @@ namespace Nekoyume.Model.Quest
 
         public override QuestType QuestType => QuestType.Craft;
 
-        public CombinationQuest(CombinationQuestSheet.Row data, QuestReward reward)
+        public CombinationQuest(CombinationQuestSheet.Row data, QuestReward reward) 
             : base(data, reward)
         {
             ItemType = data.ItemType;
@@ -58,8 +58,13 @@ namespace Nekoyume.Model.Quest
         }
 
         public override IValue Serialize() =>
-            ((Dictionary) base.Serialize())
-            .Add("itemType", (int) ItemType)
-            .Add("itemSubType", (int) ItemSubType);
+#pragma warning disable LAA1002
+            new Dictionary(new Dictionary<IKey, IValue>
+            {
+                [(Text)"itemType"] = (Integer)(int)ItemType,
+                [(Text)"itemSubType"] = (Integer)(int)ItemSubType,
+            }.Union((Dictionary)base.Serialize()));
+#pragma warning restore LAA1002
+
     }
 }

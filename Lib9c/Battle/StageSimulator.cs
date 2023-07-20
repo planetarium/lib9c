@@ -13,7 +13,6 @@ using Nekoyume.Model.State;
 using Nekoyume.Model.Buff;
 using Nekoyume.TableData;
 using Priority_Queue;
-using Skill = Nekoyume.Model.Skill.Skill;
 
 namespace Nekoyume.Battle
 {
@@ -33,11 +32,12 @@ namespace Nekoyume.Battle
         private int TurnLimit { get; }
         public override IEnumerable<ItemBase> Reward => _waveRewards;
 
-        public StageSimulator(IRandom random,
+        public StageSimulator(
+            IRandom random,
             AvatarState avatarState,
             List<Guid> foods,
             List<RuneState> runeStates,
-            List<Skill> skillsOnWaveStart,
+            List<Model.Skill.Skill> skillsOnWaveStart,
             int worldId,
             int stageId,
             StageSheet.Row stageRow,
@@ -47,14 +47,12 @@ namespace Nekoyume.Battle
             SimulatorSheets simulatorSheets,
             EnemySkillSheet enemySkillSheet,
             CostumeStatSheet costumeStatSheet,
-            List<ItemBase> waveRewards,
-            bool logEvent = true)
+            List<ItemBase> waveRewards)
             : base(
                 random,
                 avatarState,
                 foods,
-                simulatorSheets,
-                logEvent)
+                simulatorSheets)
         {
             Player.SetCostumeStat(costumeStatSheet);
             if (runeStates != null)
@@ -130,7 +128,8 @@ namespace Nekoyume.Battle
                         ActionBuffSheet
                     );
 
-                    skill.Use(Player, 0, buffs, LogEvent);
+                    var usedSkill = skill.Use(Player, 0, buffs);
+                    Log.Add(usedSkill);
                 }
 
                 while (true)
@@ -143,7 +142,7 @@ namespace Nekoyume.Battle
                             Result = BattleLog.Result.Lose;
                             if (Exp > 0)
                             {
-                                Player.GetExp((int)(Exp * 0.3m), LogEvent);
+                                Player.GetExp((int)(Exp * 0.3m), true);
                             }
                         }
                         else
@@ -170,7 +169,7 @@ namespace Nekoyume.Battle
                             Result = BattleLog.Result.Lose;
                             if (Exp > 0)
                             {
-                                Player.GetExp((int)(Exp * 0.3m), LogEvent);
+                                Player.GetExp((int)(Exp * 0.3m), true);
                             }
                         }
                         else
@@ -193,7 +192,7 @@ namespace Nekoyume.Battle
                             {
                                 if (Exp > 0)
                                 {
-                                    Player.GetExp(Exp, LogEvent);
+                                    Player.GetExp(Exp, true);
                                 }
 
                                 break;
@@ -201,13 +200,10 @@ namespace Nekoyume.Battle
                             case 2:
                             {
                                 ItemMap = Player.GetRewards(_waveRewards);
-                                if (LogEvent)
-                                {
-                                    var dropBox = new DropBox(null, _waveRewards);
-                                    Log.Add(dropBox);
-                                    var getReward = new GetReward(null, _waveRewards);
-                                    Log.Add(getReward);
-                                }
+                                var dropBox = new DropBox(null, _waveRewards);
+                                Log.Add(dropBox);
+                                var getReward = new GetReward(null, _waveRewards);
+                                Log.Add(getReward);
                                 break;
                             }
                             default:

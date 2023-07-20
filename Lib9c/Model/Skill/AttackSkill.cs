@@ -27,10 +27,9 @@ namespace Nekoyume.Model.Skill
         /// <param name="caster"></param>
         /// <param name="simulatorWaveTurn"></param>
         /// <param name="isNormalAttack"></param>
-        /// <param name="copyCharacter"></param>
         /// <returns></returns>
         protected IEnumerable<BattleStatus.Skill.SkillInfo> ProcessDamage(CharacterBase caster, int simulatorWaveTurn,
-            bool isNormalAttack = false, bool copyCharacter = true)
+            bool isNormalAttack = false)
         {
             var infos = new List<BattleStatus.Skill.SkillInfo>();
             var targets = SkillRow.SkillTargetType.GetTarget(caster).ToList();
@@ -87,10 +86,9 @@ namespace Nekoyume.Model.Skill
                         target.CurrentHP -= damage;
                     }
 
-                    var clone = copyCharacter ? (CharacterBase) target.Clone() : null;
-                    infos.Add(new BattleStatus.Skill.SkillInfo(target.Id, target.IsDead, target.Thorn, damage, isCritical,
+                    infos.Add(new BattleStatus.Skill.SkillInfo((CharacterBase) target.Clone(), damage, isCritical,
                         SkillRow.SkillCategory, simulatorWaveTurn, SkillRow.ElementalType,
-                        SkillRow.SkillTargetType, target: clone));
+                        SkillRow.SkillTargetType));
                 }
             }
 

@@ -26,10 +26,8 @@ namespace Lib9c.Tests.Model.Skill
                 .CreateLogger();
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Use(bool copyCharacter)
+        [Fact]
+        public void Use()
         {
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
@@ -67,8 +65,7 @@ namespace Lib9c.Tests.Model.Skill
                 StageSimulator.GetWaveRewards(
                     random,
                     tableSheets.StageSheet[1],
-                    tableSheets.MaterialItemSheet),
-                copyCharacter
+                    tableSheets.MaterialItemSheet)
             );
             var player = new Player(avatarState, simulator);
 
@@ -82,13 +79,13 @@ namespace Lib9c.Tests.Model.Skill
             var battleStatusSkill = normalAttack.Use(
                 player,
                 0,
-                new List<StatBuff>(),
-                copyCharacter);
+                new List<StatBuff>());
             Assert.NotNull(battleStatusSkill);
-            Assert.Equal(!copyCharacter, battleStatusSkill.Character is null);
-            var skillInfo = Assert.Single(battleStatusSkill.SkillInfos);
-            Assert.Equal(enemy.Id, skillInfo.CharacterId);
-            Assert.Equal(!copyCharacter, skillInfo.Target is null);
+            Assert.Single(battleStatusSkill.SkillInfos);
+
+            var skillInfo = battleStatusSkill.SkillInfos.FirstOrDefault();
+            Assert.NotNull(skillInfo);
+            Assert.Equal(enemy.Id, skillInfo.Target.Id);
         }
     }
 }

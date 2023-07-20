@@ -12,7 +12,7 @@ namespace Nekoyume.Model.Quest
     {
         public readonly int MonsterId;
 
-        public MonsterQuest(MonsterQuestSheet.Row data, QuestReward reward)
+        public MonsterQuest(MonsterQuestSheet.Row data, QuestReward reward) 
             : base(data, reward)
         {
             MonsterId = data.MonsterId;
@@ -54,7 +54,11 @@ namespace Nekoyume.Model.Quest
         }
 
         public override IValue Serialize() =>
-            ((Dictionary) base.Serialize())
-            .Add("monsterId", MonsterId);
+#pragma warning disable LAA1002
+            new Dictionary(new Dictionary<IKey, IValue>
+            {
+                [(Text)"monsterId"] = (Integer)MonsterId,
+            }.Union((Dictionary)base.Serialize()));
+#pragma warning restore LAA1002
     }
 }
