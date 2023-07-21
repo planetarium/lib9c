@@ -201,11 +201,11 @@ namespace Nekoyume.Model.Item
         public override IValue Serialize() => ((Dictionary)base.Serialize())
             .Add("itemId", _serializedItemId ?? ItemId.Serialize())
             .Add("statsMap", _serializedStatsMap ?? StatsMap.Serialize())
-            .Add("skills", new List(_serializedSkills ?? Skills
+            .Add("skills", _serializedSkills ?? new List(Skills
                 .OrderByDescending(i => i.Chance)
                 .ThenByDescending(i => i.Power)
                 .Select(s => s.Serialize())))
-            .Add("buffSkills", new List(_serializedBuffSkills ?? BuffSkills
+            .Add("buffSkills", _serializedBuffSkills ?? new List(BuffSkills
                 .OrderByDescending(i => i.Chance)
                 .ThenByDescending(i => i.Power)
                 .Select(s => s.Serialize())))
