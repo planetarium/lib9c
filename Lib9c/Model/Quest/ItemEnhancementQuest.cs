@@ -42,6 +42,7 @@ namespace Nekoyume.Model.Quest
         private Integer? _serializedGrade;
         private int _grade;
         private Integer? _serializedCount;
+        // Do not use this field. it can be different check result
         private int _count;
         public override float Progress => (float) _current / Count;
 
@@ -65,15 +66,15 @@ namespace Nekoyume.Model.Quest
             if (Complete)
                 return;
 
-            Complete = _count == _current;
+            Complete = Count == _current;
         }
 
         public override string GetProgressText() =>
             string.Format(
                 CultureInfo.InvariantCulture,
                 GoalFormat,
-                Math.Min(_count, _current),
-               _count
+                Math.Min(Count, _current),
+               Count
             );
 
         public void Update(Equipment equipment)
@@ -94,6 +95,6 @@ namespace Nekoyume.Model.Quest
         public override IValue Serialize() =>
             ((Dictionary) base.Serialize())
             .Add("grade", _serializedGrade ?? Grade)
-            .Add("count", _serializedCount ?? _count);
+            .Add("count", _serializedCount ?? Count);
     }
 }
