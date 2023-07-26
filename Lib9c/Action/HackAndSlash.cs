@@ -574,7 +574,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex} {Source} HAS {Process}: {Elapsed}", addressesHex, source, "Set States", sw.Elapsed.TotalMilliseconds);
 
             var totalElapsed = DateTimeOffset.UtcNow - started;
-            Log.Verbose("{AddressesHex} {Source} HAS {Process}: {Elapsed}", addressesHex, source, "Total Executed Time", totalElapsed.TotalMilliseconds);
+            Log.Verbose("{AddressesHex} {Source} HAS {Process}: {Elapsed}, blockIndex: {BlockIndex}", addressesHex, source, "Total Executed Time", totalElapsed.TotalMilliseconds, blockIndex);
             return states;
         }
 
