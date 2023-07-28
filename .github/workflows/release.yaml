@@ -2,8 +2,11 @@ name: release
 
 on:
   push:
+    branches:
+    - "main"
+    - "development"
     tags:
-    - v*
+    - "*"
 
 jobs:
   release:
@@ -18,7 +21,40 @@ jobs:
     - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 'lts/*'
+    - id: determine-version
+      run: node scripts/determine-version.js
+    - shell: bash
+      run: |
+        mkdir -p obj
+        echo "$VERSION_PREFIX" > obj/version_prefix.txt
+        if [[ "$VERSION_SUFFIX" != "" ]]; then
+          echo "$VERSION_SUFFIX" > obj/version_suffix.txt
+        fi
+        echo "$PACKAGE_VERSION" > obj/package_version.txt
+        echo "$VERSION_TYPE" > obj/version_type.txt
+      env:
+        VERSION_PREFIX: ${{ steps.determine-version.outputs.version-prefix }}
+        VERSION_SUFFIX: ${{ steps.determine-version.outputs.version-suffix }}
+        PACKAGE_VERSION: ${{ steps.determine-version.outputs.package-version }}
+        VERSION_TYPE: ${{ steps.determine-version.outputs.version-type }}
     - run: .github/bin/dist-pack.sh
+    - run: |
+        . .github/bin/constants.sh
+        mkdir -p /tmp/dist-bin/
+        for project in "${projects[@]}"; do
+          cp -r "$project/bin/$configuration"/* /tmp/dist-bin/
+        done
+    - uses: actions/upload-artifact@main
+      with:
+        name: dist-bin
+        path: /tmp/dist-bin/
     - run: .github/bin/dist-github-release.sh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - if: env.NUGET_API_KEY != ''
+      run: .github/bin/dist-nuget.sh
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
