@@ -84,7 +84,6 @@ namespace Nekoyume.Action
 
         public override IAccountStateDelta Execute(IActionContext context)
         {
-            context.UseGas(4);
             Address signer = context.Signer;
             var state = context.PreviousState;
             if (context.Rehearsal)
