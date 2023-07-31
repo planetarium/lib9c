@@ -49,13 +49,17 @@ namespace Nekoyume.Battle
             var result = new List<T>();
             var weight = 0m;
             var rnd = _random.Next(1, 100001) * 0.00001m;
-            var sum = _items.Sum(i => i.Weight);
+            decimal sum = 0;
+            foreach (var item in _items)
+            {
+                sum += item.Weight;
+            }
             var ratio = 1.0m / sum;
             while (result.Count < count)
             {
-                foreach (var item in _items.OrderBy(i => i.Weight).ToList())
+                foreach (var item in _items.OrderBy(i => i.Weight))
                 {
-                    weight += (item.Weight * ratio);
+                    weight += item.Weight * ratio;
 
                     if (rnd <= weight)
                     {
