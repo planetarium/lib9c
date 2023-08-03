@@ -235,34 +235,28 @@ namespace Nekoyume.Model.Quest
 
         public void UpdateStageQuest(CollectionMap stageMap)
         {
-            foreach (var quest in _quests)
+            var stageQuests = _quests.OfType<WorldQuest>();
+            foreach (var quest in stageQuests)
             {
-                if (quest is WorldQuest worldQuest)
-                {
-                    worldQuest.Update(stageMap);
-                }
+                quest.Update(stageMap);
             }
         }
 
         public void UpdateMonsterQuest(CollectionMap monsterMap)
         {
-            foreach (var quest in _quests)
+            var monsterQuests = _quests.OfType<MonsterQuest>();
+            foreach (var quest in monsterQuests)
             {
-                if (quest is MonsterQuest monsterQuest)
-                {
-                    monsterQuest.Update(monsterMap);
-                }
+                quest.Update(monsterMap);
             }
         }
 
         public void UpdateCollectQuest(CollectionMap itemMap)
         {
-            foreach (var quest in _quests)
+            var collectQuests = _quests.OfType<CollectQuest>();
+            foreach (var quest in collectQuests)
             {
-                if (quest is CollectQuest collectQuest)
-                {
-                    collectQuest.Update(itemMap);
-                }
+                quest.Update(itemMap);
             }
         }
 
@@ -332,8 +326,10 @@ namespace Nekoyume.Model.Quest
                 return Dictionary.Empty
                     .SetItem(ListVersionKey, _listVersion.Serialize())
                     .SetItem(QuestsKey, (IValue) new List(_quests
+                        .OrderBy(i => i.Id)
                         .Select(q => q.Serialize())))
                     .SetItem(CompletedQuestIdsKey, (IValue) new List(completedQuestIds
+                        .OrderBy(i => i)
                         .Select(i => i.Serialize())));
             }
 

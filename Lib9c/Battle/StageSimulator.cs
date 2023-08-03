@@ -257,9 +257,9 @@ namespace Nekoyume.Battle
         {
             var enemyStatModifiers = stageRow.EnemyInitialStatModifiers;
             var waves = stageWaveRow.Waves;
-            foreach (var waveData in waves)
+            foreach (var wave in waves
+                         .Select(e => SpawnWave(e, enemyStatModifiers)))
             {
-                var wave = SpawnWave(waveData, enemyStatModifiers);
                 _waves.Add(wave);
             }
         }
