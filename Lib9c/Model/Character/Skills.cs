@@ -4,7 +4,6 @@ using Libplanet.Action;
 using System.Collections;
 using System.Linq;
 using Nekoyume.Battle;
-using Nekoyume.Model.Skill;
 
 namespace Nekoyume.Model
 {
@@ -184,7 +183,7 @@ namespace Nekoyume.Model
             }
 
             var itemSelector = new WeightedSelector<Skill.Skill>(random);
-            foreach (var skill in skillList)
+            foreach (var skill in skillList.OrderBy(i => i.SkillRow.Id))
             {
                 itemSelector.Add(skill, skill.Chance);
             }

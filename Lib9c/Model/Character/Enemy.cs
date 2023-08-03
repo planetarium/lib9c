@@ -14,7 +14,7 @@ namespace Nekoyume.Model
     public class Enemy : CharacterBase, ICloneable
     {
         public int spawnIndex = -1;
-        
+
         [NonSerialized]
         private IStageSimulator _stageSimulator;
 
@@ -95,21 +95,20 @@ namespace Nekoyume.Model
             base.SetSkill();
 
             var dmg = (int)(ATK * 0.3m);
-            var skillIds = _stageSimulator.EnemySkillSheet.Values
-                .Where(r => r.characterId == RowData.Id)
-                .Select(r => r.skillId)
-                .ToList();
-            var enemySkills = Simulator.SkillSheet.Values
-                .Where(r => skillIds.Contains(r.Id))
-                .ToList();
-            foreach (var skillRow in enemySkills)
+            var skillRows = new List<SkillSheet.Row>();
+            foreach (var row in _stageSimulator.EnemySkillSheet.Values)
             {
-                var isBuff =
-                    skillRow.SkillType == SkillType.Buff ||
-                    skillRow.SkillType == SkillType.Debuff;
+                var skillId = row.skillId;
+                if (row.characterId == RowData.Id && Simulator.SkillSheet.TryGetValue(skillId, out var skillRow) && !skillRows.Contains(skillRow))
+                {
+                    skillRows.Add(skillRow);
+                    var isBuff =
+                        skillRow.SkillType == SkillType.Buff ||
+                        skillRow.SkillType == SkillType.Debuff;
 
-                var skill = SkillFactory.GetV1(skillRow, !isBuff ? dmg : 0, 100);
-                Skills.Add(skill);
+                    var skill = SkillFactory.GetV1(skillRow, !isBuff ? dmg : 0, 100);
+                    Skills.Add(skill);
+                }
             }
         }
 
