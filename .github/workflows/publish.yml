@@ -5,6 +5,7 @@ on:
     branches:
       - development
       - main
+      - exp/clean-lib9c
 
 jobs:
   nuget:
