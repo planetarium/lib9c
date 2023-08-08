@@ -63,14 +63,11 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(MigrationActivatedAccountsState))]
         [InlineData(typeof(MigrationAvatarState))]
         [InlineData(typeof(MigrationLegacyShop))]
-        [InlineData(typeof(MimisbrunnrBattle))]
-        [InlineData(typeof(MonsterCollect))]
         [InlineData(typeof(PatchTableSheet))]
         [InlineData(typeof(RankingBattle))]
         [InlineData(typeof(RapidCombination))]
         [InlineData(typeof(RedeemCode))]
         [InlineData(typeof(RewardGold))]
-        [InlineData(typeof(Sell))]
         [InlineData(typeof(SellCancellation))]
         [InlineData(typeof(UpdateSell))]
         [InlineData(typeof(CreatePendingActivations))]
@@ -199,18 +196,6 @@ namespace Lib9c.Tests.Action
                     avatarStates = new List<Dictionary>(),
                 },
                 MigrationLegacyShop _ => new MigrationLegacyShop(),
-                MimisbrunnrBattle _ => new MimisbrunnrBattle
-                {
-                    Costumes = new List<Guid>(),
-                    Equipments = new List<Guid>(),
-                    Foods = new List<Guid>(),
-                    RuneInfos = new List<RuneSlotInfo>(),
-                    WorldId = 0,
-                    StageId = 0,
-                    PlayCount = 0,
-                    AvatarAddress = default,
-                },
-                MonsterCollect _ => new MonsterCollect(),
                 PatchTableSheet _ => new PatchTableSheet
                 {
                     TableCsv = "table",
@@ -231,10 +216,6 @@ namespace Lib9c.Tests.Action
                     AvatarAddress = new PrivateKey().ToAddress(),
                 },
                 RewardGold _ => null,
-                Sell _ => new Sell
-                {
-                    price = _currency * 100,
-                },
                 SellCancellation _ => new SellCancellation(),
                 UpdateSell _ => new UpdateSell
                 {

@@ -122,37 +122,6 @@ namespace Lib9c.Tests.Action.Scenario
             return _state;
         }
 
-        public IAccountStateDelta BattleArena(
-            IRandom random,
-            Address signer,
-            Address myAvatarAddress,
-            Address enemyAvatarAddress,
-            ArenaSheet.RoundData roundData,
-            int ticket,
-            long blockIndex)
-        {
-            var action = new BattleArena6()
-            {
-                myAvatarAddress = myAvatarAddress,
-                enemyAvatarAddress = enemyAvatarAddress,
-                championshipId = roundData.ChampionshipId,
-                round = roundData.Round,
-                ticket = ticket,
-                costumes = new List<Guid>(),
-                equipments = new List<Guid>(),
-            };
-
-            _state = action.Execute(new ActionContext
-            {
-                PreviousState = _state,
-                Signer = signer,
-                Random = random,
-                Rehearsal = false,
-                BlockIndex = blockIndex,
-            });
-            return _state;
-        }
-
         public (AgentState Agent, AvatarState Avatar) CreateAccount()
         {
             var clearStageId = Math.Max(

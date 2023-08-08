@@ -67,7 +67,7 @@ namespace Lib9c.Tests.Action
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    CreateAvatar2.DeriveFormat,
+                    CreateAvatar.DeriveFormat,
                     0
                 )
             );
@@ -117,7 +117,7 @@ namespace Lib9c.Tests.Action
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    CreateAvatar2.DeriveFormat,
+                    CreateAvatar.DeriveFormat,
                     0
                 )
             );
@@ -188,7 +188,7 @@ namespace Lib9c.Tests.Action
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    CreateAvatar2.DeriveFormat,
+                    CreateAvatar.DeriveFormat,
                     0
                 )
             );
@@ -224,7 +224,7 @@ namespace Lib9c.Tests.Action
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    CreateAvatar2.DeriveFormat,
+                    CreateAvatar.DeriveFormat,
                     index
                 )
             );
