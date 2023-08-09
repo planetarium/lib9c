@@ -11,6 +11,8 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
+    using Nekoyume.Action.Results;
     using Nekoyume.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model.Item;
@@ -105,7 +107,7 @@ namespace Lib9c.Tests.Action
             _avatarState.inventory.AddItem(equipment, count: 1);
             _avatarState.inventory.AddItem(material, count: 1);
 
-            var result = new CombinationConsumable5.ResultModel()
+            var result = new Nekoyume.Action.Results.CombinationResult()
             {
                 id = default,
                 gold = 0,

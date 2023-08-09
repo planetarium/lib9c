@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model;
@@ -207,7 +208,7 @@ namespace Lib9c.Tests.Action
                     playCount);
 
                 var random = new TestRandom(_random.Seed);
-                var expectedRewardItems = HackAndSlashSweep6.GetRewardItems(
+                var expectedRewardItems = HackAndSlashSweep.GetRewardItems(
                     random,
                     playCount,
                     stageRow,

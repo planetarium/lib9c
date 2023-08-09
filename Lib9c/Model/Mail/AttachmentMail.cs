@@ -9,10 +9,10 @@ namespace Nekoyume.Model.Mail
     {
         public AttachmentActionResult attachment;
 
-        protected AttachmentMail(AttachmentActionResult attachmentActionResult, long blockIndex, Guid id, long requiredBlockIndex)
+        protected AttachmentMail(AttachmentActionResult attachmentActionCombinationResult, long blockIndex, Guid id, long requiredBlockIndex)
             : base(blockIndex, id, requiredBlockIndex)
         {
-            attachment = attachmentActionResult;
+            attachment = attachmentActionCombinationResult;
         }
 
         public AttachmentMail(Dictionary serialized)

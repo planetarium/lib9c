@@ -10,6 +10,8 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
+using Nekoyume.Action.Results;
 using Nekoyume.Battle;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
@@ -25,7 +27,7 @@ namespace Nekoyume.Action
     [ActionType("combination_equipment5")]
     public class CombinationEquipment5 : GameAction, ICombinationEquipmentV1
     {
-        public static readonly Address BlacksmithAddress = ItemEnhancement9.BlacksmithAddress;
+        public static readonly Address BlacksmithAddress = Addresses.Blacksmith;
 
         public Address AvatarAddress;
         public int RecipeId;
@@ -216,7 +218,7 @@ namespace Nekoyume.Action
                 );
             }
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Results.CombinationResult
             {
                 actionPoint = requiredActionPoint,
                 gold = requiredGold,

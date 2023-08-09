@@ -5,6 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Model.State

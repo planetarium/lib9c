@@ -1,13 +1,14 @@
-#nullable enable
-
 namespace Lib9c.Tests.Action
 {
+#nullable enable
+
     using System.Linq;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
     using Serilog;

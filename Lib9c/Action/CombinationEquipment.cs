@@ -9,6 +9,8 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
+using Nekoyume.Action.Results;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -475,7 +477,7 @@ namespace Nekoyume.Action
 
             // Update Slot
             var mailId = context.Random.GenerateRandomGuid();
-            var attachmentResult = new CombinationConsumable5.ResultModel
+            var attachmentResult = new Results.CombinationResult
             {
                 id = mailId,
                 actionPoint = costActionPoint,

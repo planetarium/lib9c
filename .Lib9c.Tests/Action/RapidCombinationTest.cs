@@ -11,6 +11,8 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
+    using Nekoyume.Action.Results;
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
@@ -94,7 +96,7 @@ namespace Lib9c.Tests.Action
                 requiredBlockIndex);
             avatarState.inventory.AddItem(equipment);
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 actionPoint = 0,
                 gold = 0,
@@ -197,7 +199,7 @@ namespace Lib9c.Tests.Action
                 Guid.NewGuid(),
                 100);
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 actionPoint = 0,
                 gold = 0,
@@ -253,7 +255,7 @@ namespace Lib9c.Tests.Action
                 Guid.NewGuid(),
                 itemRequiredBlockIndex);
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 actionPoint = 0,
                 gold = 0,
@@ -325,7 +327,7 @@ namespace Lib9c.Tests.Action
                 requiredBlockIndex);
             avatarState.inventory.AddItem(equipment);
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 actionPoint = 0,
                 gold = 0,
@@ -417,7 +419,7 @@ namespace Lib9c.Tests.Action
             var material2 = ItemFactory.CreateMaterial(row2);
 
             var itemUsable = ItemFactory.CreateItemUsable(_tableSheets.EquipmentItemSheet.Values.First(), default, 0);
-            var r = new CombinationConsumable5.ResultModel
+            var r = new Nekoyume.Action.Results.CombinationResult
             {
                 id = default,
                 gold = 0,
@@ -431,7 +433,7 @@ namespace Lib9c.Tests.Action
                 },
                 itemUsable = itemUsable,
             };
-            var result = new RapidCombination0.ResultModel((Dictionary)r.Serialize())
+            var result = new RapidCombination0Result((Dictionary)r.Serialize())
             {
                 cost = new Dictionary<Material, int>
                 {
@@ -440,7 +442,7 @@ namespace Lib9c.Tests.Action
                 },
             };
 
-            var r2 = new CombinationConsumable5.ResultModel
+            var r2 = new Nekoyume.Action.Results.CombinationResult
             {
                 id = default,
                 gold = 0,
@@ -455,7 +457,7 @@ namespace Lib9c.Tests.Action
                 itemUsable = itemUsable,
             };
 
-            var result2 = new RapidCombination0.ResultModel((Dictionary)r2.Serialize())
+            var result2 = new RapidCombination0Result((Dictionary)r2.Serialize())
             {
                 cost = new Dictionary<Material, int>
                 {
@@ -493,7 +495,7 @@ namespace Lib9c.Tests.Action
                 requiredBlockIndex);
             avatarState.inventory.AddItem(equipment);
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 actionPoint = 0,
                 gold = 0,
@@ -579,8 +581,8 @@ namespace Lib9c.Tests.Action
             {
                 case 7:
                 {
-                    equipment = ItemEnhancement7.UpgradeEquipment(equipment);
-                    resultModel = new ItemEnhancement7.ResultModel
+                    equipment = ItemEnhancement7Result.UpgradeEquipment(equipment);
+                    resultModel = new ItemEnhancement7Result
                     {
                         id = mailId,
                         itemUsable = equipment,
@@ -591,42 +593,18 @@ namespace Lib9c.Tests.Action
                 }
 
                 case 9:
-                {
-                    Assert.True(ItemEnhancement9.TryGetRow(
-                        equipment,
-                        _tableSheets.EnhancementCostSheetV2,
-                        out var costRow));
-                    var equipmentResult = ItemEnhancement9.GetEnhancementResult(costRow, random);
-                    equipment.LevelUp(
-                        random,
-                        costRow,
-                        equipmentResult == ItemEnhancement9.EnhancementResult.GreatSuccess);
-                    resultModel = new ItemEnhancement9.ResultModel
-                    {
-                        id = mailId,
-                        preItemUsable = preItemUsable,
-                        itemUsable = equipment,
-                        materialItemIdList = new[] { materialEquipment.NonFungibleId },
-                        gold = 0,
-                        actionPoint = 0,
-                        enhancementResult = ItemEnhancement9.EnhancementResult.GreatSuccess,
-                    };
-
-                    break;
-                }
-
                 case 10:
                 {
-                    Assert.True(ItemEnhancement10.TryGetRow(
+                    Assert.True(ItemEnhancement9Result.TryGetRow(
                         equipment,
                         _tableSheets.EnhancementCostSheetV2,
                         out var costRow));
-                    var equipmentResult = ItemEnhancement10.GetEnhancementResult(costRow, random);
+                    var equipmentResult = ItemEnhancement9Result.GetEnhancementResult(costRow, random);
                     equipment.LevelUp(
                         random,
                         costRow,
-                        equipmentResult == ItemEnhancement10.EnhancementResult.GreatSuccess);
-                    resultModel = new ItemEnhancement10.ResultModel
+                        equipmentResult == ItemEnhancement9Result.EnhancementResult.GreatSuccess);
+                    resultModel = new ItemEnhancement9Result
                     {
                         id = mailId,
                         preItemUsable = preItemUsable,
@@ -634,7 +612,7 @@ namespace Lib9c.Tests.Action
                         materialItemIdList = new[] { materialEquipment.NonFungibleId },
                         gold = 0,
                         actionPoint = 0,
-                        enhancementResult = ItemEnhancement10.EnhancementResult.GreatSuccess,
+                        enhancementResult = ItemEnhancement9Result.EnhancementResult.GreatSuccess,
                     };
 
                     break;

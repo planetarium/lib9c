@@ -11,6 +11,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Lib9c;
 using Lib9c.Abstractions;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model;
 using Serilog;

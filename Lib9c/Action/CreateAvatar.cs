@@ -9,7 +9,9 @@ using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
+using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
@@ -147,7 +149,7 @@ namespace Nekoyume.Action
             // Avoid NullReferenceException in test
             var materialItemSheet = ctx.PreviousState.GetSheet<MaterialItemSheet>();
 
-            avatarState = CreateAvatar0.CreateAvatarState(name, avatarAddress, ctx, materialItemSheet, default);
+            avatarState = AvatarState.CreateAvatarState(name, avatarAddress, ctx, materialItemSheet, default);
 
             if (hair < 0) hair = 0;
             if (lens < 0) lens = 0;

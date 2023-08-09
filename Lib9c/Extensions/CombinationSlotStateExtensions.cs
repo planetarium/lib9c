@@ -1,7 +1,9 @@
 using System;
 using Nekoyume.Action;
+using Nekoyume.Action.Results;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using CombinationResult = Nekoyume.Action.Results.CombinationResult;
 
 namespace Nekoyume.Extensions
 {
@@ -27,7 +29,7 @@ namespace Nekoyume.Extensions
                     $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {slotIndex}");
             }
         }
-        
+
         public static bool TryGetResultId(this CombinationSlotState state, out Guid resultId)
         {
             if (state?.Result is null)
@@ -38,43 +40,40 @@ namespace Nekoyume.Extensions
 
             switch (state.Result)
             {
-                case Buy7.BuyerResult r:
+                case BuyerResult r:
                     resultId = r.id;
                     break;
-                case Buy7.SellerResult r:
+                case SellerResult r:
                     resultId = r.id;
                     break;
-                case DailyReward2.DailyRewardResult r:
+                case DailyRewardResult r:
                     resultId = r.id;
                     break;
                 case ItemEnhancement.ResultModel r:
                     resultId = r.id;
                     break;
-                case ItemEnhancement7.ResultModel r:
+                case ItemEnhancement7Result r:
                     resultId = r.id;
                     break;
-                case ItemEnhancement9.ResultModel r:
-                    resultId = r.id;
-                    break;
-                case ItemEnhancement10.ResultModel r:
+                case ItemEnhancement9Result r:
                     resultId = r.id;
                     break;
                 case MonsterCollectionResult r:
                     resultId = r.id;
                     break;
-                case CombinationConsumable5.ResultModel r:
+                case CombinationResult r:
                     resultId = r.id;
                     break;
-                case RapidCombination5.ResultModel r:
+                case RapidCombination5Result r:
                     resultId = r.id;
                     break;
                 case SellCancellation.Result r:
                     resultId = r.id;
                     break;
-                case SellCancellation7.Result r:
+                case SellCancellation7Result r:
                     resultId = r.id;
                     break;
-                case SellCancellation8.Result r:
+                case SellCancellation8Result r:
                     resultId = r.id;
                     break;
                 default:
@@ -96,37 +95,37 @@ namespace Nekoyume.Extensions
 
             switch (state.Result)
             {
-                case Buy7.BuyerResult r:
+                case BuyerResult r:
                     resultId = r.id;
                     break;
-                case Buy7.SellerResult r:
+                case SellerResult r:
                     resultId = r.id;
                     break;
-                case DailyReward2.DailyRewardResult r:
+                case DailyRewardResult r:
                     resultId = r.id;
                     break;
                 case ItemEnhancement.ResultModel r:
                     resultId = r.id;
                     break;
-                case ItemEnhancement7.ResultModel r:
+                case ItemEnhancement7Result r:
                     resultId = r.id;
                     break;
                 case MonsterCollectionResult r:
                     resultId = r.id;
                     break;
-                case CombinationConsumable5.ResultModel r:
+                case CombinationResult r:
                     resultId = r.id;
                     break;
-                case RapidCombination5.ResultModel r:
+                case RapidCombination5Result r:
                     resultId = r.id;
                     break;
                 case SellCancellation.Result r:
                     resultId = r.id;
                     break;
-                case SellCancellation7.Result r:
+                case SellCancellation7Result r:
                     resultId = r.id;
                     break;
-                case SellCancellation8.Result r:
+                case SellCancellation8Result r:
                     resultId = r.id;
                     break;
                 default:
@@ -161,28 +160,21 @@ namespace Nekoyume.Extensions
                         resultId,
                         requiredBlockIndex);
                     return true;
-                case ItemEnhancement7.ResultModel r:
+                case ItemEnhancement7Result r:
                     itemEnhanceMail = new ItemEnhanceMail(
                         r,
                         blockIndex,
                         resultId,
                         requiredBlockIndex);
                     return true;
-                case ItemEnhancement9.ResultModel r:
+                case ItemEnhancement9Result r:
                     itemEnhanceMail = new ItemEnhanceMail(
                         r,
                         blockIndex,
                         resultId,
                         requiredBlockIndex);
                     return true;
-                case ItemEnhancement10.ResultModel r:
-                    itemEnhanceMail = new ItemEnhanceMail(
-                        r,
-                        blockIndex,
-                        resultId,
-                        requiredBlockIndex);
-                    return true;
-                case CombinationConsumable5.ResultModel r:
+                case CombinationResult r:
                     combinationMail = new CombinationMail(
                         r,
                         blockIndex,
@@ -219,14 +211,14 @@ namespace Nekoyume.Extensions
                         resultId,
                         requiredBlockIndex);
                     return true;
-                case ItemEnhancement7.ResultModel r:
+                case ItemEnhancement7Result r:
                     itemEnhanceMail = new ItemEnhanceMail(
                         r,
                         blockIndex,
                         resultId,
                         requiredBlockIndex);
                     return true;
-                case CombinationConsumable5.ResultModel r:
+                case CombinationResult r:
                     combinationMail = new CombinationMail(
                         r,
                         blockIndex,

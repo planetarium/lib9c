@@ -8,6 +8,8 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Extensions;
+using Nekoyume.Action.Results;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -124,7 +126,7 @@ namespace Nekoyume.Action
             }
             else
             {
-                costHourglassCount = RapidCombination0.CalculateHourglassCount(gameConfigState, diff);
+                costHourglassCount = Statics.RapidCombination.CalculateHourglassCountV0(gameConfigState, diff);
             }
 
             var materialItemSheet = states.GetSheet<MaterialItemSheet>();
@@ -156,7 +158,7 @@ namespace Nekoyume.Action
 
             slotState.UpdateV2(context.BlockIndex, hourGlass, costHourglassCount);
             avatarState.UpdateFromRapidCombinationV2(
-                (RapidCombination5.ResultModel)slotState.Result,
+                (RapidCombination5Result)slotState.Result,
                 context.BlockIndex);
 
             // Update Pet

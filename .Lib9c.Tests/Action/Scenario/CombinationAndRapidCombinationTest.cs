@@ -8,6 +8,7 @@
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
@@ -267,7 +268,7 @@
             Assert.False(inventoryState.TryGetFungibleItems(hourglassRow.ItemId, out _));
 
             var diff = slot0State.RequiredBlockIndex - GameConfig.RequiredAppraiseBlock;
-            var hourglassCount = RapidCombination0.CalculateHourglassCount(gameConfigState, diff);
+            var hourglassCount = Nekoyume.Action.Statics.RapidCombination.CalculateHourglassCountV0(gameConfigState, diff);
             inventoryState.AddFungibleItem(
                 ItemFactory.CreateMaterial(_tableSheets.MaterialItemSheet, hourglassRow.Id),
                 hourglassCount);

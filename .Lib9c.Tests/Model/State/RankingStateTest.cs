@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Model.State
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
     using Xunit;
     using static Lib9c.SerializeKeys;

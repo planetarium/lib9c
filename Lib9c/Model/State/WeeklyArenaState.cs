@@ -7,6 +7,7 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 using Nekoyume.TableData;
 using LazyArenaInfo =
     Nekoyume.Model.State.LazyState<Nekoyume.Model.State.ArenaInfo, Bencodex.Types.Dictionary>;

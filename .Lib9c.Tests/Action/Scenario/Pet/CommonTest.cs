@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;

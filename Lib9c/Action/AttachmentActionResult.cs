@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Nekoyume.Action.Results;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Serilog;
@@ -16,16 +17,16 @@ namespace Nekoyume.Action
         private static readonly Dictionary<string, Func<BxDictionary, AttachmentActionResult>>
             Deserializers = new Dictionary<string, Func<BxDictionary, AttachmentActionResult>>
             {
-                ["buy.buyerResult"] = d => new Buy7.BuyerResult(d),
-                ["buy.sellerResult"] = d => new Buy7.SellerResult(d),
-                ["combination.result-model"] = d => new CombinationConsumable5.ResultModel(d),
-                ["itemEnhancement.result"] = d => new ItemEnhancement7.ResultModel(d),
-                ["item_enhancement9.result"] = d => new ItemEnhancement9.ResultModel(d),
+                ["buy.buyerResult"] = d => new BuyerResult(d),
+                ["buy.sellerResult"] = d => new SellerResult(d),
+                ["combination.result-model"] = d => new Results.CombinationResult(d),
+                ["itemEnhancement.result"] = d => new ItemEnhancement7Result(d),
+                ["item_enhancement9.result"] = d => new ItemEnhancement9Result(d),
                 ["item_enhancement11.result"] = d => new ItemEnhancement.ResultModel(d),
                 ["sellCancellation.result"] = d => new SellCancellation.Result(d),
-                ["rapidCombination.result"] = d => new RapidCombination0.ResultModel(d),
-                ["rapid_combination5.result"] = d => new RapidCombination5.ResultModel(d),
-                ["dailyReward.dailyRewardResult"] = d => new DailyReward2.DailyRewardResult(d),
+                ["rapidCombination.result"] = d => new RapidCombination0Result(d),
+                ["rapid_combination5.result"] = d => new RapidCombination5Result(d),
+                ["dailyReward.dailyRewardResult"] = d => new DailyRewardResult(d),
                 ["monsterCollection.result"] = d => new MonsterCollectionResult(d),
             };
 

@@ -16,6 +16,8 @@ using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 using Nekoyume;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
+using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Item;
 
 namespace Lib9c.DevExtensions.Action

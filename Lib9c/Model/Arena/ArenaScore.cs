@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Nekoyume.Model.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 
 namespace Nekoyume.Model.Arena
 {

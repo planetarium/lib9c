@@ -8,6 +8,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
@@ -25,6 +26,7 @@ namespace Nekoyume.Action
         // Start filtering inactivate ArenaInfo
         // https://github.com/planetarium/lib9c/issues/946
         public const long FilterInactiveArenaInfoBlockIndex = 3_976_000L;
+        public const long RankingBattle11UpdateTargetBlockIndex = 3_808_000L;
         public override IValue PlainValue =>
             new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
             {
@@ -163,12 +165,12 @@ namespace Nekoyume.Action
                         ? rawList.ToList(StateExtensions.ToAddress)
                         : new List<Address>();
                     var nextAddresses = rawList ?? List.Empty;
-                    if (ctx.BlockIndex >= RankingBattle11.UpdateTargetBlockIndex)
+                    if (ctx.BlockIndex >= RankingBattle11UpdateTargetBlockIndex)
                     {
                         weekly.ResetIndex = ctx.BlockIndex;
 
                         // Copy Map to address list.
-                        if (ctx.BlockIndex == RankingBattle11.UpdateTargetBlockIndex)
+                        if (ctx.BlockIndex == RankingBattle11UpdateTargetBlockIndex)
                         {
                             foreach (var kv in prevWeekly.Map)
                             {
@@ -249,7 +251,7 @@ namespace Nekoyume.Action
             if (ctx.BlockIndex - resetIndex >= gameConfigState.DailyArenaInterval)
             {
                 var weekly = new WeeklyArenaState(rawWeekly);
-                if (resetIndex >= RankingBattle11.UpdateTargetBlockIndex)
+                if (resetIndex >= RankingBattle11UpdateTargetBlockIndex)
                 {
                     // Reset count each ArenaInfo.
                     weekly.ResetIndex = ctx.BlockIndex;
