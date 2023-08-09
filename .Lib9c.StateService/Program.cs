@@ -1,10 +1,22 @@
 using Bencodex;
+using Destructurama;
 using Libplanet.Action.State;
 using Libplanet.Extensions.RemoteBlockChainStates;
+using Serilog;
+using Serilog.Formatting.Compact;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File(
+        new RenderedCompactJsonFormatter(),
+        path: Environment.GetEnvironmentVariable("JSON_AEV_LOG_PATH") ?? "./logs/action_evaluator.json",
+        retainedFileCountLimit: 5,
+        rollOnFileSizeLimit: true,
+        fileSizeLimitBytes: 104_857_600)
+    .Destructure.UsingAttributes()
+    .CreateLogger();
 
 // Add services to the container.
 
@@ -14,6 +26,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<Codec>();
+builder.Services.AddLogging();
+builder.Host.UseSerilog();
 
 builder.Services.AddSingleton<IBlockChainStates, RemoteBlockChainStates>(_ =>
 {
