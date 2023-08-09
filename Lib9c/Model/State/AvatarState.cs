@@ -5,8 +5,11 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using Bencodex.Types;
+using Libplanet.Action;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
+using Nekoyume.Action.Results;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
@@ -14,6 +17,7 @@ using Nekoyume.Model.Mail;
 using Nekoyume.Model.Quest;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
+using CombinationResult = Nekoyume.Action.Results.CombinationResult;
 
 namespace Nekoyume.Model.State
 {
@@ -350,27 +354,27 @@ namespace Nekoyume.Model.State
             UpdateCompletedQuest();
         }
 
-        public void UpdateFromRapidCombination(CombinationConsumable5.ResultModel result,
+        public void UpdateFromRapidCombination(CombinationResult combinationResult,
             long requiredIndex)
         {
-            var mail = mailBox.First(m => m.id == result.id);
+            var mail = mailBox.First(m => m.id == combinationResult.id);
             mail.requiredBlockIndex = requiredIndex;
             var item = inventory.Items
                 .Select(i => i.item)
                 .OfType<ItemUsable>()
-                .First(i => i.ItemId == result.itemUsable.ItemId);
+                .First(i => i.ItemId == combinationResult.itemUsable.ItemId);
             item.Update(requiredIndex);
         }
 
-        public void UpdateFromRapidCombinationV2(RapidCombination5.ResultModel result,
+        public void UpdateFromRapidCombinationV2(RapidCombination5Result rapidCombination5Result,
             long requiredIndex)
         {
-            var mail = mailBox.First(m => m.id == result.id);
+            var mail = mailBox.First(m => m.id == rapidCombination5Result.id);
             mail.requiredBlockIndex = requiredIndex;
             var item = inventory.Items
                 .Select(i => i.item)
                 .OfType<ItemUsable>()
-                .First(i => i.ItemId == result.itemUsable.ItemId);
+                .First(i => i.ItemId == rapidCombination5Result.itemUsable.ItemId);
             item.Update(requiredIndex);
         }
 
@@ -1096,5 +1100,62 @@ namespace Nekoyume.Model.State
                 [(Text)RankingMapAddressKey] = RankingMapAddress.Serialize(),
             }.Union((Dictionary)base.SerializeV2()));
 #pragma warning restore LAA1002
+        public static AvatarState CreateAvatarState(string name,
+            Address avatarAddress,
+            IActionContext ctx,
+            MaterialItemSheet materialItemSheet,
+            Address rankingMapAddress)
+        {
+            var state = ctx.PreviousState;
+            var gameConfigState = state.GetGameConfigState();
+            var avatarState = new AvatarState(
+                avatarAddress,
+                ctx.Signer,
+                ctx.BlockIndex,
+                state.GetAvatarSheets(),
+                gameConfigState,
+                rankingMapAddress,
+                name
+            );
+
+#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+            var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
+            var costumeItemSheet = ctx.PreviousState.GetSheet<CostumeItemSheet>();
+            var equipmentItemSheet = ctx.PreviousState.GetSheet<EquipmentItemSheet>();
+            var consumableItemSheet = ctx.PreviousState.GetSheet<ConsumableItemSheet>();
+            AddItemsForTest(
+                avatarState: avatarState,
+                random: ctx.Random,
+                costumeItemSheet: costumeItemSheet,
+                materialItemSheet: materialItemSheet,
+                equipmentItemSheet: equipmentItemSheet,
+                consumableItemSheet: consumableItemSheet,
+                data.MaterialCount,
+                data.TradableMaterialCount,
+                data.FoodCount);
+
+            var skillSheet = ctx.PreviousState.GetSheet<SkillSheet>();
+            var optionSheet = ctx.PreviousState.GetSheet<EquipmentItemOptionSheet>();
+
+            var items = data.CustomEquipmentItems;
+            foreach (var item in items)
+            {
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: ctx.Random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // Set level of equipment here.
+                    level: item.Level,
+                    // Set recipeId of target equipment here.
+                    recipeId: item.ID,
+                    // Add optionIds here.
+                    item.OptionIds);
+            }
+#endif
+
+            return avatarState;
+        }
     }
 }

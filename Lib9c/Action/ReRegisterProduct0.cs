@@ -7,7 +7,11 @@ using Lib9c.Model.Order;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Extensions;
+using Nekoyume.Action.Statics;
 using Nekoyume.Battle;
+using Nekoyume.Model;
+using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -149,7 +153,7 @@ namespace Nekoyume.Action
                     var updateSellInfo = new UpdateSellInfo(productInfo.ProductId,
                         productInfo.ProductId, order.TradableId,
                         order.ItemSubType, productInfo.Price, itemCount);
-                    states = UpdateSell.Cancel(states, updateSellInfo, addressesHex,
+                    states = Sell.Cancel(states, updateSellInfo, addressesHex,
                         avatarState, digestList, context,
                         avatarState.address);
                 }

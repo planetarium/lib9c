@@ -7,6 +7,7 @@ using System.Linq;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 
 namespace Nekoyume.Action
 {

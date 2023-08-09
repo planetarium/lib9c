@@ -8,6 +8,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Faucet;
 using Nekoyume.Model.State;

@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Arena;
@@ -274,7 +275,7 @@ namespace Lib9c.Tests.Action
 
             if (!row.TryGetRound(round, out var roundData))
             {
-                throw new RoundNotFoundException($"{nameof(JoinArena1)} : {row.ChampionshipId} / {round}");
+                throw new RoundNotFoundException($"{nameof(JoinArena)} : {row.ChampionshipId} / {round}");
             }
 
             Assert.Equal(0 * _currency, state.GetBalance(_signer, _currency));

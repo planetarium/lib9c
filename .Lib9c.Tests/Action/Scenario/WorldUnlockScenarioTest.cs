@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;

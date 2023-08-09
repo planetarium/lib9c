@@ -20,6 +20,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Tx;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Action.Loader;
     using Nekoyume.Battle;
     using Nekoyume.Blockchain;
@@ -286,7 +287,9 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ResetChallengeCount()
         {
-            var legacyWeeklyIndex = RankingBattle11.UpdateTargetWeeklyArenaIndex - 1;
+         // WeeklyArenaIndex for ArenaInfo separate from WeeklyArenaState.Map.
+            int updateTargetWeeklyArenaIndex = 68;
+            var legacyWeeklyIndex = updateTargetWeeklyArenaIndex - 1;
             var legacyWeekly = new WeeklyArenaState(legacyWeeklyIndex);
             legacyWeekly.Set(_avatarState, _tableSheets.CharacterSheet);
             legacyWeekly[_avatarState.address].Update(
@@ -310,7 +313,7 @@ namespace Lib9c.Tests.Action
 
             var migrationCtx = new ActionContext
             {
-                BlockIndex = RankingBattle11.UpdateTargetBlockIndex,
+                BlockIndex = RewardGold.RankingBattle11UpdateTargetBlockIndex,
                 PreviousState = _baseState,
                 Miner = default,
             };
@@ -335,7 +338,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(4, prevInfo.DailyChallengeCount);
 
-            var blockIndex = RankingBattle11.UpdateTargetBlockIndex + gameConfigState.DailyArenaInterval;
+            var blockIndex = RewardGold.RankingBattle11UpdateTargetBlockIndex + gameConfigState.DailyArenaInterval;
 
             var ctx = new ActionContext
             {

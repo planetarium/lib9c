@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Model.Order
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Battle;
+    using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Xunit;

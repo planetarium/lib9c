@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model.Coupons;
     using Nekoyume.Model.State;

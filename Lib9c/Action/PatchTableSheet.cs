@@ -5,6 +5,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;

@@ -20,6 +20,7 @@ using Lib9c;
 using Libplanet.Crypto;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
+using Nekoyume.Action.Extensions;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;

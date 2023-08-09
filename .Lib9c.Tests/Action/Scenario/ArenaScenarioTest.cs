@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Arena;

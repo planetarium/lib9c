@@ -6,6 +6,7 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 
 namespace Nekoyume.Model.State
 {
@@ -58,11 +59,6 @@ namespace Nekoyume.Model.State
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("serialized", new Codec().Encode(Serialize()));
-        }
-
-        public bool Verify(ActivateAccount action)
-        {
-            return Verify(action.Signature);
         }
 
         public bool Verify(byte[] signature)

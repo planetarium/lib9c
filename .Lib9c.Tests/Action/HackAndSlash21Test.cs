@@ -12,6 +12,8 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
+    using Nekoyume.Action.Results;
     using Nekoyume.Battle;
     using Nekoyume.Blockchain.Policy;
     using Nekoyume.Extensions;
@@ -157,7 +159,7 @@ namespace Lib9c.Tests.Action
 
             var mailEquipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
             var mailEquipment = ItemFactory.CreateItemUsable(mailEquipmentRow, default, 0);
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 id = default,
                 gold = 0,
@@ -785,7 +787,7 @@ namespace Lib9c.Tests.Action
             var equipments = new List<Guid>();
             var mailEquipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
             var mailEquipment = ItemFactory.CreateItemUsable(mailEquipmentRow, default, 0);
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 id = default,
                 gold = 0,
@@ -1075,7 +1077,7 @@ namespace Lib9c.Tests.Action
 
             var mailEquipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
             var mailEquipment = ItemFactory.CreateItemUsable(mailEquipmentRow, default, 0);
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 id = default,
                 gold = 0,
@@ -1222,7 +1224,7 @@ namespace Lib9c.Tests.Action
 
             var mailEquipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
             var mailEquipment = ItemFactory.CreateItemUsable(mailEquipmentRow, default, 0);
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 id = default,
                 gold = 0,
@@ -1605,7 +1607,7 @@ namespace Lib9c.Tests.Action
 
             var mailEquipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
             var mailEquipment = ItemFactory.CreateItemUsable(mailEquipmentRow, default, 0);
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 id = default,
                 gold = 0,
@@ -1726,7 +1728,7 @@ namespace Lib9c.Tests.Action
 
             var mailEquipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
             var mailEquipment = ItemFactory.CreateItemUsable(mailEquipmentRow, default, 0);
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 id = default,
                 gold = 0,

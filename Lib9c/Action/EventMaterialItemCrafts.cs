@@ -8,7 +8,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;

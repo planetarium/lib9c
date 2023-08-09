@@ -13,6 +13,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.EnumType;

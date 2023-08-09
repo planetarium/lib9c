@@ -5,6 +5,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Consensus;
+using Nekoyume.Action.Extensions;
 
 namespace Nekoyume.Action
 {

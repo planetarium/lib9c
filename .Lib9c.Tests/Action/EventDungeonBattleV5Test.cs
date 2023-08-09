@@ -9,9 +9,11 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Blockchain.Policy;
     using Nekoyume.Exceptions;
     using Nekoyume.Extensions;
+    using Nekoyume.Model;
     using Nekoyume.Model.Event;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;

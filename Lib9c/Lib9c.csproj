@@ -44,4 +44,8 @@
     <ProjectReference Include="..\Lib9c.Abstractions\Lib9c.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Model\Avatar" />
+  </ItemGroup>
+
 </Project>
