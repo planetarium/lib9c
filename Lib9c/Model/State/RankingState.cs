@@ -7,6 +7,7 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 
 namespace Nekoyume.Model.State
 {

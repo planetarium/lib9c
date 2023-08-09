@@ -17,6 +17,7 @@ namespace Lib9c.Tests.TestHelper
     using Libplanet.Types.Blocks;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Action.Loader;
     using Nekoyume.Model;
     using Nekoyume.Model.State;

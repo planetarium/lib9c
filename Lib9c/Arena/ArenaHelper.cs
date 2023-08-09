@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Battle;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;

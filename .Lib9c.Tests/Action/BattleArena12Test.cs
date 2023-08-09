@@ -10,10 +10,12 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.EnumType;
+    using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -1296,7 +1298,7 @@ namespace Lib9c.Tests.Action
             var preCurrency = 1000 * _crystal;
             states = states.MintAsset(context, signer, preCurrency);
 
-            var action = new JoinArena1
+            var action = new JoinArena
             {
                 championshipId = championshipId,
                 round = round,

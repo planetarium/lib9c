@@ -11,6 +11,7 @@ using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
+using Nekoyume.Action.Results;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 
@@ -453,11 +454,11 @@ namespace Nekoyume.Model.State
         public static PurchaseInfo0 ToPurchaseInfo(this IValue serialized) =>
             new PurchaseInfo0((Dictionary) serialized);
 
-        public static Buy7.PurchaseResult ToPurchaseResult(this IValue serialized) =>
-            new Buy7.PurchaseResult((Dictionary) serialized);
+        public static PurchaseResult ToPurchaseResult(this IValue serialized) =>
+            new PurchaseResult((Dictionary) serialized);
 
-        public static Buy7.SellerResult ToSellerResult(this IValue serialized) =>
-            new Buy7.SellerResult((Dictionary) serialized);
+        public static SellerResult ToSellerResult(this IValue serialized) =>
+            new SellerResult((Dictionary) serialized);
 
         #endregion
 

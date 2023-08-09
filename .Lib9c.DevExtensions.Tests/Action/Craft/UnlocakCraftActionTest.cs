@@ -9,6 +9,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Model;
 using Xunit;
 using static Lib9c.SerializeKeys;

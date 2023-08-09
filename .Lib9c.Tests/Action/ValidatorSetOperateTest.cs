@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Consensus;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
     using Serilog;
     using Xunit;

@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System.Collections.Immutable;
     using Libplanet.Crypto;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Xunit;
 
     public class ActionBaseExtensionsTest

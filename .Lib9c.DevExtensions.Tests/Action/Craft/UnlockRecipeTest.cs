@@ -8,6 +8,7 @@ using Lib9c.Tests.Util;
 using Libplanet.Crypto;
 using Libplanet.Action.State;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Xunit;

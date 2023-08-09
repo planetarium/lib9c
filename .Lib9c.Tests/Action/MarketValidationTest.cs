@@ -9,6 +9,8 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Battle;
     using Nekoyume.Helper;
+    using Nekoyume.Model;
+    using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
     using Xunit;

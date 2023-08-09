@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Util
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Quest;
     using Nekoyume.TableData;
 

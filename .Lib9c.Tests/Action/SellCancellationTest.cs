@@ -11,7 +11,10 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
+    using Nekoyume.Action.Results;
     using Nekoyume.Model;
+    using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.Market;
@@ -133,7 +136,7 @@ namespace Lib9c.Tests.Action
                 tradableItem = material;
             }
 
-            var result = new DailyReward2.DailyRewardResult()
+            var result = new DailyRewardResult()
             {
                 id = default,
                 materials = new Dictionary<Material, int>(),
@@ -609,7 +612,7 @@ namespace Lib9c.Tests.Action
                 tradableItem = material;
             }
 
-            var result = new DailyReward2.DailyRewardResult()
+            var result = new DailyRewardResult()
             {
                 id = default,
                 materials = new Dictionary<Material, int>(),

@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action
     using MessagePack.Resolvers;
     using Nekoyume.Action;
     using Nekoyume.Exceptions;
+    using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;

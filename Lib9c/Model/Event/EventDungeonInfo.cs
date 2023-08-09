@@ -2,6 +2,7 @@ using System;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Event

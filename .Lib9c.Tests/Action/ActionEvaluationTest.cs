@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using MessagePack.Resolvers;
     using Nekoyume.Action;
     using Nekoyume.Helper;
+    using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
@@ -48,21 +49,14 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(TransferAsset))]
         [InlineData(typeof(CreateAvatar))]
         [InlineData(typeof(HackAndSlash))]
-        [InlineData(typeof(ActivateAccount))]
-        [InlineData(typeof(AddActivatedAccount))]
         [InlineData(typeof(AddRedeemCode))]
         [InlineData(typeof(Buy))]
         [InlineData(typeof(ChargeActionPoint))]
-        [InlineData(typeof(ClaimMonsterCollectionReward))]
         [InlineData(typeof(CombinationConsumable))]
         [InlineData(typeof(CombinationEquipment))]
-        [InlineData(typeof(CreatePendingActivation))]
         [InlineData(typeof(DailyReward))]
         [InlineData(typeof(InitializeStates))]
         [InlineData(typeof(ItemEnhancement))]
-        [InlineData(typeof(MigrationActivatedAccountsState))]
-        [InlineData(typeof(MigrationAvatarState))]
-        [InlineData(typeof(MigrationLegacyShop))]
         [InlineData(typeof(PatchTableSheet))]
         [InlineData(typeof(RankingBattle))]
         [InlineData(typeof(RapidCombination))]
@@ -70,7 +64,6 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(RewardGold))]
         [InlineData(typeof(SellCancellation))]
         [InlineData(typeof(UpdateSell))]
-        [InlineData(typeof(CreatePendingActivations))]
         [InlineData(typeof(Grinding))]
         [InlineData(typeof(UnlockEquipmentRecipe))]
         [InlineData(typeof(UnlockWorld))]
@@ -151,8 +144,6 @@ namespace Lib9c.Tests.Action
                     StageId = 0,
                     AvatarAddress = new PrivateKey().ToAddress(),
                 },
-                ActivateAccount _ => new ActivateAccount(new PrivateKey().ToAddress(), new byte[] { 0x0 }),
-                AddActivatedAccount _ => new AddActivatedAccount(),
                 AddRedeemCode _ => new AddRedeemCode
                 {
                     redeemCsv = "csv",
@@ -176,12 +167,8 @@ namespace Lib9c.Tests.Action
                     },
                 },
                 ChargeActionPoint _ => new ChargeActionPoint(),
-                ClaimMonsterCollectionReward _ => new ClaimMonsterCollectionReward(),
                 CombinationConsumable _ => new CombinationConsumable(),
                 CombinationEquipment _ => new CombinationEquipment(),
-                CreatePendingActivation _ => new CreatePendingActivation(
-                    new PendingActivationState(new byte[] { 0x0 }, new PrivateKey().PublicKey)
-                ),
                 DailyReward _ => new DailyReward(),
                 InitializeStates _ => new InitializeStates
                 {
@@ -190,12 +177,6 @@ namespace Lib9c.Tests.Action
                     Credits = Dictionary.Empty,
                 },
                 ItemEnhancement _ => new ItemEnhancement(),
-                MigrationActivatedAccountsState _ => new MigrationActivatedAccountsState(),
-                MigrationAvatarState _ => new MigrationAvatarState
-                {
-                    avatarStates = new List<Dictionary>(),
-                },
-                MigrationLegacyShop _ => new MigrationLegacyShop(),
                 PatchTableSheet _ => new PatchTableSheet
                 {
                     TableCsv = "table",
@@ -230,13 +211,6 @@ namespace Lib9c.Tests.Action
                             _currency * 100,
                             1
                         ),
-                    },
-                },
-                CreatePendingActivations _ => new CreatePendingActivations
-                {
-                    PendingActivations = new[]
-                    {
-                        (new byte[40], new byte[4], new byte[33]),
                     },
                 },
                 Grinding _ => new Grinding
