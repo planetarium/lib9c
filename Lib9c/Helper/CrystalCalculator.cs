@@ -88,11 +88,18 @@ namespace Nekoyume.Helper
             FungibleAssetValue crystal = 0 * CRYSTAL;
             foreach (var equipment in equipmentList)
             {
-                CrystalEquipmentGrindingSheet.Row grindingRow = crystalEquipmentGrindingSheet[equipment.Id];
-                crystal += grindingRow.CRYSTAL * CRYSTAL;
-                crystal += (BigInteger.Pow(2, equipment.level) - 1) *
-                           crystalEquipmentGrindingSheet[grindingRow.EnchantBaseId].CRYSTAL *
-                           CRYSTAL;
+                try
+                {
+                    CrystalEquipmentGrindingSheet.Row grindingRow = crystalEquipmentGrindingSheet[equipment.Id];
+                    crystal += grindingRow.CRYSTAL * CRYSTAL;
+                    crystal += (BigInteger.Pow(2, equipment.level) - 1) *
+                               crystalEquipmentGrindingSheet[grindingRow.EnchantBaseId].CRYSTAL *
+                               CRYSTAL;
+                }
+                catch (Exception e)
+                {
+                    //pass
+                }
             }
 
             // Divide Reward when itemEnhancement failed.
