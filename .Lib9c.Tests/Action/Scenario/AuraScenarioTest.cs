@@ -12,6 +12,8 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Model;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Skill;
+    using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
@@ -42,6 +44,10 @@ namespace Lib9c.Tests.Action.Scenario
             var auraRow =
                 tableSheets.EquipmentItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Aura);
             var aura = ItemFactory.CreateItemUsable(auraRow, Guid.NewGuid(), 0L);
+            aura.StatsMap.AddStatAdditionalValue(StatType.CRI, 1);
+            var skillRow = tableSheets.SkillSheet[800001];
+            var skill = SkillFactory.Get(skillRow, 0, 100, 0, StatType.NONE);
+            aura.Skills.Add(skill);
             avatarState.inventory.AddItem(aura);
 
             IAccountStateDelta initialState = new Tests.Action.MockStateDelta()
@@ -104,6 +110,7 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Null(player.aura);
             Assert.NotNull(equippedPlayer.aura);
             Assert.Equal(player.ATK + 1, equippedPlayer.ATK);
+            Assert.Equal(player.CRI + 1, equippedPlayer.CRI);
         }
     }
 }
