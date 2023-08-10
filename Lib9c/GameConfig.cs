@@ -5,7 +5,7 @@ namespace Nekoyume
     public static class GameConfig
     {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
-        public const bool IsEditor = true;
+        public const bool IsEditor = false;
 #else
         public const bool IsEditor = false;
 #endif
