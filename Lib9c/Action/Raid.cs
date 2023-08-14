@@ -44,19 +44,20 @@ namespace Nekoyume.Action
         IEnumerable<IValue> IRaidV2.RuneSlotInfos => RuneInfos.Select(x => x.Serialize());
         bool IRaidV2.PayNcg => PayNcg;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccountStateDelta states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
 
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var addressHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid exec started", addressHex);
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress,
+            if (!account.TryGetAvatarStateV2(context.Signer, AvatarAddress,
                     out AvatarState avatarState,
                     out var migrationRequired))
             {
@@ -71,7 +72,7 @@ namespace Nekoyume.Action
                     GameConfig.RequireClearedStageLevel.ActionsInRaid, current);
             }
 
-            Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(
+            Dictionary<Type, (Address, ISheet)> sheets = account.GetSheets(
                 containRaidSimulatorSheets: true,
                 sheetTypes: new [] {
                 typeof(MaterialItemSheet),
@@ -102,7 +103,7 @@ namespace Nekoyume.Action
             Address raiderAddress = Addresses.GetRaiderAddress(AvatarAddress, raidId);
             // Check challenge count.
             RaiderState raiderState;
-            if (states.TryGetState(raiderAddress, out List rawState))
+            if (account.TryGetState(raiderAddress, out List rawState))
             {
                 raiderState = new RaiderState(rawState);
             }
@@ -112,19 +113,19 @@ namespace Nekoyume.Action
                 if (row.EntranceFee > 0)
                 {
                     FungibleAssetValue crystalCost = CrystalCalculator.CalculateEntranceFee(avatarState.level, row.EntranceFee);
-                    states = states.TransferAsset(context, context.Signer, worldBossAddress, crystalCost);
+                    account = account.TransferAsset(context, context.Signer, worldBossAddress, crystalCost);
                 }
                 Address raiderListAddress = Addresses.GetRaiderListAddress(raidId);
                 List<Address> raiderList =
-                    states.TryGetState(raiderListAddress, out List rawRaiderList)
+                    account.TryGetState(raiderListAddress, out List rawRaiderList)
                         ? rawRaiderList.ToList(StateExtensions.ToAddress)
                         : new List<Address>();
                 raiderList.Add(raiderAddress);
-                states = states.SetState(raiderListAddress,
+                account = account.SetState(raiderListAddress,
                     new List(raiderList.Select(a => a.Serialize())));
             }
 
-            var gameConfigState = states.GetGameConfigState();
+            var gameConfigState = account.GetGameConfigState();
             if (context.BlockIndex - raiderState.UpdatedBlockIndex < gameConfigState.WorldBossRequiredInterval)
             {
                 throw new RequiredBlockIntervalException($"wait for interval. {context.BlockIndex - raiderState.UpdatedBlockIndex}");
@@ -145,8 +146,8 @@ namespace Nekoyume.Action
                     {
                         throw new ExceedTicketPurchaseLimitException("");
                     }
-                    var goldCurrency = states.GetGoldCurrency();
-                    states = states.TransferAsset(context, context.Signer, worldBossAddress,
+                    var goldCurrency = account.GetGoldCurrency();
+                    account = account.TransferAsset(context, context.Signer, worldBossAddress,
                         WorldBossHelper.CalculateTicketPrice(row, raiderState, goldCurrency));
                     raiderState.PurchaseCount++;
                 }
@@ -163,26 +164,26 @@ namespace Nekoyume.Action
 
             // Update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Raid);
-            var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+            var runeSlotState = account.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Raid);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
-            states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            account = account.SetState(runeSlotStateAddress, runeSlotState.Serialize());
 
             // Update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(AvatarAddress, BattleType.Raid);
-            var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+            var itemSlotState = account.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Raid);
             itemSlotState.UpdateEquipment(EquipmentIds);
             itemSlotState.UpdateCostumes(CostumeIds);
-            states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            account = account.SetState(itemSlotStateAddress, itemSlotState.Serialize());
 
             int previousHighScore = raiderState.HighScore;
             WorldBossState bossState;
             WorldBossGlobalHpSheet hpSheet = sheets.GetSheet<WorldBossGlobalHpSheet>();
-            if (states.TryGetState(worldBossAddress, out List rawBossState))
+            if (account.TryGetState(worldBossAddress, out List rawBossState))
             {
                 bossState = new WorldBossState(rawBossState);
             }
@@ -207,7 +208,7 @@ namespace Nekoyume.Action
             var runeStates = new List<RuneState>();
             foreach (var address in RuneInfos.Select(info => RuneState.DeriveAddress(AvatarAddress, info.RuneId)))
             {
-                if (states.TryGetState(address, out List rawRuneState))
+                if (account.TryGetState(address, out List rawRuneState))
                 {
                     runeStates.Add(new RuneState(rawRuneState));
                 }
@@ -282,11 +283,11 @@ namespace Nekoyume.Action
             {
                 if (battleReward.Currency.Equals(CrystalCalculator.CRYSTAL))
                 {
-                    states = states.MintAsset(context, context.Signer, battleReward);
+                    account = account.MintAsset(context, context.Signer, battleReward);
                 }
                 else
                 {
-                    states = states.MintAsset(context, AvatarAddress, battleReward);
+                    account = account.MintAsset(context, AvatarAddress, battleReward);
                 }
             }
 
@@ -295,13 +296,13 @@ namespace Nekoyume.Action
                 // kill reward
                 var worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(AvatarAddress, raidId);
                 WorldBossKillRewardRecord rewardRecord;
-                if (states.TryGetState(worldBossKillRewardRecordAddress, out List rawList))
+                if (account.TryGetState(worldBossKillRewardRecordAddress, out List rawList))
                 {
                     var bossRow = raidSimulatorSheets.WorldBossCharacterSheet[row.BossId];
                     rewardRecord = new WorldBossKillRewardRecord(rawList);
                     // calculate with previous high score.
                     int rank = WorldBossHelper.CalculateRank(bossRow, previousHighScore);
-                    states = states.SetWorldBossKillReward(
+                    account = account.SetWorldBossKillReward(
                         context,
                         worldBossKillRewardRecordAddress,
                         rewardRecord,
@@ -326,7 +327,7 @@ namespace Nekoyume.Action
                 {
                     rewardRecord.Add(raiderState.LatestBossLevel, false);
                 }
-                states = states.SetState(worldBossKillRewardRecordAddress, rewardRecord.Serialize());
+                account = account.SetState(worldBossKillRewardRecordAddress, rewardRecord.Serialize());
             }
 
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
@@ -335,7 +336,7 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                states = states
+                account = account
                     .SetState(AvatarAddress, avatarState.SerializeV2())
                     .SetState(inventoryAddress, avatarState.inventory.Serialize())
                     .SetState(worldInfoAddress, avatarState.worldInformation.Serialize())
@@ -344,10 +345,11 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);
-            return states
+            account = account
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldBossAddress, bossState.Serialize())
                 .SetState(raiderAddress, raiderState.Serialize());
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -30,16 +30,17 @@ namespace Nekoyume.Action.Coupons
             AvatarAddress = avatarAddress;
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                return states
+                account = account
                     .SetState(AvatarAddress, MarkChanged)
                     .SetState(inventoryAddress, MarkChanged)
                     .SetState(worldInformationAddress, MarkChanged)
@@ -48,25 +49,26 @@ namespace Nekoyume.Action.Coupons
                         context.Signer,
                         ImmutableDictionary.Create<Guid, Coupon>(),
                         rehearsal: true);
+                return world.SetAccount(account);
             }
 
-            if (!states.TryGetAvatarStateV2(
+            if (!account.TryGetAvatarStateV2(
                     context.Signer,
                     AvatarAddress,
                     out AvatarState avatarState,
                     out _))
             {
-                return states;
+                return world;
             }
 
-            var wallet = states.GetCouponWallet(context.Signer);
+            var wallet = account.GetCouponWallet(context.Signer);
             if (!wallet.TryGetValue(CouponId, out var coupon))
             {
-                return states;
+                return world;
             }
 
             wallet = wallet.Remove(CouponId);
-            var itemSheets = states.GetItemSheet();
+            var itemSheets = account.GetItemSheet();
             foreach ((int itemId, uint q) in coupon)
             {
                 for (uint i = 0U; i < q; i++)
@@ -78,12 +80,13 @@ namespace Nekoyume.Action.Coupons
                 }
             }
 
-            return states
+            account = account
                 .SetState(AvatarAddress, avatarState.SerializeV2())
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
                 .SetCouponWallet(context.Signer, wallet);
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

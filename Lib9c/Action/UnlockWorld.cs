@@ -30,22 +30,24 @@ namespace Nekoyume.Action
         IEnumerable<int> IUnlockWorldV1.WorldIds => WorldIds;
         Address IUnlockWorldV1.AvatarAddress => AvatarAddress;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var unlockedWorldIdsAddress = AvatarAddress.Derive("world_ids");
             if (context.Rehearsal)
             {
-                return states
+                account = account
                     .SetState(worldInformationAddress, MarkChanged)
                     .SetState(questListAddress, MarkChanged)
                     .SetState(inventoryAddress, MarkChanged)
                     .SetState(AvatarAddress, MarkChanged)
                     .MarkBalanceChanged(context, GoldCurrencyMock, context.Signer, Addresses.UnlockWorld);
+                return world.SetAccount(account);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
@@ -60,14 +62,14 @@ namespace Nekoyume.Action
             AvatarState avatarState = null;
             bool migrationRequired = false;
 
-            if (states.TryGetState(worldInformationAddress, out Dictionary rawInfo))
+            if (account.TryGetState(worldInformationAddress, out Dictionary rawInfo))
             {
                 worldInformation = new WorldInformation(rawInfo);
             }
             else
             {
                 // AvatarState migration required.
-                if (states.TryGetAvatarState(context.Signer, AvatarAddress, out avatarState))
+                if (account.TryGetAvatarState(context.Signer, AvatarAddress, out avatarState))
                 {
                     worldInformation = avatarState.worldInformation;
                     migrationRequired = true;
@@ -79,7 +81,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            List<int> unlockedIds = states.TryGetState(unlockedWorldIdsAddress, out List rawIds)
+            List<int> unlockedIds = account.TryGetState(unlockedWorldIdsAddress, out List rawIds)
                 ? rawIds.ToList(StateExtensions.ToInteger)
                 : new List<int>
                 {
@@ -88,7 +90,7 @@ namespace Nekoyume.Action
                 };
 
             var sortedWorldIds = WorldIds.OrderBy(i => i).ToList();
-            var worldUnlockSheet = states.GetSheet<WorldUnlockSheet>();
+            var worldUnlockSheet = account.GetSheet<WorldUnlockSheet>();
             foreach (var worldId in sortedWorldIds)
             {
                 // Already Unlocked.
@@ -117,7 +119,7 @@ namespace Nekoyume.Action
 
             FungibleAssetValue cost =
                 CrystalCalculator.CalculateWorldUnlockCost(sortedWorldIds, worldUnlockSheet);
-            FungibleAssetValue balance = states.GetBalance(context.Signer, cost.Currency);
+            FungibleAssetValue balance = account.GetBalance(context.Signer, cost.Currency);
 
             // Insufficient CRYSTAL.
             if (balance < cost)
@@ -127,7 +129,7 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                states = states
+                account = account
                     .SetState(AvatarAddress, avatarState.SerializeV2())
                     .SetState(questListAddress, avatarState.questList.Serialize())
                     .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
@@ -136,9 +138,10 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}UnlockWorld Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
+            account = account
                 .SetState(unlockedWorldIdsAddress, new List(unlockedIds.Select(i => i.Serialize())))
                 .TransferAsset(context, context.Signer, Addresses.UnlockWorld, cost);
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal

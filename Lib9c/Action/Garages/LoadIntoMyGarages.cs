@@ -125,14 +125,16 @@ namespace Nekoyume.Action.Garages
                 : (string)(Text)list[3];
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var state = context.PreviousState;
             if (context.Rehearsal)
             {
-                return state;
+                return context.PreviousState;
             }
+
+            var world = context.PreviousState;
+            var state = world.GetAccount(ReservedAddresses.LegacyAccount);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context);
             ValidateFields(context.Signer, addressesHex);
@@ -148,7 +150,7 @@ namespace Nekoyume.Action.Garages
                 garageCost);
 
             state = TransferFungibleAssetValues(context, state);
-            return TransferFungibleItems(context.Signer, context.BlockIndex, state);
+            return world.SetAccount(TransferFungibleItems(context.Signer, context.BlockIndex, state));
         }
 
         private void ValidateFields(
@@ -217,40 +219,40 @@ namespace Nekoyume.Action.Garages
             }
         }
 
-        private IAccountStateDelta TransferFungibleAssetValues(
+        private IAccount TransferFungibleAssetValues(
             IActionContext context,
-            IAccountStateDelta states)
+            IAccount account)
         {
             if (FungibleAssetValues is null)
             {
-                return states;
+                return account;
             }
 
             var garageBalanceAddress =
                 Addresses.GetGarageBalanceAddress(context.Signer);
             foreach (var (balanceAddr, value) in FungibleAssetValues)
             {
-                states = states.TransferAsset(context, balanceAddr, garageBalanceAddress, value);
+                account = account.TransferAsset(context, balanceAddr, garageBalanceAddress, value);
             }
 
-            return states;
+            return account;
         }
 
-        private IAccountStateDelta TransferFungibleItems(
+        private IAccount TransferFungibleItems(
             Address signer,
             long blockIndex,
-            IAccountStateDelta states)
+            IAccount account)
         {
             if (InventoryAddr is null ||
                 FungibleIdAndCounts is null)
             {
-                return states;
+                return account;
             }
 
-            var inventory = states.GetInventory(InventoryAddr.Value);
+            var inventory = account.GetInventory(InventoryAddr.Value);
             var fungibleItemTuples = GarageUtils.WithGarageStateTuples(
                 signer,
-                states,
+                account,
                 FungibleIdAndCounts);
             foreach (var (fungibleId, count, garageAddr, garageState) in fungibleItemTuples)
             {
@@ -304,10 +306,10 @@ namespace Nekoyume.Action.Garages
                 }
 
                 garage.Load(count);
-                states = states.SetState(garageAddr, garage.Serialize());
+                account = account.SetState(garageAddr, garage.Serialize());
             }
 
-            return states.SetState(InventoryAddr.Value, inventory.Serialize());
+            return account.SetState(InventoryAddr.Value, inventory.Serialize());
         }
     }
 }

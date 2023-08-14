@@ -69,7 +69,7 @@ namespace Nekoyume.Action
         public override int GetHashCode() =>
             (Error, (int)Operator, Operand).GetHashCode();
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             if (Error != null)
@@ -79,11 +79,12 @@ namespace Nekoyume.Action
 
             CheckPermission(context);
 
-            IAccountStateDelta previousState = context.PreviousState;
-            ValidatorSet validatorSet = previousState.GetValidatorSet();
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
+            ValidatorSet validatorSet = account.GetValidatorSet();
 
             Func<ValidatorSet, Validator, Validator> func = Operator.ToFunc();
-            return previousState.SetValidator(func(validatorSet, Operand));
+            return world.SetAccount(account.SetValidator(func(validatorSet, Operand)));
         }
 
         public override IValue PlainValue =>

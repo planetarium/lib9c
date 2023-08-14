@@ -10,7 +10,7 @@ using Libplanet.Types.Consensus;
 
 namespace Libplanet.Extensions.ActionEvaluatorCommonComponents;
 
-public class AccountStateDelta : IAccountStateDelta
+public class Account : IAccount
 {
     private IImmutableDictionary<Address, IValue> _states;
     private IImmutableDictionary<(Address, Currency), BigInteger> _fungibles;
@@ -32,7 +32,7 @@ public class AccountStateDelta : IAccountStateDelta
 
     public IImmutableSet<Currency> UpdatedTotalSupplyCurrencies => _delta.UpdatedTotalSupplyCurrencies;
 
-    public AccountStateDelta()
+    public Account()
         : this(
             ImmutableDictionary<Address, IValue>.Empty,
             ImmutableDictionary<(Address, Currency), BigInteger>.Empty,
@@ -41,7 +41,7 @@ public class AccountStateDelta : IAccountStateDelta
     {
     }
 
-    public AccountStateDelta(
+    public Account(
         IImmutableDictionary<Address, IValue> states,
         IImmutableDictionary<(Address, Currency), BigInteger> fungibles,
         IImmutableDictionary<Currency, BigInteger> totalSupplies,
@@ -59,7 +59,7 @@ public class AccountStateDelta : IAccountStateDelta
         _validatorSet = validatorSet;
     }
 
-    public AccountStateDelta(Dictionary states, List fungibles, List totalSupplies, IValue validatorSet)
+    public Account(Dictionary states, List fungibles, List totalSupplies, IValue validatorSet)
     {
         // This assumes `states` consists of only Binary keys:
         _states = states
@@ -99,12 +99,12 @@ public class AccountStateDelta : IAccountStateDelta
             _validatorSet);
     }
 
-    public AccountStateDelta(IValue serialized)
+    public Account(IValue serialized)
         : this((Dictionary)serialized)
     {
     }
 
-    public AccountStateDelta(Dictionary dict)
+    public Account(Dictionary dict)
         : this(
             (Dictionary)dict["states"],
             (List)dict["balances"],
@@ -113,12 +113,14 @@ public class AccountStateDelta : IAccountStateDelta
     {
     }
 
-    public AccountStateDelta(byte[] bytes)
+    public Account(byte[] bytes)
         : this((Dictionary)new Codec().Decode(bytes))
     {
     }
 
     public IAccountDelta Delta => _delta;
+
+    public Address Address { get; }
 
     public IValue? GetState(Address address) =>
         _states.ContainsKey(address)
@@ -128,8 +130,8 @@ public class AccountStateDelta : IAccountStateDelta
     public IReadOnlyList<IValue?> GetStates(IReadOnlyList<Address> addresses) =>
         addresses.Select(GetState).ToArray();
 
-    public IAccountStateDelta SetState(Address address, IValue state) =>
-        new AccountStateDelta(_states.SetItem(address, state), _fungibles, _totalSupplies, _validatorSet);
+    public IAccount SetState(Address address, IValue state) =>
+        new Account(_states.SetItem(address, state), _fungibles, _totalSupplies, _validatorSet);
     public FungibleAssetValue GetBalance(Address address, Currency currency)
     {
         if (!_fungibles.TryGetValue((address, currency), out BigInteger rawValue))
@@ -160,7 +162,7 @@ public class AccountStateDelta : IAccountStateDelta
         return BaseState.GetTotalSupply(currency);
     }
 
-    public IAccountStateDelta MintAsset(
+    public IAccount MintAsset(
         IActionContext context, Address recipient, FungibleAssetValue value)
     {
         // FIXME: 트랜잭션 서명자를 알아내 currency.AllowsToMint() 확인해서 CurrencyPermissionException
@@ -186,7 +188,7 @@ public class AccountStateDelta : IAccountStateDelta
                 throw new SupplyOverflowException(msg, value);
             }
 
-            return new AccountStateDelta(
+            return new Account(
                 _states,
                 _fungibles.SetItem(
                     (recipient, value.Currency),
@@ -200,7 +202,7 @@ public class AccountStateDelta : IAccountStateDelta
             };
         }
 
-        return new AccountStateDelta(
+        return new Account(
             _states,
             _fungibles.SetItem(
                 (recipient, value.Currency),
@@ -214,7 +216,7 @@ public class AccountStateDelta : IAccountStateDelta
         };
     }
 
-    public IAccountStateDelta TransferAsset(
+    public IAccount TransferAsset(
         IActionContext context,
         Address sender,
         Address recipient,
@@ -242,13 +244,13 @@ public class AccountStateDelta : IAccountStateDelta
         var balances = _fungibles
             .SetItem((sender, currency), senderRemains.RawValue)
             .SetItem((recipient, currency), recipientRemains.RawValue);
-        return new AccountStateDelta(_states, balances, _totalSupplies, _validatorSet)
+        return new Account(_states, balances, _totalSupplies, _validatorSet)
         {
             BaseState = BaseState,
         };
     }
 
-    public IAccountStateDelta BurnAsset(
+    public IAccount BurnAsset(
         IActionContext context, Address owner, FungibleAssetValue value)
     {
         // FIXME: 트랜잭션 서명자를 알아내 currency.AllowsToMint() 확인해서 CurrencyPermissionException
@@ -272,7 +274,7 @@ public class AccountStateDelta : IAccountStateDelta
         }
 
         FungibleAssetValue nextValue = balance - value;
-        return new AccountStateDelta(
+        return new Account(
             _states,
             _fungibles.SetItem(
                 (owner, currency),
@@ -295,9 +297,9 @@ public class AccountStateDelta : IAccountStateDelta
         return _validatorSet ?? BaseState.GetValidatorSet();
     }
 
-    public IAccountStateDelta SetValidator(Validator validator)
+    public IAccount SetValidator(Validator validator)
     {
-        return new AccountStateDelta(
+        return new Account(
             _states,
             _fungibles,
             _totalSupplies,

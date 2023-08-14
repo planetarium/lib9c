@@ -9,7 +9,7 @@ public class ActionEvaluation : IActionEvaluation
     public ActionEvaluation(
         IValue action,
         ActionContext inputContext,
-        AccountStateDelta outputState,
+        World outputState,
         Exception? exception)
     {
         Action = action;
@@ -21,7 +21,7 @@ public class ActionEvaluation : IActionEvaluation
     public IValue Action { get; }
     public ActionContext InputContext { get; }
     IActionContext IActionEvaluation.InputContext => InputContext;
-    public AccountStateDelta OutputState { get; }
-    IAccountStateDelta IActionEvaluation.OutputState => OutputState;
+    public World OutputState { get; }
+    IWorld IActionEvaluation.OutputState => OutputState;
     public Exception? Exception { get; }
 }

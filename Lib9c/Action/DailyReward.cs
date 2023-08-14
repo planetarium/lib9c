@@ -7,7 +7,6 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
@@ -29,21 +28,23 @@ namespace Nekoyume.Action
 
         Address IDailyRewardV1.AvatarAddress => avatarAddress;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                return states
+                account = account
                     .SetState(avatarAddress, MarkChanged)
                     .MarkBalanceChanged(context, GoldCurrencyMock, avatarAddress);
+                return world.SetAccount(account);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}DailyReward exec started", addressesHex);
-            if (!states.TryGetState(avatarAddress, out Dictionary serializedAvatar))
+            if (!account.TryGetState(avatarAddress, out Dictionary serializedAvatar))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -69,7 +70,7 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var gameConfigState = states.GetGameConfigState();
+            var gameConfigState = account.GetGameConfigState();
             if (gameConfigState is null)
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the game config was failed to load.");
@@ -94,7 +95,7 @@ namespace Nekoyume.Action
 
             if (gameConfigState.DailyRuneRewardAmount > 0)
             {
-                states = states.MintAsset(
+                account = account.MintAsset(
                     context,
                     avatarAddress,
                     RuneHelper.DailyRewardRune * gameConfigState.DailyRuneRewardAmount);
@@ -102,7 +103,8 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}DailyReward Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.SetState(avatarAddress, serializedAvatar);
+            account = account.SetState(avatarAddress, serializedAvatar);
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>

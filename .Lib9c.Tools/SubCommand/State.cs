@@ -138,12 +138,12 @@ namespace Lib9c.Tools.SubCommand
                         $"block_{block.Index}_{block.Hash}"
                     );
                     string deltaDump = DumpBencodexToFile(
-                        new Dictionary(GetTotalDelta(
+                        GetWorldDelta(
                             delta,
                             ToStateKey,
                             ToFungibleAssetKey,
                             ToTotalSupplyKey,
-                            ValidatorSetKey)),
+                            ValidatorSetKey),
                         $"delta_{block.Index}_{block.Hash}"
                     );
                     string message =
@@ -433,61 +433,54 @@ namespace Lib9c.Tools.SubCommand
                 _dictionary.Keys;
         }
 
-        private static ImmutableDictionary<string, IValue> GetTotalDelta(
+        private static Dictionary GetWorldDelta(
             IReadOnlyList<IActionEvaluation> actionEvaluations,
             Func<Address, string> toStateKey,
             Func<(Address, Currency), string> toFungibleAssetKey,
             Func<Currency, string> toTotalSupplyKey,
             string validatorSetKey)
         {
-            IImmutableSet<Address> stateUpdatedAddresses = actionEvaluations
-                .SelectMany(a => a.OutputState.Delta.StateUpdatedAddresses)
-                .ToImmutableHashSet();
-            IImmutableSet<(Address, Currency)> updatedFungibleAssets = actionEvaluations
-                .SelectMany(a => a.OutputState.Delta.UpdatedFungibleAssets)
-                .ToImmutableHashSet();
-            IImmutableSet<Currency> updatedTotalSupplies = actionEvaluations
-                .SelectMany(a => a.OutputState.Delta.UpdatedTotalSupplyCurrencies)
-                .ToImmutableHashSet();
 
-            IAccountStateDelta lastStates = actionEvaluations.Count > 0
-                ? actionEvaluations[actionEvaluations.Count - 1].OutputState
-                : null;
-            ImmutableDictionary<string, IValue> totalDelta =
-                stateUpdatedAddresses.ToImmutableDictionary(
-                    toStateKey,
-                    a => lastStates?.GetState(a)
-                ).SetItems(
-                    updatedFungibleAssets.Select(pair =>
-                        new KeyValuePair<string, IValue>(
-                            toFungibleAssetKey(pair),
-                            new Bencodex.Types.Integer(
-                                lastStates?.GetBalance(pair.Item1, pair.Item2).RawValue ?? 0
-                            )
-                        )
-                    )
-                );
+            IImmutableDictionary<Address, IAccount> accounts = actionEvaluations
+                .Select(eval => eval.OutputState.Delta)
+                .Aggregate(
+                    ImmutableDictionary<Address, IAccount>.Empty,
+                    (prev, next) => prev.SetItems(next.Accounts));
+            var rawStates = accounts.Select(
+                kv => new KeyValuePair<string, Dictionary>(
+                    toStateKey(ReservedAddresses.LegacyAccount),
+                    GetAccountDelta(
+                        kv.Value.Delta,
+                        toStateKey,
+                        toFungibleAssetKey,
+                        toTotalSupplyKey,
+                        validatorSetKey)));
+            return new Dictionary(
+                ImmutableDictionary<string, Dictionary>.Empty.SetItems(rawStates));
+        }
 
-            foreach (var currency in updatedTotalSupplies)
-            {
-                if (lastStates?.GetTotalSupply(currency).RawValue is { } rawValue)
-                {
-                    totalDelta = totalDelta.SetItem(
-                        toTotalSupplyKey(currency),
-                        new Bencodex.Types.Integer(rawValue)
-                    );
-                }
-            }
+        private static Dictionary GetAccountDelta(
+            IAccountDelta delta,
+            Func<Address, string> toStateKey,
+            Func<(Address, Currency), string> toFungibleAssetKey,
+            Func<Currency, string> toTotalSupplyKey,
+            string validatorSetKey)
+        {
+            var rawStates = delta.States.Select(
+                kv => new KeyValuePair<string, IValue>(
+                    toStateKey(kv.Key), kv.Value));
+            var rawFungibles = delta.Fungibles.Select(
+                kv => new KeyValuePair<string, IValue>(
+                    toFungibleAssetKey(kv.Key), new Integer(kv.Value)));
+            var rawTotalSupplies = delta.TotalSupplies.Select(
+                kv => new KeyValuePair<string, IValue>(
+                    toTotalSupplyKey(kv.Key), new Integer(kv.Value)));
 
-            if (lastStates?.GetValidatorSet() is { } validatorSet && validatorSet.Validators.Any())
-            {
-                totalDelta = totalDelta.SetItem(
-                    validatorSetKey,
-                    validatorSet.Bencoded
-                );
-            }
-
-            return totalDelta;
+            var rawDelta = ImmutableDictionary<string, IValue>.Empty;
+            rawDelta = rawDelta.SetItems(rawStates.Concat(rawFungibles).Concat(rawTotalSupplies));
+            return new Dictionary(delta.ValidatorSet is { } validatorSet
+                ? rawDelta.SetItem(validatorSetKey, validatorSet.Bencoded)
+                : rawDelta);
         }
 
         private const string ValidatorSetKey = "___";

@@ -23,7 +23,7 @@ namespace Lib9c.DevExtensions.Action
         public Address AvatarAddress { get; set; }
         public List<FaucetRuneInfo> FaucetRuneInfos { get; set; }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             if (context.Rehearsal)
@@ -31,15 +31,16 @@ namespace Lib9c.DevExtensions.Action
                 return context.PreviousState;
             }
 
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (!(FaucetRuneInfos is null))
             {
-                RuneSheet runeSheet = states.GetSheet<RuneSheet>();
+                RuneSheet runeSheet = account.GetSheet<RuneSheet>();
                 if (runeSheet.OrderedList != null)
                 {
                     foreach (var rune in FaucetRuneInfos)
                     {
-                        states = states.MintAsset(context, AvatarAddress, RuneHelper.ToFungibleAssetValue(
+                        account = account.MintAsset(context, AvatarAddress, RuneHelper.ToFungibleAssetValue(
                             runeSheet.OrderedList.First(r => r.Id == rune.RuneId),
                             rune.Amount
                         ));
@@ -47,7 +48,7 @@ namespace Lib9c.DevExtensions.Action
                 }
             }
 
-            return states;
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -18,24 +18,25 @@ namespace Nekoyume.Action
 
         string IAddRedeemCodeV1.RedeemCsv => redeemCsv;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                return states
-                    .SetState(Addresses.RedeemCode, MarkChanged);
+                account = account.SetState(Addresses.RedeemCode, MarkChanged);
+                return world.SetAccount(account);
             }
 
             CheckPermission(context);
 
-            var redeem = states.GetRedeemCodeState();
+            var redeem = account.GetRedeemCodeState();
             var sheet = new RedeemCodeListSheet();
             sheet.Set(redeemCsv);
             redeem.Update(sheet);
-            return states
-                .SetState(Addresses.RedeemCode, redeem.Serialize());
+            account = account.SetState(Addresses.RedeemCode, redeem.Serialize());
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

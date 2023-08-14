@@ -27,14 +27,16 @@ namespace Nekoyume.Action
         public IEnumerable<IRegisterInfo> RegisterInfos;
         public bool ChargeAp;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
+
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
             if (!RegisterInfos.Any())
             {
@@ -46,7 +48,7 @@ namespace Nekoyume.Action
                 throw new ArgumentOutOfRangeException($"{nameof(RegisterInfos)} must be less than or equal {Capacity}.");
             }
 
-            var ncg = states.GetGoldCurrency();
+            var ncg = account.GetGoldCurrency();
             foreach (var registerInfo in RegisterInfos)
             {
                 registerInfo.ValidateAddress(AvatarAddress);
@@ -54,7 +56,7 @@ namespace Nekoyume.Action
                 registerInfo.Validate();
             }
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
+            if (!account.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
                     out var migrationRequired))
             {
                 throw new FailedLoadStateException("failed to load avatar state.");
@@ -70,43 +72,43 @@ namespace Nekoyume.Action
                     current);
             }
 
-            avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
+            avatarState.UseAp(CostAp, ChargeAp, account.GetSheet<MaterialItemSheet>(), context.BlockIndex, account.GetGameConfigState());
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
-            if (states.TryGetState(productsStateAddress, out List rawProducts))
+            if (account.TryGetState(productsStateAddress, out List rawProducts))
             {
                 productsState = new ProductsState(rawProducts);
             }
             else
             {
                 productsState = new ProductsState();
-                var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
+                var marketState = account.TryGetState(Addresses.Market, out List rawMarketList)
                     ? new MarketState(rawMarketList)
                     : new MarketState();
                 marketState.AvatarAddresses.Add(AvatarAddress);
-                states = states.SetState(Addresses.Market, marketState.Serialize());
+                account = account.SetState(Addresses.Market, marketState.Serialize());
             }
             foreach (var info in RegisterInfos.OrderBy(r => r.Type).ThenBy(r => r.Price))
             {
-                states = Register(context, info, avatarState, productsState, states);
+                account = Register(context, info, avatarState, productsState, account);
             }
 
-            states = states
+            account = account
                 .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
                 .SetState(AvatarAddress, avatarState.SerializeV2())
                 .SetState(productsStateAddress, productsState.Serialize());
             if (migrationRequired)
             {
-                states = states
+                account = account
                     .SetState(AvatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
                     .SetState(AvatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize());
             }
 
-            return states;
+            return world.SetAccount(account);
         }
 
-        public static IAccountStateDelta Register(IActionContext context, IRegisterInfo info, AvatarState avatarState,
-            ProductsState productsState, IAccountStateDelta states)
+        public static IAccount Register(IActionContext context, IRegisterInfo info, AvatarState avatarState,
+            ProductsState productsState, IAccount account)
         {
             switch (info)
             {
@@ -190,7 +192,7 @@ namespace Nekoyume.Action
                                 SellerAvatarAddress = registerInfo.AvatarAddress,
                             };
                             productsState.ProductIds.Add(productId);
-                            states = states.SetState(Product.DeriveAddress(productId),
+                            account = account.SetState(Product.DeriveAddress(productId),
                                 product.Serialize());
                             break;
                         }
@@ -212,7 +214,7 @@ namespace Nekoyume.Action
                         SellerAgentAddress = context.Signer,
                         SellerAvatarAddress = assetInfo.AvatarAddress,
                     };
-                    states = states
+                    account = account
                         .TransferAsset(context, avatarState.address, productAddress, asset)
                         .SetState(productAddress, product.Serialize());
                     productsState.ProductIds.Add(productId);
@@ -220,7 +222,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            return states;
+            return account;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -11,7 +11,6 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.Extensions;
-using Nekoyume.Action.Results;
 using Nekoyume.Battle;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
@@ -39,11 +38,12 @@ namespace Nekoyume.Action
         int ICombinationEquipmentV1.SlotIndex => SlotIndex;
         int? ICombinationEquipmentV1.SubRecipeId => SubRecipeId;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
-            var states = ctx.PreviousState;
+            var world = ctx.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var slotAddress = AvatarAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -53,24 +53,25 @@ namespace Nekoyume.Action
             );
             if (ctx.Rehearsal)
             {
-                return states
+                account = account
                     .SetState(AvatarAddress, MarkChanged)
                     .SetState(slotAddress, MarkChanged)
                     .SetState(ctx.Signer, MarkChanged)
                     .MarkBalanceChanged(ctx, GoldCurrencyMock, ctx.Signer, BlacksmithAddress);
+                return world.SetAccount(account);
             }
 
             CheckObsolete(ActionObsoleteConfig.V100080ObsoleteIndex, context);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
 
-            if (!states.TryGetAgentAvatarStates(ctx.Signer, AvatarAddress, out var agentState,
+            if (!account.TryGetAgentAvatarStates(ctx.Signer, AvatarAddress, out var agentState,
                 out var avatarState))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var slotState = states.GetCombinationSlotState(AvatarAddress, SlotIndex);
+            var slotState = account.GetCombinationSlotState(AvatarAddress, SlotIndex);
             if (slotState is null)
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the slot state is failed to load");
@@ -82,8 +83,8 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {SlotIndex}");
             }
 
-            var recipeSheet = states.GetSheet<EquipmentItemRecipeSheet>();
-            var materialSheet = states.GetSheet<MaterialItemSheet>();
+            var recipeSheet = account.GetSheet<EquipmentItemRecipeSheet>();
+            var materialSheet = account.GetSheet<MaterialItemSheet>();
             var materials = new Dictionary<Material, int>();
 
             // Validate recipe.
@@ -126,7 +127,7 @@ namespace Nekoyume.Action
 
             BigInteger requiredGold = recipe.RequiredGold;
             var requiredActionPoint = recipe.RequiredActionPoint;
-            var equipmentItemSheet = states.GetSheet<EquipmentItemSheet>();
+            var equipmentItemSheet = account.GetSheet<EquipmentItemSheet>();
 
             // Validate equipment id.
             if (!equipmentItemSheet.TryGetValue(recipe.ResultEquipmentId, out var equipRow))
@@ -145,7 +146,7 @@ namespace Nekoyume.Action
             HashSet<int> optionIds = null;
             if (SubRecipeId.HasValue)
             {
-                var subSheet = states.GetSheet<EquipmentItemSubRecipeSheet>();
+                var subSheet = account.GetSheet<EquipmentItemSubRecipeSheet>();
                 var subId = (int) SubRecipeId;
                 if (!subSheet.TryGetValue(subId, out var subRecipe))
                 {
@@ -175,14 +176,14 @@ namespace Nekoyume.Action
                     materials[subMaterial] = materialInfo.Count;
                 }
 
-                optionIds = SelectOption(states.GetSheet<EquipmentItemOptionSheet>(), states.GetSheet<SkillSheet>(),
+                optionIds = SelectOption(account.GetSheet<EquipmentItemOptionSheet>(), account.GetSheet<SkillSheet>(),
                     subRecipe, ctx.Random, equipment);
                 equipment.Update(requiredBlockIndex);
             }
 
             // Validate NCG.
-            FungibleAssetValue agentBalance = states.GetBalance(ctx.Signer, states.GetGoldCurrency());
-            if (agentBalance < states.GetGoldCurrency() * requiredGold)
+            FungibleAssetValue agentBalance = account.GetBalance(ctx.Signer, account.GetGoldCurrency());
+            if (agentBalance < account.GetGoldCurrency() * requiredGold)
             {
                 throw new InsufficientBalanceException(
                     $"{addressesHex}Aborted as the agent ({ctx.Signer}) has no sufficient gold: {agentBalance} < {requiredGold}",
@@ -210,11 +211,11 @@ namespace Nekoyume.Action
             // FIXME: BlacksmithAddress just accumulate NCG. we need plan how to circulate this.
             if (requiredGold > 0)
             {
-                states = states.TransferAsset(
+                account = account.TransferAsset(
                     ctx,
                     ctx.Signer,
                     BlacksmithAddress,
-                    states.GetGoldCurrency() * requiredGold
+                    account.GetGoldCurrency() * requiredGold
                 );
             }
 
@@ -236,10 +237,11 @@ namespace Nekoyume.Action
             avatarState.questList.UpdateCombinationEquipmentQuest(RecipeId);
             avatarState.UpdateFromCombination2(equipment);
             avatarState.UpdateQuestRewards2(materialSheet);
-            return states
+            account = account
                 .SetState(AvatarAddress, avatarState.Serialize())
                 .SetState(slotAddress, slotState.Serialize())
                 .SetState(ctx.Signer, agentState.Serialize());
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

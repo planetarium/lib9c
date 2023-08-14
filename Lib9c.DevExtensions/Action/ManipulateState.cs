@@ -45,7 +45,7 @@ namespace Lib9c.DevExtensions.Action
                 .ToList();
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             if (context.Rehearsal)
@@ -56,22 +56,22 @@ namespace Lib9c.DevExtensions.Action
             return Execute(context, context.PreviousState, StateList, BalanceList);
         }
 
-        public static IAccountStateDelta Execute(
+        public static IWorld Execute(
             IActionContext context,
-            IAccountStateDelta prevStates,
+            IWorld world,
             List<(Address addr, IValue value)> stateList,
             List<(Address addr, FungibleAssetValue fav)> balanceList)
         {
-            var states = prevStates;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             foreach (var (addr, value) in stateList)
             {
-                states = states.SetState(addr, value);
+                account = account.SetState(addr, value);
             }
 
-            var ncg = states.GetGoldCurrency();
+            var ncg = account.GetGoldCurrency();
             foreach (var (addr, fav) in balanceList)
             {
-                var currentFav = states.GetBalance(addr, fav.Currency);
+                var currentFav = account.GetBalance(addr, fav.Currency);
                 if (currentFav == fav)
                 {
                     continue;
@@ -83,7 +83,7 @@ namespace Lib9c.DevExtensions.Action
                     {
                         if (currentFav > fav)
                         {
-                            states = states.TransferAsset(
+                            account = account.TransferAsset(
                                 context,
                                 addr,
                                 GoldCurrencyState.Address,
@@ -91,7 +91,7 @@ namespace Lib9c.DevExtensions.Action
                         }
                         else
                         {
-                            states = states.TransferAsset(
+                            account = account.TransferAsset(
                                 context,
                                 GoldCurrencyState.Address,
                                 addr,
@@ -104,12 +104,12 @@ namespace Lib9c.DevExtensions.Action
                     throw new NotSupportedException($"{fav.Currency} is not supported.");
                 }
 
-                states = currentFav > fav
-                    ? states.BurnAsset(context, addr, currentFav - fav)
-                    : states.MintAsset(context, addr, fav - currentFav);
+                account = currentFav > fav
+                    ? account.BurnAsset(context, addr, currentFav - fav)
+                    : account.MintAsset(context, addr, fav - currentFav);
             }
 
-            return states;
+            return world.SetAccount(account);
         }
     }
 }

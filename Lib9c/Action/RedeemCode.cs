@@ -42,16 +42,17 @@ namespace Nekoyume.Action
             AvatarAddress = avatarAddress;
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                return states
+                account = account
                     .SetState(RedeemCodeState.Address, MarkChanged)
                     .SetState(inventoryAddress, MarkChanged)
                     .SetState(worldInformationAddress, MarkChanged)
@@ -60,21 +61,22 @@ namespace Nekoyume.Action
                     .SetState(context.Signer, MarkChanged)
                     .MarkBalanceChanged(context, GoldCurrencyMock, GoldCurrencyState.Address)
                     .MarkBalanceChanged(context, GoldCurrencyMock, context.Signer);
+                return world.SetAccount(account);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RedeemCode exec started", addressesHex);
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out AvatarState avatarState, out _))
+            if (!account.TryGetAvatarStateV2(context.Signer, AvatarAddress, out AvatarState avatarState, out _))
             {
-                return states;
+                return world;
             }
 
-            var redeemState = states.GetRedeemCodeState();
+            var redeemState = account.GetRedeemCodeState();
             if (redeemState is null)
             {
-                return states;
+                return world;
             }
 
             int redeemId;
@@ -93,8 +95,8 @@ namespace Nekoyume.Action
                 throw;
             }
 
-            var row = states.GetSheet<RedeemRewardSheet>().Values.First(r => r.Id == redeemId);
-            var itemSheets = states.GetItemSheet();
+            var row = account.GetSheet<RedeemRewardSheet>().Values.First(r => r.Id == redeemId);
+            var itemSheets = account.GetItemSheet();
 
             foreach (RedeemRewardSheet.RewardInfo info in row.Rewards)
             {
@@ -113,11 +115,11 @@ namespace Nekoyume.Action
                         }
                         break;
                     case RewardType.Gold:
-                        states = states.TransferAsset(
+                        account = account.TransferAsset(
                             context,
                             GoldCurrencyState.Address,
                             context.Signer,
-                            states.GetGoldCurrency() * info.Quantity
+                            account.GetGoldCurrency() * info.Quantity
                         );
                         break;
                     default:
@@ -127,12 +129,13 @@ namespace Nekoyume.Action
             }
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RedeemCode Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
+            account = account
                 .SetState(AvatarAddress, avatarState.SerializeV2())
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
                 .SetState(RedeemCodeState.Address, redeemState.Serialize());
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

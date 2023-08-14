@@ -17,6 +17,7 @@ using Nekoyume.Model.State;
 using Serilog;
 using Serilog.Events;
 using Lib9c;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
@@ -214,7 +215,7 @@ namespace Nekoyume.Blockchain.Policy
                             action is IActivateAccount activate)
                         {
                             return transaction.Nonce == 0 &&
-                                blockChain.GetState(activate.PendingAddress) is Dictionary rawPending &&
+                                blockChain.GetState(activate.PendingAddress, ReservedAddresses.LegacyAccount) is Dictionary rawPending &&
                                 new PendingActivationState(rawPending).Verify(activate.Signature)
                                     ? null
                                     : new TxPolicyViolationException(
@@ -236,11 +237,11 @@ namespace Nekoyume.Blockchain.Policy
                         return null;
                     }
 
-                    switch (blockChain.GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
+                    switch (blockChain.GetState(transaction.Signer.Derive(ActivationKey.DeriveKey), ReservedAddresses.LegacyAccount))
                     {
                         case null:
                             // Fallback for pre-migration.
-                            if (blockChain.GetState(ActivatedAccountsState.Address)
+                            if (blockChain.GetState(ActivatedAccountsState.Address, ReservedAddresses.LegacyAccount)
                                 is Dictionary asDict)
                             {
                                 IImmutableSet<Address> activatedAccounts =

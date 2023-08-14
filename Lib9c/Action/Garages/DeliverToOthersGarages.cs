@@ -161,19 +161,21 @@ namespace Nekoyume.Action.Garages
                 : memo;
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var state = context.PreviousState;
             if (context.Rehearsal)
             {
-                return state;
+                return context.PreviousState;
             }
+
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context);
             ValidateFields(addressesHex);
-            state = SendBalances(context, state);
-            return SendFungibleItems(context.Signer, state);
+            account = SendBalances(context, account);
+            return world.SetAccount(SendFungibleItems(context.Signer, account));
         }
 
         private void ValidateFields(string addressesHex)
@@ -214,13 +216,13 @@ namespace Nekoyume.Action.Garages
             }
         }
 
-        private IAccountStateDelta SendBalances(
+        private IAccount SendBalances(
             IActionContext context,
-            IAccountStateDelta states)
+            IAccount account)
         {
             if (FungibleAssetValues is null)
             {
-                return states;
+                return account;
             }
 
             var senderGarageBalanceAddress =
@@ -229,29 +231,29 @@ namespace Nekoyume.Action.Garages
                 Addresses.GetGarageBalanceAddress(RecipientAgentAddr);
             foreach (var fav in FungibleAssetValues)
             {
-                states = states.TransferAsset(
+                account = account.TransferAsset(
                     context,
                     senderGarageBalanceAddress,
                     recipientGarageBalanceAddr,
                     fav);
             }
 
-            return states;
+            return account;
         }
 
-        private IAccountStateDelta SendFungibleItems(
+        private IAccount SendFungibleItems(
             Address signer,
-            IAccountStateDelta states)
+            IAccount account)
         {
             if (FungibleIdAndCounts is null)
             {
-                return states;
+                return account;
             }
 
             var fungibleItemTuples = GarageUtils.WithGarageStateTuples(
                 signer,
                 RecipientAgentAddr,
-                states,
+                account,
                 FungibleIdAndCounts);
             foreach (var (
                          _,
@@ -267,12 +269,12 @@ namespace Nekoyume.Action.Garages
                         ? new FungibleItemGarage(senderGarage.Item, 0)
                         : new FungibleItemGarage(recipientGarageState);
                 senderGarage.Deliver(recipientGarage, count);
-                states = states
+                account = account
                     .SetState(senderGarageAddr, senderGarage.Serialize())
                     .SetState(recipientGarageAddr, recipientGarage.Serialize());
             }
 
-            return states;
+            return account;
         }
     }
 }

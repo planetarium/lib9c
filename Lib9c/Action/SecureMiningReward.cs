@@ -56,34 +56,36 @@ namespace Nekoyume.Action
             .Add("type_id", "secure_mining_reward")
             .Add("values", Recipient.Bencoded);
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccountStateDelta state = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                return state.MarkBalanceChanged(
+                account = account.MarkBalanceChanged(
                     context,
                     NCG,
                     AuthorizedMiners.Add(Recipient).Add(Treasury).ToArray()
                 );
+                return world.SetAccount(account);
             }
 
             CheckPermission(context);
 
             foreach (Address minerAddress in AuthorizedMiners)
             {
-                FungibleAssetValue balance = state.GetBalance(minerAddress, NCG);
+                FungibleAssetValue balance = account.GetBalance(minerAddress, NCG);
                 FungibleAssetValue toTreasury = balance.DivRem(100, out _) * TreasuryRate;
                 FungibleAssetValue toRecipient = balance.DivRem(100, out _) * EarnRate;
                 FungibleAssetValue toBurn = balance - (toTreasury + toRecipient);
 
-                state = state.TransferAsset(context, minerAddress, Treasury, toTreasury);
-                state = state.TransferAsset(context, minerAddress, Recipient, toRecipient);
-                state = state.TransferAsset(context, minerAddress, Nil, toBurn);
+                account = account.TransferAsset(context, minerAddress, Treasury, toTreasury);
+                account = account.TransferAsset(context, minerAddress, Recipient, toRecipient);
+                account = account.TransferAsset(context, minerAddress, Nil, toBurn);
             }
 
-            return state;
+            return world.SetAccount(account);
         }
 
         public override void LoadPlainValue(IValue plainValue)

@@ -43,16 +43,20 @@ namespace Nekoyume.Action
             Assets = serialized["a"].ToList(StateExtensions.ToFungibleAssetValue);
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccountStateDelta states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
+                // FIXME: Is this correct implementation?
                 foreach (var asset in Assets)
                 {
-                    return states.MarkBalanceChanged(context, asset.Currency, RewardPoolAddress);
+                    account = account.MarkBalanceChanged(context, asset.Currency, RewardPoolAddress);
                 }
+
+                return world.SetAccount(account);
             }
 
             CheckPermission(context);
@@ -64,10 +68,10 @@ namespace Nekoyume.Action
                 {
                     throw new CurrencyPermissionException(null, context.Signer, asset.Currency);
                 }
-                states = states.MintAsset(context, RewardPoolAddress, asset);
+                account = account.MintAsset(context, RewardPoolAddress, asset);
             }
 
-            return states;
+            return world.SetAccount(account);
         }
     }
 }

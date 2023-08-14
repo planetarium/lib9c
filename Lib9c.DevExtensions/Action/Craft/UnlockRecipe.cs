@@ -5,7 +5,6 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
@@ -19,7 +18,7 @@ namespace Lib9c.DevExtensions.Action.Craft
         public Address AvatarAddress { get; set; }
         public int TargetStage { get; set; }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             if (context.Rehearsal)
@@ -27,17 +26,19 @@ namespace Lib9c.DevExtensions.Action.Craft
                 return context.PreviousState;
             }
 
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var recipeIdList = List.Empty;
             for (var i = 1; i <= TargetStage; i++)
             {
                 recipeIdList = recipeIdList.Add(i.Serialize());
             }
 
-            return states.SetState(
+            account = account.SetState(
                 AvatarAddress.Derive("recipe_ids"),
                 recipeIdList
             );
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

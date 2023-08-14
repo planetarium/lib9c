@@ -107,60 +107,61 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
-            var states = ctx.PreviousState;
+            if (ctx.BlockIndex != 0)
+            {
+                return ctx.PreviousState;
+            }
+
+            var world = ctx.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var weeklyArenaState = new WeeklyArenaState(0);
 
             var rankingState = new RankingState0(Ranking);
             if (ctx.Rehearsal)
             {
-                states = states.SetState(RankingState0.Address, MarkChanged);
-                states = states.SetState(ShopState.Address, MarkChanged);
+                account = account.SetState(RankingState0.Address, MarkChanged);
+                account = account.SetState(ShopState.Address, MarkChanged);
 #pragma warning disable LAA1002
-                states = TableSheets
-                    .Aggregate(states, (current, pair) =>
+                account = TableSheets
+                    .Aggregate(account, (current, pair) =>
                         current.SetState(Addresses.TableSheet.Derive(pair.Key), MarkChanged));
-                states = rankingState.RankingMap
-                    .Aggregate(states, (current, pair) =>
+                account = rankingState.RankingMap
+                    .Aggregate(account, (current, pair) =>
                         current.SetState(pair.Key, MarkChanged));
 #pragma warning restore LAA1002
-                states = states.SetState(weeklyArenaState.address, MarkChanged);
-                states = states.SetState(GameConfigState.Address, MarkChanged);
-                states = states.SetState(RedeemCodeState.Address, MarkChanged);
-                states = states.SetState(AdminState.Address, MarkChanged);
-                states = states.SetState(ActivatedAccountsState.Address, MarkChanged);
-                states = states.SetState(GoldCurrencyState.Address, MarkChanged);
-                states = states.SetState(Addresses.GoldDistribution, MarkChanged);
+                account = account.SetState(weeklyArenaState.address, MarkChanged);
+                account = account.SetState(GameConfigState.Address, MarkChanged);
+                account = account.SetState(RedeemCodeState.Address, MarkChanged);
+                account = account.SetState(AdminState.Address, MarkChanged);
+                account = account.SetState(ActivatedAccountsState.Address, MarkChanged);
+                account = account.SetState(GoldCurrencyState.Address, MarkChanged);
+                account = account.SetState(Addresses.GoldDistribution, MarkChanged);
                 foreach (var rawPending in PendingActivations)
                 {
-                    states = states.SetState(
+                    account = account.SetState(
                         new PendingActivationState((Dictionary)rawPending).address,
                         MarkChanged
                     );
                 }
 
-                states = states.SetState(AuthorizedMinersState.Address, MarkChanged);
-                states = states.SetState(CreditsState.Address, MarkChanged);
-                return states;
-            }
-
-            if (ctx.BlockIndex != 0)
-            {
-                return states;
+                account = account.SetState(AuthorizedMinersState.Address, MarkChanged);
+                account = account.SetState(CreditsState.Address, MarkChanged);
+                return world.SetAccount(account);
             }
 
 #pragma warning disable LAA1002
-            states = TableSheets
-                .Aggregate(states, (current, pair) =>
+            account = TableSheets
+                .Aggregate(account, (current, pair) =>
                     current.SetState(Addresses.TableSheet.Derive(pair.Key), pair.Value.Serialize()));
-            states = rankingState.RankingMap
-                .Aggregate(states, (current, pair) =>
+            account = rankingState.RankingMap
+                .Aggregate(account, (current, pair) =>
                     current.SetState(pair.Key, new RankingMapState(pair.Key).Serialize()));
 #pragma warning restore LAA1002
-            states = states
+            account = account
                 .SetState(weeklyArenaState.address, weeklyArenaState.Serialize())
                 .SetState(RankingState0.Address, Ranking)
                 .SetState(ShopState.Address, Shop)
@@ -172,12 +173,12 @@ namespace Nekoyume.Action
 
             if (!(AdminAddressState is null))
             {
-                states = states.SetState(AdminState.Address, AdminAddressState);
+                account = account.SetState(AdminState.Address, AdminAddressState);
             }
 
             if (!(AuthorizedMiners is null))
             {
-                states = states.SetState(
+                account = account.SetState(
                     AuthorizedMinersState.Address,
                     AuthorizedMiners
                 );
@@ -185,7 +186,7 @@ namespace Nekoyume.Action
 
             foreach (var rawPending in PendingActivations)
             {
-                states = states.SetState(
+                account = account.SetState(
                     new PendingActivationState((Dictionary)rawPending).address,
                     rawPending
                 );
@@ -193,12 +194,12 @@ namespace Nekoyume.Action
 
             if (!(Credits is null))
             {
-                states = states.SetState(CreditsState.Address, Credits);
+                account = account.SetState(CreditsState.Address, Credits);
             }
 
             var currency = new GoldCurrencyState(GoldCurrency).Currency;
-            states = states.MintAsset(ctx, GoldCurrencyState.Address, currency * 1000000000);
-            return states;
+            account = account.MintAsset(ctx, GoldCurrencyState.Address, currency * 1000000000);
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal

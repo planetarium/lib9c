@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using Bencodex.Types;
 using Libplanet.Action;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
@@ -1106,13 +1107,14 @@ namespace Nekoyume.Model.State
             MaterialItemSheet materialItemSheet,
             Address rankingMapAddress)
         {
-            var state = ctx.PreviousState;
-            var gameConfigState = state.GetGameConfigState();
+            var world = ctx.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
+            var gameConfigState = account.GetGameConfigState();
             var avatarState = new AvatarState(
                 avatarAddress,
                 ctx.Signer,
                 ctx.BlockIndex,
-                state.GetAvatarSheets(),
+                account.GetAvatarSheets(),
                 gameConfigState,
                 rankingMapAddress,
                 name

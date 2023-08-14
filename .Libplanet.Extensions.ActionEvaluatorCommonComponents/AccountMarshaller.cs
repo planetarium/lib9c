@@ -4,16 +4,16 @@ using Libplanet.Action.State;
 
 namespace Libplanet.Extensions.ActionEvaluatorCommonComponents;
 
-public static class AccountStateDeltaMarshaller
+public static class AccountMarshaller
 {
     private static readonly Codec Codec = new Codec();
 
-    public static byte[] Serialize(this IAccountStateDelta value)
+    public static byte[] Serialize(this IAccount value)
     {
         return Codec.Encode(Marshal(value));
     }
 
-    public static IEnumerable<Dictionary> Marshal(IEnumerable<IAccountStateDelta> stateDeltas)
+    public static IEnumerable<Dictionary> Marshal(IEnumerable<IAccount> stateDeltas)
     {
         foreach (var stateDelta in stateDeltas)
         {
@@ -22,18 +22,18 @@ public static class AccountStateDeltaMarshaller
         }
     }
 
-    public static Dictionary Marshal(IAccountStateDelta stateDelta)
+    public static Dictionary Marshal(IAccount account)
     {
-        var state = new Dictionary(stateDelta.Delta.States.Select(
+        var state = new Dictionary(account.Delta.States.Select(
             kv => new KeyValuePair<IKey, IValue>(
                 new Binary(kv.Key.ByteArray),
                 kv.Value)));
-        var balance = new List(stateDelta.Delta.Fungibles.Select(
+        var balance = new List(account.Delta.Fungibles.Select(
             kv => Dictionary.Empty
                 .Add("address", new Binary(kv.Key.Item1.ByteArray))
                 .Add("currency", kv.Key.Item2.Serialize())
                 .Add("amount", new Integer(kv.Value))));
-        var totalSupply = new List(stateDelta.Delta.TotalSupplies.Select(
+        var totalSupply = new List(account.Delta.TotalSupplies.Select(
             kv => Dictionary.Empty
                 .Add("currency", kv.Key.Serialize())
                 .Add("amount", new Integer(kv.Value))));
@@ -41,18 +41,18 @@ public static class AccountStateDeltaMarshaller
             .Add("states", state)
             .Add("balances", balance)
             .Add("totalSupplies", totalSupply)
-            .Add("validatorSet", stateDelta.Delta.ValidatorSet is { } validatorSet
+            .Add("validatorSet", account.Delta.ValidatorSet is { } validatorSet
                 ? validatorSet.Bencoded
                 : Null.Value);
         return bdict;
     }
 
-    public static AccountStateDelta Unmarshal(IValue marshalled)
+    public static Account Unmarshal(IValue marshalled)
     {
-        return new AccountStateDelta(marshalled);
+        return new Account(marshalled);
     }
 
-    public static AccountStateDelta Deserialize(byte[] serialized)
+    public static Account Deserialize(byte[] serialized)
     {
         var decoded = Codec.Decode(serialized);
         return Unmarshal(decoded);

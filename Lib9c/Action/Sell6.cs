@@ -60,19 +60,21 @@ namespace Nekoyume.Action
             itemSubType = plainValue[ItemSubTypeKey].ToEnum<ItemSubType>();
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                states = states.SetState(sellerAvatarAddress, MarkChanged);
-                states = ShardedShopState.AddressKeys.Aggregate(
-                    states,
+                account = account.SetState(sellerAvatarAddress, MarkChanged);
+                account = ShardedShopState.AddressKeys.Aggregate(
+                    account,
                     (current, addressKey) => current.SetState(
                         ShardedShopState.DeriveAddress(itemSubType, addressKey),
                         MarkChanged));
-                return states.SetState(context.Signer, MarkChanged);
+                account = account.SetState(context.Signer, MarkChanged);
+                return world.SetAccount(account);
             }
 
             CheckObsolete(ActionObsoleteConfig.V100080ObsoleteIndex, context);
@@ -90,7 +92,7 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the price is less than zero: {price}.");
             }
 
-            if (!states.TryGetAgentAvatarStates(
+            if (!account.TryGetAgentAvatarStates(
                 context.Signer,
                 sellerAvatarAddress,
                 out _,
@@ -168,7 +170,7 @@ namespace Nekoyume.Action
 
             var productId = context.Random.GenerateRandomGuid();
             var shardedShopAddress = ShardedShopState.DeriveAddress(itemSubType, productId);
-            if (!states.TryGetState(shardedShopAddress, out BxDictionary serializedSharedShopState))
+            if (!account.TryGetState(shardedShopAddress, out BxDictionary serializedSharedShopState))
             {
                 var shardedShopState = new ShardedShopState(shardedShopAddress);
                 serializedSharedShopState = (BxDictionary) shardedShopState.Serialize();
@@ -283,12 +285,13 @@ namespace Nekoyume.Action
             result.id = mail.id;
             avatarState.Update(mail);
 
-            states = states.SetState(sellerAvatarAddress, avatarState.Serialize());
+            account = account.SetState(sellerAvatarAddress, avatarState.Serialize());
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            states = states.SetState(shardedShopAddress, serializedSharedShopState);
+            account = account.SetState(shardedShopAddress, serializedSharedShopState);
+            world = world.SetAccount(account);
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}Sell Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
@@ -297,7 +300,7 @@ namespace Nekoyume.Action
                 addressesHex,
                 ended - started);
 
-            return states;
+            return world;
         }
     }
 }

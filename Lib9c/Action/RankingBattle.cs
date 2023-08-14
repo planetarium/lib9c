@@ -45,28 +45,30 @@ namespace Nekoyume.Action
         IEnumerable<Guid> IRankingBattleV2.CostumeIds => costumeIds;
         IEnumerable<Guid> IRankingBattleV2.EquipmentIds => equipmentIds;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var ctx = context;
-            var states = ctx.PreviousState;
+            var world = ctx.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (ctx.Rehearsal)
             {
-                return states
+                account = account
                     .SetState(avatarAddress, MarkChanged)
                     .SetState(weeklyArenaAddress, MarkChanged)
                     .SetState(inventoryAddress, MarkChanged)
                     .SetState(worldInformationAddress, MarkChanged)
                     .SetState(questListAddress, MarkChanged);
+                return world.SetAccount(account);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress, enemyAddress);
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
-            var arenaSheetState = states.GetState(arenaSheetAddress);
+            var arenaSheetState = account.GetState(arenaSheetAddress);
             if (arenaSheetState != null)
             {
                 // exception handling for v100240.
@@ -95,7 +97,7 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the signer tried to battle for themselves.");
             }
 
-            if (!states.TryGetAvatarStateV2(ctx.Signer, avatarAddress, out var avatarState, out var migrationRequired))
+            if (!account.TryGetAvatarStateV2(ctx.Signer, avatarAddress, out var avatarState, out var migrationRequired))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -105,7 +107,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Get AgentAvatarStates: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
-            var sheets = states.GetSheetsV100291(
+            var sheets = account.GetSheetsV100291(
                 containRankingSimulatorSheets: true,
                 sheetTypes: new[]
                 {
@@ -128,34 +130,34 @@ namespace Nekoyume.Action
             avatarState.ValidateItemRequirement(
                 costumeItemIds.ToList(),
                 equipments,
-                states.GetSheet<ItemRequirementSheet>(),
-                states.GetSheet<EquipmentItemRecipeSheet>(),
-                states.GetSheet<EquipmentItemSubRecipeSheetV2>(),
-                states.GetSheet<EquipmentItemOptionSheet>(),
+                account.GetSheet<ItemRequirementSheet>(),
+                account.GetSheet<EquipmentItemRecipeSheet>(),
+                account.GetSheet<EquipmentItemSubRecipeSheetV2>(),
+                account.GetSheet<EquipmentItemOptionSheet>(),
                 addressesHex);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}RankingBattle Equip Equipments: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(out var world) ||
-                world.StageClearedId < GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)
+            if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(out var worldInfo) ||
+                worldInfo.StageClearedId < GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)
             {
                 throw new NotEnoughClearedStageLevelException(
                     addressesHex,
                     GameConfig.RequireClearedStageLevel.ActionsInRankingBoard,
-                    world.StageClearedId);
+                    worldInfo.StageClearedId);
             }
 
             AvatarState enemyAvatarState;
             try
             {
-                enemyAvatarState = states.GetAvatarStateV2(enemyAddress);
+                enemyAvatarState = account.GetAvatarStateV2(enemyAddress);
             }
             // BackWard compatible.
             catch (FailedLoadStateException)
             {
-                enemyAvatarState = states.GetAvatarState(enemyAddress);
+                enemyAvatarState = account.GetAvatarState(enemyAddress);
             }
 
             if (enemyAvatarState is null)
@@ -169,9 +171,9 @@ namespace Nekoyume.Action
             sw.Restart();
 
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
-            if (!states.TryGetState(weeklyArenaAddress, out Dictionary rawWeeklyArenaState))
+            if (!account.TryGetState(weeklyArenaAddress, out Dictionary rawWeeklyArenaState))
             {
-                return states;
+                return world.SetAccount(account);
             }
 
             sw.Stop();
@@ -189,7 +191,7 @@ namespace Nekoyume.Action
             }
 
             // Run updated model
-            var (arenaInfoAddress, previousArenaInfo, isNewArenaInfo) = states.GetArenaInfo(
+            var (arenaInfoAddress, previousArenaInfo, isNewArenaInfo) = account.GetArenaInfo(
                 weeklyArenaAddress,
                 avatarState,
                 sheets.GetSheet<CharacterSheet>(),
@@ -214,7 +216,7 @@ namespace Nekoyume.Action
                 StageId,
                 costumeStatSheet);
             simulator.Simulate();
-            var (enemyArenaInfoAddress, previousEnemyArenaInfo, isNewEnemyArenaInfo) = states.GetArenaInfo(
+            var (enemyArenaInfoAddress, previousEnemyArenaInfo, isNewEnemyArenaInfo) = account.GetArenaInfo(
                 weeklyArenaAddress,
                 enemyAvatarState,
                 sheets.GetSheet<CharacterSheet>(),
@@ -265,7 +267,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Serialize WeeklyArenaState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            states = states
+            account = account
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(arenaInfoAddress, arenaInfo.Serialize())
                 .SetState(enemyArenaInfoAddress, enemyArenaInfo.Serialize())
@@ -273,7 +275,7 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                states = states
+                account = account
                     .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                     .SetState(avatarAddress, avatarState.SerializeV2());
             }
@@ -281,7 +283,7 @@ namespace Nekoyume.Action
             if (isNewArenaInfo || isNewEnemyArenaInfo)
             {
                 var addressListAddress = weeklyArenaAddress.Derive("address_list");
-                var addressList = states.TryGetState(addressListAddress, out List rawAddressList)
+                var addressList = account.TryGetState(addressListAddress, out List rawAddressList)
                     ? rawAddressList.ToList(StateExtensions.ToAddress)
                     : new List<Address>();
 
@@ -295,7 +297,7 @@ namespace Nekoyume.Action
                     addressList.Add(enemyAddress);
                 }
 
-                states = states.SetState(addressListAddress,
+                account = account.SetState(addressListAddress,
                     addressList.Aggregate(List.Empty,
                         (current, address) => current.Add(address.Serialize())));
             }
@@ -306,7 +308,7 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RankingBattle Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states;
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

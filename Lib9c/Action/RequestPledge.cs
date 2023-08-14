@@ -35,17 +35,18 @@ namespace Nekoyume.Action
             RefillMead = values[1].ToInteger();
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var contractAddress = AgentAddress.GetPledgeAddress();
-            if (states.TryGetState(contractAddress, out List _))
+            if (account.TryGetState(contractAddress, out List _))
             {
                 throw new AlreadyContractedException($"{AgentAddress} already contracted.");
             }
 
-            return states
+            account = account
                 .TransferAsset(context, context.Signer, AgentAddress, 1 * Currencies.Mead)
                 .SetState(
                     contractAddress,
@@ -54,6 +55,7 @@ namespace Nekoyume.Action
                         .Add(false.Serialize())
                         .Add(RefillMead.Serialize())
                 );
+            return world.SetAccount(account);
         }
     }
 }

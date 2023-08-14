@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Text;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -29,7 +27,7 @@ namespace Nekoyume.Action
 
         public abstract IValue PlainValue { get; }
         public abstract void LoadPlainValue(IValue plainValue);
-        public abstract IAccountStateDelta Execute(IActionContext context);
+        public abstract IWorld Execute(IActionContext context);
 
         /// <summary>
         /// returns "[Signer Address, AvatarState Address, ...]"
@@ -50,7 +48,7 @@ namespace Nekoyume.Action
             return sb.ToString();
         }
 
-        protected IAccountStateDelta LogError(IActionContext context, string message, params object[] values)
+        protected IWorld LogError(IActionContext context, string message, params object[] values)
         {
             string actionType = GetType().Name;
             object[] prependedValues = new object[values.Length + 2];
@@ -66,7 +64,7 @@ namespace Nekoyume.Action
         {
             state = default;
 
-            IValue rawState = ctx.PreviousState.GetState(AdminState.Address);
+            IValue rawState = ctx.PreviousState.GetAccount(ReservedAddresses.LegacyAccount).GetState(AdminState.Address);
             if (rawState is Bencodex.Types.Dictionary asDict)
             {
                 state = new AdminState(asDict);

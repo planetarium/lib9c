@@ -13,7 +13,7 @@ using Libplanet.Types.Consensus;
 
 namespace Lib9c.Formatters
 {
-    public struct AccountStateDelta : IAccountStateDelta
+    public struct Account : IAccount
     {
         private IImmutableDictionary<Address, IValue> _states;
         private IImmutableDictionary<(Address, Currency), BigInteger> _balances;
@@ -23,7 +23,7 @@ namespace Lib9c.Formatters
         public IImmutableSet<(Address, Currency)> TotalUpdatedFungibleAssets =>
             ImmutableHashSet<(Address, Currency)>.Empty;
 
-        public AccountStateDelta(
+        public Account(
             IImmutableDictionary<Address, IValue> states,
             IImmutableDictionary<(Address, Currency), BigInteger> balances,
             IImmutableDictionary<Currency, BigInteger> totalSupplies
@@ -35,7 +35,7 @@ namespace Lib9c.Formatters
             _totalSupplies = totalSupplies;
         }
 
-        public AccountStateDelta(Dictionary states, List balances, Dictionary totalSupplies)
+        public Account(Dictionary states, List balances, Dictionary totalSupplies)
             : this(
                 states.ToImmutableDictionary(
                     kv => new Address(kv.Key),
@@ -49,7 +49,7 @@ namespace Lib9c.Formatters
         {
         }
 
-        public AccountStateDelta(IValue serialized)
+        public Account(IValue serialized)
             : this(
                 (Dictionary)((Dictionary)serialized)["states"],
                 (List)((Dictionary)serialized)["balances"],
@@ -58,12 +58,14 @@ namespace Lib9c.Formatters
         {
         }
 
-        public AccountStateDelta(byte[] bytes)
+        public Account(byte[] bytes)
             : this((Dictionary)new Codec().Decode(bytes))
         {
         }
 
         public IAccountDelta Delta => _delta;
+
+        public Address Address => ReservedAddresses.LegacyAccount;
 
         public IValue? GetState(Address address) =>
             _states.ContainsKey(address)
@@ -73,8 +75,8 @@ namespace Lib9c.Formatters
         public IReadOnlyList<IValue?> GetStates(IReadOnlyList<Address> addresses) =>
             addresses.Select(_states.GetValueOrDefault).ToArray();
 
-        public IAccountStateDelta SetState(Address address, IValue state) =>
-            new AccountStateDelta(_states.SetItem(address, state), _balances, _totalSupplies);
+        public IAccount SetState(Address address, IValue state) =>
+            new Account(_states.SetItem(address, state), _balances, _totalSupplies);
 
         public FungibleAssetValue GetBalance(Address address, Currency currency)
         {
@@ -106,7 +108,7 @@ namespace Lib9c.Formatters
             return currency * 0;
         }
 
-        public IAccountStateDelta MintAsset(IActionContext context, Address recipient, FungibleAssetValue value)
+        public IAccount MintAsset(IActionContext context, Address recipient, FungibleAssetValue value)
         {
             // FIXME: 트랜잭션 서명자를 알아내 currency.AllowsToMint() 확인해서 CurrencyPermissionException
             // 던지는 처리를 해야하는데 여기서 트랜잭션 서명자를 무슨 수로 가져올지 잘 모르겠음.
@@ -131,7 +133,7 @@ namespace Lib9c.Formatters
                     throw new SupplyOverflowException(msg, value);
                 }
 
-                return new AccountStateDelta(
+                return new Account(
                     _states,
                     _balances.SetItem(
                         (recipient, value.Currency),
@@ -141,7 +143,7 @@ namespace Lib9c.Formatters
                 );
             }
 
-            return new AccountStateDelta(
+            return new Account(
                 _states,
                 _balances.SetItem(
                     (recipient, value.Currency),
@@ -151,7 +153,7 @@ namespace Lib9c.Formatters
             );
         }
 
-        public IAccountStateDelta TransferAsset(
+        public IAccount TransferAsset(
             IActionContext context,
             Address sender,
             Address recipient,
@@ -179,10 +181,10 @@ namespace Lib9c.Formatters
             var balances = _balances
                 .SetItem((sender, currency), senderRemains.RawValue)
                 .SetItem((recipient, currency), recipientRemains.RawValue);
-            return new AccountStateDelta(_states, balances, _totalSupplies);
+            return new Account(_states, balances, _totalSupplies);
         }
 
-        public IAccountStateDelta BurnAsset(IActionContext context, Address owner, FungibleAssetValue value)
+        public IAccount BurnAsset(IActionContext context, Address owner, FungibleAssetValue value)
         {
             // FIXME: 트랜잭션 서명자를 알아내 currency.AllowsToMint() 확인해서 CurrencyPermissionException
             // 던지는 처리를 해야하는데 여기서 트랜잭션 서명자를 무슨 수로 가져올지 잘 모르겠음.
@@ -205,7 +207,7 @@ namespace Lib9c.Formatters
             }
 
             FungibleAssetValue nextValue = balance - value;
-            return new AccountStateDelta(
+            return new Account(
                 _states,
                 _balances.SetItem(
                     (owner, currency),
@@ -219,9 +221,9 @@ namespace Lib9c.Formatters
             );
         }
 
-        public IAccountStateDelta SetValidator(Validator validator)
+        public IAccount SetValidator(Validator validator)
         {
-            return new AccountStateDelta();
+            return new Account();
         }
 
         public ValidatorSet GetValidatorSet()

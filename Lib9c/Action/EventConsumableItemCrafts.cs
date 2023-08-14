@@ -8,9 +8,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Action.Extensions;
-using Nekoyume.Action.Results;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
@@ -78,14 +76,16 @@ namespace Nekoyume.Action
             SlotIndex = list[3].ToInteger();
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
+
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -97,7 +97,7 @@ namespace Nekoyume.Action
             var sw = new Stopwatch();
             // Get AvatarState
             sw.Start();
-            if (!states.TryGetAvatarStateV2(
+            if (!account.TryGetAvatarStateV2(
                     context.Signer,
                     AvatarAddress,
                     out var avatarState,
@@ -120,7 +120,7 @@ namespace Nekoyume.Action
 
             // Get sheets
             sw.Restart();
-            var sheets = states.GetSheets(
+            var sheets = account.GetSheets(
                 sheetTypes: new[]
                 {
                     typeof(EventScheduleSheet),
@@ -164,7 +164,7 @@ namespace Nekoyume.Action
                 ActionTypeText,
                 addressesHex);
 
-            var slotState = states.GetCombinationSlotState(AvatarAddress, SlotIndex);
+            var slotState = account.GetCombinationSlotState(AvatarAddress, SlotIndex);
             if (slotState is null)
             {
                 throw new FailedLoadStateException(
@@ -192,7 +192,7 @@ namespace Nekoyume.Action
             var requiredFungibleItems = new Dictionary<int, int>();
 
             // Validate Recipe ResultEquipmentId
-            var consumableItemSheet = states.GetSheet<ConsumableItemSheet>();
+            var consumableItemSheet = account.GetSheet<ConsumableItemSheet>();
             if (!consumableItemSheet.TryGetValue(
                     recipeRow.ResultConsumableItemId,
                     out var consumableRow))
@@ -205,7 +205,7 @@ namespace Nekoyume.Action
             // ~Validate Recipe ResultEquipmentId
 
             // Validate Recipe Material
-            var materialItemSheet = states.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = account.GetSheet<MaterialItemSheet>();
             materialItemSheet.ValidateFromAction(
                 recipeRow.Materials,
                 requiredFungibleItems,
@@ -287,7 +287,7 @@ namespace Nekoyume.Action
             // Set states
             if (migrationRequired)
             {
-                states = states
+                account = account
                     .SetState(AvatarAddress, avatarState.SerializeV2())
                     .SetState(
                         AvatarAddress.Derive(LegacyInventoryKey),
@@ -304,7 +304,7 @@ namespace Nekoyume.Action
             }
             else
             {
-                states = states
+                account = account
                     .SetState(AvatarAddress, avatarState.SerializeV2())
                     .SetState(
                         AvatarAddress.Derive(LegacyInventoryKey),
@@ -328,7 +328,7 @@ namespace Nekoyume.Action
                 addressesHex,
                 DateTimeOffset.UtcNow - started);
 
-            return states;
+            return world.SetAccount(account);
         }
     }
 }

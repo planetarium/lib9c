@@ -127,18 +127,11 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var ctx = context;
             var states = ctx.PreviousState;
-
-            if (ctx.Rehearsal)
-            {
-                return states;
-            }
-
-            // Collect addresses
             var slotAddress = avatarAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -157,7 +150,7 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex} ItemEnhancement exec started", addressesHex);
 
             // Validate avatar
-            if (!states.TryGetAgentAvatarStatesV2(ctx.Signer, avatarAddress, out var agentState,
+            if (!account.TryGetAgentAvatarStatesV2(ctx.Signer, avatarAddress, out var agentState,
                     out var avatarState, out var migrationRequired))
             {
                 throw new FailedLoadStateException(
@@ -199,7 +192,7 @@ namespace Nekoyume.Action
             }
 
             // Validate combination slot
-            var slotState = states.GetCombinationSlotState(avatarAddress, slotIndex);
+            var slotState = account.GetCombinationSlotState(avatarAddress, slotIndex);
             if (slotState is null)
             {
                 throw new FailedLoadStateException(
@@ -220,7 +213,7 @@ namespace Nekoyume.Action
 
             sw.Restart();
 
-            Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new[]
+            Dictionary<Type, (Address, ISheet)> sheets = account.GetSheets(sheetTypes: new[]
             {
                 typeof(EquipmentItemSheet),
                 typeof(EnhancementCostSheetV3),
@@ -368,7 +361,7 @@ namespace Nekoyume.Action
                 var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
                 var feeStoreAddress =
                     Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
-                states = states.TransferAsset(ctx, ctx.Signer, feeStoreAddress,
+                account = account.TransferAsset(ctx, ctx.Signer, feeStoreAddress,
                     states.GetGoldCurrency() * requiredNcg);
             }
 
@@ -417,7 +410,7 @@ namespace Nekoyume.Action
 
             // Set state
             sw.Restart();
-            states = states
+            account = account
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
@@ -429,7 +422,8 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex} ItemEnhancement Total Executed Time: {Elapsed}", addressesHex,
                 ended - started);
-            return states.SetState(slotAddress, slotState.Serialize());
+            account = account.SetState(slotAddress, slotState.Serialize());
+            return world.SetAccount(account);
         }
 
         public static int GetRequiredBlockCount(Equipment preEquipment, Equipment targetEquipment,

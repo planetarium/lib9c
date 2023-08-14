@@ -9,11 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Lib9c;
 using Lib9c.Abstractions;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
-using Nekoyume.Model;
 using Serilog;
 
 namespace Nekoyume.Action
@@ -106,14 +104,16 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(4);
             Address signer = context.Signer;
-            var state = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                return state.MarkBalanceChanged(context, Amount.Currency, new[] {Sender, Recipient});
+                account = account.MarkBalanceChanged(context, Amount.Currency, new[] {Sender, Recipient});
+                return world.SetAccount(account);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, signer);
@@ -143,7 +143,8 @@ namespace Nekoyume.Action
             CheckCrystalSender(currency, context.BlockIndex, Sender);
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}TransferAsset4 Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return state.TransferAsset(context, Sender, Recipient, Amount);
+            account = account.TransferAsset(context, Sender, Recipient, Amount);
+            return world.SetAccount(account);
         }
 
         public override void LoadPlainValue(IValue plainValue)

@@ -36,17 +36,19 @@ namespace Nekoyume.Action
         {
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             if (context.Rehearsal)
             {
                 return context.PreviousState;
             }
-            var states = context.PreviousState;
+
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             CheckObsolete(ObsoletedIndex, context);
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
-            if (!states.TryGetStakeState(context.Signer, out StakeState stakeState))
+            if (!account.TryGetStakeState(context.Signer, out StakeState stakeState))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
@@ -63,7 +65,7 @@ namespace Nekoyume.Action
                     context.BlockIndex);
             }
 
-            if (!states.TryGetAvatarStateV2(
+            if (!account.TryGetAvatarStateV2(
                     context.Signer,
                     AvatarAddress,
                     out var avatarState,
@@ -76,7 +78,7 @@ namespace Nekoyume.Action
                     AvatarAddress);
             }
 
-            var sheets = states.GetSheets(sheetTypes: new[]
+            var sheets = account.GetSheets(sheetTypes: new[]
             {
                 typeof(StakeRegularRewardSheet),
                 typeof(ConsumableItemSheet),
@@ -85,8 +87,8 @@ namespace Nekoyume.Action
                 typeof(MaterialItemSheet),
             });
 
-            var currency = states.GetGoldCurrency();
-            var stakedAmount = states.GetBalance(stakeState.address, currency);
+            var currency = account.GetGoldCurrency();
+            var stakedAmount = account.GetBalance(stakeState.address, currency);
             var stakeRegularRewardSheet = sheets.GetSheet<StakeRegularRewardSheet>();
             int level =
                 stakeRegularRewardSheet.FindLevelByStakedAmount(context.Signer, stakedAmount);
@@ -109,7 +111,7 @@ namespace Nekoyume.Action
                 avatarState.inventory.AddItem(item, (int)quantity * accumulatedRewards);
             }
 
-            if (states.TryGetSheet<StakeRegularFixedRewardSheet>(
+            if (account.TryGetSheet<StakeRegularFixedRewardSheet>(
                     out var stakeRegularFixedRewardSheet))
             {
                 var fixedRewards = stakeRegularFixedRewardSheet[level].Rewards;
@@ -127,7 +129,7 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                states = states
+                account = account
                     .SetState(avatarState.address, avatarState.SerializeV2())
                     .SetState(
                         avatarState.address.Derive(LegacyWorldInformationKey),
@@ -137,11 +139,12 @@ namespace Nekoyume.Action
                         avatarState.questList.Serialize());
             }
 
-            return states
+            account = account
                 .SetState(stakeState.address, stakeState.Serialize())
                 .SetState(
                     avatarState.address.Derive(LegacyInventoryKey),
                     avatarState.inventory.Serialize());
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -7,6 +7,7 @@ using Cocona;
 using Lib9c.DevExtensions;
 using Lib9c.Model.Order;
 using Libplanet.Action.Loader;
+using Libplanet.Action.State;
 using Libplanet.Blockchain;
 using Libplanet.Crypto;
 using Libplanet.Store;
@@ -129,7 +130,7 @@ namespace Lib9c.Tools.SubCommand
                             Price = p.Price,
                             ItemSubType = p.ItemSubType,
                             Quantity = p.OrderId is {} oid
-                                ? chain.GetState(GetOrderAddress(oid)) is Dictionary rawOrder
+                                ? chain.GetState(ReservedAddresses.LegacyAccount, GetOrderAddress(oid)) is Dictionary rawOrder
                                     ? OrderFactory.Deserialize(rawOrder) is FungibleOrder fo
                                         ? fo.ItemCount
                                         : 1
