@@ -31,7 +31,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _slotAddress;
         private readonly TableSheets _tableSheets;
         private readonly IRandom _random;
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
         private readonly AgentState _agentState;
         private readonly AvatarState _avatarState;
 
@@ -78,7 +78,7 @@ namespace Lib9c.Tests.Action
                 _slotAddress,
                 GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
 
-            _initialState = new MockStateDelta()
+            _initialState = new MockAccount()
                 .SetState(_slotAddress, combinationSlotState.Serialize())
                 .SetState(GoldCurrencyState.Address, gold.Serialize());
 
@@ -150,7 +150,7 @@ namespace Lib9c.Tests.Action
         )
         {
             var context = new ActionContext();
-            IAccountStateDelta state = _initialState;
+            IAccount state = _initialState;
             if (unlockIdsExist)
             {
                 var unlockIds = List.Empty.Add(1.Serialize());
@@ -295,11 +295,11 @@ namespace Lib9c.Tests.Action
             {
                 var nextState = action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     BlockIndex = blockIndex,
                     Random = _random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
 
                 var currency = nextState.GetGoldCurrency();
                 Assert.Equal(0 * currency, nextState.GetBalance(_agentAddress, currency));
@@ -366,7 +366,7 @@ namespace Lib9c.Tests.Action
             {
                 Assert.Throws(exc, () => action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     BlockIndex = blockIndex,
                     Random = _random,
@@ -388,7 +388,7 @@ namespace Lib9c.Tests.Action
             int recipeId)
         {
             var context = new ActionContext();
-            IAccountStateDelta state = _initialState;
+            IAccount state = _initialState;
             var unlockIds = List.Empty.Add(1.Serialize());
             for (int i = 2; i < recipeId + 1; i++)
             {
@@ -474,11 +474,11 @@ namespace Lib9c.Tests.Action
             {
                 var nextState = action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     BlockIndex = 1,
                     Random = _random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
 
                 Assert.True(nextState.TryGetState(hammerPointAddress, out List serialized));
                 var hammerPointState =
@@ -502,7 +502,7 @@ namespace Lib9c.Tests.Action
                 {
                     action.Execute(new ActionContext
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = _agentAddress,
                         BlockIndex = 1,
                         Random = _random,

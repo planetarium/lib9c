@@ -27,8 +27,8 @@ namespace Lib9c.Tests.Action.Scenario
         private readonly Address _avatarAddr;
         private readonly Address _inventoryAddr;
         private readonly Address _worldInformationAddr;
-        private readonly IAccountStateDelta _initialStatesWithAvatarStateV1;
-        private readonly IAccountStateDelta _initialStatesWithAvatarStateV2;
+        private readonly IAccount _initialStatesWithAvatarStateV1;
+        private readonly IAccount _initialStatesWithAvatarStateV2;
         private readonly TableSheets _tableSheets;
 
         public ItemCraftTest()
@@ -128,11 +128,11 @@ namespace Lib9c.Tests.Action.Scenario
 
                 stateV2 = action.Execute(new ActionContext
                 {
-                    PreviousState = stateV2,
+                    PreviousState = new MockWorld(stateV2),
                     Signer = _agentAddr,
                     BlockIndex = 0L,
                     Random = random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
                 var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
                 // TEST: requiredBlock
                 // TODO: Check reduced required block when pet comes in
@@ -215,11 +215,11 @@ namespace Lib9c.Tests.Action.Scenario
 
                 stateV2 = action.Execute(new ActionContext
                 {
-                    PreviousState = stateV2,
+                    PreviousState = new MockWorld(stateV2),
                     Signer = _agentAddr,
                     BlockIndex = 0L,
                     Random = random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
                 var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
                 // TEST: requiredBlockIndex
                 // TODO: Check reduced required block when pet comens in
@@ -263,7 +263,11 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Unlock stage to create consumables
-            stateV2 = CraftUtil.UnlockStage(stateV2, _tableSheets, _worldInformationAddr, 6);
+            stateV2 = CraftUtil.UnlockStage(
+                stateV2,
+                _tableSheets,
+                _worldInformationAddr,
+                6);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
@@ -299,11 +303,11 @@ namespace Lib9c.Tests.Action.Scenario
 
                 stateV2 = action.Execute(new ActionContext
                 {
-                    PreviousState = stateV2,
+                    PreviousState = new MockWorld(stateV2),
                     Signer = _agentAddr,
                     BlockIndex = eventRow.StartBlockIndex,
                     Random = random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
                 var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
@@ -346,7 +350,11 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Unlock stage to create consumables
-            stateV2 = CraftUtil.UnlockStage(stateV2, _tableSheets, _worldInformationAddr, 6);
+            stateV2 = CraftUtil.UnlockStage(
+                stateV2,
+                _tableSheets,
+                _worldInformationAddr,
+                6);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
@@ -397,11 +405,11 @@ namespace Lib9c.Tests.Action.Scenario
 
                 stateV2 = action.Execute(new ActionContext
                 {
-                    PreviousState = stateV2,
+                    PreviousState = new MockWorld(stateV2),
                     Signer = _agentAddr,
                     BlockIndex = eventRow.StartBlockIndex,
                     Random = random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
                 var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);

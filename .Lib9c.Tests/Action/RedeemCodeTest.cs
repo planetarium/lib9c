@@ -72,7 +72,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
 
             var context = new ActionContext();
-            var initialState = new MockStateDelta()
+            var initialState = new MockAccount()
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
                 .SetState(GoldCurrencyState.Address, goldState.Serialize())
@@ -104,15 +104,15 @@ namespace Lib9c.Tests.Action
                 _avatarAddress
             );
 
-            IAccountStateDelta nextState = redeemCode.Execute(new ActionContext()
+            IAccount nextState = redeemCode.Execute(new ActionContext()
             {
                 BlockIndex = 1,
                 Miner = default,
-                PreviousState = initialState,
+                PreviousState = new MockWorld(initialState),
                 Rehearsal = false,
                 Signer = _agentAddress,
                 Random = new TestRandom(),
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             // Check target avatar & agent
             AvatarState nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
@@ -137,14 +137,14 @@ namespace Lib9c.Tests.Action
                 _avatarAddress
             );
 
-            IAccountStateDelta nextState = redeemCode.Execute(new ActionContext()
+            IAccount nextState = redeemCode.Execute(new ActionContext()
             {
                 BlockIndex = 1,
                 Miner = default,
-                PreviousState = new MockStateDelta(),
+                PreviousState = new MockWorld(),
                 Rehearsal = true,
                 Signer = _agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.Equal(
                 new[]

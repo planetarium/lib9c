@@ -51,8 +51,8 @@ namespace Lib9c.Tests.Action
         {
             var contractAddress = _sender.Derive(nameof(RequestPledge));
             var patronAddress = new PrivateKey().ToAddress();
-            var prevState = new MockStateDelta(
-                MockState.Empty
+            var prevState = new MockAccount(
+                MockAccountState.Empty
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10));
             var action = new TransferAsset(
@@ -60,13 +60,13 @@ namespace Lib9c.Tests.Action
                 recipient: _recipient,
                 amount: _currency * 100
             );
-            IAccountStateDelta nextState = action.Execute(new ActionContext()
+            IAccount nextState = action.Execute(new ActionContext()
             {
-                PreviousState = prevState,
+                PreviousState = new MockWorld(prevState),
                 Signer = _sender,
                 Rehearsal = false,
                 BlockIndex = 1,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.Equal(_currency * 900, nextState.GetBalance(_sender, _currency));
             Assert.Equal(_currency * 110, nextState.GetBalance(_recipient, _currency));
@@ -75,8 +75,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InvalidTransferSignerException()
         {
-            var prevState = new MockStateDelta(
-                MockState.Empty
+            var prevState = new MockAccount(
+                MockAccountState.Empty
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10)
                     .SetBalance(_sender, Currencies.Mead * 1));
@@ -90,7 +90,7 @@ namespace Lib9c.Tests.Action
             {
                 _ = action.Execute(new ActionContext()
                 {
-                    PreviousState = prevState,
+                    PreviousState = new MockWorld(prevState),
                     // 송금자가 직접 사인하지 않으면 실패해야 합니다.
                     Signer = _recipient,
                     Rehearsal = false,
@@ -106,8 +106,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InvalidTransferRecipientException()
         {
-            var prevState = new MockStateDelta(
-                MockState.Empty
+            var prevState = new MockAccount(
+                MockAccountState.Empty
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_sender, Currencies.Mead * 1));
             // Should not allow TransferAsset with same sender and recipient.
@@ -121,7 +121,7 @@ namespace Lib9c.Tests.Action
             {
                 _ = action.Execute(new ActionContext()
                 {
-                    PreviousState = prevState,
+                    PreviousState = new MockWorld(prevState),
                     Signer = _sender,
                     Rehearsal = false,
                     BlockIndex = 1,
@@ -135,8 +135,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InsufficientBalanceException()
         {
-            var prevState = new MockStateDelta(
-                MockState.Empty
+            var prevState = new MockAccount(
+                MockAccountState.Empty
                     .SetState(_recipient, new AgentState(_recipient).Serialize())
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10));
@@ -150,7 +150,7 @@ namespace Lib9c.Tests.Action
             {
                 action.Execute(new ActionContext()
                 {
-                    PreviousState = prevState,
+                    PreviousState = new MockWorld(prevState),
                     Signer = _sender,
                     Rehearsal = false,
                     BlockIndex = 1,
@@ -171,8 +171,8 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var currencyBySender = Currency.Legacy("NCG", 2, minter);
 #pragma warning restore CS0618
-            var prevState = new MockStateDelta(
-                MockState.Empty
+            var prevState = new MockAccount(
+                MockAccountState.Empty
                     .SetState(_recipient, new AgentState(_recipient).Serialize())
                     .SetBalance(_sender, currencyBySender * 1000)
                     .SetBalance(_recipient, currencyBySender * 10)
@@ -186,7 +186,7 @@ namespace Lib9c.Tests.Action
             {
                 action.Execute(new ActionContext()
                 {
-                    PreviousState = prevState,
+                    PreviousState = new MockWorld(prevState),
                     Signer = _sender,
                     Rehearsal = false,
                     BlockIndex = 1,
@@ -208,13 +208,14 @@ namespace Lib9c.Tests.Action
             );
 
             var context = new ActionContext();
-            IAccountStateDelta nextState = action.Execute(new ActionContext()
+            IAccount previousState = new MockAccount().MintAsset(context, _sender, Currencies.Mead * 1);
+            IAccount nextState = action.Execute(new ActionContext()
             {
-                PreviousState = new MockStateDelta().MintAsset(context, _sender, Currencies.Mead * 1),
+                PreviousState = new MockWorld(previousState),
                 Signer = default,
                 Rehearsal = true,
                 BlockIndex = 1,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.Equal(
                 ImmutableHashSet.Create(
@@ -279,8 +280,8 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InvalidTransferCurrencyException()
         {
             var crystal = CrystalCalculator.CRYSTAL;
-            var prevState = new MockStateDelta(
-                MockState.Empty
+            var prevState = new MockAccount(
+                MockAccountState.Empty
                     .SetState(_recipient.Derive(ActivationKey.DeriveKey), true.Serialize())
                     .SetBalance(_sender, crystal * 1000)
                     .SetBalance(_sender, Currencies.Mead * 1));
@@ -291,7 +292,7 @@ namespace Lib9c.Tests.Action
             );
             Assert.Throws<InvalidTransferCurrencyException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = prevState,
+                PreviousState = new MockWorld(prevState),
                 Signer = _sender,
                 Rehearsal = false,
                 BlockIndex = TransferAsset.CrystalTransferringRestrictionStartIndex,

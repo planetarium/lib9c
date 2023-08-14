@@ -1,11 +1,9 @@
 namespace Lib9c.Tests.Action
 {
     using Bencodex.Types;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
@@ -21,7 +19,7 @@ namespace Lib9c.Tests.Action
             Currency mead = Currencies.Mead;
             Address patron = new PrivateKey().ToAddress();
             var context = new ActionContext();
-            IAccountStateDelta states = new MockStateDelta().MintAsset(context, patron, 2 * mead);
+            IAccount states = new MockAccount().MintAsset(context, patron, 2 * mead);
             var address = new PrivateKey().ToAddress();
             var action = new RequestPledge
             {
@@ -35,8 +33,8 @@ namespace Lib9c.Tests.Action
             var nextState = action.Execute(new ActionContext
             {
                 Signer = patron,
-                PreviousState = states,
-            });
+                PreviousState = new MockWorld(states),
+            }).GetAccount(ReservedAddresses.LegacyAccount);
             var contract = Assert.IsType<List>(nextState.GetState(address.GetPledgeAddress()));
 
             Assert.Equal(patron, contract[0].ToAddress());
@@ -52,7 +50,7 @@ namespace Lib9c.Tests.Action
             Address patron = new PrivateKey().ToAddress();
             var address = new PrivateKey().ToAddress();
             Address contractAddress = address.GetPledgeAddress();
-            IAccountStateDelta states = new MockStateDelta().SetState(contractAddress, List.Empty);
+            IAccount states = new MockAccount().SetState(contractAddress, List.Empty);
             var action = new RequestPledge
             {
                 AgentAddress = address,
@@ -62,7 +60,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<AlreadyContractedException>(() => action.Execute(new ActionContext
             {
                 Signer = patron,
-                PreviousState = states,
+                PreviousState = new MockWorld(states),
             }));
         }
     }

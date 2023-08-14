@@ -36,7 +36,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _rankingMapAddress;
 
         private readonly WeeklyArenaState _weeklyArenaState;
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
         private readonly IRandom _random;
         private readonly Currency _currency;
 
@@ -72,7 +72,7 @@ namespace Lib9c.Tests.Action
 
             _weeklyArenaState = new WeeklyArenaState(0);
 
-            _initialState = new MockStateDelta()
+            _initialState = new MockAccount()
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetState(_agentAddress, agentState.SerializeV2())
                 .SetState(_avatarAddress, _avatarState.SerializeV2())
@@ -147,10 +147,10 @@ namespace Lib9c.Tests.Action
             {
                 var nextState = action.Execute(new ActionContext
                 {
-                    PreviousState = states,
+                    PreviousState = new MockWorld(states),
                     Signer = _agentAddress,
                     Random = _random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
 
                 Assert.Equal(
                     nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL),
@@ -162,7 +162,7 @@ namespace Lib9c.Tests.Action
                 {
                     action.Execute(new ActionContext
                     {
-                        PreviousState = states,
+                        PreviousState = new MockWorld(states),
                         Signer = _agentAddress,
                         Random = _random,
                     });
@@ -217,10 +217,10 @@ namespace Lib9c.Tests.Action
                 };
                 var nextState = action.Execute(new ActionContext
                 {
-                    PreviousState = states,
+                    PreviousState = new MockWorld(states),
                     Signer = _agentAddress,
                     Random = _random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
                 var newGachaState = new CrystalRandomSkillState(
                     gachaStateAddress,
                     (List)nextState.GetState(gachaStateAddress));

@@ -34,7 +34,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatar2Address;
         private readonly IRandom _random;
         private readonly Currency _currency;
-        private IAccountStateDelta _state;
+        private IAccount _state;
 
         public JoinArena3Test(ITestOutputHelper outputHelper)
         {
@@ -47,7 +47,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _state = new MockStateDelta();
+            _state = new MockAccount();
 
             _signer = new PrivateKey().ToAddress();
             _avatarAddress = _signer.Derive("avatar");
@@ -223,12 +223,12 @@ namespace Lib9c.Tests.Action
 
             state = action.Execute(new ActionContext
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signer,
                 Random = _random,
                 Rehearsal = false,
                 BlockIndex = blockIndex,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             // ArenaParticipants
             var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(championshipId, round);
@@ -301,7 +301,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signer,
                 Random = new TestRandom(),
             }));
@@ -327,7 +327,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<RoundNotFoundException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signer,
                 Random = new TestRandom(),
                 BlockIndex = 1,
@@ -356,7 +356,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<NotEnoughMedalException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signer,
                 Random = new TestRandom(),
                 BlockIndex = 100,
@@ -384,7 +384,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<NotEnoughFungibleAssetValueException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signer,
                 Random = new TestRandom(),
                 BlockIndex = blockIndex,
@@ -410,16 +410,16 @@ namespace Lib9c.Tests.Action
 
             state = action.Execute(new ActionContext
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signer,
                 Random = _random,
                 Rehearsal = false,
                 BlockIndex = 1,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.Throws<ArenaScoreAlreadyContainsException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signer,
                 Random = new TestRandom(),
                 BlockIndex = 2,
@@ -452,7 +452,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<ArenaScoreAlreadyContainsException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signer,
                 Random = new TestRandom(),
                 BlockIndex = 1,
@@ -485,7 +485,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<ArenaInformationAlreadyContainsException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signer,
                 Random = new TestRandom(),
                 BlockIndex = 1,
@@ -507,7 +507,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<NotEnoughClearedStageLevelException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = _state,
+                PreviousState = new MockWorld(_state),
                 Signer = _signer2,
                 Random = new TestRandom(),
             }));
@@ -544,10 +544,10 @@ namespace Lib9c.Tests.Action
             state = unlockRuneSlot.Execute(new ActionContext
             {
                 BlockIndex = 1,
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signer,
                 Random = new TestRandom(),
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var action = new JoinArena()
             {
@@ -565,7 +565,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws(exception, () => action.Execute(new ActionContext
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signer,
                 Random = new TestRandom(),
             }));

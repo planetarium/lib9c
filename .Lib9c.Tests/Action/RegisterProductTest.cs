@@ -32,7 +32,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _avatarState;
         private readonly TableSheets _tableSheets;
         private readonly GameConfigState _gameConfigState;
-        private IAccountStateDelta _initialState;
+        private IAccount _initialState;
 
         public RegisterProductTest()
         {
@@ -56,7 +56,7 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses[0] = AvatarAddress;
 
-            _initialState = new MockStateDelta()
+            _initialState = new MockAccount()
                 .SetState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize())
                 .SetState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
                 .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
@@ -244,10 +244,10 @@ namespace Lib9c.Tests.Action
             var nextState = action.Execute(new ActionContext
             {
                 BlockIndex = 1L,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
                 Signer = _agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var nextAvatarState = nextState.GetAvatarStateV2(AvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
@@ -297,7 +297,7 @@ namespace Lib9c.Tests.Action
                     };
                     Assert.Throws(validateMember.Exc, () => action.Execute(new ActionContext
                     {
-                        PreviousState = _initialState,
+                        PreviousState = new MockWorld(_initialState),
                         Random = new TestRandom(),
                         Signer = _agentAddress,
                     }));
@@ -371,7 +371,7 @@ namespace Lib9c.Tests.Action
                 Signer = _agentAddress,
                 BlockIndex = blockIndex,
                 Random = new TestRandom(),
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
             }));
         }
 

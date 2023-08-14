@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _buyerAvatarState;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly Guid _orderId;
-        private IAccountStateDelta _initialState;
+        private IAccount _initialState;
 
         public BuyProductTest(ITestOutputHelper outputHelper)
         {
@@ -47,7 +47,7 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new MockStateDelta();
+            _initialState = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -305,7 +305,7 @@ namespace Lib9c.Tests.Action
                     };
                     Assert.Throws(validateMember.Exc, () => action.Execute(new ActionContext
                     {
-                        PreviousState = previousState,
+                        PreviousState = new MockWorld(previousState),
                         Random = new TestRandom(),
                         Signer = BuyerAgentAddress,
                     }));

@@ -98,7 +98,7 @@ namespace Lib9c.Tests.TestHelper
             var sheets = TableSheetsImporter.ImportSheets();
             var weeklyArenaAddress = WeeklyArenaState.DeriveAddress(0);
             var context = new ActionContext();
-            var initialState = new Tests.Action.MockStateDelta()
+            var initialState = new Tests.Action.MockAccount()
                 .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
                 .SetState(
                     Addresses.GoldDistribution,
@@ -156,7 +156,7 @@ namespace Lib9c.Tests.TestHelper
             var nextState = action.Execute(new ActionContext()
             {
                 BlockIndex = 0,
-                PreviousState = initialState,
+                PreviousState = new MockWorld(initialState),
                 Random = new TestRandom(),
                 Rehearsal = false,
             });

@@ -15,7 +15,7 @@ namespace Lib9c.Tests.Action
 
     public class PatchTableSheetTest
     {
-        private IAccountStateDelta _initialState;
+        private IAccount _initialState;
 
         public PatchTableSheetTest(ITestOutputHelper outputHelper)
         {
@@ -24,12 +24,13 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockStateDelta();
+            _initialState = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = _initialState.SetState(
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
         }
 
@@ -49,14 +50,15 @@ namespace Lib9c.Tests.Action
                 TableName = nameof(WorldSheet),
                 TableCsv = worldSheetCsvColumnLine,
             };
-            var nextState = patchTableSheetAction.Execute(new ActionContext
+            var nextWorld = patchTableSheetAction.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Rehearsal = false,
             });
 
-            var nextWorldSheetCsv = nextState.GetSheetCsv<WorldSheet>();
+            var nextWorldSheetCsv = nextWorld.GetAccount(ReservedAddresses.LegacyAccount)
+                .GetSheetCsv<WorldSheet>();
             Assert.Single(nextWorldSheetCsv.Split('\n'));
 
             var nextWorldSheet = new WorldSheet();
@@ -68,14 +70,15 @@ namespace Lib9c.Tests.Action
                 TableName = nameof(WorldSheet),
                 TableCsv = worldSheetCsv,
             };
-            nextState = patchTableSheetAction.Execute(new ActionContext
+            nextWorld = patchTableSheetAction.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Rehearsal = false,
             });
 
-            nextWorldSheet = nextState.GetSheet<WorldSheet>();
+            nextWorldSheet = nextWorld.GetAccount(ReservedAddresses.LegacyAccount)
+                .GetSheet<WorldSheet>();
             Assert.Equal(worldSheetRowCount, nextWorldSheet.Count);
         }
 
@@ -85,10 +88,11 @@ namespace Lib9c.Tests.Action
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
             const string tableName = "TestTable";
-            var initStates = MockState.Empty
+            var initStates = MockAccountState.Empty
                 .SetState(AdminState.Address, adminState.Serialize())
                 .SetState(Addresses.TableSheet.Derive(tableName), Dictionary.Empty.Add(tableName, "Initial"));
-            var state = new MockStateDelta(initStates);
+            var account = new MockAccount(initStates);
+            var state = new MockWorld(account);
             var action = new PatchTableSheet()
             {
                 TableName = tableName,
@@ -128,10 +132,11 @@ namespace Lib9c.Tests.Action
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
             const string tableName = "TestTable";
-            var initStates = MockState.Empty
+            var initStates = MockAccountState.Empty
                 .SetState(AdminState.Address, adminState.Serialize())
                 .SetState(Addresses.TableSheet.Derive(tableName), Dictionary.Empty.Add(tableName, "Initial"));
-            var state = new MockStateDelta(initStates);
+            var account = new MockAccount(initStates);
+            var state = new MockWorld(account);
             var action = new PatchTableSheet()
             {
                 TableName = nameof(CostumeStatSheet),
@@ -146,7 +151,8 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            Assert.NotNull(nextState.GetSheet<CostumeStatSheet>());
+            Assert.NotNull(
+                nextState.GetAccount(ReservedAddresses.LegacyAccount).GetSheet<CostumeStatSheet>());
         }
     }
 }

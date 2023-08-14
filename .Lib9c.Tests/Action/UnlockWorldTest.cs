@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
 
         public UnlockWorldTest()
         {
@@ -50,7 +50,7 @@ namespace Lib9c.Tests.Action
 
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new MockStateDelta()
+            _initialState = new MockAccount()
                 .SetState(Addresses.GetSheetAddress<WorldUnlockSheet>(), _tableSheets.WorldUnlockSheet.Serialize())
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize());
         }
@@ -158,13 +158,13 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                IAccountStateDelta nextState = action.Execute(new ActionContext
+                IAccount nextState = action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     BlockIndex = 1,
                     Random = _random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
 
                 Assert.True(nextState.TryGetState(unlockedWorldIdsAddress, out List rawIds));
 
@@ -178,7 +178,7 @@ namespace Lib9c.Tests.Action
             {
                 Assert.Throws(exc, () => action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     BlockIndex = 1,
                     Random = _random,

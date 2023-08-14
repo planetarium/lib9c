@@ -39,7 +39,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatar4Address;
         private readonly Currency _crystal;
         private readonly Currency _ncg;
-        private IAccountStateDelta _initialStates;
+        private IAccount _initialStates;
 
         public BattleArena12Test(ITestOutputHelper outputHelper)
         {
@@ -48,7 +48,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialStates = new MockStateDelta();
+            _initialStates = new MockAccount();
 
             _sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in _sheets)
@@ -211,7 +211,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext
             {
-                PreviousState = _initialStates,
+                PreviousState = new MockWorld(_initialStates),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -234,7 +234,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
             {
-                PreviousState = _initialStates,
+                PreviousState = new MockWorld(_initialStates),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -258,7 +258,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<NotEnoughClearedStageLevelException>(() =>
                 action.Execute(new ActionContext
                 {
-                    PreviousState = _initialStates,
+                    PreviousState = new MockWorld(_initialStates),
                     Signer = _agent4Address,
                     Random = new TestRandom(),
                     BlockIndex = 1,
@@ -282,7 +282,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext
             {
-                PreviousState = _initialStates,
+                PreviousState = new MockWorld(_initialStates),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -305,7 +305,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<ThisArenaIsClosedException>(() => action.Execute(new ActionContext
             {
-                PreviousState = _initialStates,
+                PreviousState = new MockWorld(_initialStates),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
                 BlockIndex = 4480001,
@@ -329,7 +329,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<ArenaParticipantsNotFoundException>(() => action.Execute(new ActionContext
             {
-                PreviousState = _initialStates,
+                PreviousState = new MockWorld(_initialStates),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
                 BlockIndex = 1,
@@ -344,8 +344,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 1;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            IAccount previousAccount = _initialStates;
+            Assert.True(previousAccount.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
                 out var row));
 
@@ -356,10 +356,10 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = excludeMe
+            previousAccount = excludeMe
                 ? JoinArena(
                     context,
-                    previousStates,
+                    previousAccount,
                     _agent2Address,
                     _avatar2Address,
                     roundData.StartBlockIndex,
@@ -368,7 +368,7 @@ namespace Lib9c.Tests.Action
                     random)
                 : JoinArena(
                     context,
-                    previousStates,
+                    previousAccount,
                     _agent1Address,
                     _avatar1Address,
                     roundData.StartBlockIndex,
@@ -391,7 +391,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<AddressNotFoundInArenaParticipantsException>(() =>
                 action.Execute(new ActionContext
                 {
-                    PreviousState = previousStates,
+                    PreviousState = new MockWorld(previousAccount),
                     Signer = _agent1Address,
                     Random = new TestRandom(),
                     BlockIndex = 1,
@@ -406,8 +406,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousAccount = _initialStates;
+            Assert.True(previousAccount.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
                 out var row));
 
@@ -418,18 +418,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -442,9 +442,9 @@ namespace Lib9c.Tests.Action
                     ? _avatar1Address
                     : _avatar2Address, roundData.ChampionshipId,
                 roundData.Round);
-            previousStates.TryGetArenaScore(arenaScoreAdr, out var arenaScore);
+            previousAccount.TryGetArenaScore(arenaScoreAdr, out var arenaScore);
             arenaScore.AddScore(900);
-            previousStates = previousStates.SetState(arenaScoreAdr, arenaScore.Serialize());
+            previousAccount = previousAccount.SetState(arenaScoreAdr, arenaScore.Serialize());
 
             var action = new BattleArena
             {
@@ -462,7 +462,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ValidateScoreDifferenceException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = new MockWorld(previousAccount),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -474,8 +474,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousAccount = _initialStates;
+            Assert.True(previousAccount.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
                 out var row));
 
@@ -486,18 +486,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -507,13 +507,13 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!previousAccount.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
 
             beforeInfo.UseTicket(beforeInfo.Ticket);
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousAccount = previousAccount.SetState(arenaInfoAdr, beforeInfo.Serialize());
 
             var action = new BattleArena
             {
@@ -531,7 +531,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<InsufficientBalanceException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = new MockWorld(previousAccount),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -543,8 +543,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousAccount = _initialStates;
+            Assert.True(previousAccount.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
                 out var row));
 
@@ -555,18 +555,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -576,7 +576,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!previousAccount.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -597,7 +597,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ExceedPlayCountException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = new MockWorld(previousAccount),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -609,8 +609,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousAccount = _initialStates;
+            Assert.True(previousAccount.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
                 out var row));
 
@@ -621,18 +621,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -642,7 +642,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!previousAccount.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -654,12 +654,12 @@ namespace Lib9c.Tests.Action
                 beforeInfo.BuyTicket(roundData.MaxPurchaseCount);
             }
 
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousAccount = previousAccount.SetState(arenaInfoAdr, beforeInfo.Serialize());
             var price = ArenaHelper.GetTicketPrice(
                 roundData,
                 beforeInfo,
-                previousStates.GetGoldCurrency());
-            previousStates = previousStates.MintAsset(context, _agent1Address, price);
+                previousAccount.GetGoldCurrency());
+            previousAccount = previousAccount.MintAsset(context, _agent1Address, price);
 
             var action = new BattleArena
             {
@@ -677,7 +677,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ExceedTicketPurchaseLimitException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = new MockWorld(previousAccount),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -689,8 +689,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousAccount = _initialStates;
+            Assert.True(previousAccount.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
                 out var row));
 
@@ -701,18 +701,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -722,7 +722,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!previousAccount.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -735,7 +735,7 @@ namespace Lib9c.Tests.Action
             }
 
             var purchasedCountDuringInterval = arenaInfoAdr.Derive(BattleArena.PurchasedCountKey);
-            previousStates = previousStates
+            previousAccount = previousAccount
                 .SetState(arenaInfoAdr, beforeInfo.Serialize())
                 .SetState(
                     purchasedCountDuringInterval,
@@ -743,8 +743,8 @@ namespace Lib9c.Tests.Action
             var price = ArenaHelper.GetTicketPrice(
                 roundData,
                 beforeInfo,
-                previousStates.GetGoldCurrency());
-            previousStates = previousStates.MintAsset(context, _agent1Address, price);
+                previousAccount.GetGoldCurrency());
+            previousAccount = previousAccount.MintAsset(context, _agent1Address, price);
 
             var action = new BattleArena
             {
@@ -762,7 +762,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ExceedTicketPurchaseLimitDuringIntervalException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = new MockWorld(previousAccount),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -774,8 +774,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousAccount = _initialStates;
+            Assert.True(previousAccount.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
                 out var row));
 
@@ -786,18 +786,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -807,21 +807,21 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!previousAccount.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
 
             beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
             var max = roundData.MaxPurchaseCountWithInterval;
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousAccount = previousAccount.SetState(arenaInfoAdr, beforeInfo.Serialize());
             for (var i = 0; i < max; i++)
             {
                 var price = ArenaHelper.GetTicketPrice(
                     roundData,
                     beforeInfo,
-                    previousStates.GetGoldCurrency());
-                previousStates = previousStates.MintAsset(context, _agent1Address, price);
+                    previousAccount.GetGoldCurrency());
+                previousAccount = previousAccount.MintAsset(context, _agent1Address, price);
                 beforeInfo.BuyTicket(roundData.MaxPurchaseCount);
             }
 
@@ -842,7 +842,7 @@ namespace Lib9c.Tests.Action
             var nextStates = action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = new MockWorld(previousAccount),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             });
@@ -869,7 +869,7 @@ namespace Lib9c.Tests.Action
             int randomSeed = 3;
 
             var context = new ActionContext();
-            var previousStates = _initialStates;
+            var previousAccount = _initialStates;
             Assert.True(_initialStates.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
                 out var row));
@@ -881,18 +881,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom(randomSeed);
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -902,13 +902,13 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!previousAccount.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
 
-            var ncgCurrency = previousStates.GetGoldCurrency();
-            previousStates = previousStates.MintAsset(context, _agent1Address, 99999 * ncgCurrency);
+            var ncgCurrency = previousAccount.GetGoldCurrency();
+            previousAccount = previousAccount.MintAsset(context, _agent1Address, 99999 * ncgCurrency);
 
             var unlockRuneSlot = new UnlockRuneSlot()
             {
@@ -916,13 +916,13 @@ namespace Lib9c.Tests.Action
                 SlotIndex = 1,
             };
 
-            previousStates = unlockRuneSlot.Execute(new ActionContext
+            previousAccount = unlockRuneSlot.Execute(new ActionContext
             {
                 BlockIndex = 1,
-                PreviousState = previousStates,
+                PreviousState = new MockWorld(previousAccount),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var action = new BattleArena
             {
@@ -948,17 +948,17 @@ namespace Lib9c.Tests.Action
                 _avatar2Address,
                 championshipId,
                 round);
-            if (!previousStates.TryGetArenaScore(myScoreAdr, out var beforeMyScore))
+            if (!previousAccount.TryGetArenaScore(myScoreAdr, out var beforeMyScore))
             {
                 throw new ArenaScoreNotFoundException($"myScoreAdr : {myScoreAdr}");
             }
 
-            if (!previousStates.TryGetArenaScore(enemyScoreAdr, out var beforeEnemyScore))
+            if (!previousAccount.TryGetArenaScore(enemyScoreAdr, out var beforeEnemyScore))
             {
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            Assert.True(previousStates.TryGetAvatarStateV2(
+            Assert.True(previousAccount.TryGetAvatarStateV2(
                 _agent1Address,
                 _avatar1Address,
                 out var previousMyAvatarState,
@@ -966,13 +966,13 @@ namespace Lib9c.Tests.Action
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
-            previousStates = previousStates.SetState(GameConfigState.Address, gameConfigState.Serialize());
+            previousAccount = previousAccount.SetState(GameConfigState.Address, gameConfigState.Serialize());
 
             var blockIndex = roundData.StartBlockIndex + nextBlockIndex;
 
             Assert.Throws(exception, () => action.Execute(new ActionContext
             {
-                PreviousState = previousStates,
+                PreviousState = new MockWorld(previousAccount),
                 Signer = _agent1Address,
                 Random = random,
                 Rehearsal = false,
@@ -986,8 +986,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 1;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousAccount = _initialStates;
+            Assert.True(previousAccount.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
                 out var row));
 
@@ -1003,18 +1003,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -1024,7 +1024,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!previousAccount.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -1032,7 +1032,7 @@ namespace Lib9c.Tests.Action
             beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
 
             var purchasedCountDuringInterval = arenaInfoAdr.Derive(BattleArena.PurchasedCountKey);
-            previousStates = previousStates
+            previousAccount = previousAccount
                 .SetState(arenaInfoAdr, beforeInfo.Serialize())
                 .SetState(
                     purchasedCountDuringInterval,
@@ -1040,8 +1040,8 @@ namespace Lib9c.Tests.Action
             var price = ArenaHelper.GetTicketPrice(
                 roundData,
                 beforeInfo,
-                previousStates.GetGoldCurrency());
-            previousStates = previousStates.MintAsset(context, _agent1Address, price);
+                previousAccount.GetGoldCurrency());
+            previousAccount = previousAccount.MintAsset(context, _agent1Address, price);
 
             var action = new BattleArena
             {
@@ -1059,7 +1059,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<TicketPurchaseLimitExceedException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = new MockWorld(previousAccount),
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -1106,7 +1106,7 @@ namespace Lib9c.Tests.Action
             Address enemyAvatarAddress)
         {
             var context = new ActionContext();
-            var previousStates = _initialStates;
+            IAccount previousAccount = _initialStates;
             Assert.True(_initialStates.GetSheet<ArenaSheet>().TryGetValue(
                 championshipId,
                 out var row));
@@ -1118,18 +1118,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom(randomSeed);
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 myAgentAddress,
                 myAvatarAddress,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousAccount = JoinArena(
                 context,
-                previousStates,
+                previousAccount,
                 enemyAgentAddress,
                 enemyAvatarAddress,
                 roundData.StartBlockIndex,
@@ -1139,7 +1139,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(myAvatarAddress, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!previousAccount.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -1147,14 +1147,14 @@ namespace Lib9c.Tests.Action
             if (isPurchased)
             {
                 beforeInfo.UseTicket(beforeInfo.Ticket);
-                previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+                previousAccount = previousAccount.SetState(arenaInfoAdr, beforeInfo.Serialize());
                 for (var i = 0; i < ticket; i++)
                 {
                     var price = ArenaHelper.GetTicketPrice(
                         roundData,
                         beforeInfo,
-                        previousStates.GetGoldCurrency());
-                    previousStates = previousStates.MintAsset(context, myAgentAddress, price);
+                        previousAccount.GetGoldCurrency());
+                    previousAccount = previousAccount.MintAsset(context, myAgentAddress, price);
                     beforeInfo.BuyTicket(roundData.MaxPurchaseCount);
                 }
             }
@@ -1179,17 +1179,17 @@ namespace Lib9c.Tests.Action
                 enemyAvatarAddress,
                 championshipId,
                 round);
-            if (!previousStates.TryGetArenaScore(myScoreAdr, out var beforeMyScore))
+            if (!previousAccount.TryGetArenaScore(myScoreAdr, out var beforeMyScore))
             {
                 throw new ArenaScoreNotFoundException($"myScoreAdr : {myScoreAdr}");
             }
 
-            if (!previousStates.TryGetArenaScore(enemyScoreAdr, out var beforeEnemyScore))
+            if (!previousAccount.TryGetArenaScore(enemyScoreAdr, out var beforeEnemyScore))
             {
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            Assert.True(previousStates.TryGetAvatarStateV2(
+            Assert.True(previousAccount.TryGetAvatarStateV2(
                 myAgentAddress,
                 myAvatarAddress,
                 out var previousMyAvatarState,
@@ -1197,31 +1197,34 @@ namespace Lib9c.Tests.Action
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
-            previousStates = previousStates.SetState(GameConfigState.Address, gameConfigState.Serialize());
+            previousAccount = previousAccount.SetState(
+                GameConfigState.Address,
+                gameConfigState.Serialize());
 
             var blockIndex = roundData.StartBlockIndex < arenaInterval
                 ? roundData.StartBlockIndex
                 : roundData.StartBlockIndex + arenaInterval;
-            var nextStates = action.Execute(new ActionContext
+            var nextWorld = action.Execute(new ActionContext
             {
-                PreviousState = previousStates,
+                PreviousState = new MockWorld(previousAccount),
                 Signer = myAgentAddress,
                 Random = random,
                 Rehearsal = false,
                 BlockIndex = blockIndex,
             });
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
-            if (!nextStates.TryGetArenaScore(myScoreAdr, out var myAfterScore))
+            if (!nextAccount.TryGetArenaScore(myScoreAdr, out var myAfterScore))
             {
                 throw new ArenaScoreNotFoundException($"myScoreAdr : {myScoreAdr}");
             }
 
-            if (!nextStates.TryGetArenaScore(enemyScoreAdr, out var enemyAfterScore))
+            if (!nextAccount.TryGetArenaScore(enemyScoreAdr, out var enemyAfterScore))
             {
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            if (!nextStates.TryGetArenaInformation(arenaInfoAdr, out var afterInfo))
+            if (!nextAccount.TryGetArenaInformation(arenaInfoAdr, out var afterInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -1252,9 +1255,9 @@ namespace Lib9c.Tests.Action
             Assert.Equal(beforeInfo.Ticket - useTicket, afterInfo.Ticket);
             Assert.Equal(ticket, afterInfo.Win + afterInfo.Lose);
 
-            var balance = nextStates.GetBalance(
+            var balance = nextAccount.GetBalance(
                 myAgentAddress,
-                nextStates.GetGoldCurrency());
+                nextAccount.GetGoldCurrency());
             if (isPurchased)
             {
                 Assert.Equal(ticket, afterInfo.PurchasedTicketCount);
@@ -1262,7 +1265,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0, balance.RawValue);
 
-            var avatarState = nextStates.GetAvatarStateV2(myAvatarAddress);
+            var avatarState = nextAccount.GetAvatarStateV2(myAvatarAddress);
             var medalCount = 0;
             if (roundData.ArenaType != ArenaType.OffSeason)
             {
@@ -1285,9 +1288,9 @@ namespace Lib9c.Tests.Action
             Assert.InRange(materialCount, 0, high);
         }
 
-        private IAccountStateDelta JoinArena(
+        private IAccount JoinArena(
             IActionContext context,
-            IAccountStateDelta states,
+            IAccount state,
             Address signer,
             Address avatarAddress,
             long blockIndex,
@@ -1296,7 +1299,7 @@ namespace Lib9c.Tests.Action
             IRandom random)
         {
             var preCurrency = 1000 * _crystal;
-            states = states.MintAsset(context, signer, preCurrency);
+            state = state.MintAsset(context, signer, preCurrency);
 
             var action = new JoinArena
             {
@@ -1307,15 +1310,14 @@ namespace Lib9c.Tests.Action
                 avatarAddress = avatarAddress,
             };
 
-            states = action.Execute(new ActionContext
+            return action.Execute(new ActionContext
             {
-                PreviousState = states,
+                PreviousState = new MockWorld(state),
                 Signer = signer,
                 Random = random,
                 Rehearsal = false,
                 BlockIndex = blockIndex,
-            });
-            return states;
+            }).GetAccount(ReservedAddresses.LegacyAccount);
         }
 
         private GameConfigState SetArenaInterval(int interval)

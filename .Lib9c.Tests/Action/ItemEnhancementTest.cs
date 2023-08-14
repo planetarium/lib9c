@@ -28,7 +28,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private IAccountStateDelta _initialState;
+        private IAccount _initialState;
 
         public ItemEnhancementTest()
         {
@@ -58,7 +58,7 @@ namespace Lib9c.Tests.Action
             var slotAddress = _avatarAddress.Derive(string.Format(CultureInfo.InvariantCulture, CombinationSlotState.DeriveFormat, 0));
 
             var context = new ActionContext();
-            _initialState = new MockStateDelta()
+            _initialState = new MockAccount()
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(_avatarAddress, _avatarState.Serialize())
                 .SetState(slotAddress, new CombinationSlotState(slotAddress, 0).Serialize())
@@ -176,14 +176,15 @@ namespace Lib9c.Tests.Action
                 slotIndex = 0,
             };
 
-            var nextState = action.Execute(new ActionContext()
+            var nextWorld = action.Execute(new ActionContext()
             {
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Signer = _agentAddress,
                 BlockIndex = 1,
                 Random = new TestRandom(randomSeed),
             });
 
+            var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
             var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
             var resultEquipment = (Equipment)slotState.Result.itemUsable;
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);

@@ -28,7 +28,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _avatarState;
         private readonly Currency _crystalCurrency;
         private readonly Currency _ncgCurrency;
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
 
         public GrindingTest()
         {
@@ -61,7 +61,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(_ncgCurrency);
 
-            _initialState = new MockStateDelta()
+            _initialState = new MockAccount()
                 .SetState(
                     Addresses.GetSheetAddress<CrystalMonsterCollectionMultiplierSheet>(),
                     _tableSheets.CrystalMonsterCollectionMultiplierSheet.Serialize())
@@ -216,20 +216,22 @@ namespace Lib9c.Tests.Action
                 ChargeAp = chargeAp,
             };
 
+            var world = new MockWorld(state);
             if (exc is null)
             {
-                var nextState = action.Execute(new ActionContext
+                var nextWorld = action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = world,
                     Signer = _agentAddress,
                     BlockIndex = 1,
                     Random = _random,
                 });
+                var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
-                var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+                var nextAvatarState = nextAccount.GetAvatarStateV2(_avatarAddress);
                 FungibleAssetValue asset = totalAsset * _crystalCurrency;
 
-                Assert.Equal(asset, nextState.GetBalance(_agentAddress, _crystalCurrency));
+                Assert.Equal(asset, nextAccount.GetBalance(_agentAddress, _crystalCurrency));
                 Assert.False(nextAvatarState.inventory.HasNonFungibleItem(default));
                 Assert.Equal(115, nextAvatarState.actionPoint);
 
@@ -246,7 +248,7 @@ namespace Lib9c.Tests.Action
             {
                 Assert.Throws(exc, () => action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = world,
                     Signer = _agentAddress,
                     BlockIndex = 1,
                     Random = _random,

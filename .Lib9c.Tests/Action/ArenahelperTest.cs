@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Action
 
     public class ArenaHelperTest
     {
-        private IAccountStateDelta _state;
+        private IAccount _state;
         private Currency _crystal;
         private Address _agent1Address;
         private Address _avatar1Address;
@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _state = new MockStateDelta();
+            _state = new MockAccount();
 
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);

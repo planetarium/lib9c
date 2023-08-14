@@ -2,16 +2,15 @@ namespace Lib9c.Tests.Util
 {
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Quest;
     using Nekoyume.TableData;
 
     public static class QuestUtil
     {
-        public static (IAccountStateDelta, IAccountStateDelta) DisableQuestList(
-            IAccountStateDelta stateV1,
-            IAccountStateDelta stateV2,
+        public static (IAccount, IAccount) DisableQuestList(
+            IAccount stateV1,
+            IAccount stateV2,
             Address avatarAddress
         )
         {

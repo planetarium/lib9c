@@ -2,7 +2,6 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using Bencodex.Types;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume.Action;
@@ -21,7 +20,7 @@ namespace Lib9c.Tests.Action
             var patron = new PrivateKey().ToAddress();
             var agent = new PrivateKey().ToAddress();
             var context = new ActionContext();
-            IAccountStateDelta states = new MockStateDelta()
+            IAccount states = new MockAccount()
                 .SetState(agent.GetPledgeAddress(), List.Empty.Add(patron.Serialize()).Add(true.Serialize()));
             var mead = Currencies.Mead;
             if (balance > 0)
@@ -36,8 +35,8 @@ namespace Lib9c.Tests.Action
             var nextState = action.Execute(new ActionContext
             {
                 Signer = patron,
-                PreviousState = states,
-            });
+                PreviousState = new MockWorld(states),
+            }).GetAccount(ReservedAddresses.LegacyAccount);
             Assert.Equal(Null.Value, nextState.GetState(agent.GetPledgeAddress()));
             Assert.Equal(mead * 0, nextState.GetBalance(agent, mead));
             if (balance > 0)
@@ -54,7 +53,7 @@ namespace Lib9c.Tests.Action
             Address patron = new PrivateKey().ToAddress();
             Address agent = new PrivateKey().ToAddress();
             List contract = List.Empty.Add(patron.Serialize()).Add(true.Serialize());
-            IAccountStateDelta states = new MockStateDelta().SetState(agent.GetPledgeAddress(), contract);
+            IAccount states = new MockAccount().SetState(agent.GetPledgeAddress(), contract);
 
             var action = new EndPledge
             {
@@ -64,7 +63,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws(exc, () => action.Execute(new ActionContext
             {
                 Signer = invalidSigner ? new PrivateKey().ToAddress() : patron,
-                PreviousState = states,
+                PreviousState = new MockWorld(states),
             }));
         }
     }

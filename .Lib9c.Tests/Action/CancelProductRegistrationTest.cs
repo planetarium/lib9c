@@ -3,7 +3,6 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using Bencodex.Types;
-    using Lib9c.Model.Order;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -21,7 +20,7 @@ namespace Lib9c.Tests.Action
 
     public class CancelProductRegistrationTest
     {
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly GoldCurrencyState _goldCurrencyState;
@@ -35,7 +34,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockStateDelta();
+            _initialState = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -120,7 +119,7 @@ namespace Lib9c.Tests.Action
             {
                 Signer = _agentAddress,
                 BlockIndex = 1L,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
             };
             Assert.Throws<InvalidAddressException>(() => action.Execute(actionContext));
@@ -145,20 +144,21 @@ namespace Lib9c.Tests.Action
                     },
                 },
             };
-            var nexState = registerProduct.Execute(new ActionContext
+            var nextWorld = registerProduct.Execute(new ActionContext
             {
-                PreviousState = prevState,
+                PreviousState = new MockWorld(prevState),
                 BlockIndex = 1L,
                 Signer = _agentAddress,
                 Random = new TestRandom(),
             });
+            var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
             Assert.Equal(
                 0 * RuneHelper.StakeRune,
-                nexState.GetBalance(_avatarAddress, RuneHelper.StakeRune)
+                nextState.GetBalance(_avatarAddress, RuneHelper.StakeRune)
             );
             var productsState =
                 new ProductsState(
-                    (List)nexState.GetState(ProductsState.DeriveAddress(_avatarAddress)));
+                    (List)nextState.GetState(ProductsState.DeriveAddress(_avatarAddress)));
             var productId = Assert.Single(productsState.ProductIds);
 
             var action = new CancelProductRegistration
@@ -187,7 +187,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<ProductNotFoundException>(() => action.Execute(new ActionContext
             {
-                PreviousState = nexState,
+                PreviousState = new MockWorld(nextState),
                 BlockIndex = 2L,
                 Signer = _agentAddress,
                 Random = new TestRandom(),

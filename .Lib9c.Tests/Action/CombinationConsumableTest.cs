@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly IRandom _random;
         private readonly TableSheets _tableSheets;
-        private IAccountStateDelta _initialState;
+        private IAccount _initialState;
 
         public CombinationConsumableTest()
         {
@@ -58,7 +58,7 @@ namespace Lib9c.Tests.Action
             var gold = new GoldCurrencyState(Currency.Legacy("NCG", 2, null));
 #pragma warning restore CS0618
 
-            _initialState = new MockStateDelta()
+            _initialState = new MockAccount()
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(_avatarAddress, avatarState.Serialize())
                 .SetState(
@@ -100,7 +100,7 @@ namespace Lib9c.Tests.Action
                 _tableSheets.WorldSheet,
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
-            IAccountStateDelta previousState;
+            IAccount previousState;
             if (backward)
             {
                 previousState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
@@ -123,11 +123,11 @@ namespace Lib9c.Tests.Action
 
             var nextState = action.Execute(new ActionContext
             {
-                PreviousState = previousState,
+                PreviousState = new MockWorld(previousState),
                 Signer = _agentAddress,
                 BlockIndex = 1,
                 Random = _random,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
             Assert.NotNull(slotState.Result);

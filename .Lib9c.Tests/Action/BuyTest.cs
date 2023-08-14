@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly Guid _orderId;
-        private IAccountStateDelta _initialState;
+        private IAccount _initialState;
 
         public BuyTest(ITestOutputHelper outputHelper)
         {
@@ -47,7 +47,7 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new MockStateDelta();
+            _initialState = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -348,7 +348,7 @@ namespace Lib9c.Tests.Action
             var expectedState = buyAction.Execute(new ActionContext()
             {
                 BlockIndex = 100,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _buyerAgentAddress,
@@ -362,7 +362,7 @@ namespace Lib9c.Tests.Action
             var actualState = buyProductAction.Execute(new ActionContext
             {
                 BlockIndex = 100,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _buyerAgentAddress,
@@ -370,8 +370,9 @@ namespace Lib9c.Tests.Action
 
             Assert.Empty(buyAction.errors);
 
-            foreach (var nextState in new[] { expectedState, actualState })
+            foreach (var nextWorld in new[] { expectedState, actualState })
             {
+                var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
                 FungibleAssetValue totalTax = 0 * _goldCurrencyState.Currency;
                 FungibleAssetValue totalPrice = 0 * _goldCurrencyState.Currency;
                 Currency goldCurrencyState = nextState.GetGoldCurrency();
@@ -493,7 +494,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws(exc, () => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = _initialState,
+                    PreviousState = new MockWorld(_initialState),
                     Random = new TestRandom(),
                     Signer = _buyerAgentAddress,
                 })
@@ -620,13 +621,14 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = new[] { purchaseInfo },
             };
 
-            IAccountStateDelta nextState = action.Execute(new ActionContext()
+            IWorld nextWorld = action.Execute(new ActionContext()
             {
                 BlockIndex = blockIndex,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
                 Signer = _buyerAgentAddress,
             });
+            IAccount nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.Contains(
                 errorCodeMember.ErrorCode,
@@ -657,7 +659,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws(exc, () => buyProductAction.Execute(new ActionContext()
             {
                 BlockIndex = blockIndex,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
                 Signer = _buyerAgentAddress,
             }));
@@ -774,14 +776,15 @@ namespace Lib9c.Tests.Action
                 buyerAvatarAddress = _buyerAvatarAddress,
                 purchaseInfos = purchaseInfos,
             };
-            var nextState = buyAction.Execute(new ActionContext()
+            var nextWorld = buyAction.Execute(new ActionContext()
             {
                 BlockIndex = 100,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _buyerAgentAddress,
             });
+            var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
             AvatarState nextBuyerAvatarState = nextState.GetAvatarState(_buyerAvatarAddress);
 
@@ -851,7 +854,8 @@ namespace Lib9c.Tests.Action
         {
             var result = BlockChainHelper.MakeInitialState();
             var testbed = result.GetTestbed();
-            var nextState = result.GetState();
+            var nextWorld = result.GetState();
+            var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
             var data = TestbedHelper.LoadData<TestbedSell>("TestbedSell");
 
             Assert.Equal(testbed.Orders.Count(), testbed.result.ItemInfos.Count);
@@ -882,14 +886,16 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = purchaseInfos,
             };
 
-            nextState = buyAction.Execute(new ActionContext()
+            nextWorld = nextWorld.SetAccount(nextState);
+            nextWorld = buyAction.Execute(new ActionContext()
             {
                 BlockIndex = 100,
-                PreviousState = nextState,
+                PreviousState = nextWorld,
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = result.GetAgentState().address,
             });
+            nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
             var totalTax = 0 * _goldCurrencyState.Currency;
             var totalPrice = 0 * _goldCurrencyState.Currency;

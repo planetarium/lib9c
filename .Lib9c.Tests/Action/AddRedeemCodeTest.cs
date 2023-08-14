@@ -1,9 +1,8 @@
 namespace Lib9c.Tests.Action
 {
     using System.Collections.Immutable;
-    using Bencodex.Types;
+    using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
@@ -18,9 +17,9 @@ namespace Lib9c.Tests.Action
         {
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var initStates = MockState.Empty
+            var initStates = MockAccountState.Empty
                 .SetState(AdminState.Address, adminState.Serialize());
-            var state = new MockStateDelta(initStates);
+            var state = new MockAccount(initStates);
             var action = new AddRedeemCode
             {
                 redeemCsv = "New Value",
@@ -32,7 +31,7 @@ namespace Lib9c.Tests.Action
                     new ActionContext
                     {
                         BlockIndex = 101,
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = adminAddress,
                     }
                 );
@@ -45,7 +44,7 @@ namespace Lib9c.Tests.Action
                     new ActionContext
                     {
                         BlockIndex = 5,
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = new Address("019101FEec7ed4f918D396827E1277DEda1e20D4"),
                     }
                 );
@@ -66,14 +65,17 @@ namespace Lib9c.Tests.Action
                 redeemCsv = csv,
             };
 
+            var prevState = new MockAccount()
+                .SetState(Addresses.Admin, adminState.Serialize())
+                .SetState(
+                    Addresses.RedeemCode,
+                    new RedeemCodeState(new RedeemCodeListSheet()).Serialize());
             var nextState = action.Execute(new ActionContext
             {
                 Signer = adminAddress,
                 BlockIndex = 0,
-                PreviousState = new MockStateDelta()
-                    .SetState(Addresses.Admin, adminState.Serialize())
-                    .SetState(Addresses.RedeemCode, new RedeemCodeState(new RedeemCodeListSheet()).Serialize()),
-            });
+                PreviousState = new MockWorld(prevState),
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var sheet = new RedeemCodeListSheet();
             sheet.Set(csv);
@@ -92,7 +94,7 @@ namespace Lib9c.Tests.Action
             var sheet = new RedeemCodeListSheet();
             sheet.Set(csv);
 
-            var state = new MockStateDelta()
+            var state = new MockAccount()
                     .SetState(Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
 
             var action = new AddRedeemCode
@@ -103,7 +105,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<SheetRowValidateException>(() => action.Execute(new ActionContext
                 {
                     BlockIndex = 0,
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                 })
             );
         }
@@ -119,7 +121,7 @@ namespace Lib9c.Tests.Action
             var nextState = action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new MockStateDelta(),
+                PreviousState = new MockWorld(),
                 Rehearsal = true,
             });
 

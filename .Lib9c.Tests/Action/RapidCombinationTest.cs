@@ -24,7 +24,7 @@ namespace Lib9c.Tests.Action
 
     public class RapidCombinationTest
     {
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
 
         private readonly TableSheets _tableSheets;
 
@@ -33,7 +33,7 @@ namespace Lib9c.Tests.Action
 
         public RapidCombinationTest()
         {
-            _initialState = new MockStateDelta();
+            _initialState = new MockAccount();
 
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
@@ -140,10 +140,10 @@ namespace Lib9c.Tests.Action
 
             var nextState = action.Execute(new ActionContext
             {
-                PreviousState = tempState,
+                PreviousState = new MockWorld(tempState),
                 Signer = _agentAddress,
                 BlockIndex = 51,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
             var item = nextAvatarState.inventory.Equipments.First();
@@ -174,7 +174,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<CombinationSlotResultNullException>(() => action.Execute(new ActionContext
             {
-                PreviousState = tempState,
+                PreviousState = new MockWorld(tempState),
                 Signer = _agentAddress,
                 BlockIndex = 1,
             }));
@@ -228,7 +228,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<NotEnoughClearedStageLevelException>(() => action.Execute(new ActionContext
             {
-                PreviousState = tempState,
+                PreviousState = new MockWorld(tempState),
                 Signer = _agentAddress,
                 BlockIndex = 1,
             }));
@@ -284,7 +284,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<RequiredBlockIndexException>(() => action.Execute(new ActionContext
             {
-                PreviousState = tempState,
+                PreviousState = new MockWorld(tempState),
                 Signer = _agentAddress,
                 BlockIndex = contextBlockIndex,
             }));
@@ -360,7 +360,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<NotEnoughMaterialException>(() => action.Execute(new ActionContext
             {
-                PreviousState = tempState,
+                PreviousState = new MockWorld(tempState),
                 Signer = _agentAddress,
                 BlockIndex = 51,
             }));
@@ -386,7 +386,7 @@ namespace Lib9c.Tests.Action
                 slotAddress,
             };
 
-            var state = new MockStateDelta();
+            var state = new MockAccount();
 
             var action = new RapidCombination
             {
@@ -396,7 +396,7 @@ namespace Lib9c.Tests.Action
 
             var nextState = action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 BlockIndex = 0,
                 Rehearsal = true,
@@ -528,7 +528,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<AppraiseBlockNotReachedException>(() => action.Execute(new ActionContext
             {
-                PreviousState = tempState,
+                PreviousState = new MockWorld(tempState),
                 Signer = _agentAddress,
                 BlockIndex = 1,
             }));
@@ -675,7 +675,7 @@ namespace Lib9c.Tests.Action
 
             action.Execute(new ActionContext
             {
-                PreviousState = tempState,
+                PreviousState = new MockWorld(tempState),
                 Signer = _agentAddress,
                 BlockIndex = 51,
             });

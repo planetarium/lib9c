@@ -27,7 +27,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly Address _avatarAddr;
         private readonly Address _inventoryAddr;
         private readonly Address _worldInformationAddr;
-        private readonly IAccountStateDelta _initialStateV2;
+        private readonly IAccount _initialStateV2;
         private readonly TableSheets _tableSheets;
         private int? _petId;
 
@@ -127,11 +127,11 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 
             stateV2 = action.Execute(new ActionContext
             {
-                PreviousState = stateV2,
+                PreviousState = new MockWorld(stateV2),
                 Signer = _agentAddr,
                 BlockIndex = 0L,
                 Random = random,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             // TEST: All given crystals are used
             Assert.Equal(0 * crystal, stateV2.GetBalance(_agentAddr, crystal));

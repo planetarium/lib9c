@@ -57,7 +57,7 @@ namespace Libplanet.Extensions.RemoteBlockChainStates
             return new RemoteWorldState(_explorerEndpoint, offset).GetValidatorSet();
         }
 
-        public IWorld GetWorldState(BlockHash? offset)
+        public IWorldState GetWorldState(BlockHash? offset)
         {
             return new RemoteWorldState(_explorerEndpoint, offset);
         }

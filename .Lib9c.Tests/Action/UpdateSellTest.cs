@@ -30,7 +30,7 @@
         private readonly AvatarState _avatarState;
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
-        private IAccountStateDelta _initialState;
+        private IAccount _initialState;
 
         public UpdateSellTest(ITestOutputHelper outputHelper)
         {
@@ -39,7 +39,7 @@
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockStateDelta();
+            _initialState = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -232,11 +232,11 @@
             var nextState = action.Execute(new ActionContext
             {
                 BlockIndex = 101,
-                PreviousState = prevState,
+                PreviousState = new MockWorld(prevState),
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var updateSellShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, updateSellOrderId);
             var nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(updateSellShopAddress));
@@ -259,7 +259,7 @@
             Assert.Throws<ListEmptyException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new MockStateDelta(),
+                PreviousState = new MockWorld(),
                 Signer = _agentAddress,
             }));
         }
@@ -284,7 +284,7 @@
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new MockStateDelta(),
+                PreviousState = new MockWorld(),
                 Signer = _agentAddress,
             }));
         }
@@ -320,7 +320,7 @@
             Assert.Throws<NotEnoughClearedStageLevelException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Signer = _agentAddress,
             }));
         }
@@ -359,7 +359,7 @@
             Assert.Throws<InvalidPriceException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Signer = _agentAddress,
             }));
         }
@@ -393,7 +393,7 @@
                 Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(new ActionContext
                 {
                     BlockIndex = 0,
-                    PreviousState = _initialState,
+                    PreviousState = new MockWorld(_initialState),
                     Signer = _agentAddress,
                 }));
             }
@@ -402,7 +402,7 @@
                 Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
                 {
                     BlockIndex = 0,
-                    PreviousState = _initialState,
+                    PreviousState = new MockWorld(_initialState),
                     Signer = _agentAddress,
                 }));
             }

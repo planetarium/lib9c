@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
 
         public UnlockEquipmentRecipeTest()
         {
@@ -52,7 +52,7 @@ namespace Lib9c.Tests.Action
 
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new MockStateDelta()
+            _initialState = new MockAccount()
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(Addresses.GetSheetAddress<EquipmentItemSheet>(), _tableSheets.EquipmentItemSheet.Serialize())
                 .SetState(Addresses.GetSheetAddress<EquipmentItemRecipeSheet>(), _tableSheets.EquipmentItemRecipeSheet.Serialize())
@@ -139,29 +139,31 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
+            IWorld world = new MockWorld(state);
             if (exc is null)
             {
-                IAccountStateDelta nextState = action.Execute(new ActionContext
+                IWorld nextWorld = action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = world,
                     Signer = _agentAddress,
                     BlockIndex = 1,
                     Random = _random,
                 });
+                IAccount nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
-                Assert.True(nextState.TryGetState(unlockedRecipeIdsAddress, out List rawIds));
+                Assert.True(nextAccount.TryGetState(unlockedRecipeIdsAddress, out List rawIds));
 
                 var unlockedIds = rawIds.ToList(StateExtensions.ToInteger);
 
                 Assert.All(recipeIds, recipeId => Assert.Contains(recipeId, unlockedIds));
-                Assert.Equal(0 * _currency, nextState.GetBalance(_agentAddress, _currency));
-                Assert.Equal(balance * _currency, nextState.GetBalance(Addresses.UnlockEquipmentRecipe, _currency));
+                Assert.Equal(0 * _currency, nextAccount.GetBalance(_agentAddress, _currency));
+                Assert.Equal(balance * _currency, nextAccount.GetBalance(Addresses.UnlockEquipmentRecipe, _currency));
             }
             else
             {
                 Assert.Throws(exc, () => action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = world,
                     Signer = _agentAddress,
                     BlockIndex = 1,
                     Random = _random,

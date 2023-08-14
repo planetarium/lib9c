@@ -18,7 +18,7 @@ namespace Lib9c.Tests.Action.Coupons
         [Fact]
         public void Execute()
         {
-            IAccountStateDelta state = new Lib9c.Tests.Action.MockStateDelta();
+            IAccount state = new Lib9c.Tests.Action.MockAccount();
             IRandom random = new TestRandom();
 
             var coupon1 = new Coupon(CouponsFixture.Guid1, CouponsFixture.RewardSet1);
@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
                     }));
@@ -54,7 +54,7 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = CouponsFixture.AgentAddress2,
                         Rehearsal = false,
                     }));
@@ -69,7 +69,7 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
                     }));
@@ -83,10 +83,10 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
-                    });
+                    }).GetAccount(ReservedAddresses.LegacyAccount);
             Assert.Equal(expected, state.GetCouponWallet(CouponsFixture.AgentAddress1));
 
             // transfer nothing
@@ -96,10 +96,10 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
-                    });
+                    }).GetAccount(ReservedAddresses.LegacyAccount);
             Assert.Equal(expected, state.GetCouponWallet(CouponsFixture.AgentAddress1));
 
             // single transfer
@@ -111,10 +111,10 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
-                    });
+                    }).GetAccount(ReservedAddresses.LegacyAccount);
             Assert.Equal(
                 expected.Remove(CouponsFixture.Guid1),
                 state.GetCouponWallet(CouponsFixture.AgentAddress1));
@@ -131,7 +131,7 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
                     }));
@@ -160,10 +160,11 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = true,
-                    });
+                    })
+                .GetAccount(ReservedAddresses.LegacyAccount);
             Assert.Equal(
                 ActionBase.MarkChanged,
                 rehearsedState.GetState(
@@ -188,10 +189,10 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
-                    });
+                    }).GetAccount(ReservedAddresses.LegacyAccount);
             Assert.Equal(
                 ImmutableDictionary<Guid, Coupon>.Empty,
                 state.GetCouponWallet(CouponsFixture.AgentAddress1));

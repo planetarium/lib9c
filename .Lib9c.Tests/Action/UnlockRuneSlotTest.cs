@@ -23,7 +23,7 @@ namespace Lib9c.Tests.Action
             _goldCurrency = Currency.Legacy("NCG", 2, null);
         }
 
-        public IAccountStateDelta Init(out Address agentAddress, out Address avatarAddress, out long blockIndex)
+        public IWorld Init(out Address agentAddress, out Address avatarAddress, out long blockIndex)
         {
             agentAddress = new PrivateKey().ToAddress();
             avatarAddress = new PrivateKey().ToAddress();
@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Action
                 .StartedBlockIndex;
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
-            var state = new MockStateDelta()
+            var state = new MockAccount()
                 .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetState(agentAddress, new AgentState(agentAddress).Serialize());
 
@@ -53,7 +53,8 @@ namespace Lib9c.Tests.Action
                 gameConfigState,
                 default
             );
-            return state.SetState(gameConfigState.address, gameConfigState.Serialize());
+            state = state.SetState(gameConfigState.address, gameConfigState.Serialize());
+            return new MockWorld(state);
         }
 
         [Theory]
@@ -62,13 +63,15 @@ namespace Lib9c.Tests.Action
         public void Execute(int slotIndex)
         {
             var context = new ActionContext();
-            var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
-            var gameConfig = state.GetGameConfigState();
+            var world = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
+            var gameConfig = account.GetGameConfigState();
             var cost = slotIndex == 1
                 ? gameConfig.RuneStatSlotUnlockCost
                 : gameConfig.RuneSkillSlotUnlockCost;
-            var ncgCurrency = state.GetGoldCurrency();
-            state = state.MintAsset(context, agentAddress, cost * ncgCurrency);
+            var ncgCurrency = account.GetGoldCurrency();
+            account = account.MintAsset(context, agentAddress, cost * ncgCurrency);
+            world = world.SetAccount(account);
             var action = new UnlockRuneSlot()
             {
                 AvatarAddress = avatarAddress,
@@ -78,15 +81,16 @@ namespace Lib9c.Tests.Action
             var ctx = new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = state,
+                PreviousState = world,
                 Random = new TestRandom(0),
                 Rehearsal = false,
                 Signer = agentAddress,
             };
 
-            state = action.Execute(ctx);
+            world = action.Execute(ctx);
+            account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var adventureAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
-            if (state.TryGetState(adventureAddr, out List adventureRaw))
+            if (account.TryGetState(adventureAddr, out List adventureRaw))
             {
                 var s = new RuneSlotState(adventureRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
@@ -95,7 +99,7 @@ namespace Lib9c.Tests.Action
             }
 
             var arenaAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
-            if (state.TryGetState(arenaAddr, out List arenaRaw))
+            if (account.TryGetState(arenaAddr, out List arenaRaw))
             {
                 var s = new RuneSlotState(arenaRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
@@ -104,7 +108,7 @@ namespace Lib9c.Tests.Action
             }
 
             var raidAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Raid);
-            if (state.TryGetState(raidAddr, out List raidRaw))
+            if (account.TryGetState(raidAddr, out List raidRaw))
             {
                 var s = new RuneSlotState(raidRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
@@ -112,7 +116,7 @@ namespace Lib9c.Tests.Action
                 Assert.False(slot.IsLock);
             }
 
-            var balance = state.GetBalance(agentAddress, ncgCurrency);
+            var balance = account.GetBalance(agentAddress, ncgCurrency);
             Assert.Equal("0", balance.GetQuantityString());
         }
 
@@ -207,10 +211,12 @@ namespace Lib9c.Tests.Action
         public void Execute_SlotIsAlreadyUnlockedException()
         {
             var context = new ActionContext();
-            var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
-            var gameConfig = state.GetGameConfigState();
-            var ncgCurrency = state.GetGoldCurrency();
-            state = state.MintAsset(context, agentAddress, gameConfig.RuneStatSlotUnlockCost * ncgCurrency);
+            var world = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
+            var gameConfig = account.GetGameConfigState();
+            var ncgCurrency = account.GetGoldCurrency();
+            account = account.MintAsset(context, agentAddress, gameConfig.RuneStatSlotUnlockCost * ncgCurrency);
+            world = world.SetAccount(account);
             var action = new UnlockRuneSlot()
             {
                 AvatarAddress = avatarAddress,
@@ -220,18 +226,18 @@ namespace Lib9c.Tests.Action
             var ctx = new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = state,
+                PreviousState = world,
                 Random = new TestRandom(0),
                 Rehearsal = false,
                 Signer = agentAddress,
             };
 
-            state = action.Execute(ctx);
+            world = action.Execute(ctx);
 
             Assert.Throws<SlotIsAlreadyUnlockedException>(() =>
                 action.Execute(new ActionContext()
                 {
-                    PreviousState = state,
+                    PreviousState = world,
                     Signer = agentAddress,
                     Random = new TestRandom(),
                     BlockIndex = blockIndex,

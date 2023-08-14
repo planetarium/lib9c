@@ -33,8 +33,8 @@ namespace Lib9c.Tests.Action
             new Address("636d187B4d434244A92B65B06B5e7da14b3810A9"),
         }.ToImmutableList();
 
-        private static readonly MockStateDelta _previousState = new MockStateDelta(
-            MockState.Empty
+        private static readonly MockAccount _previousState = new MockAccount(
+            MockAccountState.Empty
                 .SetState(AdminState.Address, new AdminState(_admin, 100).Serialize())
                 .SetState(GoldCurrencyState.Address, new GoldCurrencyState(NCG).Serialize())
                 .SetBalance(_authMiners[0], NCG * 1000)
@@ -46,15 +46,15 @@ namespace Lib9c.Tests.Action
         public void Execute()
         {
             var action = new SecureMiningReward(recipient: _recipient);
-            IAccountStateDelta nextState = action.Execute(
+            IAccount nextState = action.Execute(
                 new ActionContext
                 {
-                    PreviousState = _previousState,
+                    PreviousState = new MockWorld(_previousState),
                     Signer = _admin,
                     Rehearsal = false,
                     BlockIndex = 1,
                 }
-            );
+            ).GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.Equal(NCG * 0, nextState.GetBalance(_authMiners[0], NCG));
             Assert.Equal(NCG * 0, nextState.GetBalance(_authMiners[1], NCG));
@@ -79,7 +79,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<PermissionDeniedException>(() => action.Execute(
                 new ActionContext
                 {
-                    PreviousState = _previousState,
+                    PreviousState = new MockWorld(_previousState),
                     Signer = invalidSigner,
                     Rehearsal = false,
                     BlockIndex = 1,

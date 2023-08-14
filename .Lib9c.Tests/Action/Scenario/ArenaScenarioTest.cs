@@ -13,12 +13,10 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Arena;
-    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Serilog;
-    using Xunit;
     using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
@@ -29,7 +27,7 @@ namespace Lib9c.Tests.Action.Scenario
         private readonly Currency _ncg;
         private TableSheets _tableSheets;
         private Dictionary<string, string> _sheets;
-        private IAccountStateDelta _state;
+        private IAccount _state;
 
         public ArenaScenarioTest(ITestOutputHelper outputHelper)
         {
@@ -38,7 +36,7 @@ namespace Lib9c.Tests.Action.Scenario
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _state = new Tests.Action.MockStateDelta();
+            _state = new Tests.Action.MockAccount();
 
             _sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(_sheets);
@@ -93,7 +91,7 @@ namespace Lib9c.Tests.Action.Scenario
             return (equipments, costumes);
         }
 
-        public IAccountStateDelta JoinArena(
+        public IAccount JoinArena(
             IActionContext context,
             IRandom random,
             Address signer,
@@ -114,12 +112,12 @@ namespace Lib9c.Tests.Action.Scenario
 
             _state = action.Execute(new ActionContext
             {
-                PreviousState = _state,
+                PreviousState = new MockWorld(_state),
                 Signer = signer,
                 Random = random,
                 Rehearsal = false,
                 BlockIndex = roundData.StartBlockIndex,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
             return _state;
         }
 

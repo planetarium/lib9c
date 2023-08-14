@@ -20,7 +20,7 @@
 
     public class CombinationAndRapidCombinationTest
     {
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
         private readonly TableSheets _tableSheets;
         private Address _agentAddress;
         private Address _avatarAddress;
@@ -80,7 +80,7 @@
             _worldInformationAddress = _avatarAddress.Derive(LegacyWorldInformationKey);
             _questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
 
-            _initialState = new Tests.Action.MockStateDelta()
+            _initialState = new Tests.Action.MockAccount()
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
                 .SetState(gameConfigState.address, gameConfigState.Serialize())
                 .SetState(_agentAddress, agentState.Serialize())
@@ -188,11 +188,11 @@
             var random = new TestRandom(randomSeed);
             nextState = combinationEquipmentAction.Execute(new ActionContext
             {
-                PreviousState = nextState,
+                PreviousState = new MockWorld(nextState),
                 BlockIndex = 0,
                 Random = random,
                 Signer = _agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var slot0Value = nextState.GetState(_slot0Address);
             Assert.NotNull(slot0Value);
@@ -284,11 +284,11 @@
 
             nextState = rapidCombinationAction.Execute(new ActionContext
             {
-                PreviousState = nextState,
+                PreviousState = new MockWorld(nextState),
                 BlockIndex = GameConfig.RequiredAppraiseBlock,
                 Random = random,
                 Signer = _agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
             inventoryValue = nextState.GetState(_inventoryAddress);
             Assert.NotNull(inventoryValue);
             inventoryState = new Inventory((List)inventoryValue);

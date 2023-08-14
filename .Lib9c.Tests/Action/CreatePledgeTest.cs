@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Action
             var agentAddress = new PrivateKey().ToAddress();
             var pledgeAddress = agentAddress.GetPledgeAddress();
             var context = new ActionContext();
-            IAccountStateDelta states = new MockStateDelta()
+            IAccount states = new MockAccount()
                 .SetState(Addresses.Admin, adminState.Serialize())
                 .MintAsset(context, patronAddress, 4 * 500 * mead);
 
@@ -60,12 +60,12 @@ namespace Lib9c.Tests.Action
             var actionContext = new ActionContext
             {
                 Signer = singer,
-                PreviousState = states,
+                PreviousState = new MockWorld(states),
             };
 
             if (exc is null)
             {
-                var nextState = action.Execute(actionContext);
+                var nextState = action.Execute(actionContext).GetAccount(ReservedAddresses.LegacyAccount);
 
                 Assert.Equal(0 * mead, nextState.GetBalance(patronAddress, mead));
                 Assert.Equal(4 * mead, nextState.GetBalance(agentAddress, mead));

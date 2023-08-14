@@ -15,7 +15,7 @@ namespace Lib9c.Tests.Action
 
     public class StakeTest
     {
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
         private readonly Currency _currency;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly TableSheets _tableSheets;
@@ -28,7 +28,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockStateDelta();
+            _initialState = new MockAccount();
 
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
@@ -59,7 +59,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
                 action.Execute(new ActionContext
                 {
-                    PreviousState = _initialState,
+                    PreviousState = new MockWorld(_initialState),
                     Signer = _signerAddress,
                     BlockIndex = 100,
                 }));
@@ -83,7 +83,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<MonsterCollectionExistingException>(() =>
                 action.Execute(new ActionContext
                 {
-                    PreviousState = states,
+                    PreviousState = new MockWorld(states),
                     Signer = _signerAddress,
                     BlockIndex = 100,
                 }));
@@ -101,7 +101,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<StakeExistingClaimableException>(() =>
                 action.Execute(new ActionContext
                 {
-                    PreviousState = states,
+                    PreviousState = new MockWorld(states),
                     Signer = _signerAddress,
                     BlockIndex = StakeState.RewardInterval,
                 }));
@@ -111,9 +111,9 @@ namespace Lib9c.Tests.Action
         public void Execute_Throws_WhenCancelOrUpdateWhileLockup()
         {
             var action = new Stake(51);
-            var states = action.Execute(new ActionContext
+            var world = action.Execute(new ActionContext
             {
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Signer = _signerAddress,
                 BlockIndex = 0,
             });
@@ -122,7 +122,7 @@ namespace Lib9c.Tests.Action
             var updateAction = new Stake(0);
             Assert.Throws<RequiredBlockIndexException>(() => updateAction.Execute(new ActionContext
             {
-                PreviousState = states,
+                PreviousState = world,
                 Signer = _signerAddress,
                 BlockIndex = 1,
             }));
@@ -131,34 +131,40 @@ namespace Lib9c.Tests.Action
             updateAction = new Stake(50);
             Assert.Throws<RequiredBlockIndexException>(() => updateAction.Execute(new ActionContext
             {
-                PreviousState = states,
+                PreviousState = world,
                 Signer = _signerAddress,
                 BlockIndex = 1,
             }));
 
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             // Same (since 4611070)
-            if (states.TryGetStakeState(_signerAddress, out StakeState stakeState))
+            if (account.TryGetStakeState(_signerAddress, out StakeState stakeState))
             {
-                states = states.SetState(
+                account = account.SetState(
                     stakeState.address,
                     new StakeState(stakeState.address, 4611070 - 100).Serialize());
+                world = world.SetAccount(account);
             }
 
             updateAction = new Stake(51);
             Assert.Throws<RequiredBlockIndexException>(() => updateAction.Execute(new ActionContext
             {
-                PreviousState = states,
+                PreviousState = world,
                 Signer = _signerAddress,
                 BlockIndex = 4611070,
             }));
 
             // At 4611070 - 99, it should be updated.
-            Assert.True(updateAction.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _signerAddress,
-                BlockIndex = 4611070 - 99,
-            }).TryGetStakeState(_signerAddress, out stakeState));
+            Assert.True(
+                updateAction.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = world,
+                            Signer = _signerAddress,
+                            BlockIndex = 4611070 - 99,
+                        })
+                    .GetAccount(ReservedAddresses.LegacyAccount)
+                    .TryGetStakeState(_signerAddress, out stakeState));
             Assert.Equal(4611070 - 99, stakeState.StartedBlockIndex);
         }
 
@@ -166,24 +172,25 @@ namespace Lib9c.Tests.Action
         public void Execute()
         {
             var action = new Stake(100);
-            var states = action.Execute(new ActionContext
+            var world = action.Execute(new ActionContext
             {
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Signer = _signerAddress,
                 BlockIndex = 0,
             });
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
-            Assert.Equal(_currency * 0, states.GetBalance(_signerAddress, _currency));
+            Assert.Equal(_currency * 0, account.GetBalance(_signerAddress, _currency));
             Assert.Equal(
                 _currency * 100,
-                states.GetBalance(StakeState.DeriveAddress(_signerAddress), _currency));
+                account.GetBalance(StakeState.DeriveAddress(_signerAddress), _currency));
 
-            states.TryGetStakeState(_signerAddress, out StakeState stakeState);
+            account.TryGetStakeState(_signerAddress, out StakeState stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
             Assert.Equal(0 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
-            Assert.Equal(_currency * 100, states.GetBalance(stakeState.address, _currency));
-            Assert.Equal(_currency * 0, states.GetBalance(_signerAddress, _currency));
+            Assert.Equal(_currency * 100, account.GetBalance(stakeState.address, _currency));
+            Assert.Equal(_currency * 0, account.GetBalance(_signerAddress, _currency));
 
             var achievements = stakeState.Achievements;
             Assert.False(achievements.Check(0, 0));
@@ -197,52 +204,55 @@ namespace Lib9c.Tests.Action
                 StakeState.LockupInterval - 1,
                 stakeState.CancellableBlockIndex,
                 stakeState.Achievements);
-            states = states.SetState(stakeState.address, producedStakeState.SerializeV2());
+            account = account.SetState(stakeState.address, producedStakeState.SerializeV2());
             var cancelAction = new Stake(0);
-            states = cancelAction.Execute(new ActionContext
+            world = cancelAction.Execute(new ActionContext
             {
-                PreviousState = states,
+                PreviousState = world.SetAccount(account),
                 Signer = _signerAddress,
                 BlockIndex = StakeState.LockupInterval,
             });
+            account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
-            Assert.Equal(Null.Value, states.GetState(stakeState.address));
-            Assert.Equal(_currency * 0, states.GetBalance(stakeState.address, _currency));
-            Assert.Equal(_currency * 100, states.GetBalance(_signerAddress, _currency));
+            Assert.Equal(Null.Value, account.GetState(stakeState.address));
+            Assert.Equal(_currency * 0, account.GetBalance(stakeState.address, _currency));
+            Assert.Equal(_currency * 100, account.GetBalance(_signerAddress, _currency));
         }
 
         [Fact]
         public void Update()
         {
             var action = new Stake(50);
-            var states = action.Execute(new ActionContext
+            var world = action.Execute(new ActionContext
             {
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Signer = _signerAddress,
                 BlockIndex = 0,
             });
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
-            states.TryGetStakeState(_signerAddress, out StakeState stakeState);
+            account.TryGetStakeState(_signerAddress, out StakeState stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
             Assert.Equal(0 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
-            Assert.Equal(_currency * 50, states.GetBalance(stakeState.address, _currency));
-            Assert.Equal(_currency * 50, states.GetBalance(_signerAddress, _currency));
+            Assert.Equal(_currency * 50, account.GetBalance(stakeState.address, _currency));
+            Assert.Equal(_currency * 50, account.GetBalance(_signerAddress, _currency));
 
             var updateAction = new Stake(100);
-            states = updateAction.Execute(new ActionContext
+            world = updateAction.Execute(new ActionContext
             {
-                PreviousState = states,
+                PreviousState = world,
                 Signer = _signerAddress,
                 BlockIndex = 1,
             });
+            account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
-            states.TryGetStakeState(_signerAddress, out stakeState);
+            account.TryGetStakeState(_signerAddress, out stakeState);
             Assert.Equal(1, stakeState.StartedBlockIndex);
             Assert.Equal(1 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
-            Assert.Equal(_currency * 100, states.GetBalance(stakeState.address, _currency));
-            Assert.Equal(_currency * 0, states.GetBalance(_signerAddress, _currency));
+            Assert.Equal(_currency * 100, account.GetBalance(stakeState.address, _currency));
+            Assert.Equal(_currency * 0, account.GetBalance(_signerAddress, _currency));
         }
 
         [Fact]

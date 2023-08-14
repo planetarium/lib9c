@@ -17,7 +17,7 @@ namespace Lib9c.Tests.Action
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
 
         public DailyRewardTest(ITestOutputHelper outputHelper)
         {
@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockStateDelta();
+            _initialState = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -70,7 +70,7 @@ namespace Lib9c.Tests.Action
             var nextState = action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new MockStateDelta(),
+                PreviousState = new MockWorld(),
                 Random = new TestRandom(),
                 Rehearsal = true,
                 Signer = _agentAddress,
@@ -85,7 +85,7 @@ namespace Lib9c.Tests.Action
         [InlineData(false)]
         public void Execute(bool legacy)
         {
-            IAccountStateDelta previousStates = null;
+            IAccount previousStates = null;
             switch (legacy)
             {
                 case true:
@@ -114,7 +114,7 @@ namespace Lib9c.Tests.Action
 
         [Fact]
         public void Execute_Throw_FailedLoadStateException() =>
-            Assert.Throws<FailedLoadStateException>(() => ExecuteInternal(new MockStateDelta()));
+            Assert.Throws<FailedLoadStateException>(() => ExecuteInternal(new MockAccount()));
 
         [Theory]
         [InlineData(0, 0, true)]
@@ -166,14 +166,14 @@ rune_skill_slot_unlock_cost,500";
             Assert.Equal(0, (int)avatarRuneAmount.MajorUnit);
         }
 
-        private IAccountStateDelta SetAvatarStateAsV2To(IAccountStateDelta state, AvatarState avatarState) =>
+        private IAccount SetAvatarStateAsV2To(IAccount state, AvatarState avatarState) =>
             state
                 .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
                 .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
                 .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
                 .SetState(_avatarAddress, avatarState.SerializeV2());
 
-        private IAccountStateDelta ExecuteInternal(IAccountStateDelta previousStates, long blockIndex = 0)
+        private IAccount ExecuteInternal(IAccount previousStates, long blockIndex = 0)
         {
             var dailyRewardAction = new DailyReward
             {
@@ -183,11 +183,11 @@ rune_skill_slot_unlock_cost,500";
             return dailyRewardAction.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = new MockWorld(previousStates),
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
         }
     }
 }

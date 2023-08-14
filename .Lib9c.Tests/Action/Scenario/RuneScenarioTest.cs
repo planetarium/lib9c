@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action.Scenario
             );
 
             var context = new ActionContext();
-            IAccountStateDelta initialState = new Tests.Action.MockStateDelta()
+            IAccount initialState = new Tests.Action.MockAccount()
                 .SetState(agentAddress, agentState.Serialize())
                 .SetState(avatarAddress, avatarState.SerializeV2())
                 .SetState(
@@ -80,10 +80,10 @@ namespace Lib9c.Tests.Action.Scenario
             var state = craftAction.Execute(new ActionContext
             {
                 BlockIndex = 1,
-                PreviousState = initialState,
+                PreviousState = new MockWorld(initialState),
                 Random = new TestRandom(),
                 Signer = agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var rawRuneState = Assert.IsType<List>(state.GetState(runeAddress));
             var runeState = new RuneState(rawRuneState);
@@ -110,10 +110,10 @@ namespace Lib9c.Tests.Action.Scenario
             var nextState = has.Execute(new ActionContext
             {
                 BlockIndex = 2,
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Random = new TestRandom(),
                 Signer = agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var nextAvatarState = nextState.GetAvatarStateV2(avatarAddress);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(1));

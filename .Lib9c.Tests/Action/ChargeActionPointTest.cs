@@ -21,7 +21,7 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
 
         public ChargeActionPointTest()
         {
@@ -47,7 +47,7 @@ namespace Lib9c.Tests.Action
             };
             agent.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new MockStateDelta()
+            _initialState = new MockAccount()
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize())
                 .SetState(_agentAddress, agent.Serialize())
                 .SetState(_avatarAddress, avatarState.Serialize());
@@ -80,7 +80,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0, avatarState.actionPoint);
 
-            IAccountStateDelta state;
+            IAccount state;
             if (backward)
             {
                 state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
@@ -104,13 +104,14 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            var nextState = action.Execute(new ActionContext()
+            var nextWorld = action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
             });
+            var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
             var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
             var gameConfigState = nextState.GetGameConfigState();
@@ -162,7 +163,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws(exc, () => action.Execute(new ActionContext()
                 {
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     Random = new TestRandom(),
                     Rehearsal = false,
@@ -186,11 +187,11 @@ namespace Lib9c.Tests.Action
                 _avatarAddress.Derive(LegacyQuestListKey),
             };
 
-            var state = new MockStateDelta();
+            var state = new MockAccount();
 
             var nextState = action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 BlockIndex = 0,
                 Rehearsal = true,

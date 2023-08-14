@@ -29,8 +29,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly Address _inventoryAddr;
         private readonly Address _worldInfoAddr;
         private readonly Address _recipeIdsAddr;
-        private readonly IAccountStateDelta _initialStateV1;
-        private readonly IAccountStateDelta _initialStateV2;
+        private readonly IAccount _initialStateV1;
+        private readonly IAccount _initialStateV2;
         private readonly TableSheets _tableSheets;
         private readonly int _hourglassItemId;
         private int? _petId;
@@ -161,11 +161,11 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 
             stateV2 = action.Execute(new ActionContext
             {
-                PreviousState = stateV2,
+                PreviousState = new MockWorld(stateV2),
                 Signer = _agentAddr,
                 BlockIndex = 0L,
                 Random = random,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             // Do rapid combination
             var rapidAction = new RapidCombination
@@ -175,11 +175,11 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             };
             stateV2 = rapidAction.Execute(new ActionContext
             {
-                PreviousState = stateV2,
+                PreviousState = new MockWorld(stateV2),
                 Signer = _agentAddr,
                 BlockIndex = stateV2.GetGameConfigState().RequiredAppraiseBlock,
                 Random = random,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var slotState = stateV2.GetCombinationSlotState(_avatarAddr, 0);
             // TEST: Combination should be done

@@ -1,7 +1,5 @@
 namespace Lib9c.Tests.Action
 {
-    using System.Collections.Immutable;
-    using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
@@ -11,7 +9,7 @@ namespace Lib9c.Tests.Action
 
     public class RenewAdminStateTest
     {
-        private IAccountStateDelta _stateDelta;
+        private IAccount _stateDelta;
         private long _validUntil;
         private AdminState _adminState;
         private PrivateKey _adminPrivateKey;
@@ -21,8 +19,8 @@ namespace Lib9c.Tests.Action
             _adminPrivateKey = new PrivateKey();
             _validUntil = 1_500_000L;
             _adminState = new AdminState(_adminPrivateKey.ToAddress(), _validUntil);
-            _stateDelta = new MockStateDelta(
-                MockState.Empty
+            _stateDelta = new MockAccount(
+                MockAccountState.Empty
                     .SetState(Addresses.Admin, _adminState.Serialize()));
         }
 
@@ -33,9 +31,9 @@ namespace Lib9c.Tests.Action
             var action = new RenewAdminState(newValidUntil);
             var stateDelta = action.Execute(new ActionContext
             {
-                PreviousState = _stateDelta,
+                PreviousState = new MockWorld(_stateDelta),
                 Signer = _adminPrivateKey.ToAddress(),
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetState(Addresses.Admin));
             Assert.Equal(newValidUntil, adminState.ValidUntil);
@@ -52,7 +50,7 @@ namespace Lib9c.Tests.Action
                 var userPrivateKey = new PrivateKey();
                 action.Execute(new ActionContext
                 {
-                    PreviousState = _stateDelta,
+                    PreviousState = new MockWorld(_stateDelta),
                     Signer = userPrivateKey.ToAddress(),
                 });
             });
@@ -66,9 +64,9 @@ namespace Lib9c.Tests.Action
             var stateDelta = action.Execute(new ActionContext
             {
                 BlockIndex = _validUntil + 1,
-                PreviousState = _stateDelta,
+                PreviousState = new MockWorld(_stateDelta),
                 Signer = _adminPrivateKey.ToAddress(),
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetState(Addresses.Admin));
             Assert.Equal(newValidUntil, adminState.ValidUntil);

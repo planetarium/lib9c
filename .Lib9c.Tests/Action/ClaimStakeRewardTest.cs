@@ -20,8 +20,8 @@ namespace Lib9c.Tests.Action
         private const string AgentAddressHex = "0x0000000001000000000100000000010000000001";
         private readonly Address _agentAddr = new Address(AgentAddressHex);
         private readonly Address _avatarAddr;
-        private readonly IAccountStateDelta _initialStatesWithAvatarStateV1;
-        private readonly IAccountStateDelta _initialStatesWithAvatarStateV2;
+        private readonly IAccount _initialStatesWithAvatarStateV1;
+        private readonly IAccount _initialStatesWithAvatarStateV2;
         private readonly Currency _ncg;
 
         public ClaimStakeRewardTest(ITestOutputHelper outputHelper)
@@ -191,7 +191,7 @@ namespace Lib9c.Tests.Action
             long expectedCurrencyAmount)
         {
             Execute(
-                _initialStatesWithAvatarStateV1,
+                new MockWorld(_initialStatesWithAvatarStateV1),
                 _agentAddr,
                 _avatarAddr,
                 startedBlockIndex,
@@ -206,7 +206,7 @@ namespace Lib9c.Tests.Action
                 expectedCurrencyAmount);
 
             Execute(
-                _initialStatesWithAvatarStateV2,
+                new MockWorld(_initialStatesWithAvatarStateV2),
                 _agentAddr,
                 _avatarAddr,
                 startedBlockIndex,
@@ -222,7 +222,7 @@ namespace Lib9c.Tests.Action
         }
 
         private void Execute(
-            IAccountStateDelta prevState,
+            IWorld prevWorld,
             Address agentAddr,
             Address avatarAddr,
             long startedBlockIndex,
@@ -244,19 +244,22 @@ namespace Lib9c.Tests.Action
                 initialStakeState.Claim((long)previousRewardReceiveIndex);
             }
 
-            prevState = prevState
+            var prevAccount = prevWorld.GetAccount(ReservedAddresses.LegacyAccount);
+            prevAccount = prevAccount
                 .SetState(stakeStateAddr, initialStakeState.Serialize())
                 .MintAsset(context, stakeStateAddr, _ncg * stakeAmount);
+            prevWorld = prevWorld.SetAccount(prevAccount);
 
             var action = new ClaimStakeReward(avatarAddr);
-            var states = action.Execute(new ActionContext
+            var world = action.Execute(new ActionContext
             {
-                PreviousState = prevState,
+                PreviousState = prevWorld,
                 Signer = agentAddr,
                 BlockIndex = blockIndex,
             });
 
-            var avatarState = states.GetAvatarStateV2(avatarAddr);
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
+            var avatarState = account.GetAvatarStateV2(avatarAddr);
             if (expectedHourglass > 0)
             {
                 Assert.Equal(
@@ -283,13 +286,13 @@ namespace Lib9c.Tests.Action
             {
                 Assert.Equal(
                     expectedRune * RuneHelper.StakeRune,
-                    states.GetBalance(avatarAddr, RuneHelper.StakeRune));
+                    account.GetBalance(avatarAddr, RuneHelper.StakeRune));
             }
             else
             {
                 Assert.Equal(
                     0 * RuneHelper.StakeRune,
-                    states.GetBalance(avatarAddr, RuneHelper.StakeRune));
+                    account.GetBalance(avatarAddr, RuneHelper.StakeRune));
             }
 
             if (!string.IsNullOrEmpty(expectedCurrencyAddrHex))
@@ -298,10 +301,10 @@ namespace Lib9c.Tests.Action
                 var currency = Currencies.GetMinterlessCurrency(expectedCurrencyTicker);
                 Assert.Equal(
                     expectedCurrencyAmount * currency,
-                    states.GetBalance(addr, currency));
+                    account.GetBalance(addr, currency));
             }
 
-            Assert.True(states.TryGetStakeState(agentAddr, out StakeState stakeState));
+            Assert.True(account.TryGetStakeState(agentAddr, out StakeState stakeState));
             Assert.Equal(blockIndex, stakeState.ReceivedBlockIndex);
         }
     }

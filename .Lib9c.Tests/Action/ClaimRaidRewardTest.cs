@@ -13,13 +13,13 @@ namespace Lib9c.Tests.Action
     public class ClaimRaidRewardTest
     {
         private readonly TableSheets _tableSheets;
-        private readonly IAccountStateDelta _state;
+        private readonly IAccount _state;
 
         public ClaimRaidRewardTest()
         {
             var tableCsv = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(tableCsv);
-            _state = new MockStateDelta();
+            _state = new MockAccount();
             foreach (var kv in tableCsv)
             {
                 _state = _state.SetState(Addresses.GetSheetAddress(kv.Key), kv.Value.Serialize());
@@ -62,7 +62,7 @@ namespace Lib9c.Tests.Action
                 HighScore = highScore,
                 LatestRewardRank = latestRank,
             };
-            IAccountStateDelta state = _state.SetState(raiderAddress, raiderState.Serialize());
+            IAccount state = _state.SetState(raiderAddress, raiderState.Serialize());
             var randomSeed = 0;
 
             var rows = _tableSheets.WorldBossRankRewardSheet.Values
@@ -84,13 +84,14 @@ namespace Lib9c.Tests.Action
             var action = new ClaimRaidReward(avatarAddress);
             if (exc is null)
             {
-                var nextState = action.Execute(new ActionContext
+                var nextWorld = action.Execute(new ActionContext
                 {
                     Signer = agentAddress,
                     BlockIndex = 5055201L,
                     Random = new TestRandom(randomSeed),
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                 });
+                var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
                 var crystalCurrency = CrystalCalculator.CRYSTAL;
                 Assert.Equal(
@@ -116,7 +117,7 @@ namespace Lib9c.Tests.Action
                     Signer = default,
                     BlockIndex = 5055201L,
                     Random = new TestRandom(randomSeed),
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                 }));
             }
         }

@@ -27,7 +27,7 @@ namespace Lib9c.Tests.Action
 
     public class SellCancellationTest
     {
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly GoldCurrencyState _goldCurrencyState;
@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockStateDelta();
+            _initialState = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -170,7 +170,7 @@ namespace Lib9c.Tests.Action
             avatarState.mailBox.Add(expirationMail);
 
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
-            IAccountStateDelta prevState = _initialState;
+            IAccount prevState = _initialState;
 
             if (inventoryCount > 1)
             {
@@ -235,11 +235,11 @@ namespace Lib9c.Tests.Action
             var expectedState = sellCancellationAction.Execute(new ActionContext
             {
                 BlockIndex = 101,
-                PreviousState = prevState,
+                PreviousState = new MockWorld(prevState),
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var cancelProductRegistration = new CancelProductRegistration
             {
@@ -263,11 +263,11 @@ namespace Lib9c.Tests.Action
             var actualState = cancelProductRegistration.Execute(new ActionContext
             {
                 BlockIndex = 101,
-                PreviousState = prevState,
+                PreviousState = new MockWorld(prevState),
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             foreach (var nextState in new[] { expectedState, actualState })
             {
@@ -320,7 +320,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = _initialState,
+                    PreviousState = new MockWorld(_initialState),
                     Random = new TestRandom(),
                     Signer = default,
                 })
@@ -339,7 +339,7 @@ namespace Lib9c.Tests.Action
                 ),
             };
 
-            IAccountStateDelta prevState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            IAccount prevState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
 
             var action = new SellCancellation
             {
@@ -351,7 +351,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<NotEnoughClearedStageLevelException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = prevState,
+                PreviousState = new MockWorld(prevState),
                 Signer = _agentAddress,
             }));
         }
@@ -424,7 +424,7 @@ namespace Lib9c.Tests.Action
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
             orderDigestList.Add(orderDigest);
 
-            IAccountStateDelta prevState = _initialState
+            IAccount prevState = _initialState
                 .SetState(Order.DeriveAddress(orderId), order.Serialize())
                 .SetState(orderDigestList.Address, orderDigestList.Serialize())
                 .SetState(shardedShopAddress, shopState.Serialize());
@@ -440,7 +440,7 @@ namespace Lib9c.Tests.Action
             ItemDoesNotExistException exc = Assert.Throws<ItemDoesNotExistException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = prevState,
+                    PreviousState = new MockWorld(prevState),
                     Random = new TestRandom(),
                     Signer = _agentAddress,
                 })
@@ -488,7 +488,7 @@ namespace Lib9c.Tests.Action
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
             orderDigestList.Add(orderDigest);
 
-            IAccountStateDelta prevState = _initialState
+            IAccount prevState = _initialState
                 .SetState(Order.DeriveAddress(orderId), order.Serialize())
                 .SetState(orderDigestList.Address, orderDigestList.Serialize())
                 .SetState(shardedShopAddress, shopState.Serialize());
@@ -504,7 +504,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = prevState,
+                    PreviousState = new MockWorld(prevState),
                     Random = new TestRandom(),
                     Signer = _agentAddress,
                 })
@@ -533,11 +533,11 @@ namespace Lib9c.Tests.Action
                 Addresses.GetItemAddress(default),
             };
 
-            var state = new MockStateDelta();
+            var state = new MockAccount();
 
             var nextState = action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 BlockIndex = 0,
                 Rehearsal = true,
@@ -646,7 +646,7 @@ namespace Lib9c.Tests.Action
             avatarState.mailBox.Add(expirationMail);
 
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
-            IAccountStateDelta prevState = _initialState;
+            IAccount prevState = _initialState;
 
             if (inventoryCount > 1)
             {
@@ -711,11 +711,11 @@ namespace Lib9c.Tests.Action
             var nextState = sellCancellationAction.Execute(new ActionContext
             {
                 BlockIndex = 101,
-                PreviousState = prevState,
+                PreviousState = new MockWorld(prevState),
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             ShardedShopStateV2 nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(shardedShopAddress));
             Assert.Empty(nextShopState.OrderDigestList);

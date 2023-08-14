@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c.DevExtensions.Action;
@@ -12,7 +11,6 @@ using Lib9c.Tests.Util;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model;
@@ -40,7 +38,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccountStateDelta _initialStateV2;
+        private readonly IAccount _initialStateV2;
         private readonly Address _inventoryAddress;
         private readonly Address _worldInformationAddress;
         private readonly Address _questListAddress;
@@ -346,8 +344,8 @@ namespace Lib9c.DevExtensions.Tests.Action
         // ~MemberData
 
         // Logics
-        private IAccountStateDelta Manipulate(
-            IAccountStateDelta state,
+        private IWorld Manipulate(
+            IWorld state,
             List<(Address addr, IValue value)> targetStateList,
             List<(Address addr, FungibleAssetValue fav)> targetBalanceList
         )
@@ -367,13 +365,14 @@ namespace Lib9c.DevExtensions.Tests.Action
         }
 
         private void TestAvatarState(
-            IAccountStateDelta state,
+            IWorld state,
             string? name, int? level, long? exp, int? actionPoint,
             long? blockIndex, long? dailyRewardReceivedIndex,
             int? hair, int? lens, int? ear, int? tail
         )
         {
-            var targetAvatarState = state.GetAvatarStateV2(_avatarAddress);
+            var targetAvatarState = state.GetAccount(ReservedAddresses.LegacyAccount)
+                .GetAvatarStateV2(_avatarAddress);
 
             if (name != null)
             {
@@ -426,9 +425,10 @@ namespace Lib9c.DevExtensions.Tests.Action
             }
         }
 
-        private void TestInventoryState(IAccountStateDelta state, Inventory targetInventory)
+        private void TestInventoryState(IWorld state, Inventory targetInventory)
         {
-            var avatarState = state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = state.GetAccount(ReservedAddresses.LegacyAccount)
+                .GetAvatarStateV2(_avatarAddress);
             var inventoryState = avatarState.inventory;
             Assert.Equal(targetInventory.Items.Count, inventoryState.Items.Count);
             foreach (var item in targetInventory.Items)
@@ -459,8 +459,8 @@ namespace Lib9c.DevExtensions.Tests.Action
             newAvatarState.ear = ear ?? _avatarState.ear;
             newAvatarState.tail = tail ?? _avatarState.tail;
 
-            var state = Manipulate(
-                _initialStateV2,
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
                 new List<(Address, IValue)>
                 {
                     (_avatarAddress, newAvatarState.SerializeV2())
@@ -469,16 +469,17 @@ namespace Lib9c.DevExtensions.Tests.Action
             );
 
             TestAvatarState(
-                state,
+                world,
                 name, level, exp, actionPoint,
                 blockIndex, dailyRewardReceivedIndex,
                 hair, lens, ear, tail
             );
         }
 
-        private void TestQuestState(IAccountStateDelta state, List<int> targetQuestIdList)
+        private void TestQuestState(IWorld state, List<int> targetQuestIdList)
         {
-            var avatarState = state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = state.GetAccount(ReservedAddresses.LegacyAccount)
+                .GetAvatarStateV2(_avatarAddress);
             var questState = avatarState.questList;
             foreach (var target in targetQuestIdList)
             {
@@ -486,9 +487,10 @@ namespace Lib9c.DevExtensions.Tests.Action
             }
         }
 
-        private void TestWorldInformation(IAccountStateDelta state, int lastClearedStage)
+        private void TestWorldInformation(IWorld world, int lastClearedStage)
         {
-            var avatarState = state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = world.GetAccount(ReservedAddresses.LegacyAccount)
+                .GetAvatarStateV2(_avatarAddress);
             var worldInformation = avatarState.worldInformation;
 
             for (var i = 0; i < lastClearedStage; i++)
@@ -533,8 +535,8 @@ namespace Lib9c.DevExtensions.Tests.Action
         [MemberData(nameof(FetchInventory))]
         public void SetInventoryState(Inventory targetInventory)
         {
-            var state = Manipulate(
-                _initialStateV2,
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
                 new List<(Address, IValue)>
                 {
                     (_inventoryAddress, targetInventory.Serialize()),
@@ -542,15 +544,15 @@ namespace Lib9c.DevExtensions.Tests.Action
                 new List<(Address, FungibleAssetValue)>()
             );
 
-            TestInventoryState(state, targetInventory);
+            TestInventoryState(world, targetInventory);
         }
 
         [Theory]
         [MemberData(nameof(FetchWorldInfo))]
         public void SetWorldInformation(int lastClearedStage, WorldInformation targetInfo)
         {
-            var state = Manipulate(
-                _initialStateV2,
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
                 new List<(Address, IValue)>
                 {
                     (_worldInformationAddress, targetInfo.Serialize())
@@ -558,14 +560,15 @@ namespace Lib9c.DevExtensions.Tests.Action
                 new List<(Address, FungibleAssetValue)>()
             );
 
-            TestWorldInformation(state, lastClearedStage);
+            TestWorldInformation(world, lastClearedStage);
         }
 
         [Theory]
         [MemberData(nameof(FetchQuest))]
         public void SetQuestState(List<int> targetQuestIdList, QuestList questList)
         {
-            var state = Manipulate(_initialStateV2,
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
                 new List<(Address, IValue)>
                 {
                     (_questListAddress, questList.Serialize())
@@ -573,15 +576,15 @@ namespace Lib9c.DevExtensions.Tests.Action
                 new List<(Address, FungibleAssetValue)>()
             );
 
-            TestQuestState(state, targetQuestIdList);
+            TestQuestState(world, targetQuestIdList);
         }
 
         [Theory]
         [MemberData(nameof(FetchBalance))]
         public void SetBalance(Address addr, FungibleAssetValue fav)
         {
-            var states = Manipulate(
-                _initialStateV2,
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
                 new List<(Address, IValue)>(),
                 new List<(Address, FungibleAssetValue)>
                 {
@@ -589,7 +592,9 @@ namespace Lib9c.DevExtensions.Tests.Action
                 }
             );
 
-            Assert.Equal(fav, states.GetBalance(addr, fav.Currency));
+            Assert.Equal(
+                fav,
+                world.GetAccount(ReservedAddresses.LegacyAccount).GetBalance(addr, fav.Currency));
         }
 
         [Fact]
@@ -620,8 +625,8 @@ namespace Lib9c.DevExtensions.Tests.Action
                 .Where(tuple => !(tuple.fav.Currency.Ticker == "NCG" && tuple.fav.MajorUnit > 100))
                 .ToList();
 
-            var state = Manipulate(
-                _initialStateV2,
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
                 new List<(Address, IValue)>
                 {
                     (_avatarAddress, newAvatarState.Serialize()),
@@ -632,19 +637,22 @@ namespace Lib9c.DevExtensions.Tests.Action
                 balanceList
             );
 
-            TestAvatarState(state,
+            TestAvatarState(world,
                 (string?)avatarData[0], (int?)avatarData[1],
                 (long?)avatarData[2], (int?)avatarData[3],
                 (long?)avatarData[4], (long?)avatarData[5],
                 (int?)avatarData[6], (int?)avatarData[7], (int?)avatarData[8], (int?)avatarData[9]
             );
-            TestInventoryState(state, inventory);
-            TestWorldInformation(state, lastClearedStage);
-            TestQuestState(state, targetQuestIdList);
+            TestInventoryState(world, inventory);
+            TestWorldInformation(world, lastClearedStage);
+            TestQuestState(world, targetQuestIdList);
 
             foreach (var (addr, fav) in balanceList)
             {
-                Assert.Equal(fav, state.GetBalance(addr, fav.Currency));
+                Assert.Equal(
+                    fav,
+                    world.GetAccount(ReservedAddresses.LegacyAccount)
+                        .GetBalance(addr, fav.Currency));
             }
         }
     }

@@ -1,10 +1,8 @@
-using System.Collections.Immutable;
 using Lib9c.DevExtensions.Action;
 using Lib9c.Tests.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
 using Serilog;
@@ -15,7 +13,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 {
     public class FaucetCurrencyTest
     {
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
         private readonly Address _agentAddress;
         private readonly Currency _ncg;
         private readonly Currency _crystal;
@@ -32,8 +30,8 @@ namespace Lib9c.DevExtensions.Tests.Action
             _crystal = Currency.Legacy("CRYSTAL", 18, null);
 #pragma warning restore CS0618
 
-            _initialState = new MockStateDelta(
-                MockState.Empty
+            _initialState = new MockAccount(
+                MockAccountState.Empty
                     .AddBalance(GoldCurrencyState.Address, _ncg * int.MaxValue));
 
             var goldCurrencyState = new GoldCurrencyState(_ncg);
@@ -66,7 +64,10 @@ namespace Lib9c.DevExtensions.Tests.Action
                 FaucetNcg = faucetNcg,
                 FaucetCrystal = faucetCrystal,
             };
-            var state = action.Execute(new ActionContext { PreviousState = _initialState });
+            var state = action
+                .Execute(
+                    new ActionContext { PreviousState = new MockWorld(_initialState) })
+                .GetAccount(ReservedAddresses.LegacyAccount);
             AgentState agentState = state.GetAgentState(_agentAddress);
             FungibleAssetValue expectedNcgAsset =
                 new FungibleAssetValue(_ncg, expectedNcg, 0);

@@ -36,7 +36,7 @@ namespace Lib9c.Tests.Action.Scenario
         private readonly TableSheets _tableSheets;
         private readonly Currency _currency;
         private readonly GameConfigState _gameConfigState;
-        private IAccountStateDelta _initialState;
+        private IAccount _initialState;
 
         public MarketScenarioTest(ITestOutputHelper outputHelper)
         {
@@ -103,7 +103,7 @@ namespace Lib9c.Tests.Action.Scenario
             agentState3.avatarAddresses[0] = _buyerAvatarAddress;
 
             _currency = Currency.Legacy("NCG", 2, minters: null);
-            _initialState = new Tests.Action.MockStateDelta()
+            _initialState = new Tests.Action.MockAccount()
                 .SetState(GoldCurrencyState.Address, new GoldCurrencyState(_currency).Serialize())
                 .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
                 .SetState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
@@ -161,10 +161,10 @@ namespace Lib9c.Tests.Action.Scenario
             var nextState = action.Execute(new ActionContext
             {
                 BlockIndex = 1L,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = random,
                 Signer = _sellerAgentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
             var nextAvatarState = nextState.GetAvatarStateV2(_sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
@@ -235,10 +235,10 @@ namespace Lib9c.Tests.Action.Scenario
             var nextState2 = action2.Execute(new ActionContext
             {
                 BlockIndex = 2L,
-                PreviousState = nextState,
+                PreviousState = new MockWorld(nextState),
                 Random = random,
                 Signer = _sellerAgentAddress2,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
             var nextAvatarState2 = nextState2.GetAvatarStateV2(_sellerAvatarAddress2);
             Assert.Empty(nextAvatarState2.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState2.actionPoint);
@@ -293,10 +293,10 @@ namespace Lib9c.Tests.Action.Scenario
             var latestState = action3.Execute(new ActionContext
             {
                 BlockIndex = 3L,
-                PreviousState = nextState2,
+                PreviousState = new MockWorld(nextState2),
                 Random = random,
                 Signer = _buyerAgentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var buyerAvatarState = latestState.GetAvatarStateV2(_buyerAvatarAddress);
             var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(3L);
@@ -392,10 +392,10 @@ namespace Lib9c.Tests.Action.Scenario
             var nextState = action.Execute(new ActionContext
             {
                 BlockIndex = 1L,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
                 Signer = _sellerAgentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var nextAvatarState = nextState.GetAvatarStateV2(_sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
@@ -480,10 +480,10 @@ namespace Lib9c.Tests.Action.Scenario
             var latestState = action2.Execute(new ActionContext
             {
                 BlockIndex = 2L,
-                PreviousState = nextState,
+                PreviousState = new MockWorld(nextState),
                 Random = new TestRandom(),
                 Signer = _sellerAgentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var latestAvatarState = latestState.GetAvatarStateV2(_sellerAvatarAddress);
             foreach (var productInfo in action2.ProductInfos)
@@ -564,10 +564,10 @@ namespace Lib9c.Tests.Action.Scenario
             var nextState = action.Execute(new ActionContext
             {
                 BlockIndex = 1L,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
                 Signer = _sellerAgentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var nextAvatarState = nextState.GetAvatarStateV2(_sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
@@ -688,10 +688,10 @@ namespace Lib9c.Tests.Action.Scenario
             var latestState = action2.Execute(new ActionContext
             {
                 BlockIndex = 2L,
-                PreviousState = nextState,
+                PreviousState = new MockWorld(nextState),
                 Random = random,
                 Signer = _sellerAgentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var latestAvatarState = latestState.GetAvatarStateV2(_sellerAvatarAddress);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp - ReRegisterProduct.CostAp, latestAvatarState.actionPoint);
@@ -809,10 +809,10 @@ namespace Lib9c.Tests.Action.Scenario
             var nextState = action.Execute(new ActionContext
             {
                 BlockIndex = 2L,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
                 Signer = _sellerAgentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.Empty(new OrderDigestListState((Dictionary)nextState.GetState(digestListAddress)).OrderDigestList);
             Assert.Contains(
@@ -892,10 +892,10 @@ namespace Lib9c.Tests.Action.Scenario
             var nextState = action.Execute(new ActionContext
             {
                 BlockIndex = 1L,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = random,
                 Signer = _sellerAgentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
             Guid fungibleProductId = default;
             Guid nonFungibleProductId = default;
             Guid assetProductId = default;
@@ -969,10 +969,10 @@ namespace Lib9c.Tests.Action.Scenario
             var canceledState = cancelAction.Execute(new ActionContext
             {
                 BlockIndex = 2L,
-                PreviousState = nextState,
+                PreviousState = new MockWorld(nextState),
                 Random = random,
                 Signer = _sellerAgentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
             var avatarState = canceledState.GetAvatarStateV2(_sellerAvatarAddress);
             Assert.Equal(2, avatarState.inventory.Items.Count);
             Assert.True(avatarState.inventory.TryGetTradableItem(tradableMaterial.TradableId, 0L, 1, out var materialItem));
@@ -1052,7 +1052,7 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Throws<ItemDoesNotExistException>(() => reRegisterAction.Execute(new ActionContext
             {
                 BlockIndex = 2L,
-                PreviousState = nextState,
+                PreviousState = new MockWorld(nextState),
                 Random = random,
                 Signer = _sellerAgentAddress,
             }));
@@ -1067,10 +1067,10 @@ namespace Lib9c.Tests.Action.Scenario
             var tradedState = buyAction.Execute(new ActionContext
             {
                 BlockIndex = 3L,
-                PreviousState = nextState,
+                PreviousState = new MockWorld(nextState),
                 Random = random,
                 Signer = _buyerAgentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var buyerAvatarState = tradedState.GetAvatarStateV2(_buyerAvatarAddress);
             var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(3L);

@@ -10,7 +10,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
-    using Nekoyume.Blockchain.Policy;
     using Nekoyume.Exceptions;
     using Nekoyume.Extensions;
     using Nekoyume.Model;
@@ -29,11 +28,11 @@ namespace Lib9c.Tests.Action
 
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private IAccountStateDelta _initialStates;
+        private IAccount _initialStates;
 
         public EventDungeonBattleV5Test()
         {
-            _initialStates = new MockStateDelta();
+            _initialStates = new MockAccount();
 
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
@@ -92,29 +91,31 @@ namespace Lib9c.Tests.Action
             Assert.True(_tableSheets.EventScheduleSheet
                 .TryGetValue(eventScheduleId, out var scheduleRow));
             var contextBlockIndex = scheduleRow.StartBlockIndex;
-            var nextStates = Execute(
-                _initialStates,
+            var nextWorld = Execute(
+                new MockWorld(_initialStates),
                 eventScheduleId,
                 eventDungeonId,
                 eventDungeonStageId,
                 blockIndex: contextBlockIndex);
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
             var eventDungeonInfoAddr =
                 EventDungeonInfo.DeriveAddress(_avatarAddress, eventDungeonId);
             var eventDungeonInfo =
-                new EventDungeonInfo(nextStates.GetState(eventDungeonInfoAddr));
+                new EventDungeonInfo(nextAccount.GetState(eventDungeonInfoAddr));
             Assert.Equal(
                 scheduleRow.DungeonTicketsMax - 1,
                 eventDungeonInfo.RemainingTickets);
 
             contextBlockIndex = scheduleRow.DungeonEndBlockIndex;
-            nextStates = Execute(
-                _initialStates,
+            nextWorld = Execute(
+                new MockWorld(_initialStates),
                 eventScheduleId,
                 eventDungeonId,
                 eventDungeonStageId,
                 blockIndex: contextBlockIndex);
+            nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
             eventDungeonInfo =
-                new EventDungeonInfo(nextStates.GetState(eventDungeonInfoAddr));
+                new EventDungeonInfo(nextAccount.GetState(eventDungeonInfoAddr));
             Assert.Equal(
                 scheduleRow.DungeonTicketsMax - 1,
                 eventDungeonInfo.RemainingTickets);
@@ -133,7 +134,7 @@ namespace Lib9c.Tests.Action
             int numberOfTicketPurchases)
         {
             var context = new ActionContext();
-            var previousStates = _initialStates;
+            var previousAccount = _initialStates;
             var scheduleSheet = _tableSheets.EventScheduleSheet;
             Assert.True(scheduleSheet.TryGetValue(eventScheduleId, out var scheduleRow));
             var sb = new StringBuilder();
@@ -150,7 +151,7 @@ namespace Lib9c.Tests.Action
                 $",{dungeonTicketAdditionalPrice}" +
                 $",{scheduleRow.DungeonExpSeedValue}" +
                 $",{scheduleRow.RecipeEndBlockIndex}");
-            previousStates = previousStates.SetState(
+            previousAccount = previousAccount.SetState(
                 Addresses.GetSheetAddress<EventScheduleSheet>(),
                 sb.ToString().Serialize());
 
@@ -159,34 +160,35 @@ namespace Lib9c.Tests.Action
             var eventDungeonInfo = new EventDungeonInfo(
                 remainingTickets: 0,
                 numberOfTicketPurchases: numberOfTicketPurchases);
-            previousStates = previousStates.SetState(
+            previousAccount = previousAccount.SetState(
                 eventDungeonInfoAddr,
                 eventDungeonInfo.Serialize());
 
-            Assert.True(previousStates.GetSheet<EventScheduleSheet>()
+            Assert.True(previousAccount.GetSheet<EventScheduleSheet>()
                 .TryGetValue(eventScheduleId, out var newScheduleRow));
             var ncgHas = newScheduleRow.GetDungeonTicketCost(
                 numberOfTicketPurchases,
                 _ncgCurrency);
             if (ncgHas.Sign > 0)
             {
-                previousStates = previousStates.MintAsset(context, _agentAddress, ncgHas);
+                previousAccount = previousAccount.MintAsset(context, _agentAddress, ncgHas);
             }
 
-            var nextStates = Execute(
-                previousStates,
+            var nextWorld = Execute(
+                new MockWorld(previousAccount),
                 eventScheduleId,
                 eventDungeonId,
                 eventDungeonStageId,
                 buyTicketIfNeeded: true,
                 blockIndex: scheduleRow.StartBlockIndex);
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
             var nextEventDungeonInfoList =
-                (Bencodex.Types.List)nextStates.GetState(eventDungeonInfoAddr)!;
+                (Bencodex.Types.List)nextAccount.GetState(eventDungeonInfoAddr)!;
             Assert.Equal(
                 numberOfTicketPurchases + 1,
                 nextEventDungeonInfoList[2].ToInteger());
             Assert.True(
-                nextStates.TryGetGoldBalance(
+                nextAccount.TryGetGoldBalance(
                     _agentAddress,
                     _ncgCurrency,
                     out FungibleAssetValue balance
@@ -204,7 +206,7 @@ namespace Lib9c.Tests.Action
             int eventDungeonStageId) =>
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStates,
+                    new MockWorld(_initialStates),
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId));
@@ -221,7 +223,7 @@ namespace Lib9c.Tests.Action
             var contextBlockIndex = scheduleRow.StartBlockIndex - 1;
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStates,
+                    new MockWorld(_initialStates),
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId,
@@ -229,7 +231,7 @@ namespace Lib9c.Tests.Action
             contextBlockIndex = scheduleRow.DungeonEndBlockIndex + 1;
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStates,
+                    new MockWorld(_initialStates),
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId,
@@ -248,7 +250,7 @@ namespace Lib9c.Tests.Action
                 .TryGetValue(eventScheduleId, out var scheduleRow));
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStates,
+                    new MockWorld(_initialStates),
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId,
@@ -267,7 +269,7 @@ namespace Lib9c.Tests.Action
                 .TryGetValue(eventScheduleId, out var scheduleRow));
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStates,
+                    new MockWorld(_initialStates),
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId,
@@ -291,7 +293,7 @@ namespace Lib9c.Tests.Action
                 .TryGetValue(eventScheduleId, out var scheduleRow));
             Assert.Throws<NotEnoughEventDungeonTicketsException>(() =>
                 Execute(
-                    previousStates,
+                    new MockWorld(_initialStates),
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId,
@@ -329,7 +331,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<InsufficientBalanceException>(() =>
                 Execute(
-                    previousStates,
+                    new MockWorld(_initialStates),
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId,
@@ -348,7 +350,7 @@ namespace Lib9c.Tests.Action
                 .TryGetValue(eventScheduleId, out var scheduleRow));
             Assert.Throws<StageNotClearedException>(() =>
                 Execute(
-                    _initialStates,
+                    new MockWorld(_initialStates),
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId,
@@ -364,7 +366,9 @@ namespace Lib9c.Tests.Action
                 .TryGetValue(1001, out var scheduleRow));
 
             var context = new ActionContext();
-            _initialStates = _initialStates.MintAsset(context, _agentAddress, 99999 * _ncgCurrency);
+            var previousAccount = _initialStates;
+            previousAccount = previousAccount.MintAsset(context, _agentAddress, 99999 * _ncgCurrency);
+            IWorld previousWorld = new MockWorld(previousAccount);
 
             var unlockRuneSlot = new UnlockRuneSlot()
             {
@@ -372,17 +376,17 @@ namespace Lib9c.Tests.Action
                 SlotIndex = 1,
             };
 
-            _initialStates = unlockRuneSlot.Execute(new ActionContext
+            previousWorld = unlockRuneSlot.Execute(new ActionContext
             {
                 BlockIndex = 1,
-                PreviousState = _initialStates,
+                PreviousState = previousWorld,
                 Signer = _agentAddress,
                 Random = new TestRandom(),
             });
 
             Assert.Throws(exception, () =>
                 Execute(
-                    _initialStates,
+                    previousWorld,
                     1001,
                     10010001,
                     10010001,
@@ -402,44 +406,48 @@ namespace Lib9c.Tests.Action
             int eventDungeonStageId = 10010001;
             var csv = $@"id,_name,start_block_index,dungeon_end_block_index,dungeon_tickets_max,dungeon_tickets_reset_interval_block_range,dungeon_ticket_price,dungeon_ticket_additional_price,dungeon_exp_seed_value,recipe_end_block_index
             1001,2022 Summer Event,{ActionObsoleteConfig.V100301ExecutedBlockIndex},{ActionObsoleteConfig.V100301ExecutedBlockIndex + 100},5,7200,5,2,1,5018000";
-            _initialStates =
-                _initialStates.SetState(
+            var previousStates = _initialStates;
+            previousStates =
+                previousStates.SetState(
                     Addresses.GetSheetAddress<EventScheduleSheet>(),
                     csv.Serialize());
+            var previousWorld = new MockWorld(previousStates);
             var sheet = new EventScheduleSheet();
             sheet.Set(csv);
             Assert.True(sheet.TryGetValue(eventScheduleId, out var scheduleRow));
             var contextBlockIndex = scheduleRow.StartBlockIndex;
-            var nextStates = Execute(
-                _initialStates,
+            var nextWorld = Execute(
+                previousWorld,
                 eventScheduleId,
                 eventDungeonId,
                 eventDungeonStageId,
                 blockIndex: contextBlockIndex);
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
             var eventDungeonInfoAddr =
                 EventDungeonInfo.DeriveAddress(_avatarAddress, eventDungeonId);
             var eventDungeonInfo =
-                new EventDungeonInfo(nextStates.GetState(eventDungeonInfoAddr));
+                new EventDungeonInfo(nextAccount.GetState(eventDungeonInfoAddr));
             Assert.Equal(
                 scheduleRow.DungeonTicketsMax - 1,
                 eventDungeonInfo.RemainingTickets);
 
             contextBlockIndex = scheduleRow.DungeonEndBlockIndex;
-            nextStates = Execute(
-                _initialStates,
+            nextWorld = Execute(
+                previousWorld,
                 eventScheduleId,
                 eventDungeonId,
                 eventDungeonStageId,
                 blockIndex: contextBlockIndex);
+            nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
             eventDungeonInfo =
-                new EventDungeonInfo(nextStates.GetState(eventDungeonInfoAddr));
+                new EventDungeonInfo(nextAccount.GetState(eventDungeonInfoAddr));
             Assert.Equal(
                 scheduleRow.DungeonTicketsMax - 1,
                 eventDungeonInfo.RemainingTickets);
         }
 
-        private IAccountStateDelta Execute(
-            IAccountStateDelta previousStates,
+        private IWorld Execute(
+            IWorld previousWorld,
             int eventScheduleId,
             int eventDungeonId,
             int eventDungeonStageId,
@@ -450,7 +458,8 @@ namespace Lib9c.Tests.Action
             int slotIndex2 = 1,
             int runeId2 = 30001)
         {
-            var previousAvatarState = previousStates.GetAvatarStateV2(_avatarAddress);
+            var previousAccount = previousWorld.GetAccount(ReservedAddresses.LegacyAccount);
+            var previousAvatarState = previousAccount.GetAvatarStateV2(_avatarAddress);
             var equipments =
                 Doomfist.GetAllParts(_tableSheets, previousAvatarState.level);
             foreach (var equipment in equipments)
@@ -477,26 +486,27 @@ namespace Lib9c.Tests.Action
                 BuyTicketIfNeeded = buyTicketIfNeeded,
             };
 
-            var nextStates = action.Execute(new ActionContext
+            var nextWorld = action.Execute(new ActionContext
             {
-                PreviousState = previousStates,
+                PreviousState = previousWorld,
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
                 BlockIndex = blockIndex,
             });
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
-            Assert.True(nextStates.GetSheet<EventScheduleSheet>().TryGetValue(
+            Assert.True(nextAccount.GetSheet<EventScheduleSheet>().TryGetValue(
                 eventScheduleId,
                 out var scheduleRow));
-            var nextAvatarState = nextStates.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextAccount.GetAvatarStateV2(_avatarAddress);
             var expectExp = scheduleRow.GetStageExp(
                 eventDungeonStageId.ToEventDungeonStageNumber());
             Assert.Equal(
                 previousAvatarState.exp + expectExp,
                 nextAvatarState.exp);
 
-            return nextStates;
+            return nextWorld;
         }
     }
 }

@@ -22,8 +22,8 @@ namespace Lib9c.Tests.Action.Scenario
         private readonly Address _avatarAddr;
         private readonly Address _inventoryAddr;
         private readonly Address _worldInformationAddr;
-        private readonly IAccountStateDelta _initialStatesWithAvatarStateV1;
-        private readonly IAccountStateDelta _initialStatesWithAvatarStateV2;
+        private readonly IAccount _initialStatesWithAvatarStateV1;
+        private readonly IAccount _initialStatesWithAvatarStateV2;
         private readonly TableSheets _tableSheets;
         private readonly int _hourGlassItemId;
 
@@ -147,11 +147,11 @@ namespace Lib9c.Tests.Action.Scenario
 
                 stateV2 = action.Execute(new ActionContext
                 {
-                    PreviousState = stateV2,
+                    PreviousState = new MockWorld(stateV2),
                     Signer = _agentAddr,
                     BlockIndex = 0L,
                     Random = random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
 
                 var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
                 // TEST: requiredBlock
@@ -169,11 +169,11 @@ namespace Lib9c.Tests.Action.Scenario
                 };
                 stateV2 = action.Execute(new ActionContext
                 {
-                    PreviousState = stateV2,
+                    PreviousState = new MockWorld(stateV2),
                     Signer = _agentAddr,
                     BlockIndex = stateV2.GetGameConfigState().RequiredAppraiseBlock,
                     Random = random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
 
                 var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
                 // TEST: requiredBlockIndex should be 10, a RequiredAppraiseBlock

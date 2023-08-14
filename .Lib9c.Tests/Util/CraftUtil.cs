@@ -17,8 +17,8 @@ namespace Lib9c.Tests.Util
 
     public static class CraftUtil
     {
-        public static IAccountStateDelta PrepareCombinationSlot(
-            IAccountStateDelta state,
+        public static IAccount PrepareCombinationSlot(
+            IAccount account,
             Address avatarAddress,
             int slotIndex
         )
@@ -34,18 +34,18 @@ namespace Lib9c.Tests.Util
                 // ItemEnhancement: 9
                 GameConfig.RequireClearedStageLevel.ItemEnhancementAction
             );
-            return state.SetState(slotAddress, slotState.Serialize());
+            return account.SetState(slotAddress, slotState.Serialize());
         }
 
-        public static IAccountStateDelta AddMaterialsToInventory(
-            IAccountStateDelta state,
+        public static IAccount AddMaterialsToInventory(
+            IAccount account,
             TableSheets tableSheets,
             Address avatarAddress,
             IEnumerable<EquipmentItemSubRecipeSheet.MaterialInfo> materialList,
             IRandom random
         )
         {
-            var avatarState = state.GetAvatarStateV2(avatarAddress);
+            var avatarState = account.GetAvatarStateV2(avatarAddress);
             foreach (var material in materialList)
             {
                 var materialRow = tableSheets.MaterialItemSheet[material.Id];
@@ -53,14 +53,13 @@ namespace Lib9c.Tests.Util
                 avatarState.inventory.AddItem(materialItem, material.Count);
             }
 
-            return state.SetState(
+            return account.SetState(
                 avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize()
-            );
+                avatarState.inventory.Serialize());
         }
 
-        public static IAccountStateDelta UnlockStage(
-            IAccountStateDelta state,
+        public static IAccount UnlockStage(
+            IAccount account,
             TableSheets tableSheets,
             Address worldInformationAddress,
             int stage
@@ -71,7 +70,7 @@ namespace Lib9c.Tests.Util
                 tableSheets.WorldSheet,
                 Math.Max(stage, GameConfig.RequireClearedStageLevel.ItemEnhancementAction)
             );
-            return state.SetState(worldInformationAddress, worldInformation.Serialize());
+            return account.SetState(worldInformationAddress, worldInformation.Serialize());
         }
     }
 }

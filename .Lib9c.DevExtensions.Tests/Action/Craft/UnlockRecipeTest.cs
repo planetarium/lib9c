@@ -20,7 +20,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccountStateDelta _initialStateV2;
+        private readonly IAccount _initialStateV2;
         private readonly Address _recipeAddress;
 
         public UnlockRecipeTest()
@@ -58,12 +58,14 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
 
             var stateV2 = action.Execute(new ActionContext
             {
-                PreviousState = _initialStateV2,
+                PreviousState = new MockWorld(_initialStateV2),
                 Signer = _agentAddress,
                 BlockIndex = 0L,
             });
 
-            Assert.True(stateV2.TryGetState(_recipeAddress, out List rawIds));
+            Assert.True(
+                stateV2.GetAccount(ReservedAddresses.LegacyAccount)
+                    .TryGetState(_recipeAddress, out List rawIds));
             var unlockedRecipeIds = rawIds.ToList(StateExtensions.ToInteger);
             Assert.Contains(recipeRow.UnlockStage, unlockedRecipeIds);
         }
@@ -92,12 +94,14 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
 
             var stateV2 = action.Execute(new ActionContext
             {
-                PreviousState = _initialStateV2,
+                PreviousState = new MockWorld(_initialStateV2),
                 Signer = _agentAddress,
                 BlockIndex = 0L,
             });
 
-            Assert.True(stateV2.TryGetState(_recipeAddress, out List rawIds));
+            Assert.True(
+                stateV2.GetAccount(ReservedAddresses.LegacyAccount)
+                    .TryGetState(_recipeAddress, out List rawIds));
             var unlockedRecipeIds = rawIds.ToList(StateExtensions.ToInteger);
             Assert.Contains(targetStage, unlockedRecipeIds);
         }

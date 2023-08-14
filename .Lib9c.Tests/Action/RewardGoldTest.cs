@@ -36,7 +36,7 @@ namespace Lib9c.Tests.Action
     {
         private readonly AvatarState _avatarState;
         private readonly AvatarState _avatarState2;
-        private readonly MockStateDelta _baseState;
+        private readonly MockAccount _baseState;
         private readonly TableSheets _tableSheets;
 
         public RewardGoldTest()
@@ -76,7 +76,7 @@ namespace Lib9c.Tests.Action
             var gold = new GoldCurrencyState(Currency.Legacy("NCG", 2, null));
 #pragma warning restore CS0618
             IActionContext context = new ActionContext();
-            _baseState = (MockStateDelta)new MockStateDelta()
+            _baseState = (MockAccount)new MockAccount()
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
                 .SetState(Addresses.GoldDistribution, GoldDistributionTest.Fixture.Select(v => v.Serialize()).Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100000000000);
@@ -126,7 +126,7 @@ namespace Lib9c.Tests.Action
             var ctx = new ActionContext()
             {
                 BlockIndex = blockIndex,
-                PreviousState = _baseState,
+                PreviousState = new MockWorld(_baseState),
                 Miner = default,
             };
 
@@ -232,7 +232,7 @@ namespace Lib9c.Tests.Action
             var ctx = new ActionContext()
             {
                 BlockIndex = blockIndex,
-                PreviousState = _baseState,
+                PreviousState = new MockWorld(_baseState),
                 Miner = default,
             };
 
@@ -314,7 +314,7 @@ namespace Lib9c.Tests.Action
             var migrationCtx = new ActionContext
             {
                 BlockIndex = RewardGold.RankingBattle11UpdateTargetBlockIndex,
-                PreviousState = _baseState,
+                PreviousState = new MockWorld(_baseState),
                 Miner = default,
             };
 
@@ -343,7 +343,7 @@ namespace Lib9c.Tests.Action
             var ctx = new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Miner = default,
             };
 
@@ -377,10 +377,10 @@ namespace Lib9c.Tests.Action
             var ctx = new ActionContext()
             {
                 BlockIndex = 0,
-                PreviousState = _baseState,
+                PreviousState = new MockWorld(_baseState),
             };
 
-            IAccountStateDelta delta;
+            IAccount delta;
 
             // 제너시스에 받아야 할 돈들 검사
             delta = action.GenesisGoldDistribution(ctx, _baseState);
@@ -443,7 +443,7 @@ namespace Lib9c.Tests.Action
             var ctx = new ActionContext()
             {
                 BlockIndex = 0,
-                PreviousState = _baseState,
+                PreviousState = new MockWorld(_baseState),
                 Miner = miner,
             };
 
@@ -452,7 +452,7 @@ namespace Lib9c.Tests.Action
             void AssertMinerReward(int blockIndex, string expected)
             {
                 ctx.BlockIndex = blockIndex;
-                IAccountStateDelta delta = action.MinerReward(ctx, _baseState);
+                IAccount delta = action.MinerReward(ctx, _baseState);
                 Assert.Equal(FungibleAssetValue.Parse(currency, expected), delta.GetBalance(miner, currency));
             }
 
@@ -572,7 +572,7 @@ namespace Lib9c.Tests.Action
             var patronAddress = new PrivateKey().ToAddress();
             var contractAddress = agentAddress.GetPledgeAddress();
             IActionContext context = new ActionContext();
-            IAccountStateDelta states = new MockStateDelta()
+            IAccount states = new MockAccount()
                 .MintAsset(context, patronAddress, patronMead * Currencies.Mead)
                 .TransferAsset(context, patronAddress, agentAddress, 1 * Currencies.Mead)
                 .SetState(contractAddress, List.Empty.Add(patronAddress.Serialize()).Add(true.Serialize()).Add(balance.Serialize()))

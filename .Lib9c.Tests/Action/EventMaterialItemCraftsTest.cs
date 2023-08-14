@@ -19,7 +19,7 @@ namespace Lib9c.Tests.Action
 
     public class EventMaterialItemCraftsTest
     {
-        private readonly IAccountStateDelta _initialStates;
+        private readonly IAccount _initialStates;
         private readonly TableSheets _tableSheets;
 
         private readonly Address _agentAddress;
@@ -27,7 +27,7 @@ namespace Lib9c.Tests.Action
 
         public EventMaterialItemCraftsTest()
         {
-            _initialStates = new MockStateDelta();
+            _initialStates = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -179,14 +179,14 @@ namespace Lib9c.Tests.Action
                 .TryGetValue(eventScheduleId, out var scheduleRow));
             var contextBlockIndex = scheduleRow.StartBlockIndex;
             Execute(
-                _initialStates,
+                new MockWorld(_initialStates),
                 eventScheduleId,
                 eventMaterialItemRecipeId,
                 materialsToUse,
                 contextBlockIndex);
             contextBlockIndex = scheduleRow.RecipeEndBlockIndex;
             Execute(
-                _initialStates,
+                new MockWorld(_initialStates),
                 eventScheduleId,
                 eventMaterialItemRecipeId,
                 materialsToUse,
@@ -205,7 +205,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<InvalidMaterialCountException>(() =>
             {
                 Execute(
-                    _initialStates,
+                    new MockWorld(_initialStates),
                     eventScheduleId,
                     eventMaterialItemRecipeId,
                     materialsToUse,
@@ -214,17 +214,18 @@ namespace Lib9c.Tests.Action
         }
 
         private void Execute(
-            IAccountStateDelta previousStates,
+            IWorld previousStates,
             int eventScheduleId,
             int eventMaterialItemRecipeId,
             Dictionary<int, int> materialsToUse,
             long blockIndex = 0)
         {
-            var previousAvatarState = previousStates.GetAvatarStateV2(_avatarAddress);
+            var previousAccount = previousStates.GetAccount(ReservedAddresses.LegacyAccount);
+            var previousAvatarState = previousAccount.GetAvatarStateV2(_avatarAddress);
 
-            var recipeSheet = previousStates.GetSheet<EventMaterialItemRecipeSheet>();
+            var recipeSheet = previousAccount.GetSheet<EventMaterialItemRecipeSheet>();
             Assert.True(recipeSheet.TryGetValue(eventMaterialItemRecipeId, out var recipeRow));
-            var materialItemSheet = previousStates.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = previousAccount.GetSheet<MaterialItemSheet>();
             foreach (var pair in materialsToUse)
             {
                 Assert.True(materialItemSheet.TryGetValue(pair.Key, out var materialRow));
@@ -232,19 +233,20 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.inventory.AddItem(material, pair.Value);
             }
 
-            var worldSheet = previousStates.GetSheet<WorldSheet>();
+            var worldSheet = previousAccount.GetSheet<WorldSheet>();
             previousAvatarState.worldInformation = new WorldInformation(
                 blockIndex,
                 worldSheet,
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
-            previousStates = previousStates
+            previousAccount = previousAccount
                 .SetState(
                     _avatarAddress.Derive(LegacyInventoryKey),
                     previousAvatarState.inventory.Serialize())
                 .SetState(
                     _avatarAddress.Derive(LegacyWorldInformationKey),
                     previousAvatarState.worldInformation.Serialize());
+            previousStates = previousStates.SetAccount(previousAccount);
 
             var previousMaterialCount = previousAvatarState.inventory.Items
                 .Where(i => recipeRow.RequiredMaterialsId.Contains(i.item.Id))
@@ -270,7 +272,8 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
             });
 
-            var nextAvatarState = nextStates.GetAvatarStateV2(_avatarAddress);
+            var nextAccount = nextStates.GetAccount(ReservedAddresses.LegacyAccount);
+            var nextAvatarState = nextAccount.GetAvatarStateV2(_avatarAddress);
 
             var nextMaterialCount = nextAvatarState.inventory.Items
                 .Where(i => recipeRow.RequiredMaterialsId.Contains(i.item.Id))

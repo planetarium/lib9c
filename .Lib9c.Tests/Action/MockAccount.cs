@@ -20,21 +20,21 @@ namespace Lib9c.Tests.Action
     /// except this has its constructors exposed as public for testing.
     /// </summary>
     [Pure]
-    public class MockStateDelta : IAccountStateDelta
+    public class MockAccount : IAccount
     {
         private readonly IAccountState _baseState;
 
-        public MockStateDelta()
-            : this(MockState.Empty)
+        public MockAccount()
+            : this(MockAccountState.Empty)
         {
         }
 
-        public MockStateDelta(IAccountState baseState)
-            : this(baseState, new MockDelta())
+        public MockAccount(IAccountState baseState)
+            : this(baseState, new MockAccountDelta())
         {
         }
 
-        private MockStateDelta(IAccountState baseState, IAccountDelta delta)
+        private MockAccount(IAccountState baseState, IAccountDelta delta)
         {
             _baseState = baseState;
             Delta = delta;
@@ -50,6 +50,8 @@ namespace Lib9c.Tests.Action
 
         public IImmutableDictionary<(Address, Currency), BigInteger> TotalUpdatedFungibles
             { get; private set; }
+
+        public Address Address => ReservedAddresses.LegacyAccount;
 
         /// <inheritdoc/>
         [Pure]
@@ -94,7 +96,7 @@ namespace Lib9c.Tests.Action
 
         /// <inheritdoc/>
         [Pure]
-        public IAccountStateDelta SetState(Address address, IValue state) =>
+        public IAccount SetState(Address address, IValue state) =>
             UpdateStates(Delta.States.SetItem(address, state));
 
         /// <inheritdoc/>
@@ -131,7 +133,7 @@ namespace Lib9c.Tests.Action
 
         /// <inheritdoc/>
         [Pure]
-        public IAccountStateDelta MintAsset(
+        public IAccount MintAsset(
             IActionContext context, Address recipient, FungibleAssetValue value)
         {
             if (value.Sign <= 0)
@@ -182,7 +184,7 @@ namespace Lib9c.Tests.Action
 
         /// <inheritdoc/>
         [Pure]
-        public IAccountStateDelta TransferAsset(
+        public IAccount TransferAsset(
             IActionContext context,
             Address sender,
             Address recipient,
@@ -193,7 +195,7 @@ namespace Lib9c.Tests.Action
 
         /// <inheritdoc/>
         [Pure]
-        public IAccountStateDelta BurnAsset(
+        public IAccount BurnAsset(
             IActionContext context, Address owner, FungibleAssetValue value)
         {
             string msg;
@@ -244,7 +246,7 @@ namespace Lib9c.Tests.Action
 
         /// <inheritdoc/>
         [Pure]
-        public IAccountStateDelta SetValidator(Validator validator)
+        public IAccount SetValidator(Validator validator)
         {
             return UpdateValidatorSet(GetValidatorSet().Update(validator));
         }
@@ -259,11 +261,11 @@ namespace Lib9c.Tests.Action
                 : _baseState.GetBalance(address, currency);
 
         [Pure]
-        private MockStateDelta UpdateStates(
+        private MockAccount UpdateStates(
             IImmutableDictionary<Address, IValue> updatedStates) =>
-            new MockStateDelta(
+            new MockAccount(
                 _baseState,
-                new MockDelta(
+                new MockAccountDelta(
                     updatedStates,
                     Delta.Fungibles,
                     Delta.TotalSupplies,
@@ -273,7 +275,7 @@ namespace Lib9c.Tests.Action
             };
 
         [Pure]
-        private MockStateDelta UpdateFungibleAssets(
+        private MockAccount UpdateFungibleAssets(
             IImmutableDictionary<(Address, Currency), BigInteger> updatedFungibleAssets,
             IImmutableDictionary<(Address, Currency), BigInteger> totalUpdatedFungibles
         ) =>
@@ -283,14 +285,14 @@ namespace Lib9c.Tests.Action
                 Delta.TotalSupplies);
 
         [Pure]
-        private MockStateDelta UpdateFungibleAssets(
+        private MockAccount UpdateFungibleAssets(
             IImmutableDictionary<(Address, Currency), BigInteger> updatedFungibleAssets,
             IImmutableDictionary<(Address, Currency), BigInteger> totalUpdatedFungibles,
             IImmutableDictionary<Currency, BigInteger> updatedTotalSupply
         ) =>
-            new MockStateDelta(
+            new MockAccount(
                 _baseState,
-                new MockDelta(
+                new MockAccountDelta(
                     Delta.States,
                     updatedFungibleAssets,
                     updatedTotalSupply,
@@ -300,11 +302,11 @@ namespace Lib9c.Tests.Action
             };
 
         [Pure]
-        private MockStateDelta UpdateValidatorSet(
+        private MockAccount UpdateValidatorSet(
             ValidatorSet updatedValidatorSet) =>
-            new MockStateDelta(
+            new MockAccount(
                 _baseState,
-                new MockDelta(
+                new MockAccountDelta(
                     Delta.States,
                     Delta.Fungibles,
                     Delta.TotalSupplies,
@@ -314,7 +316,7 @@ namespace Lib9c.Tests.Action
             };
 
         [Pure]
-        private IAccountStateDelta TransferAssetV0(
+        private IAccount TransferAssetV0(
             Address sender,
             Address recipient,
             FungibleAssetValue value,
@@ -350,7 +352,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Pure]
-        private IAccountStateDelta TransferAssetV1(
+        private IAccount TransferAssetV1(
             Address sender,
             Address recipient,
             FungibleAssetValue value,

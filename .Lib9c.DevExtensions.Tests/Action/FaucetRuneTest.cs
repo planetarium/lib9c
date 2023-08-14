@@ -7,7 +7,6 @@ using Lib9c.Tests.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume;
-using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Faucet;
@@ -22,7 +21,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 {
     public class FaucetRuneTest
     {
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
         private readonly Address _avatarAddress;
         private readonly RuneSheet _runeSheet;
 
@@ -33,7 +32,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Lib9c.Tests.Action.MockStateDelta();
+            _initialState = new Lib9c.Tests.Action.MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -86,7 +85,10 @@ namespace Lib9c.DevExtensions.Tests.Action
                 AvatarAddress = _avatarAddress,
                 FaucetRuneInfos = faucetRuneInfos,
             };
-            var states = action.Execute(new ActionContext { PreviousState = _initialState });
+            var states = action
+                .Execute(
+                    new ActionContext { PreviousState = new MockWorld(_initialState) })
+                .GetAccount(ReservedAddresses.LegacyAccount);
             foreach (var rune in faucetRuneInfos)
             {
                 var expectedRune = RuneHelper.ToCurrency(

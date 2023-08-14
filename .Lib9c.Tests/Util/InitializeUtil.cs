@@ -1,13 +1,11 @@
 namespace Lib9c.Tests.Util
 {
-    using System.Collections.Immutable;
     using System.IO;
     using Lib9c.Tests.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
-    using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -18,8 +16,8 @@ namespace Lib9c.Tests.Util
             TableSheets tableSheets,
             Address agentAddr,
             Address avatarAddr,
-            IAccountStateDelta initialStatesWithAvatarStateV1,
-            IAccountStateDelta initialStatesWithAvatarStateV2
+            IAccount initialStatesWithAvatarStateV1,
+            IAccount initialStatesWithAvatarStateV2
             ) InitializeStates(
                 Address? adminAddr = null,
                 Address? agentAddr = null,
@@ -29,7 +27,7 @@ namespace Lib9c.Tests.Util
         {
             adminAddr ??= new PrivateKey().ToAddress();
             var context = new ActionContext();
-            var states = new MockStateDelta().SetState(
+            var states = new MockAccount().SetState(
                 Addresses.Admin,
                 new AdminState(adminAddr.Value, long.MaxValue).Serialize());
             var sheets = TableSheetsImporter.ImportSheets(

@@ -38,7 +38,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _rankingMapAddress;
 
         private readonly WeeklyArenaState _weeklyArenaState;
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
         private readonly IRandom _random;
 
         public HackAndSlashSweep9Test()
@@ -76,7 +76,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(currency);
             _weeklyArenaState = new WeeklyArenaState(0);
-            _initialState = new MockStateDelta()
+            _initialState = new MockAccount()
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetState(_agentAddress, agentState.SerializeV2())
                 .SetState(_avatarAddress, _avatarState.SerializeV2())
@@ -170,7 +170,7 @@ namespace Lib9c.Tests.Action
             var apStone = ItemFactory.CreateTradableMaterial(row);
             avatarState.inventory.AddItem(apStone, apStoneCount);
 
-            IAccountStateDelta state;
+            IAccount state;
             if (backward)
             {
                 state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
@@ -229,10 +229,10 @@ namespace Lib9c.Tests.Action
 
                 state = action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     Random = _random,
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
 
                 var nextAvatarState = state.GetAvatarStateV2(_avatarAddress);
 
@@ -263,7 +263,7 @@ namespace Lib9c.Tests.Action
                 stageId = 1,
             };
 
-            var state = backward ? new MockStateDelta() : _initialState;
+            var state = backward ? new MockAccount() : _initialState;
             if (!backward)
             {
                 state = _initialState
@@ -275,7 +275,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
             }));
@@ -301,7 +301,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
             }));
@@ -328,7 +328,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<SheetRowColumnException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
             }));
@@ -373,7 +373,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<InvalidStageException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
             }));
@@ -400,7 +400,7 @@ namespace Lib9c.Tests.Action
                     new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 10000001),
             };
 
-            IAccountStateDelta state;
+            IAccount state;
             if (backward)
             {
                 state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
@@ -439,7 +439,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<InvalidWorldException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
             }));
@@ -463,7 +463,7 @@ namespace Lib9c.Tests.Action
                     new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
             };
 
-            IAccountStateDelta state;
+            IAccount state;
             if (backward)
             {
                 state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
@@ -494,7 +494,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<UsageLimitExceedException>(() => action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
             }));
@@ -524,7 +524,7 @@ namespace Lib9c.Tests.Action
             var apStone = ItemFactory.CreateTradableMaterial(row);
             avatarState.inventory.AddItem(apStone, holdingApStoneCount);
 
-            IAccountStateDelta state;
+            IAccount state;
             if (backward)
             {
                 state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
@@ -573,7 +573,7 @@ namespace Lib9c.Tests.Action
 
                 Assert.Throws<NotEnoughMaterialException>(() => action.Execute(new ActionContext()
                 {
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     Random = new TestRandom(),
                 }));
@@ -600,7 +600,7 @@ namespace Lib9c.Tests.Action
                 actionPoint = 0,
             };
 
-            IAccountStateDelta state;
+            IAccount state;
             if (backward)
             {
                 state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
@@ -649,7 +649,7 @@ namespace Lib9c.Tests.Action
                 Assert.Throws<NotEnoughActionPointException>(() =>
                     action.Execute(new ActionContext()
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = _agentAddress,
                         Random = new TestRandom(),
                     }));
@@ -676,7 +676,7 @@ namespace Lib9c.Tests.Action
                 actionPoint = 0,
             };
 
-            IAccountStateDelta state;
+            IAccount state;
             if (backward)
             {
                 state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
@@ -725,7 +725,7 @@ namespace Lib9c.Tests.Action
                 Assert.Throws<PlayCountIsZeroException>(() =>
                     action.Execute(new ActionContext()
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = _agentAddress,
                         Random = new TestRandom(),
                     }));
@@ -752,7 +752,7 @@ namespace Lib9c.Tests.Action
                 level = 1,
             };
 
-            IAccountStateDelta state;
+            IAccount state;
             if (backward)
             {
                 state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
@@ -800,7 +800,7 @@ namespace Lib9c.Tests.Action
                 Assert.Throws<NotEnoughCombatPointException>(() =>
                     action.Execute(new ActionContext()
                     {
-                        PreviousState = state,
+                        PreviousState = new MockWorld(state),
                         Signer = _agentAddress,
                         Random = new TestRandom(),
                     }));
@@ -873,10 +873,10 @@ namespace Lib9c.Tests.Action
 
                 var nextState = action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     Random = new TestRandom(),
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
                 var nextAvatar = nextState.GetAvatarStateV2(_avatarAddress);
                 Assert.Equal(expectedLevel, nextAvatar.level);
                 Assert.Equal(expectedExp, nextAvatar.exp);
@@ -949,10 +949,10 @@ namespace Lib9c.Tests.Action
                 state = unlockRuneSlot.Execute(new ActionContext
                 {
                     BlockIndex = 1,
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     Random = new TestRandom(),
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
 
                 var action = new HackAndSlashSweep
                 {
@@ -972,7 +972,7 @@ namespace Lib9c.Tests.Action
 
                 Assert.Throws(exception, () => action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     Random = new TestRandom(),
                 }));

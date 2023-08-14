@@ -10,7 +10,6 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume;
-using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
@@ -24,11 +23,11 @@ namespace Lib9c.DevExtensions.Tests.Action
 {
     public class CreateOrReplaceAvatarTest
     {
-        private readonly IAccountStateDelta _initialStates;
+        private readonly IAccount _initialStates;
 
         public CreateOrReplaceAvatarTest()
         {
-            _initialStates = new Lib9c.Tests.Action.MockStateDelta();
+            _initialStates = new Lib9c.Tests.Action.MockAccount();
 
 #pragma warning disable CS0618
             var ncgCurrency = Currency.Legacy("NCG", 2, null);
@@ -357,7 +356,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         {
             var agentAddr = new PrivateKey().ToAddress();
             Execute(
-                _initialStates,
+                new MockWorld(_initialStates),
                 blockIndex,
                 agentAddr,
                 avatarIndex,
@@ -393,7 +392,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         {
             var agentAddr = new PrivateKey().ToAddress();
             Assert.Throws<ArgumentException>(() => Execute(
-                _initialStates,
+                new MockWorld(_initialStates),
                 blockIndex,
                 agentAddr,
                 avatarIndex,
@@ -411,7 +410,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         }
 
         private static void Execute(
-            IAccountStateDelta previousStates,
+            IWorld previousStates,
             long blockIndex,
             Address agentAddr,
             int avatarIndex,
@@ -441,7 +440,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 costumeIds,
                 runes,
                 crystalRandomBuff);
-            var nextStates = action.Execute(new ActionContext
+            var nextWorld = action.Execute(new ActionContext
             {
                 PreviousState = previousStates,
                 Signer = agentAddr,
@@ -449,6 +448,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 Rehearsal = false,
                 BlockIndex = blockIndex,
             });
+            var nextStates = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
             var agent = new AgentState((Dictionary)nextStates.GetState(agentAddr)!);
             Assert.Single(agent.avatarAddresses);
             Assert.True(agent.avatarAddresses.ContainsKey(action.AvatarIndex));

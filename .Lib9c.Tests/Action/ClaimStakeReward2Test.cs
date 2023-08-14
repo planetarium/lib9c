@@ -16,7 +16,7 @@ namespace Lib9c.Tests.Action
 
     public class ClaimStakeReward2Test
     {
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
         private readonly Currency _currency;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly TableSheets _tableSheets;
@@ -32,7 +32,7 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new MockStateDelta();
+            _initialState = new MockAccount();
 
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
@@ -131,7 +131,7 @@ namespace Lib9c.Tests.Action
             var action = new ClaimStakeReward2(_avatarAddress);
             Assert.Throws<ActionObsoletedException>(() => action.Execute(new ActionContext
             {
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Signer = _signerAddress,
                 BlockIndex = ClaimStakeReward2.ObsoletedIndex + 1,
             }));
@@ -157,12 +157,13 @@ namespace Lib9c.Tests.Action
             }
 
             var action = new ClaimStakeReward2(avatarAddress);
-            var states = action.Execute(new ActionContext
+            var world = action.Execute(new ActionContext
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(state),
                 Signer = _signerAddress,
                 BlockIndex = StakeState.LockupInterval,
             });
+            var states = world.GetAccount(ReservedAddresses.LegacyAccount);
 
             AvatarState avatarState = states.GetAvatarStateV2(avatarAddress);
             // regular (100 / 10) * 4

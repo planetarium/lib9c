@@ -26,8 +26,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IAccountStateDelta _initialStateV1;
-        private readonly IAccountStateDelta _initialStateV2;
+        private readonly IAccount _initialStateV1;
+        private readonly IAccount _initialStateV2;
         private readonly Address _inventoryAddr;
         private readonly Address _worldInfoAddr;
         private readonly Address _recipeAddr;
@@ -127,11 +127,11 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             };
             stateV2 = action.Execute(new ActionContext
             {
-                PreviousState = stateV2,
+                PreviousState = new MockWorld(stateV2),
                 Signer = _agentAddr,
                 BlockIndex = 0L,
                 Random = random,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
             var slotState = stateV2.GetCombinationSlotState(_avatarAddr, 0);
             // TEST: No additional option added (1 star)
             Assert.Equal(
@@ -167,11 +167,11 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             };
             stateV2 = petAction.Execute(new ActionContext
             {
-                PreviousState = stateV2,
+                PreviousState = new MockWorld(stateV2),
                 Signer = _agentAddr,
                 BlockIndex = 0L,
                 Random = random,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
             var petSlotState = stateV2.GetCombinationSlotState(_avatarAddr, 1);
             // TEST: One additional option added (2 star)
             Assert.Equal(

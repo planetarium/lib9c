@@ -17,7 +17,7 @@ namespace Lib9c.Tests.Extensions
 
     public class SheetsExtensionsTest
     {
-        private IAccountStateDelta _states;
+        private IAccount _states;
         private Dictionary<string, string> _sheetNameAndFiles;
         private Dictionary<Address, IValue> _sheetsAddressAndValues;
         private Type[] _sheetTypes;
@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Extensions
 
         public SheetsExtensionsTest()
         {
-            _states = new Tests.Action.MockStateDelta();
+            _states = new Tests.Action.MockAccount();
             InitSheets(
                 _states,
                 out _sheetNameAndFiles,
@@ -56,7 +56,7 @@ namespace Lib9c.Tests.Extensions
         }
 
         internal static void InitSheets(
-            IAccountStateDelta states,
+            IAccount account,
             out Dictionary<string, string> sheetNameAndFiles,
             out Dictionary<Address, IValue> sheetsAddressAndValues,
             out Type[] sheetTypes,
@@ -68,7 +68,7 @@ namespace Lib9c.Tests.Extensions
                 pair => pair.Value.Serialize());
             foreach (var (address, value) in sheetsAddressAndValues)
             {
-                states = states.SetState(address, value);
+                account = account.SetState(address, value);
             }
 
             var iSheetType = typeof(ISheet);
@@ -81,7 +81,7 @@ namespace Lib9c.Tests.Extensions
                 .ToArray();
             Assert.NotNull(sheetTypes);
             Assert.NotEmpty(sheetTypes);
-            stateSheets = states.GetSheets(sheetTypes);
+            stateSheets = account.GetSheets(sheetTypes);
         }
     }
 }

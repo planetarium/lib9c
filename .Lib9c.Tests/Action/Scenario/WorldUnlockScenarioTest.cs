@@ -2,8 +2,6 @@ namespace Lib9c.Tests.Action.Scenario
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
@@ -18,7 +16,7 @@ namespace Lib9c.Tests.Action.Scenario
     public class WorldUnlockScenarioTest
     {
         private TableSheets _tableSheets;
-        private IAccountStateDelta _initialState;
+        private IAccount _initialState;
         private Address _agentAddress;
         private Address _avatarAddress;
         private Address _rankingMapAddress;
@@ -50,7 +48,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             _weeklyArenaState = new WeeklyArenaState(0);
 
-            _initialState = new Lib9c.Tests.Action.MockStateDelta()
+            _initialState = new Lib9c.Tests.Action.MockAccount()
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(_avatarAddress, avatarState.Serialize())
@@ -102,11 +100,11 @@ namespace Lib9c.Tests.Action.Scenario
             };
             nextState = hackAndSlash.Execute(new ActionContext
             {
-                PreviousState = nextState,
+                PreviousState = new MockWorld(nextState),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             avatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.True(avatarState.worldInformation.IsStageCleared(stageIdToClear));
@@ -133,22 +131,22 @@ id,world_id,stage_id,world_id_to_unlock,required_crystal
             };
             nextState = patchTableSheet.Execute(new ActionContext
             {
-                PreviousState = nextState,
+                PreviousState = new MockWorld(nextState),
                 Signer = AdminState.Address,
                 Random = new TestRandom(),
                 Rehearsal = false,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var nextTableCsv = nextState.GetSheetCsv<WorldUnlockSheet>();
             Assert.Equal(nextTableCsv, tableCsv);
 
             nextState = hackAndSlash.Execute(new ActionContext
             {
-                PreviousState = nextState,
+                PreviousState = new MockWorld(nextState),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             avatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.True(avatarState.worldInformation.IsWorldUnlocked(worldIdToUnlock));

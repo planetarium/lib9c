@@ -31,7 +31,7 @@
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly GameConfigState _gameConfigState;
-        private IAccountStateDelta _initialState;
+        private IAccount _initialState;
 
         public ReRegisterProduct0Test(ITestOutputHelper outputHelper)
         {
@@ -40,7 +40,7 @@
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockStateDelta();
+            _initialState = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -235,11 +235,11 @@
             var expectedState = action.Execute(new ActionContext
             {
                 BlockIndex = 101,
-                PreviousState = prevState,
+                PreviousState = new MockWorld(prevState),
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var updateSellShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, updateSellOrderId);
             var nextShopState = new ShardedShopStateV2((Dictionary)expectedState.GetState(updateSellShopAddress));
@@ -282,11 +282,11 @@
             var actualState = reRegister.Execute(new ActionContext
             {
                 BlockIndex = 101,
-                PreviousState = prevState,
+                PreviousState = new MockWorld(prevState),
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _agentAddress,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var targetShopState = new ShardedShopStateV2((Dictionary)actualState.GetState(shardedShopAddress));
             var nextOrderDigestListState = new OrderDigestListState((Dictionary)actualState.GetState(orderDigestList.Address));

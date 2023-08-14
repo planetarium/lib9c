@@ -16,7 +16,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Stage
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccountStateDelta _initialStateV2;
+        private readonly IAccount _initialStateV2;
         private readonly Address _worldInfoAddress;
 
         public ClearStageTest()
@@ -40,12 +40,13 @@ namespace Lib9c.DevExtensions.Tests.Action.Stage
 
             var state = action.Execute(new ActionContext
             {
-                PreviousState = _initialStateV2,
+                PreviousState = new MockWorld(_initialStateV2),
                 Signer = _agentAddress,
                 BlockIndex = 0L,
             });
 
-            var avatarState = state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = state.GetAccount(ReservedAddresses.LegacyAccount)
+                .GetAvatarStateV2(_avatarAddress);
             for (var i = 1; i <= targetStage; i++)
             {
                 Assert.True(avatarState.worldInformation.IsStageCleared(i));

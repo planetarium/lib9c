@@ -14,7 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.TableData;
     using Xunit;
 
-    public class AccountStateDeltaExtensionsTest
+    public class AccountExtensionsTest
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _avatarState;
         private readonly TableSheets _tableSheets;
 
-        public AccountStateDeltaExtensionsTest()
+        public AccountExtensionsTest()
         {
             _agentAddress = default;
             _avatarAddress = _agentAddress.Derive(string.Format(CultureInfo.InvariantCulture, CreateAvatar.DeriveFormat, 0));
@@ -46,7 +46,7 @@ namespace Lib9c.Tests.Action
         public void SetWorldBossKillReward(int level, int expectedRune, int expectedCrystal, Type exc)
         {
             var context = new ActionContext();
-            IAccountStateDelta states = new MockStateDelta();
+            IAccount account = new MockAccount();
             var rewardInfoAddress = new PrivateKey().ToAddress();
             var rewardRecord = new WorldBossKillRewardRecord();
             for (int i = 0; i < level; i++)
@@ -54,7 +54,7 @@ namespace Lib9c.Tests.Action
                 rewardRecord[i] = false;
             }
 
-            states = states.SetState(rewardInfoAddress, rewardRecord.Serialize());
+            account = account.SetState(rewardInfoAddress, rewardRecord.Serialize());
 
             var random = new TestRandom();
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
@@ -77,7 +77,7 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                var nextState = states.SetWorldBossKillReward(context, rewardInfoAddress, rewardRecord, 0, bossState, runeWeightSheet, killRewardSheet, runeSheet, random, avatarAddress, _agentAddress);
+                var nextState = account.SetWorldBossKillReward(context, rewardInfoAddress, rewardRecord, 0, bossState, runeWeightSheet, killRewardSheet, runeSheet, random, avatarAddress, _agentAddress);
                 Assert.Equal(expectedRune * runeCurrency, nextState.GetBalance(avatarAddress, runeCurrency));
                 Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
                 var nextRewardInfo = new WorldBossKillRewardRecord((List)nextState.GetState(rewardInfoAddress));
@@ -87,7 +87,7 @@ namespace Lib9c.Tests.Action
             {
                 Assert.Throws(
                     exc,
-                    () => states.SetWorldBossKillReward(
+                    () => account.SetWorldBossKillReward(
                         context,
                         rewardInfoAddress,
                         rewardRecord,
@@ -106,7 +106,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void SetCouponWallet()
         {
-            IAccountStateDelta states = new MockStateDelta();
+            IAccount account = new MockAccount();
             var guid1 = new Guid("6856AE42-A820-4041-92B0-5D7BAA52F2AA");
             var guid2 = new Guid("701BA698-CCB9-4FC7-B88F-7CB8C707D135");
             var guid3 = new Guid("910296E7-34E4-45D7-9B4E-778ED61F278B");
@@ -116,30 +116,30 @@ namespace Lib9c.Tests.Action
             var agentAddress1 = new Address("0000000000000000000000000000000000000000");
             var agentAddress2 = new Address("0000000000000000000000000000000000000001");
 
-            states = states.SetCouponWallet(
+            account = account.SetCouponWallet(
                 agentAddress1,
                 ImmutableDictionary<Guid, Coupon>.Empty
                     .Add(guid1, coupon1)
                     .Add(guid2, coupon2), true);
 
-            states = states.SetCouponWallet(
+            account = account.SetCouponWallet(
                 agentAddress2,
                 ImmutableDictionary<Guid, Coupon>.Empty);
 
             Assert.Equal(
                 ActionBase.MarkChanged,
-                states.GetState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
+                account.GetState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
             Assert.Equal(
                 Bencodex.Types.List.Empty,
-                states.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
+                account.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
 
-            states = states.SetCouponWallet(
+            account = account.SetCouponWallet(
                 agentAddress1,
                 ImmutableDictionary<Guid, Coupon>.Empty
                     .Add(guid1, coupon1)
                     .Add(guid2, coupon2));
 
-            states = states.SetCouponWallet(
+            account = account.SetCouponWallet(
                 agentAddress2,
                 ImmutableDictionary<Guid, Coupon>.Empty
                     .Add(guid3, coupon3));
@@ -148,12 +148,12 @@ namespace Lib9c.Tests.Action
                 Bencodex.Types.List.Empty
                     .Add(coupon1.Serialize())
                     .Add(coupon2.Serialize()),
-                states.GetState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
+                account.GetState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
 
             Assert.Equal(
                 Bencodex.Types.List.Empty
                     .Add(coupon3.Serialize()),
-                states.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
+                account.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
         }
 
         [Theory]
@@ -169,7 +169,7 @@ namespace Lib9c.Tests.Action
             var mead = Currencies.Mead;
             var price = RequestPledge.DefaultRefillMead * mead;
             ActionContext context = new ActionContext();
-            IAccountStateDelta states = new MockStateDelta()
+            IAccount account = new MockAccount()
                 .SetState(
                     agentContractAddress,
                     List.Empty.Add(patron.Serialize()).Add(true.Serialize()))
@@ -177,12 +177,12 @@ namespace Lib9c.Tests.Action
 
             if (agentBalance > 0)
             {
-                states = states.MintAsset(context, _agentAddress, agentBalance * mead);
+                account = account.MintAsset(context, _agentAddress, agentBalance * mead);
             }
 
-            states = states.Mead(context, _agentAddress, 4);
-            Assert.Equal(agentBalance * mead, states.GetBalance(patron, mead));
-            Assert.Equal(price, states.GetBalance(_agentAddress, mead));
+            account = account.Mead(context, _agentAddress, 4);
+            Assert.Equal(agentBalance * mead, account.GetBalance(patron, mead));
+            Assert.Equal(price, account.GetBalance(_agentAddress, mead));
         }
     }
 }

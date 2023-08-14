@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _currency;
         private readonly Address _signer;
         private readonly Address _sender;
-        private readonly IAccountStateDelta _states;
+        private readonly IWorld _states;
 
         public ActionEvaluationTest()
         {
@@ -33,10 +33,11 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             _signer = new PrivateKey().ToAddress();
             _sender = new PrivateKey().ToAddress();
-            _states = new MockStateDelta()
+            var account = new MockAccount()
                 .SetState(_signer, (Text)"ANYTHING")
                 .SetState(default, Dictionary.Empty.Add("key", "value"))
                 .MintAsset(context, _signer, _currency * 10000);
+            _states = new MockWorld(account);
             var resolver = MessagePack.Resolvers.CompositeResolver.Create(
                 NineChroniclesResolver.Instance,
                 StandardResolver.Instance
@@ -100,9 +101,14 @@ namespace Lib9c.Tests.Action
             var deserialized = MessagePackSerializer.Deserialize<NCActionEvaluation>(b);
             Assert.Equal(evaluation.Signer, deserialized.Signer);
             Assert.Equal(evaluation.BlockIndex, deserialized.BlockIndex);
-            var dict = (Dictionary)deserialized.OutputState.GetState(default)!;
+            var dict = (Dictionary)deserialized.OutputState
+                .GetAccount(ReservedAddresses.LegacyAccount)
+                .GetState(default)!;
             Assert.Equal("value", (Text)dict["key"]);
-            Assert.Equal(_currency * 10000, deserialized.OutputState.GetBalance(_signer, _currency));
+            Assert.Equal(
+                _currency * 10000,
+                deserialized.OutputState.GetAccount(ReservedAddresses.LegacyAccount)
+                    .GetBalance(_signer, _currency));
             if (actionType == typeof(RewardGold))
             {
                 Assert.Null(deserialized.Action);

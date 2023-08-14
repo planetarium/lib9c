@@ -21,7 +21,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccountStateDelta _initialStateV2;
+        private readonly IAccount _initialStateV2;
         private readonly Address _worldInformationAddress;
 
         public UnlockCraftActionTest()
@@ -54,13 +54,15 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
 
             var state = action.Execute(new ActionContext
             {
-                PreviousState = _initialStateV2,
+                PreviousState = new MockWorld(_initialStateV2),
                 Signer = _agentAddress,
                 BlockIndex = 0L
             });
 
             var worldInformation =
-                new WorldInformation((Dictionary)state.GetState(_worldInformationAddress));
+                new WorldInformation(
+                    (Dictionary)state.GetAccount(ReservedAddresses.LegacyAccount)
+                        .GetState(_worldInformationAddress));
             Assert.True(worldInformation.IsStageCleared(expectedStage));
         }
     }

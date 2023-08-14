@@ -17,7 +17,7 @@ namespace Lib9c.Tests.Action
 
     public class EventConsumableItemCraftsTest
     {
-        private readonly IAccountStateDelta _initialStates;
+        private readonly IAccount _initialStates;
         private readonly TableSheets _tableSheets;
 
         private readonly Address _agentAddress;
@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Action
 
         public EventConsumableItemCraftsTest()
         {
-            _initialStates = new MockStateDelta();
+            _initialStates = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -85,15 +85,16 @@ namespace Lib9c.Tests.Action
             Assert.True(_tableSheets.EventScheduleSheet
                 .TryGetValue(eventScheduleId, out var scheduleRow));
             var contextBlockIndex = scheduleRow.StartBlockIndex;
+            var world = new MockWorld(_initialStates);
             Execute(
-                _initialStates,
+                world,
                 eventScheduleId,
                 eventConsumableItemRecipeId,
                 slotIndex,
                 contextBlockIndex);
             contextBlockIndex = scheduleRow.RecipeEndBlockIndex;
             Execute(
-                _initialStates,
+                world,
                 eventScheduleId,
                 eventConsumableItemRecipeId,
                 slotIndex,
@@ -101,19 +102,20 @@ namespace Lib9c.Tests.Action
         }
 
         private void Execute(
-            IAccountStateDelta previousStates,
+            IWorld previousWorld,
             int eventScheduleId,
             int eventConsumableItemRecipeId,
             int slotIndex,
             long blockIndex = 0)
         {
-            var previousAvatarState = previousStates.GetAvatarStateV2(_avatarAddress);
+            var previousAccount = previousWorld.GetAccount(ReservedAddresses.LegacyAccount);
+            var previousAvatarState = previousAccount.GetAvatarStateV2(_avatarAddress);
 
-            var recipeSheet = previousStates.GetSheet<EventConsumableItemRecipeSheet>();
+            var recipeSheet = previousAccount.GetSheet<EventConsumableItemRecipeSheet>();
             Assert.True(recipeSheet.TryGetValue(
                 eventConsumableItemRecipeId,
                 out var recipeRow));
-            var materialItemSheet = previousStates.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = previousAccount.GetSheet<MaterialItemSheet>();
             foreach (var materialInfo in recipeRow.Materials)
             {
                 Assert.True(materialItemSheet.TryGetValue(
@@ -124,13 +126,13 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.inventory.AddItem(material, materialInfo.Count);
             }
 
-            var worldSheet = previousStates.GetSheet<WorldSheet>();
+            var worldSheet = previousAccount.GetSheet<WorldSheet>();
             previousAvatarState.worldInformation = new WorldInformation(
                 blockIndex,
                 worldSheet,
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
-            previousStates = previousStates
+            previousAccount = previousAccount
                 .SetState(
                     _avatarAddress.Derive(LegacyInventoryKey),
                     previousAvatarState.inventory.Serialize())
@@ -152,23 +154,25 @@ namespace Lib9c.Tests.Action
                 SlotIndex = slotIndex,
             };
 
-            var nextStates = action.Execute(new ActionContext
+            previousWorld = previousWorld.SetAccount(previousAccount);
+            var nextWorld = action.Execute(new ActionContext
             {
-                PreviousState = previousStates,
+                PreviousState = previousWorld,
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
                 BlockIndex = blockIndex,
             });
 
-            var slotState = nextStates.GetCombinationSlotState(_avatarAddress, slotIndex);
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
+            var slotState = nextAccount.GetCombinationSlotState(_avatarAddress, slotIndex);
             Assert.NotNull(slotState.Result);
             Assert.NotNull(slotState.Result.itemUsable);
 
             var consumable = (Consumable)slotState.Result.itemUsable;
             Assert.NotNull(consumable);
 
-            var nextAvatarState = nextStates.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextAccount.GetAvatarStateV2(_avatarAddress);
             Assert.Equal(
                 previousActionPoint - recipeRow.RequiredActionPoint,
                 nextAvatarState.actionPoint);

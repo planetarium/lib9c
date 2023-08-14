@@ -2,7 +2,6 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -21,11 +20,11 @@ namespace Lib9c.Tests.Action
         private static readonly Address AvatarAddress = new Address("47d082a115c63e7b58b1532d20e631538eafadde");
         private static readonly Currency Gold = Currency.Legacy("NCG", 2, minters: null);
 
-        private readonly IAccountStateDelta _initialState;
+        private readonly IAccount _initialState;
 
         public MarketValidationTest()
         {
-            _initialState = new MockStateDelta()
+            _initialState = new MockAccount()
                 .SetState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize());
         }
 
@@ -198,7 +197,7 @@ namespace Lib9c.Tests.Action
             var actionContext = new ActionContext
             {
                 Signer = AgentAddress,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
             };
             foreach (var validateMember in validateMembers)
@@ -232,7 +231,7 @@ namespace Lib9c.Tests.Action
             var actionContext = new ActionContext
             {
                 Signer = AgentAddress,
-                PreviousState = _initialState,
+                PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
             };
             foreach (var validateMember in validateMembers)
