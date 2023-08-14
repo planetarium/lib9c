@@ -8,9 +8,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Action.Extensions;
-using Nekoyume.Action.Results;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -86,10 +84,16 @@ namespace Nekoyume.Action
             petId = plainValue[PetIdKey].ToNullableInteger();
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            if (context.Rehearsal)
+            {
+                return context.PreviousState;
+            }
+
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var slotAddress = avatarAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -100,16 +104,12 @@ namespace Nekoyume.Action
             var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
-            if (context.Rehearsal)
-            {
-                return states;
-            }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CombinationEquipment exec started", addressesHex);
 
-            if (!states.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress, out var agentState,
+            if (!account.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress, out var agentState,
                     out var avatarState, out _))
             {
                 throw new FailedLoadStateException(
@@ -129,7 +129,7 @@ namespace Nekoyume.Action
             // ~Validate Required Cleared Tutorial Stage
 
             // Validate SlotIndex
-            var slotState = states.GetCombinationSlotState(avatarAddress, slotIndex);
+            var slotState = account.GetCombinationSlotState(avatarAddress, slotIndex);
             if (slotState is null)
             {
                 throw new FailedLoadStateException(
@@ -148,7 +148,7 @@ namespace Nekoyume.Action
             if (petId.HasValue)
             {
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, petId.Value);
-                if (!states.TryGetState(petStateAddress, out List rawState))
+                if (!account.TryGetState(petStateAddress, out List rawState))
                 {
                     throw new FailedLoadStateException($"{addressesHex}Aborted as the {nameof(PetState)} was failed to load.");
                 }
@@ -167,7 +167,7 @@ namespace Nekoyume.Action
             var endBlockIndex = context.BlockIndex;
             var requiredFungibleItems = new Dictionary<int, int>();
 
-            Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new[]
+            Dictionary<Type, (Address, ISheet)> sheets = account.GetSheets(sheetTypes: new[]
             {
                 typeof(EquipmentItemRecipeSheet),
                 typeof(EquipmentItemSheet),
@@ -227,7 +227,7 @@ namespace Nekoyume.Action
             if (equipmentItemRecipeSheet[recipeId].CRYSTAL != 0)
             {
                 var unlockedRecipeIdsAddress = avatarAddress.Derive("recipe_ids");
-                if (!states.TryGetState(unlockedRecipeIdsAddress, out List rawIds))
+                if (!account.TryGetState(unlockedRecipeIdsAddress, out List rawIds))
                 {
                     throw new FailedLoadStateException("can't find UnlockedRecipeList.");
                 }
@@ -311,7 +311,7 @@ namespace Nekoyume.Action
             CrystalHammerPointSheet.Row hammerPointRow = null;
             if (existHammerPointSheet)
             {
-                if (states.TryGetState(hammerPointAddress, out List serialized))
+                if (account.TryGetState(hammerPointAddress, out List serialized))
                 {
                     hammerPointState =
                         new HammerPointState(hammerPointAddress, serialized);
@@ -329,7 +329,7 @@ namespace Nekoyume.Action
 
             var isMimisbrunnrSubRecipe = subRecipeRow?.IsMimisbrunnrSubRecipe ??
                 subRecipeId.HasValue && recipeRow.SubRecipeIds[2] == subRecipeId.Value;
-            var petOptionSheet = states.GetSheet<PetOptionSheet>();
+            var petOptionSheet = account.GetSheet<PetOptionSheet>();
             if (useHammerPoint)
             {
                 if (!existHammerPointSheet)
@@ -349,16 +349,16 @@ namespace Nekoyume.Action
                         $"Not enough hammer points. Need : {hammerPointRow.MaxPoint}, own : {hammerPointState.HammerPoint}");
                 }
 
-                states = UseAssetsBySuperCraft(
-                    states,
+                account = UseAssetsBySuperCraft(
+                    account,
                     context,
                     hammerPointRow,
                     hammerPointState);
             }
             else
             {
-                states = UseAssetsByNormalCombination(
-                    states,
+                account = UseAssetsByNormalCombination(
+                    account,
                     context,
                     avatarState,
                     hammerPointState,
@@ -390,15 +390,15 @@ namespace Nekoyume.Action
             // Transfer Required NCG
             if (costNcg > 0L)
             {
-                var arenaSheet = states.GetSheet<ArenaSheet>();
+                var arenaSheet = account.GetSheet<ArenaSheet>();
                 var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
                 var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
 
-                states = states.TransferAsset(
+                account = account.TransferAsset(
                     context,
                     context.Signer,
                     feeStoreAddress,
-                    states.GetGoldCurrency() * costNcg
+                    account.GetGoldCurrency() * costNcg
                 );
             }
             // ~Transfer Required NCG
@@ -457,7 +457,7 @@ namespace Nekoyume.Action
             if (!(petState is null))
             {
                 var requiredBlockIndex = endBlockIndex - context.BlockIndex;
-                var gameConfigState = states.GetGameConfigState();
+                var gameConfigState = account.GetGameConfigState();
                 requiredBlockIndex = PetHelper.CalculateReducedBlockOnCraft(
                     requiredBlockIndex,
                     gameConfigState.RequiredAppraiseBlock,
@@ -497,7 +497,7 @@ namespace Nekoyume.Action
             {
                 petState.Update(endBlockIndex);
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, petState.PetId);
-                states = states.SetState(petStateAddress, petState.Serialize());
+                account = account.SetState(petStateAddress, petState.Serialize());
             }
             // ~Update Pet
 
@@ -512,7 +512,7 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CombinationEquipment Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
+            account = account
                 .SetState(avatarAddress, avatarState.SerializeV2())
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
@@ -520,15 +520,16 @@ namespace Nekoyume.Action
                 .SetState(slotAddress, slotState.Serialize())
                 .SetState(hammerPointAddress,hammerPointState.Serialize())
                 .SetState(context.Signer, agentState.Serialize());
+            return world.SetAccount(account);
         }
 
-        private IAccountStateDelta UseAssetsBySuperCraft(
-            IAccountStateDelta states,
+        private IAccount UseAssetsBySuperCraft(
+            IAccount account,
             IActionContext context,
             CrystalHammerPointSheet.Row row,
             HammerPointState hammerPointState)
         {
-            var crystalBalance = states.GetBalance(context.Signer, CrystalCalculator.CRYSTAL);
+            var crystalBalance = account.GetBalance(context.Signer, CrystalCalculator.CRYSTAL);
             var hammerPointCost = CrystalCalculator.CRYSTAL * row.CRYSTAL;
             if (crystalBalance < hammerPointCost)
             {
@@ -536,15 +537,15 @@ namespace Nekoyume.Action
             }
 
             hammerPointState.ResetHammerPoint();
-            return states.TransferAsset(
+            return account.TransferAsset(
                 context,
                 context.Signer,
                 Addresses.SuperCraft,
                 hammerPointCost);
         }
 
-        private IAccountStateDelta UseAssetsByNormalCombination(
-            IAccountStateDelta states,
+        private IAccount UseAssetsByNormalCombination(
+            IAccount account,
             IActionContext context,
             AvatarState avatarState,
             HammerPointState hammerPointState,
@@ -601,7 +602,7 @@ namespace Nekoyume.Action
                 var row = crystalFluctuationSheet.Values
                     .First(r => r.Type == CrystalFluctuationSheet.ServiceType.Combination);
                 var (dailyCostState, weeklyCostState, _, _) =
-                    states.GetCrystalCostStates(context.BlockIndex, row.BlockInterval);
+                    account.GetCrystalCostStates(context.BlockIndex, row.BlockInterval);
 
                 // 1x fixed crystal cost.
                 costCrystal = CrystalCalculator.CalculateCombinationCost(
@@ -627,14 +628,14 @@ namespace Nekoyume.Action
                 weeklyCostState.CRYSTAL += costCrystal;
 
                 var crystalBalance =
-                    states.GetBalance(context.Signer, CrystalCalculator.CRYSTAL);
+                    account.GetBalance(context.Signer, CrystalCalculator.CRYSTAL);
                 if (costCrystal > crystalBalance)
                 {
                     throw new NotEnoughFungibleAssetValueException(
                         $"required {costCrystal}, but balance is {crystalBalance}");
                 }
 
-                states = states
+                account = account
                     .SetState(dailyCostState.Address, dailyCostState.Serialize())
                     .SetState(weeklyCostState.Address, weeklyCostState.Serialize())
                     .TransferAsset(context, context.Signer, Addresses.MaterialCost, costCrystal);
@@ -655,7 +656,7 @@ namespace Nekoyume.Action
             }
 
             hammerPointState.AddHammerPoint(hammerPoint, hammerPointSheet);
-            return states;
+            return account;
         }
 
         public static void AddAndUnlockOption(

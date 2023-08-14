@@ -1,16 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Numerics;
 using System.Security.Cryptography;
-using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Libplanet.Types.Blocks;
-using Libplanet.Types.Consensus;
 using Libplanet.Types.Tx;
 
 namespace Nekoyume.Action.Extensions
@@ -26,7 +22,7 @@ namespace Nekoyume.Action.Extensions
             {
                 try
                 {
-                    IAccountStateDelta nextStates = action.Execute(rehearsalContext);
+                    IWorld nextStates = action.Execute(rehearsalContext);
                     addresses = addresses.Union(nextStates.Delta.UpdatedAddresses);
                 }
                 catch (NotSupportedException)
@@ -54,7 +50,7 @@ namespace Nekoyume.Action.Extensions
 
             public bool Rehearsal => true;
 
-            public IAccountStateDelta PreviousState => new AddressTraceStateDelta();
+            public IWorld PreviousState => new AddressTraceStateDelta();
 
             public IRandom Random => default;
 
@@ -74,7 +70,7 @@ namespace Nekoyume.Action.Extensions
             public long GasLimit() => 0;
         }
 
-        private class AddressTraceStateDelta : IAccountStateDelta
+        private class AddressTraceStateDelta : IWorld
         {
             private AddressTraceDelta _delta;
 
@@ -88,79 +84,24 @@ namespace Nekoyume.Action.Extensions
                 _delta = delta;
             }
 
-            public IAccountDelta Delta => _delta;
+            public bool Legacy { get; }
+
+            public IWorldDelta Delta => _delta;
+
+            public IWorld SetAccount(IAccount account)
+            {
+                return new AddressTraceStateDelta(
+                    new AddressTraceDelta(Delta.UpdatedAddresses.Union(new[] { account.Address })));
+            }
 
             public IImmutableSet<Address> UpdatedAddresses => _delta.UpdatedAddresses;
 
-            public IImmutableSet<Address> StateUpdatedAddresses => _delta.StateUpdatedAddresses;
-
-            public IImmutableSet<(Address, Currency)> UpdatedFungibleAssets =>
-                Delta.UpdatedFungibleAssets;
-
-            public IImmutableSet<(Address, Currency)> TotalUpdatedFungibleAssets =>
-                throw new NotSupportedException();
-
-            public IImmutableSet<Currency> UpdatedTotalSupplyCurrencies
-                => Delta.UpdatedTotalSupplyCurrencies;
-
-            public IAccountStateDelta BurnAsset(IActionContext context, Address owner, FungibleAssetValue value)
-            {
-                return new AddressTraceStateDelta(
-                    new AddressTraceDelta(Delta.UpdatedAddresses.Union(new [] { owner })));
-            }
-
-            public FungibleAssetValue GetBalance(Address address, Currency currency)
+            public IAccount GetAccount(Address address)
             {
                 throw new NotSupportedException();
             }
 
-            public IValue GetState(Address address)
-            {
-                throw new NotSupportedException();
-            }
-
-            public IReadOnlyList<IValue> GetStates(IReadOnlyList<Address> addresses)
-            {
-                throw new NotSupportedException();
-            }
-
-            public FungibleAssetValue GetTotalSupply(Currency currency)
-            {
-                throw new NotSupportedException();
-            }
-
-            public IAccountStateDelta MintAsset(IActionContext context, Address recipient, FungibleAssetValue value)
-            {
-                return new AddressTraceStateDelta(
-                    new AddressTraceDelta(Delta.UpdatedAddresses.Union(new[] { recipient })));
-            }
-
-            public IAccountStateDelta SetState(Address address, IValue state)
-            {
-                return new AddressTraceStateDelta(
-                    new AddressTraceDelta(Delta.UpdatedAddresses.Union(new[] { address })));
-            }
-
-            public IAccountStateDelta TransferAsset(
-                IActionContext context,
-                Address sender,
-                Address recipient,
-                FungibleAssetValue value,
-                bool allowNegativeBalance = false
-            )
-            {
-                return new AddressTraceStateDelta(
-                    new AddressTraceDelta(Delta.UpdatedAddresses.Union(new[] { sender, recipient })));
-            }
-
-            public ValidatorSet GetValidatorSet() => throw new NotSupportedException();
-
-            public IAccountStateDelta SetValidator(Validator validator)
-            {
-                throw new NotSupportedException();
-            }
-
-            public class AddressTraceDelta : IAccountDelta
+            public class AddressTraceDelta : IWorldDelta
             {
                 private IImmutableSet<Address> _updatedAddresses;
 
@@ -175,14 +116,7 @@ namespace Nekoyume.Action.Extensions
                 }
 
                 public IImmutableSet<Address> UpdatedAddresses => _updatedAddresses;
-                public IImmutableSet<Address> StateUpdatedAddresses => _updatedAddresses;
-                public IImmutableDictionary<Address, IValue> States => throw new NotSupportedException();
-                public IImmutableSet<Address> FungibleUpdatedAddresses => _updatedAddresses;
-                public IImmutableSet<(Address, Currency)> UpdatedFungibleAssets => throw new NotSupportedException();
-                public IImmutableDictionary<(Address, Currency), BigInteger> Fungibles => throw new NotSupportedException();
-                public IImmutableSet<Currency> UpdatedTotalSupplyCurrencies => throw new NotSupportedException();
-                public IImmutableDictionary<Currency, BigInteger> TotalSupplies => throw new NotSupportedException();
-                public ValidatorSet ValidatorSet => throw new NotSupportedException();
+                public IImmutableDictionary<Address, IAccount> Accounts => throw new NotSupportedException();
             }
         }
     }

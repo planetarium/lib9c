@@ -52,21 +52,23 @@ namespace Nekoyume.Action
                 .ToEnumerable(info => new UpdateSellInfo((List)info));
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            if (context.Rehearsal)
+            {
+                return context.PreviousState;
+            }
+
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var inventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = sellerAvatarAddress.Derive(LegacyQuestListKey);
             var digestListAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
-            if (context.Rehearsal)
-            {
-                return states;
-            }
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
-            if (!(states.GetState(Addresses.Market) is null))
+            if (!(account.GetState(Addresses.Market) is null))
             {
                 throw new ActionObsoletedException("UpdateSell action is obsoleted. please use ReRegisterProduct.");
             }
@@ -87,7 +89,7 @@ namespace Nekoyume.Action
             {
                 throw new ListEmptyException($"{addressesHex} List - UpdateSell infos was empty.");
             }
-            if (!states.TryGetAvatarStateV2(context.Signer, sellerAvatarAddress, out var avatarState, out _))
+            if (!account.TryGetAvatarStateV2(context.Signer, sellerAvatarAddress, out var avatarState, out _))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
@@ -109,9 +111,9 @@ namespace Nekoyume.Action
             avatarState.updatedAt = context.BlockIndex;
             avatarState.blockIndex = context.BlockIndex;
 
-            var costumeStatSheet = states.GetSheet<CostumeStatSheet>();
+            var costumeStatSheet = account.GetSheet<CostumeStatSheet>();
 
-            if (!states.TryGetState(digestListAddress, out Dictionary rawList))
+            if (!account.TryGetState(digestListAddress, out Dictionary rawList))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} failed to load {nameof(OrderDigest)}({digestListAddress}).");
@@ -123,12 +125,12 @@ namespace Nekoyume.Action
                 var updateSellShopAddress = ShardedShopStateV2.DeriveAddress(updateSellInfo.itemSubType, updateSellInfo.updateSellOrderId);
                 var updateSellOrderAddress = Order.DeriveAddress(updateSellInfo.updateSellOrderId);
                 var itemAddress = Addresses.GetItemAddress(updateSellInfo.tradableId);
-                states = Sell.Cancel(states, updateSellInfo, addressesHex, avatarState, digestList,
+                account = Sell.Cancel(account, updateSellInfo, addressesHex, avatarState, digestList,
                     context, sellerAvatarAddress);
 
                 // for updateSell
                 var updateSellShopState =
-                    states.TryGetState(updateSellShopAddress, out Dictionary serializedState)
+                    account.TryGetState(updateSellShopAddress, out Dictionary serializedState)
                         ? new ShardedShopStateV2(serializedState)
                         : new ShardedShopStateV2(updateSellShopAddress);
 
@@ -153,7 +155,7 @@ namespace Nekoyume.Action
 
                 digestList.Add(orderDigest);
 
-                states = states
+                account = account
                     .SetState(itemAddress, tradableItem.Serialize())
                     .SetState(updateSellOrderAddress, newOrder.Serialize())
                     .SetState(updateSellShopAddress, updateSellShopState.Serialize());
@@ -162,7 +164,7 @@ namespace Nekoyume.Action
             }
 
             sw.Restart();
-            states = states.SetState(inventoryAddress, avatarState.inventory.Serialize())
+            account = account.SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
                 .SetState(sellerAvatarAddress, avatarState.SerializeV2())
@@ -173,7 +175,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex} UpdateSell Total Executed Time: {Elapsed}", addressesHex, ended - started);
 
-            return states;
+            return world.SetAccount(account);
         }
     }
 }

@@ -44,22 +44,24 @@ namespace Nekoyume.Action
             TryCount = plainValue["t"].ToInteger();
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out _, out _))
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
+
+            if (!account.TryGetAvatarStateV2(context.Signer, AvatarAddress, out _, out _))
             {
                 throw new FailedLoadStateException(
                     $"Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var sheets = states.GetSheets(
+            var sheets = account.GetSheets(
                 sheetTypes: new[]
                 {
                     typeof(ArenaSheet),
@@ -77,7 +79,7 @@ namespace Nekoyume.Action
 
             RuneState runeState;
             var runeStateAddress = RuneState.DeriveAddress(AvatarAddress, RuneId);
-            if (states.TryGetState(runeStateAddress, out List rawState))
+            if (account.TryGetState(runeStateAddress, out List rawState))
             {
                 runeState = new RuneState(rawState);
             }
@@ -107,18 +109,18 @@ namespace Nekoyume.Action
                     $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress}");
             }
 
-            var ncgCurrency = states.GetGoldCurrency();
+            var ncgCurrency = account.GetGoldCurrency();
             var crystalCurrency = CrystalCalculator.CRYSTAL;
             var runeCurrency = Currency.Legacy(runeRow.Ticker, 0, minters: null);
-            var ncgBalance = states.GetBalance(context.Signer, ncgCurrency);
-            var crystalBalance = states.GetBalance(context.Signer, crystalCurrency);
-            var runeBalance = states.GetBalance(AvatarAddress, runeCurrency);
+            var ncgBalance = account.GetBalance(context.Signer, ncgCurrency);
+            var crystalBalance = account.GetBalance(context.Signer, crystalCurrency);
+            var runeBalance = account.GetBalance(AvatarAddress, runeCurrency);
             if (RuneHelper.TryEnhancement(ncgBalance, crystalBalance, runeBalance,
                     ncgCurrency, crystalCurrency, runeCurrency,
                     cost, context.Random, TryCount, out var tryCount))
             {
                 runeState.LevelUp();
-                states = states.SetState(runeStateAddress, runeState.Serialize());
+                account = account.SetState(runeStateAddress, runeState.Serialize());
             }
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
@@ -128,22 +130,22 @@ namespace Nekoyume.Action
             var ncgCost = cost.NcgQuantity * tryCount * ncgCurrency;
             if (cost.NcgQuantity > 0)
             {
-                states = states.TransferAsset(context, context.Signer, feeStoreAddress, ncgCost);
+                account = account.TransferAsset(context, context.Signer, feeStoreAddress, ncgCost);
             }
 
             var crystalCost = cost.CrystalQuantity * tryCount * crystalCurrency;
             if (cost.CrystalQuantity > 0)
             {
-                states = states.TransferAsset(context, context.Signer, feeStoreAddress, crystalCost);
+                account = account.TransferAsset(context, context.Signer, feeStoreAddress, crystalCost);
             }
 
             var runeCost = cost.RuneStoneQuantity * tryCount * runeCurrency;
             if (cost.RuneStoneQuantity > 0)
             {
-                states = states.TransferAsset(context, AvatarAddress, feeStoreAddress, runeCost);
+                account = account.TransferAsset(context, AvatarAddress, feeStoreAddress, runeCost);
             }
 
-            return states;
+            return world.SetAccount(account);
         }
     }
 }

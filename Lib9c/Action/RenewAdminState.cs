@@ -32,14 +32,16 @@ namespace Nekoyume.Action
             NewValidUntil = newValidUntil;
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                return states
+                account = account
                     .SetState(Addresses.Admin, MarkChanged);
+                return world.SetAccount(account);
             }
 
             if (TryGetAdminState(context, out AdminState adminState))
@@ -50,11 +52,11 @@ namespace Nekoyume.Action
                 }
 
                 var newAdminState = new AdminState(adminState.AdminAddress, NewValidUntil);
-                states = states.SetState(Addresses.Admin,
+                account = account.SetState(Addresses.Admin,
                     newAdminState.Serialize());
             }
 
-            return states;
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -11,12 +11,14 @@ public class ActionEvaluationSerializerTest
     public void Serialization()
     {
         var addresses = Enumerable.Repeat(0, 4).Select(_ => new PrivateKey().ToAddress()).ToImmutableList();
-        AccountStateDelta outputStates = (AccountStateDelta)new AccountStateDelta()
-            .SetState(addresses[0], Null.Value)
+        Account account = (Account)new Account().
+            SetState(addresses[0], Null.Value)
             .SetState(addresses[1], (Text)"foo")
             .SetState(addresses[2], new List((Text)"bar"));
+        World outputStates = (World)new World().SetAccount(account);
 
-        var previousStates = new AccountStateDelta();
+
+        var previousStates = new World();
 
         var actionEvaluation = new ActionEvaluation(
             Null.Value,
@@ -42,8 +44,9 @@ public class ActionEvaluationSerializerTest
         Assert.Equal(0, deserialized.InputContext.BlockProtocolVersion);
         Assert.Equal(addresses[0], deserialized.InputContext.Signer);
         Assert.Equal(addresses[1], deserialized.InputContext.Miner);
-        Assert.Equal(Null.Value, deserialized.OutputState.GetState(addresses[0]));
-        Assert.Equal((Text)"foo", deserialized.OutputState.GetState(addresses[1]));
-        Assert.Equal(new List((Text)"bar"), deserialized.OutputState.GetState(addresses[2]));
+        var deserializedAccount = deserialized.OutputState.GetAccount(account.Address);
+        Assert.Equal(Null.Value, deserializedAccount.GetState(addresses[0]));
+        Assert.Equal((Text)"foo", deserializedAccount.GetState(addresses[1]));
+        Assert.Equal(new List((Text)"bar"), deserializedAccount.GetState(addresses[2]));
     }
 }

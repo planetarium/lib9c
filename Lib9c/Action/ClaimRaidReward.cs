@@ -34,19 +34,21 @@ namespace Nekoyume.Action
             AvatarAddress = avatarAddress;
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccountStateDelta states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
+
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ClaimRaidReward exec started", addressesHex);
-            Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new[] {
+            Dictionary<Type, (Address, ISheet)> sheets = account.GetSheets(sheetTypes: new[] {
                 typeof(RuneWeightSheet),
                 typeof(WorldBossRankRewardSheet),
                 typeof(WorldBossCharacterSheet),
@@ -67,7 +69,7 @@ namespace Nekoyume.Action
             var row = sheets.GetSheet<WorldBossListSheet>().Values.First(r => r.Id == raidId);
             var bossRow = sheets.GetSheet<WorldBossCharacterSheet>().Values.First(x => x.BossId == row.BossId);
             var raiderAddress = Addresses.GetRaiderAddress(AvatarAddress, raidId);
-            RaiderState raiderState = states.GetRaiderState(raiderAddress);
+            RaiderState raiderState = account.GetRaiderState(raiderAddress);
             int rank = WorldBossHelper.CalculateRank(bossRow, raiderState.HighScore);
             if (raiderState.LatestRewardRank < rank)
             {
@@ -86,21 +88,22 @@ namespace Nekoyume.Action
                     {
                         if (reward.Currency.Equals(CrystalCalculator.CRYSTAL))
                         {
-                            states = states.MintAsset(context, context.Signer, reward);
+                            account = account.MintAsset(context, context.Signer, reward);
                         }
                         else
                         {
-                            states = states.MintAsset(context, AvatarAddress, reward);
+                            account = account.MintAsset(context, AvatarAddress, reward);
                         }
                     }
                 }
 
                 raiderState.LatestRewardRank = rank;
                 raiderState.ClaimedBlockIndex = context.BlockIndex;
-                states = states.SetState(raiderAddress, raiderState.Serialize());
+                account = account.SetState(raiderAddress, raiderState.Serialize());
+                world = world.SetAccount(account);
                 var ended = DateTimeOffset.UtcNow;
                 Log.Debug("{AddressesHex}ClaimRaidReward Total Executed Time: {Elapsed}", addressesHex, ended - started);
-                return states;
+                return world;
             }
 
             throw new NotEnoughRankException();

@@ -65,18 +65,20 @@ namespace Nekoyume.Action
             purchaseInfos = plainValue[PurchaseInfosKey].ToList(value => new PurchaseInfo((Dictionary)value));
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
+            if (context.Rehearsal)
+            {
+                return context.PreviousState;
+            }
+
             IActionContext ctx = context;
-            var states = ctx.PreviousState;
+            var world = ctx.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var buyerInventoryAddress = buyerAvatarAddress.Derive(LegacyInventoryKey);
             var buyerWorldInformationAddress = buyerAvatarAddress.Derive(LegacyWorldInformationKey);
             var buyerQuestListAddress = buyerAvatarAddress.Derive(LegacyQuestListKey);
-            if (ctx.Rehearsal)
-            {
-                return states;
-            }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, buyerAvatarAddress);
 
@@ -85,7 +87,7 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Buy exec started", addressesHex);
 
-            if (!states.TryGetAvatarStateV2(ctx.Signer, buyerAvatarAddress, out var buyerAvatarState, out _))
+            if (!account.TryGetAvatarStateV2(ctx.Signer, buyerAvatarAddress, out var buyerAvatarState, out _))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the buyer was failed to load.");
@@ -102,7 +104,7 @@ namespace Nekoyume.Action
                     GameConfig.RequireClearedStageLevel.ActionsInShop, current);
             }
 
-            MaterialItemSheet materialSheet = states.GetSheet<MaterialItemSheet>();
+            MaterialItemSheet materialSheet = account.GetSheet<MaterialItemSheet>();
 
             foreach (var purchaseInfo in purchaseInfos)
             {
@@ -123,13 +125,13 @@ namespace Nekoyume.Action
                     continue;
                 }
 
-                if (!states.TryGetState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
+                if (!account.TryGetState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
                 {
                     errors.Add((orderId, ErrorCodeFailedLoadingState));
                     continue;
                 }
 
-                if (!states.TryGetState(orderAddress, out Dictionary rawOrder))
+                if (!account.TryGetState(orderAddress, out Dictionary rawOrder))
                 {
                     errors.Add((orderId, ErrorCodeInvalidOrderId));
                     continue;
@@ -160,7 +162,7 @@ namespace Nekoyume.Action
                     sellerAvatarAddress);
 
 
-                if (!states.TryGetAvatarStateV2(sellerAgentAddress, sellerAvatarAddress, out var sellerAvatarState, out _))
+                if (!account.TryGetAvatarStateV2(sellerAgentAddress, sellerAvatarAddress, out var sellerAvatarState, out _))
                 {
                     errors.Add((orderId, ErrorCodeFailedLoadingState));
                     continue;
@@ -170,7 +172,7 @@ namespace Nekoyume.Action
                 Log.Verbose("{AddressesHex}Buy Get Seller AgentAvatarStates: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();
 
-                if (!states.TryGetState(digestListAddress, out Dictionary rawDigestList))
+                if (!account.TryGetState(digestListAddress, out Dictionary rawDigestList))
                 {
                     errors.Add((orderId, ErrorCodeFailedLoadingState));
                     continue;
@@ -197,7 +199,7 @@ namespace Nekoyume.Action
                 sw.Restart();
 
                 // Check Balance.
-                FungibleAssetValue buyerBalance = states.GetBalance(context.Signer, states.GetGoldCurrency());
+                FungibleAssetValue buyerBalance = account.GetBalance(context.Signer, account.GetGoldCurrency());
                 if (buyerBalance < order.Price)
                 {
                     errors.Add((orderId, ErrorCodeInsufficientBalance));
@@ -216,7 +218,7 @@ namespace Nekoyume.Action
                 }
 
                 Address orderReceiptAddress = OrderReceipt.DeriveAddress(orderId);
-                if (!(states.GetState(orderReceiptAddress) is null))
+                if (!(account.GetState(orderReceiptAddress) is null))
                 {
                     errors.Add((orderId, ErrorCodeDuplicateSell));
                     continue;
@@ -259,24 +261,24 @@ namespace Nekoyume.Action
                 var taxedPrice = order.Price - tax;
 
                 // Transfer tax.
-                var arenaSheet = states.GetSheet<ArenaSheet>();
+                var arenaSheet = account.GetSheet<ArenaSheet>();
                 var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
                 var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
-                states = states.TransferAsset(
+                account = account.TransferAsset(
                     context,
                     context.Signer,
                     feeStoreAddress,
                     tax);
 
                 // Transfer seller.
-                states = states.TransferAsset(
+                account = account.TransferAsset(
                     context,
                     context.Signer,
                     sellerAgentAddress,
                     taxedPrice
                 );
 
-                states = states
+                account = account
                     .SetState(digestListAddress, digestList.Serialize())
                     .SetState(orderReceiptAddress, orderReceipt.Serialize())
                     .SetState(sellerInventoryAddress, sellerAvatarState.inventory.Serialize())
@@ -286,7 +288,7 @@ namespace Nekoyume.Action
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set Seller AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();
-                states = states.SetState(shardedShopAddress, shardedShopState.Serialize());
+                account = account.SetState(shardedShopAddress, shardedShopState.Serialize());
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
             }
@@ -294,11 +296,12 @@ namespace Nekoyume.Action
             buyerAvatarState.updatedAt = ctx.BlockIndex;
             buyerAvatarState.blockIndex = ctx.BlockIndex;
 
-            states = states
+            account = account
                 .SetState(buyerInventoryAddress, buyerAvatarState.inventory.Serialize())
                 .SetState(buyerWorldInformationAddress, buyerAvatarState.worldInformation.Serialize())
                 .SetState(buyerQuestListAddress, buyerAvatarState.questList.Serialize())
                 .SetState(buyerAvatarAddress, buyerAvatarState.Serialize());
+            world = world.SetAccount(account);
             sw.Stop();
             Log.Verbose("{AddressesHex}Buy Set Buyer AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
@@ -306,7 +309,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Buy Total Executed Time: {Elapsed}", addressesHex, ended - started);
 
-            return states;
+            return world;
         }
     }
 }

@@ -28,21 +28,23 @@ namespace Nekoyume.Action.Coupons
 
         public Address Recipient { get; private set; }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                return states.SetCouponWallet(
+                account = account.SetCouponWallet(
                     Recipient,
                     ImmutableDictionary.Create<Guid, Coupon>(),
                     rehearsal: true);
+                return world.SetAccount(account);
             }
 
             CheckPermission(context);
 
-            var wallet = states.GetCouponWallet(Recipient);
+            var wallet = account.GetCouponWallet(Recipient);
             var random = context.Random;
             var idBytes = new byte[16];
             var orderedRewards = Rewards.OrderBy(kv => kv.Key, default(RewardSet.Comparer));
@@ -57,7 +59,8 @@ namespace Nekoyume.Action.Coupons
                 }
             }
 
-            return states.SetCouponWallet(Recipient, wallet);
+            account = account.SetCouponWallet(Recipient, wallet);
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

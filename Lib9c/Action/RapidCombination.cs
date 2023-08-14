@@ -34,10 +34,11 @@ namespace Nekoyume.Action
         Address IRapidCombinationV1.AvatarAddress => avatarAddress;
         int IRapidCombinationV1.SlotIndex => slotIndex;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var slotAddress = avatarAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -50,19 +51,20 @@ namespace Nekoyume.Action
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                return states
+                account = account
                     .SetState(avatarAddress, MarkChanged)
                     .SetState(inventoryAddress, MarkChanged)
                     .SetState(worldInformationAddress, MarkChanged)
                     .SetState(questListAddress, MarkChanged)
                     .SetState(slotAddress, MarkChanged);
+                return world.SetAccount(account);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination exec started", addressesHex);
 
-            if (!states.TryGetAgentAvatarStatesV2(
+            if (!account.TryGetAgentAvatarStatesV2(
                 context.Signer,
                 avatarAddress,
                 out var agentState,
@@ -72,7 +74,7 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var slotState = states.GetCombinationSlotState(avatarAddress, slotIndex);
+            var slotState = account.GetCombinationSlotState(avatarAddress, slotIndex);
             if (slotState?.Result is null)
             {
                 throw new CombinationSlotResultNullException($"{addressesHex}CombinationSlot Result is null. ({avatarAddress}), ({slotIndex})");
@@ -90,14 +92,14 @@ namespace Nekoyume.Action
                 throw new RequiredBlockIndexException($"{addressesHex}Already met the required block index. context block index: {context.BlockIndex}, required block index: {slotState.Result.itemUsable.RequiredBlockIndex}");
             }
 
-            var gameConfigState = states.GetGameConfigState();
+            var gameConfigState = account.GetGameConfigState();
             if (gameConfigState is null)
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the GameConfigState was failed to load.");
             }
 
             var actionableBlockIndex = slotState.StartBlockIndex +
-                                       states.GetGameConfigState().RequiredAppraiseBlock;
+                                       account.GetGameConfigState().RequiredAppraiseBlock;
             if (context.BlockIndex < actionableBlockIndex)
             {
                 throw new AppraiseBlockNotReachedException(
@@ -111,13 +113,13 @@ namespace Nekoyume.Action
             if (slotState.PetId.HasValue)
             {
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, slotState.PetId.Value);
-                if (!states.TryGetState(petStateAddress, out List rawState))
+                if (!account.TryGetState(petStateAddress, out List rawState))
                 {
                     throw new FailedLoadStateException($"{addressesHex}Aborted as the {nameof(PetState)} was failed to load.");
                 }
 
                 petState = new PetState(rawState);
-                var petOptionSheet = states.GetSheet<PetOptionSheet>();
+                var petOptionSheet = account.GetSheet<PetOptionSheet>();
                 costHourglassCount = PetHelper.CalculateDiscountedHourglass(
                     diff,
                     gameConfigState.HourglassPerBlock,
@@ -129,7 +131,7 @@ namespace Nekoyume.Action
                 costHourglassCount = Statics.RapidCombination.CalculateHourglassCountV0(gameConfigState, diff);
             }
 
-            var materialItemSheet = states.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = account.GetSheet<MaterialItemSheet>();
             var row = materialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Hourglass);
             var hourGlass = ItemFactory.CreateMaterial(row);
             if (!avatarState.inventory.RemoveFungibleItem(hourGlass, context.BlockIndex, costHourglassCount))
@@ -166,17 +168,18 @@ namespace Nekoyume.Action
             {
                 petState.Update(context.BlockIndex);
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, petState.PetId);
-                states = states.SetState(petStateAddress, petState.Serialize());
+                account = account.SetState(petStateAddress, petState.Serialize());
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
+            account = account
                 .SetState(avatarAddress, avatarState.SerializeV2())
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize())
                 .SetState(slotAddress, slotState.Serialize());
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -34,20 +34,21 @@ namespace Nekoyume.Action
         List<Guid> IGrindingV1.EquipmentsIds => EquipmentIds;
         bool IGrindingV1.ChargeAp => ChargeAp;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
-            IAccountStateDelta states = ctx.PreviousState;
+            var world = ctx.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (ctx.Rehearsal)
             {
-                states = EquipmentIds.Aggregate(states,
+                account = EquipmentIds.Aggregate(account,
                     (current, guid) =>
                         current.SetState(Addresses.GetItemAddress(guid), MarkChanged));
-                return states
+                account = account
                     .SetState(MonsterCollectionState.DeriveAddress(context.Signer, 0), MarkChanged)
                     .SetState(MonsterCollectionState.DeriveAddress(context.Signer, 1), MarkChanged)
                     .SetState(MonsterCollectionState.DeriveAddress(context.Signer, 2), MarkChanged)
@@ -57,6 +58,7 @@ namespace Nekoyume.Action
                     .SetState(questListAddress, MarkChanged)
                     .SetState(inventoryAddress, MarkChanged)
                     .MarkBalanceChanged(context, GoldCurrencyMock, context.Signer);
+                return world.SetAccount(account);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
@@ -67,7 +69,7 @@ namespace Nekoyume.Action
                 throw new InvalidItemCountException();
             }
 
-            if (!states.TryGetAgentAvatarStatesV2(ctx.Signer, AvatarAddress, out var agentState,
+            if (!account.TryGetAgentAvatarStatesV2(ctx.Signer, AvatarAddress, out var agentState,
                     out var avatarState, out bool migrationRequired))
             {
                 throw new FailedLoadStateException("");
@@ -78,7 +80,7 @@ namespace Nekoyume.Action
                 agentState.MonsterCollectionRound
             );
 
-            Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new[]
+            Dictionary<Type, (Address, ISheet)> sheets = account.GetSheets(sheetTypes: new[]
             {
                 typeof(CrystalEquipmentGrindingSheet),
                 typeof(CrystalMonsterCollectionMultiplierSheet),
@@ -86,17 +88,17 @@ namespace Nekoyume.Action
                 typeof(StakeRegularRewardSheet)
             });
 
-            Currency currency = states.GetGoldCurrency();
+            Currency currency = account.GetGoldCurrency();
             FungibleAssetValue stakedAmount = 0 * currency;
-            if (states.TryGetStakeState(context.Signer, out StakeState stakeState))
+            if (account.TryGetStakeState(context.Signer, out StakeState stakeState))
             {
-                 stakedAmount = states.GetBalance(stakeState.address, currency);
+                 stakedAmount = account.GetBalance(stakeState.address, currency);
             }
             else
             {
-                if (states.TryGetState(monsterCollectionAddress, out Dictionary _))
+                if (account.TryGetState(monsterCollectionAddress, out Dictionary _))
                 {
-                    stakedAmount = states.GetBalance(monsterCollectionAddress, currency);
+                    stakedAmount = account.GetBalance(monsterCollectionAddress, currency);
                 }
             }
 
@@ -115,7 +117,7 @@ namespace Nekoyume.Action
                         {
                             throw new NotEnoughMaterialException("not enough ap stone.");
                         }
-                        GameConfigState gameConfigState = states.GetGameConfigState();
+                        GameConfigState gameConfigState = account.GetGameConfigState();
                         avatarState.actionPoint = gameConfigState.ActionPointMax;
                         break;
                     }
@@ -168,17 +170,18 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                states = states
+                account = account
                     .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
                     .SetState(questListAddress, avatarState.questList.Serialize());
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Grinding Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
+            account = account
                 .SetState(AvatarAddress, avatarState.SerializeV2())
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .MintAsset(context, context.Signer, crystal);
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

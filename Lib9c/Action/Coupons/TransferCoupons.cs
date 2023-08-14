@@ -29,11 +29,12 @@ namespace Nekoyume.Action.Coupons
             private set;
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
-            var signerWallet = states.GetCouponWallet(context.Signer);
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
+            var signerWallet = account.GetCouponWallet(context.Signer);
             var orderedRecipients = CouponsPerRecipient.OrderBy(pair => pair.Key);
             foreach ((Address recipient, IImmutableSet<Guid> couponIds) in orderedRecipients)
             {
@@ -42,7 +43,7 @@ namespace Nekoyume.Action.Coupons
                     continue;
                 }
 
-                var recipientWallet = states.GetCouponWallet(recipient);
+                var recipientWallet = account.GetCouponWallet(recipient);
                 foreach (Guid id in couponIds)
                 {
                     if (!signerWallet.TryGetValue(id, out var coupon))
@@ -56,11 +57,11 @@ namespace Nekoyume.Action.Coupons
                     recipientWallet = recipientWallet.Add(id, coupon);
                 }
 
-                states = states.SetCouponWallet(recipient, recipientWallet, context.Rehearsal);
+                account = account.SetCouponWallet(recipient, recipientWallet, context.Rehearsal);
             }
 
-            states = states.SetCouponWallet(context.Signer, signerWallet, context.Rehearsal);
-            return states;
+            account = account.SetCouponWallet(context.Signer, signerWallet, context.Rehearsal);
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

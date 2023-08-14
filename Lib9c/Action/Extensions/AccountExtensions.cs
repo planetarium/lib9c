@@ -17,10 +17,10 @@ using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action.Extensions
 {
-    public static class AccountStateDeltaExtensions
+    public static class AccountExtensions
     {
-        public static IAccountStateDelta MarkBalanceChanged(
-            this IAccountStateDelta states,
+        public static IAccount MarkBalanceChanged(
+            this IAccount account,
             IActionContext context,
             Currency currency,
             params Address[] accounts
@@ -28,24 +28,24 @@ namespace Nekoyume.Action.Extensions
         {
             if (accounts.Length == 1)
             {
-                return states.MintAsset(context, accounts[0], currency * 1);
+                return account.MintAsset(context, accounts[0], currency * 1);
             }
             else if (accounts.Length < 1)
             {
-                return states;
+                return account;
             }
 
             for (int i = 1; i < accounts.Length; i++)
             {
-                states = states.TransferAsset(context, accounts[i - 1], accounts[i], currency * 1, true);
+                account = account.TransferAsset(context, accounts[i - 1], accounts[i], currency * 1, true);
             }
 
-            return states;
+            return account;
         }
 
 
-        public static IAccountStateDelta SetWorldBossKillReward(
-            this IAccountStateDelta states,
+        public static IAccount SetWorldBossKillReward(
+            this IAccount account,
             IActionContext context,
             Address rewardInfoAddress,
             WorldBossKillRewardRecord rewardRecord,
@@ -83,21 +83,21 @@ namespace Nekoyume.Action.Extensions
                 {
                     if (reward.Currency.Equals(CrystalCalculator.CRYSTAL))
                     {
-                        states = states.MintAsset(context, agentAddress, reward);
+                        account = account.MintAsset(context, agentAddress, reward);
                     }
                     else
                     {
-                        states = states.MintAsset(context, avatarAddress, reward);
+                        account = account.MintAsset(context, avatarAddress, reward);
                     }
                 }
             }
 
-            return states.SetState(rewardInfoAddress, rewardRecord.Serialize());
+            return account.SetState(rewardInfoAddress, rewardRecord.Serialize());
         }
 
 #nullable enable
-        public static IAccountStateDelta SetCouponWallet(
-            this IAccountStateDelta states,
+        public static IAccount SetCouponWallet(
+            this IAccount account,
             Address agentAddress,
             IImmutableDictionary<Guid, Coupon> couponWallet,
             bool rehearsal = false)
@@ -105,37 +105,37 @@ namespace Nekoyume.Action.Extensions
             Address walletAddress = agentAddress.Derive(CouponWalletKey);
             if (rehearsal)
             {
-                return states.SetState(walletAddress, ActionBase.MarkChanged);
+                return account.SetState(walletAddress, ActionBase.MarkChanged);
             }
 
             IValue serializedWallet = new Bencodex.Types.List(
                 couponWallet.Values.OrderBy(c => c.Id).Select(v => v.Serialize())
             );
-            return states.SetState(walletAddress, serializedWallet);
+            return account.SetState(walletAddress, serializedWallet);
         }
 #nullable disable
 
-        public static IAccountStateDelta Mead(
-            this IAccountStateDelta states, IActionContext context, Address signer, BigInteger rawValue)
+        public static IAccount Mead(
+            this IAccount account, IActionContext context, Address signer, BigInteger rawValue)
         {
             while (true)
             {
                 var price = rawValue * Currencies.Mead;
-                var balance = states.GetBalance(signer, Currencies.Mead);
+                var balance = account.GetBalance(signer, Currencies.Mead);
                 if (balance < price)
                 {
                     var requiredMead = price - balance;
                     var contractAddress = signer.Derive(nameof(RequestPledge));
-                    if (states.GetState(contractAddress) is List contract && contract[1].ToBoolean())
+                    if (account.GetState(contractAddress) is List contract && contract[1].ToBoolean())
                     {
                         var patron = contract[0].ToAddress();
                         try
                         {
-                            states = states.TransferAsset(context, patron, signer, requiredMead);
+                            account = account.TransferAsset(context, patron, signer, requiredMead);
                         }
                         catch (InsufficientBalanceException)
                         {
-                            states = states.Mead(context, patron, rawValue);
+                            account = account.Mead(context, patron, rawValue);
                             continue;
                         }
                     }
@@ -145,7 +145,7 @@ namespace Nekoyume.Action.Extensions
                     }
                 }
 
-                return states;
+                return account;
             }
         }
     }

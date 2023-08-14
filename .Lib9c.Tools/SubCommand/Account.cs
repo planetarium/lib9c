@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Cocona;
 using Lib9c.DevExtensions;
+using Libplanet.Action.State;
 using Libplanet.Blockchain;
 using Libplanet.Crypto;
 using Libplanet.Store;
@@ -48,7 +49,7 @@ namespace Lib9c.Tools.SubCommand
             var actionLoader = new NCActionLoader();
 
             Bencodex.Types.Dictionary goldCurrencyStateDict = (Bencodex.Types.Dictionary)
-                chain.GetState(GoldCurrencyState.Address);
+                chain.GetState(ReservedAddresses.LegacyAccount, GoldCurrencyState.Address);
             GoldCurrencyState goldCurrencyState = new GoldCurrencyState(goldCurrencyStateDict);
             Currency gold = goldCurrencyState.Currency;
 

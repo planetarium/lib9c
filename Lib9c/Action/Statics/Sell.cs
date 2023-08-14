@@ -16,7 +16,7 @@ namespace Nekoyume.Action.Statics
 {
     public static class Sell
     {
-        public static IAccountStateDelta Cancel(IAccountStateDelta states,
+        public static IAccount Cancel(IAccount account,
             UpdateSellInfo updateSellInfo, string addressesHex, AvatarState avatarState,
             OrderDigestListState digestList, IActionContext context, Address sellerAvatarAddress)
         {
@@ -37,7 +37,7 @@ namespace Nekoyume.Action.Statics
 
             // for sell cancel
             sw.Start();
-            if (!states.TryGetState(shopAddress, out Dictionary shopStateDict))
+            if (!account.TryGetState(shopAddress, out Dictionary shopStateDict))
             {
                 throw new FailedLoadStateException($"{addressesHex}failed to load {nameof(ShardedShopStateV2)}({shopAddress}).");
             }
@@ -45,7 +45,7 @@ namespace Nekoyume.Action.Statics
             sw.Stop();
             Log.Verbose("{AddressesHex} UpdateSell Sell Cancel Get ShopState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
-            if (!states.TryGetState(Order.DeriveAddress(orderId), out Dictionary orderDict))
+            if (!account.TryGetState(Order.DeriveAddress(orderId), out Dictionary orderDict))
             {
                 throw new FailedLoadStateException($"{addressesHex} failed to load {nameof(Order)}({Order.DeriveAddress(updateSellInfo.orderId)}).");
             }
@@ -57,7 +57,7 @@ namespace Nekoyume.Action.Statics
             {
                 var shardedShopState = new ShardedShopStateV2(shopStateDict);
                 shardedShopState.Remove(orderOnSale, context.BlockIndex);
-                states = states.SetState(shopAddress, shardedShopState.Serialize());
+                account = account.SetState(shopAddress, shardedShopState.Serialize());
             }
 
             digestList.Remove(orderOnSale.OrderId);
@@ -70,7 +70,7 @@ namespace Nekoyume.Action.Statics
                 avatarState.mailBox.Remove(expirationMail);
             }
 
-            return states.SetState(digestList.Address, digestList.Serialize());
+            return account.SetState(digestList.Address, digestList.Serialize());
         }
     }
 }

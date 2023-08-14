@@ -21,7 +21,7 @@ namespace Lib9c.DevExtensions.Action
         public int FaucetNcg { get; set; }
         public int FaucetCrystal { get; set; }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             if (context.Rehearsal)
@@ -29,11 +29,12 @@ namespace Lib9c.DevExtensions.Action
                 return context.PreviousState;
             }
 
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (FaucetNcg > 0)
             {
-                var ncg = states.GetGoldCurrency();
-                states = states.TransferAsset(context, GoldCurrencyState.Address, AgentAddress, ncg * FaucetNcg);
+                var ncg = account.GetGoldCurrency();
+                account = account.TransferAsset(context, GoldCurrencyState.Address, AgentAddress, ncg * FaucetNcg);
             }
 
             if (FaucetCrystal > 0)
@@ -41,10 +42,10 @@ namespace Lib9c.DevExtensions.Action
 #pragma warning disable CS0618
                 var crystal = Currency.Legacy("CRYSTAL", 18, null);
 #pragma warning restore CS0618
-                states = states.MintAsset(context, AgentAddress, crystal * FaucetCrystal);
+                account = account.MintAsset(context, AgentAddress, crystal * FaucetCrystal);
             }
 
-            return states;
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

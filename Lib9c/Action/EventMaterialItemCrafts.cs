@@ -84,15 +84,16 @@ namespace Nekoyume.Action
             MaterialsToUse = deserialized;
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
 
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug(
@@ -104,7 +105,7 @@ namespace Nekoyume.Action
 
             // Get AvatarState
             sw.Start();
-            if (!states.TryGetAvatarStateV2(
+            if (!account.TryGetAvatarStateV2(
                     context.Signer,
                     AvatarAddress,
                     out var avatarState,
@@ -127,7 +128,7 @@ namespace Nekoyume.Action
 
             // Get sheets
             sw.Restart();
-            var sheets = states.GetSheets(
+            var sheets = account.GetSheets(
                 sheetTypes: new[]
                 {
                     typeof(EventScheduleSheet),
@@ -184,7 +185,7 @@ namespace Nekoyume.Action
             sw.Restart();
 
             // Validate Recipe ResultMaterialItemId
-            var materialItemSheet = states.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = account.GetSheet<MaterialItemSheet>();
             if (!materialItemSheet.TryGetValue(
                     recipeRow.ResultMaterialItemId,
                     out var resultMaterialRow))
@@ -244,7 +245,7 @@ namespace Nekoyume.Action
 
             // Set states
             sw.Restart();
-            states = states
+            account = account
                 .SetState(AvatarAddress, avatarState.SerializeV2())
                 .SetState(
                     AvatarAddress.Derive(LegacyInventoryKey),
@@ -269,7 +270,7 @@ namespace Nekoyume.Action
                 addressesHex,
                 DateTimeOffset.UtcNow - started);
 
-            return states;
+            return world.SetAccount(account);
         }
 
     }

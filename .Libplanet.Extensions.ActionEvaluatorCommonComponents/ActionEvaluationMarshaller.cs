@@ -16,13 +16,13 @@ public static class ActionEvaluationMarshaller
     public static IEnumerable<Dictionary> Marshal(this IEnumerable<IActionEvaluation> actionEvaluations)
     {
         var actionEvaluationsArray = actionEvaluations.ToArray();
-        var outputStates = AccountStateDeltaMarshaller.Marshal(actionEvaluationsArray.Select(aev => aev.OutputState));
-        var previousStates = AccountStateDeltaMarshaller.Marshal(actionEvaluationsArray.Select(aev => aev.InputContext.PreviousState));
+        var outputStates = WorldMarshaller.Marshal(actionEvaluationsArray.Select(aev => aev.OutputState));
+        var previousStates = WorldMarshaller.Marshal(actionEvaluationsArray.Select(aev => aev.InputContext.PreviousState));
         foreach (var actionEvaluation in actionEvaluationsArray)
         {
             yield return Dictionary.Empty
                 .Add("action", actionEvaluation.Action)
-                .Add("output_states", AccountStateDeltaMarshaller.Marshal(actionEvaluation.OutputState))
+                .Add("output_states", WorldMarshaller.Marshal(actionEvaluation.OutputState))
                 .Add("input_context", ActionContextMarshaller.Marshal(actionEvaluation.InputContext))
                 .Add("exception", actionEvaluation.Exception?.GetType().FullName is { } typeName ? (Text)typeName : Null.Value);
         }
@@ -32,7 +32,7 @@ public static class ActionEvaluationMarshaller
     {
         return Dictionary.Empty
             .Add("action", actionEvaluation.Action)
-            .Add("output_states", AccountStateDeltaMarshaller.Marshal(actionEvaluation.OutputState))
+            .Add("output_states", WorldMarshaller.Marshal(actionEvaluation.OutputState))
             .Add("input_context", ActionContextMarshaller.Marshal(actionEvaluation.InputContext))
             .Add("exception", actionEvaluation.Exception?.GetType().FullName is { } typeName ? (Text)typeName : Null.Value);
     }
@@ -47,7 +47,7 @@ public static class ActionEvaluationMarshaller
         return new ActionEvaluation(
             dictionary["action"],
             ActionContextMarshaller.Unmarshal((Dictionary)dictionary["input_context"]),
-            AccountStateDeltaMarshaller.Unmarshal(dictionary["output_states"]),
+            WorldMarshaller.Unmarshal(dictionary["output_states"]),
             dictionary["exception"] is Text typeName ? new Exception(typeName) : null
         );
     }

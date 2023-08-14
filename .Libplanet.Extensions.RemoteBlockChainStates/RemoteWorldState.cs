@@ -12,12 +12,12 @@ using Libplanet.Crypto;
 
 namespace Libplanet.Extensions.RemoteBlockChainStates;
 
-public class RemoteBlockState : IBlockState
+public class RemoteWorldState : IWorldState
 {
     private readonly Uri _explorerEndpoint;
     private readonly GraphQLHttpClient _graphQlHttpClient;
 
-    public RemoteBlockState(Uri explorerEndpoint, BlockHash? blockHash)
+    public RemoteWorldState(Uri explorerEndpoint, BlockHash? blockHash)
     {
         _explorerEndpoint = explorerEndpoint;
         _graphQlHttpClient =
@@ -215,5 +215,11 @@ public class RemoteBlockState : IBlockState
     {
         public string PublicKey { get; set; }
         public long Power { get; set; }
+    }
+
+    public bool Legacy { get; }
+    public IAccount GetAccount(Address address)
+    {
+        throw new NotImplementedException();
     }
 }

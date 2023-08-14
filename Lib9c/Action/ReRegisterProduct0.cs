@@ -28,15 +28,16 @@ namespace Nekoyume.Action
         public List<(IProductInfo, IRegisterInfo)> ReRegisterInfos;
         public bool ChargeAp;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccountStateDelta states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
 
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (!ReRegisterInfos.Any())
             {
                 throw new ListEmptyException($"ReRegisterInfos was empty.");
@@ -47,7 +48,7 @@ namespace Nekoyume.Action
                 throw new ArgumentOutOfRangeException($"{nameof(ReRegisterInfos)} must be less than or equal {Capacity}.");
             }
 
-            var ncg = states.GetGoldCurrency();
+            var ncg = account.GetGoldCurrency();
             foreach (var (productInfo, registerInfo) in ReRegisterInfos)
             {
                 registerInfo.ValidateAddress(AvatarAddress);
@@ -61,27 +62,27 @@ namespace Nekoyume.Action
                 }
             }
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
+            if (!account.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
                     out var migrationRequired))
             {
                 throw new FailedLoadStateException("failed to load avatar state");
             }
 
-            avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
+            avatarState.UseAp(CostAp, ChargeAp, account.GetSheet<MaterialItemSheet>(), context.BlockIndex, account.GetGameConfigState());
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
-            if (states.TryGetState(productsStateAddress, out List rawProductList))
+            if (account.TryGetState(productsStateAddress, out List rawProductList))
             {
                 productsState = new ProductsState(rawProductList);
             }
             else
             {
-                var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
+                var marketState = account.TryGetState(Addresses.Market, out List rawMarketList)
                     ? new MarketState(rawMarketList)
                     : new MarketState();
                 productsState = new ProductsState();
                 marketState.AvatarAddresses.Add(AvatarAddress);
-                states = states.SetState(Addresses.Market, marketState.Serialize());
+                account = account.SetState(Addresses.Market, marketState.Serialize());
             }
             foreach (var (productInfo, info) in ReRegisterInfos.OrderBy(tuple => tuple.Item2.Type).ThenBy(tuple => tuple.Item2.Price))
             {
@@ -100,7 +101,7 @@ namespace Nekoyume.Action
 
                     var digestListAddress =
                         OrderDigestListState.DeriveAddress(avatarAddress);
-                    if (!states.TryGetState(digestListAddress, out Dictionary rawList))
+                    if (!account.TryGetState(digestListAddress, out Dictionary rawList))
                     {
                         throw new FailedLoadStateException(
                             $"{addressesHex} failed to load {nameof(OrderDigest)}({digestListAddress}).");
@@ -108,7 +109,7 @@ namespace Nekoyume.Action
 
                     var digestList = new OrderDigestListState(rawList);
                     var orderAddress = Order.DeriveAddress(productInfo.ProductId);
-                    if (!states.TryGetState(orderAddress, out Dictionary rawOrder))
+                    if (!account.TryGetState(orderAddress, out Dictionary rawOrder))
                     {
                         throw new FailedLoadStateException(
                             $"{addressesHex} failed to load {nameof(Order)}({orderAddress}).");
@@ -153,32 +154,32 @@ namespace Nekoyume.Action
                     var updateSellInfo = new UpdateSellInfo(productInfo.ProductId,
                         productInfo.ProductId, order.TradableId,
                         order.ItemSubType, productInfo.Price, itemCount);
-                    states = Sell.Cancel(states, updateSellInfo, addressesHex,
+                    account = Sell.Cancel(account, updateSellInfo, addressesHex,
                         avatarState, digestList, context,
                         avatarState.address);
                 }
                 else
                 {
-                    states = CancelProductRegistration.Cancel(productsState, productInfo,
-                        states, avatarState, context);
+                    account = CancelProductRegistration.Cancel(productsState, productInfo,
+                        account, avatarState, context);
                 }
-                states = RegisterProduct0.Register(context, info, avatarState, productsState, states);
+                account = RegisterProduct0.Register(context, info, avatarState, productsState, account);
             }
 
-            states = states
+            account = account
                 .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
                 .SetState(AvatarAddress, avatarState.SerializeV2())
                 .SetState(productsStateAddress, productsState.Serialize());
 
             if (migrationRequired)
             {
-                states = states
+                account = account
                     .SetState(AvatarAddress.Derive(LegacyQuestListKey),
                         avatarState.questList.Serialize())
                     .SetState(AvatarAddress.Derive(LegacyWorldInformationKey),
                         avatarState.worldInformation.Serialize());
             }
-            return states;
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -29,23 +29,25 @@ namespace Nekoyume.Action
         IEnumerable<int> IUnlockEquipmentRecipeV1.RecipeIds => RecipeIds;
         Address IUnlockEquipmentRecipeV1.AvatarAddress => AvatarAddress;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var unlockedRecipeIdsAddress = AvatarAddress.Derive("recipe_ids");
             if (context.Rehearsal)
             {
-                return states
+                account = account
                     .SetState(worldInformationAddress, MarkChanged)
                     .SetState(questListAddress, MarkChanged)
                     .SetState(inventoryAddress, MarkChanged)
                     .SetState(AvatarAddress, MarkChanged)
                     .SetState(unlockedRecipeIdsAddress, MarkChanged)
                     .MarkBalanceChanged(context, GoldCurrencyMock, context.Signer, Addresses.UnlockEquipmentRecipe);
+                return world.SetAccount(account);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
@@ -59,14 +61,14 @@ namespace Nekoyume.Action
             WorldInformation worldInformation;
             bool migrationRequired = false;
             AvatarState avatarState = null;
-            if (states.TryGetState(worldInformationAddress, out Dictionary rawInfo))
+            if (account.TryGetState(worldInformationAddress, out Dictionary rawInfo))
             {
                 worldInformation = new WorldInformation(rawInfo);
             }
             else
             {
                 // AvatarState migration required.
-                if (states.TryGetAvatarState(context.Signer, AvatarAddress, out avatarState))
+                if (account.TryGetAvatarState(context.Signer, AvatarAddress, out avatarState))
                 {
                     worldInformation = avatarState.worldInformation;
                     migrationRequired = true;
@@ -78,12 +80,12 @@ namespace Nekoyume.Action
                 }
             }
 
-            var equipmentRecipeSheet = states.GetSheet<EquipmentItemRecipeSheet>();
+            var equipmentRecipeSheet = account.GetSheet<EquipmentItemRecipeSheet>();
 
-            var unlockedIds = UnlockedIds(states, unlockedRecipeIdsAddress, equipmentRecipeSheet, worldInformation, RecipeIds);
+            var unlockedIds = UnlockedIds(account, unlockedRecipeIdsAddress, equipmentRecipeSheet, worldInformation, RecipeIds);
 
             FungibleAssetValue cost = CrystalCalculator.CalculateRecipeUnlockCost(RecipeIds, equipmentRecipeSheet);
-            FungibleAssetValue balance = states.GetBalance(context.Signer, cost.Currency);
+            FungibleAssetValue balance = account.GetBalance(context.Signer, cost.Currency);
 
             if (balance < cost)
             {
@@ -92,30 +94,31 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                states = states
+                account = account
                     .SetState(AvatarAddress, avatarState.SerializeV2())
                     .SetState(worldInformationAddress, worldInformation.Serialize())
                     .SetState(questListAddress, avatarState.questList.Serialize())
                     .SetState(inventoryAddress, avatarState.inventory.Serialize());
             }
 
-            states = states.SetState(unlockedRecipeIdsAddress,
+            account = account.SetState(unlockedRecipeIdsAddress,
                     unlockedIds.Aggregate(List.Empty,
                         (current, address) => current.Add(address.Serialize())));
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}UnlockEquipmentRecipe Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.TransferAsset(context, context.Signer, Addresses.UnlockEquipmentRecipe,  cost);
+            account = account.TransferAsset(context, context.Signer, Addresses.UnlockEquipmentRecipe,  cost);
+            return world.SetAccount(account);
         }
 
         public static List<int> UnlockedIds(
-            IAccountStateDelta states,
+            IAccount account,
             Address unlockedRecipeIdsAddress,
             EquipmentItemRecipeSheet equipmentRecipeSheet,
             WorldInformation worldInformation,
             List<int> recipeIds
         )
         {
-            var unlockedIds = states.TryGetState(unlockedRecipeIdsAddress, out List rawIds)
+            var unlockedIds = account.TryGetState(unlockedRecipeIdsAddress, out List rawIds)
                 ? rawIds.ToList(StateExtensions.ToInteger)
                 : equipmentRecipeSheet.Values.Where(r => r.CRYSTAL == 0).Select(r => r.Id).ToList();
 

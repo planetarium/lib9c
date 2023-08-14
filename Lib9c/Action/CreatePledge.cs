@@ -5,7 +5,6 @@ using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Action
@@ -46,11 +45,12 @@ namespace Nekoyume.Action
             AgentAddresses = agentAddresses;
         }
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             CheckPermission(context);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var mead = Mead * Currencies.Mead;
             var contractList = List.Empty
                 .Add(PatronAddress.Serialize())
@@ -58,11 +58,12 @@ namespace Nekoyume.Action
                 .Add(Mead.Serialize());
             foreach (var (agentAddress, pledgeAddress) in AgentAddresses)
             {
-                states = states
+                account = account
                     .TransferAsset(context, PatronAddress, agentAddress, mead)
                     .SetState(pledgeAddress, contractList);
             }
-            return states;
+
+            return world.SetAccount(account);
         }
     }
 }

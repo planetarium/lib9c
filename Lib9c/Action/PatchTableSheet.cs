@@ -36,17 +36,19 @@ namespace Nekoyume.Action
         string IPatchTableSheetV1.TableName => TableName;
         string IPatchTableSheetV1.TableCsv => TableCsv;
 
-        public override IAccountStateDelta Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
-            var states = ctx.PreviousState;
+            var world = ctx.PreviousState;
+            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var sheetAddress = Addresses.TableSheet.Derive(TableName);
             if (ctx.Rehearsal)
             {
-                return states
+                account = account
                     .SetState(sheetAddress, MarkChanged)
                     .SetState(GameConfigState.Address, MarkChanged);
+                return world.SetAccount(account);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context);
@@ -66,7 +68,7 @@ namespace Nekoyume.Action
             }
 #endif
 
-            var sheets = states.GetState(sheetAddress);
+            var sheets = account.GetState(sheetAddress);
             var value = sheets is null ? string.Empty : sheets.ToDotnetString();
 
             Log.Verbose(
@@ -81,15 +83,15 @@ namespace Nekoyume.Action
                 TableCsv
             );
 
-            states = states.SetState(sheetAddress, TableCsv.Serialize());
+            account = account.SetState(sheetAddress, TableCsv.Serialize());
 
             if (TableName == nameof(GameConfigSheet))
             {
                 var gameConfigState = new GameConfigState(TableCsv);
-                states = states.SetState(GameConfigState.Address, gameConfigState.Serialize());
+                account = account.SetState(GameConfigState.Address, gameConfigState.Serialize());
             }
 
-            return states;
+            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
