@@ -9,6 +9,7 @@ using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Coupons;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action.Coupons
@@ -34,25 +35,25 @@ namespace Nekoyume.Action.Coupons
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                account = account
-                    .SetState(AvatarAddress, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetCouponWallet(
-                        context.Signer,
-                        ImmutableDictionary.Create<Guid, Coupon>(),
-                        rehearsal: true);
-                return world.SetAccount(account);
+                world = LegacyModule.SetState(world, AvatarAddress, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetCouponWallet(
+                    world,
+                    context.Signer,
+                    ImmutableDictionary.Create<Guid, Coupon>(),
+                    rehearsal: true);
+                return world;
             }
 
-            if (!account.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
                     context.Signer,
                     AvatarAddress,
                     out AvatarState avatarState,
@@ -61,14 +62,14 @@ namespace Nekoyume.Action.Coupons
                 return world;
             }
 
-            var wallet = account.GetCouponWallet(context.Signer);
+            var wallet = LegacyModule.GetCouponWallet(world, context.Signer);
             if (!wallet.TryGetValue(CouponId, out var coupon))
             {
                 return world;
             }
 
             wallet = wallet.Remove(CouponId);
-            var itemSheets = account.GetItemSheet();
+            var itemSheets = LegacyModule.GetItemSheet(world);
             foreach ((int itemId, uint q) in coupon)
             {
                 for (uint i = 0U; i < q; i++)
@@ -80,13 +81,21 @@ namespace Nekoyume.Action.Coupons
                 }
             }
 
-            account = account
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetCouponWallet(context.Signer, wallet);
-            return world.SetAccount(account);
+            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+            world = LegacyModule.SetState(
+                world,
+                inventoryAddress,
+                avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                questListAddress,
+                avatarState.questList.Serialize());
+            world = LegacyModule.SetCouponWallet(world, context.Signer, wallet);
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

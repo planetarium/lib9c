@@ -8,10 +8,10 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Faucet;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Lib9c.DevExtensions.Action
@@ -32,23 +32,26 @@ namespace Lib9c.DevExtensions.Action
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (!(FaucetRuneInfos is null))
             {
-                RuneSheet runeSheet = account.GetSheet<RuneSheet>();
+                RuneSheet runeSheet = LegacyModule.GetSheet<RuneSheet>(world);
                 if (runeSheet.OrderedList != null)
                 {
                     foreach (var rune in FaucetRuneInfos)
                     {
-                        account = account.MintAsset(context, AvatarAddress, RuneHelper.ToFungibleAssetValue(
-                            runeSheet.OrderedList.First(r => r.Id == rune.RuneId),
-                            rune.Amount
-                        ));
+                        world = LegacyModule.MintAsset(
+                            world,
+                            context,
+                            AvatarAddress,
+                            RuneHelper.ToFungibleAssetValue(
+                                runeSheet.OrderedList.First(r => r.Id == rune.RuneId),
+                                rune.Amount
+                            ));
                     }
                 }
             }
 
-            return world.SetAccount(account);
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

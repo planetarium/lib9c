@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -15,7 +16,7 @@ namespace Lib9c.Tests.Action
 
     public class PatchTableSheetTest
     {
-        private IAccountStateDelta _initialState;
+        private IWorld _initialWorld;
 
         public PatchTableSheetTest(ITestOutputHelper outputHelper)
         {
@@ -24,19 +25,21 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockStateDelta();
+            _initialWorld = new MockWorld();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialWorld = LegacyModule.SetState(
+                    _initialWorld,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
         }
 
         [Fact]
         public void Execute()
         {
-            var worldSheetCsv = _initialState.GetSheetCsv<WorldSheet>();
+            var worldSheetCsv = LegacyModule.GetSheetCsv<WorldSheet>(_initialWorld);
             var worldSheet = new WorldSheet();
             worldSheet.Set(worldSheetCsv);
             var worldSheetRowCount = worldSheet.Count;
@@ -49,14 +52,14 @@ namespace Lib9c.Tests.Action
                 TableName = nameof(WorldSheet),
                 TableCsv = worldSheetCsvColumnLine,
             };
-            var nextState = patchTableSheetAction.Execute(new ActionContext
+            var nextWorld = patchTableSheetAction.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = _initialState,
+                PreviousState = _initialWorld,
                 Rehearsal = false,
             });
 
-            var nextWorldSheetCsv = nextState.GetSheetCsv<WorldSheet>();
+            var nextWorldSheetCsv = LegacyModule.GetSheetCsv<WorldSheet>(nextWorld);
             Assert.Single(nextWorldSheetCsv.Split('\n'));
 
             var nextWorldSheet = new WorldSheet();
@@ -68,14 +71,14 @@ namespace Lib9c.Tests.Action
                 TableName = nameof(WorldSheet),
                 TableCsv = worldSheetCsv,
             };
-            nextState = patchTableSheetAction.Execute(new ActionContext
+            nextWorld = patchTableSheetAction.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = _initialState,
+                PreviousState = _initialWorld,
                 Rehearsal = false,
             });
 
-            nextWorldSheet = nextState.GetSheet<WorldSheet>();
+            nextWorldSheet = LegacyModule.GetSheet<WorldSheet>(nextWorld);
             Assert.Equal(worldSheetRowCount, nextWorldSheet.Count);
         }
 
@@ -85,10 +88,14 @@ namespace Lib9c.Tests.Action
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
             const string tableName = "TestTable";
-            var initStates = MockState.Empty
-                .SetState(AdminState.Address, adminState.Serialize())
-                .SetState(Addresses.TableSheet.Derive(tableName), Dictionary.Empty.Add(tableName, "Initial"));
-            var state = new MockStateDelta(initStates);
+            var state = LegacyModule.SetState(
+                new MockWorld(),
+                AdminState.Address,
+                adminState.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                Addresses.TableSheet.Derive(tableName),
+                Dictionary.Empty.Add(tableName, "Initial"));
             var action = new PatchTableSheet()
             {
                 TableName = tableName,
@@ -128,17 +135,21 @@ namespace Lib9c.Tests.Action
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
             const string tableName = "TestTable";
-            var initStates = MockState.Empty
-                .SetState(AdminState.Address, adminState.Serialize())
-                .SetState(Addresses.TableSheet.Derive(tableName), Dictionary.Empty.Add(tableName, "Initial"));
-            var state = new MockStateDelta(initStates);
+            var state = LegacyModule.SetState(
+                new MockWorld(),
+                AdminState.Address,
+                adminState.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                Addresses.TableSheet.Derive(tableName),
+                Dictionary.Empty.Add(tableName, "Initial"));
             var action = new PatchTableSheet()
             {
                 TableName = nameof(CostumeStatSheet),
                 TableCsv = "id,costume_id,stat_type,stat\n1,40100000,ATK,100",
             };
 
-            var nextState = action.Execute(
+            var nextWorld = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = state,
@@ -146,7 +157,8 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            Assert.NotNull(nextState.GetSheet<CostumeStatSheet>());
+            Assert.NotNull(
+                LegacyModule.GetSheet<CostumeStatSheet>(nextWorld));
         }
     }
 }

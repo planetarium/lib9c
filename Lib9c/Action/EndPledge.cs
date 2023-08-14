@@ -3,10 +3,10 @@ using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -33,23 +33,26 @@ namespace Nekoyume.Action
             context.UseGas(1);
             Address signer = context.Signer;
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var contractAddress = AgentAddress.GetPledgeAddress();
-            if (account.TryGetState(contractAddress, out List contract))
+            if (LegacyModule.TryGetState(world, contractAddress, out List contract))
             {
                 if (signer != contract[0].ToAddress())
                 {
                     throw new InvalidAddressException($"{signer} is not patron.");
                 }
 
-                var balance = account.GetBalance(AgentAddress, Currencies.Mead);
+                var balance = LegacyModule.GetBalance(world, AgentAddress, Currencies.Mead);
                 if (balance > 0 * Currencies.Mead)
                 {
-                    account = account.TransferAsset(context, AgentAddress, signer, balance);
+                    world = LegacyModule.TransferAsset(
+                        world,
+                        context,
+                        AgentAddress,
+                        signer,
+                        balance);
                 }
 
-                account = account.SetState(contractAddress, Null.Value);
-                return world.SetAccount(account);
+                return LegacyModule.SetState(world, contractAddress, Null.Value);
             }
 
             throw new FailedLoadStateException("failed to find pledge.");

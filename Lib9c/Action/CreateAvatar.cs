@@ -12,6 +12,7 @@ using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -68,7 +69,6 @@ namespace Nekoyume.Action
             IActionContext ctx = context;
             var signer = ctx.Signer;
             var world = ctx.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var avatarAddress = signer.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -81,7 +81,7 @@ namespace Nekoyume.Action
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (ctx.Rehearsal)
             {
-                account = account.SetState(signer, MarkChanged);
+                world = LegacyModule.SetState(world, signer, MarkChanged);
                 for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
                 {
                     var slotAddress = avatarAddress.Derive(
@@ -91,16 +91,15 @@ namespace Nekoyume.Action
                             i
                         )
                     );
-                    account = account.SetState(slotAddress, MarkChanged);
+                    world = LegacyModule.SetState(world, slotAddress, MarkChanged);
                 }
 
-                account = account
-                    .SetState(avatarAddress, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .MarkBalanceChanged(ctx, GoldCurrencyMock, signer);
-                return world.SetAccount(account);
+                world = LegacyModule.SetState(world, avatarAddress, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.MarkBalanceChanged(world, ctx, GoldCurrencyMock, signer);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
@@ -115,9 +114,9 @@ namespace Nekoyume.Action
             sw.Start();
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CreateAvatar exec started", addressesHex);
-            AgentState existingAgentState = account.GetAgentState(signer);
+            AgentState existingAgentState = AgentModule.GetAgentState(world, signer);
             var agentState = existingAgentState ?? new AgentState(signer);
-            var avatarState = account.GetAvatarState(avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(world, avatarAddress);
             if (!(avatarState is null))
             {
                 throw new InvalidAddressException(
@@ -144,8 +143,7 @@ namespace Nekoyume.Action
             agentState.avatarAddresses.Add(index, avatarAddress);
 
             // Avoid NullReferenceException in test
-            var materialItemSheet = ctx.PreviousState.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetSheet<MaterialItemSheet>();
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(ctx.PreviousState);
 
             avatarState = AvatarState.CreateAvatarState(name, avatarAddress, ctx, materialItemSheet, default);
 
@@ -159,8 +157,10 @@ namespace Nekoyume.Action
             foreach (var address in avatarState.combinationSlotAddresses)
             {
                 var slotState =
-                    new CombinationSlotState(address, GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
-                account = account.SetState(address, slotState.Serialize());
+                    new CombinationSlotState(
+                        address,
+                        GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
+                world = LegacyModule.SetState(world, address, slotState.Serialize());
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);
@@ -264,14 +264,16 @@ namespace Nekoyume.Action
             // TODO delete check blockIndex hard-fork this action
             // Fix invalid mint crystal balance in internal network. main-net always mint 200_000
             var mintingValue = context.BlockIndex > 7_210_000L ? 200_000 : 600_000;
-            account = account
-                .SetState(signer, agentState.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .MintAsset(ctx, signer, mintingValue * CrystalCalculator.CRYSTAL);
-            return world.SetAccount(account);
+            world = AgentModule.SetAgentState(world, signer, agentState);
+            world = LegacyModule.SetState(world, inventoryAddress, avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            world = LegacyModule.SetState(world, questListAddress, avatarState.questList.Serialize());
+            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = LegacyModule.MintAsset(world, ctx, signer, mintingValue * CrystalCalculator.CRYSTAL);
+            return world;
         }
     }
 }

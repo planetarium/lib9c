@@ -5,7 +5,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Coupons
 {
@@ -33,8 +33,7 @@ namespace Nekoyume.Action.Coupons
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-            var signerWallet = account.GetCouponWallet(context.Signer);
+            var signerWallet = LegacyModule.GetCouponWallet(world, context.Signer);
             var orderedRecipients = CouponsPerRecipient.OrderBy(pair => pair.Key);
             foreach ((Address recipient, IImmutableSet<Guid> couponIds) in orderedRecipients)
             {
@@ -43,7 +42,7 @@ namespace Nekoyume.Action.Coupons
                     continue;
                 }
 
-                var recipientWallet = account.GetCouponWallet(recipient);
+                var recipientWallet = LegacyModule.GetCouponWallet(world, recipient);
                 foreach (Guid id in couponIds)
                 {
                     if (!signerWallet.TryGetValue(id, out var coupon))
@@ -57,11 +56,18 @@ namespace Nekoyume.Action.Coupons
                     recipientWallet = recipientWallet.Add(id, coupon);
                 }
 
-                account = account.SetCouponWallet(recipient, recipientWallet, context.Rehearsal);
+                world = LegacyModule.SetCouponWallet(
+                    world,
+                    recipient,
+                    recipientWallet,
+                    context.Rehearsal);
             }
 
-            account = account.SetCouponWallet(context.Signer, signerWallet, context.Rehearsal);
-            return world.SetAccount(account);
+            return LegacyModule.SetCouponWallet(
+                world,
+                context.Signer,
+                signerWallet,
+                context.Rehearsal);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

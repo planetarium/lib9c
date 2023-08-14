@@ -6,6 +6,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -36,12 +37,9 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                account = account
-                    .SetState(Addresses.Admin, MarkChanged);
-                return world.SetAccount(account);
+                return LegacyModule.SetState(world, Addresses.Admin, MarkChanged);
             }
 
             if (TryGetAdminState(context, out AdminState adminState))
@@ -52,11 +50,10 @@ namespace Nekoyume.Action
                 }
 
                 var newAdminState = new AdminState(adminState.AdminAddress, NewValidUntil);
-                account = account.SetState(Addresses.Admin,
-                    newAdminState.Serialize());
+                world = LegacyModule.SetState(world, Addresses.Admin, newAdminState.Serialize());
             }
 
-            return world.SetAccount(account);
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

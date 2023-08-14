@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c.DevExtensions.Action;
@@ -12,7 +11,7 @@ using Lib9c.Tests.Util;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
+using Nekoyume;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model;
@@ -20,6 +19,7 @@ using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Quest;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Xunit;
 
 namespace Lib9c.DevExtensions.Tests.Action
@@ -40,7 +40,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccountStateDelta _initialStateV2;
+        private readonly IWorld _initialStateV2;
         private readonly Address _inventoryAddress;
         private readonly Address _worldInformationAddress;
         private readonly Address _questListAddress;
@@ -58,7 +58,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 _avatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey);
             _questListAddress = _avatarAddress.Derive(SerializeKeys.LegacyQuestListKey);
             _recipeAddress = _avatarAddress.Derive("recipe_ids");
-            _avatarState = _initialStateV2.GetAvatarStateV2(_avatarAddress);
+            _avatarState = AvatarModule.GetAvatarStateV2(_initialStateV2, _avatarAddress);
         }
 
         // MemberData
@@ -249,7 +249,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 tableSheets.EquipmentItemRecipeSheet,
                 tableSheets.EquipmentItemSubRecipeSheet
             );
-            tradeQuestList.UpdateTradeQuest(TradeType.Sell, stateV2.GetGoldCurrency() * 1);
+            tradeQuestList.UpdateTradeQuest(TradeType.Sell, LegacyModule.GetGoldCurrency(stateV2) * 1);
 
             yield return new object[]
             {
@@ -288,7 +288,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 tableSheets.EquipmentItemSubRecipeSheet
             );
             combinationQuestList.UpdateCombinationQuest(item);
-            tradeQuestList.UpdateTradeQuest(TradeType.Sell, stateV2.GetGoldCurrency() * 1);
+            tradeQuestList.UpdateTradeQuest(TradeType.Sell, LegacyModule.GetGoldCurrency(stateV2) * 1);
             stageMap = new CollectionMap();
             for (var i = 1; i <= targetStage; i++)
             {
@@ -346,9 +346,9 @@ namespace Lib9c.DevExtensions.Tests.Action
         // ~MemberData
 
         // Logics
-        private IAccountStateDelta Manipulate(
-            IAccountStateDelta state,
-            List<(Address addr, IValue value)> targetStateList,
+        private IWorld Manipulate(
+            IWorld state,
+            List<(Address accountAddr, Address addr, IValue value)> targetStateList,
             List<(Address addr, FungibleAssetValue fav)> targetBalanceList
         )
         {
@@ -367,13 +367,13 @@ namespace Lib9c.DevExtensions.Tests.Action
         }
 
         private void TestAvatarState(
-            IAccountStateDelta state,
+            IWorld world,
             string? name, int? level, long? exp, int? actionPoint,
             long? blockIndex, long? dailyRewardReceivedIndex,
             int? hair, int? lens, int? ear, int? tail
         )
         {
-            var targetAvatarState = state.GetAvatarStateV2(_avatarAddress);
+            var targetAvatarState = AvatarModule.GetAvatarStateV2(world, _avatarAddress);
 
             if (name != null)
             {
@@ -426,9 +426,9 @@ namespace Lib9c.DevExtensions.Tests.Action
             }
         }
 
-        private void TestInventoryState(IAccountStateDelta state, Inventory targetInventory)
+        private void TestInventoryState(IWorld state, Inventory targetInventory)
         {
-            var avatarState = state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarStateV2(state, _avatarAddress);
             var inventoryState = avatarState.inventory;
             Assert.Equal(targetInventory.Items.Count, inventoryState.Items.Count);
             foreach (var item in targetInventory.Items)
@@ -459,26 +459,26 @@ namespace Lib9c.DevExtensions.Tests.Action
             newAvatarState.ear = ear ?? _avatarState.ear;
             newAvatarState.tail = tail ?? _avatarState.tail;
 
-            var state = Manipulate(
-                _initialStateV2,
-                new List<(Address, IValue)>
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
+                new List<(Address, Address, IValue)>
                 {
-                    (_avatarAddress, newAvatarState.SerializeV2())
+                    (Addresses.Avatar, _avatarAddress, newAvatarState.SerializeV2())
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
 
             TestAvatarState(
-                state,
+                world,
                 name, level, exp, actionPoint,
                 blockIndex, dailyRewardReceivedIndex,
                 hair, lens, ear, tail
             );
         }
 
-        private void TestQuestState(IAccountStateDelta state, List<int> targetQuestIdList)
+        private void TestQuestState(IWorld world, List<int> targetQuestIdList)
         {
-            var avatarState = state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarStateV2(world, _avatarAddress);
             var questState = avatarState.questList;
             foreach (var target in targetQuestIdList)
             {
@@ -486,9 +486,9 @@ namespace Lib9c.DevExtensions.Tests.Action
             }
         }
 
-        private void TestWorldInformation(IAccountStateDelta state, int lastClearedStage)
+        private void TestWorldInformation(IWorld world, int lastClearedStage)
         {
-            var avatarState = state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarStateV2(world, _avatarAddress);
             var worldInformation = avatarState.worldInformation;
 
             for (var i = 0; i < lastClearedStage; i++)
@@ -504,9 +504,9 @@ namespace Lib9c.DevExtensions.Tests.Action
             var crystal = new FungibleAssetValue(Crystal, 100, 0);
             var action = new ManipulateState
             {
-                StateList = new List<(Address, IValue)>
+                StateList = new List<(Address, Address, IValue)>
                 {
-                    (_avatarAddress, _avatarState.SerializeV2()),
+                    (Addresses.Avatar, _avatarAddress, _avatarState.SerializeV2()),
                 },
                 BalanceList = new List<(Address, FungibleAssetValue)>
                 {
@@ -533,63 +533,66 @@ namespace Lib9c.DevExtensions.Tests.Action
         [MemberData(nameof(FetchInventory))]
         public void SetInventoryState(Inventory targetInventory)
         {
-            var state = Manipulate(
-                _initialStateV2,
-                new List<(Address, IValue)>
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
+                new List<(Address, Address, IValue)>
                 {
-                    (_inventoryAddress, targetInventory.Serialize()),
+                    (ReservedAddresses.LegacyAccount, _inventoryAddress, targetInventory.Serialize()),
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
 
-            TestInventoryState(state, targetInventory);
+            TestInventoryState(world, targetInventory);
         }
 
         [Theory]
         [MemberData(nameof(FetchWorldInfo))]
         public void SetWorldInformation(int lastClearedStage, WorldInformation targetInfo)
         {
-            var state = Manipulate(
-                _initialStateV2,
-                new List<(Address, IValue)>
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
+                new List<(Address, Address, IValue)>
                 {
-                    (_worldInformationAddress, targetInfo.Serialize())
+                    (ReservedAddresses.LegacyAccount, _worldInformationAddress, targetInfo.Serialize())
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
 
-            TestWorldInformation(state, lastClearedStage);
+            TestWorldInformation(world, lastClearedStage);
         }
 
         [Theory]
         [MemberData(nameof(FetchQuest))]
         public void SetQuestState(List<int> targetQuestIdList, QuestList questList)
         {
-            var state = Manipulate(_initialStateV2,
-                new List<(Address, IValue)>
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
+                new List<(Address, Address, IValue)>
                 {
-                    (_questListAddress, questList.Serialize())
+                    (ReservedAddresses.LegacyAccount, _questListAddress, questList.Serialize())
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
 
-            TestQuestState(state, targetQuestIdList);
+            TestQuestState(world, targetQuestIdList);
         }
 
         [Theory]
         [MemberData(nameof(FetchBalance))]
         public void SetBalance(Address addr, FungibleAssetValue fav)
         {
-            var states = Manipulate(
-                _initialStateV2,
-                new List<(Address, IValue)>(),
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
+                new List<(Address, Address, IValue)>(),
                 new List<(Address, FungibleAssetValue)>
                 {
                     (addr, fav)
                 }
             );
 
-            Assert.Equal(fav, states.GetBalance(addr, fav.Currency));
+            Assert.Equal(
+                fav,
+                world.GetAccount(ReservedAddresses.LegacyAccount).GetBalance(addr, fav.Currency));
         }
 
         [Fact]
@@ -620,31 +623,34 @@ namespace Lib9c.DevExtensions.Tests.Action
                 .Where(tuple => !(tuple.fav.Currency.Ticker == "NCG" && tuple.fav.MajorUnit > 100))
                 .ToList();
 
-            var state = Manipulate(
-                _initialStateV2,
-                new List<(Address, IValue)>
+            var world = Manipulate(
+                new MockWorld(_initialStateV2),
+                new List<(Address, Address, IValue)>
                 {
-                    (_avatarAddress, newAvatarState.Serialize()),
-                    (_inventoryAddress, inventory.Serialize()),
-                    (_worldInformationAddress, worldState.Serialize()),
-                    (_questListAddress, questList.Serialize()),
+                    (Addresses.Avatar, _avatarAddress, newAvatarState.Serialize()),
+                    (ReservedAddresses.LegacyAccount, _inventoryAddress, inventory.Serialize()),
+                    (ReservedAddresses.LegacyAccount, _worldInformationAddress, worldState.Serialize()),
+                    (ReservedAddresses.LegacyAccount, _questListAddress, questList.Serialize()),
                 },
                 balanceList
-            );
+            ); ;
 
-            TestAvatarState(state,
+            TestAvatarState(world,
                 (string?)avatarData[0], (int?)avatarData[1],
                 (long?)avatarData[2], (int?)avatarData[3],
                 (long?)avatarData[4], (long?)avatarData[5],
                 (int?)avatarData[6], (int?)avatarData[7], (int?)avatarData[8], (int?)avatarData[9]
             );
-            TestInventoryState(state, inventory);
-            TestWorldInformation(state, lastClearedStage);
-            TestQuestState(state, targetQuestIdList);
+            TestInventoryState(world, inventory);
+            TestWorldInformation(world, lastClearedStage);
+            TestQuestState(world, targetQuestIdList);
 
             foreach (var (addr, fav) in balanceList)
             {
-                Assert.Equal(fav, state.GetBalance(addr, fav.Currency));
+                Assert.Equal(
+                    fav,
+                    world.GetAccount(ReservedAddresses.LegacyAccount)
+                        .GetBalance(addr, fav.Currency));
             }
         }
     }

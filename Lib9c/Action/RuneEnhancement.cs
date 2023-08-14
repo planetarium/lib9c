@@ -7,11 +7,11 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -53,15 +53,15 @@ namespace Nekoyume.Action
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
-            if (!account.TryGetAvatarStateV2(context.Signer, AvatarAddress, out _, out _))
+            if (!AvatarModule.TryGetAvatarStateV2(world, context.Signer, AvatarAddress, out _, out _))
             {
                 throw new FailedLoadStateException(
                     $"Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var sheets = account.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 sheetTypes: new[]
                 {
                     typeof(ArenaSheet),
@@ -79,7 +79,7 @@ namespace Nekoyume.Action
 
             RuneState runeState;
             var runeStateAddress = RuneState.DeriveAddress(AvatarAddress, RuneId);
-            if (account.TryGetState(runeStateAddress, out List rawState))
+            if (LegacyModule.TryGetState(world, runeStateAddress, out List rawState))
             {
                 runeState = new RuneState(rawState);
             }
@@ -109,18 +109,18 @@ namespace Nekoyume.Action
                     $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress}");
             }
 
-            var ncgCurrency = account.GetGoldCurrency();
+            var ncgCurrency = LegacyModule.GetGoldCurrency(world);
             var crystalCurrency = CrystalCalculator.CRYSTAL;
             var runeCurrency = Currency.Legacy(runeRow.Ticker, 0, minters: null);
-            var ncgBalance = account.GetBalance(context.Signer, ncgCurrency);
-            var crystalBalance = account.GetBalance(context.Signer, crystalCurrency);
-            var runeBalance = account.GetBalance(AvatarAddress, runeCurrency);
+            var ncgBalance = LegacyModule.GetBalance(world, context.Signer, ncgCurrency);
+            var crystalBalance = LegacyModule.GetBalance(world, context.Signer, crystalCurrency);
+            var runeBalance = LegacyModule.GetBalance(world, AvatarAddress, runeCurrency);
             if (RuneHelper.TryEnhancement(ncgBalance, crystalBalance, runeBalance,
                     ncgCurrency, crystalCurrency, runeCurrency,
                     cost, context.Random, TryCount, out var tryCount))
             {
                 runeState.LevelUp();
-                account = account.SetState(runeStateAddress, runeState.Serialize());
+                world = LegacyModule.SetState(world, runeStateAddress, runeState.Serialize());
             }
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
@@ -130,22 +130,37 @@ namespace Nekoyume.Action
             var ncgCost = cost.NcgQuantity * tryCount * ncgCurrency;
             if (cost.NcgQuantity > 0)
             {
-                account = account.TransferAsset(context, context.Signer, feeStoreAddress, ncgCost);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    context.Signer,
+                    feeStoreAddress,
+                    ncgCost);
             }
 
             var crystalCost = cost.CrystalQuantity * tryCount * crystalCurrency;
             if (cost.CrystalQuantity > 0)
             {
-                account = account.TransferAsset(context, context.Signer, feeStoreAddress, crystalCost);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    context.Signer,
+                    feeStoreAddress,
+                    crystalCost);
             }
 
             var runeCost = cost.RuneStoneQuantity * tryCount * runeCurrency;
             if (cost.RuneStoneQuantity > 0)
             {
-                account = account.TransferAsset(context, AvatarAddress, feeStoreAddress, runeCost);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    AvatarAddress,
+                    feeStoreAddress,
+                    runeCost);
             }
 
-            return world.SetAccount(account);
+            return world;
         }
     }
 }

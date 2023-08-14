@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action.Coupons
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Coupons;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class IssueCouponsTest
@@ -19,11 +20,12 @@ namespace Lib9c.Tests.Action.Coupons
         [Fact]
         public void Execute()
         {
-            IAccountStateDelta state = new Lib9c.Tests.Action.MockStateDelta()
-                .SetState(
-                    AdminState.Address,
-                    new AdminState(CouponsFixture.AgentAddress1, 1)
-                        .Serialize());
+            IWorld state = new MockWorld(
+                new MockAccount(ReservedAddresses.LegacyAccount)
+                    .SetState(
+                        AdminState.Address,
+                        new AdminState(CouponsFixture.AgentAddress1, 1)
+                            .Serialize()));
             IRandom random = new TestRandom();
 
             Assert.Throws<PolicyExpiredException>(() =>
@@ -56,19 +58,20 @@ namespace Lib9c.Tests.Action.Coupons
 
             Assert.Equal(
                 ImmutableDictionary<Guid, Coupon>.Empty,
-                new IssueCoupons(
-                    ImmutableDictionary<RewardSet, uint>.Empty,
-                    CouponsFixture.AgentAddress1)
-                    .Execute(
-                        new ActionContext
-                        {
-                            PreviousState = state,
-                            Rehearsal = false,
-                            Random = random,
-                            BlockIndex = 0,
-                            Signer = CouponsFixture.AgentAddress1,
-                        })
-                    .GetCouponWallet(CouponsFixture.AgentAddress1));
+                LegacyModule.GetCouponWallet(
+                    new IssueCoupons(
+                            ImmutableDictionary<RewardSet, uint>.Empty,
+                            CouponsFixture.AgentAddress1)
+                        .Execute(
+                            new ActionContext
+                            {
+                                PreviousState = state,
+                                Rehearsal = false,
+                                Random = random,
+                                BlockIndex = 0,
+                                Signer = CouponsFixture.AgentAddress1,
+                            }),
+                    CouponsFixture.AgentAddress1));
 
             Assert.Equal(
                 Bencodex.Types.Null.Value,
@@ -86,6 +89,7 @@ namespace Lib9c.Tests.Action.Coupons
                             BlockIndex = 0,
                             Signer = CouponsFixture.AgentAddress1,
                         })
+                    .GetAccount(ReservedAddresses.LegacyAccount)
                     .GetState(CouponsFixture.AgentAddress1.Derive(SerializeKeys.CouponWalletKey)));
 
             state = new IssueCoupons(
@@ -117,8 +121,8 @@ namespace Lib9c.Tests.Action.Coupons
                         Signer = CouponsFixture.AgentAddress1,
                     });
 
-            var agent1CouponWallet = state.GetCouponWallet(CouponsFixture.AgentAddress1);
-            var agent2CouponWallet = state.GetCouponWallet(CouponsFixture.AgentAddress2);
+            var agent1CouponWallet = LegacyModule.GetCouponWallet(state, CouponsFixture.AgentAddress1);
+            var agent2CouponWallet = LegacyModule.GetCouponWallet(state, CouponsFixture.AgentAddress2);
 
             Assert.Equal(3, agent1CouponWallet.Count);
             Assert.Equal(1, agent1CouponWallet.Count(

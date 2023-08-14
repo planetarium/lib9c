@@ -15,6 +15,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -37,7 +38,6 @@ namespace Nekoyume.Action
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
             if (!ProductInfos.Any())
             {
@@ -59,7 +59,11 @@ namespace Nekoyume.Action
                 }
             }
 
-            if (!account.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
+                    context.Signer,
+                    AvatarAddress,
+                    out var avatarState,
                     out var migrationRequired))
             {
                 throw new FailedLoadStateException("failed to load avatar state");
@@ -72,22 +76,30 @@ namespace Nekoyume.Action
                     GameConfig.RequireClearedStageLevel.ActionsInShop, current);
             }
 
-            avatarState.UseAp(CostAp, ChargeAp, account.GetSheet<MaterialItemSheet>(), context.BlockIndex, account.GetGameConfigState());
+            avatarState.UseAp(
+                CostAp,
+                ChargeAp,
+                LegacyModule.GetSheet<MaterialItemSheet>(world),
+                context.BlockIndex,
+                LegacyModule.GetGameConfigState(world));
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
-            if (account.TryGetState(productsStateAddress, out List rawProductList))
+            if (LegacyModule.TryGetState(world, productsStateAddress, out List rawProductList))
             {
                 productsState = new ProductsState(rawProductList);
             }
             else
             {
                 // cancel order before product registered case.
-                var marketState = account.TryGetState(Addresses.Market, out List rawMarketList)
+                var marketState = LegacyModule.TryGetState(
+                    world,
+                    Addresses.Market,
+                    out List rawMarketList)
                     ? new MarketState(rawMarketList)
                     : new MarketState();
                 productsState = new ProductsState();
                 marketState.AvatarAddresses.Add(AvatarAddress);
-                account = account.SetState(Addresses.Market, marketState.Serialize());
+                world = LegacyModule.SetState(world, Addresses.Market, marketState.Serialize());
             }
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             foreach (var productInfo in ProductInfos)
@@ -96,7 +108,7 @@ namespace Nekoyume.Action
                 {
                     var productType = productInfo.Type;
                     var orderAddress = Order.DeriveAddress(productInfo.ProductId);
-                    if (!account.TryGetState(orderAddress, out Dictionary rawOrder))
+                    if (!LegacyModule.TryGetState(world, orderAddress, out Dictionary rawOrder))
                     {
                         throw new FailedLoadStateException(
                             $"{addressesHex} failed to load {nameof(Order)}({orderAddress}).");
@@ -123,34 +135,47 @@ namespace Nekoyume.Action
                             throw new ArgumentOutOfRangeException(nameof(order));
                     }
 
-                    account = SellCancellation.Cancel(context, account, avatarState, addressesHex,
+                    world = SellCancellation.Cancel(
+                        context,
+                        world,
+                        avatarState,
+                        addressesHex,
                         order);
                 }
                 else
                 {
-                    account = Cancel(productsState, productInfo, account, avatarState, context);
+                    world = Cancel(productsState, productInfo, world, avatarState, context);
                 }
             }
 
-            account = account
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(productsStateAddress, productsState.Serialize());
+            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+            world = LegacyModule.SetState(
+                    world,
+                    AvatarAddress.Derive(LegacyInventoryKey),
+                    avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(world, productsStateAddress, productsState.Serialize());
 
             if (migrationRequired)
             {
-                account = account
-                    .SetState(AvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize())
-                    .SetState(AvatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize());
+                world = LegacyModule.SetState(
+                    world,
+                    AvatarAddress.Derive(LegacyQuestListKey),
+                    avatarState.questList.Serialize());
+                world = LegacyModule.SetState(
+                    world,
+                    AvatarAddress.Derive(LegacyWorldInformationKey),
+                    avatarState.worldInformation.Serialize());
             }
 
-            return world.SetAccount(account);
+            return world;
         }
 
-        public static IAccount Cancel(ProductsState productsState, IProductInfo productInfo, IAccount account,
-            AvatarState avatarState, IActionContext context)
+        public static IWorld Cancel(
+            ProductsState productsState,
+            IProductInfo productInfo,
+            IWorld world,
+            AvatarState avatarState,
+            IActionContext context)
         {
             var productId = productInfo.ProductId;
             if (!productsState.ProductIds.Contains(productId))
@@ -161,13 +186,18 @@ namespace Nekoyume.Action
             productsState.ProductIds.Remove(productId);
 
             var productAddress = Product.DeriveAddress(productId);
-            var product = ProductFactory.DeserializeProduct((List) account.GetState(productAddress));
+            var product = ProductFactory.DeserializeProduct(
+                (List)LegacyModule.GetState(world, productAddress));
             product.Validate(productInfo);
 
             switch (product)
             {
                 case FavProduct favProduct:
-                    account = account.TransferAsset(context, productAddress, avatarState.address,
+                    world = LegacyModule.TransferAsset(
+                        world,
+                        context,
+                        productAddress,
+                        avatarState.address,
                         favProduct.Asset);
                     break;
                 case ItemProduct itemProduct:
@@ -181,7 +211,10 @@ namespace Nekoyume.Action
                             break;
                         case TradableMaterial tradableMaterial:
                         {
-                            avatarState.UpdateFromAddItem(tradableMaterial, itemProduct.ItemCount, true);
+                            avatarState.UpdateFromAddItem(
+                                tradableMaterial,
+                                itemProduct.ItemCount,
+                                true);
                             break;
                         }
                     }
@@ -191,10 +224,13 @@ namespace Nekoyume.Action
                     throw new ArgumentOutOfRangeException(nameof(product));
             }
 
-            var mail = new ProductCancelMail(context.BlockIndex, productId, context.BlockIndex, productId);
+            var mail = new ProductCancelMail(
+                context.BlockIndex,
+                productId,
+                context.BlockIndex,
+                productId);
             avatarState.Update(mail);
-            account = account.SetState(productAddress, Null.Value);
-            return account;
+            return LegacyModule.SetState(world, productAddress, Null.Value);
         }
 
 

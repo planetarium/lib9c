@@ -10,11 +10,11 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -27,8 +27,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IAccountStateDelta _initialStateV1;
-        private readonly IAccountStateDelta _initialStateV2;
+        private readonly IWorld _initialStateV1;
+        private readonly IWorld _initialStateV2;
         private readonly Address _inventoryAddr;
         private readonly Address _worldInfoAddr;
         private readonly Address _recipeAddr;
@@ -69,7 +69,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 stageList = stageList.Add(i.Serialize());
             }
 
-            var stateV2 = _initialStateV2.SetState(_recipeAddr, stageList);
+            var stateV2 = LegacyModule.SetState(_initialStateV2, _recipeAddr, stageList);
 
             // Get pet
             if (!(petLevel is null))
@@ -79,7 +79,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 );
 
                 _petId = petRow.PetId;
-                stateV2 = stateV2.SetState(
+                stateV2 = LegacyModule.SetState(
+                    stateV2,
                     PetState.DeriveAddress(_avatarAddr, (int)_petId),
                     new List(_petId!.Serialize(), petLevel.Serialize(), 0L.Serialize())
                 );
@@ -114,15 +115,16 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 petId = _petId,
             };
 
-            stateV2 = action.Execute(new ActionContext
-            {
-                PreviousState = stateV2,
-                Signer = _agentAddr,
-                BlockIndex = 0L,
-                Random = random,
-            });
+            stateV2 = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = stateV2,
+                    Signer = _agentAddr,
+                    BlockIndex = 0L,
+                    Random = random,
+                });
 
-            var slotState = stateV2.GetCombinationSlotState(_avatarAddr, 0);
+            var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, 0);
             // TEST: RequiredBlockIndex
             Assert.Equal(expectedBlock, slotState.RequiredBlockIndex);
         }

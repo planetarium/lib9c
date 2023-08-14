@@ -14,13 +14,13 @@ namespace Lib9c.Tests.Action.Garages
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
-    using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Action.Garages;
     using Nekoyume.Exceptions;
     using Nekoyume.Model.Garages;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
+    using Nekoyume.Module;
     using Xunit;
 
     public class UnloadFromMyGaragesTest
@@ -32,13 +32,13 @@ namespace Lib9c.Tests.Action.Garages
             Addresses.GetAvatarAddress(AgentAddr, AvatarIndex);
 
         private readonly TableSheets _tableSheets;
-        private readonly IAccountStateDelta _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly Currency _ncg;
         private readonly Address _recipientAvatarAddr;
         private readonly (Address balanceAddr, FungibleAssetValue value)[] _fungibleAssetValues;
         private readonly (HashDigest<SHA256> fungibleId, int count)[] _fungibleIdAndCounts;
         private readonly IFungibleItem[] _fungibleItems;
-        private readonly IAccountStateDelta _previousStates;
+        private readonly IWorld _previousStates;
 
         public UnloadFromMyGaragesTest()
         {
@@ -52,7 +52,7 @@ namespace Lib9c.Tests.Action.Garages
             ) = InitializeUtil.InitializeStates(
                 agentAddr: AgentAddr,
                 avatarIndex: AvatarIndex);
-            _ncg = _initialStatesWithAvatarStateV2.GetGoldCurrency();
+            _ncg = LegacyModule.GetGoldCurrency(_initialStatesWithAvatarStateV2);
             (
                 _recipientAvatarAddr,
                 _fungibleAssetValues,
@@ -151,23 +151,23 @@ namespace Lib9c.Tests.Action.Garages
                 {
                     Assert.Equal(
                         value,
-                        nextStates.GetBalance(balanceAddr, value.Currency));
+                        LegacyModule.GetBalance(nextStates, balanceAddr, value.Currency));
                     Assert.Equal(
                         value.Currency * 0,
-                        nextStates.GetBalance(garageBalanceAddr, value.Currency));
+                        LegacyModule.GetBalance(nextStates, garageBalanceAddr, value.Currency));
                 }
             }
 
             if (action.FungibleIdAndCounts is { })
             {
                 var inventoryAddr = _recipientAvatarAddr.Derive(SerializeKeys.LegacyInventoryKey);
-                var inventory = nextStates.GetInventory(inventoryAddr);
+                var inventory = LegacyModule.GetInventory(nextStates, inventoryAddr);
                 foreach (var (fungibleId, count) in action.FungibleIdAndCounts)
                 {
                     var garageAddr = Addresses.GetGarageAddress(
                         AgentAddr,
                         fungibleId);
-                    Assert.Equal(0, new FungibleItemGarage(nextStates.GetState(garageAddr)).Count);
+                    Assert.Equal(0, new FungibleItemGarage(LegacyModule.GetState(nextStates, garageAddr)).Count);
                     Assert.True(inventory.HasFungibleItem(
                         fungibleId,
                         blockIndex: 0,
@@ -175,8 +175,8 @@ namespace Lib9c.Tests.Action.Garages
                 }
             }
 
-            var avatarDict = (Dictionary)nextStates.GetState(_recipientAvatarAddr)!;
-            var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey]);
+            var avatarState = AvatarModule.GetAvatarStateV2(nextStates, _recipientAvatarAddr)!;
+            var mailBox = avatarState.mailBox;
             Assert.Single(mailBox);
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());
             Assert.Equal(blockIndex, mail.blockIndex);
@@ -236,7 +236,8 @@ namespace Lib9c.Tests.Action.Garages
             var garageBalanceAddress = Addresses.GetGarageBalanceAddress(AgentAddr);
             foreach (var (_, value) in _fungibleAssetValues)
             {
-                previousStatesWithEmptyBalances = previousStatesWithEmptyBalances.BurnAsset(
+                previousStatesWithEmptyBalances = LegacyModule.BurnAsset(
+                    previousStatesWithEmptyBalances,
                     actionContext,
                     garageBalanceAddress,
                     value);
@@ -254,7 +255,7 @@ namespace Lib9c.Tests.Action.Garages
             // Inventory state is null.
             var inventoryAddr = _recipientAvatarAddr.Derive(SerializeKeys.LegacyInventoryKey);
             var previousStatesWithNullInventoryState =
-                _previousStates.SetState(inventoryAddr, Null.Value);
+                LegacyModule.SetState(_previousStates, inventoryAddr, Null.Value);
             Assert.Throws<StateNullException>(() => Execute(
                 AgentAddr,
                 0,
@@ -272,7 +273,7 @@ namespace Lib9c.Tests.Action.Garages
                      })
             {
                 var previousStatesWithInvalidInventoryState =
-                    _previousStates.SetState(inventoryAddr, invalidInventoryState);
+                    LegacyModule.SetState(_previousStates, inventoryAddr, invalidInventoryState);
                 Assert.Throws<InvalidCastException>(() => Execute(
                     AgentAddr,
                     0,
@@ -290,7 +291,7 @@ namespace Lib9c.Tests.Action.Garages
                     AgentAddr,
                     fungibleId);
                 var previousStatesWithNullGarageState =
-                    _previousStates.SetState(garageAddr, Null.Value);
+                    LegacyModule.SetState(_previousStates, garageAddr, Null.Value);
                 Assert.Throws<StateNullException>(() => Execute(
                     AgentAddr,
                     0,
@@ -307,11 +308,11 @@ namespace Lib9c.Tests.Action.Garages
                 var garageAddr = Addresses.GetGarageAddress(
                     AgentAddr,
                     fungibleId);
-                var garageState = _previousStates.GetState(garageAddr);
+                var garageState = LegacyModule.GetState(_previousStates, garageAddr);
                 var garage = new FungibleItemGarage(garageState);
                 garage.Unload(1);
                 var previousStatesWithNotEnoughCountOfGarageState =
-                    _previousStates.SetState(garageAddr, garage.Serialize());
+                    LegacyModule.SetState(_previousStates, garageAddr, garage.Serialize());
 
                 Assert.Throws<ArgumentOutOfRangeException>(() => Execute(
                     AgentAddr,
@@ -324,10 +325,10 @@ namespace Lib9c.Tests.Action.Garages
             }
         }
 
-        private static (UnloadFromMyGarages action, IAccountStateDelta nextStates) Execute(
+        private static (UnloadFromMyGarages action, IWorld nextStates) Execute(
             Address signer,
             long blockIndex,
-            IAccountStateDelta previousState,
+            IWorld previousState,
             IRandom random,
             Address recipientAvatarAddr,
             IEnumerable<(Address balanceAddr, FungibleAssetValue value)>? fungibleAssetValues,
@@ -339,16 +340,16 @@ namespace Lib9c.Tests.Action.Garages
                 fungibleAssetValues,
                 fungibleIdAndCounts,
                 memo);
-            return (
-                action,
-                action.Execute(new ActionContext
-                {
-                    Signer = signer,
-                    BlockIndex = blockIndex,
-                    Rehearsal = false,
-                    PreviousState = previousState,
-                    Random = random,
-                }));
+            return (action,
+                action.Execute(
+                    new ActionContext
+                    {
+                        Signer = signer,
+                        BlockIndex = blockIndex,
+                        Rehearsal = false,
+                        PreviousState = previousState,
+                        Random = random,
+                    }));
         }
 
         private static (Address balanceAddr, FungibleAssetValue value)[]
@@ -377,7 +378,7 @@ namespace Lib9c.Tests.Action.Garages
             (Address balanceAddr, FungibleAssetValue value)[] fungibleAssetValues,
             (HashDigest<SHA256> fungibleId, int count)[] fungibleIdAndCounts,
             IFungibleItem[] _fungibleItems,
-            IAccountStateDelta previousStates)
+            IWorld previousStates)
             GetSuccessfulPreviousStatesWithPlainValue()
         {
             var previousStates = _initialStatesWithAvatarStateV2;
@@ -390,7 +391,8 @@ namespace Lib9c.Tests.Action.Garages
             {
                 if (value.Currency.Equals(_ncg))
                 {
-                    previousStates = previousStates.TransferAsset(
+                    previousStates = LegacyModule.TransferAsset(
+                        previousStates,
                         actionContext,
                         Addresses.Admin,
                         garageBalanceAddress,
@@ -398,7 +400,8 @@ namespace Lib9c.Tests.Action.Garages
                     continue;
                 }
 
-                previousStates = previousStates.MintAsset(
+                previousStates = LegacyModule.MintAsset(
+                    previousStates,
                     actionContext,
                     garageBalanceAddress,
                     value);
@@ -414,7 +417,8 @@ namespace Lib9c.Tests.Action.Garages
                         material.FungibleId);
                     var count = index + 1;
                     var garage = new FungibleItemGarage(material, count);
-                    previousStates = previousStates.SetState(
+                    previousStates = LegacyModule.SetState(
+                        previousStates,
                         garageAddr,
                         garage.Serialize());
 

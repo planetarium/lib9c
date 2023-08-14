@@ -15,9 +15,9 @@ namespace Lib9c.Tests.Action
     /// Almost a replica of https://github.com/planetarium/libplanet/blob/main/Libplanet/State/AccountDelta.cs
     /// except this has its constructors exposed as public for testing.
     /// </summary>
-    public class MockDelta : IAccountDelta
+    public class MockAccountDelta : IAccountDelta
     {
-        public MockDelta()
+        public MockAccountDelta()
         {
             States = ImmutableDictionary<Address, IValue>.Empty;
             Fungibles = ImmutableDictionary<(Address, Currency), BigInteger>.Empty;
@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Action
             ValidatorSet = null;
         }
 
-        public MockDelta(
+        public MockAccountDelta(
             IImmutableDictionary<Address, IValue> statesDelta,
             IImmutableDictionary<(Address, Currency), BigInteger> fungiblesDelta,
             IImmutableDictionary<Currency, BigInteger> totalSuppliesDelta,

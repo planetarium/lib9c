@@ -1,7 +1,8 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Libplanet.Types.Blocks;
 
 namespace Libplanet.Extensions.ActionEvaluatorCommonComponents;
 
@@ -38,6 +39,8 @@ public class World : IWorld
     }
 
     public bool Legacy { get; }
+
+    public BlockHash? BlockHash => BaseState.BlockHash;
 
     public IWorldDelta Delta => _delta;
 

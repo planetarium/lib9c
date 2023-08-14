@@ -158,8 +158,8 @@ namespace Lib9c.Benchmarks
             IReadOnlyList<IActionEvaluation> actionEvaluations
         )
         {
-            IImmutableDictionary<KeyBytes, IImmutableDictionary<KeyBytes, IValue>> totalDelta =
-                actionEvaluations.GetRawTotalDelta();
+            IImmutableDictionary<KeyBytes, IValue> totalDelta =
+                actionEvaluations.GetLegacyRawTotalDelta();
 
             if (!stateStore.ContainsStateRoot(block.StateRootHash))
             {

@@ -27,7 +27,7 @@ namespace Nekoyume.Action
         public long BlockIndex { get; set; }
 
         [Key(3)]
-        [MessagePackFormatter(typeof(AccountFormatter))]
+        [MessagePackFormatter(typeof(WorldFormatter))]
         public IWorld OutputState { get; set; }
 
         [Key(4)]
@@ -35,7 +35,7 @@ namespace Nekoyume.Action
         public Exception? Exception { get; set; }
 
         [Key(5)]
-        [MessagePackFormatter(typeof(AccountFormatter))]
+        [MessagePackFormatter(typeof(WorldFormatter))]
         public IWorld PreviousState { get; set; }
 
         [Key(6)]

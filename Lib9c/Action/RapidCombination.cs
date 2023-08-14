@@ -14,6 +14,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Pet;
 using Serilog;
@@ -38,7 +39,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var slotAddress = avatarAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -51,30 +51,31 @@ namespace Nekoyume.Action
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                account = account
-                    .SetState(avatarAddress, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetState(slotAddress, MarkChanged);
-                return world.SetAccount(account);
+                world = LegacyModule.SetState(world, avatarAddress, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, slotAddress, MarkChanged);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination exec started", addressesHex);
 
-            if (!account.TryGetAgentAvatarStatesV2(
-                context.Signer,
-                avatarAddress,
-                out var agentState,
-                out var avatarState,
-                out _))
+            if (!AvatarModule.TryGetAgentAvatarStatesV2(
+                    world,
+                    context.Signer,
+                    avatarAddress,
+                    out var agentState,
+                    out var avatarState,
+                    out _))
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var slotState = account.GetCombinationSlotState(avatarAddress, slotIndex);
+            var slotState = LegacyModule.GetCombinationSlotState(world, avatarAddress, slotIndex);
             if (slotState?.Result is null)
             {
                 throw new CombinationSlotResultNullException($"{addressesHex}CombinationSlot Result is null. ({avatarAddress}), ({slotIndex})");
@@ -92,14 +93,14 @@ namespace Nekoyume.Action
                 throw new RequiredBlockIndexException($"{addressesHex}Already met the required block index. context block index: {context.BlockIndex}, required block index: {slotState.Result.itemUsable.RequiredBlockIndex}");
             }
 
-            var gameConfigState = account.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(world);
             if (gameConfigState is null)
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the GameConfigState was failed to load.");
             }
 
             var actionableBlockIndex = slotState.StartBlockIndex +
-                                       account.GetGameConfigState().RequiredAppraiseBlock;
+                                       LegacyModule.GetGameConfigState(world).RequiredAppraiseBlock;
             if (context.BlockIndex < actionableBlockIndex)
             {
                 throw new AppraiseBlockNotReachedException(
@@ -113,13 +114,13 @@ namespace Nekoyume.Action
             if (slotState.PetId.HasValue)
             {
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, slotState.PetId.Value);
-                if (!account.TryGetState(petStateAddress, out List rawState))
+                if (!LegacyModule.TryGetState(world, petStateAddress, out List rawState))
                 {
                     throw new FailedLoadStateException($"{addressesHex}Aborted as the {nameof(PetState)} was failed to load.");
                 }
 
                 petState = new PetState(rawState);
-                var petOptionSheet = account.GetSheet<PetOptionSheet>();
+                var petOptionSheet = LegacyModule.GetSheet<PetOptionSheet>(world);
                 costHourglassCount = PetHelper.CalculateDiscountedHourglass(
                     diff,
                     gameConfigState.HourglassPerBlock,
@@ -131,7 +132,7 @@ namespace Nekoyume.Action
                 costHourglassCount = Statics.RapidCombination.CalculateHourglassCountV0(gameConfigState, diff);
             }
 
-            var materialItemSheet = account.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(world);
             var row = materialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Hourglass);
             var hourGlass = ItemFactory.CreateMaterial(row);
             if (!avatarState.inventory.RemoveFungibleItem(hourGlass, context.BlockIndex, costHourglassCount))
@@ -168,18 +169,26 @@ namespace Nekoyume.Action
             {
                 petState.Update(context.BlockIndex);
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, petState.PetId);
-                account = account.SetState(petStateAddress, petState.Serialize());
+                world = LegacyModule.SetState(world, petStateAddress, petState.Serialize());
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            account = account
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
-            return world.SetAccount(account);
+            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = LegacyModule.SetState(
+                world,
+                inventoryAddress,
+                avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                questListAddress,
+                avatarState.questList.Serialize());
+            world = LegacyModule.SetState(world, slotAddress, slotState.Serialize());
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

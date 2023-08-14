@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -35,9 +36,9 @@ namespace Lib9c.Tests.Action
             var agentAddress = new PrivateKey().ToAddress();
             var pledgeAddress = agentAddress.GetPledgeAddress();
             var context = new ActionContext();
-            IAccountStateDelta states = new MockStateDelta()
-                .SetState(Addresses.Admin, adminState.Serialize())
-                .MintAsset(context, patronAddress, 4 * 500 * mead);
+            IWorld states = new MockWorld();
+            states = LegacyModule.SetState(states, Addresses.Admin, adminState.Serialize());
+            states = LegacyModule.MintAsset(states, context, patronAddress, 4 * 500 * mead);
 
             var agentAddresses = new List<(Address, Address)>
             {
@@ -65,7 +66,7 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                var nextState = action.Execute(actionContext);
+                var nextState = action.Execute(actionContext).GetAccount(ReservedAddresses.LegacyAccount);
 
                 Assert.Equal(0 * mead, nextState.GetBalance(patronAddress, mead));
                 Assert.Equal(4 * mead, nextState.GetBalance(agentAddress, mead));

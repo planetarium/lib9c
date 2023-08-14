@@ -4,11 +4,11 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class ApprovePledgeTest
@@ -21,11 +21,12 @@ namespace Lib9c.Tests.Action
             var address = new PrivateKey().ToAddress();
             var patron = new PrivateKey().ToAddress();
             var contractAddress = address.Derive(nameof(RequestPledge));
-            IAccountStateDelta states = new MockStateDelta()
-                .SetState(
-                    contractAddress,
-                    List.Empty.Add(patron.Serialize()).Add(false.Serialize()).Add(mead.Serialize())
-                );
+            IWorld states = new MockWorld();
+            states = LegacyModule.SetState(
+                states,
+                contractAddress,
+                List.Empty.Add(patron.Serialize()).Add(false.Serialize()).Add(mead.Serialize())
+            );
 
             var action = new ApprovePledge
             {
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Action
             {
                 Signer = address,
                 PreviousState = states,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var contract = Assert.IsType<List>(nextState.GetState(contractAddress));
             Assert.Equal(patron, contract[0].ToAddress());
@@ -63,7 +64,8 @@ namespace Lib9c.Tests.Action
                 contract = List.Empty.Add(patron.Serialize()).Add(true.Serialize());
             }
 
-            IAccountStateDelta states = new MockStateDelta().SetState(contractAddress, contract);
+            IWorld states = new MockWorld();
+            states = LegacyModule.SetState(states, contractAddress, contract);
 
             var action = new ApprovePledge
             {

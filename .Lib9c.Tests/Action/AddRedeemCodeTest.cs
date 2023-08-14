@@ -1,13 +1,14 @@
 namespace Lib9c.Tests.Action
 {
     using System.Collections.Immutable;
-    using Bencodex.Types;
+    using System.Linq;
+    using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -18,9 +19,8 @@ namespace Lib9c.Tests.Action
         {
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var initStates = MockState.Empty
-                .SetState(AdminState.Address, adminState.Serialize());
-            var state = new MockStateDelta(initStates);
+            IWorld world = new MockWorld();
+            world = LegacyModule.SetState(world, AdminState.Address, adminState.Serialize());
             var action = new AddRedeemCode
             {
                 redeemCsv = "New Value",
@@ -32,7 +32,7 @@ namespace Lib9c.Tests.Action
                     new ActionContext
                     {
                         BlockIndex = 101,
-                        PreviousState = state,
+                        PreviousState = world,
                         Signer = adminAddress,
                     }
                 );
@@ -45,7 +45,7 @@ namespace Lib9c.Tests.Action
                     new ActionContext
                     {
                         BlockIndex = 5,
-                        PreviousState = state,
+                        PreviousState = world,
                         Signer = new Address("019101FEec7ed4f918D396827E1277DEda1e20D4"),
                     }
                 );
@@ -66,19 +66,24 @@ namespace Lib9c.Tests.Action
                 redeemCsv = csv,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                Signer = adminAddress,
-                BlockIndex = 0,
-                PreviousState = new MockStateDelta()
-                    .SetState(Addresses.Admin, adminState.Serialize())
-                    .SetState(Addresses.RedeemCode, new RedeemCodeState(new RedeemCodeListSheet()).Serialize()),
-            });
+            IWorld prevState = new MockWorld();
+            prevState = LegacyModule.SetState(prevState, Addresses.Admin, adminState.Serialize());
+            prevState = LegacyModule.SetState(
+                prevState,
+                Addresses.RedeemCode,
+                new RedeemCodeState(new RedeemCodeListSheet()).Serialize());
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    Signer = adminAddress,
+                    BlockIndex = 0,
+                    PreviousState = prevState,
+                });
 
             var sheet = new RedeemCodeListSheet();
             sheet.Set(csv);
             var expectedMap = new RedeemCodeState(sheet).Map;
-            var redeemState = nextState.GetRedeemCodeState();
+            var redeemState = LegacyModule.GetRedeemCodeState(nextState);
             foreach (var (key, reward) in expectedMap)
             {
                 Assert.Equal(reward.RewardId, redeemState.Map[key].RewardId);
@@ -92,8 +97,8 @@ namespace Lib9c.Tests.Action
             var sheet = new RedeemCodeListSheet();
             sheet.Set(csv);
 
-            var state = new MockStateDelta()
-                    .SetState(Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
+            IWorld state = new MockWorld();
+            state = LegacyModule.SetState(state, Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
 
             var action = new AddRedeemCode
             {
@@ -119,12 +124,12 @@ namespace Lib9c.Tests.Action
             var nextState = action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new MockStateDelta(),
+                PreviousState = new MockWorld(),
                 Rehearsal = true,
             });
 
             Assert.Equal(
-                nextState.Delta.UpdatedAddresses,
+                nextState.Delta.Accounts.Values.First().Delta.UpdatedAddresses,
                 new[] { Addresses.RedeemCode }.ToImmutableHashSet()
             );
         }

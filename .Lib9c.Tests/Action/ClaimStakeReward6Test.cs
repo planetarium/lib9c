@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -19,8 +20,8 @@ namespace Lib9c.Tests.Action
         private const string AgentAddressHex = "0x0000000001000000000100000000010000000001";
         private readonly Address _agentAddr = new Address(AgentAddressHex);
         private readonly Address _avatarAddr;
-        private readonly IAccountStateDelta _initialStatesWithAvatarStateV1;
-        private readonly IAccountStateDelta _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarStateV1;
+        private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly Currency _ncg;
 
         public ClaimStakeReward6Test(ITestOutputHelper outputHelper)
@@ -36,7 +37,7 @@ namespace Lib9c.Tests.Action
                 _initialStatesWithAvatarStateV1,
                 _initialStatesWithAvatarStateV2) = InitializeUtil.InitializeStates(
                 agentAddr: _agentAddr);
-            _ncg = _initialStatesWithAvatarStateV1.GetGoldCurrency();
+            _ncg = LegacyModule.GetGoldCurrency(_initialStatesWithAvatarStateV1);
         }
 
         [Fact]
@@ -233,7 +234,7 @@ namespace Lib9c.Tests.Action
         }
 
         private void Execute(
-            IAccountStateDelta prevState,
+            IWorld prevState,
             Address agentAddr,
             Address avatarAddr,
             long startedBlockIndex,
@@ -255,9 +256,10 @@ namespace Lib9c.Tests.Action
                 initialStakeState.Claim((long)previousRewardReceiveIndex);
             }
 
-            prevState = prevState
-                .SetState(stakeStateAddr, initialStakeState.Serialize())
-                .MintAsset(context, stakeStateAddr, _ncg * stakeAmount);
+            prevState = LegacyModule
+                .SetState(prevState, stakeStateAddr, initialStakeState.Serialize());
+            prevState = LegacyModule
+                .MintAsset(prevState, context, stakeStateAddr, _ncg * stakeAmount);
 
             var action = new ClaimStakeReward6(avatarAddr);
             var states = action.Execute(new ActionContext
@@ -267,7 +269,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
             });
 
-            var avatarState = states.GetAvatarStateV2(avatarAddr);
+            var avatarState = AvatarModule.GetAvatarStateV2(states, avatarAddr);
             if (expectedHourglass > 0)
             {
                 Assert.Equal(
@@ -294,13 +296,13 @@ namespace Lib9c.Tests.Action
             {
                 Assert.Equal(
                     expectedRune * RuneHelper.StakeRune,
-                    states.GetBalance(avatarAddr, RuneHelper.StakeRune));
+                    LegacyModule.GetBalance(states, avatarAddr, RuneHelper.StakeRune));
             }
             else
             {
                 Assert.Equal(
                     0 * RuneHelper.StakeRune,
-                    states.GetBalance(avatarAddr, RuneHelper.StakeRune));
+                    LegacyModule.GetBalance(states, avatarAddr, RuneHelper.StakeRune));
             }
 
             if (!string.IsNullOrEmpty(expectedCurrencyAddrHex))
@@ -309,10 +311,10 @@ namespace Lib9c.Tests.Action
                 var currency = Currencies.GetMinterlessCurrency(expectedCurrencyTicker);
                 Assert.Equal(
                     expectedCurrencyAmount * currency,
-                    states.GetBalance(addr, currency));
+                    LegacyModule.GetBalance(states, addr, currency));
             }
 
-            Assert.True(states.TryGetStakeState(agentAddr, out StakeState stakeState));
+            Assert.True(LegacyModule.TryGetStakeState(states, agentAddr, out StakeState stakeState));
             Assert.Equal(blockIndex, stakeState.ReceivedBlockIndex);
         }
     }

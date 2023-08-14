@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -27,7 +28,7 @@ namespace Lib9c.Tests.Action
             var tableSheets = new TableSheets(sheets);
             Address agentAddress = new PrivateKey().ToAddress();
             Address avatarAddress = new PrivateKey().ToAddress();
-            IAccountStateDelta state = new MockStateDelta();
+            IWorld state = new MockWorld();
 
             var runeWeightSheet = new RuneWeightSheet();
             runeWeightSheet.Set(@"id,boss_id,rank,rune_id,weight
@@ -64,17 +65,34 @@ namespace Lib9c.Tests.Action
                 gameConfigState,
                 rankingMapAddress);
 
-            state = state
-                .SetState(Addresses.GetSheetAddress<RuneWeightSheet>(), runeWeightSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<WorldBossListSheet>(), worldBossListSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<WorldBossKillRewardSheet>(), killRewardSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<RuneSheet>(), tableSheets.RuneSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<WorldBossCharacterSheet>(), tableSheets.WorldBossCharacterSheet.Serialize())
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize())
-                .SetState(worldBossKillRewardRecordAddress, worldBossKillRewardRecord.Serialize())
-                .SetState(worldBossAddress, worldBossState.Serialize())
-                .SetState(raiderStateAddress, raiderState.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                Addresses.GetSheetAddress<RuneWeightSheet>(),
+                runeWeightSheet.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                Addresses.GetSheetAddress<WorldBossListSheet>(),
+                worldBossListSheet.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                Addresses.GetSheetAddress<WorldBossKillRewardSheet>(),
+                killRewardSheet.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                Addresses.GetSheetAddress<RuneSheet>(),
+                tableSheets.RuneSheet.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                Addresses.GetSheetAddress<WorldBossCharacterSheet>(),
+                tableSheets.WorldBossCharacterSheet.Serialize());
+            state = LegacyModule.SetState(state, Addresses.GameConfig, gameConfigState.Serialize());
+            state = AvatarModule.SetAvatarState(state, avatarAddress, avatarState);
+            state = LegacyModule.SetState(
+                state,
+                worldBossKillRewardRecordAddress,
+                worldBossKillRewardRecord.Serialize());
+            state = LegacyModule.SetState(state, worldBossAddress, worldBossState.Serialize());
+            state = LegacyModule.SetState(state, raiderStateAddress, raiderState.Serialize());
 
             var action = new ClaimWordBossKillReward
             {
@@ -90,7 +108,7 @@ namespace Lib9c.Tests.Action
                     Signer = agentAddress,
                     PreviousState = state,
                     Random = new TestRandom(randomSeed),
-                });
+                }).GetAccount(ReservedAddresses.LegacyAccount);
 
                 var runeCurrency = RuneHelper.ToCurrency(tableSheets.RuneSheet[10001]);
                 Assert.Equal(1 * runeCurrency, nextState.GetBalance(avatarAddress, runeCurrency));

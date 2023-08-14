@@ -18,6 +18,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -39,7 +40,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatar4Address;
         private readonly Currency _crystal;
         private readonly Currency _ncg;
-        private IAccountStateDelta _initialStates;
+        private IWorld _initialStates;
 
         public BattleArena12Test(ITestOutputHelper outputHelper)
         {
@@ -48,12 +49,13 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialStates = new MockStateDelta();
+            _initialStates = new MockWorld();
 
             _sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in _sheets)
             {
-                _initialStates = _initialStates.SetState(
+                _initialStates = LegacyModule.SetState(
+                    _initialStates,
                     Addresses.TableSheet.Derive(key),
                     value.Serialize());
             }
@@ -109,37 +111,43 @@ namespace Lib9c.Tests.Action
             _agent4Address = agent4State.address;
             _avatar4Address = avatar4State.address;
 
-            _initialStates = _initialStates
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .SetState(_agent1Address, agent1State.Serialize())
-                .SetState(
-                    _avatar1Address.Derive(LegacyInventoryKey),
-                    avatar1State.inventory.Serialize())
-                .SetState(
-                    _avatar1Address.Derive(LegacyWorldInformationKey),
-                    avatar1State.worldInformation.Serialize())
-                .SetState(
-                    _avatar1Address.Derive(LegacyQuestListKey),
-                    avatar1State.questList.Serialize())
-                .SetState(_avatar1Address, avatar1State.SerializeV2())
-                .SetState(_agent2Address, agent2State.Serialize())
-                .SetState(_avatar2Address, avatar2State.Serialize())
-                .SetState(_agent3Address, agent3State.Serialize())
-                .SetState(_avatar3Address, avatar3State.Serialize())
-                .SetState(_agent4Address, agent4State.Serialize())
-                .SetState(
-                    _avatar4Address.Derive(LegacyInventoryKey),
-                    avatar4State.inventory.Serialize())
-                .SetState(
-                    _avatar4Address.Derive(LegacyWorldInformationKey),
-                    avatar4State.worldInformation.Serialize())
-                .SetState(
-                    _avatar4Address.Derive(LegacyQuestListKey),
-                    avatar4State.questList.Serialize())
-                .SetState(_avatar4Address, avatar4State.SerializeV2())
-                .SetState(
-                    Addresses.GameConfig,
-                    new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize());
+            _initialStates = LegacyModule.SetState(_initialStates, Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            _initialStates = AgentModule.SetAgentState(_initialStates, _agent1Address, agent1State);
+            _initialStates = LegacyModule.SetState(
+                _initialStates,
+                _avatar1Address.Derive(LegacyInventoryKey),
+                avatar1State.inventory.Serialize());
+            _initialStates = LegacyModule.SetState(
+                _initialStates,
+                _avatar1Address.Derive(LegacyWorldInformationKey),
+                avatar1State.worldInformation.Serialize());
+            _initialStates = LegacyModule.SetState(
+                _initialStates,
+                _avatar1Address.Derive(LegacyQuestListKey),
+                avatar1State.questList.Serialize());
+            _initialStates = AvatarModule.SetAvatarStateV2(_initialStates, _avatar1Address, avatar1State);
+            _initialStates = AgentModule.SetAgentState(_initialStates, _agent2Address, agent2State);
+            _initialStates = AvatarModule.SetAvatarState(_initialStates, _avatar2Address, avatar2State);
+            _initialStates = AgentModule.SetAgentState(_initialStates, _agent3Address, agent3State);
+            _initialStates = AvatarModule.SetAvatarState(_initialStates, _avatar3Address, avatar3State);
+            _initialStates = AgentModule.SetAgentState(_initialStates, _agent4Address, agent4State);
+            _initialStates = LegacyModule.SetState(
+                _initialStates,
+                _avatar4Address.Derive(LegacyInventoryKey),
+                avatar4State.inventory.Serialize());
+            _initialStates = LegacyModule.SetState(
+                _initialStates,
+                _avatar4Address.Derive(LegacyWorldInformationKey),
+                avatar4State.worldInformation.Serialize());
+            _initialStates = LegacyModule.SetState(
+                _initialStates,
+                _avatar4Address.Derive(LegacyQuestListKey),
+                avatar4State.questList.Serialize());
+            _initialStates = AvatarModule.SetAvatarStateV2(_initialStates, _avatar4Address, avatar4State);
+            _initialStates = LegacyModule.SetState(
+                _initialStates,
+                Addresses.GameConfig,
+                new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize());
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -344,8 +352,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 1;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            IWorld previousState = _initialStates;
+            Assert.True(LegacyModule.GetSheet<ArenaSheet>(previousState).TryGetValue(
                 championshipId,
                 out var row));
 
@@ -356,10 +364,10 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = excludeMe
+            previousState = excludeMe
                 ? JoinArena(
                     context,
-                    previousStates,
+                    previousState,
                     _agent2Address,
                     _avatar2Address,
                     roundData.StartBlockIndex,
@@ -368,7 +376,7 @@ namespace Lib9c.Tests.Action
                     random)
                 : JoinArena(
                     context,
-                    previousStates,
+                    previousState,
                     _agent1Address,
                     _avatar1Address,
                     roundData.StartBlockIndex,
@@ -391,7 +399,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<AddressNotFoundInArenaParticipantsException>(() =>
                 action.Execute(new ActionContext
                 {
-                    PreviousState = previousStates,
+                    PreviousState = previousState,
                     Signer = _agent1Address,
                     Random = new TestRandom(),
                     BlockIndex = 1,
@@ -406,8 +414,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousState = _initialStates;
+            Assert.True(LegacyModule.GetSheet<ArenaSheet>(previousState).TryGetValue(
                 championshipId,
                 out var row));
 
@@ -418,18 +426,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -442,9 +450,9 @@ namespace Lib9c.Tests.Action
                     ? _avatar1Address
                     : _avatar2Address, roundData.ChampionshipId,
                 roundData.Round);
-            previousStates.TryGetArenaScore(arenaScoreAdr, out var arenaScore);
+            LegacyModule.TryGetArenaScore(previousState, arenaScoreAdr, out var arenaScore);
             arenaScore.AddScore(900);
-            previousStates = previousStates.SetState(arenaScoreAdr, arenaScore.Serialize());
+            previousState = LegacyModule.SetState(previousState, arenaScoreAdr, arenaScore.Serialize());
 
             var action = new BattleArena12
             {
@@ -462,7 +470,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ValidateScoreDifferenceException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = previousState,
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -474,8 +482,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousState = _initialStates;
+            Assert.True(LegacyModule.GetSheet<ArenaSheet>(previousState).TryGetValue(
                 championshipId,
                 out var row));
 
@@ -486,18 +494,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -507,13 +515,13 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!LegacyModule.TryGetArenaInformation(previousState, arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
 
             beforeInfo.UseTicket(beforeInfo.Ticket);
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousState = LegacyModule.SetState(previousState, arenaInfoAdr, beforeInfo.Serialize());
 
             var action = new BattleArena12
             {
@@ -531,7 +539,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<InsufficientBalanceException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = previousState,
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -543,8 +551,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousState = _initialStates;
+            Assert.True(LegacyModule.GetSheet<ArenaSheet>(previousState).TryGetValue(
                 championshipId,
                 out var row));
 
@@ -555,18 +563,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -576,7 +584,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!LegacyModule.TryGetArenaInformation(previousState, arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -597,7 +605,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ExceedPlayCountException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = previousState,
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -609,8 +617,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousState = _initialStates;
+            Assert.True(LegacyModule.GetSheet<ArenaSheet>(previousState).TryGetValue(
                 championshipId,
                 out var row));
 
@@ -621,18 +629,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -642,7 +650,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!LegacyModule.TryGetArenaInformation(previousState, arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -654,12 +662,12 @@ namespace Lib9c.Tests.Action
                 beforeInfo.BuyTicket(roundData.MaxPurchaseCount);
             }
 
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousState = LegacyModule.SetState(previousState, arenaInfoAdr, beforeInfo.Serialize());
             var price = ArenaHelper.GetTicketPrice(
                 roundData,
                 beforeInfo,
-                previousStates.GetGoldCurrency());
-            previousStates = previousStates.MintAsset(context, _agent1Address, price);
+                LegacyModule.GetGoldCurrency(previousState));
+            previousState = LegacyModule.MintAsset(previousState, context, _agent1Address, price);
 
             var action = new BattleArena12
             {
@@ -677,7 +685,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ExceedTicketPurchaseLimitException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = previousState,
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -689,8 +697,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousState = _initialStates;
+            Assert.True(LegacyModule.GetSheet<ArenaSheet>(previousState).TryGetValue(
                 championshipId,
                 out var row));
 
@@ -701,18 +709,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -722,7 +730,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!LegacyModule.TryGetArenaInformation(previousState, arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -735,16 +743,16 @@ namespace Lib9c.Tests.Action
             }
 
             var purchasedCountDuringInterval = arenaInfoAdr.Derive(BattleArena.PurchasedCountKey);
-            previousStates = previousStates
-                .SetState(arenaInfoAdr, beforeInfo.Serialize())
-                .SetState(
-                    purchasedCountDuringInterval,
-                    new Integer(beforeInfo.PurchasedTicketCount));
+            previousState = LegacyModule.SetState(previousState, arenaInfoAdr, beforeInfo.Serialize());
+            previousState = LegacyModule.SetState(
+                previousState,
+                purchasedCountDuringInterval,
+                new Integer(beforeInfo.PurchasedTicketCount));
             var price = ArenaHelper.GetTicketPrice(
                 roundData,
                 beforeInfo,
-                previousStates.GetGoldCurrency());
-            previousStates = previousStates.MintAsset(context, _agent1Address, price);
+                LegacyModule.GetGoldCurrency(previousState));
+            previousState = LegacyModule.MintAsset(previousState, context, _agent1Address, price);
 
             var action = new BattleArena12
             {
@@ -762,7 +770,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ExceedTicketPurchaseLimitDuringIntervalException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = previousState,
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -774,8 +782,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 2;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousState = _initialStates;
+            Assert.True(LegacyModule.GetSheet<ArenaSheet>(previousState).TryGetValue(
                 championshipId,
                 out var row));
 
@@ -786,18 +794,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -807,21 +815,21 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!LegacyModule.TryGetArenaInformation(previousState, arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
 
             beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
             var max = roundData.MaxPurchaseCountWithInterval;
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousState = LegacyModule.SetState(previousState, arenaInfoAdr, beforeInfo.Serialize());
             for (var i = 0; i < max; i++)
             {
                 var price = ArenaHelper.GetTicketPrice(
                     roundData,
                     beforeInfo,
-                    previousStates.GetGoldCurrency());
-                previousStates = previousStates.MintAsset(context, _agent1Address, price);
+                    LegacyModule.GetGoldCurrency(previousState));
+                previousState = LegacyModule.MintAsset(previousState, context, _agent1Address, price);
                 beforeInfo.BuyTicket(roundData.MaxPurchaseCount);
             }
 
@@ -842,7 +850,7 @@ namespace Lib9c.Tests.Action
             var nextStates = action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = previousState,
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             });
@@ -869,8 +877,8 @@ namespace Lib9c.Tests.Action
             int randomSeed = 3;
 
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(_initialStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousState = _initialStates;
+            Assert.True(LegacyModule.GetSheet<ArenaSheet>(previousState).TryGetValue(
                 championshipId,
                 out var row));
 
@@ -881,18 +889,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom(randomSeed);
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -902,13 +910,13 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!LegacyModule.TryGetArenaInformation(previousState, arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
 
-            var ncgCurrency = previousStates.GetGoldCurrency();
-            previousStates = previousStates.MintAsset(context, _agent1Address, 99999 * ncgCurrency);
+            var ncgCurrency = LegacyModule.GetGoldCurrency(previousState);
+            previousState = LegacyModule.MintAsset(previousState, context, _agent1Address, 99999 * ncgCurrency);
 
             var unlockRuneSlot = new UnlockRuneSlot()
             {
@@ -916,13 +924,14 @@ namespace Lib9c.Tests.Action
                 SlotIndex = 1,
             };
 
-            previousStates = unlockRuneSlot.Execute(new ActionContext
-            {
-                BlockIndex = 1,
-                PreviousState = previousStates,
-                Signer = _agent1Address,
-                Random = new TestRandom(),
-            });
+            previousState = unlockRuneSlot.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 1,
+                    PreviousState = previousState,
+                    Signer = _agent1Address,
+                    Random = new TestRandom(),
+                });
 
             var action = new BattleArena12
             {
@@ -948,17 +957,18 @@ namespace Lib9c.Tests.Action
                 _avatar2Address,
                 championshipId,
                 round);
-            if (!previousStates.TryGetArenaScore(myScoreAdr, out var beforeMyScore))
+            if (!LegacyModule.TryGetArenaScore(previousState, myScoreAdr, out var beforeMyScore))
             {
                 throw new ArenaScoreNotFoundException($"myScoreAdr : {myScoreAdr}");
             }
 
-            if (!previousStates.TryGetArenaScore(enemyScoreAdr, out var beforeEnemyScore))
+            if (!LegacyModule.TryGetArenaScore(previousState, enemyScoreAdr, out var beforeEnemyScore))
             {
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            Assert.True(previousStates.TryGetAvatarStateV2(
+            Assert.True(AvatarModule.TryGetAvatarStateV2(
+                previousState,
                 _agent1Address,
                 _avatar1Address,
                 out var previousMyAvatarState,
@@ -966,13 +976,13 @@ namespace Lib9c.Tests.Action
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
-            previousStates = previousStates.SetState(GameConfigState.Address, gameConfigState.Serialize());
+            previousState = LegacyModule.SetState(previousState, GameConfigState.Address, gameConfigState.Serialize());
 
             var blockIndex = roundData.StartBlockIndex + nextBlockIndex;
 
             Assert.Throws(exception, () => action.Execute(new ActionContext
             {
-                PreviousState = previousStates,
+                PreviousState = previousState,
                 Signer = _agent1Address,
                 Random = random,
                 Rehearsal = false,
@@ -986,8 +996,8 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 1;
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
+            var previousState = _initialStates;
+            Assert.True(LegacyModule.GetSheet<ArenaSheet>(previousState).TryGetValue(
                 championshipId,
                 out var row));
 
@@ -1003,18 +1013,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom();
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent1Address,
                 _avatar1Address,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 _agent2Address,
                 _avatar2Address,
                 roundData.StartBlockIndex,
@@ -1024,7 +1034,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(_avatar1Address, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!LegacyModule.TryGetArenaInformation(previousState, arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -1032,16 +1042,16 @@ namespace Lib9c.Tests.Action
             beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
 
             var purchasedCountDuringInterval = arenaInfoAdr.Derive(BattleArena.PurchasedCountKey);
-            previousStates = previousStates
-                .SetState(arenaInfoAdr, beforeInfo.Serialize())
-                .SetState(
-                    purchasedCountDuringInterval,
-                    new Integer(beforeInfo.PurchasedTicketCount));
+            previousState = LegacyModule.SetState(previousState, arenaInfoAdr, beforeInfo.Serialize());
+            previousState = LegacyModule.SetState(
+                previousState,
+                purchasedCountDuringInterval,
+                new Integer(beforeInfo.PurchasedTicketCount));
             var price = ArenaHelper.GetTicketPrice(
                 roundData,
                 beforeInfo,
-                previousStates.GetGoldCurrency());
-            previousStates = previousStates.MintAsset(context, _agent1Address, price);
+                LegacyModule.GetGoldCurrency(previousState));
+            previousState = LegacyModule.MintAsset(previousState, context, _agent1Address, price);
 
             var action = new BattleArena12
             {
@@ -1059,7 +1069,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<TicketPurchaseLimitExceedException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
-                PreviousState = previousStates,
+                PreviousState = previousState,
                 Signer = _agent1Address,
                 Random = new TestRandom(),
             }));
@@ -1145,8 +1155,8 @@ namespace Lib9c.Tests.Action
             Address enemyAvatarAddress)
         {
             var context = new ActionContext();
-            var previousStates = _initialStates;
-            Assert.True(_initialStates.GetSheet<ArenaSheet>().TryGetValue(
+            IWorld previousState = _initialStates;
+            Assert.True(LegacyModule.GetSheet<ArenaSheet>(_initialStates).TryGetValue(
                 championshipId,
                 out var row));
 
@@ -1157,18 +1167,18 @@ namespace Lib9c.Tests.Action
             }
 
             var random = new TestRandom(randomSeed);
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 myAgentAddress,
                 myAvatarAddress,
                 roundData.StartBlockIndex,
                 championshipId,
                 round,
                 random);
-            previousStates = JoinArena(
+            previousState = JoinArena(
                 context,
-                previousStates,
+                previousState,
                 enemyAgentAddress,
                 enemyAvatarAddress,
                 roundData.StartBlockIndex,
@@ -1178,7 +1188,7 @@ namespace Lib9c.Tests.Action
 
             var arenaInfoAdr =
                 ArenaInformation.DeriveAddress(myAvatarAddress, championshipId, round);
-            if (!previousStates.TryGetArenaInformation(arenaInfoAdr, out var beforeInfo))
+            if (!LegacyModule.TryGetArenaInformation(previousState, arenaInfoAdr, out var beforeInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -1186,14 +1196,14 @@ namespace Lib9c.Tests.Action
             if (isPurchased)
             {
                 beforeInfo.UseTicket(beforeInfo.Ticket);
-                previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+                previousState = LegacyModule.SetState(previousState, arenaInfoAdr, beforeInfo.Serialize());
                 for (var i = 0; i < ticket; i++)
                 {
                     var price = ArenaHelper.GetTicketPrice(
                         roundData,
                         beforeInfo,
-                        previousStates.GetGoldCurrency());
-                    previousStates = previousStates.MintAsset(context, myAgentAddress, price);
+                        LegacyModule.GetGoldCurrency(previousState));
+                    previousState = LegacyModule.MintAsset(previousState, context, myAgentAddress, price);
                     beforeInfo.BuyTicket(roundData.MaxPurchaseCount);
                 }
             }
@@ -1218,17 +1228,18 @@ namespace Lib9c.Tests.Action
                 enemyAvatarAddress,
                 championshipId,
                 round);
-            if (!previousStates.TryGetArenaScore(myScoreAdr, out var beforeMyScore))
+            if (!LegacyModule.TryGetArenaScore(previousState, myScoreAdr, out var beforeMyScore))
             {
                 throw new ArenaScoreNotFoundException($"myScoreAdr : {myScoreAdr}");
             }
 
-            if (!previousStates.TryGetArenaScore(enemyScoreAdr, out var beforeEnemyScore))
+            if (!LegacyModule.TryGetArenaScore(previousState, enemyScoreAdr, out var beforeEnemyScore))
             {
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            Assert.True(previousStates.TryGetAvatarStateV2(
+            Assert.True(AvatarModule.TryGetAvatarStateV2(
+                previousState,
                 myAgentAddress,
                 myAvatarAddress,
                 out var previousMyAvatarState,
@@ -1236,31 +1247,34 @@ namespace Lib9c.Tests.Action
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
-            previousStates = previousStates.SetState(GameConfigState.Address, gameConfigState.Serialize());
+            previousState = LegacyModule.SetState(
+                previousState,
+                GameConfigState.Address,
+                gameConfigState.Serialize());
 
             var blockIndex = roundData.StartBlockIndex < arenaInterval
                 ? roundData.StartBlockIndex
                 : roundData.StartBlockIndex + arenaInterval;
-            var nextStates = action.Execute(new ActionContext
+            var nextState = action.Execute(new ActionContext
             {
-                PreviousState = previousStates,
+                PreviousState = previousState,
                 Signer = myAgentAddress,
                 Random = random,
                 Rehearsal = false,
                 BlockIndex = blockIndex,
             });
 
-            if (!nextStates.TryGetArenaScore(myScoreAdr, out var myAfterScore))
+            if (!LegacyModule.TryGetArenaScore(nextState, myScoreAdr, out var myAfterScore))
             {
                 throw new ArenaScoreNotFoundException($"myScoreAdr : {myScoreAdr}");
             }
 
-            if (!nextStates.TryGetArenaScore(enemyScoreAdr, out var enemyAfterScore))
+            if (!LegacyModule.TryGetArenaScore(nextState, enemyScoreAdr, out var enemyAfterScore))
             {
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            if (!nextStates.TryGetArenaInformation(arenaInfoAdr, out var afterInfo))
+            if (!LegacyModule.TryGetArenaInformation(nextState, arenaInfoAdr, out var afterInfo))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
@@ -1291,9 +1305,10 @@ namespace Lib9c.Tests.Action
             Assert.Equal(beforeInfo.Ticket - useTicket, afterInfo.Ticket);
             Assert.Equal(ticket, afterInfo.Win + afterInfo.Lose);
 
-            var balance = nextStates.GetBalance(
+            var balance = LegacyModule.GetBalance(
+                nextState,
                 myAgentAddress,
-                nextStates.GetGoldCurrency());
+                LegacyModule.GetGoldCurrency(nextState));
             if (isPurchased)
             {
                 Assert.Equal(ticket, afterInfo.PurchasedTicketCount);
@@ -1301,7 +1316,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0, balance.RawValue);
 
-            var avatarState = nextStates.GetAvatarStateV2(myAvatarAddress);
+            var avatarState = AvatarModule.GetAvatarStateV2(nextState, myAvatarAddress);
             var medalCount = 0;
             if (roundData.ArenaType != ArenaType.OffSeason)
             {
@@ -1324,9 +1339,9 @@ namespace Lib9c.Tests.Action
             Assert.InRange(materialCount, 0, high);
         }
 
-        private IAccountStateDelta JoinArena(
+        private IWorld JoinArena(
             IActionContext context,
-            IAccountStateDelta states,
+            IWorld state,
             Address signer,
             Address avatarAddress,
             long blockIndex,
@@ -1335,7 +1350,7 @@ namespace Lib9c.Tests.Action
             IRandom random)
         {
             var preCurrency = 1000 * _crystal;
-            states = states.MintAsset(context, signer, preCurrency);
+            state = LegacyModule.MintAsset(state, context, signer, preCurrency);
 
             var action = new JoinArena
             {
@@ -1344,22 +1359,23 @@ namespace Lib9c.Tests.Action
                 costumes = new List<Guid>(),
                 equipments = new List<Guid>(),
                 avatarAddress = avatarAddress,
+                runeInfos = new List<RuneSlotInfo>(),
             };
 
-            states = action.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = signer,
-                Random = random,
-                Rehearsal = false,
-                BlockIndex = blockIndex,
-            });
-            return states;
+            return action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = signer,
+                    Random = random,
+                    Rehearsal = false,
+                    BlockIndex = blockIndex,
+                });
         }
 
         private GameConfigState SetArenaInterval(int interval)
         {
-            var gameConfigState = _initialStates.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(_initialStates);
             var sheet = _tableSheets.GameConfigSheet;
             foreach (var value in sheet.Values)
             {

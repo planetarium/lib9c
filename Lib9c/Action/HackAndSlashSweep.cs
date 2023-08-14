@@ -15,6 +15,7 @@ using Nekoyume.Model;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -84,7 +85,6 @@ namespace Nekoyume.Action
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}HackAndSlashSweep exec started", addressesHex);
@@ -96,9 +96,10 @@ namespace Nekoyume.Action
                     $"apStoneCount : {apStoneCount} > UsableApStoneCount : {UsableApStoneCount}");
             }
 
-            account.ValidateWorldId(avatarAddress, worldId);
+            LegacyModule.ValidateWorldId(world, avatarAddress, worldId);
 
-            if (!account.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
                     context.Signer,
                     avatarAddress,
                     out var avatarState,
@@ -108,7 +109,8 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var sheets = account.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 sheetTypes: new[]
                 {
                     typeof(WorldSheet),
@@ -198,26 +200,32 @@ namespace Nekoyume.Action
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
-            var runeSlotState = account.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+            var runeSlotState = LegacyModule.TryGetState(
+                world,
+                runeSlotStateAddress,
+                out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Adventure);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(runeInfos, runeListSheet);
-            account = account.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            world = LegacyModule.SetState(world, runeSlotStateAddress, runeSlotState.Serialize());
 
             // update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
-            var itemSlotState = account.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+            var itemSlotState = LegacyModule.TryGetState(
+                world,
+                itemSlotStateAddress,
+                out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Adventure);
             itemSlotState.UpdateEquipment(equipments);
             itemSlotState.UpdateCostumes(costumes);
-            account = account.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            world = LegacyModule.SetState(world, itemSlotStateAddress, itemSlotState.Serialize());
 
             var runeStates = new List<RuneState>();
             foreach (var address in runeInfos.Select(info => RuneState.DeriveAddress(avatarAddress, info.RuneId)))
             {
-                if (account.TryGetState(address, out List rawRuneState))
+                if (LegacyModule.TryGetState(world, address, out List rawRuneState))
                 {
                     runeStates.Add(new RuneState(rawRuneState));
                 }
@@ -269,7 +277,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            var gameConfigState = account.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(world);
             if (gameConfigState is null)
             {
                 throw new FailedLoadStateException(
@@ -287,10 +295,10 @@ namespace Nekoyume.Action
             // burn ap
             avatarState.actionPoint -= actionPoint;
             var costAp = sheets.GetSheet<StageSheet>()[stageId].CostAP;
-            if (account.TryGetStakeState(context.Signer, out var stakeState))
+            if (LegacyModule.TryGetStakeState(world, context.Signer, out var stakeState))
             {
-                var currency = account.GetGoldCurrency();
-                var stakedAmount = account.GetBalance(stakeState.address, currency);
+                var currency = LegacyModule.GetGoldCurrency(world);
+                var stakedAmount = LegacyModule.GetBalance(world, stakeState.address, currency);
                 var actionPointCoefficientSheet =
                     sheets.GetSheet<StakeActionPointCoefficientSheet>();
                 var stakingLevel =
@@ -329,22 +337,24 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                account = account.SetState(
+                world = LegacyModule.SetState(
+                    world,
                     avatarAddress.Derive(LegacyWorldInformationKey),
                     avatarState.worldInformation.Serialize());
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            account = account
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
-            return world.SetAccount(account);
+            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = LegacyModule.SetState(
+                world,
+                avatarAddress.Derive(LegacyInventoryKey),
+                avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                avatarAddress.Derive(LegacyQuestListKey),
+                avatarState.questList.Serialize());
+            return world;
         }
 
         public static List<ItemBase> GetRewardItems(IRandom random,

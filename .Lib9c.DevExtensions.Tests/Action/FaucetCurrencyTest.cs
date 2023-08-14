@@ -1,12 +1,10 @@
-using System.Collections.Immutable;
 using Lib9c.DevExtensions.Action;
 using Lib9c.Tests.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 using Xunit;
 using Xunit.Abstractions;
@@ -15,7 +13,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 {
     public class FaucetCurrencyTest
     {
-        private readonly IAccountStateDelta _initialState;
+        private readonly IWorld _initialState;
         private readonly Address _agentAddress;
         private readonly Currency _ncg;
         private readonly Currency _crystal;
@@ -32,18 +30,19 @@ namespace Lib9c.DevExtensions.Tests.Action
             _crystal = Currency.Legacy("CRYSTAL", 18, null);
 #pragma warning restore CS0618
 
-            _initialState = new MockStateDelta(
-                MockState.Empty
-                    .AddBalance(GoldCurrencyState.Address, _ncg * int.MaxValue));
+            _initialState = new MockWorld(new MockAccount(
+                MockAccountState.Legacy
+                    .AddBalance(GoldCurrencyState.Address, _ncg * int.MaxValue)));
 
             var goldCurrencyState = new GoldCurrencyState(_ncg);
             _agentAddress = new PrivateKey().ToAddress();
             var agentState = new AgentState(_agentAddress);
 
-            _initialState = _initialState
-                    .SetState(_agentAddress, agentState.Serialize())
-                    .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
-                ;
+            _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                GoldCurrencyState.Address,
+                goldCurrencyState.Serialize());
         }
 
         [Theory]
@@ -66,16 +65,21 @@ namespace Lib9c.DevExtensions.Tests.Action
                 FaucetNcg = faucetNcg,
                 FaucetCrystal = faucetCrystal,
             };
-            var state = action.Execute(new ActionContext { PreviousState = _initialState });
-            AgentState agentState = state.GetAgentState(_agentAddress);
+            var world = action
+                .Execute(
+                    new ActionContext { PreviousState = _initialState });
+            AgentState agentState = AgentModule.GetAgentState(world, _agentAddress);
             FungibleAssetValue expectedNcgAsset =
                 new FungibleAssetValue(_ncg, expectedNcg, 0);
-            FungibleAssetValue ncg = state.GetBalance(_agentAddress, state.GetGoldCurrency());
+            FungibleAssetValue ncg = LegacyModule.GetBalance(
+                world,
+                _agentAddress,
+                LegacyModule.GetGoldCurrency(world));
             Assert.Equal(expectedNcgAsset, ncg);
 
             FungibleAssetValue expectedCrystalAsset =
                 new FungibleAssetValue(_crystal, expectedCrystal, 0);
-            FungibleAssetValue crystal = state.GetBalance(_agentAddress, _crystal);
+            FungibleAssetValue crystal = LegacyModule.GetBalance(world, _agentAddress, _crystal);
             Assert.Equal(expectedCrystalAsset, crystal);
         }
     }

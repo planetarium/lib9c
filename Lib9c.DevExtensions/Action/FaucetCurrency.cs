@@ -8,8 +8,8 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Lib9c.DevExtensions.Action
 {
@@ -30,11 +30,15 @@ namespace Lib9c.DevExtensions.Action
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (FaucetNcg > 0)
             {
-                var ncg = account.GetGoldCurrency();
-                account = account.TransferAsset(context, GoldCurrencyState.Address, AgentAddress, ncg * FaucetNcg);
+                var ncg = LegacyModule.GetGoldCurrency(world);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    GoldCurrencyState.Address,
+                    AgentAddress,
+                    ncg * FaucetNcg);
             }
 
             if (FaucetCrystal > 0)
@@ -42,10 +46,14 @@ namespace Lib9c.DevExtensions.Action
 #pragma warning disable CS0618
                 var crystal = Currency.Legacy("CRYSTAL", 18, null);
 #pragma warning restore CS0618
-                account = account.MintAsset(context, AgentAddress, crystal * FaucetCrystal);
+                world = LegacyModule.MintAsset(
+                    world,
+                    context,
+                    AgentAddress,
+                    crystal * FaucetCrystal);
             }
 
-            return world.SetAccount(account);
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

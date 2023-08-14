@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
+using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
+using Nekoyume.Model.State;
 
 namespace Lib9c.Formatters
 {
@@ -63,9 +67,38 @@ namespace Lib9c.Formatters
         {
         }
 
+        public IValue Serialize()
+        {
+            return Dictionary.Empty
+                .Add(
+                "states",
+                new Dictionary(_states.Select(state => new KeyValuePair<IKey, IValue>(
+                    (Binary)state.Key.ToByteArray(),
+                    state.Value))))
+                .Add(
+                "balances",
+                new List(_balances.Select(balance => new Dictionary(
+                    new[]
+                    {
+                        new KeyValuePair<IKey, IValue>((Text)"address", (Binary)balance.Key.Item1.ByteArray),
+                        new KeyValuePair<IKey, IValue>((Text)"currency", balance.Key.Item2.Serialize()),
+                        new KeyValuePair<IKey, IValue>((Text)"amount", (Integer)balance.Value)
+                    }
+                    ))))
+                .Add(
+                "totalSupplies",
+                new Dictionary(_totalSupplies.Select(supply => new KeyValuePair<IKey, IValue>(
+                    (Binary)new Codec().Encode(supply.Key.Serialize()),
+                    (Integer)supply.Value))));
+        }
+
         public IAccountDelta Delta => _delta;
 
         public Address Address => ReservedAddresses.LegacyAccount;
+
+        public BlockHash? BlockHash => null;
+
+        public HashDigest<SHA256>? StateRootHash => null;
 
         public IValue? GetState(Address address) =>
             _states.ContainsKey(address)

@@ -7,10 +7,10 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -32,15 +32,17 @@ namespace Nekoyume.Action
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
-            Dictionary<Type, (Address, ISheet)> sheets = account.GetSheets(sheetTypes: new [] {
-                typeof(WorldBossCharacterSheet),
-                typeof(RuneSheet),
-                typeof(RuneWeightSheet),
-                typeof(WorldBossListSheet),
-                typeof(WorldBossKillRewardSheet),
-            });
+            Dictionary<Type, (Address, ISheet)> sheets = LegacyModule.GetSheets(
+                world,
+                sheetTypes: new[]
+                {
+                    typeof(WorldBossCharacterSheet),
+                    typeof(RuneSheet),
+                    typeof(RuneWeightSheet),
+                    typeof(WorldBossListSheet),
+                    typeof(WorldBossKillRewardSheet),
+                });
 
             var worldBossListSheet = sheets.GetSheet<WorldBossListSheet>();
             int raidId;
@@ -54,15 +56,20 @@ namespace Nekoyume.Action
             }
 
             var raiderAddress = Addresses.GetRaiderAddress(AvatarAddress, raidId);
-            RaiderState raiderState = account.GetRaiderState(raiderAddress);
+            RaiderState raiderState = LegacyModule.GetRaiderState(world, raiderAddress);
             var row = sheets.GetSheet<WorldBossListSheet>().Values.First(r => r.Id == raidId);
-            var bossRow = sheets.GetSheet<WorldBossCharacterSheet>().Values.First(x => x.BossId == row.BossId);
+            var bossRow = sheets.GetSheet<WorldBossCharacterSheet>()
+                .Values.First(x => x.BossId == row.BossId);
             int rank = WorldBossHelper.CalculateRank(bossRow, raiderState.HighScore);
-            var worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(AvatarAddress, raidId);
-            var rewardRecord = new WorldBossKillRewardRecord((List) account.GetState(worldBossKillRewardRecordAddress));
+            var worldBossKillRewardRecordAddress =
+                Addresses.GetWorldBossKillRewardRecordAddress(AvatarAddress, raidId);
+            var rewardRecord = new WorldBossKillRewardRecord(
+                (List)LegacyModule.GetState(world, worldBossKillRewardRecordAddress));
             Address worldBossAddress = Addresses.GetWorldBossAddress(raidId);
-            var worldBossState = new WorldBossState((List) account.GetState(worldBossAddress));
-            account = account.SetWorldBossKillReward(
+            var worldBossState =
+                new WorldBossState((List)LegacyModule.GetState(world, worldBossAddress));
+            return LegacyModule.SetWorldBossKillReward(
+                world,
                 context,
                 worldBossKillRewardRecordAddress,
                 rewardRecord,
@@ -75,7 +82,6 @@ namespace Nekoyume.Action
                 AvatarAddress,
                 context.Signer
             );
-            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

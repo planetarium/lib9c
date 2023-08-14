@@ -5,6 +5,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -39,23 +40,27 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var contractAddress = AgentAddress.GetPledgeAddress();
-            if (account.TryGetState(contractAddress, out List _))
+            if (LegacyModule.TryGetState(world, contractAddress, out List _))
             {
                 throw new AlreadyContractedException($"{AgentAddress} already contracted.");
             }
 
-            account = account
-                .TransferAsset(context, context.Signer, AgentAddress, 1 * Currencies.Mead)
-                .SetState(
-                    contractAddress,
-                    List.Empty
-                        .Add(context.Signer.Serialize())
-                        .Add(false.Serialize())
-                        .Add(RefillMead.Serialize())
-                );
-            return world.SetAccount(account);
+            world = LegacyModule.TransferAsset(
+                world,
+                context,
+                context.Signer,
+                AgentAddress,
+                1 * Currencies.Mead);
+            world = LegacyModule.SetState(
+                world,
+                contractAddress,
+                List.Empty
+                    .Add(context.Signer.Serialize())
+                    .Add(false.Serialize())
+                    .Add(RefillMead.Serialize())
+            );
+            return world;
         }
     }
 }

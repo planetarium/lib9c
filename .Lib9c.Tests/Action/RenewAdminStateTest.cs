@@ -1,17 +1,16 @@
 namespace Lib9c.Tests.Action
 {
-    using System.Collections.Immutable;
-    using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class RenewAdminStateTest
     {
-        private IAccountStateDelta _stateDelta;
+        private IWorld _stateDelta;
         private long _validUntil;
         private AdminState _adminState;
         private PrivateKey _adminPrivateKey;
@@ -21,9 +20,8 @@ namespace Lib9c.Tests.Action
             _adminPrivateKey = new PrivateKey();
             _validUntil = 1_500_000L;
             _adminState = new AdminState(_adminPrivateKey.ToAddress(), _validUntil);
-            _stateDelta = new MockStateDelta(
-                MockState.Empty
-                    .SetState(Addresses.Admin, _adminState.Serialize()));
+            _stateDelta = new MockWorld();
+            _stateDelta = LegacyModule.SetState(_stateDelta, Addresses.Admin, _adminState.Serialize());
         }
 
         [Fact]
@@ -35,7 +33,7 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = _stateDelta,
                 Signer = _adminPrivateKey.ToAddress(),
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetState(Addresses.Admin));
             Assert.Equal(newValidUntil, adminState.ValidUntil);
@@ -68,7 +66,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = _validUntil + 1,
                 PreviousState = _stateDelta,
                 Signer = _adminPrivateKey.ToAddress(),
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetState(Addresses.Admin));
             Assert.Equal(newValidUntil, adminState.ValidUntil);

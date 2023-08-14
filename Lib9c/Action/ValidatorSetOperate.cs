@@ -6,6 +6,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Consensus;
 using Nekoyume.Action.Extensions;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -80,11 +81,10 @@ namespace Nekoyume.Action
             CheckPermission(context);
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-            ValidatorSet validatorSet = account.GetValidatorSet();
+            ValidatorSet validatorSet = LegacyModule.GetValidatorSet(world);
 
             Func<ValidatorSet, Validator, Validator> func = Operator.ToFunc();
-            return world.SetAccount(account.SetValidator(func(validatorSet, Operand)));
+            return LegacyModule.SetValidator(world, func(validatorSet, Operand));
         }
 
         public override IValue PlainValue =>

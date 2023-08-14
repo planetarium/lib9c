@@ -8,6 +8,7 @@ namespace Lib9c.Tests.TestHelper
     using Lib9c.Renderers;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
+    using Libplanet.Action.State;
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
     using Libplanet.Crypto;
@@ -21,6 +22,7 @@ namespace Lib9c.Tests.TestHelper
     using Nekoyume.Action.Loader;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
 
     public static class BlockChainHelper
@@ -98,22 +100,34 @@ namespace Lib9c.Tests.TestHelper
             var sheets = TableSheetsImporter.ImportSheets();
             var weeklyArenaAddress = WeeklyArenaState.DeriveAddress(0);
             var context = new ActionContext();
-            var initialState = new Tests.Action.MockStateDelta()
-                .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
-                .SetState(
-                    Addresses.GoldDistribution,
-                    GoldDistributionTest.Fixture.Select(v => v.Serialize()).Serialize()
-                )
-                .SetState(
-                    Addresses.GameConfig,
-                    new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
-                )
-                .SetState(Addresses.Ranking, ranking.Serialize())
-                .SetState(weeklyArenaAddress, new WeeklyArenaState(0).Serialize());
+            IWorld initialState = new Tests.Action.MockWorld();
+            initialState = LegacyModule.SetState(
+                initialState,
+                GoldCurrencyState.Address,
+                goldCurrencyState.Serialize());
+            initialState = LegacyModule.SetState(
+                initialState,
+                Addresses.GoldDistribution,
+                GoldDistributionTest.Fixture.Select(v => v.Serialize()).Serialize());
+            initialState = LegacyModule.SetState(
+                initialState,
+                Addresses.GameConfig,
+                new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize());
+            initialState = LegacyModule.SetState(
+                initialState,
+                Addresses.Ranking,
+                ranking.Serialize());
+            initialState = LegacyModule.SetState(
+                initialState,
+                weeklyArenaAddress,
+                new WeeklyArenaState(0).Serialize());
 
             foreach (var (key, value) in sheets)
             {
-                initialState = initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                initialState = LegacyModule.SetState(
+                    initialState,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
             var tableSheets = new TableSheets(sheets);
@@ -141,13 +155,30 @@ namespace Lib9c.Tests.TestHelper
             var initCurrencyGold = goldCurrencyState.Currency * 100000000000;
             var agentCurrencyGold = goldCurrencyState.Currency * 1000;
             var remainCurrencyGold = initCurrencyGold - agentCurrencyGold;
-            initialState = initialState
-                .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize())
-                .SetState(Addresses.Shop, new ShopState().Serialize())
-                .MintAsset(context, GoldCurrencyState.Address, initCurrencyGold)
-                .TransferAsset(context, Addresses.GoldCurrency, agentAddress,  agentCurrencyGold);
+            initialState = LegacyModule.SetState(
+                initialState,
+                GoldCurrencyState.Address,
+                goldCurrencyState.Serialize());
+            initialState = AgentModule.SetAgentState(initialState, agentAddress, agentState);
+            initialState = AvatarModule.SetAvatarState(
+                initialState,
+                avatarAddress,
+                avatarState);
+            initialState = LegacyModule.SetState(
+                initialState,
+                Addresses.Shop,
+                new ShopState().Serialize());
+            initialState = LegacyModule.MintAsset(
+                initialState,
+                context,
+                GoldCurrencyState.Address,
+                initCurrencyGold);
+            initialState = LegacyModule.TransferAsset(
+                initialState,
+                context,
+                Addresses.GoldCurrency,
+                agentAddress,
+                agentCurrencyGold);
 
             var action = new CreateTestbed
             {
@@ -156,7 +187,7 @@ namespace Lib9c.Tests.TestHelper
             var nextState = action.Execute(new ActionContext()
             {
                 BlockIndex = 0,
-                PreviousState = initialState,
+                PreviousState = new MockWorld(initialState),
                 Random = new TestRandom(),
                 Rehearsal = false,
             });

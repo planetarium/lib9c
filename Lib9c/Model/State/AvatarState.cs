@@ -16,6 +16,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.Quest;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 using CombinationResult = Nekoyume.Action.Results.CombinationResult;
@@ -1108,13 +1109,12 @@ namespace Nekoyume.Model.State
             Address rankingMapAddress)
         {
             var world = ctx.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-            var gameConfigState = account.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(world);
             var avatarState = new AvatarState(
                 avatarAddress,
                 ctx.Signer,
                 ctx.BlockIndex,
-                account.GetAvatarSheets(),
+                LegacyModule.GetAvatarSheets(world),
                 gameConfigState,
                 rankingMapAddress,
                 name

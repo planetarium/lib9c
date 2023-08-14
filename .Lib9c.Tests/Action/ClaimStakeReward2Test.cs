@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -16,7 +17,7 @@ namespace Lib9c.Tests.Action
 
     public class ClaimStakeReward2Test
     {
-        private readonly IAccountStateDelta _initialState;
+        private readonly IWorld _initialState;
         private readonly Currency _currency;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly TableSheets _tableSheets;
@@ -32,15 +33,17 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new MockStateDelta();
+            _initialState = new MockWorld();
 
             var sheets = TableSheetsImporter.ImportSheets();
             sheets[nameof(StakeRegularRewardSheet)] =
                 ClaimStakeReward.V2.StakeRegularRewardSheetCsv;
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -82,24 +85,40 @@ namespace Lib9c.Tests.Action
                 level = 100,
             };
 
-            _initialState = _initialState
-                .SetState(_signerAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize())
-                .SetState(
-                    _avatarAddressForBackwardCompatibility,
-                    avatarStateForBackwardCompatibility.Serialize())
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(stakeStateAddress, new StakeState(stakeStateAddress, 0).Serialize())
-                .MintAsset(context, stakeStateAddress, _currency * 100);
+            _initialState = AgentModule.SetAgentState(_initialState, _signerAddress, agentState);
+            _initialState = AvatarModule.SetAvatarStateV2(
+                _initialState,
+                _avatarAddress,
+                avatarState);
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                _avatarAddress.Derive(LegacyInventoryKey),
+                avatarState.inventory.Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                _avatarAddress.Derive(LegacyWorldInformationKey),
+                avatarState.worldInformation.Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                _avatarAddress.Derive(LegacyQuestListKey),
+                avatarState.questList.Serialize());
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddressForBackwardCompatibility,
+                avatarStateForBackwardCompatibility);
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                GoldCurrencyState.Address,
+                _goldCurrencyState.Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                stakeStateAddress,
+                new StakeState(stakeStateAddress, 0).Serialize());
+            _initialState = LegacyModule.MintAsset(
+                _initialState,
+                context,
+                stakeStateAddress,
+                _currency * 100);
         }
 
         [Fact]
@@ -155,7 +174,10 @@ namespace Lib9c.Tests.Action
 4,50000,500000,800
 5,500000,400000,5
 5,500000,500000,800".Serialize();
-                state = state.SetState(Addresses.GetSheetAddress<StakeRegularRewardSheet>(), sheet);
+                state = LegacyModule.SetState(
+                    state,
+                    Addresses.GetSheetAddress<StakeRegularRewardSheet>(),
+                    sheet);
             }
 
             var action = new ClaimStakeReward2(avatarAddress);
@@ -166,14 +188,14 @@ namespace Lib9c.Tests.Action
                 BlockIndex = StakeState.LockupInterval,
             });
 
-            AvatarState avatarState = states.GetAvatarStateV2(avatarAddress);
+            AvatarState avatarState = AvatarModule.GetAvatarStateV2(states, avatarAddress);
             // regular (100 / 10) * 4
             Assert.Equal(40, avatarState.inventory.Items.First(x => x.item.Id == 400000).count);
             // regular ((100 / 800) + 1) * 4
             // It must be never added into the inventory if the amount is 0.
             Assert.Equal(4, avatarState.inventory.Items.First(x => x.item.Id == 500000).count);
 
-            Assert.True(states.TryGetStakeState(_signerAddress, out StakeState stakeState));
+            Assert.True(LegacyModule.TryGetStakeState(states, _signerAddress, out StakeState stakeState));
             Assert.Equal(StakeState.LockupInterval, stakeState.ReceivedBlockIndex);
         }
     }

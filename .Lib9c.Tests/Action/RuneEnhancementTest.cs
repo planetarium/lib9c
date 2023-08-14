@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Linq;
     using Bencodex.Types;
+    using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
@@ -11,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -54,26 +56,40 @@ namespace Lib9c.Tests.Action
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
             var context = new ActionContext();
-            var state = new MockStateDelta()
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.SerializeV2())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+            var state = LegacyModule.SetState(
+                new MockWorld(),
+                goldCurrencyState.address,
+                goldCurrencyState.Serialize());
+            state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
+            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
+            state = LegacyModule.SetState(
+                state,
+                inventoryAddress,
+                avatarState.inventory.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                questListAddress,
+                avatarState.questList.Serialize());
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = LegacyModule.SetState(
+                    state,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
-            var runeListSheet = state.GetSheet<RuneListSheet>();
+            var runeListSheet = LegacyModule.GetSheet<RuneListSheet>(state);
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new RuneState(runeId);
-            state = state.SetState(runeStateAddress, runeState.Serialize());
+            state = LegacyModule.SetState(state, runeStateAddress, runeState.Serialize());
 
-            var costSheet = state.GetSheet<RuneCostSheet>();
+            var costSheet = LegacyModule.GetSheet<RuneCostSheet>(state);
             if (!costSheet.TryGetValue(runeId, out var costRow))
             {
                 throw new RuneCostNotFoundException($"[{nameof(Execute)}] ");
@@ -84,13 +100,13 @@ namespace Lib9c.Tests.Action
                 throw new RuneCostDataNotFoundException($"[{nameof(Execute)}] ");
             }
 
-            var runeSheet = state.GetSheet<RuneSheet>();
+            var runeSheet = LegacyModule.GetSheet<RuneSheet>(state);
             if (!runeSheet.TryGetValue(runeId, out var runeRow))
             {
                 throw new RuneNotFoundException($"[{nameof(Execute)}] ");
             }
 
-            var ncgCurrency = state.GetGoldCurrency();
+            var ncgCurrency = LegacyModule.GetGoldCurrency(state);
             var crystalCurrency = CrystalCalculator.CRYSTAL;
             var runeCurrency = Currency.Legacy(runeRow.Ticker, 0, minters: null);
 
@@ -106,17 +122,17 @@ namespace Lib9c.Tests.Action
 
             if (ncgBal.Sign > 0)
             {
-                state = state.MintAsset(context, agentAddress, ncgBal);
+                state = LegacyModule.MintAsset(state, context, agentAddress, ncgBal);
             }
 
             if (crystalBal.Sign > 0)
             {
-                state = state.MintAsset(context, agentAddress, crystalBal);
+                state = LegacyModule.MintAsset(state, context, agentAddress, crystalBal);
             }
 
             if (runeBal.Sign > 0)
             {
-                state = state.MintAsset(context, avatarState.address, runeBal);
+                state = LegacyModule.MintAsset(state, context, avatarState.address, runeBal);
             }
 
             var action = new RuneEnhancement()
@@ -134,16 +150,18 @@ namespace Lib9c.Tests.Action
                 Signer = agentAddress,
             };
 
-            var nextState = action.Execute(ctx);
-            if (!nextState.TryGetState(runeStateAddress, out List nextRuneRawState))
+            var nextWorld = action.Execute(ctx);
+            if (!LegacyModule.TryGetState(nextWorld, runeStateAddress, out List nextRuneRawState))
             {
                 throw new Exception();
             }
 
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
+
             var nextRunState = new RuneState(nextRuneRawState);
-            var nextNcgBal = nextState.GetBalance(agentAddress, ncgCurrency);
-            var nextCrystalBal = nextState.GetBalance(agentAddress, crystalCurrency);
-            var nextRuneBal = nextState.GetBalance(agentAddress, runeCurrency);
+            var nextNcgBal = nextAccount.GetBalance(agentAddress, ncgCurrency);
+            var nextCrystalBal = nextAccount.GetBalance(agentAddress, crystalCurrency);
+            var nextRuneBal = nextAccount.GetBalance(agentAddress, runeCurrency);
 
             if (cost.NcgQuantity != 0)
             {
@@ -166,22 +184,22 @@ namespace Lib9c.Tests.Action
 
             if (costNcg.Sign > 0)
             {
-                nextState = nextState.MintAsset(context, agentAddress, costNcg);
+                nextAccount = nextAccount.MintAsset(context, agentAddress, costNcg);
             }
 
             if (costCrystal.Sign > 0)
             {
-                nextState = nextState.MintAsset(context, agentAddress, costCrystal);
+                nextAccount = nextAccount.MintAsset(context, agentAddress, costCrystal);
             }
 
             if (costRune.Sign > 0)
             {
-                nextState = nextState.MintAsset(context, avatarState.address, costRune);
+                nextAccount = nextAccount.MintAsset(context, avatarState.address, costRune);
             }
 
-            var finalNcgBal = nextState.GetBalance(agentAddress, ncgCurrency);
-            var finalCrystalBal = nextState.GetBalance(agentAddress, crystalCurrency);
-            var finalRuneBal = nextState.GetBalance(avatarState.address, runeCurrency);
+            var finalNcgBal = nextAccount.GetBalance(agentAddress, ncgCurrency);
+            var finalCrystalBal = nextAccount.GetBalance(agentAddress, crystalCurrency);
+            var finalRuneBal = nextAccount.GetBalance(avatarState.address, runeCurrency);
             Assert.Equal(ncgBal, finalNcgBal);
             Assert.Equal(crystalBal, finalCrystalBal);
             Assert.Equal(runeBal, finalRuneBal);
@@ -215,24 +233,37 @@ namespace Lib9c.Tests.Action
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
-            var state = new MockStateDelta()
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.SerializeV2())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+            var state = LegacyModule.SetState(
+                new MockWorld(),
+                goldCurrencyState.address,
+                goldCurrencyState.Serialize());
+            state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
+            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
+            state = LegacyModule.SetState(
+                state,
+                inventoryAddress,
+                avatarState.inventory.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                questListAddress,
+                avatarState.questList.Serialize());
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = LegacyModule.SetState(state, Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
-            var runeListSheet = state.GetSheet<RuneListSheet>();
+            var world = new MockWorld(state);
+
+            var runeListSheet = LegacyModule.GetSheet<RuneListSheet>(world);
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new RuneState(128381293);
-            state = state.SetState(runeStateAddress, runeState.Serialize());
+            state = LegacyModule.SetState(state, runeStateAddress, runeState.Serialize());
             var action = new RuneEnhancement()
             {
                 AvatarAddress = avatarState.address,
@@ -277,24 +308,40 @@ namespace Lib9c.Tests.Action
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
-            var state = new MockStateDelta()
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.SerializeV2())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+            var state = LegacyModule.SetState(
+                new MockWorld(),
+                goldCurrencyState.address,
+                goldCurrencyState.Serialize());
+            state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
+            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
+            state = LegacyModule.SetState(
+                state,
+                inventoryAddress,
+                avatarState.inventory.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                questListAddress,
+                avatarState.questList.Serialize());
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = LegacyModule.SetState(
+                    state,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
-            var runeListSheet = state.GetSheet<RuneListSheet>();
+            var world = new MockWorld(state);
+
+            var runeListSheet = LegacyModule.GetSheet<RuneListSheet>(world);
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new RuneState(runeId);
-            var costSheet = state.GetSheet<RuneCostSheet>();
+            var costSheet = LegacyModule.GetSheet<RuneCostSheet>(world);
             if (!costSheet.TryGetValue(runeId, out var costRow))
             {
                 throw new RuneCostNotFoundException($"[{nameof(Execute)}] ");
@@ -305,7 +352,7 @@ namespace Lib9c.Tests.Action
                 runeState.LevelUp();
             }
 
-            state = state.SetState(runeStateAddress, runeState.Serialize());
+            state = LegacyModule.SetState(state, runeStateAddress, runeState.Serialize());
 
             var action = new RuneEnhancement()
             {
@@ -355,26 +402,40 @@ namespace Lib9c.Tests.Action
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
             var context = new ActionContext();
-            var state = new MockStateDelta()
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.SerializeV2())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+            var state = LegacyModule.SetState(
+                new MockWorld(),
+                goldCurrencyState.address,
+                goldCurrencyState.Serialize());
+            state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
+            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
+            state = LegacyModule.SetState(
+                state,
+                inventoryAddress,
+                avatarState.inventory.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                questListAddress,
+                avatarState.questList.Serialize());
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = LegacyModule.SetState(
+                    state,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
-            var runeListSheet = state.GetSheet<RuneListSheet>();
+            var runeListSheet = LegacyModule.GetSheet<RuneListSheet>(state);
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new RuneState(runeId);
-            state = state.SetState(runeStateAddress, runeState.Serialize());
+            state = LegacyModule.SetState(state, runeStateAddress, runeState.Serialize());
 
-            var costSheet = state.GetSheet<RuneCostSheet>();
+            var costSheet = LegacyModule.GetSheet<RuneCostSheet>(state);
             if (!costSheet.TryGetValue(runeId, out var costRow))
             {
                 throw new RuneCostNotFoundException($"[{nameof(Execute)}] ");
@@ -385,29 +446,29 @@ namespace Lib9c.Tests.Action
                 throw new RuneCostDataNotFoundException($"[{nameof(Execute)}] ");
             }
 
-            var runeSheet = state.GetSheet<RuneSheet>();
+            var runeSheet = LegacyModule.GetSheet<RuneSheet>(state);
             if (!runeSheet.TryGetValue(runeId, out var runeRow))
             {
                 throw new RuneNotFoundException($"[{nameof(Execute)}] ");
             }
 
-            var ncgCurrency = state.GetGoldCurrency();
+            var ncgCurrency = LegacyModule.GetGoldCurrency(state);
             var crystalCurrency = CrystalCalculator.CRYSTAL;
             var runeCurrency = Currency.Legacy(runeRow.Ticker, 0, minters: null);
 
             if (ncg && cost.NcgQuantity > 0)
             {
-                state = state.MintAsset(context, agentAddress, cost.NcgQuantity * ncgCurrency);
+                state = LegacyModule.MintAsset(state, context, agentAddress, cost.NcgQuantity * ncgCurrency);
             }
 
             if (crystal && cost.CrystalQuantity > 0)
             {
-                state = state.MintAsset(context, agentAddress, cost.CrystalQuantity * crystalCurrency);
+                state = LegacyModule.MintAsset(state, context, agentAddress, cost.CrystalQuantity * crystalCurrency);
             }
 
             if (rune)
             {
-                state = state.MintAsset(context, avatarState.address, cost.RuneStoneQuantity * runeCurrency);
+                state = LegacyModule.MintAsset(state, context, avatarState.address, cost.RuneStoneQuantity * runeCurrency);
             }
 
             var action = new RuneEnhancement()
@@ -477,24 +538,35 @@ namespace Lib9c.Tests.Action
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
-            var state = new MockStateDelta()
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.SerializeV2())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+            var state = LegacyModule.SetState(
+                new MockWorld(),
+                goldCurrencyState.address,
+                goldCurrencyState.Serialize());
+            state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
+            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
+            state = LegacyModule.SetState(
+                state,
+                inventoryAddress,
+                avatarState.inventory.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                questListAddress,
+                avatarState.questList.Serialize());
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = LegacyModule.SetState(state, Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
-            var runeListSheet = state.GetSheet<RuneListSheet>();
+            var runeListSheet = LegacyModule.GetSheet<RuneListSheet>(state);
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new RuneState(runeId);
-            state = state.SetState(runeStateAddress, runeState.Serialize());
+            state = LegacyModule.SetState(state, runeStateAddress, runeState.Serialize());
 
             var action = new RuneEnhancement()
             {
@@ -526,13 +598,18 @@ namespace Lib9c.Tests.Action
                 .StartedBlockIndex;
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
-            var state = new MockStateDelta()
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, new AgentState(agentAddress).Serialize());
+            var state = LegacyModule.SetState(
+                new MockWorld(),
+                goldCurrencyState.address,
+                goldCurrencyState.Serialize());
+            state = AgentModule.SetAgentState(state, agentAddress, new AgentState(agentAddress));
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = LegacyModule.SetState(
+                    state,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
             var avatarState = new AvatarState(
@@ -543,9 +620,9 @@ namespace Lib9c.Tests.Action
                 new GameConfigState(),
                 default
             );
-            state = state.SetState(avatarAddress, avatarState.SerializeV2());
+            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
 
-            var runeListSheet = state.GetSheet<RuneListSheet>();
+            var runeListSheet = LegacyModule.GetSheet<RuneListSheet>(state);
             var runeId = runeListSheet.First().Value.Id;
 
             var action = new RuneEnhancement()
