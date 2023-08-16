@@ -97,6 +97,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid> { doomfist.NonFungibleId },
                 Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
             };
             nextState = hackAndSlash.Execute(new ActionContext
             {

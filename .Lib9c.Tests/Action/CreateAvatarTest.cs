@@ -278,7 +278,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(
                 updatedAddresses.ToImmutableHashSet(),
-                nextState.Delta.UpdatedAddresses
+                nextState.Delta.Accounts.Values.SelectMany(a => a.Delta.UpdatedAddresses)
             );
         }
 

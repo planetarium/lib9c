@@ -293,7 +293,7 @@ namespace Lib9c.Tests.Action
                 .TryGetValue(eventScheduleId, out var scheduleRow));
             Assert.Throws<NotEnoughEventDungeonTicketsException>(() =>
                 Execute(
-                    new MockWorld(_initialStates),
+                    new MockWorld(previousStates),
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId,
@@ -331,7 +331,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<InsufficientBalanceException>(() =>
                 Execute(
-                    new MockWorld(_initialStates),
+                    new MockWorld(previousStates),
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId,

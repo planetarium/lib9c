@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Action
 {
+    using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
@@ -76,7 +77,7 @@ namespace Lib9c.Tests.Action
                 Signer = _agentAddress,
             });
 
-            var updatedAddress = Assert.Single(nextState.Delta.UpdatedAddresses);
+            var updatedAddress = Assert.Single(nextState.Delta.Accounts.Values.SelectMany(a => a.Delta.UpdatedAddresses));
             Assert.Equal(_avatarAddress, updatedAddress);
         }
 

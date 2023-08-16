@@ -127,7 +127,7 @@ public class Account : IAccount
 
     public HashDigest<SHA256>? StateRootHash => BaseState.StateRootHash;
 
-    public Address Address => BaseState.Address;
+    public Address Address => ReservedAddresses.LegacyAccount;
 
     public IValue? GetState(Address address) =>
         _states.ContainsKey(address)

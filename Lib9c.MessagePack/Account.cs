@@ -13,6 +13,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
+using Nekoyume.Model.State;
 
 namespace Lib9c.Formatters
 {
@@ -64,6 +65,31 @@ namespace Lib9c.Formatters
         public Account(byte[] bytes)
             : this((Dictionary)new Codec().Decode(bytes))
         {
+        }
+
+        public IValue Serialize()
+        {
+            return Dictionary.Empty
+                .Add(
+                "states",
+                new Dictionary(_states.Select(state => new KeyValuePair<IKey, IValue>(
+                    (Binary)state.Key.ToByteArray(),
+                    state.Value))))
+                .Add(
+                "balances",
+                new List(_balances.Select(balance => new Dictionary(
+                    new[]
+                    {
+                        new KeyValuePair<IKey, IValue>((Text)"address", (Binary)balance.Key.Item1.ByteArray),
+                        new KeyValuePair<IKey, IValue>((Text)"currency", balance.Key.Item2.Serialize()),
+                        new KeyValuePair<IKey, IValue>((Text)"amount", (Integer)balance.Value)
+                    }
+                    ))))
+                .Add(
+                "totalSupplies",
+                new Dictionary(_totalSupplies.Select(supply => new KeyValuePair<IKey, IValue>(
+                    (Binary)new Codec().Encode(supply.Key.Serialize()),
+                    (Integer)supply.Value))));
         }
 
         public IAccountDelta Delta => _delta;

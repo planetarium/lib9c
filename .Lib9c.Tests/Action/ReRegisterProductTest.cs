@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -314,8 +314,9 @@
                 AvatarAddress = _avatarAddress,
                 ReRegisterInfos = new List<(IProductInfo, IRegisterInfo)>(),
             };
-
-            Assert.Throws<ListEmptyException>(() => action.Execute(new ActionContext()));
+            var actionContext = new ActionContext();
+            actionContext.PreviousState = new MockWorld();
+            Assert.Throws<ListEmptyException>(() => action.Execute(actionContext));
         }
 
         [Fact]
@@ -333,7 +334,9 @@
                 ReRegisterInfos = reRegisterInfos,
             };
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(new ActionContext()));
+            var actionContext = new ActionContext();
+            actionContext.PreviousState = new MockWorld();
+            Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(actionContext));
         }
     }
 }

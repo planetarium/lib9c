@@ -1,6 +1,7 @@
 namespace Lib9c.Tests.Action
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
@@ -126,7 +127,7 @@ namespace Lib9c.Tests.Action
             });
 
             Assert.Equal(
-                nextState.Delta.UpdatedAddresses,
+                nextState.Delta.Accounts.Values.First().Delta.UpdatedAddresses,
                 new[] { Addresses.RedeemCode }.ToImmutableHashSet()
             );
         }
