@@ -1,14 +1,15 @@
-﻿using Bencodex;
+using System.Security.Cryptography;
+using Bencodex;
 using Bencodex.Types;
 using GraphQL;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.SystemTextJson;
 using Libplanet.Action.State;
 using Libplanet.Common;
+using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
-using Libplanet.Crypto;
 
 namespace Libplanet.Extensions.RemoteBlockChainStates;
 
@@ -17,15 +18,41 @@ public class RemoteAccountState : IAccountState
     private readonly Uri _explorerEndpoint;
     private readonly GraphQLHttpClient _graphQlHttpClient;
 
-    public RemoteAccountState(Uri explorerEndpoint, Address address)
+    public RemoteAccountState(Uri explorerEndpoint, Address address, BlockHash? offset)
     {
         _explorerEndpoint = explorerEndpoint;
         _graphQlHttpClient =
             new GraphQLHttpClient(_explorerEndpoint, new SystemTextJsonSerializer());
-        Address = address;
+        var response = _graphQlHttpClient.SendQueryAsync<GetAccountStateResponseType>(
+            new GraphQLRequest(
+                @"query GetAccount($address: Address!, $offsetBlockHash: ID!)
+                {
+                    stateQuery
+                    {
+                        accountState(address: $address, offsetBlockHash: $offsetBlockHash)
+                    }
+                }",
+                operationName: "GetWorld",
+                variables: new
+                {
+                    address = address is { } addr
+                        ? addr.ToString()
+                        : throw new NotSupportedException(),
+                    offset = offset is { } hash
+                        ? ByteUtil.Hex(hash.ByteArray)
+                        : throw new NotSupportedException(),
+                })).Result;
+        Address = new Address(response.Data.StateQuery.AccountState.Address);
+        StateRootHash = HashDigest<SHA256>.FromString(response.Data.StateQuery.AccountState.StateRootHash);
+        BlockHash = Types.Blocks.BlockHash.FromString(response.Data.StateQuery.AccountState.BlockHash);
     }
 
     public Address Address { get; }
+
+    public HashDigest<SHA256>? StateRootHash { get; }
+
+    public BlockHash? BlockHash { get; }
+
 
     public IValue? GetState(Address address) =>
         GetStates(new[] { address }).First();
@@ -34,17 +61,18 @@ public class RemoteAccountState : IAccountState
     {
         var response = _graphQlHttpClient.SendQueryAsync<GetStatesResponseType>(
             new GraphQLRequest(
-                @"query GetStates($addresses: [Address!]!, $offsetBlockHash: ID!)
-            {
-                stateQuery
+                @"query GetStates($addresses: [Address!]!, $accountAddress: Address!, $offsetBlockHash: ID!)
                 {
-                    states(addresses: $addresses, offsetBlockHash: $offsetBlockHash)
-                }
-            }",
+                    stateQuery
+                    {
+                        states(addresses: $addresses, accountAddress: $accountAddress, offsetBlockHash: $offsetBlockHash)
+                    }
+                }",
                 operationName: "GetStates",
                 variables: new
                 {
                     addresses = addresses.Select(x => x.ToString()).ToArray(),
+                    accountAddress = Address.ToString(),
                     offsetBlockHash = BlockHash is { } hash
                         ? ByteUtil.Hex(hash.ByteArray)
                         : throw new NotSupportedException(),
@@ -166,6 +194,25 @@ public class RemoteAccountState : IAccountState
             .ToList());
     }
 
+    private class GetAccountStateResponseType
+    {
+        public StateQueryWithAccountStateType StateQuery { get; set; }
+    }
+
+    private class StateQueryWithAccountStateType
+    {
+        public AccountStateType AccountState { get; set; }
+    }
+
+    public class AccountStateType
+    {
+        public string Address { get; set; }
+
+        public string StateRootHash { get; set; }
+
+        public string BlockHash { get; set; }
+    }
+
     private class GetStatesResponseType
     {
         public StateQueryWithStatesType StateQuery { get; set; }
@@ -222,4 +269,6 @@ public class RemoteAccountState : IAccountState
     {
         throw new NotImplementedException();
     }
+
+    
 }
