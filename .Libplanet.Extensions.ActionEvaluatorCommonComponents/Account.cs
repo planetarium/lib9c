@@ -1,11 +1,14 @@
 using System.Collections.Immutable;
 using System.Numerics;
+using System.Security.Cryptography;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
+using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 
 namespace Libplanet.Extensions.ActionEvaluatorCommonComponents;
@@ -120,7 +123,11 @@ public class Account : IAccount
 
     public IAccountDelta Delta => _delta;
 
-    public Address Address { get; }
+    public BlockHash? BlockHash => BaseState.BlockHash;
+
+    public HashDigest<SHA256>? StateRootHash => BaseState.StateRootHash;
+
+    public Address Address => BaseState.Address;
 
     public IValue? GetState(Address address) =>
         _states.ContainsKey(address)

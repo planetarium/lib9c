@@ -86,6 +86,8 @@ namespace Nekoyume.Action.Extensions
 
             public bool Legacy { get; }
 
+            public BlockHash? BlockHash { get; }
+
             public IWorldDelta Delta => _delta;
 
             public IWorld SetAccount(IAccount account)

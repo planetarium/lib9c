@@ -8,11 +8,14 @@ namespace Lib9c.Tests.Action
     using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Numerics;
+    using System.Security.Cryptography;
     using Bencodex.Types;
     using Libplanet.Action;
     using Libplanet.Action.State;
+    using Libplanet.Common;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
+    using Libplanet.Types.Blocks;
     using Libplanet.Types.Consensus;
 
     /// <summary>
@@ -43,6 +46,10 @@ namespace Lib9c.Tests.Action
 
         /// <inheritdoc/>
         public IAccountDelta Delta { get; private set; }
+
+        public BlockHash? BlockHash => _baseState.BlockHash;
+
+        public HashDigest<SHA256>? StateRootHash => _baseState.StateRootHash;
 
         /// <inheritdoc/>
         public IImmutableSet<(Address, Currency)> TotalUpdatedFungibleAssets =>

@@ -1,10 +1,11 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
 #nullable enable
     using System.Collections.Immutable;
     using System.Diagnostics.Contracts;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Types.Blocks;
 
     /// <summary>
     /// A rough replica of https://github.com/planetarium/libplanet/blob/main/Libplanet/State/World.cs
@@ -41,6 +42,8 @@
 
         /// <inheritdoc/>
         public bool Legacy => true;
+
+        public BlockHash? BlockHash => _baseState.BlockHash;
 
         /// <inheritdoc/>
         public IWorldDelta Delta { get; private set; }

@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
+using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 
 namespace Lib9c.Formatters
@@ -66,6 +69,10 @@ namespace Lib9c.Formatters
         public IAccountDelta Delta => _delta;
 
         public Address Address => ReservedAddresses.LegacyAccount;
+
+        public BlockHash? BlockHash => null;
+
+        public HashDigest<SHA256>? StateRootHash => null;
 
         public IValue? GetState(Address address) =>
             _states.ContainsKey(address)

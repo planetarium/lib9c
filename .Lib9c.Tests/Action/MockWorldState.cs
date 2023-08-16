@@ -1,10 +1,11 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
 #nullable enable
 
     using System.Collections.Immutable;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Types.Blocks;
 
     public class MockWorldState : IWorldState
     {
@@ -24,6 +25,8 @@
         public static MockWorldState Empty => _empty;
 
         public bool Legacy => true;
+
+        public BlockHash? BlockHash => null;
 
         public IImmutableDictionary<Address, IAccount> Accounts => _accounts;
 
