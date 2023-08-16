@@ -257,6 +257,19 @@ namespace Nekoyume.Action
             }
 #endif
 
+            // Aura test
+            foreach (var row in states.GetSheet<EquipmentItemSheet>().Values)
+            {
+                if (row.ItemSubType == ItemSubType.Aura)
+                {
+                    var aura = ItemFactory.CreateItemUsable(row, ctx.Random.GenerateRandomGuid(), 0, 0);
+                    aura.StatsMap.AddStatAdditionalValue(StatType.CRI, 1);
+                    var auraSkillRow = states.GetSheet<SkillSheet>()[800001];
+                    var auraSkill = SkillFactory.Get(auraSkillRow, 0, 100, 0, StatType.NONE);
+                    aura.Skills.Add(auraSkill);
+                    avatarState.inventory.AddItem(aura);
+                }
+            }
             sw.Stop();
             Log.Verbose("{AddressesHex}CreateAvatar CreateAvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;

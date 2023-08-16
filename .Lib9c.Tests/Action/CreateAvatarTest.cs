@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Helper;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
@@ -62,6 +63,7 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 BlockIndex = blockIndex,
+                Random = new TestRandom(),
             });
 
             var avatarAddress = _agentAddress.Derive(
@@ -81,6 +83,7 @@ namespace Lib9c.Tests.Action
             Assert.True(agentState.avatarAddresses.Any());
             Assert.Equal("test", nextAvatarState.name);
             Assert.Equal(expected * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
+            Assert.Equal(8, nextAvatarState.inventory.Equipments.Count());
         }
 
         [Theory]
