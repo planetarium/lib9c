@@ -174,4 +174,11 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 12001001,Special Crystal Belt,Belt,2,Normal,0,ATK,1,0,12001001,1496
 12001002,Special Crystal Necklace,Necklace,3,Normal,1,ATK,1,0,12001002,65040
 12001003,Special Crystal Ring,Ring,4,Normal,2,ATK,1,0,12001003,426000
-13001000,Aura,Aura,0,Normal,0,ATK,1,0,10100000,0
+10620000,활력의 아우라,Aura,2,Normal,0,HP,1,0,10620000,10
+10630000,활력의 아우라,Aura,3,Normal,1,HP,1,0,10620000,10
+10640000,활력의 아우라,Aura,4,Normal,2,HP,1,0,10620000,10
+10650000,활력의 아우라,Aura,5,Normal,3,HP,1,0,10620000,10
+10620001,통찰의 아우라,Aura,2,Normal,4,HP,1,0,10620001,10
+10630001,통찰의 아우라,Aura,3,Normal,5,HP,1,0,10620001,10
+10640001,통찰의 아우라,Aura,4,Normal,6,HP,1,0,10620001,10
+10650001,통찰의 아우라,Aura,5,Normal,7,HP,1,0,10620001,10

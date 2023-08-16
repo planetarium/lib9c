@@ -119,8 +119,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = _agentAddress,
             });
 
-            var avatarState = _initialState.GetAvatarStateV2(_avatarAddress);
-            Assert_Player(avatarState, nextState, _avatarAddress, itemSlotStateAddress);
+            Assert_Player(nextState, _avatarAddress, itemSlotStateAddress);
         }
 
         [Fact]
@@ -158,7 +157,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Random = new TestRandom(),
                 Signer = _agentAddress,
             });
-            Assert_Player(avatarState, nextState, _avatarAddress, itemSlotStateAddress);
+            Assert_Player(nextState, _avatarAddress, itemSlotStateAddress);
         }
 
         [Fact]
@@ -260,7 +259,7 @@ namespace Lib9c.Tests.Action.Scenario
                 foreach (var spawn in log.OfType<ArenaSpawnCharacter>())
                 {
                     ArenaCharacter character = spawn.Character;
-                    Assert.Equal(21, character.ATK);
+                    Assert.Equal(602, character.HP);
                     Assert.Equal(11, character.CRI);
                 }
 
@@ -338,17 +337,18 @@ namespace Lib9c.Tests.Action.Scenario
             }));
         }
 
-        private void Assert_Player(AvatarState avatarState, IAccountStateDelta state, Address avatarAddress, Address itemSlotStateAddress)
+        private void Assert_Player(IAccountStateDelta state, Address avatarAddress, Address itemSlotStateAddress)
         {
             var nextAvatarState = state.GetAvatarStateV2(avatarAddress);
             var equippedItem = Assert.IsType<Aura>(nextAvatarState.inventory.Equipments.First());
             Assert.True(equippedItem.equipped);
             Assert_ItemSlot(state, itemSlotStateAddress);
-            var player = new Player(avatarState, _tableSheets.GetSimulatorSheets());
             var equippedPlayer = new Player(nextAvatarState, _tableSheets.GetSimulatorSheets());
+            nextAvatarState.inventory.Equipments.First().equipped = false;
+            var player = new Player(nextAvatarState, _tableSheets.GetSimulatorSheets());
             Assert.Null(player.aura);
             Assert.NotNull(equippedPlayer.aura);
-            Assert.Equal(player.ATK + 1, equippedPlayer.ATK);
+            Assert.Equal(player.HP + 1, equippedPlayer.HP);
             Assert.Equal(player.CRI + 1, equippedPlayer.CRI);
         }
 
