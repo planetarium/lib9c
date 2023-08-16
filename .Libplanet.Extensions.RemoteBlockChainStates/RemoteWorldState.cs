@@ -1,14 +1,10 @@
-using Bencodex;
-using Bencodex.Types;
 using GraphQL;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.SystemTextJson;
 using Libplanet.Action.State;
 using Libplanet.Common;
-using Libplanet.Types.Assets;
-using Libplanet.Types.Blocks;
-using Libplanet.Types.Consensus;
 using Libplanet.Crypto;
+using Libplanet.Types.Blocks;
 
 namespace Libplanet.Extensions.RemoteBlockChainStates;
 
@@ -17,209 +13,54 @@ public class RemoteWorldState : IWorldState
     private readonly Uri _explorerEndpoint;
     private readonly GraphQLHttpClient _graphQlHttpClient;
 
-    public RemoteWorldState(Uri explorerEndpoint, BlockHash? blockHash)
+    public RemoteWorldState(Uri explorerEndpoint, BlockHash? offset)
     {
         _explorerEndpoint = explorerEndpoint;
-        _graphQlHttpClient =
-            new GraphQLHttpClient(_explorerEndpoint, new SystemTextJsonSerializer());
-        BlockHash = blockHash;
-    }
-
-    public IValue? GetState(Address address) =>
-        GetStates(new[] { address }).First();
-
-    public IReadOnlyList<IValue?> GetStates(IReadOnlyList<Address> addresses)
-    {
-        var response = _graphQlHttpClient.SendQueryAsync<GetStatesResponseType>(
+        _graphQlHttpClient = new GraphQLHttpClient(_explorerEndpoint, new SystemTextJsonSerializer());
+        var response = _graphQlHttpClient.SendQueryAsync<GetWorldStateResponseType>(
             new GraphQLRequest(
-                @"query GetStates($addresses: [Address!]!, $offsetBlockHash: ID!)
-            {
-                stateQuery
+                @"query GetWorld($address: Address!, $offsetBlockHash: ID!)
                 {
-                    states(addresses: $addresses, offsetBlockHash: $offsetBlockHash)
-                }
-            }",
-                operationName: "GetStates",
+                    stateQuery
+                    {
+                        worldState(offsetBlockHash: $offsetBlockHash)
+                    }
+                }",
+                operationName: "GetWorld",
                 variables: new
                 {
-                    addresses = addresses.Select(x => x.ToString()).ToArray(),
-                    offsetBlockHash = BlockHash is { } hash
+                    offset = offset is { } hash
                         ? ByteUtil.Hex(hash.ByteArray)
                         : throw new NotSupportedException(),
                 })).Result;
-        var codec = new Codec();
-        return response.Data.StateQuery.States
-            .Select(nullableState => nullableState is { } state ? codec.Decode(state) : null).ToList();
+        BlockHash = Types.Blocks.BlockHash.FromString(response.Data.StateQuery.WorldState.BlockHash);
+        Legacy = response.Data.StateQuery.WorldState.Legacy;
     }
 
-    public FungibleAssetValue GetBalance(Address address, Currency currency)
+    public IAccount GetAccount(Address address)
     {
-        object? currencyInput = currency.TotalSupplyTrackable ? new
-        {
-            ticker = currency.Ticker,
-            decimalPlaces = currency.DecimalPlaces,
-            minters = currency.Minters?.Select(addr => addr.ToString()).ToArray(),
-            totalSupplyTrackable = currency.TotalSupplyTrackable,
-            maximumSupplyMajorUnit = currency.MaximumSupply.Value.MajorUnit,
-            maximumSupplyMinorUnit = currency.MaximumSupply.Value.MinorUnit,
-        } : new
-        {
-            ticker = currency.Ticker,
-            decimalPlaces = currency.DecimalPlaces,
-            minters = currency.Minters?.Select(addr => addr.ToString()).ToArray(),
-            totalSupplyTrackable = currency.TotalSupplyTrackable,
-        };
-        var response = _graphQlHttpClient.SendQueryAsync<GetBalanceResponseType>(
-            new GraphQLRequest(
-        @"query GetBalance($owner: Address!, $currency: CurrencyInput!, $offsetBlockHash: ID!)
-            {
-                stateQuery
-                {
-                    balance(owner: $owner, currency: $currency, offsetBlockHash: $offsetBlockHash)
-                    {
-                        string
-                    }
-                }
-            }",
-            operationName: "GetBalance",
-            variables: new
-            {
-                owner = address.ToString(),
-                currency = currencyInput,
-                offsetBlockHash = BlockHash is { } hash
-                    ? ByteUtil.Hex(hash.ByteArray)
-                    : throw new NotSupportedException(),
-            })).Result;
-
-        return FungibleAssetValue.Parse(currency, response.Data.StateQuery.Balance.String.Split()[0]);
-    }
-
-    public FungibleAssetValue GetTotalSupply(Currency currency)
-    {
-        object? currencyInput = currency.TotalSupplyTrackable ? new
-        {
-            ticker = currency.Ticker,
-            decimalPlaces = currency.DecimalPlaces,
-            minters = currency.Minters.Select(addr => addr.ToString()).ToArray(),
-            totalSupplyTrackable = currency.TotalSupplyTrackable,
-            maximumSupplyMajorUnit = currency.MaximumSupply.Value.MajorUnit,
-            maximumSupplyMinorUnit = currency.MaximumSupply.Value.MinorUnit,
-        } : new
-        {
-            ticker = currency.Ticker,
-            decimalPlaces = currency.DecimalPlaces,
-            minters = currency.Minters.Select(addr => addr.ToString()).ToArray(),
-            totalSupplyTrackable = currency.TotalSupplyTrackable,
-        };
-        var response = _graphQlHttpClient.SendQueryAsync<GetTotalSupplyResponseType>(
-            new GraphQLRequest(
-                @"query GetTotalSupply(currency: CurrencyInput!, $offsetBlockHash: ID!)
-            {
-                stateQuery
-                {
-                    totalSupply(currency: $currency, offsetBlockHash: $offsetBlockHash)
-                    {
-                        string
-                    }
-                }
-            }",
-                operationName: "GetTotalSupply",
-                variables: new
-                {
-                    currency = currencyInput,
-                    offsetBlockHash = BlockHash is { } hash
-                        ? ByteUtil.Hex(hash.ByteArray)
-                        : throw new NotSupportedException(),
-                })).Result;
-
-        return FungibleAssetValue.Parse(currency, response.Data.StateQuery.TotalSupply.String.Split()[0]);
-    }
-
-    public ValidatorSet GetValidatorSet()
-    {
-        var response = _graphQlHttpClient.SendQueryAsync<GetValidatorsResponseType>(
-            new GraphQLRequest(
-                @"query GetValidators($offsetBlockHash: ID!)
-            {
-                stateQuery
-                {
-                    validators(offsetBlockHash: $offsetBlockHash)
-                    {
-                        publicKey
-                        power
-                    }
-                }
-            }",
-                operationName: "GetValidators",
-                variables: new
-                {
-                    offsetBlockHash = BlockHash is { } hash
-                        ? ByteUtil.Hex(hash.ByteArray)
-                        : throw new NotSupportedException(),
-                })).Result;
-
-        return new ValidatorSet(response.Data.StateQuery.Validators
-            .Select(x =>
-                new Validator(new PublicKey(ByteUtil.ParseHex(x.PublicKey)), x.Power))
-            .ToList());
+        return new RemoteAccount(
+            new RemoteAccountState(_explorerEndpoint, address, BlockHash));
     }
 
     public BlockHash? BlockHash { get; }
 
-    private class GetStatesResponseType
+    public bool Legacy { get; private set; }
+
+    public class GetWorldStateResponseType
     {
-        public StateQueryWithStatesType StateQuery { get; set; }
+        public StateQueryWithWorldStateType StateQuery { get; set; }
     }
 
-    private class StateQueryWithStatesType
+    public class StateQueryWithWorldStateType
     {
-        public byte[][] States { get; set; }
+        public WorldStateType WorldState { get; set; }
     }
 
-    private class GetBalanceResponseType
+    public class WorldStateType
     {
-        public StateQueryWithBalanceType StateQuery { get; set; }
-    }
+        public string BlockHash { get; set; }
 
-    private class StateQueryWithBalanceType
-    {
-        public FungibleAssetValueWithStringType Balance { get; set; }
-    }
-
-    private class FungibleAssetValueWithStringType
-    {
-        public string String { get; set; }
-    }
-
-    private class GetTotalSupplyResponseType
-    {
-        public StateQueryWithTotalSupplyType StateQuery { get; set; }
-    }
-
-    private class StateQueryWithTotalSupplyType
-    {
-        public FungibleAssetValueWithStringType TotalSupply { get; set; }
-    }
-
-    private class GetValidatorsResponseType
-    {
-        public StateQueryWithValidatorsType StateQuery { get; set; }
-    }
-
-    private class StateQueryWithValidatorsType
-    {
-        public ValidatorType[] Validators { get; set; }
-    }
-
-    private class ValidatorType
-    {
-        public string PublicKey { get; set; }
-        public long Power { get; set; }
-    }
-
-    public bool Legacy { get; }
-    public IAccount GetAccount(Address address)
-    {
-        throw new NotImplementedException();
+        public bool Legacy { get; set; }
     }
 }
