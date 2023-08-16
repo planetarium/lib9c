@@ -197,7 +197,9 @@ namespace Lib9c.Tests.Action
                 Rehearsal = true,
             });
 
-            Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.Delta.UpdatedAddresses);
+            Assert.Equal(
+                updatedAddresses.ToImmutableHashSet(),
+                nextState.Delta.Accounts.Values.SelectMany(a => a.Delta.UpdatedAddresses));
         }
     }
 }

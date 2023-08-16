@@ -1308,6 +1308,7 @@ namespace Lib9c.Tests.Action
                 costumes = new List<Guid>(),
                 equipments = new List<Guid>(),
                 avatarAddress = avatarAddress,
+                runeInfos = new List<RuneSlotInfo>(),
             };
 
             return action.Execute(new ActionContext

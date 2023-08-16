@@ -17,6 +17,7 @@ namespace Lib9c.Formatters
             {typeof(Address), new AddressFormatter()},
             {typeof(Exception), new ExceptionFormatter<Exception>()},
             {typeof(FungibleAssetValue), new FungibleAssetValueFormatter()},
+            {typeof(IWorld), new WorldFormatter()},
             {typeof(IAccount), new AccountFormatter()},
             {typeof(PublicKey), new PublicKeyFormatter()},
             {typeof(Dictionary), new BencodexFormatter<Dictionary>()},

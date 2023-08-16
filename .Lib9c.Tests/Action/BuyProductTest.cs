@@ -328,7 +328,9 @@ namespace Lib9c.Tests.Action
                 ProductInfos = productInfos,
             };
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(new ActionContext()));
+            var actionContext = new ActionContext();
+            actionContext.PreviousState = new MockWorld();
+            Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(actionContext));
         }
 
         public class ExecuteMember

@@ -15,7 +15,7 @@ namespace Lib9c.Formatters
         public void Serialize(ref MessagePackWriter writer, IAccount value,
             MessagePackSerializerOptions options)
         {
-            var state = new Dictionary(
+            var states = new Dictionary(
                 value.Delta.UpdatedAddresses.Select(addr => new KeyValuePair<IKey, IValue>(
                     (Binary)addr.ToByteArray(),
                     value.GetState(addr) ?? new Bencodex.Types.Null()
@@ -41,7 +41,7 @@ namespace Lib9c.Formatters
 
             var bdict = new Dictionary(new[]
             {
-                new KeyValuePair<IKey, IValue>((Text) "states", state),
+                new KeyValuePair<IKey, IValue>((Text) "states", states),
                 new KeyValuePair<IKey, IValue>((Text) "balances", balance),
                 new KeyValuePair<IKey, IValue>((Text) "totalSupplies", totalSupply),
             });
