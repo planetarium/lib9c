@@ -16,7 +16,7 @@ namespace Nekoyume.Blockchain
         private readonly ConcurrentDictionary<Address, SortedList<Transaction, TxId>> _txs;
         private readonly int _quotaPerSigner;
 
-        private static readonly ImmutableHashSet<Address> _bannedAccounts = new[]
+        public ImmutableHashSet<Address> BannedAccounts = new[]
         {
             new Address("de96aa7702a7a1fd18ee0f84a5a0c7a2c28ec840"),
             new Address("153281c93274bEB9726A03C33d3F19a8D78ad805"),
@@ -97,7 +97,7 @@ namespace Nekoyume.Blockchain
 
         public bool Stage(BlockChain blockChain, Transaction transaction)
         {
-            if (_bannedAccounts.Contains(transaction.Signer))
+            if (BannedAccounts.Contains(transaction.Signer))
             {
                 return false;
             }
