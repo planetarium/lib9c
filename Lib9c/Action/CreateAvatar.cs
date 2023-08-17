@@ -12,6 +12,7 @@ using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -68,7 +69,6 @@ namespace Nekoyume.Action
             IActionContext ctx = context;
             var signer = ctx.Signer;
             var world = ctx.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var avatarAddress = signer.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -81,6 +81,7 @@ namespace Nekoyume.Action
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (ctx.Rehearsal)
             {
+                var account = world.GetAccount(ReservedAddresses.LegacyAccount);
                 account = account.SetState(signer, MarkChanged);
                 for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
                 {
@@ -115,9 +116,9 @@ namespace Nekoyume.Action
             sw.Start();
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CreateAvatar exec started", addressesHex);
-            AgentState existingAgentState = account.GetAgentState(signer);
+            AgentState existingAgentState = AgentModule.GetState(world, signer);
             var agentState = existingAgentState ?? new AgentState(signer);
-            var avatarState = account.GetAvatarState(avatarAddress);
+            var avatarState = AvatarModule.GetState(world, avatarAddress);
             if (!(avatarState is null))
             {
                 throw new InvalidAddressException(
@@ -156,11 +157,18 @@ namespace Nekoyume.Action
 
             avatarState.Customize(hair, lens, ear, tail);
 
-            foreach (var address in avatarState.combinationSlotAddresses)
             {
-                var slotState =
-                    new CombinationSlotState(address, GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
-                account = account.SetState(address, slotState.Serialize());
+                var account = world.GetAccount(ReservedAddresses.LegacyAccount);
+                foreach (var address in avatarState.combinationSlotAddresses)
+                {
+                    var slotState =
+                        new CombinationSlotState(
+                            address,
+                            GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
+                    account = account.SetState(address, slotState.Serialize());
+                }
+
+                world = world.SetAccount(account);
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);
@@ -264,14 +272,17 @@ namespace Nekoyume.Action
             // TODO delete check blockIndex hard-fork this action
             // Fix invalid mint crystal balance in internal network. main-net always mint 200_000
             var mintingValue = context.BlockIndex > 7_210_000L ? 200_000 : 600_000;
-            account = account
-                .SetState(signer, agentState.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .MintAsset(ctx, signer, mintingValue * CrystalCalculator.CRYSTAL);
-            return world.SetAccount(account);
+            AgentModule.SetState(world, signer, agentState);
+            {
+                var account = world.GetAccount(ReservedAddresses.LegacyAccount);
+                account = account
+                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
+                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
+                    .SetState(questListAddress, avatarState.questList.Serialize())
+                    .SetState(avatarAddress, avatarState.SerializeV2())
+                    .MintAsset(ctx, signer, mintingValue * CrystalCalculator.CRYSTAL);
+                return world.SetAccount(account);
+            }
         }
     }
 }

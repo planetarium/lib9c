@@ -56,7 +56,7 @@ namespace Nekoyume.Action.Extensions
             return result;
         }
 
-        public static AgentState GetAgentState(this IAccountState states, Address address)
+        public static AgentState GetAgentState_(this IAccountState states, Address address)
         {
             var serializedAgent = states.GetState(address);
             if (serializedAgent is null)
@@ -119,7 +119,7 @@ namespace Nekoyume.Action.Extensions
             );
         }
 
-        public static AvatarState GetAvatarState(this IAccountState states, Address address)
+        public static AvatarState GetAvatarState_(this IAccountState states, Address address)
         {
             var serializedAvatar = states.GetState(address);
             if (serializedAvatar is null)
@@ -145,7 +145,7 @@ namespace Nekoyume.Action.Extensions
             }
         }
 
-        public static AvatarState GetAvatarStateV2(this IAccountState states, Address address)
+        public static AvatarState GetAvatarStateV2_(this IAccountState states, Address address)
         {
             var addresses = new List<Address>
             {
@@ -194,7 +194,7 @@ namespace Nekoyume.Action.Extensions
             }
         }
 
-        public static bool TryGetAvatarState(
+        public static bool TryGetAvatarState_(
             this IAccountState states,
             Address agentAddress,
             Address avatarAddress,
@@ -229,7 +229,7 @@ namespace Nekoyume.Action.Extensions
             }
         }
 
-        public static bool TryGetAvatarStateV2(
+        public static bool TryGetAvatarStateV2_(
             this IAccountState states,
             Address agentAddress,
             Address avatarAddress,
@@ -248,7 +248,7 @@ namespace Nekoyume.Action.Extensions
                         return false;
                     }
 
-                    avatarState = GetAvatarStateV2(states, avatarAddress);
+                    avatarState = GetAvatarStateV2_(states, avatarAddress);
                     return true;
                 }
                 catch (Exception e)
@@ -257,7 +257,7 @@ namespace Nekoyume.Action.Extensions
                     if (e is KeyNotFoundException || e is FailedLoadStateException)
                     {
                         migrationRequired = true;
-                        return states.TryGetAvatarState(agentAddress, avatarAddress, out avatarState);
+                        return states.TryGetAvatarState_(agentAddress, avatarAddress, out avatarState);
                     }
 
                     return false;
@@ -267,7 +267,7 @@ namespace Nekoyume.Action.Extensions
             return false;
         }
 
-        public static bool TryGetAgentAvatarStates(
+        public static bool TryGetAgentAvatarStates_(
             this IAccountState states,
             Address agentAddress,
             Address avatarAddress,
@@ -276,7 +276,7 @@ namespace Nekoyume.Action.Extensions
         )
         {
             avatarState = null;
-            agentState = states.GetAgentState(agentAddress);
+            agentState = states.GetAgentState_(agentAddress);
             if (agentState is null)
             {
                 return false;
@@ -288,11 +288,11 @@ namespace Nekoyume.Action.Extensions
                     $"The avatar {avatarAddress.ToHex()} does not belong to the agent {agentAddress.ToHex()}.");
             }
 
-            avatarState = states.GetAvatarState(avatarAddress);
+            avatarState = states.GetAvatarState_(avatarAddress);
             return !(avatarState is null);
         }
 
-        public static bool TryGetAgentAvatarStatesV2(
+        public static bool TryGetAgentAvatarStatesV2_(
             this IAccountState states,
             Address agentAddress,
             Address avatarAddress,
@@ -303,7 +303,7 @@ namespace Nekoyume.Action.Extensions
         {
             avatarState = null;
             avatarMigrationRequired = false;
-            agentState = states.GetAgentState(agentAddress);
+            agentState = states.GetAgentState_(agentAddress);
             if (agentState is null)
             {
                 return false;
@@ -317,12 +317,12 @@ namespace Nekoyume.Action.Extensions
 
             try
             {
-                avatarState = states.GetAvatarStateV2(avatarAddress);
+                avatarState = states.GetAvatarStateV2_(avatarAddress);
             }
             catch (FailedLoadStateException)
             {
                 // BackWardCompatible.
-                avatarState = states.GetAvatarState(avatarAddress);
+                avatarState = states.GetAvatarState_(avatarAddress);
                 avatarMigrationRequired = true;
             }
 
@@ -986,17 +986,17 @@ namespace Nekoyume.Action.Extensions
             return false;
         }
 
-        public static AvatarState GetEnemyAvatarState(this IAccountState states, Address avatarAddress)
+        public static AvatarState GetEnemyAvatarState_(this IAccountState states, Address avatarAddress)
         {
             AvatarState enemyAvatarState;
             try
             {
-                enemyAvatarState = states.GetAvatarStateV2(avatarAddress);
+                enemyAvatarState = states.GetAvatarStateV2_(avatarAddress);
             }
             // BackWard compatible.
             catch (FailedLoadStateException)
             {
-                enemyAvatarState = states.GetAvatarState(avatarAddress);
+                enemyAvatarState = states.GetAvatarState_(avatarAddress);
             }
 
             if (enemyAvatarState is null)
