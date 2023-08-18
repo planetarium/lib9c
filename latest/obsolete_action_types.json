@@ -156,6 +156,10 @@
     "obsoleteAt": 7206000
   },
   {
+    "id": "claim_stake_reward5",
+    "obsoleteAt": 7649999
+  },
+  {
     "id": "combination_consumable",
     "obsoleteAt": 7000000
   },
