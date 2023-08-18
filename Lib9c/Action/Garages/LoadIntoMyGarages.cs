@@ -12,12 +12,12 @@ using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Garages;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData.Garages;
 
 namespace Nekoyume.Action.Garages
@@ -134,23 +134,22 @@ namespace Nekoyume.Action.Garages
             }
 
             var world = context.PreviousState;
-            var state = world.GetAccount(ReservedAddresses.LegacyAccount);
-
             var addressesHex = GetSignerAndOtherAddressesHex(context);
             ValidateFields(context.Signer, addressesHex);
 
-            var sheet = state.GetSheet<LoadIntoMyGaragesCostSheet>();
+            var sheet = LegacyModule.GetSheet<LoadIntoMyGaragesCostSheet>(world);
             var garageCost = sheet.GetGarageCost(
                 FungibleAssetValues?.Select(tuple => tuple.value),
                 FungibleIdAndCounts);
-            state = state.TransferAsset(
+            world = LegacyModule.TransferAsset(
+                world,
                 context,
                 context.Signer,
                 Addresses.GarageWallet,
                 garageCost);
 
-            state = TransferFungibleAssetValues(context, state);
-            return world.SetAccount(TransferFungibleItems(context.Signer, context.BlockIndex, state));
+            world = TransferFungibleAssetValues(context, world);
+            return TransferFungibleItems(context.Signer, context.BlockIndex, world);
         }
 
         private void ValidateFields(
@@ -219,40 +218,45 @@ namespace Nekoyume.Action.Garages
             }
         }
 
-        private IAccount TransferFungibleAssetValues(
+        private IWorld TransferFungibleAssetValues(
             IActionContext context,
-            IAccount account)
+            IWorld world)
         {
             if (FungibleAssetValues is null)
             {
-                return account;
+                return world;
             }
 
             var garageBalanceAddress =
                 Addresses.GetGarageBalanceAddress(context.Signer);
             foreach (var (balanceAddr, value) in FungibleAssetValues)
             {
-                account = account.TransferAsset(context, balanceAddr, garageBalanceAddress, value);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    balanceAddr,
+                    garageBalanceAddress,
+                    value);
             }
 
-            return account;
+            return world;
         }
 
-        private IAccount TransferFungibleItems(
+        private IWorld TransferFungibleItems(
             Address signer,
             long blockIndex,
-            IAccount account)
+            IWorld world)
         {
             if (InventoryAddr is null ||
                 FungibleIdAndCounts is null)
             {
-                return account;
+                return world;
             }
 
-            var inventory = account.GetInventory(InventoryAddr.Value);
+            var inventory = LegacyModule.GetInventory(world, InventoryAddr.Value);
             var fungibleItemTuples = GarageUtils.WithGarageStateTuples(
                 signer,
-                account,
+                world,
                 FungibleIdAndCounts);
             foreach (var (fungibleId, count, garageAddr, garageState) in fungibleItemTuples)
             {
@@ -306,10 +310,10 @@ namespace Nekoyume.Action.Garages
                 }
 
                 garage.Load(count);
-                account = account.SetState(garageAddr, garage.Serialize());
+                world = LegacyModule.SetState(world, garageAddr, garage.Serialize());
             }
 
-            return account.SetState(InventoryAddr.Value, inventory.Serialize());
+            return LegacyModule.SetState(world, InventoryAddr.Value, inventory.Serialize());
         }
     }
 }

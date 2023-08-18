@@ -12,6 +12,7 @@ using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -59,7 +60,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var slotAddress = avatarAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -72,6 +72,7 @@ namespace Nekoyume.Action
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
+                var account = world.GetAccount(ReservedAddresses.LegacyAccount);
                 account = account
                     .SetState(avatarAddress, MarkChanged)
                     .SetState(context.Signer, MarkChanged)
@@ -86,7 +87,12 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Combination exec started", addressesHex);
 
-            if (!account.TryGetAvatarStateV2(context.Signer, avatarAddress, out var avatarState, out _))
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
+                    context.Signer,
+                    avatarAddress,
+                    out var avatarState,
+                    out _))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -105,7 +111,8 @@ namespace Nekoyume.Action
             // ~Validate Required Cleared Stage
 
             // Validate SlotIndex
-            var slotState = account.GetCombinationSlotState(avatarAddress, slotIndex);
+            var slotState = world.GetAccount(ReservedAddresses.LegacyAccount)
+                .GetCombinationSlotState(avatarAddress, slotIndex);
             if (slotState is null)
             {
                 throw new FailedLoadStateException(
@@ -125,7 +132,8 @@ namespace Nekoyume.Action
             var requiredFungibleItems = new Dictionary<int, int>();
 
             // Validate RecipeId
-            var consumableItemRecipeSheet = account.GetSheet<ConsumableItemRecipeSheet>();
+            var consumableItemRecipeSheet = world.GetAccount(ReservedAddresses.LegacyAccount)
+                .GetSheet<ConsumableItemRecipeSheet>();
             if (!consumableItemRecipeSheet.TryGetValue(recipeId, out var recipeRow))
             {
                 throw new SheetRowNotFoundException(
@@ -136,7 +144,8 @@ namespace Nekoyume.Action
             // ~Validate RecipeId
 
             // Validate Recipe ResultEquipmentId
-            var consumableItemSheet = account.GetSheet<ConsumableItemSheet>();
+            var consumableItemSheet = world.GetAccount(ReservedAddresses.LegacyAccount)
+                .GetSheet<ConsumableItemSheet>();
             if (!consumableItemSheet.TryGetValue(recipeRow.ResultConsumableItemId, out var consumableRow))
             {
                 throw new SheetRowNotFoundException(
@@ -147,7 +156,8 @@ namespace Nekoyume.Action
             // ~Validate Recipe ResultEquipmentId
 
             // Validate Recipe Material
-            var materialItemSheet = account.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = world.GetAccount(ReservedAddresses.LegacyAccount)
+                .GetSheet<MaterialItemSheet>();
             for (var i = recipeRow.Materials.Count; i > 0; i--)
             {
                 var materialInfo = recipeRow.Materials[i - 1];
@@ -242,13 +252,13 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Combination Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            account = account
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
-            return world.SetAccount(account);
+            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            return world.SetAccount(
+                world.GetAccount(ReservedAddresses.LegacyAccount)
+                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
+                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
+                    .SetState(questListAddress, avatarState.questList.Serialize())
+                    .SetState(slotAddress, slotState.Serialize()));
         }
     }
 }

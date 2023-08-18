@@ -5,6 +5,7 @@ using Libplanet.Crypto;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -31,9 +32,8 @@ namespace Nekoyume.Action
             context.UseGas(1);
             Address signer = context.Signer;
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var contractAddress = signer.GetPledgeAddress();
-            if (!account.TryGetState(contractAddress, out List contract))
+            if (!LegacyModule.TryGetState(world, contractAddress, out List contract))
             {
                 throw new FailedLoadStateException("failed to find requested pledge.");
             }
@@ -48,14 +48,14 @@ namespace Nekoyume.Action
                 throw new AlreadyContractedException($"{signer} already contracted.");
             }
 
-            account = account.SetState(
+            return LegacyModule.SetState(
+                world,
                 contractAddress,
                 List.Empty
                     .Add(PatronAddress.Serialize())
                     .Add(true.Serialize())
                     .Add(contract[2])
             );
-            return world.SetAccount(account);
         }
     }
 }

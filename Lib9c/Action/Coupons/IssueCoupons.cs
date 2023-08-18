@@ -5,8 +5,8 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Coupons;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Coupons
 {
@@ -32,19 +32,18 @@ namespace Nekoyume.Action.Coupons
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                account = account.SetCouponWallet(
+                return LegacyModule.SetCouponWallet(
+                    world,
                     Recipient,
                     ImmutableDictionary.Create<Guid, Coupon>(),
                     rehearsal: true);
-                return world.SetAccount(account);
             }
 
             CheckPermission(context);
 
-            var wallet = account.GetCouponWallet(Recipient);
+            var wallet = LegacyModule.GetCouponWallet(world, Recipient);
             var random = context.Random;
             var idBytes = new byte[16];
             var orderedRewards = Rewards.OrderBy(kv => kv.Key, default(RewardSet.Comparer));
@@ -59,8 +58,7 @@ namespace Nekoyume.Action.Coupons
                 }
             }
 
-            account = account.SetCouponWallet(Recipient, wallet);
-            return world.SetAccount(account);
+            return LegacyModule.SetCouponWallet(world, Recipient, wallet);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

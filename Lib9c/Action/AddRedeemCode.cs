@@ -4,8 +4,8 @@ using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -22,21 +22,18 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                account = account.SetState(Addresses.RedeemCode, MarkChanged);
-                return world.SetAccount(account);
+                return LegacyModule.SetState(world, Addresses.RedeemCode, MarkChanged);
             }
 
             CheckPermission(context);
 
-            var redeem = account.GetRedeemCodeState();
+            var redeem = LegacyModule.GetRedeemCodeState(world);
             var sheet = new RedeemCodeListSheet();
             sheet.Set(redeemCsv);
             redeem.Update(sheet);
-            account = account.SetState(Addresses.RedeemCode, redeem.Serialize());
-            return world.SetAccount(account);
+            return LegacyModule.SetState(world, Addresses.RedeemCode, redeem.Serialize());
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -116,9 +116,9 @@ namespace Nekoyume.Action
             sw.Start();
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CreateAvatar exec started", addressesHex);
-            AgentState existingAgentState = AgentModule.GetState(world, signer);
+            AgentState existingAgentState = AgentModule.GetAgentState(world, signer);
             var agentState = existingAgentState ?? new AgentState(signer);
-            var avatarState = AvatarModule.GetState(world, avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(world, avatarAddress);
             if (!(avatarState is null))
             {
                 throw new InvalidAddressException(
@@ -272,14 +272,19 @@ namespace Nekoyume.Action
             // TODO delete check blockIndex hard-fork this action
             // Fix invalid mint crystal balance in internal network. main-net always mint 200_000
             var mintingValue = context.BlockIndex > 7_210_000L ? 200_000 : 600_000;
-            AgentModule.SetState(world, signer, agentState);
+            world = AgentModule.SetAgentState(world, signer, agentState);
             {
                 var account = world.GetAccount(ReservedAddresses.LegacyAccount);
                 account = account
                     .SetState(inventoryAddress, avatarState.inventory.Serialize())
                     .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize())
-                    .SetState(avatarAddress, avatarState.SerializeV2())
+                    .SetState(questListAddress, avatarState.questList.Serialize());
+                world = world.SetAccount(account);
+            }
+            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            {
+                var account = world.GetAccount(ReservedAddresses.LegacyAccount);
+                account = account
                     .MintAsset(ctx, signer, mintingValue * CrystalCalculator.CRYSTAL);
                 return world.SetAccount(account);
             }

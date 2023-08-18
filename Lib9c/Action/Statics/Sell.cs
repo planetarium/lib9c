@@ -5,18 +5,18 @@ using Lib9c.Model.Order;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model;
 using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 
 namespace Nekoyume.Action.Statics
 {
     public static class Sell
     {
-        public static IAccount Cancel(IAccount account,
+        public static IWorld Cancel(IWorld world,
             UpdateSellInfo updateSellInfo, string addressesHex, AvatarState avatarState,
             OrderDigestListState digestList, IActionContext context, Address sellerAvatarAddress)
         {
@@ -37,7 +37,7 @@ namespace Nekoyume.Action.Statics
 
             // for sell cancel
             sw.Start();
-            if (!account.TryGetState(shopAddress, out Dictionary shopStateDict))
+            if (!LegacyModule.TryGetState(world, shopAddress, out Dictionary shopStateDict))
             {
                 throw new FailedLoadStateException($"{addressesHex}failed to load {nameof(ShardedShopStateV2)}({shopAddress}).");
             }
@@ -45,7 +45,7 @@ namespace Nekoyume.Action.Statics
             sw.Stop();
             Log.Verbose("{AddressesHex} UpdateSell Sell Cancel Get ShopState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
-            if (!account.TryGetState(Order.DeriveAddress(orderId), out Dictionary orderDict))
+            if (!LegacyModule.TryGetState(world, Order.DeriveAddress(orderId), out Dictionary orderDict))
             {
                 throw new FailedLoadStateException($"{addressesHex} failed to load {nameof(Order)}({Order.DeriveAddress(updateSellInfo.orderId)}).");
             }
@@ -57,7 +57,7 @@ namespace Nekoyume.Action.Statics
             {
                 var shardedShopState = new ShardedShopStateV2(shopStateDict);
                 shardedShopState.Remove(orderOnSale, context.BlockIndex);
-                account = account.SetState(shopAddress, shardedShopState.Serialize());
+                world = LegacyModule.SetState(world, shopAddress, shardedShopState.Serialize());
             }
 
             digestList.Remove(orderOnSale.OrderId);
@@ -70,7 +70,7 @@ namespace Nekoyume.Action.Statics
                 avatarState.mailBox.Remove(expirationMail);
             }
 
-            return account.SetState(digestList.Address, digestList.Serialize());
+            return LegacyModule.SetState(world, digestList.Address, digestList.Serialize());
         }
     }
 }

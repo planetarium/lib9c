@@ -13,6 +13,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -131,9 +132,8 @@ namespace Nekoyume.Action
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
-            if (!account.TryGetStakeState(context.Signer, out var stakeState))
+            if (!LegacyModule.TryGetStakeState(world, context.Signer, out var stakeState))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
@@ -150,7 +150,8 @@ namespace Nekoyume.Action
                     context.BlockIndex);
             }
 
-            if (!account.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
                     context.Signer,
                     AvatarAddress,
                     out var avatarState,
@@ -163,17 +164,19 @@ namespace Nekoyume.Action
                     AvatarAddress);
             }
 
-            var sheets = account.GetSheets(sheetTypes: new[]
-            {
-                typeof(StakeRegularRewardSheet),
-                typeof(ConsumableItemSheet),
-                typeof(CostumeItemSheet),
-                typeof(EquipmentItemSheet),
-                typeof(MaterialItemSheet),
-            });
+            var sheets = LegacyModule.GetSheets(
+                world,
+                sheetTypes: new[]
+                {
+                    typeof(StakeRegularRewardSheet),
+                    typeof(ConsumableItemSheet),
+                    typeof(CostumeItemSheet),
+                    typeof(EquipmentItemSheet),
+                    typeof(MaterialItemSheet),
+                });
 
-            var currency = account.GetGoldCurrency();
-            var stakedAmount = account.GetBalance(stakeState.address, currency);
+            var currency = LegacyModule.GetGoldCurrency(world);
+            var stakedAmount = LegacyModule.GetBalance(world, stakeState.address, currency);
             var stakeRegularRewardSheet = sheets.GetSheet<StakeRegularRewardSheet>();
             var level =
                 stakeRegularRewardSheet.FindLevelByStakedAmount(context.Signer, stakedAmount);
@@ -195,9 +198,9 @@ namespace Nekoyume.Action
                 var v1Level = Math.Min(level, V1.MaxLevel);
                 var fixedRewardV1 = V1.StakeRegularFixedRewardSheet[v1Level].Rewards;
                 var regularRewardV1 = V1.StakeRegularRewardSheet[v1Level].Rewards;
-                account = ProcessReward(
+                world = ProcessReward(
                     context,
-                    account,
+                    world,
                     ref avatarState,
                     itemSheet,
                     stakedAmount,
@@ -210,14 +213,15 @@ namespace Nekoyume.Action
 
             if (itemV2Step > 0)
             {
-                var regularFixedReward =
-                    account.TryGetSheet<StakeRegularFixedRewardSheet>(out var fixedRewardSheet)
-                        ? fixedRewardSheet[level].Rewards
-                        : new List<StakeRegularFixedRewardSheet.RewardInfo>();
+                var regularFixedReward = LegacyModule.TryGetSheet<StakeRegularFixedRewardSheet>(
+                    world,
+                    out var fixedRewardSheet)
+                    ? fixedRewardSheet[level].Rewards
+                    : new List<StakeRegularFixedRewardSheet.RewardInfo>();
                 var regularReward = sheets.GetSheet<StakeRegularRewardSheet>()[level].Rewards;
-                account = ProcessReward(
+                world = ProcessReward(
                     context,
-                    account,
+                    world,
                     ref avatarState,
                     itemSheet,
                     stakedAmount,
@@ -232,27 +236,28 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                account = account
-                    .SetState(avatarState.address, avatarState.SerializeV2())
-                    .SetState(
+                world = AvatarModule.SetAvatarStateV2(world, avatarState.address, avatarState);
+                world = LegacyModule.SetState(world,
                         avatarState.address.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize())
+                        avatarState.worldInformation.Serialize());
+                world = LegacyModule
                     .SetState(
+                        world,
                         avatarState.address.Derive(LegacyQuestListKey),
                         avatarState.questList.Serialize());
             }
 
-            account = account
-                .SetState(stakeState.address, stakeState.Serialize())
-                .SetState(
-                    avatarState.address.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-            return world.SetAccount(account);
+            world = LegacyModule.SetState(world, stakeState.address, stakeState.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                avatarState.address.Derive(LegacyInventoryKey),
+                avatarState.inventory.Serialize());
+            return world;
         }
 
-        private IAccount ProcessReward(
+        private IWorld ProcessReward(
             IActionContext context,
-            IAccount account,
+            IWorld world,
             ref AvatarState avatarState,
             ItemSheet itemSheet,
             FungibleAssetValue stakedAmount,
@@ -291,7 +296,7 @@ namespace Nekoyume.Action
                             continue;
                         }
 
-                        account = account.MintAsset(context, AvatarAddress, runeReward);
+                        world = LegacyModule.MintAsset(world, context, AvatarAddress, runeReward);
                         break;
                     case StakeRegularRewardSheet.StakeRewardType.Currency:
                         if (string.IsNullOrEmpty(reward.CurrencyTicker))
@@ -308,7 +313,8 @@ namespace Nekoyume.Action
                             continue;
                         }
 
-                        account = account.MintAsset(
+                        world = LegacyModule.MintAsset(
+                            world,
                             context,
                             context.Signer,
                             rewardCurrencyQuantity * currencyRewardStep * rewardCurrency);
@@ -328,7 +334,7 @@ namespace Nekoyume.Action
                 avatarState.inventory.AddItem(item, reward.Count * itemRewardStep);
             }
 
-            return account;
+            return world;
         }
     }
 }

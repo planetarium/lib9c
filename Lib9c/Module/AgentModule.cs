@@ -1,21 +1,42 @@
-﻿using Libplanet.Action.State;
+﻿using System;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
+using Nekoyume.Action;
 using Nekoyume.Model.State;
+using Serilog;
 
 namespace Nekoyume.Module
 {
-    public class AgentModule
+    public static class AgentModule
     {
-        public static AgentState GetState(IWorld world, Address agent)
+        public static AgentState GetAgentState(IWorld world, Address address)
         {
             var account = AccountHelper.ResolveAccount(world, Addresses.Agent);
+            var serializedAgent = account.GetState(address);
+            if (serializedAgent is null)
+            {
+                Log.Warning("No agent state ({0})", address.ToHex());
+                return null;
+            }
 
-            // TODO: Move AccountStateExtensions to Lib9c.Modules?
-            return account.GetAgentState1(agent);
+            try
+            {
+                return new AgentState((Bencodex.Types.Dictionary)serializedAgent);
+            }
+            catch (InvalidCastException e)
+            {
+                Log.Error(
+                    e,
+                    "Invalid agent state ({0}): {1}",
+                    address.ToHex(),
+                    serializedAgent
+                );
+
+                return null;
+            }
         }
 
-        public static IWorld SetState(IWorld world, Address agent, AgentState state)
+        public static IWorld SetAgentState(IWorld world, Address agent, AgentState state)
         {
             // TODO: Override legacy address to null state?
             var account = world.GetAccount(Addresses.Agent);

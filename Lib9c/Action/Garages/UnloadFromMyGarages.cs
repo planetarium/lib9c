@@ -18,6 +18,7 @@ using Nekoyume.Exceptions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Garages
 {
@@ -128,13 +129,11 @@ namespace Nekoyume.Action.Garages
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-
             var addressesHex = GetSignerAndOtherAddressesHex(context);
             ValidateFields(addressesHex);
-            account = TransferFungibleAssetValues(context, account);
-            account = TransferFungibleItems(context.Signer, account);
-            return world.SetAccount(SendMail(context.BlockIndex, context.Random, account));
+            world = TransferFungibleAssetValues(context, world);
+            world = TransferFungibleItems(context.Signer, world);
+            return SendMail(context.BlockIndex, context.Random, world);
         }
 
         private void ValidateFields(string addressesHex)
@@ -175,55 +174,60 @@ namespace Nekoyume.Action.Garages
             }
         }
 
-        private IAccount TransferFungibleAssetValues(
+        private IWorld TransferFungibleAssetValues(
             IActionContext context,
-            IAccount account)
+            IWorld world)
         {
             if (FungibleAssetValues is null)
             {
-                return account;
+                return world;
             }
 
             var garageBalanceAddress = Addresses.GetGarageBalanceAddress(context.Signer);
             foreach (var (balanceAddr, value) in FungibleAssetValues)
             {
-                account = account.TransferAsset(context, garageBalanceAddress, balanceAddr, value);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    garageBalanceAddress,
+                    balanceAddr,
+                    value);
             }
 
-            return account;
+            return world;
         }
 
-        private IAccount TransferFungibleItems(
+        private IWorld TransferFungibleItems(
             Address signer,
-            IAccount account)
+            IWorld world)
         {
             if (FungibleIdAndCounts is null)
             {
-                return account;
+                return world;
             }
 
             var inventoryAddr = RecipientAvatarAddr.Derive(SerializeKeys.LegacyInventoryKey);
-            var inventory = account.GetInventory(inventoryAddr);
+            var inventory = LegacyModule.GetInventory(world, inventoryAddr);
             var fungibleItemTuples = GarageUtils.WithGarageTuples(
                 signer,
-                account,
+                world,
                 FungibleIdAndCounts);
             foreach (var (_, count, garageAddr, garage) in fungibleItemTuples)
             {
                 garage.Unload(count);
                 inventory.AddFungibleItem((ItemBase)garage.Item, count);
-                account = account.SetState(garageAddr, garage.Serialize());
+                world = LegacyModule.SetState(world, garageAddr, garage.Serialize());
             }
 
-            return account.SetState(inventoryAddr, inventory.Serialize());
+            return LegacyModule.SetState(world, inventoryAddr, inventory.Serialize());
         }
 
-        private IAccount SendMail(
+        private IWorld SendMail(
             long blockIndex,
             IRandom random,
-            IAccount account)
+            IWorld world)
         {
-            var avatarValue = account.GetState(RecipientAvatarAddr);
+            var avatarValue = LegacyModule.GetState(world, RecipientAvatarAddr);
             if (!(avatarValue is Dictionary avatarDict))
             {
                 throw new FailedLoadStateException(RecipientAvatarAddr, typeof(AvatarState));
@@ -248,7 +252,7 @@ namespace Nekoyume.Action.Garages
                 Memo));
             mailBox.CleanUp();
             avatarDict = avatarDict.SetItem(SerializeKeys.MailBoxKey, mailBox.Serialize());
-            return account.SetState(RecipientAvatarAddr, avatarDict);
+            return LegacyModule.SetState(world, RecipientAvatarAddr, avatarDict);
         }
     }
 }
