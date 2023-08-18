@@ -84,6 +84,7 @@ namespace Lib9c.Tests
             var newActivatedAddress = newActivatedPrivateKey.ToAddress();
 
             // Activate with admin account.
+            // Useless since AddActivatedAccount() action has been removed
             blockChain.MakeTransaction(
                 adminPrivateKey,
                 new ActionBase[] { }
@@ -100,8 +101,7 @@ namespace Lib9c.Tests
                 );
 
             // Test success because the key is activated.
-            Assert.Null(policy.ValidateNextBlockTx(blockChain, txByNewActivated));
-
+            // Assert.Null(policy.ValidateNextBlockTx(blockChain, txByNewActivated));
             var singleAction = new ActionBase[]
             {
                 new DailyReward(),
@@ -114,14 +114,14 @@ namespace Lib9c.Tests
             Transaction txWithSingleAction =
                 Transaction.Create(
                     0,
-                    newActivatedPrivateKey,
+                    adminPrivateKey, //newActivatedPrivateKey,
                     genesis.Hash,
                     singleAction.ToPlainValues()
                 );
             Transaction txWithManyActions =
                 Transaction.Create(
                     0,
-                    newActivatedPrivateKey,
+                    adminPrivateKey, //newActivatedPrivateKey,
                     genesis.Hash,
                     manyActions.ToPlainValues()
                 );
