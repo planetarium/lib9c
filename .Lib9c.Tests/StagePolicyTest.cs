@@ -4,6 +4,7 @@ namespace Lib9c.Tests
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Bencodex.Types;
     using Lib9c.Tests.TestHelper;
     using Libplanet.Action;
     using Libplanet.Blockchain;
@@ -226,6 +227,43 @@ namespace Lib9c.Tests
                 stagePolicy,
                 txA,
                 txB);
+        }
+
+        [Fact]
+        public void Stage_BanActionTypeId()
+        {
+            NCStagePolicy stagePolicy = new NCStagePolicy(TimeSpan.FromHours(1), 2);
+            BlockChain chain = MakeChainWithStagePolicy(stagePolicy);
+
+            var claimStakeReward = new ClaimStakeReward(default).PlainValue;
+            Assert.Equal(
+                (Text)"claim_stake_reward6",
+                Assert.IsType<Dictionary>(claimStakeReward)["type_id"]);
+            Assert.False(stagePolicy.Stage(
+                chain,
+                Transaction.Create(
+                    0,
+                    _accounts[0],
+                    default,
+                    new[] { claimStakeReward }
+                )
+            ));
+
+            Assert.True(stagePolicy.Stage(
+                chain,
+                Transaction.Create(
+                    0,
+                    _accounts[0],
+                    default,
+                    new[]
+                    {
+                        new DailyReward()
+                        {
+                            avatarAddress = default,
+                        },
+                    }.ToPlainValues()
+                )
+            ));
         }
 
         private void AssertTxs(BlockChain blockChain, NCStagePolicy policy, params Transaction[] txs)

@@ -1,3 +1,5 @@
+using Bencodex.Types;
+
 namespace Nekoyume.Blockchain
 {
     using System;
@@ -37,6 +39,11 @@ namespace Nekoyume.Blockchain
             new Address("7655122899Ccd2cC87B38A35D7158c9516504119"),
             new Address("3165fda4aAE0362EFFd8Ae6e8674AA49381b4485"),
             new Address("CAFC88175f88973d01e6A9479b31eC0beb020b8a"),
+        }.ToImmutableHashSet();
+
+        private static readonly ImmutableHashSet<string> _bannedActionTypeIds = new[]
+        {
+            "claim_stake_reward6",
         }.ToImmutableHashSet();
 
         public NCStagePolicy(TimeSpan txLifeTime, int quotaPerSigner)
@@ -98,6 +105,14 @@ namespace Nekoyume.Blockchain
         public bool Stage(BlockChain blockChain, Transaction transaction)
         {
             if (_bannedAccounts.Contains(transaction.Signer))
+            {
+                return false;
+            }
+
+            if (transaction.Actions.Count == 1 &&
+                transaction.Actions[0] is Dictionary dictionary &&
+                dictionary.TryGetValue((Text)"type_id", out var typeIdValue) &&
+                typeIdValue is Text typeId && _bannedActionTypeIds.Contains(typeId.Value))
             {
                 return false;
             }
