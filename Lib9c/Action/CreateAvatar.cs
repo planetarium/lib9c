@@ -258,16 +258,28 @@ namespace Nekoyume.Action
 #endif
 
             // Aura test
+            var skills = new List<Skill>();
+            foreach (var skillId in new[] {800001, 800002})
+            {
+                var auraSkillRow = states.GetSheet<SkillSheet>()[skillId];
+                var auraSkill = SkillFactory.Get(auraSkillRow, 0, 100, 0, StatType.NONE);
+                skills.Add(auraSkill);
+            }
+
             foreach (var row in states.GetSheet<EquipmentItemSheet>().Values)
             {
                 if (row.ItemSubType == ItemSubType.Aura)
                 {
-                    var aura = ItemFactory.CreateItemUsable(row, ctx.Random.GenerateRandomGuid(), 0, 0);
-                    aura.StatsMap.AddStatAdditionalValue(StatType.CRI, 1);
-                    var auraSkillRow = states.GetSheet<SkillSheet>()[800001];
-                    var auraSkill = SkillFactory.Get(auraSkillRow, 0, 100, 0, StatType.NONE);
-                    aura.Skills.Add(auraSkill);
-                    avatarState.inventory.AddItem(aura);
+                    foreach (var auraSkill in skills)
+                    {
+                        var aura = ItemFactory.CreateItemUsable(row, ctx.Random.GenerateRandomGuid(), 0);
+                        aura.Skills.Add(auraSkill);
+                        aura.StatsMap.AddStatAdditionalValue(StatType.CRI, 1);
+                        avatarState.inventory.AddItem(aura);
+                    }
+                    var aura2 = ItemFactory.CreateItemUsable(row, ctx.Random.GenerateRandomGuid(), 0);
+                    aura2.StatsMap.AddStatAdditionalValue(StatType.CRI, 1);
+                    avatarState.inventory.AddItem(aura2);
                 }
             }
             sw.Stop();

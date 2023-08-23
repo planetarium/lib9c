@@ -83,7 +83,7 @@ namespace Lib9c.Tests.Action
             Assert.True(agentState.avatarAddresses.Any());
             Assert.Equal("test", nextAvatarState.name);
             Assert.Equal(expected * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
-            Assert.Equal(8, nextAvatarState.inventory.Equipments.Count());
+            Assert.Equal(24, nextAvatarState.inventory.Equipments.Count());
         }
 
         [Theory]
