@@ -7,7 +7,6 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -15,6 +14,7 @@ using Nekoyume.Model;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 
@@ -80,8 +80,13 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}JoinArena exec started", addressesHex);
 
-            if (!account.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress,
-                    out var agentState, out var avatarState, out _))
+            if (!AvatarModule.TryGetAgentAvatarStatesV2(
+                    world,
+                    context.Signer,
+                    avatarAddress,
+                    out var agentState,
+                    out var avatarState,
+                    out _))
             {
                 throw new FailedLoadStateException(
                     $"[{nameof(JoinArena)}] Aborted as the avatar state of the signer failed to load.");
@@ -102,7 +107,8 @@ namespace Nekoyume.Action
                     worldInfo.StageClearedId);
             }
 
-            var sheets = account.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 sheetTypes: new[]
                 {
                     typeof(ItemRequirementSheet),
@@ -122,7 +128,10 @@ namespace Nekoyume.Action
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
-            var runeSlotState = account.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+            var runeSlotState = LegacyModule.TryGetState(
+                world,
+                runeSlotStateAddress,
+                out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Arena);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
@@ -131,7 +140,10 @@ namespace Nekoyume.Action
 
             // update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
-            var itemSlotState = account.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+            var itemSlotState = LegacyModule.TryGetState(
+                world,
+                itemSlotStateAddress,
+                out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Arena);
             itemSlotState.UpdateEquipment(equipments);
@@ -181,7 +193,7 @@ namespace Nekoyume.Action
             // create ArenaScore
             var arenaScoreAdr =
                 ArenaScore.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
-            if (account.TryGetState(arenaScoreAdr, out List _))
+            if (LegacyModule.TryGetState(world, arenaScoreAdr, out List _))
             {
                 throw new ArenaScoreAlreadyContainsException(
                     $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -192,7 +204,7 @@ namespace Nekoyume.Action
             // create ArenaInformation
             var arenaInformationAdr =
                 ArenaInformation.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
-            if (account.TryGetState(arenaInformationAdr, out List _))
+            if (LegacyModule.TryGetState(world, arenaInformationAdr, out List _))
             {
                 throw new ArenaInformationAlreadyContainsException(
                     $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -203,12 +215,19 @@ namespace Nekoyume.Action
 
             // update ArenaParticipants
             var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(roundData.ChampionshipId, roundData.Round);
-            var arenaParticipants = account.GetArenaParticipants(arenaParticipantsAdr, roundData.ChampionshipId, roundData.Round);
+            var arenaParticipants = LegacyModule.GetArenaParticipants(
+                world,
+                arenaParticipantsAdr,
+                roundData.ChampionshipId,
+                roundData.Round);
             arenaParticipants.Add(avatarAddress);
 
             // update ArenaAvatarState
             var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(avatarAddress);
-            var arenaAvatarState = account.GetArenaAvatarState(arenaAvatarStateAdr, avatarState);
+            var arenaAvatarState = LegacyModule.GetArenaAvatarState(
+                world,
+                arenaAvatarStateAdr,
+                avatarState);
             arenaAvatarState.UpdateCostumes(costumes);
             arenaAvatarState.UpdateEquipment(equipments);
 

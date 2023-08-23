@@ -11,6 +11,7 @@ using Nekoyume.Action.Extensions;
 using Nekoyume.Exceptions;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -32,7 +33,6 @@ namespace Lib9c.DevExtensions.Action.Craft
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             int targetStage;
 
             if (ActionType.TypeIdentifier is Text text)
@@ -63,14 +63,14 @@ namespace Lib9c.DevExtensions.Action.Craft
 
             var worldInformation = new WorldInformation(
                 context.BlockIndex,
-                account.GetSheet<WorldSheet>(),
+                LegacyModule.GetSheet<WorldSheet>(world),
                 targetStage
             );
-            account = account.SetState(
+            return LegacyModule.SetState(
+                world,
                 AvatarAddress.Derive(LegacyWorldInformationKey),
                 worldInformation.Serialize()
             );
-            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

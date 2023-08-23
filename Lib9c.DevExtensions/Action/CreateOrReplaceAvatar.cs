@@ -20,6 +20,7 @@ using Nekoyume.Model.Quest;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using static Lib9c.SerializeKeys;
@@ -387,20 +388,21 @@ namespace Lib9c.DevExtensions.Action
         {
             var agentAddr = signer;
             var avatarAddr = Addresses.GetAvatarAddress(agentAddr, AvatarIndex);
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
+            // FIXME: Should use AgentModule
             // Set AgentState.
-            var agent = account.GetState(agentAddr) is Dictionary agentDict
+            var agent = LegacyModule.GetState(world, agentAddr) is Dictionary agentDict
                 ? new AgentState(agentDict)
                 : new AgentState(agentAddr);
             if (!agent.avatarAddresses.ContainsKey(AvatarIndex))
             {
                 agent.avatarAddresses[AvatarIndex] = avatarAddr;
-                account = account.SetState(agentAddr, agent.Serialize());
+                world = AgentModule.SetAgentState(world, agentAddr, agent);
             }
             // ~Set AgentState.
 
-            var sheets = account.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 containAvatarSheets: true,
                 containQuestSheet: true,
                 sheetTypes: new[]
@@ -418,7 +420,7 @@ namespace Lib9c.DevExtensions.Action
                     typeof(CostumeItemSheet),
                     typeof(CrystalStageBuffGachaSheet),
                 });
-            var gameConfig = account.GetGameConfigState();
+            var gameConfig = LegacyModule.GetGameConfigState(world);
 
             // Set AvatarState.
             var avatar = new AvatarState(
@@ -436,7 +438,7 @@ namespace Lib9c.DevExtensions.Action
                 ear = Ear,
                 tail = Tail,
             };
-            account = account.SetState(avatarAddr, avatar.Serialize());
+            world = AvatarModule.SetAvatarState(world, avatarAddr, avatar);
             // ~Set AvatarState.
 
             // Set WorldInformation.
@@ -445,7 +447,7 @@ namespace Lib9c.DevExtensions.Action
                 blockIndex,
                 sheets.GetSheet<WorldSheet>(),
                 false);
-            account = account.SetState(worldInfoAddr, worldInfo.Serialize());
+            world = LegacyModule.SetState(world, worldInfoAddr, worldInfo.Serialize());
             // ~Set WorldInformation.
 
             // Set QuestList.
@@ -456,7 +458,7 @@ namespace Lib9c.DevExtensions.Action
                 sheets.GetSheet<QuestItemRewardSheet>(),
                 sheets.GetSheet<EquipmentItemRecipeSheet>(),
                 sheets.GetSheet<EquipmentItemSubRecipeSheet>());
-            account = account.SetState(questListAddr, questList.Serialize());
+            world = LegacyModule.SetState(world, questListAddr, questList.Serialize());
             // ~Set QuestList.
 
             // Set Inventory.
@@ -570,7 +572,7 @@ namespace Lib9c.DevExtensions.Action
                 }
             }
 
-            account = account.SetState(inventoryAddr, inventory.Serialize());
+            world = LegacyModule.SetState(world, inventoryAddr, inventory.Serialize());
             // ~Set Inventory.
 
             // Set CombinationSlot.
@@ -580,7 +582,7 @@ namespace Lib9c.DevExtensions.Action
                 var slot = new CombinationSlotState(
                     slotAddr,
                     GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
-                account = account.SetState(slotAddr, slot.Serialize());
+                world = LegacyModule.SetState(world, slotAddr, slot.Serialize());
             }
             // ~Set CombinationSlot.
 
@@ -593,7 +595,8 @@ namespace Lib9c.DevExtensions.Action
                     rune.LevelUp();
                 }
 
-                account = account.SetState(
+                world = LegacyModule.SetState(
+                    world,
                     RuneState.DeriveAddress(avatarAddr, runeId),
                     rune.Serialize());
             }
@@ -604,7 +607,7 @@ namespace Lib9c.DevExtensions.Action
                 Addresses.GetSkillStateAddressFromAvatarAddress(avatarAddr);
             if (CrystalRandomBuff is null)
             {
-                account = account.SetState(crystalRandomSkillAddr, Null.Value);
+                world = LegacyModule.SetState(world, crystalRandomSkillAddr, Null.Value);
             }
             else
             {
@@ -623,12 +626,14 @@ namespace Lib9c.DevExtensions.Action
                 }
 
                 crystalRandomSkillState.Update(crb.crystalRandomBuffIds.ToList());
-                account = account.SetState(crystalRandomSkillAddr,
+                world = LegacyModule.SetState(
+                    world,
+                    crystalRandomSkillAddr,
                     crystalRandomSkillState.Serialize());
             }
             // ~Set CrystalRandomBuffState
 
-            return world.SetAccount(account);
+            return world;
         }
     }
 }

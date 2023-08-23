@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model.Coupons;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -46,7 +47,7 @@ namespace Lib9c.Tests.Action
         public void SetWorldBossKillReward(int level, int expectedRune, int expectedCrystal, Type exc)
         {
             var context = new ActionContext();
-            IAccount account = new MockAccount();
+            IWorld world = new MockWorld();
             var rewardInfoAddress = new PrivateKey().ToAddress();
             var rewardRecord = new WorldBossKillRewardRecord();
             for (int i = 0; i < level; i++)
@@ -54,7 +55,7 @@ namespace Lib9c.Tests.Action
                 rewardRecord[i] = false;
             }
 
-            account = account.SetState(rewardInfoAddress, rewardRecord.Serialize());
+            world = LegacyModule.SetState(world, rewardInfoAddress, rewardRecord.Serialize());
 
             var random = new TestRandom();
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
@@ -77,17 +78,18 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                var nextState = account.SetWorldBossKillReward(context, rewardInfoAddress, rewardRecord, 0, bossState, runeWeightSheet, killRewardSheet, runeSheet, random, avatarAddress, _agentAddress);
-                Assert.Equal(expectedRune * runeCurrency, nextState.GetBalance(avatarAddress, runeCurrency));
-                Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
-                var nextRewardInfo = new WorldBossKillRewardRecord((List)nextState.GetState(rewardInfoAddress));
+                var nextState = LegacyModule.SetWorldBossKillReward(world, context, rewardInfoAddress, rewardRecord, 0, bossState, runeWeightSheet, killRewardSheet, runeSheet, random, avatarAddress, _agentAddress);
+                Assert.Equal(expectedRune * runeCurrency, LegacyModule.GetBalance(nextState, avatarAddress, runeCurrency));
+                Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, LegacyModule.GetBalance(nextState, _agentAddress, CrystalCalculator.CRYSTAL));
+                var nextRewardInfo = new WorldBossKillRewardRecord((List)LegacyModule.GetState(nextState, rewardInfoAddress));
                 Assert.All(nextRewardInfo, kv => Assert.True(kv.Value));
             }
             else
             {
                 Assert.Throws(
                     exc,
-                    () => account.SetWorldBossKillReward(
+                    () => LegacyModule.SetWorldBossKillReward(
+                        world,
                         context,
                         rewardInfoAddress,
                         rewardRecord,
@@ -106,7 +108,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void SetCouponWallet()
         {
-            IAccount account = new MockAccount();
+            IWorld world = new MockWorld();
             var guid1 = new Guid("6856AE42-A820-4041-92B0-5D7BAA52F2AA");
             var guid2 = new Guid("701BA698-CCB9-4FC7-B88F-7CB8C707D135");
             var guid3 = new Guid("910296E7-34E4-45D7-9B4E-778ED61F278B");
@@ -116,30 +118,34 @@ namespace Lib9c.Tests.Action
             var agentAddress1 = new Address("0000000000000000000000000000000000000000");
             var agentAddress2 = new Address("0000000000000000000000000000000000000001");
 
-            account = account.SetCouponWallet(
+            world = LegacyModule.SetCouponWallet(
+                world,
                 agentAddress1,
                 ImmutableDictionary<Guid, Coupon>.Empty
                     .Add(guid1, coupon1)
                     .Add(guid2, coupon2), true);
 
-            account = account.SetCouponWallet(
+            world = LegacyModule.SetCouponWallet(
+                world,
                 agentAddress2,
                 ImmutableDictionary<Guid, Coupon>.Empty);
 
             Assert.Equal(
                 ActionBase.MarkChanged,
-                account.GetState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
+                LegacyModule.GetState(world, agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
             Assert.Equal(
                 Bencodex.Types.List.Empty,
-                account.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
+                LegacyModule.GetState(world, agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
 
-            account = account.SetCouponWallet(
+            world = LegacyModule.SetCouponWallet(
+                world,
                 agentAddress1,
                 ImmutableDictionary<Guid, Coupon>.Empty
                     .Add(guid1, coupon1)
                     .Add(guid2, coupon2));
 
-            account = account.SetCouponWallet(
+            world = LegacyModule.SetCouponWallet(
+                world,
                 agentAddress2,
                 ImmutableDictionary<Guid, Coupon>.Empty
                     .Add(guid3, coupon3));
@@ -148,12 +154,12 @@ namespace Lib9c.Tests.Action
                 Bencodex.Types.List.Empty
                     .Add(coupon1.Serialize())
                     .Add(coupon2.Serialize()),
-                account.GetState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
+                LegacyModule.GetState(world, agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
 
             Assert.Equal(
                 Bencodex.Types.List.Empty
                     .Add(coupon3.Serialize()),
-                account.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
+                LegacyModule.GetState(world, agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
         }
 
         [Theory]
@@ -169,20 +175,20 @@ namespace Lib9c.Tests.Action
             var mead = Currencies.Mead;
             var price = RequestPledge.DefaultRefillMead * mead;
             ActionContext context = new ActionContext();
-            IAccount account = new MockAccount()
+            IWorld world = new MockWorld(new MockAccount()
                 .SetState(
                     agentContractAddress,
                     List.Empty.Add(patron.Serialize()).Add(true.Serialize()))
-                .MintAsset(context, patron, price);
+                .MintAsset(context, patron, price));
 
             if (agentBalance > 0)
             {
-                account = account.MintAsset(context, _agentAddress, agentBalance * mead);
+                world = LegacyModule.MintAsset(world, context, _agentAddress, agentBalance * mead);
             }
 
-            account = account.Mead(context, _agentAddress, 4);
-            Assert.Equal(agentBalance * mead, account.GetBalance(patron, mead));
-            Assert.Equal(price, account.GetBalance(_agentAddress, mead));
+            world = LegacyModule.Mead(world, context, _agentAddress, 4);
+            Assert.Equal(agentBalance * mead, LegacyModule.GetBalance(world, patron, mead));
+            Assert.Equal(price, LegacyModule.GetBalance(world, _agentAddress, mead));
         }
     }
 }

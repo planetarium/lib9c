@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Module;
     using Xunit;
 
     public class MeadScenarioTest
@@ -19,7 +20,7 @@ namespace Lib9c.Tests.Action.Scenario
             Currency mead = Currencies.Mead;
             var patron = new PrivateKey().ToAddress();
             IActionContext context = new ActionContext();
-            IAccount states = new MockAccount().MintAsset(context, patron, 10 * mead);
+            IWorld states = new MockWorld(new MockAccount().MintAsset(context, patron, 10 * mead));
 
             var agentAddress = new PrivateKey().ToAddress();
             var requestPledge = new RequestPledge
@@ -28,16 +29,16 @@ namespace Lib9c.Tests.Action.Scenario
                 RefillMead = RequestPledge.DefaultRefillMead,
             };
             var states2 = Execute(context, states, requestPledge, patron);
-            Assert.Equal(8 * mead, states2.GetBalance(patron, mead));
-            Assert.Equal(1 * mead, states2.GetBalance(agentAddress, mead));
+            Assert.Equal(8 * mead, LegacyModule.GetBalance(states2, patron, mead));
+            Assert.Equal(1 * mead, LegacyModule.GetBalance(states2, agentAddress, mead));
 
             var approvePledge = new ApprovePledge
             {
                 PatronAddress = patron,
             };
             var states3 = Execute(context, states2, approvePledge, agentAddress);
-            Assert.Equal(4 * mead, states3.GetBalance(patron, mead));
-            Assert.Equal(4 * mead, states3.GetBalance(agentAddress, mead));
+            Assert.Equal(4 * mead, LegacyModule.GetBalance(states3, patron, mead));
+            Assert.Equal(4 * mead, LegacyModule.GetBalance(states3, agentAddress, mead));
 
             // release and return agent mead
             var endPledge = new EndPledge
@@ -45,17 +46,17 @@ namespace Lib9c.Tests.Action.Scenario
                 AgentAddress = agentAddress,
             };
             var states4 = Execute(context, states3, endPledge, patron);
-            Assert.Equal(7 * mead, states4.GetBalance(patron, mead));
-            Assert.Equal(0 * mead, states4.GetBalance(agentAddress, mead));
+            Assert.Equal(7 * mead, LegacyModule.GetBalance(states4, patron, mead));
+            Assert.Equal(0 * mead, LegacyModule.GetBalance(states4, agentAddress, mead));
 
             // re-contract with Bencodex.Null
             var states5 = Execute(context, states4, requestPledge, patron);
-            Assert.Equal(5 * mead, states5.GetBalance(patron, mead));
-            Assert.Equal(1 * mead, states5.GetBalance(agentAddress, mead));
+            Assert.Equal(5 * mead, LegacyModule.GetBalance(states5, patron, mead));
+            Assert.Equal(1 * mead, LegacyModule.GetBalance(states5, agentAddress, mead));
 
             var states6 = Execute(context, states5, approvePledge, agentAddress);
-            Assert.Equal(1 * mead, states6.GetBalance(patron, mead));
-            Assert.Equal(4 * mead, states6.GetBalance(agentAddress, mead));
+            Assert.Equal(1 * mead, LegacyModule.GetBalance(states6, patron, mead));
+            Assert.Equal(4 * mead, LegacyModule.GetBalance(states6, agentAddress, mead));
         }
 
         [Fact]
@@ -103,15 +104,15 @@ namespace Lib9c.Tests.Action.Scenario
             }
         }
 
-        private IAccount Execute(IActionContext context, IAccount state, IAction action, Address signer)
+        private IWorld Execute(IActionContext context, IWorld state, IAction action, Address signer)
         {
-            Assert.True(state.GetBalance(signer, Currencies.Mead) > 0 * Currencies.Mead);
-            var nextState = state.BurnAsset(context, signer, 1 * Currencies.Mead);
+            Assert.True(LegacyModule.GetBalance(state, signer, Currencies.Mead) > 0 * Currencies.Mead);
+            var nextState = LegacyModule.BurnAsset(state, context, signer, 1 * Currencies.Mead);
             var executedState = action.Execute(new ActionContext
             {
                 Signer = signer,
-                PreviousState = new MockWorld(nextState),
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+                PreviousState = nextState,
+            });
             return RewardGold.TransferMead(context, executedState);
         }
     }

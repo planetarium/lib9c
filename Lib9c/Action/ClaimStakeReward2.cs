@@ -48,8 +48,7 @@ namespace Nekoyume.Action
             var world = context.PreviousState;
             CheckObsolete(ObsoletedIndex, context);
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
-            if (!world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .TryGetStakeState(context.Signer, out StakeState stakeState))
+            if (!LegacyModule.TryGetStakeState(world, context.Signer, out StakeState stakeState))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
@@ -80,26 +79,26 @@ namespace Nekoyume.Action
                     AvatarAddress);
             }
 
-            var sheets = world.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetSheets(
-                    sheetTypes: new[]
-                    {
-                        typeof(StakeRegularRewardSheet),
-                        typeof(ConsumableItemSheet),
-                        typeof(CostumeItemSheet),
-                        typeof(EquipmentItemSheet),
-                        typeof(MaterialItemSheet),
-                    });
+            var sheets = LegacyModule.GetSheets(
+                world,
+                sheetTypes: new[]
+                {
+                    typeof(StakeRegularRewardSheet),
+                    typeof(ConsumableItemSheet),
+                    typeof(CostumeItemSheet),
+                    typeof(EquipmentItemSheet),
+                    typeof(MaterialItemSheet),
+                });
 
-            var currency = world.GetAccount(ReservedAddresses.LegacyAccount).GetGoldCurrency();
-            var stakedAmount = world.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetBalance(stakeState.address, currency);
+            var currency = LegacyModule.GetGoldCurrency(world);
+            var stakedAmount = LegacyModule.GetBalance(world, stakeState.address, currency);
             var stakeRegularRewardSheet = sheets.GetSheet<StakeRegularRewardSheet>();
             int level =
                 stakeRegularRewardSheet.FindLevelByStakedAmount(context.Signer, stakedAmount);
             var rewards = stakeRegularRewardSheet[level].Rewards;
             ItemSheet itemSheet = sheets.GetItemSheet();
-            var accumulatedRewards = stakeState.CalculateAccumulatedItemRewardsV1(context.BlockIndex);
+            var accumulatedRewards =
+                stakeState.CalculateAccumulatedItemRewardsV1(context.BlockIndex);
             foreach (var reward in rewards)
             {
                 var (quantity, _) = stakedAmount.DivRem(currency * reward.Rate);
@@ -116,8 +115,8 @@ namespace Nekoyume.Action
                 avatarState.inventory.AddItem(item, (int)quantity * accumulatedRewards);
             }
 
-            if (world.GetAccount(ReservedAddresses.LegacyAccount)
-                .TryGetSheet<StakeRegularFixedRewardSheet>(
+            if (LegacyModule.TryGetSheet<StakeRegularFixedRewardSheet>(
+                    world,
                     out var stakeRegularFixedRewardSheet))
             {
                 var fixedRewards = stakeRegularFixedRewardSheet[level].Rewards;
@@ -136,22 +135,22 @@ namespace Nekoyume.Action
             if (migrationRequired)
             {
                 world = AvatarModule.SetAvatarStateV2(world, avatarState.address, avatarState);
-                world = world.SetAccount(
-                    world.GetAccount(ReservedAddresses.LegacyAccount)
-                        .SetState(
-                            avatarState.address.Derive(LegacyWorldInformationKey),
-                            avatarState.worldInformation.Serialize())
-                        .SetState(
-                            avatarState.address.Derive(LegacyQuestListKey),
-                            avatarState.questList.Serialize()));
+                world = LegacyModule.SetState(
+                    world,
+                    avatarState.address.Derive(LegacyWorldInformationKey),
+                    avatarState.worldInformation.Serialize());
+                world = LegacyModule.SetState(
+                    world,
+                    avatarState.address.Derive(LegacyQuestListKey),
+                    avatarState.questList.Serialize());
             }
 
-            return world.SetAccount(
-                world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .SetState(stakeState.address, stakeState.Serialize())
-                    .SetState(
-                        avatarState.address.Derive(LegacyInventoryKey),
-                        avatarState.inventory.Serialize()));
+            world = LegacyModule.SetState(world, stakeState.address, stakeState.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                avatarState.address.Derive(LegacyInventoryKey),
+                avatarState.inventory.Serialize());
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

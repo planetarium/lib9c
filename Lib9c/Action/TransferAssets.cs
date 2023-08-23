@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Lib9c.Abstractions;
-using Nekoyume.Action.Extensions;
+using Nekoyume.Module;
 using Serilog;
 
 namespace Nekoyume.Action
@@ -83,11 +83,15 @@ namespace Nekoyume.Action
         {
             context.UseGas(4);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                account = Recipients.Aggregate(account, (current, t) => current.MarkBalanceChanged(context, t.amount.Currency, new[] {Sender, t.recipient}));
-                return world.SetAccount(account);
+                return Recipients.Aggregate(
+                    world,
+                    (current, t) => LegacyModule.MarkBalanceChanged(
+                        world,
+                        context,
+                        t.amount.Currency,
+                        new[] { Sender, t.recipient }));
             }
 
             if (Recipients.Count > RecipientsCapacity)
@@ -98,11 +102,19 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}{ActionName} exec started", addressesHex, TypeIdentifier);
 
-            account = Recipients.Aggregate(account, (current, t) => Transfer(context, current, context.Signer, t.recipient, t.amount, context.BlockIndex));
+            world = Recipients.Aggregate(
+                world,
+                (current, t) => Transfer(
+                    context,
+                    current,
+                    context.Signer,
+                    t.recipient,
+                    t.amount,
+                    context.BlockIndex));
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}{ActionName} Total Executed Time: {Elapsed}", addressesHex, TypeIdentifier, ended - started);
 
-            return world.SetAccount(account);
+            return world;
         }
 
         public override void LoadPlainValue(IValue plainValue)
@@ -137,8 +149,13 @@ namespace Nekoyume.Action
             }
         }
 
-        private IAccount Transfer(
-            IActionContext context, IAccount account, Address signer, Address recipient, FungibleAssetValue amount, long blockIndex)
+        private IWorld Transfer(
+            IActionContext context,
+            IWorld world,
+            Address signer,
+            Address recipient,
+            FungibleAssetValue amount,
+            long blockIndex)
         {
             if (Sender != signer)
             {
@@ -162,7 +179,7 @@ namespace Nekoyume.Action
             }
 
             TransferAsset.CheckCrystalSender(currency, blockIndex, Sender);
-            return account.TransferAsset(context, Sender, recipient, amount);
+            return LegacyModule.TransferAsset(world, context, Sender, recipient, amount);
         }
     }
 }

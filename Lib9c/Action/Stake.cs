@@ -6,8 +6,8 @@ using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -44,26 +44,29 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
             // Restrict staking if there is a monster collection until now.
-            if (account.GetAgentState(context.Signer) is { } agentState &&
-                account.TryGetState(MonsterCollectionState.DeriveAddress(
-                    context.Signer,
-                    agentState.MonsterCollectionRound), out Dictionary _))
+            if (AgentModule.GetAgentState(world, context.Signer) is { } agentState &&
+                LegacyModule.TryGetState(
+                    world,
+                    MonsterCollectionState.DeriveAddress(
+                        context.Signer,
+                        agentState.MonsterCollectionRound),
+                    out Dictionary _))
             {
                 throw new MonsterCollectionExistingException();
             }
 
             if (context.Rehearsal)
             {
-                account = account.SetState(StakeState.DeriveAddress(context.Signer), MarkChanged)
-                    .MarkBalanceChanged(
-                        context,
-                        GoldCurrencyMock,
-                        context.Signer,
-                        StakeState.DeriveAddress(context.Signer));
-                return world.SetAccount(account);
+                world = LegacyModule.SetState(world, StakeState.DeriveAddress(context.Signer), MarkChanged);
+                world = LegacyModule.MarkBalanceChanged(
+                    world,
+                    context,
+                    GoldCurrencyMock,
+                    context.Signer,
+                    StakeState.DeriveAddress(context.Signer));
+                    return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, context.Signer);
@@ -74,7 +77,7 @@ namespace Nekoyume.Action
                 throw new ArgumentOutOfRangeException(nameof(Amount));
             }
 
-            var stakeRegularRewardSheet = account.GetSheet<StakeRegularRewardSheet>();
+            var stakeRegularRewardSheet = LegacyModule.GetSheet<StakeRegularRewardSheet>(world);
             var minimumRequiredGold = stakeRegularRewardSheet.OrderedRows.Min(x => x.RequiredGold);
             if (Amount != 0 && Amount < minimumRequiredGold)
             {
@@ -82,9 +85,9 @@ namespace Nekoyume.Action
             }
 
             var stakeStateAddress = StakeState.DeriveAddress(context.Signer);
-            var currency = account.GetGoldCurrency();
-            var currentBalance = account.GetBalance(context.Signer, currency);
-            var stakedBalance = account.GetBalance(stakeStateAddress, currency);
+            var currency = LegacyModule.GetGoldCurrency(world);
+            var currentBalance = LegacyModule.GetBalance(world, context.Signer, currency);
+            var stakedBalance = LegacyModule.GetBalance(world, stakeStateAddress, currency);
             var targetStakeBalance = currency * Amount;
             if (currentBalance + stakedBalance < targetStakeBalance)
             {
@@ -95,15 +98,20 @@ namespace Nekoyume.Action
             }
 
             // Stake if it doesn't exist yet.
-            if (!account.TryGetStakeState(context.Signer, out StakeState stakeState))
+            if (!LegacyModule.TryGetStakeState(world, context.Signer, out StakeState stakeState))
             {
                 stakeState = new StakeState(stakeStateAddress, context.BlockIndex);
-                account = account
-                    .SetState(
-                        stakeStateAddress,
-                        stakeState.SerializeV2())
-                    .TransferAsset(context, context.Signer, stakeStateAddress, targetStakeBalance);
-                return world.SetAccount(account);
+                world = LegacyModule.SetState(
+                    world,
+                    stakeStateAddress,
+                    stakeState.SerializeV2());
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    context.Signer,
+                    stakeStateAddress,
+                    targetStakeBalance);
+                return world;
             }
 
             if (stakeState.IsClaimable(context.BlockIndex))
@@ -124,10 +132,14 @@ namespace Nekoyume.Action
             {
                 if (stakeState.IsCancellable(context.BlockIndex))
                 {
-                    account = account
-                        .SetState(stakeState.address, Null.Value)
-                        .TransferAsset(context, stakeState.address, context.Signer, stakedBalance);
-                    return world.SetAccount(account);
+                    world = LegacyModule.SetState(world, stakeState.address, Null.Value);
+                    world = LegacyModule.TransferAsset(
+                        world,
+                        context,
+                        stakeState.address,
+                        context.Signer,
+                        stakedBalance);
+                    return world;
                 }
             }
 
@@ -135,13 +147,25 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex}Stake Total Executed Time: {Elapsed}", addressesHex, ended - started);
 
             // Stake with more or less amount.
-            account = account
-                .TransferAsset(context, stakeState.address, context.Signer, stakedBalance)
-                .TransferAsset(context, context.Signer, stakeState.address, targetStakeBalance)
-                .SetState(
-                    stakeState.address,
-                    new StakeState(stakeState.address, context.BlockIndex).SerializeV2());
-            return world.SetAccount(account);
+            world = LegacyModule.TransferAsset(
+                world,
+                context,
+                stakeState.address,
+                context
+                    .Signer,
+                stakedBalance);
+            world = LegacyModule.TransferAsset(
+                world,
+                context,
+                context.Signer,
+                stakeState
+                    .address,
+                targetStakeBalance);
+            world = LegacyModule.SetState(
+                world,
+                stakeState.address,
+                new StakeState(stakeState.address, context.BlockIndex).SerializeV2());
+            return world;
         }
     }
 }

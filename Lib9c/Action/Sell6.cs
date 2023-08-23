@@ -9,11 +9,11 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 using BxDictionary = Bencodex.Types.Dictionary;
 using BxList = Bencodex.Types.List;
@@ -64,17 +64,17 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
-                account = account.SetState(sellerAvatarAddress, MarkChanged);
-                account = ShardedShopState.AddressKeys.Aggregate(
-                    account,
-                    (current, addressKey) => current.SetState(
+                world = LegacyModule.SetState(world, sellerAvatarAddress, MarkChanged);
+                world = ShardedShopState.AddressKeys.Aggregate(
+                    world,
+                    (current, addressKey) => LegacyModule.SetState(
+                        current,
                         ShardedShopState.DeriveAddress(itemSubType, addressKey),
                         MarkChanged));
-                account = account.SetState(context.Signer, MarkChanged);
-                return world.SetAccount(account);
+                world = LegacyModule.SetState(world, context.Signer, MarkChanged);
+                return world;
             }
 
             CheckObsolete(ActionObsoleteConfig.V100080ObsoleteIndex, context);
@@ -92,11 +92,12 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the price is less than zero: {price}.");
             }
 
-            if (!account.TryGetAgentAvatarStates(
-                context.Signer,
-                sellerAvatarAddress,
-                out _,
-                out var avatarState))
+            if (!AvatarModule.TryGetAgentAvatarStates(
+                    world,
+                    context.Signer,
+                    sellerAvatarAddress,
+                    out _,
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -170,7 +171,7 @@ namespace Nekoyume.Action
 
             var productId = context.Random.GenerateRandomGuid();
             var shardedShopAddress = ShardedShopState.DeriveAddress(itemSubType, productId);
-            if (!account.TryGetState(shardedShopAddress, out BxDictionary serializedSharedShopState))
+            if (!LegacyModule.TryGetState(world, shardedShopAddress, out BxDictionary serializedSharedShopState))
             {
                 var shardedShopState = new ShardedShopState(shardedShopAddress);
                 serializedSharedShopState = (BxDictionary) shardedShopState.Serialize();
@@ -285,13 +286,12 @@ namespace Nekoyume.Action
             result.id = mail.id;
             avatarState.Update(mail);
 
-            account = account.SetState(sellerAvatarAddress, avatarState.Serialize());
+            world = AvatarModule.SetAvatarState(world, sellerAvatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            account = account.SetState(shardedShopAddress, serializedSharedShopState);
-            world = world.SetAccount(account);
+            world = LegacyModule.SetState(world, shardedShopAddress, serializedSharedShopState);
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}Sell Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);

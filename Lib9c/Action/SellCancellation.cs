@@ -101,16 +101,14 @@ namespace Nekoyume.Action
             var itemAddress = Addresses.GetItemAddress(tradableId);
             if (context.Rehearsal)
             {
-                var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-                account = account.SetState(shardedShopAddress, MarkChanged);
-                account = account
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetState(digestListAddress, MarkChanged)
-                    .SetState(itemAddress, MarkChanged)
-                    .SetState(sellerAvatarAddress, MarkChanged);
-                return world.SetAccount(account);
+                world = LegacyModule.SetState(world, shardedShopAddress, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, digestListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, itemAddress, MarkChanged);
+                world = LegacyModule.SetState(world, sellerAvatarAddress, MarkChanged);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, sellerAvatarAddress);
@@ -133,8 +131,10 @@ namespace Nekoyume.Action
                     GameConfig.RequireClearedStageLevel.ActionsInShop, current);
             }
 
-            if (!world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .TryGetState(Order.DeriveAddress(orderId), out Dictionary orderDict))
+            if (!LegacyModule.TryGetState(
+                    world,
+                    Order.DeriveAddress(orderId),
+                    out Dictionary orderDict))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}failed to load {nameof(Order)}({Order.DeriveAddress(orderId)}).");
@@ -172,8 +172,10 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Sell Cancel exec started", addressesHex);
 
-            if (!world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .TryGetState(shardedShopAddress, out BxDictionary shopStateDict))
+            if (!LegacyModule.TryGetState(
+                    world,
+                    shardedShopAddress,
+                    out BxDictionary shopStateDict))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}failed to load {nameof(ShardedShopStateV2)}({shardedShopAddress}).");
@@ -189,8 +191,7 @@ namespace Nekoyume.Action
             avatarState.updatedAt = context.BlockIndex;
             avatarState.blockIndex = context.BlockIndex;
 
-            if (!world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .TryGetState(digestListAddress, out Dictionary rawList))
+            if (!LegacyModule.TryGetState(world, digestListAddress, out Dictionary rawList))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}failed to load {nameof(OrderDigest)}({digestListAddress}).");
@@ -290,8 +291,10 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Sell Cancel exec started", addressesHex);
 
-            if (!world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .TryGetState(shardedShopAddress, out BxDictionary shopStateDict))
+            if (!LegacyModule.TryGetState(
+                    world,
+                    shardedShopAddress,
+                    out BxDictionary shopStateDict))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}failed to load {nameof(ShardedShopStateV2)}({shardedShopAddress}).");
@@ -307,8 +310,7 @@ namespace Nekoyume.Action
             avatarState.updatedAt = context.BlockIndex;
             avatarState.blockIndex = context.BlockIndex;
 
-            if (!world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .TryGetState(digestListAddress, out Dictionary rawList))
+            if (!LegacyModule.TryGetState(world, digestListAddress, out Dictionary rawList))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}failed to load {nameof(OrderDigest)}({digestListAddress}).");

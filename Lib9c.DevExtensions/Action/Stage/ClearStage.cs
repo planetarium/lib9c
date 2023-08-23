@@ -9,6 +9,7 @@ using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Lib9c.DevExtensions.Action.Stage
@@ -29,16 +30,16 @@ namespace Lib9c.DevExtensions.Action.Stage
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var worldInformation = new WorldInformation(
                 context.BlockIndex,
-                account.GetSheet<WorldSheet>(),
+                LegacyModule.GetSheet<WorldSheet>(world),
                 TargetStage
             );
-            account = account.SetState(AvatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey),
+            return LegacyModule.SetState(
+                world,
+                AvatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey),
                 worldInformation.Serialize()
             );
-            return world.SetAccount(account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

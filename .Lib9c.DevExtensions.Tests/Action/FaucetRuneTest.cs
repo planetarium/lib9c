@@ -11,6 +11,7 @@ using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Faucet;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using Xunit;
@@ -21,7 +22,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 {
     public class FaucetRuneTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialWorld;
         private readonly Address _avatarAddress;
         private readonly RuneSheet _runeSheet;
 
@@ -32,16 +33,19 @@ namespace Lib9c.DevExtensions.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Lib9c.Tests.Action.MockAccount();
+            _initialWorld = new Lib9c.Tests.Action.MockWorld();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialWorld =
+                    LegacyModule.SetState(
+                        _initialWorld,
+                        Addresses.TableSheet.Derive(key),
+                        value.Serialize());
             }
 
             var tableSheets = new TableSheets(sheets);
-            _runeSheet = _initialState.GetSheet<RuneSheet>();
+            _runeSheet = LegacyModule.GetSheet<RuneSheet>(_initialWorld);
 
             Address agentAddress = new PrivateKey().ToAddress();
             _avatarAddress = new PrivateKey().ToAddress();
@@ -56,24 +60,23 @@ namespace Lib9c.DevExtensions.Tests.Action
             );
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = _initialState
-                    .SetState(agentAddress, agentState.Serialize())
-                    .SetState(
-                        _avatarAddress.Derive(LegacyInventoryKey),
-                        avatarState.inventory.Serialize()
-                    )
-                    .SetState(
-                        _avatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize()
-                    )
-                    .SetState(
-                        _avatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize()
-                    )
-                    .SetState(
-                        _avatarAddress, avatarState.Serialize()
-                    )
-                ;
+            _initialWorld = AgentModule.SetAgentState(_initialWorld, agentAddress, agentState);
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                _avatarAddress.Derive(LegacyInventoryKey),
+                avatarState.inventory.Serialize());
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                _avatarAddress.Derive(LegacyWorldInformationKey),
+                avatarState.worldInformation.Serialize());
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                _avatarAddress.Derive(LegacyQuestListKey),
+                avatarState.questList.Serialize());
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState.Serialize());
         }
 
         [Theory]
@@ -87,7 +90,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             };
             var states = action
                 .Execute(
-                    new ActionContext { PreviousState = new MockWorld(_initialState) })
+                    new ActionContext { PreviousState = new MockWorld(_initialWorld) })
                 .GetAccount(ReservedAddresses.LegacyAccount);
             foreach (var rune in faucetRuneInfos)
             {

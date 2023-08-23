@@ -8,8 +8,8 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Lib9c.DevExtensions.Action
 {
@@ -62,16 +62,15 @@ namespace Lib9c.DevExtensions.Action
             List<(Address addr, IValue value)> stateList,
             List<(Address addr, FungibleAssetValue fav)> balanceList)
         {
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             foreach (var (addr, value) in stateList)
             {
-                account = account.SetState(addr, value);
+                world = LegacyModule.SetState(world, addr, value);
             }
 
-            var ncg = account.GetGoldCurrency();
+            var ncg = LegacyModule.GetGoldCurrency(world);
             foreach (var (addr, fav) in balanceList)
             {
-                var currentFav = account.GetBalance(addr, fav.Currency);
+                var currentFav = LegacyModule.GetBalance(world, addr, fav.Currency);
                 if (currentFav == fav)
                 {
                     continue;
@@ -83,7 +82,8 @@ namespace Lib9c.DevExtensions.Action
                     {
                         if (currentFav > fav)
                         {
-                            account = account.TransferAsset(
+                            world = LegacyModule.TransferAsset(
+                                world,
                                 context,
                                 addr,
                                 GoldCurrencyState.Address,
@@ -91,7 +91,8 @@ namespace Lib9c.DevExtensions.Action
                         }
                         else
                         {
-                            account = account.TransferAsset(
+                            world = LegacyModule.TransferAsset(
+                                world,
                                 context,
                                 GoldCurrencyState.Address,
                                 addr,
@@ -104,12 +105,12 @@ namespace Lib9c.DevExtensions.Action
                     throw new NotSupportedException($"{fav.Currency} is not supported.");
                 }
 
-                account = currentFav > fav
-                    ? account.BurnAsset(context, addr, currentFav - fav)
-                    : account.MintAsset(context, addr, fav - currentFav);
+                world = currentFav > fav
+                    ? LegacyModule.BurnAsset(world, context, addr, currentFav - fav)
+                    : LegacyModule.MintAsset(world, context, addr, fav - currentFav);
             }
 
-            return world.SetAccount(account);
+            return world;
         }
     }
 }

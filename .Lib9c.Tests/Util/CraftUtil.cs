@@ -7,18 +7,18 @@ namespace Lib9c.Tests.Util
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
-    using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using static Lib9c.SerializeKeys;
 
     public static class CraftUtil
     {
-        public static IAccount PrepareCombinationSlot(
-            IAccount account,
+        public static IWorld PrepareCombinationSlot(
+            IWorld world,
             Address avatarAddress,
             int slotIndex
         )
@@ -34,18 +34,18 @@ namespace Lib9c.Tests.Util
                 // ItemEnhancement: 9
                 GameConfig.RequireClearedStageLevel.ItemEnhancementAction
             );
-            return account.SetState(slotAddress, slotState.Serialize());
+            return LegacyModule.SetState(world, slotAddress, slotState.Serialize());
         }
 
-        public static IAccount AddMaterialsToInventory(
-            IAccount account,
+        public static IWorld AddMaterialsToInventory(
+            IWorld world,
             TableSheets tableSheets,
             Address avatarAddress,
             IEnumerable<EquipmentItemSubRecipeSheet.MaterialInfo> materialList,
             IRandom random
         )
         {
-            var avatarState = account.GetAvatarStateV2(avatarAddress);
+            var avatarState = AvatarModule.GetAvatarStateV2(world, avatarAddress);
             foreach (var material in materialList)
             {
                 var materialRow = tableSheets.MaterialItemSheet[material.Id];
@@ -53,13 +53,14 @@ namespace Lib9c.Tests.Util
                 avatarState.inventory.AddItem(materialItem, material.Count);
             }
 
-            return account.SetState(
+            return LegacyModule.SetState(
+                world,
                 avatarAddress.Derive(LegacyInventoryKey),
                 avatarState.inventory.Serialize());
         }
 
-        public static IAccount UnlockStage(
-            IAccount account,
+        public static IWorld UnlockStage(
+            IWorld world,
             TableSheets tableSheets,
             Address worldInformationAddress,
             int stage
@@ -70,7 +71,7 @@ namespace Lib9c.Tests.Util
                 tableSheets.WorldSheet,
                 Math.Max(stage, GameConfig.RequireClearedStageLevel.ItemEnhancementAction)
             );
-            return account.SetState(worldInformationAddress, worldInformation.Serialize());
+            return LegacyModule.SetState(world, worldInformationAddress, worldInformation.Serialize());
         }
     }
 }

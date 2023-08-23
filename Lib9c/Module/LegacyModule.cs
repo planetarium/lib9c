@@ -13,6 +13,7 @@ using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Libplanet.Types.Consensus;
 using LruCacheNet;
 using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
@@ -84,6 +85,9 @@ namespace Nekoyume.Module
             world.SetAccount(
                 world.GetAccount(ReservedAddresses.LegacyAccount)
                     .BurnAsset(context, owner, value));
+
+        public static ValidatorSet GetValidatorSet(IWorld world) =>
+            world.GetAccount(ReservedAddresses.LegacyAccount).GetValidatorSet();
 
         public static IWorld SetValidator(
             IWorld world,

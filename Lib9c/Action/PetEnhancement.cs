@@ -5,11 +5,11 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -49,7 +49,6 @@ namespace Nekoyume.Action
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var addresses = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             // NOTE: The `AvatarAddress` must contained in `Signer`'s `AgentState.avatarAddresses`.
             if (!Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress))
@@ -62,7 +61,8 @@ namespace Nekoyume.Action
                     $" AvatarAddress({AvatarAddress}).");
             }
 
-            var sheets = account.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 sheetTypes: new[]
                 {
                     typeof(ArenaSheet),
@@ -80,7 +80,7 @@ namespace Nekoyume.Action
             }
 
             var petStateAddress = PetState.DeriveAddress(AvatarAddress, PetId);
-            var petState = account.TryGetState(petStateAddress, out List rawState)
+            var petState = LegacyModule.TryGetState(world, petStateAddress, out List rawState)
                 ? new PetState(rawState)
                 : new PetState(PetId);
             if (TargetLevel <= petState.Level)
@@ -122,7 +122,7 @@ namespace Nekoyume.Action
                     $"Can not find cost by TargetLevel({TargetLevel}).");
             }
 
-            var ncgCurrency = account.GetGoldCurrency();
+            var ncgCurrency = LegacyModule.GetGoldCurrency(world);
             var soulStoneCurrency = PetHelper.GetSoulstoneCurrency(petRow.SoulStoneTicker);
             var (ncgQuantity, soulStoneQuantity) = PetHelper.CalculateEnhancementCost(
                 costSheet,
@@ -138,7 +138,7 @@ namespace Nekoyume.Action
             if (ncgQuantity > 0)
             {
                 var ncgCost = ncgQuantity * ncgCurrency;
-                var currentNcg = account.GetBalance(context.Signer, ncgCurrency);
+                var currentNcg = LegacyModule.GetBalance(world, context.Signer, ncgCurrency);
                 if (currentNcg < ncgCost)
                 {
                     throw new NotEnoughFungibleAssetValueException(
@@ -148,13 +148,19 @@ namespace Nekoyume.Action
                         currentNcg);
                 }
 
-                account = account.TransferAsset(context, context.Signer, feeStoreAddress, ncgCost);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    context.Signer,
+                    feeStoreAddress,
+                    ncgCost);
             }
 
             if (soulStoneQuantity > 0)
             {
                 var soulStoneCost = soulStoneQuantity * soulStoneCurrency;
-                var currentSoulStone = account.GetBalance(
+                var currentSoulStone = LegacyModule.GetBalance(
+                    world,
                     AvatarAddress,
                     soulStoneCurrency);
                 if (currentSoulStone < soulStoneCost)
@@ -166,7 +172,8 @@ namespace Nekoyume.Action
                         currentSoulStone);
                 }
 
-                account = account.TransferAsset(
+                world = LegacyModule.TransferAsset(
+                    world,
                     context,
                     AvatarAddress,
                     feeStoreAddress,
@@ -178,8 +185,7 @@ namespace Nekoyume.Action
                 petState.LevelUp();
             }
 
-            account = account.SetState(petStateAddress, petState.Serialize());
-            return world.SetAccount(account);
+            return LegacyModule.SetState(world, petStateAddress, petState.Serialize());
         }
     }
 }

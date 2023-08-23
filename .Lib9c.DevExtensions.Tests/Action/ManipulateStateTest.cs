@@ -18,6 +18,7 @@ using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Quest;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Xunit;
 
 namespace Lib9c.DevExtensions.Tests.Action
@@ -38,7 +39,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV2;
         private readonly Address _inventoryAddress;
         private readonly Address _worldInformationAddress;
         private readonly Address _questListAddress;
@@ -56,7 +57,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 _avatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey);
             _questListAddress = _avatarAddress.Derive(SerializeKeys.LegacyQuestListKey);
             _recipeAddress = _avatarAddress.Derive("recipe_ids");
-            _avatarState = _initialStateV2.GetAvatarStateV2(_avatarAddress);
+            _avatarState = AvatarModule.GetAvatarStateV2(_initialStateV2, _avatarAddress);
         }
 
         // MemberData
@@ -247,7 +248,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 tableSheets.EquipmentItemRecipeSheet,
                 tableSheets.EquipmentItemSubRecipeSheet
             );
-            tradeQuestList.UpdateTradeQuest(TradeType.Sell, stateV2.GetGoldCurrency() * 1);
+            tradeQuestList.UpdateTradeQuest(TradeType.Sell, LegacyModule.GetGoldCurrency(stateV2) * 1);
 
             yield return new object[]
             {
@@ -286,7 +287,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 tableSheets.EquipmentItemSubRecipeSheet
             );
             combinationQuestList.UpdateCombinationQuest(item);
-            tradeQuestList.UpdateTradeQuest(TradeType.Sell, stateV2.GetGoldCurrency() * 1);
+            tradeQuestList.UpdateTradeQuest(TradeType.Sell, LegacyModule.GetGoldCurrency(stateV2) * 1);
             stageMap = new CollectionMap();
             for (var i = 1; i <= targetStage; i++)
             {
@@ -365,14 +366,13 @@ namespace Lib9c.DevExtensions.Tests.Action
         }
 
         private void TestAvatarState(
-            IWorld state,
+            IWorld world,
             string? name, int? level, long? exp, int? actionPoint,
             long? blockIndex, long? dailyRewardReceivedIndex,
             int? hair, int? lens, int? ear, int? tail
         )
         {
-            var targetAvatarState = state.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetAvatarStateV2(_avatarAddress);
+            var targetAvatarState = AvatarModule.GetAvatarStateV2(world, _avatarAddress);
 
             if (name != null)
             {
@@ -427,8 +427,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
         private void TestInventoryState(IWorld state, Inventory targetInventory)
         {
-            var avatarState = state.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetAvatarStateV2(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarStateV2(state, _avatarAddress);
             var inventoryState = avatarState.inventory;
             Assert.Equal(targetInventory.Items.Count, inventoryState.Items.Count);
             foreach (var item in targetInventory.Items)
@@ -476,10 +475,9 @@ namespace Lib9c.DevExtensions.Tests.Action
             );
         }
 
-        private void TestQuestState(IWorld state, List<int> targetQuestIdList)
+        private void TestQuestState(IWorld world, List<int> targetQuestIdList)
         {
-            var avatarState = state.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetAvatarStateV2(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarStateV2(world, _avatarAddress);
             var questState = avatarState.questList;
             foreach (var target in targetQuestIdList)
             {
@@ -489,8 +487,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
         private void TestWorldInformation(IWorld world, int lastClearedStage)
         {
-            var avatarState = world.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetAvatarStateV2(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarStateV2(world, _avatarAddress);
             var worldInformation = avatarState.worldInformation;
 
             for (var i = 0; i < lastClearedStage; i++)

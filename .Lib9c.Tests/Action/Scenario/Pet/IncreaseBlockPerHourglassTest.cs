@@ -15,6 +15,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -29,8 +30,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly Address _inventoryAddr;
         private readonly Address _worldInfoAddr;
         private readonly Address _recipeIdsAddr;
-        private readonly IAccount _initialStateV1;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV1;
+        private readonly IWorld _initialStateV2;
         private readonly TableSheets _tableSheets;
         private readonly int _hourglassItemId;
         private int? _petId;
@@ -90,13 +91,13 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 recipeIds = recipeIds.Add(i.Serialize());
             }
 
-            stateV2 = stateV2.SetState(_recipeIdsAddr, recipeIds);
+            stateV2 = LegacyModule.SetState(stateV2, _recipeIdsAddr, recipeIds);
 
             var expectedHourglass = (int)Math.Ceiling(
                 ((double)recipe.RequiredBlockIndex
-                 - stateV2.GetGameConfigState().RequiredAppraiseBlock)
+                 - LegacyModule.GetGameConfigState(stateV2).RequiredAppraiseBlock)
                 /
-                stateV2.GetGameConfigState().HourglassPerBlock);
+                LegacyModule.GetGameConfigState(stateV2).HourglassPerBlock);
 
             // Get pet
             if (!(petLevel is null))
@@ -105,15 +106,16 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                     pet => pet.LevelOptionMap[(int)petLevel!].OptionType == PetOptionType
                 );
                 _petId = petRow.PetId;
-                stateV2 = stateV2.SetState(
+                stateV2 = LegacyModule.SetState(
+                    stateV2,
                     PetState.DeriveAddress(_avatarAddr, (int)_petId),
                     new List(_petId!.Serialize(), petLevel.Serialize(), 0L.Serialize())
                 );
                 expectedHourglass = (int)Math.Ceiling(
                     (recipe.RequiredBlockIndex
-                     - stateV2.GetGameConfigState().RequiredAppraiseBlock)
+                     - LegacyModule.GetGameConfigState(stateV2).RequiredAppraiseBlock)
                     /
-                    (stateV2.GetGameConfigState().HourglassPerBlock
+                    (LegacyModule.GetGameConfigState(stateV2).HourglassPerBlock
                      + petRow.LevelOptionMap[(int)petLevel].OptionValue)
                 );
             }
@@ -159,13 +161,14 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 petId = _petId,
             };
 
-            stateV2 = action.Execute(new ActionContext
-            {
-                PreviousState = new MockWorld(stateV2),
-                Signer = _agentAddr,
-                BlockIndex = 0L,
-                Random = random,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            stateV2 = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = stateV2,
+                    Signer = _agentAddr,
+                    BlockIndex = 0L,
+                    Random = random,
+                });
 
             // Do rapid combination
             var rapidAction = new RapidCombination
@@ -173,23 +176,24 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 avatarAddress = _avatarAddr,
                 slotIndex = 0,
             };
-            stateV2 = rapidAction.Execute(new ActionContext
-            {
-                PreviousState = new MockWorld(stateV2),
-                Signer = _agentAddr,
-                BlockIndex = stateV2.GetGameConfigState().RequiredAppraiseBlock,
-                Random = random,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            stateV2 = rapidAction.Execute(
+                new ActionContext
+                {
+                    PreviousState = new MockWorld(stateV2),
+                    Signer = _agentAddr,
+                    BlockIndex = LegacyModule.GetGameConfigState(stateV2).RequiredAppraiseBlock,
+                    Random = random,
+                });
 
-            var slotState = stateV2.GetCombinationSlotState(_avatarAddr, 0);
+            var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, 0);
             // TEST: Combination should be done
             Assert.Equal(
-                stateV2.GetGameConfigState().RequiredAppraiseBlock,
+                LegacyModule.GetGameConfigState(stateV2).RequiredAppraiseBlock,
                 slotState.RequiredBlockIndex
             );
 
             // TEST: All Hourglasses should be used
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            var inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
             Assert.Equal(1, inventoryState.Items.Count);
             Assert.Throws<InvalidOperationException>(() =>
                 inventoryState.Items.First(item => item.item.Id == _hourglassItemId));

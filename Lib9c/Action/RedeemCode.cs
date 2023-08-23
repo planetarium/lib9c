@@ -10,6 +10,7 @@ using Libplanet.Crypto;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -46,34 +47,45 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                account = account
-                    .SetState(RedeemCodeState.Address, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetState(AvatarAddress, MarkChanged)
-                    .SetState(context.Signer, MarkChanged)
-                    .MarkBalanceChanged(context, GoldCurrencyMock, GoldCurrencyState.Address)
-                    .MarkBalanceChanged(context, GoldCurrencyMock, context.Signer);
-                return world.SetAccount(account);
+                world = LegacyModule.SetState(world, RedeemCodeState.Address, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, AvatarAddress, MarkChanged);
+                world = LegacyModule.SetState(world, context.Signer, MarkChanged);
+                world = LegacyModule.MarkBalanceChanged(
+                    world,
+                    context,
+                    GoldCurrencyMock,
+                    GoldCurrencyState.Address);
+                world = LegacyModule.MarkBalanceChanged(
+                    world,
+                    context,
+                    GoldCurrencyMock,
+                    context.Signer);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RedeemCode exec started", addressesHex);
 
-            if (!account.TryGetAvatarStateV2(context.Signer, AvatarAddress, out AvatarState avatarState, out _))
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
+                    context.Signer,
+                    AvatarAddress,
+                    out AvatarState avatarState,
+                    out _))
             {
                 return world;
             }
 
-            var redeemState = account.GetRedeemCodeState();
+            var redeemState = LegacyModule.GetRedeemCodeState(world);
             if (redeemState is null)
             {
                 return world;
@@ -95,8 +107,8 @@ namespace Nekoyume.Action
                 throw;
             }
 
-            var row = account.GetSheet<RedeemRewardSheet>().Values.First(r => r.Id == redeemId);
-            var itemSheets = account.GetItemSheet();
+            var row = LegacyModule.GetSheet<RedeemRewardSheet>(world).Values.First(r => r.Id == redeemId);
+            var itemSheets = LegacyModule.GetItemSheet(world);
 
             foreach (RedeemRewardSheet.RewardInfo info in row.Rewards)
             {
@@ -115,11 +127,12 @@ namespace Nekoyume.Action
                         }
                         break;
                     case RewardType.Gold:
-                        account = account.TransferAsset(
+                        world = LegacyModule.TransferAsset(
+                            world,
                             context,
                             GoldCurrencyState.Address,
                             context.Signer,
-                            account.GetGoldCurrency() * info.Quantity
+                            LegacyModule.GetGoldCurrency(world) * info.Quantity
                         );
                         break;
                     default:
@@ -129,13 +142,21 @@ namespace Nekoyume.Action
             }
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RedeemCode Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            account = account
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(RedeemCodeState.Address, redeemState.Serialize());
-            return world.SetAccount(account);
+            AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+            world = LegacyModule.SetState(
+                world,
+                inventoryAddress,
+                avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                questListAddress,
+                avatarState.questList.Serialize());
+            world = LegacyModule.SetState(world, RedeemCodeState.Address, redeemState.Serialize());
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

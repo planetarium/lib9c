@@ -13,6 +13,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Event;
 using Serilog;
@@ -93,7 +94,6 @@ namespace Nekoyume.Action
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug(
@@ -105,7 +105,8 @@ namespace Nekoyume.Action
 
             // Get AvatarState
             sw.Start();
-            if (!account.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
                     context.Signer,
                     AvatarAddress,
                     out var avatarState,
@@ -128,7 +129,8 @@ namespace Nekoyume.Action
 
             // Get sheets
             sw.Restart();
-            var sheets = account.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 sheetTypes: new[]
                 {
                     typeof(EventScheduleSheet),
@@ -185,7 +187,7 @@ namespace Nekoyume.Action
             sw.Restart();
 
             // Validate Recipe ResultMaterialItemId
-            var materialItemSheet = account.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(world);
             if (!materialItemSheet.TryGetValue(
                     recipeRow.ResultMaterialItemId,
                     out var resultMaterialRow))
@@ -245,17 +247,19 @@ namespace Nekoyume.Action
 
             // Set states
             sw.Restart();
-            account = account
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    AvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    AvatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize())
-                .SetState(
-                    AvatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
+            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+            world = LegacyModule.SetState(
+                world,
+                AvatarAddress.Derive(LegacyInventoryKey),
+                avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                AvatarAddress.Derive(LegacyWorldInformationKey),
+                avatarState.worldInformation.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                AvatarAddress.Derive(LegacyQuestListKey),
+                avatarState.questList.Serialize());
             sw.Stop();
             Log.Verbose(
                 "[{ActionTypeString}][{AddressesHex}] Set states: {Elapsed}",
@@ -270,7 +274,7 @@ namespace Nekoyume.Action
                 addressesHex,
                 DateTimeOffset.UtcNow - started);
 
-            return world.SetAccount(account);
+            return world;
         }
 
     }

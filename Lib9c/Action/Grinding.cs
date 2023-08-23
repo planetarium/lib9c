@@ -45,21 +45,31 @@ namespace Nekoyume.Action
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (ctx.Rehearsal)
             {
-                var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-                account = EquipmentIds.Aggregate(account,
+                world = EquipmentIds.Aggregate(world,
                     (current, guid) =>
-                        current.SetState(Addresses.GetItemAddress(guid), MarkChanged));
-                account = account
-                    .SetState(MonsterCollectionState.DeriveAddress(context.Signer, 0), MarkChanged)
-                    .SetState(MonsterCollectionState.DeriveAddress(context.Signer, 1), MarkChanged)
-                    .SetState(MonsterCollectionState.DeriveAddress(context.Signer, 2), MarkChanged)
-                    .SetState(MonsterCollectionState.DeriveAddress(context.Signer, 3), MarkChanged)
-                    .SetState(AvatarAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .MarkBalanceChanged(context, GoldCurrencyMock, context.Signer);
-                return world.SetAccount(account);
+                        LegacyModule.SetState(current, Addresses.GetItemAddress(guid), MarkChanged));
+                world = LegacyModule.SetState(
+                    world,
+                    MonsterCollectionState.DeriveAddress(context.Signer, 0),
+                    MarkChanged);
+                world = LegacyModule.SetState(
+                    world,
+                    MonsterCollectionState.DeriveAddress(context.Signer, 1),
+                    MarkChanged);
+                world = LegacyModule.SetState(
+                    world,
+                    MonsterCollectionState.DeriveAddress(context.Signer, 2),
+                    MarkChanged);
+                world = LegacyModule.SetState(
+                    world,
+                    MonsterCollectionState.DeriveAddress(context.Signer, 3),
+                    MarkChanged);
+                world = LegacyModule.SetState(world, AvatarAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.MarkBalanceChanged(world, context, GoldCurrencyMock, context.Signer);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
@@ -81,29 +91,26 @@ namespace Nekoyume.Action
                 agentState.MonsterCollectionRound
             );
 
-            Dictionary<Type, (Address, ISheet)> sheets = world
-                .GetAccount(ReservedAddresses.LegacyAccount)
-                .GetSheets(
-                    sheetTypes: new[]
-                    {
-                        typeof(CrystalEquipmentGrindingSheet),
-                        typeof(CrystalMonsterCollectionMultiplierSheet),
-                        typeof(MaterialItemSheet),
-                        typeof(StakeRegularRewardSheet)
-                    });
+            Dictionary<Type, (Address, ISheet)> sheets = LegacyModule.GetSheets(
+                world,
+                sheetTypes: new[]
+                {
+                    typeof(CrystalEquipmentGrindingSheet),
+                    typeof(CrystalMonsterCollectionMultiplierSheet),
+                    typeof(MaterialItemSheet),
+                    typeof(StakeRegularRewardSheet)
+                });
 
-            Currency currency = world.GetAccount(ReservedAddresses.LegacyAccount).GetGoldCurrency();
+            Currency currency = LegacyModule.GetGoldCurrency(world);
             FungibleAssetValue stakedAmount = 0 * currency;
-            if (world.GetAccount(ReservedAddresses.LegacyAccount)
-                .TryGetStakeState(context.Signer, out StakeState stakeState))
+            if (LegacyModule.TryGetStakeState(world, context.Signer, out StakeState stakeState))
             {
                 stakedAmount = world.GetAccount(ReservedAddresses.LegacyAccount)
                     .GetBalance(stakeState.address, currency);
             }
             else
             {
-                if (world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .TryGetState(monsterCollectionAddress, out Dictionary _))
+                if (LegacyModule.TryGetState(world, monsterCollectionAddress, out Dictionary _))
                 {
                     stakedAmount = world.GetAccount(ReservedAddresses.LegacyAccount)
                         .GetBalance(monsterCollectionAddress, currency);
@@ -126,9 +133,7 @@ namespace Nekoyume.Action
                             throw new NotEnoughMaterialException("not enough ap stone.");
                         }
 
-                        GameConfigState gameConfigState = world
-                            .GetAccount(ReservedAddresses.LegacyAccount)
-                            .GetGameConfigState();
+                        GameConfigState gameConfigState = LegacyModule.GetGameConfigState(world);
                         avatarState.actionPoint = gameConfigState.ActionPointMax;
                         break;
                     }
@@ -181,11 +186,14 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-                account = account
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize());
-                world = world.SetAccount(account);
+                world = LegacyModule.SetState(
+                    world,
+                    worldInformationAddress,
+                    avatarState.worldInformation.Serialize());
+                world = LegacyModule.SetState(
+                    world,
+                    questListAddress,
+                    avatarState.questList.Serialize());
             }
 
             var ended = DateTimeOffset.UtcNow;

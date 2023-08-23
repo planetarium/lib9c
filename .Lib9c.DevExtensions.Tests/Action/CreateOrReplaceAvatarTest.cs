@@ -14,6 +14,7 @@ using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Xunit;
@@ -448,12 +449,11 @@ namespace Lib9c.DevExtensions.Tests.Action
                 Rehearsal = false,
                 BlockIndex = blockIndex,
             });
-            var nextStates = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
-            var agent = new AgentState((Dictionary)nextStates.GetState(agentAddr)!);
+            var agent = new AgentState((Dictionary)LegacyModule.GetState(nextWorld, agentAddr)!);
             Assert.Single(agent.avatarAddresses);
             Assert.True(agent.avatarAddresses.ContainsKey(action.AvatarIndex));
             avatarAddr ??= agent.avatarAddresses[action.AvatarIndex];
-            var avatar = new AvatarState((Dictionary)nextStates.GetState(avatarAddr.Value)!);
+            var avatar = new AvatarState((Dictionary)LegacyModule.GetState(nextWorld, avatarAddr.Value)!);
             Assert.Equal(action.Name, avatar.name);
             Assert.Equal(action.Hair, avatar.hair);
             Assert.Equal(action.Lens, avatar.lens);
@@ -463,14 +463,14 @@ namespace Lib9c.DevExtensions.Tests.Action
 
             var inventoryAddr = avatarAddr.Value.Derive(LegacyInventoryKey);
             var inventory =
-                new Inventory((List)nextStates.GetState(inventoryAddr)!);
+                new Inventory((List)LegacyModule.GetState(nextWorld, inventoryAddr)!);
             var inventoryEquipments = inventory.Equipments.ToArray();
             var equipmentItemRecipeSheet =
-                nextStates.GetSheet<EquipmentItemRecipeSheet>();
+                LegacyModule.GetSheet<EquipmentItemRecipeSheet>(nextWorld);
             var equipmentItemSubRecipeSheetV2 =
-                nextStates.GetSheet<EquipmentItemSubRecipeSheetV2>();
+                LegacyModule.GetSheet<EquipmentItemSubRecipeSheetV2>(nextWorld);
             var equipmentItemOptionSheet =
-                nextStates.GetSheet<EquipmentItemOptionSheet>();
+                LegacyModule.GetSheet<EquipmentItemOptionSheet>(nextWorld);
             foreach (var (itemId, enhancement) in action.Equipments)
             {
                 var equipment = inventoryEquipments.First(e =>
@@ -539,7 +539,8 @@ namespace Lib9c.DevExtensions.Tests.Action
 
             foreach (var (runeId, runeLevel) in action.Runes)
             {
-                var runeList = (List)nextStates.GetState(
+                var runeList = (List)LegacyModule.GetState(
+                    nextWorld,
                     RuneState.DeriveAddress(avatarAddr.Value, runeId))!;
                 Assert.Equal(runeLevel, runeList[1].ToInteger());
             }
@@ -548,16 +549,16 @@ namespace Lib9c.DevExtensions.Tests.Action
                 Addresses.GetSkillStateAddressFromAvatarAddress(avatarAddr.Value);
             if (action.CrystalRandomBuff is null)
             {
-                Assert.Equal(Null.Value, nextStates.GetState(crystalRandomSkillAddr));
+                Assert.Equal(Null.Value, LegacyModule.GetState(nextWorld, crystalRandomSkillAddr));
             }
             else
             {
                 var crystalRandomSkillState = new CrystalRandomSkillState(
                     crystalRandomSkillAddr,
-                    (List)nextStates.GetState(crystalRandomSkillAddr)!);
+                    (List)LegacyModule.GetState(nextWorld, crystalRandomSkillAddr)!);
                 var (stageId, crystalRandomBuffIds) = action.CrystalRandomBuff.Value;
                 Assert.Equal(stageId, crystalRandomSkillState.StageId);
-                var crystalStageBuffGachaSheet = nextStates.GetSheet<CrystalStageBuffGachaSheet>();
+                var crystalStageBuffGachaSheet = LegacyModule.GetSheet<CrystalStageBuffGachaSheet>(nextWorld);
                 Assert.True(crystalStageBuffGachaSheet.TryGetValue(
                     stageId,
                     out var crystalStageBuffGachaRow));

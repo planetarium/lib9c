@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -22,8 +23,8 @@ namespace Lib9c.Tests.Action.Scenario
         private readonly Address _avatarAddr;
         private readonly Address _inventoryAddr;
         private readonly Address _worldInformationAddr;
-        private readonly IAccount _initialStatesWithAvatarStateV1;
-        private readonly IAccount _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarStateV1;
+        private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly TableSheets _tableSheets;
         private readonly int _hourGlassItemId;
 
@@ -88,7 +89,7 @@ namespace Lib9c.Tests.Action.Scenario
                 recipeIds = recipeIds.Add(i.Serialize());
             }
 
-            stateV2 = stateV2.SetState(unlockRecipeIdsAddress, recipeIds);
+            stateV2 = LegacyModule.SetState(stateV2, unlockRecipeIdsAddress, recipeIds);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
@@ -97,7 +98,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            var inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
             Assert.Equal(0, inventoryState.Items.Count);
 
             // Add materials to inventory
@@ -145,15 +146,16 @@ namespace Lib9c.Tests.Action.Scenario
                     subRecipeId = recipe.SubRecipeIds?[0],
                 };
 
-                stateV2 = action.Execute(new ActionContext
-                {
-                    PreviousState = new MockWorld(stateV2),
-                    Signer = _agentAddr,
-                    BlockIndex = 0L,
-                    Random = random,
-                }).GetAccount(ReservedAddresses.LegacyAccount);
+                stateV2 = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = stateV2,
+                        Signer = _agentAddr,
+                        BlockIndex = 0L,
+                        Random = random,
+                    });
 
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
                 // TEST: requiredBlock
                 // TODO: Check reduced required block when pet comes in
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
@@ -167,22 +169,23 @@ namespace Lib9c.Tests.Action.Scenario
                     avatarAddress = _avatarAddr,
                     slotIndex = i,
                 };
-                stateV2 = action.Execute(new ActionContext
-                {
-                    PreviousState = new MockWorld(stateV2),
-                    Signer = _agentAddr,
-                    BlockIndex = stateV2.GetGameConfigState().RequiredAppraiseBlock,
-                    Random = random,
-                }).GetAccount(ReservedAddresses.LegacyAccount);
+                stateV2 = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = stateV2,
+                        Signer = _agentAddr,
+                        BlockIndex = LegacyModule.GetGameConfigState(stateV2).RequiredAppraiseBlock,
+                        Random = random,
+                    });
 
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
                 // TEST: requiredBlockIndex should be 10, a RequiredAppraiseBlock
                 Assert.Equal(10, slotState.RequiredBlockIndex);
             }
 
             // TEST: Only created items should remain in inventory
             // TEST: All HourGlasses are used
-            inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
             Assert.Equal(recipeList.Count, inventoryState.Items.Count);
             foreach (var itemId in targetItemIdList)
             {

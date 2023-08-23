@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action.Coupons
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Coupons;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class TransferCouponsTest
@@ -18,20 +19,20 @@ namespace Lib9c.Tests.Action.Coupons
         [Fact]
         public void Execute()
         {
-            IAccount state = new Lib9c.Tests.Action.MockAccount();
+            IWorld world = new MockWorld();
             IRandom random = new TestRandom();
 
             var coupon1 = new Coupon(CouponsFixture.Guid1, CouponsFixture.RewardSet1);
             var coupon2 = new Coupon(CouponsFixture.Guid2, CouponsFixture.RewardSet2);
             var coupon3 = new Coupon(CouponsFixture.Guid3, CouponsFixture.RewardSet3);
 
-            state = state
-                .SetCouponWallet(
-                    CouponsFixture.AgentAddress1,
-                    state.GetCouponWallet(CouponsFixture.AgentAddress1)
-                        .Add(CouponsFixture.Guid1, coupon1)
-                        .Add(CouponsFixture.Guid2, coupon2)
-                        .Add(CouponsFixture.Guid3, coupon3));
+            world = LegacyModule.SetCouponWallet(
+                world,
+                CouponsFixture.AgentAddress1,
+                LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress1)
+                    .Add(CouponsFixture.Guid1, coupon1)
+                    .Add(CouponsFixture.Guid2, coupon2)
+                    .Add(CouponsFixture.Guid3, coupon3));
 
             // can't transfer a nonexistent coupon
             Assert.Throws<FailedLoadStateException>(() => new TransferCoupons(
@@ -41,7 +42,7 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = new MockWorld(state),
+                        PreviousState = world,
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
                     }));
@@ -54,7 +55,7 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = new MockWorld(state),
+                        PreviousState = world,
                         Signer = CouponsFixture.AgentAddress2,
                         Rehearsal = false,
                     }));
@@ -69,59 +70,63 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = new MockWorld(state),
+                        PreviousState = world,
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
                     }));
 
             // transfer to self
-            var expected = state.GetCouponWallet(CouponsFixture.AgentAddress1);
-            state = new TransferCoupons(
+            var expected = LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress1);
+            world = new TransferCoupons(
                     ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                        .Add(CouponsFixture.AgentAddress1, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid1)))
+                        .Add(
+                            CouponsFixture.AgentAddress1,
+                            ImmutableHashSet<Guid>.Empty
+                                .Add(CouponsFixture.Guid1)))
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = new MockWorld(state),
+                        PreviousState = world,
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
-                    }).GetAccount(ReservedAddresses.LegacyAccount);
-            Assert.Equal(expected, state.GetCouponWallet(CouponsFixture.AgentAddress1));
+                    });
+            Assert.Equal(expected, LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress1));
 
             // transfer nothing
-            state = new TransferCoupons(
+            world = new TransferCoupons(
                     ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
                         .Add(CouponsFixture.AgentAddress2, ImmutableHashSet<Guid>.Empty))
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = new MockWorld(state),
+                        PreviousState = world,
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
-                    }).GetAccount(ReservedAddresses.LegacyAccount);
-            Assert.Equal(expected, state.GetCouponWallet(CouponsFixture.AgentAddress1));
+                    });
+            Assert.Equal(expected, LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress1));
 
             // single transfer
-            expected = state.GetCouponWallet(CouponsFixture.AgentAddress1);
-            state = new TransferCoupons(
+            expected = LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress1);
+            world = new TransferCoupons(
                     ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                        .Add(CouponsFixture.AgentAddress2, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid1)))
+                        .Add(
+                            CouponsFixture.AgentAddress2,
+                            ImmutableHashSet<Guid>.Empty
+                                .Add(CouponsFixture.Guid1)))
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = new MockWorld(state),
+                        PreviousState = world,
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
-                    }).GetAccount(ReservedAddresses.LegacyAccount);
+                    });
             Assert.Equal(
                 expected.Remove(CouponsFixture.Guid1),
-                state.GetCouponWallet(CouponsFixture.AgentAddress1));
+                LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress1));
             Assert.Equal(
                 ImmutableDictionary<Guid, Coupon>.Empty
                     .Add(CouponsFixture.Guid1, coupon1),
-                state.GetCouponWallet(CouponsFixture.AgentAddress2));
+                LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress2));
 
             // can't transfer a coupon twice
             Assert.Throws<FailedLoadStateException>(() => new TransferCoupons(
@@ -131,24 +136,26 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = new MockWorld(state),
+                        PreviousState = world,
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
                     }));
 
-            state = state
-                .SetCouponWallet(
-                    CouponsFixture.AgentAddress1,
-                    ImmutableDictionary<Guid, Coupon>.Empty
-                        .Add(CouponsFixture.Guid1, coupon1)
-                        .Add(CouponsFixture.Guid2, coupon2)
-                        .Add(CouponsFixture.Guid3, coupon3))
-                .SetCouponWallet(
-                    CouponsFixture.AgentAddress2,
-                    ImmutableDictionary<Guid, Coupon>.Empty)
-                .SetCouponWallet(
-                    CouponsFixture.AgentAddress3,
-                    ImmutableDictionary<Guid, Coupon>.Empty);
+            world = LegacyModule.SetCouponWallet(
+                world,
+                CouponsFixture.AgentAddress1,
+                ImmutableDictionary<Guid, Coupon>.Empty
+                    .Add(CouponsFixture.Guid1, coupon1)
+                    .Add(CouponsFixture.Guid2, coupon2)
+                    .Add(CouponsFixture.Guid3, coupon3));
+            world = LegacyModule.SetCouponWallet(
+                world,
+                CouponsFixture.AgentAddress2,
+                ImmutableDictionary<Guid, Coupon>.Empty);
+            world = LegacyModule.SetCouponWallet(
+                world,
+                CouponsFixture.AgentAddress3,
+                ImmutableDictionary<Guid, Coupon>.Empty);
 
             var rehearsedState = new TransferCoupons(
                     ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
@@ -160,7 +167,7 @@ namespace Lib9c.Tests.Action.Coupons
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = new MockWorld(state),
+                        PreviousState = world,
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = true,
                     })
@@ -179,32 +186,36 @@ namespace Lib9c.Tests.Action.Coupons
                     CouponsFixture.AgentAddress3.Derive(SerializeKeys.CouponWalletKey)));
 
             // multiple transfer
-            state = new TransferCoupons(
+            world = new TransferCoupons(
                     ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                        .Add(CouponsFixture.AgentAddress2, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid1)
-                            .Add(CouponsFixture.Guid2))
-                        .Add(CouponsFixture.AgentAddress3, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid3)))
+                        .Add(
+                            CouponsFixture.AgentAddress2,
+                            ImmutableHashSet<Guid>.Empty
+                                .Add(CouponsFixture.Guid1)
+                                .Add(CouponsFixture.Guid2))
+                        .Add(
+                            CouponsFixture.AgentAddress3,
+                            ImmutableHashSet<Guid>.Empty
+                                .Add(CouponsFixture.Guid3)))
                 .Execute(
                     new ActionContext
                     {
-                        PreviousState = new MockWorld(state),
+                        PreviousState = world,
                         Signer = CouponsFixture.AgentAddress1,
                         Rehearsal = false,
-                    }).GetAccount(ReservedAddresses.LegacyAccount);
+                    });
             Assert.Equal(
                 ImmutableDictionary<Guid, Coupon>.Empty,
-                state.GetCouponWallet(CouponsFixture.AgentAddress1));
+                LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress1));
             Assert.Equal(
                 ImmutableDictionary<Guid, Coupon>.Empty
                     .Add(CouponsFixture.Guid1, coupon1)
                     .Add(CouponsFixture.Guid2, coupon2),
-                state.GetCouponWallet(CouponsFixture.AgentAddress2));
+                LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress2));
             Assert.Equal(
                 ImmutableDictionary<Guid, Coupon>.Empty
                     .Add(CouponsFixture.Guid3, coupon3),
-                state.GetCouponWallet(CouponsFixture.AgentAddress3));
+                LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress3));
         }
 
         [Fact]

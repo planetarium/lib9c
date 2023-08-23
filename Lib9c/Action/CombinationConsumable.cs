@@ -72,15 +72,13 @@ namespace Nekoyume.Action
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-                account = account
-                    .SetState(avatarAddress, MarkChanged)
-                    .SetState(context.Signer, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetState(slotAddress, MarkChanged);
-                return world.SetAccount(account);
+                world = LegacyModule.SetState(world, avatarAddress, MarkChanged);
+                world = LegacyModule.SetState(world, context.Signer, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, slotAddress, MarkChanged);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
@@ -111,8 +109,7 @@ namespace Nekoyume.Action
             // ~Validate Required Cleared Stage
 
             // Validate SlotIndex
-            var slotState = world.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetCombinationSlotState(avatarAddress, slotIndex);
+            var slotState = LegacyModule.GetCombinationSlotState(world, avatarAddress, slotIndex);
             if (slotState is null)
             {
                 throw new FailedLoadStateException(
@@ -132,8 +129,7 @@ namespace Nekoyume.Action
             var requiredFungibleItems = new Dictionary<int, int>();
 
             // Validate RecipeId
-            var consumableItemRecipeSheet = world.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetSheet<ConsumableItemRecipeSheet>();
+            var consumableItemRecipeSheet = LegacyModule.GetSheet<ConsumableItemRecipeSheet>(world);
             if (!consumableItemRecipeSheet.TryGetValue(recipeId, out var recipeRow))
             {
                 throw new SheetRowNotFoundException(
@@ -144,8 +140,7 @@ namespace Nekoyume.Action
             // ~Validate RecipeId
 
             // Validate Recipe ResultEquipmentId
-            var consumableItemSheet = world.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetSheet<ConsumableItemSheet>();
+            var consumableItemSheet = LegacyModule.GetSheet<ConsumableItemSheet>(world);
             if (!consumableItemSheet.TryGetValue(recipeRow.ResultConsumableItemId, out var consumableRow))
             {
                 throw new SheetRowNotFoundException(
@@ -156,8 +151,7 @@ namespace Nekoyume.Action
             // ~Validate Recipe ResultEquipmentId
 
             // Validate Recipe Material
-            var materialItemSheet = world.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetSheet<MaterialItemSheet>();
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(world);
             for (var i = recipeRow.Materials.Count; i > 0; i--)
             {
                 var materialInfo = recipeRow.Materials[i - 1];

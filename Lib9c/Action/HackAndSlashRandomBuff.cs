@@ -7,10 +7,10 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Battle;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData.Crystal;
 using Serilog;
 
@@ -48,21 +48,20 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var gachaStateAddress = Addresses.GetSkillStateAddressFromAvatarAddress(AvatarAddress);
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}HackAndSlashRandomBuff exec started", addressesHex);
 
             // Invalid Avatar address, or does not have GachaState.
-            if (!account.TryGetState(gachaStateAddress, out List rawGachaState))
+            if (!LegacyModule.TryGetState(world, gachaStateAddress, out List rawGachaState))
             {
                 throw new FailedLoadStateException(
                     $"Can't find {nameof(CrystalRandomSkillState)}. Gacha state address:{gachaStateAddress}");
             }
 
             var gachaState = new CrystalRandomSkillState(gachaStateAddress, rawGachaState);
-            var stageBuffSheet = account.GetSheet<CrystalStageBuffGachaSheet>();
+            var stageBuffSheet = LegacyModule.GetSheet<CrystalStageBuffGachaSheet>(world);
 
             // Insufficient gathered star.
             if (gachaState.StarCount < stageBuffSheet[gachaState.StageId].MaxStar)
@@ -75,7 +74,7 @@ namespace Nekoyume.Action
                 CrystalCalculator.CalculateBuffGachaCost(gachaState.StageId,
                     AdvancedGacha,
                     stageBuffSheet);
-            var balance = account.GetBalance(context.Signer, cost.Currency);
+            var balance = LegacyModule.GetBalance(world, context.Signer, cost.Currency);
 
             // Insufficient CRYSTAL.
             if (balance < cost)
@@ -85,7 +84,7 @@ namespace Nekoyume.Action
             }
 
             var buffSelector = new WeightedSelector<int>(context.Random);
-            var buffSheet = account.GetSheet<CrystalRandomBuffSheet>();
+            var buffSheet = LegacyModule.GetSheet<CrystalRandomBuffSheet>(world);
             foreach (var buffRow in buffSheet.Values)
             {
                 buffSelector.Add(buffRow.Id, buffRow.Ratio);
@@ -115,10 +114,14 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}HackAndSlashRandomBuff Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            account = account
-                .SetState(gachaStateAddress, gachaState.Serialize())
-                .TransferAsset(context, context.Signer, Addresses.StageRandomBuff, cost);
-            return world.SetAccount(account);
+            world = LegacyModule.SetState(world, gachaStateAddress, gachaState.Serialize());
+            world = LegacyModule.TransferAsset(
+                world,
+                context,
+                context.Signer,
+                Addresses.StageRandomBuff,
+                cost);
+            return world;
         }
 
         private static bool IsPitySystemNeeded(IEnumerable<int> buffIds, int gachaCount, CrystalRandomBuffSheet sheet)

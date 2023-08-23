@@ -6,8 +6,8 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -47,16 +47,19 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             if (context.Rehearsal)
             {
                 // FIXME: Is this correct implementation?
                 foreach (var asset in Assets)
                 {
-                    account = account.MarkBalanceChanged(context, asset.Currency, RewardPoolAddress);
+                    world = LegacyModule.MarkBalanceChanged(
+                        world,
+                        context,
+                        asset.Currency,
+                        RewardPoolAddress);
                 }
 
-                return world.SetAccount(account);
+                return world;
             }
 
             CheckPermission(context);
@@ -68,10 +71,10 @@ namespace Nekoyume.Action
                 {
                     throw new CurrencyPermissionException(null, context.Signer, asset.Currency);
                 }
-                account = account.MintAsset(context, RewardPoolAddress, asset);
+                world = LegacyModule.MintAsset(world, context, RewardPoolAddress, asset);
             }
 
-            return world.SetAccount(account);
+            return world;
         }
     }
 }

@@ -16,8 +16,8 @@ namespace Lib9c.Tests.Util
             TableSheets tableSheets,
             Address agentAddr,
             Address avatarAddr,
-            IAccount initialStatesWithAvatarStateV1,
-            IAccount initialStatesWithAvatarStateV2
+            IWorld initialStatesWithAvatarStateV1,
+            IWorld initialStatesWithAvatarStateV2
             ) InitializeStates(
                 Address? adminAddr = null,
                 Address? agentAddr = null,
@@ -90,8 +90,8 @@ namespace Lib9c.Tests.Util
                 tableSheets,
                 agentAddr.Value,
                 avatarAddr,
-                initialStatesWithAvatarStateV1,
-                initialStatesWithAvatarStateV2);
+                new MockWorld(initialStatesWithAvatarStateV1),
+                new MockWorld(initialStatesWithAvatarStateV2));
         }
     }
 }

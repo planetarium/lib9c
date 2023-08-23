@@ -7,12 +7,11 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -50,26 +49,37 @@ namespace Nekoyume.Action
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-            var sheets = account.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 sheetTypes: new[]
                 {
                     typeof(ArenaSheet),
                 });
 
-            var adventureSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var adventureSlotState = account.TryGetState(adventureSlotStateAddress, out List rawAdventureSlotState)
+            var adventureSlotStateAddress =
+                RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
+            var adventureSlotState = LegacyModule.TryGetState(
+                world,
+                adventureSlotStateAddress,
+                out List rawAdventureSlotState)
                 ? new RuneSlotState(rawAdventureSlotState)
                 : new RuneSlotState(BattleType.Adventure);
 
 
-            var arenaSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Arena);
-            var arenaSlotState = account.TryGetState(arenaSlotStateAddress, out List rawArenaSlotState)
+            var arenaSlotStateAddress =
+                RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Arena);
+            var arenaSlotState = LegacyModule.TryGetState(
+                world,
+                arenaSlotStateAddress,
+                out List rawArenaSlotState)
                 ? new RuneSlotState(rawArenaSlotState)
                 : new RuneSlotState(BattleType.Arena);
 
             var raidSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Raid);
-            var raidSlotState = account.TryGetState(raidSlotStateAddress, out List rawRaidSlotState)
+            var raidSlotState = LegacyModule.TryGetState(
+                world,
+                raidSlotStateAddress,
+                out List rawRaidSlotState)
                 ? new RuneSlotState(rawRaidSlotState)
                 : new RuneSlotState(BattleType.Raid);
 
@@ -88,25 +98,34 @@ namespace Nekoyume.Action
                     $"[{nameof(UnlockRuneSlot)}] RuneSlotType : {slot.RuneSlotType}");
             }
 
-            var gameConfigState = account.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(world);
             var cost = slot.RuneType == RuneType.Stat
                 ? gameConfigState.RuneStatSlotUnlockCost
                 : gameConfigState.RuneSkillSlotUnlockCost;
-            var ncgCurrency = account.GetGoldCurrency();
+            var ncgCurrency = LegacyModule.GetGoldCurrency(world);
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(
+                arenaData.ChampionshipId,
+                arenaData.Round);
 
             adventureSlotState.Unlock(SlotIndex);
             arenaSlotState.Unlock(SlotIndex);
             raidSlotState.Unlock(SlotIndex);
 
-            account = account
-                .TransferAsset(context, context.Signer, feeStoreAddress, cost * ncgCurrency)
-                .SetState(adventureSlotStateAddress, adventureSlotState.Serialize())
-                .SetState(arenaSlotStateAddress, arenaSlotState.Serialize())
-                .SetState(raidSlotStateAddress, raidSlotState.Serialize());
-            return world.SetAccount(account);
+            world = LegacyModule.TransferAsset(
+                world,
+                context,
+                context.Signer,
+                feeStoreAddress,
+                cost * ncgCurrency);
+            world = LegacyModule.SetState(
+                world,
+                adventureSlotStateAddress,
+                adventureSlotState.Serialize());
+            world = LegacyModule.SetState(world, arenaSlotStateAddress, arenaSlotState.Serialize());
+            world = LegacyModule.SetState(world, raidSlotStateAddress, raidSlotState.Serialize());
+            return world;
         }
     }
 }

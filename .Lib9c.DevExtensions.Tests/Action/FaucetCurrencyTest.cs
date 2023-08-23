@@ -3,8 +3,8 @@ using Lib9c.Tests.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 using Xunit;
 using Xunit.Abstractions;
@@ -64,19 +64,21 @@ namespace Lib9c.DevExtensions.Tests.Action
                 FaucetNcg = faucetNcg,
                 FaucetCrystal = faucetCrystal,
             };
-            var state = action
+            var world = action
                 .Execute(
-                    new ActionContext { PreviousState = new MockWorld(_initialState) })
-                .GetAccount(ReservedAddresses.LegacyAccount);
-            AgentState agentState = state.GetAgentState(_agentAddress);
+                    new ActionContext { PreviousState = new MockWorld(_initialState) });
+            AgentState agentState = AgentModule.GetAgentState(world, _agentAddress);
             FungibleAssetValue expectedNcgAsset =
                 new FungibleAssetValue(_ncg, expectedNcg, 0);
-            FungibleAssetValue ncg = state.GetBalance(_agentAddress, state.GetGoldCurrency());
+            FungibleAssetValue ncg = LegacyModule.GetBalance(
+                world,
+                _agentAddress,
+                LegacyModule.GetGoldCurrency(world));
             Assert.Equal(expectedNcgAsset, ncg);
 
             FungibleAssetValue expectedCrystalAsset =
                 new FungibleAssetValue(_crystal, expectedCrystal, 0);
-            FungibleAssetValue crystal = state.GetBalance(_agentAddress, _crystal);
+            FungibleAssetValue crystal = LegacyModule.GetBalance(world, _agentAddress, _crystal);
             Assert.Equal(expectedCrystalAsset, crystal);
         }
     }

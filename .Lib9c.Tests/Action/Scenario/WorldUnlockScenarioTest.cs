@@ -10,13 +10,14 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
     public class WorldUnlockScenarioTest
     {
         private TableSheets _tableSheets;
-        private IAccount _initialState;
+        private IWorld _initialState;
         private Address _agentAddress;
         private Address _avatarAddress;
         private Address _rankingMapAddress;
@@ -48,16 +49,18 @@ namespace Lib9c.Tests.Action.Scenario
 
             _weeklyArenaState = new WeeklyArenaState(0);
 
-            _initialState = new Lib9c.Tests.Action.MockAccount()
+            _initialState = new MockWorld(new Lib9c.Tests.Action.MockAccount()
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(_rankingMapAddress, new RankingMapState(_rankingMapAddress).Serialize());
+                .SetState(_rankingMapAddress, new RankingMapState(_rankingMapAddress).Serialize()));
 
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
         }
 
@@ -79,7 +82,7 @@ namespace Lib9c.Tests.Action.Scenario
                 stageIdToClear,
                 out _));
 
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             avatarState.level = avatarLevel;
             avatarState.worldInformation = new WorldInformation(0, _tableSheets.WorldSheet, stageIdToClear);
             Assert.True(avatarState.worldInformation.IsWorldUnlocked(worldIdToClear));
@@ -88,7 +91,7 @@ namespace Lib9c.Tests.Action.Scenario
             var doomfist = Doomfist.GetOne(_tableSheets, avatarState.level, ItemSubType.Weapon);
             avatarState.inventory.AddItem(doomfist);
 
-            var nextState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            var nextState = AvatarModule.SetAvatarState(_initialState, _avatarAddress, avatarState);
             var hackAndSlash = new HackAndSlash
             {
                 WorldId = worldIdToClear,
@@ -99,20 +102,21 @@ namespace Lib9c.Tests.Action.Scenario
                 Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>(),
             };
-            nextState = hackAndSlash.Execute(new ActionContext
-            {
-                PreviousState = new MockWorld(nextState),
-                Signer = _agentAddress,
-                Random = new TestRandom(),
-                Rehearsal = false,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            nextState = hackAndSlash.Execute(
+                new ActionContext
+                {
+                    PreviousState = nextState,
+                    Signer = _agentAddress,
+                    Random = new TestRandom(),
+                    Rehearsal = false,
+                });
 
-            avatarState = nextState.GetAvatarState(_avatarAddress);
+            avatarState = AvatarModule.GetAvatarState(nextState, _avatarAddress);
             Assert.True(avatarState.worldInformation.IsStageCleared(stageIdToClear));
             Assert.False(avatarState.worldInformation.IsWorldUnlocked(worldIdToUnlock));
 
-            var tableCsv = nextState.GetSheetCsv<WorldUnlockSheet>();
-            var worldUnlockSheet = nextState.GetSheet<WorldUnlockSheet>();
+            var tableCsv = LegacyModule.GetSheetCsv<WorldUnlockSheet>(nextState);
+            var worldUnlockSheet = LegacyModule.GetSheet<WorldUnlockSheet>(nextState);
             var newId = worldUnlockSheet.Last?.Id + 1 ?? 1;
             var newLine = $"{newId},{worldIdToClear},{stageIdToClear},{worldIdToUnlock}";
             tableCsv = $@"
@@ -130,26 +134,28 @@ id,world_id,stage_id,world_id_to_unlock,required_crystal
                 TableName = nameof(WorldUnlockSheet),
                 TableCsv = tableCsv,
             };
-            nextState = patchTableSheet.Execute(new ActionContext
-            {
-                PreviousState = new MockWorld(nextState),
-                Signer = AdminState.Address,
-                Random = new TestRandom(),
-                Rehearsal = false,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            nextState = patchTableSheet.Execute(
+                new ActionContext
+                {
+                    PreviousState = nextState,
+                    Signer = AdminState.Address,
+                    Random = new TestRandom(),
+                    Rehearsal = false,
+                });
 
-            var nextTableCsv = nextState.GetSheetCsv<WorldUnlockSheet>();
+            var nextTableCsv = LegacyModule.GetSheetCsv<WorldUnlockSheet>(nextState);
             Assert.Equal(nextTableCsv, tableCsv);
 
-            nextState = hackAndSlash.Execute(new ActionContext
-            {
-                PreviousState = new MockWorld(nextState),
-                Signer = _agentAddress,
-                Random = new TestRandom(),
-                Rehearsal = false,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            nextState = hackAndSlash.Execute(
+                new ActionContext
+                {
+                    PreviousState = nextState,
+                    Signer = _agentAddress,
+                    Random = new TestRandom(),
+                    Rehearsal = false,
+                });
 
-            avatarState = nextState.GetAvatarState(_avatarAddress);
+            avatarState = AvatarModule.GetAvatarState(nextState, _avatarAddress);
             Assert.True(avatarState.worldInformation.IsWorldUnlocked(worldIdToUnlock));
         }
     }

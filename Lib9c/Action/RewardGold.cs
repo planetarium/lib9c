@@ -10,6 +10,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 
@@ -40,9 +41,8 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-            account = TransferMead(context, account);
-            account = GenesisGoldDistribution(context, account);
+            world = TransferMead(context, world);
+            world = GenesisGoldDistribution(context, world);
             var addressesHex = GetSignerAndOtherAddressesHex(context, context.Signer);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RewardGold exec started", addressesHex);
@@ -50,21 +50,22 @@ namespace Nekoyume.Action
             // Avoid InvalidBlockStateRootHashException before table patch.
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
             // Avoid InvalidBlockStateRootHashException in unit test genesis block evaluate.
-            if (account.GetState(arenaSheetAddress) is null || context.BlockIndex == 0)
+            if (LegacyModule.GetState(world, arenaSheetAddress) is null || context.BlockIndex == 0)
             {
-                account = WeeklyArenaRankingBoard2(context, account);
+                world = WeeklyArenaRankingBoard2(context, world);
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RewardGold Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return world.SetAccount(MinerReward(context, account));
+            return MinerReward(context, world);
         }
 
-        public IAccount GenesisGoldDistribution(IActionContext ctx, IAccount account)
+        public IWorld GenesisGoldDistribution(IActionContext ctx, IWorld world)
         {
-            IEnumerable<GoldDistribution> goldDistributions = account.GetGoldDistribution();
+            IEnumerable<GoldDistribution> goldDistributions =
+                LegacyModule.GetGoldDistribution(world);
             var index = ctx.BlockIndex;
-            Currency goldCurrency = account.GetGoldCurrency();
+            Currency goldCurrency = LegacyModule.GetGoldCurrency(world);
             Address fund = GoldCurrencyState.Address;
             foreach(GoldDistribution distribution in goldDistributions)
             {
@@ -85,76 +86,80 @@ namespace Nekoyume.Action
                 {
                     fav = fav.DivRem(100, out FungibleAssetValue _);
                 }
-                account = account.TransferAsset(
+                world = LegacyModule.TransferAsset(
+                    world,
                     ctx,
                     fund,
                     distribution.Address,
                     fav
                 );
             }
-            return account;
+            return world;
         }
 
         [Obsolete("Use WeeklyArenaRankingBoard2 for performance.")]
-        public IAccount WeeklyArenaRankingBoard(IActionContext ctx, IAccount account)
+        public IWorld WeeklyArenaRankingBoard(IActionContext ctx, IWorld world)
         {
-            var gameConfigState = account.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(world);
             var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
-            var weekly = account.GetWeeklyArenaState(index);
+            var weekly = LegacyModule.GetWeeklyArenaState(world, index);
             var nextIndex = index + 1;
-            var nextWeekly = account.GetWeeklyArenaState(nextIndex);
+            var nextWeekly = LegacyModule.GetWeeklyArenaState(world, nextIndex);
             if (nextWeekly is null)
             {
                 nextWeekly = new WeeklyArenaState(nextIndex);
-                account = account.SetState(nextWeekly.address, nextWeekly.Serialize());
+                world = LegacyModule.SetState(world, nextWeekly.address, nextWeekly.Serialize());
             }
 
             // Beginning block of a new weekly arena.
             if (ctx.BlockIndex % gameConfigState.WeeklyArenaInterval == 0 && index > 0)
             {
-                var prevWeekly = account.GetWeeklyArenaState(index - 1);
+                var prevWeekly = LegacyModule.GetWeeklyArenaState(world, index - 1);
                 if (!prevWeekly.Ended)
                 {
                     prevWeekly.End();
                     weekly.Update(prevWeekly, ctx.BlockIndex);
-                    account = account.SetState(prevWeekly.address, prevWeekly.Serialize());
-                    account = account.SetState(weekly.address, weekly.Serialize());
+                    world = LegacyModule.SetState(
+                        world,
+                        prevWeekly.address,
+                        prevWeekly.Serialize());
+                    world = LegacyModule.SetState(world, weekly.address, weekly.Serialize());
                 }
             }
             else if (ctx.BlockIndex - weekly.ResetIndex >= gameConfigState.DailyArenaInterval)
             {
                 weekly.ResetCount(ctx.BlockIndex);
-                account = account.SetState(weekly.address, weekly.Serialize());
+                world = LegacyModule.SetState(world, weekly.address, weekly.Serialize());
             }
-            return account;
+            return world;
         }
 
-        public IAccount WeeklyArenaRankingBoard2(IActionContext ctx, IAccount account)
+        public IWorld WeeklyArenaRankingBoard2(IActionContext ctx, IWorld world)
         {
-            account = PrepareNextArena(ctx, account);
-            account = ResetChallengeCount(ctx, account);
-            return account;
+            world = PrepareNextArena(ctx, world);
+            world = ResetChallengeCount(ctx, world);
+            return world;
         }
 
-        public IAccount PrepareNextArena(IActionContext ctx, IAccount account)
+        public IWorld PrepareNextArena(IActionContext ctx, IWorld world)
         {
-            var gameConfigState = account.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(world);
             var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
             var weeklyAddress = WeeklyArenaState.DeriveAddress(index);
-            var rawWeekly = (Dictionary) account.GetState(weeklyAddress);
+            var rawWeekly = (Dictionary)LegacyModule.GetState(world, weeklyAddress);
             var nextIndex = index + 1;
-            var nextWeekly = account.GetWeeklyArenaState(nextIndex);
+            var nextWeekly = LegacyModule.GetWeeklyArenaState(world, nextIndex);
             if (nextWeekly is null)
             {
                 nextWeekly = new WeeklyArenaState(nextIndex);
-                account = account.SetState(nextWeekly.address, nextWeekly.Serialize());
+                world = LegacyModule.SetState(world, nextWeekly.address, nextWeekly.Serialize());
             }
 
             // Beginning block of a new weekly arena.
             if (ctx.BlockIndex % gameConfigState.WeeklyArenaInterval == 0 && index > 0)
             {
                 var prevWeeklyAddress = WeeklyArenaState.DeriveAddress(index - 1);
-                var rawPrevWeekly = (Dictionary) account.GetState(prevWeeklyAddress);
+                var rawPrevWeekly = (Dictionary)LegacyModule.GetState(world, prevWeeklyAddress);
                 if (!rawPrevWeekly["ended"].ToBoolean())
                 {
                     rawPrevWeekly = rawPrevWeekly.SetItem("ended", true.Serialize());
@@ -162,7 +167,7 @@ namespace Nekoyume.Action
                     var prevWeekly = new WeeklyArenaState(rawPrevWeekly);
                     var listAddress = weekly.address.Derive("address_list");
                     // Set ArenaInfo, address list for new RankingBattle.
-                    var addressList = account.TryGetState(listAddress, out List rawList)
+                    var addressList = LegacyModule.TryGetState(world, listAddress, out List rawList)
                         ? rawList.ToList(StateExtensions.ToAddress)
                         : new List<Address>();
                     var nextAddresses = rawList ?? List.Empty;
@@ -178,8 +183,10 @@ namespace Nekoyume.Action
                                 var address = kv.Key;
                                 var lazyInfo = kv.Value;
                                 var info = new ArenaInfo(lazyInfo.State);
-                                account = account.SetState(
-                                    weeklyAddress.Derive(address.ToByteArray()), info.Serialize());
+                                world = LegacyModule.SetState(
+                                    world,
+                                    weeklyAddress.Derive(address.ToByteArray()),
+                                    info.Serialize());
                                 if (!addressList.Contains(address))
                                 {
                                     nextAddresses = nextAddresses.Add(address.Serialize());
@@ -193,10 +200,14 @@ namespace Nekoyume.Action
                             // Copy addresses from prev weekly address list.
                             var prevListAddress = prevWeekly.address.Derive("address_list");
 
-                            if (account.TryGetState(prevListAddress, out List prevRawList))
+                            if (LegacyModule.TryGetState(
+                                    world,
+                                    prevListAddress,
+                                    out List prevRawList))
                             {
                                 var prevList = prevRawList.ToList(StateExtensions.ToAddress);
-                                foreach (var address in prevList.Where(address => !addressList.Contains(address)))
+                                foreach (var address in prevList.Where(
+                                             address => !addressList.Contains(address)))
                                 {
                                     addressList.Add(address);
                                 }
@@ -205,7 +216,8 @@ namespace Nekoyume.Action
                             // Copy activated ArenaInfo from prev ArenaInfo.
                             foreach (var address in addressList)
                             {
-                                if (account.TryGetState(
+                                if (LegacyModule.TryGetState(
+                                        world,
                                         prevWeekly.address.Derive(address.ToByteArray()),
                                         out Dictionary rawInfo))
                                 {
@@ -219,14 +231,15 @@ namespace Nekoyume.Action
                                     }
 
                                     nextAddresses = nextAddresses.Add(address.Serialize());
-                                    account = account.SetState(
+                                    world = LegacyModule.SetState(
+                                        world,
                                         weeklyAddress.Derive(address.ToByteArray()),
                                         new ArenaInfo(prevInfo).Serialize());
                                 }
                             }
                         }
                         // Set address list.
-                        account = account.SetState(listAddress, nextAddresses);
+                        world = LegacyModule.SetState(world, listAddress, nextAddresses);
                     }
                     // Run legacy Update.
                     else
@@ -234,19 +247,19 @@ namespace Nekoyume.Action
                         weekly.Update(prevWeekly, ctx.BlockIndex);
                     }
 
-                    account = account.SetState(prevWeeklyAddress, rawPrevWeekly);
-                    account = account.SetState(weeklyAddress, weekly.Serialize());
+                    world = LegacyModule.SetState(world, prevWeeklyAddress, rawPrevWeekly);
+                    world = LegacyModule.SetState(world, weeklyAddress, weekly.Serialize());
                 }
             }
-            return account;
+            return world;
         }
 
-        public IAccount ResetChallengeCount(IActionContext ctx, IAccount account)
+        public IWorld ResetChallengeCount(IActionContext ctx, IWorld world)
         {
-            var gameConfigState = account.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(world);
             var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
             var weeklyAddress = WeeklyArenaState.DeriveAddress(index);
-            var rawWeekly = (Dictionary) account.GetState(weeklyAddress);
+            var rawWeekly = (Dictionary)LegacyModule.GetState(world, weeklyAddress);
             var resetIndex = rawWeekly["resetIndex"].ToLong();
 
             if (ctx.BlockIndex - resetIndex >= gameConfigState.DailyArenaInterval)
@@ -257,17 +270,17 @@ namespace Nekoyume.Action
                     // Reset count each ArenaInfo.
                     weekly.ResetIndex = ctx.BlockIndex;
                     var listAddress = weeklyAddress.Derive("address_list");
-                    if (account.TryGetState(listAddress, out List rawList))
+                    if (LegacyModule.TryGetState(world, listAddress, out List rawList))
                     {
                         var addressList = rawList.ToList(StateExtensions.ToAddress);
                         foreach (var address in addressList)
                         {
                             var infoAddress = weeklyAddress.Derive(address.ToByteArray());
-                            if (account.TryGetState(infoAddress, out Dictionary rawInfo))
+                            if (LegacyModule.TryGetState(world, infoAddress, out Dictionary rawInfo))
                             {
                                 var info = new ArenaInfo(rawInfo);
                                 info.ResetCount();
-                                account = account.SetState(infoAddress, info.Serialize());
+                                world = LegacyModule.SetState(world, infoAddress, info.Serialize());
                             }
                         }
                     }
@@ -277,16 +290,16 @@ namespace Nekoyume.Action
                     // Run legacy ResetCount.
                     weekly.ResetCount(ctx.BlockIndex);
                 }
-                account = account.SetState(weeklyAddress, weekly.Serialize());
+                world = LegacyModule.SetState(world, weeklyAddress, weekly.Serialize());
             }
-            return account;
+            return world;
         }
 
-        public IAccount MinerReward(IActionContext ctx, IAccount account)
+        public IWorld MinerReward(IActionContext ctx, IWorld world)
         {
             // 마이닝 보상
             // https://www.notion.so/planetarium/Mining-Reward-b7024ef463c24ebca40a2623027d497d
-            Currency currency = account.GetGoldCurrency();
+            Currency currency = LegacyModule.GetGoldCurrency(world);
             FungibleAssetValue defaultMiningReward = currency * 10;
             var countOfHalfLife = (int)Math.Pow(2, Convert.ToInt64((ctx.BlockIndex - 1) / 12614400));
             FungibleAssetValue miningReward =
@@ -294,7 +307,8 @@ namespace Nekoyume.Action
 
             if (miningReward >= FungibleAssetValue.Parse(currency, "1.25"))
             {
-                account = account.TransferAsset(
+                world = LegacyModule.TransferAsset(
+                    world,
                     ctx,
                     GoldCurrencyState.Address,
                     ctx.Miner,
@@ -302,13 +316,13 @@ namespace Nekoyume.Action
                 );
             }
 
-            return account;
+            return world;
         }
 
-        public static IAccount TransferMead(IActionContext context, IAccount account)
+        public static IWorld TransferMead(IActionContext context, IWorld world)
         {
 #pragma warning disable LAA1002
-            var targetAddresses = account
+            var targetAddresses = world.GetAccount(ReservedAddresses.LegacyAccount)
                 .TotalUpdatedFungibleAssets
 #pragma warning restore LAA1002
                 .Where(pair => pair.Item2.Equals(Currencies.Mead))
@@ -317,12 +331,12 @@ namespace Nekoyume.Action
             foreach (var address in targetAddresses)
             {
                 var contractAddress = address.GetPledgeAddress();
-                if (account.TryGetState(contractAddress, out List contract) &&
+                if (LegacyModule.TryGetState(world, contractAddress, out List contract) &&
                     contract[1].ToBoolean())
                 {
                     try
                     {
-                        account = account.Mead(context, address, contract[2].ToInteger());
+                        world = LegacyModule.Mead(world, context, address, contract[2].ToInteger());
                     }
                     catch (InsufficientBalanceException)
                     {
@@ -330,7 +344,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            return account;
+            return world;
         }
 
     }

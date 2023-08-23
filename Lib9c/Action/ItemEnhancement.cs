@@ -17,6 +17,7 @@ using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Serilog;
@@ -132,7 +133,6 @@ namespace Nekoyume.Action
             }
 
             var world = ctx.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var slotAddress = avatarAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -150,9 +150,16 @@ namespace Nekoyume.Action
             sw.Start();
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ItemEnhancement exec started", addressesHex);
-            if (!account.TryGetAgentAvatarStatesV2(ctx.Signer, avatarAddress, out var agentState, out var avatarState, out _))
+            if (!AvatarModule.TryGetAgentAvatarStatesV2(
+                    world,
+                    ctx.Signer,
+                    avatarAddress,
+                    out var agentState,
+                    out var avatarState,
+                    out _))
             {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
             if (!avatarState.inventory.TryGetNonFungibleItem(itemId, out ItemUsable enhancementItem))
@@ -178,7 +185,7 @@ namespace Nekoyume.Action
                 );
             }
 
-            var slotState = account.GetCombinationSlotState(avatarAddress, slotIndex);
+            var slotState = LegacyModule.GetCombinationSlotState(world, avatarAddress, slotIndex);
             if (slotState is null)
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the slot state was failed to load. #{slotIndex}");
@@ -193,14 +200,16 @@ namespace Nekoyume.Action
 
             sw.Restart();
 
-            Dictionary<Type, (Address, ISheet)> sheets = account.GetSheets(sheetTypes: new[]
-            {
-                typeof(EnhancementCostSheetV2),
-                typeof(MaterialItemSheet),
-                typeof(CrystalEquipmentGrindingSheet),
-                typeof(CrystalMonsterCollectionMultiplierSheet),
-                typeof(StakeRegularRewardSheet)
-            });
+            Dictionary<Type, (Address, ISheet)> sheets = LegacyModule.GetSheets(
+                world,
+                sheetTypes: new[]
+                {
+                    typeof(EnhancementCostSheetV2),
+                    typeof(MaterialItemSheet),
+                    typeof(CrystalEquipmentGrindingSheet),
+                    typeof(CrystalMonsterCollectionMultiplierSheet),
+                    typeof(StakeRegularRewardSheet)
+                });
 
             var enhancementCostSheet = sheets.GetSheet<EnhancementCostSheetV2>();
             if (!TryGetRow(enhancementEquipment, enhancementCostSheet, out var row))
@@ -285,10 +294,17 @@ namespace Nekoyume.Action
             var requiredNcg = row.Cost;
             if (requiredNcg > 0)
             {
-                var arenaSheet = account.GetSheet<ArenaSheet>();
+                var arenaSheet = LegacyModule.GetSheet<ArenaSheet>(world);
                 var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
-                account = account.TransferAsset(ctx, ctx.Signer, feeStoreAddress, account.GetGoldCurrency() * requiredNcg);
+                var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(
+                    arenaData.ChampionshipId,
+                    arenaData.Round);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    ctx,
+                    ctx.Signer,
+                    feeStoreAddress,
+                    LegacyModule.GetGoldCurrency(world) * requiredNcg);
             }
 
             // Unequip items
@@ -312,17 +328,20 @@ namespace Nekoyume.Action
                     agentState.MonsterCollectionRound
                 );
 
-                Currency currency = account.GetGoldCurrency();
+                Currency currency = LegacyModule.GetGoldCurrency(world);
                 FungibleAssetValue stakedAmount = 0 * currency;
-                if (account.TryGetStakeState(context.Signer, out StakeState stakeState))
+                if (LegacyModule.TryGetStakeState(world, context.Signer, out StakeState stakeState))
                 {
-                    stakedAmount = account.GetBalance(stakeState.address, currency);
+                    stakedAmount = LegacyModule.GetBalance(world, stakeState.address, currency);
                 }
                 else
                 {
-                    if (account.TryGetState(monsterCollectionAddress, out Dictionary _))
+                    if (LegacyModule.TryGetState(world, monsterCollectionAddress, out Dictionary _))
                     {
-                        stakedAmount = account.GetBalance(monsterCollectionAddress, currency);
+                        stakedAmount = LegacyModule.GetBalance(
+                            world,
+                            monsterCollectionAddress,
+                            currency);
                     }
                 }
 
@@ -338,7 +357,7 @@ namespace Nekoyume.Action
 
                 if (crystal > 0 * CrystalCalculator.CRYSTAL)
                 {
-                    account = account.MintAsset(context, context.Signer, crystal);
+                    world = LegacyModule.MintAsset(world, context, context.Signer, crystal);
                 }
             }
 
@@ -378,17 +397,24 @@ namespace Nekoyume.Action
 
             // Set state
             sw.Restart();
-            account = account
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+            world = LegacyModule.SetState(
+                world,
+                inventoryAddress,
+                avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                questListAddress,
+                avatarState.questList.Serialize());
+            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}ItemEnhancement Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ItemEnhancement Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            account = account.SetState(slotAddress, slotState.Serialize());
-            return world.SetAccount(account);
+            return LegacyModule.SetState(world, slotAddress, slotState.Serialize());
         }
 
         public static EnhancementResult GetEnhancementResult(EnhancementCostSheetV2.Row row, IRandom random)
