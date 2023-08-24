@@ -165,9 +165,8 @@ namespace Nekoyume.Action
         {
             var productId = productInfo.ProductId;
             var productsStateAddress = ProductsState.DeriveAddress(sellerAvatarAddress);
-            var productsState = new ProductsState(
-                (List)world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .GetState(productsStateAddress));
+            var productsState =
+                new ProductsState((List)LegacyModule.GetState(world, productsStateAddress));
             if (!productsState.ProductIds.Contains(productId))
             {
                 // sold out or canceled product.
@@ -178,19 +177,18 @@ namespace Nekoyume.Action
 
             var productAddress = Product.DeriveAddress(productId);
             var product = ProductFactory.DeserializeProduct(
-                (List)world.GetAccount(ReservedAddresses.LegacyAccount).GetState(productAddress));
+                (List)LegacyModule.GetState(world, productAddress));
             product.Validate(productInfo);
 
             switch (product)
             {
                 case FavProduct favProduct:
-                    world = world.SetAccount(
-                        world.GetAccount(ReservedAddresses.LegacyAccount)
-                            .TransferAsset(
-                                context,
-                                productAddress,
-                                AvatarAddress,
-                                favProduct.Asset));
+                    world = LegacyModule.TransferAsset(
+                        world,
+                        context,
+                        productAddress,
+                        AvatarAddress,
+                        favProduct.Asset);
                     break;
                 case ItemProduct itemProduct:
                 {
@@ -369,8 +367,7 @@ namespace Nekoyume.Action
             var orderReceipt = order.Transfer(sellerAvatarState, buyerAvatarState, context.BlockIndex);
 
             Address orderReceiptAddress = OrderReceipt.DeriveAddress(orderId);
-            if (!(world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .GetState(orderReceiptAddress) is null))
+            if (!(LegacyModule.GetState(world, orderReceiptAddress) is null))
             {
                 throw new DuplicateOrderIdException($"{orderId}");
             }

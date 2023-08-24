@@ -7,6 +7,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 
@@ -41,14 +42,12 @@ namespace Nekoyume.Action
             context.UseGas(1);
             IActionContext ctx = context;
             var world = ctx.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var sheetAddress = Addresses.TableSheet.Derive(TableName);
             if (ctx.Rehearsal)
             {
-                account = account
-                    .SetState(sheetAddress, MarkChanged)
-                    .SetState(GameConfigState.Address, MarkChanged);
-                return world.SetAccount(account);
+                world = LegacyModule.SetState(world, sheetAddress, MarkChanged);
+                world = LegacyModule.SetState(world, GameConfigState.Address, MarkChanged);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context);
@@ -68,7 +67,7 @@ namespace Nekoyume.Action
             }
 #endif
 
-            var sheets = account.GetState(sheetAddress);
+            var sheets = LegacyModule.GetState(world, sheetAddress);
             var value = sheets is null ? string.Empty : sheets.ToDotnetString();
 
             Log.Verbose(
@@ -83,15 +82,15 @@ namespace Nekoyume.Action
                 TableCsv
             );
 
-            account = account.SetState(sheetAddress, TableCsv.Serialize());
+            world = LegacyModule.SetState(world, sheetAddress, TableCsv.Serialize());
 
             if (TableName == nameof(GameConfigSheet))
             {
                 var gameConfigState = new GameConfigState(TableCsv);
-                account = account.SetState(GameConfigState.Address, gameConfigState.Serialize());
+                world = LegacyModule.SetState(world, GameConfigState.Address, gameConfigState.Serialize());
             }
 
-            return world.SetAccount(account);
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

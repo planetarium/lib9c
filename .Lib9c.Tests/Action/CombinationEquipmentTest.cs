@@ -18,6 +18,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData.Crystal;
     using Serilog;
     using Xunit;
@@ -31,7 +32,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _slotAddress;
         private readonly TableSheets _tableSheets;
         private readonly IRandom _random;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly AgentState _agentState;
         private readonly AvatarState _avatarState;
 
@@ -78,14 +79,22 @@ namespace Lib9c.Tests.Action
                 _slotAddress,
                 GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
 
-            _initialState = new MockAccount()
-                .SetState(_slotAddress, combinationSlotState.Serialize())
-                .SetState(GoldCurrencyState.Address, gold.Serialize());
+            _initialState = new MockWorld();
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                _slotAddress,
+                combinationSlotState.Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                GoldCurrencyState.Address,
+                gold.Serialize());
 
             foreach (var (key, value) in sheets)
             {
-                _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
         }
 
@@ -150,7 +159,7 @@ namespace Lib9c.Tests.Action
         )
         {
             var context = new ActionContext();
-            IAccount state = _initialState;
+            IWorld state = _initialState;
             if (unlockIdsExist)
             {
                 var unlockIds = List.Empty.Add(1.Serialize());
@@ -162,12 +171,15 @@ namespace Lib9c.Tests.Action
                     }
                 }
 
-                state = state.SetState(_avatarAddress.Derive("recipe_ids"), unlockIds);
+                state = LegacyModule.SetState(
+                    state,
+                    _avatarAddress.Derive("recipe_ids"),
+                    unlockIds);
             }
 
             if (agentExist)
             {
-                state = state.SetState(_agentAddress, _agentState.Serialize());
+                state = AgentModule.SetAgentState(state, _agentAddress, _agentState);
 
                 if (avatarExist)
                 {
@@ -196,17 +208,18 @@ namespace Lib9c.Tests.Action
 
                             if (ncgBalanceExist && subRow.RequiredGold > 0)
                             {
-                                state = state.MintAsset(
+                                state = LegacyModule.MintAsset(
+                                    state,
                                     context,
                                     _agentAddress,
-                                    subRow.RequiredGold * state.GetGoldCurrency());
+                                    subRow.RequiredGold * LegacyModule.GetGoldCurrency(state));
                             }
                         }
                     }
 
                     if (migrationRequired)
                     {
-                        state = state.SetState(_avatarAddress, _avatarState.Serialize());
+                        state = AvatarModule.SetAvatarState(state, _avatarAddress, _avatarState);
                     }
                     else
                     {
@@ -215,19 +228,26 @@ namespace Lib9c.Tests.Action
                             _avatarAddress.Derive(LegacyWorldInformationKey);
                         var questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
 
-                        state = state
-                            .SetState(_avatarAddress, _avatarState.SerializeV2())
-                            .SetState(inventoryAddress, _avatarState.inventory.Serialize())
-                            .SetState(
-                                worldInformationAddress,
-                                _avatarState.worldInformation.Serialize())
-                            .SetState(questListAddress, _avatarState.questList.Serialize());
+                        state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
+                        state = LegacyModule.SetState(
+                            state,
+                            inventoryAddress,
+                            _avatarState.inventory.Serialize());
+                        state = LegacyModule.SetState(
+                            state,
+                            worldInformationAddress,
+                            _avatarState.worldInformation.Serialize());
+                        state = LegacyModule.SetState(
+                            state,
+                            questListAddress,
+                            _avatarState.questList.Serialize());
                     }
 
                     if (!slotUnlock)
                     {
                         // Lock slot.
-                        state = state.SetState(
+                        state = LegacyModule.SetState(
+                            state,
                             _slotAddress,
                             new CombinationSlotState(_slotAddress, stageId + 1).Serialize()
                         );
@@ -263,13 +283,22 @@ namespace Lib9c.Tests.Action
                     var beforePreviousCostAddress = Addresses.GetWeeklyCrystalCostAddress(5);
                     var beforePreviousCostState = new CrystalCostState(beforePreviousCostAddress, crystalBalance * CrystalCalculator.CRYSTAL);
 
-                    state = state
-                        .SetState(previousCostAddress, previousCostState.Serialize())
-                        .SetState(beforePreviousCostAddress, beforePreviousCostState.Serialize());
+                    state = LegacyModule.SetState(
+                        state,
+                        previousCostAddress,
+                        previousCostState.Serialize());
+                    state = LegacyModule.SetState(
+                        state,
+                        beforePreviousCostAddress,
+                        beforePreviousCostState.Serialize());
                 }
 
                 expectedCrystal = crystalBalance;
-                state = state.MintAsset(context, _agentAddress, expectedCrystal * CrystalCalculator.CRYSTAL);
+                state = LegacyModule.MintAsset(
+                    state,
+                    context,
+                    _agentAddress,
+                    expectedCrystal * CrystalCalculator.CRYSTAL);
             }
 
             var dailyCostAddress =
@@ -278,8 +307,8 @@ namespace Lib9c.Tests.Action
                 r.Type == CrystalFluctuationSheet.ServiceType.Combination).BlockInterval;
             var weeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress((int)(blockIndex / weeklyInterval));
 
-            Assert.Null(state.GetState(dailyCostAddress));
-            Assert.Null(state.GetState(weeklyCostAddress));
+            Assert.Null(LegacyModule.GetState(state, dailyCostAddress));
+            Assert.Null(LegacyModule.GetState(state, weeklyCostAddress));
 
             var action = new CombinationEquipment
             {
@@ -293,18 +322,19 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                var nextState = action.Execute(new ActionContext
-                {
-                    PreviousState = new MockWorld(state),
-                    Signer = _agentAddress,
-                    BlockIndex = blockIndex,
-                    Random = _random,
-                }).GetAccount(ReservedAddresses.LegacyAccount);
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        BlockIndex = blockIndex,
+                        Random = _random,
+                    });
 
-                var currency = nextState.GetGoldCurrency();
-                Assert.Equal(0 * currency, nextState.GetBalance(_agentAddress, currency));
+                var currency = LegacyModule.GetGoldCurrency(nextState);
+                Assert.Equal(0 * currency, LegacyModule.GetBalance(nextState, _agentAddress, currency));
 
-                var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+                var slotState = LegacyModule.GetCombinationSlotState(nextState, _avatarAddress, 0);
                 Assert.NotNull(slotState.Result);
                 Assert.NotNull(slotState.Result.itemUsable);
 
@@ -318,7 +348,7 @@ namespace Lib9c.Tests.Action
                         var arenaSheet = _tableSheets.ArenaSheet;
                         var arenaData = arenaSheet.GetRoundByBlockIndex(blockIndex);
                         var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
-                        Assert.Equal(450 * currency, nextState.GetBalance(feeStoreAddress, currency));
+                        Assert.Equal(450 * currency, LegacyModule.GetBalance(nextState, feeStoreAddress, currency));
                     }
 
                     Assert.Equal(mimisbrunnr, equipment.MadeWithMimisbrunnrRecipe);
@@ -341,32 +371,32 @@ namespace Lib9c.Tests.Action
                     Assert.Equal(0, equipment.optionCountFromCombination);
                 }
 
-                var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+                var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _avatarAddress);
                 var mail = nextAvatarState.mailBox.OfType<CombinationMail>().First();
 
                 Assert.Equal(equipment, mail.attachment.itemUsable);
-                Assert.Equal(payByCrystal, !(nextState.GetState(dailyCostAddress) is null));
-                Assert.Equal(payByCrystal, !(nextState.GetState(weeklyCostAddress) is null));
+                Assert.Equal(payByCrystal, !(LegacyModule.GetState(nextState, dailyCostAddress) is null));
+                Assert.Equal(payByCrystal, !(LegacyModule.GetState(nextState, weeklyCostAddress) is null));
 
                 if (payByCrystal)
                 {
-                    var dailyCostState = nextState.GetCrystalCostState(dailyCostAddress);
-                    var weeklyCostState = nextState.GetCrystalCostState(weeklyCostAddress);
+                    var dailyCostState = LegacyModule.GetCrystalCostState(nextState, dailyCostAddress);
+                    var weeklyCostState = LegacyModule.GetCrystalCostState(nextState, weeklyCostAddress);
 
-                    Assert.Equal(0 * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
+                    Assert.Equal(0 * CrystalCalculator.CRYSTAL, LegacyModule.GetBalance(nextState, _agentAddress, CrystalCalculator.CRYSTAL));
                     Assert.Equal(1, dailyCostState.Count);
                     Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, dailyCostState.CRYSTAL);
                     Assert.Equal(1, weeklyCostState.Count);
                     Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, weeklyCostState.CRYSTAL);
                 }
 
-                Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, nextState.GetBalance(Addresses.MaterialCost, CrystalCalculator.CRYSTAL));
+                Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, LegacyModule.GetBalance(nextState, Addresses.MaterialCost, CrystalCalculator.CRYSTAL));
             }
             else
             {
                 Assert.Throws(exc, () => action.Execute(new ActionContext
                 {
-                    PreviousState = new MockWorld(state),
+                    PreviousState = state,
                     Signer = _agentAddress,
                     BlockIndex = blockIndex,
                     Random = _random,
@@ -388,15 +418,15 @@ namespace Lib9c.Tests.Action
             int recipeId)
         {
             var context = new ActionContext();
-            IAccount state = _initialState;
+            IWorld state = _initialState;
             var unlockIds = List.Empty.Add(1.Serialize());
             for (int i = 2; i < recipeId + 1; i++)
             {
                 unlockIds = unlockIds.Add(i.Serialize());
             }
 
-            state = state.SetState(_avatarAddress.Derive("recipe_ids"), unlockIds);
-            state = state.SetState(_agentAddress, _agentState.Serialize());
+            state = LegacyModule.SetState(state, _avatarAddress.Derive("recipe_ids"), unlockIds);
+            state = AgentModule.SetAgentState(state, _agentAddress, _agentState);
             _avatarState.worldInformation = new WorldInformation(0, _tableSheets.WorldSheet, 200);
             var row = _tableSheets.EquipmentItemRecipeSheet[recipeId];
             var materialRow = _tableSheets.MaterialItemSheet[row.MaterialId];
@@ -418,23 +448,30 @@ namespace Lib9c.Tests.Action
 
             if (subRow.RequiredGold > 0)
             {
-                state = state.MintAsset(
+                state = LegacyModule.MintAsset(
+                    state,
                     context,
                     _agentAddress,
-                    subRow.RequiredGold * state.GetGoldCurrency());
+                    subRow.RequiredGold * LegacyModule.GetGoldCurrency(state));
             }
 
             var inventoryAddress = _avatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress =
                 _avatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
-            state = state
-                .SetState(_avatarAddress, _avatarState.SerializeV2())
-                .SetState(inventoryAddress, _avatarState.inventory.Serialize())
-                .SetState(
-                    worldInformationAddress,
-                    _avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, _avatarState.questList.Serialize());
+            state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
+            state = LegacyModule.SetState(
+                state,
+                inventoryAddress,
+                _avatarState.inventory.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                worldInformationAddress,
+                _avatarState.worldInformation.Serialize());
+            state = LegacyModule.SetState(
+                state,
+                questListAddress,
+                _avatarState.questList.Serialize());
             var hammerPointAddress =
                 Addresses.GetHammerPointStateAddress(_avatarAddress, recipeId);
             if (doSuperCraft)
@@ -444,12 +481,13 @@ namespace Lib9c.Tests.Action
                 hammerPointState.AddHammerPoint(
                     hammerPointSheet[recipeId].MaxPoint,
                     hammerPointSheet);
-                state = state.SetState(hammerPointAddress, hammerPointState.Serialize());
+                state = LegacyModule.SetState(state, hammerPointAddress, hammerPointState.Serialize());
                 if (exc is null)
                 {
                     var costCrystal = CrystalCalculator.CRYSTAL *
                                       hammerPointSheet[recipeId].CRYSTAL;
-                    state = state.MintAsset(
+                    state = LegacyModule.MintAsset(
+                        state,
                         context,
                         _agentAddress,
                         costCrystal);
@@ -457,7 +495,7 @@ namespace Lib9c.Tests.Action
                 else if (exc.FullName!.Contains(nameof(NotEnoughHammerPointException)))
                 {
                     hammerPointState.ResetHammerPoint();
-                    state = state.SetState(hammerPointAddress, hammerPointState.Serialize());
+                    state = LegacyModule.SetState(state, hammerPointAddress, hammerPointState.Serialize());
                 }
             }
 
@@ -472,15 +510,16 @@ namespace Lib9c.Tests.Action
             };
             if (exc is null)
             {
-                var nextState = action.Execute(new ActionContext
-                {
-                    PreviousState = new MockWorld(state),
-                    Signer = _agentAddress,
-                    BlockIndex = 1,
-                    Random = _random,
-                }).GetAccount(ReservedAddresses.LegacyAccount);
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        BlockIndex = 1,
+                        Random = _random,
+                    });
 
-                Assert.True(nextState.TryGetState(hammerPointAddress, out List serialized));
+                Assert.True(LegacyModule.TryGetState(nextState, hammerPointAddress, out List serialized));
                 var hammerPointState =
                     new HammerPointState(hammerPointAddress, serialized);
                 if (!doSuperCraft)
@@ -490,7 +529,7 @@ namespace Lib9c.Tests.Action
                 else
                 {
                     Assert.Equal(0, hammerPointState.HammerPoint);
-                    var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+                    var slotState = LegacyModule.GetCombinationSlotState(nextState, _avatarAddress, 0);
                     Assert.NotNull(slotState.Result);
                     Assert.NotNull(slotState.Result.itemUsable);
                     Assert.NotEmpty(slotState.Result.itemUsable.Skills);
@@ -502,7 +541,7 @@ namespace Lib9c.Tests.Action
                 {
                     action.Execute(new ActionContext
                     {
-                        PreviousState = new MockWorld(state),
+                        PreviousState = state,
                         Signer = _agentAddress,
                         BlockIndex = 1,
                         Random = _random,

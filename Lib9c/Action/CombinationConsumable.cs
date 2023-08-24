@@ -247,12 +247,20 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Combination Total Executed Time: {Elapsed}", addressesHex, ended - started);
             world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
-            return world.SetAccount(
-                world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize())
-                    .SetState(slotAddress, slotState.Serialize()));
+            world = LegacyModule.SetState(
+                world,
+                inventoryAddress,
+                avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                questListAddress,
+                avatarState.questList.Serialize());
+            world = LegacyModule.SetState(world, slotAddress, slotState.Serialize());
+            return world;
         }
     }
 }

@@ -22,6 +22,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -37,7 +38,7 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly Guid _orderId;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public BuyTest(ITestOutputHelper outputHelper)
         {
@@ -47,12 +48,14 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new MockAccount();
+            _initialState = new MockWorld();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -101,14 +104,35 @@ namespace Lib9c.Tests.Action
             buyerAgentState.avatarAddresses[0] = _buyerAvatarAddress;
 
             _orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
-            _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(_sellerAgentAddress, sellerAgentState.Serialize())
-                .SetState(_sellerAvatarAddress, sellerAvatarState.Serialize())
-                .SetState(_buyerAgentAddress, buyerAgentState.Serialize())
-                .SetState(_buyerAvatarAddress, _buyerAvatarState.Serialize())
-                .SetState(Addresses.Shop, new ShopState().Serialize())
-                .MintAsset(context, _buyerAgentAddress, _goldCurrencyState.Currency * 100);
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                GoldCurrencyState.Address,
+                _goldCurrencyState.Serialize());
+            _initialState = AgentModule.SetAgentState(
+                _initialState,
+                _sellerAgentAddress,
+                sellerAgentState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _sellerAvatarAddress,
+                sellerAvatarState);
+            _initialState = AgentModule.SetAgentState(
+                _initialState,
+                _buyerAgentAddress,
+                buyerAgentState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _buyerAvatarAddress,
+                _buyerAvatarState);
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                Addresses.Shop,
+                new ShopState().Serialize());
+            _initialState = LegacyModule.MintAsset(
+                _initialState,
+                context,
+                _buyerAgentAddress,
+                _goldCurrencyState.Currency * 100);
         }
 
         public static IEnumerable<object[]> GetExecuteMemberData()
@@ -223,10 +247,10 @@ namespace Lib9c.Tests.Action
         [MemberData(nameof(GetExecuteMemberData))]
         public void Execute(params OrderData[] orderDataList)
         {
-            AvatarState buyerAvatarState = _initialState.GetAvatarState(_buyerAvatarAddress);
+            AvatarState buyerAvatarState = AvatarModule.GetAvatarState(_initialState, _buyerAvatarAddress);
             List<PurchaseInfo> purchaseInfos = new List<PurchaseInfo>();
             List<IProductInfo> productInfos = new List<IProductInfo>();
-            ShopState legacyShopState = _initialState.GetShopState();
+            ShopState legacyShopState = LegacyModule.GetShopState(_initialState);
             foreach (var orderData in orderDataList)
             {
                 (AvatarState sellerAvatarState, AgentState sellerAgentState) = CreateAvatarState(
@@ -274,9 +298,9 @@ namespace Lib9c.Tests.Action
                 }
 
                 Address shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
-                var shopState = _initialState.GetState(shardedShopAddress) is null
+                var shopState = LegacyModule.GetState(_initialState, shardedShopAddress) is null
                     ? new ShardedShopStateV2(shardedShopAddress)
-                    : new ShardedShopStateV2((Dictionary)_initialState.GetState(shardedShopAddress));
+                    : new ShardedShopStateV2((Dictionary)LegacyModule.GetState(_initialState, shardedShopAddress));
                 var order = OrderFactory.Create(
                     sellerAgentState.address,
                     sellerAvatarState.address,
@@ -332,12 +356,26 @@ namespace Lib9c.Tests.Action
                 productInfos.Add(productInfo);
                 purchaseInfos.Add(purchaseInfo);
 
-                _initialState = _initialState
-                    .SetState(Order.DeriveAddress(orderId), order.Serialize())
-                    .SetState(_buyerAvatarAddress, buyerAvatarState.Serialize())
-                    .SetState(sellerAvatarState.address, sellerAvatarState.Serialize())
-                    .SetState(shardedShopAddress, shopState.Serialize())
-                    .SetState(orderDigestListState.Address, orderDigestListState.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    Order.DeriveAddress(orderId),
+                    order.Serialize());
+                _initialState = AvatarModule.SetAvatarState(
+                    _initialState,
+                    _buyerAvatarAddress,
+                    buyerAvatarState);
+                _initialState = AvatarModule.SetAvatarState(
+                    _initialState,
+                    sellerAvatarState.address,
+                    sellerAvatarState);
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    shardedShopAddress,
+                    shopState.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    orderDigestListState.Address,
+                    orderDigestListState.Serialize());
             }
 
             var buyAction = new Buy
@@ -348,7 +386,7 @@ namespace Lib9c.Tests.Action
             var expectedState = buyAction.Execute(new ActionContext()
             {
                 BlockIndex = 100,
-                PreviousState = new MockWorld(_initialState),
+                PreviousState = _initialState,
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _buyerAgentAddress,
@@ -362,7 +400,7 @@ namespace Lib9c.Tests.Action
             var actualState = buyProductAction.Execute(new ActionContext
             {
                 BlockIndex = 100,
-                PreviousState = new MockWorld(_initialState),
+                PreviousState = _initialState,
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _buyerAgentAddress,
@@ -370,22 +408,21 @@ namespace Lib9c.Tests.Action
 
             Assert.Empty(buyAction.errors);
 
-            foreach (var nextWorld in new[] { expectedState, actualState })
+            foreach (var nextState in new[] { expectedState, actualState })
             {
-                var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
                 FungibleAssetValue totalTax = 0 * _goldCurrencyState.Currency;
                 FungibleAssetValue totalPrice = 0 * _goldCurrencyState.Currency;
-                Currency goldCurrencyState = nextState.GetGoldCurrency();
-                AvatarState nextBuyerAvatarState = nextState.GetAvatarStateV2(_buyerAvatarAddress);
+                Currency goldCurrencyState = LegacyModule.GetGoldCurrency(nextState);
+                AvatarState nextBuyerAvatarState = AvatarModule.GetAvatarStateV2(nextState, _buyerAvatarAddress);
                 foreach (var purchaseInfo in purchaseInfos)
                 {
                     Address shardedShopAddress =
                         ShardedShopStateV2.DeriveAddress(purchaseInfo.ItemSubType, purchaseInfo.OrderId);
-                    var nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(shardedShopAddress));
+                    var nextShopState = new ShardedShopStateV2((Dictionary)LegacyModule.GetState(nextState, shardedShopAddress));
                     Assert.DoesNotContain(nextShopState.OrderDigestList, o => o.OrderId.Equals(purchaseInfo.OrderId));
                     Order order =
                         OrderFactory.Deserialize(
-                            (Dictionary)nextState.GetState(Order.DeriveAddress(purchaseInfo.OrderId)));
+                            (Dictionary)LegacyModule.GetState(nextState, Order.DeriveAddress(purchaseInfo.OrderId)));
                     FungibleAssetValue tax = order.GetTax();
                     FungibleAssetValue taxedPrice = order.Price - tax;
                     totalTax += tax;
@@ -409,7 +446,7 @@ namespace Lib9c.Tests.Action
                     Assert.Equal(expectedCount, inventoryItem.count);
                     Assert.Equal(expectedCount, nextBuyerAvatarState.itemMap[((ItemBase)tradableItem).Id]);
 
-                    var nextSellerAvatarState = nextState.GetAvatarStateV2(purchaseInfo.SellerAvatarAddress);
+                    var nextSellerAvatarState = AvatarModule.GetAvatarStateV2(nextState, purchaseInfo.SellerAvatarAddress);
                     Assert.False(
                         nextSellerAvatarState.inventory.TryGetTradableItems(
                             purchaseInfo.TradableId,
@@ -429,17 +466,17 @@ namespace Lib9c.Tests.Action
                     Assert.Equal(order.OrderId, buyerMail.OrderId);
 
                     FungibleAssetValue sellerGold =
-                        nextState.GetBalance(purchaseInfo.SellerAgentAddress, goldCurrencyState);
+                        LegacyModule.GetBalance(nextState, purchaseInfo.SellerAgentAddress, goldCurrencyState);
                     Assert.Equal(taxedPrice, sellerGold);
 
-                    var orderReceipt = new OrderReceipt((Dictionary)nextState.GetState(OrderReceipt.DeriveAddress(order.OrderId)));
+                    var orderReceipt = new OrderReceipt((Dictionary)LegacyModule.GetState(nextState, OrderReceipt.DeriveAddress(order.OrderId)));
                     Assert.Equal(order.OrderId, orderReceipt.OrderId);
                     Assert.Equal(_buyerAgentAddress, orderReceipt.BuyerAgentAddress);
                     Assert.Equal(_buyerAvatarAddress, orderReceipt.BuyerAvatarAddress);
                     Assert.Equal(100, orderReceipt.TransferredBlockIndex);
 
                     var nextOrderDigestListState = new OrderDigestListState(
-                        (Dictionary)nextState.GetState(OrderDigestListState.DeriveAddress(purchaseInfo.SellerAvatarAddress))
+                        (Dictionary)LegacyModule.GetState(nextState, OrderDigestListState.DeriveAddress(purchaseInfo.SellerAvatarAddress))
                     );
                     Assert.Empty(nextOrderDigestListState.OrderDigestList);
                 }
@@ -449,10 +486,10 @@ namespace Lib9c.Tests.Action
                 var arenaSheet = _tableSheets.ArenaSheet;
                 var arenaData = arenaSheet.GetRoundByBlockIndex(100);
                 var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
-                var goldCurrencyGold = nextState.GetBalance(feeStoreAddress, goldCurrencyState);
+                var goldCurrencyGold = LegacyModule.GetBalance(nextState, feeStoreAddress, goldCurrencyState);
                 Assert.Equal(totalTax, goldCurrencyGold);
-                var buyerGold = nextState.GetBalance(_buyerAgentAddress, goldCurrencyState);
-                var prevBuyerGold = _initialState.GetBalance(_buyerAgentAddress, goldCurrencyState);
+                var buyerGold = LegacyModule.GetBalance(nextState, _buyerAgentAddress, goldCurrencyState);
+                var prevBuyerGold = LegacyModule.GetBalance(_initialState, _buyerAgentAddress, goldCurrencyState);
                 Assert.Equal(prevBuyerGold - totalPrice, buyerGold);
             }
         }
@@ -481,7 +518,7 @@ namespace Lib9c.Tests.Action
                         0
                     ),
                 };
-                _initialState = _initialState.SetState(_buyerAvatarAddress, avatarState.Serialize());
+                _initialState = AvatarModule.SetAvatarState(_initialState, _buyerAvatarAddress, avatarState);
             }
 
             var avatarAddress = equalAvatarAddress ? _buyerAvatarAddress : default;
@@ -494,7 +531,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws(exc, () => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = new MockWorld(_initialState),
+                    PreviousState = _initialState,
                     Random = new TestRandom(),
                     Signer = _buyerAgentAddress,
                 })
@@ -533,7 +570,7 @@ namespace Lib9c.Tests.Action
                 var shopState = new ShardedShopStateV2(shopAddress);
                 if (errorCodeMember.OrderExist)
                 {
-                    var sellerAvatarState = _initialState.GetAvatarState(_sellerAvatarAddress);
+                    var sellerAvatarState = AvatarModule.GetAvatarState(_initialState, _sellerAvatarAddress);
                     if (!errorCodeMember.NotContains)
                     {
                         var orderLock = new OrderLock(_orderId);
@@ -552,7 +589,8 @@ namespace Lib9c.Tests.Action
                     );
                     if (errorCodeMember.Duplicate)
                     {
-                        _initialState = _initialState.SetState(
+                        _initialState = LegacyModule.SetState(
+                            _initialState,
                             OrderReceipt.DeriveAddress(_orderId),
                             new OrderReceipt(_orderId, _buyerAgentAddress, _buyerAvatarAddress, 0)
                                 .Serialize()
@@ -575,23 +613,23 @@ namespace Lib9c.Tests.Action
                         );
                         var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(sellerAvatarAddress));
                         orderDigestList.Add(orderDigest);
-                        _initialState = _initialState.SetState(orderDigestList.Address, orderDigestList.Serialize());
+                        _initialState = LegacyModule.SetState(_initialState, orderDigestList.Address, orderDigestList.Serialize());
 
                         var digest = order.Digest(sellerAvatarState, _tableSheets.CostumeStatSheet);
                         shopState.Add(digest, 0);
-                        _initialState = _initialState.SetState(sellerAvatarAddress, sellerAvatarState.Serialize());
+                        _initialState = AvatarModule.SetAvatarState(_initialState, sellerAvatarAddress, sellerAvatarState);
                     }
 
-                    _initialState = _initialState.SetState(Order.DeriveAddress(_orderId), order.Serialize());
+                    _initialState = LegacyModule.SetState(_initialState, Order.DeriveAddress(_orderId), order.Serialize());
                 }
 
-                _initialState = _initialState.SetState(shopAddress, shopState.Serialize());
+                _initialState = LegacyModule.SetState(_initialState, shopAddress, shopState.Serialize());
             }
 
             if (errorCodeMember.NotEnoughBalance)
             {
-                var balance = _initialState.GetBalance(_buyerAgentAddress, _goldCurrencyState.Currency);
-                _initialState = _initialState.BurnAsset(context, _buyerAgentAddress, balance);
+                var balance = LegacyModule.GetBalance(_initialState, _buyerAgentAddress, _goldCurrencyState.Currency);
+                _initialState = LegacyModule.BurnAsset(_initialState, context, _buyerAgentAddress, balance);
             }
 
             PurchaseInfo purchaseInfo = new PurchaseInfo(
@@ -621,14 +659,13 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = new[] { purchaseInfo },
             };
 
-            IWorld nextWorld = action.Execute(new ActionContext()
+            IWorld nextState = action.Execute(new ActionContext()
             {
                 BlockIndex = blockIndex,
-                PreviousState = new MockWorld(_initialState),
+                PreviousState = _initialState,
                 Random = new TestRandom(),
                 Signer = _buyerAgentAddress,
             });
-            IAccount nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.Contains(
                 errorCodeMember.ErrorCode,
@@ -659,7 +696,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws(exc, () => buyProductAction.Execute(new ActionContext()
             {
                 BlockIndex = blockIndex,
-                PreviousState = new MockWorld(_initialState),
+                PreviousState = _initialState,
                 Random = new TestRandom(),
                 Signer = _buyerAgentAddress,
             }));
@@ -667,8 +704,8 @@ namespace Lib9c.Tests.Action
             foreach (var address in new[] { agentAddress, sellerAgentAddress, GoldCurrencyState.Address })
             {
                 Assert.Equal(
-                    _initialState.GetBalance(address, _goldCurrencyState.Currency),
-                    nextState.GetBalance(address, _goldCurrencyState.Currency)
+                    LegacyModule.GetBalance(_initialState, address, _goldCurrencyState.Currency),
+                    LegacyModule.GetBalance(nextState, address, _goldCurrencyState.Currency)
                 );
             }
         }
@@ -677,7 +714,7 @@ namespace Lib9c.Tests.Action
         [MemberData(nameof(GetReconfigureFungibleItemMemberData))]
         public void Execute_ReconfigureFungibleItem(params OrderData[] orderDataList)
         {
-            var buyerAvatarState = _initialState.GetAvatarState(_buyerAvatarAddress);
+            var buyerAvatarState = AvatarModule.GetAvatarState(_initialState, _buyerAvatarAddress);
             var purchaseInfos = new List<PurchaseInfo>();
             var firstData = orderDataList.First();
             var (sellerAvatarState, sellerAgentState) = CreateAvatarState(firstData.SellerAgentAddress, firstData.SellerAvatarAddress);
@@ -708,9 +745,9 @@ namespace Lib9c.Tests.Action
                 }
 
                 Address shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
-                var shopState = _initialState.GetState(shardedShopAddress) is null
+                var shopState = LegacyModule.GetState(_initialState, shardedShopAddress) is null
                     ? new ShardedShopStateV2(shardedShopAddress)
-                    : new ShardedShopStateV2((Dictionary)_initialState.GetState(shardedShopAddress));
+                    : new ShardedShopStateV2((Dictionary)LegacyModule.GetState(_initialState, shardedShopAddress));
                 var order = OrderFactory.Create(
                     sellerAgentState.address,
                     sellerAvatarState.address,
@@ -722,14 +759,14 @@ namespace Lib9c.Tests.Action
                     orderData.ItemCount
                 );
                 var inventoryAddress = orderData.SellerAvatarAddress.Derive(LegacyInventoryKey);
-                _initialState.SetState(inventoryAddress, sellerAvatarState.inventory.Serialize());
+                LegacyModule.SetState(_initialState, inventoryAddress, sellerAvatarState.inventory.Serialize());
 
                 var sellItem = order.Sell3(sellerAvatarState);
                 var orderDigest = order.Digest(sellerAvatarState, _tableSheets.CostumeStatSheet);
 
                 Address digestListAddress = OrderDigestListState.DeriveAddress(firstData.SellerAvatarAddress);
                 var digestListState = new OrderDigestListState(OrderDigestListState.DeriveAddress(firstData.SellerAvatarAddress));
-                if (_initialState.TryGetState(digestListAddress, out Dictionary rawDigestList))
+                if (LegacyModule.TryGetState(_initialState, digestListAddress, out Dictionary rawDigestList))
                 {
                     digestListState = new OrderDigestListState(rawDigestList);
                 }
@@ -759,12 +796,26 @@ namespace Lib9c.Tests.Action
                 );
                 purchaseInfos.Add(purchaseInfo);
 
-                _initialState = _initialState
-                    .SetState(Order.DeriveAddress(orderId), order.Serialize())
-                    .SetState(_buyerAvatarAddress, buyerAvatarState.Serialize())
-                    .SetState(sellerAvatarState.address, sellerAvatarState.Serialize())
-                    .SetState(shardedShopAddress, shopState.Serialize())
-                    .SetState(orderDigestListState.Address, orderDigestListState.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    Order.DeriveAddress(orderId),
+                    order.Serialize());
+                _initialState = AvatarModule.SetAvatarState(
+                    _initialState,
+                    _buyerAvatarAddress,
+                    buyerAvatarState);
+                _initialState = AvatarModule.SetAvatarState(
+                    _initialState,
+                    sellerAvatarState.address,
+                    sellerAvatarState);
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    shardedShopAddress,
+                    shopState.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    orderDigestListState.Address,
+                    orderDigestListState.Serialize());
             }
 
             var sumCount = orderDataList.Sum(x => x.ItemCount);
@@ -776,17 +827,16 @@ namespace Lib9c.Tests.Action
                 buyerAvatarAddress = _buyerAvatarAddress,
                 purchaseInfos = purchaseInfos,
             };
-            var nextWorld = buyAction.Execute(new ActionContext()
+            var nextState = buyAction.Execute(new ActionContext()
             {
                 BlockIndex = 100,
-                PreviousState = new MockWorld(_initialState),
+                PreviousState = _initialState,
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _buyerAgentAddress,
             });
-            var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
-            AvatarState nextBuyerAvatarState = nextState.GetAvatarState(_buyerAvatarAddress);
+            AvatarState nextBuyerAvatarState = AvatarModule.GetAvatarState(nextState, _buyerAvatarAddress);
 
             Assert.Empty(buyAction.errors);
 
@@ -794,11 +844,11 @@ namespace Lib9c.Tests.Action
             {
                 Address shardedShopAddress =
                     ShardedShopStateV2.DeriveAddress(purchaseInfo.ItemSubType, purchaseInfo.OrderId);
-                var nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(shardedShopAddress));
+                var nextShopState = new ShardedShopStateV2((Dictionary)LegacyModule.GetState(nextState, shardedShopAddress));
                 Assert.DoesNotContain(nextShopState.OrderDigestList, o => o.OrderId.Equals(purchaseInfo.OrderId));
                 Order order =
                     OrderFactory.Deserialize(
-                        (Dictionary)nextState.GetState(Order.DeriveAddress(purchaseInfo.OrderId)));
+                        (Dictionary)LegacyModule.GetState(nextState, Order.DeriveAddress(purchaseInfo.OrderId)));
                 FungibleAssetValue tax = order.GetTax();
 
                 int itemCount = order is FungibleOrder fungibleOrder ? fungibleOrder.ItemCount : 1;
@@ -819,7 +869,7 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(expectedCount, inventoryItem.count);
                 Assert.Equal(expectedCount, nextBuyerAvatarState.itemMap[((ItemBase)tradableItem).Id]);
 
-                var nextSellerAvatarState = nextState.GetAvatarStateV2(purchaseInfo.SellerAvatarAddress);
+                var nextSellerAvatarState = AvatarModule.GetAvatarStateV2(nextState, purchaseInfo.SellerAvatarAddress);
                 Assert.False(
                     nextSellerAvatarState.inventory.TryGetTradableItems(
                         purchaseInfo.TradableId,
@@ -836,14 +886,14 @@ namespace Lib9c.Tests.Action
                     .Single(i => i.OrderId.Equals(order.OrderId));
                 Assert.Equal(order.OrderId, buyerMail.OrderId);
 
-                var orderReceipt = new OrderReceipt((Dictionary)nextState.GetState(OrderReceipt.DeriveAddress(order.OrderId)));
+                var orderReceipt = new OrderReceipt((Dictionary)LegacyModule.GetState(nextState, OrderReceipt.DeriveAddress(order.OrderId)));
                 Assert.Equal(order.OrderId, orderReceipt.OrderId);
                 Assert.Equal(_buyerAgentAddress, orderReceipt.BuyerAgentAddress);
                 Assert.Equal(_buyerAvatarAddress, orderReceipt.BuyerAvatarAddress);
                 Assert.Equal(100, orderReceipt.TransferredBlockIndex);
 
                 var nextOrderDigestListState = new OrderDigestListState(
-                    (Dictionary)nextState.GetState(OrderDigestListState.DeriveAddress(purchaseInfo.SellerAvatarAddress))
+                    (Dictionary)LegacyModule.GetState(nextState, OrderDigestListState.DeriveAddress(purchaseInfo.SellerAvatarAddress))
                 );
                 Assert.Empty(nextOrderDigestListState.OrderDigestList);
             }
@@ -854,8 +904,7 @@ namespace Lib9c.Tests.Action
         {
             var result = BlockChainHelper.MakeInitialState();
             var testbed = result.GetTestbed();
-            var nextWorld = result.GetState();
-            var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
+            var nextState = result.GetState();
             var data = TestbedHelper.LoadData<TestbedSell>("TestbedSell");
 
             Assert.Equal(testbed.Orders.Count(), testbed.result.ItemInfos.Count);
@@ -878,7 +927,7 @@ namespace Lib9c.Tests.Action
                 purchaseInfos.Add(purchaseInfo);
             }
 
-            var prevBuyerGold = nextState.GetBalance(result.GetAgentState().address, nextState.GetGoldCurrency());
+            var prevBuyerGold = LegacyModule.GetBalance(nextState, result.GetAgentState().address, LegacyModule.GetGoldCurrency(nextState));
 
             var buyAction = new Buy
             {
@@ -886,21 +935,19 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = purchaseInfos,
             };
 
-            nextWorld = nextWorld.SetAccount(nextState);
-            nextWorld = buyAction.Execute(new ActionContext()
+            nextState = buyAction.Execute(new ActionContext()
             {
                 BlockIndex = 100,
-                PreviousState = nextWorld,
+                PreviousState = nextState,
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = result.GetAgentState().address,
             });
-            nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
             var totalTax = 0 * _goldCurrencyState.Currency;
             var totalPrice = 0 * _goldCurrencyState.Currency;
-            var goldCurrencyState = nextState.GetGoldCurrency();
-            var nextBuyerAvatarState = nextState.GetAvatarState(result.GetAvatarState().address);
+            var goldCurrencyState = LegacyModule.GetGoldCurrency(nextState);
+            var nextBuyerAvatarState = AvatarModule.GetAvatarState(nextState, result.GetAvatarState().address);
 
             Assert.Empty(buyAction.errors);
 
@@ -909,15 +956,15 @@ namespace Lib9c.Tests.Action
             {
                 var shardedShopAddress =
                     ShardedShopStateV2.DeriveAddress(purchaseInfo.ItemSubType, purchaseInfo.OrderId);
-                var nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(shardedShopAddress));
+                var nextShopState = new ShardedShopStateV2((Dictionary)LegacyModule.GetState(nextState, shardedShopAddress));
                 Assert.DoesNotContain(nextShopState.OrderDigestList, o => o.OrderId.Equals(purchaseInfo.OrderId));
 
                 var order = OrderFactory.Deserialize(
-                        (Dictionary)nextState.GetState(Order.DeriveAddress(purchaseInfo.OrderId)));
+                        (Dictionary)LegacyModule.GetState(nextState, Order.DeriveAddress(purchaseInfo.OrderId)));
                 var tradableId = purchaseInfo.TradableId;
                 var itemCount = order is FungibleOrder fungibleOrder ? fungibleOrder.ItemCount : 1;
                 var nextSellerAvatarState =
-                    nextState.GetAvatarStateV2(purchaseInfo.SellerAvatarAddress);
+                    AvatarModule.GetAvatarStateV2(nextState, purchaseInfo.SellerAvatarAddress);
 
                 Assert.True(nextBuyerAvatarState.inventory.TryGetTradableItem(
                     tradableId, 100, itemCount, out var _));
@@ -925,7 +972,7 @@ namespace Lib9c.Tests.Action
                     tradableId, 100, itemCount, out var _));
 
                 Assert.Empty(nextSellerAvatarState.mailBox.OfType<OrderExpirationMail>());
-                var orderReceipt = new OrderReceipt((Dictionary)nextState.GetState(OrderReceipt.DeriveAddress(order.OrderId)));
+                var orderReceipt = new OrderReceipt((Dictionary)LegacyModule.GetState(nextState, OrderReceipt.DeriveAddress(order.OrderId)));
                 Assert.Equal(order.OrderId, orderReceipt.OrderId);
                 Assert.Equal(result.GetAgentState().address, orderReceipt.BuyerAgentAddress);
                 Assert.Equal(result.GetAvatarState().address, orderReceipt.BuyerAvatarAddress);
@@ -957,17 +1004,17 @@ namespace Lib9c.Tests.Action
                 Assert.True(purchaseInfos.Exists(x => x.OrderId.Equals(mail.OrderId)));
             }
 
-            var buyerGold = nextState.GetBalance(result.GetAgentState().address, goldCurrencyState);
+            var buyerGold = LegacyModule.GetBalance(nextState, result.GetAgentState().address, goldCurrencyState);
             Assert.Equal(prevBuyerGold - totalPrice, buyerGold);
             var arenaSheet = _tableSheets.ArenaSheet;
             var arenaData = arenaSheet.GetRoundByBlockIndex(100);
             var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
-            var goldCurrencyGold = nextState.GetBalance(feeStoreAddress, goldCurrencyState);
+            var goldCurrencyGold = LegacyModule.GetBalance(nextState, feeStoreAddress, goldCurrencyState);
             Assert.Equal(totalTax, goldCurrencyGold);
 
             foreach (var (agentAddress, expectedGold) in agentRevenue)
             {
-                var gold = nextState.GetBalance(agentAddress, goldCurrencyState);
+                var gold = LegacyModule.GetBalance(nextState, agentAddress, goldCurrencyState);
                 Assert.Equal(expectedGold, gold);
             }
         }
@@ -993,9 +1040,8 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses[0] = avatarAddress;
 
-            _initialState = _initialState
-                .SetState(agentAddress, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize());
+            _initialState = AgentModule.SetAgentState(_initialState, agentAddress, agentState);
+            _initialState = AvatarModule.SetAvatarState(_initialState, avatarAddress, avatarState);
             return (avatarState, agentState);
         }
 

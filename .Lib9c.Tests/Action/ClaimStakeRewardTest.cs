@@ -8,9 +8,9 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume.Action;
-    using Nekoyume.Action.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -20,8 +20,8 @@ namespace Lib9c.Tests.Action
         private const string AgentAddressHex = "0x0000000001000000000100000000010000000001";
         private readonly Address _agentAddr = new Address(AgentAddressHex);
         private readonly Address _avatarAddr;
-        private readonly IAccount _initialStatesWithAvatarStateV1;
-        private readonly IAccount _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarStateV1;
+        private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly Currency _ncg;
 
         public ClaimStakeRewardTest(ITestOutputHelper outputHelper)
@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Action
                 _initialStatesWithAvatarStateV1,
                 _initialStatesWithAvatarStateV2) = InitializeUtil.InitializeStates(
                 agentAddr: _agentAddr);
-            _ncg = _initialStatesWithAvatarStateV1.GetGoldCurrency();
+            _ncg = LegacyModule.GetGoldCurrency(_initialStatesWithAvatarStateV1);
         }
 
         [Fact]
@@ -251,15 +251,14 @@ namespace Lib9c.Tests.Action
             prevWorld = prevWorld.SetAccount(prevAccount);
 
             var action = new ClaimStakeReward(avatarAddr);
-            var world = action.Execute(new ActionContext
+            var states = action.Execute(new ActionContext
             {
                 PreviousState = prevWorld,
                 Signer = agentAddr,
                 BlockIndex = blockIndex,
             });
 
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-            var avatarState = account.GetAvatarStateV2(avatarAddr);
+            var avatarState = AvatarModule.GetAvatarStateV2(states, avatarAddr);
             if (expectedHourglass > 0)
             {
                 Assert.Equal(
@@ -286,13 +285,13 @@ namespace Lib9c.Tests.Action
             {
                 Assert.Equal(
                     expectedRune * RuneHelper.StakeRune,
-                    account.GetBalance(avatarAddr, RuneHelper.StakeRune));
+                    LegacyModule.GetBalance(states, avatarAddr, RuneHelper.StakeRune));
             }
             else
             {
                 Assert.Equal(
                     0 * RuneHelper.StakeRune,
-                    account.GetBalance(avatarAddr, RuneHelper.StakeRune));
+                    LegacyModule.GetBalance(states, avatarAddr, RuneHelper.StakeRune));
             }
 
             if (!string.IsNullOrEmpty(expectedCurrencyAddrHex))
@@ -301,10 +300,10 @@ namespace Lib9c.Tests.Action
                 var currency = Currencies.GetMinterlessCurrency(expectedCurrencyTicker);
                 Assert.Equal(
                     expectedCurrencyAmount * currency,
-                    account.GetBalance(addr, currency));
+                    LegacyModule.GetBalance(states, addr, currency));
             }
 
-            Assert.True(account.TryGetStakeState(agentAddr, out StakeState stakeState));
+            Assert.True(LegacyModule.TryGetStakeState(states, agentAddr, out StakeState stakeState));
             Assert.Equal(blockIndex, stakeState.ReceivedBlockIndex);
         }
     }

@@ -75,7 +75,6 @@ namespace Nekoyume.Action
             }
 
             var world = context.PreviousState;
-            var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}JoinArena exec started", addressesHex);
@@ -136,7 +135,7 @@ namespace Nekoyume.Action
                 : new RuneSlotState(BattleType.Arena);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(runeInfos, runeListSheet);
-            account = account.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            world = LegacyModule.SetState(world, runeSlotStateAddress, runeSlotState.Serialize());
 
             // update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
@@ -148,7 +147,7 @@ namespace Nekoyume.Action
                 : new ItemSlotState(BattleType.Arena);
             itemSlotState.UpdateEquipment(equipments);
             itemSlotState.UpdateCostumes(costumes);
-            account = account.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            world = LegacyModule.SetState(world, itemSlotStateAddress, itemSlotState.Serialize());
 
             var sheet = sheets.GetSheet<ArenaSheet>();
             if (!sheet.TryGetValue(championshipId, out var row))
@@ -168,7 +167,7 @@ namespace Nekoyume.Action
             var fee = ArenaHelper.GetEntranceFee(roundData, context.BlockIndex, avatarState.level);
             if (fee > 0 * CrystalCalculator.CRYSTAL)
             {
-                var crystalBalance = account.GetBalance(context.Signer, CrystalCalculator.CRYSTAL);
+                var crystalBalance = LegacyModule.GetBalance(world, context.Signer, CrystalCalculator.CRYSTAL);
                 if (fee > crystalBalance)
                 {
                     throw new NotEnoughFungibleAssetValueException(
@@ -176,7 +175,7 @@ namespace Nekoyume.Action
                 }
 
                 var arenaAdr = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                account = account.TransferAsset(context, context.Signer, arenaAdr, fee);
+                world = LegacyModule.TransferAsset(world, context, context.Signer, arenaAdr, fee);
             }
 
             // check medal
@@ -233,13 +232,15 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}JoinArena Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            account = account
-                .SetState(arenaScoreAdr, arenaScore.Serialize())
-                .SetState(arenaInformationAdr, arenaInformation.Serialize())
-                .SetState(arenaParticipantsAdr, arenaParticipants.Serialize())
-                .SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
-                .SetState(context.Signer, agentState.Serialize());
-            return world.SetAccount(account);
+            world = LegacyModule.SetState(world, arenaScoreAdr, arenaScore.Serialize());
+            world = LegacyModule.SetState(world, arenaInformationAdr, arenaInformation.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                arenaParticipantsAdr,
+                arenaParticipants.Serialize());
+            world = LegacyModule.SetState(world, arenaAvatarStateAdr, arenaAvatarState.Serialize());
+            world = AgentModule.SetAgentState(world, context.Signer, agentState);
+            return world;
         }
     }
 }

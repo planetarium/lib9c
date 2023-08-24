@@ -322,8 +322,7 @@ namespace Nekoyume.Action
         public static IWorld TransferMead(IActionContext context, IWorld world)
         {
 #pragma warning disable LAA1002
-            var targetAddresses = world.GetAccount(ReservedAddresses.LegacyAccount)
-                .TotalUpdatedFungibleAssets
+            var targetAddresses = LegacyModule.TotalUpdatedFungibleAssets(world)
 #pragma warning restore LAA1002
                 .Where(pair => pair.Item2.Equals(Currencies.Mead))
                 .Select(pair => pair.Item1)

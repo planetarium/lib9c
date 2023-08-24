@@ -105,15 +105,13 @@ namespace Nekoyume.Action
             FungibleAssetValue stakedAmount = 0 * currency;
             if (LegacyModule.TryGetStakeState(world, context.Signer, out StakeState stakeState))
             {
-                stakedAmount = world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .GetBalance(stakeState.address, currency);
+                stakedAmount = LegacyModule.GetBalance(world, stakeState.address, currency);
             }
             else
             {
                 if (LegacyModule.TryGetState(world, monsterCollectionAddress, out Dictionary _))
                 {
-                    stakedAmount = world.GetAccount(ReservedAddresses.LegacyAccount)
-                        .GetBalance(monsterCollectionAddress, currency);
+                    stakedAmount = LegacyModule.GetBalance(world, monsterCollectionAddress, currency);
                 }
             }
 
@@ -199,9 +197,9 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Grinding Total Executed Time: {Elapsed}", addressesHex, ended - started);
             world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-            return world.SetAccount(world.GetAccount(ReservedAddresses.LegacyAccount)
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .MintAsset(context, context.Signer, crystal));
+            world = LegacyModule.SetState(world, inventoryAddress, avatarState.inventory.Serialize());
+            world = LegacyModule.MintAsset(world, context, context.Signer, crystal);
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

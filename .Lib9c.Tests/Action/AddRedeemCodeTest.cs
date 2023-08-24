@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -66,22 +67,24 @@ namespace Lib9c.Tests.Action
                 redeemCsv = csv,
             };
 
-            var prevState = new MockAccount()
-                .SetState(Addresses.Admin, adminState.Serialize())
-                .SetState(
-                    Addresses.RedeemCode,
-                    new RedeemCodeState(new RedeemCodeListSheet()).Serialize());
-            var nextState = action.Execute(new ActionContext
-            {
-                Signer = adminAddress,
-                BlockIndex = 0,
-                PreviousState = new MockWorld(prevState),
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            IWorld prevState = new MockWorld();
+            prevState = LegacyModule.SetState(prevState, Addresses.Admin, adminState.Serialize());
+            prevState = LegacyModule.SetState(
+                prevState,
+                Addresses.RedeemCode,
+                new RedeemCodeState(new RedeemCodeListSheet()).Serialize());
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    Signer = adminAddress,
+                    BlockIndex = 0,
+                    PreviousState = new MockWorld(prevState),
+                });
 
             var sheet = new RedeemCodeListSheet();
             sheet.Set(csv);
             var expectedMap = new RedeemCodeState(sheet).Map;
-            var redeemState = nextState.GetRedeemCodeState();
+            var redeemState = LegacyModule.GetRedeemCodeState(nextState);
             foreach (var (key, reward) in expectedMap)
             {
                 Assert.Equal(reward.RewardId, redeemState.Map[key].RewardId);
@@ -95,8 +98,8 @@ namespace Lib9c.Tests.Action
             var sheet = new RedeemCodeListSheet();
             sheet.Set(csv);
 
-            var state = new MockAccount()
-                    .SetState(Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
+            IWorld state = new MockWorld();
+            state = LegacyModule.SetState(state, Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
 
             var action = new AddRedeemCode
             {
@@ -106,7 +109,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<SheetRowValidateException>(() => action.Execute(new ActionContext
                 {
                     BlockIndex = 0,
-                    PreviousState = new MockWorld(state),
+                    PreviousState = state,
                 })
             );
         }

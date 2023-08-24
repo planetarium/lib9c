@@ -216,9 +216,10 @@ namespace Nekoyume.Action
             {
                 var shardedShopState = new ShardedShopStateV2(shopStateDict);
                 shardedShopState.Remove(order, context.BlockIndex);
-                world = world.SetAccount(
-                    world.GetAccount(ReservedAddresses.LegacyAccount)
-                        .SetState(shardedShopAddress, shardedShopState.Serialize()));
+                world = LegacyModule.SetState(
+                    world,
+                    shardedShopAddress,
+                    shardedShopState.Serialize());
             }
 
             var expirationMail = avatarState.mailBox.OfType<OrderExpirationMail>()
@@ -243,12 +244,11 @@ namespace Nekoyume.Action
                 sw.Elapsed);
             sw.Restart();
 
-            world = world.SetAccount(world.GetAccount(ReservedAddresses.LegacyAccount)
-                .SetState(itemAddress, sellItem.Serialize())
-                .SetState(digestListAddress, digestList.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize()));
+            world = LegacyModule.SetState(world, itemAddress, sellItem.Serialize());
+            world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
+            world = LegacyModule.SetState(world, inventoryAddress, avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(world, worldInformationAddress, avatarState.worldInformation.Serialize());
+            world = LegacyModule.SetState(world, questListAddress, avatarState.questList.Serialize());
             world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose(
@@ -335,9 +335,7 @@ namespace Nekoyume.Action
             {
                 var shardedShopState = new ShardedShopStateV2(shopStateDict);
                 shardedShopState.Remove(order, context.BlockIndex);
-                world = world.SetAccount(
-                    world.GetAccount(ReservedAddresses.LegacyAccount)
-                        .SetState(shardedShopAddress, shardedShopState.Serialize()));
+                world = LegacyModule.SetState(world, shardedShopAddress, shardedShopState.Serialize());
             }
 
             var expirationMail = avatarState.mailBox.OfType<OrderExpirationMail>()
@@ -362,13 +360,20 @@ namespace Nekoyume.Action
                 sw.Elapsed);
             sw.Restart();
 
-            world = world.SetAccount(
-                world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .SetState(itemAddress, sellItem.Serialize())
-                    .SetState(digestListAddress, digestList.Serialize())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize()));
+            world = LegacyModule.SetState(world, itemAddress, sellItem.Serialize());
+            world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                inventoryAddress,
+                avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                worldInformationAddress,
+                avatarState.worldInformation.Serialize());
+            world = LegacyModule.SetState(
+                world,
+                questListAddress,
+                avatarState.questList.Serialize());
             world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose(

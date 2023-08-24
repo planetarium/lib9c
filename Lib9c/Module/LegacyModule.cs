@@ -36,6 +36,9 @@ namespace Nekoyume.Module
             new LruCache<string, ISheet>(SheetsCacheSize);
 
         // Basic implementations from IAccount and IAccountState
+        public static IImmutableSet<(Address, Currency)> TotalUpdatedFungibleAssets(IWorld world) =>
+            world.GetAccount(ReservedAddresses.LegacyAccount).TotalUpdatedFungibleAssets;
+
         public static IValue GetState(IWorld world, Address address) =>
             world.GetAccount(ReservedAddresses.LegacyAccount).GetState(address);
 

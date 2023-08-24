@@ -7,6 +7,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Serilog;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
@@ -64,7 +65,7 @@ namespace Nekoyume.Action
         {
             state = default;
 
-            IValue rawState = ctx.PreviousState.GetAccount(ReservedAddresses.LegacyAccount).GetState(AdminState.Address);
+            IValue rawState = LegacyModule.GetState(ctx.PreviousState, AdminState.Address);
             if (rawState is Bencodex.Types.Dictionary asDict)
             {
                 state = new AdminState(asDict);

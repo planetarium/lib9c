@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -157,22 +158,21 @@ namespace Lib9c.Tests.Action
             }
 
             var action = new ClaimStakeReward2(avatarAddress);
-            var world = action.Execute(new ActionContext
+            var states = action.Execute(new ActionContext
             {
                 PreviousState = new MockWorld(state),
                 Signer = _signerAddress,
                 BlockIndex = StakeState.LockupInterval,
             });
-            var states = world.GetAccount(ReservedAddresses.LegacyAccount);
 
-            AvatarState avatarState = states.GetAvatarStateV2(avatarAddress);
+            AvatarState avatarState = AvatarModule.GetAvatarStateV2(states, avatarAddress);
             // regular (100 / 10) * 4
             Assert.Equal(40, avatarState.inventory.Items.First(x => x.item.Id == 400000).count);
             // regular ((100 / 800) + 1) * 4
             // It must be never added into the inventory if the amount is 0.
             Assert.Equal(4, avatarState.inventory.Items.First(x => x.item.Id == 500000).count);
 
-            Assert.True(states.TryGetStakeState(_signerAddress, out StakeState stakeState));
+            Assert.True(LegacyModule.TryGetStakeState(states, _signerAddress, out StakeState stakeState));
             Assert.Equal(StakeState.LockupInterval, stakeState.ReceivedBlockIndex);
         }
     }
