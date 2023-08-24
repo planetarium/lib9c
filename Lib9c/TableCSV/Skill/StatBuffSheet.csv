@@ -113,7 +113,7 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 701000,701000,DRV (Rune),100,0,Self,DRV,Add,0,true
 702000,701000,DRR (Rune),100,0,Self,DRR,Add,0,true
 703000,703000,CDMG (Rune),100,0,Self,CDMG,Add,0,true
-801001,801001,양날의 검 ATK,100,20,Self,ATK,Percentage,30,true
+801001,801001,양날의 검 ATK,100,20,Self,ATK,Percentage,0,true
 801002,801002,양날의 검 DEF,100,20,Self,DEF,Percentage,-20,false
 802001,802001,기선제압 CRI(Self),100,20,Self,CRI,Percentage,20,true
 802002,802002,기선제압 CRI(Enemy),100,20,Enemies,CRI,Percentage,-50,false

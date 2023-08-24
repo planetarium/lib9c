@@ -2,6 +2,7 @@ namespace Lib9c.Tests.Action.Scenario
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using Bencodex.Types;
     using Libplanet.Action.State;
@@ -12,6 +13,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus.Arena;
+    using Nekoyume.Model.Buff;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
@@ -47,7 +49,7 @@ namespace Lib9c.Tests.Action.Scenario
             _aura = (Aura)ItemFactory.CreateItemUsable(auraRow, Guid.NewGuid(), 0L);
             _aura.StatsMap.AddStatAdditionalValue(StatType.CRI, 1);
             var skillRow = _tableSheets.SkillSheet[800001];
-            var skill = SkillFactory.Get(skillRow, 0, 100, 0, StatType.NONE);
+            var skill = SkillFactory.Get(skillRow, 30, 100, 0, StatType.NONE);
             _aura.Skills.Add(skill);
             var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
             _initialState = new MockStateDelta();
@@ -336,6 +338,86 @@ namespace Lib9c.Tests.Action.Scenario
                 PreviousState = previousState,
                 BlockIndex = 0L,
             }));
+        }
+
+        [Fact]
+        public void Upgrade()
+        {
+            var auraRow = _tableSheets.EquipmentItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Aura);
+            var material = (Aura)ItemFactory.CreateItemUsable(auraRow, Guid.NewGuid(), 0L);
+            var avatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            avatarState.inventory.AddItem(material);
+            for (int i = 0; i < GameConfig.RequireClearedStageLevel.ItemEnhancementAction; i++)
+            {
+                avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
+            }
+
+            var slotAddress = _avatarAddress.Derive(string.Format(CultureInfo.InvariantCulture, CombinationSlotState.DeriveFormat, 0));
+
+            var previousState = _initialState
+                .SetState(
+                    _avatarAddress.Derive(LegacyWorldInformationKey),
+                    avatarState.worldInformation.Serialize()
+                )
+                .SetState(
+                    _avatarAddress.Derive(LegacyInventoryKey),
+                    avatarState.inventory.Serialize()
+                )
+                .SetState(slotAddress, new CombinationSlotState(slotAddress, 0).Serialize());
+
+            var action = new ItemEnhancement
+            {
+                slotIndex = 0,
+                avatarAddress = _avatarAddress,
+                itemId = _aura.ItemId,
+                materialId = material.ItemId,
+            };
+
+            var nextState = action.Execute(new ActionContext
+            {
+                Signer = _agentAddress,
+                PreviousState = previousState,
+                Random = new TestRandom(),
+                BlockIndex = 0L,
+            });
+
+            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            Assert.False(nextAvatarState.inventory.TryGetNonFungibleItem(material.ItemId, out _));
+            Assert.True(nextAvatarState.inventory.TryGetNonFungibleItem(_aura.ItemId, out Aura aura));
+            Assert.Equal(_aura.level + 1, aura.level);
+            Assert.Equal(_aura.StatsMap.ATK + 1, aura.StatsMap.ATK);
+            Assert.Equal(_aura.StatsMap.CRI + 1, aura.StatsMap.CRI);
+            var player = new Player(
+                level: 1,
+                _tableSheets.CharacterSheet,
+                _tableSheets.CharacterLevelSheet,
+                _tableSheets.EquipmentItemSetEffectSheet);
+            var buffs = BuffFactory.GetBuffs(
+                player.Stats,
+                aura.Skills.First(),
+                _tableSheets.SkillBuffSheet,
+                _tableSheets.StatBuffSheet,
+                _tableSheets.SkillActionBuffSheet,
+                _tableSheets.ActionBuffSheet
+            );
+            var buffs2 = BuffFactory.GetBuffs(
+                player.Stats,
+                _aura.Skills.First(),
+                _tableSheets.SkillBuffSheet,
+                _tableSheets.StatBuffSheet,
+                _tableSheets.SkillActionBuffSheet,
+                _tableSheets.ActionBuffSheet
+            );
+            // Check Double Edged skill count
+            Assert.Equal(2, buffs.Count);
+            Assert.Equal(2, buffs2.Count);
+            // Check Double Edged debuff
+            Assert.NotNull(buffs.OfType<StatBuff>().Where(s => s.CustomField is null));
+            Assert.NotNull(buffs2.OfType<StatBuff>().Where(s => s.CustomField is null));
+            // Check Double Edged buff
+            var enhancedBuff = buffs.OfType<StatBuff>().First(s => !(s.CustomField is null));
+            var originalBuff = buffs2.OfType<StatBuff>().First(s => !(s.CustomField is null));
+            Assert.Equal(originalBuff.CustomField!.Value.BuffValue + originalBuff.CustomField.Value.BuffValue * 0.1, enhancedBuff.CustomField!.Value.BuffValue);
         }
 
         private void Assert_Player(AvatarState avatarState, IAccountStateDelta state, Address avatarAddress, Address itemSlotStateAddress)
