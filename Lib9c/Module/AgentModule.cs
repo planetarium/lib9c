@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
@@ -9,10 +10,9 @@ namespace Nekoyume.Module
 {
     public static class AgentModule
     {
-        public static AgentState GetAgentState(IWorld world, Address address)
+        public static AgentState? GetAgentState(IWorldState worldState, Address address)
         {
-            var account = AccountHelper.ResolveAccount(world, Addresses.Agent);
-            var serializedAgent = account.GetState(address);
+            var serializedAgent = AccountHelper.Resolve(worldState, address, Addresses.Agent);
             if (serializedAgent is null)
             {
                 Log.Warning("No agent state ({0})", address.ToHex());

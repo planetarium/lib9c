@@ -14,10 +14,9 @@ namespace Nekoyume.Module
 {
     public static class AvatarModule
     {
-        public static AvatarState GetAvatarState(IWorld world, Address address)
+        public static AvatarState GetAvatarState(IWorldState worldState, Address address)
         {
-            var account = AccountHelper.ResolveAccount(world, Addresses.Avatar);
-            var serializedAvatar = account.GetState(address);
+            var serializedAvatar = AccountHelper.Resolve(worldState, address, Addresses.Avatar);
             if (serializedAvatar is null)
             {
                 Log.Warning("No avatar state ({AvatarAddress})", address.ToHex());
@@ -41,22 +40,18 @@ namespace Nekoyume.Module
             }
         }
 
-        public static AvatarState GetAvatarStateV2(IWorld world, Address address)
+        public static AvatarState GetAvatarStateV2(IWorldState worldState, Address address)
         {
-            var account = AccountHelper.ResolveAccount(world, Addresses.Avatar);
-            var addresses = new List<Address>
-            {
-                address,
-            };
             string[] keys =
             {
                 LegacyInventoryKey,
                 LegacyWorldInformationKey,
                 LegacyQuestListKey,
             };
-            addresses.AddRange(keys.Select(key => AddressExtension.Derive(address, key)));
-            var serializedValues = account.GetStates(addresses);
-            if (!(serializedValues[0] is Dictionary serializedAvatar))
+            var addresses = keys.Select(key => address.Derive(key)).ToArray();
+            var serializedAvatarRaw = AccountHelper.Resolve(worldState, address, Addresses.Avatar);
+            var serializedValues = LegacyModule.GetStates(worldState, addresses);
+            if (!(serializedAvatarRaw is Dictionary serializedAvatar))
             {
                 Log.Warning("No avatar state ({AvatarAddress})", address.ToHex());
                 return null;
@@ -65,7 +60,7 @@ namespace Nekoyume.Module
             for (var i = 0; i < keys.Length; i++)
             {
                 var key = keys[i];
-                var serializedValue = serializedValues[i + 1];
+                var serializedValue = serializedValues[i];
                 if (serializedValue is null)
                 {
                     throw new FailedLoadStateException($"failed to load {key}.");
@@ -91,17 +86,17 @@ namespace Nekoyume.Module
             }
         }
 
-        public static AvatarState GetEnemyAvatarState(IWorld world, Address avatarAddress)
+        public static AvatarState GetEnemyAvatarState(IWorldState worldState, Address avatarAddress)
         {
             AvatarState enemyAvatarState;
             try
             {
-                enemyAvatarState = GetAvatarStateV2(world, avatarAddress);
+                enemyAvatarState = GetAvatarStateV2(worldState, avatarAddress);
             }
             // BackWard compatible.
             catch (FailedLoadStateException)
             {
-                enemyAvatarState = GetAvatarState(world, avatarAddress);
+                enemyAvatarState = GetAvatarState(worldState, avatarAddress);
             }
 
             if (enemyAvatarState is null)
@@ -114,15 +109,14 @@ namespace Nekoyume.Module
         }
 
         public static bool TryGetAvatarState(
-            IWorld world,
+            IWorldState worldState,
             Address agentAddress,
             Address avatarAddress,
             out AvatarState avatarState
         )
         {
-            var account = AccountHelper.ResolveAccount(world, Addresses.Avatar);
             avatarState = null;
-            var value = account.GetState(avatarAddress);
+            var value = AccountHelper.Resolve(worldState, avatarAddress, Addresses.Avatar);
             if (value is null)
             {
                 return false;
@@ -150,17 +144,17 @@ namespace Nekoyume.Module
         }
 
         public static bool TryGetAvatarStateV2(
-            IWorld world,
+            IWorldState worldState,
             Address agentAddress,
             Address avatarAddress,
             out AvatarState avatarState,
             out bool migrationRequired
         )
         {
-            var account = AccountHelper.ResolveAccount(world, Addresses.Avatar);
             avatarState = null;
             migrationRequired = false;
-            if (account.GetState(avatarAddress) is Dictionary serializedAvatar)
+            if (AccountHelper.Resolve(worldState, avatarAddress, Addresses.Avatar) is Dictionary
+                serializedAvatar)
             {
                 try
                 {
@@ -169,7 +163,7 @@ namespace Nekoyume.Module
                         return false;
                     }
 
-                    avatarState = GetAvatarStateV2(world, avatarAddress);
+                    avatarState = GetAvatarStateV2(worldState, avatarAddress);
                     return true;
                 }
                 catch (Exception e)
@@ -178,7 +172,11 @@ namespace Nekoyume.Module
                     if (e is KeyNotFoundException || e is FailedLoadStateException)
                     {
                         migrationRequired = true;
-                        return TryGetAvatarState(world, agentAddress, avatarAddress, out avatarState);
+                        return TryGetAvatarState(
+                            worldState,
+                            agentAddress,
+                            avatarAddress,
+                            out avatarState);
                     }
 
                     return false;
@@ -190,7 +188,7 @@ namespace Nekoyume.Module
 
         // FIXME: Should not use this unified method.
         public static bool TryGetAgentAvatarStates(
-            IWorld world,
+            IWorldState worldState,
             Address agentAddress,
             Address avatarAddress,
             out AgentState agentState,
@@ -198,7 +196,7 @@ namespace Nekoyume.Module
         )
         {
             avatarState = null;
-            agentState = AgentModule.GetAgentState(world, agentAddress);
+            agentState = AgentModule.GetAgentState(worldState, agentAddress);
             if (agentState is null)
             {
                 return false;
@@ -210,13 +208,13 @@ namespace Nekoyume.Module
                     $"The avatar {avatarAddress.ToHex()} does not belong to the agent {agentAddress.ToHex()}.");
             }
 
-            avatarState = GetAvatarState(world, avatarAddress);
+            avatarState = GetAvatarState(worldState, avatarAddress);
             return !(avatarState is null);
         }
 
         // FIXME: Should not use this unified method.
         public static bool TryGetAgentAvatarStatesV2(
-            IWorld world,
+            IWorldState worldState,
             Address agentAddress,
             Address avatarAddress,
             out AgentState agentState,
@@ -226,7 +224,7 @@ namespace Nekoyume.Module
         {
             avatarState = null;
             avatarMigrationRequired = false;
-            agentState = AgentModule.GetAgentState(world, agentAddress);
+            agentState = AgentModule.GetAgentState(worldState, agentAddress);
             if (agentState is null)
             {
                 return false;
@@ -240,12 +238,12 @@ namespace Nekoyume.Module
 
             try
             {
-                avatarState = GetAvatarStateV2(world, avatarAddress);
+                avatarState = GetAvatarStateV2(worldState, avatarAddress);
             }
             catch (FailedLoadStateException)
             {
                 // BackWardCompatible.
-                avatarState = GetAvatarState(world, avatarAddress);
+                avatarState = GetAvatarState(worldState, avatarAddress);
                 avatarMigrationRequired = true;
             }
 

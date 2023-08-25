@@ -1,4 +1,6 @@
-﻿using Libplanet.Action.State;
+﻿#nullable enable
+using Bencodex.Types;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Store.Trie;
 
@@ -12,17 +14,19 @@ namespace Nekoyume.Module
         /// </summary>
         /// <param name="world">An <see cref="IWorld"/> instance of to get state from.</param>
         /// <param name="address">The <see cref="Address"/> of the state to get.</param>
+        /// <param name="accountAddress">The <see cref="Address"/> of the account to get.</param>
         /// <returns>An <see cref="IAccount"/> instance of address <paramref name="address"/> if exits.
         /// If not, legacy account.</returns>
-        internal static IAccount ResolveAccount(IWorld world, Address address)
+        public static IValue? Resolve(IWorldState world, Address address, Address accountAddress)
         {
-            var agents = world.GetAccount(address);
-            if (agents.StateRootHash.Equals(MerkleTrie.EmptyRootHash))
+            IAccount account = world.GetAccount(accountAddress);
+            if (account.StateRootHash.Equals(MerkleTrie.EmptyRootHash))
             {
-                agents = world.GetAccount(ReservedAddresses.LegacyAccount);
+                return world.GetAccount(ReservedAddresses.LegacyAccount).GetState(address);
             }
 
-            return agents;
+            IValue? state = account.GetState(address);
+            return state ?? world.GetAccount(ReservedAddresses.LegacyAccount).GetState(address);
         }
     }
 }
