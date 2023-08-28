@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -27,8 +28,8 @@ namespace Lib9c.Tests.Action
 
         public PetEnhancement0Test()
         {
-            IAccount initialAccountWithAvatarStateV1;
-            IAccount initialAccountWithAvatarStateV2;
+            IWorld initialAccountWithAvatarStateV1;
+            IWorld initialAccountWithAvatarStateV2;
             TableSheets tableSheets;
             (
                 tableSheets,
@@ -37,8 +38,8 @@ namespace Lib9c.Tests.Action
                 initialAccountWithAvatarStateV1,
                 initialAccountWithAvatarStateV2
             ) = InitializeUtil.InitializeStates();
-            _initialWorldWithAvatarStateV1 = new MockWorld(initialAccountWithAvatarStateV1);
-            _initialWorldWithAvatarStateV2 = new MockWorld(initialAccountWithAvatarStateV2);
+            _initialWorldWithAvatarStateV1 = initialAccountWithAvatarStateV1;
+            _initialWorldWithAvatarStateV2 = initialAccountWithAvatarStateV2;
             _targetPetId = tableSheets.PetSheet.First!.Id;
             var firstRound = tableSheets.ArenaSheet.OrderedList!
                 .SelectMany(row => row.Round)
@@ -302,8 +303,8 @@ namespace Lib9c.Tests.Action
                         blockIndex.Serialize()));
             }
 
-            var ncgCurrency = prevAccount.GetGoldCurrency();
-            var petSheet = prevAccount.GetSheet<PetSheet>();
+            var ncgCurrency = LegacyModule.GetGoldCurrency(prevStates);
+            var petSheet = LegacyModule.GetSheet<PetSheet>(prevStates);
             Assert.True(petSheet.TryGetValue(petId, out var petRow));
             var soulStoneCurrency = Currency.Legacy(petRow.SoulStoneTicker, 0, minters: null);
             if (mintAssets &&
@@ -312,7 +313,7 @@ namespace Lib9c.Tests.Action
                 //       For this reason, the following condition is added.
                 currentPetLevel < targetPetLevel)
             {
-                var costSheet = prevAccount.GetSheet<PetCostSheet>();
+                var costSheet = LegacyModule.GetSheet<PetCostSheet>(prevStates);
                 var (ncgCost, soulStoneCost) = PetHelper.CalculateEnhancementCost(
                     costSheet,
                     petId,
@@ -332,7 +333,7 @@ namespace Lib9c.Tests.Action
 
             if (removePetRow)
             {
-                var petSheetCsv = prevAccount.GetSheetCsv<PetSheet>();
+                var petSheetCsv = LegacyModule.GetSheetCsv<PetSheet>(prevStates);
                 var insolventPetSheetCsv = CsvUtil.CsvLinqWhere(
                     petSheetCsv,
                     line => !line.StartsWith($"{petId},"));
@@ -344,7 +345,7 @@ namespace Lib9c.Tests.Action
             if (removePetCostRow || removePetCostRowWithTargetPetLevel)
             {
                 var targetPetLevelString = targetPetLevel.ToString();
-                var petCostSheetCsv = prevAccount.GetSheetCsv<PetCostSheet>();
+                var petCostSheetCsv = LegacyModule.GetSheetCsv<PetCostSheet>(prevStates);
                 string insolventPetCostSheetCsv;
                 if (removePetCostRow)
                 {

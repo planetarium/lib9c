@@ -18,6 +18,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -241,30 +242,32 @@ namespace Lib9c.Tests.Action
                     },
                 },
             };
-            var nextState = action.Execute(new ActionContext
+            var nextWorld = action.Execute(new ActionContext
             {
                 BlockIndex = 1L,
                 PreviousState = new MockWorld(_initialState),
                 Random = new TestRandom(),
                 Signer = _agentAddress,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(AvatarAddress);
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
+
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, AvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct0.CostAp, nextAvatarState.actionPoint);
 
-            var marketState = new MarketState(nextState.GetState(Addresses.Market));
+            var marketState = new MarketState(nextAccount.GetState(Addresses.Market));
             Assert.Contains(AvatarAddress, marketState.AvatarAddresses);
 
             var productsState =
-                new ProductsState((List)nextState.GetState(ProductsState.DeriveAddress(AvatarAddress)));
+                new ProductsState((List)nextAccount.GetState(ProductsState.DeriveAddress(AvatarAddress)));
             var random = new TestRandom();
             for (int i = 0; i < 3; i++)
             {
                 var guid = random.GenerateRandomGuid();
                 Assert.Contains(guid, productsState.ProductIds);
                 var productAddress = Product.DeriveAddress(guid);
-                var product = ProductFactory.DeserializeProduct((List)nextState.GetState(productAddress));
+                var product = ProductFactory.DeserializeProduct((List)nextAccount.GetState(productAddress));
                 Assert.Equal(product.ProductId, guid);
                 Assert.Equal(1 * Gold, product.Price);
                 if (product is ItemProduct itemProduct)
@@ -279,7 +282,7 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            Assert.Equal(0 * asset.Currency, nextState.GetBalance(AvatarAddress, asset.Currency));
+            Assert.Equal(0 * asset.Currency, nextAccount.GetBalance(AvatarAddress, asset.Currency));
         }
 
         [Theory]

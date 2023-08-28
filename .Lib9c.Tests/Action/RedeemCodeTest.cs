@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -104,7 +105,7 @@ namespace Lib9c.Tests.Action
                 _avatarAddress
             );
 
-            IAccount nextState = redeemCode.Execute(new ActionContext()
+            var nextWorld = redeemCode.Execute(new ActionContext()
             {
                 BlockIndex = 1,
                 Miner = default,
@@ -112,17 +113,19 @@ namespace Lib9c.Tests.Action
                 Rehearsal = false,
                 Signer = _agentAddress,
                 Random = new TestRandom(),
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            });
+
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
             // Check target avatar & agent
-            AvatarState nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            AvatarState nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
             // See also Data/TableCSV/RedeemRewardSheet.csv
-            ItemSheet itemSheet = initialState.GetItemSheet();
+            ItemSheet itemSheet = LegacyModule.GetItemSheet(nextWorld);
             HashSet<int> expectedItems = new[] { 302006, 302004, 302001, 302002 }.ToHashSet();
             Assert.Subset(nextAvatarState.inventory.Items.Select(i => i.item.Id).ToHashSet(), expectedItems);
 
             // Check the code redeemed properly
-            RedeemCodeState nextRedeemCodeState = nextState.GetRedeemCodeState();
+            RedeemCodeState nextRedeemCodeState = LegacyModule.GetRedeemCodeState(nextWorld);
             Assert.Throws<DuplicateRedeemException>(() =>
             {
                 nextRedeemCodeState.Redeem(redeemCode.Code, redeemCode.AvatarAddress);

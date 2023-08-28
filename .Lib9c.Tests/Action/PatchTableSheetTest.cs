@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -15,7 +16,8 @@ namespace Lib9c.Tests.Action
 
     public class PatchTableSheetTest
     {
-        private IAccount _initialState;
+        private IAccount _initialAccount;
+        private IWorld _initialWorld;
 
         public PatchTableSheetTest(ITestOutputHelper outputHelper)
         {
@@ -24,20 +26,22 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockAccount();
+            _initialAccount = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState.SetState(
+                _initialAccount = _initialAccount.SetState(
                     Addresses.TableSheet.Derive(key),
                     value.Serialize());
             }
+
+            _initialWorld = new MockWorld(_initialAccount);
         }
 
         [Fact]
         public void Execute()
         {
-            var worldSheetCsv = _initialState.GetSheetCsv<WorldSheet>();
+            var worldSheetCsv = LegacyModule.GetSheetCsv<WorldSheet>(_initialWorld);
             var worldSheet = new WorldSheet();
             worldSheet.Set(worldSheetCsv);
             var worldSheetRowCount = worldSheet.Count;
@@ -53,12 +57,11 @@ namespace Lib9c.Tests.Action
             var nextWorld = patchTableSheetAction.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new MockWorld(_initialState),
+                PreviousState = new MockWorld(_initialAccount),
                 Rehearsal = false,
             });
 
-            var nextWorldSheetCsv = nextWorld.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetSheetCsv<WorldSheet>();
+            var nextWorldSheetCsv = LegacyModule.GetSheetCsv<WorldSheet>(nextWorld);
             Assert.Single(nextWorldSheetCsv.Split('\n'));
 
             var nextWorldSheet = new WorldSheet();
@@ -73,12 +76,11 @@ namespace Lib9c.Tests.Action
             nextWorld = patchTableSheetAction.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new MockWorld(_initialState),
+                PreviousState = new MockWorld(_initialAccount),
                 Rehearsal = false,
             });
 
-            nextWorldSheet = nextWorld.GetAccount(ReservedAddresses.LegacyAccount)
-                .GetSheet<WorldSheet>();
+            nextWorldSheet = LegacyModule.GetSheet<WorldSheet>(nextWorld);
             Assert.Equal(worldSheetRowCount, nextWorldSheet.Count);
         }
 
@@ -143,7 +145,7 @@ namespace Lib9c.Tests.Action
                 TableCsv = "id,costume_id,stat_type,stat\n1,40100000,ATK,100",
             };
 
-            var nextState = action.Execute(
+            var nextWorld = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = state,
@@ -152,7 +154,7 @@ namespace Lib9c.Tests.Action
             );
 
             Assert.NotNull(
-                nextState.GetAccount(ReservedAddresses.LegacyAccount).GetSheet<CostumeStatSheet>());
+                LegacyModule.GetSheet<CostumeStatSheet>(nextWorld));
         }
     }
 }

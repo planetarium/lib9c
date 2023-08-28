@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Crystal;
     using Xunit;
@@ -36,7 +37,8 @@ namespace Lib9c.Tests.Action
         private readonly Address _rankingMapAddress;
 
         private readonly WeeklyArenaState _weeklyArenaState;
-        private readonly IAccount _initialState;
+        private readonly IAccount _initialAccount;
+        private readonly IWorld _initialWorld;
         private readonly IRandom _random;
         private readonly Currency _currency;
 
@@ -72,7 +74,7 @@ namespace Lib9c.Tests.Action
 
             _weeklyArenaState = new WeeklyArenaState(0);
 
-            _initialState = new MockAccount()
+            _initialAccount = new MockAccount()
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetState(_agentAddress, agentState.SerializeV2())
                 .SetState(_avatarAddress, _avatarState.SerializeV2())
@@ -83,7 +85,7 @@ namespace Lib9c.Tests.Action
 
             foreach (var (key, value) in _sheets)
             {
-                _initialState = _initialState
+                _initialAccount = _initialAccount
                     .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
@@ -92,8 +94,10 @@ namespace Lib9c.Tests.Action
                 var slotState = new CombinationSlotState(
                     address,
                     GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
-                _initialState = _initialState.SetState(address, slotState.Serialize());
+                _initialAccount = _initialAccount.SetState(address, slotState.Serialize());
             }
+
+            _initialWorld = new MockWorld(_initialAccount);
         }
 
         [Theory]
@@ -104,18 +108,18 @@ namespace Lib9c.Tests.Action
         public void Execute(int stageId, bool advancedGacha, int balance, int gatheredStar, Type excType)
         {
             var context = new ActionContext();
-            var states = _initialState.MintAsset(context, _agentAddress, balance * _currency);
-            var gameConfigState = _initialState.GetGameConfigState();
+            var states = _initialAccount.MintAsset(context, _agentAddress, balance * _currency);
+            var gameConfigState = LegacyModule.GetGameConfigState(_initialWorld);
             var avatarState = new AvatarState(
                 _avatarAddress,
                 _agentAddress,
                 0,
-                _initialState.GetAvatarSheets(),
+                LegacyModule.GetAvatarSheets(_initialWorld),
                 gameConfigState,
                 _rankingMapAddress)
             {
                 worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), stageId),
+                    new WorldInformation(0, LegacyModule.GetSheet<WorldSheet>(_initialWorld), stageId),
                 level = 400,
             };
             var gachaStateAddress = Addresses.GetSkillStateAddressFromAvatarAddress(_avatarAddress);
@@ -176,18 +180,18 @@ namespace Lib9c.Tests.Action
         public void ContainMinimumBuffRank(bool advancedGacha, CrystalRandomBuffSheet.Row.BuffRank minimumRank)
         {
             var context = new ActionContext();
-            var states = _initialState.MintAsset(context, _agentAddress, 100_000_000 * _currency);
-            var gameConfigState = _initialState.GetGameConfigState();
+            var states = _initialAccount.MintAsset(context, _agentAddress, 100_000_000 * _currency);
+            var gameConfigState = LegacyModule.GetGameConfigState(_initialWorld);
             var avatarState = new AvatarState(
                 _avatarAddress,
                 _agentAddress,
                 0,
-                _initialState.GetAvatarSheets(),
+                LegacyModule.GetAvatarSheets(_initialWorld),
                 gameConfigState,
                 _rankingMapAddress)
             {
                 worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 1),
+                    new WorldInformation(0, LegacyModule.GetSheet<WorldSheet>(_initialWorld), 1),
                 level = 400,
             };
             var gachaStateAddress = Addresses.GetSkillStateAddressFromAvatarAddress(_avatarAddress);

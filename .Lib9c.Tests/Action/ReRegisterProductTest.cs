@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -31,7 +32,8 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly GameConfigState _gameConfigState;
-        private IAccount _initialState;
+        private IAccount _initialAccount;
+        private IWorld _initialWorld;
 
         public ReRegisterProductTest(ITestOutputHelper outputHelper)
         {
@@ -40,11 +42,11 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockAccount();
+            _initialAccount = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
+                _initialAccount = _initialAccount
                     .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
@@ -78,12 +80,14 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses[0] = _avatarAddress;
 
-            _initialState = _initialState
+            _initialAccount = _initialAccount
                 .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetState(Addresses.Shop, shopState.Serialize())
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
                 .SetState(_avatarAddress, _avatarState.Serialize());
+
+            _initialWorld = new MockWorld(_initialAccount);
         }
 
         [Theory]
@@ -106,7 +110,7 @@ namespace Lib9c.Tests.Action
             bool fromPreviousAction
         )
         {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             ITradableItem tradableItem;
             var itemId = new Guid(guid);
             var orderId = Guid.NewGuid();
@@ -160,7 +164,7 @@ namespace Lib9c.Tests.Action
             );
 
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
-            var prevState = _initialState;
+            var prevState = _initialAccount;
 
             if (inventoryCount > 1)
             {
@@ -214,7 +218,9 @@ namespace Lib9c.Tests.Action
                 .SetState(orderDigestList.Address, orderDigestList.Serialize())
                 .SetState(shardedShopAddress, shopState.Serialize());
 
-            var currencyState = prevState.GetGoldCurrency();
+            var world = _initialWorld.SetAccount(prevState);
+
+            var currencyState = LegacyModule.GetGoldCurrency(world);
             var price = new FungibleAssetValue(currencyState, ProductPrice, 0);
 
             var updateSellInfo = new UpdateSellInfo(
@@ -279,30 +285,32 @@ namespace Lib9c.Tests.Action
                 },
             };
 
-            var actualState = reRegister.Execute(new ActionContext
+            var actualWorld = reRegister.Execute(new ActionContext
             {
                 BlockIndex = 101,
                 PreviousState = new MockWorld(prevState),
                 Random = new TestRandom(),
                 Rehearsal = false,
                 Signer = _agentAddress,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            });
 
-            var targetShopState = new ShardedShopStateV2((Dictionary)actualState.GetState(shardedShopAddress));
-            var nextOrderDigestListState = new OrderDigestListState((Dictionary)actualState.GetState(orderDigestList.Address));
+            var actualAccount = actualWorld.GetAccount(ReservedAddresses.LegacyAccount);
+
+            var targetShopState = new ShardedShopStateV2((Dictionary)actualAccount.GetState(shardedShopAddress));
+            var nextOrderDigestListState = new OrderDigestListState((Dictionary)actualAccount.GetState(orderDigestList.Address));
             Assert.Empty(targetShopState.OrderDigestList);
             Assert.Empty(nextOrderDigestListState.OrderDigestList);
             var productsState =
                 new ProductsState(
-                    (List)actualState.GetState(ProductsState.DeriveAddress(_avatarAddress)));
+                    (List)actualAccount.GetState(ProductsState.DeriveAddress(_avatarAddress)));
             var productId = Assert.Single(productsState.ProductIds);
             var product =
-                ProductFactory.DeserializeProduct((List)actualState.GetState(Product.DeriveAddress(productId)));
+                ProductFactory.DeserializeProduct((List)actualAccount.GetState(Product.DeriveAddress(productId)));
             Assert.Equal(productId, product.ProductId);
             Assert.Equal(productType, product.Type);
             Assert.Equal(order.Price, product.Price);
 
-            var nextAvatarState = actualState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(actualWorld, _avatarAddress);
             Assert.Equal(_gameConfigState.ActionPointMax - ReRegisterProduct.CostAp, nextAvatarState.actionPoint);
         }
 

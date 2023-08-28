@@ -22,6 +22,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.Skill;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -43,7 +44,8 @@ namespace Lib9c.Tests.Action
         private readonly Address _rankingMapAddress;
 
         private readonly WeeklyArenaState _weeklyArenaState;
-        private readonly IAccount _initialState;
+        private readonly IAccount _initialAccount;
+        private readonly IWorld _initialWorld;
 
         public HackAndSlash21Test()
         {
@@ -78,7 +80,7 @@ namespace Lib9c.Tests.Action
             var currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(currency);
-            _initialState = new MockAccount()
+            _initialAccount = new MockAccount()
                 .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetState(_agentAddress, agentState.SerializeV2())
@@ -90,7 +92,7 @@ namespace Lib9c.Tests.Action
 
             foreach (var (key, value) in _sheets)
             {
-                _initialState = _initialState
+                _initialAccount = _initialAccount
                     .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
@@ -99,8 +101,10 @@ namespace Lib9c.Tests.Action
                 var slotState = new CombinationSlotState(
                     address,
                     GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
-                _initialState = _initialState.SetState(address, slotState.Serialize());
+                _initialAccount = _initialAccount.SetState(address, slotState.Serialize());
             }
+
+            _initialWorld = new MockWorld(_initialAccount);
         }
 
         [Theory]
@@ -121,7 +125,7 @@ namespace Lib9c.Tests.Action
             Assert.True(stageId <= worldRow.StageEnd);
             Assert.True(_tableSheets.StageSheet.TryGetValue(stageId, out _));
 
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(_initialWorld, _avatarAddress);
             previousAvatarState.level = avatarLevel;
             var clearedStageId = _tableSheets.StageSheet.First?.Id ?? 0;
             clearedStageId = isClearedBefore ? Math.Max(clearedStageId, stageId - 1) : stageId - 1;
@@ -175,11 +179,11 @@ namespace Lib9c.Tests.Action
             IAccount state;
             if (backward)
             {
-                state = _initialState.SetState(_avatarAddress, previousAvatarState.Serialize());
+                state = _initialAccount.SetState(_avatarAddress, previousAvatarState.Serialize());
             }
             else
             {
-                state = _initialState
+                state = _initialAccount
                     .SetState(_avatarAddress, previousAvatarState.SerializeV2())
                     .SetState(_avatarAddress.Derive(LegacyInventoryKey), previousAvatarState.inventory.Serialize())
                     .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), previousAvatarState.worldInformation.Serialize())
@@ -202,16 +206,18 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var nextState = action.Execute(new ActionContext
+            var nextWorld = action.Execute(new ActionContext
             {
                 PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
                 BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
+
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
 
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
             Assert.Equal(30, nextAvatarState.mailBox.Count);
@@ -222,10 +228,10 @@ namespace Lib9c.Tests.Action
         [InlineData(4, 200)]
         public void Execute_With_UpdateQuestList(int worldId, int stageId)
         {
-            var state = _initialState;
-
+            var state = _initialAccount;
+            var world = _initialWorld;
             // Remove stageId from WorldQuestSheet
-            var worldQuestSheet = state.GetSheet<WorldQuestSheet>();
+            var worldQuestSheet = LegacyModule.GetSheet<WorldQuestSheet>(world);
             var targetRow = worldQuestSheet.OrderedList.FirstOrDefault(e => e.Goal == stageId);
             Assert.NotNull(targetRow);
             // Update new AvatarState
@@ -233,13 +239,13 @@ namespace Lib9c.Tests.Action
                 _avatarAddress,
                 _agentAddress,
                 0,
-                state.GetAvatarSheets(),
-                state.GetGameConfigState(),
+                LegacyModule.GetAvatarSheets(world),
+                LegacyModule.GetGameConfigState(world),
                 _rankingMapAddress)
             {
                 level = 400,
-                exp = state.GetSheet<CharacterLevelSheet>().OrderedList.First(e => e.Level == 400).Exp,
-                worldInformation = new WorldInformation(0, state.GetSheet<WorldSheet>(), stageId),
+                exp = LegacyModule.GetSheet<CharacterLevelSheet>(world).OrderedList.First(e => e.Level == 400).Exp,
+                worldInformation = new WorldInformation(0, LegacyModule.GetSheet<WorldSheet>(world), stageId),
             };
             var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level);
             foreach (var equipment in equipments)
@@ -252,6 +258,9 @@ namespace Lib9c.Tests.Action
                 .SetState(_inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(_worldInformationAddress, avatarState.worldInformation.Serialize())
                 .SetState(_questListAddress, avatarState.questList.Serialize());
+
+            world = world.SetAccount(state);
+
             Assert.Equal(400, avatarState.level);
             Assert.True(avatarState.worldInformation.IsWorldUnlocked(worldId));
             Assert.True(avatarState.worldInformation.IsStageCleared(stageId));
@@ -273,7 +282,7 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = avatarState.address,
             };
 
-            avatarState = state.GetAvatarStateV2(avatarState.address);
+            avatarState = AvatarModule.GetAvatarStateV2(world, avatarState.address);
             avatarWorldQuests = avatarState.questList.OfType<WorldQuest>().ToList();
             Assert.DoesNotContain(avatarWorldQuests, e => e.Complete);
 
@@ -290,7 +299,9 @@ namespace Lib9c.Tests.Action
                 Random = new TestRandom(),
             }).GetAccount(ReservedAddresses.LegacyAccount);
 
-            avatarState = state.GetAvatarStateV2(avatarState.address);
+            world = world.SetAccount(state);
+
+            avatarState = AvatarModule.GetAvatarStateV2(world, avatarState.address);
             avatarWorldQuests = avatarState.questList.OfType<WorldQuest>().ToList();
             Assert.Equal(worldQuestSheet.Count, avatarWorldQuests.Count);
             Assert.Single(avatarWorldQuests, e => e.Goal == stageId && e.Complete);
@@ -299,7 +310,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void MaxLevelTest()
         {
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(_initialWorld, _avatarAddress);
             var maxLevel = _tableSheets.CharacterLevelSheet.Max(row => row.Value.Level);
             var expRow = _tableSheets.CharacterLevelSheet[maxLevel];
             var maxLevelExp = expRow.Exp;
@@ -333,7 +344,7 @@ namespace Lib9c.Tests.Action
                 _tableSheets.WorldSheet,
                 Math.Max(_tableSheets.StageSheet.First?.Id ?? 1, stageId));
 
-            var state = _initialState.SetState(_avatarAddress, previousAvatarState.SerializeV2());
+            var state = _initialAccount.SetState(_avatarAddress, previousAvatarState.SerializeV2());
 
             var action = new HackAndSlash
             {
@@ -346,15 +357,15 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var nextState = action.Execute(new ActionContext
+            var nextWorld = action.Execute(new ActionContext
             {
                 PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
             Assert.Equal(maxLevelExp + requiredExp - 1, nextAvatarState.exp);
             Assert.Equal(previousAvatarState.level, nextAvatarState.level);
         }
@@ -367,7 +378,7 @@ namespace Lib9c.Tests.Action
         [InlineData(ItemSubType.Ring, GameConfig.MaxEquipmentSlotCount.Ring)]
         public void MultipleEquipmentTest(ItemSubType type, int maxCount)
         {
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(_initialWorld, _avatarAddress);
             var maxLevel = _tableSheets.CharacterLevelSheet.Max(row => row.Value.Level);
             var expRow = _tableSheets.CharacterLevelSheet[maxLevel];
             var maxLevelExp = expRow.Exp;
@@ -393,9 +404,11 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.inventory.AddItem(equipment);
             }
 
-            var state = _initialState
+            var state = _initialAccount
                 .SetState(_avatarAddress, previousAvatarState.SerializeV2())
                 .SetState(_inventoryAddress, previousAvatarState.inventory.Serialize());
+
+            var world = _initialWorld.SetAccount(state);
 
             var action = new HackAndSlash
             {
@@ -410,7 +423,7 @@ namespace Lib9c.Tests.Action
 
             var exec = Assert.Throws<DuplicateEquipmentException>(() => action.Execute(new ActionContext
             {
-                PreviousState = new MockWorld(state),
+                PreviousState = world,
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
@@ -435,10 +448,10 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            IAccount state = backward ? new MockAccount() : _initialState;
+            IAccount state = backward ? new MockAccount() : _initialAccount;
             if (!backward)
             {
-                state = _initialState
+                state = _initialAccount
                     .SetState(_avatarAddress, _avatarState.SerializeV2())
                     .SetState(_avatarAddress.Derive(LegacyInventoryKey), null!)
                     .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), null!)
@@ -473,7 +486,7 @@ namespace Lib9c.Tests.Action
 
             var exec = Assert.Throws<SheetRowColumnException>(() => action.Execute(new ActionContext
             {
-                PreviousState = new MockWorld(_initialState),
+                PreviousState = new MockWorld(_initialAccount),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
             }));
@@ -495,7 +508,7 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var state = _initialState;
+            var state = _initialAccount;
             state = state.SetState(Addresses.TableSheet.Derive(nameof(StageSheet)), "test".Serialize());
 
             var exec = Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext
@@ -522,7 +535,7 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var state = _initialState;
+            var state = _initialAccount;
             var worldSheet = new WorldSheet();
             worldSheet.Set("test");
             var avatarState = new AvatarState(_avatarState)
@@ -562,7 +575,7 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            IAccount state = _initialState;
+            IAccount state = _initialAccount;
             if (unlockedIdsExist)
             {
                 state = state.SetState(
@@ -609,7 +622,7 @@ namespace Lib9c.Tests.Action
             Assert.True(world.IsStageCleared);
             Assert.True(avatarState.worldInformation.IsWorldUnlocked(1));
 
-            var state = _initialState;
+            var state = _initialAccount;
             state = state.SetState(_avatarAddress, avatarState.SerializeV2());
 
             var exec = Assert.Throws<InvalidStageException>(() => action.Execute(new ActionContext
@@ -641,7 +654,7 @@ namespace Lib9c.Tests.Action
 
             var exec = Assert.Throws<InvalidStageException>(() => action.Execute(new ActionContext
             {
-                PreviousState = new MockWorld(_initialState),
+                PreviousState = new MockWorld(_initialAccount),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
             }));
@@ -676,7 +689,7 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var state = _initialState
+            var state = _initialAccount
                 .SetState(_avatarAddress, avatarState.SerializeV2())
                 .SetState(_inventoryAddress, avatarState.inventory.Serialize());
 
@@ -698,7 +711,7 @@ namespace Lib9c.Tests.Action
         [InlineData(ItemSubType.Ring)]
         public void ExecuteThrowEquipmentSlotUnlockException(ItemSubType itemSubType)
         {
-            var state = _initialState;
+            var state = _initialAccount;
             var avatarState = new AvatarState(_avatarState)
             {
                 level = 0,
@@ -757,7 +770,7 @@ namespace Lib9c.Tests.Action
                 TotalPlayCount = playCount,
             };
 
-            var state = _initialState;
+            var state = _initialAccount;
             state = state.SetState(_avatarAddress, avatarState.SerializeV2());
 
             var exec = Assert.Throws<NotEnoughActionPointException>(() => action.Execute(new ActionContext
@@ -773,7 +786,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteWithoutPlayCount()
         {
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(_initialWorld, _avatarAddress);
             previousAvatarState.level = 1;
             var clearedStageId = 0;
             previousAvatarState.worldInformation = new WorldInformation(
@@ -801,7 +814,7 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.Update(mail);
             }
 
-            IAccount state = _initialState
+            IAccount state = _initialAccount
                 .SetState(_avatarAddress, previousAvatarState.SerializeV2())
                 .SetState(
                     _avatarAddress.Derive(LegacyInventoryKey),
@@ -824,16 +837,16 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var nextState = action.Execute(new ActionContext
+            var nextWorld = action.Execute(new ActionContext
             {
                 PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
                 BlockIndex = 1,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(1));
         }
 
@@ -854,7 +867,7 @@ namespace Lib9c.Tests.Action
                 level = avatarLevel,
             };
 
-            var state = _initialState;
+            var state = _initialAccount;
             var itemIds = new[] { GameConfig.DefaultAvatarWeaponId, 40100000 };
             foreach (var itemId in itemIds)
             {
@@ -915,7 +928,7 @@ namespace Lib9c.Tests.Action
                 level = 1,
             };
 
-            var state = _initialState;
+            var state = _initialAccount;
             var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
@@ -952,7 +965,7 @@ namespace Lib9c.Tests.Action
                 level = 1,
             };
 
-            var state = _initialState;
+            var state = _initialAccount;
             var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
@@ -979,7 +992,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteThrowUsageLimitExceedException()
         {
-            var state = _initialState;
+            var state = _initialAccount;
             var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
@@ -1006,7 +1019,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteThrowNotEnoughMaterialException()
         {
-            var state = _initialState;
+            var state = _initialAccount;
             var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
@@ -1046,7 +1059,7 @@ namespace Lib9c.Tests.Action
             Assert.True(stageId <= worldRow.StageEnd);
             Assert.True(_tableSheets.StageSheet.TryGetValue(stageId, out var stageRow));
 
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(_initialWorld, _avatarAddress);
             previousAvatarState.actionPoint = 999999;
             previousAvatarState.level = 400;
             previousAvatarState.worldInformation = new WorldInformation(
@@ -1093,11 +1106,11 @@ namespace Lib9c.Tests.Action
             IAccount state;
             if (backward)
             {
-                state = _initialState.SetState(_avatarAddress, previousAvatarState.Serialize());
+                state = _initialAccount.SetState(_avatarAddress, previousAvatarState.Serialize());
             }
             else
             {
-                state = _initialState
+                state = _initialAccount
                     .SetState(_avatarAddress, previousAvatarState.SerializeV2())
                     .SetState(
                         _avatarAddress.Derive(LegacyInventoryKey),
@@ -1126,16 +1139,16 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var nextState = action.Execute(new ActionContext
+            var nextWorld = action.Execute(new ActionContext
             {
                 PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
                 BlockIndex = 1,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
             Assert.Equal(30, nextAvatarState.mailBox.Count);
 
@@ -1144,13 +1157,13 @@ namespace Lib9c.Tests.Action
                      x.item is IFungibleItem ownedFungibleItem &&
                      x.item.Id != 400000 && x.item.Id != 500000);
 
-            var worldQuestSheet = state.GetSheet<WorldQuestSheet>();
+            var worldQuestSheet = LegacyModule.GetSheet<WorldQuestSheet>(nextWorld);
             var questRow = worldQuestSheet.OrderedList.FirstOrDefault(e => e.Goal == stageId);
-            var questRewardSheet = state.GetSheet<QuestRewardSheet>();
+            var questRewardSheet = LegacyModule.GetSheet<QuestRewardSheet>(nextWorld);
             var rewardIds = questRewardSheet.First(x => x.Key == questRow.QuestRewardId).Value
                 .RewardIds;
-            var questItemRewardSheet = state.GetSheet<QuestItemRewardSheet>();
-            var materialItemSheet = state.GetSheet<MaterialItemSheet>();
+            var questItemRewardSheet = LegacyModule.GetSheet<QuestItemRewardSheet>(nextWorld);
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(nextWorld);
             var sortedMaterialItemSheet = materialItemSheet
                 .Where(x =>
                     x.Value.ItemSubType == ItemSubType.EquipmentMaterial ||
@@ -1193,7 +1206,7 @@ namespace Lib9c.Tests.Action
             const int worldId = 1;
             const int stageId = 10;
             const int clearedStageId = 9;
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(_initialWorld, _avatarAddress);
             previousAvatarState.actionPoint = 999999;
             previousAvatarState.level = clear ? 400 : 1;
             previousAvatarState.worldInformation = new WorldInformation(
@@ -1237,7 +1250,7 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.Update(mail);
             }
 
-            var state = _initialState
+            var state = _initialAccount
                 .SetState(_avatarAddress, previousAvatarState.SerializeV2())
                 .SetState(
                     _avatarAddress.Derive(LegacyInventoryKey),
@@ -1373,7 +1386,7 @@ namespace Lib9c.Tests.Action
             const int worldId = 1;
             const int stageId = 5;
             const int clearedStageId = 4;
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(_initialWorld, _avatarAddress);
             previousAvatarState.actionPoint = 120;
             previousAvatarState.level = 400;
             previousAvatarState.worldInformation = new WorldInformation(
@@ -1386,7 +1399,7 @@ namespace Lib9c.Tests.Action
             var requiredGold = _tableSheets.StakeRegularRewardSheet.OrderedRows
                 .FirstOrDefault(r => r.Level == level)?.RequiredGold ?? 0;
             var context = new ActionContext();
-            var state = _initialState
+            var state = _initialAccount
                 .SetState(_avatarAddress, previousAvatarState.SerializeV2())
                 .SetState(
                     _avatarAddress.Derive(LegacyInventoryKey),
@@ -1401,7 +1414,7 @@ namespace Lib9c.Tests.Action
                 .SetState(
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(worldId.Serialize()))
-                .MintAsset(context, stakeStateAddress, requiredGold * _initialState.GetGoldCurrency());
+                .MintAsset(context, stakeStateAddress, requiredGold * LegacyModule.GetGoldCurrency(_initialWorld));
 
             var expectedAp = previousAvatarState.actionPoint -
                              _tableSheets.StakeActionPointCoefficientSheet.GetActionPointByStaking(
@@ -1427,8 +1440,8 @@ namespace Lib9c.Tests.Action
                 Rehearsal = false,
                 BlockIndex = 1,
             };
-            var nextState = action.Execute(ctx).GetAccount(ReservedAddresses.LegacyAccount);
-            var nextAvatar = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextWorld = action.Execute(ctx);
+            var nextAvatar = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
             Assert.Equal(expectedAp, nextAvatar.actionPoint);
         }
 
@@ -1449,7 +1462,7 @@ namespace Lib9c.Tests.Action
             const int stageId = 5;
             const int clearedStageId = 4;
             const int itemId = 303100;
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(_initialWorld, _avatarAddress);
             previousAvatarState.actionPoint = expectedUsingAp;
             previousAvatarState.level = 400;
             previousAvatarState.worldInformation = new WorldInformation(
@@ -1465,7 +1478,7 @@ namespace Lib9c.Tests.Action
             var requiredGold = _tableSheets.StakeRegularRewardSheet.OrderedRows
                 .FirstOrDefault(r => r.Level == level)?.RequiredGold ?? 0;
             var context = new ActionContext();
-            var state = _initialState
+            var state = _initialAccount
                 .SetState(_avatarAddress, previousAvatarState.SerializeV2())
                 .SetState(
                     _avatarAddress.Derive(LegacyInventoryKey),
@@ -1480,7 +1493,7 @@ namespace Lib9c.Tests.Action
                 .SetState(
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(worldId.Serialize()))
-                .MintAsset(context, stakeStateAddress, requiredGold * _initialState.GetGoldCurrency());
+                .MintAsset(context, stakeStateAddress, requiredGold * LegacyModule.GetGoldCurrency(_initialWorld));
 
             var itemCount = previousAvatarState.inventory.Items
                 .FirstOrDefault(i => i.item.Id == itemId)?.count ?? 0;
@@ -1501,14 +1514,14 @@ namespace Lib9c.Tests.Action
 
             var ctx = new ActionContext
             {
-                PreviousState = new MockWorld(state),
+                PreviousState = _initialWorld.SetAccount(state),
                 Signer = _agentAddress,
                 Random = new TestRandom(),
                 Rehearsal = false,
                 BlockIndex = 1,
             };
-            var nextState = action.Execute(ctx).GetAccount(ReservedAddresses.LegacyAccount);
-            var nextAvatar = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextWorld = action.Execute(ctx);
+            var nextAvatar = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
             Assert.Equal(expectedItemCount, nextAvatar.inventory.Items.First(i => i.item.Id == itemId).count);
             Assert.False(nextAvatar.inventory.HasItem(apStoneRow.Id));
             Assert.Equal(0, nextAvatar.actionPoint);
@@ -1527,7 +1540,7 @@ namespace Lib9c.Tests.Action
                 r.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(apStoneRow);
             avatarState.inventory.AddItem(apStone);
-            var state = _initialState
+            var state = _initialAccount
                 .SetState(_avatarAddress, avatarState.SerializeV2())
                 .SetState(
                     _avatarAddress.Derive(LegacyInventoryKey),
@@ -1572,7 +1585,7 @@ namespace Lib9c.Tests.Action
             Assert.True(stageId <= worldRow.StageEnd);
             Assert.True(_tableSheets.StageSheet.TryGetValue(stageId, out _));
 
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(_initialWorld, _avatarAddress);
             previousAvatarState.level = avatarLevel;
             var clearedStageId = _tableSheets.StageSheet.First?.Id ?? 0;
             clearedStageId = Math.Max(clearedStageId, stageId - 1);
@@ -1620,7 +1633,7 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.Update(mail);
             }
 
-            var state = _initialState
+            var state = _initialAccount
                 .SetState(_avatarAddress, previousAvatarState.SerializeV2())
                 .SetState(_avatarAddress.Derive(LegacyInventoryKey), previousAvatarState.inventory.Serialize())
                 .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), previousAvatarState.worldInformation.Serialize())
@@ -1693,7 +1706,7 @@ namespace Lib9c.Tests.Action
             Assert.True(stageId <= worldRow.StageEnd);
             Assert.True(_tableSheets.StageSheet.TryGetValue(stageId, out _));
 
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(_initialWorld, _avatarAddress);
             previousAvatarState.level = avatarLevel;
             var clearedStageId = _tableSheets.StageSheet.First?.Id ?? 0;
             clearedStageId = Math.Max(clearedStageId, stageId - 1);
@@ -1742,7 +1755,7 @@ namespace Lib9c.Tests.Action
             }
 
             var context = new ActionContext();
-            var state = _initialState
+            var state = _initialAccount
                 .SetState(_avatarAddress, previousAvatarState.SerializeV2())
                 .SetState(_avatarAddress.Derive(LegacyInventoryKey), previousAvatarState.inventory.Serialize())
                 .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), previousAvatarState.worldInformation.Serialize())
@@ -1753,7 +1766,9 @@ namespace Lib9c.Tests.Action
                 List.Empty.Add(worldId.Serialize())
             );
 
-            var ncgCurrency = state.GetGoldCurrency();
+            var world = _initialWorld.SetAccount(state);
+
+            var ncgCurrency = LegacyModule.GetGoldCurrency(world);
             state = state.MintAsset(context, _agentAddress, 99999 * ncgCurrency);
 
             var unlockRuneSlot = new UnlockRuneSlot()

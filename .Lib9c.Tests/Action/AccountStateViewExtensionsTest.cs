@@ -237,9 +237,9 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void GetSheets()
         {
-            IAccount states = new MockAccount();
+            IWorld world = new MockWorld();
             SheetsExtensionsTest.InitSheets(
-                states,
+                world,
                 out _,
                 out var sheetsAddressAndValues,
                 out var sheetTypes,

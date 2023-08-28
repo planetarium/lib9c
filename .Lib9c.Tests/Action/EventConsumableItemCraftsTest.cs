@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Event;
     using Xunit;
@@ -109,13 +110,13 @@ namespace Lib9c.Tests.Action
             long blockIndex = 0)
         {
             var previousAccount = previousWorld.GetAccount(ReservedAddresses.LegacyAccount);
-            var previousAvatarState = previousAccount.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(previousWorld, _avatarAddress);
 
-            var recipeSheet = previousAccount.GetSheet<EventConsumableItemRecipeSheet>();
+            var recipeSheet = LegacyModule.GetSheet<EventConsumableItemRecipeSheet>(previousWorld);
             Assert.True(recipeSheet.TryGetValue(
                 eventConsumableItemRecipeId,
                 out var recipeRow));
-            var materialItemSheet = previousAccount.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(previousWorld);
             foreach (var materialInfo in recipeRow.Materials)
             {
                 Assert.True(materialItemSheet.TryGetValue(
@@ -126,7 +127,7 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.inventory.AddItem(material, materialInfo.Count);
             }
 
-            var worldSheet = previousAccount.GetSheet<WorldSheet>();
+            var worldSheet = LegacyModule.GetSheet<WorldSheet>(previousWorld);
             previousAvatarState.worldInformation = new WorldInformation(
                 blockIndex,
                 worldSheet,
@@ -165,14 +166,14 @@ namespace Lib9c.Tests.Action
             });
 
             var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
-            var slotState = nextAccount.GetCombinationSlotState(_avatarAddress, slotIndex);
+            var slotState = LegacyModule.GetCombinationSlotState(nextWorld, _avatarAddress, slotIndex);
             Assert.NotNull(slotState.Result);
             Assert.NotNull(slotState.Result.itemUsable);
 
             var consumable = (Consumable)slotState.Result.itemUsable;
             Assert.NotNull(consumable);
 
-            var nextAvatarState = nextAccount.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
             Assert.Equal(
                 previousActionPoint - recipeRow.RequiredActionPoint,
                 nextAvatarState.actionPoint);

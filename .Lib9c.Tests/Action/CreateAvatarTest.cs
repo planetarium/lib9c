@@ -15,6 +15,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -60,12 +61,14 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0 * CrystalCalculator.CRYSTAL, state.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
 
-            var nextState = action.Execute(new ActionContext()
+            var nextWorld = action.Execute(new ActionContext()
             {
                 PreviousState = new MockWorld(state),
                 Signer = _agentAddress,
                 BlockIndex = blockIndex,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            });
+
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
@@ -74,7 +77,8 @@ namespace Lib9c.Tests.Action
                     0
                 )
             );
-            Assert.True(nextState.TryGetAgentAvatarStatesV2(
+            Assert.True(AvatarModule.TryGetAgentAvatarStatesV2(
+                nextWorld,
                 default,
                 avatarAddress,
                 out var agentState,
@@ -83,7 +87,7 @@ namespace Lib9c.Tests.Action
             );
             Assert.True(agentState.avatarAddresses.Any());
             Assert.Equal("test", nextAvatarState.name);
-            Assert.Equal(expected * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
+            Assert.Equal(expected * CrystalCalculator.CRYSTAL, nextAccount.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
         }
 
         [Theory]

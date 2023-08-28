@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -138,7 +139,7 @@ namespace Lib9c.Tests.Action
 
             var account = world.GetAccount(ReservedAddresses.LegacyAccount);
             // Same (since 4611070)
-            if (account.TryGetStakeState(_signerAddress, out StakeState stakeState))
+            if (LegacyModule.TryGetStakeState(world, _signerAddress, out StakeState stakeState))
             {
                 account = account.SetState(
                     stakeState.address,
@@ -156,15 +157,16 @@ namespace Lib9c.Tests.Action
 
             // At 4611070 - 99, it should be updated.
             Assert.True(
-                updateAction.Execute(
+                LegacyModule.TryGetStakeState(
+                    updateAction.Execute(
                         new ActionContext
                         {
                             PreviousState = world,
                             Signer = _signerAddress,
                             BlockIndex = 4611070 - 99,
-                        })
-                    .GetAccount(ReservedAddresses.LegacyAccount)
-                    .TryGetStakeState(_signerAddress, out stakeState));
+                        }),
+                    _signerAddress,
+                    out stakeState));
             Assert.Equal(4611070 - 99, stakeState.StartedBlockIndex);
         }
 
@@ -185,7 +187,7 @@ namespace Lib9c.Tests.Action
                 _currency * 100,
                 account.GetBalance(StakeState.DeriveAddress(_signerAddress), _currency));
 
-            account.TryGetStakeState(_signerAddress, out StakeState stakeState);
+            LegacyModule.TryGetStakeState(world, _signerAddress, out StakeState stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
             Assert.Equal(0 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
@@ -231,7 +233,7 @@ namespace Lib9c.Tests.Action
             });
             var account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
-            account.TryGetStakeState(_signerAddress, out StakeState stakeState);
+            LegacyModule.TryGetStakeState(world, _signerAddress, out StakeState stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
             Assert.Equal(0 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
@@ -247,7 +249,7 @@ namespace Lib9c.Tests.Action
             });
             account = world.GetAccount(ReservedAddresses.LegacyAccount);
 
-            account.TryGetStakeState(_signerAddress, out stakeState);
+            LegacyModule.TryGetStakeState(world, _signerAddress, out stakeState);
             Assert.Equal(1, stakeState.StartedBlockIndex);
             Assert.Equal(1 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);

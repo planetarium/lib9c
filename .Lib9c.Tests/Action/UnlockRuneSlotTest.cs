@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -65,11 +66,11 @@ namespace Lib9c.Tests.Action
             var context = new ActionContext();
             var world = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
             var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-            var gameConfig = account.GetGameConfigState();
+            var gameConfig = LegacyModule.GetGameConfigState(world);
             var cost = slotIndex == 1
                 ? gameConfig.RuneStatSlotUnlockCost
                 : gameConfig.RuneSkillSlotUnlockCost;
-            var ncgCurrency = account.GetGoldCurrency();
+            var ncgCurrency = LegacyModule.GetGoldCurrency(world);
             account = account.MintAsset(context, agentAddress, cost * ncgCurrency);
             world = world.SetAccount(account);
             var action = new UnlockRuneSlot()
@@ -90,7 +91,7 @@ namespace Lib9c.Tests.Action
             world = action.Execute(ctx);
             account = world.GetAccount(ReservedAddresses.LegacyAccount);
             var adventureAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
-            if (account.TryGetState(adventureAddr, out List adventureRaw))
+            if (LegacyModule.TryGetState(world, adventureAddr, out List adventureRaw))
             {
                 var s = new RuneSlotState(adventureRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
@@ -99,7 +100,7 @@ namespace Lib9c.Tests.Action
             }
 
             var arenaAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
-            if (account.TryGetState(arenaAddr, out List arenaRaw))
+            if (LegacyModule.TryGetState(world, arenaAddr, out List arenaRaw))
             {
                 var s = new RuneSlotState(arenaRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
@@ -108,7 +109,7 @@ namespace Lib9c.Tests.Action
             }
 
             var raidAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Raid);
-            if (account.TryGetState(raidAddr, out List raidRaw))
+            if (LegacyModule.TryGetState(world, raidAddr, out List raidRaw))
             {
                 var s = new RuneSlotState(raidRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
@@ -213,8 +214,8 @@ namespace Lib9c.Tests.Action
             var context = new ActionContext();
             var world = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
             var account = world.GetAccount(ReservedAddresses.LegacyAccount);
-            var gameConfig = account.GetGameConfigState();
-            var ncgCurrency = account.GetGoldCurrency();
+            var gameConfig = LegacyModule.GetGameConfigState(world);
+            var ncgCurrency = LegacyModule.GetGoldCurrency(world);
             account = account.MintAsset(context, agentAddress, gameConfig.RuneStatSlotUnlockCost * ncgCurrency);
             world = world.SetAccount(account);
             var action = new UnlockRuneSlot()

@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -26,7 +27,8 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private readonly IAccount _initialState;
+        private readonly IAccount _initialAccount;
+        private readonly IWorld _initialWorld;
 
         public UnlockWorldTest()
         {
@@ -50,9 +52,10 @@ namespace Lib9c.Tests.Action
 
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new MockAccount()
+            _initialAccount = new MockAccount()
                 .SetState(Addresses.GetSheetAddress<WorldUnlockSheet>(), _tableSheets.WorldUnlockSheet.Serialize())
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize());
+            _initialWorld = new MockWorld(_initialAccount);
         }
 
         [Theory]
@@ -90,8 +93,8 @@ namespace Lib9c.Tests.Action
         {
             var context = new ActionContext();
             var state = (balance > 0)
-                ? _initialState.MintAsset(context, _agentAddress, balance * _currency)
-                : _initialState;
+                ? _initialAccount.MintAsset(context, _agentAddress, balance * _currency)
+                : _initialAccount;
             var worldIds = ids.ToList();
 
             if (stateExist)
@@ -158,21 +161,23 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                IAccount nextState = action.Execute(new ActionContext
+                IWorld nextWorld = action.Execute(new ActionContext
                 {
                     PreviousState = new MockWorld(state),
                     Signer = _agentAddress,
                     BlockIndex = 1,
                     Random = _random,
-                }).GetAccount(ReservedAddresses.LegacyAccount);
+                });
 
-                Assert.True(nextState.TryGetState(unlockedWorldIdsAddress, out List rawIds));
+                var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
+
+                Assert.True(LegacyModule.TryGetState(nextWorld, unlockedWorldIdsAddress, out List rawIds));
 
                 var unlockedIds = rawIds.ToList(StateExtensions.ToInteger);
 
                 Assert.All(worldIds, worldId => Assert.Contains(worldId, unlockedIds));
-                Assert.Equal(0 * _currency, nextState.GetBalance(_agentAddress, _currency));
-                Assert.Equal(balance * _currency, nextState.GetBalance(Addresses.UnlockWorld, _currency));
+                Assert.Equal(0 * _currency, nextAccount.GetBalance(_agentAddress, _currency));
+                Assert.Equal(balance * _currency, nextAccount.GetBalance(Addresses.UnlockWorld, _currency));
             }
             else
             {

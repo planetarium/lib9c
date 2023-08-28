@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Crystal;
     using Xunit;
@@ -228,7 +229,7 @@ namespace Lib9c.Tests.Action
                 });
                 var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
-                var nextAvatarState = nextAccount.GetAvatarStateV2(_avatarAddress);
+                var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
                 FungibleAssetValue asset = totalAsset * _crystalCurrency;
 
                 Assert.Equal(asset, nextAccount.GetBalance(_agentAddress, _crystalCurrency));

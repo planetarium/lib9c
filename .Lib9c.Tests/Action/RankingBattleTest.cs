@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -24,11 +25,12 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatar1Address;
         private readonly Address _avatar2Address;
         private readonly Address _weeklyArenaAddress;
-        private readonly IAccount _initialState;
+        private readonly IAccount _initialAccount;
+        private readonly IWorld _initialWorld;
 
         public RankingBattleTest(ITestOutputHelper outputHelper)
         {
-            _initialState = new MockAccount();
+            _initialAccount = new MockAccount();
 
             var keys = new List<string>
             {
@@ -41,7 +43,7 @@ namespace Lib9c.Tests.Action
             {
                 if (!keys.Contains(key))
                 {
-                    _initialState = _initialState.SetState(
+                    _initialAccount = _initialAccount.SetState(
                         Addresses.TableSheet.Derive(key),
                         value.Serialize());
                 }
@@ -86,7 +88,7 @@ namespace Lib9c.Tests.Action
                 true);
             _weeklyArenaAddress = weeklyArenaState.address;
 
-            _initialState = _initialState
+            _initialAccount = _initialAccount
                 .SetState(_agent1Address, agent1State.Serialize())
                 .SetState(_avatar1Address, avatar1State.Serialize())
                 .SetState(agent2Address, agent2State.Serialize())
@@ -98,6 +100,8 @@ namespace Lib9c.Tests.Action
                     weeklyAddressList.Aggregate(List.Empty, (list, address) => list.Add(address.Serialize())))
                 .SetState(arenaInfo1Address, arenaInfo1.Serialize())
                 .SetState(arenaInfo2Address, arenaInfo2.Serialize());
+
+            _initialWorld = new MockWorld(_initialAccount);
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -138,8 +142,8 @@ namespace Lib9c.Tests.Action
         public void ExecuteActionObsoletedException()
         {
             var previousArenaInfoAddress = _weeklyArenaAddress.Derive(_avatar1Address.ToByteArray());
-            var previousArenaInfo = new ArenaInfo((Dictionary)_initialState.GetState(previousArenaInfoAddress));
-            var previousAvatarState = _initialState.GetAvatarState(_avatar1Address);
+            var previousArenaInfo = new ArenaInfo((Dictionary)_initialAccount.GetState(previousArenaInfoAddress));
+            var previousAvatarState = AvatarModule.GetAvatarState(_initialWorld, _avatar1Address);
             while (true)
             {
                 previousArenaInfo.UpdateV3(previousAvatarState, previousArenaInfo, BattleLog.Result.Lose);
@@ -149,7 +153,7 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            var previousState = _initialState.SetState(
+            var previousState = _initialAccount.SetState(
                 previousArenaInfoAddress,
                 previousArenaInfo.Serialize());
 

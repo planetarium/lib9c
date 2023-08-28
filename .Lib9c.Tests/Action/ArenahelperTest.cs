@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -22,7 +23,8 @@ namespace Lib9c.Tests.Action
 
     public class ArenaHelperTest
     {
-        private IAccount _state;
+        private IAccount _account;
+        private IWorld _world;
         private Currency _crystal;
         private Address _agent1Address;
         private Address _avatar1Address;
@@ -35,13 +37,13 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _state = new MockAccount();
+            _account = new MockAccount();
 
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             foreach (var (key, value) in sheets)
             {
-                _state = _state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _account = _account.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             tableSheets = new TableSheets(sheets);
@@ -69,7 +71,7 @@ namespace Lib9c.Tests.Action
             _avatar1 = avatar1State;
             _avatar1Address = avatar1State.address;
 
-            _state = _state
+            _account = _account
                 .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetState(_agent1Address, agent1State.Serialize())
                 .SetState(_avatar1Address.Derive(LegacyInventoryKey), _avatar1.inventory.Serialize())
@@ -78,6 +80,7 @@ namespace Lib9c.Tests.Action
                 .SetState(_avatar1Address, _avatar1.Serialize())
                 .SetState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize());
 
+            _world = new MockWorld(_account);
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.TestOutput(outputHelper)
@@ -115,14 +118,14 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteGetTicketPrice()
         {
-            var arenaSheet = _state.GetSheet<ArenaSheet>();
+            var arenaSheet = LegacyModule.GetSheet<ArenaSheet>(_world);
             foreach (var row in arenaSheet)
             {
                 foreach (var roundData in row.Round)
                 {
                     var arenaInformationAdr =
                         ArenaInformation.DeriveAddress(_avatar1Address, roundData.ChampionshipId, roundData.Round);
-                    if (_state.TryGetState(arenaInformationAdr, out List _))
+                    if (LegacyModule.TryGetState(_world, arenaInformationAdr, out List _))
                     {
                         throw new ArenaInformationAlreadyContainsException(
                             $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -163,8 +166,8 @@ namespace Lib9c.Tests.Action
                         var sum = ticketPrice + (additionalTicketPrice * arenaInformation.PurchasedTicketCount);
                         var major = sum / 100;
                         var miner = sum % 100;
-                        var expectedPrice = new FungibleAssetValue(_state.GetGoldCurrency(), major, miner);
-                        var price = ArenaHelper.GetTicketPrice(roundData, arenaInformation, _state.GetGoldCurrency());
+                        var expectedPrice = new FungibleAssetValue(LegacyModule.GetGoldCurrency(_world), major, miner);
+                        var price = ArenaHelper.GetTicketPrice(roundData, arenaInformation, LegacyModule.GetGoldCurrency(_world));
 
                         Assert.Equal(expectedPrice, price);
                     }

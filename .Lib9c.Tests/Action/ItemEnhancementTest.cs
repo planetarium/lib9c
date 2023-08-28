@@ -18,6 +18,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
     using static Lib9c.SerializeKeys;
 
@@ -185,9 +186,9 @@ namespace Lib9c.Tests.Action
             });
 
             var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
-            var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+            var slotState = LegacyModule.GetCombinationSlotState(nextWorld, _avatarAddress, 0);
             var resultEquipment = (Equipment)slotState.Result.itemUsable;
-            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextWorld, _avatarAddress);
             Assert.Equal(default, resultEquipment.ItemId);
             Assert.Equal(expectedLevel, resultEquipment.level);
             Assert.Equal(expectedGold * _currency, nextState.GetBalance(_agentAddress, _currency));

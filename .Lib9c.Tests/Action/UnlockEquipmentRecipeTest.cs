@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -25,7 +26,8 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private readonly IAccount _initialState;
+        private readonly IAccount _initialAccount;
+        private readonly IWorld _initialWorld;
 
         public UnlockEquipmentRecipeTest()
         {
@@ -52,11 +54,12 @@ namespace Lib9c.Tests.Action
 
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new MockAccount()
+            _initialAccount = new MockAccount()
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(Addresses.GetSheetAddress<EquipmentItemSheet>(), _tableSheets.EquipmentItemSheet.Serialize())
                 .SetState(Addresses.GetSheetAddress<EquipmentItemRecipeSheet>(), _tableSheets.EquipmentItemRecipeSheet.Serialize())
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize());
+            _initialWorld = new MockWorld(_initialAccount);
         }
 
         [Theory]
@@ -94,7 +97,7 @@ namespace Lib9c.Tests.Action
         )
         {
             var context = new ActionContext();
-            var state = _initialState.MintAsset(context, _agentAddress, balance * _currency);
+            var state = _initialAccount.MintAsset(context, _agentAddress, balance * _currency);
             List<int> recipeIds = ids.ToList();
             Address unlockedRecipeIdsAddress = _avatarAddress.Derive("recipe_ids");
             if (stateExist)
@@ -151,7 +154,7 @@ namespace Lib9c.Tests.Action
                 });
                 IAccount nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
-                Assert.True(nextAccount.TryGetState(unlockedRecipeIdsAddress, out List rawIds));
+                Assert.True(LegacyModule.TryGetState(world, unlockedRecipeIdsAddress, out List rawIds));
 
                 var unlockedIds = rawIds.ToList(StateExtensions.ToInteger);
 
@@ -194,7 +197,7 @@ namespace Lib9c.Tests.Action
             }
 
             // Unlock All recipe by ItemSubType
-            UnlockEquipmentRecipe.UnlockedIds(_initialState, new PrivateKey().ToAddress(), _tableSheets.EquipmentItemRecipeSheet, worldInformation, rows.Select(i => i.Id).ToList());
+            UnlockEquipmentRecipe.UnlockedIds(_initialWorld, new PrivateKey().ToAddress(), _tableSheets.EquipmentItemRecipeSheet, worldInformation, rows.Select(i => i.Id).ToList());
         }
     }
 }

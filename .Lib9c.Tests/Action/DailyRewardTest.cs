@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -18,7 +19,8 @@ namespace Lib9c.Tests.Action
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialState;
+        private readonly IAccount _initialAccount;
+        private readonly IWorld _initialWorld;
 
         public DailyRewardTest(ITestOutputHelper outputHelper)
         {
@@ -27,11 +29,11 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockAccount();
+            _initialAccount = new MockAccount();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
+                _initialAccount = _initialAccount
                     .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
@@ -54,10 +56,11 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses[0] = _avatarAddress;
 
-            _initialState = _initialState
+            _initialAccount = _initialAccount
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize())
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(_avatarAddress, avatarState.Serialize());
+            _initialWorld = new MockWorld(_initialAccount);
         }
 
         [Fact]
@@ -90,17 +93,18 @@ namespace Lib9c.Tests.Action
             switch (legacy)
             {
                 case true:
-                    previousStates = _initialState;
+                    previousStates = _initialAccount;
                     break;
                 case false:
-                    var avatarState = _initialState.GetAvatarState(_avatarAddress);
-                    previousStates = SetAvatarStateAsV2To(_initialState, avatarState);
+                    var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
+                    previousStates = SetAvatarStateAsV2To(_initialAccount, avatarState);
                     break;
             }
 
             var nextState = ExecuteInternal(previousStates, 1800);
-            var nextGameConfigState = nextState.GetGameConfigState();
-            nextState.TryGetAvatarStateV2(_agentAddress, _avatarAddress, out var nextAvatarState, out var migrationRequired);
+            var nextWorld = _initialWorld.SetAccount(nextState);
+            var nextGameConfigState = LegacyModule.GetGameConfigState(nextWorld);
+            AvatarModule.TryGetAvatarStateV2(nextWorld, _agentAddress, _avatarAddress, out var nextAvatarState, out var migrationRequired);
             Assert.Equal(legacy, migrationRequired);
             Assert.NotNull(nextAvatarState);
             Assert.NotNull(nextAvatarState.inventory);
@@ -129,9 +133,9 @@ namespace Lib9c.Tests.Action
             long executeBlockIndex,
             bool throwsException)
         {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(new MockWorld(_initialAccount), _avatarAddress);
             avatarState.dailyRewardReceivedIndex = dailyRewardReceivedIndex;
-            var previousStates = SetAvatarStateAsV2To(_initialState, avatarState);
+            var previousStates = SetAvatarStateAsV2To(_initialAccount, avatarState);
             try
             {
                 ExecuteInternal(previousStates, executeBlockIndex);
@@ -160,7 +164,7 @@ rune_skill_slot_unlock_cost,500";
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(gameConfigSheet);
 
-            var state = _initialState
+            var state = _initialAccount
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize());
             var nextState = ExecuteInternal(state, 1800);
             var avatarRuneAmount = nextState.GetBalance(_avatarAddress, RuneHelper.DailyRewardRune);

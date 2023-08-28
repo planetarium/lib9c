@@ -17,6 +17,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static SerializeKeys;
@@ -253,7 +254,8 @@ namespace Lib9c.Tests.Action
                     Signer = _agentAddress,
                 };
 
-                var nextState = action.Execute(ctx).GetAccount(ReservedAddresses.LegacyAccount);
+                var nextWorld = action.Execute(ctx);
+                var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
                 var random = new TestRandom(randomSeed);
                 var bossListRow = _tableSheets.WorldBossListSheet.FindRowByBlockIndex(ctx.BlockIndex);
@@ -279,7 +281,7 @@ namespace Lib9c.Tests.Action
                 if (rewardRecordExist)
                 {
                     var bossRow = raidSimulatorSheets.WorldBossCharacterSheet[bossListRow.BossId];
-                    Assert.True(state.TryGetState(bossAddress, out List prevRawBoss));
+                    Assert.True(LegacyModule.TryGetState(nextWorld, bossAddress, out List prevRawBoss));
                     var prevBossState = new WorldBossState(prevRawBoss);
                     int rank = WorldBossHelper.CalculateRank(bossRow, raiderStateExist ? 1_000 : 0);
                     var rewards = RuneHelper.CalculateReward(
@@ -307,26 +309,26 @@ namespace Lib9c.Tests.Action
                     {
                         if (reward.Key.Equals(CrystalCalculator.CRYSTAL))
                         {
-                            Assert.Equal(reward.Value, nextState.GetBalance(_agentAddress, reward.Key));
+                            Assert.Equal(reward.Value, nextAccount.GetBalance(_agentAddress, reward.Key));
                         }
                         else
                         {
-                            Assert.Equal(reward.Value, nextState.GetBalance(_avatarAddress, reward.Key));
+                            Assert.Equal(reward.Value, nextAccount.GetBalance(_avatarAddress, reward.Key));
                         }
                     }
                 }
 
                 if (rewardMap.ContainsKey(crystal))
                 {
-                    Assert.Equal(rewardMap[crystal], nextState.GetBalance(_agentAddress, crystal));
+                    Assert.Equal(rewardMap[crystal], nextAccount.GetBalance(_agentAddress, crystal));
                 }
 
                 if (crystalExist)
                 {
-                    Assert.Equal(fee * crystal, nextState.GetBalance(bossAddress, crystal));
+                    Assert.Equal(fee * crystal, nextAccount.GetBalance(bossAddress, crystal));
                 }
 
-                Assert.True(nextState.TryGetState(raiderAddress, out List rawRaider));
+                Assert.True(LegacyModule.TryGetState(nextWorld, raiderAddress, out List rawRaider));
                 var raiderState = new RaiderState(rawRaider);
                 int expectedTotalScore = raiderStateExist ? 1_000 + score : score;
                 int expectedRemainChallenge = payNcg ? 0 : 2;
@@ -340,7 +342,7 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(GameConfig.DefaultAvatarArmorId, raiderState.IconId);
                 Assert.True(raiderState.Cp > 0);
 
-                Assert.True(nextState.TryGetState(bossAddress, out List rawBoss));
+                Assert.True(LegacyModule.TryGetState(nextWorld, bossAddress, out List rawBoss));
                 var bossState = new WorldBossState(rawBoss);
                 int expectedLevel = level;
                 if (kill & levelUp)
@@ -357,11 +359,11 @@ namespace Lib9c.Tests.Action
 
                 if (payNcg)
                 {
-                    Assert.Equal(0 * _goldCurrency, nextState.GetBalance(_agentAddress, _goldCurrency));
-                    Assert.Equal(purchaseCount + 1, nextState.GetRaiderState(raiderAddress).PurchaseCount);
+                    Assert.Equal(0 * _goldCurrency, nextAccount.GetBalance(_agentAddress, _goldCurrency));
+                    Assert.Equal(purchaseCount + 1, LegacyModule.GetRaiderState(nextWorld, raiderAddress).PurchaseCount);
                 }
 
-                Assert.True(nextState.TryGetState(worldBossKillRewardRecordAddress, out List rawRewardInfo));
+                Assert.True(LegacyModule.TryGetState(nextWorld, worldBossKillRewardRecordAddress, out List rawRewardInfo));
                 var rewardRecord = new WorldBossKillRewardRecord(rawRewardInfo);
                 Assert.Contains(expectedLevel, rewardRecord.Keys);
                 if (rewardRecordExist)
@@ -380,7 +382,7 @@ namespace Lib9c.Tests.Action
                     }
                 }
 
-                Assert.True(nextState.TryGetState(raiderListAddress, out List rawRaiderList));
+                Assert.True(LegacyModule.TryGetState(nextWorld, raiderListAddress, out List rawRaiderList));
                 List<Address> raiderList = rawRaiderList.ToList(StateExtensions.ToAddress);
 
                 Assert.Contains(raiderAddress, raiderList);
@@ -389,7 +391,8 @@ namespace Lib9c.Tests.Action
             {
                 if (exc == typeof(DuplicatedRuneIdException) || exc == typeof(DuplicatedRuneSlotIndexException))
                 {
-                    var ncgCurrency = state.GetGoldCurrency();
+                    var world = new MockWorld(state);
+                    var ncgCurrency = LegacyModule.GetGoldCurrency(world);
                     state = state.MintAsset(context, _agentAddress, 99999 * ncgCurrency);
 
                     var unlockRuneSlot = new UnlockRuneSlot()
@@ -401,7 +404,7 @@ namespace Lib9c.Tests.Action
                     state = unlockRuneSlot.Execute(new ActionContext
                     {
                         BlockIndex = 1,
-                        PreviousState = new MockWorld(state),
+                        PreviousState = world,
                         Signer = _agentAddress,
                         Random = new TestRandom(),
                     }).GetAccount(ReservedAddresses.LegacyAccount);
@@ -524,16 +527,18 @@ namespace Lib9c.Tests.Action
                 random
             );
 
-            var nextState = action.Execute(new ActionContext
+            var nextWorld = action.Execute(new ActionContext
             {
                 BlockIndex = worldBossRow.StartedBlockIndex + gameConfigState.WorldBossRequiredInterval,
                 PreviousState = new MockWorld(state),
                 Random = new TestRandom(randomSeed),
                 Rehearsal = false,
                 Signer = _agentAddress,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            });
 
-            Assert.True(nextState.TryGetState(raiderAddress, out List rawRaider));
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
+
+            Assert.True(LegacyModule.TryGetState(nextWorld, raiderAddress, out List rawRaider));
             var nextRaiderState = new RaiderState(rawRaider);
             Assert.Equal(simulator.DamageDealt, nextRaiderState.HighScore);
 
@@ -553,11 +558,11 @@ namespace Lib9c.Tests.Action
             {
                 if (reward.Key.Equals(CrystalCalculator.CRYSTAL))
                 {
-                    Assert.Equal(reward.Value, nextState.GetBalance(_agentAddress, reward.Key));
+                    Assert.Equal(reward.Value, nextAccount.GetBalance(_agentAddress, reward.Key));
                 }
                 else
                 {
-                    Assert.Equal(reward.Value, nextState.GetBalance(_avatarAddress, reward.Key));
+                    Assert.Equal(reward.Value, nextAccount.GetBalance(_avatarAddress, reward.Key));
                 }
             }
 
@@ -565,10 +570,10 @@ namespace Lib9c.Tests.Action
             Assert.Equal(GameConfig.DefaultAvatarArmorId, nextRaiderState.IconId);
             Assert.True(nextRaiderState.Cp > 0);
             Assert.Equal(3, nextRaiderState.LatestBossLevel);
-            Assert.True(nextState.TryGetState(bossAddress, out List rawBoss));
+            Assert.True(LegacyModule.TryGetState(nextWorld, bossAddress, out List rawBoss));
             var nextBossState = new WorldBossState(rawBoss);
             Assert.Equal(3, nextBossState.Level);
-            Assert.True(nextState.TryGetState(worldBossKillRewardRecordAddress, out List rawRewardInfo));
+            Assert.True(LegacyModule.TryGetState(nextWorld, worldBossKillRewardRecordAddress, out List rawRewardInfo));
             var nextRewardInfo = new WorldBossKillRewardRecord(rawRewardInfo);
             Assert.True(nextRewardInfo[1]);
         }
