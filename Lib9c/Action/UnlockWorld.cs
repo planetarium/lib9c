@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -44,7 +44,7 @@ namespace Nekoyume.Action
                 world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
                 world = LegacyModule.SetState(world, questListAddress, MarkChanged);
                 world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
-                world = LegacyModule.SetState(world, AvatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, AvatarAddress);
                 world = LegacyModule.MarkBalanceChanged(
                     world,
                     context,
@@ -147,18 +147,6 @@ namespace Nekoyume.Action
             if (migrationRequired)
             {
                 world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-                world = LegacyModule.SetState(
-                    world,
-                    questListAddress,
-                    avatarState.questList.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    worldInformationAddress,
-                    avatarState.worldInformation.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    inventoryAddress,
-                    avatarState.inventory.Serialize());
             }
 
             var ended = DateTimeOffset.UtcNow;

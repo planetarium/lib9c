@@ -119,19 +119,6 @@ namespace Lib9c.Tests.Action
         {
             IWorld states = new MockWorld();
             states = AvatarModule.SetAvatarStateV2(states, _avatarAddress, _avatarState);
-            states = LegacyModule.SetState(
-                states,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                _avatarState.inventory.Serialize());
-            states = LegacyModule.SetState(
-                states,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                _avatarState.worldInformation.Serialize());
-            states = LegacyModule.SetState(
-                states,
-                _avatarAddress.Derive(LegacyQuestListKey),
-                _avatarState.questList.Serialize());
-
             var v2 = AvatarModule.GetAvatarStateV2(states, _avatarAddress);
             Assert.NotNull(v2.inventory);
             Assert.NotNull(v2.worldInformation);
@@ -146,18 +133,6 @@ namespace Lib9c.Tests.Action
         {
             IWorld states = new MockWorld();
             states = AvatarModule.SetAvatarStateV2(states, _avatarAddress, _avatarState);
-            states = LegacyModule.SetState(
-                states,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                _avatarState.inventory.Serialize());
-            states = LegacyModule.SetState(
-                states,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                _avatarState.worldInformation.Serialize());
-            states = LegacyModule.SetState(
-                states,
-                _avatarAddress.Derive(LegacyQuestListKey),
-                _avatarState.questList.Serialize());
             states = LegacyModule.SetState(states, _avatarAddress.Derive(key), null);
             var exc = Assert.Throws<FailedLoadStateException>(() => AvatarModule.GetAvatarStateV2(states, _avatarAddress));
             Assert.Contains(key, exc.Message);
@@ -176,12 +151,6 @@ namespace Lib9c.Tests.Action
             else
             {
                 states = AvatarModule.SetAvatarStateV2(states, _avatarAddress, _avatarState);
-                states = LegacyModule.SetState(states, _avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize());
-                states = LegacyModule.SetState(
-                    states,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    _avatarState.worldInformation.Serialize());
-                states = LegacyModule.SetState(states, _avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
             }
 
             Assert.True(AvatarModule.TryGetAvatarStateV2(states, _agentAddress, _avatarAddress, out _, out bool migrationRequired));
@@ -203,18 +172,6 @@ namespace Lib9c.Tests.Action
             else
             {
                 states = AvatarModule.SetAvatarStateV2(states, _avatarAddress, _avatarState);
-                states = LegacyModule.SetState(
-                    states,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    _avatarState.inventory.Serialize());
-                states = LegacyModule.SetState(
-                    states,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    _avatarState.worldInformation.Serialize());
-                states = LegacyModule.SetState(
-                    states,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    _avatarState.questList.Serialize());
             }
 
             Assert.True(

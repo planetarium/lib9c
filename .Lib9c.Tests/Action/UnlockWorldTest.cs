@@ -137,20 +137,6 @@ namespace Lib9c.Tests.Action
                 }
                 else
                 {
-                    state =
-                        LegacyModule.SetState(
-                            state,
-                            _avatarAddress.Derive(
-                                LegacyInventoryKey),
-                            _avatarState.inventory.Serialize());
-                    state = LegacyModule.SetState(
-                        state,
-                        _avatarAddress.Derive(LegacyWorldInformationKey),
-                        worldInformation.Serialize());
-                    state = LegacyModule.SetState(
-                        state,
-                        _avatarAddress.Derive(LegacyQuestListKey),
-                        _avatarState.questList.Serialize());
                     state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
                 }
             }

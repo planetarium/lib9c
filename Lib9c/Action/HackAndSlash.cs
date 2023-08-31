@@ -598,18 +598,6 @@ namespace Nekoyume.Action
             }
 
             world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-            world = LegacyModule.SetState(
-                world,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                questListAddress,
-                avatarState.questList.Serialize());
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Set States", blockIndex, sw.Elapsed.TotalMilliseconds);

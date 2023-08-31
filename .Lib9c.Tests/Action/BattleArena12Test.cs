@@ -113,36 +113,12 @@ namespace Lib9c.Tests.Action
 
             _initialStates = LegacyModule.SetState(_initialStates, Addresses.GoldCurrency, goldCurrencyState.Serialize());
             _initialStates = AgentModule.SetAgentState(_initialStates, _agent1Address, agent1State);
-            _initialStates = LegacyModule.SetState(
-                _initialStates,
-                _avatar1Address.Derive(LegacyInventoryKey),
-                avatar1State.inventory.Serialize());
-            _initialStates = LegacyModule.SetState(
-                _initialStates,
-                _avatar1Address.Derive(LegacyWorldInformationKey),
-                avatar1State.worldInformation.Serialize());
-            _initialStates = LegacyModule.SetState(
-                _initialStates,
-                _avatar1Address.Derive(LegacyQuestListKey),
-                avatar1State.questList.Serialize());
             _initialStates = AvatarModule.SetAvatarStateV2(_initialStates, _avatar1Address, avatar1State);
             _initialStates = AgentModule.SetAgentState(_initialStates, _agent2Address, agent2State);
             _initialStates = AvatarModule.SetAvatarState(_initialStates, _avatar2Address, avatar2State);
             _initialStates = AgentModule.SetAgentState(_initialStates, _agent3Address, agent3State);
             _initialStates = AvatarModule.SetAvatarState(_initialStates, _avatar3Address, avatar3State);
             _initialStates = AgentModule.SetAgentState(_initialStates, _agent4Address, agent4State);
-            _initialStates = LegacyModule.SetState(
-                _initialStates,
-                _avatar4Address.Derive(LegacyInventoryKey),
-                avatar4State.inventory.Serialize());
-            _initialStates = LegacyModule.SetState(
-                _initialStates,
-                _avatar4Address.Derive(LegacyWorldInformationKey),
-                avatar4State.worldInformation.Serialize());
-            _initialStates = LegacyModule.SetState(
-                _initialStates,
-                _avatar4Address.Derive(LegacyQuestListKey),
-                avatar4State.questList.Serialize());
             _initialStates = AvatarModule.SetAvatarStateV2(_initialStates, _avatar4Address, avatar4State);
             _initialStates = LegacyModule.SetState(
                 _initialStates,

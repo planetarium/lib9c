@@ -166,18 +166,6 @@ namespace Lib9c.Tests.Action
                     _avatarState.inventory.AddItem(apStone);
                 }
 
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    _avatarState.inventory.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    _avatarState.worldInformation.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    _avatarState.questList.Serialize());
                 state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
 
                 Assert.Equal(

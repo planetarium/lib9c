@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -56,7 +56,7 @@ namespace Nekoyume.Action
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (ctx.Rehearsal)
             {
-                world = LegacyModule.SetState(world, avatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, avatarAddress);
                 world = LegacyModule.SetState(world, weeklyArenaAddress, MarkChanged);
                 world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
                 world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
@@ -274,21 +274,17 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Serialize WeeklyArenaState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            world = LegacyModule.SetState(
-                world,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
             world = LegacyModule.SetState(world, arenaInfoAddress, arenaInfo.Serialize());
             world = LegacyModule.SetState(world, enemyArenaInfoAddress, enemyArenaInfo.Serialize());
-            world = LegacyModule.SetState(world, questListAddress, avatarState.questList.Serialize());
 
             if (migrationRequired)
             {
-                world = LegacyModule.SetState(
-                    world,
-                    worldInformationAddress,
-                    avatarState.worldInformation.Serialize());
                 world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            }
+            else
+            {
+                world = AvatarModule.SetInventory(world, inventoryAddress, avatarState.inventory);
+                world = AvatarModule.SetQuestList(world, questListAddress, avatarState.questList);
             }
 
             if (isNewArenaInfo || isNewEnemyArenaInfo)

@@ -363,33 +363,18 @@ namespace Nekoyume.Action
                     rewardRecord.Serialize());
             }
 
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInfoAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
-
             if (migrationRequired)
             {
                 world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-                world = LegacyModule.SetState(
-                    world,
-                    inventoryAddress,
-                    avatarState.inventory.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    worldInfoAddress,
-                    avatarState.worldInformation.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    questListAddress,
-                    avatarState.questList.Serialize());
+            }
+            else
+            {
+                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
+                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);
-            world = LegacyModule.SetState(
-                world,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
             world = LegacyModule.SetState(world, worldBossAddress, bossState.Serialize());
             world = LegacyModule.SetState(world, raiderAddress, raiderState.Serialize());
             return world;

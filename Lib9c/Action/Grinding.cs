@@ -64,7 +64,7 @@ namespace Nekoyume.Action
                     world,
                     MonsterCollectionState.DeriveAddress(context.Signer, 3),
                     MarkChanged);
-                world = LegacyModule.SetState(world, AvatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, AvatarAddress);
                 world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
                 world = LegacyModule.SetState(world, questListAddress, MarkChanged);
                 world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
@@ -184,20 +184,17 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                world = LegacyModule.SetState(
-                    world,
-                    worldInformationAddress,
-                    avatarState.worldInformation.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    questListAddress,
-                    avatarState.questList.Serialize());
+                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+            }
+            else
+            {
+                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
+                world = AvatarModule.SetInventory(world, inventoryAddress, avatarState.inventory);
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Grinding Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-            world = LegacyModule.SetState(world, inventoryAddress, avatarState.inventory.Serialize());
+            
             world = LegacyModule.MintAsset(world, context, context.Signer, crystal);
             return world;
         }

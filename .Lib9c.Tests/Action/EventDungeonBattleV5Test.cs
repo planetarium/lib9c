@@ -167,7 +167,7 @@ namespace Lib9c.Tests.Action
                 eventDungeonInfoAddr,
                 eventDungeonInfo.Serialize());
 
-            Assert.True(LegacyModule.GetSheet<EventScheduleSheet>(_initialWorld)
+            Assert.True(LegacyModule.GetSheet<EventScheduleSheet>(previousWorld)
                 .TryGetValue(eventScheduleId, out var newScheduleRow));
             var ncgHas = newScheduleRow.GetDungeonTicketCost(
                 numberOfTicketPurchases,

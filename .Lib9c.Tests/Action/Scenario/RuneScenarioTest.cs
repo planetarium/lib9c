@@ -47,18 +47,6 @@ namespace Lib9c.Tests.Action.Scenario
             initialState = AvatarModule.SetAvatarStateV2(initialState, avatarAddress, avatarState);
             initialState = LegacyModule.SetState(
                 initialState,
-                avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            initialState = LegacyModule.SetState(
-                initialState,
-                avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
-            initialState = LegacyModule.SetState(
-                initialState,
-                avatarAddress.Derive(LegacyQuestListKey),
-                avatarState.questList.Serialize());
-            initialState = LegacyModule.SetState(
-                initialState,
                 Addresses.GoldCurrency,
                 new GoldCurrencyState(Currency.Legacy("NCG", 2, minters: null)).Serialize());
             initialState = LegacyModule.SetState(

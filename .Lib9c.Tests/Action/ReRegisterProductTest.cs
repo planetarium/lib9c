@@ -215,18 +215,6 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                prevState = LegacyModule.SetState(
-                    prevState,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                prevState = LegacyModule.SetState(
-                    prevState,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                prevState = LegacyModule.SetState(
-                    prevState,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
                 prevState = AvatarModule.SetAvatarStateV2(prevState, _avatarAddress, avatarState);
             }
 

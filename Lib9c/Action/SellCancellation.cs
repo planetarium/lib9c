@@ -107,7 +107,7 @@ namespace Nekoyume.Action
                 world = LegacyModule.SetState(world, questListAddress, MarkChanged);
                 world = LegacyModule.SetState(world, digestListAddress, MarkChanged);
                 world = LegacyModule.SetState(world, itemAddress, MarkChanged);
-                world = LegacyModule.SetState(world, sellerAvatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, sellerAvatarAddress);
                 return world;
             }
 
@@ -246,9 +246,6 @@ namespace Nekoyume.Action
 
             world = LegacyModule.SetState(world, itemAddress, sellItem.Serialize());
             world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
-            world = LegacyModule.SetState(world, inventoryAddress, avatarState.inventory.Serialize());
-            world = LegacyModule.SetState(world, worldInformationAddress, avatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(world, questListAddress, avatarState.questList.Serialize());
             world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose(
@@ -362,18 +359,6 @@ namespace Nekoyume.Action
 
             world = LegacyModule.SetState(world, itemAddress, sellItem.Serialize());
             world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                questListAddress,
-                avatarState.questList.Serialize());
             world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose(

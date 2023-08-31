@@ -107,7 +107,7 @@ namespace Lib9c.DevExtensions.Action
                     world = LegacyModule.SetState(world, slotAddress, MarkChanged);
                 }
 
-                world = LegacyModule.SetState(world, avatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, avatarAddress);
                 world = LegacyModule.SetState(world, Addresses.Ranking, MarkChanged);
                 world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
                 world = LegacyModule.SetState(world, questListAddress, MarkChanged);
@@ -199,9 +199,6 @@ namespace Lib9c.DevExtensions.Action
             avatarState.UpdateQuestRewards(materialItemSheet);
             world = AgentModule.SetAgentState(world, agentAddress, agentState);
             world = LegacyModule.SetState(world, Addresses.Ranking, rankingState.Serialize());
-            world = LegacyModule.SetState(world, inventoryAddress, avatarState.inventory.Serialize());
-            world = LegacyModule.SetState(world, worldInformationAddress, avatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(world, questListAddress, avatarState.questList.Serialize());
             world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             // ~Create Agent and avatar && ~Add item
 
@@ -245,7 +242,6 @@ namespace Lib9c.DevExtensions.Action
                 orderReceiptList.Add(orderDigest);
 
                 world = LegacyModule.SetState(world, orderReceiptAddress, orderReceiptList.Serialize());
-                world = LegacyModule.SetState(world, inventoryAddress, avatarState.inventory.Serialize());
                 world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
                 world = LegacyModule.SetState(world, itemAddress, tradableItem.Serialize());
                 world = LegacyModule.SetState(world, orderAddress, order.Serialize());

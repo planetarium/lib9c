@@ -256,10 +256,14 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var gold = new GoldCurrencyState(Currency.Legacy("NCG", 2, null));
 #pragma warning restore CS0618
-            var updatedAddresses = new List<Address>()
+
+            var updatedAddressesAvatar = new List<Address>()
+            {
+                avatarAddress,
+            };
+            var updatedAddressesLegacy = new List<Address>()
             {
                 agentAddress,
-                avatarAddress,
                 avatarAddress.Derive(LegacyInventoryKey),
                 avatarAddress.Derive(LegacyQuestListKey),
                 avatarAddress.Derive(LegacyWorldInformationKey),
@@ -273,7 +277,7 @@ namespace Lib9c.Tests.Action
                         i
                     )
                 );
-                updatedAddresses.Add(slotAddress);
+                updatedAddressesLegacy.Add(slotAddress);
             }
 
             var nextState = action.Execute(new ActionContext()
@@ -283,10 +287,13 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Rehearsal = true,
             });
-
             Assert.Equal(
-                updatedAddresses.ToImmutableHashSet(),
-                nextState.Delta.Accounts.Values.SelectMany(a => a.Delta.UpdatedAddresses)
+                updatedAddressesAvatar.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses
+            );
+            Assert.Equal(
+                updatedAddressesLegacy.ToImmutableHashSet(),
+                nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses
             );
         }
 

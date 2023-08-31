@@ -70,18 +70,6 @@ namespace Lib9c.Tests.Action
                 avatarState);
             _initialStates = LegacyModule.SetState(
                 _initialStates,
-                inventoryAddr,
-                avatarState.inventory.Serialize());
-            _initialStates = LegacyModule.SetState(
-                _initialStates,
-                worldInformationAddr,
-                avatarState.worldInformation.Serialize());
-            _initialStates = LegacyModule.SetState(
-                _initialStates,
-                questListAddr,
-                avatarState.questList.Serialize());
-            _initialStates = LegacyModule.SetState(
-                _initialStates,
                 gameConfigState.address,
                 gameConfigState.Serialize());
 

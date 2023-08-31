@@ -40,7 +40,7 @@ namespace Nekoyume.Action.Coupons
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                world = LegacyModule.SetState(world, AvatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, AvatarAddress);
                 world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
                 world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
                 world = LegacyModule.SetState(world, questListAddress, MarkChanged);
@@ -82,18 +82,6 @@ namespace Nekoyume.Action.Coupons
             }
 
             world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-            world = LegacyModule.SetState(
-                world,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                questListAddress,
-                avatarState.questList.Serialize());
             world = LegacyModule.SetCouponWallet(world, context.Signer, wallet);
             return world;
         }

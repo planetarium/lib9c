@@ -92,18 +92,6 @@ namespace Lib9c.Tests.Util
                 initialStatesWithAvatarStateV2,
                 avatarAddr,
                 avatarState);
-            initialStatesWithAvatarStateV2 = LegacyModule.SetState(
-                initialStatesWithAvatarStateV2,
-                avatarAddr.Derive(SerializeKeys.LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            initialStatesWithAvatarStateV2 = LegacyModule.SetState(
-                initialStatesWithAvatarStateV2,
-                avatarAddr.Derive(SerializeKeys.LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
-            initialStatesWithAvatarStateV2 = LegacyModule.SetState(
-                initialStatesWithAvatarStateV2,
-                avatarAddr.Derive(SerializeKeys.LegacyQuestListKey),
-                avatarState.questList.Serialize());
 
             return (
                 tableSheets,

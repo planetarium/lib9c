@@ -56,7 +56,7 @@ namespace Nekoyume.Action
                 world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
                 world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
                 world = LegacyModule.SetState(world, questListAddress, MarkChanged);
-                world = LegacyModule.SetState(world, AvatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, AvatarAddress);
                 world = LegacyModule.SetState(world, context.Signer, MarkChanged);
                 world = LegacyModule.MarkBalanceChanged(
                     world,
@@ -142,19 +142,7 @@ namespace Nekoyume.Action
             }
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RedeemCode Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-            world = LegacyModule.SetState(
-                world,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                questListAddress,
-                avatarState.questList.Serialize());
+            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
             world = LegacyModule.SetState(world, RedeemCodeState.Address, redeemState.Serialize());
             return world;
         }

@@ -139,21 +139,14 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                world = LegacyModule.SetState(
-                    world,
-                    AvatarAddress.Derive(LegacyQuestListKey),
-                    buyerAvatarState.questList.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    AvatarAddress.Derive(LegacyWorldInformationKey),
-                    buyerAvatarState.worldInformation.Serialize());
+                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, buyerAvatarState);
+            }
+            else
+            {
+                world = AvatarModule.SetAvatarV2(world, AvatarAddress, buyerAvatarState);
+                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), buyerAvatarState.inventory);
             }
 
-            world = LegacyModule.SetState(world, AvatarAddress, buyerAvatarState.SerializeV2());
-            world = LegacyModule.SetState(
-                world,
-                AvatarAddress.Derive(LegacyInventoryKey),
-                buyerAvatarState.inventory.Serialize());
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("BuyProduct Total Executed Time: {Elapsed}", ended - started);
             return world;
@@ -249,14 +242,6 @@ namespace Nekoyume.Action
             world = LegacyModule.SetState(world, productsStateAddress, productsState.Serialize());
             world = LegacyModule.SetState(
                 world,
-                sellerAvatarAddress,
-                sellerAvatarState.SerializeV2());
-            world = LegacyModule.SetState(
-                world,
-                sellerAvatarAddress.Derive(LegacyQuestListKey),
-                sellerAvatarState.questList.Serialize());
-            world = LegacyModule.SetState(
-                world,
                 ProductReceipt.DeriveAddress(productId),
                 receipt.Serialize());
             world = LegacyModule.TransferAsset(
@@ -274,15 +259,12 @@ namespace Nekoyume.Action
 
             if (sellerMigrationRequired)
             {
-                world = LegacyModule.SetState(
-                    world,
-                    sellerAvatarAddress.Derive(LegacyInventoryKey),
-                    sellerAvatarState.inventory.Serialize());
-                world = LegacyModule
-                    .SetState(
-                        world,
-                        sellerAvatarAddress.Derive(LegacyWorldInformationKey),
-                        sellerAvatarState.worldInformation.Serialize());
+                world = AvatarModule.SetAvatarStateV2(world, sellerAvatarAddress, sellerAvatarState);
+            }
+            else
+            {
+                world = AvatarModule.SetAvatarV2(world, sellerAvatarAddress, sellerAvatarState);
+                world = AvatarModule.SetQuestList(world, sellerAvatarAddress.Derive(LegacyQuestListKey), sellerAvatarState.questList);
             }
 
             return world;
@@ -432,18 +414,6 @@ namespace Nekoyume.Action
 
             world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
             world = LegacyModule.SetState(world, orderReceiptAddress, orderReceipt.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                sellerInventoryAddress,
-                sellerAvatarState.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                sellerWorldInformationAddress,
-                sellerAvatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                sellerQuestListAddress,
-                sellerAvatarState.questList.Serialize());
             world = AvatarModule.SetAvatarStateV2(world, sellerAvatarAddress, sellerAvatarState);
             return LegacyModule.SetState(world, shardedShopAddress, shardedShopState.Serialize());
         }

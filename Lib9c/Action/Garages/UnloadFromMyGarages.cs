@@ -233,16 +233,15 @@ namespace Nekoyume.Action.Garages
             // This action supports the avatar state v2 only.
             // So, we just check the mail box with a newer key.
 
-            var mailBox = avatarState.mailBox;
-            mailBox.Add(new UnloadFromMyGaragesRecipientMail(
+            avatarState.mailBox.Add(new UnloadFromMyGaragesRecipientMail(
                 blockIndex,
                 random.GenerateRandomGuid(),
                 blockIndex,
                 FungibleAssetValues,
                 FungibleIdAndCounts,
                 Memo));
-            mailBox.CleanUp();
-            return AvatarModule.SetAvatarStateV2(world, RecipientAvatarAddr, avatarState);
+            avatarState.mailBox.CleanUp();
+            return AvatarModule.SetAvatarV2(world, RecipientAvatarAddr, avatarState);
         }
     }
 }

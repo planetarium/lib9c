@@ -92,18 +92,6 @@ namespace Lib9c.Tests.Action
                 _avatarState);
             _initialWorld = LegacyModule.SetState(
                 _initialWorld,
-                _inventoryAddress,
-                _avatarState.inventory.Serialize());
-            _initialWorld = LegacyModule.SetState(
-                _initialWorld,
-                _worldInformationAddress,
-                _avatarState.worldInformation.Serialize());
-            _initialWorld = LegacyModule.SetState(
-                _initialWorld,
-                _questListAddress,
-                _avatarState.questList.Serialize());
-            _initialWorld = LegacyModule.SetState(
-                _initialWorld,
                 gameConfigState.address,
                 gameConfigState.Serialize());
             _initialWorld = LegacyModule.SetState(
@@ -211,18 +199,6 @@ namespace Lib9c.Tests.Action
             else
             {
                 state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
             }
 
             state = LegacyModule.SetState(
@@ -303,7 +279,7 @@ namespace Lib9c.Tests.Action
             var state = backward ? new MockWorld() : _initialWorld;
             if (!backward)
             {
-                state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, _avatarState);
+                state = AvatarModule.SetAvatarV2(_initialWorld, _avatarAddress, _avatarState);
                 state = LegacyModule.SetState(
                     state,
                     _avatarAddress.Derive(LegacyInventoryKey),
@@ -453,18 +429,6 @@ namespace Lib9c.Tests.Action
             else
             {
                 state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
             }
 
             if (unlockedIdsExist)
@@ -519,18 +483,6 @@ namespace Lib9c.Tests.Action
             else
             {
                 state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
             }
 
             var action = new HackAndSlashSweep
@@ -582,18 +534,6 @@ namespace Lib9c.Tests.Action
             else
             {
                 state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
             }
 
             var stageSheet = LegacyModule.GetSheet<StageSheet>(_initialWorld);
@@ -660,18 +600,6 @@ namespace Lib9c.Tests.Action
             else
             {
                 state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
             }
 
             var stageSheet = LegacyModule.GetSheet<StageSheet>(_initialWorld);
@@ -738,18 +666,6 @@ namespace Lib9c.Tests.Action
             else
             {
                 state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
             }
 
             var stageSheet = LegacyModule.GetSheet<StageSheet>(_initialWorld);
@@ -816,18 +732,6 @@ namespace Lib9c.Tests.Action
             else
             {
                 state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
             }
 
             var stageSheet = LegacyModule.GetSheet<StageSheet>(_initialWorld);

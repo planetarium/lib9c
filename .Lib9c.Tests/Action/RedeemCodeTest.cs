@@ -100,18 +100,6 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                initialState = LegacyModule.SetState(
-                    initialState,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                initialState = LegacyModule.SetState(
-                    initialState,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                initialState = LegacyModule.SetState(
-                    initialState,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
                 initialState = AvatarModule.SetAvatarStateV2(
                     initialState,
                     _avatarAddress,
@@ -142,8 +130,6 @@ namespace Lib9c.Tests.Action
                 Random = new TestRandom(),
             });
 
-            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
-
             // Check target avatar & agent
             AvatarState nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
             // See also Data/TableCSV/RedeemRewardSheet.csv
@@ -167,19 +153,18 @@ namespace Lib9c.Tests.Action
                 _avatarAddress
             );
 
-            IAccount nextState = redeemCode.Execute(new ActionContext()
+            IWorld nextState = redeemCode.Execute(new ActionContext()
             {
                 BlockIndex = 1,
                 Miner = default,
                 PreviousState = new MockWorld(),
                 Rehearsal = true,
                 Signer = _agentAddress,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            });
 
             Assert.Equal(
                 new[]
                 {
-                    _avatarAddress,
                     _agentAddress,
                     RedeemCodeState.Address,
                     GoldCurrencyState.Address,
@@ -187,7 +172,15 @@ namespace Lib9c.Tests.Action
                     _avatarAddress.Derive(LegacyWorldInformationKey),
                     _avatarAddress.Derive(LegacyQuestListKey),
                 }.ToImmutableHashSet(),
-                nextState.Delta.UpdatedAddresses
+                nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses
+            );
+
+            Assert.Equal(
+                new[]
+                {
+                    _avatarAddress,
+                }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses
             );
         }
     }

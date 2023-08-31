@@ -418,18 +418,6 @@ namespace Nekoyume.Action
 
             // Set state
             sw.Restart();
-            world = LegacyModule.SetState(
-                world,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                questListAddress,
-                avatarState.questList.Serialize());
             world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex} ItemEnhancement Set AvatarState: {Elapsed}", addressesHex,

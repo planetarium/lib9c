@@ -41,7 +41,7 @@ namespace Nekoyume.Action
                 world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
                 world = LegacyModule.SetState(world, questListAddress, MarkChanged);
                 world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
-                world = LegacyModule.SetState(world, AvatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, AvatarAddress);
                 world = LegacyModule.SetState(world, unlockedRecipeIdsAddress, MarkChanged);
                 world = LegacyModule.MarkBalanceChanged(
                     world,
@@ -111,18 +111,6 @@ namespace Nekoyume.Action
             if (migrationRequired)
             {
                 world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-                world = LegacyModule.SetState(
-                    world,
-                    worldInformationAddress,
-                    worldInformation.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    questListAddress,
-                    avatarState.questList.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    inventoryAddress,
-                    avatarState.inventory.Serialize());
             }
 
             world = LegacyModule.SetState(

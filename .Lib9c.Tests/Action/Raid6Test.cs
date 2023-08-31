@@ -238,18 +238,6 @@ namespace Lib9c.Tests.Action
                 state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, avatarState);
                 state = LegacyModule.SetState(
                     state,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
-                state = LegacyModule.SetState(
-                    state,
                     gameConfigState.address,
                     gameConfigState.Serialize());
             }
@@ -414,8 +402,7 @@ namespace Lib9c.Tests.Action
             {
                 if (exc == typeof(DuplicatedRuneIdException) || exc == typeof(DuplicatedRuneSlotIndexException))
                 {
-                    var world = new MockWorld(state);
-                    var ncgCurrency = LegacyModule.GetGoldCurrency(world);
+                    var ncgCurrency = LegacyModule.GetGoldCurrency(state);
                     state = LegacyModule.MintAsset(state, context, _agentAddress, 99999 * ncgCurrency);
 
                     var unlockRuneSlot = new UnlockRuneSlot()
@@ -428,7 +415,7 @@ namespace Lib9c.Tests.Action
                         new ActionContext
                         {
                             BlockIndex = 1,
-                            PreviousState = world,
+                            PreviousState = state,
                             Signer = _agentAddress,
                             Random = new TestRandom(),
                         });
@@ -517,18 +504,6 @@ namespace Lib9c.Tests.Action
                 rewardRecord.Serialize());
 
             state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, avatarState);
-            state = LegacyModule.SetState(
-                state,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                _avatarAddress.Derive(LegacyQuestListKey),
-                avatarState.questList.Serialize());
             state = LegacyModule.SetState(
                 state,
                 gameConfigState.address,
@@ -670,18 +645,6 @@ namespace Lib9c.Tests.Action
             }
 
             state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, avatarState);
-            state = LegacyModule.SetState(
-                state,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                _avatarAddress.Derive(LegacyQuestListKey),
-                avatarState.questList.Serialize());
             state = LegacyModule.SetState(
                 state,
                 gameConfigState.address,

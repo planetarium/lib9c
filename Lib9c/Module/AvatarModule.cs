@@ -6,6 +6,9 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
+using Nekoyume.Model;
+using Nekoyume.Model.Item;
+using Nekoyume.Model.Quest;
 using Nekoyume.Model.State;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -258,12 +261,73 @@ namespace Nekoyume.Module
             return world.SetAccount(account);
         }
 
-        public static IWorld SetAvatarStateV2(IWorld world, Address address, AvatarState state)
+        public static IWorld SetAvatarStateV2(
+            IWorld world,
+            Address avatarAddress,
+            AvatarState state,
+            bool setAvatar = true,
+            bool setInventory = true,
+            bool setWorldInformation = true,
+            bool setQuestList = true)
         {
-            // TODO: Override legacy address to null state?
-            var account = world.GetAccount(Addresses.Avatar);
-            account = account.SetState(address, state.SerializeV2());
-            return world.SetAccount(account);
+            if (setAvatar)
+            {
+                world = SetAvatarV2(world, avatarAddress, state);
+            }
+
+            if (setInventory)
+            {
+                world = SetInventory(world, avatarAddress.Derive(LegacyInventoryKey), state.inventory);
+            }
+
+            if (setWorldInformation)
+            {
+                world = SetWorldInformation(world, avatarAddress.Derive(LegacyWorldInformationKey), state.worldInformation);
+            }
+
+            if (setQuestList)
+            {
+                world = SetQuestList(world, avatarAddress.Derive(LegacyQuestListKey), state.questList);
+            }
+
+            return world;
         }
+
+        public static IWorld SetAvatarV2(IWorld world, Address address, AvatarState state)
+        {
+            var avatarAccount = world.GetAccount(Addresses.Avatar);
+            avatarAccount = avatarAccount.SetState(address, state.SerializeV2());
+            return world.SetAccount(avatarAccount);
+        }
+
+        public static IWorld MarkChanged(IWorld world, Address address) =>
+            world.SetAccount(
+                world.GetAccount(Addresses.Avatar).SetState(
+                    address, ActionBase.MarkChanged));
+
+        public static bool Changed(IWorld world, Address address) =>
+            world.GetAccount(Addresses.Avatar).GetState(address).Equals(ActionBase.MarkChanged);
+
+        public static IWorld SetInventory(IWorld world, Address address, Inventory state)
+        {
+            var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
+            legacyAccount = legacyAccount.SetState(address, state.Serialize());
+            return world.SetAccount(legacyAccount);
+        }
+
+        public static IWorld SetWorldInformation(IWorld world, Address address, WorldInformation state)
+        {
+            var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
+            legacyAccount = legacyAccount.SetState(address, state.Serialize());
+            return world.SetAccount(legacyAccount);
+        }
+
+        public static IWorld SetQuestList(IWorld world, Address address, QuestList state)
+        {
+            var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
+            legacyAccount = legacyAccount.SetState(address, state.Serialize());
+            return world.SetAccount(legacyAccount);
+        }
+
     }
 }

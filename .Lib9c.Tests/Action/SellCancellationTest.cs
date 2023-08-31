@@ -223,18 +223,6 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                prevState = LegacyModule.SetState(
-                    prevState,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                prevState = LegacyModule.SetState(
-                    prevState,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                prevState = LegacyModule.SetState(
-                    prevState,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
                 prevState = AvatarModule.SetAvatarStateV2(prevState, _avatarAddress, avatarState);
             }
 
@@ -563,9 +551,13 @@ namespace Lib9c.Tests.Action
                 tradableId = default,
             };
 
-            var updatedAddresses = new List<Address>()
+            var updatedAddressesAvatar = new List<Address>()
             {
                 _avatarAddress,
+            };
+
+            var updatedAddressesLegacy = new List<Address>()
+            {
                 _avatarAddress.Derive(LegacyInventoryKey),
                 _avatarAddress.Derive(LegacyWorldInformationKey),
                 _avatarAddress.Derive(LegacyQuestListKey),
@@ -582,7 +574,12 @@ namespace Lib9c.Tests.Action
                 Rehearsal = true,
             });
 
-            Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.Delta.Accounts.Values.SelectMany(a => a.Delta.UpdatedAddresses));
+            Assert.Equal(
+                updatedAddressesAvatar.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses);
+            Assert.Equal(
+                updatedAddressesLegacy.ToImmutableHashSet(),
+                nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses);
         }
 
         [Fact]
@@ -727,18 +724,6 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                prevState = LegacyModule.SetState(
-                    prevState,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                prevState = LegacyModule.SetState(
-                    prevState,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                prevState = LegacyModule.SetState(
-                    prevState,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
                 prevState = AvatarModule.SetAvatarStateV2(prevState, _avatarAddress, avatarState);
             }
 

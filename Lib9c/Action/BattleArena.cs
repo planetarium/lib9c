@@ -475,15 +475,17 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                world = AvatarModule.SetAvatarStateV2(world, myAvatarAddress, avatarState);
-                world = LegacyModule.SetState(
+                world = AvatarModule.SetAvatarStateV2(
                     world,
-                    myAvatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                world = LegacyModule.SetState(
+                    myAvatarAddress,
+                    avatarState);
+            }
+            else
+            {
+                world = AvatarModule.SetInventory(
                     world,
-                    myAvatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
+                    myAvatarAddress.Derive(LegacyInventoryKey),
+                    avatarState.inventory);
             }
 
             var ended = DateTimeOffset.UtcNow;
@@ -492,10 +494,6 @@ namespace Nekoyume.Action
             world = LegacyModule.SetState(world, myArenaScoreAdr, myArenaScore.Serialize());
             world = LegacyModule.SetState(world, enemyArenaScoreAdr, enemyArenaScore.Serialize());
             world = LegacyModule.SetState(world, arenaInformationAdr, arenaInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                myAvatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
             return world;
         }
     }

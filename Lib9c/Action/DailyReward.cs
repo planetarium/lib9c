@@ -34,7 +34,7 @@ namespace Nekoyume.Action
             var world = context.PreviousState;
             if (context.Rehearsal)
             {
-                world = LegacyModule.SetState(world, avatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, avatarAddress);
                 world = LegacyModule.MarkBalanceChanged(world, context, GoldCurrencyMock, avatarAddress);
                 return world;
             }
@@ -43,18 +43,17 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}DailyReward exec started", addressesHex);
 
-            AvatarState avatarState;
-            bool legacy = false;
-            try
+            if (!AvatarModule.TryGetAvatarStateV2(
+                world,
+                context.Signer,
+                avatarAddress,
+                out var avatarState,
+                out var migrationRequired))
             {
-                avatarState = AvatarModule.GetAvatarStateV2(world, avatarAddress);
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
-            catch
-            {
-                avatarState = AvatarModule.GetAvatarState(world, avatarAddress);
-                legacy = true;
-            }
-            
+
             if (avatarState is null || avatarState.agentAddress != context.Signer)
             {
                 throw new FailedLoadStateException(
@@ -92,17 +91,16 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}DailyReward Total Executed Time: {Elapsed}", addressesHex, ended - started);
 
-            IWorld nextWorld;
-            if (legacy)
+            if (migrationRequired)
             {
-                nextWorld = AvatarModule.SetAvatarState(world, avatarAddress, avatarState);
+                world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             }
             else
             {
-                nextWorld = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+                world = AvatarModule.SetAvatarV2(world, avatarAddress, avatarState);
             }
 
-            return nextWorld;
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>

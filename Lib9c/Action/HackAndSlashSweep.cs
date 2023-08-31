@@ -337,23 +337,18 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                world = LegacyModule.SetState(
-                    world,
-                    avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
+                world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            }
+            else
+            {
+                world = AvatarModule.SetAvatarV2(world, avatarAddress, avatarState);
+                world = AvatarModule.SetInventory(world, avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
+                world = AvatarModule.SetQuestList(world, avatarAddress.Derive(LegacyQuestListKey), avatarState.questList);
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
-            world = LegacyModule.SetState(
-                world,
-                avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                avatarAddress.Derive(LegacyQuestListKey),
-                avatarState.questList.Serialize());
+
             return world;
         }
 

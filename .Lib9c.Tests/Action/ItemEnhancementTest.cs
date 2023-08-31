@@ -296,18 +296,6 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(startLevel, equipment.level);
 
-            _initialState = LegacyModule.SetState(
-                _initialState,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                _avatarState.inventory.Serialize());
-            _initialState = LegacyModule.SetState(
-                    _initialState,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    _avatarState.worldInformation.Serialize());
-            _initialState = LegacyModule.SetState(
-                    _initialState,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    _avatarState.questList.Serialize());
             _initialState = AvatarModule.SetAvatarStateV2(
                 _initialState,
                 _avatarAddress,

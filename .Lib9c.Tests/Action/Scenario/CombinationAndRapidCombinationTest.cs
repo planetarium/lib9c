@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action.Scenario
+namespace Lib9c.Tests.Action.Scenario
 {
     using System.Globalization;
     using System.Linq;
@@ -89,18 +89,6 @@
                 gameConfigState.Serialize());
             _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
             _initialState = AvatarModule.SetAvatarStateV2(_initialState, _avatarAddress, avatarState);
-            _initialState = LegacyModule.SetState(
-                _initialState,
-                _inventoryAddress,
-                avatarState.inventory.Serialize());
-            _initialState = LegacyModule.SetState(
-                _initialState,
-                _worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            _initialState = LegacyModule.SetState(
-                _initialState,
-                _questListAddress,
-                avatarState.questList.Serialize());
             _initialState = LegacyModule.SetState(_initialState, _slot0Address, slot0State.Serialize());
 
             foreach (var (key, value) in sheets)

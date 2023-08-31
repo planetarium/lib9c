@@ -187,24 +187,19 @@ namespace Nekoyume.Action
                 world = RegisterProduct.Register(context, info, avatarState, productsState, world);
             }
 
-            world = LegacyModule.SetState(
-                world,
-                AvatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
             world = LegacyModule.SetState(world, productsStateAddress, productsState.Serialize());
 
             if (migrationRequired)
             {
-                world = LegacyModule.SetState(
-                    world,
-                    AvatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    AvatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
+                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
             }
+            else
+            {
+                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
+                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
+            }
+
+
             return world;
         }
 

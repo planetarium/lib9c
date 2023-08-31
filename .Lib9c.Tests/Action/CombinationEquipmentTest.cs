@@ -229,18 +229,6 @@ namespace Lib9c.Tests.Action
                         var questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
 
                         state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
-                        state = LegacyModule.SetState(
-                            state,
-                            inventoryAddress,
-                            _avatarState.inventory.Serialize());
-                        state = LegacyModule.SetState(
-                            state,
-                            worldInformationAddress,
-                            _avatarState.worldInformation.Serialize());
-                        state = LegacyModule.SetState(
-                            state,
-                            questListAddress,
-                            _avatarState.questList.Serialize());
                     }
 
                     if (!slotUnlock)
@@ -460,18 +448,6 @@ namespace Lib9c.Tests.Action
                 _avatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
             state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
-            state = LegacyModule.SetState(
-                state,
-                inventoryAddress,
-                _avatarState.inventory.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                worldInformationAddress,
-                _avatarState.worldInformation.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                questListAddress,
-                _avatarState.questList.Serialize());
             var hammerPointAddress =
                 Addresses.GetHammerPointStateAddress(_avatarAddress, recipeId);
             if (doSuperCraft)

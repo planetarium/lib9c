@@ -302,22 +302,10 @@ namespace Nekoyume.Action
 
                 world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
                 world = LegacyModule.SetState(world, orderReceiptAddress, orderReceipt.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    sellerInventoryAddress,
-                    sellerAvatarState.inventory.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    sellerWorldInformationAddress,
-                    sellerAvatarState.worldInformation.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    sellerQuestListAddress,
-                    sellerAvatarState.questList.Serialize());
-                world = LegacyModule.SetState(
+                world = AvatarModule.SetAvatarStateV2(
                     world,
                     sellerAvatarAddress,
-                    sellerAvatarState.SerializeV2());
+                    sellerAvatarState);
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set Seller AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();

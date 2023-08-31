@@ -137,18 +137,6 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                tempState = LegacyModule.SetState(
-                    tempState,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                tempState = LegacyModule.SetState(
-                    tempState,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                tempState = LegacyModule.SetState(
-                    tempState,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
                 tempState = AvatarModule.SetAvatarStateV2(tempState, _avatarAddress, avatarState);
             }
 
@@ -396,9 +384,13 @@ namespace Lib9c.Tests.Action
                 )
             );
 
-            var updatedAddresses = new List<Address>()
+            var updatedAddressesAvatar = new List<Address>()
             {
                 _avatarAddress,
+            };
+
+            var updatedAddressesLegacy = new List<Address>()
+            {
                 _avatarAddress.Derive(LegacyInventoryKey),
                 _avatarAddress.Derive(LegacyWorldInformationKey),
                 _avatarAddress.Derive(LegacyQuestListKey),
@@ -419,7 +411,12 @@ namespace Lib9c.Tests.Action
                 Rehearsal = true,
             });
 
-            Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.Delta.Accounts.Values.SelectMany(a => a.Delta.UpdatedAddresses));
+            Assert.Equal(
+                updatedAddressesAvatar.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses);
+            Assert.Equal(
+                updatedAddressesLegacy.ToImmutableHashSet(),
+                nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses);
         }
 
         [Theory]
@@ -681,18 +678,6 @@ namespace Lib9c.Tests.Action
                 _initialWorld,
                 slotAddress,
                 slotState.Serialize());
-            tempState = LegacyModule.SetState(
-                tempState,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            tempState = LegacyModule.SetState(
-                tempState,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
-            tempState = LegacyModule.SetState(
-                tempState,
-                _avatarAddress.Derive(LegacyQuestListKey),
-                avatarState.questList.Serialize());
             tempState = AvatarModule.SetAvatarStateV2(tempState, _avatarAddress, avatarState);
 
             var action = new RapidCombination

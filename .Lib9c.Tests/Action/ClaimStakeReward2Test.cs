@@ -90,18 +90,6 @@ namespace Lib9c.Tests.Action
                 _initialState,
                 _avatarAddress,
                 avatarState);
-            _initialState = LegacyModule.SetState(
-                _initialState,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            _initialState = LegacyModule.SetState(
-                _initialState,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
-            _initialState = LegacyModule.SetState(
-                _initialState,
-                _avatarAddress.Derive(LegacyQuestListKey),
-                avatarState.questList.Serialize());
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _avatarAddressForBackwardCompatibility,

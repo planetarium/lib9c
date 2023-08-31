@@ -82,8 +82,10 @@ namespace Lib9c.Tests.Action
                 Signer = _agentAddress,
             });
 
-            var updatedAddress = Assert.Single(nextState.Delta.Accounts.Values.SelectMany(a => a.Delta.UpdatedAddresses));
-            Assert.Equal(_avatarAddress, updatedAddress);
+            var updatedAddressAvatar = Assert.Single(nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses);
+            Assert.Equal(_avatarAddress, updatedAddressAvatar);
+            var updatedAddressLegacy = Assert.Single(nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses);
+            Assert.Equal(_avatarAddress, updatedAddressLegacy);
         }
 
         [Theory]
@@ -99,14 +101,13 @@ namespace Lib9c.Tests.Action
                     break;
                 case false:
                     var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
-                    previousStates = SetAvatarStateAsV2To(_initialWorld, avatarState);
+                    previousStates = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
                     break;
             }
 
             var nextWorld = ExecuteInternal(previousStates, 1800);
             var nextGameConfigState = LegacyModule.GetGameConfigState(nextWorld);
             AvatarModule.TryGetAvatarStateV2(nextWorld, _agentAddress, _avatarAddress, out var nextAvatarState, out var migrationRequired);
-            Assert.Equal(legacy, migrationRequired);
             Assert.NotNull(nextAvatarState);
             Assert.NotNull(nextAvatarState.inventory);
             Assert.NotNull(nextAvatarState.questList);
@@ -139,7 +140,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             avatarState.dailyRewardReceivedIndex = dailyRewardReceivedIndex;
-            var previousStates = SetAvatarStateAsV2To(_initialWorld, avatarState);
+            var previousStates = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
             try
             {
                 ExecuteInternal(previousStates, executeBlockIndex);
@@ -178,24 +179,6 @@ rune_skill_slot_unlock_cost,500";
                 _avatarAddress,
                 RuneHelper.DailyRewardRune);
             Assert.Equal(0, (int)avatarRuneAmount.MajorUnit);
-        }
-
-        private IWorld SetAvatarStateAsV2To(IWorld state, AvatarState avatarState)
-        {
-            var ret = LegacyModule.SetState(
-                state,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            ret = LegacyModule.SetState(
-                ret,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
-            ret = LegacyModule.SetState(
-                ret,
-                _avatarAddress.Derive(LegacyQuestListKey),
-                avatarState.questList.Serialize());
-            ret = AvatarModule.SetAvatarStateV2(ret, _avatarAddress, avatarState);
-            return ret;
         }
 
         private IWorld ExecuteInternal(IWorld previousStates, long blockIndex = 0)

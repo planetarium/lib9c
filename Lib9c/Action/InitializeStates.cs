@@ -157,10 +157,10 @@ namespace Nekoyume.Action
 #pragma warning disable LAA1002
             world = TableSheets
                 .Aggregate(world, (current, pair) =>
-                    LegacyModule.SetState(world, Addresses.TableSheet.Derive(pair.Key), pair.Value.Serialize()));
+                    LegacyModule.SetState(current, Addresses.TableSheet.Derive(pair.Key), pair.Value.Serialize()));
             world = rankingState.RankingMap
                 .Aggregate(world, (current, pair) =>
-                    LegacyModule.SetState(world, pair.Key, new RankingMapState(pair.Key).Serialize()));
+                    LegacyModule.SetState(current, pair.Key, new RankingMapState(pair.Key).Serialize()));
 #pragma warning restore LAA1002
             world = LegacyModule.SetState(
                 world,

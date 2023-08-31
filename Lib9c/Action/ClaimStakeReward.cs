@@ -338,21 +338,14 @@ namespace Nekoyume.Action
             if (migrationRequired)
             {
                 world = AvatarModule.SetAvatarStateV2(world, avatarState.address, avatarState);
-                world = LegacyModule.SetState(world,
-                        avatarState.address.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize());
-                world = LegacyModule
-                    .SetState(
-                        world,
-                        avatarState.address.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize());
+            }
+            else
+            {
+                world = AvatarModule.SetAvatarV2(world, avatarState.address, avatarState);
+                world = AvatarModule.SetInventory(world, avatarState.address.Derive(LegacyInventoryKey), avatarState.inventory);
             }
 
             world = LegacyModule.SetState(world, stakeState.address, stakeState.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                avatarState.address.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
             return world;
         }
 

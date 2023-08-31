@@ -187,7 +187,7 @@ namespace Lib9c.Tests.TestHelper
             var nextState = action.Execute(new ActionContext()
             {
                 BlockIndex = 0,
-                PreviousState = new MockWorld(initialState),
+                PreviousState = initialState,
                 Random = new TestRandom(),
                 Rehearsal = false,
             });

@@ -79,44 +79,8 @@ namespace Lib9c.Tests.Action.Coupons
                     default);
 
             world = AvatarModule.SetAvatarStateV2(world, agent1Avatar0Address, agent1Avatar0State);
-            world = LegacyModule.SetState(
-                    world,
-                    agent1Avatar0Address.Derive(SerializeKeys.LegacyInventoryKey),
-                    agent1Avatar0State.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                agent1Avatar0Address.Derive(SerializeKeys.LegacyWorldInformationKey),
-                agent1Avatar0State.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                agent1Avatar0Address.Derive(SerializeKeys.LegacyQuestListKey),
-                agent1Avatar0State.questList.Serialize());
             world = AvatarModule.SetAvatarStateV2(world, agent1Avatar1Address, agent1Avatar1State);
-            world = LegacyModule.SetState(
-                world,
-                agent1Avatar1Address.Derive(SerializeKeys.LegacyInventoryKey),
-                agent1Avatar1State.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                agent1Avatar1Address.Derive(SerializeKeys.LegacyWorldInformationKey),
-                agent1Avatar1State.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                agent1Avatar1Address.Derive(SerializeKeys.LegacyQuestListKey),
-                agent1Avatar1State.questList.Serialize());
             world = AvatarModule.SetAvatarStateV2(world, agent2Avatar0Address, agent2Avatar0State);
-            world = LegacyModule.SetState(
-                world,
-                agent2Avatar0Address.Derive(SerializeKeys.LegacyInventoryKey),
-                agent2Avatar0State.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                agent2Avatar0Address.Derive(SerializeKeys.LegacyWorldInformationKey),
-                agent2Avatar0State.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                agent2Avatar0Address.Derive(SerializeKeys.LegacyQuestListKey),
-                agent2Avatar0State.questList.Serialize());
 
             // can't redeem a coupon with an arbitrary guid
             // FIXME: This should not world because IWorld does not implement IEquals interface.
@@ -162,9 +126,7 @@ namespace Lib9c.Tests.Action.Coupons
                         Random = random,
                     });
 
-            Assert.Equal(
-                ActionBase.MarkChanged,
-                LegacyModule.GetState(rehearsedWorld, agent1Avatar0Address));
+            Assert.True(AvatarModule.Changed(rehearsedWorld, agent1Avatar0Address));
 
             Assert.Equal(
                 ActionBase.MarkChanged,

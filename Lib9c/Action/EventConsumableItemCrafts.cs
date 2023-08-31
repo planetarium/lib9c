@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -290,35 +290,17 @@ namespace Nekoyume.Action
             if (migrationRequired)
             {
                 world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-                world = LegacyModule.SetState(
-                    world,
-                    AvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    AvatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    AvatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    CombinationSlotState.DeriveAddress(AvatarAddress, SlotIndex),
-                    slotState.Serialize());
             }
             else
             {
-                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-                world = LegacyModule.SetState(
-                    world,
-                    AvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                world = LegacyModule.SetState(
+                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
+                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
+            }
+
+            world = LegacyModule.SetState(
                     world,
                     CombinationSlotState.DeriveAddress(AvatarAddress, SlotIndex),
                     slotState.Serialize());
-            }
 
             sw.Stop();
             Log.Verbose(

@@ -62,18 +62,6 @@ namespace Lib9c.Tests.Action
                 goldCurrencyState.Serialize());
             state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
             state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
-            state = LegacyModule.SetState(
-                state,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                questListAddress,
-                avatarState.questList.Serialize());
 
             foreach (var (key, value) in sheets)
             {
@@ -239,18 +227,6 @@ namespace Lib9c.Tests.Action
                 goldCurrencyState.Serialize());
             state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
             state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
-            state = LegacyModule.SetState(
-                state,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                questListAddress,
-                avatarState.questList.Serialize());
 
             foreach (var (key, value) in sheets)
             {
@@ -314,18 +290,6 @@ namespace Lib9c.Tests.Action
                 goldCurrencyState.Serialize());
             state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
             state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
-            state = LegacyModule.SetState(
-                state,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                questListAddress,
-                avatarState.questList.Serialize());
 
             foreach (var (key, value) in sheets)
             {
@@ -408,18 +372,6 @@ namespace Lib9c.Tests.Action
                 goldCurrencyState.Serialize());
             state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
             state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
-            state = LegacyModule.SetState(
-                state,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                questListAddress,
-                avatarState.questList.Serialize());
 
             foreach (var (key, value) in sheets)
             {
@@ -544,18 +496,6 @@ namespace Lib9c.Tests.Action
                 goldCurrencyState.Serialize());
             state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
             state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
-            state = LegacyModule.SetState(
-                state,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            state = LegacyModule.SetState(
-                state,
-                questListAddress,
-                avatarState.questList.Serialize());
 
             foreach (var (key, value) in sheets)
             {
@@ -620,7 +560,7 @@ namespace Lib9c.Tests.Action
                 new GameConfigState(),
                 default
             );
-            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
+            state = AvatarModule.SetAvatarV2(state, avatarAddress, avatarState);
 
             var runeListSheet = LegacyModule.GetSheet<RuneListSheet>(state);
             var runeId = runeListSheet.First().Value.Id;

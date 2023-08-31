@@ -94,7 +94,7 @@ namespace Lib9c.Tests.Action
                 _avatar1Address,
                 avatar1State);
             _initialWorld = AgentModule.SetAgentState(_initialWorld, agent2Address, agent2State);
-            _initialWorld = AvatarModule.SetAvatarStateV2(
+            _initialWorld = AvatarModule.SetAvatarV2(
                 _initialWorld,
                 _avatar2Address,
                 avatar2State);

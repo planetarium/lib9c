@@ -45,7 +45,7 @@ namespace Nekoyume.Action
                 world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
                 world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
                 world = LegacyModule.SetState(world, questListAddress, MarkChanged);
-                world = LegacyModule.SetState(world, avatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, avatarAddress);
                 return world;
             }
 
@@ -85,15 +85,6 @@ namespace Nekoyume.Action
             }
 
             avatarState.actionPoint = gameConfigState.ActionPointMax;
-            world = LegacyModule.SetState(world, inventoryAddress, avatarState.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                questListAddress,
-                avatarState.questList.Serialize());
             world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ChargeActionPoint Total Executed Time: {Elapsed}", addressesHex, ended - started);

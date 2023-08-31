@@ -51,7 +51,7 @@ namespace Nekoyume.Action
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                world = LegacyModule.SetState(world, avatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, avatarAddress);
                 world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
                 world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
                 world = LegacyModule.SetState(world, questListAddress, MarkChanged);
@@ -175,18 +175,6 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination Total Executed Time: {Elapsed}", addressesHex, ended - started);
             world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
-            world = LegacyModule.SetState(
-                world,
-                inventoryAddress,
-                avatarState.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                questListAddress,
-                avatarState.questList.Serialize());
             world = LegacyModule.SetState(world, slotAddress, slotState.Serialize());
             return world;
         }

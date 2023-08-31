@@ -102,32 +102,8 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
 
             _state = AgentModule.SetAgentState(_state, _signer, agentState);
-            _state = LegacyModule.SetState(
-                _state,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            _state = LegacyModule.SetState(
-                _state,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
-            _state = LegacyModule.SetState(
-                _state,
-                _avatarAddress.Derive(LegacyQuestListKey),
-                avatarState.questList.Serialize());
             _state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
             _state = AgentModule.SetAgentState(_state, _signer2, agent2State);
-            _state = LegacyModule.SetState(
-                _state,
-                _avatar2Address.Derive(LegacyInventoryKey),
-                avatar2State.inventory.Serialize());
-            _state = LegacyModule.SetState(
-                _state,
-                _avatar2Address.Derive(LegacyWorldInformationKey),
-                avatar2State.worldInformation.Serialize());
-            _state = LegacyModule.SetState(
-                _state,
-                _avatar2Address.Derive(LegacyQuestListKey),
-                avatar2State.questList.Serialize());
             _state = AvatarModule.SetAvatarStateV2(_state, _avatar2Address, avatar2State);
             _state = LegacyModule.SetState(
                 _state,
@@ -182,18 +158,6 @@ namespace Lib9c.Tests.Action
             (equipments, costumes) = GetDummyItems(avatarState);
 
             _state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
-            _state = LegacyModule.SetState(
-                _state,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            _state = LegacyModule.SetState(
-                _state,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
-            _state = LegacyModule.SetState(
-                _state,
-                _avatarAddress.Derive(LegacyQuestListKey),
-                avatarState.questList.Serialize());
 
             return avatarState;
         }
@@ -214,18 +178,6 @@ namespace Lib9c.Tests.Action
             }
 
             _state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
-            _state = LegacyModule.SetState(
-                _state,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            _state = LegacyModule.SetState(
-                _state,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
-            _state = LegacyModule.SetState(
-                _state,
-                _avatarAddress.Derive(LegacyQuestListKey),
-                avatarState.questList.Serialize());
 
             return avatarState;
         }
@@ -330,7 +282,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
 
             var action = new JoinArena()
             {
@@ -356,7 +308,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
 
             var action = new JoinArena()
             {
@@ -413,7 +365,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
             GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
 
             var action = new JoinArena()
             {
@@ -439,7 +391,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
 
             var action = new JoinArena()
             {
@@ -478,7 +430,7 @@ namespace Lib9c.Tests.Action
 
             var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
 
             var arenaScoreAdr = ArenaScore.DeriveAddress(_avatarAddress, championshipId, round);
             var arenaScore = new ArenaScore(_avatarAddress, championshipId, round);
@@ -511,7 +463,7 @@ namespace Lib9c.Tests.Action
 
             var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
 
             var arenaInformationAdr = ArenaInformation.DeriveAddress(_avatarAddress, championshipId, round);
             var arenaInformation = new ArenaInformation(_avatarAddress, championshipId, round);

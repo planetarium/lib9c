@@ -91,19 +91,7 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                state = LegacyModule.SetState(
-                    _initialState,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
-                state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, avatarState);
+                state = AvatarModule.SetAvatarStateV2(_initialState, _avatarAddress, avatarState);
             }
 
             foreach (var (key, value) in _sheets)
@@ -190,9 +178,13 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            var updatedAddresses = new List<Address>()
+            var updatedAddressesAvatar = new List<Address>()
             {
                 _avatarAddress,
+            };
+
+            var updatedAddressesLegacy = new List<Address>()
+            {
                 _avatarAddress.Derive(LegacyInventoryKey),
                 _avatarAddress.Derive(LegacyWorldInformationKey),
                 _avatarAddress.Derive(LegacyQuestListKey),
@@ -209,8 +201,12 @@ namespace Lib9c.Tests.Action
             });
 
             Assert.Equal(
-                updatedAddresses.ToImmutableHashSet(),
-                nextState.Delta.Accounts.Values.SelectMany(a => a.Delta.UpdatedAddresses));
+                updatedAddressesAvatar.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses.ToImmutableHashSet());
+
+            Assert.Equal(
+                updatedAddressesLegacy.ToImmutableHashSet(),
+                nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses.ToImmutableHashSet());
         }
     }
 }

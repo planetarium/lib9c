@@ -94,7 +94,7 @@ namespace Nekoyume.Action
                     world = LegacyModule.SetState(world, slotAddress, MarkChanged);
                 }
 
-                world = LegacyModule.SetState(world, avatarAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, avatarAddress);
                 world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
                 world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
                 world = LegacyModule.SetState(world, questListAddress, MarkChanged);
@@ -265,12 +265,6 @@ namespace Nekoyume.Action
             // Fix invalid mint crystal balance in internal network. main-net always mint 200_000
             var mintingValue = context.BlockIndex > 7_210_000L ? 200_000 : 600_000;
             world = AgentModule.SetAgentState(world, signer, agentState);
-            world = LegacyModule.SetState(world, inventoryAddress, avatarState.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                worldInformationAddress,
-                avatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(world, questListAddress, avatarState.questList.Serialize());
             world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             world = LegacyModule.MintAsset(world, ctx, signer, mintingValue * CrystalCalculator.CRYSTAL);
             return world;

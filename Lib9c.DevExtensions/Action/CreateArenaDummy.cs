@@ -143,19 +143,6 @@ namespace Lib9c.DevExtensions.Action
                 // join arena
                 world = AgentModule.SetAgentState(world, agentAddress, agentState);
                 world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
-                world = LegacyModule.SetState(
-                    world,
-                    inventoryAddress,
-                    avatarState.inventory.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    worldInformationAddress,
-                    avatarState.worldInformation.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    questListAddress,
-                    avatarState.questList.Serialize());
-
 
                 var sheet = sheets.GetSheet<ArenaSheet>();
                 if (!sheet.TryGetValue(championshipId, out var row))
