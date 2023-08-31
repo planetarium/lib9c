@@ -50,6 +50,7 @@ claim_stake_reward4
 claim_stake_reward5
 claim_stake_reward6
 claim_stake_reward7
+claim_stake_reward8
 claim_world_boss_kill_reward
 combination_consumable
 combination_consumable2
