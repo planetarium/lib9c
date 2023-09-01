@@ -8,6 +8,7 @@ battle_arena
 battle_arena10
 battle_arena11
 battle_arena12
+battle_arena13
 battle_arena2
 battle_arena3
 battle_arena4
@@ -141,6 +142,7 @@ issue_coupons
 item_enhancement
 item_enhancement10
 item_enhancement11
+item_enhancement12
 item_enhancement2
 item_enhancement3
 item_enhancement4
