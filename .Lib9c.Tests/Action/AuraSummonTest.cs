@@ -11,10 +11,12 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Xunit;
+    using Xunit.Abstractions;
     using static SerializeKeys;
 
     public class AuraSummonTest
     {
+        private readonly ITestOutputHelper _testOutputHelper;
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -22,8 +24,9 @@ namespace Lib9c.Tests.Action
         private readonly Currency _currency;
         private IAccountStateDelta _initialState;
 
-        public AuraSummonTest()
+        public AuraSummonTest(ITestOutputHelper testOutputHelper)
         {
+            _testOutputHelper = testOutputHelper;
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
             var privateKey = new PrivateKey();
@@ -79,11 +82,11 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         // success first group
-        [InlineData(10001, 1, 600201, 2, 1, new[] { 10620000 }, null)]
-        [InlineData(10001, 2, 600201, 4, 54, new[] { 10630000, 10640000 }, null)]
+        [InlineData(10001, 1, 600201, 2, 1, new[] { 10610000 }, null)]
+        [InlineData(10001, 2, 600201, 4, 12, new[] { 10620000, 10630000 }, null)]
         // success second group
         [InlineData(10002, 1, 600202, 2, 1, new[] { 10620001 }, null)]
-        [InlineData(10002, 2, 600202, 4, 4, new[] { 10630001, 10640001 }, null)]
+        [InlineData(10002, 2, 600202, 4, 0, new[] { 10630001, 10640001 }, null)]
         // fail by invalid group
         [InlineData(100003, 1, null, 0, 0, new int[] { }, typeof(RowNotInTableException))]
         // fail by not enough material
@@ -167,6 +170,25 @@ namespace Lib9c.Tests.Action
                         Random = random,
                     });
                 });
+            }
+        }
+
+        [Fact(
+            Skip = "This is just a function to get right random seed to test. You don't need to run this."
+        )]
+        public void FindSeed()
+        {
+            for (var i = 0; i < 1000; i++)
+            {
+                try
+                {
+                    // Change all args except seed to find right seed
+                    Execute(10001, 2, 600201, 4, i, new[] { 10620000, 10630000 }, null);
+                    _testOutputHelper.WriteLine(i.ToString());
+                }
+                catch (Exception)
+                {
+                }
             }
         }
     }
