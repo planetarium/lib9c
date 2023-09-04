@@ -93,25 +93,21 @@ namespace Lib9c.Tests.Action
         [InlineData(0, false, 0, 0, true, 1)]
         [InlineData(0, true, 0, 0, false, 1)]
         [InlineData(0, true, 0, 0, true, 1)]
-        // from 0 to 1 using two level 0 material
-        [InlineData(0, false, 1, 0, false, 3)]
-        [InlineData(0, false, 1, 0, true, 3)]
-        [InlineData(0, true, 1, 0, false, 3)]
-        [InlineData(0, true, 1, 0, true, 3)]
+        // from 0 to 1 using level 0 materials
+        [InlineData(0, false, 1, 0, false, 19)]
+        [InlineData(0, false, 1, 0, true, 19)]
+        [InlineData(0, true, 1, 0, false, 19)]
+        [InlineData(0, true, 1, 0, true, 19)]
         // // Duplicated > from 0 to 0
         [InlineData(0, false, 0, 0, false, 3, true)]
         [InlineData(0, false, 0, 0, true, 3, true)]
         [InlineData(0, true, 0, 0, false, 3, true)]
         [InlineData(0, true, 0, 0, true, 3, true)]
         // from 0 to N using multiple level 0 materials
-        [InlineData(0, false, 2, 0, false, 7)]
-        [InlineData(0, false, 4, 0, false, 31)]
-        [InlineData(0, false, 2, 0, true, 7)]
-        [InlineData(0, false, 4, 0, true, 31)]
-        [InlineData(0, true, 2, 0, false, 7)]
-        [InlineData(0, true, 4, 0, false, 31)]
-        [InlineData(0, true, 2, 0, true, 7)]
-        [InlineData(0, true, 4, 0, true, 31)]
+        [InlineData(0, false, 2, 0, false, 39)]
+        [InlineData(0, false, 2, 0, true, 39)]
+        [InlineData(0, true, 2, 0, false, 39)]
+        [InlineData(0, true, 2, 0, true, 39)]
         // // Duplicated > from 0 to 0
         [InlineData(0, false, 0, 0, false, 7, true)]
         [InlineData(0, false, 0, 0, false, 31, true)]
@@ -168,6 +164,11 @@ namespace Lib9c.Tests.Action
         [InlineData(21, true, 21, 21, false, 1)]
         [InlineData(21, true, 21, 1, true, 1)]
         [InlineData(21, true, 21, 21, true, 1)]
+        // Exceed material limit
+        [InlineData(0, false, 4, 0, false, 159, false, typeof(InvalidItemCountException))]
+        [InlineData(0, false, 4, 0, true, 159, false, typeof(InvalidItemCountException))]
+        [InlineData(0, true, 4, 0, false, 159, false, typeof(InvalidItemCountException))]
+        [InlineData(0, true, 4, 0, true, 159, false, typeof(InvalidItemCountException))]
         public void Execute(
             int startLevel,
             bool oldStart,
@@ -175,7 +176,8 @@ namespace Lib9c.Tests.Action
             int materialLevel,
             bool oldMaterial,
             int materialCount,
-            bool duplicated = false
+            bool duplicated = false,
+            Type expectedExc = null
             )
         {
             var row = _tableSheets.EquipmentItemSheet.Values.First(r => r.Id == 10110000);
@@ -299,6 +301,21 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
                 slotIndex = 0,
             };
+
+            if (!(expectedExc is null))
+            {
+                Assert.Throws(expectedExc, () =>
+                {
+                    action.Execute(new ActionContext
+                    {
+                        PreviousState = _initialState,
+                        Signer = _agentAddress,
+                        BlockIndex = 1,
+                        Random = new TestRandom(),
+                    });
+                });
+                return;
+            }
 
             var nextState = action.Execute(new ActionContext()
             {
