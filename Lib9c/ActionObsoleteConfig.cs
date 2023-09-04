@@ -74,7 +74,11 @@ namespace Nekoyume
 
         public const long V200061ObsoleteIndex = 7_660_000L;
 
+        public const long V200063ObsoleteIndex = 7_700_000L;
+
         public const long V200070ObsoleteIndex = 7_716_400L;
+
+        public const long V200071ObsoleteIndex = 7_718_878L;
 
         // While v200020, the action obsolete wasn't work well.
         // So other previous `V*ObsoletedIndex`s lost its meaning and
