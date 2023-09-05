@@ -84,6 +84,8 @@ namespace Lib9c.Tests.Action
             Assert.Equal("test", nextAvatarState.name);
             Assert.Equal(expected * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
             Assert.Equal(24, nextAvatarState.inventory.Equipments.Count());
+            Assert.Equal(2, nextAvatarState.inventory.Materials.Count());
+            Assert.Equal(2000024, nextAvatarState.inventory.Items.Sum(i => i.count));
         }
 
         [Theory]

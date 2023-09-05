@@ -282,6 +282,13 @@ namespace Nekoyume.Action
                     avatarState.inventory.AddItem(aura2);
                 }
             }
+
+            foreach (var materialId in new[] {600201, 800201})
+            {
+                var row = materialItemSheet[materialId];
+                var material = ItemFactory.CreateMaterial(row);
+                avatarState.inventory.AddItem(material, 1000000);
+            }
             sw.Stop();
             Log.Verbose("{AddressesHex}CreateAvatar CreateAvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
