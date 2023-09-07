@@ -83,6 +83,7 @@ namespace Lib9c.Tests.Action.Scenario
                     Addresses.GoldCurrency,
                     new GoldCurrencyState(_currency).Serialize())
                 .SetState(gameConfigState.address, gameConfigState.Serialize())
+                .SetState(Addresses.Admin, new AdminState(_agentAddress, 6_000_000).Serialize())
                 .MintAsset(new ActionContext(), _agentAddress, Currencies.Crystal * 2);
             foreach (var (key, value) in sheets)
             {
@@ -136,6 +137,36 @@ namespace Lib9c.Tests.Action.Scenario
 
             var avatarState = _initialState.GetAvatarStateV2(_avatarAddress);
             Assert_Player(avatarState, nextState, _avatarAddress, itemSlotStateAddress);
+
+            var patch = new PatchTableSheet
+            {
+                TableCsv = "t",
+                TableName = "AuraIgnoreSheet",
+            };
+
+            var prevState = patch.Execute(new ActionContext
+            {
+                BlockIndex = 3,
+                PreviousState = _initialState,
+                Random = new TestRandom(),
+                Signer = _agentAddress,
+            });
+            var ignoreState = has.Execute(new ActionContext
+            {
+                BlockIndex = 4,
+                PreviousState = prevState,
+                Random = new TestRandom(),
+                Signer = _agentAddress,
+            });
+
+            var nextAvatarState = ignoreState.GetAvatarStateV2(_avatarAddress);
+            var equippedItem = Assert.IsType<Aura>(nextAvatarState.inventory.Equipments.First());
+            Assert.False(equippedItem.equipped);
+            var rawItemSlot = Assert.IsType<List>(ignoreState.GetState(itemSlotStateAddress));
+            var itemSlotState = new ItemSlotState(rawItemSlot);
+            Assert.Empty(itemSlotState.Equipments);
+            var equippedPlayer = new Player(nextAvatarState, _tableSheets.GetSimulatorSheets());
+            Assert.Null(equippedPlayer.aura);
         }
 
         [Fact]
@@ -174,6 +205,36 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = _agentAddress,
             });
             Assert_Player(avatarState, nextState, _avatarAddress, itemSlotStateAddress);
+
+            var patch = new PatchTableSheet
+            {
+                TableCsv = "t",
+                TableName = "AuraIgnoreSheet",
+            };
+
+            var patchState = patch.Execute(new ActionContext
+            {
+                BlockIndex = 5045202,
+                PreviousState = prevState,
+                Random = new TestRandom(),
+                Signer = _agentAddress,
+            });
+            var ignoreState = raid.Execute(new ActionContext
+            {
+                BlockIndex = 5045203,
+                PreviousState = patchState,
+                Random = new TestRandom(),
+                Signer = _agentAddress,
+            });
+
+            var nextAvatarState = ignoreState.GetAvatarStateV2(_avatarAddress);
+            var equippedItem = Assert.IsType<Aura>(nextAvatarState.inventory.Equipments.First());
+            Assert.False(equippedItem.equipped);
+            var rawItemSlot = Assert.IsType<List>(ignoreState.GetState(itemSlotStateAddress));
+            var itemSlotState = new ItemSlotState(rawItemSlot);
+            Assert.Empty(itemSlotState.Equipments);
+            var equippedPlayer = new Player(nextAvatarState, _tableSheets.GetSimulatorSheets());
+            Assert.Null(equippedPlayer.aura);
         }
 
         [Fact]

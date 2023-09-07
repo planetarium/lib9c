@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Helper;
     using Nekoyume.Model.Coupons;
@@ -182,6 +183,24 @@ namespace Lib9c.Tests.Action
             states = states.Mead(context, _agentAddress, 4);
             Assert.Equal(agentBalance * mead, states.GetBalance(patron, mead));
             Assert.Equal(price, states.GetBalance(_agentAddress, mead));
+        }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData("", false)]
+        [InlineData("t", true)]
+        public void IgnoreAura(string text, bool expected)
+        {
+            IAccount states = new MockStateDelta();
+            if (text is not null)
+            {
+                states = states.SetState(
+                    Addresses.GetSheetAddress<AuraIgnoreSheet>(),
+                    text.Serialize()
+                );
+            }
+
+            Assert.Equal(expected, states.IgnoreAura());
         }
     }
 }

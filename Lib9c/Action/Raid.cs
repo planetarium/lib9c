@@ -155,9 +155,11 @@ namespace Nekoyume.Action
             }
 
             // Validate equipment, costume.
-            var equipmentList = avatarState.ValidateEquipmentsV2(EquipmentIds, context.BlockIndex);
+            var ignoreAura = states.IgnoreAura();
+            var equipmentList = avatarState.ValidateEquipmentsV2(EquipmentIds, context.BlockIndex, ignoreAura);
             var foodIds = avatarState.ValidateConsumable(FoodIds, context.BlockIndex);
             var costumeIds = avatarState.ValidateCostume(CostumeIds);
+            var equipmentIds = equipmentList.Select(e => e.ItemId).ToList();
 
             // Update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Raid);
@@ -173,7 +175,7 @@ namespace Nekoyume.Action
             var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Raid);
-            itemSlotState.UpdateEquipment(EquipmentIds);
+            itemSlotState.UpdateEquipment(equipmentIds);
             itemSlotState.UpdateCostumes(CostumeIds);
             states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
 
@@ -190,7 +192,7 @@ namespace Nekoyume.Action
             }
 
             var addressesHex = $"[{context.Signer.ToHex()}, {AvatarAddress.ToHex()}]";
-            var items = EquipmentIds.Concat(CostumeIds);
+            var items = equipmentIds.Concat(CostumeIds);
             avatarState.EquipItems(items);
             avatarState.ValidateItemRequirement(
                 costumeIds.Concat(foodIds).ToList(),

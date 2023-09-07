@@ -614,7 +614,8 @@ namespace Nekoyume.Model.State
             }
         }
 
-        public List<Equipment> ValidateEquipmentsV2(List<Guid> equipmentIds, long blockIndex)
+        public List<Equipment> ValidateEquipmentsV2(List<Guid> equipmentIds, long blockIndex,
+            bool ignoreAura = false)
         {
             var countMap = new Dictionary<ItemSubType, int>();
             var list = new List<Equipment>();
@@ -689,6 +690,10 @@ namespace Nekoyume.Model.State
                     throw new EquipmentSlotUnlockException($"{equipment.ItemSubType} / not enough level. required: {requiredLevel}");
                 }
 
+                if (equipment.ItemSubType == ItemSubType.Aura && ignoreAura)
+                {
+                    continue;
+                }
                 list.Add(equipment);
             }
 

@@ -148,5 +148,16 @@ namespace Nekoyume.Action
                 return states;
             }
         }
+
+        public static bool IgnoreAura(this IAccount states)
+        {
+            var ignoreAura = false;
+            if (states.TryGetState(Addresses.GetSheetAddress<AuraIgnoreSheet>(), out Text t))
+            {
+                ignoreAura = !string.IsNullOrEmpty(t);
+            }
+
+            return ignoreAura;
+        }
     }
 }

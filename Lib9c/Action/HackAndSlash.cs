@@ -273,7 +273,8 @@ namespace Nekoyume.Action
                 addressesHex, source, "Validate World", blockIndex, sw.Elapsed.TotalMilliseconds);
 
             sw.Restart();
-            var equipmentList = avatarState.ValidateEquipmentsV2(Equipments, blockIndex);
+            var ignoreAura = states.IgnoreAura();
+            var equipmentList = avatarState.ValidateEquipmentsV2(Equipments, blockIndex, ignoreAura);
             var foodIds = avatarState.ValidateConsumable(Foods, blockIndex);
             var costumeIds = avatarState.ValidateCostume(Costumes);
             sw.Stop();
@@ -354,7 +355,8 @@ namespace Nekoyume.Action
                 sheets.GetSheet<EquipmentItemOptionSheet>(),
                 addressesHex);
 
-            var items = Equipments.Concat(Costumes);
+            var equipments = equipmentList.Select(e => e.ItemId).ToList();
+            var items = equipments.Concat(Costumes);
             avatarState.EquipItems(items);
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
@@ -441,7 +443,7 @@ namespace Nekoyume.Action
             var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Adventure);
-            itemSlotState.UpdateEquipment(Equipments);
+            itemSlotState.UpdateEquipment(equipments);
             itemSlotState.UpdateCostumes(Costumes);
             states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
 
