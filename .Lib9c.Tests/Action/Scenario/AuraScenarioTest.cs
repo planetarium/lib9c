@@ -343,6 +343,57 @@ namespace Lib9c.Tests.Action.Scenario
                 Assert_ItemSlot(nextState, ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena));
                 prevState = nextState;
             }
+
+            var patch = new PatchTableSheet
+            {
+                TableCsv = "t",
+                TableName = "AuraIgnoreSheet",
+            };
+
+            var patchState = patch.Execute(new ActionContext
+            {
+                BlockIndex = 3,
+                PreviousState = prevState,
+                Random = new TestRandom(),
+                Signer = _agentAddress,
+            });
+
+            var battle2 = new BattleArena
+            {
+                myAvatarAddress = _avatarAddress,
+                enemyAvatarAddress = _enemyAvatarAddress,
+                championshipId = 1,
+                round = 1,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>
+                {
+                    _aura.ItemId,
+                },
+                runeInfos = new List<RuneSlotInfo>(),
+            };
+
+            var ignoreState = battle2.Execute(new ActionContext
+            {
+                BlockIndex = 4,
+                PreviousState = patchState,
+                Random = new TestRandom(),
+                Signer = _agentAddress,
+            });
+
+            var nextAvatarState = ignoreState.GetAvatarStateV2(_avatarAddress);
+            var myItemSlotStateAddress = ItemSlotState.DeriveAddress(_avatarAddress, BattleType.Arena);
+            var equippedItem = Assert.IsType<Aura>(nextAvatarState.inventory.Equipments.First());
+            Assert.False(equippedItem.equipped);
+            var rawItemSlot = Assert.IsType<List>(ignoreState.GetState(myItemSlotStateAddress));
+            var itemSlotState = new ItemSlotState(rawItemSlot);
+            Assert.Empty(itemSlotState.Equipments);
+            var equippedPlayer = new Player(nextAvatarState, _tableSheets.GetSimulatorSheets());
+            Assert.Null(equippedPlayer.aura);
+            var enemySlotStateAddress = ItemSlotState.DeriveAddress(_enemyAvatarAddress, BattleType.Arena);
+            var enemyItemSlot = Assert.IsType<List>(ignoreState.GetState(enemySlotStateAddress));
+            var enemyItemSlotState = new ItemSlotState(enemyItemSlot);
+            Assert.Single(enemyItemSlotState.Equipments);
         }
 
         [Fact]

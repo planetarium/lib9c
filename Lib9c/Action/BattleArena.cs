@@ -146,12 +146,22 @@ namespace Nekoyume.Action
                     typeof(RuneListSheet),
                 });
 
-            avatarState.ValidEquipmentAndCostume(costumes, equipments,
+            var ignoreAura = false;
+            if (states.TryGetState(Addresses.GetSheetAddress<AuraIgnoreSheet>(), out Text t))
+            {
+                ignoreAura = !string.IsNullOrEmpty(t);
+            }
+            var equipmentList = avatarState.ValidateEquipmentsV2(equipments, context.BlockIndex, ignoreAura);
+            var costumeItemIds = avatarState.ValidateCostume(costumes);
+            avatarState.ValidateItemRequirement(
+                costumeItemIds.ToList(),
+                equipmentList,
                 sheets.GetSheet<ItemRequirementSheet>(),
                 sheets.GetSheet<EquipmentItemRecipeSheet>(),
                 sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
                 sheets.GetSheet<EquipmentItemOptionSheet>(),
-                context.BlockIndex, addressesHex);
+                addressesHex);
+            var equipmentIds = equipmentList.Select(e => e.ItemId).ToList();
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(myAvatarAddress, BattleType.Arena);
@@ -167,7 +177,7 @@ namespace Nekoyume.Action
             var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Arena);
-            itemSlotState.UpdateEquipment(equipments);
+            itemSlotState.UpdateEquipment(equipmentIds);
             itemSlotState.UpdateCostumes(costumes);
             states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
 
@@ -340,7 +350,7 @@ namespace Nekoyume.Action
             }
 
             // update arena avatar state
-            myArenaAvatarState.UpdateEquipment(equipments);
+            myArenaAvatarState.UpdateEquipment(equipmentIds);
             myArenaAvatarState.UpdateCostumes(costumes);
             myArenaAvatarState.LastBattleBlockIndex = context.BlockIndex;
             var runeStates = new List<RuneState>();
@@ -374,14 +384,25 @@ namespace Nekoyume.Action
 
             // simulate
             var enemyAvatarState = states.GetEnemyAvatarState(enemyAvatarAddress);
+            var enemyEquipments = enemyItemSlotState.Equipments;
+            if (ignoreAura)
+            {
+                var auraIds = enemyAvatarState
+                    .inventory
+                    .Equipments
+                    .OfType<Aura>()
+                    .Select(e => e.ItemId)
+                    .ToList();
+                enemyEquipments = enemyEquipments.Where(e => !auraIds.Contains(e)).ToList();
+            }
             var myArenaPlayerDigest = new ArenaPlayerDigest(
                 avatarState,
-                equipments,
+                equipmentIds,
                 costumes,
                 runeStates);
             var enemyArenaPlayerDigest = new ArenaPlayerDigest(
                 enemyAvatarState,
-                enemyItemSlotState.Equipments,
+                enemyEquipments,
                 enemyItemSlotState.Costumes,
                 enemyRuneStates);
             var previousMyScore = myArenaScore.Score;
