@@ -65,7 +65,11 @@ namespace Lib9c.Tests.Action
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _avatarAddress,
-                _avatarState);
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = LegacyModule.SetState(
                 _initialState,
                 slotAddress,
@@ -296,10 +300,14 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(startLevel, equipment.level);
 
-            _initialState = AvatarModule.SetAvatarStateV2(
+            _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _avatarAddress,
-                _avatarState);
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
 
             var action = new ItemEnhancement
             {

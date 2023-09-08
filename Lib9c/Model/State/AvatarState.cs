@@ -6,7 +6,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using Bencodex.Types;
 using Libplanet.Action;
-using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
@@ -29,6 +28,8 @@ namespace Nekoyume.Model.State
     [Serializable]
     public class AvatarState : State, ICloneable
     {
+        public const int CurrentVersion = 2;
+        public int Version { get; private set; }
         public string name;
         public int characterId;
         public int level;
@@ -74,6 +75,7 @@ namespace Nekoyume.Model.State
             Address rankingMapAddress,
             string name = null) : base(address)
         {
+            Version = CurrentVersion;
             this.name = name ?? string.Empty;
             characterId = GameConfig.DefaultAvatarCharacterId;
             level = 1;
@@ -131,6 +133,7 @@ namespace Nekoyume.Model.State
             if (avatarState == null)
                 throw new ArgumentNullException(nameof(avatarState));
 
+            Version = avatarState.Version;
             name = avatarState.name;
             characterId = avatarState.characterId;
             level = avatarState.level;
@@ -161,6 +164,7 @@ namespace Nekoyume.Model.State
         public AvatarState(Dictionary serialized)
             : base(serialized)
         {
+            Version = 1;
             string nameKey = NameKey;
             string characterIdKey = CharacterIdKey;
             string levelKey = LevelKey;
@@ -230,18 +234,49 @@ namespace Nekoyume.Model.State
 
             if (serialized.ContainsKey(inventoryKey))
             {
+                Version = 0;
                 inventory = new Inventory((List)serialized[inventoryKey]);
             }
 
             if (serialized.ContainsKey(worldInformationKey))
             {
+                Version = 0;
                 worldInformation = new WorldInformation((Dictionary)serialized[worldInformationKey]);
             }
 
             if (serialized.ContainsKey(questListKey))
             {
+                Version = 0;
                 questList = new QuestList((Dictionary)serialized[questListKey]);
             }
+
+            PostConstructor();
+        }
+
+        public AvatarState(List serialized)
+            : base(serialized[0])
+        {
+            Version = (int)((Integer)serialized[1]).Value;
+            name = serialized[2].ToDotnetString();
+            characterId = (int)((Integer)serialized[3]).Value;
+            level = (int)((Integer)serialized[4]).Value;
+            exp = (long)((Integer)serialized[5]).Value;
+            updatedAt = serialized[6].ToLong();
+            agentAddress = serialized[7].ToAddress();
+            mailBox = new MailBox((List)serialized[8]);
+            blockIndex = (long)((Integer)serialized[9]).Value;
+            dailyRewardReceivedIndex = (long)((Integer)serialized[10]).Value;
+            actionPoint = (int)((Integer)serialized[11]).Value;
+            stageMap = new CollectionMap((Dictionary)serialized[12]);
+            monsterMap = new CollectionMap((Dictionary)serialized[13]);
+            itemMap = new CollectionMap((Dictionary)serialized[14]);
+            eventMap = new CollectionMap((Dictionary)serialized[15]);
+            hair = (int)((Integer)serialized[16]).Value;
+            lens = (int)((Integer)serialized[17]).Value;
+            ear = (int)((Integer)serialized[18]).Value;
+            tail = (int)((Integer)serialized[19]).Value;
+            combinationSlotAddresses = serialized[20].ToList(StateExtensions.ToAddress);
+            RankingMapAddress = serialized[21].ToAddress();
 
             PostConstructor();
         }
@@ -1041,69 +1076,50 @@ namespace Nekoyume.Model.State
             actionPoint -= requiredAp;
         }
 
-        public override IValue Serialize() =>
+        public override IValue Serialize()
+        {
+            throw new NotSupportedException();
+        }
+
+        public override IValue SerializeV2()
+        {
+            throw new NotSupportedException();
+        }
+
+        public override IValue SerializeList()
+        {
+            // Migrated when serialized
+            Version = CurrentVersion;
 #pragma warning disable LAA1002
-            new Dictionary(new Dictionary<IKey, IValue>
-            {
-                [(Text)LegacyNameKey] = (Text)name,
-                [(Text)LegacyCharacterIdKey] = (Integer)characterId,
-                [(Text)LegacyLevelKey] = (Integer)level,
-                [(Text)ExpKey] = (Integer)exp,
-                [(Text)LegacyInventoryKey] = inventory.Serialize(),
-                [(Text)LegacyWorldInformationKey] = worldInformation.Serialize(),
-                [(Text)LegacyUpdatedAtKey] = updatedAt.Serialize(),
-                [(Text)LegacyAgentAddressKey] = agentAddress.Serialize(),
-                [(Text)LegacyQuestListKey] = questList.Serialize(),
-                [(Text)LegacyMailBoxKey] = mailBox.Serialize(),
-                [(Text)LegacyBlockIndexKey] = (Integer)blockIndex,
-                [(Text)LegacyDailyRewardReceivedIndexKey] = (Integer)dailyRewardReceivedIndex,
-                [(Text)LegacyActionPointKey] = (Integer)actionPoint,
-                [(Text)LegacyStageMapKey] = stageMap.Serialize(),
-                [(Text)LegacyMonsterMapKey] = monsterMap.Serialize(),
-                [(Text)LegacyItemMapKey] = itemMap.Serialize(),
-                [(Text)LegacyEventMapKey] = eventMap.Serialize(),
-                [(Text)LegacyHairKey] = (Integer)hair,
-                [(Text)LensKey] = (Integer)lens,
-                [(Text)LegacyEarKey] = (Integer)ear,
-                [(Text)LegacyTailKey] = (Integer)tail,
-                [(Text)LegacyCombinationSlotAddressesKey] = combinationSlotAddresses
+            return new List(
+                base.SerializeList(),
+                (Integer)Version,
+                (Text)name,
+                (Integer)characterId,
+                (Integer)level,
+                (Integer)exp,
+                updatedAt.Serialize(),
+                agentAddress.Serialize(),
+                mailBox.Serialize(),
+                (Integer)blockIndex,
+                (Integer)dailyRewardReceivedIndex,
+                (Integer)actionPoint,
+                stageMap.Serialize(),
+                monsterMap.Serialize(),
+                itemMap.Serialize(),
+                eventMap.Serialize(),
+                (Integer)hair,
+                (Integer)lens,
+                (Integer)ear,
+                (Integer)tail,
+                combinationSlotAddresses
                     .OrderBy(i => i)
                     .Select(i => i.Serialize())
                     .Serialize(),
-                [(Text)LegacyNonceKey] = Nonce.Serialize(),
-                [(Text)LegacyRankingMapAddressKey] = RankingMapAddress.Serialize(),
-            }.Union((Dictionary)base.Serialize()));
+                RankingMapAddress.Serialize());
+        }
 #pragma warning restore LAA1002
 
-        public override IValue SerializeV2() =>
-#pragma warning disable LAA1002
-            new Dictionary(new Dictionary<IKey, IValue>
-            {
-                [(Text)NameKey] = (Text)name,
-                [(Text)CharacterIdKey] = (Integer)characterId,
-                [(Text)LevelKey] = (Integer)level,
-                [(Text)ExpKey] = (Integer)exp,
-                [(Text)UpdatedAtKey] = updatedAt.Serialize(),
-                [(Text)AgentAddressKey] = agentAddress.Serialize(),
-                [(Text)MailBoxKey] = mailBox.Serialize(),
-                [(Text)BlockIndexKey] = (Integer)blockIndex,
-                [(Text)DailyRewardReceivedIndexKey] = (Integer)dailyRewardReceivedIndex,
-                [(Text)ActionPointKey] = (Integer)actionPoint,
-                [(Text)StageMapKey] = stageMap.Serialize(),
-                [(Text)MonsterMapKey] = monsterMap.Serialize(),
-                [(Text)ItemMapKey] = itemMap.Serialize(),
-                [(Text)EventMapKey] = eventMap.Serialize(),
-                [(Text)HairKey] = (Integer)hair,
-                [(Text)LensKey] = (Integer)lens,
-                [(Text)EarKey] = (Integer)ear,
-                [(Text)TailKey] = (Integer)tail,
-                [(Text)CombinationSlotAddressesKey] = combinationSlotAddresses
-                    .OrderBy(i => i)
-                    .Select(i => i.Serialize())
-                    .Serialize(),
-                [(Text)RankingMapAddressKey] = RankingMapAddress.Serialize(),
-            }.Union((Dictionary)base.SerializeV2()));
-#pragma warning restore LAA1002
         public static AvatarState CreateAvatarState(string name,
             Address avatarAddress,
             IActionContext ctx,

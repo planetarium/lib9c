@@ -92,12 +92,20 @@ namespace Lib9c.Tests.Action
             _initialWorld = AvatarModule.SetAvatarState(
                 _initialWorld,
                 _avatar1Address,
-                avatar1State);
+                avatar1State,
+                true,
+                true,
+                true,
+                true);
             _initialWorld = AgentModule.SetAgentState(_initialWorld, agent2Address, agent2State);
-            _initialWorld = AvatarModule.SetAvatarV2(
+            _initialWorld = AvatarModule.SetAvatarState(
                 _initialWorld,
                 _avatar2Address,
-                avatar2State);
+                avatar2State,
+                true,
+                false,
+                false,
+                false);
             _initialWorld = LegacyModule.SetState(
                 _initialWorld,
                 Addresses.GameConfig,

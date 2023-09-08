@@ -25,6 +25,7 @@ namespace Nekoyume.Action
     [ActionType("grinding2")]
     public class Grinding : GameAction, IGrindingV1
     {
+        private const string ActionTypeText = "grinding";
         public const int CostAp = 5;
         public const int Limit = 50;
         public Address AvatarAddress;
@@ -80,10 +81,26 @@ namespace Nekoyume.Action
                 throw new InvalidItemCountException();
             }
 
-            if (!AvatarModule.TryGetAgentAvatarStatesV2(world, ctx.Signer, AvatarAddress, out var agentState,
-                    out var avatarState, out bool migrationRequired))
+            AgentState agentState = AgentModule.GetAgentState(world, ctx.Signer);
+            if (agentState is null)
             {
-                throw new FailedLoadStateException("");
+                throw new FailedLoadStateException(
+                    ActionTypeText,
+                    addressesHex,
+                    typeof(AgentState),
+                    AvatarAddress);
+            }
+            if (!AvatarModule.TryGetAvatarState(
+                    world,
+                    ctx.Signer,
+                    AvatarAddress,
+                    out var avatarState))
+            {
+                throw new FailedLoadStateException(
+                    ActionTypeText,
+                    addressesHex,
+                    typeof(AvatarState),
+                    AvatarAddress);
             }
 
             Address monsterCollectionAddress = MonsterCollectionState.DeriveAddress(
@@ -176,19 +193,18 @@ namespace Nekoyume.Action
             );
             avatarState.Update(mail);
 
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
-                world = AvatarModule.SetInventory(world, inventoryAddress, avatarState.inventory);
-            }
+            world = AvatarModule.SetAvatarState(
+                world,
+                AvatarAddress,
+                avatarState,
+                true,
+                true,
+                false,
+                false);
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Grinding Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            
+
             world = LegacyModule.MintAsset(world, context, context.Signer, crystal);
             return world;
         }

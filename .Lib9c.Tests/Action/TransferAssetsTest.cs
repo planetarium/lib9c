@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class TransferAssetsTest
@@ -162,12 +163,15 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InsufficientBalanceException()
         {
-            var prevState = new MockWorld(
+            IWorld prevState = new MockWorld(
                 new MockAccount(
                     new MockAccountState(ReservedAddresses.LegacyAccount)
-                        .SetState(_recipient, new AgentState(_recipient).Serialize())
                         .SetBalance(_sender, _currency * 1000)
                         .SetBalance(_recipient, _currency * 10)));
+            prevState = AgentModule.SetAgentState(
+                prevState,
+                _recipient,
+                new AgentState(_recipient));
             var action = new TransferAssets(
                 sender: _sender,
                 new List<(Address, FungibleAssetValue)>
@@ -198,12 +202,15 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var currencyBySender = Currency.Legacy("NCG", 2, _sender);
 #pragma warning restore CS0618
-            var prevState = new MockWorld(
+            IWorld prevState = new MockWorld(
                 new MockAccount(
                     new MockAccountState(ReservedAddresses.LegacyAccount)
-                        .SetState(_recipient, new AgentState(_recipient).Serialize())
                         .SetBalance(_sender, currencyBySender * 1000)
                         .SetBalance(_recipient, currencyBySender * 10)));
+            prevState = AgentModule.SetAgentState(
+                prevState,
+                _recipient,
+                new AgentState(_recipient));
             var action = new TransferAssets(
                 sender: _sender,
                 new List<(Address, FungibleAssetValue)>

@@ -69,7 +69,14 @@ namespace Lib9c.Tests.Action
                 Addresses.GameConfig,
                 _gameConfigState.Serialize());
             _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
-            _initialState = AvatarModule.SetAvatarState(_initialState, AvatarAddress, _avatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                AvatarAddress,
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
         }
 
         public static IEnumerable<object[]> Execute_Validate_MemberData()
@@ -216,7 +223,14 @@ namespace Lib9c.Tests.Action
             Assert.Equal(2, _avatarState.inventory.Items.Count);
             var asset = 3 * RuneHelper.DailyRewardRune;
             var context = new ActionContext();
-            _initialState = AvatarModule.SetAvatarState(_initialState, AvatarAddress, _avatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                AvatarAddress,
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = LegacyModule.MintAsset(_initialState, context, AvatarAddress, asset);
             var action = new RegisterProduct
             {
@@ -258,7 +272,7 @@ namespace Lib9c.Tests.Action
 
             var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, AvatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextWorld, AvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
 
@@ -358,7 +372,14 @@ namespace Lib9c.Tests.Action
                 _avatarState.inventory.AddItem((ItemBase)tradableItem);
             }
 
-            _initialState = AvatarModule.SetAvatarState(_initialState, AvatarAddress, _avatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                AvatarAddress,
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
             var action = new RegisterProduct
             {
                 AvatarAddress = AvatarAddress,

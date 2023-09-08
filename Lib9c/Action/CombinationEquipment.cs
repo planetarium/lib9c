@@ -109,13 +109,18 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CombinationEquipment exec started", addressesHex);
 
-            if (!AvatarModule.TryGetAgentAvatarStatesV2(
+            AgentState agentState = AgentModule.GetAgentState(world, context.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the agent state of the signer was failed to load.");
+            }
+
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     avatarAddress,
-                    out var agentState,
-                    out var avatarState,
-                    out _))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -531,13 +536,20 @@ namespace Nekoyume.Action
                 "{AddressesHex}CombinationEquipment Total Executed Time: {Elapsed}",
                 addressesHex,
                 ended - started);
-            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             world = LegacyModule.SetState(world, slotAddress, slotState.Serialize());
             world = LegacyModule.SetState(
                 world,
                 hammerPointAddress,
                 hammerPointState.Serialize());
-            world = LegacyModule.SetState(world, context.Signer, agentState.Serialize());
+            world = AgentModule.SetAgentState(world, context.Signer, agentState);
             return world;
         }
 

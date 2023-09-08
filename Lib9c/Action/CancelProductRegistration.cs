@@ -7,7 +7,6 @@ using Lib9c.Model.Order;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Battle;
 using Nekoyume.Model;
 using Nekoyume.Model.Exceptions;
@@ -17,7 +16,6 @@ using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -59,12 +57,11 @@ namespace Nekoyume.Action
                 }
             }
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     AvatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException("failed to load avatar state");
             }
@@ -149,16 +146,14 @@ namespace Nekoyume.Action
             }
 
             world = LegacyModule.SetState(world, productsStateAddress, productsState.Serialize());
-
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
-                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
-            }
+            world = AvatarModule.SetAvatarState(
+                world,
+                AvatarAddress,
+                avatarState,
+                true,
+                true,
+                false,
+                false);
 
             return world;
         }

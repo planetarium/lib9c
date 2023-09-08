@@ -9,7 +9,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -80,12 +79,11 @@ namespace Nekoyume.Action
                     context.BlockIndex);
             }
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     AvatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
@@ -251,25 +249,15 @@ namespace Nekoyume.Action
                 stakeStateV2.StartedBlockIndex,
                 context.BlockIndex);
 
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, avatarState.address, avatarState);
-                world = LegacyModule.SetState(world,
-                    avatarState.address.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-                world = LegacyModule.SetState(
-                    world,
-                    avatarState.address.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
-            }
-
-            world = LegacyModule.SetState(world, stakeStateAddr, stakeStateV2.Serialize());
-            world = LegacyModule.SetState(
+            world = AvatarModule.SetAvatarState(
                 world,
-                avatarState.address.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-
-            return world;
+                avatarState.address,
+                avatarState,
+                false,
+                true,
+                false,
+                false);
+            world = LegacyModule.SetState(world, stakeStateAddr, stakeStateV2.Serialize());
 
             return world;
         }

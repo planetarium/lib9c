@@ -124,12 +124,11 @@ namespace Lib9c.DevExtensions.Action
                     LegacyModule.GetGameConfigState(context.PreviousState),
                     rankingMapAddress);
 
-                if (!AvatarModule.TryGetAvatarStateV2(
+                if (!AvatarModule.TryGetAvatarState(
                         world,
                         context.Signer,
                         myAvatarAddress,
-                        out var myAvatarState,
-                        out var _))
+                        out var myAvatarState))
                 {
                     throw new FailedLoadStateException($"error");
                 }
@@ -142,7 +141,14 @@ namespace Lib9c.DevExtensions.Action
 
                 // join arena
                 world = AgentModule.SetAgentState(world, agentAddress, agentState);
-                world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+                world = AvatarModule.SetAvatarState(
+                    world,
+                    avatarAddress,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
 
                 var sheet = sheets.GetSheet<ArenaSheet>();
                 if (!sheet.TryGetValue(championshipId, out var row))

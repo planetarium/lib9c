@@ -112,12 +112,11 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the signer tried to battle for themselves.");
             }
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     myAvatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -473,20 +472,14 @@ namespace Nekoyume.Action
             enemyArenaScore.AddScore(enemyWinScore * winCount);
             arenaInformation.UpdateRecord(winCount, defeatCount);
 
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(
-                    world,
-                    myAvatarAddress,
-                    avatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetInventory(
-                    world,
-                    myAvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory);
-            }
+            world = AvatarModule.SetAvatarState(
+                world,
+                myAvatarAddress,
+                avatarState,
+                false,
+                true,
+                false,
+                false);
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}BattleArena Total Executed Time: {Elapsed}", addressesHex, ended - started);

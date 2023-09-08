@@ -146,7 +146,14 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+                world = AvatarModule.SetAvatarState(
+                    world,
+                    AvatarAddress,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
             }
 
             var ended = DateTimeOffset.UtcNow;

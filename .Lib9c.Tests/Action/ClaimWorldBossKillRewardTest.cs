@@ -86,7 +86,14 @@ namespace Lib9c.Tests.Action
                 Addresses.GetSheetAddress<WorldBossCharacterSheet>(),
                 tableSheets.WorldBossCharacterSheet.Serialize());
             state = LegacyModule.SetState(state, Addresses.GameConfig, gameConfigState.Serialize());
-            state = AvatarModule.SetAvatarState(state, avatarAddress, avatarState);
+            state = AvatarModule.SetAvatarState(
+                state,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             state = LegacyModule.SetState(
                 state,
                 worldBossKillRewardRecordAddress,

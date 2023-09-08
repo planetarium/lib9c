@@ -74,11 +74,15 @@ namespace Lib9c.Tests.Action
                 level = 100,
             };
 
-            _initialWorld = LegacyModule.SetState(_initialWorld, _agentAddress, agentState.Serialize());
-            _initialWorld = LegacyModule.SetState(_initialWorld, _avatarAddress, avatarState.SerializeV2());
-            _initialWorld = LegacyModule.SetState(_initialWorld, inventoryAddr, avatarState.inventory.Serialize());
-            _initialWorld = LegacyModule.SetState(_initialWorld, worldInformationAddr, avatarState.worldInformation.Serialize());
-            _initialWorld = LegacyModule.SetState(_initialWorld, questListAddr, avatarState.questList.Serialize());
+            _initialWorld = AgentModule.SetAgentState(_initialWorld, _agentAddress, agentState);
+            _initialWorld = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             _initialWorld = LegacyModule.SetState(_initialWorld, gameConfigState.address, gameConfigState.Serialize());
         }
 
@@ -463,8 +467,7 @@ namespace Lib9c.Tests.Action
             int slotIndex2 = 1,
             int runeId2 = 30001)
         {
-            var previousAccount = previousWorld.GetAccount(ReservedAddresses.LegacyAccount);
-            var previousAvatarState = AvatarModule.GetAvatarStateV2(previousWorld, _avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarState(previousWorld, _avatarAddress);
             var equipments =
                 Doomfist.GetAllParts(_tableSheets, previousAvatarState.level);
             foreach (var equipment in equipments)
@@ -499,12 +502,11 @@ namespace Lib9c.Tests.Action
                 Rehearsal = false,
                 BlockIndex = blockIndex,
             });
-            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.True(LegacyModule.GetSheet<EventScheduleSheet>(nextWorld).TryGetValue(
                 eventScheduleId,
                 out var scheduleRow));
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextWorld, _avatarAddress);
             var expectExp = scheduleRow.GetStageExp(
                 eventDungeonStageId.ToEventDungeonStageNumber());
             Assert.Equal(

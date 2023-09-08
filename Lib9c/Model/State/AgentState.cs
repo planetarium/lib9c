@@ -13,12 +13,16 @@ namespace Nekoyume.Model.State
     [Serializable]
     public class AgentState : State, ICloneable
     {
+        public const int CurrentVersion = 1;
+
+        public int Version { get; private set; }
         public readonly Dictionary<int, Address> avatarAddresses;
         public HashSet<int> unlockedOptions;
         public int MonsterCollectionRound { get; private set; }
 
         public AgentState(Address address) : base(address)
         {
+            Version = CurrentVersion;
             avatarAddresses = new Dictionary<int, Address>();
             unlockedOptions = new HashSet<int>();
         }
@@ -26,6 +30,7 @@ namespace Nekoyume.Model.State
         public AgentState(Dictionary serialized)
             : base(serialized)
         {
+            Version = 0;
 #pragma warning disable LAA1002
             avatarAddresses = ((Dictionary)serialized["avatarAddresses"])
                 .Where(kv => kv.Key is Binary)
@@ -42,6 +47,22 @@ namespace Nekoyume.Model.State
                 : 0;
         }
 
+        public AgentState(List serialized)
+            : base(serialized[0])
+        {
+            Version = (int)((Integer)serialized[1]).Value;
+#pragma warning disable LAA1002
+            avatarAddresses = ((Dictionary)serialized[2])
+                .Where(kv => kv.Key is Binary)
+                .ToDictionary(
+                    kv => BitConverter.ToInt32(((Binary)kv.Key).ToByteArray(), 0),
+                    kv => kv.Value.ToAddress()
+                );
+#pragma warning restore LAA1002
+            unlockedOptions = serialized[3].ToHashSet(StateExtensions.ToInteger);
+            MonsterCollectionRound = serialized[4].ToInteger();
+        }
+
         public object Clone()
         {
             return MemberwiseClone();
@@ -54,25 +75,32 @@ namespace Nekoyume.Model.State
 
         public override IValue Serialize()
         {
-            var innerDict = new Dictionary<IKey, IValue>
-            {
+            throw new NotSupportedException();
+        }
+
+        public override IValue SerializeV2()
+        {
+            throw new NotSupportedException();
+        }
+
+        public override IValue SerializeList()
+        {
+            return new List(
+                base.SerializeList(),
+                (Integer)CurrentVersion,
 #pragma warning disable LAA1002
-                [(Text) "avatarAddresses"] = new Dictionary(
-                    avatarAddresses.Select(kv =>
-                        new KeyValuePair<IKey, IValue>(
-                            new Binary(BitConverter.GetBytes(kv.Key)),
-                            kv.Value.Serialize()
-                        )
+                new Dictionary(
+                    avatarAddresses.Select(
+                        kv =>
+                            new KeyValuePair<IKey, IValue>(
+                                new Binary(BitConverter.GetBytes(kv.Key)),
+                                kv.Value.Serialize()
+                            )
                     )
                 ),
-                [(Text) "unlockedOptions"] = unlockedOptions.Select(i => i.Serialize()).Serialize(),
-            };
-            if (MonsterCollectionRound > 0)
-            {
-                innerDict.Add((Text) MonsterCollectionRoundKey, MonsterCollectionRound.Serialize());
-            }
-            return new Dictionary(innerDict.Union((Dictionary) base.Serialize()));
+                unlockedOptions.Select(i => i.Serialize()).Serialize(),
 #pragma warning restore LAA1002
+                MonsterCollectionRound.Serialize());
         }
     }
 }

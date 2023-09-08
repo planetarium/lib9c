@@ -452,7 +452,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
             });
 
-            var avatarState = AvatarModule.GetAvatarStateV2(states, avatarAddr);
+            var avatarState = AvatarModule.GetAvatarState(states, avatarAddr);
             if (expectedHourglass > 0)
             {
                 Assert.Equal(
