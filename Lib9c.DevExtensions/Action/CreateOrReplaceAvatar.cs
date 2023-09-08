@@ -438,7 +438,7 @@ namespace Lib9c.DevExtensions.Action
                 ear = Ear,
                 tail = Tail,
             };
-            world = AvatarModule.SetAvatarState(world, avatarAddr, avatar);
+            world = AvatarModule.SetAvatarState(world, avatarAddr, avatar, true, true, true, true);
             // ~Set AvatarState.
 
             // Set WorldInformation.

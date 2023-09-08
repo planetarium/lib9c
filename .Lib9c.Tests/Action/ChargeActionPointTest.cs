@@ -54,7 +54,14 @@ namespace Lib9c.Tests.Action
                 Addresses.GameConfig,
                 gameConfigState.Serialize());
             _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agent);
-            _initialState = AvatarModule.SetAvatarState(_initialState, _avatarAddress, avatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             foreach (var (key, value) in _sheets)
             {
@@ -63,11 +70,9 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(true, true)]
-        [InlineData(false, true)]
-        [InlineData(true, false)]
-        [InlineData(false, false)]
-        public void Execute(bool useTradable, bool backward)
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Execute(bool useTradable)
         {
             var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             var row = _tableSheets.MaterialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.ApStone);
@@ -85,14 +90,14 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0, avatarState.actionPoint);
 
             IWorld state;
-            if (backward)
-            {
-                state = AvatarModule.SetAvatarState(_initialState, _avatarAddress, avatarState);
-            }
-            else
-            {
-                state = AvatarModule.SetAvatarStateV2(_initialState, _avatarAddress, avatarState);
-            }
+            state = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             foreach (var (key, value) in _sheets)
             {
@@ -112,7 +117,7 @@ namespace Lib9c.Tests.Action
                 Rehearsal = false,
             });
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextState, _avatarAddress);
             var gameConfigState = LegacyModule.GetGameConfigState(nextState);
             Assert.Equal(gameConfigState.ActionPointMax, nextAvatarState.actionPoint);
         }
@@ -146,13 +151,27 @@ namespace Lib9c.Tests.Action
             if (enough)
             {
                 avatarState.inventory.AddItem(apStone);
-                state = AvatarModule.SetAvatarState(state, _avatarAddress, avatarState);
+                state = AvatarModule.SetAvatarState(
+                    state,
+                    _avatarAddress,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
             }
 
             if (charge)
             {
                 avatarState.actionPoint = LegacyModule.GetGameConfigState(state).ActionPointMax;
-                state = AvatarModule.SetAvatarState(state, _avatarAddress, avatarState);
+                state = AvatarModule.SetAvatarState(
+                    state,
+                    _avatarAddress,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
             }
 
             var action = new ChargeActionPoint()

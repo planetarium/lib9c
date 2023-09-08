@@ -27,10 +27,9 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("buy12")]
+    // FIXME: Requires ActionObsolete attribute
     public class Buy : GameAction, IBuy5, IBuyV2
     {
-
-
         public const int TaxRate = 8;
         public const int ErrorCodeFailedLoadingState = 1;
         public const int ErrorCodeItemDoesNotExist = 2;
@@ -87,12 +86,11 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Buy exec started", addressesHex);
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     ctx.Signer,
                     buyerAvatarAddress,
-                    out var buyerAvatarState,
-                    out _))
+                    out var buyerAvatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the buyer was failed to load.");
@@ -170,12 +168,11 @@ namespace Nekoyume.Action
                     sellerAvatarAddress);
 
 
-                if (!AvatarModule.TryGetAvatarStateV2(
+                if (!AvatarModule.TryGetAvatarState(
                         world,
                         sellerAgentAddress,
                         sellerAvatarAddress,
-                        out var sellerAvatarState,
-                        out _))
+                        out var sellerAvatarState))
                 {
                     errors.Add((orderId, ErrorCodeFailedLoadingState));
                     continue;
@@ -302,10 +299,14 @@ namespace Nekoyume.Action
 
                 world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
                 world = LegacyModule.SetState(world, orderReceiptAddress, orderReceipt.Serialize());
-                world = AvatarModule.SetAvatarStateV2(
+                world = AvatarModule.SetAvatarState(
                     world,
                     sellerAvatarAddress,
-                    sellerAvatarState);
+                    sellerAvatarState,
+                    true,
+                    true,
+                    true,
+                    true);
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set Seller AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();
@@ -332,7 +333,7 @@ namespace Nekoyume.Action
                 world,
                 buyerQuestListAddress,
                 buyerAvatarState.questList.Serialize());
-            world = AvatarModule.SetAvatarState(world, buyerAvatarAddress, buyerAvatarState);
+            world = AvatarModule.SetAvatarState(world, buyerAvatarAddress, buyerAvatarState, true, false, false, false);
             sw.Stop();
             Log.Verbose("{AddressesHex}Buy Set Buyer AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();

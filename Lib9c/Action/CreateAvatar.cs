@@ -265,7 +265,14 @@ namespace Nekoyume.Action
             // Fix invalid mint crystal balance in internal network. main-net always mint 200_000
             var mintingValue = context.BlockIndex > 7_210_000L ? 200_000 : 600_000;
             world = AgentModule.SetAgentState(world, signer, agentState);
-            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             world = LegacyModule.MintAsset(world, ctx, signer, mintingValue * CrystalCalculator.CRYSTAL);
             return world;
         }

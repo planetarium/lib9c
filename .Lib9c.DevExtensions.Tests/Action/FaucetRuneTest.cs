@@ -61,22 +61,14 @@ namespace Lib9c.DevExtensions.Tests.Action
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             _initialWorld = AgentModule.SetAgentState(_initialWorld, agentAddress, agentState);
-            _initialWorld = LegacyModule.SetState(
-                _initialWorld,
-                _avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
-            _initialWorld = LegacyModule.SetState(
-                _initialWorld,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
-            _initialWorld = LegacyModule.SetState(
-                _initialWorld,
-                _avatarAddress.Derive(LegacyQuestListKey),
-                avatarState.questList.Serialize());
-            _initialWorld = LegacyModule.SetState(
+            _initialWorld = AvatarModule.SetAvatarState(
                 _initialWorld,
                 _avatarAddress,
-                avatarState.Serialize());
+                avatarState,
+                true,
+                true,
+                true,
+                true);
         }
 
         [Theory]

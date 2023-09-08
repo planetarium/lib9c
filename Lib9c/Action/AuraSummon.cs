@@ -9,7 +9,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
@@ -18,7 +17,6 @@ using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Summon;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -180,8 +178,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
 
             if (context.Rehearsal)
             {
@@ -192,8 +188,13 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug($"{addressesHex} AuraSummon Exec. Started.");
 
-            if (!AvatarModule.TryGetAgentAvatarStatesV2(world, context.Signer, AvatarAddress, out var agentState,
-                    out var avatarState, out _))
+            var agentState = AgentModule.GetAgentState(world, context.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex} Aborted as the agent state of the signer was failed to load.");
+            }
+            if (!AvatarModule.TryGetAvatarState(world, context.Signer, AvatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
@@ -281,7 +282,14 @@ namespace Nekoyume.Action
             avatarState.updatedAt = context.BlockIndex;
 
             // Set states
-            return AvatarModule.SetAvatarStateV2(world, avatarState.address, avatarState);
+            return AvatarModule.SetAvatarState(
+                world,
+                avatarState.address,
+                avatarState,
+                true,
+                false,
+                false,
+                false);
         }
 
         public static void AddAndUnlockOption(

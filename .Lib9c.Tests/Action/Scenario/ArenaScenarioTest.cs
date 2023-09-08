@@ -159,7 +159,14 @@ namespace Lib9c.Tests.Action.Scenario
                 _state,
                 avatarState.address.Derive(LegacyQuestListKey),
                 avatarState.questList.Serialize());
-            _state = AvatarModule.SetAvatarState(_state, avatarState.address, avatarState);
+            _state = AvatarModule.SetAvatarState(
+                _state,
+                avatarState.address,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             return (agentState, avatarState);
         }

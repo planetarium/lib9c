@@ -118,10 +118,6 @@ namespace Nekoyume.Action
             long blockIndex,
             IRandom random)
         {
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
-
             var addressesHex = $"[{signer.ToHex()}, {AvatarAddress.ToHex()}]";
             var started = DateTimeOffset.UtcNow;
             const string source = "HackAndSlash";
@@ -153,12 +149,11 @@ namespace Nekoyume.Action
 
             var sw = new Stopwatch();
             sw.Start();
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     signer,
                     AvatarAddress,
-                    out AvatarState avatarState,
-                    out _))
+                    out AvatarState avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -598,7 +593,14 @@ namespace Nekoyume.Action
                 world = LegacyModule.SetState(world, skillStateAddress, skillState.Serialize());
             }
 
-            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                AvatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Set States", blockIndex, sw.Elapsed.TotalMilliseconds);

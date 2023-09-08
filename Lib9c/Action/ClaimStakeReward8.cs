@@ -228,12 +228,11 @@ namespace Nekoyume.Action
                     context.BlockIndex);
             }
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                 world,
                 context.Signer,
                 AvatarAddress,
-                out var avatarState,
-                out var migrationRequired))
+                out var avatarState))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
@@ -335,15 +334,14 @@ namespace Nekoyume.Action
 
             stakeState.Claim(context.BlockIndex);
             world = LegacyModule.SetState(world, stakeState.address, stakeState.Serialize());
-
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, avatarState.address, avatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetInventory(world, avatarState.address.Derive(LegacyInventoryKey), avatarState.inventory);
-            }
+            world = AvatarModule.SetAvatarState(
+                world,
+                avatarState.address,
+                avatarState,
+                false,
+                true,
+                false,
+                false);
 
             return world;
         }

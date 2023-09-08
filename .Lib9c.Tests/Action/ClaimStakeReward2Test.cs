@@ -86,14 +86,22 @@ namespace Lib9c.Tests.Action
             };
 
             _initialState = AgentModule.SetAgentState(_initialState, _signerAddress, agentState);
-            _initialState = AvatarModule.SetAvatarStateV2(
+            _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _avatarAddress,
-                avatarState);
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _avatarAddressForBackwardCompatibility,
-                avatarStateForBackwardCompatibility);
+                avatarStateForBackwardCompatibility,
+                true,
+                true,
+                true,
+                true);
             _initialState = LegacyModule.SetState(
                 _initialState,
                 GoldCurrencyState.Address,
@@ -176,7 +184,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = StakeState.LockupInterval,
             });
 
-            AvatarState avatarState = AvatarModule.GetAvatarStateV2(states, avatarAddress);
+            AvatarState avatarState = AvatarModule.GetAvatarState(states, avatarAddress);
             // regular (100 / 10) * 4
             Assert.Equal(40, avatarState.inventory.Items.First(x => x.item.Id == 400000).count);
             // regular ((100 / 800) + 1) * 4

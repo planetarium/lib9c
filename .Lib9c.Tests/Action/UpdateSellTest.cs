@@ -78,28 +78,29 @@ namespace Lib9c.Tests.Action
 
             _initialState = LegacyModule.SetState(_initialState, GoldCurrencyState.Address, _goldCurrencyState.Serialize());
             _initialState = LegacyModule.SetState(_initialState, Addresses.Shop, shopState.Serialize());
-            _initialState = LegacyModule.SetState(_initialState, _agentAddress, agentState.Serialize());
-            _initialState = LegacyModule.SetState(_initialState, _avatarAddress, _avatarState.Serialize());
+            _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
         }
 
         [Theory]
-        [InlineData(ItemType.Equipment, "F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4", 1, 1, 1, true)]
-        [InlineData(ItemType.Costume, "936DA01F-9ABD-4d9d-80C7-02AF85C822A8", 1, 1, 1, true)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 1, 1, 1, true)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 1, 2, true)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 2, 3, true)]
-        [InlineData(ItemType.Equipment, "F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4", 1, 1, 1, false)]
-        [InlineData(ItemType.Costume, "936DA01F-9ABD-4d9d-80C7-02AF85C822A8", 1, 1, 1, false)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 1, 1, 1, false)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 1, 2, false)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 2, 3, false)]
+        [InlineData(ItemType.Equipment, "F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4", 1, 1, 1)]
+        [InlineData(ItemType.Costume, "936DA01F-9ABD-4d9d-80C7-02AF85C822A8", 1, 1, 1)]
+        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 1, 1, 1)]
+        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 1, 2)]
+        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 2, 3)]
         public void Execute(
             ItemType itemType,
             string guid,
             int itemCount,
             int inventoryCount,
-            int expectedCount,
-            bool fromPreviousAction
+            int expectedCount
         )
         {
             var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
@@ -191,18 +192,14 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(requiredBlockIndex * 2, sellItem.RequiredBlockIndex);
 
-            if (fromPreviousAction)
-            {
-                prevState = LegacyModule.SetState(prevState, _avatarAddress, avatarState.Serialize());
-            }
-            else
-            {
-                prevState = LegacyModule.SetState(prevState, _avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize());
-                prevState = LegacyModule.SetState(prevState, _avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize());
-                prevState = LegacyModule.SetState(prevState, _avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize());
-                prevState = LegacyModule.SetState(prevState, _avatarAddress, avatarState.SerializeV2());
-                prevState = LegacyModule.SetState(prevState, _avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize());
-            }
+            prevState = AvatarModule.SetAvatarState(
+                prevState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             prevState = LegacyModule.SetState(prevState, Addresses.GetItemAddress(itemId), sellItem.Serialize());
             prevState = LegacyModule.SetState(prevState, Order.DeriveAddress(order.OrderId), order.Serialize());
@@ -299,7 +296,14 @@ namespace Lib9c.Tests.Action
                 ),
             };
 
-            var prevState = LegacyModule.SetState(_initialState, _avatarAddress, avatarState.Serialize());
+            var prevState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             var updateSellInfo = new UpdateSellInfo(
                 default,
@@ -336,7 +340,14 @@ namespace Lib9c.Tests.Action
             };
             var digestListAddress = OrderDigestListState.DeriveAddress(_avatarAddress);
             var digestList = new OrderDigestListState(digestListAddress);
-            var prevState = LegacyModule.SetState(_initialState, _avatarAddress, avatarState.Serialize());
+            var prevState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             prevState = LegacyModule.SetState(prevState, digestListAddress, digestList.Serialize());
 
             var updateSellInfo = new UpdateSellInfo(

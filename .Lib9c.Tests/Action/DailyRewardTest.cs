@@ -1,6 +1,5 @@
 namespace Lib9c.Tests.Action
 {
-    using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
@@ -13,7 +12,6 @@ namespace Lib9c.Tests.Action
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
 
     public class DailyRewardTest
     {
@@ -62,7 +60,14 @@ namespace Lib9c.Tests.Action
                 Addresses.GameConfig,
                 gameConfigState.Serialize());
             _initialWorld = AgentModule.SetAgentState(_initialWorld, _agentAddress, agentState);
-            _initialWorld = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            _initialWorld = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
         }
 
         [Fact]
@@ -101,13 +106,20 @@ namespace Lib9c.Tests.Action
                     break;
                 case false:
                     var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
-                    previousStates = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
+                    previousStates = AvatarModule.SetAvatarState(
+                        _initialWorld,
+                        _avatarAddress,
+                        avatarState,
+                        true,
+                        true,
+                        true,
+                        true);
                     break;
             }
 
             var nextWorld = ExecuteInternal(previousStates, 1800);
             var nextGameConfigState = LegacyModule.GetGameConfigState(nextWorld);
-            AvatarModule.TryGetAvatarStateV2(nextWorld, _agentAddress, _avatarAddress, out var nextAvatarState, out var migrationRequired);
+            AvatarModule.TryGetAvatarState(nextWorld, _agentAddress, _avatarAddress, out var nextAvatarState);
             Assert.NotNull(nextAvatarState);
             Assert.NotNull(nextAvatarState.inventory);
             Assert.NotNull(nextAvatarState.questList);
@@ -140,7 +152,14 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             avatarState.dailyRewardReceivedIndex = dailyRewardReceivedIndex;
-            var previousStates = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
+            var previousStates = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             try
             {
                 ExecuteInternal(previousStates, executeBlockIndex);

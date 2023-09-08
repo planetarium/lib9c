@@ -44,10 +44,8 @@ namespace Lib9c.Tests.Action
             _tableSheets = new TableSheets(_sheets);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute(bool backward)
+        [Fact]
+        public void Execute()
         {
             var privateKey = new PrivateKey();
             PublicKey publicKey = privateKey.PublicKey;
@@ -91,20 +89,14 @@ namespace Lib9c.Tests.Action
                 GoldCurrencyState.Address,
                 goldState.Currency * 100000000);
 
-            if (backward)
-            {
-                initialState = AvatarModule.SetAvatarState(
-                    initialState,
-                    _avatarAddress,
-                    avatarState);
-            }
-            else
-            {
-                initialState = AvatarModule.SetAvatarStateV2(
-                    initialState,
-                    _avatarAddress,
-                    avatarState);
-            }
+            initialState = AvatarModule.SetAvatarState(
+                initialState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             foreach (var (key, value) in _sheets)
             {
@@ -131,7 +123,7 @@ namespace Lib9c.Tests.Action
             });
 
             // Check target avatar & agent
-            AvatarState nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
+            AvatarState nextAvatarState = AvatarModule.GetAvatarState(nextWorld, _avatarAddress);
             // See also Data/TableCSV/RedeemRewardSheet.csv
             ItemSheet itemSheet = LegacyModule.GetItemSheet(nextWorld);
             HashSet<int> expectedItems = new[] { 302006, 302004, 302001, 302002 }.ToHashSet();

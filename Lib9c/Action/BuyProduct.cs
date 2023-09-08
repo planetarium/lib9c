@@ -9,7 +9,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Battle;
 using Nekoyume.Model;
 using Nekoyume.Model.EnumType;
@@ -20,7 +19,6 @@ using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 using Log = Serilog.Log;
 
 namespace Nekoyume.Action
@@ -71,12 +69,11 @@ namespace Nekoyume.Action
                 productInfo.ValidateType();
             }
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     AvatarAddress,
-                    out var buyerAvatarState,
-                    out var migrationRequired))
+                    out var buyerAvatarState))
             {
                 throw new FailedLoadStateException("failed load to buyer avatar state.");
             }
@@ -95,12 +92,11 @@ namespace Nekoyume.Action
             {
                 var sellerAgentAddress = productInfo.AgentAddress;
                 var sellerAvatarAddress = productInfo.AvatarAddress;
-                if (!AvatarModule.TryGetAvatarStateV2(
+                if (!AvatarModule.TryGetAvatarState(
                         world,
                         sellerAgentAddress,
                         sellerAvatarAddress,
-                        out var sellerAvatarState,
-                        out var sellerMigrationRequired))
+                        out var sellerAvatarState))
                 {
                     throw new FailedLoadStateException($"failed load to seller avatar state.");
                 }
@@ -132,20 +128,18 @@ namespace Nekoyume.Action
                         sellerAgentAddress,
                         buyerAvatarState,
                         sellerAvatarState,
-                        materialSheet,
-                        sellerMigrationRequired);
+                        materialSheet);
                 }
             }
 
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, buyerAvatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetAvatarV2(world, AvatarAddress, buyerAvatarState);
-                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), buyerAvatarState.inventory);
-            }
+            world = AvatarModule.SetAvatarState(
+                world,
+                AvatarAddress,
+                buyerAvatarState,
+                true,
+                true,
+                false,
+                false);
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("BuyProduct Total Executed Time: {Elapsed}", ended - started);
@@ -154,7 +148,7 @@ namespace Nekoyume.Action
 
         private IWorld Buy(IActionContext context, IProductInfo productInfo, Address sellerAvatarAddress,
             IWorld world, Address sellerAgentAddress, AvatarState buyerAvatarState, AvatarState sellerAvatarState,
-            MaterialItemSheet materialSheet, bool sellerMigrationRequired)
+            MaterialItemSheet materialSheet)
         {
             var productId = productInfo.ProductId;
             var productsStateAddress = ProductsState.DeriveAddress(sellerAvatarAddress);
@@ -257,15 +251,14 @@ namespace Nekoyume.Action
                 sellerAgentAddress,
                 taxedPrice);
 
-            if (sellerMigrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, sellerAvatarAddress, sellerAvatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetAvatarV2(world, sellerAvatarAddress, sellerAvatarState);
-                world = AvatarModule.SetQuestList(world, sellerAvatarAddress.Derive(LegacyQuestListKey), sellerAvatarState.questList);
-            }
+            world = AvatarModule.SetAvatarState(
+                world,
+                sellerAvatarAddress,
+                sellerAvatarState,
+                true,
+                false,
+                false,
+                true);
 
             return world;
         }
@@ -279,9 +272,6 @@ namespace Nekoyume.Action
                 ShardedShopStateV2.DeriveAddress(purchaseInfo.ItemSubType, purchaseInfo.OrderId);
             Address sellerAgentAddress = purchaseInfo.SellerAgentAddress;
             Address sellerAvatarAddress = purchaseInfo.SellerAvatarAddress;
-            Address sellerInventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
-            var sellerWorldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
-            Address sellerQuestListAddress = sellerAvatarAddress.Derive(LegacyQuestListKey);
             Guid orderId = purchaseInfo.OrderId;
             Address orderAddress = Order.DeriveAddress(orderId);
             Address digestListAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
@@ -414,7 +404,14 @@ namespace Nekoyume.Action
 
             world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
             world = LegacyModule.SetState(world, orderReceiptAddress, orderReceipt.Serialize());
-            world = AvatarModule.SetAvatarStateV2(world, sellerAvatarAddress, sellerAvatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                sellerAvatarAddress,
+                sellerAvatarState,
+                true,
+                true,
+                true,
+                true);
             return LegacyModule.SetState(world, shardedShopAddress, shardedShopState.Serialize());
         }
 

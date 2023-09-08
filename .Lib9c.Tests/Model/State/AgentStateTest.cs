@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Model.State
 {
+    using System;
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
     using Libplanet.Crypto;
@@ -14,8 +15,17 @@ namespace Lib9c.Tests.Model.State
             var agentStateAddress = new PrivateKey().ToAddress();
             var agentState = new AgentState(agentStateAddress);
 
-            var serialized = agentState.Serialize();
-            var deserialized = new AgentState((Bencodex.Types.Dictionary)serialized);
+            Assert.Throws<NotSupportedException>(() => agentState.Serialize());
+        }
+
+        [Fact]
+        public void SerializeList()
+        {
+            var agentStateAddress = new PrivateKey().ToAddress();
+            var agentState = new AgentState(agentStateAddress);
+
+            var serialized = agentState.SerializeList();
+            var deserialized = new AgentState((Bencodex.Types.List)serialized);
 
             Assert.Equal(agentStateAddress, deserialized.address);
         }

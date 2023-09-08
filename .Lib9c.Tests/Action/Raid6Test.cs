@@ -20,7 +20,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static SerializeKeys;
 
     public class Raid6Test
     {
@@ -235,7 +234,14 @@ namespace Lib9c.Tests.Action
                         (row.TicketPrice + row.AdditionalTicketPrice * purchaseCount) * _goldCurrency);
                 }
 
-                state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, avatarState);
+                state = AvatarModule.SetAvatarState(
+                    state,
+                    _avatarAddress,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
                 state = LegacyModule.SetState(
                     state,
                     gameConfigState.address,
@@ -503,7 +509,14 @@ namespace Lib9c.Tests.Action
                 worldBossKillRewardRecordAddress,
                 rewardRecord.Serialize());
 
-            state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, avatarState);
+            state = AvatarModule.SetAvatarState(
+                state,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             state = LegacyModule.SetState(
                 state,
                 gameConfigState.address,
@@ -644,7 +657,14 @@ namespace Lib9c.Tests.Action
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, avatarState);
+            state = AvatarModule.SetAvatarState(
+                state,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             state = LegacyModule.SetState(
                 state,
                 gameConfigState.address,

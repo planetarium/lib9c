@@ -126,7 +126,11 @@ namespace Lib9c.Tests.Action
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 SellerAvatarAddress,
-                sellerAvatarState);
+                sellerAvatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = AgentModule.SetAgentState(
                 _initialState,
                 _sellerAgentAddress2,
@@ -134,7 +138,11 @@ namespace Lib9c.Tests.Action
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _sellerAvatarAddress2,
-                sellerAvatarState2);
+                sellerAvatarState2,
+                true,
+                true,
+                true,
+                true);
             _initialState = AgentModule.SetAgentState(
                 _initialState,
                 BuyerAgentAddress,
@@ -142,7 +150,11 @@ namespace Lib9c.Tests.Action
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 BuyerAvatarAddress,
-                _buyerAvatarState);
+                _buyerAvatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = LegacyModule.MintAsset(
                 _initialState,
                 context,

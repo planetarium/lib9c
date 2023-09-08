@@ -9,7 +9,6 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
-    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
@@ -17,7 +16,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.TableData;
     using Nekoyume.TableData.Crystal;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class GrindingTest
     {
@@ -166,7 +164,14 @@ namespace Lib9c.Tests.Action
                     _avatarState.inventory.AddItem(apStone);
                 }
 
-                state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
+                state = AvatarModule.SetAvatarState(
+                    state,
+                    _avatarAddress,
+                    _avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
 
                 Assert.Equal(
                     0 * _crystalCurrency,
@@ -239,7 +244,7 @@ namespace Lib9c.Tests.Action
                 });
                 var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
-                var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
+                var nextAvatarState = AvatarModule.GetAvatarState(nextWorld, _avatarAddress);
                 FungibleAssetValue asset = totalAsset * _crystalCurrency;
 
                 Assert.Equal(asset, nextAccount.GetBalance(_agentAddress, _crystalCurrency));

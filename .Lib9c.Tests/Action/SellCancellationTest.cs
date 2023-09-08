@@ -93,27 +93,28 @@ namespace Lib9c.Tests.Action
                 _initialWorld,
                 Addresses.GameConfig,
                 _gameConfigState.Serialize());
-            _initialWorld = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            _initialWorld = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
         }
 
         [Theory]
-        [InlineData(ItemType.Equipment, "F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4", 1, 1, 1, true)]
-        [InlineData(ItemType.Costume, "936DA01F-9ABD-4d9d-80C7-02AF85C822A8", 1, 1, 1, true)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 1, 1, 1, true)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 1, 2, true)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 2, 3, true)]
-        [InlineData(ItemType.Equipment, "F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4", 1, 1, 1, false)]
-        [InlineData(ItemType.Costume, "936DA01F-9ABD-4d9d-80C7-02AF85C822A8", 1, 1, 1, false)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 1, 1, 1, false)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 1, 2, false)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 2, 3, false)]
+        [InlineData(ItemType.Equipment, "F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4", 1, 1, 1)]
+        [InlineData(ItemType.Costume, "936DA01F-9ABD-4d9d-80C7-02AF85C822A8", 1, 1, 1)]
+        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 1, 1, 1)]
+        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 1, 2)]
+        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 2, 3)]
         public void Execute(
             ItemType itemType,
             string guid,
             int itemCount,
             int inventoryCount,
-            int expectedCount,
-            bool fromPreviousAction
+            int expectedCount
         )
         {
             var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
@@ -217,14 +218,14 @@ namespace Lib9c.Tests.Action
             Assert.True(avatarState.inventory.TryGetLockedItem(new OrderLock(orderId), out var outItem));
             Assert.Equal(itemCount, outItem.count);
 
-            if (fromPreviousAction)
-            {
-                prevState = AvatarModule.SetAvatarState(prevState, _avatarAddress, avatarState);
-            }
-            else
-            {
-                prevState = AvatarModule.SetAvatarStateV2(prevState, _avatarAddress, avatarState);
-            }
+            prevState = AvatarModule.SetAvatarState(
+                prevState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             prevState = LegacyModule.SetState(
                 prevState,
@@ -290,7 +291,7 @@ namespace Lib9c.Tests.Action
                 ShardedShopStateV2 nextShopState = new ShardedShopStateV2((Dictionary)nextAccount.GetState(shardedShopAddress));
                 Assert.Empty(nextShopState.OrderDigestList);
 
-                var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
+                var nextAvatarState = AvatarModule.GetAvatarState(nextWorld, _avatarAddress);
                 Assert.Equal(expectedCount, nextAvatarState.inventory.Items.Sum(i => i.count));
                 Assert.False(nextAvatarState.inventory.TryGetTradableItems(
                     itemId,
@@ -358,7 +359,11 @@ namespace Lib9c.Tests.Action
             IWorld prevState = AvatarModule.SetAvatarState(
                 _initialWorld,
                 _avatarAddress,
-                avatarState);
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             var action = new SellCancellation
             {
@@ -602,19 +607,15 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 1, 1, 1, true)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 1, 2, true)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 2, 3, true)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 1, 1, 1, false)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 1, 2, false)]
-        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 2, 3, false)]
+        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 1, 1, 1)]
+        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 1, 2)]
+        [InlineData(ItemType.Material, "15396359-04db-68d5-f24a-d89c18665900", 2, 2, 3)]
         public void Execute_ReconfigureFungibleItem(
             ItemType itemType,
             string guid,
             int itemCount,
             int inventoryCount,
-            int expectedCount,
-            bool fromPreviousAction
+            int expectedCount
         )
         {
             var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
@@ -718,15 +719,14 @@ namespace Lib9c.Tests.Action
             Assert.True(avatarState.inventory.TryGetLockedItem(new OrderLock(orderId), out var outItem));
             Assert.Equal(itemCount, outItem.count);
 
-            if (fromPreviousAction)
-            {
-                prevState = AvatarModule.SetAvatarState(prevState, _avatarAddress, avatarState);
-            }
-            else
-            {
-                prevState = AvatarModule.SetAvatarStateV2(prevState, _avatarAddress, avatarState);
-            }
-
+            prevState = AvatarModule.SetAvatarState(
+                prevState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             prevState = LegacyModule.SetState(
                 prevState,
                 Addresses.GetItemAddress(itemId),
@@ -762,7 +762,7 @@ namespace Lib9c.Tests.Action
             ShardedShopStateV2 nextShopState = new ShardedShopStateV2((Dictionary)nextAccount.GetState(shardedShopAddress));
             Assert.Empty(nextShopState.OrderDigestList);
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextWorld, _avatarAddress);
             Assert.Equal(expectedCount, nextAvatarState.inventory.Items.Sum(i => i.count));
             Assert.False(nextAvatarState.inventory.TryGetTradableItems(
                 itemId,
