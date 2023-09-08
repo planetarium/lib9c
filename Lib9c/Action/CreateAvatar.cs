@@ -270,7 +270,7 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex}CreateAvatar Total Executed Time: {Elapsed}", addressesHex, ended - started);
 
             world = AgentModule.SetAgentState(world, signer, agentState);
-            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(world, avatarAddress, avatarState);
             return world;
         }
 

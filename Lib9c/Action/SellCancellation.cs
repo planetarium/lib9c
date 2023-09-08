@@ -113,12 +113,11 @@ namespace Nekoyume.Action
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, sellerAvatarAddress);
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     sellerAvatarAddress,
-                    out var avatarState,
-                    out _))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the seller failed to load.");
@@ -246,7 +245,14 @@ namespace Nekoyume.Action
 
             world = LegacyModule.SetState(world, itemAddress, sellItem.Serialize());
             world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
-            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             sw.Stop();
             Log.Verbose(
                 "{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}",
@@ -359,7 +365,14 @@ namespace Nekoyume.Action
 
             world = LegacyModule.SetState(world, itemAddress, sellItem.Serialize());
             world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
-            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             sw.Stop();
             Log.Verbose(
                 "{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}",

@@ -96,12 +96,11 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the signer tried to battle for themselves.");
             }
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     ctx.Signer,
                     avatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -154,16 +153,7 @@ namespace Nekoyume.Action
                     worldInfo.StageClearedId);
             }
 
-            AvatarState enemyAvatarState;
-            try
-            {
-                enemyAvatarState = AvatarModule.GetAvatarStateV2(world, enemyAddress);
-            }
-            // BackWard compatible.
-            catch (FailedLoadStateException)
-            {
-                enemyAvatarState = AvatarModule.GetAvatarState(world, enemyAddress);
-            }
+            AvatarState enemyAvatarState = AvatarModule.GetAvatarState(world, enemyAddress);
 
             if (enemyAvatarState is null)
             {
@@ -278,15 +268,7 @@ namespace Nekoyume.Action
             world = LegacyModule.SetState(world, arenaInfoAddress, arenaInfo.Serialize());
             world = LegacyModule.SetState(world, enemyArenaInfoAddress, enemyArenaInfo.Serialize());
 
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetInventory(world, inventoryAddress, avatarState.inventory);
-                world = AvatarModule.SetQuestList(world, questListAddress, avatarState.questList);
-            }
+            world = AvatarModule.SetAvatarState(world, avatarAddress, avatarState, false, true, false, true);
 
             if (isNewArenaInfo || isNewEnemyArenaInfo)
             {

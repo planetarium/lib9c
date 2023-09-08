@@ -22,7 +22,6 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class AuraScenarioTest
     {
@@ -66,10 +65,14 @@ namespace Lib9c.Tests.Action.Scenario
                     rankingMapAddress
                 );
                 avatarState.inventory.AddItem(_aura);
-                _initialState = AvatarModule.SetAvatarStateV2(
+                _initialState = AvatarModule.SetAvatarState(
                     _initialState,
                     avatarAddress,
-                    avatarState);
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
             }
 
             _currency = Currency.Legacy("NCG", 2, minters: null);
@@ -139,7 +142,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = _agentAddress,
             });
 
-            var avatarState = AvatarModule.GetAvatarStateV2(_initialState, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             Assert_Player(avatarState, nextState, _avatarAddress, itemSlotStateAddress);
         }
 
@@ -148,13 +151,13 @@ namespace Lib9c.Tests.Action.Scenario
         {
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(_avatarAddress, BattleType.Raid);
             Assert.Null(LegacyModule.GetState(_initialState, itemSlotStateAddress));
-            var avatarState = AvatarModule.GetAvatarStateV2(_initialState, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             for (int i = 0; i < 50; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var prevState = AvatarModule.SetAvatarStateV2(
+            var prevState = AvatarModule.SetAvatarState(
                 _initialState,
                 _avatarAddress,
                 avatarState,
@@ -196,13 +199,13 @@ namespace Lib9c.Tests.Action.Scenario
                 var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
                 Assert.Null(LegacyModule.GetState(_initialState, itemSlotStateAddress));
 
-                var avatarState = AvatarModule.GetAvatarStateV2(prevState, avatarAddress);
+                var avatarState = AvatarModule.GetAvatarState(prevState, avatarAddress);
                 for (int i = 0; i < 50; i++)
                 {
                     avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                 }
 
-                prevState = AvatarModule.SetAvatarStateV2(
+                prevState = AvatarModule.SetAvatarState(
                     prevState,
                     avatarAddress,
                     avatarState,
@@ -264,8 +267,8 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = 2,
                     RandomSeed = 0,
                 });
-                var avatarState = AvatarModule.GetAvatarStateV2(prevState, avatarAddress);
-                var enemyAvatarState = AvatarModule.GetAvatarStateV2(prevState, enemyAvatarAddress);
+                var avatarState = AvatarModule.GetAvatarState(prevState, avatarAddress);
+                var enemyAvatarState = AvatarModule.GetAvatarState(prevState, enemyAvatarAddress);
                 var simulator = new ArenaSimulator(new TestRandom());
                 var myArenaPlayerDigest = new ArenaPlayerDigest(
                     avatarState,
@@ -302,7 +305,7 @@ namespace Lib9c.Tests.Action.Scenario
         [Fact]
         public void Grinding()
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(_initialState, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             Assert.True(avatarState.inventory.TryGetNonFungibleItem(_aura.ItemId, out _));
 
             var grinding = new Grinding
@@ -320,7 +323,7 @@ namespace Lib9c.Tests.Action.Scenario
                 BlockIndex = 1L,
             });
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextState, _avatarAddress);
             Assert.False(nextAvatarState.inventory.TryGetNonFungibleItem(_aura.ItemId, out _));
             var previousCrystal = LegacyModule.GetBalance(_initialState, _agentAddress, Currencies.Crystal);
             Assert.True(LegacyModule.GetBalance(nextState, _agentAddress, Currencies.Crystal) > previousCrystal);
@@ -329,7 +332,7 @@ namespace Lib9c.Tests.Action.Scenario
         [Fact]
         public void Market()
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(_initialState, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             avatarState.inventory.TryGetNonFungibleItem(_aura.ItemId, out Aura aura);
             Assert.NotNull(aura);
             Assert.IsAssignableFrom<Equipment>(aura);
@@ -339,10 +342,14 @@ namespace Lib9c.Tests.Action.Scenario
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var previousState = AvatarModule.SetWorldInformation(
+            var previousState = AvatarModule.SetAvatarState(
                 _initialState,
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation);
+                _avatarAddress,
+                avatarState,
+                false,
+                false,
+                true,
+                false);
 
             var register = new RegisterProduct
             {
@@ -371,7 +378,7 @@ namespace Lib9c.Tests.Action.Scenario
 
         private void Assert_Player(AvatarState avatarState, IWorld world, Address avatarAddress, Address itemSlotStateAddress)
         {
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(world, avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(world, avatarAddress);
             var equippedItem = Assert.IsType<Aura>(nextAvatarState.inventory.Equipments.First());
             Assert.True(equippedItem.equipped);
             Assert_ItemSlot(world, itemSlotStateAddress);

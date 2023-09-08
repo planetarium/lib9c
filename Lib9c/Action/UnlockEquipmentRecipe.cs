@@ -61,7 +61,6 @@ namespace Nekoyume.Action
             }
 
             WorldInformation worldInformation;
-            bool migrationRequired = false;
             AvatarState avatarState = null;
             if (LegacyModule.TryGetState(world, worldInformationAddress, out Dictionary rawInfo))
             {
@@ -77,7 +76,14 @@ namespace Nekoyume.Action
                         out avatarState))
                 {
                     worldInformation = avatarState.worldInformation;
-                    migrationRequired = true;
+                    world = AvatarModule.SetAvatarState(
+                        world,
+                        AvatarAddress,
+                        avatarState,
+                        true,
+                        true,
+                        true,
+                        true);
                 }
                 else
                 {
@@ -106,11 +112,6 @@ namespace Nekoyume.Action
             {
                 throw new NotEnoughFungibleAssetValueException(
                     $"required {cost}, but balance is {balance}");
-            }
-
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
             }
 
             world = LegacyModule.SetState(

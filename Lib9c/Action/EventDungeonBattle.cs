@@ -137,12 +137,11 @@ namespace Nekoyume.Action
             var sw = new Stopwatch();
             // Get AvatarState
             sw.Start();
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     AvatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
@@ -394,16 +393,14 @@ namespace Nekoyume.Action
 
             // Set states
             sw.Restart();
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
-                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
-            }
-
+            world = AvatarModule.SetAvatarState(
+                world,
+                AvatarAddress,
+                avatarState,
+                true,
+                true,
+                false,
+                false);
             world = LegacyModule.SetState(
                 world,
                 eventDungeonInfoAddr,

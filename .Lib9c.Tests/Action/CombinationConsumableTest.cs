@@ -15,7 +15,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class CombinationConsumableTest
     {
@@ -61,7 +60,14 @@ namespace Lib9c.Tests.Action
 
             _initialState = new MockWorld();
             _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
-            _initialState = AvatarModule.SetAvatarState(_initialState, _avatarAddress, avatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = LegacyModule.SetState(
                 _initialState,
                 slotAddress,
@@ -82,10 +88,8 @@ namespace Lib9c.Tests.Action
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute(bool backward)
+        [Fact]
+        public void Execute()
         {
             var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             var row = _tableSheets.ConsumableItemRecipeSheet.Values.First();
@@ -107,21 +111,14 @@ namespace Lib9c.Tests.Action
                 _tableSheets.WorldSheet,
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
-            IWorld previousState;
-            if (backward)
-            {
-                previousState = AvatarModule.SetAvatarState(
-                    _initialState,
-                    _avatarAddress,
-                    avatarState);
-            }
-            else
-            {
-                previousState = AvatarModule.SetAvatarStateV2(
-                    _initialState,
-                    _avatarAddress,
-                    avatarState);
-            }
+            IWorld previousState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             var action = new CombinationConsumable
             {
@@ -145,7 +142,7 @@ namespace Lib9c.Tests.Action
             var consumable = (Consumable)slotState.Result.itemUsable;
             Assert.NotNull(consumable);
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextState, _avatarAddress);
             Assert.Equal(previousActionPoint - costActionPoint, nextAvatarState.actionPoint);
             Assert.Equal(previousMailCount + 1, nextAvatarState.mailBox.Count);
             Assert.IsType<CombinationMail>(nextAvatarState.mailBox.First());

@@ -44,7 +44,14 @@ namespace Lib9c.Tests.Action.Scenario
             var context = new ActionContext();
             IWorld initialState = new MockWorld();
             initialState = AgentModule.SetAgentState(initialState, agentAddress, agentState);
-            initialState = AvatarModule.SetAvatarStateV2(initialState, avatarAddress, avatarState);
+            initialState = AvatarModule.SetAvatarState(
+                initialState,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             initialState = LegacyModule.SetState(
                 initialState,
                 Addresses.GoldCurrency,
@@ -113,7 +120,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
             });
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextState, avatarAddress);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(1));
             var rawRuneSlot = Assert.IsType<List>(LegacyModule.GetState(nextState, runeSlotStateAddress));
             var runeSlot = new RuneSlotState(rawRuneSlot);

@@ -88,7 +88,14 @@ namespace Lib9c.Tests.Action.Scenario
                 gameConfigState.address,
                 gameConfigState.Serialize());
             _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
-            _initialState = AvatarModule.SetAvatarStateV2(_initialState, _avatarAddress, avatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = LegacyModule.SetState(_initialState, _slot0Address, slot0State.Serialize());
 
             foreach (var (key, value) in sheets)

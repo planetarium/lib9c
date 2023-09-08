@@ -72,13 +72,15 @@ namespace Lib9c.Tests.Action
             _initialWorld = AvatarModule.SetAvatarState(
                 _initialWorld,
                 _avatarAddress,
-                avatarState);
+                avatarState,
+                true,
+                true,
+                true,
+                true);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute(bool backward)
+        [Fact]
+        public void Execute()
         {
             const int slotStateUnlockStage = 1;
 
@@ -131,14 +133,14 @@ namespace Lib9c.Tests.Action
                 slotAddress,
                 slotState.Serialize());
 
-            if (backward)
-            {
-                tempState = AvatarModule.SetAvatarState(tempState, _avatarAddress, avatarState);
-            }
-            else
-            {
-                tempState = AvatarModule.SetAvatarStateV2(tempState, _avatarAddress, avatarState);
-            }
+            tempState = AvatarModule.SetAvatarState(
+                tempState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             var action = new RapidCombination
             {
@@ -153,7 +155,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 51,
             });
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextState, _avatarAddress);
             var item = nextAvatarState.inventory.Equipments.First();
 
             Assert.Empty(nextAvatarState.inventory.Materials.Select(r => r.ItemSubType == ItemSubType.Hourglass));
@@ -226,7 +228,14 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
             slotState.Update(result, 0, 0);
 
-            var tempState = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            var tempState = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             tempState = LegacyModule.SetState(tempState, slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
@@ -281,7 +290,14 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, avatarClearedStage);
             slotState.Update(result, 0, 0);
 
-            var tempState = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            var tempState = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             tempState = LegacyModule.SetState(tempState, slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
@@ -356,7 +372,14 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
             slotState.Update(result, 0, 0);
 
-            var tempState = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            var tempState = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             tempState = LegacyModule.SetState(tempState, slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
@@ -530,7 +553,14 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
             slotState.Update(result, 0, 0);
 
-            var tempState = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            var tempState = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             tempState = LegacyModule.SetState(tempState, slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
@@ -651,7 +681,14 @@ namespace Lib9c.Tests.Action
                 _initialWorld,
                 slotAddress,
                 slotState.Serialize());
-            tempState = AvatarModule.SetAvatarStateV2(tempState, _avatarAddress, avatarState);
+            tempState = AvatarModule.SetAvatarState(
+                tempState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             var action = new RapidCombination
             {

@@ -228,8 +228,8 @@ namespace Nekoyume.Action.Garages
             IRandom random,
             IWorld world)
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(world, RecipientAvatarAddr);
-            
+            var avatarState = AvatarModule.GetAvatarState(world, RecipientAvatarAddr);
+
             // NOTE:
             // This action supports the avatar state v2 only.
             // So, we just check the mail box with a newer key.
@@ -242,7 +242,14 @@ namespace Nekoyume.Action.Garages
                 FungibleIdAndCounts,
                 Memo));
             avatarState.mailBox.CleanUp();
-            return AvatarModule.SetAvatarV2(world, RecipientAvatarAddr, avatarState);
+            return AvatarModule.SetAvatarState(
+                world,
+                RecipientAvatarAddr,
+                avatarState,
+                true,
+                false,
+                false,
+                false);
         }
     }
 }

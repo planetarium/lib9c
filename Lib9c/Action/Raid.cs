@@ -8,7 +8,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -20,7 +19,6 @@ using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -57,12 +55,11 @@ namespace Nekoyume.Action
             var addressHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid exec started", addressHex);
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     AvatarAddress,
-                    out AvatarState avatarState,
-                    out var migrationRequired))
+                    out AvatarState avatarState))
             {
                 throw new FailedLoadStateException(
                     $"Aborted as the avatar state of the signer was failed to load.");
@@ -364,15 +361,14 @@ namespace Nekoyume.Action
                     rewardRecord.Serialize());
             }
 
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
-                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
-            }
+            world = AvatarModule.SetAvatarState(
+                world,
+                AvatarAddress,
+                avatarState,
+                true,
+                true,
+                false,
+                false);
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);

@@ -92,11 +92,10 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the price is less than zero: {price}.");
             }
 
-            if (!AvatarModule.TryGetAgentAvatarStates(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     sellerAvatarAddress,
-                    out _,
                     out var avatarState))
             {
                 throw new FailedLoadStateException(
@@ -287,7 +286,14 @@ namespace Nekoyume.Action
             result.id = mail.id;
             avatarState.Update(mail);
 
-            world = AvatarModule.SetAvatarState(world, sellerAvatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                sellerAvatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();

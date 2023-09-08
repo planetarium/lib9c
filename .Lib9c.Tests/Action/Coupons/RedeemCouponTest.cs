@@ -78,9 +78,30 @@ namespace Lib9c.Tests.Action.Coupons
                     LegacyModule.GetSheet<MaterialItemSheet>(world),
                     default);
 
-            world = AvatarModule.SetAvatarStateV2(world, agent1Avatar0Address, agent1Avatar0State);
-            world = AvatarModule.SetAvatarStateV2(world, agent1Avatar1Address, agent1Avatar1State);
-            world = AvatarModule.SetAvatarStateV2(world, agent2Avatar0Address, agent2Avatar0State);
+            world = AvatarModule.SetAvatarState(
+                world,
+                agent1Avatar0Address,
+                agent1Avatar0State,
+                true,
+                true,
+                true,
+                true);
+            world = AvatarModule.SetAvatarState(
+                world,
+                agent1Avatar1Address,
+                agent1Avatar1State,
+                true,
+                true,
+                true,
+                true);
+            world = AvatarModule.SetAvatarState(
+                world,
+                agent2Avatar0Address,
+                agent2Avatar0State,
+                true,
+                true,
+                true,
+                true);
 
             // can't redeem a coupon with an arbitrary guid
             // FIXME: This should not world because IWorld does not implement IEquals interface.
@@ -153,7 +174,7 @@ namespace Lib9c.Tests.Action.Coupons
                     CouponsFixture.AgentAddress1.Derive(SerializeKeys.CouponWalletKey)));
 
             // can't redeem other person's coupon
-            var expected = AvatarModule.GetAvatarStateV2(world, agent1Avatar0Address);
+            var expected = AvatarModule.GetAvatarState(world, agent1Avatar0Address);
             world = new RedeemCoupon(CouponsFixture.Guid3, agent1Avatar0Address)
                 .Execute(
                     new ActionContext
@@ -164,14 +185,14 @@ namespace Lib9c.Tests.Action.Coupons
                         RandomSeed = random.Seed,
                     });
             Assert.Equal(
-                expected.SerializeV2(),
-                AvatarModule.GetAvatarStateV2(world, agent1Avatar0Address).SerializeV2());
+                expected.SerializeList(),
+                AvatarModule.GetAvatarState(world, agent1Avatar0Address).SerializeList());
             Assert.Equal(
                 agent2CouponWallet,
                 LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress2));
 
             // can't redeem other person's coupon to their account
-            expected = AvatarModule.GetAvatarStateV2(world, agent2Avatar0Address);
+            expected = AvatarModule.GetAvatarState(world, agent2Avatar0Address);
             world = new RedeemCoupon(CouponsFixture.Guid3, agent2Avatar0Address)
                 .Execute(
                     new ActionContext
@@ -182,8 +203,8 @@ namespace Lib9c.Tests.Action.Coupons
                         RandomSeed = random.Seed,
                     });
             Assert.Equal(
-                expected.SerializeV2(),
-                AvatarModule.GetAvatarStateV2(world, agent2Avatar0Address).SerializeV2());
+                expected.SerializeList(),
+                AvatarModule.GetAvatarState(world, agent2Avatar0Address).SerializeList());
             Assert.Equal(agent2CouponWallet, LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress2));
 
             // can't redeem to a nonexistent avatar
@@ -201,14 +222,14 @@ namespace Lib9c.Tests.Action.Coupons
                         RandomSeed = random.Seed,
                     });
             Assert.Null(
-                AvatarModule.GetAvatarStateV2(
+                AvatarModule.GetAvatarState(
                     world,
                     CouponsFixture.AgentAddress1
                         .Derive(SerializeKeys.AvatarAddressKey)
                         .Derive("avatar-states-2")));
             Assert.Equal(agent1CouponWallet, LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress1));
 
-            expected = AvatarModule.GetAvatarStateV2(world, agent2Avatar0Address);
+            expected = AvatarModule.GetAvatarState(world, agent2Avatar0Address);
             // can't redeem to an avatar of different agent
             world = new RedeemCoupon(
                     CouponsFixture.Guid1,
@@ -222,12 +243,12 @@ namespace Lib9c.Tests.Action.Coupons
                         RandomSeed = random.Seed,
                     });
             Assert.Equal(
-                expected.SerializeV2(),
-                AvatarModule.GetAvatarStateV2(world, agent2Avatar0Address).SerializeV2());
+                expected.SerializeList(),
+                AvatarModule.GetAvatarState(world, agent2Avatar0Address).SerializeList());
             Assert.Equal(agent1CouponWallet, LegacyModule.GetCouponWallet(world, CouponsFixture.AgentAddress1));
 
             // redeem a coupon
-            expected = AvatarModule.GetAvatarStateV2(world, agent1Avatar0Address);
+            expected = AvatarModule.GetAvatarState(world, agent1Avatar0Address);
             world = new RedeemCoupon(
                     CouponsFixture.Guid1,
                     agent1Avatar0Address)
@@ -239,17 +260,17 @@ namespace Lib9c.Tests.Action.Coupons
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
-            var actual = AvatarModule.GetAvatarStateV2(world, agent1Avatar0Address);
+            var actual = AvatarModule.GetAvatarState(world, agent1Avatar0Address);
             Assert.Equal(
                 CouponsFixture.RewardSet1.Select(kv => kv.Key).ToImmutableSortedSet(),
                 actual.inventory.Items
                     .Select(item => item.item.Id)
                     .ToImmutableSortedSet());
             expected.inventory = actual.inventory;
-            Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
+            Assert.Equal(expected.SerializeList(), actual.SerializeList());
 
             // can't redeem a coupon twice
-            expected = AvatarModule.GetAvatarStateV2(world, agent1Avatar1Address);
+            expected = AvatarModule.GetAvatarState(world, agent1Avatar1Address);
             world = new RedeemCoupon(
                     CouponsFixture.Guid1,
                     agent1Avatar1Address)
@@ -261,12 +282,12 @@ namespace Lib9c.Tests.Action.Coupons
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
-            actual = AvatarModule.GetAvatarStateV2(world, agent1Avatar1Address);
-            Assert.Equal(0, AvatarModule.GetAvatarStateV2(world, agent1Avatar1Address).inventory.Items.Count);
+            actual = AvatarModule.GetAvatarState(world, agent1Avatar1Address);
+            Assert.Equal(0, AvatarModule.GetAvatarState(world, agent1Avatar1Address).inventory.Items.Count);
             Assert.Empty(actual.inventory.Items);
-            Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
+            Assert.Equal(expected.SerializeList(), actual.SerializeList());
 
-            expected = AvatarModule.GetAvatarStateV2(world, agent1Avatar1Address);
+            expected = AvatarModule.GetAvatarState(world, agent1Avatar1Address);
             world = new RedeemCoupon(
                     CouponsFixture.Guid2,
                     agent1Avatar1Address)
@@ -278,15 +299,15 @@ namespace Lib9c.Tests.Action.Coupons
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
-            actual = AvatarModule.GetAvatarStateV2(world, agent1Avatar1Address);
+            actual = AvatarModule.GetAvatarState(world, agent1Avatar1Address);
             Assert.Equal(
                 CouponsFixture.RewardSet2.Select(kv => kv.Key).ToImmutableSortedSet(),
                 actual.inventory.Items
                     .Select(item => item.item.Id)
                     .ToImmutableSortedSet());
-            Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
+            Assert.Equal(expected.SerializeList(), actual.SerializeList());
 
-            expected = AvatarModule.GetAvatarStateV2(world, agent2Avatar0Address);
+            expected = AvatarModule.GetAvatarState(world, agent2Avatar0Address);
             world = new RedeemCoupon(
                     CouponsFixture.Guid3,
                     agent2Avatar0Address)
@@ -298,16 +319,16 @@ namespace Lib9c.Tests.Action.Coupons
                         Signer = CouponsFixture.AgentAddress2,
                         RandomSeed = random.Seed,
                     });
-            actual = AvatarModule.GetAvatarStateV2(world, agent2Avatar0Address);
+            actual = AvatarModule.GetAvatarState(world, agent2Avatar0Address);
             Assert.Equal(
                 CouponsFixture.RewardSet3.Select(kv => kv.Key).ToImmutableSortedSet(),
                 actual.inventory.Items
                     .Select(item => item.item.Id)
                     .ToImmutableSortedSet());
-            Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
+            Assert.Equal(expected.SerializeList(), actual.SerializeList());
 
             world = LegacyModule.SetCouponWallet(world, CouponsFixture.AgentAddress1, agent1CouponWallet);
-            expected = AvatarModule.GetAvatarStateV2(world, agent1Avatar0Address);
+            expected = AvatarModule.GetAvatarState(world, agent1Avatar0Address);
             world = new RedeemCoupon(
                     CouponsFixture.Guid2,
                     agent1Avatar0Address)
@@ -319,7 +340,7 @@ namespace Lib9c.Tests.Action.Coupons
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
-            actual = AvatarModule.GetAvatarStateV2(world, agent1Avatar0Address);
+            actual = AvatarModule.GetAvatarState(world, agent1Avatar0Address);
             var aggregateRewardSet = CouponsFixture.RewardSet1.Aggregate(
                 CouponsFixture.RewardSet2, (rewardSet, kv) =>
                 {
@@ -348,7 +369,7 @@ namespace Lib9c.Tests.Action.Coupons
             }
 
             expected.inventory = actual.inventory;
-            Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
+            Assert.Equal(expected.SerializeList(), actual.SerializeList());
         }
     }
 }

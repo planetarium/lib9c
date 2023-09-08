@@ -56,12 +56,11 @@ namespace Nekoyume.Action
                 registerInfo.Validate();
             }
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     AvatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException("failed to load avatar state.");
             }
@@ -106,18 +105,16 @@ namespace Nekoyume.Action
             {
                 world = Register(context, info, avatarState, productsState, world, random);
             }
-            
-            world = LegacyModule.SetState(world, productsStateAddress, productsState.Serialize());
 
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
-                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
-            }
+            world = LegacyModule.SetState(world, productsStateAddress, productsState.Serialize());
+            world = AvatarModule.SetAvatarState(
+                world,
+                AvatarAddress,
+                avatarState,
+                true,
+                true,
+                false,
+                false);
 
             return world;
         }

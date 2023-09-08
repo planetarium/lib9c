@@ -15,7 +15,6 @@ namespace Lib9c.Tests.Action.Summon
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
-    using static SerializeKeys;
 
     public class AuraSummonTest
     {
@@ -55,7 +54,14 @@ namespace Lib9c.Tests.Action.Summon
             var context = new ActionContext();
             _initialState = new MockWorld();
             _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
-            _initialState = AvatarModule.SetAvatarV2(_initialState, _avatarAddress, _avatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                _avatarState,
+                true,
+                false,
+                false,
+                false);
             _initialState = LegacyModule.SetState(_initialState, GoldCurrencyState.Address, gold.Serialize());
             _initialState = LegacyModule.MintAsset(_initialState, context, GoldCurrencyState.Address, gold.Currency * 100000000000);
             _initialState = LegacyModule.TransferAsset(
@@ -154,7 +160,14 @@ namespace Lib9c.Tests.Action.Summon
                     ItemFactory.CreateItem(material, random),
                     materialCount
                 );
-                state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
+                state = AvatarModule.SetAvatarState(
+                    state,
+                    _avatarAddress,
+                    _avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
             }
 
             var action = new AuraSummon(
@@ -175,7 +188,7 @@ namespace Lib9c.Tests.Action.Summon
                 ctx.SetRandom(random);
                 var nextState = action.Execute(ctx);
 
-                var equipments = AvatarModule.GetAvatarStateV2(nextState, _avatarAddress).inventory.Equipments
+                var equipments = AvatarModule.GetAvatarState(nextState, _avatarAddress).inventory.Equipments
                     .ToList();
                 Assert.Equal(expectedEquipmentId.Length, equipments.Count);
 
@@ -192,7 +205,7 @@ namespace Lib9c.Tests.Action.Summon
                     Assert.True(resultEquipment.optionCountFromCombination > 0);
                 }
 
-                AvatarModule.GetAvatarStateV2(nextState, _avatarAddress).inventory
+                AvatarModule.GetAvatarState(nextState, _avatarAddress).inventory
                     .TryGetItem((int)materialId!, out var resultMaterial);
                 Assert.Equal(0, resultMaterial?.count ?? 0);
             }

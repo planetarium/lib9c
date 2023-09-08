@@ -87,7 +87,14 @@ namespace Lib9c.Tests.Action
                 _world,
                 _avatar1Address.Derive(LegacyQuestListKey),
                 _avatar1.questList.Serialize());
-            _world = AvatarModule.SetAvatarState(_world, _avatar1Address, _avatar1);
+            _world = AvatarModule.SetAvatarState(
+                _world,
+                _avatar1Address,
+                _avatar1,
+                true,
+                true,
+                true,
+                true);
             _world = LegacyModule.SetState(
                 _world,
                 Addresses.GameConfig,

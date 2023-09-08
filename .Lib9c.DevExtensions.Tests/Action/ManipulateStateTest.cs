@@ -58,7 +58,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 _avatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey);
             _questListAddress = _avatarAddress.Derive(SerializeKeys.LegacyQuestListKey);
             _recipeAddress = _avatarAddress.Derive("recipe_ids");
-            _avatarState = AvatarModule.GetAvatarStateV2(_initialStateV2, _avatarAddress);
+            _avatarState = AvatarModule.GetAvatarState(_initialStateV2, _avatarAddress);
         }
 
         // MemberData
@@ -373,7 +373,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             int? hair, int? lens, int? ear, int? tail
         )
         {
-            var targetAvatarState = AvatarModule.GetAvatarStateV2(world, _avatarAddress);
+            var targetAvatarState = AvatarModule.GetAvatarState(world, _avatarAddress);
 
             if (name != null)
             {
@@ -428,7 +428,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
         private void TestInventoryState(IWorld state, Inventory targetInventory)
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(state, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(state, _avatarAddress);
             var inventoryState = avatarState.inventory;
             Assert.Equal(targetInventory.Items.Count, inventoryState.Items.Count);
             foreach (var item in targetInventory.Items)
@@ -463,7 +463,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 new MockWorld(_initialStateV2),
                 new List<(Address, Address, IValue)>
                 {
-                    (Addresses.Avatar, _avatarAddress, newAvatarState.SerializeV2())
+                    (Addresses.Avatar, _avatarAddress, newAvatarState.SerializeList())
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -478,7 +478,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
         private void TestQuestState(IWorld world, List<int> targetQuestIdList)
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(world, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(world, _avatarAddress);
             var questState = avatarState.questList;
             foreach (var target in targetQuestIdList)
             {
@@ -488,7 +488,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
         private void TestWorldInformation(IWorld world, int lastClearedStage)
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(world, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(world, _avatarAddress);
             var worldInformation = avatarState.worldInformation;
 
             for (var i = 0; i < lastClearedStage; i++)
@@ -506,7 +506,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             {
                 StateList = new List<(Address, Address, IValue)>
                 {
-                    (Addresses.Avatar, _avatarAddress, _avatarState.SerializeV2()),
+                    (Addresses.Avatar, _avatarAddress, _avatarState.SerializeList()),
                 },
                 BalanceList = new List<(Address, FungibleAssetValue)>
                 {
@@ -627,7 +627,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 new MockWorld(_initialStateV2),
                 new List<(Address, Address, IValue)>
                 {
-                    (Addresses.Avatar, _avatarAddress, newAvatarState.Serialize()),
+                    (Addresses.Avatar, _avatarAddress, newAvatarState.SerializeList()),
                     (ReservedAddresses.LegacyAccount, _inventoryAddress, inventory.Serialize()),
                     (ReservedAddresses.LegacyAccount, _worldInformationAddress, worldState.Serialize()),
                     (ReservedAddresses.LegacyAccount, _questListAddress, questList.Serialize()),

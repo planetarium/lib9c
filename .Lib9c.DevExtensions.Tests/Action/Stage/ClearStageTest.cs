@@ -45,7 +45,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Stage
                 BlockIndex = 0L,
             });
 
-            var avatarState = AvatarModule.GetAvatarStateV2(state, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(state, _avatarAddress);
             for (var i = 1; i <= targetStage; i++)
             {
                 Assert.True(avatarState.worldInformation.IsStageCleared(i));

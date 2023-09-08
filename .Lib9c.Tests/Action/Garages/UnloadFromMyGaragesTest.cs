@@ -175,7 +175,7 @@ namespace Lib9c.Tests.Action.Garages
                 }
             }
 
-            var avatarState = AvatarModule.GetAvatarStateV2(nextStates, _recipientAvatarAddr)!;
+            var avatarState = AvatarModule.GetAvatarState(nextStates, _recipientAvatarAddr)!;
             var mailBox = avatarState.mailBox;
             Assert.Single(mailBox);
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());

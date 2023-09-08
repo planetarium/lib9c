@@ -200,7 +200,14 @@ namespace Lib9c.DevExtensions.Action
             avatarState.UpdateQuestRewards(materialItemSheet);
             world = AgentModule.SetAgentState(world, agentAddress, agentState);
             world = LegacyModule.SetState(world, Addresses.Ranking, rankingState.Serialize());
-            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             // ~Create Agent and avatar && ~Add item
 
             // for sell
@@ -243,7 +250,14 @@ namespace Lib9c.DevExtensions.Action
                 orderReceiptList.Add(orderDigest);
 
                 world = LegacyModule.SetState(world, orderReceiptAddress, orderReceiptList.Serialize());
-                world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+                world = AvatarModule.SetAvatarState(
+                    world,
+                    avatarAddress,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
                 world = LegacyModule.SetState(world, itemAddress, tradableItem.Serialize());
                 world = LegacyModule.SetState(world, orderAddress, order.Serialize());
                 world = LegacyModule.SetState(world, shopAddress, shardedShopState.Serialize());

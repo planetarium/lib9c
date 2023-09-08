@@ -100,51 +100,47 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         // Tutorial recipe.
-        [InlineData(null, false, false, true, true, false, 3, 0, true, 1L, 1, null, true, false, false, false, false)]
-        // Migration AvatarState.
-        [InlineData(null, false, false, true, true, true, 3, 0, true, 1L, 1, null, true, false, false, false, false)]
+        [InlineData(null, false, false, true, true,  3, 0, true, 1L, 1, null, true, false, false, false, false)]
         // SubRecipe
-        [InlineData(null, true, true, true, true, false, 11, 0, true, 1L, 2, 1, true, false, false, false, false)]
+        [InlineData(null, true, true, true, true,  11, 0, true, 1L, 2, 1, true, false, false, false, false)]
         // Mimisbrunnr Equipment.
-        [InlineData(null, true, true, true, true, false, 11, 0, true, 1L, 2, 3, true, true, true, false, false)]
+        [InlineData(null, true, true, true, true,  11, 0, true, 1L, 2, 3, true, true, true, false, false)]
         // 3rd sub recipe, not Mimisbrunnr Equipment.
-        [InlineData(null, true, true, true, true, false, 349, 0, true, 1L, 28, 101520003, true, false, false, false, false)]
+        [InlineData(null, true, true, true, true,  349, 0, true, 1L, 28, 101520003, true, false, false, false, false)]
         // Purchase CRYSTAL.
-        [InlineData(null, true, true, true, true, false, 3, 0, true, 1L, 1, null, false, false, false, true, false)]
+        [InlineData(null, true, true, true, true,  3, 0, true, 1L, 1, null, false, false, false, true, false)]
         // Purchase CRYSTAL with calculate previous cost.
-        [InlineData(null, true, true, true, true, false, 3, 0, true, 100_800L, 1, null, false, false, true, true, true)]
+        [InlineData(null, true, true, true, true,  3, 0, true, 100_800L, 1, null, false, false, true, true, true)]
         // Arena round not found
-        [InlineData(null, false, false, true, true, false, 3, 0, true, 0L, 1, null, true, false, false, false, false)]
+        [InlineData(null, false, false, true, true,  3, 0, true, 0L, 1, null, true, false, false, false, false)]
         // UnlockEquipmentRecipe not executed.
-        [InlineData(typeof(FailedLoadStateException), false, true, true, true, false, 11, 0, true, 0L, 2, 1, true, false, false, false, false)]
+        [InlineData(typeof(FailedLoadStateException), false, true, true, true,  11, 0, true, 0L, 2, 1, true, false, false, false, false)]
         // CRYSTAL not paid.
-        [InlineData(typeof(InvalidRecipeIdException), true, false, true, true, false, 11, 0, true, 0L, 2, 1, true, false, false, false, false)]
+        [InlineData(typeof(InvalidRecipeIdException), true, false, true, true,  11, 0, true, 0L, 2, 1, true, false, false, false, false)]
         // AgentState not exist.
-        [InlineData(typeof(FailedLoadStateException), true, true, false, true, false, 3, 0, true, 0L, 1, null, true, false, false, false, false)]
+        [InlineData(typeof(FailedLoadStateException), true, true, false, true,  3, 0, true, 0L, 1, null, true, false, false, false, false)]
         // AvatarState not exist.
-        [InlineData(typeof(FailedLoadStateException), true, true, true, false, false, 3, 0, true, 0L, 1, null, true, false, false, false, false)]
-        [InlineData(typeof(FailedLoadStateException), true, true, true, false, true, 3, 0, true, 0L, 1, null, true, false, false, false, false)]
+        [InlineData(typeof(FailedLoadStateException), true, true, true, false,  3, 0, true, 0L, 1, null, true, false, false, false, false)]
         // Tutorial not cleared.
-        [InlineData(typeof(NotEnoughClearedStageLevelException), true, true, true, true, false, 1, 0, true, 0L, 1, null, true, false, false, false, false)]
+        [InlineData(typeof(NotEnoughClearedStageLevelException), true, true, true, true,  1, 0, true, 0L, 1, null, true, false, false, false, false)]
         // CombinationSlotState not exist.
-        [InlineData(typeof(FailedLoadStateException), true, true, true, true, false, 3, 5, true, 0L, 1, null, true, false, false, false, false)]
+        [InlineData(typeof(FailedLoadStateException), true, true, true, true,  3, 5, true, 0L, 1, null, true, false, false, false, false)]
         // CombinationSlotState locked.
-        [InlineData(typeof(CombinationSlotUnlockException), true, true, true, true, false, 3, 0, false, 0L, 1, null, true, false, false, false, false)]
+        [InlineData(typeof(CombinationSlotUnlockException), true, true, true, true,  3, 0, false, 0L, 1, null, true, false, false, false, false)]
         // Stage not cleared.
-        [InlineData(typeof(NotEnoughClearedStageLevelException), true, true, true, true, false, 3, 0, true, 0L, 2, null, true, false, false, false, false)]
+        [InlineData(typeof(NotEnoughClearedStageLevelException), true, true, true, true,  3, 0, true, 0L, 2, null, true, false, false, false, false)]
         // Not enough material.
-        [InlineData(typeof(NotEnoughMaterialException), true, true, true, true, false, 3, 0, true, 0L, 1, null, false, false, false, false, false)]
+        [InlineData(typeof(NotEnoughMaterialException), true, true, true, true,  3, 0, true, 0L, 1, null, false, false, false, false, false)]
         // Purchase CRYSTAL failed by Mimisbrunnr material.
-        [InlineData(typeof(ArgumentException), true, true, true, true, false, 11, 0, true, 0L, 2, 3, false, false, true, true, false)]
+        [InlineData(typeof(ArgumentException), true, true, true, true,  11, 0, true, 0L, 2, 3, false, false, true, true, false)]
         // Insufficient NCG.
-        [InlineData(typeof(InsufficientBalanceException), true, true, true, true, false, 11, 0, true, 1L, 2, 3, true, false, true, false, false)]
+        [InlineData(typeof(InsufficientBalanceException), true, true, true, true,  11, 0, true, 1L, 2, 3, true, false, true, false, false)]
         public void Execute(
             Type exc,
             bool unlockIdsExist,
             bool crystalUnlock,
             bool agentExist,
             bool avatarExist,
-            bool migrationRequired,
             int stageId,
             int slotIndex,
             bool slotUnlock,
@@ -217,19 +213,14 @@ namespace Lib9c.Tests.Action
                         }
                     }
 
-                    if (migrationRequired)
-                    {
-                        state = AvatarModule.SetAvatarState(state, _avatarAddress, _avatarState);
-                    }
-                    else
-                    {
-                        var inventoryAddress = _avatarAddress.Derive(LegacyInventoryKey);
-                        var worldInformationAddress =
-                            _avatarAddress.Derive(LegacyWorldInformationKey);
-                        var questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
-
-                        state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
-                    }
+                    state = AvatarModule.SetAvatarState(
+                        state,
+                        _avatarAddress,
+                        _avatarState,
+                        true,
+                        true,
+                        true,
+                        true);
 
                     if (!slotUnlock)
                     {
@@ -358,7 +349,7 @@ namespace Lib9c.Tests.Action
                     Assert.Equal(0, equipment.optionCountFromCombination);
                 }
 
-                var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _avatarAddress);
+                var nextAvatarState = AvatarModule.GetAvatarState(nextState, _avatarAddress);
                 var mail = nextAvatarState.mailBox.OfType<CombinationMail>().First();
 
                 Assert.Equal(equipment, mail.attachment.itemUsable);
@@ -446,7 +437,14 @@ namespace Lib9c.Tests.Action
             var worldInformationAddress =
                 _avatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
-            state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
+            state = AvatarModule.SetAvatarState(
+                state,
+                _avatarAddress,
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
             var hammerPointAddress =
                 Addresses.GetHammerPointStateAddress(_avatarAddress, recipeId);
             if (doSuperCraft)

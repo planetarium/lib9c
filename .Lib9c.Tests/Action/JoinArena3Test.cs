@@ -102,9 +102,23 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
 
             _state = AgentModule.SetAgentState(_state, _signer, agentState);
-            _state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
+            _state = AvatarModule.SetAvatarState(
+                _state,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             _state = AgentModule.SetAgentState(_state, _signer2, agent2State);
-            _state = AvatarModule.SetAvatarStateV2(_state, _avatar2Address, avatar2State);
+            _state = AvatarModule.SetAvatarState(
+                _state,
+                _avatar2Address,
+                avatar2State,
+                true,
+                true,
+                true,
+                true);
             _state = LegacyModule.SetState(
                 _state,
                 gameConfigState.address,
@@ -157,7 +171,14 @@ namespace Lib9c.Tests.Action
             avatarState.level = 999;
             (equipments, costumes) = GetDummyItems(avatarState);
 
-            _state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
+            _state = AvatarModule.SetAvatarState(
+                _state,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             return avatarState;
         }
@@ -177,7 +198,14 @@ namespace Lib9c.Tests.Action
                 avatarState.inventory.AddItem(material, count);
             }
 
-            _state = AvatarModule.SetAvatarStateV2(_state, _avatarAddress, avatarState);
+            _state = AvatarModule.SetAvatarState(
+                _state,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             return avatarState;
         }
@@ -196,7 +224,7 @@ namespace Lib9c.Tests.Action
                     nameof(ArenaSheet), $"championship Id : {championshipId}");
             }
 
-            var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             avatarState = AddMedal(avatarState, row, 80);
 
@@ -279,9 +307,16 @@ namespace Lib9c.Tests.Action
         [InlineData(9999)]
         public void Execute_SheetRowNotFoundException(int championshipId)
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarState(
+                _state,
+                _avatarAddress,
+                avatarState,
+                true,
+                false,
+                false,
+                false);
 
             var action = new JoinArena()
             {
@@ -305,9 +340,16 @@ namespace Lib9c.Tests.Action
         [InlineData(123)]
         public void Execute_RoundNotFoundByIdsException(int round)
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarState(
+                _state,
+                _avatarAddress,
+                avatarState,
+                true,
+                false,
+                false,
+                false);
 
             var action = new JoinArena()
             {
@@ -332,7 +374,7 @@ namespace Lib9c.Tests.Action
         [InlineData(8)]
         public void Execute_NotEnoughMedalException(int round)
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_state, _avatarAddress);
             GetAvatarState(avatarState, out var equipments, out var costumes);
             var preCurrency = 99800100000 * _currency;
             var context = new ActionContext();
@@ -362,9 +404,16 @@ namespace Lib9c.Tests.Action
         [InlineData(8, 100)] // entrance_fee
         public void Execute_NotEnoughFungibleAssetValueException(int round, long blockIndex)
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_state, _avatarAddress);
             GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarState(
+                _state,
+                _avatarAddress,
+                avatarState,
+                true,
+                false,
+                false,
+                false);
 
             var action = new JoinArena()
             {
@@ -388,9 +437,16 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_ArenaScoreAlreadyContainsException()
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarState(
+                _state,
+                _avatarAddress,
+                avatarState,
+                true,
+                false,
+                false,
+                false);
 
             var action = new JoinArena()
             {
@@ -426,9 +482,16 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 1;
 
-            var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarState(
+                _state,
+                _avatarAddress,
+                avatarState,
+                true,
+                false,
+                false,
+                false);
 
             var arenaScoreAdr = ArenaScore.DeriveAddress(_avatarAddress, championshipId, round);
             var arenaScore = new ArenaScore(_avatarAddress, championshipId, round);
@@ -459,9 +522,16 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 1;
 
-            var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = AvatarModule.SetAvatarV2(_state, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarState(
+                _state,
+                _avatarAddress,
+                avatarState,
+                true,
+                false,
+                false,
+                false);
 
             var arenaInformationAdr = ArenaInformation.DeriveAddress(_avatarAddress, championshipId, round);
             var arenaInformation = new ArenaInformation(_avatarAddress, championshipId, round);
@@ -521,7 +591,7 @@ namespace Lib9c.Tests.Action
                     nameof(ArenaSheet), $"championship Id : {championshipId}");
             }
 
-            var avatarState = AvatarModule.GetAvatarStateV2(_state, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_state, _avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             avatarState = AddMedal(avatarState, row, 80);
 

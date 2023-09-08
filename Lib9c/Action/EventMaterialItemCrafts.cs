@@ -105,12 +105,11 @@ namespace Nekoyume.Action
 
             // Get AvatarState
             sw.Start();
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     AvatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
@@ -247,7 +246,14 @@ namespace Nekoyume.Action
 
             // Set states
             sw.Restart();
-            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                AvatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             sw.Stop();
             Log.Verbose(
                 "[{ActionTypeString}][{AddressesHex}] Set states: {Elapsed}",

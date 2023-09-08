@@ -77,11 +77,15 @@ namespace Lib9c.Tests.Action
                 new MockWorld(),
                 _weeklyArenaState.address,
                 _weeklyArenaState.Serialize());
-            _initialWorld = AgentModule.SetAgentStateV2(_initialWorld, _agentAddress, agentState);
-            _initialWorld = AvatarModule.SetAvatarStateV2(
+            _initialWorld = AgentModule.SetAgentState(_initialWorld, _agentAddress, agentState);
+            _initialWorld = AvatarModule.SetAvatarState(
                 _initialWorld,
                 _avatarAddress,
-                _avatarState);
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
             _initialWorld = LegacyModule.SetState(
                 _initialWorld,
                 _inventoryAddress,
@@ -137,7 +141,14 @@ namespace Lib9c.Tests.Action
             };
             var gachaStateAddress = Addresses.GetSkillStateAddressFromAvatarAddress(_avatarAddress);
             var gachaState = new CrystalRandomSkillState(gachaStateAddress, stageId);
-            states = AvatarModule.SetAvatarStateV2(states, _avatarAddress, avatarState);
+            states = AvatarModule.SetAvatarState(
+                states,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             states = LegacyModule.SetState(
                 states,
                 _avatarAddress.Derive(LegacyInventoryKey),
@@ -215,7 +226,14 @@ namespace Lib9c.Tests.Action
             };
             var gachaStateAddress = Addresses.GetSkillStateAddressFromAvatarAddress(_avatarAddress);
             var gachaState = new CrystalRandomSkillState(gachaStateAddress, 1);
-            states = AvatarModule.SetAvatarStateV2(states, _avatarAddress, avatarState);
+            states = AvatarModule.SetAvatarState(
+                states,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             states = LegacyModule.SetState(
                 states,
                 _avatarAddress.Derive(LegacyInventoryKey),

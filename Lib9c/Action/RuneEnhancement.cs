@@ -54,7 +54,7 @@ namespace Nekoyume.Action
 
             var world = context.PreviousState;
 
-            if (!AvatarModule.TryGetAvatarStateV2(world, context.Signer, AvatarAddress, out _, out _))
+            if (!AvatarModule.TryGetAvatarState(world, context.Signer, AvatarAddress, out _))
             {
                 throw new FailedLoadStateException(
                     $"Aborted as the avatar state of the signer was failed to load.");

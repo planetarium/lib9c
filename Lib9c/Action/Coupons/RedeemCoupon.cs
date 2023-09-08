@@ -52,12 +52,11 @@ namespace Nekoyume.Action.Coupons
                 return world;
             }
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     AvatarAddress,
-                    out AvatarState avatarState,
-                    out _))
+                    out AvatarState avatarState))
             {
                 return world;
             }
@@ -82,7 +81,14 @@ namespace Nekoyume.Action.Coupons
                 }
             }
 
-            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                AvatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             world = LegacyModule.SetCouponWallet(world, context.Signer, wallet);
             return world;
         }

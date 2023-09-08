@@ -163,7 +163,11 @@ namespace Lib9c.Tests.TestHelper
             initialState = AvatarModule.SetAvatarState(
                 initialState,
                 avatarAddress,
-                avatarState);
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             initialState = LegacyModule.SetState(
                 initialState,
                 Addresses.Shop,

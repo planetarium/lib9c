@@ -63,13 +63,11 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination exec started", addressesHex);
 
-            if (!AvatarModule.TryGetAgentAvatarStatesV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     avatarAddress,
-                    out var agentState,
-                    out var avatarState,
-                    out _))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -174,7 +172,14 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             world = LegacyModule.SetState(world, slotAddress, slotState.Serialize());
             return world;
         }
