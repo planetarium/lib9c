@@ -82,13 +82,13 @@ namespace Lib9c.Tests.Action
                     0
                 )
             );
-            Assert.True(AvatarModule.TryGetAgentAvatarStatesV2(
+            var agentState = AgentModule.GetAgentState(nextWorld, default);
+            Assert.NotNull(agentState);
+            Assert.True(AvatarModule.TryGetAvatarState(
                 nextWorld,
                 default,
                 avatarAddress,
-                out var agentState,
-                out var nextAvatarState,
-                out _)
+                out var nextAvatarState)
             );
             Assert.True(agentState.avatarAddresses.Any());
             Assert.Equal("test", nextAvatarState.name);
@@ -152,7 +152,14 @@ namespace Lib9c.Tests.Action
             };
 
             IWorld state = new MockWorld();
-            state = AvatarModule.SetAvatarState(state, avatarAddress, avatarState);
+            state = AvatarModule.SetAvatarState(
+                state,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext()
                 {

@@ -75,12 +75,11 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RedeemCode exec started", addressesHex);
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     AvatarAddress,
-                    out AvatarState avatarState,
-                    out _))
+                    out AvatarState avatarState))
             {
                 return world;
             }
@@ -142,7 +141,14 @@ namespace Nekoyume.Action
             }
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RedeemCode Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                AvatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             world = LegacyModule.SetState(world, RedeemCodeState.Address, redeemState.Serialize());
             return world;
         }

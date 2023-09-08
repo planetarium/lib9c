@@ -82,7 +82,14 @@ namespace Lib9c.Tests.Action
                 _initialState,
                 Addresses.Shop,
                 new ShopState().Serialize());
-            _initialState = AvatarModule.SetAvatarState(_initialState, _avatarAddress, avatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
         }
 
         [Theory]

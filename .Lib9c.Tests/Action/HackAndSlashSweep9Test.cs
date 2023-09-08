@@ -82,14 +82,18 @@ namespace Lib9c.Tests.Action
                 _initialWorld,
                 _weeklyArenaState.address,
                 _weeklyArenaState.Serialize());
-            _initialWorld = AgentModule.SetAgentStateV2(
+            _initialWorld = AgentModule.SetAgentState(
                 _initialWorld,
                 _agentAddress,
                 agentState);
-            _initialWorld = AvatarModule.SetAvatarStateV2(
+            _initialWorld = AvatarModule.SetAvatarState(
                 _initialWorld,
                 _avatarAddress,
-                _avatarState);
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
             _initialWorld = LegacyModule.SetState(
                 _initialWorld,
                 gameConfigState.address,
@@ -143,23 +147,15 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(1, 1, 1, false, true)]
-        [InlineData(1, 1, 1, false, false)]
-        [InlineData(2, 1, 2, false, true)]
-        [InlineData(2, 1, 2, false, false)]
-        [InlineData(2, 2, 51, false, true)]
-        [InlineData(2, 2, 51, false, false)]
-        [InlineData(2, 2, 52, false, true)]
-        [InlineData(2, 2, 52, false, false)]
-        [InlineData(2, 1, 1, true, true)]
-        [InlineData(2, 1, 1, true, false)]
-        [InlineData(2, 1, 2, true, true)]
-        [InlineData(2, 1, 2, true, false)]
-        [InlineData(2, 2, 51, true, true)]
-        [InlineData(2, 2, 51, true, false)]
-        [InlineData(2, 2, 52, true, true)]
-        [InlineData(2, 2, 52, true, false)]
-        public void Execute(int apStoneCount, int worldId, int stageId, bool challenge, bool backward)
+        [InlineData(1, 1, 1, false)]
+        [InlineData(2, 1, 2, false)]
+        [InlineData(2, 2, 51, false)]
+        [InlineData(2, 2, 52, false)]
+        [InlineData(2, 1, 1, true)]
+        [InlineData(2, 1, 2, true)]
+        [InlineData(2, 2, 51, true)]
+        [InlineData(2, 2, 52, true)]
+        public void Execute(int apStoneCount, int worldId, int stageId, bool challenge)
         {
             var gameConfigState = LegacyModule.GetGameConfigState(_initialWorld);
             var prevStageId = stageId - 1;
@@ -188,18 +184,14 @@ namespace Lib9c.Tests.Action
             var apStone = ItemFactory.CreateTradableMaterial(row);
             avatarState.inventory.AddItem(apStone, apStoneCount);
 
-            IWorld state;
-            if (backward)
-            {
-                state = AvatarModule.SetAvatarState(
+            IWorld state = AvatarModule.SetAvatarState(
                     _initialWorld,
                     _avatarAddress,
-                    avatarState);
-            }
-            else
-            {
-                state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-            }
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
 
             state = LegacyModule.SetState(
                 state,
@@ -247,7 +239,7 @@ namespace Lib9c.Tests.Action
                         Random = _random,
                     });
 
-                var nextAvatarState = AvatarModule.GetAvatarStateV2(state, _avatarAddress);
+                var nextAvatarState = AvatarModule.GetAvatarState(state, _avatarAddress);
 
                 Assert.Equal(expectedLevel, nextAvatarState.level);
                 Assert.Equal(expectedExp, nextAvatarState.exp);
@@ -262,50 +254,11 @@ namespace Lib9c.Tests.Action
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute_FailedLoadStateException(bool backward)
+        [Fact]
+        public void Execute_SheetRowNotFoundException()
         {
-            var action = new HackAndSlashSweep
-            {
-                runeInfos = new List<RuneSlotInfo>(),
-                apStoneCount = 1,
-                avatarAddress = _avatarAddress,
-                worldId = 1,
-                stageId = 1,
-            };
-
-            var state = backward ? new MockWorld() : _initialWorld;
-            if (!backward)
-            {
-                state = AvatarModule.SetAvatarV2(_initialWorld, _avatarAddress, _avatarState);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    null!);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    null!);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    null!);
-            }
-
-            Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                Random = new TestRandom(),
-            }));
-        }
-
-        [Theory]
-        [InlineData(100, 1)]
-        public void Execute_SheetRowNotFoundException(int worldId, int stageId)
-        {
+            var worldId = 100;
+            var stageId = 1;
             var action = new HackAndSlashSweep
             {
                 runeInfos = new List<RuneSlotInfo>(),
@@ -318,7 +271,7 @@ namespace Lib9c.Tests.Action
             var state = LegacyModule.SetState(
                 _initialWorld,
                 _avatarAddress.Derive("world_ids"),
-                List.Empty.Add(worldId.Serialize()));
+                List.Empty.Add(1.Serialize()));
 
             Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext()
             {
@@ -356,11 +309,9 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(1, 48, 1, 50, true)]
-        [InlineData(1, 48, 1, 50, false)]
-        [InlineData(1, 49, 2, 51, true)]
-        [InlineData(1, 49, 2, 51, false)]
-        public void Execute_InvalidStageException(int clearedWorldId, int clearedStageId, int worldId, int stageId, bool backward)
+        [InlineData(1, 48, 1, 50)]
+        [InlineData(1, 49, 2, 51)]
+        public void Execute_InvalidStageException(int clearedWorldId, int clearedStageId, int worldId, int stageId)
         {
             var action = new HackAndSlashSweep
             {
@@ -379,18 +330,14 @@ namespace Lib9c.Tests.Action
                 _initialWorld,
                 _avatarAddress.Derive("world_ids"),
                 List.Empty.Add(worldId.Serialize()));
-
-            if (backward)
-            {
-                state = AvatarModule.SetAvatarState(state, _avatarAddress, _avatarState);
-            }
-            else
-            {
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    _avatarState.worldInformation.Serialize());
-            }
+            state = AvatarModule.SetAvatarState(
+                state,
+                _avatarAddress,
+                _avatarState,
+                true,
+                false,
+                true,
+                false);
 
             Assert.Throws<InvalidStageException>(() => action.Execute(new ActionContext()
             {
@@ -401,12 +348,11 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(GameConfig.MimisbrunnrWorldId, true, 10000001, false)]
-        [InlineData(GameConfig.MimisbrunnrWorldId, false, 10000001, true)]
+        [InlineData(GameConfig.MimisbrunnrWorldId, 10000001, false)]
+        [InlineData(GameConfig.MimisbrunnrWorldId, 10000001, true)]
         // Unlock CRYSTAL first.
-        [InlineData(2, false, 51, false)]
-        [InlineData(2, true, 51, false)]
-        public void Execute_InvalidWorldException(int worldId, bool backward, int stageId, bool unlockedIdsExist)
+        [InlineData(2, 51, false)]
+        public void Execute_InvalidWorldException(int worldId, int stageId, bool unlockedIdsExist)
         {
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             var avatarState = new AvatarState(
@@ -421,15 +367,14 @@ namespace Lib9c.Tests.Action
                     new WorldInformation(0, LegacyModule.GetSheet<WorldSheet>(_initialWorld), 10000001),
             };
 
-            IWorld state;
-            if (backward)
-            {
-                state = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
-            }
-            else
-            {
-                state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-            }
+            IWorld state = AvatarModule.SetAvatarState(
+                    _initialWorld,
+                    _avatarAddress,
+                    avatarState,
+                    true,
+                    false,
+                    false,
+                    false);
 
             if (unlockedIdsExist)
             {
@@ -457,10 +402,8 @@ namespace Lib9c.Tests.Action
             }));
         }
 
-        [Theory]
-        [InlineData(99, true)]
-        [InlineData(99, false)]
-        public void Execute_UsageLimitExceedException(int apStoneCount, bool backward)
+        [Fact]
+        public void Execute_UsageLimitExceedException()
         {
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             var avatarState = new AvatarState(
@@ -475,20 +418,19 @@ namespace Lib9c.Tests.Action
                     new WorldInformation(0, LegacyModule.GetSheet<WorldSheet>(_initialWorld), 25),
             };
 
-            IWorld state;
-            if (backward)
-            {
-                state = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
-            }
-            else
-            {
-                state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-            }
+            IWorld state = AvatarModule.SetAvatarState(
+                    _initialWorld,
+                    _avatarAddress,
+                    avatarState,
+                    true,
+                    false,
+                    false,
+                    false);
 
             var action = new HackAndSlashSweep
             {
                 runeInfos = new List<RuneSlotInfo>(),
-                apStoneCount = apStoneCount,
+                apStoneCount = 99,
                 avatarAddress = _avatarAddress,
                 worldId = 1,
                 stageId = 2,
@@ -503,9 +445,9 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(3, 2, true)]
-        [InlineData(7, 5, false)]
-        public void Execute_NotEnoughMaterialException(int useApStoneCount, int holdingApStoneCount, bool backward)
+        [InlineData(3, 2)]
+        [InlineData(7, 5)]
+        public void Execute_NotEnoughMaterialException(int useApStoneCount, int holdingApStoneCount)
         {
             var gameConfigState = LegacyModule.GetGameConfigState(_initialWorld);
             var avatarState = new AvatarState(
@@ -526,15 +468,14 @@ namespace Lib9c.Tests.Action
             var apStone = ItemFactory.CreateTradableMaterial(row);
             avatarState.inventory.AddItem(apStone, holdingApStoneCount);
 
-            IWorld state;
-            if (backward)
-            {
-                state = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
-            }
-            else
-            {
-                state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-            }
+            IWorld state = AvatarModule.SetAvatarState(
+                    _initialWorld,
+                    _avatarAddress,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
 
             var stageSheet = LegacyModule.GetSheet<StageSheet>(_initialWorld);
             var (expectedLevel, expectedExp) = (0, 0L);
@@ -572,10 +513,8 @@ namespace Lib9c.Tests.Action
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute_NotEnoughActionPointException(bool backward)
+        [Fact]
+        public void Execute_NotEnoughActionPointException()
         {
             var gameConfigState = LegacyModule.GetGameConfigState(_initialWorld);
             var avatarState = new AvatarState(
@@ -592,15 +531,14 @@ namespace Lib9c.Tests.Action
                 actionPoint = 0,
             };
 
-            IWorld state;
-            if (backward)
-            {
-                state = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
-            }
-            else
-            {
-                state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-            }
+            IWorld state = AvatarModule.SetAvatarState(
+                    _initialWorld,
+                    _avatarAddress,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
 
             var stageSheet = LegacyModule.GetSheet<StageSheet>(_initialWorld);
             var (expectedLevel, expectedExp) = (0, 0L);
@@ -638,10 +576,8 @@ namespace Lib9c.Tests.Action
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute_PlayCountIsZeroException(bool backward)
+        [Fact]
+        public void Execute_PlayCountIsZeroException()
         {
             var gameConfigState = LegacyModule.GetGameConfigState(_initialWorld);
             var avatarState = new AvatarState(
@@ -658,15 +594,14 @@ namespace Lib9c.Tests.Action
                 actionPoint = 0,
             };
 
-            IWorld state;
-            if (backward)
-            {
-                state = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
-            }
-            else
-            {
-                state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-            }
+            IWorld state = AvatarModule.SetAvatarState(
+                    _initialWorld,
+                    _avatarAddress,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
 
             var stageSheet = LegacyModule.GetSheet<StageSheet>(_initialWorld);
             var (expectedLevel, expectedExp) = (0, 0L);
@@ -704,11 +639,11 @@ namespace Lib9c.Tests.Action
             }
         }
 
-        [Theory]
-        [InlineData(1, 24, true)]
-        [InlineData(1, 24, false)]
-        public void Execute_NotEnoughCombatPointException(int worldId, int stageId, bool backward)
+        [Fact]
+        public void Execute_NotEnoughCombatPointException()
         {
+            var worldId = 1;
+            var stageId = 24;
             var gameConfigState = LegacyModule.GetGameConfigState(_initialWorld);
             var avatarState = new AvatarState(
                 _avatarAddress,
@@ -724,15 +659,14 @@ namespace Lib9c.Tests.Action
                 level = 1,
             };
 
-            IWorld state;
-            if (backward)
-            {
-                state = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
-            }
-            else
-            {
-                state = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
-            }
+            IWorld state = AvatarModule.SetAvatarState(
+                    _initialWorld,
+                    _avatarAddress,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
 
             var stageSheet = LegacyModule.GetSheet<StageSheet>(_initialWorld);
             var (expectedLevel, expectedExp) = (0, 0L);
@@ -803,7 +737,14 @@ namespace Lib9c.Tests.Action
             var requiredGold = _tableSheets.StakeRegularRewardSheet.OrderedRows
                 .FirstOrDefault(r => r.Level == stakingLevel)?.RequiredGold ?? 0;
             var context = new ActionContext();
-            var state = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             state = LegacyModule.SetState(state, stakeStateAddress, stakeState.Serialize());
             state = LegacyModule.MintAsset(
                 state,
@@ -842,7 +783,7 @@ namespace Lib9c.Tests.Action
                     Signer = _agentAddress,
                     Random = new TestRandom(),
                 });
-                var nextAvatar = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
+                var nextAvatar = AvatarModule.GetAvatarState(nextWorld, _avatarAddress);
                 Assert.Equal(expectedLevel, nextAvatar.level);
                 Assert.Equal(expectedExp, nextAvatar.exp);
             }
@@ -884,7 +825,7 @@ namespace Lib9c.Tests.Action
             var requiredGold = _tableSheets.StakeRegularRewardSheet.OrderedRows
                 .FirstOrDefault(r => r.Level == stakingLevel)?.RequiredGold ?? 0;
             var context = new ActionContext();
-            var state = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            var state = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState, true, false, false, false);
             state = LegacyModule.SetState(state, stakeStateAddress, stakeState.Serialize());
             state = LegacyModule.MintAsset(
                 state,

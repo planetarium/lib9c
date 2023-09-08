@@ -148,16 +148,18 @@ namespace Nekoyume.Action
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;
-            Log.Debug("{AddressesHex} ItemEnhancement exec started", addressesHex);
-
-            // Validate avatar
-            if (!AvatarModule.TryGetAgentAvatarStatesV2(
+            Log.Debug("{AddressesHex}ItemEnhancement exec started", addressesHex);
+            AgentState agentState = AgentModule.GetAgentState(world, ctx.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the agent of the signer was failed to load.");
+            }
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     ctx.Signer,
                     avatarAddress,
-                    out var agentState,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load."
@@ -418,7 +420,14 @@ namespace Nekoyume.Action
 
             // Set state
             sw.Restart();
-            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             sw.Stop();
             Log.Verbose("{AddressesHex} ItemEnhancement Set AvatarState: {Elapsed}", addressesHex,
                 sw.Elapsed);

@@ -228,12 +228,11 @@ namespace Nekoyume.Action
                     context.BlockIndex);
             }
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     AvatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
@@ -335,15 +334,14 @@ namespace Nekoyume.Action
 
             stakeState.Claim(context.BlockIndex);
 
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, avatarState.address, avatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetAvatarV2(world, avatarState.address, avatarState);
-                world = AvatarModule.SetInventory(world, avatarState.address.Derive(LegacyInventoryKey), avatarState.inventory);
-            }
+            world = AvatarModule.SetAvatarState(
+                world,
+                avatarState.address,
+                avatarState,
+                true,
+                true,
+                false,
+                false);
 
             return world.SetAccount(
                 world.GetAccount(ReservedAddresses.LegacyAccount)

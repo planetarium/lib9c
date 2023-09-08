@@ -17,90 +17,98 @@ namespace Nekoyume.Module
 {
     public static class AvatarModule
     {
+        // This method automatically determines if given IValue is a legacy avatar state or not.
         public static AvatarState GetAvatarState(IWorldState worldState, Address address)
         {
-            var serializedAvatar = AccountHelper.Resolve(worldState, address, Addresses.Avatar);
-            if (serializedAvatar is null)
-            {
-                Log.Warning("No avatar state ({AvatarAddress})", address.ToHex());
-                return null;
-            }
-
-            try
-            {
-                return new AvatarState((Bencodex.Types.Dictionary)serializedAvatar);
-            }
-            catch (InvalidCastException e)
-            {
-                Log.Error(
-                    e,
-                    "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
-                    address.ToHex(),
-                    serializedAvatar
-                );
-
-                return null;
-            }
-        }
-
-        public static AvatarState GetAvatarStateV2(IWorldState worldState, Address address)
-        {
-            string[] keys =
-            {
-                LegacyInventoryKey,
-                LegacyWorldInformationKey,
-                LegacyQuestListKey,
-            };
-            var addresses = keys.Select(key => address.Derive(key)).ToArray();
             var serializedAvatarRaw = AccountHelper.Resolve(worldState, address, Addresses.Avatar);
-            var serializedValues = LegacyModule.GetStates(worldState, addresses);
-            if (!(serializedAvatarRaw is Dictionary serializedAvatar))
-            {
-                Log.Warning("No avatar state ({AvatarAddress})", address.ToHex());
-                return null;
-            }
 
-            for (var i = 0; i < keys.Length; i++)
+            AvatarState avatarState = null;
+            if (serializedAvatarRaw is Dictionary avatarDict)
             {
-                var key = keys[i];
-                var serializedValue = serializedValues[i];
-                if (serializedValue is null)
+                try
                 {
-                    throw new FailedLoadStateException($"failed to load {key}.");
+                    avatarState = new AvatarState(avatarDict);
                 }
+                catch (InvalidCastException e)
+                {
+                    Log.Error(
+                        e,
+                        "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
+                        address.ToHex(),
+                        avatarDict
+                    );
 
-                serializedAvatar = serializedAvatar.SetItem(key, serializedValue);
+                    return null;
+                }
+            }
+            else if (serializedAvatarRaw is List avatarList)
+            {
+                try
+                {
+                    avatarState = new AvatarState(avatarList);
+                }
+                catch (InvalidCastException e)
+                {
+                    Log.Error(
+                        e,
+                        "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
+                        address.ToHex(),
+                        avatarList
+                    );
+
+                    return null;
+                }
+            }
+            else
+            {
+                Log.Warning(
+                    "Avatar state ({AvatarAddress}) should be " +
+                    "Dictionary or List but: {Raw}",
+                    address.ToHex(),
+                    serializedAvatarRaw);
+                return null;
             }
 
             try
             {
-                return new AvatarState(serializedAvatar);
-            }
-            catch (InvalidCastException e)
-            {
-                Log.Error(
-                    e,
-                    "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
-                    address.ToHex(),
-                    serializedAvatar
-                );
+                string[] keys =
+                {
+                    LegacyInventoryKey,
+                    LegacyWorldInformationKey,
+                    LegacyQuestListKey,
+                };
+                var addresses = keys.Select(key => address.Derive(key)).ToArray();
+                var serializedValues = LegacyModule.GetStates(worldState, addresses);
 
-                return null;
+                // Version 0 contains inventory, worldInformation, questList itself.
+                if (avatarState.Version > 0)
+                {
+                    for (var i = 0; i < keys.Length; i++)
+                    {
+                        if (serializedValues[i] is null)
+                        {
+                            throw new FailedLoadStateException(
+                                $"failed to load {keys[i]}.");
+                        }
+                    }
+
+                    avatarState.inventory = new Inventory((List)serializedValues[0]);
+                    avatarState.worldInformation =
+                        new WorldInformation((Dictionary)serializedValues[1]);
+                    avatarState.questList = new QuestList((Dictionary)serializedValues[2]);
+                }
             }
+            catch (KeyNotFoundException)
+            {
+            }
+
+            return avatarState;
         }
 
+        // FIXME: Is this method required?
         public static AvatarState GetEnemyAvatarState(IWorldState worldState, Address avatarAddress)
         {
-            AvatarState enemyAvatarState;
-            try
-            {
-                enemyAvatarState = GetAvatarStateV2(worldState, avatarAddress);
-            }
-            // BackWard compatible.
-            catch (FailedLoadStateException)
-            {
-                enemyAvatarState = GetAvatarState(worldState, avatarAddress);
-            }
+            AvatarState enemyAvatarState = GetAvatarState(worldState, avatarAddress);
 
             if (enemyAvatarState is null)
             {
@@ -119,160 +127,43 @@ namespace Nekoyume.Module
         )
         {
             avatarState = null;
-            var value = AccountHelper.Resolve(worldState, avatarAddress, Addresses.Avatar);
-            if (value is null)
-            {
-                return false;
-            }
-
             try
             {
-                var serializedAvatar = (Dictionary)value;
-                if (serializedAvatar["agentAddress"].ToAddress() != agentAddress)
+                var temp = GetAvatarState(worldState, avatarAddress);
+                if (temp is null || !temp.agentAddress.Equals(agentAddress))
                 {
                     return false;
                 }
 
-                avatarState = new AvatarState(serializedAvatar);
+                avatarState = temp;
                 return true;
             }
-            catch (InvalidCastException)
-            {
-                return false;
-            }
-            catch (KeyNotFoundException)
+            catch (Exception)
             {
                 return false;
             }
         }
 
-        public static bool TryGetAvatarStateV2(
-            IWorldState worldState,
-            Address agentAddress,
-            Address avatarAddress,
-            out AvatarState avatarState,
-            out bool migrationRequired
-        )
-        {
-            avatarState = null;
-            migrationRequired = false;
-            if (AccountHelper.Resolve(worldState, avatarAddress, Addresses.Avatar) is Dictionary
-                serializedAvatar)
-            {
-                try
-                {
-                    if (serializedAvatar[AgentAddressKey].ToAddress() != agentAddress)
-                    {
-                        return false;
-                    }
-
-                    avatarState = GetAvatarStateV2(worldState, avatarAddress);
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    // BackWardCompatible.
-                    if (e is KeyNotFoundException || e is FailedLoadStateException)
-                    {
-                        migrationRequired = true;
-                        return TryGetAvatarState(
-                            worldState,
-                            agentAddress,
-                            avatarAddress,
-                            out avatarState);
-                    }
-
-                    return false;
-                }
-            }
-
-            return false;
-        }
-
-        // FIXME: Should not use this unified method.
-        public static bool TryGetAgentAvatarStates(
-            IWorldState worldState,
-            Address agentAddress,
-            Address avatarAddress,
-            out AgentState agentState,
-            out AvatarState avatarState
-        )
-        {
-            avatarState = null;
-            agentState = AgentModule.GetAgentState(worldState, agentAddress);
-            if (agentState is null)
-            {
-                return false;
-            }
-
-            if (!agentState.avatarAddresses.ContainsValue(avatarAddress))
-            {
-                throw new AgentStateNotContainsAvatarAddressException(
-                    $"The avatar {avatarAddress.ToHex()} does not belong to the agent {agentAddress.ToHex()}.");
-            }
-
-            avatarState = GetAvatarState(worldState, avatarAddress);
-            return !(avatarState is null);
-        }
-
-        // FIXME: Should not use this unified method.
-        public static bool TryGetAgentAvatarStatesV2(
-            IWorldState worldState,
-            Address agentAddress,
-            Address avatarAddress,
-            out AgentState agentState,
-            out AvatarState avatarState,
-            out bool avatarMigrationRequired
-        )
-        {
-            avatarState = null;
-            avatarMigrationRequired = false;
-            agentState = AgentModule.GetAgentState(worldState, agentAddress);
-            if (agentState is null)
-            {
-                return false;
-            }
-
-            if (!agentState.avatarAddresses.ContainsValue(avatarAddress))
-            {
-                throw new AgentStateNotContainsAvatarAddressException(
-                    $"The avatar {avatarAddress.ToHex()} does not belong to the agent {agentAddress.ToHex()}.");
-            }
-
-            try
-            {
-                avatarState = GetAvatarStateV2(worldState, avatarAddress);
-            }
-            catch (FailedLoadStateException)
-            {
-                // BackWardCompatible.
-                avatarState = GetAvatarState(worldState, avatarAddress);
-                avatarMigrationRequired = true;
-            }
-
-            return !(avatarState is null);
-        }
-
-        public static IWorld SetAvatarState(IWorld world, Address address, AvatarState state)
-        {
-            // TODO: Override legacy address to null state?
-            var account = world.GetAccount(Addresses.Avatar);
-            account = account.SetState(address, state.Serialize());
-            return world.SetAccount(account);
-        }
-
-        public static IWorld SetAvatarStateV2(
+        public static IWorld SetAvatarState(
             IWorld world,
             Address avatarAddress,
             AvatarState state,
-            bool setAvatar = true,
-            bool setInventory = true,
-            bool setWorldInformation = true,
-            bool setQuestList = true)
+            bool setAvatar,
+            bool setInventory,
+            bool setWorldInformation,
+            bool setQuestList)
         {
+            if (state.Version == 0)
+            {
+                // If the version of the avatar state is 0, overwrite flags to true.
+                setAvatar = true;
+                setInventory = true;
+                setWorldInformation = true;
+            }
+
             if (setAvatar)
             {
-                world = SetAvatarV2(world, avatarAddress, state);
+                world = SetAvatar(world, avatarAddress, state);
             }
 
             if (setInventory)
@@ -293,13 +184,6 @@ namespace Nekoyume.Module
             return world;
         }
 
-        public static IWorld SetAvatarV2(IWorld world, Address address, AvatarState state)
-        {
-            var avatarAccount = world.GetAccount(Addresses.Avatar);
-            avatarAccount = avatarAccount.SetState(address, state.SerializeV2());
-            return world.SetAccount(avatarAccount);
-        }
-
         public static IWorld MarkChanged(IWorld world, Address address) =>
             world.SetAccount(
                 world.GetAccount(Addresses.Avatar).SetState(
@@ -308,21 +192,28 @@ namespace Nekoyume.Module
         public static bool Changed(IWorld world, Address address) =>
             world.GetAccount(Addresses.Avatar).GetState(address).Equals(ActionBase.MarkChanged);
 
-        public static IWorld SetInventory(IWorld world, Address address, Inventory state)
+        private static IWorld SetAvatar(IWorld world, Address address, AvatarState state)
+        {
+            var avatarAccount = world.GetAccount(Addresses.Avatar);
+            avatarAccount = avatarAccount.SetState(address, state.SerializeList());
+            return world.SetAccount(avatarAccount);
+        }
+
+        private static IWorld SetInventory(IWorld world, Address address, Inventory state)
         {
             var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
             legacyAccount = legacyAccount.SetState(address, state.Serialize());
             return world.SetAccount(legacyAccount);
         }
 
-        public static IWorld SetWorldInformation(IWorld world, Address address, WorldInformation state)
+        private static IWorld SetWorldInformation(IWorld world, Address address, WorldInformation state)
         {
             var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
             legacyAccount = legacyAccount.SetState(address, state.Serialize());
             return world.SetAccount(legacyAccount);
         }
 
-        public static IWorld SetQuestList(IWorld world, Address address, QuestList state)
+        private static IWorld SetQuestList(IWorld world, Address address, QuestList state)
         {
             var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
             legacyAccount = legacyAccount.SetState(address, state.Serialize());

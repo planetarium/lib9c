@@ -61,33 +61,29 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(new[] { 2, 3 }, true, false, false, true, 4, null)]
-        [InlineData(new[] { 2 }, true, false, false, true, 2, null)]
+        [InlineData(new[] { 2, 3 }, true,  false, true, 4, null)]
+        [InlineData(new[] { 2 }, true,  false, true, 2, null)]
         // Unlock Belt without Armor unlock.
-        [InlineData(new[] { 83 }, true, false, false, true, 1, null)]
+        [InlineData(new[] { 83 }, true,  false, true, 1, null)]
         // Unlock Weapon & Ring
-        [InlineData(new[] { 2, 133 }, true, false, false, true, 3, null)]
-        // AvatarState migration.
-        [InlineData(new[] { 2 }, true, true, false, true, 2, null)]
+        [InlineData(new[] { 2, 133 }, true,  false, true, 3, null)]
         // Invalid recipe id.
-        [InlineData(new[] { -1 }, true, false, false, false, 100, typeof(InvalidRecipeIdException))]
-        [InlineData(new[] { 1 }, true, false, false, true, 100, typeof(InvalidRecipeIdException))]
-        [InlineData(new int[] { }, true, false, false, false, 100, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { -1 }, true,  false, false, 100, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { 1 }, true,  false, true, 100, typeof(InvalidRecipeIdException))]
+        [InlineData(new int[] { }, true,  false, false, 100, typeof(InvalidRecipeIdException))]
         // AvatarState is null.
-        [InlineData(new[] { 2 }, false, true, false, true, 100, typeof(FailedLoadStateException))]
-        [InlineData(new[] { 2 }, false, false, false, true, 100, typeof(FailedLoadStateException))]
+        [InlineData(new[] { 2 }, false,  false, true, 100, typeof(FailedLoadStateException))]
         // Already unlocked recipe.
-        [InlineData(new[] { 2 }, true, false, true, true, 100, typeof(AlreadyRecipeUnlockedException))]
+        [InlineData(new[] { 2 }, true,  true, true, 100, typeof(AlreadyRecipeUnlockedException))]
         // Skip prev recipe.
-        [InlineData(new[] { 3 }, true, false, false, true, 100, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { 3 }, true,  false, true, 100, typeof(InvalidRecipeIdException))]
         // Stage not cleared.
-        [InlineData(new[] { 2 }, true, false, false, false, 100, typeof(NotEnoughClearedStageLevelException))]
+        [InlineData(new[] { 2 }, true,  false, false, 100, typeof(NotEnoughClearedStageLevelException))]
         // Insufficient CRYSTAL.
-        [InlineData(new[] { 2 }, true, false, false, true, 1, typeof(NotEnoughFungibleAssetValueException))]
+        [InlineData(new[] { 2 }, true,  false, true, 1, typeof(NotEnoughFungibleAssetValueException))]
         public void Execute(
             IEnumerable<int> ids,
             bool stateExist,
-            bool migrationRequired,
             bool alreadyUnlocked,
             bool stageCleared,
             int balance,
@@ -120,14 +116,14 @@ namespace Lib9c.Tests.Action
                     state = LegacyModule.SetState(state, unlockedRecipeIdsAddress, serializedIds);
                 }
 
-                if (migrationRequired)
-                {
-                    state = AvatarModule.SetAvatarState(state, _avatarAddress, _avatarState);
-                }
-                else
-                {
-                    state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
-                }
+                state = AvatarModule.SetAvatarState(
+                    state,
+                    _avatarAddress,
+                    _avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
             }
 
             var action = new UnlockEquipmentRecipe
@@ -145,15 +141,18 @@ namespace Lib9c.Tests.Action
                     BlockIndex = 1,
                     Random = _random,
                 });
-                IAccount nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
                 Assert.True(LegacyModule.TryGetState(nextWorld, unlockedRecipeIdsAddress, out List rawIds));
 
                 var unlockedIds = rawIds.ToList(StateExtensions.ToInteger);
 
                 Assert.All(recipeIds, recipeId => Assert.Contains(recipeId, unlockedIds));
-                Assert.Equal(0 * _currency, nextAccount.GetBalance(_agentAddress, _currency));
-                Assert.Equal(balance * _currency, nextAccount.GetBalance(Addresses.UnlockEquipmentRecipe, _currency));
+                Assert.Equal(
+                    0 * _currency,
+                    LegacyModule.GetBalance(nextWorld, _agentAddress, _currency));
+                Assert.Equal(
+                    balance * _currency,
+                    LegacyModule.GetBalance(nextWorld, Addresses.UnlockEquipmentRecipe, _currency));
             }
             else
             {

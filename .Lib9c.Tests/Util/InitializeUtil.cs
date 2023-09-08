@@ -82,16 +82,24 @@ namespace Lib9c.Tests.Util
             initialStatesWithAvatarStateV1 = AvatarModule.SetAvatarState(
                 initialStatesWithAvatarStateV1,
                 avatarAddr,
-                avatarState);
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             var initialStatesWithAvatarStateV2 = states;
             initialStatesWithAvatarStateV2 = AgentModule.SetAgentState(
                 initialStatesWithAvatarStateV2,
                 agentAddr.Value,
                 agentState);
-            initialStatesWithAvatarStateV2 = AvatarModule.SetAvatarStateV2(
+            initialStatesWithAvatarStateV2 = AvatarModule.SetAvatarState(
                 initialStatesWithAvatarStateV2,
                 avatarAddr,
-                avatarState);
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             return (
                 tableSheets,

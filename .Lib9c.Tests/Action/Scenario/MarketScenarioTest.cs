@@ -128,7 +128,11 @@ namespace Lib9c.Tests.Action.Scenario
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _sellerAvatarAddress,
-                _sellerAvatarState);
+                _sellerAvatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = AgentModule.SetAgentState(
                 _initialState,
                 _sellerAgentAddress2,
@@ -136,7 +140,11 @@ namespace Lib9c.Tests.Action.Scenario
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _sellerAvatarAddress2,
-                _sellerAvatarState2);
+                _sellerAvatarState2,
+                true,
+                true,
+                true,
+                true);
             _initialState = AgentModule.SetAgentState(
                 _initialState,
                 _buyerAgentAddress,
@@ -144,7 +152,11 @@ namespace Lib9c.Tests.Action.Scenario
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _buyerAvatarAddress,
-                buyerAvatarState);
+                buyerAvatarState,
+                true,
+                true,
+                true,
+                true);
         }
 
         [Fact]
@@ -161,11 +173,19 @@ namespace Lib9c.Tests.Action.Scenario
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _sellerAvatarAddress,
-                _sellerAvatarState);
+                _sellerAvatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _sellerAvatarAddress2,
-                _sellerAvatarState2);
+                _sellerAvatarState2,
+                true,
+                true,
+                true,
+                true);
             _initialState = LegacyModule.MintAsset(
                 _initialState,
                 context,
@@ -214,7 +234,7 @@ namespace Lib9c.Tests.Action.Scenario
                     Random = random,
                     Signer = _sellerAgentAddress,
                 });
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _sellerAvatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextState, _sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
 
@@ -289,7 +309,7 @@ namespace Lib9c.Tests.Action.Scenario
                     Random = random,
                     Signer = _sellerAgentAddress2,
                 });
-            var nextAvatarState2 = AvatarModule.GetAvatarStateV2(nextState2, _sellerAvatarAddress2);
+            var nextAvatarState2 = AvatarModule.GetAvatarState(nextState2, _sellerAvatarAddress2);
             Assert.Empty(nextAvatarState2.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState2.actionPoint);
 
@@ -349,7 +369,7 @@ namespace Lib9c.Tests.Action.Scenario
                     Signer = _buyerAgentAddress,
                 });
 
-            var buyerAvatarState = AvatarModule.GetAvatarStateV2(latestState, _buyerAvatarAddress);
+            var buyerAvatarState = AvatarModule.GetAvatarState(latestState, _buyerAvatarAddress);
             var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(3L);
             var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
             var totalTax = 0 * _currency;
@@ -363,7 +383,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Assert.Equal(taxedPrice, LegacyModule.GetBalance(latestState, sellerAgentAddress, _currency));
                 foreach (var productInfo in group)
                 {
-                    var sellerAvatarState = AvatarModule.GetAvatarStateV2(latestState, productInfo.AvatarAddress);
+                    var sellerAvatarState = AvatarModule.GetAvatarState(latestState, productInfo.AvatarAddress);
                     var sellProductList = new ProductsState((List)LegacyModule.GetState(latestState, ProductsState.DeriveAddress(productInfo.AvatarAddress)));
                     var productId = productInfo.ProductId;
                     Assert.Empty(sellProductList.ProductIds);
@@ -407,7 +427,14 @@ namespace Lib9c.Tests.Action.Scenario
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, id, 0L);
             _sellerAvatarState.inventory.AddItem(equipment);
             Assert.Equal(2, _sellerAvatarState.inventory.Items.Count);
-            _initialState = AvatarModule.SetAvatarState(_initialState, _sellerAvatarAddress, _sellerAvatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _sellerAvatarAddress,
+                _sellerAvatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = LegacyModule.MintAsset(_initialState, context, _sellerAvatarAddress, 1 * RuneHelper.StakeRune);
             var action = new RegisterProduct
             {
@@ -448,7 +475,7 @@ namespace Lib9c.Tests.Action.Scenario
                     Signer = _sellerAgentAddress,
                 });
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _sellerAvatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextState, _sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
 
@@ -537,7 +564,7 @@ namespace Lib9c.Tests.Action.Scenario
                     Signer = _sellerAgentAddress,
                 });
 
-            var latestAvatarState = AvatarModule.GetAvatarStateV2(latestState, _sellerAvatarAddress);
+            var latestAvatarState = AvatarModule.GetAvatarState(latestState, _sellerAvatarAddress);
             foreach (var productInfo in action2.ProductInfos)
             {
                 Assert.Contains(
@@ -588,7 +615,11 @@ namespace Lib9c.Tests.Action.Scenario
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _sellerAvatarAddress,
-                _sellerAvatarState);
+                _sellerAvatarState,
+                true,
+                true,
+                true,
+                true);
             var action = new RegisterProduct
             {
                 AvatarAddress = _sellerAvatarAddress,
@@ -628,7 +659,7 @@ namespace Lib9c.Tests.Action.Scenario
                     Signer = _sellerAgentAddress,
                 });
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _sellerAvatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextState, _sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
             Assert.Equal(
                 _gameConfigState.ActionPointMax - RegisterProduct.CostAp,
@@ -770,7 +801,7 @@ namespace Lib9c.Tests.Action.Scenario
                 });
 
             var latestAvatarState =
-                AvatarModule.GetAvatarStateV2(latestState, _sellerAvatarAddress);
+                AvatarModule.GetAvatarState(latestState, _sellerAvatarAddress);
             Assert.Equal(
                 _gameConfigState.ActionPointMax - RegisterProduct.CostAp - ReRegisterProduct.CostAp,
                 latestAvatarState.actionPoint);
@@ -840,7 +871,14 @@ namespace Lib9c.Tests.Action.Scenario
             var id = Guid.NewGuid();
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, id, 0L);
             _sellerAvatarState.inventory.AddItem(equipment);
-            _initialState = AvatarModule.SetAvatarState(_initialState, _sellerAvatarAddress, _sellerAvatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _sellerAvatarAddress,
+                _sellerAvatarState,
+                true,
+                true,
+                true,
+                true);
 
             var digestListAddress = OrderDigestListState.DeriveAddress(_sellerAvatarAddress);
             var orderDigestList = new OrderDigestListState(digestListAddress);
@@ -888,7 +926,11 @@ namespace Lib9c.Tests.Action.Scenario
                 _initialState = AvatarModule.SetAvatarState(
                     _initialState,
                     _sellerAvatarAddress,
-                    _sellerAvatarState);
+                    _sellerAvatarState,
+                    true,
+                    true,
+                    true,
+                    true);
 
                 var productType = tradableItem is TradableMaterial
                     ? ProductType.Fungible
@@ -945,7 +987,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Assert.Equal(100 * _currency, product.Price);
             }
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _sellerAvatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextState, _sellerAvatarAddress);
             Assert.Equal(_gameConfigState.ActionPointMax - ReRegisterProduct.CostAp, nextAvatarState.actionPoint);
             Assert.Empty(nextAvatarState.inventory.Items);
 
@@ -972,7 +1014,11 @@ namespace Lib9c.Tests.Action.Scenario
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _sellerAvatarAddress,
-                _sellerAvatarState);
+                _sellerAvatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = LegacyModule.MintAsset(
                 _initialState,
                 context,
@@ -1102,7 +1148,7 @@ namespace Lib9c.Tests.Action.Scenario
                     Random = random,
                     Signer = _sellerAgentAddress,
                 });
-            var avatarState = AvatarModule.GetAvatarStateV2(canceledState, _sellerAvatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(canceledState, _sellerAvatarAddress);
             Assert.Equal(2, avatarState.inventory.Items.Count);
             Assert.True(
                 avatarState.inventory.TryGetTradableItem(
@@ -1212,7 +1258,7 @@ namespace Lib9c.Tests.Action.Scenario
                     Signer = _buyerAgentAddress,
                 });
 
-            var buyerAvatarState = AvatarModule.GetAvatarStateV2(tradedState, _buyerAvatarAddress);
+            var buyerAvatarState = AvatarModule.GetAvatarState(tradedState, _buyerAvatarAddress);
             var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(3L);
             var feeStoreAddress = Addresses.GetShopFeeAddress(
                 arenaData.ChampionshipId,
@@ -1230,7 +1276,7 @@ namespace Lib9c.Tests.Action.Scenario
                     LegacyModule.GetBalance(tradedState, sellerAgentAddress, _currency));
                 foreach (var productInfo in group)
                 {
-                    var sellerAvatarState = AvatarModule.GetAvatarStateV2(
+                    var sellerAvatarState = AvatarModule.GetAvatarState(
                         tradedState,
                         productInfo.AvatarAddress);
                     var sellProductList = new ProductsState(

@@ -43,10 +43,6 @@ namespace Lib9c.Tests.Action
             _agentAddress = new PrivateKey().ToAddress();
             _avatarAddress = _agentAddress.Derive("avatar");
 
-            var inventoryAddr = _avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddr = _avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddr = _avatarAddress.Derive(LegacyQuestListKey);
-
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
@@ -64,10 +60,14 @@ namespace Lib9c.Tests.Action
             };
 
             _initialStates = AgentModule.SetAgentState(_initialStates, _agentAddress, agentState);
-            _initialStates = AvatarModule.SetAvatarStateV2(
+            _initialStates = AvatarModule.SetAvatarState(
                 _initialStates,
                 _avatarAddress,
-                avatarState);
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             _initialStates = LegacyModule.SetState(
                 _initialStates,
                 gameConfigState.address,
@@ -227,7 +227,7 @@ namespace Lib9c.Tests.Action
             long blockIndex = 0)
         {
             var previousAccount = previousStates.GetAccount(ReservedAddresses.LegacyAccount);
-            var previousAvatarState = AvatarModule.GetAvatarStateV2(previousStates, _avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarState(previousStates, _avatarAddress);
 
             var recipeSheet = LegacyModule.GetSheet<EventMaterialItemRecipeSheet>(previousStates);
             Assert.True(recipeSheet.TryGetValue(eventMaterialItemRecipeId, out var recipeRow));
@@ -278,7 +278,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
             });
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextStates, _avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextStates, _avatarAddress);
 
             var nextMaterialCount = nextAvatarState.inventory.Items
                 .Where(i => recipeRow.RequiredMaterialsId.Contains(i.item.Id))

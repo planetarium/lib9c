@@ -60,8 +60,15 @@ namespace Lib9c.Tests.Action
                 new MockWorld(),
                 goldCurrencyState.address,
                 goldCurrencyState.Serialize());
-            state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
-            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
+            state = AgentModule.SetAgentState(state, agentAddress, agentState);
+            state = AvatarModule.SetAvatarState(
+                state,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             foreach (var (key, value) in sheets)
             {
@@ -225,8 +232,15 @@ namespace Lib9c.Tests.Action
                 new MockWorld(),
                 goldCurrencyState.address,
                 goldCurrencyState.Serialize());
-            state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
-            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
+            state = AgentModule.SetAgentState(state, agentAddress, agentState);
+            state = AvatarModule.SetAvatarState(
+                state,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             foreach (var (key, value) in sheets)
             {
@@ -288,8 +302,15 @@ namespace Lib9c.Tests.Action
                 new MockWorld(),
                 goldCurrencyState.address,
                 goldCurrencyState.Serialize());
-            state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
-            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
+            state = AgentModule.SetAgentState(state, agentAddress, agentState);
+            state = AvatarModule.SetAvatarState(
+                state,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             foreach (var (key, value) in sheets)
             {
@@ -370,8 +391,15 @@ namespace Lib9c.Tests.Action
                 new MockWorld(),
                 goldCurrencyState.address,
                 goldCurrencyState.Serialize());
-            state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
-            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
+            state = AgentModule.SetAgentState(state, agentAddress, agentState);
+            state = AvatarModule.SetAvatarState(
+                state,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             foreach (var (key, value) in sheets)
             {
@@ -494,8 +522,15 @@ namespace Lib9c.Tests.Action
                 new MockWorld(),
                 goldCurrencyState.address,
                 goldCurrencyState.Serialize());
-            state = AgentModule.SetAgentStateV2(state, agentAddress, agentState);
-            state = AvatarModule.SetAvatarStateV2(state, avatarAddress, avatarState);
+            state = AgentModule.SetAgentState(state, agentAddress, agentState);
+            state = AvatarModule.SetAvatarState(
+                state,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
 
             foreach (var (key, value) in sheets)
             {
@@ -560,7 +595,14 @@ namespace Lib9c.Tests.Action
                 new GameConfigState(),
                 default
             );
-            state = AvatarModule.SetAvatarV2(state, avatarAddress, avatarState);
+            state = AvatarModule.SetAvatarState(
+                state,
+                avatarAddress,
+                avatarState,
+                true,
+                false,
+                false,
+                false);
 
             var runeListSheet = LegacyModule.GetSheet<RuneListSheet>(state);
             var runeId = runeListSheet.First().Value.Id;

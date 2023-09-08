@@ -61,10 +61,14 @@ namespace Lib9c.Tests.Action
             };
 
             _initialStates = AgentModule.SetAgentState(_initialStates, _agentAddress, agentState);
-            _initialStates = AvatarModule.SetAvatarStateV2(
+            _initialStates = AvatarModule.SetAvatarState(
                 _initialStates,
                 _avatarAddress,
-                avatarState);
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             _initialStates = LegacyModule.SetState(
                 _initialStates,
                 gameConfigState.address,
@@ -115,7 +119,7 @@ namespace Lib9c.Tests.Action
             long blockIndex = 0)
         {
             var previousAccount = previousWorld.GetAccount(ReservedAddresses.LegacyAccount);
-            var previousAvatarState = AvatarModule.GetAvatarStateV2(previousWorld, _avatarAddress);
+            var previousAvatarState = AvatarModule.GetAvatarState(previousWorld, _avatarAddress);
 
             var recipeSheet = LegacyModule.GetSheet<EventConsumableItemRecipeSheet>(previousWorld);
             Assert.True(recipeSheet.TryGetValue(
@@ -178,7 +182,7 @@ namespace Lib9c.Tests.Action
             var consumable = (Consumable)slotState.Result.itemUsable;
             Assert.NotNull(consumable);
 
-            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextWorld, _avatarAddress);
             Assert.Equal(
                 previousActionPoint - recipeRow.RequiredActionPoint,
                 nextAvatarState.actionPoint);

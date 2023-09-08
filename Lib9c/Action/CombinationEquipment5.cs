@@ -69,11 +69,16 @@ namespace Nekoyume.Action
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
 
-            if (!AvatarModule.TryGetAgentAvatarStates(
+            AgentState agentState = AgentModule.GetAgentState(world, ctx.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the agent state of the signer was failed to load.");
+            }
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     ctx.Signer,
                     AvatarAddress,
-                    out var agentState,
                     out var avatarState))
             {
                 throw new FailedLoadStateException(
@@ -254,9 +259,9 @@ namespace Nekoyume.Action
             avatarState.questList.UpdateCombinationEquipmentQuest(RecipeId);
             avatarState.UpdateFromCombination2(equipment);
             avatarState.UpdateQuestRewards2(materialSheet);
-            world = LegacyModule.SetState(world, AvatarAddress, avatarState.Serialize());
+            world = AvatarModule.SetAvatarState(world, AvatarAddress, avatarState, true, false, false, false);
             world = LegacyModule.SetState(world, slotAddress, slotState.Serialize());
-            world = LegacyModule.SetState(world, ctx.Signer, agentState.Serialize());
+            world = AgentModule.SetAgentState(world, ctx.Signer, agentState);
             return world;
         }
 

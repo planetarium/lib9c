@@ -79,13 +79,19 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}JoinArena exec started", addressesHex);
 
-            if (!AvatarModule.TryGetAgentAvatarStatesV2(
+            // FIXME: Even loading of agent state is required?
+            AgentState agentState = AgentModule.GetAgentState(world, context.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"[{nameof(JoinArena)}] Aborted as the agent state of the signer failed to load.");
+            }
+
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     avatarAddress,
-                    out var agentState,
-                    out var avatarState,
-                    out _))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"[{nameof(JoinArena)}] Aborted as the avatar state of the signer failed to load.");

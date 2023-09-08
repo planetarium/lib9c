@@ -55,7 +55,14 @@ namespace Lib9c.Tests.Action.Scenario
                 _weeklyArenaState.address,
                 _weeklyArenaState.Serialize());
             _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
-            _initialState = AvatarModule.SetAvatarState(_initialState, _avatarAddress, avatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = LegacyModule.SetState(
                 _initialState,
                 _rankingMapAddress,
@@ -97,7 +104,14 @@ namespace Lib9c.Tests.Action.Scenario
             var doomfist = Doomfist.GetOne(_tableSheets, avatarState.level, ItemSubType.Weapon);
             avatarState.inventory.AddItem(doomfist);
 
-            var nextState = AvatarModule.SetAvatarState(_initialState, _avatarAddress, avatarState);
+            var nextState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             var hackAndSlash = new HackAndSlash
             {
                 WorldId = worldIdToClear,

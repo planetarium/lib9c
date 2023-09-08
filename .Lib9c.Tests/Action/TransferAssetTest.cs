@@ -9,7 +9,6 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Helper;
@@ -139,12 +138,15 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InsufficientBalanceException()
         {
-            var prevState = new MockWorld(
+            IWorld prevState = new MockWorld(
                 new MockAccount(
                     new MockAccountState(ReservedAddresses.LegacyAccount)
-                        .SetState(_recipient, new AgentState(_recipient).Serialize())
                         .SetBalance(_sender, _currency * 1000)
                         .SetBalance(_recipient, _currency * 10)));
+            prevState = AgentModule.SetAgentState(
+                prevState,
+                _recipient,
+                new AgentState(_recipient));
             var action = new TransferAsset(
                 sender: _sender,
                 recipient: _recipient,
@@ -176,13 +178,16 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var currencyBySender = Currency.Legacy("NCG", 2, minter);
 #pragma warning restore CS0618
-            var prevState = new MockWorld(
+            IWorld prevState = new MockWorld(
                 new MockAccount(
                     new MockAccountState(ReservedAddresses.LegacyAccount)
-                        .SetState(_recipient, new AgentState(_recipient).Serialize())
                         .SetBalance(_sender, currencyBySender * 1000)
                         .SetBalance(_recipient, currencyBySender * 10)
                         .SetBalance(_sender, Currencies.Mead * 1)));
+            prevState = AgentModule.SetAgentState(
+                prevState,
+                _recipient,
+                new AgentState(_recipient));
             var action = new TransferAsset(
                 sender: _sender,
                 recipient: _recipient,

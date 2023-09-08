@@ -93,12 +93,11 @@ namespace Nekoyume.Action
                 throw new ListEmptyException($"{addressesHex} List - UpdateSell infos was empty.");
             }
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     sellerAvatarAddress,
-                    out var avatarState,
-                    out _))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
@@ -202,7 +201,14 @@ namespace Nekoyume.Action
             }
 
             sw.Restart();
-            world = AvatarModule.SetAvatarStateV2(world, sellerAvatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(
+                world,
+                sellerAvatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
             sw.Stop();
             Log.Verbose(

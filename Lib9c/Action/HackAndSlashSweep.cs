@@ -7,7 +7,6 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -18,7 +17,6 @@ using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -98,12 +96,11 @@ namespace Nekoyume.Action
 
             LegacyModule.ValidateWorldId(world, avatarAddress, worldId);
 
-            if (!AvatarModule.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarState(
                     world,
                     context.Signer,
                     avatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -335,16 +332,14 @@ namespace Nekoyume.Action
             var (level, exp) = avatarState.GetLevelAndExp(levelSheet, stageId, playCount);
             avatarState.UpdateExp(level, exp);
 
-            if (migrationRequired)
-            {
-                world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
-            }
-            else
-            {
-                world = AvatarModule.SetAvatarV2(world, avatarAddress, avatarState);
-                world = AvatarModule.SetInventory(world, avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
-                world = AvatarModule.SetQuestList(world, avatarAddress.Derive(LegacyQuestListKey), avatarState.questList);
-            }
+            world = AvatarModule.SetAvatarState(
+                world,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                false,
+                true);
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}", addressesHex, ended - started);

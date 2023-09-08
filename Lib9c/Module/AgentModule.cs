@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
@@ -21,7 +22,16 @@ namespace Nekoyume.Module
 
             try
             {
-                return new AgentState((Bencodex.Types.Dictionary)serializedAgent);
+                if (serializedAgent is Dictionary dict)
+                {
+                    return new AgentState(dict);
+                }
+                else if (serializedAgent is List list)
+                {
+                    return new AgentState(list);
+                }
+
+                return null;
             }
             catch (InvalidCastException e)
             {
@@ -40,15 +50,7 @@ namespace Nekoyume.Module
         {
             // TODO: Override legacy address to null state?
             var account = world.GetAccount(Addresses.Agent);
-            account = account.SetState(agent, state.Serialize());
-            return world.SetAccount(account);
-        }
-
-        public static IWorld SetAgentStateV2(IWorld world, Address agent, AgentState state)
-        {
-            // TODO: Override legacy address to null state?
-            var account = world.GetAccount(Addresses.Agent);
-            account = account.SetState(agent, state.SerializeV2());
+            account = account.SetState(agent, state.SerializeList());
             return world.SetAccount(account);
         }
     }

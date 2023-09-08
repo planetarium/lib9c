@@ -16,14 +16,15 @@ namespace Nekoyume.Model.State
             this.address = address;
         }
 
-        protected State(Dictionary serialized)
-            : this(serialized.ContainsKey(LegacyAddressKey)
-                ? serialized[LegacyAddressKey].ToAddress()
-                : serialized[AddressKey].ToAddress())
-        {
-        }
-
-        protected State(IValue iValue) : this((Dictionary)iValue)
+        protected State(IValue iValue)
+            : this(iValue switch
+            {
+                Dictionary dict => dict.ContainsKey(LegacyAddressKey)
+                    ? dict[LegacyAddressKey].ToAddress()
+                    : dict[AddressKey].ToAddress(),
+                List list => list[0].ToAddress(),
+                _ => throw new ArgumentException($"{iValue} is not a dictionary.")
+            })
         {
         }
 
@@ -37,6 +38,8 @@ namespace Nekoyume.Model.State
             {
                 [(Text)AddressKey] = address.Serialize(),
             });
+        public virtual IValue SerializeList() =>
+            new List(address.Serialize());
 
     }
 }

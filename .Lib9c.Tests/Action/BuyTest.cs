@@ -115,7 +115,11 @@ namespace Lib9c.Tests.Action
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _sellerAvatarAddress,
-                sellerAvatarState);
+                sellerAvatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = AgentModule.SetAgentState(
                 _initialState,
                 _buyerAgentAddress,
@@ -123,7 +127,11 @@ namespace Lib9c.Tests.Action
             _initialState = AvatarModule.SetAvatarState(
                 _initialState,
                 _buyerAvatarAddress,
-                _buyerAvatarState);
+                _buyerAvatarState,
+                true,
+                true,
+                true,
+                true);
             _initialState = LegacyModule.SetState(
                 _initialState,
                 Addresses.Shop,
@@ -363,11 +371,19 @@ namespace Lib9c.Tests.Action
                 _initialState = AvatarModule.SetAvatarState(
                     _initialState,
                     _buyerAvatarAddress,
-                    buyerAvatarState);
+                    buyerAvatarState,
+                    true,
+                    true,
+                    true,
+                    true);
                 _initialState = AvatarModule.SetAvatarState(
                     _initialState,
                     sellerAvatarState.address,
-                    sellerAvatarState);
+                    sellerAvatarState,
+                    true,
+                    true,
+                    true,
+                    true);
                 _initialState = LegacyModule.SetState(
                     _initialState,
                     shardedShopAddress,
@@ -413,7 +429,7 @@ namespace Lib9c.Tests.Action
                 FungibleAssetValue totalTax = 0 * _goldCurrencyState.Currency;
                 FungibleAssetValue totalPrice = 0 * _goldCurrencyState.Currency;
                 Currency goldCurrencyState = LegacyModule.GetGoldCurrency(nextState);
-                AvatarState nextBuyerAvatarState = AvatarModule.GetAvatarStateV2(nextState, _buyerAvatarAddress);
+                AvatarState nextBuyerAvatarState = AvatarModule.GetAvatarState(nextState, _buyerAvatarAddress);
                 foreach (var purchaseInfo in purchaseInfos)
                 {
                     Address shardedShopAddress =
@@ -446,7 +462,7 @@ namespace Lib9c.Tests.Action
                     Assert.Equal(expectedCount, inventoryItem.count);
                     Assert.Equal(expectedCount, nextBuyerAvatarState.itemMap[((ItemBase)tradableItem).Id]);
 
-                    var nextSellerAvatarState = AvatarModule.GetAvatarStateV2(nextState, purchaseInfo.SellerAvatarAddress);
+                    var nextSellerAvatarState = AvatarModule.GetAvatarState(nextState, purchaseInfo.SellerAvatarAddress);
                     Assert.False(
                         nextSellerAvatarState.inventory.TryGetTradableItems(
                             purchaseInfo.TradableId,
@@ -518,7 +534,14 @@ namespace Lib9c.Tests.Action
                         0
                     ),
                 };
-                _initialState = AvatarModule.SetAvatarState(_initialState, _buyerAvatarAddress, avatarState);
+                _initialState = AvatarModule.SetAvatarState(
+                    _initialState,
+                    _buyerAvatarAddress,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
             }
 
             var avatarAddress = equalAvatarAddress ? _buyerAvatarAddress : default;
@@ -617,7 +640,14 @@ namespace Lib9c.Tests.Action
 
                         var digest = order.Digest(sellerAvatarState, _tableSheets.CostumeStatSheet);
                         shopState.Add(digest, 0);
-                        _initialState = AvatarModule.SetAvatarState(_initialState, sellerAvatarAddress, sellerAvatarState);
+                        _initialState = AvatarModule.SetAvatarState(
+                            _initialState,
+                            sellerAvatarAddress,
+                            sellerAvatarState,
+                            true,
+                            true,
+                            true,
+                            true);
                     }
 
                     _initialState = LegacyModule.SetState(_initialState, Order.DeriveAddress(_orderId), order.Serialize());
@@ -803,11 +833,19 @@ namespace Lib9c.Tests.Action
                 _initialState = AvatarModule.SetAvatarState(
                     _initialState,
                     _buyerAvatarAddress,
-                    buyerAvatarState);
+                    buyerAvatarState,
+                    true,
+                    true,
+                    true,
+                    true);
                 _initialState = AvatarModule.SetAvatarState(
                     _initialState,
                     sellerAvatarState.address,
-                    sellerAvatarState);
+                    sellerAvatarState,
+                    true,
+                    true,
+                    true,
+                    true);
                 _initialState = LegacyModule.SetState(
                     _initialState,
                     shardedShopAddress,
@@ -869,7 +907,7 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(expectedCount, inventoryItem.count);
                 Assert.Equal(expectedCount, nextBuyerAvatarState.itemMap[((ItemBase)tradableItem).Id]);
 
-                var nextSellerAvatarState = AvatarModule.GetAvatarStateV2(nextState, purchaseInfo.SellerAvatarAddress);
+                var nextSellerAvatarState = AvatarModule.GetAvatarState(nextState, purchaseInfo.SellerAvatarAddress);
                 Assert.False(
                     nextSellerAvatarState.inventory.TryGetTradableItems(
                         purchaseInfo.TradableId,
@@ -964,7 +1002,7 @@ namespace Lib9c.Tests.Action
                 var tradableId = purchaseInfo.TradableId;
                 var itemCount = order is FungibleOrder fungibleOrder ? fungibleOrder.ItemCount : 1;
                 var nextSellerAvatarState =
-                    AvatarModule.GetAvatarStateV2(nextState, purchaseInfo.SellerAvatarAddress);
+                    AvatarModule.GetAvatarState(nextState, purchaseInfo.SellerAvatarAddress);
 
                 Assert.True(nextBuyerAvatarState.inventory.TryGetTradableItem(
                     tradableId, 100, itemCount, out var _));
@@ -1041,7 +1079,14 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = avatarAddress;
 
             _initialState = AgentModule.SetAgentState(_initialState, agentAddress, agentState);
-            _initialState = AvatarModule.SetAvatarState(_initialState, avatarAddress, avatarState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             return (avatarState, agentState);
         }
 

@@ -45,7 +45,7 @@ namespace Lib9c.Tests.Util
             IRandom random
         )
         {
-            var avatarState = AvatarModule.GetAvatarStateV2(world, avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(world, avatarAddress);
             foreach (var material in materialList)
             {
                 var materialRow = tableSheets.MaterialItemSheet[material.Id];

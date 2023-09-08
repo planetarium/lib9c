@@ -63,10 +63,14 @@ namespace Lib9c.Tests.Action.Scenario
                     rankingMapAddress
                 );
                 avatarState.inventory.AddItem(_aura);
-                _initialState = AvatarModule.SetAvatarStateV2(
+                _initialState = AvatarModule.SetAvatarState(
                     _initialState,
                     avatarAddress,
-                    avatarState);
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
             }
 
             _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
@@ -120,7 +124,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = _agentAddress,
             });
 
-            var avatarState = AvatarModule.GetAvatarStateV2(_initialState, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             Assert_Player(avatarState, nextState, _avatarAddress, itemSlotStateAddress);
         }
 
@@ -129,13 +133,13 @@ namespace Lib9c.Tests.Action.Scenario
         {
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(_avatarAddress, BattleType.Raid);
             Assert.Null(LegacyModule.GetState(_initialState, itemSlotStateAddress));
-            var avatarState = AvatarModule.GetAvatarStateV2(_initialState, _avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             for (int i = 0; i < 50; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var prevState = AvatarModule.SetAvatarStateV2(
+            var prevState = AvatarModule.SetAvatarState(
                 _initialState,
                 _avatarAddress,
                 avatarState,
@@ -177,13 +181,13 @@ namespace Lib9c.Tests.Action.Scenario
                 var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
                 Assert.Null(LegacyModule.GetState(_initialState, itemSlotStateAddress));
 
-                var avatarState = AvatarModule.GetAvatarStateV2(prevState, avatarAddress);
+                var avatarState = AvatarModule.GetAvatarState(prevState, avatarAddress);
                 for (int i = 0; i < 50; i++)
                 {
                     avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                 }
 
-                prevState = AvatarModule.SetAvatarStateV2(
+                prevState = AvatarModule.SetAvatarState(
                     prevState,
                     avatarAddress,
                     avatarState,
@@ -245,8 +249,8 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = 2,
                     Random = new TestRandom(),
                 });
-                var avatarState = AvatarModule.GetAvatarStateV2(prevState, avatarAddress);
-                var enemyAvatarState = AvatarModule.GetAvatarStateV2(prevState, enemyAvatarAddress);
+                var avatarState = AvatarModule.GetAvatarState(prevState, avatarAddress);
+                var enemyAvatarState = AvatarModule.GetAvatarState(prevState, enemyAvatarAddress);
                 var simulator = new ArenaSimulator(new TestRandom());
                 var myArenaPlayerDigest = new ArenaPlayerDigest(
                     avatarState,

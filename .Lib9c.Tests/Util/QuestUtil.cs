@@ -24,7 +24,14 @@ namespace Lib9c.Tests.Util
             );
             var avatarState = AvatarModule.GetAvatarState(stateV1, avatarAddress);
             avatarState.questList = emptyQuestList;
-            var newStateV1 = LegacyModule.SetState(stateV1, avatarAddress, avatarState.Serialize());
+            var newStateV1 = AvatarModule.SetAvatarState(
+                stateV1,
+                avatarAddress,
+                avatarState,
+                true,
+                true,
+                true,
+                true);
             var newStateV2 = LegacyModule.SetState(
                 stateV2,
                 avatarAddress.Derive(SerializeKeys.LegacyQuestListKey),

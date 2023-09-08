@@ -51,7 +51,14 @@ namespace Lib9c.Tests.Action
         public void TryGetAvatarState()
         {
             IWorld states = new MockWorld();
-            states = AvatarModule.SetAvatarState(states, _avatarAddress, _avatarState);
+            states = AvatarModule.SetAvatarState(
+                states,
+                _avatarAddress,
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
 
             Assert.True(AvatarModule.TryGetAvatarState(states, _agentAddress, _avatarAddress, out var avatarState2));
             Assert.Equal(_avatarAddress, avatarState2.address);
@@ -104,7 +111,7 @@ namespace Lib9c.Tests.Action
         public void TryGetAvatarStateInvalidAddress()
         {
             IWorld states = new MockWorld(
-                new MockAccount(Addresses.Avatar).SetState(default, _avatarState.Serialize()));
+                new MockAccount(Addresses.Avatar).SetState(default, _avatarState.SerializeList()));
 
             Assert.False(
                 AvatarModule.TryGetAvatarState(
@@ -118,8 +125,15 @@ namespace Lib9c.Tests.Action
         public void GetAvatarStateV2()
         {
             IWorld states = new MockWorld();
-            states = AvatarModule.SetAvatarStateV2(states, _avatarAddress, _avatarState);
-            var v2 = AvatarModule.GetAvatarStateV2(states, _avatarAddress);
+            states = AvatarModule.SetAvatarState(
+                states,
+                _avatarAddress,
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
+            var v2 = AvatarModule.GetAvatarState(states, _avatarAddress);
             Assert.NotNull(v2.inventory);
             Assert.NotNull(v2.worldInformation);
             Assert.NotNull(v2.questList);
@@ -132,57 +146,17 @@ namespace Lib9c.Tests.Action
         public void GetAvatarStateV2_Throw_FailedLoadStateException(string key)
         {
             IWorld states = new MockWorld();
-            states = AvatarModule.SetAvatarStateV2(states, _avatarAddress, _avatarState);
+            states = AvatarModule.SetAvatarState(
+                states,
+                _avatarAddress,
+                _avatarState,
+                true,
+                true,
+                true,
+                true);
             states = LegacyModule.SetState(states, _avatarAddress.Derive(key), null);
-            var exc = Assert.Throws<FailedLoadStateException>(() => AvatarModule.GetAvatarStateV2(states, _avatarAddress));
+            var exc = Assert.Throws<FailedLoadStateException>(() => AvatarModule.GetAvatarState(states, _avatarAddress));
             Assert.Contains(key, exc.Message);
-        }
-
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void TryGetAvatarStateV2(bool backward)
-        {
-            IWorld states = new MockWorld();
-            if (backward)
-            {
-                states = AvatarModule.SetAvatarState(states, _avatarAddress, _avatarState);
-            }
-            else
-            {
-                states = AvatarModule.SetAvatarStateV2(states, _avatarAddress, _avatarState);
-            }
-
-            Assert.True(AvatarModule.TryGetAvatarStateV2(states, _agentAddress, _avatarAddress, out _, out bool migrationRequired));
-            Assert.Equal(backward, migrationRequired);
-        }
-
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void TryGetAgentAvatarStatesV2(bool backward)
-        {
-            IWorld states = new MockWorld();
-            states = AgentModule.SetAgentState(states, _agentAddress, _agentState);
-
-            if (backward)
-            {
-                states = AvatarModule.SetAvatarState(states, _avatarAddress, _avatarState);
-            }
-            else
-            {
-                states = AvatarModule.SetAvatarStateV2(states, _avatarAddress, _avatarState);
-            }
-
-            Assert.True(
-                AvatarModule.TryGetAgentAvatarStatesV2(
-                    states,
-                    _agentAddress,
-                    _avatarAddress,
-                    out _,
-                    out _,
-                    out bool avatarMigrationRequired));
-            Assert.Equal(backward, avatarMigrationRequired);
         }
 
         [Fact]

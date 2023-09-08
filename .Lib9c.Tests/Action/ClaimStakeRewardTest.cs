@@ -439,11 +439,15 @@ namespace Lib9c.Tests.Action
                 initialStakeState.Claim((long)previousRewardReceiveIndex);
             }
 
-            var prevAccount = prevWorld.GetAccount(ReservedAddresses.LegacyAccount);
-            prevAccount = prevAccount
-                .SetState(stakeStateAddr, initialStakeState.Serialize())
-                .MintAsset(context, stakeStateAddr, _ncg * stakeAmount);
-            prevWorld = prevWorld.SetAccount(prevAccount);
+            prevWorld = LegacyModule.SetState(
+                prevWorld,
+                stakeStateAddr,
+                initialStakeState.Serialize());
+            prevWorld = LegacyModule.MintAsset(
+                prevWorld,
+                context,
+                stakeStateAddr,
+                _ncg * stakeAmount);
 
             var action = new ClaimStakeReward(avatarAddr);
             var states = action.Execute(new ActionContext
@@ -453,7 +457,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
             });
 
-            var avatarState = AvatarModule.GetAvatarStateV2(states, avatarAddr);
+            var avatarState = AvatarModule.GetAvatarState(states, avatarAddr);
             if (expectedHourglass > 0)
             {
                 Assert.Equal(
