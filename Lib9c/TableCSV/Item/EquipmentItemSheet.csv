@@ -175,9 +175,10 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10453001,Ancient Necklace,Necklace,5,Land,15,HIT,15363,0,10453001,2000000
 10454001,Ancient Necklace,Necklace,5,Wind,15,HIT,15363,0,10454001,2000000
 10610000,Vitality Aura,Aura,1,Normal,0,HP,5000,0,10620000,1
-10620000,Ordinary Vitality Aura,Aura,2,Normal,0,HP,7000,0,10620000,20
-10630000,Flashy Vitality Aura,Aura,3,Normal,0,HP,9000,0,10620000,400
-10620001,Ordinary Insight Aura,Aura,2,Normal,0,ATK,1040,0,10620001,20
-10630001,Flashy Insight Aura,Aura,3,Normal,0,ATK,2000,0,10620001,400
-10640001,Grand Insight Aura,Aura,4,Normal,0,ATK,3500,0,10620001,4000
-10650001,Legendary Insight Aura,Aura,5,Normal,0,ATK,8000,0,10620001,40000
+10620000,Vitality Aura,Aura,2,Normal,0,HP,7000,0,10620000,20
+10630000,Vitality Aura,Aura,3,Normal,0,HP,9000,0,10620000,400
+10620001,Insight Aura,Aura,2,Normal,0,ATK,10,0,10620001,20
+10630001,Insight Aura,Aura,3,Normal,0,ATK,10,0,10620001,400
+10640001,Insight Aura,Aura,4,Normal,0,ATK,10,0,10620001,4000
+10650001,Insight Aura,Aura,5,Normal,0,ATK,10,0,10620001,40000
+10650002,Grand Insight Aura,Aura,5,Normal,0,ATK,10,0,10620001,40000
