@@ -452,7 +452,9 @@ namespace Nekoyume.Action
             }
 
             var ended = DateTimeOffset.UtcNow;
-            Log.Debug("{AddressesHex}BattleArena Total Executed Time: {Elapsed}", addressesHex, ended - started);
+            Log.Debug("{AddressesHex} {Source} {Process} from #{BlockIndex}: {Elapsed}",
+                addressesHex, nameof(BattleArena), "End", context.BlockIndex, ended - started);
+
             return states
                 .SetState(myArenaAvatarStateAdr, myArenaAvatarState.Serialize())
                 .SetState(myArenaScoreAdr, myArenaScore.Serialize())
