@@ -13,9 +13,9 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 104000,104000,치명 증가,20,10,Self,CRI,Percentage,50,true
 104001,104000,치명 증가,100,25,Self,CRI,Percentage,75,true
 104002,104000,치명 증가,100,10,Self,CRI,Percentage,25,true
-104003,104003,Preemptive Strike CRI(Self) Lv1,100,20,Self,CRI,Percentage,300,true
-104004,104003,Preemptive Strike CRI(Self) LV2,100,20,Self,CRI,Percentage,500,true
-104005,104003,Preemptive Strike CRI(Self) Lv3,100,20,Self,CRI,Percentage,800,true
+104003,104003,Preemptive Strike CRI(Self) Lv1,100,20,Self,CRI,Percentage,0,true
+104004,104003,Preemptive Strike CRI(Self) LV2,100,20,Self,CRI,Percentage,0,true
+104005,104003,Preemptive Strike CRI(Self) Lv3,100,20,Self,CRI,Percentage,0,true
 105000,105000,회피 증가,20,10,Self,HIT,Percentage,50,true
 105001,105000,회피 증가,100,25,Self,HIT,Percentage,75,true
 105002,105000,회피 증가,100,10,Self,HIT,Percentage,25,true
