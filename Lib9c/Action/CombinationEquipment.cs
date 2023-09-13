@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
@@ -85,7 +86,11 @@ namespace Nekoyume.Action
 
         public override IAccount Execute(IActionContext context)
         {
+            var sw = new Stopwatch();
+
             context.UseGas(1);
+
+            sw.Start();
             var states = context.PreviousState;
             var slotAddress = avatarAddress.Derive(
                 string.Format(
@@ -327,6 +332,12 @@ namespace Nekoyume.Action
             var isMimisbrunnrSubRecipe = subRecipeRow?.IsMimisbrunnrSubRecipe ??
                 subRecipeId.HasValue && recipeRow.SubRecipeIds[2] == subRecipeId.Value;
             var petOptionSheet = states.GetSheet<PetOptionSheet>();
+
+            sw.Stop();
+            Log.Debug("{AddressesHex} {Source} {Process} from #{BlockIndex}: {Elapsed}",
+                addressesHex, nameof(CombinationEquipment), "Get sheets and validation", context.BlockIndex, sw.Elapsed.TotalMilliseconds);
+
+            sw.Restart();
             if (useHammerPoint)
             {
                 if (!existHammerPointSheet)
@@ -369,6 +380,12 @@ namespace Nekoyume.Action
                     requiredFungibleItems,
                     addressesHex);
             }
+
+            sw.Stop();
+            Log.Debug("{AddressesHex} {Source} {Process} from #{BlockIndex}: {Elapsed}",
+                addressesHex, nameof(CombinationEquipment), "Use Assets", context.BlockIndex, sw.Elapsed.TotalMilliseconds);
+
+            sw.Restart();
 
             // Subtract Required ActionPoint
             if (costActionPoint > 0)
@@ -508,6 +525,11 @@ namespace Nekoyume.Action
             // ~Create Mail
 
             var ended = DateTimeOffset.UtcNow;
+
+            sw.Stop();
+            Log.Debug("{AddressesHex} {Source} {Process} from #{BlockIndex}: {Elapsed}",
+                addressesHex, nameof(CombinationEquipment), "Create Equipment", context.BlockIndex, sw.Elapsed.TotalMilliseconds);
+
             Log.Debug("{AddressesHex}CombinationEquipment Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetState(avatarAddress, avatarState.SerializeV2())
