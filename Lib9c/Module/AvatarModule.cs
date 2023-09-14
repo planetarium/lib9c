@@ -153,6 +153,7 @@ namespace Nekoyume.Module
             bool setWorldInformation,
             bool setQuestList)
         {
+            // TODO: Overwrite legacy address to null state?
             if (state.Version == 0)
             {
                 // If the version of the avatar state is 0, overwrite flags to true.
