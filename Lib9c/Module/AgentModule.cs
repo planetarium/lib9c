@@ -48,7 +48,7 @@ namespace Nekoyume.Module
 
         public static IWorld SetAgentState(IWorld world, Address agent, AgentState state)
         {
-            // TODO: Override legacy address to null state?
+            // TODO: Overwrite legacy address to null state?
             var account = world.GetAccount(Addresses.Agent);
             account = account.SetState(agent, state.SerializeList());
             return world.SetAccount(account);

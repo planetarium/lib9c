@@ -19,6 +19,15 @@ namespace Lib9c.Tests.Model.State
         }
 
         [Fact]
+        public void SerializeV2()
+        {
+            var agentStateAddress = new PrivateKey().ToAddress();
+            var agentState = new AgentState(agentStateAddress);
+
+            Assert.Throws<NotSupportedException>(() => agentState.SerializeV2());
+        }
+
+        [Fact]
         public void SerializeList()
         {
             var agentStateAddress = new PrivateKey().ToAddress();

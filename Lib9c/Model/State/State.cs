@@ -23,7 +23,7 @@ namespace Nekoyume.Model.State
                     ? dict[LegacyAddressKey].ToAddress()
                     : dict[AddressKey].ToAddress(),
                 List list => list[0].ToAddress(),
-                _ => throw new ArgumentException($"{iValue} is not a dictionary.")
+                _ => throw new ArgumentException($"{iValue} is not a dictionary or a list.")
             })
         {
         }
