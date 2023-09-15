@@ -465,7 +465,7 @@ namespace Lib9c.DevExtensions.Action
             var inventoryAddr = avatarAddr.Derive(LegacyInventoryKey);
             var inventory = new Nekoyume.Model.Item.Inventory();
             var equipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>();
-            var enhancementCostSheetV2 = sheets.GetSheet<EnhancementCostSheetV2>();
+            var enhancementCostSheetV3 = sheets.GetSheet<EnhancementCostSheetV3>();
             var recipeSheet = sheets.GetSheet<EquipmentItemRecipeSheet>();
             var subRecipeSheetV2 = sheets.GetSheet<EquipmentItemSubRecipeSheetV2>();
             var optionSheet = sheets.GetSheet<EquipmentItemOptionSheet>();
@@ -532,14 +532,14 @@ namespace Lib9c.DevExtensions.Action
                 }
 
                 if (eLevel > 0 &&
-                    ItemEnhancement11.TryGetRow(
+                    ItemEnhancement.TryGetRow(
                         equipment,
-                        enhancementCostSheetV2,
+                        enhancementCostSheetV3,
                         out var enhancementCostRow))
                 {
                     for (var j = 0; j < eLevel; j++)
                     {
-                        equipment.LevelUp(random, enhancementCostRow, true);
+                        equipment.SetLevel(random, enhancementCostRow.Level, enhancementCostSheetV3);
                     }
                 }
 

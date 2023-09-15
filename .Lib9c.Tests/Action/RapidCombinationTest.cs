@@ -551,7 +551,6 @@ namespace Lib9c.Tests.Action
         [InlineData(7)]
         [InlineData(9)]
         [InlineData(10)]
-        [InlineData(11)]
         public void Execute_NotThrow_InvalidOperationException_When_TargetSlotCreatedBy(
             int itemEnhancementResultModelNumber)
         {
@@ -626,32 +625,6 @@ namespace Lib9c.Tests.Action
                         gold = 0,
                         actionPoint = 0,
                         enhancementResult = ItemEnhancement9Result.EnhancementResult.GreatSuccess,
-                    };
-
-                    break;
-                }
-
-                case 11:
-                {
-                    Assert.True(ItemEnhancement11.TryGetRow(
-                        equipment,
-                        _tableSheets.EnhancementCostSheetV2,
-                        out var costRow));
-                    var equipmentResult = ItemEnhancement11.GetEnhancementResult(costRow, random);
-                    equipment.LevelUp(
-                        random,
-                        costRow,
-                        equipmentResult == ItemEnhancement11.EnhancementResult.GreatSuccess);
-                    resultModel = new ItemEnhancement11.ResultModel
-                    {
-                        id = mailId,
-                        preItemUsable = preItemUsable,
-                        itemUsable = equipment,
-                        materialItemIdList = new[] { materialEquipment.NonFungibleId },
-                        gold = 0,
-                        actionPoint = 0,
-                        enhancementResult = ItemEnhancement11.EnhancementResult.GreatSuccess,
-                        CRYSTAL = 0 * CrystalCalculator.CRYSTAL,
                     };
 
                     break;

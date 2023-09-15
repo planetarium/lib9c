@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus.Arena;
@@ -17,16 +18,16 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static SerializeKeys;
 
     public class AuraScenarioTest
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly Address _enemyAvatarAddress;
-        private readonly IAccountStateDelta _initialState;
+        private readonly IWorld _initialState;
         private readonly Aura _aura;
         private readonly TableSheets _tableSheets;
 
@@ -48,7 +49,7 @@ namespace Lib9c.Tests.Action.Scenario
             var skill = SkillFactory.Get(skillRow, 0, 100, 0, StatType.NONE);
             _aura.Skills.Add(skill);
             var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
-            _initialState = new MockStateDelta();
+            _initialState = new MockWorld();
             for (int i = 0; i < addresses.Length; i++)
             {
                 var avatarAddress = addresses[i];
@@ -62,29 +63,32 @@ namespace Lib9c.Tests.Action.Scenario
                     rankingMapAddress
                 );
                 avatarState.inventory.AddItem(_aura);
-                _initialState = _initialState.SetState(avatarAddress, avatarState.SerializeV2())
-                    .SetState(
-                        avatarAddress.Derive(LegacyInventoryKey),
-                        avatarState.inventory.Serialize())
-                    .SetState(
-                        avatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize())
-                    .SetState(
-                        avatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize());
+                _initialState = AvatarModule.SetAvatarStateV2(
+                    _initialState,
+                    avatarAddress,
+                    avatarState);
             }
 
-            _initialState = _initialState
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(
-                    Addresses.GoldCurrency,
-                    new GoldCurrencyState(Currency.Legacy("NCG", 2, minters: null)).Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize())
-                .MintAsset(new ActionContext(), _agentAddress, Currencies.Crystal * 2);
+            _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                Addresses.GoldCurrency,
+                new GoldCurrencyState(Currency.Legacy("NCG", 2, minters: null)).Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                gameConfigState.address,
+                gameConfigState.Serialize());
+            _initialState = LegacyModule.MintAsset(
+                _initialState,
+                new ActionContext(),
+                _agentAddress,
+                Currencies.Crystal * 2);
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
         }
 
@@ -92,7 +96,7 @@ namespace Lib9c.Tests.Action.Scenario
         public void HackAndSlash()
         {
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(_avatarAddress, BattleType.Adventure);
-            Assert.Null(_initialState.GetState(itemSlotStateAddress));
+            Assert.Null(LegacyModule.GetState(_initialState, itemSlotStateAddress));
 
             var has = new HackAndSlash
             {
@@ -116,7 +120,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = _agentAddress,
             });
 
-            var avatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarStateV2(_initialState, _avatarAddress);
             Assert_Player(avatarState, nextState, _avatarAddress, itemSlotStateAddress);
         }
 
@@ -124,16 +128,21 @@ namespace Lib9c.Tests.Action.Scenario
         public void Raid()
         {
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(_avatarAddress, BattleType.Raid);
-            Assert.Null(_initialState.GetState(itemSlotStateAddress));
-            var avatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            Assert.Null(LegacyModule.GetState(_initialState, itemSlotStateAddress));
+            var avatarState = AvatarModule.GetAvatarStateV2(_initialState, _avatarAddress);
             for (int i = 0; i < 50; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var prevState = _initialState.SetState(
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize()
+            var prevState = AvatarModule.SetAvatarStateV2(
+                _initialState,
+                _avatarAddress,
+                avatarState,
+                false,
+                false,
+                true,
+                false
             );
 
             var raid = new Raid
@@ -166,17 +175,22 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var avatarAddress in addresses)
             {
                 var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
-                Assert.Null(_initialState.GetState(itemSlotStateAddress));
+                Assert.Null(LegacyModule.GetState(_initialState, itemSlotStateAddress));
 
-                var avatarState = prevState.GetAvatarStateV2(avatarAddress);
+                var avatarState = AvatarModule.GetAvatarStateV2(prevState, avatarAddress);
                 for (int i = 0; i < 50; i++)
                 {
                     avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                 }
 
-                prevState = prevState.SetState(
-                    avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize()
+                prevState = AvatarModule.SetAvatarStateV2(
+                    prevState,
+                    avatarAddress,
+                    avatarState,
+                    false,
+                    false,
+                    true,
+                    false
                 );
 
                 var join = new JoinArena
@@ -198,7 +212,7 @@ namespace Lib9c.Tests.Action.Scenario
                     PreviousState = prevState,
                 });
                 var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(avatarAddress);
-                var serializedArenaAvatarState = (List)nextState.GetState(arenaAvatarStateAdr);
+                var serializedArenaAvatarState = (List)LegacyModule.GetState(nextState, arenaAvatarStateAdr);
                 var arenaAvatarState = new ArenaAvatarState(serializedArenaAvatarState);
                 Assert_Equipments(arenaAvatarState.Equipments);
                 prevState = nextState;
@@ -231,8 +245,8 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = 2,
                     Random = new TestRandom(),
                 });
-                var avatarState = prevState.GetAvatarStateV2(avatarAddress);
-                var enemyAvatarState = prevState.GetAvatarStateV2(enemyAvatarAddress);
+                var avatarState = AvatarModule.GetAvatarStateV2(prevState, avatarAddress);
+                var enemyAvatarState = AvatarModule.GetAvatarStateV2(prevState, enemyAvatarAddress);
                 var simulator = new ArenaSimulator(new TestRandom());
                 var myArenaPlayerDigest = new ArenaPlayerDigest(
                     avatarState,
@@ -266,12 +280,12 @@ namespace Lib9c.Tests.Action.Scenario
             }
         }
 
-        private void Assert_Player(AvatarState avatarState, IAccountStateDelta state, Address avatarAddress, Address itemSlotStateAddress)
+        private void Assert_Player(AvatarState avatarState, IWorld world, Address avatarAddress, Address itemSlotStateAddress)
         {
-            var nextAvatarState = state.GetAvatarStateV2(avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(world, avatarAddress);
             var equippedItem = Assert.IsType<Aura>(nextAvatarState.inventory.Equipments.First());
             Assert.True(equippedItem.equipped);
-            Assert_ItemSlot(state, itemSlotStateAddress);
+            Assert_ItemSlot(world, itemSlotStateAddress);
             var player = new Player(avatarState, _tableSheets.GetSimulatorSheets());
             var equippedPlayer = new Player(nextAvatarState, _tableSheets.GetSimulatorSheets());
             Assert.Null(player.aura);
@@ -286,9 +300,10 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Equal(_aura.ItemId, equipmentId);
         }
 
-        private ItemSlotState Assert_ItemSlot(IAccountStateDelta state, Address itemSlotStateAddress)
+        private ItemSlotState Assert_ItemSlot(IWorld world, Address itemSlotStateAddress)
         {
-            var rawItemSlot = Assert.IsType<List>(state.GetState(itemSlotStateAddress));
+            var rawItemSlot =
+                Assert.IsType<List>(LegacyModule.GetState(world, itemSlotStateAddress));
             var itemSlotState = new ItemSlotState(rawItemSlot);
             Assert_Equipments(itemSlotState.Equipments);
             return itemSlotState;

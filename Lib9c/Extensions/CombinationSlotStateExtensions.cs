@@ -58,9 +58,6 @@ namespace Nekoyume.Extensions
                 case ItemEnhancement9Result r:
                     resultId = r.id;
                     break;
-                case ItemEnhancement11.ResultModel r:
-                    resultId = r.id;
-                    break;
                 case MonsterCollectionResult r:
                     resultId = r.id;
                     break;
@@ -111,9 +108,6 @@ namespace Nekoyume.Extensions
                     resultId = r.id;
                     break;
                 case ItemEnhancement7Result r:
-                    resultId = r.id;
-                    break;
-                case ItemEnhancement11.ResultModel r:
                     resultId = r.id;
                     break;
                 case MonsterCollectionResult r:
@@ -180,13 +174,6 @@ namespace Nekoyume.Extensions
                         resultId,
                         requiredBlockIndex);
                     return true;
-                case ItemEnhancement11.ResultModel r:
-                    itemEnhanceMail = new ItemEnhanceMail(
-                        r,
-                        blockIndex,
-                        resultId,
-                        requiredBlockIndex);
-                    return true;
                 case CombinationResult r:
                     combinationMail = new CombinationMail(
                         r,
@@ -225,13 +212,6 @@ namespace Nekoyume.Extensions
                         requiredBlockIndex);
                     return true;
                 case ItemEnhancement7Result r:
-                    itemEnhanceMail = new ItemEnhanceMail(
-                        r,
-                        blockIndex,
-                        resultId,
-                        requiredBlockIndex);
-                    return true;
-                case ItemEnhancement11.ResultModel r:
                     itemEnhanceMail = new ItemEnhanceMail(
                         r,
                         blockIndex,

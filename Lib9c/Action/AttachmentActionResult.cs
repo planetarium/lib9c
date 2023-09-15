@@ -22,8 +22,6 @@ namespace Nekoyume.Action
                 ["combination.result-model"] = d => new Results.CombinationResult(d),
                 ["itemEnhancement.result"] = d => new ItemEnhancement7Result(d),
                 ["item_enhancement9.result"] = d => new ItemEnhancement9Result(d),
-                ["item_enhancement11.result"] = d => new ItemEnhancement11.ResultModel(d),
-                ["item_enhancement12.result"] = d => new ItemEnhancement12.ResultModel(d),
                 ["item_enhancement13.result"] = d => new ItemEnhancement.ResultModel(d),
                 ["sellCancellation.result"] = d => new SellCancellation.Result(d),
                 ["rapidCombination.result"] = d => new RapidCombination0Result(d),
