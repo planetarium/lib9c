@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Store.Trie;
     using Libplanet.Types.Assets;
     using Libplanet.Types.Consensus;
 
@@ -86,6 +87,11 @@ namespace Lib9c.Tests.Action
         public IImmutableDictionary<Currency, BigInteger> TotalSupplies => _totalSupplies;
 
         public ValidatorSet ValidatorSet => _validatorSet;
+
+        public ITrie Trie
+        {
+            get => throw new NotSupportedException();
+        }
 
         public IValue? GetState(Address address) => _states.TryGetValue(address, out IValue? value)
             ? value

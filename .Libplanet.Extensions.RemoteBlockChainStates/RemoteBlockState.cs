@@ -9,10 +9,11 @@ using Libplanet.Types.Assets;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 using Libplanet.Crypto;
+using Libplanet.Store.Trie;
 
 namespace Libplanet.Extensions.RemoteBlockChainStates;
 
-public class RemoteBlockState : IBlockState
+public class RemoteBlockState : IAccountState
 {
     private readonly Uri _explorerEndpoint;
     private readonly GraphQLHttpClient _graphQlHttpClient;
@@ -23,6 +24,11 @@ public class RemoteBlockState : IBlockState
         _graphQlHttpClient =
             new GraphQLHttpClient(_explorerEndpoint, new SystemTextJsonSerializer());
         BlockHash = blockHash;
+    }
+
+    public ITrie Trie
+    {
+        get => throw new NotSupportedException();
     }
 
     public IValue? GetState(Address address) =>

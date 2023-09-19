@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Store.Trie;
     using Libplanet.Types.Assets;
     using Libplanet.Types.Consensus;
 
@@ -20,7 +21,7 @@ namespace Lib9c.Tests.Action
     /// except this has its constructors exposed as public for testing.
     /// </summary>
     [Pure]
-    public class MockStateDelta : IAccountStateDelta
+    public class MockStateDelta : IAccount
     {
         private readonly IAccountState _baseState;
 
@@ -50,6 +51,11 @@ namespace Lib9c.Tests.Action
 
         public IImmutableDictionary<(Address, Currency), BigInteger> TotalUpdatedFungibles
             { get; private set; }
+
+        public ITrie Trie
+        {
+            get => new MerkleTrie(new MemoryKeyValueStore());
+        }
 
         /// <inheritdoc/>
         [Pure]
@@ -94,7 +100,7 @@ namespace Lib9c.Tests.Action
 
         /// <inheritdoc/>
         [Pure]
-        public IAccountStateDelta SetState(Address address, IValue state) =>
+        public IAccount SetState(Address address, IValue state) =>
             UpdateStates(Delta.States.SetItem(address, state));
 
         /// <inheritdoc/>
@@ -131,7 +137,7 @@ namespace Lib9c.Tests.Action
 
         /// <inheritdoc/>
         [Pure]
-        public IAccountStateDelta MintAsset(
+        public IAccount MintAsset(
             IActionContext context, Address recipient, FungibleAssetValue value)
         {
             if (value.Sign <= 0)
@@ -182,7 +188,7 @@ namespace Lib9c.Tests.Action
 
         /// <inheritdoc/>
         [Pure]
-        public IAccountStateDelta TransferAsset(
+        public IAccount TransferAsset(
             IActionContext context,
             Address sender,
             Address recipient,
@@ -193,7 +199,7 @@ namespace Lib9c.Tests.Action
 
         /// <inheritdoc/>
         [Pure]
-        public IAccountStateDelta BurnAsset(
+        public IAccount BurnAsset(
             IActionContext context, Address owner, FungibleAssetValue value)
         {
             string msg;
@@ -244,7 +250,7 @@ namespace Lib9c.Tests.Action
 
         /// <inheritdoc/>
         [Pure]
-        public IAccountStateDelta SetValidator(Validator validator)
+        public IAccount SetValidator(Validator validator)
         {
             return UpdateValidatorSet(GetValidatorSet().Update(validator));
         }
@@ -314,7 +320,7 @@ namespace Lib9c.Tests.Action
             };
 
         [Pure]
-        private IAccountStateDelta TransferAssetV0(
+        private IAccount TransferAssetV0(
             Address sender,
             Address recipient,
             FungibleAssetValue value,
@@ -350,7 +356,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Pure]
-        private IAccountStateDelta TransferAssetV1(
+        private IAccount TransferAssetV1(
             Address sender,
             Address recipient,
             FungibleAssetValue value,
