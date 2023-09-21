@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -59,21 +60,22 @@ namespace Nekoyume.Action
                     AvatarAddress);
             }
 
-            var itemSheet = states.GetSheets(sheetTypes: new[]
-            {
-                typeof(ConsumableItemSheet),
-                typeof(CostumeItemSheet),
-                typeof(EquipmentItemSheet),
-                typeof(MaterialItemSheet),
-            }).GetItemSheet();
+            var itemSheet = states.GetSheets(containItemSheet: true).GetItemSheet();
 
             foreach (var fungibleAssetValue in Amounts)
             {
                 var ticker = fungibleAssetValue.Currency.Ticker;
-                if (!ticker.StartsWith("it_") ||
-                    !int.TryParse(ticker.Replace("it_", string.Empty), out var itemId))
+                if (!ticker.StartsWith("IT_") ||
+                    !int.TryParse(ticker.Replace("IT_", string.Empty), out var itemId))
                 {
                     throw new ArgumentException($"Format of Amount currency's ticker is invalid");
+                }
+
+                var decimalPlaces = fungibleAssetValue.Currency.DecimalPlaces;
+                if (decimalPlaces != 0)
+                {
+                    throw new ArgumentException(
+                        "DecimalPlaces of fungibleAssetValue for claimItems are not 0");
                 }
 
                 var balance = states.GetBalance(context.Signer, fungibleAssetValue.Currency);
@@ -93,13 +95,10 @@ namespace Nekoyume.Action
                 };
 
                 avatarState.inventory.AddItem(item, (int)fungibleAssetValue.RawValue);
-
-                states = states
-                    .BurnAsset(context, context.Signer, fungibleAssetValue)
-                    .SetState(avatarState.address, avatarState.Serialize());
+                states = states.BurnAsset(context, context.Signer, fungibleAssetValue);
             }
 
-            return states;
+            return states.SetState(avatarState.address, avatarState.Serialize());
         }
     }
 }
