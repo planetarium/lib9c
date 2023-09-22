@@ -5,7 +5,6 @@ using Lib9c.Tests.Action;
 using Lib9c.Tests.Util;
 using Libplanet.Crypto;
 using Libplanet.Action.State;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Module;
 using Xunit;
 
@@ -16,14 +15,12 @@ namespace Lib9c.DevExtensions.Tests.Action.Stage
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IWorld _initialStateV2;
-        private readonly Address _worldInfoAddress;
+        private readonly IWorld _initialState;
 
         public ClearStageTest()
         {
-            (_tableSheets, _agentAddress, _avatarAddress, _, _initialStateV2) =
+            (_tableSheets, _agentAddress, _avatarAddress, _initialState) =
                 InitializeUtil.InitializeStates(isDevEx: true);
-            _worldInfoAddress = _avatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey);
         }
 
         [Fact]
@@ -40,7 +37,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Stage
 
             var state = action.Execute(new ActionContext
             {
-                PreviousState = _initialStateV2,
+                PreviousState = _initialState,
                 Signer = _agentAddress,
                 BlockIndex = 0L,
             });

@@ -14,7 +14,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.TableData;
     using Nekoyume.TableData.Event;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class EventConsumableItemCraftsTest
     {
@@ -40,9 +39,6 @@ namespace Lib9c.Tests.Action
 
             _agentAddress = new PrivateKey().ToAddress();
             _avatarAddress = _agentAddress.Derive("avatar");
-            var inventoryAddr = _avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddr = _avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddr = _avatarAddress.Derive(LegacyQuestListKey);
 
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses.Add(0, _avatarAddress);
@@ -95,7 +91,7 @@ namespace Lib9c.Tests.Action
             Assert.True(_tableSheets.EventScheduleSheet
                 .TryGetValue(eventScheduleId, out var scheduleRow));
             var contextBlockIndex = scheduleRow.StartBlockIndex;
-            var world = new MockWorld(_initialStates);
+            var world = _initialStates;
             Execute(
                 world,
                 eventScheduleId,
@@ -118,7 +114,6 @@ namespace Lib9c.Tests.Action
             int slotIndex,
             long blockIndex = 0)
         {
-            var previousAccount = previousWorld.GetAccount(ReservedAddresses.LegacyAccount);
             var previousAvatarState = AvatarModule.GetAvatarState(previousWorld, _avatarAddress);
 
             var recipeSheet = LegacyModule.GetSheet<EventConsumableItemRecipeSheet>(previousWorld);
@@ -142,13 +137,14 @@ namespace Lib9c.Tests.Action
                 worldSheet,
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
-            previousAccount = previousAccount
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    previousAvatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    previousAvatarState.worldInformation.Serialize());
+            previousWorld = AvatarModule.SetAvatarState(
+                previousWorld,
+                _avatarAddress,
+                previousAvatarState,
+                false,
+                true,
+                true,
+                false);
 
             var previousActionPoint = previousAvatarState.actionPoint;
             var previousResultConsumableCount =
@@ -164,7 +160,6 @@ namespace Lib9c.Tests.Action
                 SlotIndex = slotIndex,
             };
 
-            previousWorld = previousWorld.SetAccount(previousAccount);
             var nextWorld = action.Execute(new ActionContext
             {
                 PreviousState = previousWorld,

@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Security.Cryptography;
 using Bencodex.Types;
-using Lib9c;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -19,6 +18,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action.Garages
 {
@@ -207,8 +207,20 @@ namespace Nekoyume.Action.Garages
                 return world;
             }
 
-            var inventoryAddr = RecipientAvatarAddr.Derive(SerializeKeys.LegacyInventoryKey);
-            var inventory = LegacyModule.GetInventory(world, inventoryAddr);
+
+            Inventory inventory;
+            try
+            {
+                // Try load inventory from v2 avatar state first. If not exist, try v2.
+                inventory = AvatarModule.GetInventory(world, RecipientAvatarAddr);
+            }
+            catch (FailedLoadStateException)
+            {
+                inventory = LegacyModule.GetInventory(
+                    world,
+                    RecipientAvatarAddr.Derive(LegacyInventoryKey));
+            }
+
             var fungibleItemTuples = GarageUtils.WithGarageTuples(
                 signer,
                 world,
@@ -220,7 +232,7 @@ namespace Nekoyume.Action.Garages
                 world = LegacyModule.SetState(world, garageAddr, garage.Serialize());
             }
 
-            return LegacyModule.SetState(world, inventoryAddr, inventory.Serialize());
+            return AvatarModule.SetInventory(world, RecipientAvatarAddr, inventory);
         }
 
         private IWorld SendMail(

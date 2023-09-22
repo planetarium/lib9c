@@ -8,7 +8,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -18,7 +17,6 @@ using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -41,9 +39,6 @@ namespace Nekoyume.Action
             context.UseGas(1);
             IActionContext ctx = context;
             var world = ctx.PreviousState;
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (ctx.Rehearsal)
             {
                 world = EquipmentIds.Aggregate(world,
@@ -65,10 +60,7 @@ namespace Nekoyume.Action
                     world,
                     MonsterCollectionState.DeriveAddress(context.Signer, 3),
                     MarkChanged);
-                world = AvatarModule.MarkChanged(world, AvatarAddress);
-                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
-                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
-                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, AvatarAddress, true, true, true, true);
                 world = LegacyModule.MarkBalanceChanged(world, context, GoldCurrencyMock, context.Signer);
                 return world;
             }

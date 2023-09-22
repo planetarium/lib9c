@@ -15,16 +15,12 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class RapidCombinationTest
     {
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly Address _inventoryAddr;
-        private readonly Address _worldInformationAddr;
-        private readonly IWorld _initialStatesWithAvatarStateV1;
-        private readonly IWorld _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarState;
         private readonly TableSheets _tableSheets;
         private readonly int _hourGlassItemId;
 
@@ -34,11 +30,8 @@ namespace Lib9c.Tests.Action.Scenario
                 _tableSheets,
                 _agentAddr,
                 _avatarAddr,
-                _initialStatesWithAvatarStateV1,
-                _initialStatesWithAvatarStateV2
+                _initialStatesWithAvatarState
             ) = InitializeUtil.InitializeStates();
-            _inventoryAddr = _avatarAddr.Derive(LegacyInventoryKey);
-            _worldInformationAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
             _hourGlassItemId = _tableSheets.MaterialItemSheet.OrderedList.First(
                 e => e.ItemSubType == ItemSubType.Hourglass
             ).Id;
@@ -57,9 +50,8 @@ namespace Lib9c.Tests.Action.Scenario
         )
         {
             // Disable all quests to prevent contamination by quest reward
-            var (stateV1, stateV2) = QuestUtil.DisableQuestList(
-                _initialStatesWithAvatarStateV1,
-                _initialStatesWithAvatarStateV2,
+            var state = QuestUtil.DisableQuestList(
+                _initialStatesWithAvatarState,
                 _avatarAddr
             );
 
@@ -89,21 +81,21 @@ namespace Lib9c.Tests.Action.Scenario
                 recipeIds = recipeIds.Add(i.Serialize());
             }
 
-            stateV2 = LegacyModule.SetState(stateV2, unlockRecipeIdsAddress, recipeIds);
+            state = LegacyModule.SetState(state, unlockRecipeIdsAddress, recipeIds);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
             {
-                stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, i);
+                state = CraftUtil.PrepareCombinationSlot(state, _avatarAddr, i);
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
+            var inventoryState = AvatarModule.GetInventory(state, _avatarAddr);
             Assert.Equal(0, inventoryState.Items.Count);
 
             // Add materials to inventory
-            stateV2 = CraftUtil.AddMaterialsToInventory(
-                stateV2,
+            state = CraftUtil.AddMaterialsToInventory(
+                state,
                 _tableSheets,
                 _avatarAddr,
                 allMaterialList,
@@ -111,8 +103,8 @@ namespace Lib9c.Tests.Action.Scenario
             );
 
             // Give HourGlasses to execute RapidCombination
-            stateV2 = CraftUtil.AddMaterialsToInventory(
-                stateV2,
+            state = CraftUtil.AddMaterialsToInventory(
+                state,
                 _tableSheets,
                 _avatarAddr,
                 new List<EquipmentItemSubRecipeSheet.MaterialInfo>
@@ -129,10 +121,10 @@ namespace Lib9c.Tests.Action.Scenario
             {
                 // Unlock stage
                 var equipmentRecipe = recipeList[i];
-                stateV2 = CraftUtil.UnlockStage(
-                    stateV2,
+                state = CraftUtil.UnlockStage(
+                    state,
                     _tableSheets,
-                    _worldInformationAddr,
+                    _avatarAddr,
                     equipmentRecipe.UnlockStage
                 );
 
@@ -146,15 +138,15 @@ namespace Lib9c.Tests.Action.Scenario
                     subRecipeId = recipe.SubRecipeIds?[0],
                 };
 
-                stateV2 = action.Execute(new ActionContext
+                state = action.Execute(new ActionContext
                 {
-                    PreviousState = stateV2,
+                    PreviousState = state,
                     Signer = _agentAddr,
                     BlockIndex = 0L,
                     RandomSeed = random.Seed,
                 });
 
-                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(state, _avatarAddr, i);
                 // TEST: requiredBlock
                 // TODO: Check reduced required block when pet comes in
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
@@ -168,22 +160,22 @@ namespace Lib9c.Tests.Action.Scenario
                     avatarAddress = _avatarAddr,
                     slotIndex = i,
                 };
-                stateV2 = action.Execute(new ActionContext
+                state = action.Execute(new ActionContext
                 {
-                    PreviousState = stateV2,
+                    PreviousState = state,
                     Signer = _agentAddr,
-                    BlockIndex = LegacyModule.GetGameConfigState(stateV2).RequiredAppraiseBlock,
+                    BlockIndex = LegacyModule.GetGameConfigState(state).RequiredAppraiseBlock,
                     RandomSeed = random.Seed,
                 });
 
-                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(state, _avatarAddr, i);
                 // TEST: requiredBlockIndex should be 10, a RequiredAppraiseBlock
                 Assert.Equal(10, slotState.RequiredBlockIndex);
             }
 
             // TEST: Only created items should remain in inventory
             // TEST: All HourGlasses are used
-            inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
+            inventoryState = AvatarModule.GetInventory(state, _avatarAddr);
             Assert.Equal(recipeList.Count, inventoryState.Items.Count);
             foreach (var itemId in targetItemIdList)
             {

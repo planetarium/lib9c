@@ -15,7 +15,6 @@ using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -76,9 +75,6 @@ namespace Nekoyume.Action
                     index
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (ctx.Rehearsal)
             {
                 world = LegacyModule.SetState(world, signer, MarkChanged);
@@ -94,10 +90,7 @@ namespace Nekoyume.Action
                     world = LegacyModule.SetState(world, slotAddress, MarkChanged);
                 }
 
-                world = AvatarModule.MarkChanged(world, avatarAddress);
-                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
-                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
-                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, avatarAddress, true, true, true, true);
                 world = LegacyModule.MarkBalanceChanged(world, ctx, GoldCurrencyMock, signer);
                 return world;
             }

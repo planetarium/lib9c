@@ -11,7 +11,6 @@ using Nekoyume.Helper;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -34,7 +33,7 @@ namespace Nekoyume.Action
             var world = context.PreviousState;
             if (context.Rehearsal)
             {
-                world = AvatarModule.MarkChanged(world, avatarAddress);
+                world = AvatarModule.MarkChanged(world, avatarAddress, true, false, false, false);
                 world = LegacyModule.MarkBalanceChanged(world, context, GoldCurrencyMock, avatarAddress);
                 return world;
             }

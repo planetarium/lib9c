@@ -75,9 +75,6 @@ namespace Nekoyume.Action
 
             IActionContext ctx = context;
             var world = ctx.PreviousState;
-            var buyerInventoryAddress = buyerAvatarAddress.Derive(LegacyInventoryKey);
-            var buyerWorldInformationAddress = buyerAvatarAddress.Derive(LegacyWorldInformationKey);
-            var buyerQuestListAddress = buyerAvatarAddress.Derive(LegacyQuestListKey);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, buyerAvatarAddress);
 
@@ -321,19 +318,14 @@ namespace Nekoyume.Action
             buyerAvatarState.updatedAt = ctx.BlockIndex;
             buyerAvatarState.blockIndex = ctx.BlockIndex;
 
-            world = LegacyModule.SetState(
+            world = AvatarModule.SetAvatarState(
                 world,
-                buyerInventoryAddress,
-                buyerAvatarState.inventory.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                buyerWorldInformationAddress,
-                buyerAvatarState.worldInformation.Serialize());
-            world = LegacyModule.SetState(
-                world,
-                buyerQuestListAddress,
-                buyerAvatarState.questList.Serialize());
-            world = AvatarModule.SetAvatarState(world, buyerAvatarAddress, buyerAvatarState, true, false, false, false);
+                buyerAvatarAddress,
+                buyerAvatarState,
+                true,
+                true,
+                true,
+                true);
             sw.Stop();
             Log.Verbose("{AddressesHex}Buy Set Buyer AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();

@@ -17,7 +17,6 @@ namespace Lib9c.Tests.Action.Scenario
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
 
     public class CombinationAndRapidCombinationTest
     {
@@ -25,9 +24,6 @@ namespace Lib9c.Tests.Action.Scenario
         private readonly TableSheets _tableSheets;
         private Address _agentAddress;
         private Address _avatarAddress;
-        private Address _inventoryAddress;
-        private Address _worldInformationAddress;
-        private Address _questListAddress;
         private Address _slot0Address;
 
         public CombinationAndRapidCombinationTest(ITestOutputHelper outputHelper)
@@ -76,10 +72,6 @@ namespace Lib9c.Tests.Action.Scenario
                     _tableSheets.WorldSheet,
                     GameConfig.RequireClearedStageLevel.CombinationEquipmentAction),
             };
-
-            _inventoryAddress = _avatarAddress.Derive(LegacyInventoryKey);
-            _worldInformationAddress = _avatarAddress.Derive(LegacyWorldInformationKey);
-            _questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
 
             _initialState = new Tests.Action.MockWorld();
             _initialState = LegacyModule.SetState(_initialState, GoldCurrencyState.Address, gold.Serialize());
@@ -164,7 +156,8 @@ namespace Lib9c.Tests.Action.Scenario
                 subRecipeId = subRecipeRow.Id,
             };
 
-            var inventoryValue = LegacyModule.GetState(_initialState, _inventoryAddress);
+            var inventoryValue = _initialState.GetAccount(Addresses.Inventory)
+                .GetState(_avatarAddress);
             Assert.NotNull(inventoryValue);
 
             var inventoryState = new Inventory((List)inventoryValue);
@@ -191,14 +184,14 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             var nextState = LegacyModule.SetState(_initialState, unlockedRecipeIdsAddress, recipeIds);
-            nextState = LegacyModule.SetState(
+            nextState = AvatarModule.SetInventory(
                 nextState,
-                _inventoryAddress,
-                inventoryState.Serialize());
-            nextState = LegacyModule.SetState(
+                _avatarAddress,
+                inventoryState);
+            nextState = AvatarModule.SetWorldInformation(
                 nextState,
-                _worldInformationAddress,
-                worldInformation.Serialize());
+                _avatarAddress,
+                worldInformation);
 
             var random = new TestRandom(randomSeed);
             var ctx = new ActionContext
@@ -278,7 +271,7 @@ namespace Lib9c.Tests.Action.Scenario
                 .First(pair => pair.Value.ItemSubType == ItemSubType.Hourglass)
                 .Value;
 
-            inventoryValue = LegacyModule.GetState(nextState, _inventoryAddress);
+            inventoryValue = nextState.GetAccount(Addresses.Inventory).GetState(_avatarAddress);
             Assert.NotNull(inventoryValue);
             inventoryState = new Inventory((List)inventoryValue);
             Assert.False(inventoryState.TryGetFungibleItems(hourglassRow.ItemId, out _));
@@ -290,7 +283,7 @@ namespace Lib9c.Tests.Action.Scenario
                 hourglassCount);
             Assert.True(inventoryState.TryGetFungibleItems(hourglassRow.ItemId, out var hourglasses));
             Assert.Equal(hourglassCount, hourglasses.Sum(e => e.count));
-            nextState = LegacyModule.SetState(nextState, _inventoryAddress, inventoryState.Serialize());
+            nextState = AvatarModule.SetInventory(nextState, _avatarAddress, inventoryState);
 
             var rapidCombinationAction = new RapidCombination
             {
@@ -305,7 +298,7 @@ namespace Lib9c.Tests.Action.Scenario
                 RandomSeed = random.Seed,
                 Signer = _agentAddress,
             });
-            inventoryValue = LegacyModule.GetState(nextState, _inventoryAddress);
+            inventoryValue = nextState.GetAccount(Addresses.Inventory).GetState(_avatarAddress);
             Assert.NotNull(inventoryValue);
             inventoryState = new Inventory((List)inventoryValue);
             Assert.False(inventoryState.TryGetFungibleItems(hourglassRow.ItemId, out _));

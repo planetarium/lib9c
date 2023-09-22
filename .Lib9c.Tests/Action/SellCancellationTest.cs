@@ -24,7 +24,6 @@ namespace Lib9c.Tests.Action
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
 
     public class SellCancellationTest
     {
@@ -556,16 +555,8 @@ namespace Lib9c.Tests.Action
                 tradableId = default,
             };
 
-            var updatedAddressesAvatar = new List<Address>()
-            {
-                _avatarAddress,
-            };
-
             var updatedAddressesLegacy = new List<Address>()
             {
-                _avatarAddress.Derive(LegacyInventoryKey),
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                _avatarAddress.Derive(LegacyQuestListKey),
                 ShardedShopStateV2.DeriveAddress(ItemSubType.Weapon, default(Guid)),
                 OrderDigestListState.DeriveAddress(_avatarAddress),
                 Addresses.GetItemAddress(default),
@@ -580,8 +571,17 @@ namespace Lib9c.Tests.Action
             });
 
             Assert.Equal(
-                updatedAddressesAvatar.ToImmutableHashSet(),
+                new[] { _avatarAddress }.ToImmutableHashSet(),
                 nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses);
+            Assert.Equal(
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Inventory).Delta.UpdatedAddresses);
+            Assert.Equal(
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.WorldInformation).Delta.UpdatedAddresses);
+            Assert.Equal(
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.QuestList).Delta.UpdatedAddresses);
             Assert.Equal(
                 updatedAddressesLegacy.ToImmutableHashSet(),
                 nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses);

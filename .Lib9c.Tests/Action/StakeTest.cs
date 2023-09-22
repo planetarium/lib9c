@@ -61,7 +61,6 @@ namespace Lib9c.Tests.Action
                 _,
                 _agentAddr,
                 _,
-                _,
                 _initialState
             ) = InitializeUtil.InitializeStates(sheetsOverride: sheetsOverride);
             _ncg = LegacyModule.GetGoldCurrency(_initialState);

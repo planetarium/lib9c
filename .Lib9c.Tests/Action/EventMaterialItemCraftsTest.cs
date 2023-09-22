@@ -226,7 +226,6 @@ namespace Lib9c.Tests.Action
             Dictionary<int, int> materialsToUse,
             long blockIndex = 0)
         {
-            var previousAccount = previousStates.GetAccount(ReservedAddresses.LegacyAccount);
             var previousAvatarState = AvatarModule.GetAvatarState(previousStates, _avatarAddress);
 
             var recipeSheet = LegacyModule.GetSheet<EventMaterialItemRecipeSheet>(previousStates);
@@ -245,14 +244,14 @@ namespace Lib9c.Tests.Action
                 worldSheet,
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
-            previousAccount = previousAccount
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    previousAvatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    previousAvatarState.worldInformation.Serialize());
-            previousStates = previousStates.SetAccount(previousAccount);
+            previousStates = AvatarModule.SetAvatarState(
+                previousStates,
+                _avatarAddress,
+                previousAvatarState,
+                false,
+                true,
+                true,
+                false);
 
             var previousMaterialCount = previousAvatarState.inventory.Items
                 .Where(i => recipeRow.RequiredMaterialsId.Contains(i.item.Id))

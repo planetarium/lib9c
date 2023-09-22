@@ -13,7 +13,6 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
@@ -92,9 +91,6 @@ namespace Lib9c.DevExtensions.Action
                     _slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var orderReceiptAddress = OrderDigestListState.DeriveAddress(avatarAddress);
 
             if (context.Rehearsal)
@@ -108,11 +104,8 @@ namespace Lib9c.DevExtensions.Action
                     world = LegacyModule.SetState(world, slotAddress, MarkChanged);
                 }
 
-                world = AvatarModule.MarkChanged(world, avatarAddress);
+                world = AvatarModule.MarkChanged(world, avatarAddress, true, true, true, true);
                 world = LegacyModule.SetState(world, Addresses.Ranking, MarkChanged);
-                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
-                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
-                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
 
                 for (var i = 0; i < sellData.Items.Length; i++)
                 {
@@ -122,8 +115,7 @@ namespace Lib9c.DevExtensions.Action
                         sellData.Items[i].ItemSubType,
                         addedItemInfos[i].OrderId);
 
-                    world = LegacyModule.SetState(world, avatarAddress, MarkChanged);
-                    world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                    world = AvatarModule.MarkChanged(world, avatarAddress, true, true, false, false);
                     world = LegacyModule.MarkBalanceChanged(
                         world,
                         context,

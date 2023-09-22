@@ -277,16 +277,9 @@ namespace Lib9c.Tests.Action
             var gold = new GoldCurrencyState(Currency.Legacy("NCG", 2, null));
 #pragma warning restore CS0618
 
-            var updatedAddressesAvatar = new List<Address>()
-            {
-                avatarAddress,
-            };
             var updatedAddressesLegacy = new List<Address>()
             {
                 agentAddress,
-                avatarAddress.Derive(LegacyInventoryKey),
-                avatarAddress.Derive(LegacyQuestListKey),
-                avatarAddress.Derive(LegacyWorldInformationKey),
             };
             for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
             {
@@ -308,8 +301,20 @@ namespace Lib9c.Tests.Action
                 Rehearsal = true,
             });
             Assert.Equal(
-                updatedAddressesAvatar.ToImmutableHashSet(),
+                new[] { avatarAddress }.ToImmutableHashSet(),
                 nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses
+            );
+            Assert.Equal(
+                new[] { avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Inventory).Delta.UpdatedAddresses
+            );
+            Assert.Equal(
+                new[] { avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.WorldInformation).Delta.UpdatedAddresses
+            );
+            Assert.Equal(
+                new[] { avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.QuestList).Delta.UpdatedAddresses
             );
             Assert.Equal(
                 updatedAddressesLegacy.ToImmutableHashSet(),

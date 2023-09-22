@@ -32,16 +32,10 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var unlockedRecipeIdsAddress = AvatarAddress.Derive("recipe_ids");
             if (context.Rehearsal)
             {
-                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
-                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
-                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
-                world = AvatarModule.MarkChanged(world, AvatarAddress);
+                world = AvatarModule.MarkChanged(world, AvatarAddress, true, true, true, true);
                 world = LegacyModule.SetState(world, unlockedRecipeIdsAddress, MarkChanged);
                 world = LegacyModule.MarkBalanceChanged(
                     world,
@@ -62,13 +56,13 @@ namespace Nekoyume.Action
 
             WorldInformation worldInformation;
             AvatarState avatarState = null;
-            if (LegacyModule.TryGetState(world, worldInformationAddress, out Dictionary rawInfo))
+            if (AvatarModule.GetWorldInformation(world, AvatarAddress) is { } worldInfo)
             {
-                worldInformation = new WorldInformation(rawInfo);
+                worldInformation = worldInfo;
             }
             else
             {
-                // AvatarState migration required.
+                // AvatarState migration required (v0, v1 -> v2).
                 if (AvatarModule.TryGetAvatarState(
                         world,
                         context.Signer,

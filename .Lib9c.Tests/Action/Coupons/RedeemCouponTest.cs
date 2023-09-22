@@ -151,21 +151,16 @@ namespace Lib9c.Tests.Action.Coupons
 
             Assert.Equal(
                 ActionBase.MarkChanged,
-                LegacyModule.GetState(
-                    rehearsedWorld,
-                    agent1Avatar0Address.Derive(SerializeKeys.LegacyInventoryKey)));
-
+                rehearsedWorld.GetAccount(Addresses.Inventory).GetState(
+                    agent1Avatar0Address));
             Assert.Equal(
                 ActionBase.MarkChanged,
-                LegacyModule.GetState(
-                    rehearsedWorld,
-                    agent1Avatar0Address.Derive(SerializeKeys.LegacyWorldInformationKey)));
-
+                rehearsedWorld.GetAccount(Addresses.WorldInformation).GetState(
+                    agent1Avatar0Address));
             Assert.Equal(
                 ActionBase.MarkChanged,
-                LegacyModule.GetState(
-                    rehearsedWorld,
-                    agent1Avatar0Address.Derive(SerializeKeys.LegacyQuestListKey)));
+                rehearsedWorld.GetAccount(Addresses.QuestList).GetState(
+                    agent1Avatar0Address));
 
             Assert.Equal(
                 ActionBase.MarkChanged,

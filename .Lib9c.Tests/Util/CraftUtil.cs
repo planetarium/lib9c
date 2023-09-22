@@ -53,16 +53,20 @@ namespace Lib9c.Tests.Util
                 avatarState.inventory.AddItem(materialItem, material.Count);
             }
 
-            return LegacyModule.SetState(
+            return AvatarModule.SetAvatarState(
                 world,
-                avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize());
+                avatarAddress,
+                avatarState,
+                false,
+                true,
+                false,
+                false);
         }
 
         public static IWorld UnlockStage(
             IWorld world,
             TableSheets tableSheets,
-            Address worldInformationAddress,
+            Address avatarAddress,
             int stage
         )
         {
@@ -71,7 +75,7 @@ namespace Lib9c.Tests.Util
                 tableSheets.WorldSheet,
                 Math.Max(stage, GameConfig.RequireClearedStageLevel.ItemEnhancementAction)
             );
-            return LegacyModule.SetState(world, worldInformationAddress, worldInformation.Serialize());
+            return AvatarModule.SetWorldInformation(world, avatarAddress, worldInformation);
         }
     }
 }

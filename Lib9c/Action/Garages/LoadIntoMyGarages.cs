@@ -12,6 +12,7 @@ using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Garages;
@@ -19,6 +20,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData.Garages;
+using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action.Garages
 {
@@ -33,6 +35,8 @@ namespace Nekoyume.Action.Garages
         /// If the avatar state is v1, there is no separate inventory,
         /// so it should be execute another action first to migrate the avatar state to v2.
         /// And then, the inventory address will be set.
+        /// After v2, the inventory address is equal to its avatar address,
+        /// but still need another action first to migrate.
         /// </summary>
         public Address? InventoryAddr { get; private set; }
 
@@ -198,7 +202,11 @@ namespace Nekoyume.Action.Garages
                     $"{nameof(FungibleIdAndCounts)} is set.");
             }
 
+            // FIXME: This may cause mistakes.
             if (!Addresses.CheckInventoryAddrIsContainedInAgent(
+                    signer,
+                    InventoryAddr.Value) &&
+                !Addresses.CheckAvatarAddrIsContainedInAgent(
                     signer,
                     InventoryAddr.Value))
             {
@@ -253,7 +261,19 @@ namespace Nekoyume.Action.Garages
                 return world;
             }
 
-            var inventory = LegacyModule.GetInventory(world, InventoryAddr.Value);
+            Inventory inventory;
+            try
+            {
+                // Try load inventory from v2 avatar state first. If not exist, try v2.
+                inventory = AvatarModule.GetInventory(world, InventoryAddr.Value);
+            }
+            catch (FailedLoadStateException)
+            {
+                inventory = LegacyModule.GetInventory(
+                    world,
+                    InventoryAddr.Value.Derive(LegacyInventoryKey));
+            }
+
             var fungibleItemTuples = GarageUtils.WithGarageStateTuples(
                 signer,
                 world,

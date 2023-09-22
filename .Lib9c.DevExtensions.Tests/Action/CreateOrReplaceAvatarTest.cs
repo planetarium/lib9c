@@ -464,10 +464,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             Assert.Equal(action.Tail, avatar.tail);
             Assert.Equal(action.Level, avatar.level);
 
-            var inventoryAddr = avatarAddr.Value.Derive(LegacyInventoryKey);
-            var inventory =
-                new Inventory((List)LegacyModule.GetState(nextWorld, inventoryAddr)!);
-            var inventoryEquipments = inventory.Equipments.ToArray();
+            var inventoryEquipments = avatar.inventory.Equipments.ToArray();
             var equipmentItemRecipeSheet =
                 LegacyModule.GetSheet<EquipmentItemRecipeSheet>(nextWorld);
             var equipmentItemSubRecipeSheetV2 =
@@ -528,13 +525,13 @@ namespace Lib9c.DevExtensions.Tests.Action
                 }
             }
 
-            var inventoryConsumables = inventory.Consumables.ToArray();
+            var inventoryConsumables = avatar.inventory.Consumables.ToArray();
             foreach (var (consumableId, count) in action.Foods)
             {
                 Assert.Equal(count, inventoryConsumables.Count(e => e.Id == consumableId));
             }
 
-            var inventoryCostumes = inventory.Costumes.ToArray();
+            var inventoryCostumes = avatar.inventory.Costumes.ToArray();
             foreach (var costumeId in action.CostumeIds)
             {
                 Assert.Contains(inventoryCostumes, e => e.Id == costumeId);

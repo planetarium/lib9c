@@ -28,7 +28,7 @@ namespace Lib9c.Tests.Action.Garages
         private static readonly Address SenderAgentAddr = Addresses.Admin;
 
         private readonly TableSheets _tableSheets;
-        private readonly IWorld _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarState;
         private readonly Currency _ncg;
         private readonly Address _recipientAgentAddr;
         private readonly FungibleAssetValue[] _fungibleAssetValues;
@@ -43,12 +43,11 @@ namespace Lib9c.Tests.Action.Garages
                 _tableSheets,
                 _,
                 _,
-                _,
-                _initialStatesWithAvatarStateV2
+                _initialStatesWithAvatarState
             ) = InitializeUtil.InitializeStates(
                 agentAddr: SenderAgentAddr,
                 avatarIndex: AvatarIndex);
-            _ncg = LegacyModule.GetGoldCurrency(_initialStatesWithAvatarStateV2);
+            _ncg = LegacyModule.GetGoldCurrency(_initialStatesWithAvatarState);
             (
                 _recipientAgentAddr,
                 _fungibleAssetValues,
@@ -360,7 +359,7 @@ namespace Lib9c.Tests.Action.Garages
             IWorld previousStates)
             GetSuccessfulPreviousStatesWithPlainValue()
         {
-            var previousStates = _initialStatesWithAvatarStateV2;
+            var previousStates = _initialStatesWithAvatarState;
             var actionContext = new ActionContext { Signer = Addresses.Admin };
             var senderFavGarageBalanceAddr =
                 Addresses.GetGarageBalanceAddress(SenderAgentAddr);

@@ -14,7 +14,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class CommonTest
     {
@@ -22,16 +21,13 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
         private readonly Address _recipeAddr;
-        private readonly Address _worldInfoAddr;
-        private readonly IWorld _initialStateV1;
-        private readonly IWorld _initialStateV2;
+        private readonly IWorld _initialState;
 
         public CommonTest()
         {
-            (_tableSheets, _agentAddr, _avatarAddr, _initialStateV1, _initialStateV2) =
+            (_tableSheets, _agentAddr, _avatarAddr, _initialState) =
                 InitializeUtil.InitializeStates();
             _recipeAddr = _avatarAddr.Derive("recipe_ids");
-            _worldInfoAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
         }
 
         // Pet level range test (1~30)
@@ -61,8 +57,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var random = new TestRandom();
 
             // Get Pet
-            var stateV2 = LegacyModule.SetState(
-                _initialStateV2,
+            var state = LegacyModule.SetState(
+                _initialState,
                 PetState.DeriveAddress(_avatarAddr, petId),
                 new List(petId.Serialize(), petLevel.Serialize(), 0L.Serialize())
             );
@@ -79,27 +75,27 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 stageList = stageList.Add(i.Serialize());
             }
 
-            stateV2 = LegacyModule.SetState(stateV2, _recipeAddr, stageList);
-            stateV2 = CraftUtil.UnlockStage(
-                stateV2,
+            state = LegacyModule.SetState(state, _recipeAddr, stageList);
+            state = CraftUtil.UnlockStage(
+                state,
                 _tableSheets,
-                _worldInfoAddr,
+                _avatarAddr,
                 recipe.UnlockStage
             );
 
             // Prepare Slots
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 0);
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 1);
+            state = CraftUtil.PrepareCombinationSlot(state, _avatarAddr, 0);
+            state = CraftUtil.PrepareCombinationSlot(state, _avatarAddr, 1);
 
-            stateV2 = CraftUtil.AddMaterialsToInventory(
-                stateV2,
+            state = CraftUtil.AddMaterialsToInventory(
+                state,
                 _tableSheets,
                 _avatarAddr,
                 materialList,
                 random
             );
-            stateV2 = CraftUtil.AddMaterialsToInventory(
-                stateV2,
+            state = CraftUtil.AddMaterialsToInventory(
+                state,
                 _tableSheets,
                 _avatarAddr,
                 materialList,
@@ -115,9 +111,9 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 subRecipeId = recipe.SubRecipeIds?[0],
                 petId = petId,
             };
-            stateV2 = action1.Execute(new ActionContext
+            state = action1.Execute(new ActionContext
             {
-                PreviousState = stateV2,
+                PreviousState = state,
                 Signer = _agentAddr,
                 BlockIndex = 0L,
                 RandomSeed = random.Seed,
@@ -135,7 +131,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             Assert.Throws<PetIsLockedException>(() => action2.Execute(
                 new ActionContext
                 {
-                    PreviousState = stateV2,
+                    PreviousState = state,
                     Signer = _agentAddr,
                     BlockIndex = 1L,
                     RandomSeed = random.Seed,

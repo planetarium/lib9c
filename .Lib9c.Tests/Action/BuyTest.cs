@@ -258,7 +258,6 @@ namespace Lib9c.Tests.Action
             AvatarState buyerAvatarState = AvatarModule.GetAvatarState(_initialState, _buyerAvatarAddress);
             List<PurchaseInfo> purchaseInfos = new List<PurchaseInfo>();
             List<IProductInfo> productInfos = new List<IProductInfo>();
-            ShopState legacyShopState = LegacyModule.GetShopState(_initialState);
             foreach (var orderData in orderDataList)
             {
                 (AvatarState sellerAvatarState, AgentState sellerAgentState) = CreateAvatarState(
@@ -788,8 +787,10 @@ namespace Lib9c.Tests.Action
                     itemSubType,
                     orderData.ItemCount
                 );
-                var inventoryAddress = orderData.SellerAvatarAddress.Derive(LegacyInventoryKey);
-                LegacyModule.SetState(_initialState, inventoryAddress, sellerAvatarState.inventory.Serialize());
+                AvatarModule.SetInventory(
+                    _initialState,
+                    orderData.SellerAvatarAddress,
+                    sellerAvatarState.inventory);
 
                 var sellItem = order.Sell3(sellerAvatarState);
                 var orderDigest = order.Digest(sellerAvatarState, _tableSheets.CostumeStatSheet);

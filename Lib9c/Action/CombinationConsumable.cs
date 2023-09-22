@@ -67,16 +67,10 @@ namespace Nekoyume.Action
                     slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                world = AvatarModule.MarkChanged(world, avatarAddress);
+                world = AvatarModule.MarkChanged(world, avatarAddress, true, true, true, true);
                 world = LegacyModule.SetState(world, context.Signer, MarkChanged);
-                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
-                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
-                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
                 world = LegacyModule.SetState(world, slotAddress, MarkChanged);
                 return world;
             }

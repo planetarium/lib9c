@@ -37,10 +37,6 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
 
-        private readonly Address _inventoryAddress;
-        private readonly Address _worldInformationAddress;
-        private readonly Address _questListAddress;
-
         private readonly Address _rankingMapAddress;
 
         private readonly WeeklyArenaState _weeklyArenaState;
@@ -69,9 +65,6 @@ namespace Lib9c.Tests.Action
             {
                 level = 100,
             };
-            _inventoryAddress = _avatarAddress.Derive(LegacyInventoryKey);
-            _worldInformationAddress = _avatarAddress.Derive(LegacyWorldInformationKey);
-            _questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
             agentState.avatarAddresses.Add(0, _avatarAddress);
             _weeklyArenaState = new WeeklyArenaState(0);
 #pragma warning disable CS0618
@@ -471,18 +464,9 @@ namespace Lib9c.Tests.Action
                     false,
                     false,
                     false);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    null!);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    null!);
-                state = LegacyModule.SetState(
-                    state,
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    null!);
+                state = state.SetAccount(state.GetAccount(Addresses.Inventory).SetState(_avatarAddress, null!));
+                state = state.SetAccount(state.GetAccount(Addresses.WorldInformation).SetState(_avatarAddress, null!));
+                state = state.SetAccount(state.GetAccount(Addresses.QuestList).SetState(_avatarAddress, null!));
             }
 
             var exec = Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
@@ -572,10 +556,9 @@ namespace Lib9c.Tests.Action
             {
                 worldInformation = new WorldInformation(0, worldSheet, false),
             };
-            state = LegacyModule.SetState(
-                state,
-                _worldInformationAddress,
-                avatarState.worldInformation.Serialize());
+            state = state.SetAccount(state.GetAccount(Addresses.WorldInformation).SetState(
+                _avatarAddress,
+                avatarState.worldInformation.Serialize()));
 
             Assert.False(avatarState.worldInformation.IsStageCleared(0));
 
@@ -738,10 +721,9 @@ namespace Lib9c.Tests.Action
                 false,
                 false,
                 false);
-            state = LegacyModule.SetState(
-                state,
-                _inventoryAddress,
-                avatarState.inventory.Serialize());
+            state = state.SetAccount(state.GetAccount(Addresses.Inventory).SetState(
+                _avatarAddress,
+                avatarState.inventory.Serialize()));
 
             var exec = Assert.Throws<RequiredBlockIndexException>(() => action.Execute(new ActionContext
             {
@@ -771,10 +753,11 @@ namespace Lib9c.Tests.Action
             var equipRow = _tableSheets.EquipmentItemSheet.Values.First(r => r.ItemSubType == itemSubType);
             var equipment = ItemFactory.CreateItemUsable(equipRow, Guid.NewGuid(), 0);
             avatarState.inventory.AddItem(equipment);
-            state = LegacyModule.SetState(
-                state,
-                _inventoryAddress,
-                avatarState.inventory.Serialize());
+            state = state.SetAccount(
+                state.GetAccount(Addresses.Inventory)
+                    .SetState(
+                        _avatarAddress,
+                        avatarState.inventory.Serialize()));
 
             var action = new HackAndSlash
             {
