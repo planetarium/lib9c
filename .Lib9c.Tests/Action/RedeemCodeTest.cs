@@ -14,7 +14,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
     using static Nekoyume.Model.State.RedeemCodeState;
 
     public class RedeemCodeTest
@@ -160,20 +159,22 @@ namespace Lib9c.Tests.Action
                     _agentAddress,
                     RedeemCodeState.Address,
                     GoldCurrencyState.Address,
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    _avatarAddress.Derive(LegacyQuestListKey),
                 }.ToImmutableHashSet(),
                 nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses
             );
 
             Assert.Equal(
-                new[]
-                {
-                    _avatarAddress,
-                }.ToImmutableHashSet(),
-                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses
-            );
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses);
+            Assert.Equal(
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Inventory).Delta.UpdatedAddresses);
+            Assert.Equal(
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.WorldInformation).Delta.UpdatedAddresses);
+            Assert.Equal(
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.QuestList).Delta.UpdatedAddresses);
         }
     }
 }

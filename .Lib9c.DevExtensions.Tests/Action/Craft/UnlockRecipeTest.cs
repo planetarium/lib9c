@@ -20,12 +20,12 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IWorld _initialStateV2;
+        private readonly IWorld _initialState;
         private readonly Address _recipeAddress;
 
         public UnlockRecipeTest()
         {
-            (_tableSheets, _agentAddress, _avatarAddress, _, _initialStateV2) =
+            (_tableSheets, _agentAddress, _avatarAddress, _initialState) =
                 InitializeUtil.InitializeStates(isDevEx: true);
             _recipeAddress = _avatarAddress.Derive("recipe_ids");
         }
@@ -58,7 +58,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
 
             var stateV2 = action.Execute(new ActionContext
             {
-                PreviousState = _initialStateV2,
+                PreviousState = _initialState,
                 Signer = _agentAddress,
                 BlockIndex = 0L,
             });
@@ -92,7 +92,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
 
             var stateV2 = action.Execute(new ActionContext
             {
-                PreviousState = _initialStateV2,
+                PreviousState = _initialState,
                 Signer = _agentAddress,
                 BlockIndex = 0L,
             });

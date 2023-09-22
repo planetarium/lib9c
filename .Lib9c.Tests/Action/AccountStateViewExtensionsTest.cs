@@ -140,10 +140,10 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(LegacyInventoryKey)]
-        [InlineData(LegacyWorldInformationKey)]
-        [InlineData(LegacyQuestListKey)]
-        public void GetAvatarStateV2_Throw_FailedLoadStateException(string key)
+        [InlineData("inventory")]
+        [InlineData("worldInformation")]
+        [InlineData("questList")]
+        public void GetAvatarStateV2_Throw_FailedLoadStateException(string keyString)
         {
             IWorld states = new MockWorld();
             states = AvatarModule.SetAvatarState(
@@ -154,9 +154,19 @@ namespace Lib9c.Tests.Action
                 true,
                 true,
                 true);
-            states = LegacyModule.SetState(states, _avatarAddress.Derive(key), null);
+            Address key = keyString switch
+            {
+                "inventory" => Addresses.Inventory,
+                "worldInformation" => Addresses.WorldInformation,
+                "questList" => Addresses.QuestList,
+                _ => throw new ArgumentOutOfRangeException(nameof(keyString), keyString, null)
+            };
+            var account = states.GetAccount(key);
+            account = account.SetState(_avatarAddress, null!);
+            states = states.SetAccount(account);
+
             var exc = Assert.Throws<FailedLoadStateException>(() => AvatarModule.GetAvatarState(states, _avatarAddress));
-            Assert.Contains(key, exc.Message);
+            Assert.Contains(keyString, exc.Message);
         }
 
         [Fact]

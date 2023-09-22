@@ -9,9 +9,8 @@ namespace Lib9c.Tests.Util
 
     public static class QuestUtil
     {
-        public static (IWorld, IWorld) DisableQuestList(
-            IWorld stateV1,
-            IWorld stateV2,
+        public static IWorld DisableQuestList(
+            IWorld state,
             Address avatarAddress
         )
         {
@@ -22,22 +21,17 @@ namespace Lib9c.Tests.Util
                 new EquipmentItemRecipeSheet(),
                 new EquipmentItemSubRecipeSheet()
             );
-            var avatarState = AvatarModule.GetAvatarState(stateV1, avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(state, avatarAddress);
             avatarState.questList = emptyQuestList;
-            var newStateV1 = AvatarModule.SetAvatarState(
-                stateV1,
+            var newState = AvatarModule.SetAvatarState(
+                state,
                 avatarAddress,
                 avatarState,
                 true,
                 true,
                 true,
                 true);
-            var newStateV2 = LegacyModule.SetState(
-                stateV2,
-                avatarAddress.Derive(SerializeKeys.LegacyQuestListKey),
-                emptyQuestList.Serialize()
-            );
-            return (newStateV1, newStateV2);
+            return newState;
         }
     }
 }

@@ -40,25 +40,18 @@ namespace Lib9c.DevExtensions.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IWorld _initialStateV2;
-        private readonly Address _inventoryAddress;
-        private readonly Address _worldInformationAddress;
-        private readonly Address _questListAddress;
+        private readonly IWorld _initialState;
         private readonly Address _recipeAddress;
         private readonly AvatarState _avatarState;
 
         public ManipulateStateTest()
         {
-            (_tableSheets, _agentAddress, _avatarAddress, _, _initialStateV2) =
+            (_tableSheets, _agentAddress, _avatarAddress, _initialState) =
                 InitializeUtil.InitializeStates(
                     adminAddr: AdminAddr,
                     isDevEx: true);
-            _inventoryAddress = _avatarAddress.Derive(SerializeKeys.LegacyInventoryKey);
-            _worldInformationAddress =
-                _avatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey);
-            _questListAddress = _avatarAddress.Derive(SerializeKeys.LegacyQuestListKey);
             _recipeAddress = _avatarAddress.Derive("recipe_ids");
-            _avatarState = AvatarModule.GetAvatarState(_initialStateV2, _avatarAddress);
+            _avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
         }
 
         // MemberData
@@ -118,7 +111,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         public static IEnumerable<object[]> FetchInventory()
         {
             var random = new TestRandom();
-            var (tableSheets, _, _, _, _) = InitializeUtil.InitializeStates(isDevEx: true);
+            var (tableSheets, _, _, _) = InitializeUtil.InitializeStates(isDevEx: true);
             var equipmentList = tableSheets.EquipmentItemSheet.Values.ToList();
             var consumableList = tableSheets.ConsumableItemSheet.Values.ToList();
             var materialList = tableSheets.MaterialItemSheet.Values.ToList();
@@ -177,7 +170,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         public static IEnumerable<object[]> FetchWorldInfo()
         {
             var random = new Random();
-            var (tableSheets, _, _, _, _) = InitializeUtil.InitializeStates(isDevEx: true);
+            var (tableSheets, _, _, _) = InitializeUtil.InitializeStates(isDevEx: true);
             var worldSheet = tableSheets.WorldSheet;
             yield return new object[]
             {
@@ -202,7 +195,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         public static IEnumerable<object[]> FetchQuest()
         {
             var random = new Random();
-            var (tableSheets, _, _, _, stateV2) = InitializeUtil.InitializeStates(isDevEx: true);
+            var (tableSheets, _, _, state) = InitializeUtil.InitializeStates(isDevEx: true);
             // Empty QuestList
             yield return new object[]
             {
@@ -249,7 +242,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 tableSheets.EquipmentItemRecipeSheet,
                 tableSheets.EquipmentItemSubRecipeSheet
             );
-            tradeQuestList.UpdateTradeQuest(TradeType.Sell, LegacyModule.GetGoldCurrency(stateV2) * 1);
+            tradeQuestList.UpdateTradeQuest(TradeType.Sell, LegacyModule.GetGoldCurrency(state) * 1);
 
             yield return new object[]
             {
@@ -288,7 +281,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 tableSheets.EquipmentItemSubRecipeSheet
             );
             combinationQuestList.UpdateCombinationQuest(item);
-            tradeQuestList.UpdateTradeQuest(TradeType.Sell, LegacyModule.GetGoldCurrency(stateV2) * 1);
+            tradeQuestList.UpdateTradeQuest(TradeType.Sell, LegacyModule.GetGoldCurrency(state) * 1);
             stageMap = new CollectionMap();
             for (var i = 1; i <= targetStage; i++)
             {
@@ -460,7 +453,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             newAvatarState.tail = tail ?? _avatarState.tail;
 
             var world = Manipulate(
-                new MockWorld(_initialStateV2),
+                new MockWorld(_initialState),
                 new List<(Address, Address, IValue)>
                 {
                     (Addresses.Avatar, _avatarAddress, newAvatarState.SerializeList())
@@ -534,10 +527,10 @@ namespace Lib9c.DevExtensions.Tests.Action
         public void SetInventoryState(Inventory targetInventory)
         {
             var world = Manipulate(
-                new MockWorld(_initialStateV2),
+                new MockWorld(_initialState),
                 new List<(Address, Address, IValue)>
                 {
-                    (ReservedAddresses.LegacyAccount, _inventoryAddress, targetInventory.Serialize()),
+                    (Addresses.Inventory, _avatarAddress, targetInventory.Serialize()),
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -550,10 +543,10 @@ namespace Lib9c.DevExtensions.Tests.Action
         public void SetWorldInformation(int lastClearedStage, WorldInformation targetInfo)
         {
             var world = Manipulate(
-                new MockWorld(_initialStateV2),
+                new MockWorld(_initialState),
                 new List<(Address, Address, IValue)>
                 {
-                    (ReservedAddresses.LegacyAccount, _worldInformationAddress, targetInfo.Serialize())
+                    (Addresses.WorldInformation, _avatarAddress, targetInfo.Serialize())
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -566,10 +559,10 @@ namespace Lib9c.DevExtensions.Tests.Action
         public void SetQuestState(List<int> targetQuestIdList, QuestList questList)
         {
             var world = Manipulate(
-                new MockWorld(_initialStateV2),
+                new MockWorld(_initialState),
                 new List<(Address, Address, IValue)>
                 {
-                    (ReservedAddresses.LegacyAccount, _questListAddress, questList.Serialize())
+                    (Addresses.QuestList, _avatarAddress, questList.Serialize())
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -582,7 +575,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         public void SetBalance(Address addr, FungibleAssetValue fav)
         {
             var world = Manipulate(
-                new MockWorld(_initialStateV2),
+                new MockWorld(_initialState),
                 new List<(Address, Address, IValue)>(),
                 new List<(Address, FungibleAssetValue)>
                 {
@@ -624,13 +617,13 @@ namespace Lib9c.DevExtensions.Tests.Action
                 .ToList();
 
             var world = Manipulate(
-                new MockWorld(_initialStateV2),
+                new MockWorld(_initialState),
                 new List<(Address, Address, IValue)>
                 {
                     (Addresses.Avatar, _avatarAddress, newAvatarState.SerializeList()),
-                    (ReservedAddresses.LegacyAccount, _inventoryAddress, inventory.Serialize()),
-                    (ReservedAddresses.LegacyAccount, _worldInformationAddress, worldState.Serialize()),
-                    (ReservedAddresses.LegacyAccount, _questListAddress, questList.Serialize()),
+                    (Addresses.Inventory, _avatarAddress, inventory.Serialize()),
+                    (Addresses.WorldInformation, _avatarAddress, worldState.Serialize()),
+                    (Addresses.QuestList, _avatarAddress, questList.Serialize()),
                 },
                 balanceList
             ); ;

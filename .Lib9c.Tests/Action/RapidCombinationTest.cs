@@ -13,7 +13,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Action.Results;
-    using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
@@ -21,7 +20,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class RapidCombinationTest
     {
@@ -407,19 +405,6 @@ namespace Lib9c.Tests.Action
                 )
             );
 
-            var updatedAddressesAvatar = new List<Address>()
-            {
-                _avatarAddress,
-            };
-
-            var updatedAddressesLegacy = new List<Address>()
-            {
-                _avatarAddress.Derive(LegacyInventoryKey),
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                _avatarAddress.Derive(LegacyQuestListKey),
-                slotAddress,
-            };
-
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
@@ -435,10 +420,19 @@ namespace Lib9c.Tests.Action
             });
 
             Assert.Equal(
-                updatedAddressesAvatar.ToImmutableHashSet(),
+                new[] { _avatarAddress }.ToImmutableHashSet(),
                 nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses);
             Assert.Equal(
-                updatedAddressesLegacy.ToImmutableHashSet(),
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Inventory).Delta.UpdatedAddresses);
+            Assert.Equal(
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.WorldInformation).Delta.UpdatedAddresses);
+            Assert.Equal(
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.QuestList).Delta.UpdatedAddresses);
+            Assert.Equal(
+                new[] { slotAddress }.ToImmutableHashSet(),
                 nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses);
         }
 

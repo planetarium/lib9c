@@ -8,7 +8,6 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
-    using Nekoyume.Action.Extensions;
     using Nekoyume.Exceptions;
     using Nekoyume.Helper;
     using Nekoyume.Model.Arena;
@@ -21,25 +20,21 @@ namespace Lib9c.Tests.Action
     {
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IWorld _initialWorldWithAvatarStateV1;
-        private readonly IWorld _initialWorldWithAvatarStateV2;
+        private readonly IWorld _initialWorldWithAvatarState;
         private readonly int _targetPetId;
         private readonly long _firstRoundStartBlockIndex;
 
         public PetEnhancement0Test()
         {
-            IWorld initialAccountWithAvatarStateV1;
-            IWorld initialAccountWithAvatarStateV2;
+            IWorld initialAccountWithAvatarState;
             TableSheets tableSheets;
             (
                 tableSheets,
                 _agentAddr,
                 _avatarAddr,
-                initialAccountWithAvatarStateV1,
-                initialAccountWithAvatarStateV2
+                initialAccountWithAvatarState
             ) = InitializeUtil.InitializeStates();
-            _initialWorldWithAvatarStateV1 = initialAccountWithAvatarStateV1;
-            _initialWorldWithAvatarStateV2 = initialAccountWithAvatarStateV2;
+            _initialWorldWithAvatarState = initialAccountWithAvatarState;
             _targetPetId = tableSheets.PetSheet.First!.Id;
             var firstRound = tableSheets.ArenaSheet.OrderedList!
                 .SelectMany(row => row.Round)
@@ -57,15 +52,7 @@ namespace Lib9c.Tests.Action
             int targetPetLevel)
         {
             Execute(
-                _initialWorldWithAvatarStateV1,
-                _firstRoundStartBlockIndex,
-                _agentAddr,
-                _avatarAddr,
-                _targetPetId,
-                currentPetLevel,
-                targetPetLevel);
-            Execute(
-                _initialWorldWithAvatarStateV2,
+                _initialWorldWithAvatarState,
                 _firstRoundStartBlockIndex,
                 _agentAddr,
                 _avatarAddr,
@@ -80,16 +67,7 @@ namespace Lib9c.Tests.Action
             var invalidAgentAddr = new PrivateKey().ToAddress();
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialWorldWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    invalidAgentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    1));
-            Assert.Throws<InvalidActionFieldException>(() =>
-                Execute(
-                    _initialWorldWithAvatarStateV2,
+                    _initialWorldWithAvatarState,
                     _firstRoundStartBlockIndex,
                     invalidAgentAddr,
                     _avatarAddr,
@@ -104,16 +82,7 @@ namespace Lib9c.Tests.Action
             var invalidAvatarAddr = new PrivateKey().ToAddress();
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialWorldWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    invalidAvatarAddr,
-                    _targetPetId,
-                    0,
-                    1));
-            Assert.Throws<InvalidActionFieldException>(() =>
-                Execute(
-                    _initialWorldWithAvatarStateV2,
+                    _initialWorldWithAvatarState,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     invalidAvatarAddr,
@@ -133,16 +102,7 @@ namespace Lib9c.Tests.Action
         {
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialWorldWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    currentPetLevel,
-                    targetPetLevel));
-            Assert.Throws<InvalidActionFieldException>(() =>
-                Execute(
-                    _initialWorldWithAvatarStateV2,
+                    _initialWorldWithAvatarState,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -157,17 +117,7 @@ namespace Lib9c.Tests.Action
             // PetSheet
             Assert.Throws<SheetRowNotFoundException>(() =>
                 Execute(
-                    _initialWorldWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    1,
-                    removePetRow: true));
-            Assert.Throws<SheetRowNotFoundException>(() =>
-                Execute(
-                    _initialWorldWithAvatarStateV2,
+                    _initialWorldWithAvatarState,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -179,17 +129,7 @@ namespace Lib9c.Tests.Action
             // PetCostSheet
             Assert.Throws<SheetRowNotFoundException>(() =>
                 Execute(
-                    _initialWorldWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    1,
-                    removePetCostRow: true));
-            Assert.Throws<SheetRowNotFoundException>(() =>
-                Execute(
-                    _initialWorldWithAvatarStateV2,
+                    _initialWorldWithAvatarState,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -206,17 +146,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<PetCostNotFoundException>(() =>
                 Execute(
-                    _initialWorldWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    targetPetLevel,
-                    removePetCostRowWithTargetPetLevel: true));
-            Assert.Throws<PetCostNotFoundException>(() =>
-                Execute(
-                    _initialWorldWithAvatarStateV2,
+                    _initialWorldWithAvatarState,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -231,16 +161,7 @@ namespace Lib9c.Tests.Action
         {
             Assert.Throws<RoundNotFoundException>(() =>
                 Execute(
-                    _initialWorldWithAvatarStateV1,
-                    _firstRoundStartBlockIndex - 1,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    1));
-            Assert.Throws<RoundNotFoundException>(() =>
-                Execute(
-                    _initialWorldWithAvatarStateV2,
+                    _initialWorldWithAvatarState,
                     _firstRoundStartBlockIndex - 1,
                     _agentAddr,
                     _avatarAddr,
@@ -257,17 +178,7 @@ namespace Lib9c.Tests.Action
         {
             Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
                 Execute(
-                    _initialWorldWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    currentPetLevel,
-                    targetPetLevel,
-                    mintAssets: false));
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
-                Execute(
-                    _initialWorldWithAvatarStateV2,
+                    _initialWorldWithAvatarState,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,

@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model;
@@ -35,11 +36,11 @@ namespace Lib9c.DevExtensions.Action.Stage
                 LegacyModule.GetSheet<WorldSheet>(world),
                 TargetStage
             );
-            return LegacyModule.SetState(
-                world,
-                AvatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey),
-                worldInformation.Serialize()
-            );
+            return world.SetAccount(
+                world.GetAccount(Addresses.WorldInformation)
+                    .SetState(
+                        AvatarAddress,
+                        worldInformation.Serialize()));
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

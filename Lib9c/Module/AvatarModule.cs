@@ -71,18 +71,17 @@ namespace Nekoyume.Module
 
             try
             {
-                string[] keys =
-                {
-                    LegacyInventoryKey,
-                    LegacyWorldInformationKey,
-                    LegacyQuestListKey,
-                };
-                var addresses = keys.Select(key => address.Derive(key)).ToArray();
-                var serializedValues = LegacyModule.GetStates(worldState, addresses);
-
                 // Version 0 contains inventory, worldInformation, questList itself.
-                if (avatarState.Version > 0)
+                if (avatarState.Version == 1)
                 {
+                    string[] keys =
+                    {
+                        LegacyInventoryKey,
+                        LegacyWorldInformationKey,
+                        LegacyQuestListKey,
+                    };
+                    var addresses = keys.Select(key => address.Derive(key)).ToArray();
+                    var serializedValues = LegacyModule.GetStates(worldState, addresses);
                     for (var i = 0; i < keys.Length; i++)
                     {
                         if (serializedValues[i] is null)
@@ -96,6 +95,13 @@ namespace Nekoyume.Module
                     avatarState.worldInformation =
                         new WorldInformation((Dictionary)serializedValues[1]);
                     avatarState.questList = new QuestList((Dictionary)serializedValues[2]);
+                }
+
+                if (avatarState.Version >= 2)
+                {
+                    avatarState.inventory = GetInventory(worldState, address);
+                    avatarState.worldInformation = GetWorldInformation(worldState, address);
+                    avatarState.questList = GetQuestList(worldState, address);
                 }
             }
             catch (KeyNotFoundException)
@@ -154,9 +160,9 @@ namespace Nekoyume.Module
             bool setQuestList)
         {
             // TODO: Overwrite legacy address to null state?
-            if (state.Version == 0)
+            if (state.Version < 2)
             {
-                // If the version of the avatar state is 0, overwrite flags to true.
+                // If the version of the avatar state is 0 or 1, overwrite flags to true.
                 setAvatar = true;
                 setInventory = true;
                 setWorldInformation = true;
@@ -169,27 +175,69 @@ namespace Nekoyume.Module
 
             if (setInventory)
             {
-                world = SetInventory(world, avatarAddress.Derive(LegacyInventoryKey), state.inventory);
+                world = SetInventory(world, avatarAddress, state.inventory);
             }
 
             if (setWorldInformation)
             {
-                world = SetWorldInformation(world, avatarAddress.Derive(LegacyWorldInformationKey), state.worldInformation);
+                world = SetWorldInformation(world, avatarAddress, state.worldInformation);
             }
 
             if (setQuestList)
             {
-                world = SetQuestList(world, avatarAddress.Derive(LegacyQuestListKey), state.questList);
+                world = SetQuestList(world, avatarAddress, state.questList);
             }
 
             return world;
         }
 
-        public static IWorld MarkChanged(IWorld world, Address address) =>
-            world.SetAccount(
-                Addresses.Avatar,
-                world.GetAccount(Addresses.Avatar).SetState(
-                    address, ActionBase.MarkChanged));
+        public static IWorld MarkChanged(
+            IWorld world,
+            Address address,
+            bool avatar,
+            bool inventory,
+            bool worldInformation,
+            bool questList)
+        {
+            IWorld nextWorld = world;
+            if (avatar)
+            {
+                nextWorld = nextWorld.SetAccount(
+                    nextWorld.GetAccount(Addresses.Avatar)
+                        .SetState(
+                            address,
+                            ActionBase.MarkChanged));
+            }
+
+            if (inventory)
+            {
+                nextWorld = nextWorld.SetAccount(
+                    nextWorld.GetAccount(Addresses.Inventory)
+                        .SetState(
+                            address,
+                            ActionBase.MarkChanged));
+            }
+
+            if (worldInformation)
+            {
+                nextWorld = nextWorld.SetAccount(
+                    nextWorld.GetAccount(Addresses.WorldInformation)
+                        .SetState(
+                            address,
+                            ActionBase.MarkChanged));
+            }
+
+            if (questList)
+            {
+                nextWorld = nextWorld.SetAccount(
+                    nextWorld.GetAccount(Addresses.QuestList)
+                        .SetState(
+                            address,
+                            ActionBase.MarkChanged));
+            }
+
+            return nextWorld;
+        }
 
         public static bool Changed(IWorld world, Address address) =>
             world.GetAccount(Addresses.Avatar).GetState(address).Equals(ActionBase.MarkChanged);
@@ -201,25 +249,65 @@ namespace Nekoyume.Module
             return world.SetAccount(avatarAccount);
         }
 
-        private static IWorld SetInventory(IWorld world, Address address, Inventory state)
+        internal static Inventory GetInventory(IWorldState worldState, Address address)
         {
-            var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
-            legacyAccount = legacyAccount.SetState(address, state.Serialize());
-            return world.SetAccount(ReservedAddresses.LegacyAccount, legacyAccount);
+
+            var inventoryAccount = worldState.GetAccount(Addresses.Inventory);
+            var serializedInventory = inventoryAccount.GetState(address);
+            if (serializedInventory is null || serializedInventory.Equals(Null.Value))
+            {
+                throw new FailedLoadStateException(
+                    $"Aborted as the inventory state of the avatar ({address}) was failed to load.");
+            }
+
+            return new Inventory((List)serializedInventory);
         }
 
-        private static IWorld SetWorldInformation(IWorld world, Address address, WorldInformation state)
+        internal static IWorld SetInventory(IWorld world, Address address, Inventory state)
         {
-            var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
-            legacyAccount = legacyAccount.SetState(address, state.Serialize());
-            return world.SetAccount(ReservedAddresses.LegacyAccount, legacyAccount);
+            var inventoryAccount = world.GetAccount(Addresses.Inventory);
+            inventoryAccount = inventoryAccount.SetState(address, state.Serialize());
+            return world.SetAccount(Addresses.Inventory, inventoryAccount);
+        }
+
+        internal static WorldInformation GetWorldInformation(IWorldState worldState, Address address)
+        {
+            var worldInfoAccount = worldState.GetAccount(Addresses.WorldInformation);
+            var serializeWorldInfo = worldInfoAccount.GetState(address);
+            if (serializeWorldInfo is null || serializeWorldInfo.Equals(Null.Value))
+            {
+                throw new FailedLoadStateException(
+                    $"Aborted as the worldInformation state of the avatar ({address}) was failed to load.");
+            }
+
+            return new WorldInformation((Dictionary)serializeWorldInfo);
+        }
+
+        internal static IWorld SetWorldInformation(IWorld world, Address address, WorldInformation state)
+        {
+            var worldInfoAccount = world.GetAccount(Addresses.WorldInformation);
+            worldInfoAccount = worldInfoAccount.SetState(address, state.Serialize());
+            return world.SetAccount(Addresses.WorldInformation, worldInfoAccount);
+        }
+
+        private static QuestList GetQuestList(IWorldState worldState, Address address)
+        {
+            var questListAccount = worldState.GetAccount(Addresses.QuestList);
+            var serializeQuestList = questListAccount.GetState(address);
+            if (serializeQuestList is null || serializeQuestList.Equals(Null.Value))
+            {
+                throw new FailedLoadStateException(
+                    $"Aborted as the questList state of the avatar ({address}) was failed to load.");
+            }
+
+            return new QuestList((Dictionary)serializeQuestList);
         }
 
         private static IWorld SetQuestList(IWorld world, Address address, QuestList state)
         {
-            var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
-            legacyAccount = legacyAccount.SetState(address, state.Serialize());
-            return world.SetAccount(ReservedAddresses.LegacyAccount, legacyAccount);
+            var questListAccount = world.GetAccount(Addresses.QuestList);
+            questListAccount = questListAccount.SetState(address, state.Serialize());
+            return world.SetAccount(Addresses.QuestList, questListAccount);
         }
 
     }

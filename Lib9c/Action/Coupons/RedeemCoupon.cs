@@ -5,12 +5,10 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Coupons;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action.Coupons
 {
@@ -35,15 +33,9 @@ namespace Nekoyume.Action.Coupons
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                world = AvatarModule.MarkChanged(world, AvatarAddress);
-                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
-                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
-                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, AvatarAddress, true, true, true, true);
                 world = LegacyModule.SetCouponWallet(
                     world,
                     context.Signer,

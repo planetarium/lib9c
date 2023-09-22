@@ -17,7 +17,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class DiscountMaterialCostCrystalTest
     {
@@ -26,9 +25,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly Address _inventoryAddr;
-        private readonly Address _worldInformationAddr;
-        private readonly IWorld _initialStateV2;
+        private readonly IWorld _initialState;
         private readonly TableSheets _tableSheets;
         private int? _petId;
 
@@ -38,11 +35,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 _tableSheets,
                 _agentAddr,
                 _avatarAddr,
-                _,
-                _initialStateV2
+                _initialState
             ) = InitializeUtil.InitializeStates();
-            _inventoryAddr = _avatarAddr.Derive(LegacyInventoryKey);
-            _worldInformationAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
         }
 
         [Theory]
@@ -76,7 +70,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 
             var context = new ActionContext();
             var stateV2 = LegacyModule.SetState(
-                _initialStateV2,
+                _initialState,
                 _avatarAddr.Derive("recipe_ids"),
                 stageList
             );
@@ -113,7 +107,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,
-                _worldInformationAddr,
+                _avatarAddr,
                 recipe.UnlockStage
             );
 

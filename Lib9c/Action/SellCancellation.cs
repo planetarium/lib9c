@@ -9,7 +9,6 @@ using Lib9c.Model.Order;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -94,20 +93,14 @@ namespace Nekoyume.Action
             context.UseGas(1);
             var world = context.PreviousState;
             var shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
-            var inventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = sellerAvatarAddress.Derive(LegacyQuestListKey);
             var digestListAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
             var itemAddress = Addresses.GetItemAddress(tradableId);
             if (context.Rehearsal)
             {
                 world = LegacyModule.SetState(world, shardedShopAddress, MarkChanged);
-                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
-                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
-                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
                 world = LegacyModule.SetState(world, digestListAddress, MarkChanged);
                 world = LegacyModule.SetState(world, itemAddress, MarkChanged);
-                world = AvatarModule.MarkChanged(world, sellerAvatarAddress);
+                world = AvatarModule.MarkChanged(world, sellerAvatarAddress, true, true, true, true);
                 return world;
             }
 
@@ -163,9 +156,6 @@ namespace Nekoyume.Action
                 ShardedShopStateV2.DeriveAddress(itemSubType, order.OrderId);
             Address digestListAddress = OrderDigestListState.DeriveAddress(avatarAddress);
             Address itemAddress = Addresses.GetItemAddress(orderTradableId);
-            Address inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            Address worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            Address questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;
@@ -286,9 +276,6 @@ namespace Nekoyume.Action
                 ShardedShopStateV2.DeriveAddress(order.ItemSubType, order.OrderId);
             Address digestListAddress = OrderDigestListState.DeriveAddress(avatarAddress);
             Address itemAddress = Addresses.GetItemAddress(orderTradableId);
-            Address inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            Address worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            Address questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;

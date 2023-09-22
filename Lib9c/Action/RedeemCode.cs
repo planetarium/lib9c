@@ -7,13 +7,11 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -47,16 +45,10 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var world = context.PreviousState;
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
                 world = LegacyModule.SetState(world, RedeemCodeState.Address, MarkChanged);
-                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
-                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
-                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
-                world = AvatarModule.MarkChanged(world, AvatarAddress);
+                world = AvatarModule.MarkChanged(world, AvatarAddress, true, true, true, true);
                 world = LegacyModule.SetState(world, context.Signer, MarkChanged);
                 world = LegacyModule.MarkBalanceChanged(
                     world,

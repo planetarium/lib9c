@@ -19,14 +19,12 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IWorld _initialStateV2;
-        private readonly Address _worldInformationAddress;
+        private readonly IWorld _initialState;
 
         public UnlockCraftActionTest()
         {
-            (_tableSheets, _agentAddress, _avatarAddress, _, _initialStateV2) =
+            (_tableSheets, _agentAddress, _avatarAddress, _initialState) =
                 InitializeUtil.InitializeStates(isDevEx: true);
-            _worldInformationAddress = _avatarAddress.Derive(LegacyWorldInformationKey);
         }
 
         [Theory]
@@ -52,15 +50,15 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
 
             var state = action.Execute(new ActionContext
             {
-                PreviousState = _initialStateV2,
+                PreviousState = _initialState,
                 Signer = _agentAddress,
                 BlockIndex = 0L
             });
 
             var worldInformation =
                 new WorldInformation(
-                    (Dictionary)state.GetAccount(ReservedAddresses.LegacyAccount)
-                        .GetState(_worldInformationAddress));
+                    (Dictionary)state.GetAccount(Addresses.WorldInformation)
+                        .GetState(_avatarAddress));
             Assert.True(worldInformation.IsStageCleared(expectedStage));
         }
     }

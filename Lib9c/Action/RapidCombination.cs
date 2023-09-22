@@ -18,7 +18,6 @@ using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Pet;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -46,15 +45,9 @@ namespace Nekoyume.Action
                     slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                world = AvatarModule.MarkChanged(world, avatarAddress);
-                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
-                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
-                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, avatarAddress, true, true, true, true);
                 world = LegacyModule.SetState(world, slotAddress, MarkChanged);
                 return world;
             }

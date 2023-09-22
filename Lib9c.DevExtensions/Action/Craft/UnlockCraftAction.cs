@@ -66,11 +66,11 @@ namespace Lib9c.DevExtensions.Action.Craft
                 LegacyModule.GetSheet<WorldSheet>(world),
                 targetStage
             );
-            return LegacyModule.SetState(
-                world,
-                AvatarAddress.Derive(LegacyWorldInformationKey),
-                worldInformation.Serialize()
-            );
+            return world.SetAccount(
+                world.GetAccount(Addresses.WorldInformation)
+                    .SetState(
+                        AvatarAddress,
+                        worldInformation.Serialize()));
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -197,18 +197,6 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            var updatedAddressesAvatar = new List<Address>()
-            {
-                _avatarAddress,
-            };
-
-            var updatedAddressesLegacy = new List<Address>()
-            {
-                _avatarAddress.Derive(LegacyInventoryKey),
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                _avatarAddress.Derive(LegacyQuestListKey),
-            };
-
             var state = new MockWorld();
 
             var nextState = action.Execute(new ActionContext()
@@ -220,12 +208,17 @@ namespace Lib9c.Tests.Action
             });
 
             Assert.Equal(
-                updatedAddressesAvatar.ToImmutableHashSet(),
+                new[] { _avatarAddress }.ToImmutableHashSet(),
                 nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses.ToImmutableHashSet());
-
             Assert.Equal(
-                updatedAddressesLegacy.ToImmutableHashSet(),
-                nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses.ToImmutableHashSet());
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Inventory).Delta.UpdatedAddresses.ToImmutableHashSet());
+            Assert.Equal(
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.WorldInformation).Delta.UpdatedAddresses.ToImmutableHashSet());
+            Assert.Equal(
+                new[] { _avatarAddress }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.QuestList).Delta.UpdatedAddresses.ToImmutableHashSet());
         }
     }
 }

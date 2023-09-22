@@ -18,8 +18,7 @@ namespace Lib9c.Tests.Util
             TableSheets tableSheets,
             Address agentAddr,
             Address avatarAddr,
-            IWorld initialStatesWithAvatarStateV1,
-            IWorld initialStatesWithAvatarStateV2
+            IWorld initialStatesWithAvatarState
             ) InitializeStates(
                 Address? adminAddr = null,
                 Address? agentAddr = null,
@@ -74,26 +73,13 @@ namespace Lib9c.Tests.Util
                 avatarAddr.Derive("ranking_map"));
             agentState.avatarAddresses.Add(avatarIndex, avatarAddr);
 
-            var initialStatesWithAvatarStateV1 = states;
-            initialStatesWithAvatarStateV1 = AgentModule.SetAgentState(
-                initialStatesWithAvatarStateV1,
+            var initialStatesWithAvatarState = states;
+            initialStatesWithAvatarState = AgentModule.SetAgentState(
+                initialStatesWithAvatarState,
                 agentAddr.Value,
                 agentState);
-            initialStatesWithAvatarStateV1 = AvatarModule.SetAvatarState(
-                initialStatesWithAvatarStateV1,
-                avatarAddr,
-                avatarState,
-                true,
-                true,
-                true,
-                true);
-            var initialStatesWithAvatarStateV2 = states;
-            initialStatesWithAvatarStateV2 = AgentModule.SetAgentState(
-                initialStatesWithAvatarStateV2,
-                agentAddr.Value,
-                agentState);
-            initialStatesWithAvatarStateV2 = AvatarModule.SetAvatarState(
-                initialStatesWithAvatarStateV2,
+            initialStatesWithAvatarState = AvatarModule.SetAvatarState(
+                initialStatesWithAvatarState,
                 avatarAddr,
                 avatarState,
                 true,
@@ -105,8 +91,7 @@ namespace Lib9c.Tests.Util
                 tableSheets,
                 agentAddr.Value,
                 avatarAddr,
-                new MockWorld(initialStatesWithAvatarStateV1),
-                new MockWorld(initialStatesWithAvatarStateV2));
+                new MockWorld(initialStatesWithAvatarState));
         }
 
         private static (IWorld world, Dictionary<string, string> sheets)

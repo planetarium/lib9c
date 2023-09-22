@@ -26,19 +26,14 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IWorld _initialStateV1;
-        private readonly IWorld _initialStateV2;
-        private readonly Address _inventoryAddr;
-        private readonly Address _worldInfoAddr;
+        private readonly IWorld _initialState;
         private readonly Address _recipeAddr;
         private int? _petId;
 
         public AdditionalOptionRateByFixedValueTest()
         {
-            (_tableSheets, _agentAddr, _avatarAddr, _initialStateV1, _initialStateV2)
+            (_tableSheets, _agentAddr, _avatarAddr, _initialState)
                 = InitializeUtil.InitializeStates();
-            _inventoryAddr = _avatarAddr.Derive(LegacyInventoryKey);
-            _worldInfoAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
             _recipeAddr = _avatarAddr.Derive("recipe_ids");
         }
 
@@ -69,11 +64,11 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 stageList = stageList.Add(i.Serialize());
             }
 
-            var stateV2 = LegacyModule.SetState(_initialStateV2, _recipeAddr, stageList);
-            stateV2 = CraftUtil.UnlockStage(
-                stateV2,
+            var state = LegacyModule.SetState(_initialState, _recipeAddr, stageList);
+            state = CraftUtil.UnlockStage(
+                state,
                 _tableSheets,
-                _worldInfoAddr,
+                _avatarAddr,
                 recipe.UnlockStage
             );
 
@@ -89,8 +84,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 pet => pet.LevelOptionMap[(int)petLevel!].OptionType == PetOptionType
             );
             _petId = petRow.PetId;
-            stateV2 = LegacyModule.SetState(
-                stateV2,
+            state = LegacyModule.SetState(
+                state,
                 PetState.DeriveAddress(_avatarAddr, (int)_petId),
                 new List(_petId!.Serialize(), petLevel.Serialize(), 0L.Serialize())
             );
@@ -103,15 +98,15 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             );
 
             // Prepare
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 0);
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 1);
+            state = CraftUtil.PrepareCombinationSlot(state, _avatarAddr, 0);
+            state = CraftUtil.PrepareCombinationSlot(state, _avatarAddr, 1);
 
             // Find specific random seed to meet test condition
             var random = new TestRandom(randomSeed);
 
             // Give Materials
-            stateV2 = CraftUtil.AddMaterialsToInventory(
-                stateV2,
+            state = CraftUtil.AddMaterialsToInventory(
+                state,
                 _tableSheets,
                 _avatarAddr,
                 materialList,
@@ -126,15 +121,15 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 recipeId = recipe.Id,
                 subRecipeId = recipe.SubRecipeIds?[1],
             };
-            stateV2 = action.Execute(
+            state = action.Execute(
                 new ActionContext
                 {
-                    PreviousState = stateV2,
+                    PreviousState = state,
                     Signer = _agentAddr,
                     BlockIndex = 0L,
                     Random = random,
                 });
-            var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, 0);
+            var slotState = LegacyModule.GetCombinationSlotState(state, _avatarAddr, 0);
             // TEST: No additional option added (1 star)
             Assert.Equal(
                 recipe.RequiredBlockIndex + subRecipe.RequiredBlockIndex +
@@ -151,8 +146,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             random = new TestRandom(randomSeed);
 
             // Give materials
-            stateV2 = CraftUtil.AddMaterialsToInventory(
-                stateV2,
+            state = CraftUtil.AddMaterialsToInventory(
+                state,
                 _tableSheets,
                 _avatarAddr,
                 materialList,
@@ -167,15 +162,15 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 subRecipeId = recipe.SubRecipeIds?[1],
                 petId = _petId,
             };
-            stateV2 = petAction.Execute(
+            state = petAction.Execute(
                 new ActionContext
                 {
-                    PreviousState = stateV2,
+                    PreviousState = state,
                     Signer = _agentAddr,
                     BlockIndex = 0L,
                     Random = random,
                 });
-            var petSlotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, 1);
+            var petSlotState = LegacyModule.GetCombinationSlotState(state, _avatarAddr, 1);
             // TEST: One additional option added (2 star)
             Assert.Equal(
                 recipe.RequiredBlockIndex + subRecipe.RequiredBlockIndex +

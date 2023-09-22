@@ -22,8 +22,7 @@ namespace Lib9c.Tests.Action
         private const string AgentAddressHex = "0x0000000001000000000100000000010000000001";
         private readonly Address _agentAddr = new Address(AgentAddressHex);
         private readonly Address _avatarAddr;
-        private readonly IWorld _initialStatesWithAvatarStateV1;
-        private readonly IWorld _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarState;
         private readonly Currency _ncg;
 
         public ClaimStakeReward5Test(ITestOutputHelper outputHelper)
@@ -36,8 +35,7 @@ namespace Lib9c.Tests.Action
                 _,
                 _,
                 _avatarAddr,
-                _initialStatesWithAvatarStateV1,
-                _initialStatesWithAvatarStateV2) = InitializeUtil.InitializeStates(
+                _initialStatesWithAvatarState) = InitializeUtil.InitializeStates(
                 agentAddr: _agentAddr,
                 sheetsOverride: new Dictionary<string, string>
                 {
@@ -46,7 +44,7 @@ namespace Lib9c.Tests.Action
                         ClaimStakeReward6.V2.StakeRegularRewardSheetCsv
                     },
                 });
-            _ncg = LegacyModule.GetGoldCurrency(_initialStatesWithAvatarStateV1);
+            _ncg = LegacyModule.GetGoldCurrency(_initialStatesWithAvatarState);
         }
 
         [Fact]
@@ -200,22 +198,7 @@ namespace Lib9c.Tests.Action
             long expectedCurrencyAmount)
         {
             Execute(
-                _initialStatesWithAvatarStateV1,
-                _agentAddr,
-                _avatarAddr,
-                startedBlockIndex,
-                stakeAmount,
-                previousRewardReceiveIndex,
-                blockIndex,
-                expectedHourglass,
-                expectedApStone,
-                expectedRune,
-                expectedCurrencyAddrHex,
-                expectedCurrencyTicker,
-                expectedCurrencyAmount);
-
-            Execute(
-                _initialStatesWithAvatarStateV2,
+                _initialStatesWithAvatarState,
                 _agentAddr,
                 _avatarAddr,
                 startedBlockIndex,

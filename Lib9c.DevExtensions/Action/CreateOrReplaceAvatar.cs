@@ -462,7 +462,6 @@ namespace Lib9c.DevExtensions.Action
             // ~Set QuestList.
 
             // Set Inventory.
-            var inventoryAddr = avatarAddr.Derive(LegacyInventoryKey);
             var inventory = new Nekoyume.Model.Item.Inventory();
             var equipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>();
             var enhancementCostSheetV3 = sheets.GetSheet<EnhancementCostSheetV3>();
@@ -568,7 +567,8 @@ namespace Lib9c.DevExtensions.Action
                 }
             }
 
-            world = LegacyModule.SetState(world, inventoryAddr, inventory.Serialize());
+            world = world.SetAccount(
+                world.GetAccount(Addresses.Inventory).SetState(avatarAddr, inventory.Serialize()));
             // ~Set Inventory.
 
             // Set CombinationSlot.

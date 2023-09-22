@@ -15,21 +15,16 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Action;
     using Nekoyume.Action.Extensions;
     using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class ItemCraftTest
     {
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly Address _inventoryAddr;
-        private readonly Address _worldInformationAddr;
-        private readonly IWorld _initialStatesWithAvatarStateV1;
-        private readonly IWorld _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarState;
         private readonly TableSheets _tableSheets;
 
         public ItemCraftTest()
@@ -38,11 +33,8 @@ namespace Lib9c.Tests.Action.Scenario
                 _tableSheets,
                 _agentAddr,
                 _avatarAddr,
-                _initialStatesWithAvatarStateV1,
-                _initialStatesWithAvatarStateV2
+                _initialStatesWithAvatarState
             ) = InitializeUtil.InitializeStates();
-            _inventoryAddr = _avatarAddr.Derive(LegacyInventoryKey);
-            _worldInformationAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
         }
 
         [Theory]
@@ -52,9 +44,8 @@ namespace Lib9c.Tests.Action.Scenario
         public void CraftEquipmentTest(int randomSeed, int[] targetItemIdList)
         {
             // Disable all quests to prevent contamination by quest reward
-            var (stateV1, stateV2) = QuestUtil.DisableQuestList(
-                _initialStatesWithAvatarStateV1,
-                _initialStatesWithAvatarStateV2,
+            var state = QuestUtil.DisableQuestList(
+                _initialStatesWithAvatarState,
                 _avatarAddr
             );
 
@@ -86,21 +77,21 @@ namespace Lib9c.Tests.Action.Scenario
                 recipeIds = recipeIds.Add(i.Serialize());
             }
 
-            stateV2 = LegacyModule.SetState(stateV2, unlockRecipeIdsAddress, recipeIds);
+            state = LegacyModule.SetState(state, unlockRecipeIdsAddress, recipeIds);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
             {
-                stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, i);
+                state = CraftUtil.PrepareCombinationSlot(state, _avatarAddr, i);
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
+            var inventoryState = AvatarModule.GetInventory(state, _avatarAddr);
             Assert.Equal(0, inventoryState.Items.Count);
 
             // Add materials to inventory
-            stateV2 = CraftUtil.AddMaterialsToInventory(
-                stateV2,
+            state = CraftUtil.AddMaterialsToInventory(
+                state,
                 _tableSheets,
                 _avatarAddr,
                 allMaterialList,
@@ -111,10 +102,10 @@ namespace Lib9c.Tests.Action.Scenario
             {
                 // Unlock stage
                 var equipmentRecipe = recipeList[i];
-                stateV2 = CraftUtil.UnlockStage(
-                    stateV2,
+                state = CraftUtil.UnlockStage(
+                    state,
                     _tableSheets,
-                    _worldInformationAddr,
+                    _avatarAddr,
                     equipmentRecipe.UnlockStage
                 );
 
@@ -127,21 +118,21 @@ namespace Lib9c.Tests.Action.Scenario
                     subRecipeId = equipmentRecipe.SubRecipeIds?[0],
                 };
 
-                stateV2 = action.Execute(
+                state = action.Execute(
                     new ActionContext
                     {
-                        PreviousState = stateV2,
+                        PreviousState = state,
                         Signer = _agentAddr,
                         BlockIndex = 0L,
                         Random = random,
                     });
-                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(state, _avatarAddr, i);
                 // TEST: requiredBlock
                 // TODO: Check reduced required block when pet comes in
                 Assert.Equal(equipmentRecipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
+            inventoryState = AvatarModule.GetInventory(state, _avatarAddr);
             // TEST: Only created equipments should remain in inventory
             Assert.Equal(recipeList.Count, inventoryState.Items.Count);
             foreach (var itemId in targetItemIdList)
@@ -158,9 +149,8 @@ namespace Lib9c.Tests.Action.Scenario
         public void CraftConsumableTest(int randomSeed, int[] targetItemIdList)
         {
             // Disable all quests to prevent contamination by quest reward
-            var (stateV1, stateV2) = QuestUtil.DisableQuestList(
-                _initialStatesWithAvatarStateV1,
-                _initialStatesWithAvatarStateV2,
+            var state = QuestUtil.DisableQuestList(
+                _initialStatesWithAvatarState,
                 _avatarAddr
             );
 
@@ -180,16 +170,16 @@ namespace Lib9c.Tests.Action.Scenario
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
             {
-                stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, i);
+                state = CraftUtil.PrepareCombinationSlot(state, _avatarAddr, i);
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
+            var inventoryState = AvatarModule.GetInventory(state, _avatarAddr);
             Assert.Equal(0, inventoryState.Items.Count);
 
             // Add materials to inventory
-            stateV2 = CraftUtil.AddMaterialsToInventory(
-                stateV2,
+            state = CraftUtil.AddMaterialsToInventory(
+                state,
                 _tableSheets,
                 _avatarAddr,
                 allMaterialList,
@@ -197,10 +187,10 @@ namespace Lib9c.Tests.Action.Scenario
             );
 
             // Unlock stage
-            stateV2 = CraftUtil.UnlockStage(
-                stateV2,
+            state = CraftUtil.UnlockStage(
+                state,
                 _tableSheets,
-                _worldInformationAddr,
+                _avatarAddr,
                 6 // Stage to open craft consumables
             );
 
@@ -215,21 +205,21 @@ namespace Lib9c.Tests.Action.Scenario
                     recipeId = recipe.Id,
                 };
 
-                stateV2 = action.Execute(
+                state = action.Execute(
                     new ActionContext
                     {
-                        PreviousState = stateV2,
+                        PreviousState = state,
                         Signer = _agentAddr,
                         BlockIndex = 0L,
                         Random = random,
                     });
-                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(state, _avatarAddr, i);
                 // TEST: requiredBlockIndex
                 // TODO: Check reduced required block when pet comens in
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
+            inventoryState = AvatarModule.GetInventory(state, _avatarAddr);
             // TEST: Only created items should remain in inventory
             Assert.Equal(recipeList.Count, inventoryState.Items.Count);
             foreach (var itemId in targetItemIdList)
@@ -248,9 +238,8 @@ namespace Lib9c.Tests.Action.Scenario
         )
         {
             // Disable all quests to prevent contamination by quest reward
-            var (stateV1, stateV2) = QuestUtil.DisableQuestList(
-                _initialStatesWithAvatarStateV1,
-                _initialStatesWithAvatarStateV2,
+            var state = QuestUtil.DisableQuestList(
+                _initialStatesWithAvatarState,
                 _avatarAddr
             );
 
@@ -266,25 +255,25 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Unlock stage to create consumables
-            stateV2 = CraftUtil.UnlockStage(
-                stateV2,
+            state = CraftUtil.UnlockStage(
+                state,
                 _tableSheets,
-                _worldInformationAddr,
+                _avatarAddr,
                 6);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
             {
-                stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, i);
+                state = CraftUtil.PrepareCombinationSlot(state, _avatarAddr, i);
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
+            var inventoryState = AvatarModule.GetInventory(state, _avatarAddr);
             Assert.Equal(0, inventoryState.Items.Count);
 
             // Add materials to inventory
-            stateV2 = CraftUtil.AddMaterialsToInventory(
-                stateV2,
+            state = CraftUtil.AddMaterialsToInventory(
+                state,
                 _tableSheets,
                 _avatarAddr,
                 allMaterialList,
@@ -304,20 +293,20 @@ namespace Lib9c.Tests.Action.Scenario
                     SlotIndex = i,
                 };
 
-                stateV2 = action.Execute(
+                state = action.Execute(
                     new ActionContext
                     {
-                        PreviousState = stateV2,
+                        PreviousState = state,
                         Signer = _agentAddr,
                         BlockIndex = eventRow.StartBlockIndex,
                         Random = random,
                     });
-                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(state, _avatarAddr, i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
+            inventoryState = AvatarModule.GetInventory(state, _avatarAddr);
             // TEST: Only created items should remain in inventory
             Assert.Equal(recipeList.Count, inventoryState.Items.Count);
             foreach (var itemId in targetItemIdList)
@@ -336,9 +325,8 @@ namespace Lib9c.Tests.Action.Scenario
         )
         {
             // Disable all quests to prevent contamination by quest reward
-            var (stateV1, stateV2) = QuestUtil.DisableQuestList(
-                _initialStatesWithAvatarStateV1,
-                _initialStatesWithAvatarStateV2,
+            var state = QuestUtil.DisableQuestList(
+                _initialStatesWithAvatarState,
                 _avatarAddr
             );
 
@@ -354,25 +342,25 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Unlock stage to create consumables
-            stateV2 = CraftUtil.UnlockStage(
-                stateV2,
+            state = CraftUtil.UnlockStage(
+                state,
                 _tableSheets,
-                _worldInformationAddr,
+                _avatarAddr,
                 6);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
             {
-                stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, i);
+                state = CraftUtil.PrepareCombinationSlot(state, _avatarAddr, i);
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
+            var inventoryState = AvatarModule.GetInventory(state, _avatarAddr);
             Assert.Equal(0, inventoryState.Items.Count);
 
             // Add materials to inventory
-            stateV2 = CraftUtil.AddMaterialsToInventory(
-                stateV2,
+            state = CraftUtil.AddMaterialsToInventory(
+                state,
                 _tableSheets,
                 _avatarAddr,
                 allMaterialList,
@@ -407,20 +395,20 @@ namespace Lib9c.Tests.Action.Scenario
                     MaterialsToUse = materialsToUse,
                 };
 
-                stateV2 = action.Execute(
+                state = action.Execute(
                     new ActionContext
                     {
-                        PreviousState = stateV2,
+                        PreviousState = state,
                         Signer = _agentAddr,
                         BlockIndex = eventRow.StartBlockIndex,
                         Random = random,
                     });
-                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(state, _avatarAddr, i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
+            inventoryState = AvatarModule.GetInventory(state, _avatarAddr);
             // TEST: Only created items should remain in inventory
             Assert.Equal(recipeList.Count, inventoryState.Items.Count);
             foreach (var itemId in targetItemIdList)

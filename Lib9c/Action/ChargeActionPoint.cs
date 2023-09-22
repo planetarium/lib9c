@@ -42,11 +42,7 @@ namespace Nekoyume.Action
 
             if (context.Rehearsal)
             {
-                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
-                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
-                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
-                world = AvatarModule.MarkChanged(world, avatarAddress);
-                return world;
+                return AvatarModule.MarkChanged(world, avatarAddress, true, true, true, true);
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
