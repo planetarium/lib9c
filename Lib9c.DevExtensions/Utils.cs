@@ -49,7 +49,7 @@ namespace Lib9c.DevExtensions
             IKeyValueStore stateKeyValueStore = null
         )
         {
-            var policySource = new BlockPolicySource();
+            var policySource = new BlockPolicySource(logger);
             IBlockPolicy policy = policySource.GetPolicy();
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             IStore store = new RocksDBStore(storePath);
