@@ -31,7 +31,8 @@ namespace Nekoyume.Module
                     return new AgentState(list);
                 }
 
-                return null;
+                throw new InvalidCastException(
+                    "Serialized agent state must be a dictionary or a list.");
             }
             catch (InvalidCastException e)
             {
