@@ -4,6 +4,7 @@ add_activated_account
 add_activated_account2
 add_redeem_code
 approve_pledge
+aura_summon
 battle_arena
 battle_arena10
 battle_arena11
@@ -52,6 +53,7 @@ claim_stake_reward5
 claim_stake_reward6
 claim_stake_reward7
 claim_stake_reward8
+claim_stake_reward9
 claim_world_boss_kill_reward
 combination_consumable
 combination_consumable2
@@ -106,6 +108,7 @@ event_dungeon_battle4
 event_dungeon_battle5
 event_material_item_crafts
 grinding
+grinding2
 hack_and_slash
 hack_and_slash_random_buff
 hack_and_slash_sweep
@@ -244,10 +247,12 @@ sell8
 sell9
 stake
 stake2
+stake3
 transfer_asset
 transfer_asset2
 transfer_asset3
 transfer_asset4
+transfer_asset5
 transfer_assets
 transfer_assets2
 transfer_coupons

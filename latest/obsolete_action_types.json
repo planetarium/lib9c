@@ -172,6 +172,10 @@
     "obsoleteAt": 7700000
   },
   {
+    "id": "claim_stake_reward8",
+    "obsoleteAt": 7983895
+  },
+  {
     "id": "combination_consumable",
     "obsoleteAt": 7000000
   },
@@ -768,6 +772,10 @@
     "obsoleteAt": 7200000
   },
   {
+    "id": "stake2",
+    "obsoleteAt": 7983895
+  },
+  {
     "id": "transfer_asset",
     "obsoleteAt": 7000000
   },
@@ -778,6 +786,10 @@
   {
     "id": "transfer_asset3",
     "obsoleteAt": 7200000
+  },
+  {
+    "id": "transfer_asset4",
+    "obsoleteAt": 7983895
   },
   {
     "id": "transfer_assets",
