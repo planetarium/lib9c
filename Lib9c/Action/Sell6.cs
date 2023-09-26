@@ -9,9 +9,11 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 using BxDictionary = Bencodex.Types.Dictionary;
 using BxList = Bencodex.Types.List;
@@ -58,19 +60,21 @@ namespace Nekoyume.Action
             itemSubType = plainValue[ItemSubTypeKey].ToEnum<ItemSubType>();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
             if (context.Rehearsal)
             {
-                states = states.SetState(sellerAvatarAddress, MarkChanged);
-                states = ShardedShopState.AddressKeys.Aggregate(
-                    states,
-                    (current, addressKey) => current.SetState(
+                world = LegacyModule.SetState(world, sellerAvatarAddress, MarkChanged);
+                world = ShardedShopState.AddressKeys.Aggregate(
+                    world,
+                    (current, addressKey) => LegacyModule.SetState(
+                        current,
                         ShardedShopState.DeriveAddress(itemSubType, addressKey),
                         MarkChanged));
-                return states.SetState(context.Signer, MarkChanged);
+                world = LegacyModule.SetState(world, context.Signer, MarkChanged);
+                return world;
             }
 
             CheckObsolete(ActionObsoleteConfig.V100080ObsoleteIndex, context);
@@ -88,11 +92,12 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the price is less than zero: {price}.");
             }
 
-            if (!states.TryGetAgentAvatarStates(
-                context.Signer,
-                sellerAvatarAddress,
-                out _,
-                out var avatarState))
+            if (!AvatarModule.TryGetAgentAvatarStates(
+                    world,
+                    context.Signer,
+                    sellerAvatarAddress,
+                    out _,
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -166,7 +171,7 @@ namespace Nekoyume.Action
 
             var productId = context.Random.GenerateRandomGuid();
             var shardedShopAddress = ShardedShopState.DeriveAddress(itemSubType, productId);
-            if (!states.TryGetState(shardedShopAddress, out BxDictionary serializedSharedShopState))
+            if (!LegacyModule.TryGetState(world, shardedShopAddress, out BxDictionary serializedSharedShopState))
             {
                 var shardedShopState = new ShardedShopState(shardedShopAddress);
                 serializedSharedShopState = (BxDictionary) shardedShopState.Serialize();
@@ -281,12 +286,12 @@ namespace Nekoyume.Action
             result.id = mail.id;
             avatarState.Update(mail);
 
-            states = states.SetState(sellerAvatarAddress, avatarState.Serialize());
+            world = AvatarModule.SetAvatarState(world, sellerAvatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            states = states.SetState(shardedShopAddress, serializedSharedShopState);
+            world = LegacyModule.SetState(world, shardedShopAddress, serializedSharedShopState);
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}Sell Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
@@ -295,7 +300,7 @@ namespace Nekoyume.Action
                 addressesHex,
                 ended - started);
 
-            return states;
+            return world;
         }
     }
 }
