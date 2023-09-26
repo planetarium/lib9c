@@ -2,10 +2,11 @@ using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Helper;
+using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Model
 {
     public class AssetInfo: IRegisterInfo
     {

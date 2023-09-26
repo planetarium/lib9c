@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Bencodex.Types;
 using Libplanet.Crypto;
@@ -7,7 +7,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Model
 {
     [Serializable]
     public class PurchaseInfo : IComparable<PurchaseInfo>, IComparable, IPurchaseInfo
