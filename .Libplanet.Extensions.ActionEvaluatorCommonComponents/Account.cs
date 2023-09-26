@@ -1,17 +1,20 @@
 using System.Collections.Immutable;
 using System.Numerics;
+using System.Security.Cryptography;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
+using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Store.Trie;
 using Libplanet.Types.Assets;
+using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 
 namespace Libplanet.Extensions.ActionEvaluatorCommonComponents;
 
-public class AccountStateDelta : IAccount
+public class Account : IAccount
 {
     private IImmutableDictionary<Address, IValue> _states;
     private IImmutableDictionary<(Address, Currency), BigInteger> _fungibles;
@@ -33,7 +36,7 @@ public class AccountStateDelta : IAccount
 
     public IImmutableSet<Currency> UpdatedTotalSupplyCurrencies => _delta.UpdatedTotalSupplyCurrencies;
 
-    public AccountStateDelta()
+    public Account()
         : this(
             ImmutableDictionary<Address, IValue>.Empty,
             ImmutableDictionary<(Address, Currency), BigInteger>.Empty,
@@ -42,7 +45,7 @@ public class AccountStateDelta : IAccount
     {
     }
 
-    public AccountStateDelta(
+    public Account(
         IImmutableDictionary<Address, IValue> states,
         IImmutableDictionary<(Address, Currency), BigInteger> fungibles,
         IImmutableDictionary<Currency, BigInteger> totalSupplies,
@@ -60,7 +63,7 @@ public class AccountStateDelta : IAccount
         _validatorSet = validatorSet;
     }
 
-    public AccountStateDelta(Dictionary states, List fungibles, List totalSupplies, IValue validatorSet)
+    public Account(Dictionary states, List fungibles, List totalSupplies, IValue validatorSet)
     {
         // This assumes `states` consists of only Binary keys:
         _states = states
@@ -100,12 +103,12 @@ public class AccountStateDelta : IAccount
             _validatorSet);
     }
 
-    public AccountStateDelta(IValue serialized)
+    public Account(IValue serialized)
         : this((Dictionary)serialized)
     {
     }
 
-    public AccountStateDelta(Dictionary dict)
+    public Account(Dictionary dict)
         : this(
             (Dictionary)dict["states"],
             (List)dict["balances"],
@@ -114,14 +117,18 @@ public class AccountStateDelta : IAccount
     {
     }
 
-    public AccountStateDelta(byte[] bytes)
+    public Account(byte[] bytes)
         : this((Dictionary)new Codec().Decode(bytes))
     {
     }
 
-    public ITrie Trie => throw new NotSupportedException();
-
     public IAccountDelta Delta => _delta;
+
+    public BlockHash? BlockHash => BaseState.BlockHash;
+
+    public ITrie Trie => BaseState.Trie;
+
+    public Address Address => ReservedAddresses.LegacyAccount;
 
     public IValue? GetState(Address address) =>
         _states.ContainsKey(address)
@@ -132,7 +139,7 @@ public class AccountStateDelta : IAccount
         addresses.Select(GetState).ToArray();
 
     public IAccount SetState(Address address, IValue state) =>
-        new AccountStateDelta(_states.SetItem(address, state), _fungibles, _totalSupplies, _validatorSet);
+        new Account(_states.SetItem(address, state), _fungibles, _totalSupplies, _validatorSet);
     public FungibleAssetValue GetBalance(Address address, Currency currency)
     {
         if (!_fungibles.TryGetValue((address, currency), out BigInteger rawValue))
@@ -189,7 +196,7 @@ public class AccountStateDelta : IAccount
                 throw new SupplyOverflowException(msg, value);
             }
 
-            return new AccountStateDelta(
+            return new Account(
                 _states,
                 _fungibles.SetItem(
                     (recipient, value.Currency),
@@ -203,7 +210,7 @@ public class AccountStateDelta : IAccount
             };
         }
 
-        return new AccountStateDelta(
+        return new Account(
             _states,
             _fungibles.SetItem(
                 (recipient, value.Currency),
@@ -245,7 +252,7 @@ public class AccountStateDelta : IAccount
         var balances = _fungibles
             .SetItem((sender, currency), senderRemains.RawValue)
             .SetItem((recipient, currency), recipientRemains.RawValue);
-        return new AccountStateDelta(_states, balances, _totalSupplies, _validatorSet)
+        return new Account(_states, balances, _totalSupplies, _validatorSet)
         {
             BaseState = BaseState,
         };
@@ -275,7 +282,7 @@ public class AccountStateDelta : IAccount
         }
 
         FungibleAssetValue nextValue = balance - value;
-        return new AccountStateDelta(
+        return new Account(
             _states,
             _fungibles.SetItem(
                 (owner, currency),
@@ -300,7 +307,7 @@ public class AccountStateDelta : IAccount
 
     public IAccount SetValidator(Validator validator)
     {
-        return new AccountStateDelta(
+        return new Account(
             _states,
             _fungibles,
             _totalSupplies,
