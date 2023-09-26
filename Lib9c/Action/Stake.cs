@@ -5,12 +5,14 @@ using System.Numerics;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
+using Nekoyume.Action.Extensions;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Stake;
 using Serilog;
@@ -45,29 +47,34 @@ namespace Nekoyume.Action
             Amount = plainValue[AmountKey].ToBigInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             var started = DateTimeOffset.UtcNow;
             context.UseGas(1);
-            IAccount states = context.PreviousState;
+            var world = context.PreviousState;
 
-            // NOTE: Restrict staking if there is a monster collection until now.
-            if (states.GetAgentState(context.Signer) is { } agentState &&
-                states.TryGetState(MonsterCollectionState.DeriveAddress(
-                    context.Signer,
-                    agentState.MonsterCollectionRound), out Dictionary _))
+            // Restrict staking if there is a monster collection until now.
+            if (AgentModule.GetAgentState(world, context.Signer) is { } agentState &&
+                LegacyModule.TryGetState(
+                    world,
+                    MonsterCollectionState.DeriveAddress(
+                        context.Signer,
+                        agentState.MonsterCollectionRound),
+                    out Dictionary _))
             {
                 throw new MonsterCollectionExistingException();
             }
 
             if (context.Rehearsal)
             {
-                return states.SetState(StakeState.DeriveAddress(context.Signer), MarkChanged)
-                    .MarkBalanceChanged(
-                        context,
-                        GoldCurrencyMock,
-                        context.Signer,
-                        StakeState.DeriveAddress(context.Signer));
+                world = LegacyModule.SetState(world, StakeState.DeriveAddress(context.Signer), MarkChanged);
+                world = LegacyModule.MarkBalanceChanged(
+                    world,
+                    context,
+                    GoldCurrencyMock,
+                    context.Signer,
+                    StakeState.DeriveAddress(context.Signer));
+                    return world;
             }
 
             // NOTE: When the amount is less than 0.
@@ -80,16 +87,17 @@ namespace Nekoyume.Action
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, context.Signer);
             Log.Debug("{AddressesHex}Stake exec started", addressesHex);
-            if (!states.TryGetSheet<StakePolicySheet>(out var stakePolicySheet))
+            if (!LegacyModule.TryGetSheet<StakePolicySheet>(world, out var stakePolicySheet))
             {
                 throw new StateNullException(Addresses.GetSheetAddress<StakePolicySheet>());
             }
 
             var currentStakeRegularRewardSheetAddr = Addresses.GetSheetAddress(
                 stakePolicySheet.StakeRegularRewardSheetValue);
-            if (!states.TryGetSheet<StakeRegularRewardSheet>(
-                    currentStakeRegularRewardSheetAddr,
-                    out var stakeRegularRewardSheet))
+            if (!LegacyModule.TryGetSheet<StakeRegularRewardSheet>(
+                world,
+                currentStakeRegularRewardSheetAddr,
+                out var stakeRegularRewardSheet))
             {
                 throw new StateNullException(currentStakeRegularRewardSheetAddr);
             }
@@ -104,9 +112,9 @@ namespace Nekoyume.Action
             }
 
             var stakeStateAddress = StakeState.DeriveAddress(context.Signer);
-            var currency = states.GetGoldCurrency();
-            var currentBalance = states.GetBalance(context.Signer, currency);
-            var stakedBalance = states.GetBalance(stakeStateAddress, currency);
+            var currency = LegacyModule.GetGoldCurrency(world);
+            var currentBalance = LegacyModule.GetBalance(world, context.Signer, currency);
+            var stakedBalance = LegacyModule.GetBalance(world, stakeStateAddress, currency);
             var targetStakeBalance = currency * Amount;
             // NOTE: When the total balance is less than the target balance.
             if (currentBalance + stakedBalance < targetStakeBalance)
@@ -119,7 +127,7 @@ namespace Nekoyume.Action
 
             var latestStakeContract = new Contract(stakePolicySheet);
             // NOTE: When the staking state is not exist.
-            if (!states.TryGetStakeStateV2(context.Signer, out var stakeStateV2))
+            if (!LegacyModule.TryGetStakeStateV2(world, context.Signer, out var stakeStateV2))
             {
                 // NOTE: Cannot withdraw staking.
                 if (Amount == 0)
@@ -128,9 +136,9 @@ namespace Nekoyume.Action
                 }
 
                 // NOTE: Contract a new staking.
-                states = ContractNewStake(
+                world = ContractNewStake(
                     context,
-                    states,
+                    world,
                     stakeStateAddress,
                     stakedBalance: null,
                     targetStakeBalance,
@@ -139,7 +147,7 @@ namespace Nekoyume.Action
                     "{AddressesHex}Stake Total Executed Time: {Elapsed}",
                     addressesHex,
                     DateTimeOffset.UtcNow - started);
-                return states;
+                return world;
             }
 
             // NOTE: Cannot anything if staking state is claimable.
@@ -161,15 +169,15 @@ namespace Nekoyume.Action
             // NOTE: Withdraw staking.
             if (Amount == 0)
             {
-                return states
-                    .SetState(stakeStateAddress, Null.Value)
-                    .TransferAsset(context, stakeStateAddress, context.Signer, stakedBalance);
+                world = LegacyModule.SetState(world, stakeStateAddress, Null.Value);
+                world = LegacyModule.TransferAsset(world, context, stakeStateAddress, context.Signer, stakedBalance);
+                return world;
             }
 
             // NOTE: Contract a new staking.
-            states = ContractNewStake(
+            world = ContractNewStake(
                 context,
-                states,
+                world,
                 stakeStateAddress,
                 stakedBalance,
                 targetStakeBalance,
@@ -178,12 +186,12 @@ namespace Nekoyume.Action
                 "{AddressesHex}Stake Total Executed Time: {Elapsed}",
                 addressesHex,
                 DateTimeOffset.UtcNow - started);
-            return states;
+            return world;
         }
 
-        private static IAccount ContractNewStake(
+        private static IWorld ContractNewStake(
             IActionContext context,
-            IAccount state,
+            IWorld world,
             Address stakeStateAddr,
             FungibleAssetValue? stakedBalance,
             FungibleAssetValue targetStakeBalance,
@@ -192,16 +200,25 @@ namespace Nekoyume.Action
             var newStakeState = new StakeStateV2(latestStakeContract, context.BlockIndex);
             if (stakedBalance.HasValue)
             {
-                state = state.TransferAsset(
+                world = LegacyModule.TransferAsset(
+                    world,
                     context,
                     stakeStateAddr,
                     context.Signer,
                     stakedBalance.Value);
             }
 
-            return state
-                .TransferAsset(context, context.Signer, stakeStateAddr, targetStakeBalance)
-                .SetState(stakeStateAddr, newStakeState.Serialize());
+            world = LegacyModule.TransferAsset(
+                world,
+                context,
+                context.Signer,
+                stakeStateAddr,
+                targetStakeBalance);
+            world = LegacyModule.SetState(
+                world,
+                stakeStateAddr,
+                newStakeState.Serialize());
+            return world;
         }
     }
 }

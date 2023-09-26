@@ -7,6 +7,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
@@ -15,8 +16,10 @@ using Nekoyume.Model;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.EnumType;
+using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -86,14 +89,15 @@ namespace Nekoyume.Action
             runeInfos = plainValue[RuneInfos].ToList(x => new RuneSlotInfo((List)x));
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
+
+            var world = context.PreviousState;
 
             var addressesHex = GetSignerAndOtherAddressesHex(
                 context,
@@ -108,7 +112,8 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the signer tried to battle for themselves.");
             }
 
-            if (!states.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
                     context.Signer,
                     myAvatarAddress,
                     out var avatarState,
@@ -119,21 +124,22 @@ namespace Nekoyume.Action
             }
 
             if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(
-                    out var world))
+                    out var worldInfo))
             {
                 throw new NotEnoughClearedStageLevelException(
                     $"{addressesHex}Aborted as NotEnoughClearedStageLevelException");
             }
 
-            if (world.StageClearedId < GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)
+            if (worldInfo.StageClearedId < GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)
             {
                 throw new NotEnoughClearedStageLevelException(
                     addressesHex,
                     GameConfig.RequireClearedStageLevel.ActionsInRankingBoard,
-                    world.StageClearedId);
+                    worldInfo.StageClearedId);
             }
 
-            var sheets = states.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 containArenaSimulatorSheets: true,
                 sheetTypes: new[]
                 {
@@ -155,21 +161,27 @@ namespace Nekoyume.Action
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(myAvatarAddress, BattleType.Arena);
-            var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+            var runeSlotState = LegacyModule.TryGetState(
+                world,
+                runeSlotStateAddress,
+                out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Arena);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(runeInfos, runeListSheet);
-            states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            world = LegacyModule.SetState(world, runeSlotStateAddress, runeSlotState.Serialize());
 
             // update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(myAvatarAddress, BattleType.Arena);
-            var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+            var itemSlotState = LegacyModule.TryGetState(
+                world,
+                itemSlotStateAddress,
+                out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Arena);
             itemSlotState.UpdateEquipment(equipments);
             itemSlotState.UpdateCostumes(costumes);
-            states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            world = LegacyModule.SetState(world, itemSlotStateAddress, itemSlotState.Serialize());
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             if (!arenaSheet.TryGetValue(championshipId, out var arenaRow))
@@ -194,7 +206,10 @@ namespace Nekoyume.Action
 
             var arenaParticipantsAdr =
                 ArenaParticipants.DeriveAddress(roundData.ChampionshipId, roundData.Round);
-            if (!states.TryGetArenaParticipants(arenaParticipantsAdr, out var arenaParticipants))
+            if (!LegacyModule.TryGetArenaParticipants(
+                    world,
+                    arenaParticipantsAdr,
+                    out var arenaParticipants))
             {
                 throw new ArenaParticipantsNotFoundException(
                     $"[{nameof(BattleArena)}] ChampionshipId({roundData.ChampionshipId}) - " +
@@ -214,13 +229,16 @@ namespace Nekoyume.Action
             }
 
             var myArenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(myAvatarAddress);
-            if (!states.TryGetArenaAvatarState(myArenaAvatarStateAdr, out var myArenaAvatarState))
+            if (!LegacyModule.TryGetArenaAvatarState(
+                    world,
+                    myArenaAvatarStateAdr,
+                    out var myArenaAvatarState))
             {
                 throw new ArenaAvatarStateNotFoundException(
                     $"[{nameof(BattleArena)}] my avatar address : {myAvatarAddress}");
             }
 
-            var gameConfigState = states.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(world);
             var battleArenaInterval = roundData.ArenaType == ArenaType.OffSeason
                 ? 1
                 : gameConfigState.BattleArenaInterval;
@@ -233,7 +251,8 @@ namespace Nekoyume.Action
             }
 
             var enemyArenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(enemyAvatarAddress);
-            if (!states.TryGetArenaAvatarState(
+            if (!LegacyModule.TryGetArenaAvatarState(
+                    world,
                     enemyArenaAvatarStateAdr,
                     out var enemyArenaAvatarState))
             {
@@ -245,7 +264,7 @@ namespace Nekoyume.Action
                 myAvatarAddress,
                 roundData.ChampionshipId,
                 roundData.Round);
-            if (!states.TryGetArenaScore(myArenaScoreAdr, out var myArenaScore))
+            if (!LegacyModule.TryGetArenaScore(world, myArenaScoreAdr, out var myArenaScore))
             {
                 throw new ArenaScoreNotFoundException(
                     $"[{nameof(BattleArena)}] my avatar address : {myAvatarAddress}" +
@@ -256,7 +275,7 @@ namespace Nekoyume.Action
                 enemyAvatarAddress,
                 roundData.ChampionshipId,
                 roundData.Round);
-            if (!states.TryGetArenaScore(enemyArenaScoreAdr, out var enemyArenaScore))
+            if (!LegacyModule.TryGetArenaScore(world, enemyArenaScoreAdr, out var enemyArenaScore))
             {
                 throw new ArenaScoreNotFoundException(
                     $"[{nameof(BattleArena)}] enemy avatar address : {enemyAvatarAddress}" +
@@ -267,7 +286,10 @@ namespace Nekoyume.Action
                 myAvatarAddress,
                 roundData.ChampionshipId,
                 roundData.Round);
-            if (!states.TryGetArenaInformation(arenaInformationAdr, out var arenaInformation))
+            if (!LegacyModule.TryGetArenaInformation(
+                    world,
+                    arenaInformationAdr,
+                    out var arenaInformation))
             {
                 throw new ArenaInformationNotFoundException(
                     $"[{nameof(BattleArena)}] my avatar address : {myAvatarAddress}" +
@@ -291,7 +313,10 @@ namespace Nekoyume.Action
             var currentTicketResetCount = ArenaHelper.GetCurrentTicketResetCount(
                 context.BlockIndex, roundData.StartBlockIndex, dailyArenaInterval);
             var purchasedCountAddr = arenaInformation.Address.Derive(PurchasedCountKey);
-            if (!states.TryGetState(purchasedCountAddr, out Integer purchasedCountDuringInterval))
+            if (!LegacyModule.TryGetState(
+                    world,
+                    purchasedCountAddr,
+                    out Integer purchasedCountDuringInterval))
             {
                 purchasedCountDuringInterval = 0;
             }
@@ -300,7 +325,7 @@ namespace Nekoyume.Action
             {
                 arenaInformation.ResetTicket(currentTicketResetCount);
                 purchasedCountDuringInterval = 0;
-                states = states.SetState(purchasedCountAddr, purchasedCountDuringInterval);
+                world = LegacyModule.SetState(world, purchasedCountAddr, purchasedCountDuringInterval);
             }
 
             if (roundData.ArenaType != ArenaType.OffSeason && ticket > 1)
@@ -323,7 +348,7 @@ namespace Nekoyume.Action
             {
                 var arenaAdr =
                     ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                var goldCurrency = states.GetGoldCurrency();
+                var goldCurrency = LegacyModule.GetGoldCurrency(world);
                 var ticketBalance =
                     ArenaHelper.GetTicketPrice(roundData, arenaInformation, goldCurrency);
                 arenaInformation.BuyTicket(roundData.MaxPurchaseCount);
@@ -334,9 +359,11 @@ namespace Nekoyume.Action
                 }
 
                 purchasedCountDuringInterval++;
-                states = states
-                    .TransferAsset(context, context.Signer, arenaAdr, ticketBalance)
-                    .SetState(purchasedCountAddr, purchasedCountDuringInterval);
+                world = LegacyModule.TransferAsset(world, context, context.Signer, arenaAdr, ticketBalance);
+                world = LegacyModule.SetState(
+                    world,
+                    purchasedCountAddr,
+                    purchasedCountDuringInterval);
             }
 
             // update arena avatar state
@@ -346,7 +373,7 @@ namespace Nekoyume.Action
             var runeStates = new List<RuneState>();
             foreach (var address in runeInfos.Select(info => RuneState.DeriveAddress(myAvatarAddress, info.RuneId)))
             {
-                if (states.TryGetState(address, out List rawRuneState))
+                if (LegacyModule.TryGetState(world, address, out List rawRuneState))
                 {
                     runeStates.Add(new RuneState(rawRuneState));
                 }
@@ -354,26 +381,33 @@ namespace Nekoyume.Action
 
             // get enemy equipped items
             var enemyItemSlotStateAddress = ItemSlotState.DeriveAddress(enemyAvatarAddress, BattleType.Arena);
-            var enemyItemSlotState = states.TryGetState(enemyItemSlotStateAddress, out List rawEnemyItemSlotState)
+            var enemyItemSlotState = LegacyModule.TryGetState(
+                world,
+                enemyItemSlotStateAddress,
+                out List rawEnemyItemSlotState)
                 ? new ItemSlotState(rawEnemyItemSlotState)
                 : new ItemSlotState(BattleType.Arena);
             var enemyRuneSlotStateAddress = RuneSlotState.DeriveAddress(enemyAvatarAddress, BattleType.Arena);
-            var enemyRuneSlotState = states.TryGetState(enemyRuneSlotStateAddress, out List enemyRawRuneSlotState)
+            var enemyRuneSlotState = LegacyModule.TryGetState(
+                world,
+                enemyRuneSlotStateAddress,
+                out List enemyRawRuneSlotState)
                 ? new RuneSlotState(enemyRawRuneSlotState)
                 : new RuneSlotState(BattleType.Arena);
 
             var enemyRuneStates = new List<RuneState>();
             var enemyRuneSlotInfos = enemyRuneSlotState.GetEquippedRuneSlotInfos();
-            foreach (var address in enemyRuneSlotInfos.Select(info => RuneState.DeriveAddress(enemyAvatarAddress, info.RuneId)))
+            foreach (var address in enemyRuneSlotInfos.Select(
+                         info => RuneState.DeriveAddress(enemyAvatarAddress, info.RuneId)))
             {
-                if (states.TryGetState(address, out List rawRuneState))
+                if (LegacyModule.TryGetState(world, address, out List rawRuneState))
                 {
                     enemyRuneStates.Add(new RuneState(rawRuneState));
                 }
             }
 
             // simulate
-            var enemyAvatarState = states.GetEnemyAvatarState(enemyAvatarAddress);
+            var enemyAvatarState = AvatarModule.GetEnemyAvatarState(world, enemyAvatarAddress);
             var myArenaPlayerDigest = new ArenaPlayerDigest(
                 avatarState,
                 equipments,
@@ -441,26 +475,26 @@ namespace Nekoyume.Action
 
             if (migrationRequired)
             {
-                states = states
-                    .SetState(myAvatarAddress, avatarState.SerializeV2())
-                    .SetState(
-                        myAvatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize())
-                    .SetState(
-                        myAvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize());
+                world = AvatarModule.SetAvatarStateV2(
+                    world,
+                    myAvatarAddress,
+                    avatarState);
+            }
+            else
+            {
+                world = AvatarModule.SetInventory(
+                    world,
+                    myAvatarAddress.Derive(LegacyInventoryKey),
+                    avatarState.inventory);
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}BattleArena Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
-                .SetState(myArenaAvatarStateAdr, myArenaAvatarState.Serialize())
-                .SetState(myArenaScoreAdr, myArenaScore.Serialize())
-                .SetState(enemyArenaScoreAdr, enemyArenaScore.Serialize())
-                .SetState(arenaInformationAdr, arenaInformation.Serialize())
-                .SetState(
-                    myAvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
+            world = LegacyModule.SetState(world, myArenaAvatarStateAdr, myArenaAvatarState.Serialize());
+            world = LegacyModule.SetState(world, myArenaScoreAdr, myArenaScore.Serialize());
+            world = LegacyModule.SetState(world, enemyArenaScoreAdr, enemyArenaScore.Serialize());
+            world = LegacyModule.SetState(world, arenaInformationAdr, arenaInformation.Serialize());
+            return world;
         }
     }
 }

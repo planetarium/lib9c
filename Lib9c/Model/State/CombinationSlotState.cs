@@ -4,6 +4,8 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
+using Nekoyume.Action.Results;
 using Nekoyume.Model.Item;
 
 namespace Nekoyume.Model.State
@@ -78,7 +80,7 @@ namespace Nekoyume.Model.State
         public void Update(long blockIndex, Material material, int count)
         {
             Update(blockIndex);
-            var result = new RapidCombination0.ResultModel((Dictionary) Result.Serialize())
+            var result = new RapidCombination0Result((Dictionary) Result.Serialize())
             {
                 cost = new Dictionary<Material, int> {[material] = count}
             };
@@ -88,7 +90,7 @@ namespace Nekoyume.Model.State
         public void UpdateV2(long blockIndex, Material material, int count)
         {
             Update(blockIndex);
-            var result = new RapidCombination5.ResultModel((Dictionary) Result.Serialize())
+            var result = new RapidCombination5Result((Dictionary) Result.Serialize())
             {
                 cost = new Dictionary<Material, int> {[material] = count}
             };

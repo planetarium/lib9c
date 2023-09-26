@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Text;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -9,6 +7,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Serilog;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
@@ -29,7 +28,7 @@ namespace Nekoyume.Action
 
         public abstract IValue PlainValue { get; }
         public abstract void LoadPlainValue(IValue plainValue);
-        public abstract IAccount Execute(IActionContext context);
+        public abstract IWorld Execute(IActionContext context);
 
         /// <summary>
         /// returns "[Signer Address, AvatarState Address, ...]"
@@ -50,7 +49,7 @@ namespace Nekoyume.Action
             return sb.ToString();
         }
 
-        protected IAccount LogError(IActionContext context, string message, params object[] values)
+        protected IWorld LogError(IActionContext context, string message, params object[] values)
         {
             string actionType = GetType().Name;
             object[] prependedValues = new object[values.Length + 2];
@@ -66,7 +65,7 @@ namespace Nekoyume.Action
         {
             state = default;
 
-            IValue rawState = ctx.PreviousState.GetState(AdminState.Address);
+            IValue rawState = LegacyModule.GetState(ctx.PreviousState, AdminState.Address);
             if (rawState is Bencodex.Types.Dictionary asDict)
             {
                 state = new AdminState(asDict);

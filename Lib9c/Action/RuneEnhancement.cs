@@ -11,6 +11,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -43,22 +44,24 @@ namespace Nekoyume.Action
             TryCount = plainValue["t"].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out _, out _))
+            var world = context.PreviousState;
+
+            if (!AvatarModule.TryGetAvatarStateV2(world, context.Signer, AvatarAddress, out _, out _))
             {
                 throw new FailedLoadStateException(
                     $"Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var sheets = states.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 sheetTypes: new[]
                 {
                     typeof(ArenaSheet),
@@ -76,7 +79,7 @@ namespace Nekoyume.Action
 
             RuneState runeState;
             var runeStateAddress = RuneState.DeriveAddress(AvatarAddress, RuneId);
-            if (states.TryGetState(runeStateAddress, out List rawState))
+            if (LegacyModule.TryGetState(world, runeStateAddress, out List rawState))
             {
                 runeState = new RuneState(rawState);
             }
@@ -106,18 +109,18 @@ namespace Nekoyume.Action
                     $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress}");
             }
 
-            var ncgCurrency = states.GetGoldCurrency();
+            var ncgCurrency = LegacyModule.GetGoldCurrency(world);
             var crystalCurrency = CrystalCalculator.CRYSTAL;
             var runeCurrency = Currency.Legacy(runeRow.Ticker, 0, minters: null);
-            var ncgBalance = states.GetBalance(context.Signer, ncgCurrency);
-            var crystalBalance = states.GetBalance(context.Signer, crystalCurrency);
-            var runeBalance = states.GetBalance(AvatarAddress, runeCurrency);
+            var ncgBalance = LegacyModule.GetBalance(world, context.Signer, ncgCurrency);
+            var crystalBalance = LegacyModule.GetBalance(world, context.Signer, crystalCurrency);
+            var runeBalance = LegacyModule.GetBalance(world, AvatarAddress, runeCurrency);
             if (RuneHelper.TryEnhancement(ncgBalance, crystalBalance, runeBalance,
                     ncgCurrency, crystalCurrency, runeCurrency,
                     cost, context.Random, TryCount, out var tryCount))
             {
                 runeState.LevelUp();
-                states = states.SetState(runeStateAddress, runeState.Serialize());
+                world = LegacyModule.SetState(world, runeStateAddress, runeState.Serialize());
             }
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
@@ -127,22 +130,37 @@ namespace Nekoyume.Action
             var ncgCost = cost.NcgQuantity * tryCount * ncgCurrency;
             if (cost.NcgQuantity > 0)
             {
-                states = states.TransferAsset(context, context.Signer, feeStoreAddress, ncgCost);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    context.Signer,
+                    feeStoreAddress,
+                    ncgCost);
             }
 
             var crystalCost = cost.CrystalQuantity * tryCount * crystalCurrency;
             if (cost.CrystalQuantity > 0)
             {
-                states = states.TransferAsset(context, context.Signer, feeStoreAddress, crystalCost);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    context.Signer,
+                    feeStoreAddress,
+                    crystalCost);
             }
 
             var runeCost = cost.RuneStoneQuantity * tryCount * runeCurrency;
             if (cost.RuneStoneQuantity > 0)
             {
-                states = states.TransferAsset(context, AvatarAddress, feeStoreAddress, runeCost);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    AvatarAddress,
+                    feeStoreAddress,
+                    runeCost);
             }
 
-            return states;
+            return world;
         }
     }
 }

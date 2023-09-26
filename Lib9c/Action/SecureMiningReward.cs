@@ -7,6 +7,7 @@ using System.Linq;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -55,13 +56,14 @@ namespace Nekoyume.Action
             .Add("type_id", "secure_mining_reward")
             .Add("values", Recipient.Bencoded);
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount state = context.PreviousState;
+            var world = context.PreviousState;
             if (context.Rehearsal)
             {
-                return state.MarkBalanceChanged(
+                return LegacyModule.MarkBalanceChanged(
+                    world,
                     context,
                     NCG,
                     AuthorizedMiners.Add(Recipient).Add(Treasury).ToArray()
@@ -72,17 +74,27 @@ namespace Nekoyume.Action
 
             foreach (Address minerAddress in AuthorizedMiners)
             {
-                FungibleAssetValue balance = state.GetBalance(minerAddress, NCG);
+                FungibleAssetValue balance = LegacyModule.GetBalance(world, minerAddress, NCG);
                 FungibleAssetValue toTreasury = balance.DivRem(100, out _) * TreasuryRate;
                 FungibleAssetValue toRecipient = balance.DivRem(100, out _) * EarnRate;
                 FungibleAssetValue toBurn = balance - (toTreasury + toRecipient);
 
-                state = state.TransferAsset(context, minerAddress, Treasury, toTreasury);
-                state = state.TransferAsset(context, minerAddress, Recipient, toRecipient);
-                state = state.TransferAsset(context, minerAddress, Nil, toBurn);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    minerAddress,
+                    Treasury,
+                    toTreasury);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    minerAddress,
+                    Recipient,
+                    toRecipient);
+                world = LegacyModule.TransferAsset(world, context, minerAddress, Nil, toBurn);
             }
 
-            return state;
+            return world;
         }
 
         public override void LoadPlainValue(IValue plainValue)

@@ -13,10 +13,12 @@ using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Garages
 {
@@ -118,20 +120,20 @@ namespace Nekoyume.Action.Garages
                 : (string)(Text)list[3];
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var state = context.PreviousState;
             if (context.Rehearsal)
             {
-                return state;
+                return context.PreviousState;
             }
 
+            var world = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(context);
             ValidateFields(addressesHex);
-            state = TransferFungibleAssetValues(context, state);
-            state = TransferFungibleItems(context.Signer, state);
-            return SendMail(context.BlockIndex, context.Random, state);
+            world = TransferFungibleAssetValues(context, world);
+            world = TransferFungibleItems(context.Signer, world);
+            return SendMail(context.BlockIndex, context.Random, world);
         }
 
         private void ValidateFields(string addressesHex)
@@ -172,80 +174,74 @@ namespace Nekoyume.Action.Garages
             }
         }
 
-        private IAccount TransferFungibleAssetValues(
+        private IWorld TransferFungibleAssetValues(
             IActionContext context,
-            IAccount states)
+            IWorld world)
         {
             if (FungibleAssetValues is null)
             {
-                return states;
+                return world;
             }
 
             var garageBalanceAddress = Addresses.GetGarageBalanceAddress(context.Signer);
             foreach (var (balanceAddr, value) in FungibleAssetValues)
             {
-                states = states.TransferAsset(context, garageBalanceAddress, balanceAddr, value);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    garageBalanceAddress,
+                    balanceAddr,
+                    value);
             }
 
-            return states;
+            return world;
         }
 
-        private IAccount TransferFungibleItems(
+        private IWorld TransferFungibleItems(
             Address signer,
-            IAccount states)
+            IWorld world)
         {
             if (FungibleIdAndCounts is null)
             {
-                return states;
+                return world;
             }
 
             var inventoryAddr = RecipientAvatarAddr.Derive(SerializeKeys.LegacyInventoryKey);
-            var inventory = states.GetInventory(inventoryAddr);
+            var inventory = LegacyModule.GetInventory(world, inventoryAddr);
             var fungibleItemTuples = GarageUtils.WithGarageTuples(
                 signer,
-                states,
+                world,
                 FungibleIdAndCounts);
             foreach (var (_, count, garageAddr, garage) in fungibleItemTuples)
             {
                 garage.Unload(count);
                 inventory.AddFungibleItem((ItemBase)garage.Item, count);
-                states = states.SetState(garageAddr, garage.Serialize());
+                world = LegacyModule.SetState(world, garageAddr, garage.Serialize());
             }
 
-            return states.SetState(inventoryAddr, inventory.Serialize());
+            return LegacyModule.SetState(world, inventoryAddr, inventory.Serialize());
         }
 
-        private IAccount SendMail(
+        private IWorld SendMail(
             long blockIndex,
             IRandom random,
-            IAccount states)
+            IWorld world)
         {
-            var avatarValue = states.GetState(RecipientAvatarAddr);
-            if (!(avatarValue is Dictionary avatarDict))
-            {
-                throw new FailedLoadStateException(RecipientAvatarAddr, typeof(AvatarState));
-            }
-
+            var avatarState = AvatarModule.GetAvatarStateV2(world, RecipientAvatarAddr);
+            
             // NOTE:
             // This action supports the avatar state v2 only.
             // So, we just check the mail box with a newer key.
-            if (!avatarDict.ContainsKey(SerializeKeys.MailBoxKey))
-            {
-                throw new KeyNotFoundException(
-                    $"Dictionary key is not found: {SerializeKeys.MailBoxKey}");
-            }
 
-            var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey]);
-            mailBox.Add(new UnloadFromMyGaragesRecipientMail(
+            avatarState.mailBox.Add(new UnloadFromMyGaragesRecipientMail(
                 blockIndex,
                 random.GenerateRandomGuid(),
                 blockIndex,
                 FungibleAssetValues,
                 FungibleIdAndCounts,
                 Memo));
-            mailBox.CleanUp();
-            avatarDict = avatarDict.SetItem(SerializeKeys.MailBoxKey, mailBox.Serialize());
-            return states.SetState(RecipientAvatarAddr, avatarDict);
+            avatarState.mailBox.CleanUp();
+            return AvatarModule.SetAvatarV2(world, RecipientAvatarAddr, avatarState);
         }
     }
 }

@@ -6,7 +6,9 @@ using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -106,77 +108,81 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
-            var states = ctx.PreviousState;
+            if (ctx.BlockIndex != 0)
+            {
+                return ctx.PreviousState;
+            }
+
+            var world = ctx.PreviousState;
             var weeklyArenaState = new WeeklyArenaState(0);
 
             var rankingState = new RankingState0(Ranking);
             if (ctx.Rehearsal)
             {
-                states = states.SetState(RankingState0.Address, MarkChanged);
-                states = states.SetState(ShopState.Address, MarkChanged);
+                world = LegacyModule.SetState(world, RankingState0.Address, MarkChanged);
+                world = LegacyModule.SetState(world, ShopState.Address, MarkChanged);
 #pragma warning disable LAA1002
-                states = TableSheets
-                    .Aggregate(states, (current, pair) =>
-                        current.SetState(Addresses.TableSheet.Derive(pair.Key), MarkChanged));
-                states = rankingState.RankingMap
-                    .Aggregate(states, (current, pair) =>
-                        current.SetState(pair.Key, MarkChanged));
+                world = TableSheets
+                    .Aggregate(world, (current, pair) =>
+                        LegacyModule.SetState(current, Addresses.TableSheet.Derive(pair.Key), MarkChanged));
+                world = rankingState.RankingMap
+                    .Aggregate(world, (current, pair) =>
+                        LegacyModule.SetState(current, pair.Key, MarkChanged));
 #pragma warning restore LAA1002
-                states = states.SetState(weeklyArenaState.address, MarkChanged);
-                states = states.SetState(GameConfigState.Address, MarkChanged);
-                states = states.SetState(RedeemCodeState.Address, MarkChanged);
-                states = states.SetState(AdminState.Address, MarkChanged);
-                states = states.SetState(ActivatedAccountsState.Address, MarkChanged);
-                states = states.SetState(GoldCurrencyState.Address, MarkChanged);
-                states = states.SetState(Addresses.GoldDistribution, MarkChanged);
+                world = LegacyModule.SetState(world, weeklyArenaState.address, MarkChanged);
+                world = LegacyModule.SetState(world, GameConfigState.Address, MarkChanged);
+                world = LegacyModule.SetState(world, RedeemCodeState.Address, MarkChanged);
+                world = LegacyModule.SetState(world, AdminState.Address, MarkChanged);
+                world = LegacyModule.SetState(world, ActivatedAccountsState.Address, MarkChanged);
+                world = LegacyModule.SetState(world, GoldCurrencyState.Address, MarkChanged);
+                world = LegacyModule.SetState(world, Addresses.GoldDistribution, MarkChanged);
                 foreach (var rawPending in PendingActivations)
                 {
-                    states = states.SetState(
+                    world = LegacyModule.SetState(
+                        world,
                         new PendingActivationState((Dictionary)rawPending).address,
                         MarkChanged
                     );
                 }
 
-                states = states.SetState(AuthorizedMinersState.Address, MarkChanged);
-                states = states.SetState(CreditsState.Address, MarkChanged);
-                return states;
-            }
-
-            if (ctx.BlockIndex != 0)
-            {
-                return states;
+                world = LegacyModule.SetState(world, AuthorizedMinersState.Address, MarkChanged);
+                world = LegacyModule.SetState(world, CreditsState.Address, MarkChanged);
+                return world;
             }
 
 #pragma warning disable LAA1002
-            states = TableSheets
-                .Aggregate(states, (current, pair) =>
-                    current.SetState(Addresses.TableSheet.Derive(pair.Key), pair.Value.Serialize()));
-            states = rankingState.RankingMap
-                .Aggregate(states, (current, pair) =>
-                    current.SetState(pair.Key, new RankingMapState(pair.Key).Serialize()));
+            world = TableSheets
+                .Aggregate(world, (current, pair) =>
+                    LegacyModule.SetState(current, Addresses.TableSheet.Derive(pair.Key), pair.Value.Serialize()));
+            world = rankingState.RankingMap
+                .Aggregate(world, (current, pair) =>
+                    LegacyModule.SetState(current, pair.Key, new RankingMapState(pair.Key).Serialize()));
 #pragma warning restore LAA1002
-            states = states
-                .SetState(weeklyArenaState.address, weeklyArenaState.Serialize())
-                .SetState(RankingState0.Address, Ranking)
-                .SetState(ShopState.Address, Shop)
-                .SetState(GameConfigState.Address, GameConfig)
-                .SetState(RedeemCodeState.Address, RedeemCode)
-                .SetState(ActivatedAccountsState.Address, ActivatedAccounts)
-                .SetState(GoldCurrencyState.Address, GoldCurrency)
-                .SetState(Addresses.GoldDistribution, GoldDistributions);
+            world = LegacyModule.SetState(
+                world,
+                weeklyArenaState.address,
+                weeklyArenaState.Serialize());
+            world = LegacyModule.SetState(world, RankingState0.Address, Ranking);
+            world = LegacyModule.SetState(world, ShopState.Address, Shop);
+            world = LegacyModule.SetState(world, GameConfigState.Address, GameConfig);
+            world = LegacyModule.SetState(world, RedeemCodeState.Address, RedeemCode);
+            world = LegacyModule.SetState(world, ActivatedAccountsState.Address, ActivatedAccounts);
+            world = LegacyModule.SetState(world, GoldCurrencyState.Address, GoldCurrency);
+            world = LegacyModule.SetState(world, Addresses.GoldDistribution, GoldDistributions);
 
             if (!(AdminAddressState is null))
             {
-                states = states.SetState(AdminState.Address, AdminAddressState);
+                world = LegacyModule.SetState(world, AdminState.Address, AdminAddressState);
             }
 
             if (!(AuthorizedMiners is null))
             {
-                states = states.SetState(
+                world = LegacyModule.SetState(
+                    world,
                     AuthorizedMinersState.Address,
                     AuthorizedMiners
                 );
@@ -184,7 +190,8 @@ namespace Nekoyume.Action
 
             foreach (var rawPending in PendingActivations)
             {
-                states = states.SetState(
+                world = LegacyModule.SetState(
+                    world,
                     new PendingActivationState((Dictionary)rawPending).address,
                     rawPending
                 );
@@ -192,12 +199,12 @@ namespace Nekoyume.Action
 
             if (!(Credits is null))
             {
-                states = states.SetState(CreditsState.Address, Credits);
+                world = LegacyModule.SetState(world, CreditsState.Address, Credits);
             }
 
             var currency = new GoldCurrencyState(GoldCurrency).Currency;
-            states = states.MintAsset(ctx, GoldCurrencyState.Address, currency * 1000000000);
-            return states;
+            world = LegacyModule.MintAsset(world, ctx, GoldCurrencyState.Address, currency * 1000000000);
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
