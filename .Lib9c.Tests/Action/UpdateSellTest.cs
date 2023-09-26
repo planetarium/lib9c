@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -10,10 +10,13 @@
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Battle;
     using Nekoyume.Model;
+    using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -28,7 +31,7 @@
         private readonly AvatarState _avatarState;
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public UpdateSellTest(ITestOutputHelper outputHelper)
         {
@@ -37,12 +40,11 @@
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockStateDelta();
+            _initialState = new MockWorld();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = LegacyModule.SetState(_initialState, Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -74,11 +76,10 @@
             };
             agentState.avatarAddresses[0] = _avatarAddress;
 
-            _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(Addresses.Shop, shopState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, _avatarState.Serialize());
+            _initialState = LegacyModule.SetState(_initialState, GoldCurrencyState.Address, _goldCurrencyState.Serialize());
+            _initialState = LegacyModule.SetState(_initialState, Addresses.Shop, shopState.Serialize());
+            _initialState = LegacyModule.SetState(_initialState, _agentAddress, agentState.Serialize());
+            _initialState = LegacyModule.SetState(_initialState, _avatarAddress, _avatarState.Serialize());
         }
 
         [Theory]
@@ -101,7 +102,7 @@
             bool fromPreviousAction
         )
         {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             ITradableItem tradableItem;
             var itemId = new Guid(guid);
             var orderId = Guid.NewGuid();
@@ -192,24 +193,23 @@
 
             if (fromPreviousAction)
             {
-                prevState = prevState.SetState(_avatarAddress, avatarState.Serialize());
+                prevState = LegacyModule.SetState(prevState, _avatarAddress, avatarState.Serialize());
             }
             else
             {
-                prevState = prevState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                prevState = LegacyModule.SetState(prevState, _avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize());
+                prevState = LegacyModule.SetState(prevState, _avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize());
+                prevState = LegacyModule.SetState(prevState, _avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize());
+                prevState = LegacyModule.SetState(prevState, _avatarAddress, avatarState.SerializeV2());
+                prevState = LegacyModule.SetState(prevState, _avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize());
             }
 
-            prevState = prevState
-                .SetState(Addresses.GetItemAddress(itemId), sellItem.Serialize())
-                .SetState(Order.DeriveAddress(order.OrderId), order.Serialize())
-                .SetState(orderDigestList.Address, orderDigestList.Serialize())
-                .SetState(shardedShopAddress, shopState.Serialize());
+            prevState = LegacyModule.SetState(prevState, Addresses.GetItemAddress(itemId), sellItem.Serialize());
+            prevState = LegacyModule.SetState(prevState, Order.DeriveAddress(order.OrderId), order.Serialize());
+            prevState = LegacyModule.SetState(prevState, orderDigestList.Address, orderDigestList.Serialize());
+            prevState = LegacyModule.SetState(prevState, shardedShopAddress, shopState.Serialize());
 
-            var currencyState = prevState.GetGoldCurrency();
+            var currencyState = LegacyModule.GetGoldCurrency(prevState);
             var price = new FungibleAssetValue(currencyState, ProductPrice, 0);
 
             var updateSellInfo = new UpdateSellInfo(
@@ -237,7 +237,7 @@
             });
 
             var updateSellShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, updateSellOrderId);
-            var nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(updateSellShopAddress));
+            var nextShopState = new ShardedShopStateV2((Dictionary)LegacyModule.GetState(nextState, updateSellShopAddress));
             Assert.Equal(1, nextShopState.OrderDigestList.Count);
             Assert.NotEqual(orderId, nextShopState.OrderDigestList.First().OrderId);
             Assert.Equal(updateSellOrderId, nextShopState.OrderDigestList.First().OrderId);
@@ -257,7 +257,7 @@
             Assert.Throws<ListEmptyException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new MockStateDelta(),
+                PreviousState = new MockWorld(),
                 Signer = _agentAddress,
             }));
         }
@@ -282,7 +282,7 @@
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new MockStateDelta(),
+                PreviousState = new MockWorld(),
                 Signer = _agentAddress,
             }));
         }
@@ -299,7 +299,7 @@
                 ),
             };
 
-            _initialState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            var prevState = LegacyModule.SetState(_initialState, _avatarAddress, avatarState.Serialize());
 
             var updateSellInfo = new UpdateSellInfo(
                 default,
@@ -318,7 +318,7 @@
             Assert.Throws<NotEnoughClearedStageLevelException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = _initialState,
+                PreviousState = prevState,
                 Signer = _agentAddress,
             }));
         }
@@ -336,9 +336,8 @@
             };
             var digestListAddress = OrderDigestListState.DeriveAddress(_avatarAddress);
             var digestList = new OrderDigestListState(digestListAddress);
-            _initialState = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(digestListAddress, digestList.Serialize());
+            var prevState = LegacyModule.SetState(_initialState, _avatarAddress, avatarState.Serialize());
+            prevState = LegacyModule.SetState(prevState, digestListAddress, digestList.Serialize());
 
             var updateSellInfo = new UpdateSellInfo(
                 default,
@@ -357,7 +356,7 @@
             Assert.Throws<InvalidPriceException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = _initialState,
+                PreviousState = prevState,
                 Signer = _agentAddress,
             }));
         }

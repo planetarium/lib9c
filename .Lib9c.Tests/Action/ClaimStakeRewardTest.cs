@@ -11,8 +11,11 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
+    using Nekoyume.Helper;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData.Stake;
     using Serilog;
     using Xunit;
@@ -27,7 +30,7 @@ namespace Lib9c.Tests.Action
         private static readonly Address AvatarAddr =
             Addresses.GetAvatarAddress(AgentAddr, AvatarIndex);
 
-        private readonly IAccount[] _initialStates;
+        private readonly IWorld[] _initialStates;
         private readonly Currency _ncg;
         private readonly StakePolicySheet _stakePolicySheet;
 
@@ -60,8 +63,8 @@ namespace Lib9c.Tests.Action
                     StakePolicySheetFixtures.V2
                 },
             };
-            IAccount initialStatesWithAvatarStateV1;
-            IAccount initialStatesWithAvatarStateV2;
+            IWorld initialStatesWithAvatarStateV1;
+            IWorld initialStatesWithAvatarStateV2;
             (
                 _,
                 _,
@@ -76,8 +79,8 @@ namespace Lib9c.Tests.Action
                 initialStatesWithAvatarStateV1,
                 initialStatesWithAvatarStateV2,
             };
-            _ncg = initialStatesWithAvatarStateV2.GetGoldCurrency();
-            _stakePolicySheet = initialStatesWithAvatarStateV2.GetSheet<StakePolicySheet>();
+            _ncg = LegacyModule.GetGoldCurrency(initialStatesWithAvatarStateV2);
+            _stakePolicySheet = LegacyModule.GetSheet<StakePolicySheet>(initialStatesWithAvatarStateV2);
         }
 
         // NOTE: object[] {
@@ -368,7 +371,7 @@ namespace Lib9c.Tests.Action
                         0));
 
                 var stakeAddr = StakeStateV2.DeriveAddress(AgentAddr);
-                var previousState = initialState.SetState(stakeAddr, Null.Value);
+                var previousState = LegacyModule.SetState(initialState, stakeAddr, Null.Value);
                 Assert.Throws<FailedLoadStateException>(() =>
                     Execute(
                         previousState,
@@ -400,10 +403,11 @@ namespace Lib9c.Tests.Action
 
             foreach (var initialState in _initialStates)
             {
-                var prevState = initialState
+                var prevState = LegacyModule
                     // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
-                    .MintAsset(new ActionContext(), stakeAddr, _ncg * 50)
-                    .SetState(stakeAddr, stakeState.Serialize());
+                    .MintAsset(initialState, new ActionContext(), stakeAddr, _ncg * 50);
+                prevState = LegacyModule
+                    .SetState(prevState, stakeAddr, stakeState.Serialize());
                 Assert.Throws<RequiredBlockIndexException>(() =>
                     Execute(
                         prevState,
@@ -434,10 +438,11 @@ namespace Lib9c.Tests.Action
                 receivedBlockIndex);
             foreach (var initialState in _initialStates)
             {
-                var prevState = initialState
+                var prevState = LegacyModule
                     // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
-                    .MintAsset(new ActionContext(), stakeAddr, _ncg * 50)
-                    .SetState(stakeAddr, stakeStateV2.Serialize());
+                    .MintAsset(initialState, new ActionContext(), stakeAddr, _ncg * 50);
+                prevState = LegacyModule
+                    .SetState(prevState, stakeAddr, stakeStateV2.Serialize());
                 Assert.Throws<RequiredBlockIndexException>(() =>
                     Execute(
                         prevState,
@@ -455,14 +460,15 @@ namespace Lib9c.Tests.Action
             var blockIndex = stakeStateV2.StartedBlockIndex + stakeStateV2.Contract.RewardInterval;
             foreach (var initialState in _initialStates)
             {
-                var prevState = initialState
+                var prevState = LegacyModule
                     // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
-                    .MintAsset(new ActionContext(), stakeAddr, _ncg * 50)
-                    .SetState(stakeAddr, stakeStateV2.Serialize());
+                    .MintAsset(initialState, new ActionContext(), stakeAddr, _ncg * 50);
+                prevState = LegacyModule
+                    .SetState(prevState, stakeAddr, stakeStateV2.Serialize());
                 // NOTE: Set StakeRegularFixedRewardSheetTable to Null
                 var sheetAddr = Addresses.GetSheetAddress(
                     stakeStateV2.Contract.StakeRegularFixedRewardSheetTableName);
-                prevState = prevState.SetState(sheetAddr, Null.Value);
+                prevState = LegacyModule.SetState(prevState, sheetAddr, Null.Value);
                 Assert.Throws<FailedLoadStateException>(() =>
                     Execute(
                         prevState,
@@ -470,14 +476,15 @@ namespace Lib9c.Tests.Action
                         AvatarAddr,
                         blockIndex));
 
-                prevState = initialState
+                prevState = LegacyModule
                     // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
-                    .MintAsset(new ActionContext(), stakeAddr, _ncg * 50)
-                    .SetState(stakeAddr, stakeStateV2.Serialize());
+                    .MintAsset(initialState, new ActionContext(), stakeAddr, _ncg * 50);
+                prevState = LegacyModule
+                    .SetState(initialState, stakeAddr, stakeStateV2.Serialize());
                 // NOTE: Set StakeRegularRewardSheetTableName to Null
                 sheetAddr = Addresses.GetSheetAddress(
                     stakeStateV2.Contract.StakeRegularRewardSheetTableName);
-                prevState = prevState.SetState(sheetAddr, Null.Value);
+                prevState = LegacyModule.SetState(prevState, sheetAddr, Null.Value);
                 Assert.Throws<FailedLoadStateException>(() =>
                     Execute(
                         prevState,
@@ -498,9 +505,10 @@ namespace Lib9c.Tests.Action
             var blockIndex = stakeStateV2.StartedBlockIndex + stakeStateV2.Contract.RewardInterval;
             foreach (var initialState in _initialStates)
             {
-                var previousState = initialState.SetState(stakeAddr, stakeStateV2.Serialize());
+                var previousState = LegacyModule.SetState(initialState, stakeAddr, stakeStateV2.Serialize());
                 previousState = stakedBalance > 0
-                    ? previousState.MintAsset(
+                    ? LegacyModule.MintAsset(
+                        previousState,
                         new ActionContext(),
                         stakeAddr,
                         _ncg * stakedBalance)
@@ -522,21 +530,22 @@ namespace Lib9c.Tests.Action
             var blockIndex = stakeStateV2.StartedBlockIndex + stakeStateV2.Contract.RewardInterval;
             foreach (var initialState in _initialStates)
             {
-                var prevState = initialState
+                var prevState = LegacyModule
                     // NOTE: required_gold to receive Currency
                     // of StakeRegularRewardSheetFixtures.V2 is 10,000,000.
-                    .MintAsset(new ActionContext(), stakeAddr, _ncg * 10_000_000)
-                    .SetState(stakeAddr, stakeStateV2.Serialize());
+                    .MintAsset(initialState, new ActionContext(), stakeAddr, _ncg * 10_000_000);
+                prevState = LegacyModule
+                    .SetState(prevState, stakeAddr, stakeStateV2.Serialize());
                 // NOTE: Set CurrencyTicker to string.Empty.
                 var sheetAddr = Addresses.GetSheetAddress(
                     stakeStateV2.Contract.StakeRegularRewardSheetTableName);
-                var sheetValue = prevState.GetSheetCsv(sheetAddr);
+                var sheetValue = LegacyModule.GetSheetCsv(prevState, sheetAddr);
                 sheetValue = string.Join('\n', sheetValue.Split('\n')
                     .Select(line => string.Join(',', line.Split(',')
                         .Select((column, index) => index == 5
                             ? string.Empty
                             : column))));
-                prevState = prevState.SetState(sheetAddr, sheetValue.Serialize());
+                prevState = LegacyModule.SetState(prevState, sheetAddr, sheetValue.Serialize());
                 Assert.Throws<ArgumentNullException>(() =>
                     Execute(
                         prevState,
@@ -555,15 +564,16 @@ namespace Lib9c.Tests.Action
             var blockIndex = stakeStateV2.StartedBlockIndex + stakeStateV2.Contract.RewardInterval;
             foreach (var initialState in _initialStates)
             {
-                var prevState = initialState
+                var prevState = LegacyModule
                     // NOTE: required_gold to receive Currency
                     // of StakeRegularRewardSheetFixtures.V2 is 10,000,000.
-                    .MintAsset(new ActionContext(), stakeAddr, _ncg * 10_000_000)
-                    .SetState(stakeAddr, stakeStateV2.Serialize());
+                    .MintAsset(initialState, new ActionContext(), stakeAddr, _ncg * 10_000_000);
+                prevState = LegacyModule
+                    .SetState(prevState, stakeAddr, stakeStateV2.Serialize());
                 // NOTE: Set CurrencyTicker to string.Empty.
                 var sheetAddr = Addresses.GetSheetAddress(
                     stakeStateV2.Contract.StakeRegularRewardSheetTableName);
-                var sheetValue = prevState.GetSheetCsv(sheetAddr);
+                var sheetValue = LegacyModule.GetSheetCsv(prevState, sheetAddr);
                 sheetValue = string.Join('\n', sheetValue.Split('\n')
                     .Select(line => string.Join(',', line.Split(',')
                         .Select((column, index) =>
@@ -575,7 +585,7 @@ namespace Lib9c.Tests.Action
                                 _ => column,
                             };
                         }))));
-                prevState = prevState.SetState(sheetAddr, sheetValue.Serialize());
+                prevState = LegacyModule.SetState(prevState, sheetAddr, sheetValue.Serialize());
                 Assert.Throws<ArgumentNullException>(() =>
                     Execute(
                         prevState,
@@ -605,12 +615,13 @@ namespace Lib9c.Tests.Action
             foreach (var initialState in _initialStates)
             {
                 var previousState = stakedBalance > 0
-                    ? initialState.MintAsset(
+                    ? LegacyModule.MintAsset(
+                        initialState,
                         new ActionContext(),
                         stakeAddr,
                         _ncg * stakedBalance)
                     : initialState;
-                previousState = previousState.SetState(stakeAddr, stakeState.Serialize());
+                previousState = LegacyModule.SetState(previousState, stakeAddr, stakeState.Serialize());
                 var nextState = Execute(
                     previousState,
                     AgentAddr,
@@ -642,12 +653,13 @@ namespace Lib9c.Tests.Action
             foreach (var initialState in _initialStates)
             {
                 var previousState = stakedBalance > 0
-                    ? initialState.MintAsset(
+                    ? LegacyModule.MintAsset(
+                        initialState,
                         new ActionContext(),
                         stakeAddr,
                         _ncg * stakedBalance)
                     : initialState;
-                previousState = previousState.SetState(stakeAddr, stakeStateV2.Serialize());
+                previousState = LegacyModule.SetState(previousState, stakeAddr, stakeStateV2.Serialize());
                 var nextState = Execute(
                     previousState,
                     AgentAddr,
@@ -672,16 +684,16 @@ namespace Lib9c.Tests.Action
                 : new StakeStateV2(contract, startedBlockIndex, receivedBlockIndex.Value);
         }
 
-        private static IAccount Execute(
-            IAccount prevState,
+        private static IWorld Execute(
+            IWorld prevState,
             Address agentAddr,
             Address avatarAddr,
             long blockIndex)
         {
             var stakeAddr = StakeStateV2.DeriveAddress(agentAddr);
-            var ncg = prevState.GetGoldCurrency();
-            var prevBalance = prevState.GetBalance(agentAddr, ncg);
-            var prevStakedBalance = prevState.GetBalance(stakeAddr, ncg);
+            var ncg = LegacyModule.GetGoldCurrency(prevState);
+            var prevBalance = LegacyModule.GetBalance(prevState, agentAddr, ncg);
+            var prevStakedBalance = LegacyModule.GetBalance(prevState, stakeAddr, ncg);
             var action = new ClaimStakeReward(avatarAddr);
             var nextState = action.Execute(new ActionContext
             {
@@ -689,11 +701,11 @@ namespace Lib9c.Tests.Action
                 Signer = agentAddr,
                 BlockIndex = blockIndex,
             });
-            var nextBalance = nextState.GetBalance(agentAddr, ncg);
+            var nextBalance = LegacyModule.GetBalance(nextState, agentAddr, ncg);
             Assert.Equal(prevBalance, nextBalance);
-            var nextStakedBalance = nextState.GetBalance(stakeAddr, ncg);
+            var nextStakedBalance = LegacyModule.GetBalance(nextState, stakeAddr, ncg);
             Assert.Equal(prevStakedBalance, nextStakedBalance);
-            Assert.True(nextState.TryGetStakeStateV2(agentAddr, out var stakeStateV2));
+            Assert.True(LegacyModule.TryGetStakeStateV2(nextState, agentAddr, out var stakeStateV2));
             Assert.Equal(blockIndex, stakeStateV2.ReceivedBlockIndex);
             Assert.True(stakeStateV2.ClaimedBlockIndex <= blockIndex);
             Assert.True(stakeStateV2.ClaimableBlockIndex > blockIndex);
@@ -702,7 +714,7 @@ namespace Lib9c.Tests.Action
         }
 
         private static void Expect(
-            IAccountState state,
+            IWorldState world,
             (Address balanceAddr, FungibleAssetValue fav)[] expectedBalances,
             Address inventoryAddr,
             (int itemSheetId, int count)[] expectedItems)
@@ -711,13 +723,13 @@ namespace Lib9c.Tests.Action
             {
                 foreach (var (balanceAddr, fav) in expectedBalances)
                 {
-                    Assert.Equal(fav, state.GetBalance(balanceAddr, fav.Currency));
+                    Assert.Equal(fav, LegacyModule.GetBalance(world, balanceAddr, fav.Currency));
                 }
             }
 
             if (expectedItems is not null)
             {
-                var inventory = state.GetInventory(inventoryAddr);
+                var inventory = LegacyModule.GetInventory(world, inventoryAddr);
                 foreach (var (itemSheetId, count) in expectedItems)
                 {
                     Assert.Equal(count, inventory.Items.First(e => e.item.Id == itemSheetId).count);

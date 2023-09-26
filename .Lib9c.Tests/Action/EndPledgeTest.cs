@@ -2,11 +2,13 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using Bencodex.Types;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
+    using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class EndPledgeTest
@@ -19,12 +21,15 @@ namespace Lib9c.Tests.Action
             var patron = new PrivateKey().ToAddress();
             var agent = new PrivateKey().ToAddress();
             var context = new ActionContext();
-            IAccount states = new MockStateDelta()
-                .SetState(agent.GetPledgeAddress(), List.Empty.Add(patron.Serialize()).Add(true.Serialize()));
+            IWorld states = new MockWorld();
+            states = LegacyModule.SetState(
+                states,
+                agent.GetPledgeAddress(),
+                List.Empty.Add(patron.Serialize()).Add(true.Serialize()));
             var mead = Currencies.Mead;
             if (balance > 0)
             {
-                states = states.MintAsset(context, agent, mead * balance);
+                states = LegacyModule.MintAsset(states, context, agent, mead * balance);
             }
 
             var action = new EndPledge
@@ -35,7 +40,7 @@ namespace Lib9c.Tests.Action
             {
                 Signer = patron,
                 PreviousState = states,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
             Assert.Equal(Null.Value, nextState.GetState(agent.GetPledgeAddress()));
             Assert.Equal(mead * 0, nextState.GetBalance(agent, mead));
             if (balance > 0)
@@ -52,7 +57,7 @@ namespace Lib9c.Tests.Action
             Address patron = new PrivateKey().ToAddress();
             Address agent = new PrivateKey().ToAddress();
             List contract = List.Empty.Add(patron.Serialize()).Add(true.Serialize());
-            IAccount states = new MockStateDelta().SetState(agent.GetPledgeAddress(), contract);
+            var states = LegacyModule.SetState(new MockWorld(), agent.GetPledgeAddress(), contract);
 
             var action = new EndPledge
             {

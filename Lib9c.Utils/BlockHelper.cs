@@ -85,7 +85,7 @@ namespace Nekoyume
             IEnumerable<IAction> systemActions = new IAction[]
             {
                 new Initialize(
-                    states: ImmutableDictionary.Create<Address, IValue>(),
+                    states: ImmutableDictionary.Create<Address, IImmutableDictionary<Address, IValue>>(),
                     validatorSet: new ValidatorSet(
                         initialValidators.Select(validator =>
                             new Validator(validator.Key, validator.Value)).ToList()

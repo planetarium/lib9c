@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Model
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Battle;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;

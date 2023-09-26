@@ -87,7 +87,7 @@ namespace Lib9c.Tests
             // Activate with admin account.
             blockChain.MakeTransaction(
                 adminPrivateKey,
-                new ActionBase[] { new AddActivatedAccount(newActivatedAddress) }
+                new ActionBase[] { }
             );
             Block block = blockChain.ProposeBlock(adminPrivateKey);
             blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
@@ -270,7 +270,7 @@ namespace Lib9c.Tests
             );
             blockChain.MakeTransaction(
                 adminPrivateKey,
-                new ActionBase[] { new AddActivatedAccount(adminPrivateKey.ToAddress()) }
+                new ActionBase[] { }
             );
             Block block1 = blockChain.ProposeBlock(adminPrivateKey);
             Assert.Throws<InvalidBlockCommitException>(

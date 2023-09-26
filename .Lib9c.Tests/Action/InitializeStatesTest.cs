@@ -4,10 +4,12 @@ namespace Lib9c.Tests.Action
     using System.Collections.Immutable;
     using System.Linq;
     using Bencodex.Types;
+    using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -61,8 +63,8 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Signer = minterKey.ToAddress(),
                 Miner = default,
-                PreviousState = new MockStateDelta(),
-            });
+                PreviousState = new MockWorld(),
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var addresses = new List<Address>()
             {
@@ -128,8 +130,8 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.ToAddress(),
-                PreviousState = new MockStateDelta(),
-            });
+                PreviousState = new MockWorld(),
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var fetchedState = new AuthorizedMinersState(
                 (Dictionary)genesisState.GetState(AuthorizedMinersState.Address)
@@ -177,8 +179,8 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.ToAddress(),
-                PreviousState = new MockStateDelta(),
-            });
+                PreviousState = new MockWorld(),
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var fetchedState = new ActivatedAccountsState(
                 (Dictionary)genesisState.GetState(Addresses.ActivatedAccount));
@@ -229,8 +231,8 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.ToAddress(),
-                PreviousState = new MockStateDelta(),
-            });
+                PreviousState = new MockWorld(),
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var fetchedState = new CreditsState(
                 (Dictionary)genesisState.GetState(CreditsState.Address));
@@ -275,8 +277,8 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.ToAddress(),
-                PreviousState = new MockStateDelta(),
-            });
+                PreviousState = new MockWorld(),
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             var fetchedState = new ActivatedAccountsState(
                 (Dictionary)genesisState.GetState(Addresses.ActivatedAccount));

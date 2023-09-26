@@ -7,8 +7,9 @@ namespace Lib9c.Tests.Util
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
-    using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
 
     public static class InitializeUtil
@@ -17,8 +18,8 @@ namespace Lib9c.Tests.Util
             TableSheets tableSheets,
             Address agentAddr,
             Address avatarAddr,
-            IAccount initialStatesWithAvatarStateV1,
-            IAccount initialStatesWithAvatarStateV2
+            IWorld initialStatesWithAvatarStateV1,
+            IWorld initialStatesWithAvatarStateV2
             ) InitializeStates(
                 Address? adminAddr = null,
                 Address? agentAddr = null,
@@ -28,7 +29,9 @@ namespace Lib9c.Tests.Util
         {
             adminAddr ??= new PrivateKey().ToAddress();
             var context = new ActionContext();
-            var states = new MockStateDelta().SetState(
+            IWorld states = new MockWorld();
+            states = LegacyModule.SetState(
+                states,
                 Addresses.Admin,
                 new AdminState(adminAddr.Value, long.MaxValue).Serialize());
 
@@ -38,15 +41,26 @@ namespace Lib9c.Tests.Util
                 minters: default
             );
             var goldCurrencyState = new GoldCurrencyState(goldCurrency);
-            states = states
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .MintAsset(context, goldCurrencyState.address, goldCurrency * 1_000_000_000);
+            states = LegacyModule.SetState(
+                states,
+                goldCurrencyState.address,
+                goldCurrencyState.Serialize());
+            states = LegacyModule.MintAsset(
+                states,
+                context,
+                goldCurrencyState.address,
+                goldCurrency * 1_000_000_000);
 
-            var tuple = InitializeTableSheets(states, isDevEx, sheetsOverride);
-            states = tuple.states;
+            var world = new MockWorld(states);
+
+            var tuple = InitializeTableSheets(world, isDevEx, sheetsOverride);
+            states = tuple.world;
             var tableSheets = new TableSheets(tuple.sheets, ignoreFailedGetProperty: true);
             var gameConfigState = new GameConfigState(tuple.sheets[nameof(GameConfigSheet)]);
-            states = states.SetState(gameConfigState.address, gameConfigState.Serialize());
+            states = LegacyModule.SetState(
+                states,
+                gameConfigState.address,
+                gameConfigState.Serialize());
 
             agentAddr ??= new PrivateKey().ToAddress();
             var avatarAddr = Addresses.GetAvatarAddress(agentAddr.Value, avatarIndex);
@@ -60,33 +74,36 @@ namespace Lib9c.Tests.Util
                 avatarAddr.Derive("ranking_map"));
             agentState.avatarAddresses.Add(avatarIndex, avatarAddr);
 
-            var initialStatesWithAvatarStateV1 = states
-                .SetState(agentAddr.Value, agentState.Serialize())
-                .SetState(avatarAddr, avatarState.Serialize());
-            var initialStatesWithAvatarStateV2 = states
-                .SetState(agentAddr.Value, agentState.Serialize())
-                .SetState(avatarAddr, avatarState.SerializeV2())
-                .SetState(
-                    avatarAddr.Derive(SerializeKeys.LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    avatarAddr.Derive(SerializeKeys.LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize())
-                .SetState(
-                    avatarAddr.Derive(SerializeKeys.LegacyQuestListKey),
-                    avatarState.questList.Serialize());
+            var initialStatesWithAvatarStateV1 = states;
+            initialStatesWithAvatarStateV1 = AgentModule.SetAgentState(
+                initialStatesWithAvatarStateV1,
+                agentAddr.Value,
+                agentState);
+            initialStatesWithAvatarStateV1 = AvatarModule.SetAvatarState(
+                initialStatesWithAvatarStateV1,
+                avatarAddr,
+                avatarState);
+            var initialStatesWithAvatarStateV2 = states;
+            initialStatesWithAvatarStateV2 = AgentModule.SetAgentState(
+                initialStatesWithAvatarStateV2,
+                agentAddr.Value,
+                agentState);
+            initialStatesWithAvatarStateV2 = AvatarModule.SetAvatarStateV2(
+                initialStatesWithAvatarStateV2,
+                avatarAddr,
+                avatarState);
 
             return (
                 tableSheets,
                 agentAddr.Value,
                 avatarAddr,
-                initialStatesWithAvatarStateV1,
-                initialStatesWithAvatarStateV2);
+                new MockWorld(initialStatesWithAvatarStateV1),
+                new MockWorld(initialStatesWithAvatarStateV2));
         }
 
-        private static (IAccount states, Dictionary<string, string> sheets)
+        private static (IWorld world, Dictionary<string, string> sheets)
             InitializeTableSheets(
-                IAccount states,
+                IWorld world,
                 bool isDevEx = false,
                 Dictionary<string, string> sheetsOverride = null)
         {
@@ -107,12 +124,13 @@ namespace Lib9c.Tests.Util
 
             foreach (var (key, value) in sheets)
             {
-                states = states.SetState(
-                    Addresses.TableSheet.Derive(key),
-                    value.Serialize());
+                world = world.SetAccount(
+                    world.GetAccount(ReservedAddresses.LegacyAccount).SetState(
+                        Addresses.TableSheet.Derive(key),
+                        value.Serialize()));
             }
 
-            return (states, sheets);
+            return (world, sheets);
         }
     }
 }

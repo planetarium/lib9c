@@ -94,21 +94,19 @@ namespace Nekoyume.Action.Extensions
 
             public bool Legacy { get; }
 
-            public BlockHash? BlockHash { get; }
-
             public IWorldDelta Delta => _delta;
 
-            public IWorld SetAccount(IAccount account)
+            public IWorld SetAccount(Address address, IAccount account)
             {
                 return new AddressTraceWorld(
-                    new AddressTraceWorldDelta(Delta.Accounts.Add(account.Address, account)));
+                    new AddressTraceWorldDelta(Delta.Accounts.Add(address, account)));
             }
 
             public IImmutableSet<Address> UpdatedAddresses => _delta.UpdatedAddresses;
 
             public IAccount GetAccount(Address address)
             {
-                return new AddressTraceAccount(address);
+                return new AddressTraceAccount();
             }
 
             public class AddressTraceWorldDelta : IWorldDelta
@@ -132,25 +130,17 @@ namespace Nekoyume.Action.Extensions
         {
             private AddressTraceAccountDelta _delta;
 
-            public AddressTraceAccount(Address address)
-                : this(address, new AddressTraceAccountDelta())
+            public AddressTraceAccount()
+                : this(new AddressTraceAccountDelta())
             {
-                Address = address;
             }
 
-            public AddressTraceAccount(Address address, AddressTraceAccountDelta delta)
+            public AddressTraceAccount(AddressTraceAccountDelta delta)
             {
-                Address = address;
                 _delta = delta;
             }
 
             public ITrie Trie { get; }
-
-            public Address Address { get; }
-
-            public BlockHash? BlockHash { get; }
-
-            public HashDigest<SHA256>? StateRootHash { get; }
 
             public IAccountDelta Delta => _delta;
 
@@ -170,7 +160,6 @@ namespace Nekoyume.Action.Extensions
             public IAccount BurnAsset(IActionContext context, Address owner, FungibleAssetValue value)
             {
                 return new AddressTraceAccount(
-                    Address,
                     new AddressTraceAccountDelta(Delta.UpdatedAddresses.Union(new[] { owner })));
             }
 
@@ -197,14 +186,12 @@ namespace Nekoyume.Action.Extensions
             public IAccount MintAsset(IActionContext context, Address recipient, FungibleAssetValue value)
             {
                 return new AddressTraceAccount(
-                    Address,
                     new AddressTraceAccountDelta(Delta.UpdatedAddresses.Union(new[] { recipient })));
             }
 
             public IAccount SetState(Address address, IValue state)
             {
                 return new AddressTraceAccount(
-                    Address,
                     new AddressTraceAccountDelta(Delta.UpdatedAddresses.Union(new[] { address })));
             }
 
@@ -217,7 +204,6 @@ namespace Nekoyume.Action.Extensions
             )
             {
                 return new AddressTraceAccount(
-                    Address,
                     new AddressTraceAccountDelta(Delta.UpdatedAddresses.Union(new[] { sender, recipient })));
             }
 

@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action.Scenario
+namespace Lib9c.Tests.Action.Scenario
 {
     using System.Globalization;
     using System.Linq;
@@ -8,9 +8,11 @@
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -19,7 +21,7 @@
 
     public class CombinationAndRapidCombinationTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly TableSheets _tableSheets;
         private Address _agentAddress;
         private Address _avatarAddress;
@@ -79,20 +81,22 @@
             _worldInformationAddress = _avatarAddress.Derive(LegacyWorldInformationKey);
             _questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
 
-            _initialState = new Tests.Action.MockStateDelta()
-                .SetState(GoldCurrencyState.Address, gold.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(_inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(_worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(_questListAddress, avatarState.questList.Serialize())
-                .SetState(_slot0Address, slot0State.Serialize());
+            _initialState = new Tests.Action.MockWorld();
+            _initialState = LegacyModule.SetState(_initialState, GoldCurrencyState.Address, gold.Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                gameConfigState.address,
+                gameConfigState.Serialize());
+            _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
+            _initialState = AvatarModule.SetAvatarStateV2(_initialState, _avatarAddress, avatarState);
+            _initialState = LegacyModule.SetState(_initialState, _slot0Address, slot0State.Serialize());
 
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
         }
 
@@ -136,7 +140,7 @@
         [InlineData(18, new[] { 1, 2, 3, 4 })]
         public void Case(int randomSeed, int[] optionNumbers)
         {
-            var gameConfigState = _initialState.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(_initialState);
             Assert.NotNull(gameConfigState);
 
             var subRecipeRow = _tableSheets.EquipmentItemSubRecipeSheetV2.OrderedList.First(e =>
@@ -153,7 +157,7 @@
                 subRecipeId = subRecipeRow.Id,
             };
 
-            var inventoryValue = _initialState.GetState(_inventoryAddress);
+            var inventoryValue = LegacyModule.GetState(_initialState, _inventoryAddress);
             Assert.NotNull(inventoryValue);
 
             var inventoryState = new Inventory((List)inventoryValue);
@@ -179,21 +183,27 @@
                 recipeIds = recipeIds.Add(i.Serialize());
             }
 
-            var nextState = _initialState
-                .SetState(unlockedRecipeIdsAddress, recipeIds)
-                .SetState(_inventoryAddress, inventoryState.Serialize())
-                .SetState(_worldInformationAddress, worldInformation.Serialize());
+            var nextState = LegacyModule.SetState(_initialState, unlockedRecipeIdsAddress, recipeIds);
+            nextState = LegacyModule.SetState(
+                nextState,
+                _inventoryAddress,
+                inventoryState.Serialize());
+            nextState = LegacyModule.SetState(
+                nextState,
+                _worldInformationAddress,
+                worldInformation.Serialize());
 
             var random = new TestRandom(randomSeed);
-            nextState = combinationEquipmentAction.Execute(new ActionContext
-            {
-                PreviousState = nextState,
-                BlockIndex = 0,
-                Random = random,
-                Signer = _agentAddress,
-            });
+            nextState = combinationEquipmentAction.Execute(
+                new ActionContext
+                {
+                    PreviousState = nextState,
+                    BlockIndex = 0,
+                    Random = random,
+                    Signer = _agentAddress,
+                });
 
-            var slot0Value = nextState.GetState(_slot0Address);
+            var slot0Value = LegacyModule.GetState(nextState, _slot0Address);
             Assert.NotNull(slot0Value);
 
             var slot0State = new CombinationSlotState((Dictionary)slot0Value);
@@ -261,34 +271,35 @@
                 .First(pair => pair.Value.ItemSubType == ItemSubType.Hourglass)
                 .Value;
 
-            inventoryValue = nextState.GetState(_inventoryAddress);
+            inventoryValue = LegacyModule.GetState(nextState, _inventoryAddress);
             Assert.NotNull(inventoryValue);
             inventoryState = new Inventory((List)inventoryValue);
             Assert.False(inventoryState.TryGetFungibleItems(hourglassRow.ItemId, out _));
 
             var diff = slot0State.RequiredBlockIndex - GameConfig.RequiredAppraiseBlock;
-            var hourglassCount = RapidCombination0.CalculateHourglassCount(gameConfigState, diff);
+            var hourglassCount = Nekoyume.Action.Statics.RapidCombination.CalculateHourglassCountV0(gameConfigState, diff);
             inventoryState.AddFungibleItem(
                 ItemFactory.CreateMaterial(_tableSheets.MaterialItemSheet, hourglassRow.Id),
                 hourglassCount);
             Assert.True(inventoryState.TryGetFungibleItems(hourglassRow.ItemId, out var hourglasses));
             Assert.Equal(hourglassCount, hourglasses.Sum(e => e.count));
-            nextState = nextState.SetState(_inventoryAddress, inventoryState.Serialize());
+            nextState = LegacyModule.SetState(nextState, _inventoryAddress, inventoryState.Serialize());
 
-            var rapidCombinationAction = new RapidCombination8
+            var rapidCombinationAction = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
                 slotIndex = 0,
             };
 
-            nextState = rapidCombinationAction.Execute(new ActionContext
-            {
-                PreviousState = nextState,
-                BlockIndex = GameConfig.RequiredAppraiseBlock,
-                Random = random,
-                Signer = _agentAddress,
-            });
-            inventoryValue = nextState.GetState(_inventoryAddress);
+            nextState = rapidCombinationAction.Execute(
+                new ActionContext
+                {
+                    PreviousState = nextState,
+                    BlockIndex = GameConfig.RequiredAppraiseBlock,
+                    Random = random,
+                    Signer = _agentAddress,
+                });
+            inventoryValue = LegacyModule.GetState(nextState, _inventoryAddress);
             Assert.NotNull(inventoryValue);
             inventoryState = new Inventory((List)inventoryValue);
             Assert.False(inventoryState.TryGetFungibleItems(hourglassRow.ItemId, out _));

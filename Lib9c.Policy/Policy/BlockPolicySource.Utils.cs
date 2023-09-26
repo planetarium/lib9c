@@ -4,6 +4,7 @@ using System.Reflection;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.Loader;
+using Libplanet.Action.State;
 using Libplanet.Blockchain;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
@@ -73,7 +74,7 @@ namespace Nekoyume.Blockchain.Policy
 
         internal static AdminState GetAdminState(BlockChain blockChain)
         {
-            return blockChain.GetState(AdminState.Address) is Dictionary rawAdmin
+            return blockChain.GetState(AdminState.Address, ReservedAddresses.LegacyAccount) is Dictionary rawAdmin
                 ? new AdminState(rawAdmin)
                 : null;
         }

@@ -9,6 +9,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Lib9c.DevExtensions.Action
 {
@@ -16,7 +17,7 @@ namespace Lib9c.DevExtensions.Action
     [ActionType("manipulate_state")]
     public class ManipulateState : GameAction
     {
-        public List<(Address addr, IValue value)> StateList { get; set; }
+        public List<(Address accountAddr, Address addr, IValue value)> StateList { get; set; }
         public List<(Address addr, FungibleAssetValue fav)> BalanceList { get; set; }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
@@ -37,14 +38,14 @@ namespace Lib9c.DevExtensions.Action
         protected override void LoadPlainValueInternal(
             IImmutableDictionary<string, IValue> plainValue)
         {
-            StateList = plainValue["sl"].ToStateList();
+            StateList = plainValue["sl"].ToAccountStateList();
             BalanceList = ((List)plainValue["bl"])
                 .OfType<List>()
                 .Select(list => (list[0].ToAddress(), list[1].ToFungibleAssetValue()))
                 .ToList();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             if (context.Rehearsal)
@@ -55,22 +56,22 @@ namespace Lib9c.DevExtensions.Action
             return Execute(context, context.PreviousState, StateList, BalanceList);
         }
 
-        public static IAccount Execute(
+        public static IWorld Execute(
             IActionContext context,
-            IAccount prevStates,
-            List<(Address addr, IValue value)> stateList,
+            IWorld world,
+            List<(Address accountAddr, Address addr, IValue value)> stateList,
             List<(Address addr, FungibleAssetValue fav)> balanceList)
         {
-            var states = prevStates;
-            foreach (var (addr, value) in stateList)
+            foreach (var (accountAddr, addr, value) in stateList)
             {
-                states = states.SetState(addr, value);
+                world = world.SetAccount(
+                    world.GetAccount(accountAddr).SetState(addr, value));
             }
 
-            var ncg = states.GetGoldCurrency();
+            var ncg = LegacyModule.GetGoldCurrency(world);
             foreach (var (addr, fav) in balanceList)
             {
-                var currentFav = states.GetBalance(addr, fav.Currency);
+                var currentFav = LegacyModule.GetBalance(world, addr, fav.Currency);
                 if (currentFav == fav)
                 {
                     continue;
@@ -82,7 +83,8 @@ namespace Lib9c.DevExtensions.Action
                     {
                         if (currentFav > fav)
                         {
-                            states = states.TransferAsset(
+                            world = LegacyModule.TransferAsset(
+                                world,
                                 context,
                                 addr,
                                 GoldCurrencyState.Address,
@@ -90,7 +92,8 @@ namespace Lib9c.DevExtensions.Action
                         }
                         else
                         {
-                            states = states.TransferAsset(
+                            world = LegacyModule.TransferAsset(
+                                world,
                                 context,
                                 GoldCurrencyState.Address,
                                 addr,
@@ -103,12 +106,12 @@ namespace Lib9c.DevExtensions.Action
                     throw new NotSupportedException($"{fav.Currency} is not supported.");
                 }
 
-                states = currentFav > fav
-                    ? states.BurnAsset(context, addr, currentFav - fav)
-                    : states.MintAsset(context, addr, fav - currentFav);
+                world = currentFav > fav
+                    ? LegacyModule.BurnAsset(world, context, addr, currentFav - fav)
+                    : LegacyModule.MintAsset(world, context, addr, fav - currentFav);
             }
 
-            return states;
+            return world;
         }
     }
 }
