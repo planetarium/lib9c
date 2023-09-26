@@ -68,7 +68,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libplanet.Extensions.Remote
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libplanet.Extensions.RemoteActionEvaluator.Tests", ".Libplanet.Extensions.RemoteActionEvaluator.Tests\Libplanet.Extensions.RemoteActionEvaluator.Tests.csproj", "{3608A63A-A52D-4EB5-A96D-36C8F11CE603}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libplanet.Extensions.RemoteBlockChainStates", ".Libplanet.Extensions.RemoteBlockChainStates\Libplanet.Extensions.RemoteBlockChainStates.csproj", "{63544447-4FCD-48D1-898C-974FBA6834AD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libplanet.Extensions.RemoteStates", ".Libplanet.Extensions.RemoteBlockChainStates\Libplanet.Extensions.RemoteStates.csproj", "{63544447-4FCD-48D1-898C-974FBA6834AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib9c.StateService", ".Lib9c.StateService\Lib9c.StateService.csproj", "{EB97AB26-1C8F-48F5-97FF-8A6DF8FAB879}"
 EndProject
