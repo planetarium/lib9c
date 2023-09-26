@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using Bencodex.Types;
@@ -14,7 +15,7 @@ using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Tx;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Action.Extensions
 {
     public static class ActionBaseExtensions
     {
@@ -27,8 +28,8 @@ namespace Nekoyume.Action
             {
                 try
                 {
-                    IAccount nextStates = action.Execute(rehearsalContext);
-                    addresses = addresses.Union(nextStates.Delta.UpdatedAddresses);
+                    IWorld nextStates = action.Execute(rehearsalContext);
+                    addresses = addresses.Union(nextStates.Delta.Accounts.Values.SelectMany(a => a.Delta.UpdatedAddresses));
                 }
                 catch (NotSupportedException)
                 {
@@ -55,7 +56,7 @@ namespace Nekoyume.Action
 
             public bool Rehearsal => true;
 
-            public IAccount PreviousState => new AddressTraceStateDelta();
+            public IWorld PreviousState => new AddressTraceWorld();
 
             public IRandom Random => default;
 
@@ -75,21 +76,81 @@ namespace Nekoyume.Action
             public long GasLimit() => 0;
         }
 
-        private class AddressTraceStateDelta : IAccount
+        private class AddressTraceWorld : IWorld
         {
-            private AddressTraceDelta _delta;
+            private AddressTraceWorldDelta _delta;
 
-            public AddressTraceStateDelta()
-                : this(new AddressTraceDelta())
+            public AddressTraceWorld()
+                : this(new AddressTraceWorldDelta())
             {
             }
 
-            public AddressTraceStateDelta(AddressTraceDelta delta)
+            public AddressTraceWorld(AddressTraceWorldDelta delta)
             {
                 _delta = delta;
             }
 
-            public ITrie Trie => throw new NotSupportedException();
+            public ITrie Trie { get; }
+
+            public bool Legacy { get; }
+
+            public BlockHash? BlockHash { get; }
+
+            public IWorldDelta Delta => _delta;
+
+            public IWorld SetAccount(IAccount account)
+            {
+                return new AddressTraceWorld(
+                    new AddressTraceWorldDelta(Delta.Accounts.Add(account.Address, account)));
+            }
+
+            public IImmutableSet<Address> UpdatedAddresses => _delta.UpdatedAddresses;
+
+            public IAccount GetAccount(Address address)
+            {
+                return new AddressTraceAccount(address);
+            }
+
+            public class AddressTraceWorldDelta : IWorldDelta
+            {
+                public AddressTraceWorldDelta()
+                    : this(ImmutableDictionary<Address, IAccount>.Empty)
+                {
+                }
+
+                public AddressTraceWorldDelta(IImmutableDictionary<Address, IAccount> accounts)
+                {
+                    Accounts = accounts;
+                }
+
+                public IImmutableSet<Address> UpdatedAddresses => Accounts.Keys.ToImmutableHashSet();
+                public IImmutableDictionary<Address, IAccount> Accounts { get; set; }
+            }
+        }
+
+        private class AddressTraceAccount : IAccount
+        {
+            private AddressTraceAccountDelta _delta;
+
+            public AddressTraceAccount(Address address)
+                : this(address, new AddressTraceAccountDelta())
+            {
+                Address = address;
+            }
+
+            public AddressTraceAccount(Address address, AddressTraceAccountDelta delta)
+            {
+                Address = address;
+                _delta = delta;
+            }
+
+            public ITrie Trie { get; }
+
+            public Address Address { get; }
+
+            public BlockHash? BlockHash { get; }
+
+            public HashDigest<SHA256>? StateRootHash { get; }
 
             public IAccountDelta Delta => _delta;
 
@@ -108,8 +169,9 @@ namespace Nekoyume.Action
 
             public IAccount BurnAsset(IActionContext context, Address owner, FungibleAssetValue value)
             {
-                return new AddressTraceStateDelta(
-                    new AddressTraceDelta(Delta.UpdatedAddresses.Union(new [] { owner })));
+                return new AddressTraceAccount(
+                    Address,
+                    new AddressTraceAccountDelta(Delta.UpdatedAddresses.Union(new[] { owner })));
             }
 
             public FungibleAssetValue GetBalance(Address address, Currency currency)
@@ -134,14 +196,16 @@ namespace Nekoyume.Action
 
             public IAccount MintAsset(IActionContext context, Address recipient, FungibleAssetValue value)
             {
-                return new AddressTraceStateDelta(
-                    new AddressTraceDelta(Delta.UpdatedAddresses.Union(new[] { recipient })));
+                return new AddressTraceAccount(
+                    Address,
+                    new AddressTraceAccountDelta(Delta.UpdatedAddresses.Union(new[] { recipient })));
             }
 
             public IAccount SetState(Address address, IValue state)
             {
-                return new AddressTraceStateDelta(
-                    new AddressTraceDelta(Delta.UpdatedAddresses.Union(new[] { address })));
+                return new AddressTraceAccount(
+                    Address,
+                    new AddressTraceAccountDelta(Delta.UpdatedAddresses.Union(new[] { address })));
             }
 
             public IAccount TransferAsset(
@@ -152,8 +216,9 @@ namespace Nekoyume.Action
                 bool allowNegativeBalance = false
             )
             {
-                return new AddressTraceStateDelta(
-                    new AddressTraceDelta(Delta.UpdatedAddresses.Union(new[] { sender, recipient })));
+                return new AddressTraceAccount(
+                    Address,
+                    new AddressTraceAccountDelta(Delta.UpdatedAddresses.Union(new[] { sender, recipient })));
             }
 
             public ValidatorSet GetValidatorSet() => throw new NotSupportedException();
@@ -163,16 +228,16 @@ namespace Nekoyume.Action
                 throw new NotSupportedException();
             }
 
-            public class AddressTraceDelta : IAccountDelta
+            public class AddressTraceAccountDelta : IAccountDelta
             {
                 private IImmutableSet<Address> _updatedAddresses;
 
-                public AddressTraceDelta()
+                public AddressTraceAccountDelta()
                     : this(ImmutableHashSet<Address>.Empty)
                 {
                 }
 
-                public AddressTraceDelta(IImmutableSet<Address> updatedAddresses)
+                public AddressTraceAccountDelta(IImmutableSet<Address> updatedAddresses)
                 {
                     _updatedAddresses = updatedAddresses;
                 }

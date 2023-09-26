@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Action.Extensions
 {
     public static class AddressExtension
     {
