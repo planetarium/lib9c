@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using Bencodex.Types;
 using Nekoyume.Model.State;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Model
 {
     [Serializable]
     public class RuneSlotInfo
