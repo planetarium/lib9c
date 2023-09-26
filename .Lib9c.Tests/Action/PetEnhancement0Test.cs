@@ -3,16 +3,17 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using Bencodex.Types;
     using Lib9c.Tests.Util;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Exceptions;
     using Nekoyume.Helper;
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -20,21 +21,25 @@ namespace Lib9c.Tests.Action
     {
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IAccount _initialStatesWithAvatarStateV1;
-        private readonly IAccount _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialWorldWithAvatarStateV1;
+        private readonly IWorld _initialWorldWithAvatarStateV2;
         private readonly int _targetPetId;
         private readonly long _firstRoundStartBlockIndex;
 
         public PetEnhancement0Test()
         {
+            IWorld initialAccountWithAvatarStateV1;
+            IWorld initialAccountWithAvatarStateV2;
             TableSheets tableSheets;
             (
                 tableSheets,
                 _agentAddr,
                 _avatarAddr,
-                _initialStatesWithAvatarStateV1,
-                _initialStatesWithAvatarStateV2
+                initialAccountWithAvatarStateV1,
+                initialAccountWithAvatarStateV2
             ) = InitializeUtil.InitializeStates();
+            _initialWorldWithAvatarStateV1 = initialAccountWithAvatarStateV1;
+            _initialWorldWithAvatarStateV2 = initialAccountWithAvatarStateV2;
             _targetPetId = tableSheets.PetSheet.First!.Id;
             var firstRound = tableSheets.ArenaSheet.OrderedList!
                 .SelectMany(row => row.Round)
@@ -52,7 +57,7 @@ namespace Lib9c.Tests.Action
             int targetPetLevel)
         {
             Execute(
-                _initialStatesWithAvatarStateV1,
+                _initialWorldWithAvatarStateV1,
                 _firstRoundStartBlockIndex,
                 _agentAddr,
                 _avatarAddr,
@@ -60,7 +65,7 @@ namespace Lib9c.Tests.Action
                 currentPetLevel,
                 targetPetLevel);
             Execute(
-                _initialStatesWithAvatarStateV2,
+                _initialWorldWithAvatarStateV2,
                 _firstRoundStartBlockIndex,
                 _agentAddr,
                 _avatarAddr,
@@ -75,7 +80,7 @@ namespace Lib9c.Tests.Action
             var invalidAgentAddr = new PrivateKey().ToAddress();
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
+                    _initialWorldWithAvatarStateV1,
                     _firstRoundStartBlockIndex,
                     invalidAgentAddr,
                     _avatarAddr,
@@ -84,7 +89,7 @@ namespace Lib9c.Tests.Action
                     1));
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV2,
+                    _initialWorldWithAvatarStateV2,
                     _firstRoundStartBlockIndex,
                     invalidAgentAddr,
                     _avatarAddr,
@@ -99,7 +104,7 @@ namespace Lib9c.Tests.Action
             var invalidAvatarAddr = new PrivateKey().ToAddress();
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
+                    _initialWorldWithAvatarStateV1,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     invalidAvatarAddr,
@@ -108,7 +113,7 @@ namespace Lib9c.Tests.Action
                     1));
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV2,
+                    _initialWorldWithAvatarStateV2,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     invalidAvatarAddr,
@@ -128,7 +133,7 @@ namespace Lib9c.Tests.Action
         {
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
+                    _initialWorldWithAvatarStateV1,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -137,7 +142,7 @@ namespace Lib9c.Tests.Action
                     targetPetLevel));
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV2,
+                    _initialWorldWithAvatarStateV2,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -152,7 +157,7 @@ namespace Lib9c.Tests.Action
             // PetSheet
             Assert.Throws<SheetRowNotFoundException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
+                    _initialWorldWithAvatarStateV1,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -162,7 +167,7 @@ namespace Lib9c.Tests.Action
                     removePetRow: true));
             Assert.Throws<SheetRowNotFoundException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV2,
+                    _initialWorldWithAvatarStateV2,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -174,7 +179,7 @@ namespace Lib9c.Tests.Action
             // PetCostSheet
             Assert.Throws<SheetRowNotFoundException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
+                    _initialWorldWithAvatarStateV1,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -184,7 +189,7 @@ namespace Lib9c.Tests.Action
                     removePetCostRow: true));
             Assert.Throws<SheetRowNotFoundException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV2,
+                    _initialWorldWithAvatarStateV2,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -201,7 +206,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<PetCostNotFoundException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
+                    _initialWorldWithAvatarStateV1,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -211,7 +216,7 @@ namespace Lib9c.Tests.Action
                     removePetCostRowWithTargetPetLevel: true));
             Assert.Throws<PetCostNotFoundException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV2,
+                    _initialWorldWithAvatarStateV2,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -226,7 +231,7 @@ namespace Lib9c.Tests.Action
         {
             Assert.Throws<RoundNotFoundException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
+                    _initialWorldWithAvatarStateV1,
                     _firstRoundStartBlockIndex - 1,
                     _agentAddr,
                     _avatarAddr,
@@ -235,7 +240,7 @@ namespace Lib9c.Tests.Action
                     1));
             Assert.Throws<RoundNotFoundException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV2,
+                    _initialWorldWithAvatarStateV2,
                     _firstRoundStartBlockIndex - 1,
                     _agentAddr,
                     _avatarAddr,
@@ -252,7 +257,7 @@ namespace Lib9c.Tests.Action
         {
             Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
+                    _initialWorldWithAvatarStateV1,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -262,7 +267,7 @@ namespace Lib9c.Tests.Action
                     mintAssets: false));
             Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV2,
+                    _initialWorldWithAvatarStateV2,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
                     _avatarAddr,
@@ -272,8 +277,8 @@ namespace Lib9c.Tests.Action
                     mintAssets: false));
         }
 
-        private static IAccount Execute(
-            IAccount prevStates,
+        private static IWorld Execute(
+            IWorld prevStates,
             long blockIndex,
             Address agentAddr,
             Address avatarAddr,
@@ -287,9 +292,10 @@ namespace Lib9c.Tests.Action
         {
             var context = new ActionContext();
             var petAddress = PetState.DeriveAddress(avatarAddr, petId);
+            var prevAccount = prevStates.GetAccount(ReservedAddresses.LegacyAccount);
             if (currentPetLevel > 0)
             {
-                prevStates = prevStates.SetState(
+                prevAccount = prevAccount.SetState(
                     petAddress,
                     new List(
                         petId.Serialize(),
@@ -297,8 +303,8 @@ namespace Lib9c.Tests.Action
                         blockIndex.Serialize()));
             }
 
-            var ncgCurrency = prevStates.GetGoldCurrency();
-            var petSheet = prevStates.GetSheet<PetSheet>();
+            var ncgCurrency = LegacyModule.GetGoldCurrency(prevStates);
+            var petSheet = LegacyModule.GetSheet<PetSheet>(prevStates);
             Assert.True(petSheet.TryGetValue(petId, out var petRow));
             var soulStoneCurrency = Currency.Legacy(petRow.SoulStoneTicker, 0, minters: null);
             if (mintAssets &&
@@ -307,7 +313,7 @@ namespace Lib9c.Tests.Action
                 //       For this reason, the following condition is added.
                 currentPetLevel < targetPetLevel)
             {
-                var costSheet = prevStates.GetSheet<PetCostSheet>();
+                var costSheet = LegacyModule.GetSheet<PetCostSheet>(prevStates);
                 var (ncgCost, soulStoneCost) = PetHelper.CalculateEnhancementCost(
                     costSheet,
                     petId,
@@ -316,22 +322,22 @@ namespace Lib9c.Tests.Action
 
                 if (ncgCost > 0)
                 {
-                    prevStates = prevStates.MintAsset(context, agentAddr, ncgCost * ncgCurrency);
+                    prevAccount = prevAccount.MintAsset(context, agentAddr, ncgCost * ncgCurrency);
                 }
 
                 if (soulStoneCost > 0)
                 {
-                    prevStates = prevStates.MintAsset(context, avatarAddr, soulStoneCost * soulStoneCurrency);
+                    prevAccount = prevAccount.MintAsset(context, avatarAddr, soulStoneCost * soulStoneCurrency);
                 }
             }
 
             if (removePetRow)
             {
-                var petSheetCsv = prevStates.GetSheetCsv<PetSheet>();
+                var petSheetCsv = LegacyModule.GetSheetCsv<PetSheet>(prevStates);
                 var insolventPetSheetCsv = CsvUtil.CsvLinqWhere(
                     petSheetCsv,
                     line => !line.StartsWith($"{petId},"));
-                prevStates = prevStates.SetState(
+                prevAccount = prevAccount.SetState(
                     Addresses.GetSheetAddress<PetSheet>(),
                     insolventPetSheetCsv.Serialize());
             }
@@ -339,7 +345,7 @@ namespace Lib9c.Tests.Action
             if (removePetCostRow || removePetCostRowWithTargetPetLevel)
             {
                 var targetPetLevelString = targetPetLevel.ToString();
-                var petCostSheetCsv = prevStates.GetSheetCsv<PetCostSheet>();
+                var petCostSheetCsv = LegacyModule.GetSheetCsv<PetCostSheet>(prevStates);
                 string insolventPetCostSheetCsv;
                 if (removePetCostRow)
                 {
@@ -363,10 +369,12 @@ namespace Lib9c.Tests.Action
                         });
                 }
 
-                prevStates = prevStates.SetState(
+                prevAccount = prevAccount.SetState(
                     Addresses.GetSheetAddress<PetCostSheet>(),
                     insolventPetCostSheetCsv.Serialize());
             }
+
+            prevStates = prevStates.SetAccount(prevAccount);
 
             var action = new PetEnhancement
             {
@@ -382,16 +390,17 @@ namespace Lib9c.Tests.Action
                 Rehearsal = false,
                 Signer = agentAddr,
             });
-            var nextNcgBal = nextStates.GetBalance(agentAddr, ncgCurrency);
-            var nextSoulStoneBal = nextStates.GetBalance(avatarAddr, soulStoneCurrency);
+            var nextAccount = nextStates.GetAccount(ReservedAddresses.LegacyAccount);
+            var nextNcgBal = nextAccount.GetBalance(agentAddr, ncgCurrency);
+            var nextSoulStoneBal = nextAccount.GetBalance(avatarAddr, soulStoneCurrency);
             Assert.Equal(0, nextNcgBal.MajorUnit);
             Assert.Equal(0, nextSoulStoneBal.MajorUnit);
 
-            var rawPetState = (List)nextStates.GetState(petAddress);
+            var rawPetState = (List)nextAccount.GetState(petAddress);
             var nextPetState = new PetState(rawPetState);
             Assert.Equal(targetPetLevel, nextPetState.Level);
 
-            return nextStates;
+            return nextStates.SetAccount(nextAccount);
         }
     }
 }

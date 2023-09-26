@@ -13,9 +13,11 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -26,8 +28,8 @@ namespace Lib9c.Tests.Action.Scenario
         private readonly Address _avatarAddr;
         private readonly Address _inventoryAddr;
         private readonly Address _worldInformationAddr;
-        private readonly IAccount _initialStatesWithAvatarStateV1;
-        private readonly IAccount _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarStateV1;
+        private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly TableSheets _tableSheets;
 
         public ItemCraftTest()
@@ -84,7 +86,7 @@ namespace Lib9c.Tests.Action.Scenario
                 recipeIds = recipeIds.Add(i.Serialize());
             }
 
-            stateV2 = stateV2.SetState(unlockRecipeIdsAddress, recipeIds);
+            stateV2 = LegacyModule.SetState(stateV2, unlockRecipeIdsAddress, recipeIds);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
@@ -93,7 +95,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            var inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
             Assert.Equal(0, inventoryState.Items.Count);
 
             // Add materials to inventory
@@ -132,13 +134,13 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = 0L,
                     RandomSeed = random.Seed,
                 });
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
                 // TEST: requiredBlock
                 // TODO: Check reduced required block when pet comes in
                 Assert.Equal(equipmentRecipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
             // TEST: Only created equipments should remain in inventory
             Assert.Equal(recipeList.Count, inventoryState.Items.Count);
             foreach (var itemId in targetItemIdList)
@@ -181,7 +183,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            var inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
             Assert.Equal(0, inventoryState.Items.Count);
 
             // Add materials to inventory
@@ -219,13 +221,13 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = 0L,
                     RandomSeed = random.Seed,
                 });
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
                 // TEST: requiredBlockIndex
                 // TODO: Check reduced required block when pet comens in
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
             // TEST: Only created items should remain in inventory
             Assert.Equal(recipeList.Count, inventoryState.Items.Count);
             foreach (var itemId in targetItemIdList)
@@ -262,7 +264,11 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Unlock stage to create consumables
-            stateV2 = CraftUtil.UnlockStage(stateV2, _tableSheets, _worldInformationAddr, 6);
+            stateV2 = CraftUtil.UnlockStage(
+                stateV2,
+                _tableSheets,
+                _worldInformationAddr,
+                6);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
@@ -271,7 +277,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            var inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
             Assert.Equal(0, inventoryState.Items.Count);
 
             // Add materials to inventory
@@ -303,12 +309,12 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = eventRow.StartBlockIndex,
                     RandomSeed = random.Seed,
                 });
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
             // TEST: Only created items should remain in inventory
             Assert.Equal(recipeList.Count, inventoryState.Items.Count);
             foreach (var itemId in targetItemIdList)
@@ -345,7 +351,11 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Unlock stage to create consumables
-            stateV2 = CraftUtil.UnlockStage(stateV2, _tableSheets, _worldInformationAddr, 6);
+            stateV2 = CraftUtil.UnlockStage(
+                stateV2,
+                _tableSheets,
+                _worldInformationAddr,
+                6);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
@@ -354,7 +364,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            var inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
             Assert.Equal(0, inventoryState.Items.Count);
 
             // Add materials to inventory
@@ -401,12 +411,12 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = eventRow.StartBlockIndex,
                     RandomSeed = random.Seed,
                 });
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+                var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            inventoryState = new Inventory((List)LegacyModule.GetState(stateV2, _inventoryAddr));
             // TEST: Only created items should remain in inventory
             Assert.Equal(recipeList.Count, inventoryState.Items.Count);
             foreach (var itemId in targetItemIdList)

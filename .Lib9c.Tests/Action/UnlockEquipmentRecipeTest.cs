@@ -10,8 +10,10 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -24,7 +26,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public UnlockEquipmentRecipeTest()
         {
@@ -51,11 +53,11 @@ namespace Lib9c.Tests.Action
 
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new Account(MockState.Empty)
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(Addresses.GetSheetAddress<EquipmentItemSheet>(), _tableSheets.EquipmentItemSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<EquipmentItemRecipeSheet>(), _tableSheets.EquipmentItemRecipeSheet.Serialize())
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize());
+            _initialState = new MockWorld();
+            _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
+            _initialState = LegacyModule.SetState(_initialState, Addresses.GetSheetAddress<EquipmentItemSheet>(), _tableSheets.EquipmentItemSheet.Serialize());
+            _initialState = LegacyModule.SetState(_initialState, Addresses.GetSheetAddress<EquipmentItemRecipeSheet>(), _tableSheets.EquipmentItemRecipeSheet.Serialize());
+            _initialState = LegacyModule.SetState(_initialState, Addresses.GameConfig, gameConfigState.Serialize());
         }
 
         [Theory]
@@ -93,7 +95,7 @@ namespace Lib9c.Tests.Action
         )
         {
             var context = new ActionContext();
-            var state = _initialState.MintAsset(context, _agentAddress, balance * _currency);
+            var state = LegacyModule.MintAsset(_initialState, context, _agentAddress, balance * _currency);
             List<int> recipeIds = ids.ToList();
             Address unlockedRecipeIdsAddress = _avatarAddress.Derive("recipe_ids");
             if (stateExist)
@@ -115,20 +117,16 @@ namespace Lib9c.Tests.Action
                 if (alreadyUnlocked)
                 {
                     var serializedIds = new List(recipeIds.Select(i => i.Serialize()));
-                    state = state.SetState(unlockedRecipeIdsAddress, serializedIds);
+                    state = LegacyModule.SetState(state, unlockedRecipeIdsAddress, serializedIds);
                 }
 
                 if (migrationRequired)
                 {
-                    state = state.SetState(_avatarAddress, _avatarState.Serialize());
+                    state = AvatarModule.SetAvatarState(state, _avatarAddress, _avatarState);
                 }
                 else
                 {
-                    state = state
-                        .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                        .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), worldInformation.Serialize())
-                        .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize())
-                        .SetState(_avatarAddress, _avatarState.SerializeV2());
+                    state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
                 }
             }
 
@@ -140,21 +138,22 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                IAccount nextState = action.Execute(new ActionContext
+                IWorld nextWorld = action.Execute(new ActionContext
                 {
                     PreviousState = state,
                     Signer = _agentAddress,
                     BlockIndex = 1,
                     RandomSeed = _random.Seed,
                 });
+                IAccount nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
-                Assert.True(nextState.TryGetState(unlockedRecipeIdsAddress, out List rawIds));
+                Assert.True(LegacyModule.TryGetState(nextWorld, unlockedRecipeIdsAddress, out List rawIds));
 
                 var unlockedIds = rawIds.ToList(StateExtensions.ToInteger);
 
                 Assert.All(recipeIds, recipeId => Assert.Contains(recipeId, unlockedIds));
-                Assert.Equal(0 * _currency, nextState.GetBalance(_agentAddress, _currency));
-                Assert.Equal(balance * _currency, nextState.GetBalance(Addresses.UnlockEquipmentRecipe, _currency));
+                Assert.Equal(0 * _currency, nextAccount.GetBalance(_agentAddress, _currency));
+                Assert.Equal(balance * _currency, nextAccount.GetBalance(Addresses.UnlockEquipmentRecipe, _currency));
             }
             else
             {

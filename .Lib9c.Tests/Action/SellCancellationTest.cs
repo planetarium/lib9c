@@ -11,11 +11,15 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
+    using Nekoyume.Action.Results;
     using Nekoyume.Model;
+    using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -24,7 +28,7 @@ namespace Lib9c.Tests.Action
 
     public class SellCancellationTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialWorld;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly GoldCurrencyState _goldCurrencyState;
@@ -38,12 +42,14 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialWorld = new MockWorld();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialWorld = LegacyModule.SetState(
+                    _initialWorld,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -74,12 +80,20 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses[0] = _avatarAddress;
 
-            _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(Addresses.Shop, new ShopState().Serialize())
-                .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize());
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                GoldCurrencyState.Address,
+                _goldCurrencyState.Serialize());
+            _initialWorld = AgentModule.SetAgentState(_initialWorld, _agentAddress, agentState);
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                Addresses.Shop,
+                new ShopState().Serialize());
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                Addresses.GameConfig,
+                _gameConfigState.Serialize());
+            _initialWorld = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
         }
 
         [Theory]
@@ -102,7 +116,7 @@ namespace Lib9c.Tests.Action
             bool fromPreviousAction
         )
         {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             ITradableItem tradableItem;
             Guid itemId = new Guid(guid);
             Guid orderId = Guid.NewGuid();
@@ -133,7 +147,7 @@ namespace Lib9c.Tests.Action
                 tradableItem = material;
             }
 
-            var result = new DailyReward2.DailyRewardResult()
+            var result = new DailyRewardResult()
             {
                 id = default,
                 materials = new Dictionary<Material, int>(),
@@ -167,7 +181,7 @@ namespace Lib9c.Tests.Action
             avatarState.mailBox.Add(expirationMail);
 
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
-            IAccount prevState = _initialState;
+            IWorld prevState = _initialWorld;
 
             if (inventoryCount > 1)
             {
@@ -205,22 +219,26 @@ namespace Lib9c.Tests.Action
 
             if (fromPreviousAction)
             {
-                prevState = prevState.SetState(_avatarAddress, avatarState.Serialize());
+                prevState = AvatarModule.SetAvatarState(prevState, _avatarAddress, avatarState);
             }
             else
             {
-                prevState = prevState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                prevState = AvatarModule.SetAvatarStateV2(prevState, _avatarAddress, avatarState);
             }
 
-            prevState = prevState
-                .SetState(Addresses.GetItemAddress(itemId), sellItem.Serialize())
-                .SetState(Order.DeriveAddress(order.OrderId), order.Serialize())
-                .SetState(orderDigestList.Address, orderDigestList.Serialize())
-                .SetState(shardedShopAddress, shopState.Serialize());
+            prevState = LegacyModule.SetState(
+                prevState,
+                Addresses.GetItemAddress(itemId),
+                sellItem.Serialize());
+            prevState = LegacyModule.SetState(
+                prevState,
+                Order.DeriveAddress(order.OrderId),
+                order.Serialize());
+            prevState = LegacyModule.SetState(
+                prevState,
+                orderDigestList.Address,
+                orderDigestList.Serialize());
+            prevState = LegacyModule.SetState(prevState, shardedShopAddress, shopState.Serialize());
 
             var sellCancellationAction = new SellCancellation
             {
@@ -229,7 +247,7 @@ namespace Lib9c.Tests.Action
                 itemSubType = itemSubType,
                 tradableId = itemId,
             };
-            var expectedState = sellCancellationAction.Execute(new ActionContext
+            var expectedWorld = sellCancellationAction.Execute(new ActionContext
             {
                 BlockIndex = 101,
                 PreviousState = prevState,
@@ -257,7 +275,7 @@ namespace Lib9c.Tests.Action
                 },
             };
 
-            var actualState = cancelProductRegistration.Execute(new ActionContext
+            var actualWorld = cancelProductRegistration.Execute(new ActionContext
             {
                 BlockIndex = 101,
                 PreviousState = prevState,
@@ -266,12 +284,13 @@ namespace Lib9c.Tests.Action
                 Signer = _agentAddress,
             });
 
-            foreach (var nextState in new[] { expectedState, actualState })
+            foreach (var nextWorld in new[] { expectedWorld, actualWorld })
             {
-                ShardedShopStateV2 nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(shardedShopAddress));
+                var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
+                ShardedShopStateV2 nextShopState = new ShardedShopStateV2((Dictionary)nextAccount.GetState(shardedShopAddress));
                 Assert.Empty(nextShopState.OrderDigestList);
 
-                var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+                var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
                 Assert.Equal(expectedCount, nextAvatarState.inventory.Items.Sum(i => i.count));
                 Assert.False(nextAvatarState.inventory.TryGetTradableItems(
                     itemId,
@@ -296,10 +315,10 @@ namespace Lib9c.Tests.Action
                 Assert.Empty(nextAvatarState.mailBox.OfType<OrderExpirationMail>());
                 var cancelMail = nextAvatarState.mailBox.OfType<CancelOrderMail>().First();
                 Assert.Equal(orderId, cancelMail.OrderId);
-                var nextReceiptList = new OrderDigestListState((Dictionary)nextState.GetState(orderDigestList.Address));
+                var nextReceiptList = new OrderDigestListState((Dictionary)nextAccount.GetState(orderDigestList.Address));
                 Assert.Empty(nextReceiptList.OrderDigestList);
 
-                var sellCancelItem = (ITradableItem)ItemFactory.Deserialize((Dictionary)nextState.GetState(Addresses.GetItemAddress(itemId)));
+                var sellCancelItem = (ITradableItem)ItemFactory.Deserialize((Dictionary)nextAccount.GetState(Addresses.GetItemAddress(itemId)));
                 Assert.Equal(101, sellCancelItem.RequiredBlockIndex);
             }
         }
@@ -317,7 +336,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = _initialState,
+                    PreviousState = _initialWorld,
                     RandomSeed = 0,
                     Signer = default,
                 })
@@ -327,7 +346,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_NotEnoughClearedStageLevelException()
         {
-            var avatarState = new AvatarState(_initialState.GetAvatarState(_avatarAddress))
+            var avatarState = new AvatarState(AvatarModule.GetAvatarState(_initialWorld, _avatarAddress))
             {
                 worldInformation = new WorldInformation(
                     0,
@@ -336,7 +355,10 @@ namespace Lib9c.Tests.Action
                 ),
             };
 
-            IAccount prevState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            IWorld prevState = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState);
 
             var action = new SellCancellation
             {
@@ -348,7 +370,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<NotEnoughClearedStageLevelException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = prevState,
+                PreviousState = new MockWorld(prevState),
                 Signer = _agentAddress,
             }));
         }
@@ -421,10 +443,15 @@ namespace Lib9c.Tests.Action
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
             orderDigestList.Add(orderDigest);
 
-            IAccount prevState = _initialState
-                .SetState(Order.DeriveAddress(orderId), order.Serialize())
-                .SetState(orderDigestList.Address, orderDigestList.Serialize())
-                .SetState(shardedShopAddress, shopState.Serialize());
+            IWorld prevState = LegacyModule.SetState(
+                _initialWorld,
+                Order.DeriveAddress(orderId),
+                order.Serialize());
+            prevState = LegacyModule.SetState(
+                prevState,
+                orderDigestList.Address,
+                orderDigestList.Serialize());
+            prevState = LegacyModule.SetState(prevState, shardedShopAddress, shopState.Serialize());
 
             var action = new SellCancellation
             {
@@ -485,10 +512,15 @@ namespace Lib9c.Tests.Action
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
             orderDigestList.Add(orderDigest);
 
-            IAccount prevState = _initialState
-                .SetState(Order.DeriveAddress(orderId), order.Serialize())
-                .SetState(orderDigestList.Address, orderDigestList.Serialize())
-                .SetState(shardedShopAddress, shopState.Serialize());
+            IWorld prevState = LegacyModule.SetState(
+                _initialWorld,
+                Order.DeriveAddress(orderId),
+                order.Serialize());
+            prevState = LegacyModule.SetState(
+                prevState,
+                orderDigestList.Address,
+                orderDigestList.Serialize());
+            prevState = LegacyModule.SetState(prevState, shardedShopAddress, shopState.Serialize());
 
             var action = new SellCancellation
             {
@@ -519,9 +551,13 @@ namespace Lib9c.Tests.Action
                 tradableId = default,
             };
 
-            var updatedAddresses = new List<Address>()
+            var updatedAddressesAvatar = new List<Address>()
             {
                 _avatarAddress,
+            };
+
+            var updatedAddressesLegacy = new List<Address>()
+            {
                 _avatarAddress.Derive(LegacyInventoryKey),
                 _avatarAddress.Derive(LegacyWorldInformationKey),
                 _avatarAddress.Derive(LegacyQuestListKey),
@@ -530,17 +566,20 @@ namespace Lib9c.Tests.Action
                 Addresses.GetItemAddress(default),
             };
 
-            var state = new Account(MockState.Empty);
-
             var nextState = action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(),
                 Signer = _agentAddress,
                 BlockIndex = 0,
                 Rehearsal = true,
             });
 
-            Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.Delta.UpdatedAddresses);
+            Assert.Equal(
+                updatedAddressesAvatar.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses);
+            Assert.Equal(
+                updatedAddressesLegacy.ToImmutableHashSet(),
+                nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses);
         }
 
         [Fact]
@@ -578,7 +617,7 @@ namespace Lib9c.Tests.Action
             bool fromPreviousAction
         )
         {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             ITradableItem tradableItem;
             Guid itemId = new Guid(guid);
             Guid orderId = Guid.NewGuid();
@@ -609,7 +648,7 @@ namespace Lib9c.Tests.Action
                 tradableItem = material;
             }
 
-            var result = new DailyReward2.DailyRewardResult()
+            var result = new DailyRewardResult()
             {
                 id = default,
                 materials = new Dictionary<Material, int>(),
@@ -643,7 +682,7 @@ namespace Lib9c.Tests.Action
             avatarState.mailBox.Add(expirationMail);
 
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
-            IAccount prevState = _initialState;
+            IWorld prevState = _initialWorld;
 
             if (inventoryCount > 1)
             {
@@ -681,22 +720,26 @@ namespace Lib9c.Tests.Action
 
             if (fromPreviousAction)
             {
-                prevState = prevState.SetState(_avatarAddress, avatarState.Serialize());
+                prevState = AvatarModule.SetAvatarState(prevState, _avatarAddress, avatarState);
             }
             else
             {
-                prevState = prevState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                prevState = AvatarModule.SetAvatarStateV2(prevState, _avatarAddress, avatarState);
             }
 
-            prevState = prevState
-                .SetState(Addresses.GetItemAddress(itemId), sellItem.Serialize())
-                .SetState(Order.DeriveAddress(order.OrderId), order.Serialize())
-                .SetState(orderDigestList.Address, orderDigestList.Serialize())
-                .SetState(shardedShopAddress, shopState.Serialize());
+            prevState = LegacyModule.SetState(
+                prevState,
+                Addresses.GetItemAddress(itemId),
+                sellItem.Serialize());
+            prevState = LegacyModule.SetState(
+                prevState,
+                Order.DeriveAddress(order.OrderId),
+                order.Serialize());
+            prevState = LegacyModule.SetState(
+                prevState,
+                orderDigestList.Address,
+                orderDigestList.Serialize());
+            prevState = LegacyModule.SetState(prevState, shardedShopAddress, shopState.Serialize());
 
             var sellCancellationAction = new SellCancellation
             {
@@ -705,7 +748,7 @@ namespace Lib9c.Tests.Action
                 itemSubType = itemSubType,
                 tradableId = itemId,
             };
-            var nextState = sellCancellationAction.Execute(new ActionContext
+            var nextWorld = sellCancellationAction.Execute(new ActionContext
             {
                 BlockIndex = 101,
                 PreviousState = prevState,
@@ -714,10 +757,12 @@ namespace Lib9c.Tests.Action
                 Signer = _agentAddress,
             });
 
-            ShardedShopStateV2 nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(shardedShopAddress));
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
+
+            ShardedShopStateV2 nextShopState = new ShardedShopStateV2((Dictionary)nextAccount.GetState(shardedShopAddress));
             Assert.Empty(nextShopState.OrderDigestList);
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
             Assert.Equal(expectedCount, nextAvatarState.inventory.Items.Sum(i => i.count));
             Assert.False(nextAvatarState.inventory.TryGetTradableItems(
                 itemId,
@@ -742,10 +787,10 @@ namespace Lib9c.Tests.Action
             Assert.Empty(nextAvatarState.mailBox.OfType<OrderExpirationMail>());
             var cancelMail = nextAvatarState.mailBox.OfType<CancelOrderMail>().First();
             Assert.Equal(orderId, cancelMail.OrderId);
-            var nextReceiptList = new OrderDigestListState((Dictionary)nextState.GetState(orderDigestList.Address));
+            var nextReceiptList = new OrderDigestListState((Dictionary)nextAccount.GetState(orderDigestList.Address));
             Assert.Empty(nextReceiptList.OrderDigestList);
 
-            var sellCancelItem = (ITradableItem)ItemFactory.Deserialize((Dictionary)nextState.GetState(Addresses.GetItemAddress(itemId)));
+            var sellCancelItem = (ITradableItem)ItemFactory.Deserialize((Dictionary)nextAccount.GetState(Addresses.GetItemAddress(itemId)));
             Assert.Equal(101, sellCancelItem.RequiredBlockIndex);
         }
     }

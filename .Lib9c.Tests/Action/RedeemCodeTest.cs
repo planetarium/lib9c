@@ -9,7 +9,9 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -71,28 +73,43 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
 
             var context = new ActionContext();
-            var initialState = new Account(MockState.Empty)
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
-                .SetState(GoldCurrencyState.Address, goldState.Serialize())
-                .MintAsset(context, GoldCurrencyState.Address, goldState.Currency * 100000000);
+            var initialState = AgentModule.SetAgentState(
+                new MockWorld(),
+                _agentAddress,
+                agentState);
+            initialState = LegacyModule.SetState(
+                initialState,
+                RedeemCodeState.Address,
+                prevRedeemCodesState.Serialize());
+            initialState = LegacyModule.SetState(
+                initialState,
+                GoldCurrencyState.Address,
+                goldState.Serialize());
+            initialState = LegacyModule.MintAsset(
+                initialState,
+                context,
+                GoldCurrencyState.Address,
+                goldState.Currency * 100000000);
 
             if (backward)
             {
-                initialState = initialState.SetState(_avatarAddress, avatarState.Serialize());
+                initialState = AvatarModule.SetAvatarState(
+                    initialState,
+                    _avatarAddress,
+                    avatarState);
             }
             else
             {
-                initialState = initialState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                initialState = AvatarModule.SetAvatarStateV2(
+                    initialState,
+                    _avatarAddress,
+                    avatarState);
             }
 
             foreach (var (key, value) in _sheets)
             {
-                initialState = initialState.SetState(
+                initialState = LegacyModule.SetState(
+                    initialState,
                     Addresses.TableSheet.Derive(key),
                     value.Serialize()
                 );
@@ -103,7 +120,7 @@ namespace Lib9c.Tests.Action
                 _avatarAddress
             );
 
-            IAccount nextState = redeemCode.Execute(new ActionContext()
+            var nextWorld = redeemCode.Execute(new ActionContext()
             {
                 BlockIndex = 1,
                 Miner = default,
@@ -114,14 +131,14 @@ namespace Lib9c.Tests.Action
             });
 
             // Check target avatar & agent
-            AvatarState nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            AvatarState nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
             // See also Data/TableCSV/RedeemRewardSheet.csv
-            ItemSheet itemSheet = initialState.GetItemSheet();
+            ItemSheet itemSheet = LegacyModule.GetItemSheet(nextWorld);
             HashSet<int> expectedItems = new[] { 302006, 302004, 302001, 302002 }.ToHashSet();
             Assert.Subset(nextAvatarState.inventory.Items.Select(i => i.item.Id).ToHashSet(), expectedItems);
 
             // Check the code redeemed properly
-            RedeemCodeState nextRedeemCodeState = nextState.GetRedeemCodeState();
+            RedeemCodeState nextRedeemCodeState = LegacyModule.GetRedeemCodeState(nextWorld);
             Assert.Throws<DuplicateRedeemException>(() =>
             {
                 nextRedeemCodeState.Redeem(redeemCode.Code, redeemCode.AvatarAddress);
@@ -136,11 +153,11 @@ namespace Lib9c.Tests.Action
                 _avatarAddress
             );
 
-            IAccount nextState = redeemCode.Execute(new ActionContext()
+            IWorld nextState = redeemCode.Execute(new ActionContext()
             {
                 BlockIndex = 1,
                 Miner = default,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new MockWorld(),
                 Rehearsal = true,
                 Signer = _agentAddress,
             });
@@ -148,7 +165,6 @@ namespace Lib9c.Tests.Action
             Assert.Equal(
                 new[]
                 {
-                    _avatarAddress,
                     _agentAddress,
                     RedeemCodeState.Address,
                     GoldCurrencyState.Address,
@@ -156,7 +172,15 @@ namespace Lib9c.Tests.Action
                     _avatarAddress.Derive(LegacyWorldInformationKey),
                     _avatarAddress.Derive(LegacyQuestListKey),
                 }.ToImmutableHashSet(),
-                nextState.Delta.UpdatedAddresses
+                nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses
+            );
+
+            Assert.Equal(
+                new[]
+                {
+                    _avatarAddress,
+                }.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses
             );
         }
     }

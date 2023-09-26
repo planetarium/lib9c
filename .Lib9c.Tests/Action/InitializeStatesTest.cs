@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -62,7 +63,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Signer = minterKey.ToAddress(),
                 Miner = default,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new MockWorld(),
             });
 
             var addresses = new List<Address>()
@@ -81,7 +82,7 @@ namespace Lib9c.Tests.Action
 
             foreach (var address in addresses)
             {
-                Assert.NotNull(genesisState.GetState(address));
+                Assert.NotNull(LegacyModule.GetState(genesisState, address));
             }
         }
 
@@ -129,11 +130,11 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.ToAddress(),
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new MockWorld(),
             });
 
             var fetchedState = new AuthorizedMinersState(
-                (Dictionary)genesisState.GetState(AuthorizedMinersState.Address)
+                (Dictionary)LegacyModule.GetState(genesisState, AuthorizedMinersState.Address)
             );
 
             Assert.Equal(50, fetchedState.Interval);
@@ -178,11 +179,11 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.ToAddress(),
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new MockWorld(),
             });
 
             var fetchedState = new ActivatedAccountsState(
-                (Dictionary)genesisState.GetState(Addresses.ActivatedAccount));
+                (Dictionary)LegacyModule.GetState(genesisState, Addresses.ActivatedAccount));
 
             Assert.Contains(adminAddress, fetchedState.Accounts);
         }
@@ -230,11 +231,11 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.ToAddress(),
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new MockWorld(),
             });
 
             var fetchedState = new CreditsState(
-                (Dictionary)genesisState.GetState(CreditsState.Address));
+                (Dictionary)LegacyModule.GetState(genesisState, CreditsState.Address));
 
             Assert.Equal(creditState.Names, fetchedState.Names);
         }
@@ -276,14 +277,14 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.ToAddress(),
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new MockWorld(),
             });
 
             var fetchedState = new ActivatedAccountsState(
-                (Dictionary)genesisState.GetState(Addresses.ActivatedAccount));
+                (Dictionary)LegacyModule.GetState(genesisState, Addresses.ActivatedAccount));
             Assert.Empty(fetchedState.Accounts);
 
-            Assert.Null(genesisState.GetState(Addresses.Admin));
+            Assert.Null(LegacyModule.GetState(genesisState, Addresses.Admin));
         }
     }
 }

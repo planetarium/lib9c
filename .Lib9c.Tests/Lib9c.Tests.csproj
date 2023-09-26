@@ -58,4 +58,8 @@
     <ProjectReference Include="..\Lib9c.DevExtensions\Lib9c.DevExtensions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Action\Factory\" />
+  </ItemGroup>
+
 </Project>

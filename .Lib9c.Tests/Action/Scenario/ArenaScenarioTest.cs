@@ -9,15 +9,15 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Arena;
-    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
-    using Xunit;
     using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
@@ -28,7 +28,7 @@ namespace Lib9c.Tests.Action.Scenario
         private readonly Currency _ncg;
         private TableSheets _tableSheets;
         private Dictionary<string, string> _sheets;
-        private IAccount _state;
+        private IWorld _state;
 
         public ArenaScenarioTest(ITestOutputHelper outputHelper)
         {
@@ -37,13 +37,13 @@ namespace Lib9c.Tests.Action.Scenario
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _state = new Account(MockState.Empty);
+            _state = new MockWorld();
 
             _sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(_sheets);
             foreach (var (key, value) in _sheets)
             {
-                _state = _state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _state = LegacyModule.SetState(_state, Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(_sheets);
@@ -58,9 +58,8 @@ namespace Lib9c.Tests.Action.Scenario
                 _tableSheets.StageSheet.First?.Id ?? 1,
                 GameConfig.RequireClearedStageLevel.ActionsInRankingBoard);
 
-            _state = _state
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .SetState(Addresses.GameConfig, new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize());
+            _state = LegacyModule.SetState(_state, Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            _state = LegacyModule.SetState(_state, Addresses.GameConfig, new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize());
         }
 
         public (List<Guid> Equipments, List<Guid> Costumes) GetDummyItems(AvatarState avatarState)
@@ -92,7 +91,7 @@ namespace Lib9c.Tests.Action.Scenario
             return (equipments, costumes);
         }
 
-        public IAccount JoinArena(
+        public IWorld JoinArena(
             IActionContext context,
             IRandom random,
             Address signer,
@@ -100,7 +99,7 @@ namespace Lib9c.Tests.Action.Scenario
             ArenaSheet.RoundData roundData)
         {
             var preCurrency = roundData.EntranceFee * _crystal;
-            _state = _state.MintAsset(context, signer, preCurrency);
+            _state = LegacyModule.MintAsset(_state, context, signer, preCurrency);
 
             var action = new JoinArena()
             {
@@ -122,7 +121,7 @@ namespace Lib9c.Tests.Action.Scenario
             return _state;
         }
 
-        public IAccount BattleArena(
+        public IWorld BattleArena(
             IRandom random,
             Address signer,
             Address myAvatarAddress,
@@ -131,7 +130,7 @@ namespace Lib9c.Tests.Action.Scenario
             int ticket,
             long blockIndex)
         {
-            var action = new BattleArena6()
+            var action = new BattleArena()
             {
                 myAvatarAddress = myAvatarAddress,
                 enemyAvatarAddress = enemyAvatarAddress,
@@ -177,12 +176,20 @@ namespace Lib9c.Tests.Action.Scenario
                     clearStageId),
             };
             agentState.avatarAddresses.Add(0, avatarAddress);
-            _state = _state
-                .SetState(agentState.address, agentState.Serialize())
-                .SetState(avatarState.address.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(avatarState.address.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(avatarState.address.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                .SetState(avatarState.address, avatarState.Serialize());
+            _state = AgentModule.SetAgentState(_state, agentState.address, agentState);
+            _state = LegacyModule.SetState(
+                _state,
+                avatarState.address.Derive(LegacyInventoryKey),
+                avatarState.inventory.Serialize());
+            _state = LegacyModule.SetState(
+                _state,
+                avatarState.address.Derive(LegacyWorldInformationKey),
+                avatarState.worldInformation.Serialize());
+            _state = LegacyModule.SetState(
+                _state,
+                avatarState.address.Derive(LegacyQuestListKey),
+                avatarState.questList.Serialize());
+            _state = AvatarModule.SetAvatarState(_state, avatarState.address, avatarState);
 
             return (agentState, avatarState);
         }
@@ -371,7 +378,7 @@ namespace Lib9c.Tests.Action.Scenario
         private int GetScore(Address avatarAddress, ArenaSheet.RoundData data)
         {
             var sAdr = ArenaScore.DeriveAddress(avatarAddress, data.ChampionshipId, data.Round);
-            if (!_state.TryGetArenaScore(sAdr, out var score))
+            if (!LegacyModule.TryGetArenaScore(_state, sAdr, out var score))
             {
                 throw new ArenaScoreNotFoundException($"score : {score}");
             }
@@ -381,7 +388,7 @@ namespace Lib9c.Tests.Action.Scenario
 
         private GameConfigState SetArenaInterval(int interval)
         {
-            var gameConfigState = _state.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(_state);
             var sheet = _tableSheets.GameConfigSheet;
             foreach (var value in sheet.Values)
             {

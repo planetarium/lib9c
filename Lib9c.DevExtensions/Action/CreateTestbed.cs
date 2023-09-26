@@ -16,7 +16,10 @@ using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 using Nekoyume;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
+using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Item;
+using Nekoyume.Module;
 
 namespace Lib9c.DevExtensions.Action
 {
@@ -68,7 +71,7 @@ namespace Lib9c.DevExtensions.Action
             weeklyArenaAddress = plainValue["w"].ToAddress();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var sellData = TestbedHelper.LoadData<TestbedSell>("TestbedSell");
@@ -80,7 +83,7 @@ namespace Lib9c.DevExtensions.Action
                 .ToList();
 
             var agentAddress = _privateKey.PublicKey.ToAddress();
-            var states = context.PreviousState;
+            var world = context.PreviousState;
 
             var avatarAddress = agentAddress.Derive(
                 string.Format(
@@ -96,20 +99,20 @@ namespace Lib9c.DevExtensions.Action
 
             if (context.Rehearsal)
             {
-                states = states.SetState(agentAddress, MarkChanged);
+                world = LegacyModule.SetState(world, agentAddress, MarkChanged);
                 for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
                 {
                     var slotAddress = avatarAddress.Derive(
                         string.Format(CultureInfo.InvariantCulture,
                             CombinationSlotState.DeriveFormat, i));
-                    states = states.SetState(slotAddress, MarkChanged);
+                    world = LegacyModule.SetState(world, slotAddress, MarkChanged);
                 }
 
-                states = states.SetState(avatarAddress, MarkChanged)
-                    .SetState(Addresses.Ranking, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, avatarAddress);
+                world = LegacyModule.SetState(world, Addresses.Ranking, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
 
                 for (var i = 0; i < sellData.Items.Length; i++)
                 {
@@ -119,22 +122,27 @@ namespace Lib9c.DevExtensions.Action
                         sellData.Items[i].ItemSubType,
                         addedItemInfos[i].OrderId);
 
-                    states = states.SetState(avatarAddress, MarkChanged)
-                        .SetState(inventoryAddress, MarkChanged)
-                        .MarkBalanceChanged(
-                            context, GoldCurrencyMock, agentAddress, GoldCurrencyState.Address)
-                        .SetState(orderReceiptAddress, MarkChanged)
-                        .SetState(itemAddress, MarkChanged)
-                        .SetState(orderAddress, MarkChanged)
-                        .SetState(shopAddress, MarkChanged);
+                    world = LegacyModule.SetState(world, avatarAddress, MarkChanged);
+                    world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                    world = LegacyModule.MarkBalanceChanged(
+                        world,
+                        context,
+                        GoldCurrencyMock,
+                        agentAddress,
+                        GoldCurrencyState.Address);
+                    world = LegacyModule.SetState(world, orderReceiptAddress, MarkChanged);
+                    world = LegacyModule.SetState(world, itemAddress, MarkChanged);
+                    world = LegacyModule.SetState(world, orderAddress, MarkChanged);
+                    world = LegacyModule.SetState(world, shopAddress, MarkChanged);
                 }
-                return states;
+
+                return world;
             }
 
             // Create Agent and avatar
-            var existingAgentState = states.GetAgentState(agentAddress);
+            var existingAgentState = AgentModule.GetAgentState(world, agentAddress);
             var agentState = existingAgentState ?? new AgentState(agentAddress);
-            var avatarState = states.GetAvatarState(avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(world, avatarAddress);
             if (!(avatarState is null))
             {
                 throw new InvalidAddressException(
@@ -149,24 +157,24 @@ namespace Lib9c.DevExtensions.Action
 
             agentState.avatarAddresses.Add(_slotIndex, avatarAddress);
 
-            var rankingState = context.PreviousState.GetRankingState();
+            var rankingState = LegacyModule.GetRankingState(context.PreviousState);
             var rankingMapAddress = rankingState.UpdateRankingMap(avatarAddress);
             avatarState = TestbedHelper.CreateAvatarState(sellData.Avatar.Name,
                 agentAddress,
                 avatarAddress,
                 context.BlockIndex,
-                context.PreviousState.GetAvatarSheets(),
-                context.PreviousState.GetSheet<WorldSheet>(),
-                context.PreviousState.GetGameConfigState(),
+                LegacyModule.GetAvatarSheets(context.PreviousState),
+                LegacyModule.GetSheet<WorldSheet>(context.PreviousState),
+                LegacyModule.GetGameConfigState(context.PreviousState),
                 rankingMapAddress);
 
             // Add item
-            var costumeItemSheet =  context.PreviousState.GetSheet<CostumeItemSheet>();
-            var equipmentItemSheet = context.PreviousState.GetSheet<EquipmentItemSheet>();
-            var optionSheet = context.PreviousState.GetSheet<EquipmentItemOptionSheet>();
-            var skillSheet = context.PreviousState.GetSheet<SkillSheet>();
-            var materialItemSheet = context.PreviousState.GetSheet<MaterialItemSheet>();
-            var consumableItemSheet = context.PreviousState.GetSheet<ConsumableItemSheet>();
+            var costumeItemSheet =  LegacyModule.GetSheet<CostumeItemSheet>(context.PreviousState);
+            var equipmentItemSheet = LegacyModule.GetSheet<EquipmentItemSheet>(context.PreviousState);
+            var optionSheet = LegacyModule.GetSheet<EquipmentItemOptionSheet>(context.PreviousState);
+            var skillSheet = LegacyModule.GetSheet<SkillSheet>(context.PreviousState);
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(context.PreviousState);
+            var consumableItemSheet = LegacyModule.GetSheet<ConsumableItemSheet>(context.PreviousState);
             for (var i = 0; i < sellData.Items.Length; i++)
             {
                 TestbedHelper.AddItem(costumeItemSheet,
@@ -186,20 +194,17 @@ namespace Lib9c.DevExtensions.Action
                 var slotState =
                     new CombinationSlotState(address,
                         GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
-                states = states.SetState(address, slotState.Serialize());
+                world = LegacyModule.SetState(world, address, slotState.Serialize());
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);
-            states = states.SetState(agentAddress, agentState.Serialize())
-                .SetState(Addresses.Ranking, rankingState.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+            world = AgentModule.SetAgentState(world, agentAddress, agentState);
+            world = LegacyModule.SetState(world, Addresses.Ranking, rankingState.Serialize());
+            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             // ~Create Agent and avatar && ~Add item
 
             // for sell
-            var costumeStatSheet = states.GetSheet<CostumeStatSheet>();
+            var costumeStatSheet = LegacyModule.GetSheet<CostumeStatSheet>(world);
             for (var i = 0; i < sellData.Items.Length; i++)
             {
                 var itemAddress = Addresses.GetItemAddress(addedItemInfos[i].TradableId);
@@ -208,8 +213,10 @@ namespace Lib9c.DevExtensions.Action
                     sellData.Items[i].ItemSubType,
                     addedItemInfos[i].OrderId);
 
-                var balance =
-                    context.PreviousState.GetBalance(agentAddress, states.GetGoldCurrency());
+                var balance = LegacyModule.GetBalance(
+                    context.PreviousState,
+                    agentAddress,
+                    LegacyModule.GetGoldCurrency(world));
                 var price = new FungibleAssetValue(balance.Currency, sellData.Items[i].Price, 0);
                 var order = OrderFactory.Create(agentAddress, avatarAddress,
                     addedItemInfos[i].OrderId,
@@ -224,23 +231,22 @@ namespace Lib9c.DevExtensions.Action
                 var tradableItem = order.Sell(avatarState);
 
                 var shardedShopState =
-                    states.TryGetState(shopAddress, out Dictionary serializedState)
+                    LegacyModule.TryGetState(world, shopAddress, out Dictionary serializedState)
                         ? new ShardedShopStateV2(serializedState)
                         : new ShardedShopStateV2(shopAddress);
                 var orderDigest = order.Digest(avatarState, costumeStatSheet);
                 shardedShopState.Add(orderDigest, context.BlockIndex);
                 var orderReceiptList =
-                    states.TryGetState(orderReceiptAddress, out Dictionary receiptDict)
+                    LegacyModule.TryGetState(world, orderReceiptAddress, out Dictionary receiptDict)
                         ? new OrderDigestListState(receiptDict)
                         : new OrderDigestListState(orderReceiptAddress);
                 orderReceiptList.Add(orderDigest);
 
-                states = states.SetState(orderReceiptAddress, orderReceiptList.Serialize())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                    .SetState(avatarAddress, avatarState.SerializeV2())
-                    .SetState(itemAddress, tradableItem.Serialize())
-                    .SetState(orderAddress, order.Serialize())
-                    .SetState(shopAddress, shardedShopState.Serialize());
+                world = LegacyModule.SetState(world, orderReceiptAddress, orderReceiptList.Serialize());
+                world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+                world = LegacyModule.SetState(world, itemAddress, tradableItem.Serialize());
+                world = LegacyModule.SetState(world, orderAddress, order.Serialize());
+                world = LegacyModule.SetState(world, shopAddress, shardedShopState.Serialize());
             }
 
             result.SellerAgentAddress = agentAddress;
@@ -256,7 +262,7 @@ namespace Lib9c.DevExtensions.Action
                     sellData.Items[i].Count));
             }
 
-            return states;
+            return world;
         }
     }
 }

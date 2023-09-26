@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Xunit;
 

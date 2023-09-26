@@ -5,18 +5,20 @@ namespace Lib9c.Tests.Extensions
     using System.Linq;
     using System.Reflection;
     using Bencodex.Types;
+    using Lib9c.Tests.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
-    using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
     public class SheetsExtensionsTest
     {
-        private IAccount _states;
+        private IWorld _world;
         private Dictionary<string, string> _sheetNameAndFiles;
         private Dictionary<Address, IValue> _sheetsAddressAndValues;
         private Type[] _sheetTypes;
@@ -24,9 +26,9 @@ namespace Lib9c.Tests.Extensions
 
         public SheetsExtensionsTest()
         {
-            _states = new Account(Tests.Action.MockState.Empty);
+            _world = new MockWorld();
             InitSheets(
-                _states,
+                _world,
                 out _sheetNameAndFiles,
                 out _sheetsAddressAndValues,
                 out _sheetTypes,
@@ -55,7 +57,7 @@ namespace Lib9c.Tests.Extensions
         }
 
         internal static void InitSheets(
-            IAccount states,
+            IWorld world,
             out Dictionary<string, string> sheetNameAndFiles,
             out Dictionary<Address, IValue> sheetsAddressAndValues,
             out Type[] sheetTypes,
@@ -67,7 +69,7 @@ namespace Lib9c.Tests.Extensions
                 pair => pair.Value.Serialize());
             foreach (var (address, value) in sheetsAddressAndValues)
             {
-                states = states.SetState(address, value);
+                world = world.SetAccount(world.GetAccount(ReservedAddresses.LegacyAccount).SetState(address, value));
             }
 
             var iSheetType = typeof(ISheet);
@@ -80,7 +82,7 @@ namespace Lib9c.Tests.Extensions
                 .ToArray();
             Assert.NotNull(sheetTypes);
             Assert.NotEmpty(sheetTypes);
-            stateSheets = states.GetSheets(sheetTypes);
+            stateSheets = LegacyModule.GetSheets(world, sheetTypes);
         }
     }
 }

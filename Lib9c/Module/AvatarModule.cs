@@ -258,7 +258,7 @@ namespace Nekoyume.Module
             // TODO: Override legacy address to null state?
             var account = world.GetAccount(Addresses.Avatar);
             account = account.SetState(address, state.Serialize());
-            return world.SetAccount(account);
+            return world.SetAccount(Addresses.Avatar, account);
         }
 
         public static IWorld SetAvatarStateV2(
@@ -297,11 +297,12 @@ namespace Nekoyume.Module
         {
             var avatarAccount = world.GetAccount(Addresses.Avatar);
             avatarAccount = avatarAccount.SetState(address, state.SerializeV2());
-            return world.SetAccount(avatarAccount);
+            return world.SetAccount(Addresses.Avatar, avatarAccount);
         }
 
         public static IWorld MarkChanged(IWorld world, Address address) =>
             world.SetAccount(
+                Addresses.Avatar,
                 world.GetAccount(Addresses.Avatar).SetState(
                     address, ActionBase.MarkChanged));
 
@@ -312,21 +313,21 @@ namespace Nekoyume.Module
         {
             var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
             legacyAccount = legacyAccount.SetState(address, state.Serialize());
-            return world.SetAccount(legacyAccount);
+            return world.SetAccount(ReservedAddresses.LegacyAccount, legacyAccount);
         }
 
         public static IWorld SetWorldInformation(IWorld world, Address address, WorldInformation state)
         {
             var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
             legacyAccount = legacyAccount.SetState(address, state.Serialize());
-            return world.SetAccount(legacyAccount);
+            return world.SetAccount(ReservedAddresses.LegacyAccount, legacyAccount);
         }
 
         public static IWorld SetQuestList(IWorld world, Address address, QuestList state)
         {
             var legacyAccount = world.GetAccount(ReservedAddresses.LegacyAccount);
             legacyAccount = legacyAccount.SetState(address, state.Serialize());
-            return world.SetAccount(legacyAccount);
+            return world.SetAccount(ReservedAddresses.LegacyAccount, legacyAccount);
         }
 
     }

@@ -11,8 +11,10 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -26,7 +28,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly Address _avatarAddr;
         private readonly Address _inventoryAddr;
         private readonly Address _worldInformationAddr;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV2;
         private readonly TableSheets _tableSheets;
         private int? _petId;
 
@@ -73,7 +75,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             }
 
             var context = new ActionContext();
-            var stateV2 = _initialStateV2.SetState(
+            var stateV2 = LegacyModule.SetState(
+                _initialStateV2,
                 _avatarAddr.Derive("recipe_ids"),
                 stageList
             );
@@ -94,7 +97,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 );
 
                 _petId = petRow.PetId;
-                stateV2 = stateV2.SetState(
+                stateV2 = LegacyModule.SetState(
+                    stateV2,
                     PetState.DeriveAddress(_avatarAddr, (int)_petId),
                     new List(_petId.Serialize(), petLevel.Serialize(), 0L.Serialize()));
                 expectedCrystal *= (BigInteger)(
@@ -133,7 +137,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             });
 
             // TEST: All given crystals are used
-            Assert.Equal(0 * crystal, stateV2.GetBalance(_agentAddr, crystal));
+            Assert.Equal(0 * crystal, LegacyModule.GetBalance(stateV2, _agentAddr, crystal));
         }
     }
 }

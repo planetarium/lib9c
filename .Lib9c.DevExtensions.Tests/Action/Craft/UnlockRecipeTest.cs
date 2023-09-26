@@ -7,9 +7,10 @@ using Lib9c.Tests.Action;
 using Lib9c.Tests.Util;
 using Libplanet.Crypto;
 using Libplanet.Action.State;
-using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Xunit;
 
 namespace Lib9c.DevExtensions.Tests.Action.Craft
@@ -19,7 +20,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV2;
         private readonly Address _recipeAddress;
 
         public UnlockRecipeTest()
@@ -62,7 +63,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
                 BlockIndex = 0L,
             });
 
-            Assert.True(stateV2.TryGetState(_recipeAddress, out List rawIds));
+            Assert.True(LegacyModule.TryGetState(stateV2, _recipeAddress, out List rawIds));
             var unlockedRecipeIds = rawIds.ToList(StateExtensions.ToInteger);
             Assert.Contains(recipeRow.UnlockStage, unlockedRecipeIds);
         }
@@ -96,7 +97,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
                 BlockIndex = 0L,
             });
 
-            Assert.True(stateV2.TryGetState(_recipeAddress, out List rawIds));
+            Assert.True(LegacyModule.TryGetState(stateV2, _recipeAddress, out List rawIds));
             var unlockedRecipeIds = rawIds.ToList(StateExtensions.ToInteger);
             Assert.Contains(targetStage, unlockedRecipeIds);
         }

@@ -11,18 +11,21 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
+    using Nekoyume.Action.Results;
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
 
     public class RapidCombinationTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialWorld;
 
         private readonly TableSheets _tableSheets;
 
@@ -31,12 +34,13 @@ namespace Lib9c.Tests.Action
 
         public RapidCombinationTest()
         {
-            _initialState = new Account(MockState.Empty);
+            _initialWorld = new MockWorld();
 
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState.SetState(
+                _initialWorld = LegacyModule.SetState(
+                    _initialWorld,
                     Addresses.TableSheet.Derive(key),
                     value.Serialize());
             }
@@ -58,10 +62,17 @@ namespace Lib9c.Tests.Action
 
             agentState.avatarAddresses[0] = _avatarAddress;
 
-            _initialState = _initialState
-                .SetState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize());
+            _initialWorld =
+                LegacyModule.SetState(
+                    _initialWorld,
+                    Addresses.GameConfig,
+                    new GameConfigState(
+                        sheets[nameof(GameConfigSheet)]).Serialize());
+            _initialWorld = AgentModule.SetAgentState(_initialWorld, _agentAddress, agentState);
+            _initialWorld = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatarAddress,
+                avatarState);
         }
 
         [Theory]
@@ -71,10 +82,10 @@ namespace Lib9c.Tests.Action
         {
             const int slotStateUnlockStage = 1;
 
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             avatarState.worldInformation = new WorldInformation(
                 0,
-                _initialState.GetSheet<WorldSheet>(),
+                LegacyModule.GetSheet<WorldSheet>(_initialWorld),
                 slotStateUnlockStage);
 
             var row = _tableSheets.MaterialItemSheet.Values.First(r =>
@@ -86,7 +97,7 @@ namespace Lib9c.Tests.Action
             var firstEquipmentRow = _tableSheets.EquipmentItemSheet.First;
             Assert.NotNull(firstEquipmentRow);
 
-            var gameConfigState = _initialState.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(_initialWorld);
             var requiredBlockIndex = gameConfigState.HourglassPerBlock * 200;
             var equipment = (Equipment)ItemFactory.CreateItemUsable(
                 firstEquipmentRow,
@@ -94,7 +105,7 @@ namespace Lib9c.Tests.Action
                 requiredBlockIndex);
             avatarState.inventory.AddItem(equipment);
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 actionPoint = 0,
                 gold = 0,
@@ -115,19 +126,18 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
             slotState.Update(result, 0, requiredBlockIndex);
 
-            var tempState = _initialState.SetState(slotAddress, slotState.Serialize());
+            var tempState = LegacyModule.SetState(
+                _initialWorld,
+                slotAddress,
+                slotState.Serialize());
 
             if (backward)
             {
-                tempState = tempState.SetState(_avatarAddress, avatarState.Serialize());
+                tempState = AvatarModule.SetAvatarState(tempState, _avatarAddress, avatarState);
             }
             else
             {
-                tempState = tempState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                tempState = AvatarModule.SetAvatarStateV2(tempState, _avatarAddress, avatarState);
             }
 
             var action = new RapidCombination
@@ -143,7 +153,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 51,
             });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _avatarAddress);
             var item = nextAvatarState.inventory.Equipments.First();
 
             Assert.Empty(nextAvatarState.inventory.Materials.Select(r => r.ItemSubType == ItemSubType.Hourglass));
@@ -161,8 +171,10 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, 0);
             slotState.Update(null, 0, 0);
 
-            var tempState = _initialState
-                .SetState(slotAddress, slotState.Serialize());
+            var tempState = LegacyModule.SetState(
+                _initialWorld,
+                slotAddress,
+                slotState.Serialize());
 
             var action = new RapidCombination
             {
@@ -183,10 +195,10 @@ namespace Lib9c.Tests.Action
         [InlineData(1, 2)]
         public void Execute_Throw_NotEnoughClearedStageLevelException(int avatarClearedStage, int slotStateUnlockStage)
         {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             avatarState.worldInformation = new WorldInformation(
                 0,
-                _initialState.GetSheet<WorldSheet>(),
+                LegacyModule.GetSheet<WorldSheet>(_initialWorld),
                 avatarClearedStage);
 
             var firstEquipmentRow = _tableSheets.EquipmentItemSheet.First;
@@ -197,7 +209,7 @@ namespace Lib9c.Tests.Action
                 Guid.NewGuid(),
                 100);
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 actionPoint = 0,
                 gold = 0,
@@ -214,9 +226,8 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
             slotState.Update(result, 0, 0);
 
-            var tempState = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
+            var tempState = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            tempState = LegacyModule.SetState(tempState, slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
             {
@@ -239,10 +250,10 @@ namespace Lib9c.Tests.Action
         {
             const int avatarClearedStage = 1;
 
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             avatarState.worldInformation = new WorldInformation(
                 0,
-                _initialState.GetSheet<WorldSheet>(),
+                LegacyModule.GetSheet<WorldSheet>(_initialWorld),
                 avatarClearedStage);
 
             var firstEquipmentRow = _tableSheets.EquipmentItemSheet.First;
@@ -253,7 +264,7 @@ namespace Lib9c.Tests.Action
                 Guid.NewGuid(),
                 itemRequiredBlockIndex);
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 actionPoint = 0,
                 gold = 0,
@@ -270,9 +281,8 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, avatarClearedStage);
             slotState.Update(result, 0, 0);
 
-            var tempState = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
+            var tempState = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            tempState = LegacyModule.SetState(tempState, slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
             {
@@ -299,10 +309,10 @@ namespace Lib9c.Tests.Action
         {
             const int slotStateUnlockStage = 1;
 
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             avatarState.worldInformation = new WorldInformation(
                 0,
-                _initialState.GetSheet<WorldSheet>(),
+                LegacyModule.GetSheet<WorldSheet>(_initialWorld),
                 slotStateUnlockStage);
 
             var row = _tableSheets.MaterialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Hourglass);
@@ -317,7 +327,7 @@ namespace Lib9c.Tests.Action
             var firstEquipmentRow = _tableSheets.EquipmentItemSheet.First;
             Assert.NotNull(firstEquipmentRow);
 
-            var gameConfigState = _initialState.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(_initialWorld);
             var requiredBlockIndex = gameConfigState.HourglassPerBlock * requiredCount;
             var equipment = (Equipment)ItemFactory.CreateItemUsable(
                 firstEquipmentRow,
@@ -325,7 +335,7 @@ namespace Lib9c.Tests.Action
                 requiredBlockIndex);
             avatarState.inventory.AddItem(equipment);
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 actionPoint = 0,
                 gold = 0,
@@ -346,9 +356,8 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
             slotState.Update(result, 0, 0);
 
-            var tempState = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
+            var tempState = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            tempState = LegacyModule.SetState(tempState, slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
             {
@@ -375,16 +384,18 @@ namespace Lib9c.Tests.Action
                 )
             );
 
-            var updatedAddresses = new List<Address>()
+            var updatedAddressesAvatar = new List<Address>()
             {
                 _avatarAddress,
+            };
+
+            var updatedAddressesLegacy = new List<Address>()
+            {
                 _avatarAddress.Derive(LegacyInventoryKey),
                 _avatarAddress.Derive(LegacyWorldInformationKey),
                 _avatarAddress.Derive(LegacyQuestListKey),
                 slotAddress,
             };
-
-            var state = new Account(MockState.Empty);
 
             var action = new RapidCombination
             {
@@ -394,13 +405,18 @@ namespace Lib9c.Tests.Action
 
             var nextState = action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(),
                 Signer = _agentAddress,
                 BlockIndex = 0,
                 Rehearsal = true,
             });
 
-            Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.Delta.UpdatedAddresses);
+            Assert.Equal(
+                updatedAddressesAvatar.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses);
+            Assert.Equal(
+                updatedAddressesLegacy.ToImmutableHashSet(),
+                nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses);
         }
 
         [Theory]
@@ -417,7 +433,7 @@ namespace Lib9c.Tests.Action
             var material2 = ItemFactory.CreateMaterial(row2);
 
             var itemUsable = ItemFactory.CreateItemUsable(_tableSheets.EquipmentItemSheet.Values.First(), default, 0);
-            var r = new CombinationConsumable5.ResultModel
+            var r = new Nekoyume.Action.Results.CombinationResult
             {
                 id = default,
                 gold = 0,
@@ -431,7 +447,7 @@ namespace Lib9c.Tests.Action
                 },
                 itemUsable = itemUsable,
             };
-            var result = new RapidCombination0.ResultModel((Dictionary)r.Serialize())
+            var result = new RapidCombination0Result((Dictionary)r.Serialize())
             {
                 cost = new Dictionary<Material, int>
                 {
@@ -440,7 +456,7 @@ namespace Lib9c.Tests.Action
                 },
             };
 
-            var r2 = new CombinationConsumable5.ResultModel
+            var r2 = new Nekoyume.Action.Results.CombinationResult
             {
                 id = default,
                 gold = 0,
@@ -455,7 +471,7 @@ namespace Lib9c.Tests.Action
                 itemUsable = itemUsable,
             };
 
-            var result2 = new RapidCombination0.ResultModel((Dictionary)r2.Serialize())
+            var result2 = new RapidCombination0Result((Dictionary)r2.Serialize())
             {
                 cost = new Dictionary<Material, int>
                 {
@@ -472,10 +488,10 @@ namespace Lib9c.Tests.Action
         {
             const int slotStateUnlockStage = 1;
 
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             avatarState.worldInformation = new WorldInformation(
                 0,
-                _initialState.GetSheet<WorldSheet>(),
+                LegacyModule.GetSheet<WorldSheet>(_initialWorld),
                 slotStateUnlockStage);
 
             var row = _tableSheets.MaterialItemSheet.Values.First(r =>
@@ -485,7 +501,7 @@ namespace Lib9c.Tests.Action
             var firstEquipmentRow = _tableSheets.EquipmentItemSheet.First;
             Assert.NotNull(firstEquipmentRow);
 
-            var gameConfigState = _initialState.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(_initialWorld);
             var requiredBlockIndex = gameConfigState.HourglassPerBlock * 40;
             var equipment = (Equipment)ItemFactory.CreateItemUsable(
                 firstEquipmentRow,
@@ -493,7 +509,7 @@ namespace Lib9c.Tests.Action
                 requiredBlockIndex);
             avatarState.inventory.AddItem(equipment);
 
-            var result = new CombinationConsumable5.ResultModel
+            var result = new Nekoyume.Action.Results.CombinationResult
             {
                 actionPoint = 0,
                 gold = 0,
@@ -514,9 +530,8 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
             slotState.Update(result, 0, 0);
 
-            var tempState = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
+            var tempState = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
+            tempState = LegacyModule.SetState(tempState, slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
             {
@@ -536,16 +551,15 @@ namespace Lib9c.Tests.Action
         [InlineData(7)]
         [InlineData(9)]
         [InlineData(10)]
-        [InlineData(11)]
         public void Execute_NotThrow_InvalidOperationException_When_TargetSlotCreatedBy(
             int itemEnhancementResultModelNumber)
         {
             const int slotStateUnlockStage = 1;
 
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             avatarState.worldInformation = new WorldInformation(
                 0,
-                _initialState.GetSheet<WorldSheet>(),
+                LegacyModule.GetSheet<WorldSheet>(_initialWorld),
                 slotStateUnlockStage);
 
             var row = _tableSheets.MaterialItemSheet.Values.First(r =>
@@ -558,7 +572,7 @@ namespace Lib9c.Tests.Action
                 .OrderedList.First(e => e.Grade >= 1);
             Assert.NotNull(firstEquipmentRow);
 
-            var gameConfigState = _initialState.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(_initialWorld);
             var requiredBlockIndex = gameConfigState.HourglassPerBlock * 200;
             var equipment = (Equipment)ItemFactory.CreateItemUsable(
                 firstEquipmentRow,
@@ -579,8 +593,8 @@ namespace Lib9c.Tests.Action
             {
                 case 7:
                 {
-                    equipment = ItemEnhancement7.UpgradeEquipment(equipment);
-                    resultModel = new ItemEnhancement7.ResultModel
+                    equipment = ItemEnhancement7Result.UpgradeEquipment(equipment);
+                    resultModel = new ItemEnhancement7Result
                     {
                         id = mailId,
                         itemUsable = equipment,
@@ -591,42 +605,18 @@ namespace Lib9c.Tests.Action
                 }
 
                 case 9:
-                {
-                    Assert.True(ItemEnhancement9.TryGetRow(
-                        equipment,
-                        _tableSheets.EnhancementCostSheetV2,
-                        out var costRow));
-                    var equipmentResult = ItemEnhancement9.GetEnhancementResult(costRow, random);
-                    equipment.LevelUp(
-                        random,
-                        costRow,
-                        equipmentResult == ItemEnhancement9.EnhancementResult.GreatSuccess);
-                    resultModel = new ItemEnhancement9.ResultModel
-                    {
-                        id = mailId,
-                        preItemUsable = preItemUsable,
-                        itemUsable = equipment,
-                        materialItemIdList = new[] { materialEquipment.NonFungibleId },
-                        gold = 0,
-                        actionPoint = 0,
-                        enhancementResult = ItemEnhancement9.EnhancementResult.GreatSuccess,
-                    };
-
-                    break;
-                }
-
                 case 10:
                 {
-                    Assert.True(ItemEnhancement10.TryGetRow(
+                    Assert.True(ItemEnhancement9Result.TryGetRow(
                         equipment,
                         _tableSheets.EnhancementCostSheetV2,
                         out var costRow));
-                    var equipmentResult = ItemEnhancement10.GetEnhancementResult(costRow, random);
+                    var equipmentResult = ItemEnhancement9Result.GetEnhancementResult(costRow, random);
                     equipment.LevelUp(
                         random,
                         costRow,
-                        equipmentResult == ItemEnhancement10.EnhancementResult.GreatSuccess);
-                    resultModel = new ItemEnhancement10.ResultModel
+                        equipmentResult == ItemEnhancement9Result.EnhancementResult.GreatSuccess);
+                    resultModel = new ItemEnhancement9Result
                     {
                         id = mailId,
                         preItemUsable = preItemUsable,
@@ -634,33 +624,7 @@ namespace Lib9c.Tests.Action
                         materialItemIdList = new[] { materialEquipment.NonFungibleId },
                         gold = 0,
                         actionPoint = 0,
-                        enhancementResult = ItemEnhancement10.EnhancementResult.GreatSuccess,
-                    };
-
-                    break;
-                }
-
-                case 11:
-                {
-                    Assert.True(ItemEnhancement11.TryGetRow(
-                        equipment,
-                        _tableSheets.EnhancementCostSheetV2,
-                        out var costRow));
-                    var equipmentResult = ItemEnhancement11.GetEnhancementResult(costRow, random);
-                    equipment.LevelUp(
-                        random,
-                        costRow,
-                        equipmentResult == ItemEnhancement11.EnhancementResult.GreatSuccess);
-                    resultModel = new ItemEnhancement11.ResultModel
-                    {
-                        id = mailId,
-                        preItemUsable = preItemUsable,
-                        itemUsable = equipment,
-                        materialItemIdList = new[] { materialEquipment.NonFungibleId },
-                        gold = 0,
-                        actionPoint = 0,
-                        enhancementResult = ItemEnhancement11.EnhancementResult.GreatSuccess,
-                        CRYSTAL = 0 * CrystalCalculator.CRYSTAL,
+                        enhancementResult = ItemEnhancement9Result.EnhancementResult.GreatSuccess,
                     };
 
                     break;
@@ -683,11 +647,11 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
             slotState.Update(resultModel, 0, requiredBlockIndex);
 
-            var tempState = _initialState.SetState(slotAddress, slotState.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2());
+            var tempState = LegacyModule.SetState(
+                _initialWorld,
+                slotAddress,
+                slotState.Serialize());
+            tempState = AvatarModule.SetAvatarStateV2(tempState, _avatarAddress, avatarState);
 
             var action = new RapidCombination
             {

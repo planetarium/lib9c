@@ -8,8 +8,10 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -21,8 +23,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly Address _avatarAddr;
         private readonly Address _recipeAddr;
         private readonly Address _worldInfoAddr;
-        private readonly IAccount _initialStateV1;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV1;
+        private readonly IWorld _initialStateV2;
 
         public CommonTest()
         {
@@ -59,7 +61,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var random = new TestRandom();
 
             // Get Pet
-            var stateV2 = _initialStateV2.SetState(
+            var stateV2 = LegacyModule.SetState(
+                _initialStateV2,
                 PetState.DeriveAddress(_avatarAddr, petId),
                 new List(petId.Serialize(), petLevel.Serialize(), 0L.Serialize())
             );
@@ -76,7 +79,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 stageList = stageList.Add(i.Serialize());
             }
 
-            stateV2 = stateV2.SetState(_recipeAddr, stageList);
+            stateV2 = LegacyModule.SetState(stateV2, _recipeAddr, stageList);
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,

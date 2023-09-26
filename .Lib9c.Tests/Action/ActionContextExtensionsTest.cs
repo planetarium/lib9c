@@ -6,8 +6,9 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
-    using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class ActionContextExtensionsTest
@@ -142,7 +143,11 @@ namespace Lib9c.Tests.Action
         [MemberData(nameof(IsMainNetTestcases))]
         public void IsMainNet(GoldCurrencyState goldCurrencyState, bool expected)
         {
-            var state = new Account(MockState.Empty).SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            IWorld state = new MockWorld();
+            state = LegacyModule.SetState(
+                state,
+                Addresses.GoldCurrency,
+                goldCurrencyState.Serialize());
             IActionContext context = new ActionContext
             {
                 PreviousState = state,

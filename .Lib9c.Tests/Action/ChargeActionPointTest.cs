@@ -8,8 +8,10 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -20,7 +22,7 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public ChargeActionPointTest()
         {
@@ -46,14 +48,17 @@ namespace Lib9c.Tests.Action
             };
             agent.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new Account(MockState.Empty)
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize())
-                .SetState(_agentAddress, agent.Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize());
+            _initialState = new MockWorld();
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                Addresses.GameConfig,
+                gameConfigState.Serialize());
+            _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agent);
+            _initialState = AvatarModule.SetAvatarState(_initialState, _avatarAddress, avatarState);
 
             foreach (var (key, value) in _sheets)
             {
-                _initialState = _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = LegacyModule.SetState(_initialState, Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
@@ -64,7 +69,7 @@ namespace Lib9c.Tests.Action
         [InlineData(false, false)]
         public void Execute(bool useTradable, bool backward)
         {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             var row = _tableSheets.MaterialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.ApStone);
             if (useTradable)
             {
@@ -79,23 +84,19 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0, avatarState.actionPoint);
 
-            IAccount state;
+            IWorld state;
             if (backward)
             {
-                state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+                state = AvatarModule.SetAvatarState(_initialState, _avatarAddress, avatarState);
             }
             else
             {
-                state = _initialState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                state = AvatarModule.SetAvatarStateV2(_initialState, _avatarAddress, avatarState);
             }
 
             foreach (var (key, value) in _sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = LegacyModule.SetState(state, Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var action = new ChargeActionPoint()
@@ -111,8 +112,8 @@ namespace Lib9c.Tests.Action
                 Rehearsal = false,
             });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
-            var gameConfigState = nextState.GetGameConfigState();
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _avatarAddress);
+            var gameConfigState = LegacyModule.GetGameConfigState(nextState);
             Assert.Equal(gameConfigState.ActionPointMax, nextAvatarState.actionPoint);
         }
 
@@ -124,7 +125,7 @@ namespace Lib9c.Tests.Action
         [InlineData(true, true, true, true, typeof(ActionPointExceededException))]
         public void Execute_Throw_Exception(bool useAvatarAddress, bool useTradable, bool enough, bool charge, Type exc)
         {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
 
             Assert.Equal(0, avatarState.actionPoint);
 
@@ -145,13 +146,13 @@ namespace Lib9c.Tests.Action
             if (enough)
             {
                 avatarState.inventory.AddItem(apStone);
-                state = state.SetState(_avatarAddress, avatarState.Serialize());
+                state = AvatarModule.SetAvatarState(state, _avatarAddress, avatarState);
             }
 
             if (charge)
             {
-                avatarState.actionPoint = state.GetGameConfigState().ActionPointMax;
-                state = state.SetState(_avatarAddress, avatarState.Serialize());
+                avatarState.actionPoint = LegacyModule.GetGameConfigState(state).ActionPointMax;
+                state = AvatarModule.SetAvatarState(state, _avatarAddress, avatarState);
             }
 
             var action = new ChargeActionPoint()
@@ -177,15 +178,19 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            var updatedAddresses = new List<Address>()
+            var updatedAddressesAvatar = new List<Address>()
             {
                 _avatarAddress,
+            };
+
+            var updatedAddressesLegacy = new List<Address>()
+            {
                 _avatarAddress.Derive(LegacyInventoryKey),
                 _avatarAddress.Derive(LegacyWorldInformationKey),
                 _avatarAddress.Derive(LegacyQuestListKey),
             };
 
-            var state = new Account(MockState.Empty);
+            var state = new MockWorld();
 
             var nextState = action.Execute(new ActionContext()
             {
@@ -195,7 +200,13 @@ namespace Lib9c.Tests.Action
                 Rehearsal = true,
             });
 
-            Assert.Equal(updatedAddresses.ToImmutableHashSet(), nextState.Delta.UpdatedAddresses);
+            Assert.Equal(
+                updatedAddressesAvatar.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses.ToImmutableHashSet());
+
+            Assert.Equal(
+                updatedAddressesLegacy.ToImmutableHashSet(),
+                nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses.ToImmutableHashSet());
         }
     }
 }

@@ -33,14 +33,15 @@ namespace Lib9c.Tests.Action
             new Address("636d187B4d434244A92B65B06B5e7da14b3810A9"),
         }.ToImmutableList();
 
-        private static readonly IAccount _previousState = new Account(
-            MockState.Empty
-                .SetState(AdminState.Address, new AdminState(_admin, 100).Serialize())
-                .SetState(GoldCurrencyState.Address, new GoldCurrencyState(NCG).Serialize())
-                .SetBalance(_authMiners[0], NCG * 1000)
-                .SetBalance(_authMiners[1], NCG * 2000)
-                .SetBalance(_authMiners[2], NCG * 3000)
-                .SetBalance(_authMiners[3], NCG * 4000));
+        private static readonly MockWorld _previousState = new MockWorld(
+            new MockAccount(
+                new MockAccountState(ReservedAddresses.LegacyAccount)
+                    .SetState(AdminState.Address, new AdminState(_admin, 100).Serialize())
+                    .SetState(GoldCurrencyState.Address, new GoldCurrencyState(NCG).Serialize())
+                    .SetBalance(_authMiners[0], NCG * 1000)
+                    .SetBalance(_authMiners[1], NCG * 2000)
+                    .SetBalance(_authMiners[2], NCG * 3000)
+                    .SetBalance(_authMiners[3], NCG * 4000)));
 
         [Fact]
         public void Execute()
@@ -54,7 +55,7 @@ namespace Lib9c.Tests.Action
                     Rehearsal = false,
                     BlockIndex = 1,
                 }
-            );
+            ).GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.Equal(NCG * 0, nextState.GetBalance(_authMiners[0], NCG));
             Assert.Equal(NCG * 0, nextState.GetBalance(_authMiners[1], NCG));

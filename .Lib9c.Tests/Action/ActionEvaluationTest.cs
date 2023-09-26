@@ -11,9 +11,11 @@ namespace Lib9c.Tests.Action
     using MessagePack.Resolvers;
     using Nekoyume.Action;
     using Nekoyume.Helper;
+    using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class ActionEvaluationTest
@@ -21,7 +23,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _currency;
         private readonly Address _signer;
         private readonly Address _sender;
-        private readonly IAccount _states;
+        private readonly IWorld _states;
 
         public ActionEvaluationTest()
         {
@@ -32,10 +34,10 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             _signer = new PrivateKey().ToAddress();
             _sender = new PrivateKey().ToAddress();
-            _states = new Account(MockState.Empty)
-                .SetState(_signer, (Text)"ANYTHING")
-                .SetState(default, Dictionary.Empty.Add("key", "value"))
-                .MintAsset(context, _signer, _currency * 10000);
+            _states = new MockWorld();
+            _states = LegacyModule.SetState(_states, _signer, (Text)"ANYTHING");
+            _states = LegacyModule.SetState(_states, default, Dictionary.Empty.Add("key", "value"));
+            _states = LegacyModule.MintAsset(_states, context, _signer, _currency * 10000);
             var resolver = MessagePack.Resolvers.CompositeResolver.Create(
                 NineChroniclesResolver.Instance,
                 StandardResolver.Instance
@@ -48,32 +50,21 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(TransferAsset))]
         [InlineData(typeof(CreateAvatar))]
         [InlineData(typeof(HackAndSlash))]
-        [InlineData(typeof(ActivateAccount))]
-        [InlineData(typeof(AddActivatedAccount))]
         [InlineData(typeof(AddRedeemCode))]
         [InlineData(typeof(Buy))]
         [InlineData(typeof(ChargeActionPoint))]
-        [InlineData(typeof(ClaimMonsterCollectionReward))]
         [InlineData(typeof(CombinationConsumable))]
         [InlineData(typeof(CombinationEquipment))]
-        [InlineData(typeof(CreatePendingActivation))]
         [InlineData(typeof(DailyReward))]
         [InlineData(typeof(InitializeStates))]
         [InlineData(typeof(ItemEnhancement))]
-        [InlineData(typeof(MigrationActivatedAccountsState))]
-        [InlineData(typeof(MigrationAvatarState))]
-        [InlineData(typeof(MigrationLegacyShop))]
-        [InlineData(typeof(MimisbrunnrBattle))]
-        [InlineData(typeof(MonsterCollect))]
         [InlineData(typeof(PatchTableSheet))]
         [InlineData(typeof(RankingBattle))]
         [InlineData(typeof(RapidCombination))]
         [InlineData(typeof(RedeemCode))]
         [InlineData(typeof(RewardGold))]
-        [InlineData(typeof(Sell))]
         [InlineData(typeof(SellCancellation))]
         [InlineData(typeof(UpdateSell))]
-        [InlineData(typeof(CreatePendingActivations))]
         [InlineData(typeof(Grinding))]
         [InlineData(typeof(UnlockEquipmentRecipe))]
         [InlineData(typeof(UnlockWorld))]
@@ -153,8 +144,6 @@ namespace Lib9c.Tests.Action
                     StageId = 0,
                     AvatarAddress = new PrivateKey().ToAddress(),
                 },
-                ActivateAccount _ => new ActivateAccount(new PrivateKey().ToAddress(), new byte[] { 0x0 }),
-                AddActivatedAccount _ => new AddActivatedAccount(),
                 AddRedeemCode _ => new AddRedeemCode
                 {
                     redeemCsv = "csv",
@@ -178,12 +167,8 @@ namespace Lib9c.Tests.Action
                     },
                 },
                 ChargeActionPoint _ => new ChargeActionPoint(),
-                ClaimMonsterCollectionReward _ => new ClaimMonsterCollectionReward(),
                 CombinationConsumable _ => new CombinationConsumable(),
                 CombinationEquipment _ => new CombinationEquipment(),
-                CreatePendingActivation _ => new CreatePendingActivation(
-                    new PendingActivationState(new byte[] { 0x0 }, new PrivateKey().PublicKey)
-                ),
                 DailyReward _ => new DailyReward(),
                 InitializeStates _ => new InitializeStates
                 {
@@ -195,24 +180,6 @@ namespace Lib9c.Tests.Action
                 {
                     materialIds = new List<Guid>(),
                 },
-                MigrationActivatedAccountsState _ => new MigrationActivatedAccountsState(),
-                MigrationAvatarState _ => new MigrationAvatarState
-                {
-                    avatarStates = new List<Dictionary>(),
-                },
-                MigrationLegacyShop _ => new MigrationLegacyShop(),
-                MimisbrunnrBattle _ => new MimisbrunnrBattle
-                {
-                    Costumes = new List<Guid>(),
-                    Equipments = new List<Guid>(),
-                    Foods = new List<Guid>(),
-                    RuneInfos = new List<RuneSlotInfo>(),
-                    WorldId = 0,
-                    StageId = 0,
-                    PlayCount = 0,
-                    AvatarAddress = default,
-                },
-                MonsterCollect _ => new MonsterCollect(),
                 PatchTableSheet _ => new PatchTableSheet
                 {
                     TableCsv = "table",
@@ -233,10 +200,6 @@ namespace Lib9c.Tests.Action
                     AvatarAddress = new PrivateKey().ToAddress(),
                 },
                 RewardGold _ => null,
-                Sell _ => new Sell
-                {
-                    price = _currency * 100,
-                },
                 SellCancellation _ => new SellCancellation(),
                 UpdateSell _ => new UpdateSell
                 {
@@ -251,13 +214,6 @@ namespace Lib9c.Tests.Action
                             _currency * 100,
                             1
                         ),
-                    },
-                },
-                CreatePendingActivations _ => new CreatePendingActivations
-                {
-                    PendingActivations = new[]
-                    {
-                        (new byte[40], new byte[4], new byte[33]),
                     },
                 },
                 Grinding _ => new Grinding

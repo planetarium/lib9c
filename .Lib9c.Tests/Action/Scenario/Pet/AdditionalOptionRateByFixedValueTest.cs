@@ -9,12 +9,13 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
     public class AdditionalOptionRateByFixedValueTest
@@ -25,8 +26,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IAccount _initialStateV1;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV1;
+        private readonly IWorld _initialStateV2;
         private readonly Address _inventoryAddr;
         private readonly Address _worldInfoAddr;
         private readonly Address _recipeAddr;
@@ -68,7 +69,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 stageList = stageList.Add(i.Serialize());
             }
 
-            var stateV2 = _initialStateV2.SetState(_recipeAddr, stageList);
+            var stateV2 = LegacyModule.SetState(_initialStateV2, _recipeAddr, stageList);
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,
@@ -88,7 +89,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 pet => pet.LevelOptionMap[(int)petLevel!].OptionType == PetOptionType
             );
             _petId = petRow.PetId;
-            stateV2 = stateV2.SetState(
+            stateV2 = LegacyModule.SetState(
+                stateV2,
                 PetState.DeriveAddress(_avatarAddr, (int)_petId),
                 new List(_petId!.Serialize(), petLevel.Serialize(), 0L.Serialize())
             );
@@ -132,7 +134,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             };
             ctx.SetRandom(random);
             stateV2 = action.Execute(ctx);
-            var slotState = stateV2.GetCombinationSlotState(_avatarAddr, 0);
+            var slotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, 0);
             // TEST: No additional option added (1 star)
             Assert.Equal(
                 recipe.RequiredBlockIndex + subRecipe.RequiredBlockIndex +
@@ -173,7 +175,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             };
             ctx.SetRandom(random);
             stateV2 = petAction.Execute(ctx);
-            var petSlotState = stateV2.GetCombinationSlotState(_avatarAddr, 1);
+            var petSlotState = LegacyModule.GetCombinationSlotState(stateV2, _avatarAddr, 1);
             // TEST: One additional option added (2 star)
             Assert.Equal(
                 recipe.RequiredBlockIndex + subRecipe.RequiredBlockIndex +

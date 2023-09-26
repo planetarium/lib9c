@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Model.Stake
     using Nekoyume;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData.Stake;
     using Xunit;
 
@@ -31,7 +32,7 @@ namespace Lib9c.Tests.Model.Stake
         [Fact]
         public void TryMigrate_Return_False_When_Staking_State_Null()
         {
-            var state = new Account(MockState.Empty);
+            var state = new MockWorld();
             Assert.False(StakeStateUtils.TryMigrate(state, new PrivateKey().ToAddress(), out _));
         }
 
@@ -107,8 +108,9 @@ namespace Lib9c.Tests.Model.Stake
             string stakeRegularFixedRewardSheetTableName,
             string stakeRegularRewardSheetTableName)
         {
-            IAccount state = new Account(MockState.Empty);
-            state = state.SetState(
+            IWorld state = new MockWorld();
+            state = LegacyModule.SetState(
+                state,
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());
             var stakeAddr = new PrivateKey().ToAddress();
@@ -118,7 +120,7 @@ namespace Lib9c.Tests.Model.Stake
                 stakeState.Claim(receivedBlockIndex.Value);
             }
 
-            state = state.SetState(stakeAddr, stakeState.Serialize());
+            state = LegacyModule.SetState(state, stakeAddr, stakeState.Serialize());
             Assert.True(StakeStateUtils.TryMigrate(state, stakeAddr, out var stakeStateV2));
             Assert.Equal(
                 stakeRegularFixedRewardSheetTableName,
@@ -139,8 +141,9 @@ namespace Lib9c.Tests.Model.Stake
             long startedBlockIndex,
             long? receivedBlockIndex)
         {
-            IAccount state = new Account(MockState.Empty);
-            state = state.SetState(
+            IWorld state = new MockWorld();
+            state = LegacyModule.SetState(
+                state,
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());
             var stakeAddr = new PrivateKey().ToAddress();
@@ -151,7 +154,7 @@ namespace Lib9c.Tests.Model.Stake
                 ? new StakeStateV2(contract, startedBlockIndex)
                 : new StakeStateV2(contract, receivedBlockIndex.Value);
 
-            state = state.SetState(stakeAddr, stakeStateV2.Serialize());
+            state = LegacyModule.SetState(state, stakeAddr, stakeStateV2.Serialize());
             Assert.True(StakeStateUtils.TryMigrate(state, stakeAddr, out var result));
             Assert.Equal(stakeStateV2.Contract, result.Contract);
             Assert.Equal(stakeStateV2.StartedBlockIndex, result.StartedBlockIndex);

@@ -10,8 +10,10 @@ namespace Lib9c.Tests.Action.Summon
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Exceptions;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
     using static SerializeKeys;
 
@@ -22,7 +24,7 @@ namespace Lib9c.Tests.Action.Summon
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public AuraSummonTest()
         {
@@ -51,31 +53,31 @@ namespace Lib9c.Tests.Action.Summon
             var gold = new GoldCurrencyState(_currency);
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty)
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, _avatarState.Serialize())
-                .SetState(GoldCurrencyState.Address, gold.Serialize())
-                .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100000000000)
-                .TransferAsset(
-                    context,
-                    Addresses.GoldCurrency,
-                    _agentAddress,
-                    gold.Currency * 1000
-                );
+            _initialState = new MockWorld();
+            _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
+            _initialState = AvatarModule.SetAvatarV2(_initialState, _avatarAddress, _avatarState);
+            _initialState = LegacyModule.SetState(_initialState, GoldCurrencyState.Address, gold.Serialize());
+            _initialState = LegacyModule.MintAsset(_initialState, context, GoldCurrencyState.Address, gold.Currency * 100000000000);
+            _initialState = LegacyModule.TransferAsset(
+                _initialState,
+                context,
+                Addresses.GoldCurrency,
+                _agentAddress,
+                gold.Currency * 1000);
 
             Assert.Equal(
                 gold.Currency * 99999999000,
-                _initialState.GetBalance(Addresses.GoldCurrency, gold.Currency)
+                LegacyModule.GetBalance(_initialState, Addresses.GoldCurrency, gold.Currency)
             );
             Assert.Equal(
                 gold.Currency * 1000,
-                _initialState.GetBalance(_agentAddress, gold.Currency)
+                LegacyModule.GetBalance(_initialState, _agentAddress, gold.Currency)
             );
 
             foreach (var (key, value) in sheets)
             {
                 _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    LegacyModule.SetState(_initialState, Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
@@ -152,21 +154,7 @@ namespace Lib9c.Tests.Action.Summon
                     ItemFactory.CreateItem(material, random),
                     materialCount
                 );
-                state = state
-                        .SetState(_avatarAddress, _avatarState.SerializeV2())
-                        .SetState(
-                            _avatarAddress.Derive(LegacyInventoryKey),
-                            _avatarState.inventory.Serialize()
-                        )
-                        .SetState(
-                            _avatarAddress.Derive(LegacyWorldInformationKey),
-                            _avatarState.worldInformation.Serialize()
-                        )
-                        .SetState(
-                            _avatarAddress.Derive(LegacyQuestListKey),
-                            _avatarState.questList.Serialize()
-                        )
-                    ;
+                state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
             }
 
             var action = new AuraSummon(
@@ -187,7 +175,7 @@ namespace Lib9c.Tests.Action.Summon
                 ctx.SetRandom(random);
                 var nextState = action.Execute(ctx);
 
-                var equipments = nextState.GetAvatarStateV2(_avatarAddress).inventory.Equipments
+                var equipments = AvatarModule.GetAvatarStateV2(nextState, _avatarAddress).inventory.Equipments
                     .ToList();
                 Assert.Equal(expectedEquipmentId.Length, equipments.Count);
 
@@ -204,7 +192,7 @@ namespace Lib9c.Tests.Action.Summon
                     Assert.True(resultEquipment.optionCountFromCombination > 0);
                 }
 
-                nextState.GetAvatarStateV2(_avatarAddress).inventory
+                AvatarModule.GetAvatarStateV2(nextState, _avatarAddress).inventory
                     .TryGetItem((int)materialId!, out var resultMaterial);
                 Assert.Equal(0, resultMaterial?.count ?? 0);
             }

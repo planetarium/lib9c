@@ -8,15 +8,15 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
 
     public class RankingBattleTest
     {
@@ -25,11 +25,11 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatar1Address;
         private readonly Address _avatar2Address;
         private readonly Address _weeklyArenaAddress;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialWorld;
 
         public RankingBattleTest(ITestOutputHelper outputHelper)
         {
-            _initialState = new Account(MockState.Empty);
+            _initialWorld = new MockWorld();
 
             var keys = new List<string>
             {
@@ -42,7 +42,8 @@ namespace Lib9c.Tests.Action
             {
                 if (!keys.Contains(key))
                 {
-                    _initialState = _initialState.SetState(
+                    _initialWorld = LegacyModule.SetState(
+                        _initialWorld,
                         Addresses.TableSheet.Derive(key),
                         value.Serialize());
                 }
@@ -87,18 +88,38 @@ namespace Lib9c.Tests.Action
                 true);
             _weeklyArenaAddress = weeklyArenaState.address;
 
-            _initialState = _initialState
-                .SetState(_agent1Address, agent1State.Serialize())
-                .SetState(_avatar1Address, avatar1State.Serialize())
-                .SetState(agent2Address, agent2State.Serialize())
-                .SetState(_avatar2Address, avatar2State.Serialize())
-                .SetState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize())
-                .SetState(_weeklyArenaAddress, weeklyArenaState.Serialize())
-                .SetState(
-                    weeklyAddressListAddress,
-                    weeklyAddressList.Aggregate(List.Empty, (list, address) => list.Add(address.Serialize())))
-                .SetState(arenaInfo1Address, arenaInfo1.Serialize())
-                .SetState(arenaInfo2Address, arenaInfo2.Serialize());
+            _initialWorld = AgentModule.SetAgentState(_initialWorld, _agent1Address, agent1State);
+            _initialWorld = AvatarModule.SetAvatarState(
+                _initialWorld,
+                _avatar1Address,
+                avatar1State);
+            _initialWorld = AgentModule.SetAgentState(_initialWorld, agent2Address, agent2State);
+            _initialWorld = AvatarModule.SetAvatarV2(
+                _initialWorld,
+                _avatar2Address,
+                avatar2State);
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                Addresses.GameConfig,
+                new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize());
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                _weeklyArenaAddress,
+                weeklyArenaState.Serialize());
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                weeklyAddressListAddress,
+                weeklyAddressList.Aggregate(
+                    List.Empty,
+                    (list, address) => list.Add(address.Serialize())));
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                arenaInfo1Address,
+                arenaInfo1.Serialize());
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                arenaInfo2Address,
+                arenaInfo2.Serialize());
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -139,8 +160,9 @@ namespace Lib9c.Tests.Action
         public void ExecuteActionObsoletedException()
         {
             var previousArenaInfoAddress = _weeklyArenaAddress.Derive(_avatar1Address.ToByteArray());
-            var previousArenaInfo = new ArenaInfo((Dictionary)_initialState.GetState(previousArenaInfoAddress));
-            var previousAvatarState = _initialState.GetAvatarState(_avatar1Address);
+            var previousArenaInfo = new ArenaInfo(
+                (Dictionary)LegacyModule.GetState(_initialWorld, previousArenaInfoAddress));
+            var previousAvatarState = AvatarModule.GetAvatarState(_initialWorld, _avatar1Address);
             while (true)
             {
                 previousArenaInfo.UpdateV3(previousAvatarState, previousArenaInfo, BattleLog.Result.Lose);
@@ -150,7 +172,8 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            var previousState = _initialState.SetState(
+            var previousState = LegacyModule.SetState(
+                _initialWorld,
                 previousArenaInfoAddress,
                 previousArenaInfo.Serialize());
 

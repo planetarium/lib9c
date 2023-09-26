@@ -2,15 +2,17 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume.Action;
     using Nekoyume.Battle;
     using Nekoyume.Helper;
+    using Nekoyume.Model;
+    using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class MarketValidationTest
@@ -19,12 +21,14 @@ namespace Lib9c.Tests.Action
         private static readonly Address AvatarAddress = new Address("47d082a115c63e7b58b1532d20e631538eafadde");
         private static readonly Currency Gold = Currency.Legacy("NCG", 2, minters: null);
 
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public MarketValidationTest()
         {
-            _initialState = new Account(MockState.Empty)
-                .SetState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize());
+            _initialState = LegacyModule.SetState(
+                new MockWorld(),
+                GoldCurrencyState.Address,
+                new GoldCurrencyState(Gold).Serialize());
         }
 
         public static IEnumerable<object[]> RegisterInfosMemberData()
