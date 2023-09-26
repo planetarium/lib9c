@@ -6,11 +6,13 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Exceptions;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Event;
     using Xunit;
@@ -18,7 +20,7 @@ namespace Lib9c.Tests.Action
 
     public class EventMaterialItemCraftsTest
     {
-        private readonly IAccount _initialStates;
+        private readonly IWorld _initialStates;
         private readonly TableSheets _tableSheets;
 
         private readonly Address _agentAddress;
@@ -26,12 +28,14 @@ namespace Lib9c.Tests.Action
 
         public EventMaterialItemCraftsTest()
         {
-            _initialStates = new MockStateDelta();
+            _initialStates = new MockWorld();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialStates = _initialStates
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialStates = LegacyModule.SetState(
+                    _initialStates,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -59,19 +63,22 @@ namespace Lib9c.Tests.Action
                 level = 100,
             };
 
-            _initialStates = _initialStates
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddr, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddr, avatarState.worldInformation.Serialize())
-                .SetState(questListAddr, avatarState.questList.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+            _initialStates = AgentModule.SetAgentState(_initialStates, _agentAddress, agentState);
+            _initialStates = AvatarModule.SetAvatarStateV2(
+                _initialStates,
+                _avatarAddress,
+                avatarState);
+            _initialStates = LegacyModule.SetState(
+                _initialStates,
+                gameConfigState.address,
+                gameConfigState.Serialize());
 
             for (var i = 0; i < GameConfig.SlotCount; i++)
             {
                 var addr = CombinationSlotState.DeriveAddress(_avatarAddress, i);
                 const int unlock = GameConfig.RequireClearedStageLevel.CombinationEquipmentAction;
-                _initialStates = _initialStates.SetState(
+                _initialStates = LegacyModule.SetState(
+                    _initialStates,
                     addr,
                     new CombinationSlotState(addr, unlock).Serialize());
             }
@@ -178,14 +185,14 @@ namespace Lib9c.Tests.Action
                 .TryGetValue(eventScheduleId, out var scheduleRow));
             var contextBlockIndex = scheduleRow.StartBlockIndex;
             Execute(
-                _initialStates,
+                new MockWorld(_initialStates),
                 eventScheduleId,
                 eventMaterialItemRecipeId,
                 materialsToUse,
                 contextBlockIndex);
             contextBlockIndex = scheduleRow.RecipeEndBlockIndex;
             Execute(
-                _initialStates,
+                new MockWorld(_initialStates),
                 eventScheduleId,
                 eventMaterialItemRecipeId,
                 materialsToUse,
@@ -204,7 +211,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<InvalidMaterialCountException>(() =>
             {
                 Execute(
-                    _initialStates,
+                    new MockWorld(_initialStates),
                     eventScheduleId,
                     eventMaterialItemRecipeId,
                     materialsToUse,
@@ -213,17 +220,18 @@ namespace Lib9c.Tests.Action
         }
 
         private void Execute(
-            IAccount previousStates,
+            IWorld previousStates,
             int eventScheduleId,
             int eventMaterialItemRecipeId,
             Dictionary<int, int> materialsToUse,
             long blockIndex = 0)
         {
-            var previousAvatarState = previousStates.GetAvatarStateV2(_avatarAddress);
+            var previousAccount = previousStates.GetAccount(ReservedAddresses.LegacyAccount);
+            var previousAvatarState = AvatarModule.GetAvatarStateV2(previousStates, _avatarAddress);
 
-            var recipeSheet = previousStates.GetSheet<EventMaterialItemRecipeSheet>();
+            var recipeSheet = LegacyModule.GetSheet<EventMaterialItemRecipeSheet>(previousStates);
             Assert.True(recipeSheet.TryGetValue(eventMaterialItemRecipeId, out var recipeRow));
-            var materialItemSheet = previousStates.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(previousStates);
             foreach (var pair in materialsToUse)
             {
                 Assert.True(materialItemSheet.TryGetValue(pair.Key, out var materialRow));
@@ -231,19 +239,20 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.inventory.AddItem(material, pair.Value);
             }
 
-            var worldSheet = previousStates.GetSheet<WorldSheet>();
+            var worldSheet = LegacyModule.GetSheet<WorldSheet>(previousStates);
             previousAvatarState.worldInformation = new WorldInformation(
                 blockIndex,
                 worldSheet,
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
-            previousStates = previousStates
+            previousAccount = previousAccount
                 .SetState(
                     _avatarAddress.Derive(LegacyInventoryKey),
                     previousAvatarState.inventory.Serialize())
                 .SetState(
                     _avatarAddress.Derive(LegacyWorldInformationKey),
                     previousAvatarState.worldInformation.Serialize());
+            previousStates = previousStates.SetAccount(previousAccount);
 
             var previousMaterialCount = previousAvatarState.inventory.Items
                 .Where(i => recipeRow.RequiredMaterialsId.Contains(i.item.Id))
@@ -269,7 +278,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
             });
 
-            var nextAvatarState = nextStates.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextStates, _avatarAddress);
 
             var nextMaterialCount = nextAvatarState.inventory.Items
                 .Where(i => recipeRow.RequiredMaterialsId.Contains(i.item.Id))

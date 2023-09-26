@@ -6,12 +6,16 @@ namespace Lib9c.Tests.Action
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
+    using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Helper;
+    using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -44,34 +48,42 @@ namespace Lib9c.Tests.Action
             };
 
             var sheets = TableSheetsImporter.ImportSheets();
-            var state = new MockStateDelta()
-                .SetState(
-                    Addresses.GameConfig,
-                    new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
-                );
+            IWorld state = new MockWorld();
+            state = LegacyModule.SetState(
+                state,
+                Addresses.GameConfig,
+                new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize());
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = LegacyModule.SetState(
+                    state,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
-            Assert.Equal(0 * CrystalCalculator.CRYSTAL, state.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
+            Assert.Equal(
+                0 * CrystalCalculator.CRYSTAL,
+                LegacyModule.GetBalance(state, _agentAddress, CrystalCalculator.CRYSTAL));
 
-            var nextState = action.Execute(new ActionContext()
+            var nextWorld = action.Execute(new ActionContext()
             {
                 PreviousState = state,
                 Signer = _agentAddress,
                 BlockIndex = blockIndex,
             });
 
+            var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
+
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    CreateAvatar2.DeriveFormat,
+                    CreateAvatar.DeriveFormat,
                     0
                 )
             );
-            Assert.True(nextState.TryGetAgentAvatarStatesV2(
+            Assert.True(AvatarModule.TryGetAgentAvatarStatesV2(
+                nextWorld,
                 default,
                 avatarAddress,
                 out var agentState,
@@ -80,7 +92,7 @@ namespace Lib9c.Tests.Action
             );
             Assert.True(agentState.avatarAddresses.Any());
             Assert.Equal("test", nextAvatarState.name);
-            Assert.Equal(expected * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
+            Assert.Equal(expected * CrystalCalculator.CRYSTAL, nextAccount.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
         }
 
         [Theory]
@@ -100,11 +112,9 @@ namespace Lib9c.Tests.Action
                 name = nickName,
             };
 
-            var state = new MockStateDelta();
-
             Assert.Throws<InvalidNamePatternException>(() => action.Execute(new ActionContext()
                 {
-                    PreviousState = state,
+                    PreviousState = new MockWorld(),
                     Signer = agentAddress,
                     BlockIndex = 0,
                 })
@@ -117,7 +127,7 @@ namespace Lib9c.Tests.Action
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    CreateAvatar2.DeriveFormat,
+                    CreateAvatar.DeriveFormat,
                     0
                 )
             );
@@ -141,7 +151,8 @@ namespace Lib9c.Tests.Action
                 name = "test",
             };
 
-            var state = new MockStateDelta().SetState(avatarAddress, avatarState.Serialize());
+            IWorld state = new MockWorld();
+            state = AvatarModule.SetAvatarState(state, avatarAddress, avatarState);
 
             Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext()
                 {
@@ -158,7 +169,8 @@ namespace Lib9c.Tests.Action
         public void ExecuteThrowAvatarIndexOutOfRangeException(int index)
         {
             var agentState = new AgentState(_agentAddress);
-            var state = new MockStateDelta().SetState(_agentAddress, agentState.Serialize());
+            IWorld state = new MockWorld();
+            state = AgentModule.SetAgentState(state, _agentAddress, agentState);
             var action = new CreateAvatar()
             {
                 index = index,
@@ -188,12 +200,13 @@ namespace Lib9c.Tests.Action
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    CreateAvatar2.DeriveFormat,
+                    CreateAvatar.DeriveFormat,
                     0
                 )
             );
             agentState.avatarAddresses[index] = avatarAddress;
-            var state = new MockStateDelta().SetState(_agentAddress, agentState.Serialize());
+            IWorld state = new MockWorld();
+            state = AgentModule.SetAgentState(state, _agentAddress, agentState);
 
             var action = new CreateAvatar()
             {
@@ -224,7 +237,7 @@ namespace Lib9c.Tests.Action
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    CreateAvatar2.DeriveFormat,
+                    CreateAvatar.DeriveFormat,
                     index
                 )
             );
@@ -243,10 +256,14 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var gold = new GoldCurrencyState(Currency.Legacy("NCG", 2, null));
 #pragma warning restore CS0618
-            var updatedAddresses = new List<Address>()
+
+            var updatedAddressesAvatar = new List<Address>()
+            {
+                avatarAddress,
+            };
+            var updatedAddressesLegacy = new List<Address>()
             {
                 agentAddress,
-                avatarAddress,
                 avatarAddress.Derive(LegacyInventoryKey),
                 avatarAddress.Derive(LegacyQuestListKey),
                 avatarAddress.Derive(LegacyWorldInformationKey),
@@ -260,22 +277,23 @@ namespace Lib9c.Tests.Action
                         i
                     )
                 );
-                updatedAddresses.Add(slotAddress);
+                updatedAddressesLegacy.Add(slotAddress);
             }
-
-            var state = new MockStateDelta();
 
             var nextState = action.Execute(new ActionContext()
             {
-                PreviousState = state,
+                PreviousState = new MockWorld(),
                 Signer = agentAddress,
                 BlockIndex = 0,
                 Rehearsal = true,
             });
-
             Assert.Equal(
-                updatedAddresses.ToImmutableHashSet(),
-                nextState.Delta.UpdatedAddresses
+                updatedAddressesAvatar.ToImmutableHashSet(),
+                nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses
+            );
+            Assert.Equal(
+                updatedAddressesLegacy.ToImmutableHashSet(),
+                nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses
             );
         }
 

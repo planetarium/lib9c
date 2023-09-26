@@ -4,15 +4,16 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
-using Lib9c.DevExtensions.Model;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Arena;
-using Nekoyume.Model.Item;
+using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -53,14 +54,15 @@ namespace Lib9c.DevExtensions.Action
             equipments = ((List)plainValue["equipments"]).Select(e => e.ToGuid()).ToList();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
+
+            var world = context.PreviousState;
 
             for (var i = 0; i < accountCount; i++)
             {
@@ -74,9 +76,9 @@ namespace Lib9c.DevExtensions.Action
                     )
                 );
 
-                var existingAgentState = states.GetAgentState(agentAddress);
+                var existingAgentState = AgentModule.GetAgentState(world, agentAddress);
                 var agentState = existingAgentState ?? new AgentState(agentAddress);
-                var avatarState = states.GetAvatarState(avatarAddress);
+                var avatarState = AvatarModule.GetAvatarState(world, avatarAddress);
                 if (!(avatarState is null))
                 {
                     throw new InvalidAddressException(
@@ -94,11 +96,12 @@ namespace Lib9c.DevExtensions.Action
                 var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
                 var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
-                var rankingState = context.PreviousState.GetRankingState();
+                var rankingState = LegacyModule.GetRankingState(context.PreviousState);
                 var rankingMapAddress = rankingState.UpdateRankingMap(avatarAddress);
 
                 // create ArenaScore
-                var sheets = states.GetSheets(
+                var sheets = LegacyModule.GetSheets(
+                    world,
                     sheetTypes: new[]
                     {
                         typeof(ItemRequirementSheet),
@@ -116,13 +119,17 @@ namespace Lib9c.DevExtensions.Action
                     agentAddress,
                     avatarAddress,
                     context.BlockIndex,
-                    context.PreviousState.GetAvatarSheets(),
-                    context.PreviousState.GetSheet<WorldSheet>(),
-                    context.PreviousState.GetGameConfigState(),
+                    LegacyModule.GetAvatarSheets(context.PreviousState),
+                    LegacyModule.GetSheet<WorldSheet>(context.PreviousState),
+                    LegacyModule.GetGameConfigState(context.PreviousState),
                     rankingMapAddress);
 
-                if (!states.TryGetAvatarStateV2(context.Signer, myAvatarAddress,
-                out var myAvatarState, out var _))
+                if (!AvatarModule.TryGetAvatarStateV2(
+                        world,
+                        context.Signer,
+                        myAvatarAddress,
+                        out var myAvatarState,
+                        out var _))
                 {
                     throw new FailedLoadStateException($"error");
                 }
@@ -134,12 +141,8 @@ namespace Lib9c.DevExtensions.Action
                 }
 
                 // join arena
-                states = states.SetState(agentAddress, agentState.Serialize())
-                    .SetState(avatarAddress, avatarState.SerializeV2())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize());
-
+                world = AgentModule.SetAgentState(world, agentAddress, agentState);
+                world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
 
                 var sheet = sheets.GetSheet<ArenaSheet>();
                 if (!sheet.TryGetValue(championshipId, out var row))
@@ -157,7 +160,7 @@ namespace Lib9c.DevExtensions.Action
                 var arenaScoreAdr =
                     ArenaScore.DeriveAddress(avatarAddress, roundData.ChampionshipId,
                         roundData.Round);
-                if (states.TryGetState(arenaScoreAdr, out List _))
+                if (LegacyModule.TryGetState(world, arenaScoreAdr, out List _))
                 {
                     throw new ArenaScoreAlreadyContainsException(
                         $"[{nameof(CreateArenaDummy)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -170,7 +173,7 @@ namespace Lib9c.DevExtensions.Action
                 var arenaInformationAdr =
                     ArenaInformation.DeriveAddress(avatarAddress, roundData.ChampionshipId,
                         roundData.Round);
-                if (states.TryGetState(arenaInformationAdr, out List _))
+                if (LegacyModule.TryGetState(world, arenaInformationAdr, out List _))
                 {
                     throw new ArenaInformationAlreadyContainsException(
                         $"[{nameof(CreateArenaDummy)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -182,25 +185,39 @@ namespace Lib9c.DevExtensions.Action
                 // update ArenaParticipants
                 var arenaParticipantsAdr =
                     ArenaParticipants.DeriveAddress(roundData.ChampionshipId, roundData.Round);
-                var arenaParticipants = states.GetArenaParticipants(arenaParticipantsAdr,
-                    roundData.ChampionshipId, roundData.Round);
+                var arenaParticipants = LegacyModule.GetArenaParticipants(
+                    world,
+                    arenaParticipantsAdr,
+                    roundData.ChampionshipId,
+                    roundData.Round);
                 arenaParticipants.Add(avatarAddress);
 
                 // update ArenaAvatarState
                 var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(avatarAddress);
-                var arenaAvatarState = states.GetArenaAvatarState(arenaAvatarStateAdr, avatarState);
+                var arenaAvatarState = LegacyModule.GetArenaAvatarState(
+                    world,
+                    arenaAvatarStateAdr,
+                    avatarState);
                 arenaAvatarState.UpdateCostumes(costumes);
                 arenaAvatarState.UpdateEquipment(equipments);
 
-                states = states
-                    .SetState(arenaScoreAdr, arenaScore.Serialize())
-                    .SetState(arenaInformationAdr, arenaInformation.Serialize())
-                    .SetState(arenaParticipantsAdr, arenaParticipants.Serialize())
-                    .SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
-                    .SetState(agentAddress, agentState.Serialize());
+                world = LegacyModule.SetState(world, arenaScoreAdr, arenaScore.Serialize());
+                world = LegacyModule.SetState(
+                    world,
+                    arenaInformationAdr,
+                    arenaInformation.Serialize());
+                world = LegacyModule.SetState(
+                    world,
+                    arenaParticipantsAdr,
+                    arenaParticipants.Serialize());
+                world = LegacyModule.SetState(
+                    world,
+                    arenaAvatarStateAdr,
+                    arenaAvatarState.Serialize());
+                world = LegacyModule.SetState(world, agentAddress, agentState.Serialize());
             }
 
-            return states;
+            return world;
         }
 
     }

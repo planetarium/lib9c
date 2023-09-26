@@ -8,12 +8,15 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Battle;
     using Nekoyume.Helper;
     using Nekoyume.Model;
+    using Nekoyume.Model.Exceptions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -35,7 +38,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _buyerAvatarState;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly Guid _orderId;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public BuyProductTest(ITestOutputHelper outputHelper)
         {
@@ -45,12 +48,14 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new MockStateDelta();
+            _initialState = new MockWorld();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
 #pragma warning disable CS0618
@@ -110,15 +115,39 @@ namespace Lib9c.Tests.Action
             buyerAgentState.avatarAddresses[0] = BuyerAvatarAddress;
 
             _orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
-            _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(SellerAgentAddress, sellerAgentState.Serialize())
-                .SetState(SellerAvatarAddress, sellerAvatarState.Serialize())
-                .SetState(_sellerAgentAddress2, agentState2.Serialize())
-                .SetState(_sellerAvatarAddress2, sellerAvatarState2.Serialize())
-                .SetState(BuyerAgentAddress, buyerAgentState.Serialize())
-                .SetState(BuyerAvatarAddress, _buyerAvatarState.Serialize())
-                .MintAsset(context, BuyerAgentAddress, _goldCurrencyState.Currency * 1);
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                GoldCurrencyState.Address,
+                _goldCurrencyState.Serialize());
+            _initialState = AgentModule.SetAgentState(
+                _initialState,
+                SellerAgentAddress,
+                sellerAgentState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                SellerAvatarAddress,
+                sellerAvatarState);
+            _initialState = AgentModule.SetAgentState(
+                _initialState,
+                _sellerAgentAddress2,
+                agentState2);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _sellerAvatarAddress2,
+                sellerAvatarState2);
+            _initialState = AgentModule.SetAgentState(
+                _initialState,
+                BuyerAgentAddress,
+                buyerAgentState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                BuyerAvatarAddress,
+                _buyerAvatarState);
+            _initialState = LegacyModule.MintAsset(
+                _initialState,
+                context,
+                BuyerAgentAddress,
+                _goldCurrencyState.Currency * 1);
         }
 
         public static IEnumerable<object[]> Execute_MemberData()
@@ -281,7 +310,8 @@ namespace Lib9c.Tests.Action
                 var productsState = validateMember.ProductsState;
                 if (!(productsState is null))
                 {
-                    previousState = previousState.SetState(
+                    previousState = LegacyModule.SetState(
+                        previousState,
                         ProductsState.DeriveAddress(SellerAvatarAddress),
                         productsState.Serialize());
                 }
@@ -289,7 +319,8 @@ namespace Lib9c.Tests.Action
                 var product = validateMember.Product;
                 if (!(product is null))
                 {
-                    previousState = previousState.SetState(
+                    previousState = LegacyModule.SetState(
+                        previousState,
                         Product.DeriveAddress(product.ProductId),
                         product.Serialize());
                 }
@@ -326,7 +357,9 @@ namespace Lib9c.Tests.Action
                 ProductInfos = productInfos,
             };
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(new ActionContext()));
+            var actionContext = new ActionContext();
+            actionContext.PreviousState = new MockWorld();
+            Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(actionContext));
         }
 
         public class ExecuteMember

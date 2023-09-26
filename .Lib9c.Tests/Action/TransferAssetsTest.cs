@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
@@ -66,10 +67,11 @@ namespace Lib9c.Tests.Action
         {
             var contractAddress = _sender.Derive(nameof(RequestPledge));
             var patronAddress = new PrivateKey().ToAddress();
-            var prevState = new MockStateDelta(
-                MockState.Empty
-                    .SetBalance(_sender, _currency * 1000)
-                    .SetBalance(_recipient, _currency * 10));
+            var prevState = new MockWorld(
+                new MockAccount(
+                    new MockAccountState(ReservedAddresses.LegacyAccount)
+                        .SetBalance(_sender, _currency * 1000)
+                        .SetBalance(_recipient, _currency * 10)));
             var action = new TransferAssets(
                 sender: _sender,
                 new List<(Address, FungibleAssetValue)>
@@ -84,7 +86,7 @@ namespace Lib9c.Tests.Action
                 Signer = _sender,
                 Rehearsal = false,
                 BlockIndex = 1,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.Equal(_currency * 800, nextState.GetBalance(_sender, _currency));
             Assert.Equal(_currency * 110, nextState.GetBalance(_recipient, _currency));
@@ -96,10 +98,11 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InvalidTransferSignerException()
         {
-            var prevState = new MockStateDelta(
-                MockState.Empty
-                    .SetBalance(_sender, _currency * 1000)
-                    .SetBalance(_recipient, _currency * 10));
+            var prevState = new MockWorld(
+                new MockAccount(
+                    new MockAccountState(ReservedAddresses.LegacyAccount)
+                        .SetBalance(_sender, _currency * 1000)
+                        .SetBalance(_recipient, _currency * 10)));
             var action = new TransferAssets(
                 sender: _sender,
                 new List<(Address, FungibleAssetValue)>
@@ -128,9 +131,10 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InvalidTransferRecipientException()
         {
-            var prevState = new MockStateDelta(
-                MockState.Empty
-                    .SetBalance(_sender, _currency * 1000));
+            var prevState = new MockWorld(
+                new MockAccount(
+                    new MockAccountState(ReservedAddresses.LegacyAccount)
+                        .SetBalance(_sender, _currency * 1000)));
             // Should not allow TransferAsset with same sender and recipient.
             var action = new TransferAssets(
                 sender: _sender,
@@ -158,11 +162,12 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InsufficientBalanceException()
         {
-            var prevState = new MockStateDelta(
-                MockState.Empty
-                    .SetState(_recipient, new AgentState(_recipient).Serialize())
-                    .SetBalance(_sender, _currency * 1000)
-                    .SetBalance(_recipient, _currency * 10));
+            var prevState = new MockWorld(
+                new MockAccount(
+                    new MockAccountState(ReservedAddresses.LegacyAccount)
+                        .SetState(_recipient, new AgentState(_recipient).Serialize())
+                        .SetBalance(_sender, _currency * 1000)
+                        .SetBalance(_recipient, _currency * 10)));
             var action = new TransferAssets(
                 sender: _sender,
                 new List<(Address, FungibleAssetValue)>
@@ -193,11 +198,12 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var currencyBySender = Currency.Legacy("NCG", 2, _sender);
 #pragma warning restore CS0618
-            var prevState = new MockStateDelta(
-                MockState.Empty
-                    .SetState(_recipient, new AgentState(_recipient).Serialize())
-                    .SetBalance(_sender, currencyBySender * 1000)
-                    .SetBalance(_recipient, currencyBySender * 10));
+            var prevState = new MockWorld(
+                new MockAccount(
+                    new MockAccountState(ReservedAddresses.LegacyAccount)
+                        .SetState(_recipient, new AgentState(_recipient).Serialize())
+                        .SetBalance(_sender, currencyBySender * 1000)
+                        .SetBalance(_recipient, currencyBySender * 10)));
             var action = new TransferAssets(
                 sender: _sender,
                 new List<(Address, FungibleAssetValue)>
@@ -234,11 +240,11 @@ namespace Lib9c.Tests.Action
 
             IAccount nextState = action.Execute(new ActionContext()
             {
-                PreviousState = new MockStateDelta(),
+                PreviousState = new MockWorld(),
                 Signer = default,
                 Rehearsal = true,
                 BlockIndex = 1,
-            });
+            }).GetAccount(ReservedAddresses.LegacyAccount);
 
             Assert.Equal(
                 ImmutableHashSet.Create(
@@ -366,7 +372,7 @@ namespace Lib9c.Tests.Action
             {
                 action.Execute(new ActionContext()
                 {
-                    PreviousState = new MockStateDelta(),
+                    PreviousState = new MockWorld(),
                     Signer = _sender,
                     Rehearsal = false,
                     BlockIndex = 1,
@@ -378,10 +384,11 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InvalidTransferCurrencyException()
         {
             var crystal = CrystalCalculator.CRYSTAL;
-            var prevState = new MockStateDelta(
-                MockState.Empty
-                    .SetState(_recipient.Derive(ActivationKey.DeriveKey), true.Serialize())
-                    .SetBalance(_sender, crystal * 1000));
+            var prevState = new MockWorld(
+                new MockAccount(
+                    new MockAccountState(ReservedAddresses.LegacyAccount)
+                        .SetState(_recipient.Derive(ActivationKey.DeriveKey), true.Serialize())
+                        .SetBalance(_sender, crystal * 1000)));
             var action = new TransferAssets(
                 sender: _sender,
                 recipients: new List<(Address, FungibleAssetValue)>
@@ -395,7 +402,7 @@ namespace Lib9c.Tests.Action
                 PreviousState = prevState,
                 Signer = _sender,
                 Rehearsal = false,
-                BlockIndex = TransferAsset3.CrystalTransferringRestrictionStartIndex,
+                BlockIndex = TransferAsset.CrystalTransferringRestrictionStartIndex,
             }));
         }
     }

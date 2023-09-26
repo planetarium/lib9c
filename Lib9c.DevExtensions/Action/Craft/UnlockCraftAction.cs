@@ -5,12 +5,13 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume;
 using Nekoyume.Action;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Exceptions;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -23,7 +24,7 @@ namespace Lib9c.DevExtensions.Action.Craft
         public Address AvatarAddress { get; set; }
         public ActionTypeAttribute ActionType { get; set; }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             if (context.Rehearsal)
@@ -31,7 +32,7 @@ namespace Lib9c.DevExtensions.Action.Craft
                 return context.PreviousState;
             }
 
-            var states = context.PreviousState;
+            var world = context.PreviousState;
             int targetStage;
 
             if (ActionType.TypeIdentifier is Text text)
@@ -62,10 +63,11 @@ namespace Lib9c.DevExtensions.Action.Craft
 
             var worldInformation = new WorldInformation(
                 context.BlockIndex,
-                states.GetSheet<WorldSheet>(),
+                LegacyModule.GetSheet<WorldSheet>(world),
                 targetStage
             );
-            return states.SetState(
+            return LegacyModule.SetState(
+                world,
                 AvatarAddress.Derive(LegacyWorldInformationKey),
                 worldInformation.Serialize()
             );

@@ -9,9 +9,11 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Crystal;
     using Xunit;
@@ -27,7 +29,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _avatarState;
         private readonly Currency _crystalCurrency;
         private readonly Currency _ncgCurrency;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public GrindingTest()
         {
@@ -60,21 +62,31 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(_ncgCurrency);
 
-            _initialState = new MockStateDelta()
-                .SetState(
-                    Addresses.GetSheetAddress<CrystalMonsterCollectionMultiplierSheet>(),
-                    _tableSheets.CrystalMonsterCollectionMultiplierSheet.Serialize())
-                .SetState(
-                    Addresses.GetSheetAddress<CrystalEquipmentGrindingSheet>(),
-                    _tableSheets.CrystalEquipmentGrindingSheet.Serialize())
-                .SetState(
-                    Addresses.GetSheetAddress<MaterialItemSheet>(),
-                    _tableSheets.MaterialItemSheet.Serialize())
-                .SetState(
-                    Addresses.GetSheetAddress<StakeRegularRewardSheet>(),
-                    _tableSheets.StakeRegularRewardSheet.Serialize())
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize());
+            _initialState = new MockWorld();
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                Addresses.GetSheetAddress<CrystalMonsterCollectionMultiplierSheet>(),
+                _tableSheets.CrystalMonsterCollectionMultiplierSheet.Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                Addresses.GetSheetAddress<CrystalEquipmentGrindingSheet>(),
+                _tableSheets.CrystalEquipmentGrindingSheet.Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                Addresses.GetSheetAddress<MaterialItemSheet>(),
+                _tableSheets.MaterialItemSheet.Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                Addresses.GetSheetAddress<StakeRegularRewardSheet>(),
+                _tableSheets.StakeRegularRewardSheet.Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                Addresses.GoldCurrency,
+                goldCurrencyState.Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                Addresses.GameConfig,
+                gameConfigState.Serialize());
         }
 
         [Theory]
@@ -125,7 +137,7 @@ namespace Lib9c.Tests.Action
             var state = _initialState;
             if (agentExist)
             {
-                state = state.SetState(_agentAddress, _agentState.Serialize());
+                state = AgentModule.SetAgentState(state, _agentAddress, _agentState);
             }
 
             if (avatarExist)
@@ -154,13 +166,11 @@ namespace Lib9c.Tests.Action
                     _avatarState.inventory.AddItem(apStone);
                 }
 
-                state = state
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, _avatarState.SerializeV2());
+                state = AvatarModule.SetAvatarStateV2(state, _avatarAddress, _avatarState);
 
-                Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
+                Assert.Equal(
+                    0 * _crystalCurrency,
+                    LegacyModule.GetBalance(state, _avatarAddress, _crystalCurrency));
             }
 
             if (stake || monsterCollect)
@@ -173,11 +183,12 @@ namespace Lib9c.Tests.Action
 
                 if (stake)
                 {
-                    state = state.SetState(stakeStateAddress, stakeState.SerializeV2());
+                    state = LegacyModule.SetState(state, stakeStateAddress, stakeState.SerializeV2());
 
                     if (requiredGold > 0)
                     {
-                        state = state.MintAsset(
+                        state = LegacyModule.MintAsset(
+                            state,
                             context,
                             stakeStateAddress,
                             requiredGold * _ncgCurrency
@@ -188,14 +199,15 @@ namespace Lib9c.Tests.Action
                 if (monsterCollect)
                 {
                     var mcAddress = MonsterCollectionState.DeriveAddress(_agentAddress, 0);
-                    state = state.SetState(
+                    state = LegacyModule.SetState(
+                        state,
                         mcAddress,
                         new MonsterCollectionState(mcAddress, monsterCollectLevel, 1).Serialize()
                     );
 
                     if (requiredGold > 0)
                     {
-                        state = state.MintAsset(context, mcAddress, requiredGold * _ncgCurrency);
+                        state = LegacyModule.MintAsset(state, context, mcAddress, requiredGold * _ncgCurrency);
                     }
                 }
             }
@@ -215,20 +227,22 @@ namespace Lib9c.Tests.Action
                 ChargeAp = chargeAp,
             };
 
+            var world = new MockWorld(state);
             if (exc is null)
             {
-                var nextState = action.Execute(new ActionContext
+                var nextWorld = action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = world,
                     Signer = _agentAddress,
                     BlockIndex = 1,
                     Random = _random,
                 });
+                var nextAccount = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
 
-                var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+                var nextAvatarState = AvatarModule.GetAvatarStateV2(nextWorld, _avatarAddress);
                 FungibleAssetValue asset = totalAsset * _crystalCurrency;
 
-                Assert.Equal(asset, nextState.GetBalance(_agentAddress, _crystalCurrency));
+                Assert.Equal(asset, nextAccount.GetBalance(_agentAddress, _crystalCurrency));
                 Assert.False(nextAvatarState.inventory.HasNonFungibleItem(default));
                 Assert.Equal(115, nextAvatarState.actionPoint);
 
@@ -245,7 +259,7 @@ namespace Lib9c.Tests.Action
             {
                 Assert.Throws(exc, () => action.Execute(new ActionContext
                 {
-                    PreviousState = state,
+                    PreviousState = world,
                     Signer = _agentAddress,
                     BlockIndex = 1,
                     Random = _random,

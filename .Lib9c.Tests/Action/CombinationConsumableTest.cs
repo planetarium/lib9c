@@ -8,10 +8,12 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
     using static Lib9c.SerializeKeys;
 
@@ -21,7 +23,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly IRandom _random;
         private readonly TableSheets _tableSheets;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public CombinationConsumableTest()
         {
@@ -57,20 +59,26 @@ namespace Lib9c.Tests.Action
             var gold = new GoldCurrencyState(Currency.Legacy("NCG", 2, null));
 #pragma warning restore CS0618
 
-            _initialState = new MockStateDelta()
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(
+            _initialState = new MockWorld();
+            _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
+            _initialState = AvatarModule.SetAvatarState(_initialState, _avatarAddress, avatarState);
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                slotAddress,
+                new CombinationSlotState(
                     slotAddress,
-                    new CombinationSlotState(
-                        slotAddress,
-                        GameConfig.RequireClearedStageLevel.CombinationConsumableAction).Serialize())
-                .SetState(GameConfigState.Address, gold.Serialize());
+                    GameConfig.RequireClearedStageLevel.CombinationConsumableAction).Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                GameConfigState.Address,
+                gold.Serialize());
 
             foreach (var (key, value) in sheets)
             {
-                _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = LegacyModule.SetState(
+                    _initialState,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
         }
 
@@ -79,7 +87,7 @@ namespace Lib9c.Tests.Action
         [InlineData(false)]
         public void Execute(bool backward)
         {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialState, _avatarAddress);
             var row = _tableSheets.ConsumableItemRecipeSheet.Values.First();
             var costActionPoint = row.RequiredActionPoint;
             foreach (var materialInfo in row.Materials)
@@ -99,18 +107,20 @@ namespace Lib9c.Tests.Action
                 _tableSheets.WorldSheet,
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
-            IAccount previousState;
+            IWorld previousState;
             if (backward)
             {
-                previousState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+                previousState = AvatarModule.SetAvatarState(
+                    _initialState,
+                    _avatarAddress,
+                    avatarState);
             }
             else
             {
-                previousState = _initialState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                previousState = AvatarModule.SetAvatarStateV2(
+                    _initialState,
+                    _avatarAddress,
+                    avatarState);
             }
 
             var action = new CombinationConsumable
@@ -120,22 +130,23 @@ namespace Lib9c.Tests.Action
                 slotIndex = 0,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = previousState,
-                Signer = _agentAddress,
-                BlockIndex = 1,
-                Random = _random,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = previousState,
+                    Signer = _agentAddress,
+                    BlockIndex = 1,
+                    Random = _random,
+                });
 
-            var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+            var slotState = LegacyModule.GetCombinationSlotState(nextState, _avatarAddress, 0);
             Assert.NotNull(slotState.Result);
             Assert.NotNull(slotState.Result.itemUsable);
 
             var consumable = (Consumable)slotState.Result.itemUsable;
             Assert.NotNull(consumable);
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarStateV2(nextState, _avatarAddress);
             Assert.Equal(previousActionPoint - costActionPoint, nextAvatarState.actionPoint);
             Assert.Equal(previousMailCount + 1, nextAvatarState.mailBox.Count);
             Assert.IsType<CombinationMail>(nextAvatarState.mailBox.First());

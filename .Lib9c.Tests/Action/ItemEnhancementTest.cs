@@ -10,10 +10,12 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Extensions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
     using static SerializeKeys;
 
@@ -24,7 +26,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public ItemEnhancementTest()
         {
@@ -58,32 +60,49 @@ namespace Lib9c.Tests.Action
             ));
 
             var context = new ActionContext();
-            _initialState = new MockStateDelta()
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, _avatarState.Serialize())
-                .SetState(slotAddress, new CombinationSlotState(slotAddress, 0).Serialize())
-                .SetState(GoldCurrencyState.Address, gold.Serialize())
-                .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100_000_000_000)
-                .TransferAsset(
-                    context,
-                    Addresses.GoldCurrency,
-                    _agentAddress,
-                    gold.Currency * 3_000_000
+            _initialState = new MockWorld();
+            _initialState = AgentModule.SetAgentState(_initialState, _agentAddress, agentState);
+            _initialState = AvatarModule.SetAvatarState(
+                _initialState,
+                _avatarAddress,
+                _avatarState);
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                slotAddress,
+                new CombinationSlotState(slotAddress, 0).Serialize());
+            _initialState = LegacyModule.SetState(
+                _initialState,
+                GoldCurrencyState.Address,
+                gold.Serialize());
+            _initialState = LegacyModule.MintAsset(
+                _initialState,
+                context,
+                GoldCurrencyState.Address,
+                gold.Currency * 100_000_000_000);
+            _initialState = LegacyModule.TransferAsset(
+                _initialState,
+                context,
+                Addresses.GoldCurrency,
+                _agentAddress,
+                gold.Currency * 3_000_000
                 );
 
             Assert.Equal(
                 gold.Currency * 99_997_000_000,
-                _initialState.GetBalance(Addresses.GoldCurrency, gold.Currency)
+                LegacyModule.GetBalance(_initialState, Addresses.GoldCurrency, gold.Currency)
             );
             Assert.Equal(
                 gold.Currency * 3_000_000,
-                _initialState.GetBalance(_agentAddress, gold.Currency)
+                LegacyModule.GetBalance(_initialState, _agentAddress, gold.Currency)
             );
 
             foreach (var (key, value) in sheets)
             {
                 _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    LegacyModule.SetState(
+                    _initialState,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
         }
 
@@ -243,7 +262,7 @@ namespace Lib9c.Tests.Action
                 _avatarState.inventory.AddItem(material, count: 1);
             }
 
-            var result = new CombinationConsumable5.ResultModel()
+            var result = new Nekoyume.Action.Results.CombinationResult()
             {
                 id = default,
                 gold = 0,
@@ -277,20 +296,10 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(startLevel, equipment.level);
 
-            _initialState = _initialState
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    _avatarState.inventory.Serialize()
-                )
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    _avatarState.worldInformation.Serialize()
-                )
-                .SetState(
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    _avatarState.questList.Serialize()
-                )
-                .SetState(_avatarAddress, _avatarState.SerializeV2());
+            _initialState = AvatarModule.SetAvatarStateV2(
+                _initialState,
+                _avatarAddress,
+                _avatarState);
 
             var action = new ItemEnhancement
             {
@@ -300,7 +309,7 @@ namespace Lib9c.Tests.Action
                 slotIndex = 0,
             };
 
-            var nextState = action.Execute(new ActionContext()
+            var nextWorld = action.Execute(new ActionContext()
             {
                 PreviousState = _initialState,
                 Signer = _agentAddress,
@@ -308,9 +317,10 @@ namespace Lib9c.Tests.Action
                 Random = new TestRandom(),
             });
 
-            var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+            var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
+            var slotState = LegacyModule.GetCombinationSlotState(nextWorld, _avatarAddress, 0);
             var resultEquipment = (Equipment)slotState.Result.itemUsable;
-            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            var nextAvatarState = AvatarModule.GetAvatarState(nextWorld, _avatarAddress);
             Assert.Equal(default, resultEquipment.ItemId);
             Assert.Equal(expectedLevel, resultEquipment.level);
             Assert.Equal(startExp + expectedExpIncrement, resultEquipment.Exp);

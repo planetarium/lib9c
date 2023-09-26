@@ -29,7 +29,7 @@ public static class ActionContextMarshaller
             .Add("block_protocol_version", actionContext.BlockProtocolVersion)
             .Add("random_seed", actionContext.Random.Seed)
             .Add("signer", actionContext.Signer.ToHex())
-            .Add("previous_states", AccountStateDeltaMarshaller.Marshal(actionContext.PreviousState));
+            .Add("previous_states", WorldMarshaller.Marshal(actionContext.PreviousState));
 
         if (actionContext.TxId is { } txId)
         {
@@ -59,7 +59,7 @@ public static class ActionContextMarshaller
             previousStateRootHash: dictionary.ContainsKey("previous_state_root_hash")
                 ? new HashDigest<SHA256>(((Binary)dictionary["previous_state_root_hash"]).ByteArray)
                 : null,
-            previousState: AccountStateDeltaMarshaller.Unmarshal(dictionary["previous_states"]),
+            previousState: WorldMarshaller.Unmarshal(dictionary["previous_states"]),
             random: new Random((Integer)dictionary["random_seed"])
         );
     }

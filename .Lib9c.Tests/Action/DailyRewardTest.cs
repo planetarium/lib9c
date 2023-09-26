@@ -1,11 +1,14 @@
 namespace Lib9c.Tests.Action
 {
+    using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -16,7 +19,7 @@ namespace Lib9c.Tests.Action
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialWorld;
 
         public DailyRewardTest(ITestOutputHelper outputHelper)
         {
@@ -25,12 +28,14 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new MockStateDelta();
+            _initialWorld = new MockWorld();
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialWorld = LegacyModule.SetState(
+                    _initialWorld,
+                    Addresses.TableSheet.Derive(key),
+                    value.Serialize());
             }
 
             var tableSheets = new TableSheets(sheets);
@@ -52,10 +57,12 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses[0] = _avatarAddress;
 
-            _initialState = _initialState
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize());
+            _initialWorld = LegacyModule.SetState(
+                _initialWorld,
+                Addresses.GameConfig,
+                gameConfigState.Serialize());
+            _initialWorld = AgentModule.SetAgentState(_initialWorld, _agentAddress, agentState);
+            _initialWorld = AvatarModule.SetAvatarState(_initialWorld, _avatarAddress, avatarState);
         }
 
         [Fact]
@@ -69,14 +76,16 @@ namespace Lib9c.Tests.Action
             var nextState = action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new MockStateDelta(),
+                PreviousState = new MockWorld(),
                 Random = new TestRandom(),
                 Rehearsal = true,
                 Signer = _agentAddress,
             });
 
-            var updatedAddress = Assert.Single(nextState.Delta.UpdatedAddresses);
-            Assert.Equal(_avatarAddress, updatedAddress);
+            var updatedAddressAvatar = Assert.Single(nextState.GetAccount(Addresses.Avatar).Delta.UpdatedAddresses);
+            Assert.Equal(_avatarAddress, updatedAddressAvatar);
+            var updatedAddressLegacy = Assert.Single(nextState.GetAccount(ReservedAddresses.LegacyAccount).Delta.UpdatedAddresses);
+            Assert.Equal(_avatarAddress, updatedAddressLegacy);
         }
 
         [Theory]
@@ -84,36 +93,38 @@ namespace Lib9c.Tests.Action
         [InlineData(false)]
         public void Execute(bool legacy)
         {
-            IAccount previousStates = null;
+            IWorld previousStates = null;
             switch (legacy)
             {
                 case true:
-                    previousStates = _initialState;
+                    previousStates = _initialWorld;
                     break;
                 case false:
-                    var avatarState = _initialState.GetAvatarState(_avatarAddress);
-                    previousStates = SetAvatarStateAsV2To(_initialState, avatarState);
+                    var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
+                    previousStates = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
                     break;
             }
 
-            var nextState = ExecuteInternal(previousStates, 1800);
-            var nextGameConfigState = nextState.GetGameConfigState();
-            nextState.TryGetAvatarStateV2(_agentAddress, _avatarAddress, out var nextAvatarState, out var migrationRequired);
-            Assert.Equal(legacy, migrationRequired);
+            var nextWorld = ExecuteInternal(previousStates, 1800);
+            var nextGameConfigState = LegacyModule.GetGameConfigState(nextWorld);
+            AvatarModule.TryGetAvatarStateV2(nextWorld, _agentAddress, _avatarAddress, out var nextAvatarState, out var migrationRequired);
             Assert.NotNull(nextAvatarState);
             Assert.NotNull(nextAvatarState.inventory);
             Assert.NotNull(nextAvatarState.questList);
             Assert.NotNull(nextAvatarState.worldInformation);
             Assert.Equal(nextGameConfigState.ActionPointMax, nextAvatarState.actionPoint);
 
-            var avatarRuneAmount = nextState.GetBalance(_avatarAddress, RuneHelper.DailyRewardRune);
+            var avatarRuneAmount = LegacyModule.GetBalance(
+                nextWorld,
+                _avatarAddress,
+                RuneHelper.DailyRewardRune);
             var expectedRune = RuneHelper.DailyRewardRune * nextGameConfigState.DailyRuneRewardAmount;
             Assert.Equal(expectedRune, avatarRuneAmount);
         }
 
         [Fact]
         public void Execute_Throw_FailedLoadStateException() =>
-            Assert.Throws<FailedLoadStateException>(() => ExecuteInternal(new MockStateDelta()));
+            Assert.Throws<FailedLoadStateException>(() => ExecuteInternal(new MockWorld()));
 
         [Theory]
         [InlineData(0, 0, true)]
@@ -127,9 +138,9 @@ namespace Lib9c.Tests.Action
             long executeBlockIndex,
             bool throwsException)
         {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(_initialWorld, _avatarAddress);
             avatarState.dailyRewardReceivedIndex = dailyRewardReceivedIndex;
-            var previousStates = SetAvatarStateAsV2To(_initialState, avatarState);
+            var previousStates = AvatarModule.SetAvatarStateV2(_initialWorld, _avatarAddress, avatarState);
             try
             {
                 ExecuteInternal(previousStates, executeBlockIndex);
@@ -158,35 +169,34 @@ rune_skill_slot_unlock_cost,500";
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(gameConfigSheet);
 
-            var state = _initialState
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize());
+            var state = LegacyModule.SetState(
+                _initialWorld,
+                Addresses.GameConfig,
+                gameConfigState.Serialize());
             var nextState = ExecuteInternal(state, 1800);
-            var avatarRuneAmount = nextState.GetBalance(_avatarAddress, RuneHelper.DailyRewardRune);
+            var avatarRuneAmount = LegacyModule.GetBalance(
+                nextState,
+                _avatarAddress,
+                RuneHelper.DailyRewardRune);
             Assert.Equal(0, (int)avatarRuneAmount.MajorUnit);
         }
 
-        private IAccount SetAvatarStateAsV2To(IAccount state, AvatarState avatarState) =>
-            state
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2());
-
-        private IAccount ExecuteInternal(IAccount previousStates, long blockIndex = 0)
+        private IWorld ExecuteInternal(IWorld previousStates, long blockIndex = 0)
         {
             var dailyRewardAction = new DailyReward
             {
                 avatarAddress = _avatarAddress,
             };
 
-            return dailyRewardAction.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = previousStates,
-                Random = new TestRandom(),
-                Rehearsal = false,
-                Signer = _agentAddress,
-            });
+            return dailyRewardAction.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = previousStates,
+                    Random = new TestRandom(),
+                    Rehearsal = false,
+                    Signer = _agentAddress,
+                });
         }
     }
 }
