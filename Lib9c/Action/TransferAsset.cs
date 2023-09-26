@@ -15,6 +15,7 @@ using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.Stake;
 using Serilog;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -28,6 +29,14 @@ namespace Nekoyume.Action
     {
         private const int MemoMaxLength = 80;
         public const string TypeIdentifier = "transfer_asset5";
+        public const long CrystalTransferringRestrictionStartIndex = 6_220_000L;
+        public static readonly IReadOnlyList<Address> AllowedCrystalTransfers = new Address[]
+        {
+            // world boss service
+            new Address("CFCd6565287314FF70e4C4CF309dB701C43eA5bD"),
+            // world boss ops
+            new Address("3ac40802D359a6B51acB0AC0710cc90de19C9B81"),
+        };
 
         public TransferAsset()
         {
@@ -46,7 +55,7 @@ namespace Nekoyume.Action
         protected TransferAsset(SerializationInfo info, StreamingContext context)
         {
             var rawBytes = (byte[])info.GetValue("serialized", typeof(byte[]));
-            Dictionary pv = (Dictionary) new Codec().Decode(rawBytes);
+            Dictionary pv = (Dictionary)new Codec().Decode(rawBytes);
 
             LoadPlainValue(pv);
         }
@@ -74,7 +83,7 @@ namespace Nekoyume.Action
 
                 if (!(Memo is null))
                 {
-                    pairs = pairs.Append(new KeyValuePair<IKey, IValue>((Text) "memo", Memo.Serialize()));
+                    pairs = pairs.Append(new KeyValuePair<IKey, IValue>((Text)"memo", Memo.Serialize()));
                 }
 
                 return Dictionary.Empty
@@ -83,14 +92,14 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(4);
             Address signer = context.Signer;
-            var state = context.PreviousState;
+            var world = context.PreviousState;
             if (context.Rehearsal)
             {
-                return state.MarkBalanceChanged(context, Amount.Currency, new[] {Sender, Recipient});
+                return LegacyModule.MarkBalanceChanged(world, context, Amount.Currency, new[] { Sender, Recipient });
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, signer);
@@ -117,8 +126,8 @@ namespace Nekoyume.Action
                );
             }
 
-            TransferAsset3.CheckCrystalSender(currency, context.BlockIndex, Sender);
-            if (state.TryGetState(Recipient, out IValue serializedStakeState))
+            CheckCrystalSender(currency, context.BlockIndex, Sender);
+            if (LegacyModule.TryGetState(world, Recipient, out IValue serializedStakeState))
             {
                 bool isStakeStateOrMonsterCollectionState;
                 if (serializedStakeState is Dictionary dictionary)
@@ -198,7 +207,7 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}TransferAsset5 Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return state.TransferAsset(context, Sender, Recipient, Amount);
+            return LegacyModule.TransferAsset(world, context, Sender, Recipient, Amount);
         }
 
         public override void LoadPlainValue(IValue plainValue)
@@ -208,7 +217,7 @@ namespace Nekoyume.Action
             Sender = asDict["sender"].ToAddress();
             Recipient = asDict["recipient"].ToAddress();
             Amount = asDict["amount"].ToFungibleAssetValue();
-            Memo = asDict.TryGetValue((Text) "memo", out IValue memo) ? memo.ToDotnetString() : null;
+            Memo = asDict.TryGetValue((Text)"memo", out IValue memo) ? memo.ToDotnetString() : null;
 
             CheckMemoLength(Memo);
         }
@@ -225,6 +234,15 @@ namespace Nekoyume.Action
                 string msg = $"The length of the memo, {memo.Length}, " +
                              $"is overflowed than the max length, {MemoMaxLength}.";
                 throw new MemoLengthOverflowException(msg);
+            }
+        }
+
+        public static void CheckCrystalSender(Currency currency, long blockIndex, Address sender)
+        {
+            if (currency.Equals(CrystalCalculator.CRYSTAL) &&
+                blockIndex >= CrystalTransferringRestrictionStartIndex && !AllowedCrystalTransfers.Contains(sender))
+            {
+                throw new InvalidTransferCurrencyException($"transfer crystal not allowed {sender}");
             }
         }
     }

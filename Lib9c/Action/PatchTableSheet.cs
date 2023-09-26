@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
-using Nekoyume.TableData.Stake;
 using Serilog;
 
 namespace Nekoyume.Action
@@ -37,17 +37,17 @@ namespace Nekoyume.Action
         string IPatchTableSheetV1.TableName => TableName;
         string IPatchTableSheetV1.TableCsv => TableCsv;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
-            var states = ctx.PreviousState;
+            var world = ctx.PreviousState;
             var sheetAddress = Addresses.TableSheet.Derive(TableName);
             if (ctx.Rehearsal)
             {
-                return states
-                    .SetState(sheetAddress, MarkChanged)
-                    .SetState(GameConfigState.Address, MarkChanged);
+                world = LegacyModule.SetState(world, sheetAddress, MarkChanged);
+                world = LegacyModule.SetState(world, GameConfigState.Address, MarkChanged);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context);
@@ -67,8 +67,8 @@ namespace Nekoyume.Action
             }
 #endif
 
-            var sheet = states.GetState(sheetAddress);
-            var value = sheet is null ? string.Empty : sheet.ToDotnetString();
+            var sheets = LegacyModule.GetState(world, sheetAddress);
+            var value = sheets is null ? string.Empty : sheets.ToDotnetString();
 
             Log.Verbose(
                 "{AddressesHex}{TableName} was patched\n" +
@@ -82,15 +82,15 @@ namespace Nekoyume.Action
                 TableCsv
             );
 
-            states = states.SetState(sheetAddress, TableCsv.Serialize());
+            world = LegacyModule.SetState(world, sheetAddress, TableCsv.Serialize());
 
             if (TableName == nameof(GameConfigSheet))
             {
                 var gameConfigState = new GameConfigState(TableCsv);
-                states = states.SetState(GameConfigState.Address, gameConfigState.Serialize());
+                world = LegacyModule.SetState(world, GameConfigState.Address, gameConfigState.Serialize());
             }
 
-            return states;
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

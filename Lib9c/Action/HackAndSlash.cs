@@ -7,13 +7,14 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
-using Nekoyume.Helper;
+using Nekoyume.Model;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Serilog;
@@ -96,7 +97,7 @@ namespace Nekoyume.Action
             ApStoneCount = plainValue["apStoneCount"].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             if (context.Rehearsal)
@@ -111,8 +112,8 @@ namespace Nekoyume.Action
                 context.Random);
         }
 
-        public IAccount Execute(
-            IAccount states,
+        public IWorld Execute(
+            IWorld world,
             Address signer,
             long blockIndex,
             IRandom random)
@@ -148,11 +149,16 @@ namespace Nekoyume.Action
                     $"Total play count : {TotalPlayCount}");
             }
 
-            states.ValidateWorldId(AvatarAddress, WorldId);
+            LegacyModule.ValidateWorldId(world, AvatarAddress, WorldId);
 
             var sw = new Stopwatch();
             sw.Start();
-            if (!states.TryGetAvatarStateV2(signer, AvatarAddress, out AvatarState avatarState, out _))
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
+                    signer,
+                    AvatarAddress,
+                    out AvatarState avatarState,
+                    out _))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -163,31 +169,32 @@ namespace Nekoyume.Action
                 addressesHex, source, "Get AvatarState", blockIndex, sw.Elapsed.TotalMilliseconds);
 
             sw.Restart();
-            var sheets = states.GetSheets(
-                    containQuestSheet: true,
-                    containSimulatorSheets: true,
-                    sheetTypes: new[]
-                    {
-                        typeof(WorldSheet),
-                        typeof(StageSheet),
-                        typeof(StageWaveSheet),
-                        typeof(EnemySkillSheet),
-                        typeof(CostumeStatSheet),
-                        typeof(SkillSheet),
-                        typeof(QuestRewardSheet),
-                        typeof(QuestItemRewardSheet),
-                        typeof(EquipmentItemRecipeSheet),
-                        typeof(WorldUnlockSheet),
-                        typeof(MaterialItemSheet),
-                        typeof(ItemRequirementSheet),
-                        typeof(EquipmentItemRecipeSheet),
-                        typeof(EquipmentItemSubRecipeSheetV2),
-                        typeof(EquipmentItemOptionSheet),
-                        typeof(CrystalStageBuffGachaSheet),
-                        typeof(CrystalRandomBuffSheet),
-                        typeof(StakeActionPointCoefficientSheet),
-                        typeof(RuneListSheet),
-                    });
+            var sheets = LegacyModule.GetSheets(
+                world,
+                containQuestSheet: true,
+                containSimulatorSheets: true,
+                sheetTypes: new[]
+                {
+                    typeof(WorldSheet),
+                    typeof(StageSheet),
+                    typeof(StageWaveSheet),
+                    typeof(EnemySkillSheet),
+                    typeof(CostumeStatSheet),
+                    typeof(SkillSheet),
+                    typeof(QuestRewardSheet),
+                    typeof(QuestItemRewardSheet),
+                    typeof(EquipmentItemRecipeSheet),
+                    typeof(WorldUnlockSheet),
+                    typeof(MaterialItemSheet),
+                    typeof(ItemRequirementSheet),
+                    typeof(EquipmentItemRecipeSheet),
+                    typeof(EquipmentItemSubRecipeSheetV2),
+                    typeof(EquipmentItemOptionSheet),
+                    typeof(CrystalStageBuffGachaSheet),
+                    typeof(CrystalRandomBuffSheet),
+                    typeof(StakeActionPointCoefficientSheet),
+                    typeof(RuneListSheet),
+                });
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Get Sheets", blockIndex, sw.Elapsed.TotalMilliseconds);
@@ -196,8 +203,8 @@ namespace Nekoyume.Action
             var stakingLevel = 0;
             StakeActionPointCoefficientSheet actionPointCoefficientSheet = null;
 
-            var goldCurrency = states.GetGoldCurrency();
-            var stakedAmount = states.GetStakedAmount(signer);
+            var goldCurrency = LegacyModule.GetGoldCurrency(world);
+            var stakedAmount = LegacyModule.GetStakedAmount(world, signer);
             if (stakedAmount > goldCurrency * 0 &&
                 sheets.TryGetSheet(out actionPointCoefficientSheet))
             {
@@ -234,38 +241,38 @@ namespace Nekoyume.Action
 
             sw.Restart();
             var worldInformation = avatarState.worldInformation;
-            if (!worldInformation.TryGetWorld(WorldId, out var world))
+            if (!worldInformation.TryGetWorld(WorldId, out var worldInfo))
             {
                 // NOTE: Add new World from WorldSheet
                 worldInformation.AddAndUnlockNewWorld(worldRow, blockIndex, worldSheet);
-                worldInformation.TryGetWorld(WorldId, out world);
+                worldInformation.TryGetWorld(WorldId, out worldInfo);
             }
 
-            if (!world.IsUnlocked)
+            if (!worldInfo.IsUnlocked)
             {
                 throw new InvalidWorldException($"{addressesHex}{WorldId} is locked.");
             }
 
-            if (world.StageBegin != worldRow.StageBegin ||
-                world.StageEnd != worldRow.StageEnd)
+            if (worldInfo.StageBegin != worldRow.StageBegin ||
+                worldInfo.StageEnd != worldRow.StageEnd)
             {
                 worldInformation.UpdateWorld(worldRow);
             }
 
-            if (!world.IsStageCleared && StageId != world.StageBegin)
+            if (!worldInfo.IsStageCleared && StageId != worldInfo.StageBegin)
             {
                 throw new InvalidStageException(
                     $"{addressesHex}Aborted as the stage ({WorldId}/{StageId - 1}) is not cleared; " +
-                    $"clear the stage ({world.Id}/{world.StageBegin}) first"
+                    $"clear the stage ({worldInfo.Id}/{worldInfo.StageBegin}) first"
                 );
             }
 
-            if (world.IsStageCleared && StageId - 1 > world.StageClearedId)
+            if (worldInfo.IsStageCleared && StageId - 1 > worldInfo.StageClearedId)
             {
                 throw new InvalidStageException(
                     $"{addressesHex}Aborted as the stage ({WorldId}/{StageId - 1}) is not cleared; " +
-                    $"cleared stage is ({world.Id}/{world.StageClearedId}), so you can play stage " +
-                    $"({world.Id}/{world.StageClearedId + 1})"
+                    $"cleared stage is ({worldInfo.Id}/{worldInfo.StageClearedId}), so you can play stage " +
+                    $"({worldInfo.Id}/{worldInfo.StageClearedId + 1})"
                 );
             }
 
@@ -294,7 +301,7 @@ namespace Nekoyume.Action
 
             if (ApStoneCount > 0)
             {
-                var gameConfigState = states.GetGameConfigState();
+                var gameConfigState = LegacyModule.GetGameConfigState(world);
                 if (gameConfigState is null)
                 {
                     throw new FailedLoadStateException(
@@ -391,7 +398,7 @@ namespace Nekoyume.Action
             if (isNotClearedStage)
             {
                 // If state exists, get CrystalRandomSkillState. If not, create new state.
-                skillState = states.TryGetState<List>(skillStateAddress, out var serialized)
+                skillState = LegacyModule.TryGetState<List>(world, skillStateAddress, out var serialized)
                     ? new CrystalRandomSkillState(skillStateAddress, serialized)
                     : new CrystalRandomSkillState(skillStateAddress, StageId);
 
@@ -430,26 +437,32 @@ namespace Nekoyume.Action
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+            var runeSlotState = LegacyModule.TryGetState(
+                world,
+                runeSlotStateAddress,
+                out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Adventure);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
-            states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            world = LegacyModule.SetState(world, runeSlotStateAddress, runeSlotState.Serialize());
 
             // update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+            var itemSlotState = LegacyModule.TryGetState(
+                world,
+                itemSlotStateAddress,
+                out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Adventure);
             itemSlotState.UpdateEquipment(Equipments);
             itemSlotState.UpdateCostumes(Costumes);
-            states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            world = LegacyModule.SetState(world, itemSlotStateAddress, itemSlotState.Serialize());
 
             var runeStates = new List<RuneState>();
             foreach (var address in RuneInfos.Select(info => RuneState.DeriveAddress(AvatarAddress, info.RuneId)))
             {
-                if (states.TryGetState(address, out List rawRuneState))
+                if (LegacyModule.TryGetState(world, address, out List rawRuneState))
                 {
                     runeStates.Add(new RuneState(rawRuneState));
                 }
@@ -582,21 +595,17 @@ namespace Nekoyume.Action
                 }
 
                 skillState.Update(new List<int>());
-                states = states.SetState(skillStateAddress, skillState.Serialize());
+                world = LegacyModule.SetState(world, skillStateAddress, skillState.Serialize());
             }
 
-            states = states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Set States", blockIndex, sw.Elapsed.TotalMilliseconds);
 
             var totalElapsed = DateTimeOffset.UtcNow - started;
             Log.Verbose("{AddressesHex} {Source} HAS {Process}: {Elapsed}, blockIndex: {BlockIndex}", addressesHex, source, "Total Executed Time", totalElapsed.TotalMilliseconds, blockIndex);
-            return states;
+            return world;
         }
 
     }

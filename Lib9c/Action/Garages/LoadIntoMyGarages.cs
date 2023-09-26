@@ -13,9 +13,11 @@ using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Exceptions;
+using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.Garages;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData.Garages;
 
 namespace Nekoyume.Action.Garages
@@ -123,30 +125,31 @@ namespace Nekoyume.Action.Garages
                 : (string)(Text)list[3];
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var state = context.PreviousState;
             if (context.Rehearsal)
             {
-                return state;
+                return context.PreviousState;
             }
 
+            var world = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(context);
             ValidateFields(context.Signer, addressesHex);
 
-            var sheet = state.GetSheet<LoadIntoMyGaragesCostSheet>();
+            var sheet = LegacyModule.GetSheet<LoadIntoMyGaragesCostSheet>(world);
             var garageCost = sheet.GetGarageCost(
                 FungibleAssetValues?.Select(tuple => tuple.value),
                 FungibleIdAndCounts);
-            state = state.TransferAsset(
+            world = LegacyModule.TransferAsset(
+                world,
                 context,
                 context.Signer,
                 Addresses.GarageWallet,
                 garageCost);
 
-            state = TransferFungibleAssetValues(context, state);
-            return TransferFungibleItems(context.Signer, context.BlockIndex, state);
+            world = TransferFungibleAssetValues(context, world);
+            return TransferFungibleItems(context.Signer, context.BlockIndex, world);
         }
 
         private void ValidateFields(
@@ -215,40 +218,45 @@ namespace Nekoyume.Action.Garages
             }
         }
 
-        private IAccount TransferFungibleAssetValues(
+        private IWorld TransferFungibleAssetValues(
             IActionContext context,
-            IAccount states)
+            IWorld world)
         {
             if (FungibleAssetValues is null)
             {
-                return states;
+                return world;
             }
 
             var garageBalanceAddress =
                 Addresses.GetGarageBalanceAddress(context.Signer);
             foreach (var (balanceAddr, value) in FungibleAssetValues)
             {
-                states = states.TransferAsset(context, balanceAddr, garageBalanceAddress, value);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    balanceAddr,
+                    garageBalanceAddress,
+                    value);
             }
 
-            return states;
+            return world;
         }
 
-        private IAccount TransferFungibleItems(
+        private IWorld TransferFungibleItems(
             Address signer,
             long blockIndex,
-            IAccount states)
+            IWorld world)
         {
             if (InventoryAddr is null ||
                 FungibleIdAndCounts is null)
             {
-                return states;
+                return world;
             }
 
-            var inventory = states.GetInventory(InventoryAddr.Value);
+            var inventory = LegacyModule.GetInventory(world, InventoryAddr.Value);
             var fungibleItemTuples = GarageUtils.WithGarageStateTuples(
                 signer,
-                states,
+                world,
                 FungibleIdAndCounts);
             foreach (var (fungibleId, count, garageAddr, garageState) in fungibleItemTuples)
             {
@@ -302,10 +310,10 @@ namespace Nekoyume.Action.Garages
                 }
 
                 garage.Load(count);
-                states = states.SetState(garageAddr, garage.Serialize());
+                world = LegacyModule.SetState(world, garageAddr, garage.Serialize());
             }
 
-            return states.SetState(InventoryAddr.Value, inventory.Serialize());
+            return LegacyModule.SetState(world, InventoryAddr.Value, inventory.Serialize());
         }
     }
 }

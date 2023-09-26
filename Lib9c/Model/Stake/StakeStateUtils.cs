@@ -1,19 +1,19 @@
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Model.Stake
 {
     public static class StakeStateUtils
     {
         public static bool TryMigrate(
-            IAccountState state,
+            IWorldState worldState,
             Address stakeStateAddr,
             out StakeStateV2 stakeStateV2)
         {
-            var serialized = state.GetState(stakeStateAddr);
+            var serialized = LegacyModule.GetState(worldState, stakeStateAddr);
             if (serialized is null or Null)
             {
                 stakeStateV2 = default;
@@ -35,7 +35,7 @@ namespace Nekoyume.Model.Stake
             }
 
             // NOTE: Migration needs GameConfigState.
-            var gameConfigState = state.GetGameConfigState();
+            var gameConfigState = LegacyModule.GetGameConfigState(worldState);
             if (gameConfigState is null)
             {
                 stakeStateV2 = default;

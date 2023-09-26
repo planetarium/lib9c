@@ -9,9 +9,11 @@ using Lib9c.Model.Order;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 using BxDictionary = Bencodex.Types.Dictionary;
 using BxList = Bencodex.Types.List;
@@ -87,10 +89,10 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
             var shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
             var inventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
@@ -99,19 +101,24 @@ namespace Nekoyume.Action
             var itemAddress = Addresses.GetItemAddress(tradableId);
             if (context.Rehearsal)
             {
-                states = states.SetState(shardedShopAddress, MarkChanged);
-                return states
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetState(digestListAddress, MarkChanged)
-                    .SetState(itemAddress, MarkChanged)
-                    .SetState(sellerAvatarAddress, MarkChanged);
+                world = LegacyModule.SetState(world, shardedShopAddress, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, digestListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, itemAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, sellerAvatarAddress);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, sellerAvatarAddress);
 
-            if (!states.TryGetAvatarStateV2(context.Signer, sellerAvatarAddress, out var avatarState, out _))
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
+                    context.Signer,
+                    sellerAvatarAddress,
+                    out var avatarState,
+                    out _))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the seller failed to load.");
@@ -124,7 +131,10 @@ namespace Nekoyume.Action
                     GameConfig.RequireClearedStageLevel.ActionsInShop, current);
             }
 
-            if (!states.TryGetState(Order.DeriveAddress(orderId), out Dictionary orderDict))
+            if (!LegacyModule.TryGetState(
+                    world,
+                    Order.DeriveAddress(orderId),
+                    out Dictionary orderDict))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}failed to load {nameof(Order)}({Order.DeriveAddress(orderId)}).");
@@ -133,17 +143,25 @@ namespace Nekoyume.Action
             Order order = OrderFactory.Deserialize(orderDict);
             if (tradableId != order.TradableId || itemSubType != order.ItemSubType)
             {
-                return CancelV2(context, states, avatarState, addressesHex, order, tradableId, itemSubType);
+                return CancelV2(context, world, avatarState, addressesHex, order, tradableId, itemSubType);
             }
 
-            return Cancel(context, states, avatarState, addressesHex, order);
+            return Cancel(context, world, avatarState, addressesHex, order);
         }
 
-        public static IAccount CancelV2(IActionContext context, IAccount states, AvatarState avatarState, string addressesHex, Order order, Guid tradableId, ItemSubType itemSubType)
+        public static IWorld CancelV2(
+            IActionContext context,
+            IWorld world,
+            AvatarState avatarState,
+            string addressesHex,
+            Order order,
+            Guid tradableId,
+            ItemSubType itemSubType)
         {
             var orderTradableId = tradableId;
             var avatarAddress = avatarState.address;
-            Address shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, order.OrderId);
+            Address shardedShopAddress =
+                ShardedShopStateV2.DeriveAddress(itemSubType, order.OrderId);
             Address digestListAddress = OrderDigestListState.DeriveAddress(avatarAddress);
             Address itemAddress = Addresses.GetItemAddress(orderTradableId);
             Address inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
@@ -154,22 +172,29 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Sell Cancel exec started", addressesHex);
 
-            if (!states.TryGetState(shardedShopAddress, out BxDictionary shopStateDict))
+            if (!LegacyModule.TryGetState(
+                    world,
+                    shardedShopAddress,
+                    out BxDictionary shopStateDict))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}failed to load {nameof(ShardedShopStateV2)}({shardedShopAddress}).");
             }
 
             sw.Stop();
-            Log.Verbose("{AddressesHex}Sell Cancel Get ShopState: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose(
+                "{AddressesHex}Sell Cancel Get ShopState: {Elapsed}",
+                addressesHex,
+                sw.Elapsed);
             sw.Restart();
 
             avatarState.updatedAt = context.BlockIndex;
             avatarState.blockIndex = context.BlockIndex;
 
-            if (!states.TryGetState(digestListAddress, out Dictionary rawList))
+            if (!LegacyModule.TryGetState(world, digestListAddress, out Dictionary rawList))
             {
-                throw new FailedLoadStateException($"{addressesHex}failed to load {nameof(OrderDigest)}({digestListAddress}).");
+                throw new FailedLoadStateException(
+                    $"{addressesHex}failed to load {nameof(OrderDigest)}({digestListAddress}).");
             }
 
             var digestList = new OrderDigestListState(rawList);
@@ -177,7 +202,10 @@ namespace Nekoyume.Action
             // migration method
             avatarState.inventory.UnlockInvalidSlot(digestList, context.Signer, avatarAddress);
             avatarState.inventory.ReconfigureFungibleItem(digestList, orderTradableId);
-            avatarState.inventory.LockByReferringToDigestList(digestList, orderTradableId, context.BlockIndex);
+            avatarState.inventory.LockByReferringToDigestList(
+                digestList,
+                orderTradableId,
+                context.BlockIndex);
             //
 
             digestList.Remove(order.OrderId);
@@ -188,7 +216,10 @@ namespace Nekoyume.Action
             {
                 var shardedShopState = new ShardedShopStateV2(shopStateDict);
                 shardedShopState.Remove(order, context.BlockIndex);
-                states = states.SetState(shardedShopAddress, shardedShopState.Serialize());
+                world = LegacyModule.SetState(
+                    world,
+                    shardedShopAddress,
+                    shardedShopState.Serialize());
             }
 
             var expirationMail = avatarState.mailBox.OfType<OrderExpirationMail>()
@@ -207,32 +238,46 @@ namespace Nekoyume.Action
             avatarState.Update(mail);
 
             sw.Stop();
-            Log.Verbose("{AddressesHex}Sell Cancel Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose(
+                "{AddressesHex}Sell Cancel Update AvatarState: {Elapsed}",
+                addressesHex,
+                sw.Elapsed);
             sw.Restart();
 
-            states = states
-                .SetState(itemAddress, sellItem.Serialize())
-                .SetState(digestListAddress, digestList.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+            world = LegacyModule.SetState(world, itemAddress, sellItem.Serialize());
+            world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
+            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             sw.Stop();
-            Log.Verbose("{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose(
+                "{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}",
+                addressesHex,
+                sw.Elapsed);
             sw.Restart();
 
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
-            Log.Verbose("{AddressesHex}Sell Cancel Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
-            Log.Debug("{AddressesHex}Sell Cancel Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states;
+            Log.Verbose(
+                "{AddressesHex}Sell Cancel Set ShopState: {Elapsed}",
+                addressesHex,
+                sw.Elapsed);
+            Log.Debug(
+                "{AddressesHex}Sell Cancel Total Executed Time: {Elapsed}",
+                addressesHex,
+                ended - started);
+            return world;
         }
 
-        public static IAccount Cancel(IActionContext context, IAccount states, AvatarState avatarState, string addressesHex, Order order)
+        public static IWorld Cancel(
+            IActionContext context,
+            IWorld world,
+            AvatarState avatarState,
+            string addressesHex,
+            Order order)
         {
             var orderTradableId = order.TradableId;
             var avatarAddress = avatarState.address;
-            Address shardedShopAddress = ShardedShopStateV2.DeriveAddress(order.ItemSubType, order.OrderId);
+            Address shardedShopAddress =
+                ShardedShopStateV2.DeriveAddress(order.ItemSubType, order.OrderId);
             Address digestListAddress = OrderDigestListState.DeriveAddress(avatarAddress);
             Address itemAddress = Addresses.GetItemAddress(orderTradableId);
             Address inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
@@ -243,22 +288,29 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Sell Cancel exec started", addressesHex);
 
-            if (!states.TryGetState(shardedShopAddress, out BxDictionary shopStateDict))
+            if (!LegacyModule.TryGetState(
+                    world,
+                    shardedShopAddress,
+                    out BxDictionary shopStateDict))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}failed to load {nameof(ShardedShopStateV2)}({shardedShopAddress}).");
             }
 
             sw.Stop();
-            Log.Verbose("{AddressesHex}Sell Cancel Get ShopState: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose(
+                "{AddressesHex}Sell Cancel Get ShopState: {Elapsed}",
+                addressesHex,
+                sw.Elapsed);
             sw.Restart();
 
             avatarState.updatedAt = context.BlockIndex;
             avatarState.blockIndex = context.BlockIndex;
 
-            if (!states.TryGetState(digestListAddress, out Dictionary rawList))
+            if (!LegacyModule.TryGetState(world, digestListAddress, out Dictionary rawList))
             {
-                throw new FailedLoadStateException($"{addressesHex}failed to load {nameof(OrderDigest)}({digestListAddress}).");
+                throw new FailedLoadStateException(
+                    $"{addressesHex}failed to load {nameof(OrderDigest)}({digestListAddress}).");
             }
 
             var digestList = new OrderDigestListState(rawList);
@@ -266,7 +318,10 @@ namespace Nekoyume.Action
             // migration method
             avatarState.inventory.UnlockInvalidSlot(digestList, context.Signer, avatarAddress);
             avatarState.inventory.ReconfigureFungibleItem(digestList, orderTradableId);
-            avatarState.inventory.LockByReferringToDigestList(digestList, orderTradableId, context.BlockIndex);
+            avatarState.inventory.LockByReferringToDigestList(
+                digestList,
+                orderTradableId,
+                context.BlockIndex);
             //
 
             digestList.Remove(order.OrderId);
@@ -277,7 +332,7 @@ namespace Nekoyume.Action
             {
                 var shardedShopState = new ShardedShopStateV2(shopStateDict);
                 shardedShopState.Remove(order, context.BlockIndex);
-                states = states.SetState(shardedShopAddress, shardedShopState.Serialize());
+                world = LegacyModule.SetState(world, shardedShopAddress, shardedShopState.Serialize());
             }
 
             var expirationMail = avatarState.mailBox.OfType<OrderExpirationMail>()
@@ -296,25 +351,33 @@ namespace Nekoyume.Action
             avatarState.Update(mail);
 
             sw.Stop();
-            Log.Verbose("{AddressesHex}Sell Cancel Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose(
+                "{AddressesHex}Sell Cancel Update AvatarState: {Elapsed}",
+                addressesHex,
+                sw.Elapsed);
             sw.Restart();
 
-            states = states
-                .SetState(itemAddress, sellItem.Serialize())
-                .SetState(digestListAddress, digestList.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+            world = LegacyModule.SetState(world, itemAddress, sellItem.Serialize());
+            world = LegacyModule.SetState(world, digestListAddress, digestList.Serialize());
+            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
             sw.Stop();
-            Log.Verbose("{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
+            Log.Verbose(
+                "{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}",
+                addressesHex,
+                sw.Elapsed);
             sw.Restart();
 
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
-            Log.Verbose("{AddressesHex}Sell Cancel Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
-            Log.Debug("{AddressesHex}Sell Cancel Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states;
+            Log.Verbose(
+                "{AddressesHex}Sell Cancel Set ShopState: {Elapsed}",
+                addressesHex,
+                sw.Elapsed);
+            Log.Debug(
+                "{AddressesHex}Sell Cancel Total Executed Time: {Elapsed}",
+                addressesHex,
+                ended - started);
+            return world;
         }
     }
 }

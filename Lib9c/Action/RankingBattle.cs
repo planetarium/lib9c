@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -8,10 +8,13 @@ using Lib9c.Action;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Battle;
-using Nekoyume.Model;
 using Nekoyume.Extensions;
+using Nekoyume.Model;
+using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -43,28 +46,28 @@ namespace Nekoyume.Action
         IEnumerable<Guid> IRankingBattleV2.CostumeIds => costumeIds;
         IEnumerable<Guid> IRankingBattleV2.EquipmentIds => equipmentIds;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var ctx = context;
-            var states = ctx.PreviousState;
+            var world = ctx.PreviousState;
             var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (ctx.Rehearsal)
             {
-                return states
-                    .SetState(avatarAddress, MarkChanged)
-                    .SetState(weeklyArenaAddress, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, avatarAddress);
+                world = LegacyModule.SetState(world, weeklyArenaAddress, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress, enemyAddress);
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
-            var arenaSheetState = states.GetState(arenaSheetAddress);
+            var arenaSheetState = LegacyModule.GetState(world, arenaSheetAddress);
             if (arenaSheetState != null)
             {
                 // exception handling for v100240.
@@ -93,7 +96,12 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the signer tried to battle for themselves.");
             }
 
-            if (!states.TryGetAvatarStateV2(ctx.Signer, avatarAddress, out var avatarState, out var migrationRequired))
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
+                    ctx.Signer,
+                    avatarAddress,
+                    out var avatarState,
+                    out var migrationRequired))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -103,7 +111,8 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Get AgentAvatarStates: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
-            var sheets = states.GetSheetsV100291(
+            var sheets = LegacyModule.GetSheetsV100291(
+                world,
                 containRankingSimulatorSheets: true,
                 sheetTypes: new[]
                 {
@@ -126,34 +135,34 @@ namespace Nekoyume.Action
             avatarState.ValidateItemRequirement(
                 costumeItemIds.ToList(),
                 equipments,
-                states.GetSheet<ItemRequirementSheet>(),
-                states.GetSheet<EquipmentItemRecipeSheet>(),
-                states.GetSheet<EquipmentItemSubRecipeSheetV2>(),
-                states.GetSheet<EquipmentItemOptionSheet>(),
+                LegacyModule.GetSheet<ItemRequirementSheet>(world),
+                LegacyModule.GetSheet<EquipmentItemRecipeSheet>(world),
+                LegacyModule.GetSheet<EquipmentItemSubRecipeSheetV2>(world),
+                LegacyModule.GetSheet<EquipmentItemOptionSheet>(world),
                 addressesHex);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}RankingBattle Equip Equipments: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(out var world) ||
-                world.StageClearedId < GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)
+            if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(out var worldInfo) ||
+                worldInfo.StageClearedId < GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)
             {
                 throw new NotEnoughClearedStageLevelException(
                     addressesHex,
                     GameConfig.RequireClearedStageLevel.ActionsInRankingBoard,
-                    world.StageClearedId);
+                    worldInfo.StageClearedId);
             }
 
             AvatarState enemyAvatarState;
             try
             {
-                enemyAvatarState = states.GetAvatarStateV2(enemyAddress);
+                enemyAvatarState = AvatarModule.GetAvatarStateV2(world, enemyAddress);
             }
             // BackWard compatible.
             catch (FailedLoadStateException)
             {
-                enemyAvatarState = states.GetAvatarState(enemyAddress);
+                enemyAvatarState = AvatarModule.GetAvatarState(world, enemyAddress);
             }
 
             if (enemyAvatarState is null)
@@ -166,10 +175,10 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Get Enemy AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
-            if (!states.TryGetState(weeklyArenaAddress, out Dictionary rawWeeklyArenaState))
+            var costumeStatSheet = LegacyModule.GetSheet<CostumeStatSheet>(world);
+            if (!LegacyModule.TryGetState(world, weeklyArenaAddress, out Dictionary rawWeeklyArenaState))
             {
-                return states;
+                return world;
             }
 
             sw.Stop();
@@ -187,7 +196,8 @@ namespace Nekoyume.Action
             }
 
             // Run updated model
-            var (arenaInfoAddress, previousArenaInfo, isNewArenaInfo) = states.GetArenaInfo(
+            var (arenaInfoAddress, previousArenaInfo, isNewArenaInfo) = LegacyModule.GetArenaInfo(
+                world,
                 weeklyArenaAddress,
                 avatarState,
                 sheets.GetSheet<CharacterSheet>(),
@@ -212,7 +222,8 @@ namespace Nekoyume.Action
                 StageId,
                 costumeStatSheet);
             simulator.Simulate();
-            var (enemyArenaInfoAddress, previousEnemyArenaInfo, isNewEnemyArenaInfo) = states.GetArenaInfo(
+            var (enemyArenaInfoAddress, previousEnemyArenaInfo, isNewEnemyArenaInfo) = LegacyModule.GetArenaInfo(
+                world,
                 weeklyArenaAddress,
                 enemyAvatarState,
                 sheets.GetSheet<CharacterSheet>(),
@@ -263,23 +274,26 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Serialize WeeklyArenaState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            states = states
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(arenaInfoAddress, arenaInfo.Serialize())
-                .SetState(enemyArenaInfoAddress, enemyArenaInfo.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+            world = LegacyModule.SetState(world, arenaInfoAddress, arenaInfo.Serialize());
+            world = LegacyModule.SetState(world, enemyArenaInfoAddress, enemyArenaInfo.Serialize());
 
             if (migrationRequired)
             {
-                states = states
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(avatarAddress, avatarState.SerializeV2());
+                world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            }
+            else
+            {
+                world = AvatarModule.SetInventory(world, inventoryAddress, avatarState.inventory);
+                world = AvatarModule.SetQuestList(world, questListAddress, avatarState.questList);
             }
 
             if (isNewArenaInfo || isNewEnemyArenaInfo)
             {
                 var addressListAddress = weeklyArenaAddress.Derive("address_list");
-                var addressList = states.TryGetState(addressListAddress, out List rawAddressList)
+                var addressList = LegacyModule.TryGetState(
+                    world,
+                    addressListAddress,
+                    out List rawAddressList)
                     ? rawAddressList.ToList(StateExtensions.ToAddress)
                     : new List<Address>();
 
@@ -293,8 +307,11 @@ namespace Nekoyume.Action
                     addressList.Add(enemyAddress);
                 }
 
-                states = states.SetState(addressListAddress,
-                    addressList.Aggregate(List.Empty,
+                world = LegacyModule.SetState(
+                    world,
+                    addressListAddress,
+                    addressList.Aggregate(
+                        List.Empty,
                         (current, address) => current.Add(address.Serialize())));
             }
 
@@ -304,7 +321,7 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RankingBattle Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states;
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

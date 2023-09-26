@@ -9,6 +9,7 @@ using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -39,15 +40,15 @@ namespace Nekoyume.Action
             TargetLevel = plainValue["t"].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
 
+            var world = context.PreviousState;
             var addresses = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             // NOTE: The `AvatarAddress` must contained in `Signer`'s `AgentState.avatarAddresses`.
             if (!Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress))
@@ -60,7 +61,8 @@ namespace Nekoyume.Action
                     $" AvatarAddress({AvatarAddress}).");
             }
 
-            var sheets = states.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 sheetTypes: new[]
                 {
                     typeof(ArenaSheet),
@@ -78,7 +80,7 @@ namespace Nekoyume.Action
             }
 
             var petStateAddress = PetState.DeriveAddress(AvatarAddress, PetId);
-            var petState = states.TryGetState(petStateAddress, out List rawState)
+            var petState = LegacyModule.TryGetState(world, petStateAddress, out List rawState)
                 ? new PetState(rawState)
                 : new PetState(PetId);
             if (TargetLevel <= petState.Level)
@@ -120,7 +122,7 @@ namespace Nekoyume.Action
                     $"Can not find cost by TargetLevel({TargetLevel}).");
             }
 
-            var ncgCurrency = states.GetGoldCurrency();
+            var ncgCurrency = LegacyModule.GetGoldCurrency(world);
             var soulStoneCurrency = PetHelper.GetSoulstoneCurrency(petRow.SoulStoneTicker);
             var (ncgQuantity, soulStoneQuantity) = PetHelper.CalculateEnhancementCost(
                 costSheet,
@@ -136,7 +138,7 @@ namespace Nekoyume.Action
             if (ncgQuantity > 0)
             {
                 var ncgCost = ncgQuantity * ncgCurrency;
-                var currentNcg = states.GetBalance(context.Signer, ncgCurrency);
+                var currentNcg = LegacyModule.GetBalance(world, context.Signer, ncgCurrency);
                 if (currentNcg < ncgCost)
                 {
                     throw new NotEnoughFungibleAssetValueException(
@@ -146,13 +148,19 @@ namespace Nekoyume.Action
                         currentNcg);
                 }
 
-                states = states.TransferAsset(context, context.Signer, feeStoreAddress, ncgCost);
+                world = LegacyModule.TransferAsset(
+                    world,
+                    context,
+                    context.Signer,
+                    feeStoreAddress,
+                    ncgCost);
             }
 
             if (soulStoneQuantity > 0)
             {
                 var soulStoneCost = soulStoneQuantity * soulStoneCurrency;
-                var currentSoulStone = states.GetBalance(
+                var currentSoulStone = LegacyModule.GetBalance(
+                    world,
                     AvatarAddress,
                     soulStoneCurrency);
                 if (currentSoulStone < soulStoneCost)
@@ -164,7 +172,8 @@ namespace Nekoyume.Action
                         currentSoulStone);
                 }
 
-                states = states.TransferAsset(
+                world = LegacyModule.TransferAsset(
+                    world,
                     context,
                     AvatarAddress,
                     feeStoreAddress,
@@ -176,7 +185,7 @@ namespace Nekoyume.Action
                 petState.LevelUp();
             }
 
-            return states.SetState(petStateAddress, petState.Serialize());
+            return LegacyModule.SetState(world, petStateAddress, petState.Serialize());
         }
     }
 }

@@ -12,6 +12,8 @@ using System.Runtime.Serialization;
 using Lib9c.Abstractions;
 using Nekoyume.Model;
 using Serilog;
+using Nekoyume.Module;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Action
 {
@@ -43,7 +45,7 @@ namespace Nekoyume.Action
         protected TransferAssets(SerializationInfo info, StreamingContext context)
         {
             var rawBytes = (byte[])info.GetValue("serialized", typeof(byte[]));
-            Dictionary pv = (Dictionary) new Codec().Decode(rawBytes);
+            Dictionary pv = (Dictionary)new Codec().Decode(rawBytes);
 
             LoadPlainValue(pv);
         }
@@ -70,7 +72,7 @@ namespace Nekoyume.Action
 
                 if (!(Memo is null))
                 {
-                    pairs = pairs.Append(new KeyValuePair<IKey, IValue>((Text) "memo", Memo.Serialize()));
+                    pairs = pairs.Append(new KeyValuePair<IKey, IValue>((Text)"memo", Memo.Serialize()));
                 }
 
                 return Dictionary.Empty
@@ -79,13 +81,14 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(4);
             var state = context.PreviousState;
             if (context.Rehearsal)
             {
-                return Recipients.Aggregate(state, (current, t) => current.MarkBalanceChanged(context, t.amount.Currency, new[] {Sender, t.recipient}));
+                return Recipients.Aggregate(state, (current, t) => LegacyModule.MarkBalanceChanged(
+                    current, context, t.amount.Currency, new[] { Sender, t.recipient }));
             }
 
             if (Recipients.Count > RecipientsCapacity)
@@ -112,10 +115,10 @@ namespace Nekoyume.Action
             Recipients = new List<(Address recipient, FungibleAssetValue amount)>();
             foreach (var iValue in rawMap)
             {
-                var list = (List) iValue;
+                var list = (List)iValue;
                 Recipients.Add((list[0].ToAddress(), list[1].ToFungibleAssetValue()));
             }
-            Memo = asDict.TryGetValue((Text) "memo", out IValue memo) ? memo.ToDotnetString() : null;
+            Memo = asDict.TryGetValue((Text)"memo", out IValue memo) ? memo.ToDotnetString() : null;
 
             CheckMemoLength(Memo);
         }
@@ -135,8 +138,8 @@ namespace Nekoyume.Action
             }
         }
 
-        private IAccount Transfer(
-            IActionContext context, IAccount state, Address signer, Address recipient, FungibleAssetValue amount, long blockIndex)
+        private IWorld Transfer(
+            IActionContext context, IWorld world, Address signer, Address recipient, FungibleAssetValue amount, long blockIndex)
         {
             if (Sender != signer)
             {
@@ -159,8 +162,8 @@ namespace Nekoyume.Action
                 );
             }
 
-            TransferAsset3.CheckCrystalSender(currency, blockIndex, Sender);
-            return state.TransferAsset(context, Sender, recipient, amount);
+            TransferAsset.CheckCrystalSender(currency, blockIndex, Sender);
+            return LegacyModule.TransferAsset(world, context, Sender, recipient, amount);
         }
     }
 }

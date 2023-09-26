@@ -8,11 +8,12 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Event;
 using Serilog;
@@ -84,15 +85,15 @@ namespace Nekoyume.Action
             MaterialsToUse = deserialized;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
 
+            var world = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug(
@@ -104,7 +105,8 @@ namespace Nekoyume.Action
 
             // Get AvatarState
             sw.Start();
-            if (!states.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
                     context.Signer,
                     AvatarAddress,
                     out var avatarState,
@@ -127,7 +129,8 @@ namespace Nekoyume.Action
 
             // Get sheets
             sw.Restart();
-            var sheets = states.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 sheetTypes: new[]
                 {
                     typeof(EventScheduleSheet),
@@ -184,7 +187,7 @@ namespace Nekoyume.Action
             sw.Restart();
 
             // Validate Recipe ResultMaterialItemId
-            var materialItemSheet = states.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(world);
             if (!materialItemSheet.TryGetValue(
                     recipeRow.ResultMaterialItemId,
                     out var resultMaterialRow))
@@ -244,17 +247,7 @@ namespace Nekoyume.Action
 
             // Set states
             sw.Restart();
-            states = states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    AvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    AvatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize())
-                .SetState(
-                    AvatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
+            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
             sw.Stop();
             Log.Verbose(
                 "[{ActionTypeString}][{AddressesHex}] Set states: {Elapsed}",
@@ -269,7 +262,7 @@ namespace Nekoyume.Action
                 addressesHex,
                 DateTimeOffset.UtcNow - started);
 
-            return states;
+            return world;
         }
 
     }

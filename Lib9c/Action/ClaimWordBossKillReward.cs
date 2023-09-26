@@ -7,10 +7,10 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -23,22 +23,26 @@ namespace Nekoyume.Action
 
         Address IClaimWordBossKillRewardV1.AvatarAddress => AvatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
 
-            Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new [] {
-                typeof(WorldBossCharacterSheet),
-                typeof(RuneSheet),
-                typeof(RuneWeightSheet),
-                typeof(WorldBossListSheet),
-                typeof(WorldBossKillRewardSheet),
-            });
+            var world = context.PreviousState;
+
+            Dictionary<Type, (Address, ISheet)> sheets = LegacyModule.GetSheets(
+                world,
+                sheetTypes: new[]
+                {
+                    typeof(WorldBossCharacterSheet),
+                    typeof(RuneSheet),
+                    typeof(RuneWeightSheet),
+                    typeof(WorldBossListSheet),
+                    typeof(WorldBossKillRewardSheet),
+                });
 
             var worldBossListSheet = sheets.GetSheet<WorldBossListSheet>();
             int raidId;
@@ -52,15 +56,20 @@ namespace Nekoyume.Action
             }
 
             var raiderAddress = Addresses.GetRaiderAddress(AvatarAddress, raidId);
-            RaiderState raiderState = states.GetRaiderState(raiderAddress);
+            RaiderState raiderState = LegacyModule.GetRaiderState(world, raiderAddress);
             var row = sheets.GetSheet<WorldBossListSheet>().Values.First(r => r.Id == raidId);
-            var bossRow = sheets.GetSheet<WorldBossCharacterSheet>().Values.First(x => x.BossId == row.BossId);
+            var bossRow = sheets.GetSheet<WorldBossCharacterSheet>()
+                .Values.First(x => x.BossId == row.BossId);
             int rank = WorldBossHelper.CalculateRank(bossRow, raiderState.HighScore);
-            var worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(AvatarAddress, raidId);
-            var rewardRecord = new WorldBossKillRewardRecord((List) states.GetState(worldBossKillRewardRecordAddress));
+            var worldBossKillRewardRecordAddress =
+                Addresses.GetWorldBossKillRewardRecordAddress(AvatarAddress, raidId);
+            var rewardRecord = new WorldBossKillRewardRecord(
+                (List)LegacyModule.GetState(world, worldBossKillRewardRecordAddress));
             Address worldBossAddress = Addresses.GetWorldBossAddress(raidId);
-            var worldBossState = new WorldBossState((List) states.GetState(worldBossAddress));
-            return states.SetWorldBossKillReward(
+            var worldBossState =
+                new WorldBossState((List)LegacyModule.GetState(world, worldBossAddress));
+            return LegacyModule.SetWorldBossKillReward(
+                world,
                 context,
                 worldBossKillRewardRecordAddress,
                 rewardRecord,

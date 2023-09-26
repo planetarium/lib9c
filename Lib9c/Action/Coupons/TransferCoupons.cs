@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Coupons
 {
@@ -28,11 +29,11 @@ namespace Nekoyume.Action.Coupons
             private set;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
-            var signerWallet = states.GetCouponWallet(context.Signer);
+            var world = context.PreviousState;
+            var signerWallet = LegacyModule.GetCouponWallet(world, context.Signer);
             var orderedRecipients = CouponsPerRecipient.OrderBy(pair => pair.Key);
             foreach ((Address recipient, IImmutableSet<Guid> couponIds) in orderedRecipients)
             {
@@ -41,7 +42,7 @@ namespace Nekoyume.Action.Coupons
                     continue;
                 }
 
-                var recipientWallet = states.GetCouponWallet(recipient);
+                var recipientWallet = LegacyModule.GetCouponWallet(world, recipient);
                 foreach (Guid id in couponIds)
                 {
                     if (!signerWallet.TryGetValue(id, out var coupon))
@@ -55,11 +56,18 @@ namespace Nekoyume.Action.Coupons
                     recipientWallet = recipientWallet.Add(id, coupon);
                 }
 
-                states = states.SetCouponWallet(recipient, recipientWallet, context.Rehearsal);
+                world = LegacyModule.SetCouponWallet(
+                    world,
+                    recipient,
+                    recipientWallet,
+                    context.Rehearsal);
             }
 
-            states = states.SetCouponWallet(context.Signer, signerWallet, context.Rehearsal);
-            return states;
+            return LegacyModule.SetCouponWallet(
+                world,
+                context.Signer,
+                signerWallet,
+                context.Rehearsal);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

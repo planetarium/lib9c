@@ -6,6 +6,7 @@ using Nekoyume.Model.Pet;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Pet;
+using RapidCombination = Nekoyume.Action.Statics.RapidCombination;
 
 namespace Nekoyume.Helper
 {
@@ -157,7 +158,7 @@ namespace Nekoyume.Helper
             if (!petOptionSheet.TryGetValue(petState.PetId, out var optionRow) ||
                 !optionRow.LevelOptionMap.TryGetValue(petState.Level, out var optionInfo))
             {
-                return RapidCombination0.CalculateHourglassCount(hourglassPerBlock, diff);
+                return RapidCombination.CalculateHourglassCountV0(hourglassPerBlock, diff);
             }
             else
             {
@@ -165,13 +166,13 @@ namespace Nekoyume.Helper
                 {
                     var increasedHourglassPerBlock = hourglassPerBlock
                         + optionInfo.OptionValue;
-                    return RapidCombination0.CalculateHourglassCount(
+                    return RapidCombination.CalculateHourglassCountV0(
                         increasedHourglassPerBlock,
                         diff);
                 }
             }
 
-            return RapidCombination0.CalculateHourglassCount(hourglassPerBlock, diff);
+            return RapidCombination.CalculateHourglassCountV0(hourglassPerBlock, diff);
         }
     }
 }

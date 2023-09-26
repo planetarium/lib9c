@@ -5,6 +5,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -17,24 +18,22 @@ namespace Nekoyume.Action
 
         string IAddRedeemCodeV1.RedeemCsv => redeemCsv;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states
-                    .SetState(Addresses.RedeemCode, MarkChanged);
+                return LegacyModule.SetState(world, Addresses.RedeemCode, MarkChanged);
             }
 
             CheckPermission(context);
 
-            var redeem = states.GetRedeemCodeState();
+            var redeem = LegacyModule.GetRedeemCodeState(world);
             var sheet = new RedeemCodeListSheet();
             sheet.Set(redeemCsv);
             redeem.Update(sheet);
-            return states
-                .SetState(Addresses.RedeemCode, redeem.Serialize());
+            return LegacyModule.SetState(world, Addresses.RedeemCode, redeem.Serialize());
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

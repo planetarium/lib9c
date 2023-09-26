@@ -8,14 +8,16 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Battle;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
+using Nekoyume.Model;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Event;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Event;
 using Serilog;
@@ -115,14 +117,15 @@ namespace Nekoyume.Action
             RuneInfos = list[8].ToList(x => new RuneSlotInfo((List)x));
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
+
+            var world = context.PreviousState;
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -134,7 +137,8 @@ namespace Nekoyume.Action
             var sw = new Stopwatch();
             // Get AvatarState
             sw.Start();
-            if (!states.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
                     context.Signer,
                     AvatarAddress,
                     out var avatarState,
@@ -157,7 +161,8 @@ namespace Nekoyume.Action
 
             // Get sheets
             sw.Restart();
-            var sheets = states.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 containSimulatorSheets: true,
                 containValidateItemRequirementSheets: true,
                 sheetTypes: new[]
@@ -229,7 +234,7 @@ namespace Nekoyume.Action
             var eventDungeonInfoAddr = EventDungeonInfo.DeriveAddress(
                 AvatarAddress,
                 EventDungeonId);
-            var eventDungeonInfo = states.GetState(eventDungeonInfoAddr)
+            var eventDungeonInfo = LegacyModule.GetState(world, eventDungeonInfoAddr)
                 is Bencodex.Types.List serializedEventDungeonInfoList
                 ? new EventDungeonInfo(serializedEventDungeonInfoList)
                 : new EventDungeonInfo(remainingTickets: scheduleRow.DungeonTicketsMax);
@@ -262,13 +267,14 @@ namespace Nekoyume.Action
                         eventDungeonInfo.RemainingTickets);
                 }
 
-                var currency = states.GetGoldCurrency();
+                var currency = LegacyModule.GetGoldCurrency(world);
                 var cost = scheduleRow.GetDungeonTicketCost(
                     eventDungeonInfo.NumberOfTicketPurchases,
                     currency);
                 if (cost.Sign > 0)
                 {
-                    states = states.TransferAsset(
+                    world = LegacyModule.TransferAsset(
+                        world,
                         context,
                         context.Signer,
                         Addresses.EventDungeon,
@@ -300,21 +306,21 @@ namespace Nekoyume.Action
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+            var runeSlotState = LegacyModule.TryGetState(world, runeSlotStateAddress, out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Adventure);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
-            states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            world = LegacyModule.SetState(world, runeSlotStateAddress, runeSlotState.Serialize());
 
             // update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+            var itemSlotState = LegacyModule.TryGetState(world, itemSlotStateAddress, out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Adventure);
             itemSlotState.UpdateEquipment(Equipments);
             itemSlotState.UpdateCostumes(Costumes);
-            states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            world = LegacyModule.SetState(world, itemSlotStateAddress, itemSlotState.Serialize());
 
             // Simulate
             sw.Restart();
@@ -325,7 +331,7 @@ namespace Nekoyume.Action
             var runeStates = new List<RuneState>();
             foreach (var address in RuneInfos.Select(info => RuneState.DeriveAddress(AvatarAddress, info.RuneId)))
             {
-                if (states.TryGetState(address, out List rawRuneState))
+                if (LegacyModule.TryGetState(world, address, out List rawRuneState))
                 {
                     runeStates.Add(new RuneState(rawRuneState));
                 }
@@ -389,28 +395,18 @@ namespace Nekoyume.Action
             sw.Restart();
             if (migrationRequired)
             {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyInventoryKey),
-                        avatarState.inventory.Serialize())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize())
-                    .SetState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
             }
             else
             {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyInventoryKey),
-                        avatarState.inventory.Serialize())
-                    .SetState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
+                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
             }
+
+            world = LegacyModule.SetState(
+                world,
+                eventDungeonInfoAddr,
+                eventDungeonInfo.Serialize());
 
             sw.Stop();
             Log.Verbose(
@@ -425,7 +421,7 @@ namespace Nekoyume.Action
                 ActionTypeText,
                 addressesHex,
                 DateTimeOffset.UtcNow - started);
-            return states;
+            return world;
         }
     }
 }
