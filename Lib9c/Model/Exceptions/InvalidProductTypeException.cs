@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Model.Exceptions
 {
     [Serializable]
     public class InvalidProductTypeException : InvalidOperationException
