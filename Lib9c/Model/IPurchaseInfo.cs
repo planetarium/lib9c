@@ -3,7 +3,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Model
 {
     public interface IPurchaseInfo
     {

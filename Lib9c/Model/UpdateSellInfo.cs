@@ -4,7 +4,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Model
 {
     [Serializable]
     public class UpdateSellInfo

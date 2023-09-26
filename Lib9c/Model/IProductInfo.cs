@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.Market;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Model
 {
     public interface IProductInfo
     {
