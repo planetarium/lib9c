@@ -6,6 +6,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.Coupons;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Coupons
 {
@@ -27,13 +28,14 @@ namespace Nekoyume.Action.Coupons
 
         public Address Recipient { get; private set; }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states.SetCouponWallet(
+                return LegacyModule.SetCouponWallet(
+                    world,
                     Recipient,
                     ImmutableDictionary.Create<Guid, Coupon>(),
                     rehearsal: true);
@@ -41,7 +43,7 @@ namespace Nekoyume.Action.Coupons
 
             CheckPermission(context);
 
-            var wallet = states.GetCouponWallet(Recipient);
+            var wallet = LegacyModule.GetCouponWallet(world, Recipient);
             var random = context.GetRandom();
             var idBytes = new byte[16];
             var orderedRewards = Rewards.OrderBy(kv => kv.Key, default(RewardSet.Comparer));
@@ -56,7 +58,7 @@ namespace Nekoyume.Action.Coupons
                 }
             }
 
-            return states.SetCouponWallet(Recipient, wallet);
+            return LegacyModule.SetCouponWallet(world, Recipient, wallet);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

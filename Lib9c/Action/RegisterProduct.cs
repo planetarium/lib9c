@@ -7,10 +7,13 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Battle;
+using Nekoyume.Model;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -25,14 +28,15 @@ namespace Nekoyume.Action
         public IEnumerable<IRegisterInfo> RegisterInfos;
         public bool ChargeAp;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
+
+            var world = context.PreviousState;
 
             if (!RegisterInfos.Any())
             {
@@ -44,7 +48,7 @@ namespace Nekoyume.Action
                 throw new ArgumentOutOfRangeException($"{nameof(RegisterInfos)} must be less than or equal {Capacity}.");
             }
 
-            var ncg = states.GetGoldCurrency();
+            var ncg = LegacyModule.GetGoldCurrency(world);
             foreach (var registerInfo in RegisterInfos)
             {
                 registerInfo.ValidateAddress(AvatarAddress);
@@ -52,7 +56,11 @@ namespace Nekoyume.Action
                 registerInfo.Validate();
             }
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
+                    context.Signer,
+                    AvatarAddress,
+                    out var avatarState,
                     out var migrationRequired))
             {
                 throw new FailedLoadStateException("failed to load avatar state.");
@@ -68,45 +76,59 @@ namespace Nekoyume.Action
                     current);
             }
 
-            avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
+            avatarState.UseAp(
+                CostAp,
+                ChargeAp,
+                LegacyModule.GetSheet<MaterialItemSheet>(world),
+                context.BlockIndex,
+                LegacyModule.GetGameConfigState(world));
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
-            if (states.TryGetState(productsStateAddress, out List rawProducts))
+            if (LegacyModule.TryGetState(world, productsStateAddress, out List rawProducts))
             {
                 productsState = new ProductsState(rawProducts);
             }
             else
             {
                 productsState = new ProductsState();
-                var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
+                var marketState = LegacyModule.TryGetState(
+                    world,
+                    Addresses.Market,
+                    out List rawMarketList)
                     ? new MarketState(rawMarketList)
                     : new MarketState();
                 marketState.AvatarAddresses.Add(AvatarAddress);
-                states = states.SetState(Addresses.Market, marketState.Serialize());
+                world = LegacyModule.SetState(world, Addresses.Market, marketState.Serialize());
             }
 
             var random = context.GetRandom();
             foreach (var info in RegisterInfos.OrderBy(r => r.Type).ThenBy(r => r.Price))
             {
-                states = Register(context, info, avatarState, productsState, states, random);
+                world = Register(context, info, avatarState, productsState, world, random);
             }
+            
+            world = LegacyModule.SetState(world, productsStateAddress, productsState.Serialize());
 
-            states = states
-                .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(productsStateAddress, productsState.Serialize());
             if (migrationRequired)
             {
-                states = states
-                    .SetState(AvatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(AvatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize());
+                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+            }
+            else
+            {
+                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
+                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
             }
 
-            return states;
+            return world;
         }
 
-        public static IAccount Register(IActionContext context, IRegisterInfo info, AvatarState avatarState,
-            ProductsState productsState, IAccount states, IRandom random)
+        public static IWorld Register(
+            IActionContext context,
+            IRegisterInfo info,
+            AvatarState avatarState,
+            ProductsState productsState,
+            IWorld world,
+            IRandom random)
         {
             switch (info)
             {
@@ -124,17 +146,21 @@ namespace Nekoyume.Action
                             {
                                 case ProductType.Fungible:
                                 {
-                                    if (avatarState.inventory.TryGetTradableItems(tradableId,
-                                            context.BlockIndex, itemCount, out var items))
+                                    if (avatarState.inventory.TryGetTradableItems(
+                                            tradableId,
+                                            context.BlockIndex,
+                                            itemCount,
+                                            out var items))
                                     {
                                         int totalCount = itemCount;
-                                        tradableItem = (ITradableItem) items.First().item;
+                                        tradableItem = (ITradableItem)items.First().item;
                                         foreach (var inventoryItem in items)
                                         {
-                                            int removeCount = Math.Min(totalCount,
+                                            int removeCount = Math.Min(
+                                                totalCount,
                                                 inventoryItem.count);
                                             ITradableFungibleItem tradableFungibleItem =
-                                                (ITradableFungibleItem) inventoryItem.item;
+                                                (ITradableFungibleItem)inventoryItem.item;
                                             if (!avatarState.inventory.RemoveTradableItem(
                                                     tradableId,
                                                     tradableFungibleItem.RequiredBlockIndex,
@@ -161,7 +187,8 @@ namespace Nekoyume.Action
                                 }
                                 case ProductType.NonFungible:
                                 {
-                                    if (avatarState.inventory.TryGetNonFungibleItem(tradableId,
+                                    if (avatarState.inventory.TryGetNonFungibleItem(
+                                            tradableId,
                                             out var item) &&
                                         avatarState.inventory.RemoveNonFungibleItem(tradableId))
                                     {
@@ -172,9 +199,11 @@ namespace Nekoyume.Action
                                 }
                             }
 
-                            if (tradableItem is null || tradableItem.RequiredBlockIndex > context.BlockIndex)
+                            if (tradableItem is null ||
+                                tradableItem.RequiredBlockIndex > context.BlockIndex)
                             {
-                                throw new ItemDoesNotExistException($"can't find item: {tradableId}");
+                                throw new ItemDoesNotExistException(
+                                    $"can't find item: {tradableId}");
                             }
 
                             Guid productId = random.GenerateRandomGuid();
@@ -190,7 +219,9 @@ namespace Nekoyume.Action
                                 SellerAvatarAddress = registerInfo.AvatarAddress,
                             };
                             productsState.ProductIds.Add(productId);
-                            states = states.SetState(Product.DeriveAddress(productId),
+                            world = LegacyModule.SetState(
+                                world,
+                                Product.DeriveAddress(productId),
                                 product.Serialize());
                             break;
                         }
@@ -212,15 +243,19 @@ namespace Nekoyume.Action
                         SellerAgentAddress = context.Signer,
                         SellerAvatarAddress = assetInfo.AvatarAddress,
                     };
-                    states = states
-                        .TransferAsset(context, avatarState.address, productAddress, asset)
-                        .SetState(productAddress, product.Serialize());
+                    world = LegacyModule.TransferAsset(
+                        world,
+                        context,
+                        avatarState.address,
+                        productAddress,
+                        asset);
+                    world = LegacyModule.SetState(world, productAddress, product.Serialize());
                     productsState.ProductIds.Add(productId);
                     break;
                 }
             }
 
-            return states;
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

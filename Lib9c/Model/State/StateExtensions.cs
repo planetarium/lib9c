@@ -11,6 +11,7 @@ using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
+using Nekoyume.Action.Results;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 
@@ -292,6 +293,24 @@ namespace Nekoyume.Model.State
             return result;
         }
 
+        public static IValue Serialize(this IEnumerable<(Address, Address, IValue)> value)
+        {
+            var result = List.Empty;
+            foreach (var v in value
+                         .OrderBy(tuple => tuple.Item1)
+                         .ThenBy(tuple => tuple.Item2)
+                         .ThenBy(tuple => tuple.Item3))
+            {
+                result = result.Add(
+                    new List(
+                        v.Item1.Serialize(),
+                        v.Item2.Serialize(),
+                        v.Item3)); // Already IValue
+            }
+
+            return result;
+        }
+
         public static List<(Address, IValue)> ToStateList(this IValue serialized)
         {
             if (!(serialized is List serializedList))
@@ -306,6 +325,27 @@ namespace Nekoyume.Model.State
                 result.Add((
                     list.ElementAt(0).ToAddress(),
                     list.ElementAt(1) // Already IValue
+                ));
+            }
+
+            return result;
+        }
+
+        public static List<(Address, Address, IValue)> ToAccountStateList(this IValue serialized)
+        {
+            if (!(serialized is List serializedList))
+            {
+                throw new InvalidCastException();
+            }
+
+            var result = new List<(Address, Address, IValue)>();
+            foreach (var value in serializedList)
+            {
+                var list = (List)value;
+                result.Add((
+                    list.ElementAt(0).ToAddress(),
+                    list.ElementAt(1).ToAddress(),
+                    list.ElementAt(2)// Already IValue
                 ));
             }
 
@@ -453,17 +493,11 @@ namespace Nekoyume.Model.State
         public static PurchaseInfo0 ToPurchaseInfo(this IValue serialized) =>
             new PurchaseInfo0((Dictionary) serialized);
 
-        public static BuyMultiple.PurchaseInfo ToPurchaseInfoLegacy(this IValue serialized) =>
-            new BuyMultiple.PurchaseInfo((Dictionary) serialized);
+        public static PurchaseResult ToPurchaseResult(this IValue serialized) =>
+            new PurchaseResult((Dictionary) serialized);
 
-        public static Buy7.PurchaseResult ToPurchaseResult(this IValue serialized) =>
-            new Buy7.PurchaseResult((Dictionary) serialized);
-
-        public static BuyMultiple.PurchaseResult ToPurchaseResultLegacy(this IValue serialized) =>
-            new BuyMultiple.PurchaseResult((Dictionary) serialized);
-
-        public static Buy7.SellerResult ToSellerResult(this IValue serialized) =>
-            new Buy7.SellerResult((Dictionary) serialized);
+        public static SellerResult ToSellerResult(this IValue serialized) =>
+            new SellerResult((Dictionary) serialized);
 
         #endregion
 

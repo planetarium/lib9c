@@ -11,6 +11,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 
@@ -33,25 +34,29 @@ namespace Nekoyume.Action
             AvatarAddress = avatarAddress;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
+
+            var world = context.PreviousState;
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ClaimRaidReward exec started", addressesHex);
-            Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new[] {
-                typeof(RuneWeightSheet),
-                typeof(WorldBossRankRewardSheet),
-                typeof(WorldBossCharacterSheet),
-                typeof(WorldBossListSheet),
-                typeof(RuneSheet),
-            });
+            Dictionary<Type, (Address, ISheet)> sheets = LegacyModule.GetSheets(
+                world,
+                sheetTypes: new[]
+                {
+                    typeof(RuneWeightSheet),
+                    typeof(WorldBossRankRewardSheet),
+                    typeof(WorldBossCharacterSheet),
+                    typeof(WorldBossListSheet),
+                    typeof(RuneSheet),
+                });
             var worldBossListSheet = sheets.GetSheet<WorldBossListSheet>();
             int raidId;
             try
@@ -66,7 +71,7 @@ namespace Nekoyume.Action
             var row = sheets.GetSheet<WorldBossListSheet>().Values.First(r => r.Id == raidId);
             var bossRow = sheets.GetSheet<WorldBossCharacterSheet>().Values.First(x => x.BossId == row.BossId);
             var raiderAddress = Addresses.GetRaiderAddress(AvatarAddress, raidId);
-            RaiderState raiderState = states.GetRaiderState(raiderAddress);
+            RaiderState raiderState = LegacyModule.GetRaiderState(world, raiderAddress);
             int rank = WorldBossHelper.CalculateRank(bossRow, raiderState.HighScore);
             var random = context.GetRandom();
             if (raiderState.LatestRewardRank < rank)
@@ -86,21 +91,21 @@ namespace Nekoyume.Action
                     {
                         if (reward.Currency.Equals(CrystalCalculator.CRYSTAL))
                         {
-                            states = states.MintAsset(context, context.Signer, reward);
+                            world = LegacyModule.MintAsset(world, context, context.Signer, reward);
                         }
                         else
                         {
-                            states = states.MintAsset(context, AvatarAddress, reward);
+                            world = LegacyModule.MintAsset(world, context, AvatarAddress, reward);
                         }
                     }
                 }
 
                 raiderState.LatestRewardRank = rank;
                 raiderState.ClaimedBlockIndex = context.BlockIndex;
-                states = states.SetState(raiderAddress, raiderState.Serialize());
+                world = LegacyModule.SetState(world, raiderAddress, raiderState.Serialize());
                 var ended = DateTimeOffset.UtcNow;
                 Log.Debug("{AddressesHex}ClaimRaidReward Total Executed Time: {Elapsed}", addressesHex, ended - started);
-                return states;
+                return world;
             }
 
             throw new NotEnoughRankException();

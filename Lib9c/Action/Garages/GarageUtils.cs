@@ -11,6 +11,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.Garages;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Garages
 {
@@ -107,7 +108,7 @@ namespace Nekoyume.Action.Garages
             Address garageAddr,
             IValue? garageState)> WithGarageStateTuples(
             Address agentAddr,
-            IAccountState states,
+            IWorld world,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
         {
             var withGarageAddr = fungibleIdAndCounts
@@ -119,7 +120,7 @@ namespace Nekoyume.Action.Garages
                     return (tuple.fungibleId, tuple.count, garageAddr);
                 }).ToArray();
             var garageAddresses = withGarageAddr.Select(tuple => tuple.garageAddr).ToArray();
-            var garageStates = states.GetStates(garageAddresses);
+            var garageStates = LegacyModule.GetStates(world, garageAddresses);
             return withGarageAddr
                 .Zip(garageStates, (tuple, garageState) => (
                     tuple.fungibleId,
@@ -138,7 +139,7 @@ namespace Nekoyume.Action.Garages
             IValue? recipientGarageState)> WithGarageStateTuples(
             Address senderAgentAddr,
             Address recipientAgentAddr,
-            IAccountState states,
+            IWorld world,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
         {
             var withGarageAddr = fungibleIdAndCounts
@@ -160,7 +161,7 @@ namespace Nekoyume.Action.Garages
                 .Select(tuple => tuple.senderGarageAddr)
                 .Concat(withGarageAddr.Select(tuple => tuple.recipientGarageAddr))
                 .ToArray();
-            var garageStates = states.GetStates(garageAddresses);
+            var garageStates = LegacyModule.GetStates(world, garageAddresses);
             if (garageStates.Count != garageAddresses.Length)
             {
                 throw new Exception($"garageStates.Count({garageStates.Count}) != " +
@@ -193,10 +194,10 @@ namespace Nekoyume.Action.Garages
             Address garageAddr,
             FungibleItemGarage garage)> WithGarageTuples(
             Address agentAddr,
-            IAccountState states,
+            IWorld world,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
         {
-            return WithGarageStateTuples(agentAddr, states, fungibleIdAndCounts)
+            return WithGarageStateTuples(agentAddr, world, fungibleIdAndCounts)
                 .Select(tuple =>
                 {
                     var (fungibleId, count, garageAddr, garageState) = tuple;

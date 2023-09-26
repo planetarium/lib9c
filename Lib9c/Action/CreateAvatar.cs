@@ -3,20 +3,17 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Extensions;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
+using Nekoyume.Model.Exceptions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
-using Nekoyume.TableData.Pet;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
@@ -66,12 +63,12 @@ namespace Nekoyume.Action
             name = (Text) plainValue["name"];
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
             var signer = ctx.Signer;
-            var states = ctx.PreviousState;
+            var world = ctx.PreviousState;
             var avatarAddress = signer.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -84,7 +81,7 @@ namespace Nekoyume.Action
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (ctx.Rehearsal)
             {
-                states = states.SetState(signer, MarkChanged);
+                world = LegacyModule.SetState(world, signer, MarkChanged);
                 for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
                 {
                     var slotAddress = avatarAddress.Derive(
@@ -94,15 +91,15 @@ namespace Nekoyume.Action
                             i
                         )
                     );
-                    states = states.SetState(slotAddress, MarkChanged);
+                    world = LegacyModule.SetState(world, slotAddress, MarkChanged);
                 }
 
-                return states
-                    .SetState(avatarAddress, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .MarkBalanceChanged(ctx, GoldCurrencyMock, signer);
+                world = AvatarModule.MarkChanged(world, avatarAddress);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.MarkBalanceChanged(world, ctx, GoldCurrencyMock, signer);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
@@ -117,9 +114,9 @@ namespace Nekoyume.Action
             sw.Start();
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CreateAvatar exec started", addressesHex);
-            AgentState existingAgentState = states.GetAgentState(signer);
+            AgentState existingAgentState = AgentModule.GetAgentState(world, signer);
             var agentState = existingAgentState ?? new AgentState(signer);
-            var avatarState = states.GetAvatarState(avatarAddress);
+            var avatarState = AvatarModule.GetAvatarState(world, avatarAddress);
             if (!(avatarState is null))
             {
                 throw new InvalidAddressException(
@@ -146,9 +143,9 @@ namespace Nekoyume.Action
             agentState.avatarAddresses.Add(index, avatarAddress);
 
             // Avoid NullReferenceException in test
-            var materialItemSheet = ctx.PreviousState.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(ctx.PreviousState);
 
-            avatarState = CreateAvatar0.CreateAvatarState(name, avatarAddress, ctx, materialItemSheet, default);
+            avatarState = AvatarState.CreateAvatarState(name, avatarAddress, ctx, materialItemSheet, default);
 
             if (hair < 0) hair = 0;
             if (lens < 0) lens = 0;
@@ -160,8 +157,10 @@ namespace Nekoyume.Action
             foreach (var address in avatarState.combinationSlotAddresses)
             {
                 var slotState =
-                    new CombinationSlotState(address, GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
-                states = states.SetState(address, slotState.Serialize());
+                    new CombinationSlotState(
+                        address,
+                        GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
+                world = LegacyModule.SetState(world, address, slotState.Serialize());
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);
@@ -269,12 +268,10 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}CreateAvatar CreateAvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CreateAvatar Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
-                .SetState(signer, agentState.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+
+            world = AgentModule.SetAgentState(world, signer, agentState);
+            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            return world;
         }
 
         public static void AddItem(ItemSheet itemSheet, CreateAvatarItemSheet createAvatarItemSheet,
@@ -302,7 +299,7 @@ namespace Nekoyume.Action
         }
 
         public static IAccount MintAsset(CreateAvatarFavSheet favSheet,
-            AvatarState avatarState, IAccount states, IActionContext context)
+            AvatarState avatarState, IWorld world, IActionContext context)
         {
             foreach (var row in favSheet.Values)
             {
@@ -313,10 +310,10 @@ namespace Nekoyume.Action
                     CreateAvatarFavSheet.Target.Avatar => avatarState.address,
                     _ => throw new ArgumentOutOfRangeException()
                 };
-                states = states.MintAsset(context, targetAddress, currency * row.Quantity);
+                world = LegacyModule.MintAsset(world, context, targetAddress, currency * row.Quantity);
             }
 
-            return states;
+            return world;
         }
     }
 }

@@ -5,6 +5,8 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Consensus;
+using Nekoyume.Action.Extensions;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -68,7 +70,7 @@ namespace Nekoyume.Action
         public override int GetHashCode() =>
             (Error, (int)Operator, Operand).GetHashCode();
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             if (Error != null)
@@ -78,11 +80,11 @@ namespace Nekoyume.Action
 
             CheckPermission(context);
 
-            IAccount previousState = context.PreviousState;
-            ValidatorSet validatorSet = previousState.GetValidatorSet();
+            var world = context.PreviousState;
+            ValidatorSet validatorSet = LegacyModule.GetValidatorSet(world);
 
             Func<ValidatorSet, Validator, Validator> func = Operator.ToFunc();
-            return previousState.SetValidator(func(validatorSet, Operand));
+            return LegacyModule.SetValidator(world, func(validatorSet, Operand));
         }
 
         public override IValue PlainValue =>

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Libplanet.Action;
 using Libplanet.Crypto;
+using Nekoyume.Model;
 
 namespace Nekoyume.Action
 {

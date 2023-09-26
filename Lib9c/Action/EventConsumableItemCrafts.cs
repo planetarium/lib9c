@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -8,11 +8,12 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Event;
 using Serilog;
@@ -76,14 +77,15 @@ namespace Nekoyume.Action
             SlotIndex = list[3].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
             if (context.Rehearsal)
             {
-                return states;
+                return context.PreviousState;
             }
+
+            var world = context.PreviousState;
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -95,7 +97,8 @@ namespace Nekoyume.Action
             var sw = new Stopwatch();
             // Get AvatarState
             sw.Start();
-            if (!states.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
                     context.Signer,
                     AvatarAddress,
                     out var avatarState,
@@ -118,7 +121,8 @@ namespace Nekoyume.Action
 
             // Get sheets
             sw.Restart();
-            var sheets = states.GetSheets(
+            var sheets = LegacyModule.GetSheets(
+                world,
                 sheetTypes: new[]
                 {
                     typeof(EventScheduleSheet),
@@ -162,7 +166,7 @@ namespace Nekoyume.Action
                 ActionTypeText,
                 addressesHex);
 
-            var slotState = states.GetCombinationSlotState(AvatarAddress, SlotIndex);
+            var slotState = LegacyModule.GetCombinationSlotState(world, AvatarAddress, SlotIndex);
             if (slotState is null)
             {
                 throw new FailedLoadStateException(
@@ -190,7 +194,7 @@ namespace Nekoyume.Action
             var requiredFungibleItems = new Dictionary<int, int>();
 
             // Validate Recipe ResultEquipmentId
-            var consumableItemSheet = states.GetSheet<ConsumableItemSheet>();
+            var consumableItemSheet = LegacyModule.GetSheet<ConsumableItemSheet>(world);
             if (!consumableItemSheet.TryGetValue(
                     recipeRow.ResultConsumableItemId,
                     out var consumableRow))
@@ -203,7 +207,7 @@ namespace Nekoyume.Action
             // ~Validate Recipe ResultEquipmentId
 
             // Validate Recipe Material
-            var materialItemSheet = states.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(world);
             materialItemSheet.ValidateFromAction(
                 recipeRow.Materials,
                 requiredFungibleItems,
@@ -261,7 +265,7 @@ namespace Nekoyume.Action
 
             // Update Slot
             var mailId = random.GenerateRandomGuid();
-            var attachmentResult = new CombinationConsumable5.ResultModel
+            var attachmentResult = new Results.CombinationResult
             {
                 id = mailId,
                 actionPoint = costActionPoint,
@@ -286,32 +290,18 @@ namespace Nekoyume.Action
             // Set states
             if (migrationRequired)
             {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyInventoryKey),
-                        avatarState.inventory.Serialize())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize())
-                    .SetState(
-                        CombinationSlotState.DeriveAddress(AvatarAddress, SlotIndex),
-                        slotState.Serialize());
+                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
             }
             else
             {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyInventoryKey),
-                        avatarState.inventory.Serialize())
-                    .SetState(
-                        CombinationSlotState.DeriveAddress(AvatarAddress, SlotIndex),
-                        slotState.Serialize());
+                world = AvatarModule.SetAvatarV2(world, AvatarAddress, avatarState);
+                world = AvatarModule.SetInventory(world, AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory);
             }
+
+            world = LegacyModule.SetState(
+                    world,
+                    CombinationSlotState.DeriveAddress(AvatarAddress, SlotIndex),
+                    slotState.Serialize());
 
             sw.Stop();
             Log.Verbose(
@@ -327,7 +317,7 @@ namespace Nekoyume.Action
                 addressesHex,
                 DateTimeOffset.UtcNow - started);
 
-            return states;
+            return world;
         }
     }
 }

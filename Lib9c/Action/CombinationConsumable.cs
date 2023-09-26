@@ -1,20 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Numerics;
-using System.Security.Cryptography;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -58,10 +56,10 @@ namespace Nekoyume.Action
             recipeId = plainValue[RecipeIdKey].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
             var slotAddress = avatarAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -74,20 +72,25 @@ namespace Nekoyume.Action
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                return states
-                    .SetState(avatarAddress, MarkChanged)
-                    .SetState(context.Signer, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetState(slotAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, avatarAddress);
+                world = LegacyModule.SetState(world, context.Signer, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, slotAddress, MarkChanged);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Combination exec started", addressesHex);
 
-            if (!states.TryGetAvatarStateV2(context.Signer, avatarAddress, out var avatarState, out _))
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
+                    context.Signer,
+                    avatarAddress,
+                    out var avatarState,
+                    out _))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -106,7 +109,7 @@ namespace Nekoyume.Action
             // ~Validate Required Cleared Stage
 
             // Validate SlotIndex
-            var slotState = states.GetCombinationSlotState(avatarAddress, slotIndex);
+            var slotState = LegacyModule.GetCombinationSlotState(world, avatarAddress, slotIndex);
             if (slotState is null)
             {
                 throw new FailedLoadStateException(
@@ -126,7 +129,7 @@ namespace Nekoyume.Action
             var requiredFungibleItems = new Dictionary<int, int>();
 
             // Validate RecipeId
-            var consumableItemRecipeSheet = states.GetSheet<ConsumableItemRecipeSheet>();
+            var consumableItemRecipeSheet = LegacyModule.GetSheet<ConsumableItemRecipeSheet>(world);
             if (!consumableItemRecipeSheet.TryGetValue(recipeId, out var recipeRow))
             {
                 throw new SheetRowNotFoundException(
@@ -137,7 +140,7 @@ namespace Nekoyume.Action
             // ~Validate RecipeId
 
             // Validate Recipe ResultEquipmentId
-            var consumableItemSheet = states.GetSheet<ConsumableItemSheet>();
+            var consumableItemSheet = LegacyModule.GetSheet<ConsumableItemSheet>(world);
             if (!consumableItemSheet.TryGetValue(recipeRow.ResultConsumableItemId, out var consumableRow))
             {
                 throw new SheetRowNotFoundException(
@@ -148,7 +151,7 @@ namespace Nekoyume.Action
             // ~Validate Recipe ResultEquipmentId
 
             // Validate Recipe Material
-            var materialItemSheet = states.GetSheet<MaterialItemSheet>();
+            var materialItemSheet = LegacyModule.GetSheet<MaterialItemSheet>(world);
             for (var i = recipeRow.Materials.Count; i > 0; i--)
             {
                 var materialInfo = recipeRow.Materials[i - 1];
@@ -220,7 +223,7 @@ namespace Nekoyume.Action
 
             // Update Slot
             var mailId = random.GenerateRandomGuid();
-            var attachmentResult = new CombinationConsumable5.ResultModel
+            var attachmentResult = new Results.CombinationResult
             {
                 id = mailId,
                 actionPoint = costActionPoint,
@@ -244,12 +247,9 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Combination Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
+            world = AvatarModule.SetAvatarStateV2(world, avatarAddress, avatarState);
+            world = LegacyModule.SetState(world, slotAddress, slotState.Serialize());
+            return world;
         }
     }
 }

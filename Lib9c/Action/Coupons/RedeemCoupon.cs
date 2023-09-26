@@ -5,9 +5,11 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Coupons;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action.Coupons
@@ -29,43 +31,45 @@ namespace Nekoyume.Action.Coupons
             AvatarAddress = avatarAddress;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             if (context.Rehearsal)
             {
-                return states
-                    .SetState(AvatarAddress, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetCouponWallet(
-                        context.Signer,
-                        ImmutableDictionary.Create<Guid, Coupon>(),
-                        rehearsal: true);
+                world = AvatarModule.MarkChanged(world, AvatarAddress);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetCouponWallet(
+                    world,
+                    context.Signer,
+                    ImmutableDictionary.Create<Guid, Coupon>(),
+                    rehearsal: true);
+                return world;
             }
 
-            if (!states.TryGetAvatarStateV2(
+            if (!AvatarModule.TryGetAvatarStateV2(
+                    world,
                     context.Signer,
                     AvatarAddress,
                     out AvatarState avatarState,
                     out _))
             {
-                return states;
+                return world;
             }
 
-            var wallet = states.GetCouponWallet(context.Signer);
+            var wallet = LegacyModule.GetCouponWallet(world, context.Signer);
             if (!wallet.TryGetValue(CouponId, out var coupon))
             {
-                return states;
+                return world;
             }
 
             wallet = wallet.Remove(CouponId);
-            var itemSheets = states.GetItemSheet();
+            var itemSheets = LegacyModule.GetItemSheet(world);
             var random = context.GetRandom();
             foreach ((int itemId, uint q) in coupon)
             {
@@ -78,12 +82,9 @@ namespace Nekoyume.Action.Coupons
                 }
             }
 
-            return states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetCouponWallet(context.Signer, wallet);
+            world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
+            world = LegacyModule.SetCouponWallet(world, context.Signer, wallet);
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

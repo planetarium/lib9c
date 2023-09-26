@@ -9,10 +9,12 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Summon;
 using Serilog;
@@ -174,23 +176,23 @@ namespace Nekoyume.Action
             return result;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
 
             if (context.Rehearsal)
             {
-                return states;
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug($"{addressesHex} AuraSummon Exec. Started.");
 
-            if (!states.TryGetAgentAvatarStatesV2(context.Signer, AvatarAddress, out var agentState,
+            if (!AvatarModule.TryGetAgentAvatarStatesV2(world, context.Signer, AvatarAddress, out var agentState,
                     out var avatarState, out _))
             {
                 throw new FailedLoadStateException(
@@ -205,7 +207,7 @@ namespace Nekoyume.Action
             }
 
             // Validate Work
-            Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new[]
+            Dictionary<Type, (Address, ISheet)> sheets = LegacyModule.GetSheets(world, sheetTypes: new[]
             {
                 typeof(SummonSheet),
                 typeof(EquipmentItemRecipeSheet),
@@ -239,16 +241,17 @@ namespace Nekoyume.Action
             // Transfer Cost NCG first for fast-fail
             if (summonRow.CostNcg > 0L)
             {
-                var arenaSheet = states.GetSheet<ArenaSheet>();
+                var arenaSheet = LegacyModule.GetSheet<ArenaSheet>(world);
                 var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
                 var feeStoreAddress =
                     Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
 
-                states = states.TransferAsset(
+                world = LegacyModule.TransferAsset(
+                    world,
                     context,
                     context.Signer,
                     feeStoreAddress,
-                    states.GetGoldCurrency() * summonRow.CostNcg * SummonCount
+                    LegacyModule.GetGoldCurrency(world) * summonRow.CostNcg * SummonCount
                 );
             }
 
@@ -279,11 +282,7 @@ namespace Nekoyume.Action
             avatarState.updatedAt = context.BlockIndex;
 
             // Set states
-            return states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(context.Signer, agentState.Serialize());
+            return AvatarModule.SetAvatarStateV2(world, avatarState.address, avatarState);
         }
 
         public static void AddAndUnlockOption(

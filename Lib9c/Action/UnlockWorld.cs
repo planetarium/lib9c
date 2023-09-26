@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -8,9 +8,11 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -29,22 +31,27 @@ namespace Nekoyume.Action
         IEnumerable<int> IUnlockWorldV1.WorldIds => WorldIds;
         Address IUnlockWorldV1.AvatarAddress => AvatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
             var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var unlockedWorldIdsAddress = AvatarAddress.Derive("world_ids");
             if (context.Rehearsal)
             {
-                return states
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(AvatarAddress, MarkChanged)
-                    .MarkBalanceChanged(context, GoldCurrencyMock, context.Signer, Addresses.UnlockWorld);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, AvatarAddress);
+                world = LegacyModule.MarkBalanceChanged(
+                    world,
+                    context,
+                    GoldCurrencyMock,
+                    context.Signer,
+                    Addresses.UnlockWorld);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
@@ -59,14 +66,18 @@ namespace Nekoyume.Action
             AvatarState avatarState = null;
             bool migrationRequired = false;
 
-            if (states.TryGetState(worldInformationAddress, out Dictionary rawInfo))
+            if (LegacyModule.TryGetState(world, worldInformationAddress, out Dictionary rawInfo))
             {
                 worldInformation = new WorldInformation(rawInfo);
             }
             else
             {
                 // AvatarState migration required.
-                if (states.TryGetAvatarState(context.Signer, AvatarAddress, out avatarState))
+                if (AvatarModule.TryGetAvatarState(
+                        world,
+                        context.Signer,
+                        AvatarAddress,
+                        out avatarState))
                 {
                     worldInformation = avatarState.worldInformation;
                     migrationRequired = true;
@@ -78,7 +89,10 @@ namespace Nekoyume.Action
                 }
             }
 
-            List<int> unlockedIds = states.TryGetState(unlockedWorldIdsAddress, out List rawIds)
+            List<int> unlockedIds = LegacyModule.TryGetState(
+                world,
+                unlockedWorldIdsAddress,
+                out List rawIds)
                 ? rawIds.ToList(StateExtensions.ToInteger)
                 : new List<int>
                 {
@@ -87,7 +101,7 @@ namespace Nekoyume.Action
                 };
 
             var sortedWorldIds = WorldIds.OrderBy(i => i).ToList();
-            var worldUnlockSheet = states.GetSheet<WorldUnlockSheet>();
+            var worldUnlockSheet = LegacyModule.GetSheet<WorldUnlockSheet>(world);
             foreach (var worldId in sortedWorldIds)
             {
                 // Already Unlocked.
@@ -99,14 +113,16 @@ namespace Nekoyume.Action
                 WorldUnlockSheet.Row row =
                     worldUnlockSheet.OrderedList.First(r => r.WorldIdToUnlock == worldId);
                 // Check Previous world unlocked.
-                if (!worldInformation.IsWorldUnlocked(row.WorldId) || !unlockedIds.Contains(row.WorldId))
+                if (!worldInformation.IsWorldUnlocked(row.WorldId) ||
+                    !unlockedIds.Contains(row.WorldId))
                 {
                     throw new FailedToUnlockWorldException($"unlock ${row.WorldId} first.");
                 }
 
                 // Check stage cleared in HackAndSlash.
                 // If world is unlocked or can unlock, Execute it.
-                if (!worldInformation.IsWorldUnlocked(worldId) && !worldInformation.IsStageCleared(row.StageId))
+                if (!worldInformation.IsWorldUnlocked(worldId) &&
+                    !worldInformation.IsStageCleared(row.StageId))
                 {
                     throw new FailedToUnlockWorldException($"{worldId} is locked.");
                 }
@@ -116,28 +132,39 @@ namespace Nekoyume.Action
 
             FungibleAssetValue cost =
                 CrystalCalculator.CalculateWorldUnlockCost(sortedWorldIds, worldUnlockSheet);
-            FungibleAssetValue balance = states.GetBalance(context.Signer, cost.Currency);
+            FungibleAssetValue balance = LegacyModule.GetBalance(
+                world,
+                context.Signer,
+                cost.Currency);
 
             // Insufficient CRYSTAL.
             if (balance < cost)
             {
-                throw new NotEnoughFungibleAssetValueException($"UnlockWorld required {cost}, but balance is {balance}");
+                throw new NotEnoughFungibleAssetValueException(
+                    $"UnlockWorld required {cost}, but balance is {balance}");
             }
 
             if (migrationRequired)
             {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(questListAddress, avatarState.questList.Serialize())
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize());
+                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
             }
 
             var ended = DateTimeOffset.UtcNow;
-            Log.Debug("{AddressesHex}UnlockWorld Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
-                .SetState(unlockedWorldIdsAddress, new List(unlockedIds.Select(i => i.Serialize())))
-                .TransferAsset(context, context.Signer, Addresses.UnlockWorld, cost);
+            Log.Debug(
+                "{AddressesHex}UnlockWorld Total Executed Time: {Elapsed}",
+                addressesHex,
+                ended - started);
+            world = LegacyModule.SetState(
+                world,
+                unlockedWorldIdsAddress,
+                new List(unlockedIds.Select(i => i.Serialize())));
+            world = LegacyModule.TransferAsset(
+                world,
+                context,
+                context.Signer,
+                Addresses.UnlockWorld,
+                cost);
+            return world;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal

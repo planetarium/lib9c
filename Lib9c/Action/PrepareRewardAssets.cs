@@ -7,6 +7,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -42,16 +43,23 @@ namespace Nekoyume.Action
             Assets = serialized["a"].ToList(StateExtensions.ToFungibleAssetValue);
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount states = context.PreviousState;
+            var world = context.PreviousState;
             if (context.Rehearsal)
             {
+                // FIXME: Is this correct implementation?
                 foreach (var asset in Assets)
                 {
-                    return states.MarkBalanceChanged(context, asset.Currency, RewardPoolAddress);
+                    world = LegacyModule.MarkBalanceChanged(
+                        world,
+                        context,
+                        asset.Currency,
+                        RewardPoolAddress);
                 }
+
+                return world;
             }
 
             CheckPermission(context);
@@ -63,10 +71,10 @@ namespace Nekoyume.Action
                 {
                     throw new CurrencyPermissionException(null, context.Signer, asset.Currency);
                 }
-                states = states.MintAsset(context, RewardPoolAddress, asset);
+                world = LegacyModule.MintAsset(world, context, RewardPoolAddress, asset);
             }
 
-            return states;
+            return world;
         }
     }
 }

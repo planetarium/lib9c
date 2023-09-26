@@ -8,11 +8,11 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Extensions;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model;
-using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -28,23 +28,28 @@ namespace Nekoyume.Action
         IEnumerable<int> IUnlockEquipmentRecipeV1.RecipeIds => RecipeIds;
         Address IUnlockEquipmentRecipeV1.AvatarAddress => AvatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
+            var world = context.PreviousState;
             var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var unlockedRecipeIdsAddress = AvatarAddress.Derive("recipe_ids");
             if (context.Rehearsal)
             {
-                return states
-                    .SetState(worldInformationAddress, MarkChanged)
-                    .SetState(questListAddress, MarkChanged)
-                    .SetState(inventoryAddress, MarkChanged)
-                    .SetState(AvatarAddress, MarkChanged)
-                    .SetState(unlockedRecipeIdsAddress, MarkChanged)
-                    .MarkBalanceChanged(context, GoldCurrencyMock, context.Signer, Addresses.UnlockEquipmentRecipe);
+                world = LegacyModule.SetState(world, worldInformationAddress, MarkChanged);
+                world = LegacyModule.SetState(world, questListAddress, MarkChanged);
+                world = LegacyModule.SetState(world, inventoryAddress, MarkChanged);
+                world = AvatarModule.MarkChanged(world, AvatarAddress);
+                world = LegacyModule.SetState(world, unlockedRecipeIdsAddress, MarkChanged);
+                world = LegacyModule.MarkBalanceChanged(
+                    world,
+                    context,
+                    GoldCurrencyMock,
+                    context.Signer,
+                    Addresses.UnlockEquipmentRecipe);
+                return world;
             }
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
@@ -58,14 +63,18 @@ namespace Nekoyume.Action
             WorldInformation worldInformation;
             bool migrationRequired = false;
             AvatarState avatarState = null;
-            if (states.TryGetState(worldInformationAddress, out Dictionary rawInfo))
+            if (LegacyModule.TryGetState(world, worldInformationAddress, out Dictionary rawInfo))
             {
                 worldInformation = new WorldInformation(rawInfo);
             }
             else
             {
                 // AvatarState migration required.
-                if (states.TryGetAvatarState(context.Signer, AvatarAddress, out avatarState))
+                if (AvatarModule.TryGetAvatarState(
+                        world,
+                        context.Signer,
+                        AvatarAddress,
+                        out avatarState))
                 {
                     worldInformation = avatarState.worldInformation;
                     migrationRequired = true;
@@ -77,44 +86,61 @@ namespace Nekoyume.Action
                 }
             }
 
-            var equipmentRecipeSheet = states.GetSheet<EquipmentItemRecipeSheet>();
+            var equipmentRecipeSheet = LegacyModule.GetSheet<EquipmentItemRecipeSheet>(world);
 
-            var unlockedIds = UnlockedIds(states, unlockedRecipeIdsAddress, equipmentRecipeSheet, worldInformation, RecipeIds);
+            var unlockedIds = UnlockedIds(
+                world,
+                unlockedRecipeIdsAddress,
+                equipmentRecipeSheet,
+                worldInformation,
+                RecipeIds);
 
-            FungibleAssetValue cost = CrystalCalculator.CalculateRecipeUnlockCost(RecipeIds, equipmentRecipeSheet);
-            FungibleAssetValue balance = states.GetBalance(context.Signer, cost.Currency);
+            FungibleAssetValue cost =
+                CrystalCalculator.CalculateRecipeUnlockCost(RecipeIds, equipmentRecipeSheet);
+            FungibleAssetValue balance = LegacyModule.GetBalance(
+                world,
+                context.Signer,
+                cost.Currency);
 
             if (balance < cost)
             {
-                throw new NotEnoughFungibleAssetValueException($"required {cost}, but balance is {balance}");
+                throw new NotEnoughFungibleAssetValueException(
+                    $"required {cost}, but balance is {balance}");
             }
 
             if (migrationRequired)
             {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(worldInformationAddress, worldInformation.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize());
+                world = AvatarModule.SetAvatarStateV2(world, AvatarAddress, avatarState);
             }
 
-            states = states.SetState(unlockedRecipeIdsAddress,
-                    unlockedIds.Aggregate(List.Empty,
-                        (current, address) => current.Add(address.Serialize())));
+            world = LegacyModule.SetState(
+                world,
+                unlockedRecipeIdsAddress,
+                unlockedIds.Aggregate(
+                    List.Empty,
+                    (current, address) => current.Add(address.Serialize())));
             var ended = DateTimeOffset.UtcNow;
-            Log.Debug("{AddressesHex}UnlockEquipmentRecipe Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.TransferAsset(context, context.Signer, Addresses.UnlockEquipmentRecipe,  cost);
+            Log.Debug(
+                "{AddressesHex}UnlockEquipmentRecipe Total Executed Time: {Elapsed}",
+                addressesHex,
+                ended - started);
+            return LegacyModule.TransferAsset(
+                world,
+                context,
+                context.Signer,
+                Addresses.UnlockEquipmentRecipe,
+                cost);
         }
 
         public static List<int> UnlockedIds(
-            IAccount states,
+            IWorld world,
             Address unlockedRecipeIdsAddress,
             EquipmentItemRecipeSheet equipmentRecipeSheet,
             WorldInformation worldInformation,
             List<int> recipeIds
         )
         {
-            var unlockedIds = states.TryGetState(unlockedRecipeIdsAddress, out List rawIds)
+            var unlockedIds = LegacyModule.TryGetState(world, unlockedRecipeIdsAddress, out List rawIds)
                 ? rawIds.ToList(StateExtensions.ToInteger)
                 : equipmentRecipeSheet.Values.Where(r => r.CRYSTAL == 0).Select(r => r.Id).ToList();
 
