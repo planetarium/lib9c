@@ -2,6 +2,7 @@
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Libplanet.Store.Trie;
 
 namespace Nekoyume.Module
 {
@@ -18,14 +19,9 @@ namespace Nekoyume.Module
         /// If not, legacy account.</returns>
         public static IValue? Resolve(IWorldState world, Address address, Address accountAddress)
         {
-            if (world.Legacy)
-            {
-                return world.GetAccount(ReservedAddresses.LegacyAccount).GetState(address);
-            }
-            else
-            {
-                return world.GetAccount(accountAddress).GetState(address);
-            }            
+            IAccount account = world.GetAccount(accountAddress);
+            IValue? state = account.GetState(address);
+            return state ?? world.GetAccount(ReservedAddresses.LegacyAccount).GetState(address);
         }
     }
 }
