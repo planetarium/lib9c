@@ -6,7 +6,6 @@ namespace Nekoyume.Action
 {
     public interface IClaimItems
     {
-        Address AvatarAddress { get; }
-        IEnumerable<FungibleAssetValue> Amounts { get; }
+        public IReadOnlyList<(Address address, IReadOnlyList<FungibleAssetValue> fungibleAssetValues)> ClaimData { get; }
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -16,31 +15,41 @@ using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
+    [ActionType(ActionTypeText)]
     public class ClaimItems : GameAction, IClaimItems
     {
-        private const string ActionTypeText = "claim_item";
+        private const string ActionTypeText = "claim_items";
 
-        public Address AvatarAddress { get; private set; }
-        public IEnumerable<FungibleAssetValue> Amounts { get; private set; }
+        public IReadOnlyList<(Address address, IReadOnlyList<FungibleAssetValue> fungibleAssetValues)> ClaimData { get; private set; }
 
-        public ClaimItems() {}
-
-        public ClaimItems(Address avatarAddress, IEnumerable<FungibleAssetValue> amounts)
+        public ClaimItems()
         {
-            AvatarAddress = avatarAddress;
-            Amounts = amounts;
+        }
+
+        public ClaimItems(IReadOnlyList<(Address, IReadOnlyList<FungibleAssetValue>)> claimData)
+        {
+            ClaimData = claimData;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             ImmutableDictionary<string, IValue>.Empty
-                .Add(AvatarAddressKey, AvatarAddress.Serialize())
-                .Add(AmountKey, new List(Amounts.Select(x => x.Serialize())));
+                .Add(ClaimDataKey, ClaimData.Select(tuple =>
+                {
+                    var serializedFungibleAssetValues = tuple.fungibleAssetValues.Select(x => x.Serialize()).Serialize();
+
+                    return (tuple.address, serialized: serializedFungibleAssetValues);
+                }).Serialize());
 
         protected override void LoadPlainValueInternal(
             IImmutableDictionary<string, IValue> plainValue)
         {
-            AvatarAddress = plainValue[AvatarAddressKey].ToAddress();
-            Amounts = ((List)plainValue[AmountKey]).Select(x => x.ToFungibleAssetValue());
+            ClaimData = plainValue[ClaimDataKey].ToStateList()
+                .Select((tuple =>
+                {
+                    return (
+                        tuple.Item1,
+                        tuple.Item2.ToList((x => x.ToFungibleAssetValue())) as IReadOnlyList<FungibleAssetValue>);
+                })).ToList();
         }
 
         public override IAccount Execute(IActionContext context)
@@ -48,57 +57,53 @@ namespace Nekoyume.Action
             context.UseGas(1);
 
             var states = context.PreviousState;
-            var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
-
-            var avatarState = states.GetAvatarState(AvatarAddress);
-            if (avatarState is null)
-            {
-                throw new FailedLoadStateException(
-                    ActionTypeText,
-                    addressesHex,
-                    typeof(AvatarState),
-                    AvatarAddress);
-            }
-
             var itemSheet = states.GetSheets(containItemSheet: true).GetItemSheet();
 
-            foreach (var fungibleAssetValue in Amounts)
+            foreach (var (avatarAddress, fungibleAssetValues) in ClaimData)
             {
-                var ticker = fungibleAssetValue.Currency.Ticker;
-                if (!ticker.StartsWith("IT_") ||
-                    !int.TryParse(ticker.Replace("IT_", string.Empty), out var itemId))
+                var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
+                var inventory = states.GetInventory(inventoryAddress)
+                                ?? throw new FailedLoadStateException(
+                                    ActionTypeText,
+                                    GetSignerAndOtherAddressesHex(context, inventoryAddress),
+                                    typeof(Inventory),
+                                    inventoryAddress);
+
+                foreach (var fungibleAssetValue in fungibleAssetValues)
                 {
-                    throw new ArgumentException($"Format of Amount currency's ticker is invalid");
+                    if (fungibleAssetValue.Currency.DecimalPlaces != 0)
+                    {
+                        throw new ArgumentException(
+                            $"DecimalPlaces of fungibleAssetValue for claimItems are not 0: {fungibleAssetValue.Currency.Ticker}");
+                    }
+
+                    var parsedTicker = fungibleAssetValue.Currency.Ticker.Split("_");
+                    if (parsedTicker.Length != 3
+                        || parsedTicker[0] != "Item"
+                        || (parsedTicker[1] != "NT" && parsedTicker[1] != "T")
+                        || !int.TryParse(parsedTicker[2], out var itemId))
+                    {
+                        throw new ArgumentException(
+                            $"Format of Amount currency's ticker is invalid");
+                    }
+
+                    states = states.BurnAsset(context, context.Signer, fungibleAssetValue);
+
+                    var item = itemSheet[itemId] switch
+                    {
+                        MaterialItemSheet.Row materialRow => parsedTicker[1] == "T"
+                            ? ItemFactory.CreateTradableMaterial(materialRow)
+                            : ItemFactory.CreateMaterial(materialRow),
+                        var itemRow => ItemFactory.CreateItem(itemRow, context.Random)
+                    };
+
+                    inventory.AddItem(item, (int)fungibleAssetValue.RawValue);
                 }
 
-                var decimalPlaces = fungibleAssetValue.Currency.DecimalPlaces;
-                if (decimalPlaces != 0)
-                {
-                    throw new ArgumentException(
-                        "DecimalPlaces of fungibleAssetValue for claimItems are not 0");
-                }
-
-                var balance = states.GetBalance(context.Signer, fungibleAssetValue.Currency);
-                if (balance < fungibleAssetValue)
-                {
-                    throw new NotEnoughFungibleAssetValueException(
-                        context.Signer.ToHex(),
-                        fungibleAssetValue.RawValue,
-                        balance);
-                }
-
-                var item = itemSheet[itemId] switch
-                {
-                    MaterialItemSheet.Row materialRow =>
-                        ItemFactory.CreateTradableMaterial(materialRow),
-                    var itemRow => ItemFactory.CreateItem(itemRow, context.Random)
-                };
-
-                avatarState.inventory.AddItem(item, (int)fungibleAssetValue.RawValue);
-                states = states.BurnAsset(context, context.Signer, fungibleAssetValue);
+                states = states.SetState(inventoryAddress, inventory.Serialize());
             }
 
-            return states.SetState(avatarState.address, avatarState.Serialize());
+            return states;
         }
     }
 }
