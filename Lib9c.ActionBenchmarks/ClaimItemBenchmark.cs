@@ -11,15 +11,22 @@ using Nekoyume.Model.State;
 
 namespace Lib9c.ActionBenchmarks;
 
-[SimpleJob(iterationCount: 5)]
+[SimpleJob]
 [MinColumn, MaxColumn, MeanColumn, MedianColumn]
+[MarkdownExporter]
 public class ClaimItemBenchmark
 {
     private readonly IAccount _initialState;
     private readonly Address _signerAddress;
-    private readonly Address _recipientAvatarAddress;
+    private readonly TableSheets _tableSheets;
+    private readonly IEnumerable<FungibleAssetValue> _fungibleAssetValues;
 
-    private IEnumerable<FungibleAssetValue> _fungibleAssetValues;
+    private IAccount state;
+    private List<(Address, IReadOnlyList<FungibleAssetValue>)> data;
+
+    [Params(1, 10, 100, 500, 1000)] public int RECIPIENT_COUNT;
+
+    [Params(1, 5, 10)] public int FAV_COUNT;
 
     public ClaimItemBenchmark()
     {
@@ -33,50 +40,91 @@ public class ClaimItemBenchmark
                 .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
         }
 
-        var tableSheets = new TableSheets(sheets);
-        var itemIds = tableSheets.CostumeItemSheet.Values.Take(3).Select(x => x.Id).ToList();
-        var currencies = itemIds.Select(id => Currency.Legacy($"it_{id}", 0, minters: null)).ToList();
+        _tableSheets = new TableSheets(sheets);
+        var itemIds = _tableSheets.CostumeItemSheet.Values.Take(10).Select(x => x.Id).ToList();
+        var currencies = itemIds.Select(id => Currency.Legacy($"Item_T_{id}", 0, minters: null))
+            .ToList();
         _fungibleAssetValues = currencies.Select(currency => currency * 1);
 
         _signerAddress = new PrivateKey().ToAddress();
-        var recipientAddress = new PrivateKey().ToAddress();
-        var recipientAgentState = new AgentState(recipientAddress);
-        _recipientAvatarAddress = recipientAddress.Derive("avatar");
+
+        var context = new ActionContext();
+        _initialState = _initialState
+            .MintAsset(context, _signerAddress, currencies[0] * 1000000)
+            .MintAsset(context, _signerAddress, currencies[1] * 1000000)
+            .MintAsset(context, _signerAddress, currencies[2] * 1000000)
+            .MintAsset(context, _signerAddress, currencies[3] * 1000000)
+            .MintAsset(context, _signerAddress, currencies[4] * 1000000)
+            .MintAsset(context, _signerAddress, currencies[5] * 1000000)
+            .MintAsset(context, _signerAddress, currencies[6] * 1000000)
+            .MintAsset(context, _signerAddress, currencies[7] * 1000000)
+            .MintAsset(context, _signerAddress, currencies[8] * 1000000)
+            .MintAsset(context, _signerAddress, currencies[9] * 1000000);
+    }
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        var (generatedState, addresses) = Enumerable.Range(0, RECIPIENT_COUNT).Aggregate(
+            (_initialState, new List<Address>()), (acc, _) =>
+            {
+                var (accState, addresses) = acc;
+
+                accState = GenerateAvatar(accState, out var address);
+                addresses.Add(address);
+
+                return (accState, addresses);
+            });
+        state = generatedState;
+        data = addresses.SelectMany(address =>
+        {
+            return Enumerable.Range(1, FAV_COUNT)
+                .Select(index => (address,
+                    _fungibleAssetValues.Take(index)
+                        .ToList() as IReadOnlyList<FungibleAssetValue>));
+        }).ToList();
+    }
+
+    [Benchmark]
+    public void ClaimItem()
+    {
+        new ClaimItems(data).Execute(new ActionContext
+        {
+            PreviousState = state,
+            Signer = _signerAddress,
+            BlockIndex = 0,
+            Random = new TestRandom(),
+        });
+    }
+
+    private IAccount GenerateAvatar(IAccount state, out Address avatarAddress)
+    {
+        var address = new PrivateKey().ToAddress();
+        var agentState = new AgentState(address);
+        avatarAddress = address.Derive("avatar");
         var rankingMapAddress = new PrivateKey().ToAddress();
-        var recipientAvatarState = new AvatarState(
-            _recipientAvatarAddress,
-            recipientAddress,
+        var avatarState = new AvatarState(
+            avatarAddress,
+            address,
             0,
-            tableSheets.GetAvatarSheets(),
+            _tableSheets.GetAvatarSheets(),
             new GameConfigState(),
             rankingMapAddress)
         {
             worldInformation = new WorldInformation(
                 0,
-                tableSheets.WorldSheet,
+                _tableSheets.WorldSheet,
                 GameConfig.RequireClearedStageLevel.ActionsInShop),
         };
-        recipientAgentState.avatarAddresses[0] = _recipientAvatarAddress;
+        agentState.avatarAddresses[0] = avatarAddress;
 
-        var context = new ActionContext();
-        _initialState = _initialState
-            .SetState(recipientAddress, recipientAgentState.Serialize())
-            .SetState(_recipientAvatarAddress, recipientAvatarState.Serialize())
-            .MintAsset(context, _signerAddress, currencies[0] * 1)
-            .MintAsset(context, _signerAddress, currencies[1] * 1)
-            .MintAsset(context, _signerAddress, currencies[2] * 1);
-      }
+        state = state
+            .SetState(address, agentState.Serialize())
+            .SetState(avatarAddress, avatarState.Serialize())
+            .SetState(
+                avatarAddress.Derive(SerializeKeys.LegacyInventoryKey),
+                avatarState.inventory.Serialize());
 
-    [Benchmark]
-    public void ClaimItem()
-    {
-        var action = new ClaimItems(_recipientAvatarAddress, _fungibleAssetValues);
-        action.Execute(new ActionContext
-        {
-            PreviousState = _initialState,
-            Signer = _signerAddress,
-            BlockIndex = 0,
-            Random = new TestRandom(),
-        });
+        return state;
     }
 }

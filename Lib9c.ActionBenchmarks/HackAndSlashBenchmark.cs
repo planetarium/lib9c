@@ -16,7 +16,7 @@ using static Lib9c.SerializeKeys;
 
 namespace Lib9c.ActionBenchmarks;
 
-[SimpleJob(iterationCount: 5)]
+[SimpleJob]
 [MinColumn, MaxColumn, MeanColumn, MedianColumn]
 public class HackAndSlashBenchmark
 {
@@ -47,7 +47,6 @@ public class HackAndSlashBenchmark
     public void setup()
     {
         var tablePath = Path.Combine(Path.GetFullPath("../../../.."), "Lib9c", "TableCSV");
-        // ("/Users/lyugeunchan/dev/company/main-projects/lib9c/Lib9c/TableCSV")
         _sheets = TableSheetsImporter.ImportSheets(tablePath);
         _tableSheets = new TableSheets(_sheets);
 
