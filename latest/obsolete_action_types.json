@@ -796,6 +796,10 @@
     "obsoleteAt": 7200000
   },
   {
+    "id": "transfer_assets2",
+    "obsoleteAt": 8070865
+  },
+  {
     "id": "unlock_equipment_recipe",
     "obsoleteAt": 7200000
   },

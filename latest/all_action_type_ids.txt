@@ -255,6 +255,7 @@ transfer_asset4
 transfer_asset5
 transfer_assets
 transfer_assets2
+transfer_assets3
 transfer_coupons
 unload_from_my_garages
 unlock_equipment_recipe
