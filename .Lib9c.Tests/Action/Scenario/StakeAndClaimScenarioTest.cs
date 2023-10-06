@@ -103,8 +103,8 @@ namespace Lib9c.Tests.Action.Scenario
                 _agentAddr,
                 stakedNCG,
                 stake2BlockIndex,
-                "StakeRegularFixedRewardSheet_V1",
-                "StakeRegularRewardSheet_V1",
+                "StakeRegularFixedRewardSheet_V2",
+                "StakeRegularRewardSheet_V2",
                 StakeState.RewardInterval,
                 StakeState.LockupInterval);
 
@@ -215,7 +215,7 @@ namespace Lib9c.Tests.Action.Scenario
             var stakeAddr = StakeState.DeriveAddress(agentAddr);
             var actualStakedAmount = LegacyModule.GetBalance(state, stakeAddr, expectStakedAmount.Currency);
             Assert.Equal(expectStakedAmount, actualStakedAmount);
-            var stakeState = new StakeState((Dictionary)LegacyModule.GetState(state, stakeAddr));
+            var stakeState = new StakeStateV2(LegacyModule.GetState(state, stakeAddr));
             Assert.Equal(expectStartedBlockIndex, stakeState.StartedBlockIndex);
         }
 

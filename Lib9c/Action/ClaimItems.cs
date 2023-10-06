@@ -65,13 +65,12 @@ namespace Nekoyume.Action
 
             foreach (var (avatarAddress, fungibleAssetValues) in ClaimData)
             {
-                var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-                var inventory = AvatarModule.GetInventory(states, inventoryAddress)
+                var inventory = AvatarModule.GetInventory(states, avatarAddress)
                                 ?? throw new FailedLoadStateException(
                                     ActionTypeText,
-                                    GetSignerAndOtherAddressesHex(context, inventoryAddress),
+                                    GetSignerAndOtherAddressesHex(context, avatarAddress),
                                     typeof(Inventory),
-                                    inventoryAddress);
+                                    avatarAddress);
 
                 foreach (var fungibleAssetValue in fungibleAssetValues)
                 {
@@ -104,7 +103,7 @@ namespace Nekoyume.Action
                     inventory.AddItem(item, (int)fungibleAssetValue.RawValue);
                 }
 
-                states = AvatarModule.SetInventory(states, inventoryAddress, inventory);
+                states = AvatarModule.SetInventory(states, avatarAddress, inventory);
             }
 
             return states;

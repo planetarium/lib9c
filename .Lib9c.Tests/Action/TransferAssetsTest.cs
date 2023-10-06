@@ -450,7 +450,7 @@ namespace Lib9c.Tests.Action
                 }
             );
             // 스테이킹 주소에 송금하려고 하면 실패합니다.
-            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
+            Assert.Throws<ArgumentException>("Recipient", () => action.Execute(new ActionContext()
             {
                 PreviousState = LegacyModule
                     .SetState(

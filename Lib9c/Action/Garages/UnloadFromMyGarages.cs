@@ -208,18 +208,7 @@ namespace Nekoyume.Action.Garages
             }
 
 
-            Inventory inventory;
-            try
-            {
-                // Try load inventory from v2 avatar state first. If not exist, try v2.
-                inventory = AvatarModule.GetInventory(world, RecipientAvatarAddr);
-            }
-            catch (FailedLoadStateException)
-            {
-                inventory = LegacyModule.GetInventory(
-                    world,
-                    RecipientAvatarAddr.Derive(LegacyInventoryKey));
-            }
+            Inventory inventory = AvatarModule.GetInventory(world, RecipientAvatarAddr);
 
             var fungibleItemTuples = GarageUtils.WithGarageTuples(
                 signer,

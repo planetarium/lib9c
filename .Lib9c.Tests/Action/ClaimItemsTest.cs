@@ -133,7 +133,7 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var inventory = AvatarModule.GetInventory(states, recipientAvatarAddress.Derive(SerializeKeys.LegacyInventoryKey));
+            var inventory = AvatarModule.GetInventory(states, recipientAvatarAddress);
             foreach (var i in Enumerable.Range(0, 3))
             {
                 Assert.Equal(_currencies[i] * 4, LegacyModule.GetBalance(states, _signerAddress, _currencies[i]));
@@ -173,11 +173,11 @@ namespace Lib9c.Tests.Action
             Assert.Equal(LegacyModule.GetBalance(states, _signerAddress, _currencies[1]), _currencies[1] * 3);
             Assert.Equal(LegacyModule.GetBalance(states, _signerAddress, _currencies[2]), _currencies[2] * 4);
 
-            var inventory1 = AvatarModule.GetInventory(states, recipientAvatarAddress1.Derive(SerializeKeys.LegacyInventoryKey));
+            var inventory1 = AvatarModule.GetInventory(states, recipientAvatarAddress1);
             Assert.Equal(1, inventory1.Items.First(x => x.item.Id == _itemIds[0]).count);
             Assert.Equal(1, inventory1.Items.First(x => x.item.Id == _itemIds[1]).count);
 
-            var inventory2 = AvatarModule.GetInventory(states, recipientAvatarAddress2.Derive(SerializeKeys.LegacyInventoryKey));
+            var inventory2 = AvatarModule.GetInventory(states, recipientAvatarAddress2);
             Assert.Equal(1, inventory2.Items.First(x => x.item.Id == _itemIds[0]).count);
             Assert.Equal(1, inventory2.Items.First(x => x.item.Id == _itemIds[1]).count);
             Assert.Equal(1, inventory2.Items.First(x => x.item.Id == _itemIds[2]).count);
