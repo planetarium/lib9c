@@ -72,7 +72,7 @@ namespace Lib9c.Tests.Action
                 : gameConfig.RuneSkillSlotUnlockCost;
             var ncgCurrency = LegacyModule.GetGoldCurrency(world);
             account = account.MintAsset(context, agentAddress, cost * ncgCurrency);
-            world = world.SetAccount(account);
+            world = world.SetAccount(ReservedAddresses.LegacyAccount, account);
             var action = new UnlockRuneSlot()
             {
                 AvatarAddress = avatarAddress,
@@ -217,7 +217,7 @@ namespace Lib9c.Tests.Action
             var gameConfig = LegacyModule.GetGameConfigState(world);
             var ncgCurrency = LegacyModule.GetGoldCurrency(world);
             account = account.MintAsset(context, agentAddress, gameConfig.RuneStatSlotUnlockCost * ncgCurrency);
-            world = world.SetAccount(account);
+            world = world.SetAccount(ReservedAddresses.LegacyAccount, account);
             var action = new UnlockRuneSlot()
             {
                 AvatarAddress = avatarAddress,

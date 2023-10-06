@@ -23,11 +23,7 @@ public class RemoteAccount : IAccount
 
     public IImmutableSet<(Address, Currency)> TotalUpdatedFungibleAssets => throw new NotImplementedException();
 
-    public Address Address => _baseState.Address;
-
     public ITrie Trie => _baseState.Trie;
-
-    public BlockHash? BlockHash => _baseState.BlockHash;
 
     public FungibleAssetValue GetBalance(Address address, Currency currency)
         => _baseState.GetBalance(address, currency);

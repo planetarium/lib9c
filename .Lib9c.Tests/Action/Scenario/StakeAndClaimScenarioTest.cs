@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Action;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Stake;
     using Serilog;
@@ -26,7 +27,7 @@ namespace Lib9c.Tests.Action.Scenario
     {
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IAccount _initialStateWithoutStakePolicySheet;
+        private readonly IWorld _initialStateWithoutStakePolicySheet;
         private readonly Currency _ncg;
 
         public StakeAndClaimScenarioTest(ITestOutputHelper output)
@@ -66,8 +67,8 @@ namespace Lib9c.Tests.Action.Scenario
                 });
             _agentAddr = tuple.agentAddr;
             _avatarAddr = tuple.avatarAddr;
-            _initialStateWithoutStakePolicySheet = tuple.initialStatesWithAvatarStateV2;
-            _ncg = _initialStateWithoutStakePolicySheet.GetGoldCurrency();
+            _initialStateWithoutStakePolicySheet = tuple.initialStatesWithAvatarState;
+            _ncg = LegacyModule.GetGoldCurrency(_initialStateWithoutStakePolicySheet);
         }
 
         [Fact]
@@ -83,14 +84,14 @@ namespace Lib9c.Tests.Action.Scenario
             // Stake 50 NCG via stake2.
             const long stakedAmount = 50;
             const int stake2BlockIndex = 1;
-            state = Stake2(state, _agentAddr, stakedAmount, stake2BlockIndex);
+            state = Stake(state, _agentAddr, stakedAmount, stake2BlockIndex);
 
             // Validate staked.
             var stakedNCG = stakedAmount * _ncg;
             ValidateStakedState(state, _agentAddr, stakedNCG, stake2BlockIndex);
 
             // Claim stake reward via claim_stake_reward9.
-            state = ClaimStakeReward9(
+            state = ClaimStakeReward(
                 state,
                 _agentAddr,
                 _avatarAddr,
@@ -108,11 +109,11 @@ namespace Lib9c.Tests.Action.Scenario
                 StakeState.LockupInterval);
 
             // Withdraw stake via stake3.
-            state = Stake3(state, _agentAddr, 0, stake2BlockIndex + StakeState.LockupInterval + 1);
+            state = Stake(state, _agentAddr, 0, stake2BlockIndex + StakeState.LockupInterval + 1);
 
             // Stake 50 NCG via stake3 before patching.
             const long firstStake3BlockIndex = stake2BlockIndex + StakeState.LockupInterval + 1;
-            state = Stake3(
+            state = Stake(
                 state,
                 _agentAddr,
                 stakedAmount,
@@ -130,12 +131,13 @@ namespace Lib9c.Tests.Action.Scenario
                 201_600);
 
             // Patch StakePolicySheet and so on.
-            state = state.SetState(
+            state = LegacyModule.SetState(
+                state,
                 Addresses.GetSheetAddress(nameof(StakePolicySheet)),
                 StakePolicySheetFixtures.V3.Serialize());
 
             // Stake 50 NCG via stake3 after patching.
-            state = Stake3(
+            state = Stake(
                 state,
                 _agentAddr,
                 stakedAmount,
@@ -153,13 +155,14 @@ namespace Lib9c.Tests.Action.Scenario
                 150);
         }
 
-        private static IAccount MintAsset(
-            IAccount state,
+        private static IWorld MintAsset(
+            IWorld state,
             Address recipient,
             FungibleAssetValue amount,
             long blockIndex)
         {
-            return state.MintAsset(
+            return LegacyModule.MintAsset(
+                state,
                 new ActionContext
                 {
                     PreviousState = state,
@@ -171,24 +174,8 @@ namespace Lib9c.Tests.Action.Scenario
                 amount);
         }
 
-        private static IAccount Stake2(
-            IAccount state,
-            Address agentAddr,
-            long stakingAmount,
-            long blockIndex)
-        {
-            var stake2 = new Stake2(stakingAmount);
-            return stake2.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = agentAddr,
-                BlockIndex = blockIndex,
-                Rehearsal = false,
-            });
-        }
-
-        private static IAccount Stake3(
-            IAccount state,
+        private static IWorld Stake(
+            IWorld state,
             Address agentAddr,
             long stakingAmount,
             long blockIndex)
@@ -203,8 +190,8 @@ namespace Lib9c.Tests.Action.Scenario
             });
         }
 
-        private static IAccount ClaimStakeReward9(
-            IAccount state,
+        private static IWorld ClaimStakeReward(
+            IWorld state,
             Address agentAddr,
             Address avatarAddr,
             long blockIndex)
@@ -220,20 +207,20 @@ namespace Lib9c.Tests.Action.Scenario
         }
 
         private static void ValidateStakedState(
-            IAccountState state,
+            IWorld state,
             Address agentAddr,
             FungibleAssetValue expectStakedAmount,
             long expectStartedBlockIndex)
         {
             var stakeAddr = StakeState.DeriveAddress(agentAddr);
-            var actualStakedAmount = state.GetBalance(stakeAddr, expectStakedAmount.Currency);
+            var actualStakedAmount = LegacyModule.GetBalance(state, stakeAddr, expectStakedAmount.Currency);
             Assert.Equal(expectStakedAmount, actualStakedAmount);
-            var stakeState = new StakeState((Dictionary)state.GetState(stakeAddr));
+            var stakeState = new StakeState((Dictionary)LegacyModule.GetState(state, stakeAddr));
             Assert.Equal(expectStartedBlockIndex, stakeState.StartedBlockIndex);
         }
 
         private static void ValidateStakedStateV2(
-            IAccountState state,
+            IWorld state,
             Address agentAddr,
             FungibleAssetValue expectStakedAmount,
             long expectStartedBlockIndex,
@@ -243,9 +230,9 @@ namespace Lib9c.Tests.Action.Scenario
             long expectLockupInterval)
         {
             var stakeAddr = StakeState.DeriveAddress(agentAddr);
-            var actualStakedAmount = state.GetBalance(stakeAddr, expectStakedAmount.Currency);
+            var actualStakedAmount = LegacyModule.GetBalance(state, stakeAddr, expectStakedAmount.Currency);
             Assert.Equal(expectStakedAmount, actualStakedAmount);
-            var stakeState = new StakeStateV2(state.GetState(stakeAddr));
+            var stakeState = new StakeStateV2(LegacyModule.GetState(state, stakeAddr));
             Assert.Equal(expectStartedBlockIndex, stakeState.StartedBlockIndex);
             Assert.Equal(
                 expectStakeRegularFixedRewardSheetName,

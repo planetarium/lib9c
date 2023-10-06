@@ -3,7 +3,6 @@ using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Store.Trie;
-using Libplanet.Types.Blocks;
 
 namespace Libplanet.Extensions.ActionEvaluatorCommonComponents;
 
@@ -43,8 +42,6 @@ public class World : IWorld
 
     public bool Legacy { get; }
 
-    public BlockHash? BlockHash => BaseState.BlockHash;
-
     public IWorldDelta Delta => _delta;
 
     public IWorldState BaseState { get; set; }
@@ -54,6 +51,6 @@ public class World : IWorld
             ? _accounts[address]
             : BaseState.GetAccount(address);
 
-    public IWorld SetAccount(IAccount account)
-        => new World(_accounts.SetItem(account.Address, account));
+    public IWorld SetAccount(Address address, IAccount account)
+        => new World(_accounts.SetItem(address, account));
 }

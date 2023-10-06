@@ -53,8 +53,8 @@ namespace Lib9c.Formatters
                 ? _accounts[address]
                 : new Account();
 
-        public IWorld SetAccount(IAccount account) =>
-            new World(_accounts.SetItem(account.Address, account));
+        public IWorld SetAccount(Address address, IAccount account) =>
+            new World(_accounts.SetItem(address, account));
 
         private class MockWorldDelta : IWorldDelta
         {

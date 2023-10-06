@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Bencodex.Types;
 using Libplanet.Action;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
 
 namespace Libplanet.Extensions.ActionEvaluatorCommonComponents.Tests;
@@ -15,7 +16,7 @@ public class ActionEvaluationSerializerTest
             SetState(addresses[0], Null.Value)
             .SetState(addresses[1], (Text)"foo")
             .SetState(addresses[2], new List((Text)"bar"));
-        World outputStates = (World)new World().SetAccount(account);
+        World outputStates = (World)new World().SetAccount(ReservedAddresses.LegacyAccount, account);
 
 
         var previousStates = new World();
@@ -44,7 +45,7 @@ public class ActionEvaluationSerializerTest
         Assert.Equal(0, deserialized.InputContext.BlockProtocolVersion);
         Assert.Equal(addresses[0], deserialized.InputContext.Signer);
         Assert.Equal(addresses[1], deserialized.InputContext.Miner);
-        var deserializedAccount = deserialized.OutputState.GetAccount(account.Address);
+        var deserializedAccount = deserialized.OutputState.GetAccount(ReservedAddresses.LegacyAccount);
         Assert.Equal(Null.Value, deserializedAccount.GetState(addresses[0]));
         Assert.Equal((Text)"foo", deserializedAccount.GetState(addresses[1]));
         Assert.Equal(new List((Text)"bar"), deserializedAccount.GetState(addresses[2]));

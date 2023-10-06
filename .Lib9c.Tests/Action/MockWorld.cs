@@ -1,14 +1,11 @@
 namespace Lib9c.Tests.Action
 {
 #nullable enable
-    using System;
     using System.Collections.Immutable;
     using System.Diagnostics.Contracts;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Libplanet.Store;
     using Libplanet.Store.Trie;
-    using Libplanet.Types.Blocks;
 
     /// <summary>
     /// A rough replica of https://github.com/planetarium/libplanet/blob/main/Libplanet/State/World.cs
@@ -20,15 +17,15 @@ namespace Lib9c.Tests.Action
         private readonly IWorldState _baseState;
 
         public MockWorld()
-            : this(MockWorldState.Empty)
+            : this(new MockWorldState())
         {
         }
 
-        public MockWorld(IAccount account)
+        public MockWorld(Address address, IAccount account)
             : this(
-                MockWorldState.Empty,
+                new MockWorldState(),
                 new MockWorldDelta(
-                    ImmutableDictionary<Address, IAccount>.Empty.SetItem(account.Address, account)))
+                    ImmutableDictionary<Address, IAccount>.Empty.SetItem(address, account)))
         {
         }
 
@@ -50,9 +47,6 @@ namespace Lib9c.Tests.Action
         public bool Legacy => _baseState.Legacy;
 
         /// <inheritdoc/>
-        public BlockHash? BlockHash => _baseState.BlockHash;
-
-        /// <inheritdoc/>
         public IWorldDelta Delta { get; private set; }
 
         /// <inheritdoc/>
@@ -64,9 +58,9 @@ namespace Lib9c.Tests.Action
         }
 
         /// <inheritdoc/>
-        public IWorld SetAccount(IAccount account)
+        public IWorld SetAccount(Address address, IAccount account)
         {
-            if (!account.Address.Equals(ReservedAddresses.LegacyAccount)
+            if (!address.Equals(ReservedAddresses.LegacyAccount)
                 && account.Delta.UpdatedFungibleAssets.Count > 0)
             {
                 return this;
@@ -74,7 +68,7 @@ namespace Lib9c.Tests.Action
 
             return new MockWorld(
                 this,
-                new MockWorldDelta(Delta.Accounts.SetItem(account.Address, account)));
+                new MockWorldDelta(Delta.Accounts.SetItem(address, account)));
         }
     }
 }

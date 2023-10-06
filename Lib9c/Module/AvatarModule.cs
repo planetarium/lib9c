@@ -203,6 +203,7 @@ namespace Nekoyume.Module
             if (avatar)
             {
                 nextWorld = nextWorld.SetAccount(
+                    Addresses.Avatar,
                     nextWorld.GetAccount(Addresses.Avatar)
                         .SetState(
                             address,
@@ -212,6 +213,7 @@ namespace Nekoyume.Module
             if (inventory)
             {
                 nextWorld = nextWorld.SetAccount(
+                    Addresses.Inventory,
                     nextWorld.GetAccount(Addresses.Inventory)
                         .SetState(
                             address,
@@ -221,6 +223,7 @@ namespace Nekoyume.Module
             if (worldInformation)
             {
                 nextWorld = nextWorld.SetAccount(
+                    Addresses.WorldInformation,
                     nextWorld.GetAccount(Addresses.WorldInformation)
                         .SetState(
                             address,
@@ -230,6 +233,7 @@ namespace Nekoyume.Module
             if (questList)
             {
                 nextWorld = nextWorld.SetAccount(
+                    Addresses.QuestList,
                     nextWorld.GetAccount(Addresses.QuestList)
                         .SetState(
                             address,
@@ -246,7 +250,7 @@ namespace Nekoyume.Module
         {
             var avatarAccount = world.GetAccount(Addresses.Avatar);
             avatarAccount = avatarAccount.SetState(address, state.SerializeList());
-            return world.SetAccount(avatarAccount);
+            return world.SetAccount(Addresses.Avatar, avatarAccount);
         }
 
         internal static Inventory GetInventory(IWorldState worldState, Address address)

@@ -51,6 +51,7 @@ namespace Nekoyume.Module
 
         public static IWorld SetState(IWorld world, Address address, IValue state) =>
             world.SetAccount(
+                ReservedAddresses.LegacyAccount,
                 world.GetAccount(ReservedAddresses.LegacyAccount).SetState(address, state));
 
         public static FungibleAssetValue GetBalance(
@@ -68,6 +69,7 @@ namespace Nekoyume.Module
             Address recipient,
             FungibleAssetValue value) =>
             world.SetAccount(
+                ReservedAddresses.LegacyAccount,
                 world.GetAccount(ReservedAddresses.LegacyAccount)
                     .MintAsset(context, recipient, value));
 
@@ -82,6 +84,7 @@ namespace Nekoyume.Module
             FungibleAssetValue value,
             bool allowNegativeBalance = false) =>
             world.SetAccount(
+                ReservedAddresses.LegacyAccount,
                 world.GetAccount(ReservedAddresses.LegacyAccount)
                     .TransferAsset(context, sender, recipient, value, allowNegativeBalance));
 
@@ -91,6 +94,7 @@ namespace Nekoyume.Module
             Address owner,
             FungibleAssetValue value) =>
             world.SetAccount(
+                ReservedAddresses.LegacyAccount,
                 world.GetAccount(ReservedAddresses.LegacyAccount)
                     .BurnAsset(context, owner, value));
 
@@ -98,6 +102,7 @@ namespace Nekoyume.Module
             IWorld world,
             Libplanet.Types.Consensus.Validator validator) =>
             world.SetAccount(
+                ReservedAddresses.LegacyAccount,
                 world.GetAccount(ReservedAddresses.LegacyAccount)
                     .SetValidator(validator));
 

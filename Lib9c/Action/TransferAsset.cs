@@ -146,7 +146,7 @@ namespace Nekoyume.Action
                     {
                         throw new ArgumentException(
                             "You can't send assets to staking state.",
-                            nameof(recipient));
+                            nameof(Recipient));
                     }
 
                     try
@@ -163,7 +163,7 @@ namespace Nekoyume.Action
                     {
                         throw new ArgumentException(
                             "You can't send assets to staking state.",
-                            nameof(recipient));
+                            nameof(Recipient));
                     }
 
                     try
@@ -180,7 +180,7 @@ namespace Nekoyume.Action
                     {
                         throw new ArgumentException(
                             "You can't send assets to staking state.",
-                            nameof(recipient));
+                            nameof(Recipient));
                     }
                 }
 
@@ -200,7 +200,7 @@ namespace Nekoyume.Action
                     {
                         throw new ArgumentException(
                             "You can't send assets to staking state.",
-                            nameof(recipient));
+                            nameof(Recipient));
                     }
                 }
             }

@@ -34,14 +34,17 @@ namespace Lib9c.Tests.Action
         }.ToImmutableList();
 
         private static readonly MockWorld _previousState = new MockWorld(
-            new MockAccount(
-                new MockAccountState(ReservedAddresses.LegacyAccount)
-                    .SetState(AdminState.Address, new AdminState(_admin, 100).Serialize())
-                    .SetState(GoldCurrencyState.Address, new GoldCurrencyState(NCG).Serialize())
-                    .SetBalance(_authMiners[0], NCG * 1000)
-                    .SetBalance(_authMiners[1], NCG * 2000)
-                    .SetBalance(_authMiners[2], NCG * 3000)
-                    .SetBalance(_authMiners[3], NCG * 4000)));
+            new MockWorldState(
+                ImmutableDictionary<Address, IAccount>.Empty.Add(
+                    ReservedAddresses.LegacyAccount,
+                    new MockAccount(
+                        new MockAccountState()
+                            .SetState(AdminState.Address, new AdminState(_admin, 100).Serialize())
+                            .SetState(GoldCurrencyState.Address, new GoldCurrencyState(NCG).Serialize())
+                            .SetBalance(_authMiners[0], NCG * 1000)
+                            .SetBalance(_authMiners[1], NCG * 2000)
+                            .SetBalance(_authMiners[2], NCG * 3000)
+                            .SetBalance(_authMiners[3], NCG * 4000)))));
 
         [Fact]
         public void Execute()

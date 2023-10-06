@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action.Coupons
     using Bencodex.Types;
     using Libplanet.Action;
     using Libplanet.Action.State;
+    using Libplanet.Crypto;
     using Nekoyume.Action;
     using Nekoyume.Action.Coupons;
     using Nekoyume.Action.Extensions;
@@ -21,11 +22,14 @@ namespace Lib9c.Tests.Action.Coupons
         public void Execute()
         {
             IWorld state = new MockWorld(
-                new MockAccount(ReservedAddresses.LegacyAccount)
-                    .SetState(
-                        AdminState.Address,
-                        new AdminState(CouponsFixture.AgentAddress1, 1)
-                            .Serialize()));
+                new MockWorldState(
+                    ImmutableDictionary<Address, IAccount>.Empty.Add(
+                        ReservedAddresses.LegacyAccount,
+                        new MockAccount()
+                            .SetState(
+                                AdminState.Address,
+                                new AdminState(CouponsFixture.AgentAddress1, 1)
+                                    .Serialize()))));
             IRandom random = new TestRandom();
 
             Assert.Throws<PolicyExpiredException>(() =>

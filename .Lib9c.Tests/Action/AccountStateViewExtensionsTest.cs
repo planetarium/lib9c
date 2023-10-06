@@ -77,9 +77,12 @@ namespace Lib9c.Tests.Action
         public void TryGetAvatarStateAddressKeyNotFoundException()
         {
             IWorld states = new MockWorld(
-                new MockAccount(Addresses.Avatar).SetState(
-                    default,
-                    Dictionary.Empty));
+                new MockWorldState(
+                    ImmutableDictionary<Address, IAccount>.Empty.Add(
+                        Addresses.Avatar,
+                        new MockAccount().SetState(
+                            default,
+                            Dictionary.Empty))));
 
             Assert.False(AvatarModule.TryGetAvatarState(states, default, default, out _));
         }
@@ -88,12 +91,15 @@ namespace Lib9c.Tests.Action
         public void TryGetAvatarStateKeyNotFoundException()
         {
             IWorld states = new MockWorld(
-                new MockAccount(Addresses.Avatar)
-                    .SetState(
-                        default,
-                        Dictionary.Empty
-                            .Add("agentAddress", default(Address).Serialize())
-                    ));
+                new MockWorldState(
+                    ImmutableDictionary<Address, IAccount>.Empty.Add(
+                        Addresses.Avatar,
+                        new MockAccount()
+                            .SetState(
+                                default,
+                                Dictionary.Empty
+                                    .Add("agentAddress", default(Address).Serialize())
+                    ))));
 
             Assert.False(AvatarModule.TryGetAvatarState(states, default, default, out _));
         }
@@ -102,7 +108,10 @@ namespace Lib9c.Tests.Action
         public void TryGetAvatarStateInvalidCastException()
         {
             IWorld states = new MockWorld(
-                new MockAccount(Addresses.Avatar).SetState(default, default(Text)));
+                new MockWorldState(
+                    ImmutableDictionary<Address, IAccount>.Empty.Add(
+                        Addresses.Avatar,
+                        new MockAccount().SetState(default, default(Text)))));
 
             Assert.False(AvatarModule.TryGetAvatarState(states, default, default, out _));
         }
@@ -111,7 +120,10 @@ namespace Lib9c.Tests.Action
         public void TryGetAvatarStateInvalidAddress()
         {
             IWorld states = new MockWorld(
-                new MockAccount(Addresses.Avatar).SetState(default, _avatarState.SerializeList()));
+                new MockWorldState(
+                    ImmutableDictionary<Address, IAccount>.Empty.Add(
+                        Addresses.Avatar,
+                        new MockAccount().SetState(default, _avatarState.SerializeList()))));
 
             Assert.False(
                 AvatarModule.TryGetAvatarState(
@@ -163,7 +175,7 @@ namespace Lib9c.Tests.Action
             };
             var account = states.GetAccount(key);
             account = account.SetState(_avatarAddress, null!);
-            states = states.SetAccount(account);
+            states = states.SetAccount(key, account);
 
             var exc = Assert.Throws<FailedLoadStateException>(() => AvatarModule.GetAvatarState(states, _avatarAddress));
             Assert.Contains(keyString, exc.Message);

@@ -19,7 +19,7 @@ namespace Libplanet.Extensions.RemoteStates
             _explorerEndpoint = explorerEndpoint;
         }
 
-        public IWorldState GetWorldState(BlockHash? blockHash)
+        public IWorldState GetBlockWorldState(BlockHash? blockHash)
             => new RemoteWorldState(
                 _explorerEndpoint,
                 blockHash);
@@ -34,7 +34,15 @@ namespace Libplanet.Extensions.RemoteStates
                 _explorerEndpoint,
                 address,
                 offset);
+        public IWorldState GetWorldState(HashDigest<SHA256>? hash)
+        {
+            throw new NotImplementedException();
+        }
 
+        public IAccountState GetAccountState(HashDigest<SHA256>? hash)
+        {
+            throw new NotImplementedException();
+        }
         public ITrie GetBlockTrie(BlockHash? offset)
         {
             throw new NotImplementedException();

@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action.Coupons
     using System.Linq;
     using Libplanet.Action;
     using Libplanet.Action.State;
+    using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Coupons;
@@ -23,11 +24,13 @@ namespace Lib9c.Tests.Action.Coupons
             IRandom random = new TestRandom();
             var sheets = TableSheetsImporter.ImportSheets();
             IWorld world = new MockWorld(
-                new MockAccount(ReservedAddresses.LegacyAccount)
-                    .SetState(
-                        Addresses.GameConfig,
-                        new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
-                    ));
+                new MockWorldState(
+                    ImmutableDictionary<Address, IAccount>.Empty.Add(
+                        ReservedAddresses.LegacyAccount,
+                        new MockAccount()
+                            .SetState(
+                                Addresses.GameConfig,
+                                new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()))));
 
             foreach (var (key, value) in sheets)
             {

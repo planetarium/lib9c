@@ -7,6 +7,7 @@ using Libplanet.Crypto;
 using Libplanet.Action.State;
 using Nekoyume.Module;
 using Xunit;
+using Nekoyume.Action;
 
 namespace Lib9c.DevExtensions.Tests.Action.Stage
 {

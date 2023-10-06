@@ -1,15 +1,12 @@
 using System.Collections.Immutable;
 using System.Numerics;
-using System.Security.Cryptography;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Store.Trie;
 using Libplanet.Types.Assets;
-using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 
 namespace Libplanet.Extensions.ActionEvaluatorCommonComponents;
@@ -124,11 +121,7 @@ public class Account : IAccount
 
     public IAccountDelta Delta => _delta;
 
-    public BlockHash? BlockHash => BaseState.BlockHash;
-
     public ITrie Trie => BaseState.Trie;
-
-    public Address Address => ReservedAddresses.LegacyAccount;
 
     public IValue? GetState(Address address) =>
         _states.ContainsKey(address)

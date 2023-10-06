@@ -344,6 +344,7 @@ namespace Nekoyume.Action
                 false);
 
             return world.SetAccount(
+                ReservedAddresses.LegacyAccount,
                 world.GetAccount(ReservedAddresses.LegacyAccount)
                     .SetState(stakeState.address, stakeState.Serialize()));
         }
