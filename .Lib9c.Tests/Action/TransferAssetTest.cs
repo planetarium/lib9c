@@ -366,7 +366,7 @@ namespace Lib9c.Tests.Action
                 amount: _currency * 100
             );
             // 스테이킹 주소에 송금하려고 하면 실패합니다.
-            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
+            Assert.Throws<ArgumentException>("Recipient", () => action.Execute(new ActionContext()
             {
                 PreviousState = LegacyModule
                     .SetState(
@@ -377,7 +377,7 @@ namespace Lib9c.Tests.Action
                 Rehearsal = false,
                 BlockIndex = 1,
             }));
-            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
+            Assert.Throws<ArgumentException>("Recipient", () => action.Execute(new ActionContext()
             {
                 PreviousState = LegacyModule
                     .SetState(
@@ -394,7 +394,7 @@ namespace Lib9c.Tests.Action
                 Rehearsal = false,
                 BlockIndex = 1,
             }));
-            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
+            Assert.Throws<ArgumentException>("Recipient", () => action.Execute(new ActionContext()
             {
                 PreviousState = LegacyModule
                     .SetState(
@@ -412,7 +412,7 @@ namespace Lib9c.Tests.Action
             var monsterCollectionRewardSheet = new MonsterCollectionRewardSheet();
             monsterCollectionRewardSheet.Set(
                 "level,required_gold,reward_id\n1,500,1\n2,1800,2\n3,7200,3\n4,54000,4\n5,270000,5\n6,480000,6\n7,1500000,7\n");
-            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
+            Assert.Throws<ArgumentException>("Recipient", () => action.Execute(new ActionContext()
             {
                 PreviousState = LegacyModule
                     .SetState(

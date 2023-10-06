@@ -287,9 +287,9 @@ namespace Nekoyume.Action
                 avatarState.address,
                 avatarState,
                 true,
+                true,
                 false,
-                false,
-                false);
+                true);
         }
 
         public static void AddAndUnlockOption(

@@ -1363,26 +1363,5 @@ namespace Nekoyume.Module
 
             return GetSheets(worldState, sheetTypeList.Distinct().ToArray());
         }
-
-        public static IValue GetInventoryState(
-            IWorldState worldState,
-            Address inventoryAddr)
-        {
-            var inventoryState = GetState(worldState, inventoryAddr);
-            if (inventoryState is null || inventoryState is Null)
-            {
-                throw new StateNullException(inventoryAddr);
-            }
-
-            return inventoryState;
-        }
-
-        public static Inventory GetInventory(
-            IWorldState worldState,
-            Address inventoryAddr)
-        {
-            var inventoryState = GetInventoryState(worldState, inventoryAddr);
-            return new Inventory((List)inventoryState);
-        }
     }
 }

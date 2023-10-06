@@ -99,9 +99,9 @@ namespace Nekoyume.Module
 
                 if (avatarState.Version >= 2)
                 {
-                    avatarState.inventory = GetInventory(worldState, address);
-                    avatarState.worldInformation = GetWorldInformation(worldState, address);
-                    avatarState.questList = GetQuestList(worldState, address);
+                    avatarState.inventory = GetInventoryV2(worldState, address);
+                    avatarState.worldInformation = GetWorldInformationV2(worldState, address);
+                    avatarState.questList = GetQuestListV2(worldState, address);
                 }
             }
             catch (KeyNotFoundException)
@@ -255,9 +255,23 @@ namespace Nekoyume.Module
 
         internal static Inventory GetInventory(IWorldState worldState, Address address)
         {
+            var serializedInventory = AccountHelper.Resolve(
+                worldState,
+                address,
+                Addresses.Inventory,
+                address.Derive(LegacyInventoryKey));
+            if (serializedInventory is null || serializedInventory.Equals(Null.Value))
+            {
+                throw new FailedLoadStateException(
+                    $"Aborted as the inventory state of the avatar ({address}) was failed to load.");
+            }
 
-            var inventoryAccount = worldState.GetAccount(Addresses.Inventory);
-            var serializedInventory = inventoryAccount.GetState(address);
+            return new Inventory((List)serializedInventory);
+        }
+
+        private static Inventory GetInventoryV2(IWorldState worldState, Address address)
+        {
+            var serializedInventory = worldState.GetAccount(Addresses.Inventory).GetState(address);
             if (serializedInventory is null || serializedInventory.Equals(Null.Value))
             {
                 throw new FailedLoadStateException(
@@ -276,8 +290,24 @@ namespace Nekoyume.Module
 
         internal static WorldInformation GetWorldInformation(IWorldState worldState, Address address)
         {
-            var worldInfoAccount = worldState.GetAccount(Addresses.WorldInformation);
-            var serializeWorldInfo = worldInfoAccount.GetState(address);
+            var serializeWorldInfo = AccountHelper.Resolve(
+                worldState,
+                address,
+                Addresses.WorldInformation,
+                address.Derive(LegacyWorldInformationKey));
+            if (serializeWorldInfo is null || serializeWorldInfo.Equals(Null.Value))
+            {
+                throw new FailedLoadStateException(
+                    $"Aborted as the worldInformation state of the avatar ({address}) was failed to load.");
+            }
+
+            return new WorldInformation((Dictionary)serializeWorldInfo);
+        }
+
+        internal static WorldInformation GetWorldInformationV2(IWorldState worldState, Address address)
+        {
+            var serializeWorldInfo =
+                worldState.GetAccount(Addresses.WorldInformation).GetState(address);
             if (serializeWorldInfo is null || serializeWorldInfo.Equals(Null.Value))
             {
                 throw new FailedLoadStateException(
@@ -294,10 +324,25 @@ namespace Nekoyume.Module
             return world.SetAccount(Addresses.WorldInformation, worldInfoAccount);
         }
 
-        private static QuestList GetQuestList(IWorldState worldState, Address address)
+        internal static QuestList GetQuestList(IWorldState worldState, Address address)
         {
-            var questListAccount = worldState.GetAccount(Addresses.QuestList);
-            var serializeQuestList = questListAccount.GetState(address);
+            var serializeQuestList = AccountHelper.Resolve(
+                worldState,
+                address,
+                Addresses.QuestList,
+                address.Derive(LegacyQuestListKey));
+            if (serializeQuestList is null || serializeQuestList.Equals(Null.Value))
+            {
+                throw new FailedLoadStateException(
+                    $"Aborted as the questList state of the avatar ({address}) was failed to load.");
+            }
+
+            return new QuestList((Dictionary)serializeQuestList);
+        }
+
+        private static QuestList GetQuestListV2(IWorldState worldState, Address address)
+        {
+            var serializeQuestList = worldState.GetAccount(Addresses.QuestList).GetState(address);
             if (serializeQuestList is null || serializeQuestList.Equals(Null.Value))
             {
                 throw new FailedLoadStateException(

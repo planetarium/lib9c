@@ -59,9 +59,9 @@ namespace Lib9c.Tests.Action.Summon
                 _avatarAddress,
                 _avatarState,
                 true,
-                false,
-                false,
-                false);
+                true,
+                true,
+                true);
             _initialState = LegacyModule.SetState(_initialState, GoldCurrencyState.Address, gold.Serialize());
             _initialState = LegacyModule.MintAsset(_initialState, context, GoldCurrencyState.Address, gold.Currency * 100000000000);
             _initialState = LegacyModule.TransferAsset(
