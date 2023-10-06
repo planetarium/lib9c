@@ -118,6 +118,7 @@ namespace Lib9c.Tests.Util
             foreach (var (key, value) in sheets)
             {
                 world = world.SetAccount(
+                    ReservedAddresses.LegacyAccount,
                     world.GetAccount(ReservedAddresses.LegacyAccount).SetState(
                         Addresses.TableSheet.Derive(key),
                         value.Serialize()));

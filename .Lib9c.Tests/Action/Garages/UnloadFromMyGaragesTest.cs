@@ -253,6 +253,7 @@ namespace Lib9c.Tests.Action.Garages
             // Inventory state is null.
             var previousStatesWithNullInventoryState =
                 _previousStates.SetAccount(
+                    Addresses.Inventory,
                     _previousStates.GetAccount(Addresses.Inventory)
                         .SetState(_recipientAvatarAddr, Null.Value));
             Assert.Throws<StateNullException>(() => Execute(
@@ -273,6 +274,7 @@ namespace Lib9c.Tests.Action.Garages
             {
                 var previousStatesWithInvalidInventoryState =
                     _previousStates.SetAccount(
+                        Addresses.Inventory,
                         _previousStates.GetAccount(Addresses.Inventory)
                             .SetState(_recipientAvatarAddr, invalidInventoryState));
                 Assert.Throws<InvalidCastException>(() => Execute(

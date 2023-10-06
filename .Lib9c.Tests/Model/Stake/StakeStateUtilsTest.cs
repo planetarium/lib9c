@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Model.Stake
         public void TryMigrate_Throw_NullReferenceException_When_IAccountDelta_Null()
         {
             Assert.Throws<NullReferenceException>(() =>
-                StakeStateUtils.TryMigrate((IAccount)null, default, out _));
+                StakeStateUtils.TryMigrate((IWorld)null, default, out _));
         }
 
         [Fact]

@@ -8,15 +8,17 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
 
     public class ClaimItemsTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly Address _signerAddress;
 
         private readonly TableSheets _tableSheets;
@@ -30,13 +32,13 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new MockWorld();
 
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = LegacyModule
+                    .SetState(_initialState, Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -46,10 +48,9 @@ namespace Lib9c.Tests.Action
             _signerAddress = new PrivateKey().ToAddress();
 
             var context = new ActionContext();
-            _initialState = _initialState
-                .MintAsset(context, _signerAddress, _currencies[0] * 5)
-                .MintAsset(context, _signerAddress, _currencies[1] * 5)
-                .MintAsset(context, _signerAddress, _currencies[2] * 5);
+            _initialState = LegacyModule.MintAsset(_initialState, context, _signerAddress, _currencies[0] * 5);
+            _initialState = LegacyModule.MintAsset(_initialState, context, _signerAddress, _currencies[1] * 5);
+            _initialState = LegacyModule.MintAsset(_initialState, context, _signerAddress, _currencies[2] * 5);
         }
 
         [Fact]
@@ -132,10 +133,10 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var inventory = states.GetInventory(recipientAvatarAddress.Derive(SerializeKeys.LegacyInventoryKey));
+            var inventory = AvatarModule.GetInventory(states, recipientAvatarAddress.Derive(SerializeKeys.LegacyInventoryKey));
             foreach (var i in Enumerable.Range(0, 3))
             {
-                Assert.Equal(_currencies[i] * 4, states.GetBalance(_signerAddress, _currencies[i]));
+                Assert.Equal(_currencies[i] * 4, LegacyModule.GetBalance(states, _signerAddress, _currencies[i]));
                 Assert.Equal(
                     1,
                     inventory.Items.First(x => x.item.Id == _itemIds[i]).count);
@@ -168,21 +169,21 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            Assert.Equal(states.GetBalance(_signerAddress, _currencies[0]), _currencies[0] * 3);
-            Assert.Equal(states.GetBalance(_signerAddress, _currencies[1]), _currencies[1] * 3);
-            Assert.Equal(states.GetBalance(_signerAddress, _currencies[2]), _currencies[2] * 4);
+            Assert.Equal(LegacyModule.GetBalance(states, _signerAddress, _currencies[0]), _currencies[0] * 3);
+            Assert.Equal(LegacyModule.GetBalance(states, _signerAddress, _currencies[1]), _currencies[1] * 3);
+            Assert.Equal(LegacyModule.GetBalance(states, _signerAddress, _currencies[2]), _currencies[2] * 4);
 
-            var inventory1 = states.GetInventory(recipientAvatarAddress1.Derive(SerializeKeys.LegacyInventoryKey));
+            var inventory1 = AvatarModule.GetInventory(states, recipientAvatarAddress1.Derive(SerializeKeys.LegacyInventoryKey));
             Assert.Equal(1, inventory1.Items.First(x => x.item.Id == _itemIds[0]).count);
             Assert.Equal(1, inventory1.Items.First(x => x.item.Id == _itemIds[1]).count);
 
-            var inventory2 = states.GetInventory(recipientAvatarAddress2.Derive(SerializeKeys.LegacyInventoryKey));
+            var inventory2 = AvatarModule.GetInventory(states, recipientAvatarAddress2.Derive(SerializeKeys.LegacyInventoryKey));
             Assert.Equal(1, inventory2.Items.First(x => x.item.Id == _itemIds[0]).count);
             Assert.Equal(1, inventory2.Items.First(x => x.item.Id == _itemIds[1]).count);
             Assert.Equal(1, inventory2.Items.First(x => x.item.Id == _itemIds[2]).count);
         }
 
-        private IAccount GenerateAvatar(IAccount state, out Address avatarAddress)
+        private IWorld GenerateAvatar(IWorld state, out Address avatarAddress)
         {
             var address = new PrivateKey().ToAddress();
             var agentState = new AgentState(address);
@@ -203,12 +204,8 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses[0] = avatarAddress;
 
-            state = state
-                .SetState(address, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize())
-                .SetState(
-                    avatarAddress.Derive(SerializeKeys.LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
+            state = AgentModule.SetAgentState(state, address, agentState);
+            state = AvatarModule.SetAvatarState(state, avatarAddress, avatarState, true, true, true, true);
 
             return state;
         }

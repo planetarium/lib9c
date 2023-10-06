@@ -61,7 +61,7 @@ namespace Nekoyume.Model.State
         //       Because we need to make sure that the reward sheet V3 is applied
         //       after the `ClaimStakeReward5` action is deprecated.
         //       And we expect the index will be 7_650_000L.
-        public const long StakeRewardSheetV3Index = ClaimStakeReward5.ObsoleteBlockIndex + 1;
+        public const long StakeRewardSheetV3Index = ActionObsoleteConfig.V200060ObsoleteIndex;
 
         public long CancellableBlockIndex { get; private set; }
         public long StartedBlockIndex { get; private set; }
@@ -238,7 +238,7 @@ namespace Nekoyume.Model.State
             out int v1Step,
             out int v2Step)
         {
-            var startedBlockIndex = Math.Max(StartedBlockIndex, ClaimStakeReward2.ObsoletedIndex);
+            var startedBlockIndex = Math.Max(StartedBlockIndex, 5_549_200L);
             return CalculateStep(blockIndex, startedBlockIndex, out v1Step, out v2Step);
         }
 
@@ -249,7 +249,7 @@ namespace Nekoyume.Model.State
             out int v2Step)
         {
             v2Step = GetRewardStepV1(blockIndex, StakeRewardSheetV2Index);
-            v1Step = GetRewardStepV1(blockIndex, ClaimStakeReward2.ObsoletedIndex) - v2Step;
+            v1Step = GetRewardStepV1(blockIndex, 5_549_200L) - v2Step;
             return v1Step + v2Step;
         }
 
@@ -260,7 +260,7 @@ namespace Nekoyume.Model.State
             out int v2Step)
         {
             v2Step = GetRewardStep(blockIndex, StakeRewardSheetV2Index);
-            v1Step = GetRewardStep(blockIndex, ClaimStakeReward2.ObsoletedIndex) - v2Step;
+            v1Step = GetRewardStep(blockIndex, 5_549_200L) - v2Step;
             return v1Step + v2Step;
         }
 
@@ -272,7 +272,7 @@ namespace Nekoyume.Model.State
         {
             v3Step = GetRewardStep(blockIndex, StakeRewardSheetV3Index);
             v2Step = GetRewardStep(blockIndex, StakeRewardSheetV2Index) - v3Step;
-            v1Step = GetRewardStep(blockIndex, ClaimStakeReward2.ObsoletedIndex) - v2Step - v3Step;
+            v1Step = GetRewardStep(blockIndex, 5_549_200L) - v2Step - v3Step;
             return v1Step + v2Step + v3Step;
         }
 

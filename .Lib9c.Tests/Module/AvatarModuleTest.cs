@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Module
+namespace Lib9c.Tests.Module
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -134,9 +134,9 @@
             };
 
             IWorld world = new MockWorld();
-            IAccount account = new MockAccount(ReservedAddresses.LegacyAccount);
+            IAccount account = new MockAccount();
             account = account.SetState(_address, new Dictionary(dict));
-            world = world.SetAccount(account);
+            world = world.SetAccount(ReservedAddresses.LegacyAccount, account);
             var avatarStateV0 = AvatarModule.GetAvatarState(world, _address);
             CheckAvatarState(avatarStateV0, 0);
         }
@@ -173,12 +173,12 @@
             };
 
             IWorld world = new MockWorld();
-            IAccount account = new MockAccount(ReservedAddresses.LegacyAccount);
+            IAccount account = new MockAccount();
             account = account.SetState(_address, new Dictionary(dict));
             account = account.SetState(_address.Derive(LegacyInventoryKey), _inventory.Serialize());
             account = account.SetState(_address.Derive(LegacyWorldInformationKey), _worldInformation.Serialize());
             account = account.SetState(_address.Derive(LegacyQuestListKey), _questList.Serialize());
-            world = world.SetAccount(account);
+            world = world.SetAccount(ReservedAddresses.LegacyAccount, account);
             var avatarStateV1 = AvatarModule.GetAvatarState(world, _address);
             CheckAvatarState(avatarStateV1, 1);
         }
@@ -221,10 +221,10 @@
             IAccount inventoryAccount = world.GetAccount(Addresses.Inventory).SetState(_address, _inventory.Serialize());
             IAccount worldInformationAccount = world.GetAccount(Addresses.WorldInformation).SetState(_address, _worldInformation.Serialize());
             IAccount questListAccount = world.GetAccount(Addresses.QuestList).SetState(_address, _questList.Serialize());
-            world = world.SetAccount(avatarAccount);
-            world = world.SetAccount(inventoryAccount);
-            world = world.SetAccount(worldInformationAccount);
-            world = world.SetAccount(questListAccount);
+            world = world.SetAccount(Addresses.Avatar, avatarAccount);
+            world = world.SetAccount(Addresses.Inventory, inventoryAccount);
+            world = world.SetAccount(Addresses.WorldInformation, worldInformationAccount);
+            world = world.SetAccount(Addresses.QuestList, questListAccount);
             var avatarStateV2 = AvatarModule.GetAvatarState(world, _address);
             CheckAvatarState(avatarStateV2, version);
         }

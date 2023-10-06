@@ -7,9 +7,11 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Extensions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -53,18 +55,18 @@ namespace Nekoyume.Action
                 }).ToList();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
 
             var states = context.PreviousState;
             var random = context.GetRandom();
-            var itemSheet = states.GetSheets(containItemSheet: true).GetItemSheet();
+            var itemSheet = LegacyModule.GetSheets(states, containItemSheet: true).GetItemSheet();
 
             foreach (var (avatarAddress, fungibleAssetValues) in ClaimData)
             {
                 var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-                var inventory = states.GetInventory(inventoryAddress)
+                var inventory = AvatarModule.GetInventory(states, inventoryAddress)
                                 ?? throw new FailedLoadStateException(
                                     ActionTypeText,
                                     GetSignerAndOtherAddressesHex(context, inventoryAddress),
@@ -89,7 +91,7 @@ namespace Nekoyume.Action
                             $"Format of Amount currency's ticker is invalid");
                     }
 
-                    states = states.BurnAsset(context, context.Signer, fungibleAssetValue);
+                    states = LegacyModule.BurnAsset(states, context, context.Signer, fungibleAssetValue);
 
                     var item = itemSheet[itemId] switch
                     {
@@ -102,7 +104,7 @@ namespace Nekoyume.Action
                     inventory.AddItem(item, (int)fungibleAssetValue.RawValue);
                 }
 
-                states = states.SetState(inventoryAddress, inventory.Serialize());
+                states = AvatarModule.SetInventory(states, inventoryAddress, inventory);
             }
 
             return states;

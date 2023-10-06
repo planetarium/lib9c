@@ -26,8 +26,8 @@ namespace Lib9c.Tests.Action
     {
         private readonly IAccountState _baseState;
 
-        public MockAccount(Address address)
-            : this(new MockAccountState(address))
+        public MockAccount()
+            : this(new MockAccountState())
         {
         }
 
@@ -43,7 +43,7 @@ namespace Lib9c.Tests.Action
             TotalUpdatedFungibles = ImmutableDictionary<(Address, Currency), BigInteger>.Empty;
         }
 
-        public ITrie Trie => throw new NotSupportedException();
+        public ITrie Trie => _baseState.Trie;
 
         /// <inheritdoc/>
         public IAccountDelta Delta { get; private set; }

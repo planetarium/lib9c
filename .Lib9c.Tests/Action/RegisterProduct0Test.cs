@@ -232,7 +232,7 @@ namespace Lib9c.Tests.Action
                 true,
                 true);
             _initialState = LegacyModule.MintAsset(_initialState, context, AvatarAddress, asset);
-            var action = new RegisterProduct0
+            var action = new RegisterProduct
             {
                 AvatarAddress = AvatarAddress,
                 RegisterInfos = new List<IRegisterInfo>
@@ -274,7 +274,7 @@ namespace Lib9c.Tests.Action
 
             var nextAvatarState = AvatarModule.GetAvatarState(nextWorld, AvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct0.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
 
             var marketState = new MarketState(nextAccount.GetState(Addresses.Market));
             Assert.Contains(AvatarAddress, marketState.AvatarAddresses);
@@ -313,7 +313,7 @@ namespace Lib9c.Tests.Action
             {
                 foreach (var registerInfo in validateMember.RegisterInfos)
                 {
-                    var action = new RegisterProduct0
+                    var action = new RegisterProduct
                     {
                         AvatarAddress = AvatarAddress,
                         RegisterInfos = new[] { registerInfo },
@@ -379,7 +379,7 @@ namespace Lib9c.Tests.Action
                 true,
                 true,
                 true);
-            var action = new RegisterProduct0
+            var action = new RegisterProduct
             {
                 AvatarAddress = AvatarAddress,
                 RegisterInfos = new List<IRegisterInfo>
@@ -408,12 +408,12 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_ArgumentOutOfRangeException()
         {
             var registerInfos = new List<RegisterInfo>();
-            for (int i = 0; i < RegisterProduct0.Capacity + 1; i++)
+            for (int i = 0; i < RegisterProduct.Capacity + 1; i++)
             {
                 registerInfos.Add(new RegisterInfo());
             }
 
-            var action = new RegisterProduct0
+            var action = new RegisterProduct
             {
                 AvatarAddress = _avatarState.address,
                 RegisterInfos = registerInfos,

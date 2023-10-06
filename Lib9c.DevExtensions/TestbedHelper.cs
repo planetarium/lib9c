@@ -160,12 +160,12 @@ namespace Lib9c.DevExtensions
             {
                 if (optionRow.StatType != StatType.NONE)
                 {
-                    var stat = CombinationEquipment5.GetStat(optionRow, random);
+                    var stat = CombinationEquipment.GetStat(optionRow, random);
                     equipment.StatsMap.AddStatAdditionalValue(stat.StatType, stat.BaseValue);
                 }
                 else
                 {
-                    var skill = CombinationEquipment5.GetSkill(optionRow, skillSheet, random);
+                    var skill = CombinationEquipment.GetSkill(optionRow, skillSheet, random);
                     if (!(skill is null))
                     {
                         equipment.Skills.Add(skill);

@@ -69,7 +69,9 @@ namespace Lib9c.Tests.Extensions
                 pair => pair.Value.Serialize());
             foreach (var (address, value) in sheetsAddressAndValues)
             {
-                world = world.SetAccount(world.GetAccount(ReservedAddresses.LegacyAccount).SetState(address, value));
+                world = world.SetAccount(
+                    ReservedAddresses.LegacyAccount,
+                    world.GetAccount(ReservedAddresses.LegacyAccount).SetState(address, value));
             }
 
             var iSheetType = typeof(ISheet);

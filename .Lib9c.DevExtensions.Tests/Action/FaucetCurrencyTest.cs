@@ -6,6 +6,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Serilog;
+using System.Collections.Immutable;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -30,9 +31,13 @@ namespace Lib9c.DevExtensions.Tests.Action
             _crystal = Currency.Legacy("CRYSTAL", 18, null);
 #pragma warning restore CS0618
 
-            _initialState = new MockWorld(new MockAccount(
-                MockAccountState.Legacy
-                    .AddBalance(GoldCurrencyState.Address, _ncg * int.MaxValue)));
+            _initialState = new MockWorld(
+                new MockWorldState(
+                    ImmutableDictionary<Address, IAccount>.Empty.Add(
+                        ReservedAddresses.LegacyAccount,
+                        new MockAccount(
+                            new MockAccountState()
+                                .AddBalance(GoldCurrencyState.Address, _ncg * int.MaxValue)))));
 
             var goldCurrencyState = new GoldCurrencyState(_ncg);
             _agentAddress = new PrivateKey().ToAddress();

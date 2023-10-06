@@ -1026,7 +1026,7 @@ namespace Lib9c.Tests.Action.Scenario
                 context,
                 _sellerAvatarAddress,
                 1 * RuneHelper.StakeRune);
-            var action = new RegisterProduct0
+            var action = new RegisterProduct
             {
                 AvatarAddress = _sellerAvatarAddress,
                 RegisterInfos = new List<IRegisterInfo>

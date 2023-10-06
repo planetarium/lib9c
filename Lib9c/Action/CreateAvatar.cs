@@ -9,8 +9,9 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Action.Extensions;
-using Nekoyume.Helper;
+using Nekoyume.Extensions;
 using Nekoyume.Model.Exceptions;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -250,20 +251,22 @@ namespace Nekoyume.Action
                 avatarState.inventory.AddItem(equipment);
             }
 #endif
-            var sheets = ctx.PreviousState.GetSheets(containItemSheet: true,
+            var sheets = LegacyModule.GetSheets(
+                ctx.PreviousState,
+                containItemSheet: true,
                 sheetTypes: new[] {typeof(CreateAvatarItemSheet), typeof(CreateAvatarFavSheet)});
             var itemSheet = sheets.GetItemSheet();
             var createAvatarItemSheet = sheets.GetSheet<CreateAvatarItemSheet>();
             AddItem(itemSheet, createAvatarItemSheet, avatarState, context.GetRandom());
             var createAvatarFavSheet = sheets.GetSheet<CreateAvatarFavSheet>();
-            states = MintAsset(createAvatarFavSheet, avatarState, states, context);
+            world = MintAsset(createAvatarFavSheet, avatarState, world, context);
             sw.Stop();
             Log.Verbose("{AddressesHex}CreateAvatar CreateAvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CreateAvatar Total Executed Time: {Elapsed}", addressesHex, ended - started);
 
             world = AgentModule.SetAgentState(world, signer, agentState);
-            world = AvatarModule.SetAvatarState(world, avatarAddress, avatarState);
+            world = AvatarModule.SetAvatarState(world, avatarAddress, avatarState, true, true, true, true);
             return world;
         }
 
@@ -291,7 +294,7 @@ namespace Nekoyume.Action
             }
         }
 
-        public static IAccount MintAsset(CreateAvatarFavSheet favSheet,
+        public static IWorld MintAsset(CreateAvatarFavSheet favSheet,
             AvatarState avatarState, IWorld world, IActionContext context)
         {
             foreach (var row in favSheet.Values)

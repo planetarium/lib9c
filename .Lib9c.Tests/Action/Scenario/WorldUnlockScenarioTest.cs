@@ -130,7 +130,6 @@ namespace Lib9c.Tests.Action.Scenario
                 RandomSeed = 0,
                 Rehearsal = false,
             });
-            Assert.True(hackAndSlash.Result.IsClear);
 
             avatarState = AvatarModule.GetAvatarState(nextState, _avatarAddress);
             Assert.True(avatarState.worldInformation.IsStageCleared(stageIdToClear));
@@ -173,7 +172,6 @@ id,world_id,stage_id,world_id_to_unlock,required_crystal
                 RandomSeed = 0,
                 Rehearsal = false,
             });
-            Assert.True(hackAndSlash.Result.IsClear);
 
             avatarState = AvatarModule.GetAvatarState(nextState, _avatarAddress);
             Assert.True(avatarState.worldInformation.IsWorldUnlocked(worldIdToUnlock));

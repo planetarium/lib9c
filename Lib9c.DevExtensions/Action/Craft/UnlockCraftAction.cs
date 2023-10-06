@@ -67,6 +67,7 @@ namespace Lib9c.DevExtensions.Action.Craft
                 targetStage
             );
             return world.SetAccount(
+                Addresses.WorldInformation,
                 world.GetAccount(Addresses.WorldInformation)
                     .SetState(
                         AvatarAddress,

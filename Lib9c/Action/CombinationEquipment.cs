@@ -745,7 +745,7 @@ namespace Nekoyume.Action
 
                 if (optionRow.StatType != StatType.NONE)
                 {
-                    var stat = CombinationEquipment5.GetStat(optionRow, random);
+                    var stat = CombinationEquipment.GetStat(optionRow, random);
                     equipment.StatsMap.AddStatAdditionalValue(stat.StatType, stat.BaseValue);
                     equipment.Update(equipment.RequiredBlockIndex + optionInfo.RequiredBlockIndex);
                     equipment.optionCountFromCombination++;
@@ -786,6 +786,12 @@ namespace Nekoyume.Action
 
             var skill = SkillFactory.Get(skillRow, dmg, chance, statDamageRatio, refStatType);
             return skill;
+        }
+
+        public static DecimalStat GetStat(EquipmentItemOptionSheet.Row row, IRandom random)
+        {
+            var value = random.Next(row.StatMin, row.StatMax + 1);
+            return new DecimalStat(row.StatType, value);
         }
 
         public static void AddSkillOption(

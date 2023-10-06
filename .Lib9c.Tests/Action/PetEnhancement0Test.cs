@@ -285,7 +285,7 @@ namespace Lib9c.Tests.Action
                     insolventPetCostSheetCsv.Serialize());
             }
 
-            prevStates = prevStates.SetAccount(prevAccount);
+            prevStates = prevStates.SetAccount(ReservedAddresses.LegacyAccount, prevAccount);
 
             var action = new PetEnhancement
             {
@@ -311,7 +311,7 @@ namespace Lib9c.Tests.Action
             var nextPetState = new PetState(rawPetState);
             Assert.Equal(targetPetLevel, nextPetState.Level);
 
-            return nextStates.SetAccount(nextAccount);
+            return nextStates.SetAccount(ReservedAddresses.LegacyAccount, nextAccount);
         }
     }
 }

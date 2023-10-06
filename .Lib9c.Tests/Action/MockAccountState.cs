@@ -52,15 +52,13 @@ namespace Lib9c.Tests.Action
     /// </remarks>
     public class MockAccountState : IAccountState
     {
-        private readonly Address _address;
         private readonly IImmutableDictionary<Address, IValue> _states;
         private readonly IImmutableDictionary<(Address, Currency), BigInteger> _fungibles;
         private readonly IImmutableDictionary<Currency, BigInteger> _totalSupplies;
         private readonly ValidatorSet _validatorSet;
 
-        public MockAccountState(Address address)
+        public MockAccountState()
             : this(
-                address,
                 ImmutableDictionary<Address, IValue>.Empty,
                 ImmutableDictionary<(Address Address, Currency Currency), BigInteger>.Empty,
                 ImmutableDictionary<Currency, BigInteger>.Empty,
@@ -69,22 +67,17 @@ namespace Lib9c.Tests.Action
         }
 
         private MockAccountState(
-            Address address,
             IImmutableDictionary<Address, IValue> state,
             IImmutableDictionary<(Address Address, Currency Currency), BigInteger> balance,
             IImmutableDictionary<Currency, BigInteger> totalSupplies,
             ValidatorSet validatorSet)
         {
-            _address = address;
             _states = state;
             _fungibles = balance;
             _totalSupplies = totalSupplies;
             _validatorSet = validatorSet;
             Trie = new TrieStateStore(new MemoryKeyValueStore()).GetStateRoot(null);
         }
-
-        public static MockAccountState Legacy =>
-            new MockAccountState(ReservedAddresses.LegacyAccount);
 
         public ITrie Trie { get; }
 
@@ -128,7 +121,6 @@ namespace Lib9c.Tests.Action
 
         public MockAccountState SetState(Address address, IValue state) =>
             new MockAccountState(
-                _address,
                 _states.SetItem(address, state),
                 _fungibles,
                 _totalSupplies,
@@ -142,7 +134,6 @@ namespace Lib9c.Tests.Action
 
         public MockAccountState SetBalance((Address Address, Currency Currency) pair, BigInteger rawAmount) =>
             new MockAccountState(
-                _address,
                 _states,
                 _fungibles.SetItem(pair, rawAmount),
                 _totalSupplies,
@@ -179,7 +170,6 @@ namespace Lib9c.Tests.Action
             currency.TotalSupplyTrackable
                 ? !(currency.MaximumSupply is { } maximumSupply) || rawAmount <= maximumSupply.RawValue
                     ? new MockAccountState(
-                        _address,
                         _states,
                         _fungibles,
                         _totalSupplies.SetItem(currency, rawAmount),
@@ -204,7 +194,6 @@ namespace Lib9c.Tests.Action
 
         public MockAccountState SetValidator(Validator validator) =>
             new MockAccountState(
-                _address,
                 _states,
                 _fungibles,
                 _totalSupplies,

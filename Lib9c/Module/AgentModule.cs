@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using System;
 using Bencodex.Types;
 using Libplanet.Action.State;
@@ -52,7 +52,7 @@ namespace Nekoyume.Module
             // TODO: Overwrite legacy address to null state?
             var account = world.GetAccount(Addresses.Agent);
             account = account.SetState(agent, state.SerializeList());
-            return world.SetAccount(account);
+            return world.SetAccount(Addresses.Agent, account);
         }
     }
 }

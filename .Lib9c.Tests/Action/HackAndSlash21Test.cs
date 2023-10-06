@@ -464,9 +464,15 @@ namespace Lib9c.Tests.Action
                     false,
                     false,
                     false);
-                state = state.SetAccount(state.GetAccount(Addresses.Inventory).SetState(_avatarAddress, null!));
-                state = state.SetAccount(state.GetAccount(Addresses.WorldInformation).SetState(_avatarAddress, null!));
-                state = state.SetAccount(state.GetAccount(Addresses.QuestList).SetState(_avatarAddress, null!));
+                state = state.SetAccount(
+                    Addresses.Inventory,
+                    state.GetAccount(Addresses.Inventory).SetState(_avatarAddress, null!));
+                state = state.SetAccount(
+                    Addresses.WorldInformation,
+                    state.GetAccount(Addresses.WorldInformation).SetState(_avatarAddress, null!));
+                state = state.SetAccount(
+                    Addresses.QuestList,
+                    state.GetAccount(Addresses.QuestList).SetState(_avatarAddress, null!));
             }
 
             var exec = Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
@@ -556,9 +562,11 @@ namespace Lib9c.Tests.Action
             {
                 worldInformation = new WorldInformation(0, worldSheet, false),
             };
-            state = state.SetAccount(state.GetAccount(Addresses.WorldInformation).SetState(
-                _avatarAddress,
-                avatarState.worldInformation.Serialize()));
+            state = state.SetAccount(
+                Addresses.WorldInformation,
+                state.GetAccount(Addresses.WorldInformation).SetState(
+                    _avatarAddress,
+                    avatarState.worldInformation.Serialize()));
 
             Assert.False(avatarState.worldInformation.IsStageCleared(0));
 
@@ -721,9 +729,11 @@ namespace Lib9c.Tests.Action
                 false,
                 false,
                 false);
-            state = state.SetAccount(state.GetAccount(Addresses.Inventory).SetState(
-                _avatarAddress,
-                avatarState.inventory.Serialize()));
+            state = state.SetAccount(
+                Addresses.Inventory,
+                state.GetAccount(Addresses.Inventory).SetState(
+                    _avatarAddress,
+                    avatarState.inventory.Serialize()));
 
             var exec = Assert.Throws<RequiredBlockIndexException>(() => action.Execute(new ActionContext
             {
@@ -754,6 +764,7 @@ namespace Lib9c.Tests.Action
             var equipment = ItemFactory.CreateItemUsable(equipRow, Guid.NewGuid(), 0);
             avatarState.inventory.AddItem(equipment);
             state = state.SetAccount(
+                Addresses.Inventory,
                 state.GetAccount(Addresses.Inventory)
                     .SetState(
                         _avatarAddress,

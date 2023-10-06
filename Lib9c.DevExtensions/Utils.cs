@@ -82,7 +82,6 @@ namespace Lib9c.DevExtensions
             Block genesis = store.GetBlock(
                 genesisBlockHash
             );
-            var blockChainStates = new BlockChainStates(store, stateStore);
             var actionLoader = new NCDevActionLoader();
             ActionEvaluator actionEvaluator = new ActionEvaluator(
                 _ => policy.BlockAction,
@@ -110,7 +109,6 @@ namespace Lib9c.DevExtensions
                     stateStore: stateStore,
                     genesisBlock: genesis,
                     renderers: null,
-                    blockChainStates: blockChainStates,
                     actionEvaluator: actionEvaluator
                 );
             }

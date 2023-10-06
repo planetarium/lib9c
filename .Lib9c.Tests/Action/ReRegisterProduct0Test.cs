@@ -266,7 +266,7 @@ namespace Lib9c.Tests.Action
             var productType = tradableItem is TradableMaterial
                 ? ProductType.Fungible
                 : ProductType.NonFungible;
-            var reRegister = new ReRegisterProduct0
+            var reRegister = new ReRegisterProduct
             {
                 AvatarAddress = _avatarAddress,
                 ReRegisterInfos = new List<(IProductInfo, IRegisterInfo)>
@@ -319,13 +319,13 @@ namespace Lib9c.Tests.Action
             Assert.Equal(order.Price, product.Price);
 
             var nextAvatarState = AvatarModule.GetAvatarState(actualWorld, _avatarAddress);
-            Assert.Equal(_gameConfigState.ActionPointMax - ReRegisterProduct0.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(_gameConfigState.ActionPointMax - ReRegisterProduct.CostAp, nextAvatarState.actionPoint);
         }
 
         [Fact]
         public void Execute_Throw_ListEmptyException()
         {
-            var action = new ReRegisterProduct0
+            var action = new ReRegisterProduct
             {
                 AvatarAddress = _avatarAddress,
                 ReRegisterInfos = new List<(IProductInfo, IRegisterInfo)>(),
@@ -340,12 +340,12 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_ArgumentOutOfRangeException()
         {
             var reRegisterInfos = new List<(IProductInfo, IRegisterInfo)>();
-            for (int i = 0; i < ReRegisterProduct0.Capacity + 1; i++)
+            for (int i = 0; i < ReRegisterProduct.Capacity + 1; i++)
             {
                 reRegisterInfos.Add((new ItemProductInfo(), new RegisterInfo()));
             }
 
-            var action = new ReRegisterProduct0
+            var action = new ReRegisterProduct
             {
                 AvatarAddress = _avatarAddress,
                 ReRegisterInfos = reRegisterInfos,

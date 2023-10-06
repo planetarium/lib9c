@@ -65,6 +65,7 @@ namespace Lib9c.DevExtensions.Action
             foreach (var (accountAddr, addr, value) in stateList)
             {
                 world = world.SetAccount(
+                    accountAddr,
                     world.GetAccount(accountAddr).SetState(addr, value));
             }
 

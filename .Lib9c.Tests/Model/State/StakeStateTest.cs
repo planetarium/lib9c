@@ -69,10 +69,10 @@ namespace Lib9c.Tests.Model.State
         }
 
         [Theory]
-        [InlineData(1L, ClaimStakeReward2.ObsoletedIndex - 1L, 0)]
-        [InlineData(1L, ClaimStakeReward2.ObsoletedIndex, 0)]
-        [InlineData(1L, ClaimStakeReward2.ObsoletedIndex + RewardInterval - 1L, 0)]
-        [InlineData(1L, ClaimStakeReward2.ObsoletedIndex + RewardInterval, 1)]
+        [InlineData(1L, 5_549_200L - 1L, 0)]
+        [InlineData(1L, 5_549_200L, 0)]
+        [InlineData(1L, 5_549_200L + RewardInterval - 1L, 0)]
+        [InlineData(1L, 5_549_200L + RewardInterval, 1)]
         public void CalculateAccumulateRuneRewards(
             long startedBlockIndex,
             long blockIndex,

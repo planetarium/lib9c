@@ -38,7 +38,7 @@ namespace Lib9c.DevExtensions.Action.Craft
                 AvatarAddress.Derive("recipe_ids"),
                 recipeIdList
             );
-            return world.SetAccount(account);
+            return world.SetAccount(ReservedAddresses.LegacyAccount, account);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

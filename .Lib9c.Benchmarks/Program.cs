@@ -90,7 +90,6 @@ namespace Lib9c.Benchmarks
                 store,
                 stateStore,
                 genesis,
-                new BlockChainStates(store, stateStore),
                 actionEvaluator);
             long height = chain.Tip.Index;
             if (offset + limit > (int)height)

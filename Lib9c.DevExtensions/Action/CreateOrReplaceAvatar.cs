@@ -569,6 +569,7 @@ namespace Lib9c.DevExtensions.Action
             }
 
             world = world.SetAccount(
+                Addresses.Inventory,
                 world.GetAccount(Addresses.Inventory).SetState(avatarAddr, inventory.Serialize()));
             // ~Set Inventory.
 

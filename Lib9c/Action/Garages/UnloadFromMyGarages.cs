@@ -134,7 +134,7 @@ namespace Nekoyume.Action.Garages
             world = TransferFungibleAssetValues(context, world);
             world = TransferFungibleItems(context.Signer, world);
             var random = context.GetRandom();
-            return SendMail(context.BlockIndex, context.Random, world);
+            return SendMail(context.BlockIndex, random, world);
         }
 
         private void ValidateFields(string addressesHex)

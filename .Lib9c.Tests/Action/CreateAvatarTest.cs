@@ -386,13 +386,13 @@ RUNE_GOLDENLEAF,200000,Avatar
             var avatarAddress = new PrivateKey().ToAddress();
             var agentAddress = new PrivateKey().ToAddress();
             var avatarState = new AvatarState(avatarAddress, agentAddress, 0L, _tableSheets.GetAvatarSheets(), new GameConfigState(), default, "test");
-            var nextState = CreateAvatar.MintAsset(createAvatarFavSheet, avatarState, new Account(MockState.Empty), new ActionContext());
+            var nextState = CreateAvatar.MintAsset(createAvatarFavSheet, avatarState, new MockWorld(), new ActionContext());
             foreach (var row in createAvatarFavSheet.Values)
             {
                 var targetAddress = row.Target == CreateAvatarFavSheet.Target.Agent
                     ? agentAddress
                     : avatarAddress;
-                Assert.Equal(row.Currency * row.Quantity, nextState.GetBalance(targetAddress, row.Currency));
+                Assert.Equal(row.Currency * row.Quantity, LegacyModule.GetBalance(nextState, targetAddress, row.Currency));
             }
         }
     }

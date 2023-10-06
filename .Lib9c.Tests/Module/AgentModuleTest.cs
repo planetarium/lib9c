@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Module
+namespace Lib9c.Tests.Module
 {
     using System;
     using System.Collections.Generic;
@@ -52,9 +52,9 @@
             };
 
             IWorld world = new MockWorld();
-            IAccount account = new MockAccount(ReservedAddresses.LegacyAccount);
+            IAccount account = new MockAccount();
             account = account.SetState(_address, new Dictionary(dict));
-            world = world.SetAccount(account);
+            world = world.SetAccount(ReservedAddresses.LegacyAccount, account);
             var agentStateV0 = AgentModule.GetAgentState(world, _address);
             Assert.NotNull(agentStateV0);
             Assert.Equal(0, agentStateV0.Version);
@@ -85,9 +85,9 @@
             };
 
             IWorld world = new MockWorld();
-            IAccount account = new MockAccount(Addresses.Agent);
+            IAccount account = new MockAccount();
             account = account.SetState(_address, new List(list));
-            world = world.SetAccount(account);
+            world = world.SetAccount(Addresses.Agent, account);
             var agentStateV1 = AgentModule.GetAgentState(world, _address);
             Assert.NotNull(agentStateV1);
             Assert.Equal(version, agentStateV1.Version);
