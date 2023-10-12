@@ -80,6 +80,7 @@ combination_equipment7
 combination_equipment8
 combination_equipment9
 create_avatar
+create_avatar10
 create_avatar2
 create_avatar3
 create_avatar4
