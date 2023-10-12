@@ -166,6 +166,7 @@ namespace Nekoyume.Module
                 setAvatar = true;
                 setInventory = true;
                 setWorldInformation = true;
+                setQuestList = true;
             }
 
             if (setAvatar)
