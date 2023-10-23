@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using Bencodex;
 using Bencodex.Types;
 using GraphQL;
@@ -18,68 +17,51 @@ public class RemoteAccountState : IAccountState
 {
     private readonly Uri _explorerEndpoint;
     private readonly GraphQLHttpClient _graphQlHttpClient;
+    private readonly Address? _address;
+    private readonly BlockHash? _offset;
 
-    public RemoteAccountState(Uri explorerEndpoint, Address address, BlockHash? offset)
+    public RemoteAccountState(
+        Uri explorerEndpoint,
+        Address? address,
+        BlockHash? offset)
     {
         _explorerEndpoint = explorerEndpoint;
+        _address = address;
+        _offset = offset;
         _graphQlHttpClient =
             new GraphQLHttpClient(_explorerEndpoint, new SystemTextJsonSerializer());
-        var response = _graphQlHttpClient.SendQueryAsync<GetAccountStateResponseType>(
-            new GraphQLRequest(
-                @"query GetAccount($address: Address!, $offsetBlockHash: ID!)
-                {
-                    stateQuery
-                    {
-                        accountState(address: $address, offsetBlockHash: $offsetBlockHash)
-                    }
-                }",
-                operationName: "GetWorld",
-                variables: new
-                {
-                    address = address is { } addr
-                        ? addr.ToString()
-                        : throw new NotSupportedException(),
-                    offset = offset is { } hash
-                        ? ByteUtil.Hex(hash.ByteArray)
-                        : throw new NotSupportedException(),
-                })).Result;
-        Address = new Address(response.Data.StateQuery.AccountState.Address);
-        BlockHash = Types.Blocks.BlockHash.FromString(response.Data.StateQuery.AccountState.BlockHash);
     }
-
-    public Address Address { get; }
 
     public ITrie Trie => throw new NotSupportedException();
 
-    public BlockHash? BlockHash { get; }
-
-
-    public IValue? GetState(Address address) =>
-        GetStates(new[] { address }).First();
-
     public IReadOnlyList<IValue?> GetStates(IReadOnlyList<Address> addresses)
+        => addresses.Select(address => GetState(address)).ToList().AsReadOnly();
+
+    public IValue? GetState(Address address)
     {
         var response = _graphQlHttpClient.SendQueryAsync<GetStatesResponseType>(
             new GraphQLRequest(
-                @"query GetStates($addresses: [Address!]!, $accountAddress: Address!, $offsetBlockHash: ID!)
+                @"query GetState($address: Address!, $accountAddress: Address!, $offsetBlockHash: ID!, $o)
                 {
                     stateQuery
                     {
-                        states(addresses: $addresses, accountAddress: $accountAddress, offsetBlockHash: $offsetBlockHash)
+                        states(
+                            address: $address,
+                            accountAddress: $accountAddress,
+                            offsetBlockHash: $offsetBlockHash)
                     }
                 }",
-                operationName: "GetStates",
+                operationName: "GetState",
                 variables: new
                 {
-                    addresses = addresses.Select(x => x.ToString()).ToArray(),
-                    accountAddress = Address.ToString(),
-                    offsetBlockHash = BlockHash is { } hash
+                    address,
+                    accountAddress = _address.ToString(),
+                    offsetBlockHash = _offset is { } hash
                         ? ByteUtil.Hex(hash.ByteArray)
-                        : throw new NotSupportedException(),
+                        : null,
                 })).Result;
         var codec = new Codec();
-        return response.Data.StateQuery.States
-            .Select(nullableState => nullableState is { } state ? codec.Decode(state) : null).ToList();
+        return response.Data.StateQuery.States is { } state ? codec.Decode(state) : null;
     }
 
     public FungibleAssetValue GetBalance(Address address, Currency currency)
@@ -101,7 +83,7 @@ public class RemoteAccountState : IAccountState
         };
         var response = _graphQlHttpClient.SendQueryAsync<GetBalanceResponseType>(
             new GraphQLRequest(
-        @"query GetBalance($owner: Address!, $currency: CurrencyInput!, $offsetBlockHash: ID!)
+            @"query GetBalance($owner: Address!, $currency: CurrencyInput!, $offsetBlockHash: ID!)
             {
                 stateQuery
                 {
@@ -116,7 +98,7 @@ public class RemoteAccountState : IAccountState
             {
                 owner = address.ToString(),
                 currency = currencyInput,
-                offsetBlockHash = BlockHash is { } hash
+                offsetBlockHash = _offset is { } hash
                     ? ByteUtil.Hex(hash.ByteArray)
                     : throw new NotSupportedException(),
             })).Result;
@@ -157,7 +139,7 @@ public class RemoteAccountState : IAccountState
                 variables: new
                 {
                     currency = currencyInput,
-                    offsetBlockHash = BlockHash is { } hash
+                    offsetBlockHash = _offset is { } hash
                         ? ByteUtil.Hex(hash.ByteArray)
                         : throw new NotSupportedException(),
                 })).Result;
@@ -183,7 +165,7 @@ public class RemoteAccountState : IAccountState
                 operationName: "GetValidators",
                 variables: new
                 {
-                    offsetBlockHash = BlockHash is { } hash
+                    offsetBlockHash = _offset is { } hash
                         ? ByteUtil.Hex(hash.ByteArray)
                         : throw new NotSupportedException(),
                 })).Result;
@@ -220,7 +202,7 @@ public class RemoteAccountState : IAccountState
 
     private class StateQueryWithStatesType
     {
-        public byte[][] States { get; set; }
+        public byte[] States { get; set; }
     }
 
     private class GetBalanceResponseType

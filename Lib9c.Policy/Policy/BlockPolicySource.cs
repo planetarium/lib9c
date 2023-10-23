@@ -187,7 +187,7 @@ namespace Nekoyume.Blockchain.Policy
                             action is IActivateAccount activate)
                         {
                             return transaction.Nonce == 0 &&
-                                blockChain.GetState(activate.PendingAddress, ReservedAddresses.LegacyAccount) is Dictionary rawPending &&
+                                blockChain.GetWorldState().GetAccount(ReservedAddresses.LegacyAccount).GetState(activate.PendingAddress) is Dictionary rawPending &&
                                 new PendingActivationState(rawPending).Verify(activate.Signature)
                                     ? null
                                     : new TxPolicyViolationException(
@@ -209,11 +209,11 @@ namespace Nekoyume.Blockchain.Policy
                         return null;
                     }
 
-                    switch (blockChain.GetState(transaction.Signer.Derive(ActivationKey.DeriveKey), ReservedAddresses.LegacyAccount))
+                    switch (blockChain.GetWorldState().GetAccount(ReservedAddresses.LegacyAccount).GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
                     {
                         case null:
                             // Fallback for pre-migration.
-                            if (blockChain.GetState(ActivatedAccountsState.Address, ReservedAddresses.LegacyAccount)
+                            if (blockChain.GetWorldState().GetAccount(ReservedAddresses.LegacyAccount).GetState(ActivatedAccountsState.Address)
                                 is Dictionary asDict)
                             {
                                 IImmutableSet<Address> activatedAccounts =

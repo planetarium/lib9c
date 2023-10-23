@@ -13,42 +13,23 @@ public class RemoteWorldState : IWorldState
 {
     private readonly Uri _explorerEndpoint;
     private readonly GraphQLHttpClient _graphQlHttpClient;
+    private readonly BlockHash? _offset;
 
     public RemoteWorldState(Uri explorerEndpoint, BlockHash? offset)
     {
         _explorerEndpoint = explorerEndpoint;
-        _graphQlHttpClient = new GraphQLHttpClient(_explorerEndpoint, new SystemTextJsonSerializer());
-        var response = _graphQlHttpClient.SendQueryAsync<GetWorldStateResponseType>(
-            new GraphQLRequest(
-                @"query GetWorld($address: Address!, $offsetBlockHash: ID!)
-                {
-                    stateQuery
-                    {
-                        worldState(offsetBlockHash: $offsetBlockHash)
-                    }
-                }",
-                operationName: "GetWorld",
-                variables: new
-                {
-                    offset = offset is { } hash
-                        ? ByteUtil.Hex(hash.ByteArray)
-                        : throw new NotSupportedException(),
-                })).Result;
-        BlockHash = Types.Blocks.BlockHash.FromString(response.Data.StateQuery.WorldState.BlockHash);
-        Legacy = response.Data.StateQuery.WorldState.Legacy;
+        _offset = offset;
     }
 
     public IAccount GetAccount(Address address)
     {
         return new RemoteAccount(
-            new RemoteAccountState(_explorerEndpoint, address, BlockHash));
+            new RemoteAccountState(_explorerEndpoint, address, _offset));
     }
 
     public ITrie Trie => throw new NotSupportedException();
 
-    public BlockHash? BlockHash { get; }
-
-    public bool Legacy { get; private set; }
+    public bool Legacy => throw new NotSupportedException();
 
     public class GetWorldStateResponseType
     {

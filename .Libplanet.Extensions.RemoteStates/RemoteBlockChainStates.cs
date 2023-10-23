@@ -2,7 +2,6 @@ using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
-using Libplanet.Store.Trie;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
@@ -19,54 +18,17 @@ namespace Libplanet.Extensions.RemoteStates
             _explorerEndpoint = explorerEndpoint;
         }
 
-        public IWorldState GetBlockWorldState(BlockHash? blockHash)
+        public IWorldState GetWorldState(BlockHash? blockHash)
             => new RemoteWorldState(
                 _explorerEndpoint,
                 blockHash);
 
-        public IAccountState GetBlockAccountState(Address address, BlockHash? offset)
+        public IAccountState GetAccountState(Address address, BlockHash? offset)
             => new RemoteWorldState(
                 _explorerEndpoint,
                 offset).GetAccount(address);
-
-        public IAccountState GetAccountState(Address address, BlockHash? offset)
-            => new RemoteAccountState(
-                _explorerEndpoint,
-                address,
-                offset);
-        public IWorldState GetWorldState(HashDigest<SHA256>? hash)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IWorldState GetWorldState(BlockHash? hash)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IAccountState GetAccountState(HashDigest<SHA256>? hash)
-        {
-            throw new NotImplementedException();
-        }
-        public ITrie GetBlockTrie(BlockHash? offset)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ITrie GetTrie(HashDigest<SHA256>? hash)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IValue? GetState(Address address, Address accountAddress, BlockHash? offset) =>
-            GetStates(new[] { address }, accountAddress, offset).First();
-
-        public IReadOnlyList<IValue?> GetStates(IReadOnlyList<Address> addresses, Address accountAddress, BlockHash? offset)
-            => new RemoteWorldState(_explorerEndpoint, offset).GetAccount(
-                accountAddress).GetStates(addresses);
-
-        public IReadOnlyList<IValue?> GetStates(IReadOnlyList<Address> addresses, HashDigest<SHA256>? stateRootHash)
-            => throw new NotImplementedException();
+        public IValue? GetState(Address address, Address accountAddress, BlockHash? offset)
+            => new RemoteWorldState(_explorerEndpoint, offset).GetAccount(accountAddress).GetState(address);
 
         public FungibleAssetValue GetBalance(Address address, Currency currency, BlockHash? offset)
             => new RemoteWorldState(_explorerEndpoint, offset).GetAccount(
@@ -79,5 +41,20 @@ namespace Libplanet.Extensions.RemoteStates
         public ValidatorSet GetValidatorSet(BlockHash? offset)
             => new RemoteWorldState(_explorerEndpoint, offset).GetAccount(
                 ReservedAddresses.LegacyAccount).GetValidatorSet();
+
+        public IWorldState GetWorldState(HashDigest<SHA256>? hash)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAccountState GetAccountState(HashDigest<SHA256>? hash)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IValue? GetState(Address address, HashDigest<SHA256>? hash)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

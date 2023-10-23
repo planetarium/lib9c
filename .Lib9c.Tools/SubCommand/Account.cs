@@ -49,7 +49,7 @@ namespace Lib9c.Tools.SubCommand
             var actionLoader = new NCActionLoader();
 
             Bencodex.Types.Dictionary goldCurrencyStateDict = (Bencodex.Types.Dictionary)
-                chain.GetState(ReservedAddresses.LegacyAccount, GoldCurrencyState.Address);
+                chain.GetWorldState().GetAccount(GoldCurrencyState.Address).GetState(ReservedAddresses.LegacyAccount);
             GoldCurrencyState goldCurrencyState = new GoldCurrencyState(goldCurrencyStateDict);
             Currency gold = goldCurrencyState.Currency;
 
