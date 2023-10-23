@@ -163,6 +163,7 @@ namespace Nekoyume.Action
             }
 
             TransferAsset.CheckCrystalSender(currency, blockIndex, Sender);
+            TransferAsset.ThrowIfStakeState(world, recipient);
             return LegacyModule.TransferAsset(world, context, Sender, recipient, amount);
         }
     }

@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action.Garages
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
+    using Nekoyume.Action;
     using Nekoyume.Action.Garages;
     using Nekoyume.Exceptions;
     using Nekoyume.Model.Garages;
@@ -297,7 +298,7 @@ namespace Lib9c.Tests.Action.Garages
                     Addresses.Inventory,
                     _previousStates.GetAccount(Addresses.Inventory)
                         .SetState(_avatarAddress, Null.Value));
-            Assert.Throws<StateNullException>(() => Execute(
+            Assert.Throws<FailedLoadStateException>(() => Execute(
                 AgentAddr,
                 0,
                 previousStatesWithNullInventoryState,

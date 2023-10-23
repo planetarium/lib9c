@@ -1059,7 +1059,7 @@ namespace Lib9c.Tests.Action.Scenario
             var random = new TestRandom();
             var nextState = action.Execute(new ActionContext
             {
-                BlockIndex = 1L,
+                BlockIndex = 100L,
                 PreviousState = _initialState,
                 RandomSeed = random.Seed,
                 Signer = _sellerAgentAddress,

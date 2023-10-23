@@ -325,7 +325,6 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var nextState = nextWorld.GetAccount(ReservedAddresses.LegacyAccount);
             var slotState = LegacyModule.GetCombinationSlotState(nextWorld, _avatarAddress, 0);
             var resultEquipment = (Equipment)slotState.Result.itemUsable;
             var nextAvatarState = AvatarModule.GetAvatarState(nextWorld, _avatarAddress);
@@ -334,7 +333,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(startExp + expectedExpIncrement, resultEquipment.Exp);
             Assert.Equal(
                 (3_000_000 - expectedCost) * _currency,
-                nextState.GetBalance(_agentAddress, _currency)
+                LegacyModule.GetBalance(nextWorld, _agentAddress, _currency)
             );
 
             var arenaSheet = _tableSheets.ArenaSheet;
@@ -343,11 +342,11 @@ namespace Lib9c.Tests.Action
                 Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
             Assert.Equal(
                 expectedCost * _currency,
-                nextState.GetBalance(feeStoreAddress, _currency)
+                LegacyModule.GetBalance(nextWorld, feeStoreAddress, _currency)
             );
             Assert.Equal(30, nextAvatarState.mailBox.Count);
 
-            var stateDict = (Dictionary)nextState.GetState(slotAddress);
+            var stateDict = (Dictionary)LegacyModule.GetState(nextWorld, slotAddress);
             var slot = new CombinationSlotState(stateDict);
             var slotResult = (ItemEnhancement.ResultModel)slot.Result;
             if (startLevel != expectedLevel)

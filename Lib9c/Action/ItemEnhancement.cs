@@ -133,6 +133,13 @@ namespace Nekoyume.Action
             context.UseGas(1);
             var ctx = context;
             var world = ctx.PreviousState;
+
+            if (context.Rehearsal)
+            {
+                return world;
+            }
+
+            // Collect addresses
             var slotAddress = avatarAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -148,7 +155,9 @@ namespace Nekoyume.Action
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;
-            Log.Debug("{AddressesHex}ItemEnhancement exec started", addressesHex);
+            Log.Debug("{AddressesHex} ItemEnhancement exec started", addressesHex);
+
+            // Validate avatar
             AgentState agentState = AgentModule.GetAgentState(world, ctx.Signer);
             if (agentState is null)
             {
@@ -171,7 +180,7 @@ namespace Nekoyume.Action
             if (avatarState.actionPoint < requiredActionPoint)
             {
                 throw new NotEnoughActionPointException(
-                    $"{addressesHex}Aborted due to insufficient action point: {avatarState.actionPoint} < {requiredActionPoint}"
+                    $"{addressesHex} Aborted due to insufficient action point: {avatarState.actionPoint} < {requiredActionPoint}"
                 );
             }
 
@@ -216,9 +225,10 @@ namespace Nekoyume.Action
             }
 
             sw.Stop();
-            Log.Verbose("{AddressesHex} ItemEnhancement Get Equipment: {Elapsed}", addressesHex,
+            Log.Verbose(
+                "{AddressesHex} ItemEnhancement Get Equipment: {Elapsed}",
+                addressesHex,
                 sw.Elapsed);
-
             sw.Restart();
 
             Dictionary<Type, (Address, ISheet)> sheets = LegacyModule.GetSheets(
@@ -226,7 +236,7 @@ namespace Nekoyume.Action
                 sheetTypes: new[]
                 {
                     typeof(EquipmentItemSheet),
-                typeof(EnhancementCostSheetV3),
+                    typeof(EnhancementCostSheetV3),
                     typeof(MaterialItemSheet),
                     typeof(CrystalEquipmentGrindingSheet),
                     typeof(CrystalMonsterCollectionMultiplierSheet),
@@ -455,7 +465,7 @@ namespace Nekoyume.Action
         {
             row = sheet.OrderedList.FirstOrDefault(x =>
                 x.Grade == equipment.Grade &&
-                x.Level == equipment.level + 1 &&
+                x.Level == equipment.level &&
                 x.ItemSubType == equipment.ItemSubType
             );
             return row != null;

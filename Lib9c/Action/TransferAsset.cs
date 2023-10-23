@@ -127,7 +127,16 @@ namespace Nekoyume.Action
             }
 
             CheckCrystalSender(currency, context.BlockIndex, Sender);
-            if (LegacyModule.TryGetState(world, Recipient, out IValue serializedStakeState))
+            ThrowIfStakeState(world, Recipient);
+
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug("{AddressesHex}TransferAsset5 Total Executed Time: {Elapsed}", addressesHex, ended - started);
+            return LegacyModule.TransferAsset(world, context, Sender, Recipient, Amount);
+        }
+
+        public static void ThrowIfStakeState(IWorld world, Address recipient)
+        {
+            if (LegacyModule.TryGetState(world, recipient, out IValue serializedStakeState))
             {
                 bool isStakeStateOrMonsterCollectionState;
                 if (serializedStakeState is Dictionary dictionary)
@@ -141,12 +150,11 @@ namespace Nekoyume.Action
                     {
                         isStakeStateOrMonsterCollectionState = false;
                     }
-
                     if (isStakeStateOrMonsterCollectionState)
                     {
                         throw new ArgumentException(
                             "You can't send assets to staking state.",
-                            nameof(Recipient));
+                            nameof(recipient));
                     }
 
                     try
@@ -158,12 +166,11 @@ namespace Nekoyume.Action
                     {
                         isStakeStateOrMonsterCollectionState = false;
                     }
-
                     if (isStakeStateOrMonsterCollectionState)
                     {
                         throw new ArgumentException(
                             "You can't send assets to staking state.",
-                            nameof(Recipient));
+                            nameof(recipient));
                     }
 
                     try
@@ -175,12 +182,11 @@ namespace Nekoyume.Action
                     {
                         isStakeStateOrMonsterCollectionState = false;
                     }
-
                     if (isStakeStateOrMonsterCollectionState)
                     {
                         throw new ArgumentException(
                             "You can't send assets to staking state.",
-                            nameof(Recipient));
+                            nameof(recipient));
                     }
                 }
 
@@ -195,19 +201,14 @@ namespace Nekoyume.Action
                     {
                         isStakeStateOrMonsterCollectionState = false;
                     }
-
                     if (isStakeStateOrMonsterCollectionState)
                     {
                         throw new ArgumentException(
                             "You can't send assets to staking state.",
-                            nameof(Recipient));
+                            nameof(recipient));
                     }
                 }
             }
-
-            var ended = DateTimeOffset.UtcNow;
-            Log.Debug("{AddressesHex}TransferAsset5 Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return LegacyModule.TransferAsset(world, context, Sender, Recipient, Amount);
         }
 
         public override void LoadPlainValue(IValue plainValue)

@@ -87,19 +87,20 @@ namespace Lib9c.Tests.Action
                     (_recipient2, _currency * 100),
                 }
             );
-            IAccount nextState = action.Execute(new ActionContext()
-            {
-                PreviousState = prevState,
-                Signer = _sender,
-                Rehearsal = false,
-                BlockIndex = 1,
-            }).GetAccount(ReservedAddresses.LegacyAccount);
+            IWorld nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = prevState,
+                    Signer = _sender,
+                    Rehearsal = false,
+                    BlockIndex = 1,
+                });
 
-            Assert.Equal(_currency * 800, nextState.GetBalance(_sender, _currency));
-            Assert.Equal(_currency * 110, nextState.GetBalance(_recipient, _currency));
-            Assert.Equal(_currency * 100, nextState.GetBalance(_recipient2, _currency));
-            Assert.Equal(Currencies.Mead * 0, nextState.GetBalance(_sender, Currencies.Mead));
-            Assert.Equal(Currencies.Mead * 0, nextState.GetBalance(patronAddress, Currencies.Mead));
+            Assert.Equal(_currency * 800, LegacyModule.GetBalance(nextState, _sender, _currency));
+            Assert.Equal(_currency * 110, LegacyModule.GetBalance(nextState, _recipient, _currency));
+            Assert.Equal(_currency * 100, LegacyModule.GetBalance(nextState, _recipient2, _currency));
+            Assert.Equal(Currencies.Mead * 0, LegacyModule.GetBalance(nextState, _sender, Currencies.Mead));
+            Assert.Equal(Currencies.Mead * 0, LegacyModule.GetBalance(nextState, patronAddress, Currencies.Mead));
         }
 
         [Fact]
@@ -440,7 +441,8 @@ namespace Lib9c.Tests.Action
                 new MockWorldState(
                     ImmutableDictionary<Address, IAccount>.Empty.Add(
                         ReservedAddresses.LegacyAccount,
-                        new MockAccount(new MockAccountState().SetBalance(_sender, _currency * 1000)))));
+                        new MockAccount(
+                            new MockAccountState().SetBalance(_sender, _currency * 1000)))));
             var action = new TransferAssets(
                 sender: _sender,
                 new List<(Address, FungibleAssetValue)>
@@ -450,7 +452,7 @@ namespace Lib9c.Tests.Action
                 }
             );
             // 스테이킹 주소에 송금하려고 하면 실패합니다.
-            Assert.Throws<ArgumentException>("Recipient", () => action.Execute(new ActionContext()
+            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
             {
                 PreviousState = LegacyModule
                     .SetState(

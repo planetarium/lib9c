@@ -8,6 +8,7 @@ namespace Lib9c.Tests
     using Bencodex.Types;
     using Lib9c.Renderers;
     using Libplanet.Action;
+    using Libplanet.Action.State;
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
     using Libplanet.Crypto;
@@ -46,12 +47,15 @@ namespace Lib9c.Tests
             var adminPrivateKey = new PrivateKey();
             var adminAddress = adminPrivateKey.ToAddress();
 
+            var newActivatedPrivateKey = new PrivateKey();
+            var newActivatedAddress = newActivatedPrivateKey.ToAddress();
+
             var blockPolicySource = new BlockPolicySource();
             IBlockPolicy policy = blockPolicySource.GetPolicy(null, null, null, null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis = MakeGenesisBlock(
                 adminAddress,
-                ImmutableHashSet.Create(adminAddress),
+                ImmutableHashSet.Create(adminAddress, newActivatedAddress),
                 initialValidators: new Dictionary<PublicKey, BigInteger>
                 { { adminPrivateKey.PublicKey, BigInteger.One } }
             );
@@ -81,9 +85,6 @@ namespace Lib9c.Tests
             // New private key which is not in activated addresses list is blocked.
             Assert.NotNull(policy.ValidateNextBlockTx(blockChain, txByStranger));
 
-            var newActivatedPrivateKey = new PrivateKey();
-            var newActivatedAddress = newActivatedPrivateKey.ToAddress();
-
             // Activate with admin account.
             blockChain.MakeTransaction(
                 adminPrivateKey,
@@ -101,6 +102,7 @@ namespace Lib9c.Tests
                 );
 
             // Test success because the key is activated.
+            // NOTE: This test is obsolete because ActivateAccount action has been removed.
             Assert.Null(policy.ValidateNextBlockTx(blockChain, txByNewActivated));
 
             var singleAction = new ActionBase[]
@@ -180,8 +182,18 @@ namespace Lib9c.Tests
                 ),
                 renderers: new[] { new BlockRenderer() }
             );
-            Assert.Equal(1 * Currencies.Mead, blockChain.GetBalance(adminAddress, Currencies.Mead));
-            Assert.Equal(1 * Currencies.Mead, blockChain.GetBalance(MeadConfig.PatronAddress, Currencies.Mead));
+            Assert.Equal(
+                1 * Currencies.Mead,
+                blockChain.GetBalance(
+                    adminAddress,
+                    Currencies.Mead,
+                    ReservedAddresses.LegacyAccount));
+            Assert.Equal(
+                1 * Currencies.Mead,
+                blockChain.GetBalance(
+                    MeadConfig.PatronAddress,
+                    Currencies.Mead,
+                    ReservedAddresses.LegacyAccount));
             var action = new DailyReward
             {
                 avatarAddress = adminAddress,
@@ -383,7 +395,10 @@ namespace Lib9c.Tests
 
             Block block = blockChain.ProposeBlock(adminPrivateKey);
             blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
-            FungibleAssetValue actualBalance = blockChain.GetBalance(adminAddress, _currency);
+            FungibleAssetValue actualBalance = blockChain.GetBalance(
+                adminAddress,
+                _currency,
+                ReservedAddresses.LegacyAccount);
             FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 10, 0);
             Assert.True(expectedBalance.Equals(actualBalance));
         }
