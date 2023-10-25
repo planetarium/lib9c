@@ -5,6 +5,7 @@ using GraphQL.Client.Serializer.SystemTextJson;
 using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
+using Libplanet.Extensions.RemoteBlockChainStates;
 using Libplanet.Store.Trie;
 using Libplanet.Types.Blocks;
 
@@ -14,30 +15,71 @@ public class RemoteWorldState : IWorldState
 {
     private readonly Uri _explorerEndpoint;
     private readonly GraphQLHttpClient _graphQlHttpClient;
-    private readonly BlockHash? _offset;
-    private readonly HashDigest<SHA256>? _hashDigest;
 
-    public RemoteWorldState(Uri explorerEndpoint, BlockHash? offset)
+    public RemoteWorldState(Uri explorerEndpoint, BlockHash? offsetBlockHash)
     {
         _explorerEndpoint = explorerEndpoint;
-        _offset = offset;
+        _graphQlHttpClient = new GraphQLHttpClient(_explorerEndpoint, new SystemTextJsonSerializer());
+        var response = _graphQlHttpClient.SendQueryAsync<GetWorldStateResponseType>(
+            new GraphQLRequest(
+                @"query GetWorld($address: Address!, $offsetBlockHash: ID!)
+                {
+                    stateQuery
+                    {
+                        worldState(offsetBlockHash: $offsetBlockHash)
+                        {
+                            string
+                        }
+                    }
+                }",
+                operationName: "GetWorld",
+                variables: new
+                {
+                    offsetBlockHash = offsetBlockHash is { } hash
+                        ? ByteUtil.Hex(hash.ByteArray)
+                        : throw new NotSupportedException(),
+                })).Result;
+
+        Trie = new HollowTrie(HashDigest<SHA256>.FromString(response.Data.StateQuery.WorldState.StateRootHash));
+        Legacy = response.Data.StateQuery.WorldState.Legacy;
     }
 
-    public RemoteWorldState(Uri explorerEndpoint, HashDigest<SHA256>? hashDigest)
+    public RemoteWorldState(Uri explorerEndpoint, HashDigest<SHA256>? offsetStateRootHash)
     {
         _explorerEndpoint = explorerEndpoint;
-        _hashDigest = hashDigest;
+        _graphQlHttpClient = new GraphQLHttpClient(_explorerEndpoint, new SystemTextJsonSerializer());
+        var response = _graphQlHttpClient.SendQueryAsync<GetWorldStateResponseType>(
+            new GraphQLRequest(
+                @"query GetWorld($address: Address!, $offsetStateRootHash: ID!)
+                {
+                    stateQuery
+                    {
+                        worldState(offsetStateRootHash: $offsetStateRootHash)
+                        {
+                            string
+                        }
+                    }
+                }",
+                operationName: "GetWorld",
+                variables: new
+                {
+                    offsetStateRootHash = offsetStateRootHash is { } hash
+                        ? ByteUtil.Hex(hash.ByteArray)
+                        : throw new NotSupportedException(),
+                })).Result;
+
+        Trie = new HollowTrie(offsetStateRootHash);
+        Legacy = response.Data.StateQuery.WorldState.Legacy;
     }
+    public ITrie Trie { get; }
+
+    public bool Legacy { get; private set; }
 
     public IAccount GetAccount(Address address)
     {
         return new RemoteAccount(
-            new RemoteAccountState(_explorerEndpoint, address, _offset));
+            new RemoteAccountState(_explorerEndpoint, address, Trie.Hash));
     }
-
-    public ITrie Trie => throw new NotSupportedException();
-
-    public bool Legacy => throw new NotSupportedException();
 
     public class GetWorldStateResponseType
     {
@@ -51,7 +93,7 @@ public class RemoteWorldState : IWorldState
 
     public class WorldStateType
     {
-        public string BlockHash { get; set; }
+        public string StateRootHash { get; set; }
 
         public bool Legacy { get; set; }
     }

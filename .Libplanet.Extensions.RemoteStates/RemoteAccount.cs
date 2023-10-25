@@ -5,7 +5,6 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Store.Trie;
 using Libplanet.Types.Assets;
-using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 
 namespace Libplanet.Extensions.RemoteStates;
