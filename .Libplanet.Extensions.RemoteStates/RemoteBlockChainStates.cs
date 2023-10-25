@@ -30,17 +30,31 @@ namespace Libplanet.Extensions.RemoteStates
         public IValue? GetState(Address address, Address accountAddress, BlockHash? offset)
             => new RemoteWorldState(_explorerEndpoint, offset).GetAccount(accountAddress).GetState(address);
 
-        public FungibleAssetValue GetBalance(Address address, Currency currency, BlockHash? offset)
-            => new RemoteWorldState(_explorerEndpoint, offset).GetAccount(
-                ReservedAddresses.LegacyAccount).GetBalance(address, currency);
+        public FungibleAssetValue GetBalance(
+            Address address,
+            Currency currency,
+            Address accountAddress,
+            BlockHash? offset)
+            => new RemoteWorldState(_explorerEndpoint, offset).GetAccount(accountAddress)
+                .GetBalance(address, currency);
 
-        public FungibleAssetValue GetTotalSupply(Currency currency, BlockHash? offset)
-            => new RemoteWorldState(_explorerEndpoint, offset).GetAccount(
-                ReservedAddresses.LegacyAccount).GetTotalSupply(currency);
+        public FungibleAssetValue GetBalance(
+            Address address,
+            Currency currency,
+            HashDigest<SHA256>? hashDigest)
+            => throw new NotSupportedException();
 
-        public ValidatorSet GetValidatorSet(BlockHash? offset)
-            => new RemoteWorldState(_explorerEndpoint, offset).GetAccount(
-                ReservedAddresses.LegacyAccount).GetValidatorSet();
+        public FungibleAssetValue GetTotalSupply(Currency currency, Address accountAddress, BlockHash? offset)
+            => new RemoteWorldState(_explorerEndpoint, offset).GetAccount(accountAddress).GetTotalSupply(currency);
+
+        public FungibleAssetValue GetTotalSupply(Currency currency, HashDigest<SHA256>? hashDigest)
+            => throw new NotSupportedException();
+
+        public ValidatorSet GetValidatorSet(Address accountAddress, BlockHash? offset)
+            => new RemoteWorldState(_explorerEndpoint, offset).GetAccount(accountAddress).GetValidatorSet();
+
+        public ValidatorSet GetValidatorSet(HashDigest<SHA256>? hashDigest)
+            => throw new NotSupportedException();
 
         public IWorldState GetWorldState(HashDigest<SHA256>? hash)
         {

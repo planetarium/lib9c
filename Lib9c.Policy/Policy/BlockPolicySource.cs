@@ -176,23 +176,31 @@ namespace Nekoyume.Blockchain.Policy
 
             try
             {
-                if (blockChain.GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
+                if (blockChain.GetBalance(
+                        MeadConfig.PatronAddress,
+                        Currencies.Mead,
+                        ReservedAddresses.LegacyAccount) < 1 * Currencies.Mead)
                 {
                     // Check Activation
                     try
                     {
                         if (transaction.Actions is { } rawActions &&
                             rawActions.Count == 1 &&
-                            actionLoader.LoadAction(index, rawActions.First()) is ActionBase action &&
+                            actionLoader.LoadAction(
+                                index,
+                                rawActions.First()) is ActionBase action &&
                             action is IActivateAccount activate)
                         {
                             return transaction.Nonce == 0 &&
-                                blockChain.GetWorldState().GetAccount(ReservedAddresses.LegacyAccount).GetState(activate.PendingAddress) is Dictionary rawPending &&
-                                new PendingActivationState(rawPending).Verify(activate.Signature)
-                                    ? null
-                                    : new TxPolicyViolationException(
-                                        $"Transaction {transaction.Id} has an invalid activate action.",
-                                        transaction.Id);
+                                   blockChain.GetWorldState()
+                                           .GetAccount(ReservedAddresses.LegacyAccount)
+                                           .GetState(activate.PendingAddress) is Dictionary
+                                       rawPending &&
+                                   new PendingActivationState(rawPending).Verify(activate.Signature)
+                                ? null
+                                : new TxPolicyViolationException(
+                                    $"Transaction {transaction.Id} has an invalid activate action.",
+                                    transaction.Id);
                         }
                     }
                     catch (Exception e)
@@ -209,35 +217,45 @@ namespace Nekoyume.Blockchain.Policy
                         return null;
                     }
 
-                    switch (blockChain.GetWorldState().GetAccount(ReservedAddresses.LegacyAccount).GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
+                    switch (blockChain.GetWorldState()
+                                .GetAccount(ReservedAddresses.LegacyAccount)
+                                .GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
                     {
                         case null:
                             // Fallback for pre-migration.
-                            if (blockChain.GetWorldState().GetAccount(ReservedAddresses.LegacyAccount).GetState(ActivatedAccountsState.Address)
+                            if (blockChain.GetWorldState()
+                                    .GetAccount(ReservedAddresses.LegacyAccount)
+                                    .GetState(ActivatedAccountsState.Address)
                                 is Dictionary asDict)
                             {
                                 IImmutableSet<Address> activatedAccounts =
                                     new ActivatedAccountsState(asDict).Accounts;
                                 return !activatedAccounts.Any() ||
-                                    activatedAccounts.Contains(transaction.Signer)
-                                        ? null
-                                        : new TxPolicyViolationException(
-                                            $"Transaction {transaction.Id} is by a signer " +
-                                            $"without account activation: {transaction.Signer}",
-                                            transaction.Id);
+                                       activatedAccounts.Contains(transaction.Signer)
+                                    ? null
+                                    : new TxPolicyViolationException(
+                                        $"Transaction {transaction.Id} is by a signer " +
+                                        $"without account activation: {transaction.Signer}",
+                                        transaction.Id);
                             }
+
                             return null;
                         case Bencodex.Types.Boolean _:
                             return null;
                     }
                 }
+
                 if (transaction.MaxGasPrice is null || transaction.GasLimit is null)
                 {
                     return new
                         TxPolicyViolationException("Transaction has no gas price or limit.",
                         transaction.Id);
                 }
-                if (transaction.MaxGasPrice * transaction.GasLimit > blockChain.GetBalance(transaction.Signer, Currencies.Mead))
+
+                if (transaction.MaxGasPrice * transaction.GasLimit > blockChain.GetBalance(
+                        transaction.Signer,
+                        Currencies.Mead,
+                        ReservedAddresses.LegacyAccount))
                 {
                     return new TxPolicyViolationException(
                         $"Transaction {transaction.Id} signer insufficient transaction fee",

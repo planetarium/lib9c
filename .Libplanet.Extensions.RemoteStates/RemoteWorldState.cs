@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using GraphQL;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.SystemTextJson;
@@ -14,11 +15,18 @@ public class RemoteWorldState : IWorldState
     private readonly Uri _explorerEndpoint;
     private readonly GraphQLHttpClient _graphQlHttpClient;
     private readonly BlockHash? _offset;
+    private readonly HashDigest<SHA256>? _hashDigest;
 
     public RemoteWorldState(Uri explorerEndpoint, BlockHash? offset)
     {
         _explorerEndpoint = explorerEndpoint;
         _offset = offset;
+    }
+
+    public RemoteWorldState(Uri explorerEndpoint, HashDigest<SHA256>? hashDigest)
+    {
+        _explorerEndpoint = explorerEndpoint;
+        _hashDigest = hashDigest;
     }
 
     public IAccount GetAccount(Address address)
