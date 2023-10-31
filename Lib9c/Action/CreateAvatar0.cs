@@ -192,7 +192,7 @@ namespace Nekoyume.Action
                 name
             );
 
-#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+#if LIB9C_DEV_EXTENSIONS
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
             var costumeItemSheet = ctx.PreviousState.GetSheet<CostumeItemSheet>();
             var equipmentItemSheet = ctx.PreviousState.GetSheet<EquipmentItemSheet>();
