@@ -104,12 +104,12 @@ namespace Nekoyume.Action
             {
                 return context.PreviousState;
             }
-
+            IRandom random = context.GetRandom();
             return Execute(
                 context.PreviousState,
                 context.Signer,
                 context.BlockIndex,
-                context.Random);
+                random);
         }
 
         public IAccount Execute(
