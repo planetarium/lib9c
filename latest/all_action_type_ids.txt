@@ -10,6 +10,7 @@ battle_arena10
 battle_arena11
 battle_arena12
 battle_arena13
+battle_arena14
 battle_arena2
 battle_arena3
 battle_arena4
@@ -25,6 +26,7 @@ buy
 buy_multiple
 buy_product
 buy_product2
+buy_product3
 buy10
 buy11
 buy12
@@ -38,6 +40,7 @@ buy8
 buy9
 cancel_monster_collect
 cancel_product_registration
+cancel_product_registration2
 charge_action_point
 charge_action_point2
 charge_action_point3
@@ -63,6 +66,7 @@ combination_consumable5
 combination_consumable6
 combination_consumable7
 combination_consumable8
+combination_consumable9
 combination_equipment
 combination_equipment10
 combination_equipment11
@@ -71,6 +75,7 @@ combination_equipment13
 combination_equipment14
 combination_equipment15
 combination_equipment16
+combination_equipment17
 combination_equipment2
 combination_equipment3
 combination_equipment4
@@ -81,6 +86,7 @@ combination_equipment8
 combination_equipment9
 create_avatar
 create_avatar10
+create_avatar11
 create_avatar2
 create_avatar3
 create_avatar4
@@ -102,17 +108,21 @@ daily_reward7
 deliver_to_others_garages
 end_pledge
 event_consumable_item_crafts
+event_consumable_item_crafts2
 event_dungeon_battle
 event_dungeon_battle2
 event_dungeon_battle3
 event_dungeon_battle4
 event_dungeon_battle5
+event_dungeon_battle6
 event_material_item_crafts
+event_material_item_crafts2
 grinding
 grinding2
 hack_and_slash
 hack_and_slash_random_buff
 hack_and_slash_sweep
+hack_and_slash_sweep10
 hack_and_slash_sweep2
 hack_and_slash_sweep3
 hack_and_slash_sweep4
@@ -134,6 +144,7 @@ hack_and_slash19
 hack_and_slash2
 hack_and_slash20
 hack_and_slash21
+hack_and_slash22
 hack_and_slash3
 hack_and_slash4
 hack_and_slash5
@@ -148,6 +159,7 @@ item_enhancement10
 item_enhancement11
 item_enhancement12
 item_enhancement13
+item_enhancement14
 item_enhancement2
 item_enhancement3
 item_enhancement4
@@ -159,6 +171,7 @@ item_enhancement9
 join_arena
 join_arena2
 join_arena3
+join_arena4
 load_into_my_garages
 migrate_monster_collection
 migration_activated_accounts_state
@@ -191,6 +204,7 @@ raid3
 raid4
 raid5
 raid6
+raid7
 ranking_battle
 ranking_battle10
 ranking_battle11
@@ -204,6 +218,7 @@ ranking_battle7
 ranking_battle8
 ranking_battle9
 rapid_combination
+rapid_combination10
 rapid_combination2
 rapid_combination3
 rapid_combination4
@@ -220,6 +235,7 @@ redeem_code3
 redeem_coupon
 register_product
 register_product2
+register_product3
 renew_admin_state
 request_pledge
 runeEnhancement

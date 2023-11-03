@@ -32,6 +32,10 @@
     "obsoleteAt": 7716400
   },
   {
+    "id": "battle_arena13",
+    "obsoleteAt": 8324909
+  },
+  {
     "id": "battle_arena2",
     "obsoleteAt": 7000000
   },
@@ -80,12 +84,24 @@
     "obsoleteAt": 7000000
   },
   {
+    "id": "buy_product",
+    "obsoleteAt": 8324909
+  },
+  {
+    "id": "buy_product2",
+    "obsoleteAt": 8324909
+  },
+  {
     "id": "buy10",
     "obsoleteAt": 7000000
   },
   {
     "id": "buy11",
     "obsoleteAt": 7200000
+  },
+  {
+    "id": "buy12",
+    "obsoleteAt": 8324909
   },
   {
     "id": "buy2",
@@ -122,6 +138,10 @@
   {
     "id": "cancel_monster_collect",
     "obsoleteAt": 7000000
+  },
+  {
+    "id": "cancel_product_registration",
+    "obsoleteAt": 8324909
   },
   {
     "id": "charge_action_point",
@@ -204,6 +224,10 @@
     "obsoleteAt": 7000000
   },
   {
+    "id": "combination_consumable8",
+    "obsoleteAt": 8324909
+  },
+  {
     "id": "combination_equipment",
     "obsoleteAt": 7000000
   },
@@ -230,6 +254,10 @@
   {
     "id": "combination_equipment15",
     "obsoleteAt": 7200000
+  },
+  {
+    "id": "combination_equipment16",
+    "obsoleteAt": 8324909
   },
   {
     "id": "combination_equipment2",
@@ -266,6 +294,10 @@
   {
     "id": "create_avatar",
     "obsoleteAt": 7000000
+  },
+  {
+    "id": "create_avatar10",
+    "obsoleteAt": 8324909
   },
   {
     "id": "create_avatar2",
@@ -328,6 +360,10 @@
     "obsoleteAt": 7200000
   },
   {
+    "id": "event_consumable_item_crafts",
+    "obsoleteAt": 8324909
+  },
+  {
     "id": "event_dungeon_battle",
     "obsoleteAt": 7200000
   },
@@ -342,6 +378,14 @@
   {
     "id": "event_dungeon_battle4",
     "obsoleteAt": 7000000
+  },
+  {
+    "id": "event_dungeon_battle5",
+    "obsoleteAt": 8324909
+  },
+  {
+    "id": "event_material_item_crafts",
+    "obsoleteAt": 8324909
   },
   {
     "id": "hack_and_slash",
@@ -378,6 +422,10 @@
   {
     "id": "hack_and_slash_sweep8",
     "obsoleteAt": 7000000
+  },
+  {
+    "id": "hack_and_slash_sweep9",
+    "obsoleteAt": 8324909
   },
   {
     "id": "hack_and_slash10",
@@ -428,6 +476,10 @@
     "obsoleteAt": 7000000
   },
   {
+    "id": "hack_and_slash21",
+    "obsoleteAt": 8324909
+  },
+  {
     "id": "hack_and_slash3",
     "obsoleteAt": 7000000
   },
@@ -468,6 +520,10 @@
     "obsoleteAt": 7718878
   },
   {
+    "id": "item_enhancement13",
+    "obsoleteAt": 8324909
+  },
+  {
     "id": "item_enhancement2",
     "obsoleteAt": 7000000
   },
@@ -506,6 +562,10 @@
   {
     "id": "join_arena2",
     "obsoleteAt": 7000000
+  },
+  {
+    "id": "join_arena3",
+    "obsoleteAt": 8324909
   },
   {
     "id": "migration_legacy_shop",
@@ -600,6 +660,10 @@
     "obsoleteAt": 7000000
   },
   {
+    "id": "raid6",
+    "obsoleteAt": 8324909
+  },
+  {
     "id": "ranking_battle",
     "obsoleteAt": 7000000
   },
@@ -610,6 +674,10 @@
   {
     "id": "ranking_battle11",
     "obsoleteAt": 7200000
+  },
+  {
+    "id": "ranking_battle12",
+    "obsoleteAt": 8324909
   },
   {
     "id": "ranking_battle2",
@@ -676,12 +744,24 @@
     "obsoleteAt": 7200000
   },
   {
+    "id": "rapid_combination9",
+    "obsoleteAt": 8324909
+  },
+  {
     "id": "redeem_code",
     "obsoleteAt": 7000000
   },
   {
     "id": "redeem_code2",
     "obsoleteAt": 7000000
+  },
+  {
+    "id": "register_product",
+    "obsoleteAt": 8324909
+  },
+  {
+    "id": "register_product2",
+    "obsoleteAt": 8324909
   },
   {
     "id": "runeEnhancement",
@@ -722,6 +802,10 @@
   {
     "id": "sell_cancellation8",
     "obsoleteAt": 7000000
+  },
+  {
+    "id": "sell_cancellation9",
+    "obsoleteAt": 8324909
   },
   {
     "id": "sell10",
