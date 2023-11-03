@@ -10,24 +10,24 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Extensions;
-using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
-using Nekoyume.TableData.Pet;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Hard forked at https://github.com/planetarium/lib9c/pull/2195
+    /// Hard forked at https://github.com/planetarium/lib9c/pull/2166
+    /// Updated at https://github.com/planetarium/lib9c/pull/2166
     /// </summary>
     [Serializable]
-    [ActionType("create_avatar11")]
-    public class CreateAvatar : GameAction, ICreateAvatarV2
+    [ActionObsolete(ActionObsoleteConfig.V200092ObsoleteIndex)]
+    [ActionType("create_avatar10")]
+    public class CreateAvatar10 : GameAction, ICreateAvatarV2
     {
         public const string DeriveFormat = "avatar-state-{0}";
 
@@ -158,7 +158,8 @@ namespace Nekoyume.Action
 
             foreach (var address in avatarState.combinationSlotAddresses)
             {
-                var slotState = new CombinationSlotState(address, 0);
+                var slotState =
+                    new CombinationSlotState(address, GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
                 states = states.SetState(address, slotState.Serialize());
             }
 
@@ -195,7 +196,6 @@ namespace Nekoyume.Action
             var skillSheet = states.GetSheet<SkillSheet>();
             var characterLevelSheet = states.GetSheet<CharacterLevelSheet>();
             var enhancementCostSheet = states.GetSheet<EnhancementCostSheetV2>();
-            var random = context.GetRandom();
 
             avatarState.level = 300;
             avatarState.exp = characterLevelSheet[300].Exp;
@@ -210,7 +210,7 @@ namespace Nekoyume.Action
 
                 var equipment = (Equipment)ItemFactory.CreateItemUsable(
                     equipmentRow,
-                    random.GenerateRandomGuid(),
+                    context.Random.GenerateRandomGuid(),
                     0L,
                     madeWithMimisbrunnrRecipe: subRecipeRow.IsMimisbrunnrSubRecipe ?? false);
 
@@ -250,7 +250,7 @@ namespace Nekoyume.Action
                         .First(x => x.ItemSubType == subType &&
                                     x.Grade == grade &&
                                     x.Level == i);
-                    equipment.LevelUp(random, costRow, true);
+                    equipment.LevelUp(ctx.Random, costRow, true);
                 }
 
                 avatarState.inventory.AddItem(equipment);
@@ -260,7 +260,7 @@ namespace Nekoyume.Action
                 sheetTypes: new[] {typeof(CreateAvatarItemSheet), typeof(CreateAvatarFavSheet)});
             var itemSheet = sheets.GetItemSheet();
             var createAvatarItemSheet = sheets.GetSheet<CreateAvatarItemSheet>();
-            AddItem(itemSheet, createAvatarItemSheet, avatarState, context.GetRandom());
+            AddItem(itemSheet, createAvatarItemSheet, avatarState, context.Random);
             var createAvatarFavSheet = sheets.GetSheet<CreateAvatarFavSheet>();
             states = MintAsset(createAvatarFavSheet, avatarState, states, context);
             sw.Stop();

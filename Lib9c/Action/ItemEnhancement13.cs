@@ -24,12 +24,21 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Updated at https://github.com/planetarium/lib9c/pull/2195
+    /// Updated at https://github.com/planetarium/lib9c/pull/2068
     /// </summary>
     [Serializable]
-    [ActionType("item_enhancement14")]
-    public class ItemEnhancement : GameAction, IItemEnhancementV4
+    [ActionObsolete(ActionObsoleteConfig.V200092ObsoleteIndex)]
+    [ActionType("item_enhancement13")]
+    public class ItemEnhancement13 : GameAction, IItemEnhancementV4
     {
+        public enum EnhancementResult
+        {
+            // Result is fixed to Success.
+            // GreatSuccess = 0,
+            Success = 1,
+            // Fail = 2,
+        }
+
         public const int MaterialCountLimit = 50;
 
         public Guid itemId;
@@ -41,6 +50,53 @@ namespace Nekoyume.Action
         List<Guid> IItemEnhancementV4.MaterialIds => materialIds;
         Address IItemEnhancementV4.AvatarAddress => avatarAddress;
         int IItemEnhancementV4.SlotIndex => slotIndex;
+
+        [Serializable]
+        public class ResultModel : AttachmentActionResult
+        {
+            protected override string TypeId => "item_enhancement13.result";
+            public Guid id;
+            public IEnumerable<Guid> materialItemIdList;
+            public BigInteger gold;
+            public int actionPoint;
+            public EnhancementResult enhancementResult;
+            public ItemUsable preItemUsable;
+            public FungibleAssetValue CRYSTAL;
+
+            public ResultModel()
+            {
+            }
+
+            public ResultModel(Dictionary serialized) : base(serialized)
+            {
+                id = serialized["id"].ToGuid();
+                materialItemIdList =
+                    serialized["materialItemIdList"].ToList(StateExtensions.ToGuid);
+                gold = serialized["gold"].ToBigInteger();
+                actionPoint = serialized["actionPoint"].ToInteger();
+                enhancementResult = serialized["enhancementResult"].ToEnum<EnhancementResult>();
+                preItemUsable = serialized.ContainsKey("preItemUsable")
+                    ? (ItemUsable)ItemFactory.Deserialize((Dictionary)serialized["preItemUsable"])
+                    : null;
+                CRYSTAL = serialized["c"].ToFungibleAssetValue();
+            }
+
+            public override IValue Serialize() =>
+#pragma warning disable LAA1002
+                new Dictionary(new Dictionary<IKey, IValue>
+                {
+                    [(Text)"id"] = id.Serialize(),
+                    [(Text)"materialItemIdList"] = materialItemIdList
+                        .OrderBy(i => i)
+                        .Select(g => g.Serialize()).Serialize(),
+                    [(Text)"gold"] = gold.Serialize(),
+                    [(Text)"actionPoint"] = actionPoint.Serialize(),
+                    [(Text)"enhancementResult"] = enhancementResult.Serialize(),
+                    [(Text)"preItemUsable"] = preItemUsable.Serialize(),
+                    [(Text)"c"] = CRYSTAL.Serialize(),
+                }.Union((Dictionary)base.Serialize()));
+#pragma warning restore LAA1002
+        }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {
@@ -151,7 +207,7 @@ namespace Nekoyume.Action
                 );
             }
 
-            if (!slotState.ValidateV2(avatarState, ctx.BlockIndex))
+            if (!slotState.Validate(avatarState, ctx.BlockIndex))
             {
                 throw new CombinationSlotUnlockException(
                     $"{addressesHex} Aborted as the slot state was failed to invalid. #{slotIndex}"
@@ -284,10 +340,9 @@ namespace Nekoyume.Action
                     row.Value.Grade == enhancementEquipment.Grade &&
                     row.Value.Exp <= enhancementEquipment.Exp
                 ).Value;
-            var random = ctx.GetRandom();
             if (!(row is null) && row.Level > enhancementEquipment.level)
             {
-                enhancementEquipment.SetLevel(random, row.Level, enhancementCostSheet);
+                enhancementEquipment.SetLevel(ctx.Random, row.Level, enhancementCostSheet);
             }
 
             EnhancementCostSheetV3.Row targetCostRow;
@@ -334,19 +389,19 @@ namespace Nekoyume.Action
                 sw.Elapsed);
 
             // Send scheduled mail
-            var result = new ItemEnhancement13.ResultModel
+            var result = new ResultModel
             {
                 preItemUsable = preItemUsable,
                 itemUsable = enhancementEquipment,
                 materialItemIdList = uniqueMaterialIds.ToArray(),
                 actionPoint = requiredActionPoint,
-                enhancementResult = ItemEnhancement13.EnhancementResult.Success, // Result is fixed to Success
+                enhancementResult = EnhancementResult.Success, // Result is fixed to Success
                 gold = requiredNcg,
                 CRYSTAL = 0 * CrystalCalculator.CRYSTAL,
             };
 
             var mail = new ItemEnhanceMail(
-                result, ctx.BlockIndex, random.GenerateRandomGuid(), requiredBlockIndex
+                result, ctx.BlockIndex, ctx.Random.GenerateRandomGuid(), requiredBlockIndex
             );
             result.id = mail.id;
             avatarState.inventory.RemoveNonFungibleItem(enhancementEquipment);

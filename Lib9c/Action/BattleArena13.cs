@@ -24,11 +24,12 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Hard forked at https://github.com/planetarium/lib9c/pull/2195
+    /// Hard forked at https://github.com/planetarium/lib9c/pull/2094
     /// </summary>
     [Serializable]
-    [ActionType("battle_arena14")]
-    public class BattleArena : GameAction, IBattleArenaV1
+    [ActionObsolete(ActionObsoleteConfig.V200092ObsoleteIndex)]
+    [ActionType("battle_arena13")]
+    public class BattleArena13 : GameAction, IBattleArenaV1
     {
         public const string PurchasedCountKey = "purchased_count_during_interval";
         public Address myAvatarAddress;
@@ -118,6 +119,21 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
+            if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(
+                    out var world))
+            {
+                throw new NotEnoughClearedStageLevelException(
+                    $"{addressesHex}Aborted as NotEnoughClearedStageLevelException");
+            }
+
+            if (world.StageClearedId < GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)
+            {
+                throw new NotEnoughClearedStageLevelException(
+                    addressesHex,
+                    GameConfig.RequireClearedStageLevel.ActionsInRankingBoard,
+                    world.StageClearedId);
+            }
+
             var sheets = states.GetSheets(
                 containArenaSimulatorSheets: true,
                 sheetTypes: new[]
@@ -131,13 +147,12 @@ namespace Nekoyume.Action
                     typeof(RuneListSheet),
                 });
 
-            var gameConfigState = states.GetGameConfigState();
-            avatarState.ValidEquipmentAndCostumeV2(costumes, equipments,
+            avatarState.ValidEquipmentAndCostume(costumes, equipments,
                 sheets.GetSheet<ItemRequirementSheet>(),
                 sheets.GetSheet<EquipmentItemRecipeSheet>(),
                 sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
                 sheets.GetSheet<EquipmentItemOptionSheet>(),
-                context.BlockIndex, addressesHex, gameConfigState);
+                context.BlockIndex, addressesHex);
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(myAvatarAddress, BattleType.Arena);
@@ -206,6 +221,7 @@ namespace Nekoyume.Action
                     $"[{nameof(BattleArena)}] my avatar address : {myAvatarAddress}");
             }
 
+            var gameConfigState = states.GetGameConfigState();
             var battleArenaInterval = roundData.ArenaType == ArenaType.OffSeason
                 ? 1
                 : gameConfigState.BattleArenaInterval;
@@ -374,10 +390,9 @@ namespace Nekoyume.Action
             var winCount = 0;
             var defeatCount = 0;
             var rewards = new List<ItemBase>();
-            var random = context.GetRandom();
             for (var i = 0; i < ticket; i++)
             {
-                var simulator = new ArenaSimulator(random);
+                var simulator = new ArenaSimulator(context.Random);
                 var log = simulator.Simulate(
                     myArenaPlayerDigest,
                     enemyArenaPlayerDigest,
@@ -392,7 +407,7 @@ namespace Nekoyume.Action
                 }
 
                 var reward = RewardSelector.Select(
-                    random,
+                    context.Random,
                     sheets.GetSheet<WeeklyArenaRewardSheet>(),
                     sheets.GetSheet<MaterialItemSheet>(),
                     myArenaPlayerDigest.Level,

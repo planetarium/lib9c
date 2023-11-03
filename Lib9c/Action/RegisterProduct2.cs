@@ -16,8 +16,9 @@ using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
-    [ActionType("register_product3")]
-    public class RegisterProduct : GameAction
+    [ActionObsolete(ActionObsoleteConfig.V200092ObsoleteIndex)]
+    [ActionType("register_product2")]
+    public class RegisterProduct2 : GameAction
     {
         public const int CostAp = 5;
         public const int Capacity = 100;
@@ -58,6 +59,16 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException("failed to load avatar state.");
             }
 
+            if (!avatarState.worldInformation.IsStageCleared(
+                    GameConfig.RequireClearedStageLevel.ActionsInShop))
+            {
+                avatarState.worldInformation.TryGetLastClearedStageId(out var current);
+                throw new NotEnoughClearedStageLevelException(
+                    AvatarAddress.ToHex(),
+                    GameConfig.RequireClearedStageLevel.ActionsInShop,
+                    current);
+            }
+
             avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
@@ -74,11 +85,9 @@ namespace Nekoyume.Action
                 marketState.AvatarAddresses.Add(AvatarAddress);
                 states = states.SetState(Addresses.Market, marketState.Serialize());
             }
-
-            var random = context.GetRandom();
             foreach (var info in RegisterInfos.OrderBy(r => r.Type).ThenBy(r => r.Price))
             {
-                states = Register(context, info, avatarState, productsState, states, random);
+                states = Register(context, info, avatarState, productsState, states);
             }
 
             states = states
@@ -96,7 +105,7 @@ namespace Nekoyume.Action
         }
 
         public static IAccount Register(IActionContext context, IRegisterInfo info, AvatarState avatarState,
-            ProductsState productsState, IAccount states, IRandom random)
+            ProductsState productsState, IAccount states)
         {
             switch (info)
             {
@@ -167,7 +176,7 @@ namespace Nekoyume.Action
                                 throw new ItemDoesNotExistException($"can't find item: {tradableId}");
                             }
 
-                            Guid productId = random.GenerateRandomGuid();
+                            Guid productId = context.Random.GenerateRandomGuid();
                             var product = new ItemProduct
                             {
                                 ProductId = productId,
@@ -189,7 +198,7 @@ namespace Nekoyume.Action
                     break;
                 case AssetInfo assetInfo:
                 {
-                    Guid productId = random.GenerateRandomGuid();
+                    Guid productId = context.Random.GenerateRandomGuid();
                     Address productAddress = Product.DeriveAddress(productId);
                     FungibleAssetValue asset = assetInfo.Asset;
                     var product = new FavProduct
