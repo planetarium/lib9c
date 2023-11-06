@@ -189,6 +189,7 @@
             {
                 PreviousState = nextState,
                 BlockIndex = 0,
+                RandomSeed = randomSeed,
                 Signer = _agentAddress,
             };
             ctx.SetRandom(random);
@@ -286,7 +287,7 @@
             {
                 PreviousState = nextState,
                 BlockIndex = GameConfig.RequiredAppraiseBlock,
-                RandomSeed = random.Seed,
+                RandomSeed = randomSeed,
                 Signer = _agentAddress,
             });
             inventoryValue = nextState.GetState(_inventoryAddress);
