@@ -4,6 +4,9 @@ namespace Lib9c.Tests.Action.Scenario
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Tests.Fixtures.TableCSV;
+    using Lib9c.Tests.Fixtures.TableCSV.Item;
+    using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -34,13 +37,36 @@ namespace Lib9c.Tests.Action.Scenario
 
         public AuraScenarioTest()
         {
+            _initialState = new Account(MockState.Empty);
+            Dictionary<string, string> sheets;
+            (_initialState, sheets) = InitializeUtil.InitializeTableSheets(
+                _initialState,
+                sheetsOverride: new Dictionary<string, string>
+                {
+                    {
+                        "EquipmentItemRecipeSheet",
+                        EquipmentItemRecipeSheetFixtures.Default
+                    },
+                    {
+                        "EquipmentItemSubRecipeSheetV2",
+                        EquipmentItemSubRecipeSheetFixtures.V2
+                    },
+                    {
+                        "GameConfigSheet",
+                        GameConfigSheetFixtures.Default
+                    },
+                    {
+                        "ItemRequirementSheet",
+                        ItemRequirementSheetFixtures.Default
+                    },
+                });
+            _tableSheets = new TableSheets(sheets);
+
             _agentAddress = new PrivateKey().ToAddress();
             var agentState = new AgentState(_agentAddress);
             _avatarAddress = new PrivateKey().ToAddress();
             _enemyAvatarAddress = new PrivateKey().ToAddress();
             var rankingMapAddress = _avatarAddress.Derive("ranking_map");
-            var sheets = TableSheetsImporter.ImportSheets();
-            _tableSheets = new TableSheets(sheets);
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
             var auraRow =
                 _tableSheets.EquipmentItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Aura);
@@ -50,7 +76,6 @@ namespace Lib9c.Tests.Action.Scenario
             var skill = SkillFactory.Get(skillRow, 0, 100, 0, StatType.NONE);
             _aura.Skills.Add(skill);
             var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
-            _initialState = new Account(MockState.Empty);
             for (int i = 0; i < addresses.Length; i++)
             {
                 var avatarAddress = addresses[i];
@@ -84,11 +109,6 @@ namespace Lib9c.Tests.Action.Scenario
                     new GoldCurrencyState(_currency).Serialize())
                 .SetState(gameConfigState.address, gameConfigState.Serialize())
                 .MintAsset(new ActionContext(), _agentAddress, Currencies.Crystal * 2);
-            foreach (var (key, value) in sheets)
-            {
-                _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
-            }
         }
 
         [Fact]
