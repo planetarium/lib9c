@@ -44,11 +44,6 @@ namespace Lib9c.Tests.Action
                     },
                 });
             _tableSheets = new TableSheets(sheets);
-            foreach (var (key, value) in sheets)
-            {
-                _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
-            }
 
             var privateKey = new PrivateKey();
             _agentAddress = privateKey.PublicKey.ToAddress();
