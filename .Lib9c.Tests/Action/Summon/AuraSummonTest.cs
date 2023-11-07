@@ -4,6 +4,9 @@ namespace Lib9c.Tests.Action.Summon
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using Lib9c.Tests.Fixtures.TableCSV;
+    using Lib9c.Tests.Fixtures.TableCSV.Item;
+    using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -26,8 +29,32 @@ namespace Lib9c.Tests.Action.Summon
 
         public AuraSummonTest()
         {
-            var sheets = TableSheetsImporter.ImportSheets();
+            _initialState = new Account(MockState.Empty);
+            Dictionary<string, string> sheets;
+            (_initialState, sheets) = InitializeUtil.InitializeTableSheets(
+                _initialState,
+                sheetsOverride: new Dictionary<string, string>
+                {
+                    {
+                        "EquipmentItemRecipeSheet",
+                        EquipmentItemRecipeSheetFixtures.Default
+                    },
+                    {
+                        "EquipmentItemSubRecipeSheetV2",
+                        EquipmentItemSubRecipeSheetFixtures.V2
+                    },
+                    {
+                        "GameConfigSheet",
+                        GameConfigSheetFixtures.Default
+                    },
+                });
             _tableSheets = new TableSheets(sheets);
+            foreach (var (key, value) in sheets)
+            {
+                _initialState =
+                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
             var privateKey = new PrivateKey();
             _agentAddress = privateKey.PublicKey.ToAddress();
             var agentState = new AgentState(_agentAddress);
@@ -51,7 +78,7 @@ namespace Lib9c.Tests.Action.Summon
             var gold = new GoldCurrencyState(_currency);
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty)
+            _initialState = _initialState
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(_avatarAddress, _avatarState.Serialize())
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
@@ -71,12 +98,6 @@ namespace Lib9c.Tests.Action.Summon
                 gold.Currency * 1000,
                 _initialState.GetBalance(_agentAddress, gold.Currency)
             );
-
-            foreach (var (key, value) in sheets)
-            {
-                _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
-            }
         }
 
         [Theory]
@@ -84,8 +105,8 @@ namespace Lib9c.Tests.Action.Summon
         [InlineData(10001, 1, 600201, 2, 1, new[] { 10620000 }, null)]
         [InlineData(10001, 2, 600201, 4, 54, new[] { 10630000, 10640000 }, null)]
         // success second group
-        [InlineData(10002, 1, 600202, 2, 1, new[] { 10620001 }, null)]
-        [InlineData(10002, 2, 600202, 4, 4, new[] { 10630001, 10640001 }, null)]
+        [InlineData(10002, 1, 800201, 2, 1, new[] { 10620001 }, null)]
+        [InlineData(10002, 2, 800201, 4, 4, new[] { 10630001, 10640001 }, null)]
         // Nine plus zero
         [InlineData(
             10001,
@@ -99,7 +120,7 @@ namespace Lib9c.Tests.Action.Summon
         [InlineData(
             10002,
             9,
-            600202,
+            800201,
             18,
             0,
             new[] { 10620001, 10620001, 10620001, 10620001, 10630001, 10630001, 10630001, 10640001, 10640001 },
@@ -118,7 +139,7 @@ namespace Lib9c.Tests.Action.Summon
         [InlineData(
             10002,
             10,
-            600202,
+            800201,
             20,
             0,
             new[] { 10620001, 10620001, 10620001, 10620001, 10630001, 10630001, 10630001, 10630001, 10640001, 10640001, 10640001 },
