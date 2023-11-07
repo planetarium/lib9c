@@ -6,6 +6,9 @@ namespace Lib9c.Tests.Action
     using System.Globalization;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Tests.Fixtures.TableCSV;
+    using Lib9c.Tests.Fixtures.TableCSV.Item;
+    using Lib9c.Tests.Util;
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
@@ -32,16 +35,30 @@ namespace Lib9c.Tests.Action
         public RapidCombination8Test()
         {
             _initialState = new Account(MockState.Empty);
-
-            var sheets = TableSheetsImporter.ImportSheets();
+            Dictionary<string, string> sheets;
+            (_initialState, sheets) = InitializeUtil.InitializeTableSheets(
+                _initialState,
+                sheetsOverride: new Dictionary<string, string>
+                {
+                    {
+                        "EquipmentItemRecipeSheet",
+                        EquipmentItemRecipeSheetFixtures.Default
+                    },
+                    {
+                        "EquipmentItemSubRecipeSheet",
+                        EquipmentItemSubRecipeSheetFixtures.V1
+                    },
+                    {
+                        "GameConfigSheet",
+                        GameConfigSheetFixtures.Default
+                    },
+                });
+            _tableSheets = new TableSheets(sheets);
             foreach (var (key, value) in sheets)
             {
-                _initialState = _initialState.SetState(
-                    Addresses.TableSheet.Derive(key),
-                    value.Serialize());
+                _initialState =
+                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
-
-            _tableSheets = new TableSheets(sheets);
 
             _agentAddress = new PrivateKey().ToAddress();
             var agentState = new AgentState(_agentAddress);
