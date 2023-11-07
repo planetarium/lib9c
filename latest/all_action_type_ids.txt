@@ -44,6 +44,7 @@ cancel_product_registration2
 charge_action_point
 charge_action_point2
 charge_action_point3
+claim_items
 claim_monster_collection_reward
 claim_monster_collection_reward2
 claim_monster_collection_reward3
