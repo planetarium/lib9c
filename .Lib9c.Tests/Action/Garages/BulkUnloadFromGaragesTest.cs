@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action.Garages
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Garages;
+    using Nekoyume.Exceptions;
     using Nekoyume.Model.Garages;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
@@ -160,11 +161,71 @@ namespace Lib9c.Tests.Action.Garages
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());
             Assert.Equal(blockIndex, mail.blockIndex);
             Assert.Equal(blockIndex, mail.requiredBlockIndex);
-            Assert.True(action.UnloadData[0].fungibleAssetValues?.SequenceEqual(mail.FungibleAssetValues!) ??
+            Assert.True(action.UnloadData[0].fungibleAssetValues
+                            ?.SequenceEqual(mail.FungibleAssetValues!) ??
                         mail.FungibleAssetValues is null);
-            Assert.True(action.UnloadData[0].fungibleIdAndCounts?.SequenceEqual(mail.FungibleIdAndCounts!) ??
+            Assert.True(action.UnloadData[0].fungibleIdAndCounts
+                            ?.SequenceEqual(mail.FungibleIdAndCounts!) ??
                         mail.FungibleIdAndCounts is null);
             Assert.Equal(action.UnloadData[0].memo, mail.Memo);
+        }
+
+        [Fact]
+        public void Execute_Throws_InvalidActionFieldException()
+        {
+            // FungibleAssetValues and FungibleIdAndCounts are null.
+            Assert.Throws<InvalidActionFieldException>(() =>
+            {
+                new BulkUnloadFromGarages(new[] { WrapUnloadData(AgentAddress) })
+                    .Execute(new ActionContext
+                    {
+                        Signer = AgentAddress,
+                        BlockIndex = 0,
+                        Rehearsal = false,
+                        PreviousState = _previousStates,
+                        RandomSeed = new TestRandom().Seed,
+                    });
+            });
+
+            // FungibleAssetValues contains negative value.
+            var fungibleAssetValues = GetFungibleAssetValues(AgentAddress, AvatarAddress)
+                .Select(tuple => (tuple.balanceAddr, tuple.value * -1));
+            Assert.Throws<InvalidActionFieldException>(() =>
+            {
+                new BulkUnloadFromGarages(new[]
+                    {
+                        WrapUnloadData(AgentAddress, fungibleAssetValues),
+                    })
+                    .Execute(new ActionContext
+                    {
+                        Signer = AgentAddress,
+                        BlockIndex = 0,
+                        Rehearsal = false,
+                        PreviousState = _previousStates,
+                        RandomSeed = new TestRandom().Seed,
+                    });
+            });
+
+            // Count of fungible id is negative.
+            var fungibleIdAndCounts = _tableSheets.MaterialItemSheet.OrderedList!
+                .Take(3).Select(ItemFactory.CreateMaterial)
+                .Select((material, index) => (FungibleItem: material.FungibleId, index * -1 - 1))
+                .ToArray();
+            Assert.Throws<InvalidActionFieldException>(() =>
+            {
+                new BulkUnloadFromGarages(new[]
+                    {
+                        WrapUnloadData(AgentAddress, null, fungibleIdAndCounts),
+                    })
+                    .Execute(new ActionContext
+                    {
+                        Signer = AgentAddress,
+                        BlockIndex = 0,
+                        Rehearsal = false,
+                        PreviousState = _previousStates,
+                        RandomSeed = new TestRandom().Seed,
+                    });
+            });
         }
 
         private static (Address balanceAddr, FungibleAssetValue value)[]
@@ -186,6 +247,20 @@ namespace Lib9c.Tests.Action.Garages
                     return (agentAddr, fav);
                 })
                 .ToArray();
+        }
+
+        private static (
+            Address recipientAvatarAddress,
+            IEnumerable<(Address balanceAddress, FungibleAssetValue value)>? fungibleAssetValues,
+            IEnumerable<(HashDigest<SHA256> fungibleId, int count)>? fungibleIdAndCounts,
+            string? memo) WrapUnloadData(
+                Address recipientAvatarAddress,
+                IEnumerable<(Address balanceAddress, FungibleAssetValue value)>?
+                    fungibleAssetValues = null,
+                IEnumerable<(HashDigest<SHA256> fungibleId, int count)>? fungibleIdAndCounts = null,
+                string? memo = null)
+        {
+            return (recipientAvatarAddress, fungibleAssetValues, fungibleIdAndCounts, memo);
         }
 
         private (IAccount states, (
