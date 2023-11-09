@@ -65,17 +65,17 @@ namespace Nekoyume.Action
 
             avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
-            ProductsState productsState;
+            List productsState;
             if (states.TryGetState(productsStateAddress, out List rawProductList))
             {
-                productsState = new ProductsState(rawProductList);
+                productsState = rawProductList;
             }
             else
             {
                 var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
                     ? rawMarketList
                     : List.Empty;
-                productsState = new ProductsState();
+                productsState = List.Empty;
                 marketState = marketState.Add(AvatarAddress.Serialize());
                 states = states.SetState(Addresses.Market, marketState);
             }
@@ -157,17 +157,17 @@ namespace Nekoyume.Action
                 }
                 else
                 {
-                    states = CancelProductRegistration0.Cancel(productsState, productInfo,
+                    states = CancelProductRegistration0.Cancel(ref productsState, productInfo,
                         states, avatarState, context);
                 }
 
-                states = RegisterProduct0.Register(context, info, avatarState, productsState, states, random);
+                states = RegisterProduct0.Register(context, info, avatarState, ref productsState, states, random);
             }
 
             states = states
                 .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
                 .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(productsStateAddress, productsState.Serialize());
+                .SetState(productsStateAddress, productsState);
 
             if (migrationRequired)
             {

@@ -127,14 +127,15 @@ namespace Nekoyume.Action
         {
             var productId = productInfo.ProductId;
             var productsStateAddress = ProductsState.DeriveAddress(sellerAvatarAddress);
-            var productsState = new ProductsState((List) states.GetState(productsStateAddress));
-            if (!productsState.ProductIds.Contains(productId))
+            var productsState = (List) states.GetState(productsStateAddress)!;
+            var serializedProductId = productId.Serialize();
+            if (!productsState.Contains(serializedProductId))
             {
                 // sold out or canceled product.
                 throw new ProductNotFoundException($"can't find product {productId}");
             }
 
-            productsState.ProductIds.Remove(productId);
+            productsState = (List) productsState.Remove(serializedProductId);
 
             var productAddress = Product.DeriveAddress(productId);
             var product = ProductFactory.DeserializeProduct((List) states.GetState(productAddress));
@@ -202,7 +203,7 @@ namespace Nekoyume.Action
                 context.BlockIndex);
             states = states
                 .SetState(productAddress, Null.Value)
-                .SetState(productsStateAddress, productsState.Serialize())
+                .SetState(productsStateAddress, productsState)
                 .SetState(sellerAvatarAddress, sellerAvatarState.SerializeV2())
                 .SetState(sellerAvatarAddress.Derive(LegacyQuestListKey), sellerAvatarState.questList.Serialize())
                 .SetState(ProductReceipt.DeriveAddress(productId), receipt.Serialize())

@@ -70,10 +70,10 @@ namespace Nekoyume.Action
 
             avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
-            ProductsState productsState;
+            List productsState;
             if (states.TryGetState(productsStateAddress, out List rawProductList))
             {
-                productsState = new ProductsState(rawProductList);
+                productsState = rawProductList;
             }
             else
             {
@@ -81,7 +81,7 @@ namespace Nekoyume.Action
                 var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
                     ? rawMarketList
                     : List.Empty;
-                productsState = new ProductsState();
+                productsState = List.Empty;
                 marketState = marketState.Add(AvatarAddress.Serialize());
                 states = states.SetState(Addresses.Market, marketState);
             }
@@ -124,14 +124,14 @@ namespace Nekoyume.Action
                 }
                 else
                 {
-                    states = Cancel(productsState, productInfo, states, avatarState, context);
+                    states = Cancel(ref productsState, productInfo, states, avatarState, context);
                 }
             }
 
             states = states
                 .SetState(AvatarAddress, avatarState.SerializeV2())
                 .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(productsStateAddress, productsState.Serialize());
+                .SetState(productsStateAddress, productsState);
 
             if (migrationRequired)
             {
@@ -145,16 +145,17 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public static IAccount Cancel(ProductsState productsState, IProductInfo productInfo, IAccount states,
+        public static IAccount Cancel(ref List productsState, IProductInfo productInfo, IAccount states,
             AvatarState avatarState, IActionContext context)
         {
             var productId = productInfo.ProductId;
-            if (!productsState.ProductIds.Contains(productId))
+            var serializedProductId = productId.Serialize();
+            if (!productsState.Contains(serializedProductId))
             {
                 throw new ProductNotFoundException($"can't find product {productId}");
             }
 
-            productsState.ProductIds.Remove(productId);
+            productsState = (List) productsState.Remove(serializedProductId);
 
             var productAddress = Product.DeriveAddress(productId);
             var product = ProductFactory.DeserializeProduct((List) states.GetState(productAddress));

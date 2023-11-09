@@ -71,14 +71,14 @@ namespace Nekoyume.Action
 
             avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
-            ProductsState productsState;
+            List productsState;
             if (states.TryGetState(productsStateAddress, out List rawProducts))
             {
-                productsState = new ProductsState(rawProducts);
+                productsState = rawProducts;
             }
             else
             {
-                productsState = new ProductsState();
+                productsState = List.Empty;
                 var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
                     ? rawMarketList
                     : List.Empty;
@@ -89,13 +89,13 @@ namespace Nekoyume.Action
             var random = context.GetRandom();
             foreach (var info in RegisterInfos.OrderBy(r => r.Type).ThenBy(r => r.Price))
             {
-                states = Register(context, info, avatarState, productsState, states, random);
+                states = Register(context, info, avatarState, ref productsState, states, random);
             }
 
             states = states
                 .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
                 .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(productsStateAddress, productsState.Serialize());
+                .SetState(productsStateAddress, productsState);
             if (migrationRequired)
             {
                 states = states
@@ -107,7 +107,7 @@ namespace Nekoyume.Action
         }
 
         public static IAccount Register(IActionContext context, IRegisterInfo info, AvatarState avatarState,
-            ProductsState productsState, IAccount states, IRandom random)
+            ref List productsState, IAccount states, IRandom random)
         {
             switch (info)
             {
@@ -190,7 +190,7 @@ namespace Nekoyume.Action
                                 SellerAgentAddress = context.Signer,
                                 SellerAvatarAddress = registerInfo.AvatarAddress,
                             };
-                            productsState.ProductIds.Add(productId);
+                            productsState = productsState.Add(productId.Serialize());
                             states = states.SetState(Product.DeriveAddress(productId),
                                 product.Serialize());
                             break;
@@ -216,7 +216,7 @@ namespace Nekoyume.Action
                     states = states
                         .TransferAsset(context, avatarState.address, productAddress, asset)
                         .SetState(productAddress, product.Serialize());
-                    productsState.ProductIds.Add(productId);
+                    productsState = productsState.Add(productId.Serialize());
                     break;
                 }
             }
