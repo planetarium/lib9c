@@ -9,7 +9,7 @@ public static class TransactionMarshaller
     private static readonly Codec Codec = new Codec();
 
     // Copied from Libplanet/Tx/TxMarshaler.cs
-    private static readonly Binary SignatureKey = new byte[] { 0x53 }; // 'S'
+    private static readonly Binary SignatureKey = new Binary(new byte[] { 0x53 }); // 'S'
 
     public static Dictionary Marshal(this ITransaction transaction)
     {

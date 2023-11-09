@@ -87,7 +87,7 @@ namespace Nekoyume.Action
         {
             var asDict = (Dictionary)((Dictionary)plainValue)["values"];
             PendingAddress = asDict["pa"].ToAddress();
-            Signature = (Binary) asDict["s"];
+            Signature = ((Binary)asDict["s"]).ToByteArray();
         }
 
         public Address GetPendingAddress() => PendingAddress;

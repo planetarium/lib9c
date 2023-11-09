@@ -77,7 +77,7 @@ namespace Nekoyume.Action.Coupons
                 .ToImmutableDictionary(
                     pair => new Address(pair.Key),
                     pair => (IImmutableSet<Guid>)((Bencodex.Types.List)pair.Value).Select(
-                        value => new Guid((Binary)value)
+                        value => new Guid(((Binary)value).ToByteArray())
                         ).ToImmutableHashSet()
             );
     }
