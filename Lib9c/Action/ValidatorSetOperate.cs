@@ -163,9 +163,9 @@ namespace Nekoyume.Action
             catch (Exception)
             {
                 BigInteger power =
-                    new BigInteger(dict.GetValue<Binary>(PowerKey).ToByteArray());
+                    new BigInteger(((Binary)dict[PowerKey]).ToByteArray());
                 PublicKey publicKey =
-                    new PublicKey(dict.GetValue<Binary>(PublicKeyKey).ToByteArray());
+                    new PublicKey(((Binary)dict[PublicKeyKey]).ToByteArray());
 
                 return new Validator(publicKey, power);
             }
