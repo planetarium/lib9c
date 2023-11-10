@@ -18,7 +18,7 @@ builder.Services.AddSingleton<Codec>();
 builder.Services.AddSingleton<IStateStore, TrieStateStore>(_ =>
 {
     var path = builder.Configuration.GetValue<string>("StateStorePath");
-    return new TrieStateStore(new RocksDBKeyValueStore(path));
+    return new TrieStateStore(new RocksDBKeyValueStore(Path.Combine(path, "states")));
 });
 
 var app = builder.Build();

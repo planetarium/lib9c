@@ -42,14 +42,8 @@ public class RemoteEvaluationController : ControllerBase
             return StatusCode(StatusCodes.Status400BadRequest);
         }
 
-        var decodedStateRootHash = _codec.Decode(request.BaseStateRootHash);
-        if (decodedStateRootHash is not Binary binary)
-        {
-            return StatusCode(StatusCodes.Status400BadRequest);
-        }
-
         var preEvaluationBlock = PreEvaluationBlockMarshaller.Unmarshal(dictionary);
-        var baseStateRootHash = new HashDigest<SHA256>(binary);
+        var baseStateRootHash = new HashDigest<SHA256>(request.BaseStateRootHash);
 
         return Ok(new RemoteEvaluationResponse
         {

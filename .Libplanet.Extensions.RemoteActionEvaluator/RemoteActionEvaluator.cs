@@ -7,6 +7,7 @@ using Libplanet.Action.Loader;
 using Libplanet.Types.Blocks;
 using Libplanet.Extensions.ActionEvaluatorCommonComponents;
 using Libplanet.Common;
+using Libplanet.Store.Trie;
 
 namespace Libplanet.Extensions.RemoteActionEvaluator;
 
@@ -29,7 +30,7 @@ public class RemoteActionEvaluator : IActionEvaluator
         {
             PreEvaluationBlock = PreEvaluationBlockMarshaller.Serialize(block),
             BaseStateRootHash = baseStateRootHash is null
-                ? new byte[]{}
+                ? MerkleTrie.EmptyRootHash.ToByteArray()
                 : baseStateRootHash.Value.ToByteArray(),
         }).Result;
         var evaluationResponse = response.Content.ReadFromJsonAsync<RemoteEvaluationResponse>().Result;
