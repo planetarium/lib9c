@@ -44,7 +44,7 @@ public class CustomActionsDeserializableValidatorTest
 
         public void LoadPlainValue(IValue plainValue)
         {
-            AvatarAddress = new Address(((Binary)((Dictionary)plainValue)["a"]).ByteArray);
+            AvatarAddress = new Address(((Dictionary)plainValue)["a"]);
         }
 
         public IAccount Execute(IActionContext context)
