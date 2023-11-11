@@ -42,7 +42,7 @@ namespace Lib9c.Formatters
                     kv => new Address(kv.Key),
                     kv => kv.Value),
                 balances.Cast<Dictionary>().ToImmutableDictionary(
-                    record => (new Address(((Binary)record["address"]).ByteArray), new Currency((Dictionary)record["currency"])),
+                    record => (new Address(record["address"]), new Currency((Dictionary)record["currency"])),
                     record => (BigInteger)(Integer)record["amount"]),
                 totalSupplies.ToImmutableDictionary(
                     kv => new Currency(new Codec().Decode((Binary)kv.Key)),
