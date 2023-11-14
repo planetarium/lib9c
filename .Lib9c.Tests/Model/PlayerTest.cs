@@ -303,23 +303,24 @@ namespace Lib9c.Tests.Model
                 _tableSheets.CharacterLevelSheet,
                 _tableSheets.EquipmentItemSetEffectSheet
             );
+            var baseHp = player.HP;
             player.SetCostumeStat(_tableSheets.CostumeStatSheet);
-
-            Assert.Equal(600, player.HP);
-            Assert.Equal(600, player.CurrentHP);
+            var expectedHp = baseHp + row.Stat;
+            Assert.Equal(expectedHp, player.HP);
+            Assert.Equal(expectedHp, player.CurrentHP);
 
             Assert.Equal(1, player.Level);
 
             player.CurrentHP -= 10;
-
-            Assert.Equal(590, player.CurrentHP);
+            var expectedCurrentHp = expectedHp - 10;
+            Assert.Equal(expectedCurrentHp, player.CurrentHP);
 
             var requiredExp = _tableSheets.CharacterLevelSheet[1].ExpNeed;
             player.GetExp2(requiredExp);
-
+            var characterRow = _tableSheets.CharacterSheet[player.CharacterId];
             Assert.Equal(2, player.Level);
-            Assert.Equal(612, player.HP);
-            Assert.Equal(590, player.CurrentHP);
+            Assert.Equal(expectedHp + characterRow.LvHP, player.HP);
+            Assert.Equal(expectedCurrentHp, player.CurrentHP);
         }
 
         [Theory]
