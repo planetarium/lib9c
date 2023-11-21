@@ -98,9 +98,9 @@ namespace Lib9c.Tests.Action
                 ArenaScoreHelper.GetScoreV4);
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(_tableSheets.GameConfigSheet);
-            var state = _baseState
+            IAccount state = new Account(_baseState
                 .SetState(weekly.address, weekly.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+                .SetState(gameConfigState.address, gameConfigState.Serialize()));
             var blockIndex = 0;
 
             if (resetCount)
@@ -114,9 +114,9 @@ namespace Lib9c.Tests.Action
                 blockIndex = gameConfigState.WeeklyArenaInterval;
                 // Avoid NRE in test case.
                 var nextWeekly = new WeeklyArenaState(1);
-                state = state
+                state = new Account(state
                     .SetState(weekly.address, weekly.Serialize())
-                    .SetState(nextWeekly.address, nextWeekly.Serialize());
+                    .SetState(nextWeekly.address, nextWeekly.Serialize()));
             }
 
             Assert.False(weekly.Ended);
@@ -142,12 +142,28 @@ namespace Lib9c.Tests.Action
                 var currentWeeklyState = nextState.GetWeeklyArenaState(0);
                 var nextWeeklyState = nextState.GetWeeklyArenaState(1);
 
-                Assert.Contains(WeeklyArenaState.DeriveAddress(0), nextState.Delta.UpdatedAddresses);
-                Assert.Contains(WeeklyArenaState.DeriveAddress(1), nextState.Delta.UpdatedAddresses);
+                if (resetCount || updateNext)
+                {
+                    Assert.NotEqual(
+                        state.GetState(WeeklyArenaState.DeriveAddress(0)),
+                        nextState.GetState(WeeklyArenaState.DeriveAddress(0)));
+                }
+                else
+                {
+                    Assert.Equal(
+                        state.GetState(WeeklyArenaState.DeriveAddress(0)),
+                        nextState.GetState(WeeklyArenaState.DeriveAddress(0)));
+                }
+
+                Assert.NotEqual(
+                    state.GetState(WeeklyArenaState.DeriveAddress(1)),
+                    nextState.GetState(WeeklyArenaState.DeriveAddress(1)));
 
                 if (updateNext)
                 {
-                    Assert.Contains(WeeklyArenaState.DeriveAddress(2), nextState.Delta.UpdatedAddresses);
+                    Assert.NotEqual(
+                        state.GetState(WeeklyArenaState.DeriveAddress(2)),
+                        nextState.GetState(WeeklyArenaState.DeriveAddress(2)));
                     Assert.Equal(blockIndex, nextWeeklyState.ResetIndex);
                 }
 
