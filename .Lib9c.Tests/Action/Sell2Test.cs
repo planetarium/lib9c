@@ -121,7 +121,6 @@
                 {
                     BlockIndex = 0,
                     PreviousState = previousStates,
-                    Rehearsal = false,
                     Signer = _agentAddress,
                 };
                 ctx.SetRandom(random);

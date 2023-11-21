@@ -164,7 +164,6 @@ rune_skill_slot_unlock_cost,500";
                 BlockIndex = blockIndex,
                 PreviousState = previousStates,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _agentAddress,
             });
         }

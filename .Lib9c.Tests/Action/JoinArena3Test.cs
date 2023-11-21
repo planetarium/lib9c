@@ -225,7 +225,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _signer,
                 RandomSeed = _random.Seed,
-                Rehearsal = false,
                 BlockIndex = blockIndex,
             });
 
@@ -412,7 +411,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _signer,
                 RandomSeed = _random.Seed,
-                Rehearsal = false,
                 BlockIndex = 1,
             });
 

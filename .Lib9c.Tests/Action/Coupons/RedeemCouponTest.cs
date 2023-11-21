@@ -117,7 +117,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     }));
@@ -148,7 +147,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
@@ -164,7 +162,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
@@ -183,7 +180,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
@@ -203,7 +199,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
@@ -221,7 +216,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
@@ -243,7 +237,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
@@ -260,7 +253,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
@@ -280,7 +272,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         Signer = CouponsFixture.AgentAddress2,
                         RandomSeed = random.Seed,
                     });
@@ -302,7 +293,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });

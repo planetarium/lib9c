@@ -114,7 +114,6 @@ namespace Lib9c.Tests.Action.Scenario
                     PreviousState = nextStates,
                     BlockIndex = sellBlockIndex,
                     RandomSeed = random.Seed,
-                    Rehearsal = false,
                 });
                 // TODO: Check state.. inventory, orders..
             }
@@ -142,7 +141,6 @@ namespace Lib9c.Tests.Action.Scenario
                     PreviousState = nextStates,
                     BlockIndex = sellBlockIndex + 1L,
                     RandomSeed = random.Seed,
-                    Rehearsal = false,
                 });
                 // TODO: Check state.. inventory, orders..
             }
@@ -163,7 +161,6 @@ namespace Lib9c.Tests.Action.Scenario
                 PreviousState = nextStates,
                 BlockIndex = sellBlockIndex + 2L,
                 RandomSeed = random.Seed,
-                Rehearsal = false,
             });
 
             // Check inventory does not have ap stones.

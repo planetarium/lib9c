@@ -158,7 +158,6 @@ namespace Lib9c.Tests.TestHelper
                 BlockIndex = 0,
                 PreviousState = initialState,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             return new MakeInitialStateResult(

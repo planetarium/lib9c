@@ -347,7 +347,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 100,
                 PreviousState = _initialState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _buyerAgentAddress,
             });
 
@@ -361,7 +360,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 100,
                 PreviousState = _initialState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _buyerAgentAddress,
             });
 
@@ -776,7 +774,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 100,
                 PreviousState = _initialState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _buyerAgentAddress,
             });
 
@@ -884,7 +881,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 100,
                 PreviousState = nextState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = result.GetAgentState().address,
             });
 
