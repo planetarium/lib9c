@@ -460,7 +460,6 @@ namespace Lib9c.DevExtensions.Tests.Action
                 PreviousState = previousStates,
                 Signer = agentAddr,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = blockIndex,
             });
             var agent = new AgentState((Dictionary)nextStates.GetState(agentAddr)!);

@@ -24,13 +24,12 @@ namespace Nekoyume.Action
         public IList<(byte[] Address, byte[] Nonce, byte[] PublicKey)> PendingActivations { get; internal set; }
 
         IEnumerable<IValue> ICreatePendingActivationsV1.PendingActivations =>
-            PendingActivations.Select(t =>
-                new List(new Binary[] { t.Address, t.Nonce, t.PublicKey }.Cast<IValue>()));
+            PendingActivations.Select(t => new List(new[] { t.Address, t.Nonce, t.PublicKey }));
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", "create_pending_activations")
             .Add("values", PendingActivations
-                .Select(t => new List(new Binary[] { t.Address, t.Nonce, t.PublicKey }.Cast<IValue>()))
+                .Select(t => new List(new[] { t.Address, t.Nonce, t.PublicKey }))
                 .Serialize());
 
         public CreatePendingActivations()

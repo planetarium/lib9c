@@ -87,7 +87,6 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = prevState,
                 Signer = _sender,
-                Rehearsal = false,
                 BlockIndex = 1,
             });
 
@@ -115,7 +114,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = prevState,
                     // 송금자가 직접 사인하지 않으면 실패해야 합니다.
                     Signer = _recipient,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 });
             });
@@ -147,7 +145,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = prevState,
                     Signer = _sender,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 });
             });
@@ -176,7 +173,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = prevState,
                     Signer = _sender,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 });
             });
@@ -205,7 +201,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = prevState,
                     Signer = _sender,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 });
             });
@@ -238,7 +233,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = prevState,
                     Signer = _sender,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 });
             });
@@ -269,7 +263,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = prevState,
                     Signer = _sender,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 });
             });
@@ -341,7 +334,6 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = prevState,
                 Signer = _sender,
-                Rehearsal = false,
                 BlockIndex = TransferAsset3.CrystalTransferringRestrictionStartIndex,
             }));
         }

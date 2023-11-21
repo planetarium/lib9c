@@ -170,7 +170,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }

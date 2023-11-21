@@ -182,7 +182,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
@@ -261,7 +260,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
@@ -324,7 +322,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
             }));
 
             SerializeException<DuplicateEquipmentException>(exec);
@@ -353,7 +350,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = _initialState,
                     Signer = _agentAddress,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 })
             );
 

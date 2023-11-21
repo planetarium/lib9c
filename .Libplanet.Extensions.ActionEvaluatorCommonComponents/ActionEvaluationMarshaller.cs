@@ -32,7 +32,7 @@ public static class ActionEvaluationMarshaller
         return new CommittedActionEvaluation(
             dictionary["action"],
             ActionContextMarshaller.Unmarshal((Dictionary)dictionary["input_context"]),
-            new HashDigest<SHA256>((Binary)dictionary["output_states"]),
+            new HashDigest<SHA256>(dictionary["output_states"]),
             dictionary["exception"] is Text typeName ? new Exception(typeName) : null
         );
     }

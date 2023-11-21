@@ -33,7 +33,6 @@ namespace Lib9c.Tests.Action.Coupons
                         new ActionContext
                         {
                             PreviousState = state,
-                            Rehearsal = false,
                             RandomSeed = random.Seed,
                             BlockIndex = long.MaxValue,
                             Signer = CouponsFixture.AgentAddress1,
@@ -47,7 +46,6 @@ namespace Lib9c.Tests.Action.Coupons
                         new ActionContext
                         {
                             PreviousState = state,
-                            Rehearsal = false,
                             RandomSeed = random.Seed,
                             BlockIndex = 0,
                             Signer = CouponsFixture.AgentAddress2,
@@ -62,7 +60,6 @@ namespace Lib9c.Tests.Action.Coupons
                         new ActionContext
                         {
                             PreviousState = state,
-                            Rehearsal = false,
                             RandomSeed = random.Seed,
                             BlockIndex = 0,
                             Signer = CouponsFixture.AgentAddress1,
@@ -78,7 +75,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         RandomSeed = random.Seed,
                         BlockIndex = 0,
                         Signer = CouponsFixture.AgentAddress1,
@@ -92,7 +88,6 @@ namespace Lib9c.Tests.Action.Coupons
                     new ActionContext
                     {
                         PreviousState = state,
-                        Rehearsal = false,
                         RandomSeed = random.Seed,
                         BlockIndex = 0,
                         Signer = CouponsFixture.AgentAddress1,

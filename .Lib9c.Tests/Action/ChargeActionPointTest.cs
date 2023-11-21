@@ -108,7 +108,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
@@ -164,7 +163,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = state,
                     Signer = _agentAddress,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 })
             );
         }

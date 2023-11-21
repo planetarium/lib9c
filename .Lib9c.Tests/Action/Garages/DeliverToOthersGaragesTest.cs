@@ -336,7 +336,6 @@ namespace Lib9c.Tests.Action.Garages
                 {
                     Signer = signer,
                     BlockIndex = blockIndex,
-                    Rehearsal = false,
                     PreviousState = previousState,
                     RandomSeed = random.Seed,
                 }));

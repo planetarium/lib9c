@@ -51,7 +51,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = _previousState,
                     Signer = _admin,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 }
             );
@@ -81,7 +80,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = _previousState,
                     Signer = invalidSigner,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 }
             ));

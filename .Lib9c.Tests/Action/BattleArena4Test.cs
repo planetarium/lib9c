@@ -213,7 +213,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = _state,
                 Signer = signer,
                 RandomSeed = random.Seed,
-                Rehearsal = false,
                 BlockIndex = blockIndex,
             });
             return _state;
@@ -308,7 +307,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = _state,
                 Signer = _agent1Address,
                 RandomSeed = random.Seed,
-                Rehearsal = false,
                 BlockIndex = blockIndex,
             });
 
@@ -927,7 +925,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = _state,
                 Signer = _agent1Address,
                 RandomSeed = random.Seed,
-                Rehearsal = false,
                 BlockIndex = blockIndex,
             });
 

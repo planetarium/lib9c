@@ -164,7 +164,6 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = blockIndex,
                 PreviousState = previousStates,
-                Rehearsal = false,
                 Signer = _agentAddress,
                 RandomSeed = 0,
             });

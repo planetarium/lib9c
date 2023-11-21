@@ -247,7 +247,6 @@ namespace Lib9c.Tests.Action
                     BlockIndex = blockIndex + executeOffset,
                     PreviousState = state,
                     RandomSeed = randomSeed,
-                    Rehearsal = false,
                     Signer = _agentAddress,
                 };
 
@@ -410,7 +409,6 @@ namespace Lib9c.Tests.Action
                     BlockIndex = blockIndex + executeOffset,
                     PreviousState = state,
                     RandomSeed = 0,
-                    Rehearsal = false,
                     Signer = _agentAddress,
                 }));
             }
@@ -527,7 +525,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = worldBossRow.StartedBlockIndex + gameConfigState.WorldBossRequiredInterval,
                 PreviousState = state,
                 RandomSeed = randomSeed,
-                Rehearsal = false,
                 Signer = _agentAddress,
             });
 
@@ -628,7 +625,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
                 PreviousState = state,
                 RandomSeed = randomSeed,
-                Rehearsal = false,
                 Signer = _agentAddress,
             };
 

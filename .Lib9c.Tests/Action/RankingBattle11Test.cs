@@ -198,7 +198,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = previousState,
                 Signer = _agent1Address,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = RankingBattle11.UpdateTargetBlockIndex,
             });
 
@@ -340,7 +339,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = previousState,
                 Signer = _agent1Address,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = RankingBattle11.UpdateTargetBlockIndex - 1,
             });
 
@@ -395,7 +393,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = _initialState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -439,7 +436,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = _initialState,
                     Signer = signer,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -473,7 +469,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -504,7 +499,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -537,7 +531,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -577,7 +570,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -708,7 +700,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agent1Address,
                 RandomSeed = 0,
-                Rehearsal = false,
             }));
         }
 
@@ -744,7 +735,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
