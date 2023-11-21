@@ -11,6 +11,7 @@ battle_arena11
 battle_arena12
 battle_arena13
 battle_arena14
+battle_arena15
 battle_arena2
 battle_arena3
 battle_arena4
@@ -22,6 +23,8 @@ battle_arena9
 battle_grand_finale
 battle_grand_finale2
 battle_grand_finale3
+bulk_unload_from_garages
+burn_asset
 buy
 buy_multiple
 buy_product
@@ -155,6 +158,7 @@ hack_and_slash8
 hack_and_slash9
 initialize_states
 issue_coupons
+issue_tokens_from_garage
 item_enhancement
 item_enhancement10
 item_enhancement11
@@ -192,6 +196,7 @@ mimisbrunnr_battle6
 mimisbrunnr_battle7
 mimisbrunnr_battle8
 mimisbrunnr_battle9
+mint_assets
 monster_collect
 monster_collect2
 monster_collect3
