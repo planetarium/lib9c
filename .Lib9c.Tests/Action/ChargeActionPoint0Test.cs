@@ -73,7 +73,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             var nextAvatarState = nextState.GetAvatarState(avatarAddress);

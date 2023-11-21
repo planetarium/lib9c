@@ -169,7 +169,6 @@
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = 1,
             });
 
@@ -260,7 +259,6 @@
                     PreviousState = previousState,
                     Signer = _agentAddress,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -495,7 +493,7 @@
             {
                 action.Execute(new ActionContext()
                 {
-                    PreviousState = state, Signer = _agentAddress, RandomSeed = 0, Rehearsal = false,
+                    PreviousState = state, Signer = _agentAddress, RandomSeed = 0,
                 });
             });
         }
@@ -585,7 +583,6 @@
             {
                 PreviousState = nextState,
                 Signer = _agentAddress,
-                Rehearsal = false,
                 RandomSeed = 0,
             });
 

@@ -65,7 +65,6 @@
             {
                 BlockIndex = 0,
                 PreviousState = _initialState,
-                Rehearsal = false,
                 Signer = _agentAddress,
             });
 

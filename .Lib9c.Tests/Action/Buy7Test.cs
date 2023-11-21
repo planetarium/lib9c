@@ -321,7 +321,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 1,
                 PreviousState = _initialState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _buyerAgentAddress,
             });
 

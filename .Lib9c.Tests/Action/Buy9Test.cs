@@ -404,7 +404,6 @@
                 BlockIndex = 100,
                 PreviousState = _initialState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _buyerAgentAddress,
             });
 

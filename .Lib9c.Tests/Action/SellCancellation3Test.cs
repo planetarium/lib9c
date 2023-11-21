@@ -132,7 +132,6 @@
                         BlockIndex = 0,
                         PreviousState = previousStates,
                         RandomSeed = 0,
-                        Rehearsal = false,
                         Signer = _agentAddress,
                     });
                     productsCount--;
@@ -162,7 +161,6 @@
                         BlockIndex = 0,
                         PreviousState = previousStates,
                         RandomSeed = 0,
-                        Rehearsal = false,
                         Signer = _agentAddress,
                     });
                     productsCount--;

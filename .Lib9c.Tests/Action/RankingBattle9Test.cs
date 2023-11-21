@@ -210,7 +210,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = previousState,
                 Signer = _agent1Address,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             var nextAvatar1State = nextState.GetAvatarStateV2(_avatar1Address);
@@ -265,7 +264,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = _initialState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -310,7 +308,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = _initialState,
                     Signer = signer,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -345,7 +342,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -377,7 +373,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -411,7 +406,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -452,7 +446,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -510,7 +503,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agent1Address,
                 RandomSeed = 0,
-                Rehearsal = false,
             }));
         }
     }

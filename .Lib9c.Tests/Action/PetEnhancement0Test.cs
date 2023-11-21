@@ -379,7 +379,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
                 PreviousState = prevStates,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = agentAddr,
             });
             var nextNcgBal = nextStates.GetBalance(agentAddr, ncgCurrency);

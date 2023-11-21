@@ -236,7 +236,6 @@
                 BlockIndex = 101,
                 PreviousState = prevState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _agentAddress,
             });
 
@@ -283,7 +282,6 @@
                 BlockIndex = 101,
                 PreviousState = prevState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _agentAddress,
             });
 

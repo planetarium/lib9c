@@ -54,7 +54,6 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 PreviousState = _initialState,
-                Rehearsal = false,
             });
 
             var nextWorldSheetCsv = nextState.GetSheetCsv<WorldSheet>();
@@ -73,7 +72,6 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 PreviousState = _initialState,
-                Rehearsal = false,
             });
 
             nextWorldSheet = nextState.GetSheet<WorldSheet>();
