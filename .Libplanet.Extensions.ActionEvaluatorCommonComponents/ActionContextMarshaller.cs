@@ -51,7 +51,7 @@ public static class ActionContextMarshaller
             blockIndex: (Integer)dictionary["block_index"],
             blockProtocolVersion: (Integer)dictionary["block_protocol_version"],
             rehearsal: (Boolean)dictionary["rehearsal"],
-            previousState: new HashDigest<SHA256>(((Binary)dictionary["previous_states"]).ByteArray),
+            previousState: new HashDigest<SHA256>(dictionary["previous_states"]),
             randomSeed: (Integer)dictionary["random_seed"],
             blockAction: (Boolean)dictionary["block_action"]
         );

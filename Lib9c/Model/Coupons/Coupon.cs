@@ -40,7 +40,7 @@ namespace Nekoyume.Model.Coupons
                 );
             }
 
-            Id = new Guid((Binary)dict["id"]);
+            Id = new Guid(((Binary)dict["id"]).ToByteArray());
             Rewards = new RewardSet((Bencodex.Types.Dictionary)dict["rewards"]);
         }
 
