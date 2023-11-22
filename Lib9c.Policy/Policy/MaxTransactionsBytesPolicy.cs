@@ -27,11 +27,6 @@ namespace Nekoyume.Blockchain.Policy
                 .Add(new SpannedSubPolicy<long>(
                     startIndex: 0L,
                     value: 1024L * 1024L * 15L))    // 15 MiB
-                // Note: Initial analysis of the heaviest block of 9c-main
-                // (except for the genesis) weighs 58,408 B (58 KiB).
-                .Add(new SpannedSubPolicy<long>(
-                    startIndex: 1L,
-                    value: 1024L * 100L))           // 100 KiB
                 // Note: Temporary limit increase for resolving
                 // https://github.com/planetarium/NineChronicles/issues/777.
                 // Issued for v100081.  Temporary ad hoc increase was introduced
