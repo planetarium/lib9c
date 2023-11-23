@@ -90,7 +90,15 @@ namespace Nekoyume.Blockchain
         {
             if (_accessControlService?.GetTxQuota(transaction.Signer) is { } acsTxQuota)
             {
-                _quotaPerSignerList.TryAdd(transaction.Signer, acsTxQuota);
+                if (_quotaPerSignerList.ContainsKey(transaction.Signer))
+                {
+                    _quotaPerSignerList[transaction.Signer] = acsTxQuota;
+                }
+                else
+                {
+                    _quotaPerSignerList.TryAdd(transaction.Signer, acsTxQuota);
+                }
+
                 if (acsTxQuota == 0)
                 {
                     return false;
