@@ -15,6 +15,7 @@ namespace Nekoyume.Blockchain
         private readonly VolatileStagePolicy _impl;
         private readonly ConcurrentDictionary<Address, SortedList<Transaction, TxId>> _txs;
         private readonly int _quotaPerSigner;
+        private readonly Dictionary<Address, int> _quotaPerSignerList;
         private IAccessControlService? _accessControlService;
 
         public NCStagePolicy(TimeSpan txLifeTime, int quotaPerSigner, IAccessControlService? accessControlService = null)
@@ -31,6 +32,7 @@ namespace Nekoyume.Blockchain
                 ? new VolatileStagePolicy()
                 : new VolatileStagePolicy(txLifeTime);
 
+            _quotaPerSignerList = new Dictionary<Address, int>();
             _accessControlService = accessControlService;
         }
 
@@ -61,10 +63,10 @@ namespace Nekoyume.Blockchain
                     s.Add(tx);
                     int txQuotaPerSigner = _quotaPerSigner;
 
-                    // update txQuotaPerSigner if ACS returns a value for the signer.
-                    if (_accessControlService?.GetTxQuota(tx.Signer) is { } acsTxQuota)
+                    // update txQuotaPerSigner if signer is in the list
+                    if (_quotaPerSignerList.TryGetValue(tx.Signer, out int signerQuota))
                     {
-                        txQuotaPerSigner = acsTxQuota;
+                        txQuotaPerSigner = signerQuota;
                     }
 
 
@@ -86,10 +88,13 @@ namespace Nekoyume.Blockchain
 
         public bool Stage(BlockChain blockChain, Transaction transaction)
         {
-            if (_accessControlService?.GetTxQuota(transaction.Signer) is { } acsTxQuota
-                && acsTxQuota == 0)
+            if (_accessControlService?.GetTxQuota(transaction.Signer) is { } acsTxQuota)
             {
-                return false;
+                _quotaPerSignerList.TryAdd(transaction.Signer, acsTxQuota);
+                if (acsTxQuota == 0)
+                {
+                    return false;
+                }
             }
 
             var deniedTxs = new[]
