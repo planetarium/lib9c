@@ -131,7 +131,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = _prevState,
                     Signer = _minters.First(),
-                    Rehearsal = false,
                     BlockIndex = 1,
                 }
             );
@@ -170,7 +169,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = prevState,
                     Signer = _minters.First(),
-                    Rehearsal = false,
                     BlockIndex = 1,
                 }
             );
@@ -216,7 +214,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = prevState,
                     Signer = _minters.First(),
-                    Rehearsal = false,
                     BlockIndex = 1,
                 }
             );
@@ -251,7 +248,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = _prevState,
                     Signer = _adminAddress,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 }
             );
@@ -264,7 +260,6 @@ namespace Lib9c.Tests.Action
                     {
                         PreviousState = _prevState,
                         Signer = m,
-                        Rehearsal = false,
                         BlockIndex = 1,
                     }
                 );
@@ -276,7 +271,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = _prevState,
                     Signer = default,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 }
             ));

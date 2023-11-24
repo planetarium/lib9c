@@ -108,7 +108,6 @@ namespace Lib9c.Tests
                 {
                     PreviousState = _prevState,
                     Signer = _signer,
-                    Rehearsal = false,
                     BlockIndex = 42,
                 }
             );
@@ -138,7 +137,6 @@ namespace Lib9c.Tests
                 {
                     PreviousState = _prevState,
                     Signer = _signer,
-                    Rehearsal = false,
                     BlockIndex = 42,
                 }
             );
