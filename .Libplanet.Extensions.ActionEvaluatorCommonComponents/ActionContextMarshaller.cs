@@ -26,7 +26,6 @@ public static class ActionContextMarshaller
             .Add("miner", actionContext.Miner.ToHex())
             .Add("block_index", actionContext.BlockIndex)
             .Add("block_protocol_version", actionContext.BlockProtocolVersion)
-            .Add("rehearsal", actionContext.Rehearsal)
             .Add("previous_states", actionContext.PreviousState.ByteArray)
             .Add("random_seed", actionContext.RandomSeed)
             .Add("block_action", actionContext.BlockAction);
@@ -50,7 +49,6 @@ public static class ActionContextMarshaller
             miner: new Address(((Text)dictionary["miner"]).Value),
             blockIndex: (Integer)dictionary["block_index"],
             blockProtocolVersion: (Integer)dictionary["block_protocol_version"],
-            rehearsal: (Boolean)dictionary["rehearsal"],
             previousState: new HashDigest<SHA256>(dictionary["previous_states"]),
             randomSeed: (Integer)dictionary["random_seed"],
             blockAction: (Boolean)dictionary["block_action"]

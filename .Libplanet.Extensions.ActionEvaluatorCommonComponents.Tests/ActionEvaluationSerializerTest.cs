@@ -29,7 +29,6 @@ public class ActionEvaluationSerializerTest
                 miner: addresses[1],
                 blockIndex: 0,
                 blockProtocolVersion: 0,
-                rehearsal: false,
                 previousState: prevState,
                 randomSeed: 123,
                 blockAction: true),
