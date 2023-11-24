@@ -11,7 +11,7 @@ namespace Lib9c.Tests.Model.Stake
         [Fact]
         public void DeriveAddress()
         {
-            var agentAddr = new PrivateKey().ToAddress();
+            var agentAddr = new PrivateKey().Address;
             var expectedStakeStateAddr = StakeState.DeriveAddress(agentAddr);
             Assert.Equal(expectedStakeStateAddr, StakeStateV2.DeriveAddress(agentAddr));
         }
@@ -63,7 +63,7 @@ namespace Lib9c.Tests.Model.Stake
         public void Constructor_With_StakeState(long startedBlockIndex, long? receivedBlockIndex)
         {
             var stakeState = new StakeState(
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 startedBlockIndex);
             if (receivedBlockIndex.HasValue)
             {
@@ -84,7 +84,7 @@ namespace Lib9c.Tests.Model.Stake
         [Fact]
         public void Constructor_With_StakeState_Throw_ArgumentNullException()
         {
-            var stakeState = new StakeState(new PrivateKey().ToAddress(), 0);
+            var stakeState = new StakeState(new PrivateKey().Address, 0);
             var contract = new Contract(
                 Contract.StakeRegularFixedRewardSheetPrefix,
                 Contract.StakeRegularRewardSheetPrefix,

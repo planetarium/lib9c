@@ -19,7 +19,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Serialize()
         {
-            var address = new PrivateKey().ToAddress();
+            var address = new PrivateKey().Address;
             var state = new CrystalRandomSkillState(address, 1);
             state.Update(100_000_000, _tableSheets.CrystalStageBuffGachaSheet);
             state.Update(new List<int> { 1, 2, 3 });

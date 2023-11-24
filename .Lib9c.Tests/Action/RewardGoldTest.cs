@@ -49,7 +49,7 @@ namespace Lib9c.Tests.Action
                     "100010,전사,S,0,300,20,10,10,90,70,12,0.8,0.4,0,3.6,2.8,2,3");
 
             var privateKey = new PrivateKey();
-            var agentAddress = privateKey.PublicKey.ToAddress();
+            var agentAddress = privateKey.PublicKey.Address;
 
             var avatarAddress = agentAddress.Derive("avatar");
             _tableSheets = new TableSheets(sheets);
@@ -64,7 +64,7 @@ namespace Lib9c.Tests.Action
             );
 
             _avatarState2 = new AvatarState(
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
@@ -513,7 +513,7 @@ namespace Lib9c.Tests.Action
             else
             {
                 var adminPrivateKey = new PrivateKey();
-                var adminAddress = adminPrivateKey.ToAddress();
+                var adminAddress = adminPrivateKey.Address;
                 var activatedAccounts = ImmutableHashSet<Address>.Empty;
                 var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
                 var privateKey = new PrivateKey();
@@ -581,8 +581,8 @@ namespace Lib9c.Tests.Action
         [InlineData(1, 0)]
         public void TransferMead(int patronMead, int balance)
         {
-            var agentAddress = new PrivateKey().ToAddress();
-            var patronAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var patronAddress = new PrivateKey().Address;
             var contractAddress = agentAddress.GetPledgeAddress();
             IActionContext context = new ActionContext();
             IAccount states = new Account(MockState.Empty)

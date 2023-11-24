@@ -30,8 +30,8 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             _currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
-            _signer = new PrivateKey().ToAddress();
-            _sender = new PrivateKey().ToAddress();
+            _signer = new PrivateKey().Address;
+            _sender = new PrivateKey().Address;
             _states = new Account(MockState.Empty)
                 .SetState(_signer, (Text)"ANYTHING")
                 .SetState(default, Dictionary.Empty.Add("key", "value"))
@@ -151,9 +151,9 @@ namespace Lib9c.Tests.Action
                     RuneInfos = new List<RuneSlotInfo>(),
                     WorldId = 0,
                     StageId = 0,
-                    AvatarAddress = new PrivateKey().ToAddress(),
+                    AvatarAddress = new PrivateKey().Address,
                 },
-                ActivateAccount _ => new ActivateAccount(new PrivateKey().ToAddress(), new byte[] { 0x0 }),
+                ActivateAccount _ => new ActivateAccount(new PrivateKey().Address, new byte[] { 0x0 }),
                 AddActivatedAccount _ => new AddActivatedAccount(),
                 AddRedeemCode _ => new AddRedeemCode
                 {
@@ -161,14 +161,14 @@ namespace Lib9c.Tests.Action
                 },
                 Buy _ => new Buy
                 {
-                    buyerAvatarAddress = new PrivateKey().ToAddress(),
+                    buyerAvatarAddress = new PrivateKey().Address,
                     purchaseInfos = new[]
                     {
                         new PurchaseInfo(
                             Guid.NewGuid(),
                             Guid.NewGuid(),
                             _signer,
-                            new PrivateKey().ToAddress(),
+                            new PrivateKey().Address,
                             ItemSubType.Armor,
 #pragma warning disable CS0618
                     // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
@@ -220,9 +220,9 @@ namespace Lib9c.Tests.Action
                 },
                 RankingBattle _ => new RankingBattle
                 {
-                    avatarAddress = new PrivateKey().ToAddress(),
-                    enemyAddress = new PrivateKey().ToAddress(),
-                    weeklyArenaAddress = new PrivateKey().ToAddress(),
+                    avatarAddress = new PrivateKey().Address,
+                    enemyAddress = new PrivateKey().Address,
+                    weeklyArenaAddress = new PrivateKey().Address,
                     costumeIds = new List<Guid>(),
                     equipmentIds = new List<Guid>(),
                 },
@@ -230,7 +230,7 @@ namespace Lib9c.Tests.Action
                 RedeemCode _ => new RedeemCode
                 {
                     Code = "code",
-                    AvatarAddress = new PrivateKey().ToAddress(),
+                    AvatarAddress = new PrivateKey().Address,
                 },
                 RewardGold _ => null,
                 Sell _ => new Sell
@@ -240,7 +240,7 @@ namespace Lib9c.Tests.Action
                 SellCancellation _ => new SellCancellation(),
                 UpdateSell _ => new UpdateSell
                 {
-                    sellerAvatarAddress = new PrivateKey().ToAddress(),
+                    sellerAvatarAddress = new PrivateKey().Address,
                     updateSellInfos = new[]
                     {
                         new UpdateSellInfo(
@@ -262,12 +262,12 @@ namespace Lib9c.Tests.Action
                 },
                 Grinding _ => new Grinding
                 {
-                    AvatarAddress = new PrivateKey().ToAddress(),
+                    AvatarAddress = new PrivateKey().Address,
                     EquipmentIds = new List<Guid>(),
                 },
                 UnlockEquipmentRecipe _ => new UnlockEquipmentRecipe
                 {
-                    AvatarAddress = new PrivateKey().ToAddress(),
+                    AvatarAddress = new PrivateKey().Address,
                     RecipeIds = new List<int>
                     {
                         2,
@@ -276,7 +276,7 @@ namespace Lib9c.Tests.Action
                 },
                 UnlockWorld _ => new UnlockWorld
                 {
-                    AvatarAddress = new PrivateKey().ToAddress(),
+                    AvatarAddress = new PrivateKey().Address,
                     WorldIds = new List<int>()
                     {
                         2,
@@ -303,7 +303,7 @@ namespace Lib9c.Tests.Action
                 },
                 Raid _ => new Raid
                 {
-                    AvatarAddress = new PrivateKey().ToAddress(),
+                    AvatarAddress = new PrivateKey().Address,
                     CostumeIds = new List<Guid>(),
                     EquipmentIds = new List<Guid>(),
                     FoodIds = new List<Guid>(),
@@ -329,7 +329,7 @@ namespace Lib9c.Tests.Action
                     {
                         new RegisterInfo
                         {
-                            AvatarAddress = new PrivateKey().ToAddress(),
+                            AvatarAddress = new PrivateKey().Address,
                             ItemCount = 1,
                             Price = 1 * _currency,
                             TradableId = Guid.NewGuid(),
@@ -337,7 +337,7 @@ namespace Lib9c.Tests.Action
                         },
                         new AssetInfo
                         {
-                            AvatarAddress = new PrivateKey().ToAddress(),
+                            AvatarAddress = new PrivateKey().Address,
                             Price = 1 * _currency,
                             Asset = 1 * RuneHelper.StakeRune,
                             Type = ProductType.FungibleAssetValue,
@@ -348,21 +348,21 @@ namespace Lib9c.Tests.Action
                 },
                 ReRegisterProduct _ => new ReRegisterProduct
                 {
-                    AvatarAddress = new PrivateKey().ToAddress(),
+                    AvatarAddress = new PrivateKey().Address,
                     ReRegisterInfos = new List<(IProductInfo, IRegisterInfo)>
                     {
                         (
                             new ItemProductInfo
                             {
-                                AvatarAddress = new PrivateKey().ToAddress(),
-                                AgentAddress = new PrivateKey().ToAddress(),
+                                AvatarAddress = new PrivateKey().Address,
+                                AgentAddress = new PrivateKey().Address,
                                 Price = 1 * _currency,
                                 ProductId = Guid.NewGuid(),
                                 Type = ProductType.Fungible,
                             },
                             new RegisterInfo
                             {
-                                AvatarAddress = new PrivateKey().ToAddress(),
+                                AvatarAddress = new PrivateKey().Address,
                                 ItemCount = 1,
                                 Price = 1 * _currency,
                                 TradableId = Guid.NewGuid(),
@@ -372,15 +372,15 @@ namespace Lib9c.Tests.Action
                         (
                             new ItemProductInfo
                             {
-                                AvatarAddress = new PrivateKey().ToAddress(),
-                                AgentAddress = new PrivateKey().ToAddress(),
+                                AvatarAddress = new PrivateKey().Address,
+                                AgentAddress = new PrivateKey().Address,
                                 Price = 1 * _currency,
                                 ProductId = Guid.NewGuid(),
                                 Type = ProductType.NonFungible,
                             },
                             new RegisterInfo
                             {
-                                AvatarAddress = new PrivateKey().ToAddress(),
+                                AvatarAddress = new PrivateKey().Address,
                                 ItemCount = 1,
                                 Price = 1 * _currency,
                                 TradableId = Guid.NewGuid(),
@@ -390,15 +390,15 @@ namespace Lib9c.Tests.Action
                         (
                             new FavProductInfo
                             {
-                                AvatarAddress = new PrivateKey().ToAddress(),
-                                AgentAddress = new PrivateKey().ToAddress(),
+                                AvatarAddress = new PrivateKey().Address,
+                                AgentAddress = new PrivateKey().Address,
                                 Price = 1 * _currency,
                                 ProductId = Guid.NewGuid(),
                                 Type = ProductType.FungibleAssetValue,
                             },
                             new AssetInfo
                             {
-                                AvatarAddress = new PrivateKey().ToAddress(),
+                                AvatarAddress = new PrivateKey().Address,
                                 Price = 1 * _currency,
                                 Asset = 1 * RuneHelper.StakeRune,
                                 Type = ProductType.FungibleAssetValue,
@@ -409,13 +409,13 @@ namespace Lib9c.Tests.Action
                 },
                 CancelProductRegistration _ => new CancelProductRegistration
                 {
-                    AvatarAddress = new PrivateKey().ToAddress(),
+                    AvatarAddress = new PrivateKey().Address,
                     ProductInfos = new List<IProductInfo>
                     {
                         new FavProductInfo
                         {
-                            AvatarAddress = new PrivateKey().ToAddress(),
-                            AgentAddress = new PrivateKey().ToAddress(),
+                            AvatarAddress = new PrivateKey().Address,
+                            AgentAddress = new PrivateKey().Address,
                             Price = 1 * _currency,
                             ProductId = Guid.NewGuid(),
                             Type = ProductType.FungibleAssetValue,
@@ -425,13 +425,13 @@ namespace Lib9c.Tests.Action
                 },
                 BuyProduct _ => new BuyProduct
                 {
-                    AvatarAddress = new PrivateKey().ToAddress(),
+                    AvatarAddress = new PrivateKey().Address,
                     ProductInfos = new List<IProductInfo>
                     {
                         new ItemProductInfo
                         {
-                            AvatarAddress = new PrivateKey().ToAddress(),
-                            AgentAddress = new PrivateKey().ToAddress(),
+                            AvatarAddress = new PrivateKey().Address,
+                            AgentAddress = new PrivateKey().Address,
                             Price = 1 * _currency,
                             ProductId = Guid.NewGuid(),
                             Type = ProductType.Fungible,
@@ -442,20 +442,20 @@ namespace Lib9c.Tests.Action
                 },
                 RequestPledge _ => new RequestPledge
                 {
-                    AgentAddress = new PrivateKey().ToAddress(),
+                    AgentAddress = new PrivateKey().Address,
                 },
                 ApprovePledge _ => new ApprovePledge
                 {
-                    PatronAddress = new PrivateKey().ToAddress(),
+                    PatronAddress = new PrivateKey().Address,
                 },
                 EndPledge _ => new EndPledge
                 {
-                    AgentAddress = new PrivateKey().ToAddress(),
+                    AgentAddress = new PrivateKey().Address,
                 },
                 CreatePledge _ => new CreatePledge
                 {
-                    PatronAddress = new PrivateKey().ToAddress(),
-                    AgentAddresses = new[] { (new PrivateKey().ToAddress(), new PrivateKey().ToAddress()) },
+                    PatronAddress = new PrivateKey().Address,
+                    AgentAddresses = new[] { (new PrivateKey().Address, new PrivateKey().Address) },
                     Mead = 4,
                 },
                 TransferAssets _ => new TransferAssets(_sender, new List<(Address, FungibleAssetValue)>

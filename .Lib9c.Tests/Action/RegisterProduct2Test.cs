@@ -34,9 +34,9 @@ namespace Lib9c.Tests.Action
 
         public RegisterProduct2Test()
         {
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(_agentAddress);
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             _gameConfigState = new GameConfigState((Text)_tableSheets.GameConfigSheet.Serialize());
             _avatarState = new AvatarState(
@@ -77,11 +77,11 @@ namespace Lib9c.Tests.Action
                     {
                         new RegisterInfo
                         {
-                            AvatarAddress = new PrivateKey().ToAddress(),
+                            AvatarAddress = new PrivateKey().Address,
                         },
                         new AssetInfo
                         {
-                            AvatarAddress = new PrivateKey().ToAddress(),
+                            AvatarAddress = new PrivateKey().Address,
                         },
                     },
                     Exc = typeof(InvalidAddressException),

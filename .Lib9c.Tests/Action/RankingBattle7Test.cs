@@ -44,7 +44,7 @@
 
             _tableSheets = new TableSheets(sheets);
 
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
 
             var (agent1State, avatar1State) = GetAgentStateWithAvatarState(
                 sheets,
@@ -85,7 +85,7 @@
             TableSheets tableSheets,
             Address rankingMapAddress)
         {
-            var agentAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);
 
             var avatarAddress = agentAddress.Derive("avatar");
@@ -243,14 +243,14 @@
             switch (caseIndex)
             {
                 case 0:
-                    signer = new PrivateKey().ToAddress();
+                    signer = new PrivateKey().Address;
                     avatarAddress = _avatar1Address;
                     enemyAddress = _avatar2Address;
                     break;
                 case 1:
                     signer = _agent1Address;
                     avatarAddress = _avatar1Address;
-                    enemyAddress = new PrivateKey().ToAddress();
+                    enemyAddress = new PrivateKey().Address;
                     break;
             }
 

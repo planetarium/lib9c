@@ -72,7 +72,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InvalidActionFieldException_AgentAddress()
         {
-            var invalidAgentAddr = new PrivateKey().ToAddress();
+            var invalidAgentAddr = new PrivateKey().Address;
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
                     _initialStatesWithAvatarStateV1,
@@ -96,7 +96,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InvalidActionFieldException_AvatarAddress()
         {
-            var invalidAvatarAddr = new PrivateKey().ToAddress();
+            var invalidAvatarAddr = new PrivateKey().Address;
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
                     _initialStatesWithAvatarStateV1,

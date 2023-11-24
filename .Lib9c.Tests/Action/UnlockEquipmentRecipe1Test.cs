@@ -31,8 +31,8 @@ namespace Lib9c.Tests.Action
             _random = new TestRandom();
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
-            _agentAddress = new PrivateKey().ToAddress();
-            _avatarAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
+            _avatarAddress = new PrivateKey().Address;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             _currency = Currency.Legacy("CRYSTAL", 18, null);
@@ -206,7 +206,7 @@ namespace Lib9c.Tests.Action
             }
 
             // Unlock All recipe by ItemSubType
-            UnlockEquipmentRecipe1.UnlockedIds(_initialState, new PrivateKey().ToAddress(), _tableSheets.EquipmentItemRecipeSheet, worldInformation, rows.Select(i => i.Id).ToList());
+            UnlockEquipmentRecipe1.UnlockedIds(_initialState, new PrivateKey().Address, _tableSheets.EquipmentItemRecipeSheet, worldInformation, rows.Select(i => i.Id).ToList());
         }
     }
 }

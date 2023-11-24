@@ -24,8 +24,8 @@ namespace Lib9c.Tests.Action
 
         public IAccount Init(out Address agentAddress, out Address avatarAddress, out long blockIndex)
         {
-            agentAddress = new PrivateKey().ToAddress();
-            avatarAddress = new PrivateKey().ToAddress();
+            agentAddress = new PrivateKey().Address;
+            avatarAddress = new PrivateKey().Address;
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             blockIndex = tableSheets.WorldBossListSheet.Values

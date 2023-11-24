@@ -52,10 +52,10 @@
 
             _sellerAgentStateMap = new Dictionary<AvatarState, AgentState>();
 
-            _buyerAgentAddress = new PrivateKey().ToAddress();
+            _buyerAgentAddress = new PrivateKey().Address;
             var buyerAgentState = new AgentState(_buyerAgentAddress);
-            _buyerAvatarAddress = new PrivateKey().ToAddress();
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            _buyerAvatarAddress = new PrivateKey().Address;
+            var rankingMapAddress = new PrivateKey().Address;
             _buyerAvatarState = new AvatarState(
                 _buyerAvatarAddress,
                 _buyerAgentAddress,
@@ -89,8 +89,8 @@
                 {
                     ItemType = ItemType.Equipment,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Buy = true,
                     Price = 10,
@@ -100,8 +100,8 @@
                 {
                     ItemType = ItemType.Costume,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Buy = false,
                     Price = 20,
@@ -111,8 +111,8 @@
                 {
                     ItemType = ItemType.Costume,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = 0,
                     Buy = true,
                     Price = 30,
@@ -125,8 +125,8 @@
                 {
                     ItemType = ItemType.Costume,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Buy = false,
                     Price = 10,
@@ -136,8 +136,8 @@
                 {
                     ItemType = ItemType.Costume,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Buy = false,
                     Price = 50,
@@ -147,8 +147,8 @@
                 {
                     ItemType = ItemType.Equipment,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Buy = false,
                     Price = 30,
@@ -161,8 +161,8 @@
                 {
                     ItemType = ItemType.Equipment,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = 0,
                     Buy = true,
                     Price = 20,
@@ -172,8 +172,8 @@
                 {
                     ItemType = ItemType.Equipment,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = 0,
                     Buy = true,
                     Price = 50,
@@ -183,8 +183,8 @@
                 {
                     ItemType = ItemType.Equipment,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = 0,
                     Buy = true,
                     Price = 30,
@@ -197,8 +197,8 @@
                 {
                     ItemType = ItemType.Costume,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Buy = true,
                     Price = 30,
@@ -208,8 +208,8 @@
                 {
                     ItemType = ItemType.Costume,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Buy = true,
                     Price = 30,
@@ -219,8 +219,8 @@
                 {
                     ItemType = ItemType.Equipment,
                     ItemId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Buy = true,
                     Price = 30,
@@ -489,8 +489,8 @@
         {
             var shopState = _initialState.GetShopState();
 
-            var sellerAvatarAddress = new PrivateKey().ToAddress();
-            var sellerAgentAddress = new PrivateKey().ToAddress();
+            var sellerAvatarAddress = new PrivateKey().Address;
+            var sellerAgentAddress = new PrivateKey().Address;
             var (avatarState, agentState) = CreateAvatarState(sellerAgentAddress, sellerAvatarAddress);
 
             var equipment = ItemFactory.CreateItemUsable(
@@ -555,8 +555,8 @@
         [Fact]
         public void ExecuteThrowShopItemExpiredError()
         {
-            var sellerAvatarAddress = new PrivateKey().ToAddress();
-            var sellerAgentAddress = new PrivateKey().ToAddress();
+            var sellerAvatarAddress = new PrivateKey().Address;
+            var sellerAgentAddress = new PrivateKey().Address;
             var (avatarState, agentState) = CreateAvatarState(sellerAgentAddress, sellerAvatarAddress);
 
             IAccount previousStates = _initialState;
@@ -610,7 +610,7 @@
             Address agentAddress, Address avatarAddress)
         {
             var agentState = new AgentState(agentAddress);
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
 
             var avatarState = new AvatarState(
                 avatarAddress,

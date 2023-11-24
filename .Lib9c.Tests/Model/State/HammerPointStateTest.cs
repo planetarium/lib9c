@@ -19,7 +19,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Serialize()
         {
-            var address = new PrivateKey().ToAddress();
+            var address = new PrivateKey().Address;
             var state = new HammerPointState(address, 1);
             state.AddHammerPoint(3, _tableSheets.CrystalHammerPointSheet);
             var serialized = state.Serialize();
@@ -33,7 +33,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void ResetHammerPoint()
         {
-            var address = new PrivateKey().ToAddress();
+            var address = new PrivateKey().Address;
             var state = new HammerPointState(address, 1);
             state.AddHammerPoint(3, _tableSheets.CrystalHammerPointSheet);
             var serialized = state.Serialize();
@@ -52,7 +52,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void AddHammerPoint()
         {
-            var address = new PrivateKey().ToAddress();
+            var address = new PrivateKey().Address;
             var state = new HammerPointState(address, 1);
             var sheet = _tableSheets.CrystalHammerPointSheet;
             state.AddHammerPoint(3, sheet);

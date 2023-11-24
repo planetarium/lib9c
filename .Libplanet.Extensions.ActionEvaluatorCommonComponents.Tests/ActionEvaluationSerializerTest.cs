@@ -12,7 +12,7 @@ public class ActionEvaluationSerializerTest
     [Fact]
     public void Serialization()
     {
-        var addresses = Enumerable.Repeat(0, 4).Select(_ => new PrivateKey().ToAddress()).ToImmutableList();
+        var addresses = Enumerable.Repeat(0, 4).Select(_ => new PrivateKey().Address).ToImmutableList();
 
         var random = new System.Random();
         var buffer = new byte[HashDigest<SHA256>.Size];

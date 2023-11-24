@@ -48,11 +48,11 @@ namespace Lib9c.Tests.Action
 
             _state = new Account(MockState.Empty);
 
-            _signer = new PrivateKey().ToAddress();
+            _signer = new PrivateKey().Address;
             _avatarAddress = _signer.Derive("avatar");
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
             var agentState = new AgentState(_signer);
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             var avatarState = new AvatarState(
@@ -71,7 +71,7 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = _avatarAddress;
             avatarState.level = GameConfig.RequireClearedStageLevel.ActionsInRankingBoard;
 
-            _signer2 = new PrivateKey().ToAddress();
+            _signer2 = new PrivateKey().Address;
             _avatar2Address = _signer2.Derive("avatar");
             var agent2State = new AgentState(_signer2);
 

@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             _avatarAddress = _agentAddress.Derive("avatar");
             _slotAddress = _avatarAddress.Derive(
                 string.Format(

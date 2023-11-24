@@ -29,7 +29,7 @@ namespace Lib9c.Tests
 
         public IssueTokensFromGarageTest()
         {
-            _signer = new PrivateKey().ToAddress();
+            _signer = new PrivateKey().Address;
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
 

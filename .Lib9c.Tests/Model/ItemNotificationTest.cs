@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Model
             var sheets = TableSheetsImporter.ImportSheets();
 
             var privateKey = new PrivateKey();
-            _agentAddress = privateKey.PublicKey.ToAddress();
+            _agentAddress = privateKey.PublicKey.Address;
             _tableSheets = new TableSheets(sheets);
         }
 

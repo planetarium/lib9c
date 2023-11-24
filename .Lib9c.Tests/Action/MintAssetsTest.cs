@@ -28,13 +28,13 @@ namespace Lib9c.Tests.Action
 
         public MintAssetsTest()
         {
-            _adminAddress = new PrivateKey().ToAddress();
+            _adminAddress = new PrivateKey().Address;
             _ncgCurrency = Currency.Legacy("NCG", 2, null);
             _minters = new HashSet<Address>
             {
-                new PrivateKey().ToAddress(),
-                new PrivateKey().ToAddress(),
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
+                new PrivateKey().Address,
+                new PrivateKey().Address,
             };
             _prevState = new Account(
                 MockState.Empty
@@ -278,10 +278,10 @@ namespace Lib9c.Tests.Action
 
         private IAccount GenerateAvatar(IAccount state, out Address avatarAddress)
         {
-            var address = new PrivateKey().ToAddress();
+            var address = new PrivateKey().Address;
             var agentState = new AgentState(address);
             avatarAddress = address.Derive("avatar");
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(
                 avatarAddress,
                 address,

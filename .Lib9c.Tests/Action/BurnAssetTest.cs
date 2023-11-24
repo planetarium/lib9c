@@ -17,7 +17,7 @@ namespace Lib9c.Tests.Action
 
         public BurnAssetTest()
         {
-            _signer = new PrivateKey().ToAddress();
+            _signer = new PrivateKey().Address;
             _prevState = new Account(
                 MockState.Empty
                     .SetBalance(_signer, Currencies.Crystal * 100)

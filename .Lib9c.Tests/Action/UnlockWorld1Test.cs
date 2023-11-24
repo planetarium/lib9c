@@ -32,8 +32,8 @@
             _random = new TestRandom();
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
-            _agentAddress = new PrivateKey().ToAddress();
-            _avatarAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
+            _avatarAddress = new PrivateKey().Address;
             _currency = CrystalCalculator.CRYSTAL;
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
 

@@ -107,7 +107,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
                 {
                     PreviousState = _state,
-                    Signer = new PrivateKey().ToAddress(),
+                    Signer = new PrivateKey().Address,
                     BlockIndex = 0,
                 })
             );

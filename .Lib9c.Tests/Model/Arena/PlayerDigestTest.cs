@@ -22,12 +22,12 @@ namespace Lib9c.Tests.Model.Arena
         {
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             var avatarState = new AvatarState(
-                new PrivateKey().ToAddress(),
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
+                new PrivateKey().Address,
                 1234,
                 _tableSheets.GetAvatarSheets(),
                 new GameConfigState(),
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 "test"
             );
             avatarState.hair = 2;

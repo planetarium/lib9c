@@ -205,12 +205,12 @@ namespace Lib9c.Tests
         [Fact]
         public void SelectRecipientAddress()
         {
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             Assert.Equal(agentAddress, Currencies.SelectRecipientAddress(Currencies.Crystal, agentAddress, avatarAddress));
             Assert.Equal(agentAddress, Currencies.SelectRecipientAddress(Currencies.Garage, agentAddress, avatarAddress));
             Assert.Equal(agentAddress, Currencies.SelectRecipientAddress(Currencies.Mead, agentAddress, avatarAddress));
-            Assert.Equal(agentAddress, Currencies.SelectRecipientAddress(Currency.Legacy("NCG", decimalPlaces: 2, minter: new PrivateKey().ToAddress()), agentAddress, avatarAddress));
+            Assert.Equal(agentAddress, Currencies.SelectRecipientAddress(Currency.Legacy("NCG", decimalPlaces: 2, minter: new PrivateKey().Address), agentAddress, avatarAddress));
             Assert.Equal(avatarAddress, Currencies.SelectRecipientAddress(Currencies.DailyRewardRune, agentAddress, avatarAddress));
         }
     }

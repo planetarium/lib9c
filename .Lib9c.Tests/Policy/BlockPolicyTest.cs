@@ -36,7 +36,7 @@ namespace Lib9c.Tests
             _privateKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            _currency = Currency.Legacy("NCG", 2, _privateKey.ToAddress());
+            _currency = Currency.Legacy("NCG", 2, _privateKey.Address);
 #pragma warning restore CS0618
         }
 
@@ -44,7 +44,7 @@ namespace Lib9c.Tests
         public void ValidateNextBlockTx()
         {
             var adminPrivateKey = new PrivateKey();
-            var adminAddress = adminPrivateKey.ToAddress();
+            var adminAddress = adminPrivateKey.Address;
 
             var blockPolicySource = new BlockPolicySource();
             IBlockPolicy policy = blockPolicySource.GetPolicy(null, null, null, null);
@@ -82,7 +82,7 @@ namespace Lib9c.Tests
             Assert.NotNull(policy.ValidateNextBlockTx(blockChain, txByStranger));
 
             var newActivatedPrivateKey = new PrivateKey();
-            var newActivatedAddress = newActivatedPrivateKey.ToAddress();
+            var newActivatedAddress = newActivatedPrivateKey.Address;
 
             // Activate with admin account.
             blockChain.MakeTransaction(
@@ -136,7 +136,7 @@ namespace Lib9c.Tests
         public void ValidateNextBlockTx_Mead()
         {
             var adminPrivateKey = new PrivateKey();
-            var adminAddress = adminPrivateKey.ToAddress();
+            var adminAddress = adminPrivateKey.Address;
             var blockPolicySource = new BlockPolicySource();
             var actionTypeLoader = new NCActionLoader();
             IBlockPolicy policy = blockPolicySource.GetPolicy(null, null, null, null);
@@ -241,7 +241,7 @@ namespace Lib9c.Tests
         public void BlockCommitFromNonValidator()
         {
             var adminPrivateKey = new PrivateKey();
-            var adminAddress = adminPrivateKey.ToAddress();
+            var adminAddress = adminPrivateKey.Address;
             var nonValidator = new PrivateKey();
 
             var blockPolicySource = new BlockPolicySource();
@@ -270,7 +270,7 @@ namespace Lib9c.Tests
             );
             blockChain.MakeTransaction(
                 adminPrivateKey,
-                new ActionBase[] { new AddActivatedAccount(adminPrivateKey.ToAddress()) }
+                new ActionBase[] { new AddActivatedAccount(adminPrivateKey.Address) }
             );
             Block block1 = blockChain.ProposeBlock(adminPrivateKey);
             Assert.Throws<InvalidBlockCommitException>(
@@ -281,7 +281,7 @@ namespace Lib9c.Tests
         public void MustNotIncludeBlockActionAtTransaction()
         {
             var adminPrivateKey = new PrivateKey();
-            var adminAddress = adminPrivateKey.ToAddress();
+            var adminAddress = adminPrivateKey.Address;
             var authorizedMinerPrivateKey = new PrivateKey();
 
             (ActivationKey ak, PendingActivationState ps) = ActivationKey.Create(
@@ -300,7 +300,7 @@ namespace Lib9c.Tests
                 adminAddress,
                 ImmutableHashSet.Create(adminAddress),
                 new AuthorizedMinersState(
-                    new[] { authorizedMinerPrivateKey.ToAddress() },
+                    new[] { authorizedMinerPrivateKey.Address },
                     5,
                     10
                 ),
@@ -333,7 +333,7 @@ namespace Lib9c.Tests
         public void EarnMiningGoldWhenSuccessMining()
         {
             var adminPrivateKey = new PrivateKey();
-            var adminAddress = adminPrivateKey.ToAddress();
+            var adminAddress = adminPrivateKey.Address;
             var authorizedMinerPrivateKey = new PrivateKey();
 
             (ActivationKey ak, PendingActivationState ps) = ActivationKey.Create(
@@ -352,7 +352,7 @@ namespace Lib9c.Tests
                 adminAddress,
                 ImmutableHashSet.Create(adminAddress),
                 new AuthorizedMinersState(
-                    new[] { authorizedMinerPrivateKey.ToAddress() },
+                    new[] { authorizedMinerPrivateKey.Address },
                     5,
                     10
                 ),
@@ -404,7 +404,7 @@ namespace Lib9c.Tests
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis =
                 MakeGenesisBlock(
-                    adminPublicKey.ToAddress(),
+                    adminPublicKey.Address,
                     ImmutableHashSet<Address>.Empty,
                     initialValidators: new Dictionary<PublicKey, BigInteger>
                     { { adminPrivateKey.PublicKey, BigInteger.One } });
@@ -505,7 +505,7 @@ namespace Lib9c.Tests
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis =
                 MakeGenesisBlock(
-                    adminPublicKey.ToAddress(),
+                    adminPublicKey.Address,
                     ImmutableHashSet<Address>.Empty,
                     initialValidators: new Dictionary<PublicKey, BigInteger>
                     { { adminPrivateKey.PublicKey, BigInteger.One } });

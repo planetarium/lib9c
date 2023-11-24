@@ -59,7 +59,7 @@ namespace Lib9c.Tests.Action
             _goldCurrencyState = new GoldCurrencyState(Gold);
 
             var sellerAgentState = new AgentState(SellerAgentAddress);
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
             var sellerAvatarState = new AvatarState(
                 SellerAvatarAddress,
                 SellerAgentAddress,
@@ -75,9 +75,9 @@ namespace Lib9c.Tests.Action
             };
             sellerAgentState.avatarAddresses[0] = SellerAvatarAddress;
 
-            _sellerAgentAddress2 = new PrivateKey().ToAddress();
+            _sellerAgentAddress2 = new PrivateKey().Address;
             var agentState2 = new AgentState(_sellerAgentAddress2);
-            _sellerAvatarAddress2 = new PrivateKey().ToAddress();
+            _sellerAvatarAddress2 = new PrivateKey().Address;
             var sellerAvatarState2 = new AvatarState(
                 _sellerAvatarAddress2,
                 _sellerAgentAddress2,

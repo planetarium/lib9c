@@ -32,10 +32,10 @@
 
             var tableSheets = new TableSheets(sheets);
 
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(_agentAddress);
-            _avatarAddress = new PrivateKey().ToAddress();
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            _avatarAddress = new PrivateKey().Address;
+            var rankingMapAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(
                 _avatarAddress,
                 _agentAddress,
