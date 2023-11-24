@@ -1,12 +1,12 @@
 namespace Lib9c.Tests.Action.Snapshot
 {
-    using System.Collections.Immutable;
-    using System.Numerics;
+    using System.Linq;
     using System.Threading.Tasks;
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Common;
     using Libplanet.Crypto;
+    using Libplanet.Store;
     using Libplanet.Store.Trie;
     using Libplanet.Types.Assets;
     using Nekoyume.Action;
@@ -50,7 +50,18 @@ namespace Lib9c.Tests.Action.Snapshot
             var recipientAddress = recipientPrivateKey.ToAddress();
             var crystal = CrystalCalculator.CRYSTAL;
             var context = new ActionContext();
-            IAccount state = new Account(MockState.Empty).MintAsset(context, senderAddress, crystal * 100);
+
+            var stateStore = new TrieStateStore(new MemoryKeyValueStore());
+            var inputTrie = stateStore.GetStateRoot(null);
+            IAccount state = new Account(new AccountState(inputTrie))
+                .MintAsset(context, senderAddress, crystal * 100);
+
+            // NOTE: Temporary measure using IAccountDelta.
+            // Will be removed once Libplanet moves to ITrie based IAccouns.
+            inputTrie = inputTrie.Set(state.Delta.ToRawDelta());
+            inputTrie = stateStore.Commit(inputTrie);
+            state = new Account(new AccountState(inputTrie));
+
             var actionContext = new ActionContext
             {
                 Signer = senderAddress,
@@ -59,22 +70,28 @@ namespace Lib9c.Tests.Action.Snapshot
             var action = new TransferAsset0(
                 senderAddress,
                 recipientAddress,
-                crystal * 100);
+                crystal * 20);
+
             var outputState = action.Execute(actionContext);
+            var outputTrie = inputTrie.Set(outputState.Delta.ToRawDelta());
+            outputTrie = stateStore.Commit(outputTrie);
+
+            var trieDiff = outputTrie.Diff(inputTrie)
+                .Select(elem => new object[]
+                {
+                    ByteUtil.Hex(elem.Path.ByteArray),
+                    elem.TargetValue?.ToString(),
+                    elem.SourceValue.ToString(),
+                })
+                .ToArray();
+            var accountDiff = AccountDiff.Create(inputTrie, outputTrie);
 
             // Verifier does not handle tuples well when nested.
-            var summary = Verifier
-                .Verify(outputState)
-                .IgnoreMembersWithType<IImmutableSet<(Address, Currency)>>()
-                .IgnoreMembersWithType<IImmutableDictionary<(Address, Currency), BigInteger>>()
-                .IgnoreMembersWithType<ITrie>()
+            var diff = Verifier
+                .Verify(trieDiff)
                 .UseTypeName((Text)GetActionTypeId<TransferAsset0>())
-                .UseMethodName($"{nameof(TransferCrystal)}.summary");
-            var fungibles = Verifier
-                .Verify(outputState.Delta.Fungibles)
-                .UseTypeName((Text)GetActionTypeId<TransferAsset0>())
-                .UseMethodName($"{nameof(TransferCrystal)}.fungibles");
-            return Task.WhenAll(summary, fungibles);
+                .UseMethodName($"{nameof(TransferCrystal)}.diff");
+            return diff;
         }
 
         [Fact]
@@ -90,7 +107,18 @@ namespace Lib9c.Tests.Action.Snapshot
             var recipientAddress = recipientPrivateKey.ToAddress();
             var crystal = CrystalCalculator.CRYSTAL;
             var context = new ActionContext();
-            var state = new Account(MockState.Empty).MintAsset(context, senderAddress, crystal * 100);
+
+            var stateStore = new TrieStateStore(new MemoryKeyValueStore());
+            var inputTrie = stateStore.GetStateRoot(null);
+            IAccount state = new Account(new AccountState(inputTrie))
+                .MintAsset(context, senderAddress, crystal * 100);
+
+            // NOTE: Temporary measure using IAccountDelta.
+            // Will be removed once Libplanet moves to ITrie based IAccouns.
+            inputTrie = inputTrie.Set(state.Delta.ToRawDelta());
+            inputTrie = stateStore.Commit(inputTrie);
+            state = new Account(new AccountState(inputTrie));
+
             var actionContext = new ActionContext
             {
                 Signer = senderAddress,
@@ -99,23 +127,27 @@ namespace Lib9c.Tests.Action.Snapshot
             var action = new TransferAsset0(
                 senderAddress,
                 recipientAddress,
-                crystal * 100,
+                crystal * 20,
                 "MEMO");
             var outputState = action.Execute(actionContext);
+            var outputTrie = inputTrie.Set(outputState.Delta.ToRawDelta());
+            outputTrie = stateStore.Commit(outputTrie);
+
+            var trieDiff = outputTrie.Diff(inputTrie)
+                .Select(elem => new object[]
+                {
+                    ByteUtil.Hex(elem.Path.ByteArray),
+                    elem.TargetValue?.ToString(),
+                    elem.SourceValue.ToString(),
+                })
+                .ToArray();
 
             // Verifier does not handle tuples well when nested.
-            var summary = Verifier
-                .Verify(outputState)
-                .IgnoreMembersWithType<IImmutableSet<(Address, Currency)>>()
-                .IgnoreMembersWithType<IImmutableDictionary<(Address, Currency), BigInteger>>()
-                .IgnoreMembersWithType<ITrie>()
+            var diff = Verifier
+                .Verify(trieDiff)
                 .UseTypeName((Text)GetActionTypeId<TransferAsset0>())
-                .UseMethodName($"{nameof(TransferWithMemo)}.summary");
-            var fungibles = Verifier
-                .Verify(outputState.Delta.Fungibles)
-                .UseTypeName((Text)GetActionTypeId<TransferAsset0>())
-                .UseMethodName($"{nameof(TransferWithMemo)}.fungibles");
-            return Task.WhenAll(summary, fungibles);
+                .UseMethodName($"{nameof(TransferWithMemo)}.diff");
+            return diff;
         }
     }
 }
