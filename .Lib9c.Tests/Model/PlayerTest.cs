@@ -308,7 +308,6 @@ namespace Lib9c.Tests.Model
             var expectedHp = baseHp + row.Stat;
             Assert.Equal(expectedHp, player.HP);
             Assert.Equal(expectedHp, player.CurrentHP);
-
             Assert.Equal(1, player.Level);
 
             player.CurrentHP -= 10;
