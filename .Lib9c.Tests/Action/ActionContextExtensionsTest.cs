@@ -39,7 +39,7 @@ namespace Lib9c.Tests.Action
                 new GoldCurrencyState(
 #pragma warning disable CS0618
                     // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-                    Currency.Legacy("NCG", 2, new PrivateKey().ToAddress())),
+                    Currency.Legacy("NCG", 2, new PrivateKey().Address)),
 #pragma warning restore CS0618
                 false,
             };
@@ -102,7 +102,7 @@ namespace Lib9c.Tests.Action
                 new GoldCurrencyState(
 #pragma warning disable CS0618
                     // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-                    Currency.Legacy("NCG", 2, new PrivateKey().ToAddress())),
+                    Currency.Legacy("NCG", 2, new PrivateKey().Address)),
 #pragma warning restore CS0618
                 false,
             };

@@ -36,7 +36,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                     .AddBalance(GoldCurrencyState.Address, _ncg * int.MaxValue));
 
             var goldCurrencyState = new GoldCurrencyState(_ncg);
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(_agentAddress);
 
             _initialState = _initialState

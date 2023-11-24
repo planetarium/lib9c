@@ -30,9 +30,9 @@ namespace Lib9c.Tests.Types
 
             _addressList = new Bencodex.Types.List(new List<IValue>
             {
-                new PrivateKey().ToAddress().Serialize(),
-                new PrivateKey().ToAddress().Serialize(),
-                new PrivateKey().ToAddress().Serialize(),
+                new PrivateKey().Address.Serialize(),
+                new PrivateKey().Address.Serialize(),
+                new PrivateKey().Address.Serialize(),
             });
             _descendingAddressList = (Bencodex.Types.List)_addressList
                 .OrderByDescending(element => element.ToAddress())

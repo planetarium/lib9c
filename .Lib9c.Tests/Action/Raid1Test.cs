@@ -30,8 +30,8 @@ namespace Lib9c.Tests.Action
         {
             _sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(_sheets);
-            _agentAddress = new PrivateKey().ToAddress();
-            _avatarAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
+            _avatarAddress = new PrivateKey().Address;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             _goldCurrency = Currency.Legacy("NCG", 2, null);

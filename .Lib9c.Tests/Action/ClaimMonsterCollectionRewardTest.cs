@@ -38,7 +38,7 @@ namespace Lib9c.Tests.Action
             _state = new Account(MockState.Empty);
             Dictionary<string, string> sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
             var agentState = new AgentState(_signer);
             var avatarState = new AvatarState(
                 _avatarAddress,
@@ -148,7 +148,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<FailedLoadStateException>(() => _action.Execute(new ActionContext
                 {
                     PreviousState = _state,
-                    Signer = new PrivateKey().ToAddress(),
+                    Signer = new PrivateKey().Address,
                     BlockIndex = 0,
                 })
             );

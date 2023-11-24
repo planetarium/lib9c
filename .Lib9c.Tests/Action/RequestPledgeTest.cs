@@ -18,10 +18,10 @@ namespace Lib9c.Tests.Action
         public void Execute(int contractedMead)
         {
             Currency mead = Currencies.Mead;
-            Address patron = new PrivateKey().ToAddress();
+            Address patron = new PrivateKey().Address;
             var context = new ActionContext();
             IAccount states = new Account(MockState.Empty).MintAsset(context, patron, 2 * mead);
-            var address = new PrivateKey().ToAddress();
+            var address = new PrivateKey().Address;
             var action = new RequestPledge
             {
                 AgentAddress = address,
@@ -48,8 +48,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_AlreadyContractedException()
         {
-            Address patron = new PrivateKey().ToAddress();
-            var address = new PrivateKey().ToAddress();
+            Address patron = new PrivateKey().Address;
+            var address = new PrivateKey().Address;
             Address contractAddress = address.GetPledgeAddress();
             IAccount states = new Account(MockState.Empty).SetState(contractAddress, List.Empty);
             var action = new RequestPledge

@@ -189,12 +189,12 @@ namespace Lib9c.Tests.Action
             IAccount states = new Account(MockState.Empty);
             var dict = new Dictionary<Address, IValue>
             {
-                { new PrivateKey().ToAddress(), Null.Value },
-                { new PrivateKey().ToAddress(), new Bencodex.Types.Boolean(false) },
-                { new PrivateKey().ToAddress(), new Bencodex.Types.Boolean(true) },
-                { new PrivateKey().ToAddress(), new Integer(int.MinValue) },
-                { new PrivateKey().ToAddress(), new Integer(0) },
-                { new PrivateKey().ToAddress(), new Integer(int.MaxValue) },
+                { new PrivateKey().Address, Null.Value },
+                { new PrivateKey().Address, new Bencodex.Types.Boolean(false) },
+                { new PrivateKey().Address, new Bencodex.Types.Boolean(true) },
+                { new PrivateKey().Address, new Integer(int.MinValue) },
+                { new PrivateKey().Address, new Integer(0) },
+                { new PrivateKey().Address, new Integer(int.MaxValue) },
             };
             foreach (var (address, value) in dict)
             {

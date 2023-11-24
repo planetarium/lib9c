@@ -245,7 +245,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteWithUnactivatedRecipient()
         {
-            var activatedAddress = new ActivatedAccountsState().AddAccount(new PrivateKey().ToAddress());
+            var activatedAddress = new ActivatedAccountsState().AddAccount(new PrivateKey().Address);
             var prevState = new Account(
                 MockState.Empty
                     .SetState(_sender.Derive(ActivationKey.DeriveKey), true.Serialize())

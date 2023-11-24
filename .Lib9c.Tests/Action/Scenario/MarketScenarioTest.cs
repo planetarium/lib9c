@@ -44,10 +44,10 @@ namespace Lib9c.Tests.Action.Scenario
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _sellerAgentAddress = new PrivateKey().ToAddress();
+            _sellerAgentAddress = new PrivateKey().Address;
             var agentState = new AgentState(_sellerAgentAddress);
-            _sellerAvatarAddress = new PrivateKey().ToAddress();
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            _sellerAvatarAddress = new PrivateKey().Address;
+            var rankingMapAddress = new PrivateKey().Address;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             _gameConfigState = new GameConfigState((Text)_tableSheets.GameConfigSheet.Serialize());
             _sellerAvatarState = new AvatarState(
@@ -65,9 +65,9 @@ namespace Lib9c.Tests.Action.Scenario
             };
             agentState.avatarAddresses[0] = _sellerAvatarAddress;
 
-            _sellerAgentAddress2 = new PrivateKey().ToAddress();
+            _sellerAgentAddress2 = new PrivateKey().Address;
             var agentState2 = new AgentState(_sellerAgentAddress2);
-            _sellerAvatarAddress2 = new PrivateKey().ToAddress();
+            _sellerAvatarAddress2 = new PrivateKey().Address;
             _sellerAvatarState2 = new AvatarState(
                 _sellerAvatarAddress2,
                 _sellerAgentAddress2,
@@ -83,9 +83,9 @@ namespace Lib9c.Tests.Action.Scenario
             };
             agentState2.avatarAddresses[0] = _sellerAvatarAddress2;
 
-            _buyerAgentAddress = new PrivateKey().ToAddress();
+            _buyerAgentAddress = new PrivateKey().Address;
             var agentState3 = new AgentState(_buyerAgentAddress);
-            _buyerAvatarAddress = new PrivateKey().ToAddress();
+            _buyerAvatarAddress = new PrivateKey().Address;
             var buyerAvatarState = new AvatarState(
                 _buyerAvatarAddress,
                 _buyerAgentAddress,

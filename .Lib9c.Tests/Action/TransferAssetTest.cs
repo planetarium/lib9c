@@ -52,7 +52,7 @@ namespace Lib9c.Tests.Action
         public void Execute()
         {
             var contractAddress = _sender.Derive(nameof(RequestPledge));
-            var patronAddress = new PrivateKey().ToAddress();
+            var patronAddress = new PrivateKey().Address;
             var prevState = new Account(
                 MockState.Empty
                     .SetBalance(_sender, _currency * 1000)

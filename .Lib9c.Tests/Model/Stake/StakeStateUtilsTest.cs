@@ -32,7 +32,7 @@ namespace Lib9c.Tests.Model.Stake
         public void TryMigrate_Return_False_When_Staking_State_Null()
         {
             var state = new Account(MockState.Empty);
-            Assert.False(StakeStateUtils.TryMigrate(state, new PrivateKey().ToAddress(), out _));
+            Assert.False(StakeStateUtils.TryMigrate(state, new PrivateKey().Address, out _));
         }
 
         [Theory]
@@ -111,7 +111,7 @@ namespace Lib9c.Tests.Model.Stake
             state = state.SetState(
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());
-            var stakeAddr = new PrivateKey().ToAddress();
+            var stakeAddr = new PrivateKey().Address;
             var stakeState = new StakeState(stakeAddr, startedBlockIndex);
             if (receivedBlockIndex is not null)
             {
@@ -143,7 +143,7 @@ namespace Lib9c.Tests.Model.Stake
             state = state.SetState(
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());
-            var stakeAddr = new PrivateKey().ToAddress();
+            var stakeAddr = new PrivateKey().Address;
             var stakePolicySheet = new StakePolicySheet();
             stakePolicySheet.Set(StakePolicySheetFixtures.V2);
             var contract = new Contract(stakePolicySheet);

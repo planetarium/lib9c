@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Action.Scenario
 #pragma warning restore CS0618
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
 
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             _avatarAddress = _agentAddress.Derive("avatar");
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses[0] = _avatarAddress;

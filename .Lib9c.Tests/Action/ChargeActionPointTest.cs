@@ -28,7 +28,7 @@ namespace Lib9c.Tests.Action
             _tableSheets = new TableSheets(_sheets);
 
             var privateKey = new PrivateKey();
-            _agentAddress = privateKey.PublicKey.ToAddress();
+            _agentAddress = privateKey.PublicKey.Address;
             var agent = new AgentState(_agentAddress);
 
             _avatarAddress = _agentAddress.Derive("avatar");

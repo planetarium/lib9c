@@ -16,8 +16,8 @@ namespace Lib9c.Tests.Action
         [InlineData(100)]
         public void Execute(int mead)
         {
-            var address = new PrivateKey().ToAddress();
-            var patron = new PrivateKey().ToAddress();
+            var address = new PrivateKey().Address;
+            var patron = new PrivateKey().Address;
             var contractAddress = address.Derive(nameof(RequestPledge));
             IAccount states = new Account(MockState.Empty)
                 .SetState(
@@ -47,13 +47,13 @@ namespace Lib9c.Tests.Action
         [InlineData(false, true, typeof(AlreadyContractedException))]
         public void Execute_Throw_Exception(bool invalidPatron, bool alreadyContract, Type exc)
         {
-            var address = new PrivateKey().ToAddress();
-            var patron = new PrivateKey().ToAddress();
+            var address = new PrivateKey().Address;
+            var patron = new PrivateKey().Address;
             var contractAddress = address.Derive(nameof(RequestPledge));
             IValue contract = Null.Value;
             if (invalidPatron)
             {
-                contract = List.Empty.Add(new PrivateKey().ToAddress().Serialize());
+                contract = List.Empty.Add(new PrivateKey().Address.Serialize());
             }
 
             if (alreadyContract)

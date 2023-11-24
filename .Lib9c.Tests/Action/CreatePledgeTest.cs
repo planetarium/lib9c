@@ -26,12 +26,12 @@ namespace Lib9c.Tests.Action
         [InlineData(false, typeof(PermissionDeniedException))]
         public void Execute(bool admin, Type exc)
         {
-            var adminAddress = new PrivateKey().ToAddress();
-            var poolAddress = new PrivateKey().ToAddress();
+            var adminAddress = new PrivateKey().Address;
+            var poolAddress = new PrivateKey().Address;
             var adminState = new AdminState(adminAddress, 150L);
-            var patronAddress = new PrivateKey().ToAddress();
+            var patronAddress = new PrivateKey().Address;
             var mead = Currencies.Mead;
-            var agentAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
             var pledgeAddress = agentAddress.GetPledgeAddress();
             var context = new ActionContext();
             IAccount states = new Account(MockState.Empty)
@@ -44,7 +44,7 @@ namespace Lib9c.Tests.Action
             };
             for (int i = 0; i < 499; i++)
             {
-                var address = new PrivateKey().ToAddress();
+                var address = new PrivateKey().Address;
                 agentAddresses.Add((address, address.GetPledgeAddress()));
             }
 

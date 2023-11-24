@@ -11,7 +11,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Serialize()
         {
-            var agentStateAddress = new PrivateKey().ToAddress();
+            var agentStateAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentStateAddress);
 
             var serialized = agentState.Serialize();
@@ -23,7 +23,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void SerializeWithDotNetAPI()
         {
-            var agentStateAddress = new PrivateKey().ToAddress();
+            var agentStateAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentStateAddress);
 
             var formatter = new BinaryFormatter();

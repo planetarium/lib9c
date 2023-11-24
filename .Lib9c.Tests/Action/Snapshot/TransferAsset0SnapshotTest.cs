@@ -46,8 +46,8 @@ namespace Lib9c.Tests.Action.Snapshot
             var recipientPrivateKey =
                 new PrivateKey(ByteUtil.ParseHex(
                     "f8960846e9ae4ad1c23686f74c8e5f80f22336b6f2175be21db82afa8823c92d"));
-            var senderAddress = senderPrivateKey.ToAddress();
-            var recipientAddress = recipientPrivateKey.ToAddress();
+            var senderAddress = senderPrivateKey.Address;
+            var recipientAddress = recipientPrivateKey.Address;
             var crystal = CrystalCalculator.CRYSTAL;
             var context = new ActionContext();
 
@@ -103,8 +103,8 @@ namespace Lib9c.Tests.Action.Snapshot
             var recipientPrivateKey =
                 new PrivateKey(ByteUtil.ParseHex(
                     "f8960846e9ae4ad1c23686f74c8e5f80f22336b6f2175be21db82afa8823c92d"));
-            var senderAddress = senderPrivateKey.ToAddress();
-            var recipientAddress = recipientPrivateKey.ToAddress();
+            var senderAddress = senderPrivateKey.Address;
+            var recipientAddress = recipientPrivateKey.Address;
             var crystal = CrystalCalculator.CRYSTAL;
             var context = new ActionContext();
 
