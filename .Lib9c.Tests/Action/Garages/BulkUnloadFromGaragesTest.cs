@@ -118,7 +118,6 @@ namespace Lib9c.Tests.Action.Garages
             {
                 Signer = AgentAddress,
                 BlockIndex = blockIndex,
-                Rehearsal = false,
                 PreviousState = states,
                 RandomSeed = new TestRandom().Seed,
             });
