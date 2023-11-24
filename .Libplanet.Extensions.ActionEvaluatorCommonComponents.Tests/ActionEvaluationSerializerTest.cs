@@ -20,6 +20,8 @@ public class ActionEvaluationSerializerTest
         var prevState = new HashDigest<SHA256>(buffer);
         random.NextBytes(buffer);
         var outputState = new HashDigest<SHA256>(buffer);
+        random.NextBytes(buffer);
+        var preEvalHash = new HashDigest<SHA256>(buffer);
 
         var committed = new CommittedActionEvaluation(
             action: Null.Value,
@@ -27,7 +29,7 @@ public class ActionEvaluationSerializerTest
                 signer: addresses[0],
                 txId: null,
                 miner: addresses[1],
-                blockIndex: 0,
+                blockIndex: 456,
                 blockProtocolVersion: 0,
                 previousState: prevState,
                 randomSeed: 123,
@@ -35,8 +37,8 @@ public class ActionEvaluationSerializerTest
             outputState: outputState,
             exception: new UnexpectedlyTerminatedActionException(
                 "",
-                null,
-                null,
+                preEvalHash,
+                456,
                 null,
                 null,
                 new NullAction(),
@@ -46,7 +48,7 @@ public class ActionEvaluationSerializerTest
 
         Assert.Equal(Null.Value, deserialized.Action);
         Assert.Equal(123, deserialized.InputContext.RandomSeed);
-        Assert.Equal(0, deserialized.InputContext.BlockIndex);
+        Assert.Equal(456, deserialized.InputContext.BlockIndex);
         Assert.Equal(0, deserialized.InputContext.BlockProtocolVersion);
         Assert.Equal(addresses[0], deserialized.InputContext.Signer);
         Assert.Equal(addresses[1], deserialized.InputContext.Miner);
