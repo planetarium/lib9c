@@ -92,6 +92,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(EndPledge))]
         [InlineData(typeof(CreatePledge))]
         [InlineData(typeof(TransferAssets))]
+        [InlineData(typeof(RuneSummon))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -462,6 +463,12 @@ namespace Lib9c.Tests.Action
                 {
                     (_signer, 1 * _currency),
                 }),
+                RuneSummon _ => new RuneSummon
+                {
+                    AvatarAddress = _sender,
+                    GroupId = 20001,
+                    SummonCount = 10,
+                },
                 _ => throw new InvalidCastException(),
             };
         }
