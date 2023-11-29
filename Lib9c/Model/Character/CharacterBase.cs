@@ -517,7 +517,7 @@ namespace Nekoyume.Model
                 BattleStatus.Skill usedSkill;
                 if (OnPreSkill())
                 {
-                    usedSkill = new Tick(this);
+                    usedSkill = new Tick((CharacterBase)Clone());
                     Simulator.Log.Add(usedSkill);
                 }
                 else
