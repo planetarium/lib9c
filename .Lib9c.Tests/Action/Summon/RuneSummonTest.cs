@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action.Summon
     using Nekoyume.Action.Exceptions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.TableData;
     using Nekoyume.TableData.Summon;
     using Xunit;
     using static SerializeKeys;
@@ -58,6 +59,7 @@ namespace Lib9c.Tests.Action.Summon
                 .SetState(_avatarAddress, _avatarState.Serialize())
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100000000000)
+                .MintAsset(context, _avatarAddress, 100 * Currencies.GetRune("RUNESTONE_FENRIR1"))
                 .TransferAsset(
                     context,
                     Addresses.GoldCurrency,
@@ -172,8 +174,9 @@ namespace Lib9c.Tests.Action.Summon
                 var expectedBalance = RuneSummon.RuneQuantity * count;
                 foreach (var currency in currencies)
                 {
+                    var prevBalance = state.GetBalance(_avatarAddress, currency);
                     var balance = nextState.GetBalance(_avatarAddress, currency);
-                    totalBalance += (int)balance.RawValue;
+                    totalBalance += (int)(balance - prevBalance).RawValue;
                 }
 
                 Assert.Equal(expectedBalance, totalBalance);
@@ -285,6 +288,10 @@ namespace Lib9c.Tests.Action.Summon
                 new object[]
                 {
                     20001, 1, 800201, 1, 1, null,
+                },
+                new object[]
+                {
+                    10001, 1, 800201, 1, 1, typeof(SheetRowNotFoundException),
                 },
             };
 

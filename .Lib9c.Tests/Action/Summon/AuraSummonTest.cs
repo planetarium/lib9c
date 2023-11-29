@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action.Summon
     using Nekoyume.Action.Exceptions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.TableData;
     using Nekoyume.TableData.Summon;
     using Xunit;
     using static SerializeKeys;
@@ -176,6 +177,8 @@ namespace Lib9c.Tests.Action.Summon
         [InlineData("V1", 10001, 11, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
         // 15 recipes
         [InlineData("V2", 10002, 1, 600201, 1, 5341, new[] { 10650006 }, null)]
+        // 15 recipes
+        [InlineData("V3", 20002, 1, 600201, 1, 5341, new int[] { }, typeof(SheetRowNotFoundException))]
         public void Execute(
             string version,
             int groupId,
@@ -189,10 +192,14 @@ namespace Lib9c.Tests.Action.Summon
         {
             var random = new TestRandom(seed);
             var state = _initialState;
-            state = state.SetState(
-                Addresses.TableSheet.Derive(nameof(SummonSheet)),
-                version == "V1" ? SummonSheetFixtures.V1.Serialize() : SummonSheetFixtures.V2.Serialize()
-            );
+            var sheet = version switch
+            {
+                "V1" => SummonSheetFixtures.V1.Serialize(),
+                "V2" => SummonSheetFixtures.V2.Serialize(),
+                "V3" => SummonSheetFixtures.V3.Serialize(),
+                _ => throw new ArgumentOutOfRangeException(nameof(version), version, null)
+            };
+            state = state.SetState(Addresses.TableSheet.Derive(nameof(SummonSheet)), sheet);
 
             if (!(materialId is null))
             {
