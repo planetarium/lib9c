@@ -1,11 +1,12 @@
 using Libplanet.Crypto;
 
-namespace Lib9c.Abstractions;
-
-public interface IRuneSummonV1
+namespace Lib9c.Abstractions
 {
-    Address AvatarAddress { get; }
-    int GroupId { get; }
+    public interface IRuneSummonV1
+    {
+        Address AvatarAddress { get; }
+        int GroupId { get; }
 
-    int SummonCount { get; }
+        int SummonCount { get; }
+    }
 }
