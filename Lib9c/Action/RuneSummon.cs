@@ -44,8 +44,7 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug($"{addressesHex} RuneSummon Exec. Started.");
 
-            if (!states.TryGetAgentAvatarStatesV2(context.Signer, AvatarAddress, out var agentState,
-                    out var avatarState, out _))
+            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState, out _))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
@@ -124,8 +123,7 @@ namespace Nekoyume.Action
             // Set states
             return states
                 .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(context.Signer, agentState.Serialize());
+                .SetState(inventoryAddress, avatarState.inventory.Serialize());
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
