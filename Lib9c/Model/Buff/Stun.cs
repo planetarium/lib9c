@@ -1,22 +1,38 @@
 ﻿using System;
+using Nekoyume.Model.BattleStatus.Arena;
+using Nekoyume.Model.Skill;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Buff
 {
     [Serializable]
-    public class Stun : Buff
+    public class Stun : ActionBuff
     {
-        public Stun(BuffInfo buffInfo) : base(buffInfo)
+        public Stun(ActionBuffSheet.Row row) : base(row)
         {
-
         }
 
-        protected Stun(Buff value) : base(value)
+        public Stun(SkillCustomField customField, ActionBuffSheet.Row row) : base(customField, row)
+        {
+        }
+
+        protected Stun(ActionBuff value) : base(value)
         {
         }
 
         public override object Clone()
         {
             return new Stun(this);
+        }
+
+        public override BattleStatus.Skill GiveEffect(CharacterBase affectedCharacter, int simulatorWaveTurn, bool copyCharacter = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ArenaSkill GiveEffectForArena(ArenaCharacter affectedCharacter, int simulatorWaveTurn)
+        {
+            throw new NotImplementedException();
         }
     }
 }
