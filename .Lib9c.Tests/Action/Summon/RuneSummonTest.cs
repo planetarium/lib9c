@@ -167,19 +167,19 @@ namespace Lib9c.Tests.Action.Summon
                 };
                 ctx.SetRandom(random);
                 var nextState = action.Execute(ctx);
-                var currencies =
-                    nextState.TotalUpdatedFungibleAssets.Where(t => t.Item1 == _avatarAddress).Select(t => t.Item2).ToList();
-                var totalBalance = 0;
-                var count = summonCount == 10 ? 11 : summonCount;
-                var expectedBalance = RuneSummon.RuneQuantity * count;
-                foreach (var currency in currencies)
+                var result = RuneSummon.SimulateSummon(
+                    _tableSheets.RuneSheet,
+                    _tableSheets.SummonSheet[groupId],
+                    summonCount,
+                    new TestRandom(seed)
+                );
+                foreach (var pair in result)
                 {
+                    var currency = pair.Key;
                     var prevBalance = state.GetBalance(_avatarAddress, currency);
                     var balance = nextState.GetBalance(_avatarAddress, currency);
-                    totalBalance += (int)(balance - prevBalance).RawValue;
+                    Assert.Equal(currency * pair.Value, balance - prevBalance);
                 }
-
-                Assert.Equal(expectedBalance, totalBalance);
 
                 nextState.GetAvatarStateV2(_avatarAddress).inventory
                     .TryGetItem((int)materialId!, out var resultMaterial);

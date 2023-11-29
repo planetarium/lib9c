@@ -9,6 +9,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.State;
@@ -44,7 +45,8 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug($"{addressesHex} RuneSummon Exec. Started.");
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState, out _))
+            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
+                    out _))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
@@ -103,9 +105,8 @@ namespace Nekoyume.Action
             }
 
             var random = context.GetRandom();
-            states = SimulateSummon(
+            states = Summon(
                 context,
-                addressesHex,
                 AvatarAddress,
                 runeSheet,
                 summonRow,
@@ -130,25 +131,24 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>
             {
                 [AvatarAddressKey] = AvatarAddress.Serialize(),
-                [GroupIdKey] = (Integer)GroupId,
-                [SummonCountKey] = (Integer)SummonCount,
+                [GroupIdKey] = (Integer) GroupId,
+                [SummonCountKey] = (Integer) SummonCount,
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(
             IImmutableDictionary<string, IValue> plainValue)
         {
             AvatarAddress = plainValue[AvatarAddressKey].ToAddress();
-            GroupId = (Integer)plainValue[GroupIdKey];
-            SummonCount = (Integer)plainValue[SummonCountKey];
+            GroupId = (Integer) plainValue[GroupIdKey];
+            SummonCount = (Integer) plainValue[SummonCountKey];
         }
 
         Address IRuneSummonV1.AvatarAddress => AvatarAddress;
         int IRuneSummonV1.GroupId => GroupId;
         int IRuneSummonV1.SummonCount => SummonCount;
 
-        public static IAccount SimulateSummon(
+        public static IAccount Summon(
             IActionContext context,
-            string addressesHex,
             Address avatarAddress,
             RuneSheet runeSheet,
             SummonSheet.Row summonRow,
@@ -163,6 +163,31 @@ namespace Nekoyume.Action
                 summonCount += 1;
             }
 
+            var result = SimulateSummon(runeSheet, summonRow, summonCount, random);
+#pragma warning disable LAA1002
+            foreach (var pair in result)
+#pragma warning restore LAA1002
+            {
+                states = states.MintAsset(context, avatarAddress, pair.Key * pair.Value);
+            }
+
+            return states;
+        }
+
+        public static Dictionary<Currency, int> SimulateSummon(
+            RuneSheet runeSheet,
+            SummonSheet.Row summonRow,
+            int summonCount,
+            IRandom random
+        )
+        {
+            // Ten plus one
+            if (summonCount == 10)
+            {
+                summonCount += 1;
+            }
+
+            var result = new Dictionary<Currency, int>();
             for (var i = 0; i < summonCount; i++)
             {
                 var recipeId = 0;
@@ -181,7 +206,6 @@ namespace Nekoyume.Action
                 if (runeRow is null)
                 {
                     throw new SheetRowNotFoundException(
-                        addressesHex,
                         nameof(RuneSheet),
                         recipeId
                     );
@@ -189,10 +213,11 @@ namespace Nekoyume.Action
 
                 var ticker = runeRow.Ticker;
                 var currency = Currencies.GetRune(ticker);
-                states = states.MintAsset(context, avatarAddress, RuneQuantity * currency);
+                result.TryAdd(currency, 0);
+                result[currency] += RuneQuantity;
             }
 
-            return states;
+            return result;
         }
     }
 }
