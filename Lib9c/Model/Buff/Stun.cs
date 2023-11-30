@@ -27,12 +27,14 @@ namespace Nekoyume.Model.Buff
 
         public override BattleStatus.Skill GiveEffect(CharacterBase affectedCharacter, int simulatorWaveTurn, bool copyCharacter = true)
         {
-            throw new NotImplementedException();
+            // Do not anything
+            return null;
         }
 
         public override ArenaSkill GiveEffectForArena(ArenaCharacter affectedCharacter, int simulatorWaveTurn)
         {
-            throw new NotImplementedException();
+            // Do not anything
+            return null;
         }
     }
 }
