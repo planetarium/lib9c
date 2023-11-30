@@ -18,15 +18,15 @@ using Nekoyume.TableData;
 namespace Nekoyume.Action
 {
     [ActionType(TypeIdentifier)]
-    public class MintAssets : ActionBase
+    public class MintAssets0 : ActionBase
     {
         public const string TypeIdentifier = "mint_assets";
 
-        public MintAssets()
+        public MintAssets0()
         {
         }
 
-        public MintAssets(IEnumerable<MintSpec> specs, string? memo)
+        public MintAssets0(IEnumerable<MintSpec> specs, string? memo)
         {
             MintSpecs = specs.ToList();
             Memo = memo;
