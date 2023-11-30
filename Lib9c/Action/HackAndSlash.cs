@@ -99,6 +99,7 @@ namespace Nekoyume.Action
         public override IAccount Execute(IActionContext context)
         {
             context.UseGas(1);
+            Log.Debug("{Source} from different ActionEvaluator at #{BlockIndex}", "HackAndSlash", context.BlockIndex);
             var random = context.GetRandom();
             return Execute(
                 context.PreviousState,
