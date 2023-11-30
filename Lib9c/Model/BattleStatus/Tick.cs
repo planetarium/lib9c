@@ -22,7 +22,7 @@ namespace Nekoyume.Model.BattleStatus
 
         public override IEnumerator CoExecute(IStage stage)
         {
-            yield return null;
+            yield return stage.CoTickDamage(Character, SkillId, SkillInfos);
         }
     }
 }
