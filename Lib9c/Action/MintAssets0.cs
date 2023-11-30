@@ -18,15 +18,15 @@ using Nekoyume.TableData;
 namespace Nekoyume.Action
 {
     [ActionType(TypeIdentifier)]
-    public class MintAssets : ActionBase
+    public class MintAssets0 : ActionBase
     {
-        public const string TypeIdentifier = "mint_assets2";
+        public const string TypeIdentifier = "mint_assets";
 
-        public MintAssets()
+        public MintAssets0()
         {
         }
 
-        public MintAssets(IEnumerable<MintSpec> specs, string? memo)
+        public MintAssets0(IEnumerable<MintSpec> specs, string? memo)
         {
             MintSpecs = specs.ToList();
             Memo = memo;
@@ -108,27 +108,17 @@ namespace Nekoyume.Action
             {
                 if (
                     state.GetState(recipient) is Dictionary dict &&
-                    dict.TryGetValue((Text)SerializeKeys.MailBoxKey, out IValue rawMailBox) &&
-                    dict.TryGetValue((Text)SerializeKeys.AgentAddressKey, out IValue rawAgentAddress)
+                    dict.TryGetValue((Text)SerializeKeys.MailBoxKey, out IValue rawMailBox)
                 )
                 {
-                    var agentAddress = rawAgentAddress.ToAddress();
                     var mailBox = new MailBox((List)rawMailBox);
                     (List<FungibleAssetValue> favs, List<FungibleItemValue> fivs) = mailRecords[recipient];
-                    List<(Address recipient, FungibleAssetValue v)> mailFavs =
-                        favs.Select(v => (recipient, v))
-                            .ToList();
-
-                    if (mailRecords.TryGetValue(agentAddress, out (List<FungibleAssetValue> agentFavs, List<FungibleItemValue> _) agentRecords))
-                    {
-                        mailFavs.AddRange(agentRecords.agentFavs.Select(v => (agentAddress, v)));
-                    }
                     mailBox.Add(
                         new UnloadFromMyGaragesRecipientMail(
                             context.BlockIndex,
                             rng.GenerateRandomGuid(),
                             context.BlockIndex,
-                            mailFavs,
+                            favs.Select(v => (recipient, v)),
                             fivs.Select(v => (v.Id, v.Count)),
                             Memo
                         )

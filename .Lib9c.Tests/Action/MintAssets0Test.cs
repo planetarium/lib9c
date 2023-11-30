@@ -18,7 +18,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.State;
     using Xunit;
 
-    public class MintAssetsTest
+    public class MintAssets0Test
     {
         private readonly Address _adminAddress;
         private readonly ISet<Address> _minters;
@@ -27,7 +27,7 @@ namespace Lib9c.Tests.Action
 
         private readonly TableSheets _tableSheets;
 
-        public MintAssetsTest()
+        public MintAssets0Test()
         {
             _adminAddress = new PrivateKey().Address;
             _ncgCurrency = Currency.Legacy("NCG", 2, null);
@@ -55,14 +55,14 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void PlainValue()
         {
-            var r = new List<MintAssets.MintSpec>()
+            var r = new List<MintAssets0.MintSpec>()
             {
                 new (default, _ncgCurrency * 100, null),
                 new (new Address("0x47d082a115c63e7b58b1532d20e631538eafadde"), _ncgCurrency * 1000, null),
             };
-            var act = new MintAssets(r, null);
+            var act = new MintAssets0(r, null);
             var expected = Dictionary.Empty
-                .Add("type_id", MintAssets.TypeIdentifier)
+                .Add("type_id", "mint_assets")
                 .Add("values", List.Empty
                     .Add(Null.Value)
                     .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
@@ -72,9 +72,9 @@ namespace Lib9c.Tests.Action
                 act.PlainValue
             );
 
-            var act2 = new MintAssets(r, "memo");
+            var act2 = new MintAssets0(r, "memo");
             var expected2 = Dictionary.Empty
-                .Add("type_id", MintAssets.TypeIdentifier)
+                .Add("type_id", "mint_assets")
                 .Add("values", List.Empty
                     .Add((Text)"memo")
                     .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
@@ -94,10 +94,10 @@ namespace Lib9c.Tests.Action
                     .Add(default(Null))
                     .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
                     .Add(new List(new Address("0x47d082a115c63e7b58b1532d20e631538eafadde").Bencoded, (_ncgCurrency * 1000).Serialize(), default(Null))));
-            var act = new MintAssets();
+            var act = new MintAssets0();
             act.LoadPlainValue(pv);
 
-            var expected = new List<MintAssets.MintSpec>()
+            var expected = new List<MintAssets0.MintSpec>()
             {
                 new (default, _ncgCurrency * 100, null),
                 new (new Address("0x47d082a115c63e7b58b1532d20e631538eafadde"), _ncgCurrency * 1000, null),
@@ -111,7 +111,7 @@ namespace Lib9c.Tests.Action
                     .Add((Text)"memo")
                     .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
                     .Add(new List(new Address("0x47d082a115c63e7b58b1532d20e631538eafadde").Bencoded, (_ncgCurrency * 1000).Serialize(), default(Null))));
-            var act2 = new MintAssets();
+            var act2 = new MintAssets0();
             act2.LoadPlainValue(pv2);
             Assert.Equal("memo", act2.Memo);
         }
@@ -119,8 +119,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_With_FungibleAssetValue()
         {
-            var action = new MintAssets(
-                new List<MintAssets.MintSpec>()
+            var action = new MintAssets0(
+                new List<MintAssets0.MintSpec>()
                 {
                     new (default, _ncgCurrency * 100, null),
                     new (new Address("0x47d082a115c63e7b58b1532d20e631538eafadde"), _ncgCurrency * 1000, null),
@@ -154,8 +154,8 @@ namespace Lib9c.Tests.Action
                 "7f5d25371e58c0f3d5a33511450f73c2e0fa4fac32a92e1cbe64d3bf2fef6328"
             );
 
-            var action = new MintAssets(
-                new List<MintAssets.MintSpec>()
+            var action = new MintAssets0(
+                new List<MintAssets0.MintSpec>()
                 {
                     new (
                         avatarAddress,
@@ -193,8 +193,8 @@ namespace Lib9c.Tests.Action
                 "7f5d25371e58c0f3d5a33511450f73c2e0fa4fac32a92e1cbe64d3bf2fef6328"
             );
 
-            var action = new MintAssets(
-                new List<MintAssets.MintSpec>()
+            var action = new MintAssets0(
+                new List<MintAssets0.MintSpec>()
                 {
                     new (new Address("0x47d082a115c63e7b58b1532d20e631538eafadde"), _ncgCurrency * 1000, null),
                     new (
@@ -234,8 +234,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throws_InvalidMinterException()
         {
-            var action = new MintAssets(
-                new List<MintAssets.MintSpec>()
+            var action = new MintAssets0(
+                new List<MintAssets0.MintSpec>()
                 {
                     new (default, _ncgCurrency * 100, null),
                     new (new Address("0x47d082a115c63e7b58b1532d20e631538eafadde"), _ncgCurrency * 1000, null),
@@ -283,7 +283,7 @@ namespace Lib9c.Tests.Action
             var tx = Transaction.Deserialize(Convert.FromBase64String(
                 "ZDE6UzcxOjBFAiEAhzt5mDMzPwi6y+W+DJ53T4TKwt6YMaFTi38rKYqf7ZMCICV36ngA3Gi+rXkdG5hCUtlLXjAz8H2IKMNaCdCy/N90MTphbGR1Nzp0eXBlX2lkdTExOm1pbnRfYXNzZXRzdTY6dmFsdWVzbHU3Mzp7ImlhcCI6IHsiZ19za3UiOiAiZ19wa2dfYmxhY2tmcmlkYXkwMSIsICJhX3NrdSI6ICJhX3BrZ19ibGFja2ZyaWRheTAxIn19bDIwOgNS/yy36WH9ZHgDqZJiTdhQeCGFbGR1MTM6ZGVjaW1hbFBsYWNlczE6EnU3Om1pbnRlcnNudTY6dGlja2VydTc6Q1JZU1RBTGVpMjUwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMGVlbmVsMjA6H3yZ4KY1m33Wn0P0t+LAvTf5oidubDMyOjmR4E3YCNwLwksh9a23vxmXMS+HANrxM0vzSTbooIE6aTMwMDAwZWVlbDIwOh98meCmNZt91p9D9LfiwL03+aInbmwzMjr4+vksnA0OjgZpQ2Hqh7/IspqK6N6TBEuYRwpXY27Q4Gk0MDBlZWVlZWUxOmczMjpyn6JpWGSKNbU+jjkF0R7FOxtJKb9fSZiErtffYW9ZEzE6bGk0ZTE6bWxkdTEzOmRlY2ltYWxQbGFjZXMxOhJ1NzptaW50ZXJzbnU2OnRpY2tlcnU0Ok1lYWRlaTEwMDAwMDAwMDAwMDAwMDAwMDBlZTE6bmkxMTU3N2UxOnA2NToEq54xog2Nv1BCv8Js6dntmg4yrXh6HlqjroGI+lFDhhU1rMcTLNjnTUwfC5T4Q1deOt1piNPMsfVNfFn7lTXXiTE6czIwOhwq6XOAz7T3MgSeRU9tmiXUlnxvMTp0dTI3OjIyMDEtMDEtMzFUMjM6NTk6NTkuOTk5MDAwWjE6dWxlZQ=="));
             var a = tx.Actions.First();
-            var action = new MintAssets();
+            var action = new MintAssets0();
             action.LoadPlainValue(a);
             var address = action.MintSpecs!.First().Recipient;
             var avatarAddress = action.MintSpecs.Last().Recipient;
@@ -310,7 +310,7 @@ namespace Lib9c.Tests.Action
                 {
                     var fav = mintSpec.Assets.Value;
                     Assert.Equal(fav, nextState.GetBalance(address, fav.Currency));
-                    Assert.Contains(mail.FungibleAssetValues, tuple => tuple.value == fav && tuple.balanceAddr.Equals(address));
+                    Assert.Null(mail.FungibleAssetValues);
                 }
 
                 if (mintSpec.Items.HasValue)
