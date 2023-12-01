@@ -14,14 +14,13 @@ namespace Lib9c.Plugin
     public class PluginActionEvaluator : IPluginActionEvaluator
     {
         private readonly IActionEvaluator _actionEvaluator;
-        private readonly IStateStore _stateStore;
 
-        public PluginActionEvaluator(string stateStorePath)
+        public PluginActionEvaluator(IPluginKeyValueStore keyValueStore)
         {
-            _stateStore = new TrieStateStore(new RocksDBKeyValueStore(stateStorePath));
+            var stateStore = new TrieStateStore(new WrappedKeyValueStore(keyValueStore));
             _actionEvaluator = new ActionEvaluator(
                 _ => new RewardGold(),
-                _stateStore,
+                stateStore,
                 new NCActionLoader());
         }
 
