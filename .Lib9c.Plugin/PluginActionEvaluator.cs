@@ -3,7 +3,6 @@ using Lib9c.Plugin.Shared;
 using Libplanet.Action;
 using Libplanet.Common;
 using Libplanet.Extensions.ActionEvaluatorCommonComponents;
-using Libplanet.RocksDBStore;
 using Libplanet.Store;
 using Nekoyume.Action;
 using Nekoyume.Action.Loader;
