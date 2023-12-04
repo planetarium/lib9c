@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Model
     using Nekoyume.Battle;
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus;
+    using Nekoyume.Model.Buff;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Quest;
     using Nekoyume.Model.Skill;
@@ -421,6 +422,153 @@ namespace Lib9c.Tests.Model
 
             Assert.Equal(maxLevel, player.Level);
             Assert.Equal(requiredExp - 1, player.Exp.Current - expRow.Exp);
+        }
+
+        [Fact]
+        public void GetStun()
+        {
+            var defaultAttack = SkillFactory.GetV1(
+                _tableSheets.SkillSheet.Values.First(r => r.Id == GameConfig.DefaultAttackId),
+                100,
+                100
+            );
+
+            var simulator = new StageSimulator(
+                _random,
+                _avatarState,
+                new List<Guid>(),
+                null,
+                new List<Nekoyume.Model.Skill.Skill>(),
+                1,
+                1,
+                _tableSheets.StageSheet[1],
+                _tableSheets.StageWaveSheet[1],
+                false,
+                20,
+                _tableSheets.GetSimulatorSheets(),
+                _tableSheets.EnemySkillSheet,
+                _tableSheets.CostumeStatSheet,
+                StageSimulator.GetWaveRewards(
+                    _random,
+                    _tableSheets.StageSheet[1],
+                    _tableSheets.MaterialItemSheet)
+            );
+            var player = simulator.Player;
+            var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
+            player.Targets.Add(enemy);
+            simulator.Characters = new SimplePriorityQueue<CharacterBase, decimal>();
+            simulator.Characters.Enqueue(enemy, 0);
+            player.InitAI();
+            player.OverrideSkill(defaultAttack);
+
+            var actionBuffSheet = _tableSheets.ActionBuffSheet;
+            // force add buff 'Stun'
+            // 704000 is ActionBuff id of Stun
+            player.AddBuff(BuffFactory.GetActionBuff(player.Stats, actionBuffSheet[704000]));
+            var row = actionBuffSheet.Values.First();
+            var bleed = BuffFactory.GetActionBuff(enemy.Stats, row);
+            player.AddBuff(bleed);
+            player.Tick();
+            player.Tick();
+            Assert.NotEmpty(simulator.Log);
+            var log = simulator.Log;
+            var logCount = log.Count;
+            var logList = log.ToList();
+            for (int i = 0; i < logCount; i++)
+            {
+                var currLog = logList[i];
+                if (currLog is Tick)
+                {
+                    var nextLog = logList[i + 1];
+
+                    // 'Tick' does not give damage
+                    Assert.Equal(currLog.Character.Targets.First().CurrentHP, nextLog.Character.Targets.First().CurrentHP);
+                    Assert.True(nextLog is TickDamage);
+                }
+                else if (currLog is TickDamage)
+                {
+                    var nextLog = logList[i + 1];
+                    Assert.True(currLog.Character.CurrentHP > nextLog.Character.CurrentHP);
+                }
+            }
+
+            Assert.True(logList.Count > 0);
+            Assert.Contains(logList, e => e is Tick);
+            Assert.Contains(logList, e => e is TickDamage);
+            Assert.Contains(logList, e => e is RemoveBuffs);
+        }
+
+        [Fact]
+        public void GiveStun()
+        {
+            var simulator = new StageSimulator(
+                _random,
+                _avatarState,
+                new List<Guid>(),
+                null,
+                new List<Nekoyume.Model.Skill.Skill>(),
+                1,
+                1,
+                _tableSheets.StageSheet[1],
+                _tableSheets.StageWaveSheet[1],
+                false,
+                20,
+                _tableSheets.GetSimulatorSheets(),
+                _tableSheets.EnemySkillSheet,
+                _tableSheets.CostumeStatSheet,
+                StageSimulator.GetWaveRewards(
+                    _random,
+                    _tableSheets.StageSheet[1],
+                    _tableSheets.MaterialItemSheet)
+            );
+            var skill = SkillFactory.Get(_tableSheets.SkillSheet[700004], 0, 100, 0, StatType.NONE);
+            skill.CustomField = new SkillCustomField { BuffDuration = 2 };
+            var player = simulator.Player;
+            var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
+            player.Targets.Add(enemy);
+            simulator.Characters = new SimplePriorityQueue<CharacterBase, decimal>();
+            simulator.Characters.Enqueue(enemy, 0);
+            player.InitAI();
+            enemy.InitAI();
+            player.AddSkill(skill);
+            player.Tick();
+            var actionBuffSheet = _tableSheets.ActionBuffSheet;
+            var row = actionBuffSheet.Values.First();
+            var bleed = BuffFactory.GetActionBuff(enemy.Stats, row);
+            enemy.AddBuff(bleed);
+            enemy.Tick();
+            enemy.Tick();
+            enemy.Tick();
+            Assert.NotEmpty(simulator.Log);
+            var log = simulator.Log;
+            var logCount = log.Count;
+            var logList = log.ToList();
+            for (int i = 0; i < logCount; i++)
+            {
+                var currLog = logList[i];
+                if (currLog is Tick)
+                {
+                    var nextLog = logList[i + 1];
+
+                    // 'Tick' does not give damage
+                    Assert.Equal(currLog.Character.Targets.First().CurrentHP, nextLog.Character.Targets.First().CurrentHP);
+                    Assert.True(nextLog is TickDamage);
+                }
+                else if (currLog is TickDamage)
+                {
+                    var nextLog = logList.ElementAtOrDefault(i + 1);
+                    if (nextLog != null)
+                    {
+                        Assert.True(currLog.Character.CurrentHP > nextLog.Character.CurrentHP);
+                    }
+                }
+            }
+
+            Assert.True(logList.Count > 0);
+            Assert.Contains(logList, e => e is Tick);
+            Assert.Contains(logList, e => e is TickDamage);
+            Assert.Contains(logList, e => e is RemoveBuffs);
+            Assert.Contains(logList, e => e is Nekoyume.Model.BattleStatus.NormalAttack);
         }
     }
 }
