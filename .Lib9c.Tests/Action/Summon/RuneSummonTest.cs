@@ -1,10 +1,10 @@
 namespace Lib9c.Tests.Action.Summon
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-    using Lib9c.Tests.Fixtures.TableCSV.Summon;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -18,7 +18,7 @@ namespace Lib9c.Tests.Action.Summon
     using Xunit;
     using static SerializeKeys;
 
-    public class AuraSummonTest
+    public class RuneSummonTest
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -27,7 +27,7 @@ namespace Lib9c.Tests.Action.Summon
         private TableSheets _tableSheets;
         private IAccount _initialState;
 
-        public AuraSummonTest()
+        public RuneSummonTest()
         {
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
@@ -59,6 +59,7 @@ namespace Lib9c.Tests.Action.Summon
                 .SetState(_avatarAddress, _avatarState.Serialize())
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100000000000)
+                .MintAsset(context, _avatarAddress, 100 * Currencies.GetRune("RUNESTONE_FENRIR1"))
                 .TransferAsset(
                     context,
                     Addresses.GoldCurrency,
@@ -83,25 +84,10 @@ namespace Lib9c.Tests.Action.Summon
         }
 
         [Theory]
-        [InlineData("V1", 10001)]
-        [InlineData("V1", 10002)]
-        [InlineData("V2", 10001)]
-        [InlineData("V2", 10002)]
-        public void CumulativeRatio(string version, int groupId)
+        [InlineData(20001)]
+        public void CumulativeRatio(int groupId)
         {
-            var sheets = TableSheetsImporter.ImportSheets();
-            if (version == "V1")
-            {
-                sheets[nameof(SummonSheet)] = SummonSheetFixtures.V1;
-            }
-            else
-            {
-                sheets[nameof(SummonSheet)] = SummonSheetFixtures.V2;
-            }
-
-            _tableSheets = new TableSheets(sheets);
             var sheet = _tableSheets.SummonSheet;
-
             var targetRow = sheet.OrderedList.First(r => r.GroupId == groupId);
 
             for (var i = 1; i <= SummonSheet.Row.MaxRecipeCount; i++)
@@ -120,86 +106,22 @@ namespace Lib9c.Tests.Action.Summon
         }
 
         [Theory]
-        // success first group
-        [InlineData("V1", 10001, 1, 800201, 1, 1, new[] { 10610000 }, null)]
-        [InlineData("V1", 10001, 2, 800201, 2, 54, new[] { 10620000, 10630000 }, null)]
-        // success second group
-        [InlineData("V1", 10002, 1, 600201, 1, 1, new[] { 10620001 }, null)]
-        [InlineData("V1", 10002, 2, 600201, 2, 4, new[] { 10620001, 10630001 }, null)]
-        // Nine plus zero
-        [InlineData(
-            "V1",
-            10001,
-            9,
-            800201,
-            9,
-            0,
-            new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000 },
-            null
-        )]
-        [InlineData(
-            "V1",
-            10002,
-            9,
-            600201,
-            9,
-            0,
-            new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10630001, 10630001, 10630001 },
-            null
-        )]
-        // Ten plus one
-        [InlineData(
-            "V1",
-            10001,
-            10,
-            800201,
-            10,
-            0,
-            new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000 },
-            null
-        )]
-        [InlineData(
-            "V1",
-            10002,
-            10,
-            600201,
-            10,
-            0,
-            new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10620001, 10630001, 10630001, 10630001 },
-            null
-        )]
-        // fail by invalid group
-        [InlineData("V1", 100003, 1, null, 0, 0, new int[] { }, typeof(RowNotInTableException))]
-        // fail by not enough material
-        [InlineData("V1", 10001, 1, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
-        [InlineData("V1", 10001, 2, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
-        // Fail by exceeding summon limit
-        [InlineData("V1", 10001, 11, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
-        // 15 recipes
-        [InlineData("V2", 10002, 1, 600201, 1, 5341, new[] { 10650006 }, null)]
-        // 15 recipes
-        [InlineData("V3", 20001, 1, 600201, 1, 5341, new int[] { }, typeof(SheetRowNotFoundException))]
+        [ClassData(typeof(ExecuteMemeber))]
         public void Execute(
-            string version,
             int groupId,
             int summonCount,
             int? materialId,
             int materialCount,
             int seed,
-            int[] expectedEquipmentId,
             Type expectedExc
         )
         {
             var random = new TestRandom(seed);
             var state = _initialState;
-            var sheet = version switch
-            {
-                "V1" => SummonSheetFixtures.V1.Serialize(),
-                "V2" => SummonSheetFixtures.V2.Serialize(),
-                "V3" => SummonSheetFixtures.V3.Serialize(),
-                _ => throw new ArgumentOutOfRangeException(nameof(version), version, null)
-            };
-            state = state.SetState(Addresses.TableSheet.Derive(nameof(SummonSheet)), sheet);
+            state = state.SetState(
+                Addresses.TableSheet.Derive(nameof(SummonSheet)),
+                _tableSheets.SummonSheet.Serialize()
+            );
 
             if (!(materialId is null))
             {
@@ -226,11 +148,12 @@ namespace Lib9c.Tests.Action.Summon
                     ;
             }
 
-            var action = new AuraSummon(
-                _avatarAddress,
-                groupId,
-                summonCount
-            );
+            var action = new RuneSummon
+            {
+                AvatarAddress = _avatarAddress,
+                GroupId = groupId,
+                SummonCount = summonCount,
+            };
 
             if (expectedExc == null)
             {
@@ -243,22 +166,18 @@ namespace Lib9c.Tests.Action.Summon
                 };
                 ctx.SetRandom(random);
                 var nextState = action.Execute(ctx);
-
-                var equipments = nextState.GetAvatarStateV2(_avatarAddress).inventory.Equipments
-                    .ToList();
-                Assert.Equal(expectedEquipmentId.Length, equipments.Count);
-
-                var checkedEquipments = new List<Guid>();
-                foreach (var equipmentId in expectedEquipmentId)
+                var result = RuneSummon.SimulateSummon(
+                    _tableSheets.RuneSheet,
+                    _tableSheets.SummonSheet[groupId],
+                    summonCount,
+                    new TestRandom(seed)
+                );
+                foreach (var pair in result)
                 {
-                    var resultEquipment = equipments.First(e =>
-                        e.Id == equipmentId && !checkedEquipments.Contains(e.ItemId)
-                    );
-
-                    checkedEquipments.Add(resultEquipment.ItemId);
-                    Assert.NotNull(resultEquipment);
-                    Assert.Equal(1, resultEquipment.RequiredBlockIndex);
-                    Assert.True(resultEquipment.optionCountFromCombination > 0);
+                    var currency = pair.Key;
+                    var prevBalance = state.GetBalance(_avatarAddress, currency);
+                    var balance = nextState.GetBalance(_avatarAddress, currency);
+                    Assert.Equal(currency * pair.Value, balance - prevBalance);
                 }
 
                 nextState.GetAvatarStateV2(_avatarAddress).inventory
@@ -279,6 +198,64 @@ namespace Lib9c.Tests.Action.Summon
                     });
                 });
             }
+        }
+
+        private class ExecuteMemeber : IEnumerable<object[]>
+        {
+            private readonly List<object[]> _data = new ()
+            {
+                new object[]
+                {
+                    20001, 1, 600201, 1, 1, null,
+                },
+                new object[]
+                {
+                        20001, 2, 600201, 2, 54, null,
+                },
+                // Nine plus zero
+                new object[]
+                {
+                    20001,
+                    9,
+                    600201,
+                    9,
+                    0,
+                    null,
+                },
+                // Ten plus one
+                new object[]
+                {
+                    20001,
+                    10,
+                    600201,
+                    10,
+                    0,
+                    null,
+                },
+                // fail by invalid group
+                new object[]
+                {
+                    100003, 1, null, 0, 0,  typeof(RowNotInTableException),
+                },
+                // fail by not enough material
+                new object[]
+                {
+                    20001, 1, 600201, 0, 0,  typeof(NotEnoughMaterialException),
+                },
+                // Fail by exceeding summon limit
+                new object[]
+                {
+                    20001, 11, 600201, 22, 1,  typeof(InvalidSummonCountException),
+                },
+                new object[]
+                {
+                    10002, 1, 600201, 1, 1, typeof(SheetRowNotFoundException),
+                },
+            };
+
+            public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
         }
     }
 }
