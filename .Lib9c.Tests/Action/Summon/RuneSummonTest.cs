@@ -85,7 +85,6 @@ namespace Lib9c.Tests.Action.Summon
 
         [Theory]
         [InlineData(20001)]
-        [InlineData(20002)]
         public void CumulativeRatio(int groupId)
         {
             var sheet = _tableSheets.SummonSheet;
@@ -207,34 +206,16 @@ namespace Lib9c.Tests.Action.Summon
             {
                 new object[]
                 {
-                    20001, 1, 800201, 1, 1, null,
+                    20001, 1, 600201, 1, 1, null,
                 },
                 new object[]
                 {
-                        20001, 2, 800201, 2, 54, null,
-                },
-                // success second group
-                new object[]
-                {
-                    20002, 1, 600201, 1, 1, null,
-                },
-                new object[]
-                {
-                    20002, 2, 600201, 2, 4, null,
+                        20001, 2, 600201, 2, 54, null,
                 },
                 // Nine plus zero
                 new object[]
                 {
                     20001,
-                    9,
-                    800201,
-                    9,
-                    0,
-                    null,
-                },
-                new object[]
-                {
-                    20002,
                     9,
                     600201,
                     9,
@@ -245,15 +226,6 @@ namespace Lib9c.Tests.Action.Summon
                 new object[]
                 {
                     20001,
-                    10,
-                    800201,
-                    10,
-                    0,
-                    null,
-                },
-                new object[]
-                {
-                    20002,
                     10,
                     600201,
                     10,
@@ -268,30 +240,16 @@ namespace Lib9c.Tests.Action.Summon
                 // fail by not enough material
                 new object[]
                 {
-                    20001, 1, 800201, 0, 0,  typeof(NotEnoughMaterialException),
-                },
-                new object[]
-                {
-                    20001, 2, 800201, 0, 0,  typeof(NotEnoughMaterialException),
+                    20001, 1, 600201, 0, 0,  typeof(NotEnoughMaterialException),
                 },
                 // Fail by exceeding summon limit
                 new object[]
                 {
-                    20001, 11, 800201, 22, 1,  typeof(InvalidSummonCountException),
-                },
-                // 15 recipes
-                new object[]
-                {
-                    20002, 1, 600201, 1, 5341, null,
-                },
-                // success first group
-                new object[]
-                {
-                    20001, 1, 800201, 1, 1, null,
+                    20001, 11, 600201, 22, 1,  typeof(InvalidSummonCountException),
                 },
                 new object[]
                 {
-                    10001, 1, 800201, 1, 1, typeof(SheetRowNotFoundException),
+                    10002, 1, 600201, 1, 1, typeof(SheetRowNotFoundException),
                 },
             };
 

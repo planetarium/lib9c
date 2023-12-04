@@ -33,7 +33,7 @@ namespace Nekoyume.Action
         public int SummonCount;
 
         private const int SummonLimit = 10;
-        public const int RuneQuantity = 100;
+        public const int RuneQuantity = 10;
 
         public override IAccount Execute(IActionContext context)
         {

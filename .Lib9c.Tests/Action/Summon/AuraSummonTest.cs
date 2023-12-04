@@ -178,7 +178,7 @@ namespace Lib9c.Tests.Action.Summon
         // 15 recipes
         [InlineData("V2", 10002, 1, 600201, 1, 5341, new[] { 10650006 }, null)]
         // 15 recipes
-        [InlineData("V3", 20002, 1, 600201, 1, 5341, new int[] { }, typeof(SheetRowNotFoundException))]
+        [InlineData("V3", 20001, 1, 600201, 1, 5341, new int[] { }, typeof(SheetRowNotFoundException))]
         public void Execute(
             string version,
             int groupId,
