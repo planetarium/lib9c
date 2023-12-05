@@ -5,4 +5,4 @@ id,group,_name,chance,duration,target_type,buff_type,elemental_type,atk_power_ra
 600001,600001,출혈,100,0,Enemies,Bleed,Normal,1
 704000,704000,기절,100,0,Enemy,Stun,Normal,0
 704001,704000,기절,100,0,Enemies,Stun,Normal,0
-705000,705000,흡혈,100,0,Self,Vampiric ,Normal,0
+705000,705000,흡혈,100,0,Self,Vampiric,Normal,0
