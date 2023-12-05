@@ -862,7 +862,7 @@ namespace Lib9c.Tests.Action
             {
                 if (keys.Contains(key))
                 {
-                    _state = _state.SetState(Addresses.TableSheet.Derive(key), null!);
+                    _state = _state.SetNull(Addresses.TableSheet.Derive(key));
                 }
             }
 

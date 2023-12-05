@@ -688,7 +688,7 @@ namespace Lib9c.Tests.Action
             {
                 if (keys.Contains(key))
                 {
-                    state = state.SetState(Addresses.TableSheet.Derive(key), null!);
+                    state = state.SetNull(Addresses.TableSheet.Derive(key));
                 }
             }
 
