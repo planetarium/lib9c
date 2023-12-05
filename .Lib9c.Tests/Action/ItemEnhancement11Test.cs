@@ -77,7 +77,7 @@ namespace Lib9c.Tests.Action
             }
 
             var costV3SheetAddress = Addresses.GetSheetAddress<EnhancementCostSheetV3>();
-            _initialState = _initialState.SetState(costV3SheetAddress, null);
+            _initialState = _initialState.SetNull(costV3SheetAddress);
         }
 
         [Theory]

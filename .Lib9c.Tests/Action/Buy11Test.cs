@@ -111,7 +111,7 @@ namespace Lib9c.Tests.Action
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
             _arenaSheetState = _initialState.GetState(arenaSheetAddress);
-            _initialState = _initialState.SetState(arenaSheetAddress, null);
+            _initialState = _initialState.SetNull(arenaSheetAddress);
         }
 
         public static IEnumerable<object[]> GetExecuteMemberData()
@@ -809,7 +809,7 @@ namespace Lib9c.Tests.Action
             };
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
-            nextState = nextState.SetState(arenaSheetAddress, null);
+            nextState = nextState.SetNull(arenaSheetAddress);
 
             nextState = buyAction.Execute(new ActionContext()
             {
