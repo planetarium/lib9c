@@ -1,5 +1,5 @@
 rune_id,_name,level,total_cp,stat_type_1,value_1,value_type_1,stat_type_2,value_2,value_type_2,stat_type_3,value_3,value_type3,skillId,cooldown,chance,skill_value,skill_stat_ratio,skill_value_type,stat_reference_type,buff_duration
-30001,Adventurer's Rune,1,364,HP,520,Add,NONE,0,Add,NONE,0,Add,,,,,,,,
+30001,Adventurer's Rune,1,364,HP,520,Add,NONE,0,Add,NONE,0,Add,800001,1,100,100,0,NONE,Caster,1
 30001,Adventurer's Rune,2,504,HP,720,Add,NONE,0,Add,NONE,0,Add,,,,,,,,
 30001,Adventurer's Rune,3,644,HP,920,Add,NONE,0,Add,NONE,0,Add,,,,,,,,
 30001,Adventurer's Rune,4,756,HP,1080,Add,NONE,0,Add,NONE,0,Add,,,,,,,,
