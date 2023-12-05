@@ -1,6 +1,10 @@
 name: lib9c plugin build and push s3
 
 on:
+  push:
+    branches:
+      - development
+      - main 
   workflow_dispatch:
 
 jobs:
