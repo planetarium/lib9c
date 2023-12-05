@@ -37,7 +37,7 @@ namespace Nekoyume.Model.Buff
             var effect = (int)(skillInfo.Effect * Percentage / 100m);
             affectedCharacter.Heal(effect);
             // Copy new Character with healed.
-            var damageInfos = new List<BattleStatus.Skill.SkillInfo>
+            var infos = new List<BattleStatus.Skill.SkillInfo>
             {
                 new(affectedCharacter.Id,
                     affectedCharacter.IsDead,
@@ -52,14 +52,30 @@ namespace Nekoyume.Model.Buff
             };
             return new BattleStatus.HealSkill(RowData.Id,
                 target,
-                damageInfos,
+                infos,
                 ArraySegment<BattleStatus.Skill.SkillInfo>.Empty);
         }
 
-        public ArenaSkill GiveEffectForArena(ArenaCharacter affectedCharacter, int simulatorWaveTurn)
+        public ArenaSkill GiveEffectForArena(ArenaCharacter affectedCharacter, ArenaSkill.ArenaSkillInfo skillInfo, int simulatorWaveTurn)
         {
-            // TODO: add healing
-            return null;
+            var clone = (ArenaCharacter)affectedCharacter.Clone();
+            var effect = (int)(skillInfo.Effect * Percentage / 100m);
+            affectedCharacter.Heal(effect);
+            // Copy new Character with healed.
+            var infos = new List<ArenaSkill.ArenaSkillInfo>
+            {
+                new(affectedCharacter,
+                    effect,
+                    false,
+                    SkillCategory.Heal,
+                    simulatorWaveTurn,
+                    RowData.ElementalType,
+                    RowData.TargetType)
+            };
+            return new ArenaHeal(
+                clone,
+                infos,
+                null);
         }
     }
 }
