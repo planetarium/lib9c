@@ -198,7 +198,7 @@ namespace Lib9c.Tests.Action.Garages
                 null));
 
             // Signer does not have permission of balance address.
-            var invalidSignerAddr = new PrivateKey().ToAddress();
+            var invalidSignerAddr = new PrivateKey().Address;
             Assert.Throws<InvalidActionFieldException>(() => Execute(
                 invalidSignerAddr,
                 0,
@@ -232,7 +232,7 @@ namespace Lib9c.Tests.Action.Garages
                 _fungibleIdAndCounts));
 
             // AgentAddr does not have permission of inventory address.
-            var invalidInventoryAddr = new PrivateKey().ToAddress();
+            var invalidInventoryAddr = new PrivateKey().Address;
             Assert.Throws<InvalidActionFieldException>(() => Execute(
                 AgentAddr,
                 0,
@@ -415,7 +415,6 @@ namespace Lib9c.Tests.Action.Garages
             {
                 Signer = signer,
                 BlockIndex = blockIndex,
-                Rehearsal = false,
                 PreviousState = previousState,
                 RandomSeed = random.Seed,
             };

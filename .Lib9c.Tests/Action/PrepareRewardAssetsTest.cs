@@ -20,8 +20,8 @@ namespace Lib9c.Tests.Action
         [InlineData(false, false, typeof(PermissionDeniedException))]
         public void Execute(bool admin, bool includeNcg, Type exc)
         {
-            var adminAddress = new PrivateKey().ToAddress();
-            var poolAddress = new PrivateKey().ToAddress();
+            var adminAddress = new PrivateKey().Address;
+            var poolAddress = new PrivateKey().Address;
             var adminState = new AdminState(adminAddress, 150L);
             var assets = new List<FungibleAssetValue>
             {

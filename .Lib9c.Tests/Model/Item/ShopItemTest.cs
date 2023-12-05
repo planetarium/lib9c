@@ -57,8 +57,8 @@ namespace Lib9c.Tests.Model.Item
             var equipmentRow = _tableSheets.EquipmentItemSheet.First;
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 0);
             var shopItem = new ShopItem(
-                new PrivateKey().ToAddress(),
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
+                new PrivateKey().Address,
                 Guid.NewGuid(),
                 new FungibleAssetValue(_currency, 100, 0),
                 expiredBlockIndex,
@@ -79,8 +79,8 @@ namespace Lib9c.Tests.Model.Item
             var equipmentRow = _tableSheets.EquipmentItemSheet.First;
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 0);
             Assert.Throws<ArgumentOutOfRangeException>(() => new ShopItem(
-                new PrivateKey().ToAddress(),
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
+                new PrivateKey().Address,
                 Guid.NewGuid(),
                 new FungibleAssetValue(_currency, 100, 0),
                 -1,
@@ -93,8 +93,8 @@ namespace Lib9c.Tests.Model.Item
             var equipmentRow = _tableSheets.EquipmentItemSheet.First;
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 0);
             var shopItem = new ShopItem(
-                new PrivateKey().ToAddress(),
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
+                new PrivateKey().Address,
                 Guid.NewGuid(),
                 new FungibleAssetValue(_currency, 100, 0),
                 0,
@@ -116,8 +116,8 @@ namespace Lib9c.Tests.Model.Item
             var costumeRow = _tableSheets.CostumeItemSheet.First;
             var costume = ItemFactory.CreateCostume(costumeRow, Guid.NewGuid());
             return new ShopItem(
-                new PrivateKey().ToAddress(),
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
+                new PrivateKey().Address,
                 Guid.NewGuid(),
                 new FungibleAssetValue(_currency, 100, 0),
                 costume);
@@ -128,8 +128,8 @@ namespace Lib9c.Tests.Model.Item
             var equipmentRow = _tableSheets.EquipmentItemSheet.First;
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 0);
             return new ShopItem(
-                new PrivateKey().ToAddress(),
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
+                new PrivateKey().Address,
                 Guid.NewGuid(),
                 new FungibleAssetValue(_currency, 100, 0),
                 (ITradableItem)equipment);
@@ -140,8 +140,8 @@ namespace Lib9c.Tests.Model.Item
             var row = _tableSheets.MaterialItemSheet.First;
             var tradableMaterial = ItemFactory.CreateTradableMaterial(row);
             return new ShopItem(
-                new PrivateKey().ToAddress(),
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
+                new PrivateKey().Address,
                 Guid.NewGuid(),
                 new FungibleAssetValue(_currency, 100, 0),
                 1,
@@ -158,8 +158,8 @@ namespace Lib9c.Tests.Model.Item
             {
                 var tradableMaterial = new TradableMaterial(row);
                 var shopItem = new ShopItem(
-                    new PrivateKey().ToAddress(),
-                    new PrivateKey().ToAddress(),
+                    new PrivateKey().Address,
+                    new PrivateKey().Address,
                     Guid.NewGuid(),
                     new FungibleAssetValue(_currency, 100, 0),
                     1,

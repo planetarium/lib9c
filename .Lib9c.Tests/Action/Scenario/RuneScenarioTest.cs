@@ -21,9 +21,9 @@ namespace Lib9c.Tests.Action.Scenario
         [Fact]
         public void Craft_And_Equip()
         {
-            var agentAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);
-            var avatarAddress = new PrivateKey().ToAddress();
+            var avatarAddress = new PrivateKey().Address;
             var rankingMapAddress = avatarAddress.Derive("ranking_map");
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);

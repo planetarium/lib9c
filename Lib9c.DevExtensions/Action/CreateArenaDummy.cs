@@ -61,7 +61,7 @@ namespace Lib9c.DevExtensions.Action
             for (var i = 0; i < accountCount; i++)
             {
                 var privateKey = new PrivateKey();
-                var agentAddress = privateKey.PublicKey.ToAddress();
+                var agentAddress = privateKey.PublicKey.Address;
                 var avatarAddress = agentAddress.Derive(
                     string.Format(
                         CultureInfo.InvariantCulture,

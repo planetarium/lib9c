@@ -29,7 +29,7 @@ namespace Lib9c.Tests.Action.Scenario
             _tableSheets = new TableSheets(sheets);
 
             var privateKey = new PrivateKey();
-            _agentAddress = privateKey.PublicKey.ToAddress();
+            _agentAddress = privateKey.PublicKey.Address;
             var agentState = new AgentState(_agentAddress);
 
             _avatarAddress = _agentAddress.Derive("avatar");
@@ -106,7 +106,6 @@ namespace Lib9c.Tests.Action.Scenario
                 PreviousState = nextState,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
             Assert.True(hackAndSlash.Result.IsClear);
 
@@ -138,7 +137,6 @@ id,world_id,stage_id,world_id_to_unlock,required_crystal
                 PreviousState = nextState,
                 Signer = AdminState.Address,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             var nextTableCsv = nextState.GetSheetCsv<WorldUnlockSheet>();
@@ -149,7 +147,6 @@ id,world_id,stage_id,world_id_to_unlock,required_crystal
                 PreviousState = nextState,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
             Assert.True(hackAndSlash.Result.IsClear);
 
@@ -228,7 +225,6 @@ id,world_id,stage_id,world_id_to_unlock,required_crystal
                     PreviousState = nextState,
                     Signer = _agentAddress,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
 
@@ -248,7 +244,6 @@ id,world_id,stage_id,world_id_to_unlock,required_crystal
                 PreviousState = nextState,
                 Signer = AdminState.Address,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             var nextTableCsv = nextState.GetSheetCsv<WorldUnlockSheet>();
@@ -259,7 +254,6 @@ id,world_id,stage_id,world_id_to_unlock,required_crystal
                 PreviousState = nextState,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             avatarState = nextState.GetAvatarState(_avatarAddress);

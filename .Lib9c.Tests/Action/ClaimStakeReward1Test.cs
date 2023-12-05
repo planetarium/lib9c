@@ -49,10 +49,10 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             _goldCurrencyState = new GoldCurrencyState(_currency);
 
-            _signerAddress = new PrivateKey().ToAddress();
+            _signerAddress = new PrivateKey().Address;
             var stakeStateAddress = StakeState.DeriveAddress(_signerAddress);
             var agentState = new AgentState(_signerAddress);
-            _avatarAddress = new PrivateKey().ToAddress();
+            _avatarAddress = new PrivateKey().Address;
             var rankingMapAddress = _avatarAddress.Derive("ranking_map");
             agentState.avatarAddresses.Add(0, _avatarAddress);
             var avatarState = new AvatarState(

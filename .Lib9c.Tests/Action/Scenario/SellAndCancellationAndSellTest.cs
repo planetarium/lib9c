@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Action.Scenario
 #pragma warning restore CS0618
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
 
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             _avatarAddress = _agentAddress.Derive("avatar");
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses[0] = _avatarAddress;
@@ -114,7 +114,6 @@ namespace Lib9c.Tests.Action.Scenario
                     PreviousState = nextStates,
                     BlockIndex = sellBlockIndex,
                     RandomSeed = random.Seed,
-                    Rehearsal = false,
                 });
                 // TODO: Check state.. inventory, orders..
             }
@@ -142,7 +141,6 @@ namespace Lib9c.Tests.Action.Scenario
                     PreviousState = nextStates,
                     BlockIndex = sellBlockIndex + 1L,
                     RandomSeed = random.Seed,
-                    Rehearsal = false,
                 });
                 // TODO: Check state.. inventory, orders..
             }
@@ -163,7 +161,6 @@ namespace Lib9c.Tests.Action.Scenario
                 PreviousState = nextStates,
                 BlockIndex = sellBlockIndex + 2L,
                 RandomSeed = random.Seed,
-                Rehearsal = false,
             });
 
             // Check inventory does not have ap stones.

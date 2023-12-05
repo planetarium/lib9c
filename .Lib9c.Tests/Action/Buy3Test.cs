@@ -51,10 +51,10 @@
 #pragma warning restore CS0618
             _goldCurrencyState = new GoldCurrencyState(currency);
 
-            _sellerAgentAddress = new PrivateKey().ToAddress();
+            _sellerAgentAddress = new PrivateKey().Address;
             var sellerAgentState = new AgentState(_sellerAgentAddress);
-            _sellerAvatarAddress = new PrivateKey().ToAddress();
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            _sellerAvatarAddress = new PrivateKey().Address;
+            var rankingMapAddress = new PrivateKey().Address;
             var sellerAvatarState = new AvatarState(
                 _sellerAvatarAddress,
                 _sellerAgentAddress,
@@ -70,9 +70,9 @@
             };
             sellerAgentState.avatarAddresses[0] = _sellerAvatarAddress;
 
-            _buyerAgentAddress = new PrivateKey().ToAddress();
+            _buyerAgentAddress = new PrivateKey().Address;
             var buyerAgentState = new AgentState(_buyerAgentAddress);
-            _buyerAvatarAddress = new PrivateKey().ToAddress();
+            _buyerAvatarAddress = new PrivateKey().Address;
             _buyerAvatarState = new AvatarState(
                 _buyerAvatarAddress,
                 _buyerAgentAddress,
@@ -165,7 +165,6 @@
                     BlockIndex = 0,
                     PreviousState = previousStates,
                     RandomSeed = 0,
-                    Rehearsal = false,
                     Signer = _buyerAgentAddress,
                 });
 

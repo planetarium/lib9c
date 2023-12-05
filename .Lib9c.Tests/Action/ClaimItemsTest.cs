@@ -58,7 +58,7 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            _signerAddress = new PrivateKey().ToAddress();
+            _signerAddress = new PrivateKey().Address;
 
             var context = new ActionContext();
             _initialState = _initialState
@@ -306,7 +306,7 @@ namespace Lib9c.Tests.Action
             var fungibleAssetValues = _itemCurrencies.Select(currency => currency * 1).ToList();
 
             var action = new ClaimItems(Enumerable.Repeat(0, 101)
-                .Select(_ => (new PrivateKey().ToAddress(),
+                .Select(_ => (new PrivateKey().Address,
                     (IReadOnlyList<FungibleAssetValue>)fungibleAssetValues))
                 .ToImmutableList());
 
@@ -322,10 +322,10 @@ namespace Lib9c.Tests.Action
 
         private IAccount GenerateAvatar(IAccount state, out Address avatarAddress, out Address agentAddress)
         {
-            agentAddress = new PrivateKey().ToAddress();
+            agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);
             avatarAddress = agentAddress.Derive("avatar");
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(
                 avatarAddress,
                 agentAddress,

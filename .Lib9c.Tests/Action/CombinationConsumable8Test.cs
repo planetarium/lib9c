@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Action
 
         public CombinationConsumable8Test()
         {
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             _avatarAddress = _agentAddress.Derive("avatar");
             var slotAddress = _avatarAddress.Derive(
                 string.Format(

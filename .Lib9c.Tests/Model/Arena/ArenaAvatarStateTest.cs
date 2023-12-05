@@ -18,8 +18,8 @@ namespace Lib9c.Tests.Model.Arena
         [Fact]
         public void Serialize()
         {
-            var avatarAddress = new PrivateKey().ToAddress();
-            var agentAddress = new PrivateKey().ToAddress();
+            var avatarAddress = new PrivateKey().Address;
+            var agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
             var state = new ArenaAvatarState(avatarState);
 

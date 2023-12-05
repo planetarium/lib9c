@@ -52,7 +52,7 @@ namespace Lib9c.Tests.Action
         public void Execute()
         {
             var contractAddress = _sender.Derive(nameof(RequestPledge));
-            var patronAddress = new PrivateKey().ToAddress();
+            var patronAddress = new PrivateKey().Address;
             var prevState = new Account(
                 MockState.Empty
                     .SetBalance(_sender, _currency * 1000)
@@ -66,7 +66,6 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = prevState,
                 Signer = _sender,
-                Rehearsal = false,
                 BlockIndex = 1,
             });
 
@@ -95,7 +94,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = prevState,
                     // 송금자가 직접 사인하지 않으면 실패해야 합니다.
                     Signer = _recipient,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 });
             });
@@ -125,7 +123,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = prevState,
                     Signer = _sender,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 });
             });
@@ -154,7 +151,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = prevState,
                     Signer = _sender,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 });
             });
@@ -190,7 +186,6 @@ namespace Lib9c.Tests.Action
                 {
                     PreviousState = prevState,
                     Signer = _sender,
-                    Rehearsal = false,
                     BlockIndex = 1,
                 });
             });
@@ -265,7 +260,6 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = prevState,
                 Signer = _sender,
-                Rehearsal = false,
                 BlockIndex = TransferAsset3.CrystalTransferringRestrictionStartIndex,
             }));
         }
@@ -306,7 +300,6 @@ namespace Lib9c.Tests.Action
                         StakeState.DeriveAddress(_recipient),
                         new StakeState(StakeState.DeriveAddress(_recipient), 0).SerializeV2()),
                 Signer = _sender,
-                Rehearsal = false,
                 BlockIndex = 1,
             }));
             Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
@@ -322,7 +315,6 @@ namespace Lib9c.Tests.Action
                                 201600),
                             0).Serialize()),
                 Signer = _sender,
-                Rehearsal = false,
                 BlockIndex = 1,
             }));
             Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
@@ -336,7 +328,6 @@ namespace Lib9c.Tests.Action
                                 0)
                             .Serialize()),
                 Signer = _sender,
-                Rehearsal = false,
                 BlockIndex = 1,
             }));
             var monsterCollectionRewardSheet = new MonsterCollectionRewardSheet();
@@ -354,7 +345,6 @@ namespace Lib9c.Tests.Action
                                 monsterCollectionRewardSheet)
                             .Serialize()),
                 Signer = _sender,
-                Rehearsal = false,
                 BlockIndex = 1,
             }));
         }

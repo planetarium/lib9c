@@ -566,8 +566,17 @@ namespace Nekoyume.Model
 
             ReduceDurationOfBuffs();
             ReduceSkillCooldown();
-            OnPreSkill();
-            var usedSkill = UseSkill();
+            ArenaSkill usedSkill;
+            if (OnPreSkill())
+            {
+                usedSkill = new ArenaTick((ArenaCharacter)Clone());
+                _simulator.Log.Add(usedSkill);
+            }
+            else
+            {
+                usedSkill = UseSkill();
+            }
+
             if (usedSkill != null)
             {
                 OnPostSkill(usedSkill);
@@ -603,9 +612,9 @@ namespace Nekoyume.Model
             RemoveBuffs();
         }
 
-        protected virtual void OnPreSkill()
+        protected virtual bool OnPreSkill()
         {
-
+            return Buffs.Values.Any(buff => buff is Stun);
         }
 
         protected virtual void OnPostSkill(BattleStatus.Arena.ArenaSkill usedSkill)

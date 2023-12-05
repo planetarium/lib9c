@@ -17,11 +17,11 @@ namespace Lib9c.Tests.Action.Scenario
         public void Contract()
         {
             Currency mead = Currencies.Mead;
-            var patron = new PrivateKey().ToAddress();
+            var patron = new PrivateKey().Address;
             IActionContext context = new ActionContext();
             IAccount states = new Account(MockState.Empty).MintAsset(context, patron, 10 * mead);
 
-            var agentAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
             var requestPledge = new RequestPledge
             {
                 AgentAddress = agentAddress,

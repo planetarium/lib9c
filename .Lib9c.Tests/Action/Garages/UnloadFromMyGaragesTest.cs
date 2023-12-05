@@ -24,7 +24,7 @@ namespace Lib9c.Tests.Action.Garages
 
     public class UnloadFromMyGaragesTest
     {
-        private static readonly Address AgentAddr = new PrivateKey().ToAddress();
+        private static readonly Address AgentAddr = new PrivateKey().Address;
         private static readonly int AvatarIndex = 0;
 
         private static readonly Address AvatarAddr =
@@ -344,7 +344,6 @@ namespace Lib9c.Tests.Action.Garages
                 {
                     Signer = signer,
                     BlockIndex = blockIndex,
-                    Rehearsal = false,
                     PreviousState = previousState,
                     RandomSeed = random.Seed,
                 }));

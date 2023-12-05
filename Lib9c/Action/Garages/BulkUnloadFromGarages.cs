@@ -119,7 +119,6 @@ namespace Nekoyume.Action.Garages
             context.UseGas(1);
 
             var states = context.PreviousState;
-            if (context.Rehearsal) return states;
 
             // validate
             var addressesHex = GetSignerAndOtherAddressesHex(context);

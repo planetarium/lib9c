@@ -35,10 +35,10 @@ namespace Lib9c.Tests.Action.Scenario
 
         public AuraScenarioTest()
         {
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(_agentAddress);
-            _avatarAddress = new PrivateKey().ToAddress();
-            _enemyAvatarAddress = new PrivateKey().ToAddress();
+            _avatarAddress = new PrivateKey().Address;
+            _enemyAvatarAddress = new PrivateKey().Address;
             var rankingMapAddress = _avatarAddress.Derive("ranking_map");
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);

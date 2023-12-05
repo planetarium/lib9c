@@ -11,7 +11,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Serialize()
         {
-            var adminStateAddress = new PrivateKey().ToAddress();
+            var adminStateAddress = new PrivateKey().Address;
             var validUntil = 100;
             var adminState = new AdminState(adminStateAddress, validUntil);
 
@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void SerializeWithDotNetAPI()
         {
-            var adminStateAddress = new PrivateKey().ToAddress();
+            var adminStateAddress = new PrivateKey().Address;
             var validUntil = 100;
             var adminState = new AdminState(adminStateAddress, validUntil);
 

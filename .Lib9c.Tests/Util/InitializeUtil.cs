@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Util
                 bool isDevEx = false,
                 Dictionary<string, string> sheetsOverride = null)
         {
-            adminAddr ??= new PrivateKey().ToAddress();
+            adminAddr ??= new PrivateKey().Address;
             var context = new ActionContext();
             var states = new Account(MockState.Empty).SetState(
                 Addresses.Admin,
@@ -48,7 +48,7 @@ namespace Lib9c.Tests.Util
             var gameConfigState = new GameConfigState(tuple.sheets[nameof(GameConfigSheet)]);
             states = states.SetState(gameConfigState.address, gameConfigState.Serialize());
 
-            agentAddr ??= new PrivateKey().ToAddress();
+            agentAddr ??= new PrivateKey().Address;
             var avatarAddr = Addresses.GetAvatarAddress(agentAddr.Value, avatarIndex);
             var agentState = new AgentState(agentAddr.Value);
             var avatarState = new AvatarState(

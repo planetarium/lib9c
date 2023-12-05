@@ -20,7 +20,7 @@ namespace Nekoyume.Action
     [ActionType(TypeIdentifier)]
     public class MintAssets : ActionBase
     {
-        public const string TypeIdentifier = "mint_assets";
+        public const string TypeIdentifier = "mint_assets2";
 
         public MintAssets()
         {
@@ -108,17 +108,27 @@ namespace Nekoyume.Action
             {
                 if (
                     state.GetState(recipient) is Dictionary dict &&
-                    dict.TryGetValue((Text)SerializeKeys.MailBoxKey, out IValue rawMailBox)
+                    dict.TryGetValue((Text)SerializeKeys.MailBoxKey, out IValue rawMailBox) &&
+                    dict.TryGetValue((Text)SerializeKeys.AgentAddressKey, out IValue rawAgentAddress)
                 )
                 {
+                    var agentAddress = rawAgentAddress.ToAddress();
                     var mailBox = new MailBox((List)rawMailBox);
                     (List<FungibleAssetValue> favs, List<FungibleItemValue> fivs) = mailRecords[recipient];
+                    List<(Address recipient, FungibleAssetValue v)> mailFavs =
+                        favs.Select(v => (recipient, v))
+                            .ToList();
+
+                    if (mailRecords.TryGetValue(agentAddress, out (List<FungibleAssetValue> agentFavs, List<FungibleItemValue> _) agentRecords))
+                    {
+                        mailFavs.AddRange(agentRecords.agentFavs.Select(v => (agentAddress, v)));
+                    }
                     mailBox.Add(
                         new UnloadFromMyGaragesRecipientMail(
                             context.BlockIndex,
                             rng.GenerateRandomGuid(),
                             context.BlockIndex,
-                            favs.Select(v => (recipient, v)),
+                            mailFavs,
                             fivs.Select(v => (v.Id, v.Count)),
                             Memo
                         )

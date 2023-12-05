@@ -10,9 +10,9 @@ namespace Lib9c.Tests.Model.GrandFinale
         [Fact]
         public void Serialize()
         {
-            var avatarAddress = new PrivateKey().ToAddress();
-            var addr1 = new PrivateKey().ToAddress();
-            var addr2 = new PrivateKey().ToAddress();
+            var avatarAddress = new PrivateKey().Address;
+            var addr1 = new PrivateKey().Address;
+            var addr2 = new PrivateKey().Address;
             var state = new GrandFinaleInformation(avatarAddress, 1);
             state.UpdateRecord(addr1, true);
             state.UpdateRecord(addr2, false);
@@ -32,9 +32,9 @@ namespace Lib9c.Tests.Model.GrandFinale
         [Fact]
         public void UpdateBattleRecord()
         {
-            var avatarAddress = new PrivateKey().ToAddress();
+            var avatarAddress = new PrivateKey().Address;
             var state = new GrandFinaleInformation(avatarAddress, 1);
-            var enemyAddr = new PrivateKey().ToAddress();
+            var enemyAddr = new PrivateKey().Address;
             state.UpdateRecord(enemyAddr, true);
             var serialized = (List)state.Serialize();
             var deserialized = new GrandFinaleInformation(serialized);
@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Model.GrandFinale
             Assert.Equal(state.Address, deserialized.Address);
             Assert.True(state.TryGetBattleRecord(enemyAddr, out var win));
             Assert.True(win);
-            Assert.False(state.TryGetBattleRecord(new PrivateKey().ToAddress(), out _));
+            Assert.False(state.TryGetBattleRecord(new PrivateKey().Address, out _));
         }
     }
 }

@@ -37,12 +37,12 @@ namespace Lib9c.Tests.Model.Skill
             var normalAttack = new NormalAttack(skillRow, 100, 100, default, StatType.NONE);
 
             var avatarState = new AvatarState(
-                new PrivateKey().ToAddress(),
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
+                new PrivateKey().Address,
                 0,
                 tableSheets.GetAvatarSheets(),
                 new GameConfigState(),
-                new PrivateKey().ToAddress());
+                new PrivateKey().Address);
 
             var worldRow = tableSheets.WorldSheet.First;
             Assert.NotNull(worldRow);

@@ -25,6 +25,8 @@ namespace Nekoyume.Model.Buff
                 case ActionBuffType.Bleed:
                     var power = (int)decimal.Round(stat.ATK * row.ATKPowerRatio);
                     return new Bleed(row, power);
+                case ActionBuffType.Stun:
+                    return new Stun(row);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -36,6 +38,8 @@ namespace Nekoyume.Model.Buff
             {
                 case ActionBuffType.Bleed:
                     return new Bleed(customField, row);
+                case ActionBuffType.Stun:
+                    return new Stun(customField, row);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

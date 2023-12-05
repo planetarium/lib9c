@@ -15,8 +15,8 @@ namespace Lib9c.Tests.Model.State
         public void Serialization()
         {
             var shopState = new ShopState();
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
             weaponRow.Set(new[]
@@ -51,8 +51,8 @@ namespace Lib9c.Tests.Model.State
         public void Register()
         {
             var shopState = new ShopState();
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
             weaponRow.Set(new[]
@@ -85,8 +85,8 @@ namespace Lib9c.Tests.Model.State
         public void RegisterThrowShopStateAlreadyContainsException()
         {
             var shopState = new ShopState();
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
             weaponRow.Set(new[]
@@ -117,8 +117,8 @@ namespace Lib9c.Tests.Model.State
         public void Unregister()
         {
             var shopState = new ShopState();
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
             weaponRow.Set(new[]
@@ -153,8 +153,8 @@ namespace Lib9c.Tests.Model.State
         public void TryUnregister()
         {
             var shopState = new ShopState();
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
             weaponRow.Set(new[]
@@ -193,8 +193,8 @@ namespace Lib9c.Tests.Model.State
         public void TryGet()
         {
             var shopState = new ShopState();
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
             weaponRow.Set(new[]

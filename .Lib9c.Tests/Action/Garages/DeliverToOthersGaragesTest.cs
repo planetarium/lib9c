@@ -59,7 +59,7 @@ namespace Lib9c.Tests.Action.Garages
 
         public static IEnumerable<object[]> Get_Sample_PlainValue()
         {
-            var recipientAddr = new PrivateKey().ToAddress();
+            var recipientAddr = new PrivateKey().Address;
             var fungibleAssetValues = GetFungibleAssetValues();
             var hex = string.Join(
                 string.Empty,
@@ -336,7 +336,6 @@ namespace Lib9c.Tests.Action.Garages
                 {
                     Signer = signer,
                     BlockIndex = blockIndex,
-                    Rehearsal = false,
                     PreviousState = previousState,
                     RandomSeed = random.Seed,
                 }));
@@ -402,7 +401,7 @@ namespace Lib9c.Tests.Action.Garages
                         count: index + 1);
                 }).ToArray();
             return (
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 fungibleAssetValues,
                 fungibleIdAndCounts
                     .Select(tuple => (tuple.tradableFungibleItem.FungibleId, tuple.count))

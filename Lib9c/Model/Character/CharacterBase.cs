@@ -369,6 +369,11 @@ namespace Nekoyume.Model
                 var clone = (ActionBuff)action.Clone();
                 Buffs[action.RowData.GroupId] = clone;
             }
+            else if (buff is Stun stun)
+            {
+                var clone = (Stun)stun.Clone();
+                Buffs[stun.BuffInfo.GroupId] = clone;
+            }
         }
 
         public void RemoveRecentStatBuff()
@@ -509,8 +514,17 @@ namespace Nekoyume.Model
             {
                 ReduceDurationOfBuffs();
                 ReduceSkillCooldown();
-                OnPreSkill();
-                var usedSkill = UseSkill();
+                BattleStatus.Skill usedSkill;
+                if (OnPreSkill())
+                {
+                    usedSkill = new Tick((CharacterBase)Clone());
+                    Simulator.Log.Add(usedSkill);
+                }
+                else
+                {
+                    usedSkill = UseSkill();
+                }
+
                 if (usedSkill != null)
                 {
                     OnPostSkill(usedSkill);
@@ -556,9 +570,9 @@ namespace Nekoyume.Model
             EndTurn();
         }
 
-        protected virtual void OnPreSkill()
+        protected virtual bool OnPreSkill()
         {
-
+            return Buffs.Values.Any(buff => buff is Stun);
         }
 
         protected virtual void OnPostSkill(BattleStatus.Skill usedSkill)

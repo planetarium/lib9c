@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Model.State
         [InlineData(int.MaxValue)]
         public void DeriveAddress(int petId)
         {
-            var avatarAddress = new PrivateKey().ToAddress();
+            var avatarAddress = new PrivateKey().Address;
             var expectedAddress = avatarAddress.Derive($"pet-{petId}");
             Assert.Equal(expectedAddress, PetState.DeriveAddress(avatarAddress, petId));
         }

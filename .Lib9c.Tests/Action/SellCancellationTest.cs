@@ -54,11 +54,11 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             _goldCurrencyState = new GoldCurrencyState(currency);
 
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(_agentAddress);
-            _avatarAddress = new PrivateKey().ToAddress();
+            _avatarAddress = new PrivateKey().Address;
             _gameConfigState = new GameConfigState((Text)_tableSheets.GameConfigSheet.Serialize());
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(
                 _avatarAddress,
                 _agentAddress,
@@ -234,7 +234,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 101,
                 PreviousState = prevState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _agentAddress,
             });
 
@@ -262,7 +261,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 101,
                 PreviousState = prevState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _agentAddress,
             });
 
@@ -675,7 +673,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 101,
                 PreviousState = prevState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _agentAddress,
             });
 

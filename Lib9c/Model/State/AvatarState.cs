@@ -57,7 +57,7 @@ namespace Nekoyume.Model.State
         public static Address CreateAvatarAddress()
         {
             var key = new PrivateKey();
-            return key.PublicKey.ToAddress();
+            return key.PublicKey.Address;
         }
 
         public AvatarState(Address address,

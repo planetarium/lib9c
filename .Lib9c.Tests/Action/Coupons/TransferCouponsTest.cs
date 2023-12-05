@@ -42,7 +42,6 @@ namespace Lib9c.Tests.Action.Coupons
                     {
                         PreviousState = state,
                         Signer = CouponsFixture.AgentAddress1,
-                        Rehearsal = false,
                     }));
 
             // can't transfer coupon that's not mine
@@ -55,7 +54,6 @@ namespace Lib9c.Tests.Action.Coupons
                     {
                         PreviousState = state,
                         Signer = CouponsFixture.AgentAddress2,
-                        Rehearsal = false,
                     }));
 
             // can't transfer a coupon to two different people
@@ -70,7 +68,6 @@ namespace Lib9c.Tests.Action.Coupons
                     {
                         PreviousState = state,
                         Signer = CouponsFixture.AgentAddress1,
-                        Rehearsal = false,
                     }));
 
             // transfer to self
@@ -84,7 +81,6 @@ namespace Lib9c.Tests.Action.Coupons
                     {
                         PreviousState = state,
                         Signer = CouponsFixture.AgentAddress1,
-                        Rehearsal = false,
                     });
             Assert.Equal(expected, state.GetCouponWallet(CouponsFixture.AgentAddress1));
 
@@ -97,7 +93,6 @@ namespace Lib9c.Tests.Action.Coupons
                     {
                         PreviousState = state,
                         Signer = CouponsFixture.AgentAddress1,
-                        Rehearsal = false,
                     });
             Assert.Equal(expected, state.GetCouponWallet(CouponsFixture.AgentAddress1));
 
@@ -112,7 +107,6 @@ namespace Lib9c.Tests.Action.Coupons
                     {
                         PreviousState = state,
                         Signer = CouponsFixture.AgentAddress1,
-                        Rehearsal = false,
                     });
             Assert.Equal(
                 expected.Remove(CouponsFixture.Guid1),
@@ -132,7 +126,6 @@ namespace Lib9c.Tests.Action.Coupons
                     {
                         PreviousState = state,
                         Signer = CouponsFixture.AgentAddress1,
-                        Rehearsal = false,
                     }));
 
             // multiple transfer
@@ -162,7 +155,6 @@ namespace Lib9c.Tests.Action.Coupons
                     {
                         PreviousState = state,
                         Signer = CouponsFixture.AgentAddress1,
-                        Rehearsal = false,
                     });
             Assert.Equal(
                 ImmutableDictionary<Guid, Coupon>.Empty,

@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Address()
         {
-            var addr = new PrivateKey().ToAddress();
+            var addr = new PrivateKey().Address;
             var ser = addr.Serialize();
             var de = ser.ToAddress();
             Assert.Equal(addr, de);
@@ -36,7 +36,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void NullableAddress()
         {
-            Address? addr = new PrivateKey().ToAddress();
+            Address? addr = new PrivateKey().Address;
             var ser = addr.Serialize();
             var de = ser.ToNullableAddress();
             Assert.Equal(addr, de);

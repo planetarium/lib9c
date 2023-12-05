@@ -33,7 +33,7 @@ namespace Lib9c.Tests.Action
             _tableSheets = new TableSheets(_sheets);
 
             var privateKey = new PrivateKey();
-            _agentAddress = privateKey.PublicKey.ToAddress();
+            _agentAddress = privateKey.PublicKey.Address;
             var agentState = new AgentState(_agentAddress);
 
             _avatarAddress = _agentAddress.Derive("avatar");
@@ -158,7 +158,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
             });
 
@@ -233,7 +232,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agentAddress,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -434,7 +432,7 @@ namespace Lib9c.Tests.Action
             {
                 action.Execute(new ActionContext
                 {
-                    PreviousState = state, Signer = _agentAddress, RandomSeed = 0, Rehearsal = false,
+                    PreviousState = state, Signer = _agentAddress, RandomSeed = 0,
                 });
             });
         }
@@ -519,7 +517,6 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = nextState,
                 Signer = _agentAddress,
-                Rehearsal = false,
                 RandomSeed = 0,
             });
         }
@@ -717,7 +714,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = 1,
             });
 

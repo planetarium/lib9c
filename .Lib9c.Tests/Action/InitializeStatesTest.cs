@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Action
             var minterKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, minterKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var privateKey = new PrivateKey();
@@ -61,7 +61,7 @@ namespace Lib9c.Tests.Action
             var genesisState = action.Execute(new ActionContext()
             {
                 BlockIndex = 0,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 Miner = default,
                 PreviousState = new Account(MockState.Empty),
             });
@@ -97,7 +97,7 @@ namespace Lib9c.Tests.Action
             var minterKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, minterKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var privateKey = new PrivateKey();
@@ -129,7 +129,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 Miner = default,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 PreviousState = new Account(MockState.Empty),
             });
 
@@ -153,7 +153,7 @@ namespace Lib9c.Tests.Action
             var minterKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, minterKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var privateKey = new PrivateKey();
@@ -178,7 +178,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 Miner = default,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 PreviousState = new Account(MockState.Empty),
             });
 
@@ -199,7 +199,7 @@ namespace Lib9c.Tests.Action
             var minterKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, minterKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var adminAddress = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
@@ -230,7 +230,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 Miner = default,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 PreviousState = new Account(MockState.Empty),
             });
 
@@ -252,7 +252,7 @@ namespace Lib9c.Tests.Action
             var minterKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, minterKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var privateKey = new PrivateKey();
@@ -276,7 +276,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 Miner = default,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 PreviousState = new Account(MockState.Empty),
             });
 
@@ -319,7 +319,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 Miner = default,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 PreviousState = new Account(MockState.Empty),
             });
 
@@ -337,7 +337,7 @@ namespace Lib9c.Tests.Action
             var minterKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, minterKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var adminAddress = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
@@ -360,7 +360,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 Miner = default,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 PreviousState = new Account(MockState.Empty),
             });
 
