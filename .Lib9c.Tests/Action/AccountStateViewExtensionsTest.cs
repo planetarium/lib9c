@@ -129,7 +129,7 @@ namespace Lib9c.Tests.Action
                 .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
                 .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
                 .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
-            states = states.SetState(_avatarAddress.Derive(key), null);
+            states = states.SetNull(_avatarAddress.Derive(key));
             var exc = Assert.Throws<FailedLoadStateException>(() => states.GetAvatarStateV2(_avatarAddress));
             Assert.Contains(key, exc.Message);
         }

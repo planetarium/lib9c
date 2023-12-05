@@ -431,9 +431,9 @@ namespace Lib9c.Tests.Action
             {
                 state = _initialState
                     .SetState(_avatarAddress, _avatarState.SerializeV2())
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), null!)
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), null!)
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), null!);
+                    .SetNull(_avatarAddress.Derive(LegacyInventoryKey))
+                    .SetNull(_avatarAddress.Derive(LegacyWorldInformationKey))
+                    .SetNull(_avatarAddress.Derive(LegacyQuestListKey));
             }
 
             var exec = Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
@@ -933,7 +933,7 @@ namespace Lib9c.Tests.Action
             {
                 if (keys.Contains(key))
                 {
-                    initialState = initialState.SetState(Addresses.TableSheet.Derive(key), null!);
+                    initialState = initialState.SetNull(Addresses.TableSheet.Derive(key));
                 }
             }
 

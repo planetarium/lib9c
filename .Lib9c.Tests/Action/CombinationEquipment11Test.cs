@@ -92,7 +92,7 @@ namespace Lib9c.Tests.Action
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
             _arenaSheetState = _initialState.GetState(arenaSheetAddress);
-            _initialState = _initialState.SetState(arenaSheetAddress, null);
+            _initialState = _initialState.SetNull(arenaSheetAddress);
         }
 
         [Theory]
