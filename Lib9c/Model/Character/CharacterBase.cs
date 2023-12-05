@@ -620,13 +620,12 @@ namespace Nekoyume.Model
             {
                 foreach (var vampiric in vampirics)
                 {
-                    foreach (var skillInfo in attackSkills)
+                    foreach (var effect in attackSkills
+                                 .Select(skillInfo =>
+                                     vampiric.GiveEffect(this, skillInfo, Simulator.WaveTurn, log))
+                                 .Where(effect => log))
                     {
-                        var effect = vampiric.GiveEffect(this, skillInfo, Simulator.WaveTurn, log);
-                        if (log)
-                        {
-                            Simulator.Log.Add(effect);
-                        }
+                        Simulator.Log.Add(effect);
                     }
                 }
             }

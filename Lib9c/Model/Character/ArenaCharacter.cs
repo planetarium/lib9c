@@ -626,6 +626,7 @@ namespace Nekoyume.Model
                 _simulator.Log.Add(effect);
             }
 
+            var attackSkills = new List<ArenaSkill.ArenaSkillInfo>();
             // Apply thorn damage if target has thorn
             foreach (var skillInfo in usedSkill.SkillInfos)
             {
@@ -635,10 +636,28 @@ namespace Nekoyume.Model
                     skillInfo.SkillCategory == SkillCategory.DoubleAttack ||
                     skillInfo.SkillCategory == SkillCategory.AreaAttack ||
                     skillInfo.SkillCategory == SkillCategory.BuffRemovalAttack;
-                if (isAttackSkill && skillInfo.Target.Thorn > 0)
+                if (isAttackSkill)
                 {
-                    var effect = GiveThornDamage(skillInfo.Target.Thorn);
-                    _simulator.Log.Add(effect);
+                    attackSkills.Add(skillInfo);
+                    if (skillInfo.Target.Thorn > 0)
+                    {
+                        var effect = GiveThornDamage(skillInfo.Target.Thorn);
+                        _simulator.Log.Add(effect);
+                    }
+                }
+            }
+
+            if (!IsDead && Buffs.Values.OfType<Vampiric>().OrderBy(x => x.BuffInfo.Id) is
+                    { } vampirics)
+            {
+                foreach (var vampiric in vampirics)
+                {
+                    foreach (var effect in attackSkills
+                                 .Select(skillInfo =>
+                                     vampiric.GiveEffectForArena(this, skillInfo, _simulator.Turn)))
+                    {
+                        _simulator.Log.Add(effect);
+                    }
                 }
             }
         }
