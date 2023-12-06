@@ -48,7 +48,7 @@ namespace Nekoyume.Model.Buff
                     simulatorWaveTurn,
                     RowData.ElementalType,
                     RowData.TargetType,
-                    target: (CharacterBase)affectedCharacter.Clone())
+                    target: copyCharacter ? (CharacterBase)affectedCharacter.Clone() : null)
             };
             return new BattleStatus.Tick(RowData.Id,
                 target,
