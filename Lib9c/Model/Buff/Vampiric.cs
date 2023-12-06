@@ -50,7 +50,7 @@ namespace Nekoyume.Model.Buff
                     RowData.TargetType,
                     target: target)
             };
-            return new BattleStatus.HealSkill(RowData.Id,
+            return new BattleStatus.Tick(RowData.Id,
                 target,
                 infos,
                 ArraySegment<BattleStatus.Skill.SkillInfo>.Empty);
@@ -72,7 +72,7 @@ namespace Nekoyume.Model.Buff
                     RowData.ElementalType,
                     RowData.TargetType)
             };
-            return new ArenaHeal(
+            return new ArenaTick(
                 clone,
                 infos,
                 null);

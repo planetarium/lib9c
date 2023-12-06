@@ -19,5 +19,6 @@ namespace Nekoyume.Model
         IEnumerator CoRemoveBuffs(ArenaCharacter caster);
         IEnumerator CoDead(ArenaCharacter caster);
         IEnumerator CoTurnEnd(int turnNumber);
+        IEnumerator CoCustomEvent(ArenaCharacter caster, ArenaEventBase eventBase);
     }
 }

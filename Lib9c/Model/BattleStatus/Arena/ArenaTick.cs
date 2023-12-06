@@ -21,7 +21,7 @@ namespace Nekoyume.Model.BattleStatus.Arena
 
         public override IEnumerator CoExecute(IArena arena)
         {
-            yield return arena.CoTickDamage(Character, SkillInfos);
+            yield return arena.CoCustomEvent(Character, this);
         }
     }
 }
