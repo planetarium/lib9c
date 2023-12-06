@@ -629,15 +629,16 @@ namespace Lib9c.Tests.Model
                 if (currLog is Nekoyume.Model.BattleStatus.NormalAttack)
                 {
                     var nextLog = logList[i + 1];
-
-                    Assert.True(nextLog is TickDamage);
+                    if (currLog.Character.ActionBuffs.Any(actionBuff => actionBuff is Vampiric))
+                    {
+                        Assert.True(nextLog is Tick);
+                    }
+                    else
+                    {
+                        Assert.True(nextLog is TickDamage);
+                    }
                 }
-                else if (currLog is TickDamage)
-                {
-                    var nextLog = logList[i + 1];
-                    Assert.True(currLog.Character.CurrentHP > nextLog.Character.CurrentHP);
-                }
-                else if (currLog is Nekoyume.Model.BattleStatus.HealSkill healSkill)
+                else if (currLog is Tick healSkill)
                 {
                     Assert.Equal(vampiric.RowData.Id, healSkill.SkillId);
                     var healInfo = healSkill.SkillInfos.First();
@@ -653,7 +654,7 @@ namespace Lib9c.Tests.Model
             Assert.Contains(logList, e => e is Nekoyume.Model.BattleStatus.NormalAttack);
             Assert.Contains(logList, e => e is TickDamage);
             Assert.Contains(logList, e => e is RemoveBuffs);
-            Assert.Contains(logList, e => e is Nekoyume.Model.BattleStatus.HealSkill);
+            Assert.Contains(logList, e => e is Tick);
         }
     }
 }
