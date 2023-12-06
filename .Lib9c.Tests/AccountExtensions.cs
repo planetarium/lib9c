@@ -32,6 +32,11 @@ namespace Lib9c.Tests
         /// This can be very slow depending on the size of the state.
         /// For test backward compatibility only.  Should not be used in production.
         /// </summary>
+        /// <param name="account">The account to remove the value from.</param>
+        /// <param name="address">The address of the value to remove.</param>
+        /// <returns>
+        /// A new <see cref="IAccount"/> instance with the value removed.
+        /// </returns>
         public static IAccount SetNull(this IAccount account, Address address)
         {
             var trie = MockState.Empty.Trie;
