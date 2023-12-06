@@ -610,9 +610,9 @@ namespace Lib9c.Tests.Model
 
             var actionBuffSheet = _tableSheets.ActionBuffSheet;
             // force add buff 'Vampiric'
-            // 801000 is ActionBuff id of Vampiric
+            // 705000 is ActionBuff id of Vampiric
             var vampiric = (Vampiric)BuffFactory.GetCustomActionBuff(
-                new SkillCustomField { BuffDuration = 1, BuffValue = 1 }, actionBuffSheet[801000]);
+                new SkillCustomField { BuffDuration = 1, BuffValue = 1 }, actionBuffSheet[705000]);
             player.AddBuff(vampiric);
             var row = actionBuffSheet.Values.First();
             var bleed = BuffFactory.GetActionBuff(enemy.Stats, row);
