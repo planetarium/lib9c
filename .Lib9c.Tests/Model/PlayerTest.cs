@@ -571,8 +571,11 @@ namespace Lib9c.Tests.Model
             Assert.Contains(logList, e => e is Nekoyume.Model.BattleStatus.NormalAttack);
         }
 
-        [Fact]
-        public void Vampiric()
+        [Theory]
+        [InlineData(1, 100)]
+        [InlineData(2, 10)]
+        [InlineData(1, 1)]
+        public void Vampiric(int duration, int percent)
         {
             var defaultAttack = SkillFactory.GetV1(
                 _tableSheets.SkillSheet.Values.First(r => r.Id == GameConfig.DefaultAttackId),
@@ -612,7 +615,7 @@ namespace Lib9c.Tests.Model
             // force add buff 'Vampiric'
             // 705000 is ActionBuff id of Vampiric
             var vampiric = (Vampiric)BuffFactory.GetCustomActionBuff(
-                new SkillCustomField { BuffDuration = 1, BuffValue = 1 }, actionBuffSheet[705000]);
+                new SkillCustomField { BuffDuration = duration, BuffValue = percent }, actionBuffSheet[705000]);
             player.AddBuff(vampiric);
             var row = actionBuffSheet.Values.First();
             var bleed = BuffFactory.GetActionBuff(enemy.Stats, row);
