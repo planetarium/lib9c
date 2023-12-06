@@ -20,7 +20,7 @@ namespace Nekoyume.Action
     [ActionType(TypeIdentifier)]
     public class MintAssets : ActionBase
     {
-        public const string TypeIdentifier = "mint_assets2";
+        public const string TypeIdentifier = "mint_assets";
 
         public MintAssets()
         {
