@@ -31,7 +31,7 @@ namespace Nekoyume.Model.Buff
             return new Bleed(this);
         }
 
-        public override BattleStatus.Skill GiveEffect(CharacterBase affectedCharacter,
+        public BattleStatus.Skill GiveEffect(CharacterBase affectedCharacter,
             int simulatorWaveTurn, bool copyCharacter = true)
         {
             var clone = copyCharacter ? (CharacterBase) affectedCharacter.Clone() : null;
@@ -53,7 +53,7 @@ namespace Nekoyume.Model.Buff
                 null);
         }
 
-        public override ArenaSkill GiveEffectForArena(
+        public ArenaSkill GiveEffectForArena(
             ArenaCharacter affectedCharacter,
             int simulatorWaveTurn)
         {

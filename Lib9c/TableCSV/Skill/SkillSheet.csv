@@ -169,3 +169,4 @@ _250001,속도 증가(전체),Normal,Buff,SpeedBuff,Ally,1,1 // 미구현
 700003,치명 데미지 증가,Normal,Buff,CriticalDamageBuff,Self,1,15
 700004,기절,Normal,Debuff,Buff,Enemy,1,15
 700005,기절,Normal,Debuff,Buff,Enemies,1,15
+700006,흡혈,Normal,Buff,Buff,Self,1,15
