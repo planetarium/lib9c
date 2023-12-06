@@ -48,7 +48,7 @@ namespace Nekoyume.Model.Buff
                     simulatorWaveTurn,
                     RowData.ElementalType,
                     RowData.TargetType,
-                    target: target)
+                    target: copyCharacter ? (CharacterBase)affectedCharacter.Clone() : null)
             };
             return new BattleStatus.Tick(RowData.Id,
                 target,
@@ -64,7 +64,7 @@ namespace Nekoyume.Model.Buff
             // Copy new Character with healed.
             var infos = new List<ArenaSkill.ArenaSkillInfo>
             {
-                new(affectedCharacter,
+                new((ArenaCharacter)affectedCharacter.Clone(),
                     effect,
                     false,
                     SkillCategory.Heal,
