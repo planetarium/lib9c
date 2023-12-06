@@ -577,8 +577,31 @@ namespace Nekoyume.Model
 
         protected virtual void OnPostSkill(BattleStatus.Skill usedSkill)
         {
+            var log = Simulator.LogEvent;
+            var attackSkills = usedSkill.SkillInfos
+                .Where(skillInfo => skillInfo.SkillCategory
+                    is SkillCategory.NormalAttack
+                    or SkillCategory.BlowAttack
+                    or SkillCategory.DoubleAttack
+                    or SkillCategory.AreaAttack
+                    or SkillCategory.BuffRemovalAttack)
+                .ToList();
+            if (Buffs.Values.OfType<Vampiric>().OrderBy(x => x.BuffInfo.Id) is
+                { } vampirics)
+            {
+                foreach (var vampiric in vampirics)
+                {
+                    foreach (var effect in attackSkills
+                                 .Select(skillInfo =>
+                                     vampiric.GiveEffect(this, skillInfo, Simulator.WaveTurn, log))
+                                 .Where(_ => log))
+                    {
+                        Simulator.Log.Add(effect);
+                    }
+                }
+            }
+
             var bleeds = Buffs.Values.OfType<Bleed>().OrderBy(x => x.BuffInfo.Id);
-            bool log = Simulator.LogEvent;
             foreach (var bleed in bleeds)
             {
                 var effect = bleed.GiveEffect(this, Simulator.WaveTurn, log);
@@ -588,26 +611,15 @@ namespace Nekoyume.Model
                 }
             }
 
-            var attackSkills = new List<BattleStatus.Skill.SkillInfo>();
             // Apply thorn damage if target has thorn
-            foreach (var skillInfo in usedSkill.SkillInfos)
+            foreach (var skillInfo in attackSkills)
             {
-                var isAttackSkill =
-                    skillInfo.SkillCategory == SkillCategory.NormalAttack ||
-                    skillInfo.SkillCategory == SkillCategory.BlowAttack ||
-                    skillInfo.SkillCategory == SkillCategory.DoubleAttack ||
-                    skillInfo.SkillCategory == SkillCategory.AreaAttack ||
-                    skillInfo.SkillCategory == SkillCategory.BuffRemovalAttack;
-                if (isAttackSkill)
+                if (skillInfo.Thorn > 0)
                 {
-                    attackSkills.Add(skillInfo);
-                    if (skillInfo.Thorn > 0)
+                    var effect = GiveThornDamage(skillInfo.Thorn);
+                    if (log)
                     {
-                        var effect = GiveThornDamage(skillInfo.Thorn);
-                        if (log)
-                        {
-                            Simulator.Log.Add(effect);
-                        }
+                        Simulator.Log.Add(effect);
                     }
                 }
             }
@@ -615,19 +627,6 @@ namespace Nekoyume.Model
             if (IsDead)
             {
                 Die();
-            }
-            else if (Buffs.Values.OfType<Vampiric>().OrderBy(x => x.BuffInfo.Id) is { } vampirics)
-            {
-                foreach (var vampiric in vampirics)
-                {
-                    foreach (var effect in attackSkills
-                                 .Select(skillInfo =>
-                                     vampiric.GiveEffect(this, skillInfo, Simulator.WaveTurn, log))
-                                 .Where(effect => log))
-                    {
-                        Simulator.Log.Add(effect);
-                    }
-                }
             }
 
             FinishTargetIfKilledForBeforeV100310(usedSkill);

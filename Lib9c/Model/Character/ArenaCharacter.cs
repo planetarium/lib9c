@@ -619,36 +619,16 @@ namespace Nekoyume.Model
 
         protected virtual void OnPostSkill(BattleStatus.Arena.ArenaSkill usedSkill)
         {
-            var bleeds = Buffs.Values.OfType<Bleed>().OrderBy(x => x.BuffInfo.Id);
-            foreach (var bleed in bleeds)
-            {
-                var effect = bleed.GiveEffectForArena(this, _simulator.Turn);
-                _simulator.Log.Add(effect);
-            }
-
-            var attackSkills = new List<ArenaSkill.ArenaSkillInfo>();
-            // Apply thorn damage if target has thorn
-            foreach (var skillInfo in usedSkill.SkillInfos)
-            {
-                var isAttackSkill =
-                    skillInfo.SkillCategory == SkillCategory.NormalAttack ||
-                    skillInfo.SkillCategory == SkillCategory.BlowAttack ||
-                    skillInfo.SkillCategory == SkillCategory.DoubleAttack ||
-                    skillInfo.SkillCategory == SkillCategory.AreaAttack ||
-                    skillInfo.SkillCategory == SkillCategory.BuffRemovalAttack;
-                if (isAttackSkill)
-                {
-                    attackSkills.Add(skillInfo);
-                    if (skillInfo.Target.Thorn > 0)
-                    {
-                        var effect = GiveThornDamage(skillInfo.Target.Thorn);
-                        _simulator.Log.Add(effect);
-                    }
-                }
-            }
-
-            if (!IsDead && Buffs.Values.OfType<Vampiric>().OrderBy(x => x.BuffInfo.Id) is
-                    { } vampirics)
+            var attackSkills = usedSkill.SkillInfos
+                .Where(skillInfo => skillInfo.SkillCategory
+                    is SkillCategory.NormalAttack
+                    or SkillCategory.BlowAttack
+                    or SkillCategory.DoubleAttack
+                    or SkillCategory.AreaAttack
+                    or SkillCategory.BuffRemovalAttack)
+                .ToList();
+            if (Buffs.Values.OfType<Vampiric>().OrderBy(x => x.BuffInfo.Id) is
+                { } vampirics)
             {
                 foreach (var vampiric in vampirics)
                 {
@@ -658,6 +638,23 @@ namespace Nekoyume.Model
                     {
                         _simulator.Log.Add(effect);
                     }
+                }
+            }
+
+            var bleeds = Buffs.Values.OfType<Bleed>().OrderBy(x => x.BuffInfo.Id);
+            foreach (var bleed in bleeds)
+            {
+                var effect = bleed.GiveEffectForArena(this, _simulator.Turn);
+                _simulator.Log.Add(effect);
+            }
+
+            // Apply thorn damage if target has thorn
+            foreach (var skillInfo in attackSkills)
+            {
+                if (skillInfo.Target.Thorn > 0)
+                {
+                    var effect = GiveThornDamage(skillInfo.Target.Thorn);
+                    _simulator.Log.Add(effect);
                 }
             }
         }
