@@ -228,7 +228,7 @@ namespace Lib9c.Tests.Action.Scenario
                 var enemyAvatarAddress = avatarAddress.Equals(_avatarAddress)
                     ? _enemyAvatarAddress
                     : _avatarAddress;
-                var battle = new BattleArena13
+                var battle = new BattleArena
                 {
                     myAvatarAddress = avatarAddress,
                     enemyAvatarAddress = enemyAvatarAddress,
