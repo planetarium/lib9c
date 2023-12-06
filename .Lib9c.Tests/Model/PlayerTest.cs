@@ -570,5 +570,94 @@ namespace Lib9c.Tests.Model
             Assert.Contains(logList, e => e is RemoveBuffs);
             Assert.Contains(logList, e => e is Nekoyume.Model.BattleStatus.NormalAttack);
         }
+
+        [Theory]
+        [InlineData(1, 100)]
+        [InlineData(2, 10)]
+        [InlineData(1, 1)]
+        public void Vampiric(int duration, int percent)
+        {
+            var defaultAttack = SkillFactory.GetV1(
+                _tableSheets.SkillSheet.Values.First(r => r.Id == GameConfig.DefaultAttackId),
+                100,
+                100
+            );
+
+            var simulator = new StageSimulator(
+                _random,
+                _avatarState,
+                new List<Guid>(),
+                null,
+                new List<Nekoyume.Model.Skill.Skill>(),
+                1,
+                1,
+                _tableSheets.StageSheet[1],
+                _tableSheets.StageWaveSheet[1],
+                false,
+                20,
+                _tableSheets.GetSimulatorSheets(),
+                _tableSheets.EnemySkillSheet,
+                _tableSheets.CostumeStatSheet,
+                StageSimulator.GetWaveRewards(
+                    _random,
+                    _tableSheets.StageSheet[1],
+                    _tableSheets.MaterialItemSheet)
+            );
+            var player = simulator.Player;
+            var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
+            player.Targets.Add(enemy);
+            simulator.Characters = new SimplePriorityQueue<CharacterBase, decimal>();
+            simulator.Characters.Enqueue(enemy, 0);
+            player.InitAI();
+            player.OverrideSkill(defaultAttack);
+
+            var actionBuffSheet = _tableSheets.ActionBuffSheet;
+            // force add buff 'Vampiric'
+            // 705000 is ActionBuff id of Vampiric
+            var vampiric = (Vampiric)BuffFactory.GetCustomActionBuff(
+                new SkillCustomField { BuffDuration = duration, BuffValue = percent }, actionBuffSheet[705000]);
+            player.AddBuff(vampiric);
+            var row = actionBuffSheet.Values.First();
+            var bleed = BuffFactory.GetActionBuff(enemy.Stats, row);
+            player.AddBuff(bleed);
+            player.Tick();
+            player.Tick();
+            Assert.NotEmpty(simulator.Log);
+            var log = simulator.Log;
+            var logCount = log.Count;
+            var logList = log.ToList();
+            for (int i = 0; i < logCount; i++)
+            {
+                var currLog = logList[i];
+                if (currLog is Nekoyume.Model.BattleStatus.NormalAttack)
+                {
+                    var nextLog = logList[i + 1];
+                    if (currLog.Character.ActionBuffs.Any(actionBuff => actionBuff is Vampiric))
+                    {
+                        Assert.True(nextLog is Tick);
+                    }
+                    else
+                    {
+                        Assert.True(nextLog is TickDamage);
+                    }
+                }
+                else if (currLog is Tick healSkill)
+                {
+                    Assert.Equal(vampiric.RowData.Id, healSkill.SkillId);
+                    var healInfo = healSkill.SkillInfos.First();
+                    var prevAttack = logList.Take(i).OfType<Nekoyume.Model.BattleStatus.NormalAttack>()
+                        .Last();
+                    Assert.Equal(
+                        (int)(prevAttack.SkillInfos.First().Effect * vampiric.BasisPoint / 10000m),
+                        healInfo.Effect);
+                }
+            }
+
+            Assert.True(logList.Count > 0);
+            Assert.Contains(logList, e => e is Nekoyume.Model.BattleStatus.NormalAttack);
+            Assert.Contains(logList, e => e is TickDamage);
+            Assert.Contains(logList, e => e is RemoveBuffs);
+            Assert.Contains(logList, e => e is Tick);
+        }
     }
 }

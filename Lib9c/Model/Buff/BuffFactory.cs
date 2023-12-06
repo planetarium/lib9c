@@ -27,6 +27,8 @@ namespace Nekoyume.Model.Buff
                     return new Bleed(row, power);
                 case ActionBuffType.Stun:
                     return new Stun(row);
+                case ActionBuffType.Vampiric:
+                    return new Vampiric(row, 0);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -40,6 +42,8 @@ namespace Nekoyume.Model.Buff
                     return new Bleed(customField, row);
                 case ActionBuffType.Stun:
                     return new Stun(customField, row);
+                case ActionBuffType.Vampiric:
+                    return new Vampiric(customField, row);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
