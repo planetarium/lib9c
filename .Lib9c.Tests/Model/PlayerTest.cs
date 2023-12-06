@@ -648,7 +648,7 @@ namespace Lib9c.Tests.Model
                     var prevAttack = logList.Take(i).OfType<Nekoyume.Model.BattleStatus.NormalAttack>()
                         .Last();
                     Assert.Equal(
-                        (int)(prevAttack.SkillInfos.First().Effect * vampiric.Percentage / 100m),
+                        (int)(prevAttack.SkillInfos.First().Effect * vampiric.BasisPoint / 10000m),
                         healInfo.Effect);
                 }
             }

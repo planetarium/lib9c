@@ -9,21 +9,21 @@ namespace Nekoyume.Model.Buff
     [Serializable]
     public class Vampiric : ActionBuff
     {
-        public int Percentage { get; }
+        public int BasisPoint { get; }
 
-        public Vampiric(ActionBuffSheet.Row row, int percentage) : base(row)
+        public Vampiric(ActionBuffSheet.Row row, int basisPoint) : base(row)
         {
-            Percentage = percentage;
+            BasisPoint = basisPoint;
         }
 
         public Vampiric(SkillCustomField customField, ActionBuffSheet.Row row) : base(customField, row)
         {
-            Percentage = customField.BuffValue;
+            BasisPoint = customField.BuffValue;
         }
 
         protected Vampiric(Vampiric value) : base(value)
         {
-            Percentage = value.Percentage;
+            BasisPoint = value.BasisPoint;
         }
 
         public override object Clone()
@@ -34,7 +34,7 @@ namespace Nekoyume.Model.Buff
         public BattleStatus.Skill GiveEffect(CharacterBase affectedCharacter, BattleStatus.Skill.SkillInfo skillInfo, int simulatorWaveTurn, bool copyCharacter = true)
         {
             var target = copyCharacter ? (CharacterBase) affectedCharacter.Clone() : null;
-            var effect = (int)(skillInfo.Effect * Percentage / 100m);
+            var effect = (int)(skillInfo.Effect * BasisPoint / 10000m);
             affectedCharacter.Heal(effect);
             // Copy new Character with healed.
             var infos = new List<BattleStatus.Skill.SkillInfo>
@@ -59,7 +59,7 @@ namespace Nekoyume.Model.Buff
         public ArenaSkill GiveEffectForArena(ArenaCharacter affectedCharacter, ArenaSkill.ArenaSkillInfo skillInfo, int simulatorWaveTurn)
         {
             var clone = (ArenaCharacter)affectedCharacter.Clone();
-            var effect = (int)(skillInfo.Effect * Percentage / 100m);
+            var effect = (int)(skillInfo.Effect * BasisPoint / 10000m);
             affectedCharacter.Heal(effect);
             // Copy new Character with healed.
             var infos = new List<ArenaSkill.ArenaSkillInfo>
