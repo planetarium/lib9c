@@ -42,8 +42,8 @@ namespace Lib9c.Tools.SubCommand
             [Option(
                 'T',
                 Description = "Filter by item type.  This implicitly filters out transactions " +
-                    "made with " + nameof(Buy) + " action version prior to " + nameof(Buy5) +
-                    ".  This can be applied multiple times (meaning: match any of them).  " +
+                    "made with " + nameof(Buy) + "." +
+                    "This can be applied multiple times (meaning: match any of them).  " +
                     "The list of available types can be found in " + nameof(ItemSubType) +
                     " enum declared in Lib9c/Model/Item/ItemType.cs file.")]
             string[] itemType = null,
