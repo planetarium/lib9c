@@ -13,6 +13,11 @@ namespace Lib9c.Tests
             foreach (var filePath in files)
             {
                 var fileName = Path.GetFileName(filePath);
+                if (fileName.StartsWith("_"))
+                {
+                    continue;
+                }
+
                 if (fileName.EndsWith(".csv"))
                 {
                     fileName = fileName.Split(".csv")[0];
