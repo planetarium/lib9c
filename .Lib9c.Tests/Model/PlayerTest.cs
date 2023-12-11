@@ -579,7 +579,7 @@ namespace Lib9c.Tests.Model
         {
             var defaultAttack = SkillFactory.GetV1(
                 _tableSheets.SkillSheet.Values.First(r => r.Id == GameConfig.DefaultAttackId),
-                100,
+                int.MaxValue / 2,
                 100
             );
 
@@ -604,7 +604,12 @@ namespace Lib9c.Tests.Model
                     _tableSheets.MaterialItemSheet)
             );
             var player = simulator.Player;
-            var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
+            var enemy = new Enemy(
+                player,
+                _tableSheets.CharacterSheet.Values.First(),
+                1,
+                new[] { new StatModifier(StatType.HP, StatModifier.OperationType.Add, int.MaxValue / 2), }
+            );
             player.Targets.Add(enemy);
             simulator.Characters = new SimplePriorityQueue<CharacterBase, decimal>();
             simulator.Characters.Enqueue(enemy, 0);
@@ -648,7 +653,7 @@ namespace Lib9c.Tests.Model
                     var prevAttack = logList.Take(i).OfType<Nekoyume.Model.BattleStatus.NormalAttack>()
                         .Last();
                     Assert.Equal(
-                        (int)(prevAttack.SkillInfos.First().Effect * vampiric.BasisPoint / 10000m),
+                        (int)(prevAttack.SkillInfos.First().Effect * (vampiric.BasisPoint / 10000m)),
                         healInfo.Effect);
                 }
             }

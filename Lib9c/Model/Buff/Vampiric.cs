@@ -34,7 +34,7 @@ namespace Nekoyume.Model.Buff
         public BattleStatus.Skill GiveEffect(CharacterBase affectedCharacter, BattleStatus.Skill.SkillInfo skillInfo, int simulatorWaveTurn, bool copyCharacter = true)
         {
             var target = copyCharacter ? (CharacterBase) affectedCharacter.Clone() : null;
-            var effect = (int)(skillInfo.Effect * BasisPoint / 10000m);
+            var effect = (int)(skillInfo.Effect * (BasisPoint / 10000m));
             affectedCharacter.Heal(effect);
             // Copy new Character with healed.
             var infos = new List<BattleStatus.Skill.SkillInfo>
@@ -59,7 +59,7 @@ namespace Nekoyume.Model.Buff
         public ArenaSkill GiveEffectForArena(ArenaCharacter affectedCharacter, ArenaSkill.ArenaSkillInfo skillInfo, int simulatorWaveTurn)
         {
             var clone = (ArenaCharacter)affectedCharacter.Clone();
-            var effect = (int)(skillInfo.Effect * BasisPoint / 10000m);
+            var effect = (int)(skillInfo.Effect * (BasisPoint / 10000m));
             affectedCharacter.Heal(effect);
             // Copy new Character with healed.
             var infos = new List<ArenaSkill.ArenaSkillInfo>
