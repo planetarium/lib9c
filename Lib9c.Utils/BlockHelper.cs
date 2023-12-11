@@ -37,7 +37,8 @@ namespace Nekoyume
             PrivateKey? privateKey = null,
             DateTimeOffset? timestamp = null,
             IEnumerable<ActionBase>? actionBases = null,
-            Currency? goldCurrency = null
+            Currency? goldCurrency = null,
+            ISet<Address>? assetMinters = null
         )
         {
             if (!tableSheets.TryGetValue(nameof(GameConfigSheet), out var csv))
@@ -53,7 +54,7 @@ namespace Nekoyume
             activatedAccounts ??= ImmutableHashSet<Address>.Empty;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            goldCurrency ??= Currency.Legacy("NCG", 2, privateKey.ToAddress());
+            goldCurrency ??= Currency.Legacy("NCG", 2, privateKey.Address);
 #pragma warning restore CS0618
 
             var initialStatesAction = new InitializeStates
@@ -72,7 +73,8 @@ namespace Nekoyume
                 goldDistributions: goldDistributions,
                 pendingActivationStates: pendingActivationStates,
                 authorizedMinersState: authorizedMinersState,
-                creditsState: credits is null ? null : new CreditsState(credits)
+                creditsState: credits is null ? null : new CreditsState(credits),
+                assetMinters: assetMinters
             );
             List<ActionBase> actions = new List<ActionBase>
             {

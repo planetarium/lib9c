@@ -63,7 +63,7 @@ namespace Lib9c.Tests.Model.State
         [InlineData(long.MinValue)]
         public void Claim(long blockIndex)
         {
-            var stakeState = new StakeState(new PrivateKey().ToAddress(), 0L);
+            var stakeState = new StakeState(new PrivateKey().Address, 0L);
             stakeState.Claim(blockIndex);
             Assert.Equal(blockIndex, stakeState.ReceivedBlockIndex);
         }
@@ -121,7 +121,7 @@ namespace Lib9c.Tests.Model.State
             int expectedStep)
         {
             var stakeState = new StakeState(
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 startedBlockIndex);
             stakeState.Claim(receivedBlockIndex);
             var actualStep = stakeState.GetRewardStepV1(currentBlockIndex, rewardStartBlockIndex);
@@ -167,7 +167,7 @@ namespace Lib9c.Tests.Model.State
             int expectedStep)
         {
             var stakeState = new StakeState(
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 startedBlockIndex);
             stakeState.Claim(receivedBlockIndex);
             var actualStep = stakeState.GetRewardStep(currentBlockIndex, rewardStartBlockIndex);

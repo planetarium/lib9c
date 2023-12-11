@@ -92,22 +92,22 @@ namespace Lib9c.Tests.Model.State
             int count,
             int expectedCount)
         {
-            var weeklyArenaState = new WeeklyArenaState(new PrivateKey().ToAddress());
+            var weeklyArenaState = new WeeklyArenaState(new PrivateKey().Address);
             var characterSheet = new CharacterSheet();
             characterSheet.Set(_sheets[nameof(CharacterSheet)]);
 
             for (var i = 0; i < infoCount; i++)
             {
                 var avatarState = new AvatarState(
-                    new PrivateKey().ToAddress(),
-                    new PrivateKey().ToAddress(),
+                    new PrivateKey().Address,
+                    new PrivateKey().Address,
                     0L,
                     _tableSheets.GetAvatarSheets(),
                     new GameConfigState(),
                     default,
                     i.ToString());
                 weeklyArenaState.Add(
-                    new PrivateKey().ToAddress(),
+                    new PrivateKey().Address,
                     new ArenaInfo(avatarState, characterSheet, new CostumeStatSheet(), true));
             }
 
@@ -126,22 +126,22 @@ namespace Lib9c.Tests.Model.State
         [InlineData(10, 11)]
         public void GetArenaInfosByFirstRankAndCountThrow(int infoCount, int firstRank)
         {
-            var weeklyArenaState = new WeeklyArenaState(new PrivateKey().ToAddress());
+            var weeklyArenaState = new WeeklyArenaState(new PrivateKey().Address);
             var characterSheet = new CharacterSheet();
             characterSheet.Set(_sheets[nameof(CharacterSheet)]);
 
             for (var i = 0; i < infoCount; i++)
             {
                 var avatarState = new AvatarState(
-                    new PrivateKey().ToAddress(),
-                    new PrivateKey().ToAddress(),
+                    new PrivateKey().Address,
+                    new PrivateKey().Address,
                     0L,
                     _tableSheets.GetAvatarSheets(),
                     new GameConfigState(),
                     default,
                     i.ToString());
                 weeklyArenaState.Add(
-                    new PrivateKey().ToAddress(),
+                    new PrivateKey().Address,
                     new ArenaInfo(avatarState, characterSheet, new CostumeStatSheet(), true));
             }
 
@@ -160,13 +160,13 @@ namespace Lib9c.Tests.Model.State
             int lowerRange,
             int expectedCount)
         {
-            var weeklyArenaState = new WeeklyArenaState(new PrivateKey().ToAddress());
+            var weeklyArenaState = new WeeklyArenaState(new PrivateKey().Address);
             Address targetAddress = default;
             var characterSheet = new CharacterSheet();
             characterSheet.Set(_sheets[nameof(CharacterSheet)]);
             for (var i = 0; i < infoCount; i++)
             {
-                var avatarAddress = new PrivateKey().ToAddress();
+                var avatarAddress = new PrivateKey().Address;
                 if (i + 1 == targetRank)
                 {
                     targetAddress = avatarAddress;
@@ -174,14 +174,14 @@ namespace Lib9c.Tests.Model.State
 
                 var avatarState = new AvatarState(
                     avatarAddress,
-                    new PrivateKey().ToAddress(),
+                    new PrivateKey().Address,
                     0L,
                     _tableSheets.GetAvatarSheets(),
                     new GameConfigState(),
                     default,
                     i.ToString());
                 weeklyArenaState.Add(
-                    new PrivateKey().ToAddress(),
+                    new PrivateKey().Address,
                     new ArenaInfo(avatarState, characterSheet, new CostumeStatSheet(), true));
             }
 

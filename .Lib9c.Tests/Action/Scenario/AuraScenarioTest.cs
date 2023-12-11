@@ -35,10 +35,10 @@ namespace Lib9c.Tests.Action.Scenario
 
         public AuraScenarioTest()
         {
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(_agentAddress);
-            _avatarAddress = new PrivateKey().ToAddress();
-            _enemyAvatarAddress = new PrivateKey().ToAddress();
+            _avatarAddress = new PrivateKey().Address;
+            _enemyAvatarAddress = new PrivateKey().Address;
             var rankingMapAddress = _avatarAddress.Derive("ranking_map");
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
@@ -228,7 +228,7 @@ namespace Lib9c.Tests.Action.Scenario
                 var enemyAvatarAddress = avatarAddress.Equals(_avatarAddress)
                     ? _enemyAvatarAddress
                     : _avatarAddress;
-                var battle = new BattleArena13
+                var battle = new BattleArena
                 {
                     myAvatarAddress = avatarAddress,
                     enemyAvatarAddress = enemyAvatarAddress,
@@ -252,7 +252,7 @@ namespace Lib9c.Tests.Action.Scenario
                 });
                 var avatarState = prevState.GetAvatarStateV2(avatarAddress);
                 var enemyAvatarState = prevState.GetAvatarStateV2(enemyAvatarAddress);
-                var simulator = new ArenaSimulator(new TestRandom());
+                var simulator = new ArenaSimulator(new TestRandom(), 10);
                 var myArenaPlayerDigest = new ArenaPlayerDigest(
                     avatarState,
                     battle.equipments,
@@ -276,7 +276,7 @@ namespace Lib9c.Tests.Action.Scenario
                 foreach (var spawn in log.OfType<ArenaSpawnCharacter>())
                 {
                     ArenaCharacter character = spawn.Character;
-                    Assert.Equal(100, character.HIT);
+                    Assert.Equal(400, character.HIT);
                     Assert.Equal(11, character.CRI);
                 }
 
@@ -366,7 +366,7 @@ namespace Lib9c.Tests.Action.Scenario
             var row = _tableSheets.CharacterSheet[player.CharacterId];
             Assert.Null(player.aura);
             Assert.NotNull(equippedPlayer.aura);
-            Assert.Equal(player.HIT + 10 + (int)(row.LvHIT * diffLevel), equippedPlayer.HIT);
+            Assert.Equal(player.HIT + 310 + (int)(row.LvHIT * diffLevel), equippedPlayer.HIT);
             Assert.Equal(player.CRI + 1, equippedPlayer.CRI);
         }
 

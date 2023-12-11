@@ -50,7 +50,7 @@ namespace Lib9c.Tests.Action
 
             _tableSheets = new TableSheets(sheets);
 
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
 
             var (agent1State, avatar1State) = GetAgentStateWithAvatarState(
                 sheets,
@@ -111,7 +111,7 @@ namespace Lib9c.Tests.Action
             TableSheets tableSheets,
             Address rankingMapAddress)
         {
-            var agentAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);
 
             var avatarAddress = agentAddress.Derive("avatar");
@@ -170,7 +170,6 @@ namespace Lib9c.Tests.Action
                     PreviousState = previousState,
                     Signer = _agent1Address,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }

@@ -38,7 +38,7 @@ namespace Lib9c.Tests.TestHelper
             stagePolicy ??= new VolatileStagePolicy();
             store ??= new DefaultStore(null);
             stateStore ??= new TrieStateStore(new DefaultKeyValueStore(null));
-            Block genesis = MakeGenesisBlock(adminPrivateKey.ToAddress(), ImmutableHashSet<Address>.Empty);
+            Block genesis = MakeGenesisBlock(adminPrivateKey.Address, ImmutableHashSet<Address>.Empty);
             return BlockChain.Create(
                 policy,
                 stagePolicy,
@@ -117,12 +117,12 @@ namespace Lib9c.Tests.TestHelper
             }
 
             var tableSheets = new TableSheets(sheets);
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
 
-            var agentAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);
 
-            var avatarAddress = new PrivateKey().ToAddress();
+            var avatarAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(
                 avatarAddress,
                 agentAddress,
@@ -158,7 +158,6 @@ namespace Lib9c.Tests.TestHelper
                 BlockIndex = 0,
                 PreviousState = initialState,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             return new MakeInitialStateResult(

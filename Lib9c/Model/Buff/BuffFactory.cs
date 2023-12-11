@@ -25,6 +25,10 @@ namespace Nekoyume.Model.Buff
                 case ActionBuffType.Bleed:
                     var power = (int)decimal.Round(stat.ATK * row.ATKPowerRatio);
                     return new Bleed(row, power);
+                case ActionBuffType.Stun:
+                    return new Stun(row);
+                case ActionBuffType.Vampiric:
+                    return new Vampiric(row, 0);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -36,6 +40,10 @@ namespace Nekoyume.Model.Buff
             {
                 case ActionBuffType.Bleed:
                     return new Bleed(customField, row);
+                case ActionBuffType.Stun:
+                    return new Stun(customField, row);
+                case ActionBuffType.Vampiric:
+                    return new Vampiric(customField, row);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -47,15 +55,16 @@ namespace Nekoyume.Model.Buff
             SkillBuffSheet skillBuffSheet,
             StatBuffSheet statBuffSheet,
             SkillActionBuffSheet skillActionBuffSheet,
-            ActionBuffSheet actionBuffSheet)
+            ActionBuffSheet actionBuffSheet,
+            bool hasExtraValueBuff = false)
         {
             var buffs = new List<Buff>();
 
             // If ReferencedStatType exists,
             // buff value = original value + (referenced stat * (SkillRow.StatPowerRatio / 10000))
-            var extraValueBuff =
-                skill is BuffSkill &&
-                (skill.Power > 0 || skill.ReferencedStatType != StatType.NONE);
+            var extraValueBuff = hasExtraValueBuff ||
+                                 (skill is BuffSkill &&
+                                  (skill.Power > 0 || skill.ReferencedStatType != StatType.NONE));
 
             if (skillBuffSheet.TryGetValue(skill.SkillRow.Id, out var skillStatBuffRow))
             {
@@ -76,7 +85,7 @@ namespace Nekoyume.Model.Buff
                             var multiplier = skill.StatPowerRatio / 10000m;
                             additionalValue += (int)Math.Round(statMap.GetStat(skill.ReferencedStatType) * multiplier);
                         }
-                        
+
                         customField = new SkillCustomField()
                         {
                             BuffDuration = buffRow.Duration,

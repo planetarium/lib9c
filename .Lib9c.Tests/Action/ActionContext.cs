@@ -27,8 +27,6 @@ namespace Lib9c.Tests.Action
 
         public int BlockProtocolVersion { get; set; }
 
-        public bool Rehearsal { get; set; }
-
         public IAccount PreviousState { get; set; }
 
         public int RandomSeed { get; set; }

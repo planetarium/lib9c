@@ -53,7 +53,7 @@ namespace Lib9c.Tests.Action.Scenario
             _ncg = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(_ncg);
-            _rankingMapAddress = new PrivateKey().ToAddress();
+            _rankingMapAddress = new PrivateKey().Address;
             var clearStageId = Math.Max(
                 _tableSheets.StageSheet.First?.Id ?? 1,
                 GameConfig.RequireClearedStageLevel.ActionsInRankingBoard);
@@ -116,7 +116,6 @@ namespace Lib9c.Tests.Action.Scenario
                 PreviousState = _state,
                 Signer = signer,
                 RandomSeed = random.Seed,
-                Rehearsal = false,
                 BlockIndex = roundData.StartBlockIndex,
             });
             return _state;
@@ -131,7 +130,7 @@ namespace Lib9c.Tests.Action.Scenario
             int ticket,
             long blockIndex)
         {
-            var action = new BattleArena6()
+            var action = new BattleArena()
             {
                 myAvatarAddress = myAvatarAddress,
                 enemyAvatarAddress = enemyAvatarAddress,
@@ -147,7 +146,6 @@ namespace Lib9c.Tests.Action.Scenario
                 PreviousState = _state,
                 Signer = signer,
                 RandomSeed = random.Seed,
-                Rehearsal = false,
                 BlockIndex = blockIndex,
             });
             return _state;
@@ -159,7 +157,7 @@ namespace Lib9c.Tests.Action.Scenario
                 _tableSheets.StageSheet.First?.Id ?? 1,
                 GameConfig.RequireClearedStageLevel.ActionsInRankingBoard);
 
-            var agentAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);
 
             var avatarAddress = agentAddress.Derive("avatar");
@@ -364,7 +362,7 @@ namespace Lib9c.Tests.Action.Scenario
                 }
             }
 
-            targetAddress = new PrivateKey().ToAddress();
+            targetAddress = new PrivateKey().Address;
             return false;
         }
 

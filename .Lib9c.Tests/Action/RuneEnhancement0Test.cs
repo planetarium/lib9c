@@ -28,8 +28,8 @@ namespace Lib9c.Tests.Action
         [InlineData(1)]
         public void Execute(int seed)
         {
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var blockIndex = tableSheets.WorldBossListSheet.Values
@@ -120,7 +120,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
                 PreviousState = state,
                 RandomSeed = rand.Seed,
-                Rehearsal = false,
                 Signer = agentAddress,
             };
 
@@ -181,8 +180,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_RuneCostNotFoundException()
         {
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var blockIndex = tableSheets.WorldBossListSheet.Values
@@ -234,8 +233,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_RuneCostDataNotFoundException()
         {
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var blockIndex = tableSheets.WorldBossListSheet.Values
@@ -302,8 +301,8 @@ namespace Lib9c.Tests.Action
         [InlineData(true, false, true)]
         public void Execute_NotEnoughFungibleAssetValueException(bool ncg, bool crystal, bool rune)
         {
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var blockIndex = tableSheets.WorldBossListSheet.Values
@@ -384,7 +383,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
                 PreviousState = state,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = agentAddress,
             };
 
@@ -416,8 +414,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_TryCountIsZeroException()
         {
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var blockIndex = tableSheets.WorldBossListSheet.Values

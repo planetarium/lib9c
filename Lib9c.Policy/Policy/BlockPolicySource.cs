@@ -30,7 +30,7 @@ namespace Nekoyume.Blockchain.Policy
 {
     public partial class BlockPolicySource
     {
-        public const int MaxTransactionsPerBlock = 100;
+        public const int MaxTransactionsPerBlock = 200;
 
         public static readonly TimeSpan BlockInterval = TimeSpan.FromSeconds(8);
 
@@ -229,12 +229,21 @@ namespace Nekoyume.Blockchain.Policy
                             return null;
                     }
                 }
-                if (transaction.MaxGasPrice is null || transaction.GasLimit is null)
+
+                if (!(transaction.MaxGasPrice is { } gasPrice && transaction.GasLimit is { } gasLimit))
                 {
-                    return new
-                        TxPolicyViolationException("Transaction has no gas price or limit.",
+                    return new TxPolicyViolationException(
+                        "Transaction has no gas price or limit.",
                         transaction.Id);
                 }
+
+                if (gasPrice.Sign < 0 || gasLimit < 0)
+                {
+                    return new TxPolicyViolationException(
+                        "Transaction has negative gas price or limit.",
+                        transaction.Id);
+                }
+
                 if (transaction.MaxGasPrice * transaction.GasLimit > blockChain.GetBalance(transaction.Signer, Currencies.Mead))
                 {
                     return new TxPolicyViolationException(

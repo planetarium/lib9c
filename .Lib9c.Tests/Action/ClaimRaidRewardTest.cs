@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action
         public void Execute(Type exc, int rank, int latestRank)
         {
             Address agentAddress = default;
-            Address avatarAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
             var bossRow = _tableSheets.WorldBossListSheet.OrderedList.First();
             var raiderAddress = Addresses.GetRaiderAddress(avatarAddress, bossRow.Id);
             var highScore = 0;

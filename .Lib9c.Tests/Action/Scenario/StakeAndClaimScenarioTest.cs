@@ -165,7 +165,6 @@ namespace Lib9c.Tests.Action.Scenario
                     PreviousState = state,
                     Signer = Addresses.Admin,
                     BlockIndex = blockIndex,
-                    Rehearsal = false,
                 },
                 recipient,
                 amount);
@@ -183,7 +182,6 @@ namespace Lib9c.Tests.Action.Scenario
                 PreviousState = state,
                 Signer = agentAddr,
                 BlockIndex = blockIndex,
-                Rehearsal = false,
             });
         }
 
@@ -199,7 +197,6 @@ namespace Lib9c.Tests.Action.Scenario
                 PreviousState = state,
                 Signer = agentAddr,
                 BlockIndex = blockIndex,
-                Rehearsal = false,
             });
         }
 
@@ -215,7 +212,6 @@ namespace Lib9c.Tests.Action.Scenario
                 PreviousState = state,
                 Signer = agentAddr,
                 BlockIndex = blockIndex,
-                Rehearsal = false,
             });
         }
 

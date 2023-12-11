@@ -33,7 +33,7 @@ namespace Lib9c.Tests
                 new PrivateKey(),
             };
             _txs = _accounts.ToDictionary(
-                acc => acc.ToAddress(),
+                acc => acc.Address,
                 acc => Enumerable
                     .Range(0, 10)
                     .Select(
@@ -54,18 +54,18 @@ namespace Lib9c.Tests
             NCStagePolicy stagePolicy = new NCStagePolicy(TimeSpan.FromHours(1), 2);
             BlockChain chain = MakeChainWithStagePolicy(stagePolicy);
 
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][0]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][1]);
-            stagePolicy.Stage(chain, _txs[_accounts[1].ToAddress()][0]);
-            stagePolicy.Stage(chain, _txs[_accounts[2].ToAddress()][0]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][0]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][1]);
+            stagePolicy.Stage(chain, _txs[_accounts[1].Address][0]);
+            stagePolicy.Stage(chain, _txs[_accounts[2].Address][0]);
 
             AssertTxs(
                 chain,
                 stagePolicy,
-                _txs[_accounts[0].ToAddress()][0],
-                _txs[_accounts[0].ToAddress()][1],
-                _txs[_accounts[1].ToAddress()][0],
-                _txs[_accounts[2].ToAddress()][0]
+                _txs[_accounts[0].Address][0],
+                _txs[_accounts[0].Address][1],
+                _txs[_accounts[1].Address][0],
+                _txs[_accounts[2].Address][0]
             );
         }
 
@@ -75,16 +75,16 @@ namespace Lib9c.Tests
             NCStagePolicy stagePolicy = new NCStagePolicy(TimeSpan.FromHours(1), 2);
             BlockChain chain = MakeChainWithStagePolicy(stagePolicy);
 
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][0]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][1]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][2]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][3]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][0]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][1]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][2]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][3]);
 
             AssertTxs(
                 chain,
                 stagePolicy,
-                _txs[_accounts[0].ToAddress()][0],
-                _txs[_accounts[0].ToAddress()][1]
+                _txs[_accounts[0].Address][0],
+                _txs[_accounts[0].Address][1]
             );
         }
 
@@ -94,16 +94,16 @@ namespace Lib9c.Tests
             NCStagePolicy stagePolicy = new NCStagePolicy(TimeSpan.FromHours(1), 2);
             BlockChain chain = MakeChainWithStagePolicy(stagePolicy);
 
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][3]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][2]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][1]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][0]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][3]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][2]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][1]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][0]);
 
             AssertTxs(
                 chain,
                 stagePolicy,
-                _txs[_accounts[0].ToAddress()][0],
-                _txs[_accounts[0].ToAddress()][1]
+                _txs[_accounts[0].Address][0],
+                _txs[_accounts[0].Address][1]
             );
         }
 
@@ -113,16 +113,16 @@ namespace Lib9c.Tests
             NCStagePolicy stagePolicy = new NCStagePolicy(TimeSpan.FromHours(1), 2);
             BlockChain chain = MakeChainWithStagePolicy(stagePolicy);
 
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][2]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][1]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][3]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][0]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][2]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][1]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][3]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][0]);
 
             AssertTxs(
                 chain,
                 stagePolicy,
-                _txs[_accounts[0].ToAddress()][0],
-                _txs[_accounts[0].ToAddress()][1]
+                _txs[_accounts[0].Address][0],
+                _txs[_accounts[0].Address][1]
             );
         }
 
@@ -153,20 +153,20 @@ namespace Lib9c.Tests
                     .Range(0, 40)
                     .Select(i => Task.Run(() =>
                     {
-                        stagePolicy.Stage(chain, _txs[_accounts[i / 10].ToAddress()][i % 10]);
+                        stagePolicy.Stage(chain, _txs[_accounts[i / 10].Address][i % 10]);
                     }))
             );
             AssertTxs(
                 chain,
                 stagePolicy,
-                _txs[_accounts[0].ToAddress()][0],
-                _txs[_accounts[0].ToAddress()][1],
-                _txs[_accounts[1].ToAddress()][0],
-                _txs[_accounts[1].ToAddress()][1],
-                _txs[_accounts[2].ToAddress()][0],
-                _txs[_accounts[2].ToAddress()][1],
-                _txs[_accounts[3].ToAddress()][0],
-                _txs[_accounts[3].ToAddress()][1]
+                _txs[_accounts[0].Address][0],
+                _txs[_accounts[0].Address][1],
+                _txs[_accounts[1].Address][0],
+                _txs[_accounts[1].Address][1],
+                _txs[_accounts[2].Address][0],
+                _txs[_accounts[2].Address][1],
+                _txs[_accounts[3].Address][0],
+                _txs[_accounts[3].Address][1]
             );
         }
 
@@ -176,25 +176,25 @@ namespace Lib9c.Tests
             NCStagePolicy stagePolicy = new NCStagePolicy(TimeSpan.FromHours(1), 2);
             BlockChain chain = MakeChainWithStagePolicy(stagePolicy);
 
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][0]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][1]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][2]);
-            stagePolicy.Stage(chain, _txs[_accounts[0].ToAddress()][3]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][0]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][1]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][2]);
+            stagePolicy.Stage(chain, _txs[_accounts[0].Address][3]);
 
             AssertTxs(
                 chain,
                 stagePolicy,
-                _txs[_accounts[0].ToAddress()][0],
-                _txs[_accounts[0].ToAddress()][1]
+                _txs[_accounts[0].Address][0],
+                _txs[_accounts[0].Address][1]
             );
 
-            stagePolicy.Unstage(chain, _txs[_accounts[0].ToAddress()][0].Id);
+            stagePolicy.Unstage(chain, _txs[_accounts[0].Address][0].Id);
 
             AssertTxs(
                 chain,
                 stagePolicy,
-                _txs[_accounts[0].ToAddress()][1],
-                _txs[_accounts[0].ToAddress()][2]
+                _txs[_accounts[0].Address][1],
+                _txs[_accounts[0].Address][2]
             );
         }
 
@@ -204,22 +204,22 @@ namespace Lib9c.Tests
             NCStagePolicy stagePolicy = new NCStagePolicy(TimeSpan.FromHours(1), 2);
             BlockChain chain = MakeChainWithStagePolicy(stagePolicy);
 
-            long nextTxNonce = chain.GetNextTxNonce(_accounts[0].ToAddress());
+            long nextTxNonce = chain.GetNextTxNonce(_accounts[0].Address);
             Assert.Equal(0, nextTxNonce);
             var txA = Transaction.Create(nextTxNonce, _accounts[0], default, new ActionBase[0].ToPlainValues());
             stagePolicy.Stage(chain, txA);
 
-            nextTxNonce = chain.GetNextTxNonce(_accounts[0].ToAddress());
+            nextTxNonce = chain.GetNextTxNonce(_accounts[0].Address);
             Assert.Equal(1, nextTxNonce);
             var txB = Transaction.Create(nextTxNonce, _accounts[0], default, new ActionBase[0].ToPlainValues());
             stagePolicy.Stage(chain, txB);
 
-            nextTxNonce = chain.GetNextTxNonce(_accounts[0].ToAddress());
+            nextTxNonce = chain.GetNextTxNonce(_accounts[0].Address);
             Assert.Equal(2, nextTxNonce);
             var txC = Transaction.Create(nextTxNonce, _accounts[0], default, new ActionBase[0].ToPlainValues());
             stagePolicy.Stage(chain, txC);
 
-            nextTxNonce = chain.GetNextTxNonce(_accounts[0].ToAddress());
+            nextTxNonce = chain.GetNextTxNonce(_accounts[0].Address);
             Assert.Equal(3, nextTxNonce);
 
             AssertTxs(

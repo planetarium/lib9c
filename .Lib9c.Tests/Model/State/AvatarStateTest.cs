@@ -32,8 +32,8 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Serialize()
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
 
             var serialized = avatarState.Serialize();
@@ -59,8 +59,8 @@ namespace Lib9c.Tests.Model.State
         [InlineData(4)]
         public async Task ConstructDeterministic(int waitMilliseconds)
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             AvatarState avatarStateA = GetNewAvatarState(avatarAddress, agentAddress);
             await Task.Delay(waitMilliseconds);
             AvatarState avatarStateB = GetNewAvatarState(avatarAddress, agentAddress);
@@ -74,8 +74,8 @@ namespace Lib9c.Tests.Model.State
         public void UpdateFromQuestRewardDeterministic()
         {
             var rankingState = new RankingState1();
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(
                 avatarAddress,
                 agentAddress,
@@ -121,8 +121,8 @@ namespace Lib9c.Tests.Model.State
         [InlineData(5, GameConfig.RequireCharacterLevel.CharacterConsumableSlot5)]
         public void ValidateConsumable(int count, int level)
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
             avatarState.level = level;
 
@@ -142,8 +142,8 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void ValidateConsumableThrowRequiredBlockIndexException()
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
 
             var consumableIds = new List<Guid>();
@@ -158,8 +158,8 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void ValidateConsumableThrowConsumableSlotOutOfRangeException()
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
             avatarState.level = GameConfig.RequireCharacterLevel.CharacterConsumableSlot5;
 
@@ -184,8 +184,8 @@ namespace Lib9c.Tests.Model.State
         [InlineData(5, GameConfig.RequireCharacterLevel.CharacterConsumableSlot5)]
         public void ValidateConsumableSlotThrowConsumableSlotUnlockException(int count, int level)
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
             avatarState.level = level - 1;
 
@@ -205,8 +205,8 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void ValidateCostume()
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
             avatarState.level = 100;
 
@@ -240,8 +240,8 @@ namespace Lib9c.Tests.Model.State
         [InlineData(ItemSubType.Title)]
         public void ValidateCostumeThrowDuplicateCostumeException(ItemSubType type)
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
             avatarState.level = 100;
 
@@ -265,8 +265,8 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void ValidateCostumeThrowInvalidItemTypeException()
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
             avatarState.level = 100;
 
@@ -290,8 +290,8 @@ namespace Lib9c.Tests.Model.State
         [InlineData(ItemSubType.Title, GameConfig.RequireCharacterLevel.CharacterTitleSlot)]
         public void ValidateCostumeThrowCostumeSlotUnlockException(ItemSubType type, int level)
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
             avatarState.level = level - 1;
 
@@ -306,8 +306,8 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void UpdateV2()
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
             var result = new CombinationConsumable5.ResultModel()
             {
@@ -331,8 +331,8 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void UpdateV4()
         {
-            Address avatarAddress = new PrivateKey().ToAddress();
-            Address agentAddress = new PrivateKey().ToAddress();
+            Address avatarAddress = new PrivateKey().Address;
+            Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
             var result = new CombinationConsumable5.ResultModel()
             {
@@ -384,7 +384,7 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void EquipItems()
         {
-            var avatarState = GetNewAvatarState(new PrivateKey().ToAddress(), new PrivateKey().ToAddress());
+            var avatarState = GetNewAvatarState(new PrivateKey().Address, new PrivateKey().Address);
             avatarState.inventory.AddItem(EquipmentTest.CreateFirstEquipment(_tableSheets));
             avatarState.inventory.AddItem(CostumeTest.CreateFirstCostume(_tableSheets));
 
@@ -456,7 +456,7 @@ namespace Lib9c.Tests.Model.State
         [InlineData(ItemSubType.Ring, 3, GameConfig.MaxEquipmentSlotCount.Ring, 0, 0)]
         private void ValidateEquipmentsV2(ItemSubType type, int count, int maxCount, long blockIndex, long requiredBlockIndex)
         {
-            var avatarState = GetNewAvatarState(new PrivateKey().ToAddress(), new PrivateKey().ToAddress());
+            var avatarState = GetNewAvatarState(new PrivateKey().Address, new PrivateKey().Address);
             var maxLevel = _tableSheets.CharacterLevelSheet.Max(row => row.Value.Level);
             var expRow = _tableSheets.CharacterLevelSheet[maxLevel];
             var maxLevelExp = expRow.Exp;

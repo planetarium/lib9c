@@ -36,10 +36,10 @@ namespace Lib9c.Tests.Action
             var tableSheets = new TableSheets(sheets);
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(tableSheets.GameConfigSheet);
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(_agentAddress);
-            _avatarAddress = new PrivateKey().ToAddress();
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            _avatarAddress = new PrivateKey().Address;
+            var rankingMapAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(
                 _avatarAddress,
                 _agentAddress,
@@ -75,7 +75,7 @@ namespace Lib9c.Tests.Action
                     break;
             }
 
-            var nextState = ExecuteInternal(previousStates, 2040);
+            var nextState = ExecuteInternal(previousStates, 2448);
             var nextGameConfigState = nextState.GetGameConfigState();
             var nextAvatarState = avatarStateSerializedVersion switch
             {
@@ -97,11 +97,11 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         [InlineData(0, 0, true)]
-        [InlineData(0, 2039, true)]
-        [InlineData(0, 2040, false)]
-        [InlineData(2040, 2040, true)]
-        [InlineData(2040, 2040 + 2039, true)]
-        [InlineData(2040, 2040 + 2040, false)]
+        [InlineData(0, 2447, true)]
+        [InlineData(0, 2448, false)]
+        [InlineData(2448, 2448, true)]
+        [InlineData(2448, 2448 + 2447, true)]
+        [InlineData(2448, 2448 + 2448, false)]
         public void Execute_Throw_RequiredBlockIndexException(
             long dailyRewardReceivedIndex,
             long executeBlockIndex,
@@ -139,7 +139,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
                 PreviousState = previousStates,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _agentAddress,
             });
         }

@@ -291,8 +291,8 @@ namespace Lib9c.Tests.Action
 CRYSTAL,200000,Agent
 RUNE_GOLDENLEAF,200000,Avatar
 ");
-            var avatarAddress = new PrivateKey().ToAddress();
-            var agentAddress = new PrivateKey().ToAddress();
+            var avatarAddress = new PrivateKey().Address;
+            var agentAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(avatarAddress, agentAddress, 0L, _tableSheets.GetAvatarSheets(), new GameConfigState(), default, "test");
             var nextState = CreateAvatar10.MintAsset(createAvatarFavSheet, avatarState, new Account(MockState.Empty), new ActionContext());
             foreach (var row in createAvatarFavSheet.Values)

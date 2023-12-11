@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action.Summon
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using Lib9c.Tests.Fixtures.TableCSV.Summon;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -12,16 +13,18 @@ namespace Lib9c.Tests.Action.Summon
     using Nekoyume.Action.Exceptions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.TableData;
+    using Nekoyume.TableData.Summon;
     using Xunit;
     using static SerializeKeys;
 
     public class AuraSummonTest
     {
-        private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
+        private TableSheets _tableSheets;
         private IAccount _initialState;
 
         public AuraSummonTest()
@@ -29,7 +32,7 @@ namespace Lib9c.Tests.Action.Summon
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
             var privateKey = new PrivateKey();
-            _agentAddress = privateKey.PublicKey.ToAddress();
+            _agentAddress = privateKey.PublicKey.Address;
             var agentState = new AgentState(_agentAddress);
 
             _avatarAddress = _agentAddress.Derive("avatar");
@@ -80,14 +83,52 @@ namespace Lib9c.Tests.Action.Summon
         }
 
         [Theory]
+        [InlineData("V1", 10001)]
+        [InlineData("V1", 10002)]
+        [InlineData("V2", 10001)]
+        [InlineData("V2", 10002)]
+        public void CumulativeRatio(string version, int groupId)
+        {
+            var sheets = TableSheetsImporter.ImportSheets();
+            if (version == "V1")
+            {
+                sheets[nameof(SummonSheet)] = SummonSheetFixtures.V1;
+            }
+            else
+            {
+                sheets[nameof(SummonSheet)] = SummonSheetFixtures.V2;
+            }
+
+            _tableSheets = new TableSheets(sheets);
+            var sheet = _tableSheets.SummonSheet;
+
+            var targetRow = sheet.OrderedList.First(r => r.GroupId == groupId);
+
+            for (var i = 1; i <= SummonSheet.Row.MaxRecipeCount; i++)
+            {
+                var sum = 0;
+                for (var j = 0; j < i; j++)
+                {
+                    if (j < targetRow.Recipes.Count)
+                    {
+                        sum += targetRow.Recipes[j].Item2;
+                    }
+                }
+
+                Assert.Equal(sum, targetRow.CumulativeRatio(i));
+            }
+        }
+
+        [Theory]
         // success first group
-        [InlineData(10001, 1, 800201, 1, 1, new[] { 10610000 }, null)]
-        [InlineData(10001, 2, 800201, 2, 54, new[] { 10620000, 10630000 }, null)]
+        [InlineData("V1", 10001, 1, 800201, 1, 1, new[] { 10610000 }, null)]
+        [InlineData("V1", 10001, 2, 800201, 2, 54, new[] { 10620000, 10630000 }, null)]
         // success second group
-        [InlineData(10002, 1, 600201, 1, 1, new[] { 10620001 }, null)]
-        [InlineData(10002, 2, 600201, 2, 4, new[] { 10620001, 10630001 }, null)]
+        [InlineData("V1", 10002, 1, 600201, 1, 1, new[] { 10620001 }, null)]
+        [InlineData("V1", 10002, 2, 600201, 2, 4, new[] { 10620001, 10630001 }, null)]
         // Nine plus zero
         [InlineData(
+            "V1",
             10001,
             9,
             800201,
@@ -97,6 +138,7 @@ namespace Lib9c.Tests.Action.Summon
             null
         )]
         [InlineData(
+            "V1",
             10002,
             9,
             600201,
@@ -107,6 +149,7 @@ namespace Lib9c.Tests.Action.Summon
         )]
         // Ten plus one
         [InlineData(
+            "V1",
             10001,
             10,
             800201,
@@ -116,6 +159,7 @@ namespace Lib9c.Tests.Action.Summon
             null
         )]
         [InlineData(
+            "V1",
             10002,
             10,
             600201,
@@ -125,13 +169,18 @@ namespace Lib9c.Tests.Action.Summon
             null
         )]
         // fail by invalid group
-        [InlineData(100003, 1, null, 0, 0, new int[] { }, typeof(RowNotInTableException))]
+        [InlineData("V1", 100003, 1, null, 0, 0, new int[] { }, typeof(RowNotInTableException))]
         // fail by not enough material
-        [InlineData(10001, 1, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
-        [InlineData(10001, 2, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
+        [InlineData("V1", 10001, 1, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
+        [InlineData("V1", 10001, 2, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
         // Fail by exceeding summon limit
-        [InlineData(10001, 11, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
+        [InlineData("V1", 10001, 11, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
+        // 15 recipes
+        [InlineData("V2", 10002, 1, 600201, 1, 5341, new[] { 10650006 }, null)]
+        // 15 recipes
+        [InlineData("V3", 20001, 1, 600201, 1, 5341, new int[] { }, typeof(SheetRowNotFoundException))]
         public void Execute(
+            string version,
             int groupId,
             int summonCount,
             int? materialId,
@@ -143,6 +192,14 @@ namespace Lib9c.Tests.Action.Summon
         {
             var random = new TestRandom(seed);
             var state = _initialState;
+            var sheet = version switch
+            {
+                "V1" => SummonSheetFixtures.V1.Serialize(),
+                "V2" => SummonSheetFixtures.V2.Serialize(),
+                "V3" => SummonSheetFixtures.V3.Serialize(),
+                _ => throw new ArgumentOutOfRangeException(nameof(version), version, null)
+            };
+            state = state.SetState(Addresses.TableSheet.Derive(nameof(SummonSheet)), sheet);
 
             if (!(materialId is null))
             {

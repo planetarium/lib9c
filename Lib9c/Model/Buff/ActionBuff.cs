@@ -27,13 +27,5 @@ namespace Nekoyume.Model.Buff
             RowData = value.RowData;
             CustomField = value.CustomField;
         }
-
-        public abstract BattleStatus.Skill GiveEffect(
-            CharacterBase affectedCharacter,
-            int simulatorWaveTurn, bool copyCharacter = true);
-
-        public abstract BattleStatus.Arena.ArenaSkill GiveEffectForArena(
-            ArenaCharacter affectedCharacter,
-            int simulatorWaveTurn);
     }
 }

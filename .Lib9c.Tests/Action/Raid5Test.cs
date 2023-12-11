@@ -31,8 +31,8 @@ namespace Lib9c.Tests.Action
         {
             _sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(_sheets);
-            _agentAddress = new PrivateKey().ToAddress();
-            _avatarAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
+            _avatarAddress = new PrivateKey().Address;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             _goldCurrency = Currency.Legacy("NCG", 2, null);
@@ -44,7 +44,7 @@ namespace Lib9c.Tests.Action
         [InlineData(null, true, true, true, false, 0, 0L, false, false, 0, false, false, false, 5, false, 0, 10002, 1, 30001)]
         [InlineData(null, true, true, true, false, 0, 0L, false, false, 0, false, false, false, 5, true, 0, 10002, 1, 30001)]
         // Refill by interval.
-        [InlineData(null, true, true, false, true, 0, -8640, false, false, 0, false, false, false, 5, true, 0, 10002, 1, 30001)]
+        [InlineData(null, true, true, false, true, 0, -10368, false, false, 0, false, false, false, 5, true, 0, 10002, 1, 30001)]
         // Refill by NCG.
         [InlineData(null, true, true, false, true, 0, 200L, true, true, 0, false, false, false, 5, true, 0, 10002, 1, 30001)]
         [InlineData(null, true, true, false, true, 0, 200L, true, true, 1, false, false, false, 5, true, 0, 10002, 1, 30001)]
@@ -199,7 +199,7 @@ namespace Lib9c.Tests.Action
 
                     if (raiderListExist)
                     {
-                        raiderList = raiderList.Add(new PrivateKey().ToAddress().Serialize());
+                        raiderList = raiderList.Add(new PrivateKey().Address.Serialize());
                     }
 
                     state = state.SetState(raiderListAddress, raiderList);
@@ -247,7 +247,6 @@ namespace Lib9c.Tests.Action
                     BlockIndex = blockIndex + executeOffset,
                     PreviousState = state,
                     RandomSeed = randomSeed,
-                    Rehearsal = false,
                     Signer = _agentAddress,
                 };
 
@@ -410,7 +409,6 @@ namespace Lib9c.Tests.Action
                     BlockIndex = blockIndex + executeOffset,
                     PreviousState = state,
                     RandomSeed = 0,
-                    Rehearsal = false,
                     Signer = _agentAddress,
                 }));
             }
@@ -527,7 +525,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = worldBossRow.StartedBlockIndex + gameConfigState.WorldBossRequiredInterval,
                 PreviousState = state,
                 RandomSeed = randomSeed,
-                Rehearsal = false,
                 Signer = _agentAddress,
             });
 
@@ -628,7 +625,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
                 PreviousState = state,
                 RandomSeed = randomSeed,
-                Rehearsal = false,
                 Signer = _agentAddress,
             };
 

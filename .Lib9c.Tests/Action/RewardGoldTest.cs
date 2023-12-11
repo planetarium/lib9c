@@ -49,7 +49,7 @@ namespace Lib9c.Tests.Action
                     "100010,전사,S,0,300,20,10,10,90,70,12,0.8,0.4,0,3.6,2.8,2,3");
 
             var privateKey = new PrivateKey();
-            var agentAddress = privateKey.PublicKey.ToAddress();
+            var agentAddress = privateKey.PublicKey.Address;
 
             var avatarAddress = agentAddress.Derive("avatar");
             _tableSheets = new TableSheets(sheets);
@@ -64,7 +64,7 @@ namespace Lib9c.Tests.Action
             );
 
             _avatarState2 = new AvatarState(
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
@@ -98,9 +98,9 @@ namespace Lib9c.Tests.Action
                 ArenaScoreHelper.GetScoreV4);
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(_tableSheets.GameConfigSheet);
-            var state = _baseState
+            IAccount state = new Account(_baseState
                 .SetState(weekly.address, weekly.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+                .SetState(gameConfigState.address, gameConfigState.Serialize()));
             var blockIndex = 0;
 
             if (resetCount)
@@ -114,9 +114,9 @@ namespace Lib9c.Tests.Action
                 blockIndex = gameConfigState.WeeklyArenaInterval;
                 // Avoid NRE in test case.
                 var nextWeekly = new WeeklyArenaState(1);
-                state = state
+                state = new Account(state
                     .SetState(weekly.address, weekly.Serialize())
-                    .SetState(nextWeekly.address, nextWeekly.Serialize());
+                    .SetState(nextWeekly.address, nextWeekly.Serialize()));
             }
 
             Assert.False(weekly.Ended);
@@ -142,12 +142,28 @@ namespace Lib9c.Tests.Action
                 var currentWeeklyState = nextState.GetWeeklyArenaState(0);
                 var nextWeeklyState = nextState.GetWeeklyArenaState(1);
 
-                Assert.Contains(WeeklyArenaState.DeriveAddress(0), nextState.Delta.UpdatedAddresses);
-                Assert.Contains(WeeklyArenaState.DeriveAddress(1), nextState.Delta.UpdatedAddresses);
+                if (resetCount || updateNext)
+                {
+                    Assert.NotEqual(
+                        state.GetState(WeeklyArenaState.DeriveAddress(0)),
+                        nextState.GetState(WeeklyArenaState.DeriveAddress(0)));
+                }
+                else
+                {
+                    Assert.Equal(
+                        state.GetState(WeeklyArenaState.DeriveAddress(0)),
+                        nextState.GetState(WeeklyArenaState.DeriveAddress(0)));
+                }
+
+                Assert.NotEqual(
+                    state.GetState(WeeklyArenaState.DeriveAddress(1)),
+                    nextState.GetState(WeeklyArenaState.DeriveAddress(1)));
 
                 if (updateNext)
                 {
-                    Assert.Contains(WeeklyArenaState.DeriveAddress(2), nextState.Delta.UpdatedAddresses);
+                    Assert.NotEqual(
+                        state.GetState(WeeklyArenaState.DeriveAddress(2)),
+                        nextState.GetState(WeeklyArenaState.DeriveAddress(2)));
                     Assert.Equal(blockIndex, nextWeeklyState.ResetIndex);
                 }
 
@@ -497,7 +513,7 @@ namespace Lib9c.Tests.Action
             else
             {
                 var adminPrivateKey = new PrivateKey();
-                var adminAddress = adminPrivateKey.ToAddress();
+                var adminAddress = adminPrivateKey.Address;
                 var activatedAccounts = ImmutableHashSet<Address>.Empty;
                 var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
                 var privateKey = new PrivateKey();
@@ -565,8 +581,8 @@ namespace Lib9c.Tests.Action
         [InlineData(1, 0)]
         public void TransferMead(int patronMead, int balance)
         {
-            var agentAddress = new PrivateKey().ToAddress();
-            var patronAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var patronAddress = new PrivateKey().Address;
             var contractAddress = agentAddress.GetPledgeAddress();
             IActionContext context = new ActionContext();
             IAccount states = new Account(MockState.Empty)
@@ -581,6 +597,33 @@ namespace Lib9c.Tests.Action
             // transfer mead from patron to agent
             Assert.Equal(0 * Currencies.Mead, nextState.GetBalance(patronAddress, Currencies.Mead));
             Assert.Equal(balance * Currencies.Mead, nextState.GetBalance(agentAddress, Currencies.Mead));
+        }
+
+        [Fact]
+        public void NoRewardWhenEmptySupply()
+        {
+            var weekly = new WeeklyArenaState(0);
+            var gameConfigState = new GameConfigState();
+            gameConfigState.Set(_tableSheets.GameConfigSheet);
+
+            var currency = Currency.Legacy("NCG", 2, null);
+            IAccount states = new Account(MockState.Empty)
+                .SetState(GoldCurrencyState.Address, new GoldCurrencyState(currency, 0).Serialize())
+                .SetState(weekly.address, weekly.Serialize())
+                .SetState(Addresses.GoldDistribution, new List())
+                .SetState(gameConfigState.address, gameConfigState.Serialize());
+            var action = new RewardGold();
+
+            IAccount nextState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 42,
+                    PreviousState = states,
+                    Miner = default,
+                }
+            );
+
+            Assert.Equal(0 * currency, nextState.GetBalance(default, currency));
         }
     }
 }

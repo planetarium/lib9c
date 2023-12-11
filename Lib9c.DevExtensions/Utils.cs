@@ -210,7 +210,7 @@ namespace Lib9c.DevExtensions
             Parallel.For(0, countOfKeys, _ =>
             {
                 var pendingKey = new PrivateKey();
-                var nonce = pendingKey.PublicKey.ToAddress().ToByteArray();
+                var nonce = pendingKey.PublicKey.Address.ToByteArray();
                 (ActivationKey ak, PendingActivationState s) =
                     ActivationKey.Create(pendingKey, nonce);
                 ps.Add(s);

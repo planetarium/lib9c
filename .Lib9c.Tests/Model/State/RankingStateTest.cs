@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Model.State
         public void Serialize()
         {
             var state = new RankingState();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var avatarAddress = new PrivateKey().Address;
             state.UpdateRankingMap(avatarAddress);
             var serialized = state.Serialize();
 
@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Model.State
             var state = new RankingState();
             for (var i = 0; i < 1000; i++)
             {
-                state.UpdateRankingMap(new PrivateKey().ToAddress());
+                state.UpdateRankingMap(new PrivateKey().Address);
             }
 
             var serializedV1 = state.Serialize();

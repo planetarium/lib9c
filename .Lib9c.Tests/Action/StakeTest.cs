@@ -491,7 +491,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
                 PreviousState = previousState,
                 RandomSeed = random.Seed,
-                Rehearsal = false,
                 Signer = signer,
             });
 

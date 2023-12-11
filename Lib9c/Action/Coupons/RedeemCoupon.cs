@@ -81,7 +81,7 @@ namespace Nekoyume.Action.Coupons
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
-            CouponId = new Guid((Binary)plainValue["coupon_id"]);
+            CouponId = new Guid(((Binary)plainValue["coupon_id"]).ToByteArray());
             AvatarAddress = new Address(plainValue["avatar_address"]);
         }
     }

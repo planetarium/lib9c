@@ -43,7 +43,7 @@ namespace Lib9c.Tests.Action
             _tableSheets = new TableSheets(_sheets);
 
             var privateKey = new PrivateKey();
-            _agentAddress = privateKey.PublicKey.ToAddress();
+            _agentAddress = privateKey.PublicKey.Address;
             var agentState = new AgentState(_agentAddress);
 
             _avatarAddress = _agentAddress.Derive("avatar");
@@ -83,7 +83,7 @@ namespace Lib9c.Tests.Action
             }
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
-            _initialState = _initialState.SetState(arenaSheetAddress, null);
+            _initialState = _initialState.SetNull(arenaSheetAddress);
 
             foreach (var address in _avatarState.combinationSlotAddresses)
             {
@@ -231,9 +231,9 @@ namespace Lib9c.Tests.Action
             {
                 state = _initialState
                     .SetState(_avatarAddress, _avatarState.SerializeV2())
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), null!)
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), null!)
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), null!);
+                    .SetNull(_avatarAddress.Derive(LegacyInventoryKey))
+                    .SetNull(_avatarAddress.Derive(LegacyWorldInformationKey))
+                    .SetNull(_avatarAddress.Derive(LegacyQuestListKey));
             }
 
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()

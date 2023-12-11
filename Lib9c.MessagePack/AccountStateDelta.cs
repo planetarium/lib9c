@@ -19,7 +19,6 @@ namespace Lib9c.Formatters
         private IImmutableDictionary<Address, IValue> _states;
         private IImmutableDictionary<(Address, Currency), BigInteger> _balances;
         private IImmutableDictionary<Currency, BigInteger> _totalSupplies;
-        private MockAccountDelta _delta;
 
         public IImmutableSet<(Address, Currency)> TotalUpdatedFungibleAssets =>
             ImmutableHashSet<(Address, Currency)>.Empty;
@@ -30,7 +29,6 @@ namespace Lib9c.Formatters
             IImmutableDictionary<Currency, BigInteger> totalSupplies
         )
         {
-            _delta = new MockAccountDelta(states, balances, totalSupplies);
             _states = states;
             _balances = balances;
             _totalSupplies = totalSupplies;
@@ -45,7 +43,7 @@ namespace Lib9c.Formatters
                     record => (new Address(record["address"]), new Currency((Dictionary)record["currency"])),
                     record => (BigInteger)(Integer)record["amount"]),
                 totalSupplies.ToImmutableDictionary(
-                    kv => new Currency(new Codec().Decode((Binary)kv.Key)),
+                    kv => new Currency(new Codec().Decode(((Binary)kv.Key).ToByteArray())),
                     kv => (BigInteger)(Integer)kv.Value))
         {
         }
@@ -65,8 +63,6 @@ namespace Lib9c.Formatters
         }
 
         public ITrie Trie => throw new NotSupportedException();
-
-        public IAccountDelta Delta => _delta;
 
         public IValue? GetState(Address address) =>
             _states.ContainsKey(address)
@@ -230,33 +226,6 @@ namespace Lib9c.Formatters
         public ValidatorSet GetValidatorSet()
         {
             return new ValidatorSet();
-        }
-
-        private class MockAccountDelta : IAccountDelta
-        {
-            private IImmutableDictionary<Address, IValue> _states;
-            private IImmutableDictionary<(Address, Currency), BigInteger> _fungibles;
-            private IImmutableDictionary<Currency, BigInteger> _totalSupplies;
-
-            public MockAccountDelta(
-                IImmutableDictionary<Address, IValue> states,
-                IImmutableDictionary<(Address, Currency), BigInteger> balances,
-                IImmutableDictionary<Currency, BigInteger> totalSupplies)
-            {
-                _states = states;
-                _fungibles = balances;
-                _totalSupplies = totalSupplies;
-            }
-
-            public IImmutableSet<Address> UpdatedAddresses => StateUpdatedAddresses.Union(FungibleUpdatedAddresses);
-            public IImmutableSet<Address> StateUpdatedAddresses => _states.Keys.ToImmutableHashSet();
-            public IImmutableDictionary<Address, IValue> States => _states;
-            public IImmutableSet<Address> FungibleUpdatedAddresses => _fungibles.Keys.Select(pair => pair.Item1).ToImmutableHashSet();
-            public IImmutableSet<(Address, Currency)> UpdatedFungibleAssets => _fungibles.Keys.ToImmutableHashSet();
-            public IImmutableDictionary<(Address, Currency), BigInteger> Fungibles => _fungibles;
-            public IImmutableSet<Currency> UpdatedTotalSupplyCurrencies => _totalSupplies.Keys.ToImmutableHashSet();
-            public IImmutableDictionary<Currency, BigInteger> TotalSupplies => _totalSupplies;
-            public ValidatorSet? ValidatorSet => null;
         }
     }
 }

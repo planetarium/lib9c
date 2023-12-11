@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Action
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
@@ -34,7 +35,7 @@ namespace Lib9c.Tests.Action
             var minterKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, minterKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var privateKey = new PrivateKey();
@@ -60,7 +61,7 @@ namespace Lib9c.Tests.Action
             var genesisState = action.Execute(new ActionContext()
             {
                 BlockIndex = 0,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 Miner = default,
                 PreviousState = new Account(MockState.Empty),
             });
@@ -96,7 +97,7 @@ namespace Lib9c.Tests.Action
             var minterKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, minterKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var privateKey = new PrivateKey();
@@ -128,7 +129,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 Miner = default,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 PreviousState = new Account(MockState.Empty),
             });
 
@@ -152,7 +153,7 @@ namespace Lib9c.Tests.Action
             var minterKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, minterKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var privateKey = new PrivateKey();
@@ -177,7 +178,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 Miner = default,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 PreviousState = new Account(MockState.Empty),
             });
 
@@ -198,7 +199,7 @@ namespace Lib9c.Tests.Action
             var minterKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, minterKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var adminAddress = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
@@ -229,7 +230,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 Miner = default,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 PreviousState = new Account(MockState.Empty),
             });
 
@@ -251,7 +252,7 @@ namespace Lib9c.Tests.Action
             var minterKey = new PrivateKey();
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            var ncg = Currency.Legacy("NCG", 2, minterKey.ToAddress());
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var privateKey = new PrivateKey();
@@ -275,7 +276,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = 0,
                 Miner = default,
-                Signer = minterKey.ToAddress(),
+                Signer = minterKey.Address,
                 PreviousState = new Account(MockState.Empty),
             });
 
@@ -284,6 +285,87 @@ namespace Lib9c.Tests.Action
             Assert.Empty(fetchedState.Accounts);
 
             Assert.Null(genesisState.GetState(Addresses.Admin));
+        }
+
+        [Fact]
+        public void ExecuteWithoutInitialSupply()
+        {
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
+            var redeemCodeListSheet = new RedeemCodeListSheet();
+            redeemCodeListSheet.Set(_sheets[nameof(RedeemCodeListSheet)]);
+            var goldDistributions = Array.Empty<GoldDistribution>();
+            var minterKey = new PrivateKey();
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            var ncg = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var privateKey = new PrivateKey();
+
+            var action = new InitializeStates(
+                rankingState: new RankingState0(),
+                shopState: new ShopState(),
+                tableSheets: _sheets,
+                gameConfigState: gameConfigState,
+                redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
+                adminAddressState: null,
+                activatedAccountsState: new ActivatedAccountsState(ImmutableHashSet<Address>.Empty),
+                goldCurrencyState: new GoldCurrencyState(ncg, 0),
+                goldDistributions: goldDistributions,
+                pendingActivationStates: Array.Empty<PendingActivationState>()
+            );
+
+            var genesisState = action.Execute(new ActionContext()
+            {
+                BlockIndex = 0,
+                Miner = default,
+                Signer = minterKey.Address,
+                PreviousState = new Account(MockState.Empty),
+            });
+
+            Assert.Equal(0 * ncg, genesisState.GetBalance(GoldCurrencyState.Address, ncg));
+        }
+
+        [Fact]
+        public void ExecuteWithAssetMinters()
+        {
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
+            var redeemCodeListSheet = new RedeemCodeListSheet();
+            redeemCodeListSheet.Set(_sheets[nameof(RedeemCodeListSheet)]);
+            var goldDistributionCsvPath = GoldDistributionTest.CreateFixtureCsvFile();
+            var goldDistributions = GoldDistribution.LoadInDescendingEndBlockOrder(goldDistributionCsvPath);
+            var minterKey = new PrivateKey();
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
+#pragma warning restore CS0618
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var adminAddress = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
+
+            var action = new InitializeStates(
+                rankingState: new RankingState0(),
+                shopState: new ShopState(),
+                tableSheets: _sheets,
+                gameConfigState: gameConfigState,
+                redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
+                adminAddressState: new AdminState(adminAddress, 1500000),
+                activatedAccountsState: new ActivatedAccountsState(ImmutableHashSet<Address>.Empty.Add(adminAddress)),
+                goldCurrencyState: new GoldCurrencyState(ncg),
+                goldDistributions: goldDistributions,
+                pendingActivationStates: Array.Empty<PendingActivationState>(),
+                assetMinters: new[] { default(Address) }.ToHashSet()
+            );
+
+            var genesisState = action.Execute(new ActionContext()
+            {
+                BlockIndex = 0,
+                Miner = default,
+                Signer = minterKey.Address,
+                PreviousState = new Account(MockState.Empty),
+            });
+
+            var assetMinters = Assert.IsType<List>(genesisState.GetState(Addresses.AssetMinters));
+            Assert.Contains(default(Address).Serialize(), assetMinters);
         }
     }
 }

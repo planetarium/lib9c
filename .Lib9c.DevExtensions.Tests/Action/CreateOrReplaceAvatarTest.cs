@@ -369,7 +369,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                     equipments.Add((row.ResultEquipmentId, data.level));
                 }
             }
-            var agentAddr = new PrivateKey().ToAddress();
+            var agentAddr = new PrivateKey().Address;
             Execute(
                 _initialStates,
                 blockIndex,
@@ -405,7 +405,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             (int runeId, int level)[]? runes,
             (int stageId, int[] crystalRandomBuffIds)? crystalRandomBuff)
         {
-            var agentAddr = new PrivateKey().ToAddress();
+            var agentAddr = new PrivateKey().Address;
             Assert.Throws<ArgumentException>(() => Execute(
                 _initialStates,
                 blockIndex,
@@ -460,7 +460,6 @@ namespace Lib9c.DevExtensions.Tests.Action
                 PreviousState = previousStates,
                 Signer = agentAddr,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = blockIndex,
             });
             var agent = new AgentState((Dictionary)nextStates.GetState(agentAddr)!);

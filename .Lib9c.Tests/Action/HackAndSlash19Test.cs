@@ -49,7 +49,7 @@ namespace Lib9c.Tests.Action
             _tableSheets = new TableSheets(_sheets);
 
             var privateKey = new PrivateKey();
-            _agentAddress = privateKey.PublicKey.ToAddress();
+            _agentAddress = privateKey.PublicKey.Address;
             var agentState = new AgentState(_agentAddress);
 
             _avatarAddress = _agentAddress.Derive("avatar");
@@ -205,7 +205,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
             });
 
@@ -349,7 +348,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
@@ -411,7 +409,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
             }));
 
             SerializeException<DuplicateEquipmentException>(exec);
@@ -438,9 +435,9 @@ namespace Lib9c.Tests.Action
             {
                 state = _initialState
                     .SetState(_avatarAddress, _avatarState.SerializeV2())
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), null!)
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), null!)
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), null!);
+                    .SetNull(_avatarAddress.Derive(LegacyInventoryKey))
+                    .SetNull(_avatarAddress.Derive(LegacyWorldInformationKey))
+                    .SetNull(_avatarAddress.Derive(LegacyQuestListKey));
             }
 
             var exec = Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
@@ -827,7 +824,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = 1,
             });
 
@@ -1040,7 +1036,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = 1,
             });
 
@@ -1211,7 +1206,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = 1,
             };
             var nextState = action.Execute(ctx);
@@ -1333,7 +1327,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = 1,
             };
             var nextState = action.Execute(ctx);
