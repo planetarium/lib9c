@@ -55,7 +55,7 @@ namespace Lib9c.Tests.Model.State
             _unloaded.State.Foo = 456L;
             Assert.Equal(
                 456L,
-                (long)((Dictionary)_unloaded.Serialize()).GetValue<Integer>("foo")
+                (long)(Integer)((Dictionary)_unloaded.Serialize())["foo"]
             );
             Assert.True(_unloaded.GetStateOrSerializedEncoding(out _, out _));
         }
@@ -107,8 +107,8 @@ namespace Lib9c.Tests.Model.State
             public SampleState(Dictionary serialized)
                 : base(serialized)
             {
-                Foo = serialized.GetValue<Integer>("foo");
-                Bar = serialized.GetValue<Text>("bar");
+                Foo = (Integer)serialized["foo"];
+                Bar = (Text)serialized["bar"];
             }
 
             public SampleState(IValue iValue)

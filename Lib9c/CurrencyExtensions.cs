@@ -40,7 +40,7 @@ namespace Nekoyume
             IImmutableSet<Address> minters = null;
             if (serialized["minters"] is Bencodex.Types.List mintersAsList)
             {
-                minters = mintersAsList.Select(b => new Address(((Binary) b).ByteArray)).ToImmutableHashSet();
+                minters = mintersAsList.Select(b => new Address(b)).ToImmutableHashSet();
             }
 
             if (serialized.ContainsKey("totalSupplyTrackable"))

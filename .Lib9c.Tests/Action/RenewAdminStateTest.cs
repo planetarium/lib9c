@@ -21,7 +21,7 @@ namespace Lib9c.Tests.Action
         {
             _adminPrivateKey = new PrivateKey();
             _validUntil = 1_500_000L;
-            _adminState = new AdminState(_adminPrivateKey.ToAddress(), _validUntil);
+            _adminState = new AdminState(_adminPrivateKey.Address, _validUntil);
             _stateDelta = new Account(
                 MockState.Empty
                     .SetState(Addresses.Admin, _adminState.Serialize()));
@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Action
             var stateDelta = action.Execute(new ActionContext
             {
                 PreviousState = _stateDelta,
-                Signer = _adminPrivateKey.ToAddress(),
+                Signer = _adminPrivateKey.Address,
             });
 
             var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetState(Addresses.Admin));
@@ -54,7 +54,7 @@ namespace Lib9c.Tests.Action
                 action.Execute(new ActionContext
                 {
                     PreviousState = _stateDelta,
-                    Signer = userPrivateKey.ToAddress(),
+                    Signer = userPrivateKey.Address,
                 });
             });
         }
@@ -68,7 +68,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = _validUntil + 1,
                 PreviousState = _stateDelta,
-                Signer = _adminPrivateKey.ToAddress(),
+                Signer = _adminPrivateKey.Address,
             });
 
             var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetState(Addresses.Admin));
@@ -104,7 +104,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = blockIndex,
                 PreviousState = _stateDelta,
-                Signer = _adminPrivateKey.ToAddress(),
+                Signer = _adminPrivateKey.Address,
             }));
 
             var newValidUntil = _validUntil + 1000;
@@ -113,7 +113,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = blockIndex,
                 PreviousState = _stateDelta,
-                Signer = _adminPrivateKey.ToAddress(),
+                Signer = _adminPrivateKey.Address,
             });
 
             // After 100 blocks.
@@ -124,7 +124,7 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = blockIndex,
                 PreviousState = stateDelta,
-                Signer = _adminPrivateKey.ToAddress(),
+                Signer = _adminPrivateKey.Address,
             });
 
             Address expectedPendingActivationStateAddress =

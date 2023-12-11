@@ -45,7 +45,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             _goldCurrencyState = new GoldCurrencyState(_currency);
 
-            _signerAddress = new PrivateKey().ToAddress();
+            _signerAddress = new PrivateKey().Address;
             _initialState = _initialState
                 .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .MintAsset(context, _signerAddress, _currency * 100);
@@ -71,7 +71,7 @@ namespace Lib9c.Tests.Action
                 MonsterCollectionState.DeriveAddress(_signerAddress, 0);
             var agentState = new AgentState(_signerAddress)
             {
-                avatarAddresses = { [0] = new PrivateKey().ToAddress(), },
+                avatarAddresses = { [0] = new PrivateKey().Address, },
             };
             var states = _initialState
                 .SetState(_signerAddress, agentState.Serialize())

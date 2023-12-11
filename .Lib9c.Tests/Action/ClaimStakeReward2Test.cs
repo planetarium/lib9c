@@ -50,7 +50,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             _goldCurrencyState = new GoldCurrencyState(_currency);
 
-            _signerAddress = new PrivateKey().ToAddress();
+            _signerAddress = new PrivateKey().Address;
             var stakeStateAddress = StakeState.DeriveAddress(_signerAddress);
             var agentState = new AgentState(_signerAddress);
             _avatarAddress = _signerAddress.Derive("0");
@@ -61,7 +61,7 @@ namespace Lib9c.Tests.Action
                 0,
                 _tableSheets.GetAvatarSheets(),
                 new GameConfigState(sheets[nameof(GameConfigSheet)]),
-                new PrivateKey().ToAddress()
+                new PrivateKey().Address
             )
             {
                 level = 100,
@@ -75,7 +75,7 @@ namespace Lib9c.Tests.Action
                 0,
                 _tableSheets.GetAvatarSheets(),
                 new GameConfigState(sheets[nameof(GameConfigSheet)]),
-                new PrivateKey().ToAddress()
+                new PrivateKey().Address
             )
             {
                 level = 100,

@@ -33,7 +33,7 @@ namespace Nekoyume.Model.State
         public PendingActivationState(Dictionary serialized)
             : base(serialized)
         {
-            Nonce = (Binary)serialized["nonce"];
+            Nonce = ((Binary)serialized["nonce"]).ToByteArray();
             PublicKey = serialized["public_key"].ToPublicKey();
         }
 

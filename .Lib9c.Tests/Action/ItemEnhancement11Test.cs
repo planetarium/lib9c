@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Action
                 EquipmentItemSheetFixture.LegacyEnhancementCostSheetV2;
             _tableSheets = new TableSheets(sheets);
             var privateKey = new PrivateKey();
-            _agentAddress = privateKey.PublicKey.ToAddress();
+            _agentAddress = privateKey.PublicKey.Address;
             var agentState = new AgentState(_agentAddress);
 
             _avatarAddress = _agentAddress.Derive("avatar");
@@ -77,7 +77,7 @@ namespace Lib9c.Tests.Action
             }
 
             var costV3SheetAddress = Addresses.GetSheetAddress<EnhancementCostSheetV3>();
-            _initialState = _initialState.SetState(costV3SheetAddress, null);
+            _initialState = _initialState.SetNull(costV3SheetAddress);
         }
 
         [Theory]

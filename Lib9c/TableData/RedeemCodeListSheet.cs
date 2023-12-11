@@ -24,7 +24,7 @@ namespace Nekoyume.TableData
             {
                 Id = ParseInt(fields[0]);
                 RewardId = ParseInt(fields[1]);
-                PublicKeyBinary = ByteUtil.ParseHex(fields[2]);
+                PublicKeyBinary = new Binary(ByteUtil.ParseHex(fields[2]));
             }
         }
 

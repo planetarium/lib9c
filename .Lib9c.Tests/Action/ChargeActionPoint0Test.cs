@@ -27,7 +27,7 @@ namespace Lib9c.Tests.Action
         public void Execute()
         {
             var privateKey = new PrivateKey();
-            var agentAddress = privateKey.PublicKey.ToAddress();
+            var agentAddress = privateKey.PublicKey.Address;
             var agent = new AgentState(agentAddress);
 
             var avatarAddress = agentAddress.Derive("avatar");
@@ -73,7 +73,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
             });
 
             var nextAvatarState = nextState.GetAvatarState(avatarAddress);

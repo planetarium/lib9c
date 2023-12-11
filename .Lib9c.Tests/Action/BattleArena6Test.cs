@@ -64,7 +64,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(_ncg);
 
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
             var clearStageId = Math.Max(
                 _tableSheets.StageSheet.First?.Id ?? 1,
                 GameConfig.RequireClearedStageLevel.ActionsInRankingBoard);
@@ -848,7 +848,7 @@ namespace Lib9c.Tests.Action
             Address rankingMapAddress,
             int clearStageId)
         {
-            var agentAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);
 
             var avatarAddress = agentAddress.Derive("avatar");
@@ -982,7 +982,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = previousStates,
                 Signer = myAgentAddress,
                 RandomSeed = random.Seed,
-                Rehearsal = false,
                 BlockIndex = blockIndex,
             });
 
@@ -1087,7 +1086,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = states,
                 Signer = signer,
                 RandomSeed = random.Seed,
-                Rehearsal = false,
                 BlockIndex = blockIndex,
             });
             return states;

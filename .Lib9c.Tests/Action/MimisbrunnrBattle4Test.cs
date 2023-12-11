@@ -37,7 +37,7 @@
             _tableSheets = new TableSheets(sheets);
 
             var privateKey = new PrivateKey();
-            _agentAddress = privateKey.PublicKey.ToAddress();
+            _agentAddress = privateKey.PublicKey.Address;
             var agentState = new AgentState(_agentAddress);
 
             _avatarAddress = _agentAddress.Derive("avatar");
@@ -182,7 +182,6 @@
                 PreviousState = state,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = 1,
             });
 
@@ -269,7 +268,6 @@
                     PreviousState = previousState,
                     Signer = _agentAddress,
                     RandomSeed = 0,
-                    Rehearsal = false,
                 });
             });
         }
@@ -495,7 +493,7 @@
             {
                 action.Execute(new ActionContext()
                 {
-                    PreviousState = state, Signer = _agentAddress, RandomSeed = 0, Rehearsal = false,
+                    PreviousState = state, Signer = _agentAddress, RandomSeed = 0,
                 });
             });
         }
@@ -581,7 +579,6 @@
             {
                 PreviousState = nextState,
                 Signer = _agentAddress,
-                Rehearsal = false,
                 RandomSeed = 0,
             });
         }

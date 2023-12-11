@@ -79,7 +79,7 @@ namespace Lib9c.DevExtensions.Action
                     random.GenerateRandomGuid()))
                 .ToList();
 
-            var agentAddress = _privateKey.PublicKey.ToAddress();
+            var agentAddress = _privateKey.PublicKey.Address;
             var states = context.PreviousState;
 
             var avatarAddress = agentAddress.Derive(

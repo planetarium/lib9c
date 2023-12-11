@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             _avatarAddress = _agentAddress.Derive("avatar");
             var slotAddress = _avatarAddress.Derive(
                 string.Format(
@@ -92,7 +92,7 @@ namespace Lib9c.Tests.Action
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
             _arenaSheetState = _initialState.GetState(arenaSheetAddress);
-            _initialState = _initialState.SetState(arenaSheetAddress, null);
+            _initialState = _initialState.SetNull(arenaSheetAddress);
         }
 
         [Theory]

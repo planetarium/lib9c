@@ -23,7 +23,7 @@ namespace Lib9c.Tests.Action.Garages
     {
         private const int AvatarIndex = 0;
 
-        private static readonly Address AgentAddress = new PrivateKey().ToAddress();
+        private static readonly Address AgentAddress = new PrivateKey().Address;
 
         private static readonly Address AvatarAddress =
             Addresses.GetAvatarAddress(AgentAddress, AvatarIndex);
@@ -118,7 +118,6 @@ namespace Lib9c.Tests.Action.Garages
             {
                 Signer = AgentAddress,
                 BlockIndex = blockIndex,
-                Rehearsal = false,
                 PreviousState = states,
                 RandomSeed = new TestRandom().Seed,
             });

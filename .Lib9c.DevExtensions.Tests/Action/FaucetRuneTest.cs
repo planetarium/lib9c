@@ -43,8 +43,8 @@ namespace Lib9c.DevExtensions.Tests.Action
             var tableSheets = new TableSheets(sheets);
             _runeSheet = _initialState.GetSheet<RuneSheet>();
 
-            Address agentAddress = new PrivateKey().ToAddress();
-            _avatarAddress = new PrivateKey().ToAddress();
+            Address agentAddress = new PrivateKey().Address;
+            _avatarAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);
             var avatarState = new AvatarState(
                 _avatarAddress,
@@ -52,7 +52,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 0,
                 tableSheets.GetAvatarSheets(),
                 new GameConfigState(sheets[nameof(GameConfigSheet)]),
-                new PrivateKey().ToAddress()
+                new PrivateKey().Address
             );
             agentState.avatarAddresses.Add(0, _avatarAddress);
 

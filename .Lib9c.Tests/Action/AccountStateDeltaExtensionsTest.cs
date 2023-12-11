@@ -46,7 +46,7 @@ namespace Lib9c.Tests.Action
         {
             var context = new ActionContext();
             IAccount states = new Account(MockState.Empty);
-            var rewardInfoAddress = new PrivateKey().ToAddress();
+            var rewardInfoAddress = new PrivateKey().Address;
             var rewardRecord = new WorldBossKillRewardRecord();
             for (int i = 0; i < level; i++)
             {
@@ -59,7 +59,7 @@ namespace Lib9c.Tests.Action
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             var runeSheet = tableSheets.RuneSheet;
             var runeCurrency = RuneHelper.ToCurrency(runeSheet[10001]);
-            var avatarAddress = new PrivateKey().ToAddress();
+            var avatarAddress = new PrivateKey().Address;
             var bossState = new WorldBossState(
                 tableSheets.WorldBossListSheet[1],
                 tableSheets.WorldBossGlobalHpSheet[1]
@@ -156,7 +156,7 @@ namespace Lib9c.Tests.Action
         [InlineData(4)]
         public void Mead(int agentBalance)
         {
-            var patron = new PrivateKey().ToAddress();
+            var patron = new PrivateKey().Address;
             var agentContractAddress = _agentAddress.GetPledgeAddress();
             var mead = Currencies.Mead;
             var price = RequestPledge.DefaultRefillMead * mead;

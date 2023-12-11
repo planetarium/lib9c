@@ -24,8 +24,8 @@ namespace Lib9c.Tests.Action
         {
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
-            Address agentAddress = new PrivateKey().ToAddress();
-            Address avatarAddress = new PrivateKey().ToAddress();
+            Address agentAddress = new PrivateKey().Address;
+            Address avatarAddress = new PrivateKey().Address;
             IAccount state = new Account(MockState.Empty);
 
             var runeWeightSheet = new RuneWeightSheet();

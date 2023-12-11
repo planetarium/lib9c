@@ -29,7 +29,7 @@ namespace Lib9c.Tests
 
         public IssueTokensFromGarageTest()
         {
-            _signer = new PrivateKey().ToAddress();
+            _signer = new PrivateKey().Address;
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
 
@@ -108,7 +108,6 @@ namespace Lib9c.Tests
                 {
                     PreviousState = _prevState,
                     Signer = _signer,
-                    Rehearsal = false,
                     BlockIndex = 42,
                 }
             );
@@ -138,7 +137,6 @@ namespace Lib9c.Tests
                 {
                     PreviousState = _prevState,
                     Signer = _signer,
-                    Rehearsal = false,
                     BlockIndex = 42,
                 }
             );

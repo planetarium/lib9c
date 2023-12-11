@@ -25,7 +25,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 {
     public class ManipulateStateTest
     {
-        private static readonly Address AdminAddr = new PrivateKey().ToAddress();
+        private static readonly Address AdminAddr = new PrivateKey().Address;
 
         // See also InitializeUtil.cs
         private static readonly Currency Ncg = Currency.Legacy(
@@ -305,37 +305,37 @@ namespace Lib9c.DevExtensions.Tests.Action
         {
             yield return new object[]
             {
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 new FungibleAssetValue(Ncg, 0, 1),
             };
             yield return new object[]
             {
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 new FungibleAssetValue(Ncg, 1, 0),
             };
             yield return new object[]
             {
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 new FungibleAssetValue(Ncg, 1_000_000_000 - 1, 99),
             };
             yield return new object[]
             {
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 new FungibleAssetValue(Ncg, 1_000_000_000, 0),
             };
             yield return new object[]
             {
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 new FungibleAssetValue(Crystal, 0, 1),
             };
             yield return new object[]
             {
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 new FungibleAssetValue(Crystal, 1, 0),
             };
             yield return new object[]
             {
-                new PrivateKey().ToAddress(),
+                new PrivateKey().Address,
                 new FungibleAssetValue(
                     Crystal,
                     long.MaxValue,

@@ -60,7 +60,7 @@ namespace Lib9c.Tests.Action.Factory
             long blockIndex,
             Type type)
         {
-            var addr = new PrivateKey().ToAddress();
+            var addr = new PrivateKey().Address;
             var action = ClaimStakeRewardFactory.CreateByBlockIndex(blockIndex, addr);
             Assert.Equal(type, action.GetType());
         }
@@ -69,7 +69,7 @@ namespace Lib9c.Tests.Action.Factory
         [MemberData(nameof(GetAllClaimStakeRewardV1))]
         public void Create_ByVersion_Success(string expectActionType, int version)
         {
-            var addr = new PrivateKey().ToAddress();
+            var addr = new PrivateKey().Address;
             var action = ClaimStakeRewardFactory.CreateByVersion(version, addr);
             var actualActionType = action
                 .GetType()

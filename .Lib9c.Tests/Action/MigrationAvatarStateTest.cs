@@ -21,8 +21,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute()
         {
-            var agentAddress = new PrivateKey().ToAddress();
-            var avatarAddress = new PrivateKey().ToAddress();
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(
                 avatarAddress,
                 agentAddress,

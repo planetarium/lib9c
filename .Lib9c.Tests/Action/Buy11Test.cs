@@ -62,10 +62,10 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             _goldCurrencyState = new GoldCurrencyState(currency);
 
-            _sellerAgentAddress = new PrivateKey().ToAddress();
+            _sellerAgentAddress = new PrivateKey().Address;
             var sellerAgentState = new AgentState(_sellerAgentAddress);
-            _sellerAvatarAddress = new PrivateKey().ToAddress();
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            _sellerAvatarAddress = new PrivateKey().Address;
+            var rankingMapAddress = new PrivateKey().Address;
             var sellerAvatarState = new AvatarState(
                 _sellerAvatarAddress,
                 _sellerAgentAddress,
@@ -81,9 +81,9 @@ namespace Lib9c.Tests.Action
             };
             sellerAgentState.avatarAddresses[0] = _sellerAvatarAddress;
 
-            _buyerAgentAddress = new PrivateKey().ToAddress();
+            _buyerAgentAddress = new PrivateKey().Address;
             var buyerAgentState = new AgentState(_buyerAgentAddress);
-            _buyerAvatarAddress = new PrivateKey().ToAddress();
+            _buyerAvatarAddress = new PrivateKey().Address;
             _buyerAvatarState = new AvatarState(
                 _buyerAvatarAddress,
                 _buyerAgentAddress,
@@ -111,7 +111,7 @@ namespace Lib9c.Tests.Action
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
             _arenaSheetState = _initialState.GetState(arenaSheetAddress);
-            _initialState = _initialState.SetState(arenaSheetAddress, null);
+            _initialState = _initialState.SetNull(arenaSheetAddress);
         }
 
         public static IEnumerable<object[]> GetExecuteMemberData()
@@ -123,8 +123,8 @@ namespace Lib9c.Tests.Action
                     ItemType = ItemType.Equipment,
                     TradableId = Guid.NewGuid(),
                     OrderId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Price = 10,
                     ItemCount = 1,
@@ -134,8 +134,8 @@ namespace Lib9c.Tests.Action
                     ItemType = ItemType.Costume,
                     TradableId = Guid.NewGuid(),
                     OrderId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = 0,
                     Price = 20,
                     ItemCount = 1,
@@ -148,8 +148,8 @@ namespace Lib9c.Tests.Action
                     ItemType = ItemType.Costume,
                     TradableId = Guid.NewGuid(),
                     OrderId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = 0,
                     Price = 10,
                     ItemCount = 1,
@@ -159,8 +159,8 @@ namespace Lib9c.Tests.Action
                     ItemType = ItemType.Equipment,
                     TradableId = Guid.NewGuid(),
                     OrderId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Price = 50,
                     ItemCount = 1,
@@ -173,8 +173,8 @@ namespace Lib9c.Tests.Action
                     ItemType = ItemType.Material,
                     TradableId = new Guid("15396359-04db-68d5-f24a-d89c18665900"),
                     OrderId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Price = 50,
                     ItemCount = 1,
@@ -184,8 +184,8 @@ namespace Lib9c.Tests.Action
                     ItemType = ItemType.Material,
                     TradableId = new Guid("15396359-04db-68d5-f24a-d89c18665900"),
                     OrderId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = 0,
                     Price = 10,
                     ItemCount = 2,
@@ -202,8 +202,8 @@ namespace Lib9c.Tests.Action
                     ItemType = ItemType.Material,
                     TradableId = new Guid("15396359-04db-68d5-f24a-d89c18665900"),
                     OrderId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex,
                     Price = 50,
                     ItemCount = 50,
@@ -213,8 +213,8 @@ namespace Lib9c.Tests.Action
                     ItemType = ItemType.Material,
                     TradableId = new Guid("15396359-04db-68d5-f24a-d89c18665900"),
                     OrderId = Guid.NewGuid(),
-                    SellerAgentAddress = new PrivateKey().ToAddress(),
-                    SellerAvatarAddress = new PrivateKey().ToAddress(),
+                    SellerAgentAddress = new PrivateKey().Address,
+                    SellerAvatarAddress = new PrivateKey().Address,
                     RequiredBlockIndex = Sell6.ExpiredBlockIndex + 1,
                     Price = 10,
                     ItemCount = 60,
@@ -338,7 +338,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 100,
                 PreviousState = _initialState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _buyerAgentAddress,
             });
 
@@ -707,7 +706,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 100,
                 PreviousState = _initialState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = _buyerAgentAddress,
             });
 
@@ -811,14 +809,13 @@ namespace Lib9c.Tests.Action
             };
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
-            nextState = nextState.SetState(arenaSheetAddress, null);
+            nextState = nextState.SetNull(arenaSheetAddress);
 
             nextState = buyAction.Execute(new ActionContext()
             {
                 BlockIndex = 100,
                 PreviousState = nextState,
                 RandomSeed = 0,
-                Rehearsal = false,
                 Signer = result.GetAgentState().address,
             });
 
@@ -937,7 +934,6 @@ namespace Lib9c.Tests.Action
                     BlockIndex = 100,
                     PreviousState = nextState,
                     RandomSeed = 0,
-                    Rehearsal = false,
                     Signer = result.GetAgentState().address,
                 });
             });
@@ -947,7 +943,7 @@ namespace Lib9c.Tests.Action
             Address agentAddress, Address avatarAddress)
         {
             var agentState = new AgentState(agentAddress);
-            var rankingMapAddress = new PrivateKey().ToAddress();
+            var rankingMapAddress = new PrivateKey().Address;
 
             var avatarState = new AvatarState(
                 avatarAddress,

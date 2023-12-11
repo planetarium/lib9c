@@ -49,7 +49,7 @@ namespace Lib9c.Tests.Action
 
             _tableSheets = new TableSheets(sheets);
 
-            _agentAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
             _avatarAddress = _agentAddress.Derive("avatar");
             var inventoryAddr = _avatarAddress.Derive(LegacyInventoryKey);
             var worldInformationAddr = _avatarAddress.Derive(LegacyWorldInformationKey);
@@ -65,7 +65,7 @@ namespace Lib9c.Tests.Action
                 0,
                 _tableSheets.GetAvatarSheets(),
                 gameConfigState,
-                new PrivateKey().ToAddress()
+                new PrivateKey().Address
             )
             {
                 level = 100,
@@ -480,7 +480,6 @@ namespace Lib9c.Tests.Action
                 PreviousState = previousStates,
                 Signer = _agentAddress,
                 RandomSeed = 0,
-                Rehearsal = false,
                 BlockIndex = blockIndex,
             });
 

@@ -421,7 +421,7 @@ namespace Nekoyume.Model.State
 
         public static HashDigest<SHA256> ToItemId(this IValue serialized)
         {
-            return new HashDigest<SHA256>(((Binary)serialized).ByteArray);
+            return new HashDigest<SHA256>(serialized);
         }
 
         #endregion

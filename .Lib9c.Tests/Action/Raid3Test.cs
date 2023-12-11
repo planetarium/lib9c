@@ -30,8 +30,8 @@ namespace Lib9c.Tests.Action
         {
             _sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(_sheets);
-            _agentAddress = new PrivateKey().ToAddress();
-            _avatarAddress = new PrivateKey().ToAddress();
+            _agentAddress = new PrivateKey().Address;
+            _avatarAddress = new PrivateKey().Address;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             _goldCurrency = Currency.Legacy("NCG", 2, null);
@@ -179,7 +179,7 @@ namespace Lib9c.Tests.Action
 
                     if (raiderListExist)
                     {
-                        raiderList = raiderList.Add(new PrivateKey().ToAddress().Serialize());
+                        raiderList = raiderList.Add(new PrivateKey().Address.Serialize());
                     }
 
                     state = state.SetState(raiderListAddress, raiderList);
@@ -226,7 +226,6 @@ namespace Lib9c.Tests.Action
                     BlockIndex = blockIndex + executeOffset,
                     PreviousState = state,
                     RandomSeed = randomSeed,
-                    Rehearsal = false,
                     Signer = _agentAddress,
                 };
 
@@ -369,7 +368,6 @@ namespace Lib9c.Tests.Action
                     BlockIndex = blockIndex + executeOffset,
                     PreviousState = state,
                     RandomSeed = 0,
-                    Rehearsal = false,
                     Signer = _agentAddress,
                 }));
             }
@@ -484,7 +482,6 @@ namespace Lib9c.Tests.Action
                 BlockIndex = worldBossRow.StartedBlockIndex + Raid4.RequiredInterval,
                 PreviousState = state,
                 RandomSeed = randomSeed,
-                Rehearsal = false,
                 Signer = _agentAddress,
             });
 
