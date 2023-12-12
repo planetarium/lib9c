@@ -59,9 +59,6 @@ namespace Nekoyume.Blockchain.Policy
                     startIndex: 0L,
                     value: 1024L * 1024L * 15L))   // 15 MiB
                 .Add(new SpannedSubPolicy<long>(
-                    startIndex: 1L,
-                    value: 1024L * 100L))           // 100 KiB
-                .Add(new SpannedSubPolicy<long>(
                     startIndex: 2_000_001L,
                     value: 1024L * 1024L * 10L))    // 10 MiB
                 .Add(new SpannedSubPolicy<long>(
