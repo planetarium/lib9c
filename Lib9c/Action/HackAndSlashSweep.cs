@@ -311,7 +311,7 @@ namespace Nekoyume.Action
             avatarState.UpdateMonsterMap(stageWaveSheet, stageId);
 
             var random = context.GetRandom();
-            var rewardItems = HackAndSlashSweep6.GetRewardItems(
+            var rewardItems = GetRewardItems(
                 random,
                 playCount,
                 stageRow,
@@ -339,6 +339,25 @@ namespace Nekoyume.Action
                 .SetState(
                     avatarAddress.Derive(LegacyQuestListKey),
                     avatarState.questList.Serialize());
+        }
+
+        public static List<ItemBase> GetRewardItems(IRandom random,
+            int playCount,
+            StageSheet.Row stageRow,
+            MaterialItemSheet materialItemSheet)
+        {
+            var rewardItems = new List<ItemBase>();
+            var maxCount = random.Next(stageRow.DropItemMin, stageRow.DropItemMax + 1);
+            for (var i = 0; i < playCount; i++)
+            {
+                var selector = StageSimulatorV1.SetItemSelector(stageRow, random);
+                var rewards = Simulator.SetRewardV2(selector, maxCount, random,
+                    materialItemSheet);
+                rewardItems.AddRange(rewards);
+            }
+
+            rewardItems = rewardItems.OrderBy(x => x.Id).ToList();
+            return rewardItems;
         }
     }
 }
