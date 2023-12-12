@@ -244,6 +244,7 @@ register_product2
 register_product3
 renew_admin_state
 request_pledge
+rune_summon
 runeEnhancement
 runeEnhancement2
 secure_mining_reward
