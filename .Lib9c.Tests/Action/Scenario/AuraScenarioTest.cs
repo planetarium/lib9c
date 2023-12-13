@@ -155,7 +155,7 @@ namespace Lib9c.Tests.Action.Scenario
                 avatarState.worldInformation.Serialize()
             );
 
-            var raid = new Raid6
+            var raid = new Raid
             {
                 AvatarAddress = _avatarAddress,
                 EquipmentIds = new List<Guid>
