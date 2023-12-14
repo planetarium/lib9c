@@ -23,12 +23,14 @@ namespace Lib9c.Plugin
                 new NCActionLoader());
         }
 
-        public byte[][] Evaluate(byte[] blockBytes, byte[]? baseStateRootHashBytes)
+        public byte[][] Evaluate(byte[] blockBytes, byte[]? baseStateRootHashBytes, out byte[] stateRootHashBytes)
         {
-            return _actionEvaluator.Evaluate(
+            var evals = _actionEvaluator.Evaluate(
                 PreEvaluationBlockMarshaller.Deserialize(blockBytes),
-                baseStateRootHashBytes is { } bytes ? new HashDigest<SHA256>(bytes) : null)
-                .Select(eval => ActionEvaluationMarshaller.Serialize(eval)).ToArray();
+                baseStateRootHashBytes is { } bytes ? new HashDigest<SHA256>(bytes) : null,
+                out var stateRootHash);
+            stateRootHashBytes = stateRootHash.ToByteArray();
+            return evals.Select(eval => ActionEvaluationMarshaller.Serialize(eval)).ToArray();
         }
     }
 }

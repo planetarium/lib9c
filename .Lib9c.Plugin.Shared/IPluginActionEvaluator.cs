@@ -2,6 +2,6 @@ namespace Lib9c.Plugin.Shared
 {
     public interface IPluginActionEvaluator
     {
-        byte[][] Evaluate(byte[] blockBytes, byte[]? baseStateRootHashBytes);
+        byte[][] Evaluate(byte[] blockBytes, byte[]? baseStateRootHashBytes, out byte[] stateRootHashBytes);
     }
 }
