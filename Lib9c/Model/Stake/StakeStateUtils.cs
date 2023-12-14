@@ -3,13 +3,14 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Model.Stake
 {
     public static class StakeStateUtils
     {
         public static bool TryMigrate(
-            IAccountState state,
+            IWorldState state,
             Address stakeStateAddr,
             out StakeStateV2 stakeStateV2)
         {
