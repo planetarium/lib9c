@@ -18,35 +18,55 @@ namespace Libplanet.Extensions.RemoteBlockChainStates
             _explorerEndpoint = explorerEndpoint;
         }
 
-        public IValue? GetState(Address address, BlockHash? offset) =>
-            GetStates(new[] { address }, offset).First();
+        public IWorldState GetWorldState(HashDigest<SHA256>? offsetStateRootHash)
+            => new RemoteWorldState(_explorerEndpoint, offsetStateRootHash);
 
-        public IReadOnlyList<IValue?> GetStates(IReadOnlyList<Address> addresses, BlockHash? offset)
-        {
-            return new RemoteBlockState(_explorerEndpoint, offset).GetStates(addresses);
-        }
+        public IWorldState GetWorldState(BlockHash? offsetBlockHash)
+            => new RemoteWorldState(_explorerEndpoint, offsetBlockHash);
 
-        public FungibleAssetValue GetBalance(Address address, Currency currency, BlockHash? offset)
-        {
-            return new RemoteBlockState(_explorerEndpoint, offset).GetBalance(address, currency);
-        }
+        public IAccountState GetAccountState(HashDigest<SHA256>? accountStateRootHash)
+            => new RemoteAccountState(_explorerEndpoint, accountStateRootHash);
 
-        public FungibleAssetValue GetTotalSupply(Currency currency, BlockHash? offset)
-        {
-            return new RemoteBlockState(_explorerEndpoint, offset).GetTotalSupply(currency);
-        }
+        public IAccountState GetAccountState(Address address, BlockHash? offsetBlockHash)
+            => new RemoteAccountState(_explorerEndpoint, address, offsetBlockHash);
 
-        public ValidatorSet GetValidatorSet(BlockHash? offset)
-        {
-            return new RemoteBlockState(_explorerEndpoint, offset).GetValidatorSet();
-        }
+        public IValue? GetState(Address address, Address accountAddress, BlockHash? offsetBlockHash)
+            => new RemoteAccountState(_explorerEndpoint, accountAddress, offsetBlockHash)
+                .GetState(address);
 
-        public IAccountState GetAccountState(BlockHash? offset)
-        {
-            return new RemoteBlockState(_explorerEndpoint, offset);
-        }
+        public IValue? GetState(Address address, HashDigest<SHA256>? accountStateRootHash)
+            => new RemoteAccountState(_explorerEndpoint, accountStateRootHash)
+                .GetState(address);
 
-        public IAccountState GetAccountState(HashDigest<SHA256>? hash) =>
-            throw new NotImplementedException();
+        public FungibleAssetValue GetBalance(
+            Address address,
+            Currency currency,
+            HashDigest<SHA256>? hashDigest)
+            => new RemoteAccountState(_explorerEndpoint, hashDigest)
+                .GetBalance(address, currency);
+
+        public FungibleAssetValue GetBalance(
+            Address address,
+            Currency currency,
+            Address accountAddress,
+            BlockHash? offset)
+            => new RemoteAccountState(_explorerEndpoint, accountAddress, offset)
+                .GetBalance(address, currency);
+
+        public FungibleAssetValue GetTotalSupply(Currency currency, HashDigest<SHA256>? hashDigest)
+            => new RemoteAccountState(_explorerEndpoint, hashDigest)
+                .GetTotalSupply(currency);
+
+        public FungibleAssetValue GetTotalSupply(Currency currency, Address accountAddress, BlockHash? offset)
+            => new RemoteAccountState(_explorerEndpoint, accountAddress, offset)
+                .GetTotalSupply(currency);
+
+        public ValidatorSet GetValidatorSet(HashDigest<SHA256>? hashDigest)
+            => new RemoteAccountState(_explorerEndpoint, hashDigest)
+                .GetValidatorSet();
+
+        public ValidatorSet GetValidatorSet(Address accountAddress, BlockHash? offset)
+            => new RemoteAccountState(_explorerEndpoint, accountAddress, offset)
+                .GetValidatorSet();
     }
 }
