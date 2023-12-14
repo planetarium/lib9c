@@ -4,6 +4,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -34,7 +35,7 @@ namespace Nekoyume.Action
             RefillMead = values[1].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;

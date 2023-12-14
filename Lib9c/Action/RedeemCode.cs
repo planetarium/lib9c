@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -41,7 +42,7 @@ namespace Nekoyume.Action
             AvatarAddress = avatarAddress;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -52,7 +53,7 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RedeemCode exec started", addressesHex);
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out AvatarState avatarState, out _))
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out AvatarState avatarState))
             {
                 return states;
             }

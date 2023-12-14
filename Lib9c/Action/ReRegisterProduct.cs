@@ -10,6 +10,7 @@ using Libplanet.Crypto;
 using Nekoyume.Battle;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -24,10 +25,10 @@ namespace Nekoyume.Action
         public List<(IProductInfo, IRegisterInfo)> ReRegisterInfos;
         public bool ChargeAp;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount states = context.PreviousState;
+            IWorld states = context.PreviousState;
 
             if (!ReRegisterInfos.Any())
             {
@@ -53,8 +54,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
-                    out var migrationRequired))
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException("failed to load avatar state");
             }
@@ -165,14 +165,6 @@ namespace Nekoyume.Action
                 .SetState(AvatarAddress, avatarState.SerializeV2())
                 .SetState(productsStateAddress, productsState.Serialize());
 
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(AvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize())
-                    .SetState(AvatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize());
-            }
             return states;
         }
 

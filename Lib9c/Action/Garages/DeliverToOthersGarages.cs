@@ -14,6 +14,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.Garages;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Garages
 {
@@ -161,7 +162,7 @@ namespace Nekoyume.Action.Garages
                 : memo;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var state = context.PreviousState;
@@ -209,9 +210,9 @@ namespace Nekoyume.Action.Garages
             }
         }
 
-        private IAccount SendBalances(
+        private IWorld SendBalances(
             IActionContext context,
-            IAccount states)
+            IWorld states)
         {
             if (FungibleAssetValues is null)
             {
@@ -234,9 +235,9 @@ namespace Nekoyume.Action.Garages
             return states;
         }
 
-        private IAccount SendFungibleItems(
+        private IWorld SendFungibleItems(
             Address signer,
-            IAccount states)
+            IWorld states)
         {
             if (FungibleIdAndCounts is null)
             {

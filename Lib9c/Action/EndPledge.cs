@@ -3,8 +3,8 @@ using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -26,7 +26,7 @@ namespace Nekoyume.Action
             AgentAddress = ((Dictionary)plainValue)["values"].ToAddress();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             Address signer = context.Signer;

@@ -4,8 +4,8 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
@@ -42,7 +42,7 @@ namespace Nekoyume.Action
             AvatarAddress = dictionary[AvatarAddressKey].ToAddress();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;

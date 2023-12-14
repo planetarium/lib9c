@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Lib9c.Abstractions;
-using Nekoyume.Model;
+using Nekoyume.Module;
 using Serilog;
 
 namespace Nekoyume.Action
@@ -79,7 +79,7 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(4);
             var state = context.PreviousState;
@@ -131,8 +131,8 @@ namespace Nekoyume.Action
             }
         }
 
-        private IAccount Transfer(
-            IActionContext context, IAccount state, Address signer, Address recipient, FungibleAssetValue amount, long blockIndex)
+        private IWorld Transfer(
+            IActionContext context, IWorld state, Address signer, Address recipient, FungibleAssetValue amount, long blockIndex)
         {
             if (Sender != signer)
             {

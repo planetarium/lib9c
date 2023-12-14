@@ -10,10 +10,10 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 
@@ -119,7 +119,7 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var ctx = context;
@@ -156,7 +156,13 @@ namespace Nekoyume.Action
             sw.Start();
             var started = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}ItemEnhancement exec started", addressesHex);
-            if (!states.TryGetAgentAvatarStatesV2(ctx.Signer, avatarAddress, out var agentState, out var avatarState, out _))
+            var agentState = states.GetAgentState(ctx.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the agent state of the signer was failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(ctx.Signer, avatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }

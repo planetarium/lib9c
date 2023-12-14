@@ -10,6 +10,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -25,7 +26,7 @@ namespace Nekoyume.Action
         IEnumerable<int> IUnlockWorldV1.WorldIds => WorldIds;
         Address IUnlockWorldV1.AvatarAddress => AvatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;

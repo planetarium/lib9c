@@ -7,6 +7,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 
 namespace Nekoyume.Action
@@ -43,10 +44,10 @@ namespace Nekoyume.Action
             Signature = signature;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount state = context.PreviousState;
+            IWorld state = context.PreviousState;
             Address activatedAddress = context.Signer.Derive(ActivationKey.DeriveKey);
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);

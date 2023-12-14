@@ -15,6 +15,7 @@ using Nekoyume.Model.Mail;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Nekoyume.TableData.Pet;
@@ -83,7 +84,7 @@ namespace Nekoyume.Action
             petId = plainValue[PetIdKey].ToNullableInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -102,8 +103,14 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CombinationEquipment exec started", addressesHex);
 
-            if (!states.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress, out var agentState,
-                    out var avatarState, out _))
+            var agentState = states.GetAgentState(context.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the agent state of the signer was failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(context.Signer, avatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -504,8 +511,8 @@ namespace Nekoyume.Action
                 .SetState(context.Signer, agentState.Serialize());
         }
 
-        private IAccount UseAssetsBySuperCraft(
-            IAccount states,
+        private IWorld UseAssetsBySuperCraft(
+            IWorld states,
             IActionContext context,
             CrystalHammerPointSheet.Row row,
             HammerPointState hammerPointState)
@@ -525,8 +532,8 @@ namespace Nekoyume.Action
                 hammerPointCost);
         }
 
-        private IAccount UseAssetsByNormalCombination(
-            IAccount states,
+        private IWorld UseAssetsByNormalCombination(
+            IWorld states,
             IActionContext context,
             AvatarState avatarState,
             HammerPointState hammerPointState,

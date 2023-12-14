@@ -6,6 +6,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
@@ -22,7 +23,7 @@ namespace Nekoyume.Action
 
         IEnumerable<IValue> IMigrationAvatarStateV1.AvatarStates => avatarStates;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -48,7 +49,7 @@ namespace Nekoyume.Action
                     states = states.SetState(questListAddress, v1.questList.Serialize());
                 }
 
-                var v2 = states.GetAvatarStateV2(v1.address);
+                var v2 = states.GetAvatarState(v1.address);
                 if (v2.inventory is null || v2.worldInformation is null || v2.questList is null)
                 {
                     throw new FailedLoadStateException(v1.address.ToHex());

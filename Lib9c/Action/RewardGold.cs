@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 
@@ -34,7 +35,7 @@ namespace Nekoyume.Action
         {
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -57,7 +58,7 @@ namespace Nekoyume.Action
             return MinerReward(context, states);
         }
 
-        public IAccount GenesisGoldDistribution(IActionContext ctx, IAccount states)
+        public IWorld GenesisGoldDistribution(IActionContext ctx, IWorld states)
         {
             IEnumerable<GoldDistribution> goldDistributions = states.GetGoldDistribution();
             var index = ctx.BlockIndex;
@@ -94,7 +95,7 @@ namespace Nekoyume.Action
         }
 
         [Obsolete("Use WeeklyArenaRankingBoard2 for performance.")]
-        public IAccount WeeklyArenaRankingBoard(IActionContext ctx, IAccount states)
+        public IWorld WeeklyArenaRankingBoard(IActionContext ctx, IWorld states)
         {
             var gameConfigState = states.GetGameConfigState();
             var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
@@ -127,14 +128,14 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public IAccount WeeklyArenaRankingBoard2(IActionContext ctx, IAccount states)
+        public IWorld WeeklyArenaRankingBoard2(IActionContext ctx, IWorld states)
         {
             states = PrepareNextArena(ctx, states);
             states = ResetChallengeCount(ctx, states);
             return states;
         }
 
-        public IAccount PrepareNextArena(IActionContext ctx, IAccount states)
+        public IWorld PrepareNextArena(IActionContext ctx, IWorld states)
         {
             var gameConfigState = states.GetGameConfigState();
             var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
@@ -239,7 +240,7 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public IAccount ResetChallengeCount(IActionContext ctx, IAccount states)
+        public IWorld ResetChallengeCount(IActionContext ctx, IWorld states)
         {
             var gameConfigState = states.GetGameConfigState();
             var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
@@ -280,7 +281,7 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public IAccount MinerReward(IActionContext ctx, IAccount states)
+        public IWorld MinerReward(IActionContext ctx, IWorld states)
         {
             // 마이닝 보상
             // https://www.notion.so/planetarium/Mining-Reward-b7024ef463c24ebca40a2623027d497d
@@ -304,10 +305,10 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public static IAccount TransferMead(IActionContext context, IAccount states)
+        public static IWorld TransferMead(IActionContext context, IWorld states)
         {
 #pragma warning disable LAA1002
-            var targetAddresses = states
+            var targetAddresses = states.GetAccount(ReservedAddresses.LegacyAccount)
                 .TotalUpdatedFungibleAssets
 #pragma warning restore LAA1002
                 .Where(pair => pair.Item2.Equals(Currencies.Mead))

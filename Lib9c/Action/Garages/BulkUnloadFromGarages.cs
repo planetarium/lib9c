@@ -16,6 +16,7 @@ using Nekoyume.Exceptions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Garages
 {
@@ -114,7 +115,7 @@ namespace Nekoyume.Action.Garages
             }).ToList();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
 
@@ -167,9 +168,9 @@ namespace Nekoyume.Action.Garages
             return states;
         }
 
-        private IAccount TransferFungibleAssetValues(
+        private IWorld TransferFungibleAssetValues(
             IActionContext context,
-            IAccount states,
+            IWorld states,
             IEnumerable<(Address balanceAddress, FungibleAssetValue value)> fungibleAssetValues)
         {
             var garageBalanceAddress = Addresses.GetGarageBalanceAddress(context.Signer);
@@ -181,8 +182,8 @@ namespace Nekoyume.Action.Garages
             return states;
         }
 
-        private IAccount TransferFungibleItems(
-            IAccount states,
+        private IWorld TransferFungibleItems(
+            IWorld states,
             Address signer,
             Address recipientAvatarAddress,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
@@ -204,10 +205,10 @@ namespace Nekoyume.Action.Garages
             return states.SetState(inventoryAddress, inventory.Serialize());
         }
 
-        private IAccount BulkSendMail(
+        private IWorld BulkSendMail(
             long blockIndex,
             IRandom random,
-            IAccount states)
+            IWorld states)
         {
             foreach (var tuple in UnloadData)
             {

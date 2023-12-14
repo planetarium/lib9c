@@ -12,6 +12,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Pet;
 using Serilog;
@@ -32,7 +33,7 @@ namespace Nekoyume.Action
         Address IRapidCombinationV1.AvatarAddress => avatarAddress;
         int IRapidCombinationV1.SlotIndex => slotIndex;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -50,12 +51,16 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination exec started", addressesHex);
 
-            if (!states.TryGetAgentAvatarStatesV2(
+            var agentState = states.GetAgentState(context.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(
                 context.Signer,
                 avatarAddress,
-                out var agentState,
-                out var avatarState,
-                out _))
+                out var avatarState))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }

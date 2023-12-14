@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -17,6 +17,7 @@ using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -88,7 +89,7 @@ namespace Nekoyume.Action
             runeInfos = plainValue[RuneInfos].ToList(x => new RuneSlotInfo((List)x));
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -105,11 +106,10 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the signer tried to battle for themselves.");
             }
 
-            if (!states.TryGetAvatarStateV2(
+            if (!states.TryGetAvatarState(
                     context.Signer,
                     myAvatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -422,18 +422,6 @@ namespace Nekoyume.Action
             myArenaScore.AddScore(myScore);
             enemyArenaScore.AddScore(enemyWinScore * winCount);
             arenaInformation.UpdateRecord(winCount, defeatCount);
-
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(myAvatarAddress, avatarState.SerializeV2())
-                    .SetState(
-                        myAvatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize())
-                    .SetState(
-                        myAvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize());
-            }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}BattleArena Total Executed Time: {Elapsed}", addressesHex, ended - started);

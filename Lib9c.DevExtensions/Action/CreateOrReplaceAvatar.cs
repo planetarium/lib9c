@@ -1,5 +1,4 @@
 #nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -10,7 +9,6 @@ using Lib9c.DevExtensions.Action.Interface;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Extensions;
@@ -20,6 +18,7 @@ using Nekoyume.Model.Quest;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using static Lib9c.SerializeKeys;
@@ -364,7 +363,7 @@ namespace Lib9c.DevExtensions.Action
             CrystalRandomBuff = crystalRandomBuff;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var random = context.GetRandom();
@@ -375,8 +374,8 @@ namespace Lib9c.DevExtensions.Action
                 context.Signer);
         }
 
-        public IAccount Execute(
-            IAccount states,
+        public IWorld Execute(
+            IWorld states,
             IRandom random,
             long blockIndex,
             Address signer)

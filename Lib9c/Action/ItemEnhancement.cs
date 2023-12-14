@@ -4,18 +4,17 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Numerics;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Serilog;
@@ -71,7 +70,7 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var ctx = context;
@@ -96,8 +95,15 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex} ItemEnhancement exec started", addressesHex);
 
             // Validate avatar
-            if (!states.TryGetAgentAvatarStatesV2(ctx.Signer, avatarAddress, out var agentState,
-                    out var avatarState, out var migrationRequired))
+            var agentState = states.GetAgentState(ctx.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex} Aborted as the agent state of the signer was failed to load."
+                );
+            }
+
+            if (!states.TryGetAvatarState(ctx.Signer, avatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load."

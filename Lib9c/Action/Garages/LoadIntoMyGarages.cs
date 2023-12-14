@@ -1,5 +1,4 @@
 #nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -16,6 +15,7 @@ using Nekoyume.Exceptions;
 using Nekoyume.Model.Garages;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData.Garages;
 
 namespace Nekoyume.Action.Garages
@@ -123,7 +123,7 @@ namespace Nekoyume.Action.Garages
                 : (string)(Text)list[3];
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var state = context.PreviousState;
@@ -210,9 +210,9 @@ namespace Nekoyume.Action.Garages
             }
         }
 
-        private IAccount TransferFungibleAssetValues(
+        private IWorld TransferFungibleAssetValues(
             IActionContext context,
-            IAccount states)
+            IWorld states)
         {
             if (FungibleAssetValues is null)
             {
@@ -229,10 +229,10 @@ namespace Nekoyume.Action.Garages
             return states;
         }
 
-        private IAccount TransferFungibleItems(
+        private IWorld TransferFungibleItems(
             Address signer,
             long blockIndex,
-            IAccount states)
+            IWorld states)
         {
             if (InventoryAddr is null ||
                 FungibleIdAndCounts is null)

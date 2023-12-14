@@ -7,13 +7,12 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
-using Nekoyume.Helper;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Serilog;
@@ -96,7 +95,7 @@ namespace Nekoyume.Action
             ApStoneCount = plainValue["apStoneCount"].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var random = context.GetRandom();
@@ -107,8 +106,8 @@ namespace Nekoyume.Action
                 random);
         }
 
-        public IAccount Execute(
-            IAccount states,
+        public IWorld Execute(
+            IWorld states,
             Address signer,
             long blockIndex,
             IRandom random)
@@ -148,7 +147,7 @@ namespace Nekoyume.Action
 
             var sw = new Stopwatch();
             sw.Start();
-            if (!states.TryGetAvatarStateV2(signer, AvatarAddress, out AvatarState avatarState, out _))
+            if (!states.TryGetAvatarState(signer, AvatarAddress, out AvatarState avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");

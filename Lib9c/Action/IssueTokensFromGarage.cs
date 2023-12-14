@@ -11,7 +11,7 @@ using Nekoyume.Action.Garages;
 using Nekoyume.Model;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
-using Org.BouncyCastle.Asn1.Esf;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -45,7 +45,7 @@ namespace Nekoyume.Action
 
         public IEnumerable<Spec> Specs { get; private set; }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
 
@@ -54,7 +54,7 @@ namespace Nekoyume.Action
                 throw new InvalidOperationException();
             }
 
-            IAccount state = context.PreviousState;
+            IWorld state = context.PreviousState;
             Address garageBalanceAddress = Addresses.GetGarageBalanceAddress(context.Signer);
 
             foreach (var (assets, items) in Specs)

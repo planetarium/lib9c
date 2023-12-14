@@ -12,6 +12,7 @@ using Libplanet.Crypto;
 using Nekoyume.Battle;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -51,7 +52,7 @@ namespace Nekoyume.Action
                 .ToEnumerable(info => new UpdateSellInfo((List)info));
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -82,7 +83,7 @@ namespace Nekoyume.Action
             {
                 throw new ListEmptyException($"{addressesHex} List - UpdateSell infos was empty.");
             }
-            if (!states.TryGetAvatarStateV2(context.Signer, sellerAvatarAddress, out var avatarState, out _))
+            if (!states.TryGetAvatarState(context.Signer, sellerAvatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
@@ -171,7 +172,7 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public static IAccount Cancel(IAccount states,
+        public static IWorld Cancel(IWorld states,
             UpdateSellInfo updateSellInfo, string addressesHex, AvatarState avatarState,
             OrderDigestListState digestList, IActionContext context, Address sellerAvatarAddress)
         {

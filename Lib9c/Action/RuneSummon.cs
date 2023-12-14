@@ -13,6 +13,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Summon;
 using Serilog;
@@ -35,7 +36,7 @@ namespace Nekoyume.Action
         private const int SummonLimit = 10;
         public const int RuneQuantity = 10;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -45,8 +46,7 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug($"{addressesHex} RuneSummon Exec. Started.");
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
-                    out _))
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
@@ -147,14 +147,14 @@ namespace Nekoyume.Action
         int IRuneSummonV1.GroupId => GroupId;
         int IRuneSummonV1.SummonCount => SummonCount;
 
-        public static IAccount Summon(
+        public static IWorld Summon(
             IActionContext context,
             Address avatarAddress,
             RuneSheet runeSheet,
             SummonSheet.Row summonRow,
             int summonCount,
             IRandom random,
-            IAccount states
+            IWorld states
         )
         {
             // Ten plus one

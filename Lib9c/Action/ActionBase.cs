@@ -9,6 +9,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Serilog;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
@@ -27,7 +28,7 @@ namespace Nekoyume.Action
 
         public abstract IValue PlainValue { get; }
         public abstract void LoadPlainValue(IValue plainValue);
-        public abstract IAccount Execute(IActionContext context);
+        public abstract IWorld Execute(IActionContext context);
 
         /// <summary>
         /// returns "[Signer Address, AvatarState Address, ...]"
@@ -48,7 +49,7 @@ namespace Nekoyume.Action
             return sb.ToString();
         }
 
-        protected IAccount LogError(IActionContext context, string message, params object[] values)
+        protected IWorld LogError(IActionContext context, string message, params object[] values)
         {
             string actionType = GetType().Name;
             object[] prependedValues = new object[values.Length + 2];

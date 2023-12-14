@@ -10,6 +10,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -53,7 +54,7 @@ namespace Nekoyume.Action
         Address IRapidCombinationV1.AvatarAddress => avatarAddress;
         int IRapidCombinationV1.SlotIndex => slotIndex;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -72,12 +73,16 @@ namespace Nekoyume.Action
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
-            if (!states.TryGetAgentAvatarStatesV2(
+            var agentState = states.GetAgentState(context.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(
                 context.Signer,
                 avatarAddress,
-                out var agentState,
-                out var avatarState,
-                out _))
+                out var avatarState))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }

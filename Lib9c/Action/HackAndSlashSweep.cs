@@ -7,13 +7,13 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -74,7 +74,7 @@ namespace Nekoyume.Action
             stageId = plainValue["stageId"].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -91,11 +91,10 @@ namespace Nekoyume.Action
 
             states.ValidateWorldId(avatarAddress, worldId);
 
-            if (!states.TryGetAvatarStateV2(
+            if (!states.TryGetAvatarState(
                     context.Signer,
                     avatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -321,13 +320,6 @@ namespace Nekoyume.Action
             var levelSheet = sheets.GetSheet<CharacterLevelSheet>();
             var (level, exp) = avatarState.GetLevelAndExp(levelSheet, stageId, playCount);
             avatarState.UpdateExp(level, exp);
-
-            if (migrationRequired)
-            {
-                states = states.SetState(
-                    avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize());
-            }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}", addressesHex, ended - started);

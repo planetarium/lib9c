@@ -12,6 +12,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -26,10 +27,10 @@ namespace Nekoyume.Action
         public Address AvatarAddress;
         public List<IProductInfo> ProductInfos;
         public bool ChargeAp;
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount states = context.PreviousState;
+            IWorld states = context.PreviousState;
 
             if (!ProductInfos.Any())
             {
@@ -51,8 +52,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
-                    out var migrationRequired))
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException("failed to load avatar state");
             }
@@ -129,19 +129,10 @@ namespace Nekoyume.Action
                 .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
                 .SetState(productsStateAddress, productsState.Serialize());
 
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(AvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize())
-                    .SetState(AvatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize());
-            }
-
             return states;
         }
 
-        public static IAccount Cancel(ProductsState productsState, IProductInfo productInfo, IAccount states,
+        public static IWorld Cancel(ProductsState productsState, IProductInfo productInfo, IWorld states,
             AvatarState avatarState, IActionContext context)
         {
             var productId = productInfo.ProductId;

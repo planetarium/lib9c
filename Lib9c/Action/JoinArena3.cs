@@ -15,6 +15,7 @@ using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 
@@ -67,7 +68,7 @@ namespace Nekoyume.Action
             runeInfos = plainValue["runeInfos"].ToList(x => new RuneSlotInfo((List)x));
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -75,13 +76,17 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}JoinArena exec started", addressesHex);
 
-            if (!states.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress,
-                    out var agentState, out var avatarState, out _))
+            var agentState = states.GetAgentState(context.Signer);
+            if (agentState is null)
             {
-                throw new FailedLoadStateException(
-                    $"[{nameof(JoinArena)}] Aborted as the avatar state of the signer failed to load.");
+                throw new FailedLoadStateException($"[{nameof(JoinArena)}] Aborted as the agent state of the signer was failed to load.");
             }
 
+            if (!states.TryGetAvatarState(context.Signer, avatarAddress, out var avatarState))
+            {
+                throw new FailedLoadStateException($"[{nameof(JoinArena)}] Aborted as the avatar state of the signer was failed to load.");
+            }
+            
             if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(
                     out var world))
             {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -13,6 +13,7 @@ using Nekoyume.Battle;
 using Nekoyume.Model;
 using Nekoyume.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -50,7 +51,7 @@ namespace Nekoyume.Action
         IEnumerable<Guid> IRankingBattleV2.CostumeIds => costumeIds;
         IEnumerable<Guid> IRankingBattleV2.EquipmentIds => equipmentIds;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
@@ -90,7 +91,7 @@ namespace Nekoyume.Action
                 throw new InvalidAddressException($"{addressesHex}Aborted as the signer tried to battle for themselves.");
             }
 
-            if (!states.TryGetAvatarStateV2(ctx.Signer, avatarAddress, out var avatarState, out bool migrationRequired))
+            if (!states.TryGetAvatarState(ctx.Signer, avatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
@@ -144,16 +145,7 @@ namespace Nekoyume.Action
                     world.StageClearedId);
             }
 
-            AvatarState enemyAvatarState;
-            try
-            {
-                enemyAvatarState = states.GetAvatarStateV2(enemyAddress);
-            }
-            // BackWard compatible.
-            catch (FailedLoadStateException)
-            {
-                enemyAvatarState = states.GetAvatarState(enemyAddress);
-            }
+            AvatarState enemyAvatarState = states.GetAvatarState(enemyAddress);
             if (enemyAvatarState is null)
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the opponent ({enemyAddress}) was failed to load.");
@@ -275,13 +267,6 @@ namespace Nekoyume.Action
                     .SetState(enemyInfoAddress, enemyInfo.Serialize())
                     .SetState(questListAddress, avatarState.questList.Serialize());
 
-                if (migrationRequired)
-                {
-                    states = states
-                        .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                        .SetState(avatarAddress, avatarState.SerializeV2());
-                }
-
                 if (listCheck)
                 {
                     var addressList = states.TryGetState(addressListAddress, out List rawAddressList)
@@ -313,13 +298,13 @@ namespace Nekoyume.Action
             }
 
             // Run Backward compatible
-            return BackwardCompatibleExecute(rawWeeklyArenaState, sheets, avatarState, costumeStatSheet, sw, addressesHex, enemyAvatarState, ctx, states, inventoryAddress, questListAddress, migrationRequired, worldInformationAddress, started);
+            return BackwardCompatibleExecute(rawWeeklyArenaState, sheets, avatarState, costumeStatSheet, sw, addressesHex, enemyAvatarState, ctx, states, inventoryAddress, questListAddress, started);
         }
 
-        private IAccount BackwardCompatibleExecute(Dictionary rawWeeklyArenaState, Dictionary<Type, (Address address, ISheet sheet)> sheets,
+        private IWorld BackwardCompatibleExecute(Dictionary rawWeeklyArenaState, Dictionary<Type, (Address address, ISheet sheet)> sheets,
             AvatarState avatarState, CostumeStatSheet costumeStatSheet, Stopwatch sw, string addressesHex,
-            AvatarState enemyAvatarState, IActionContext ctx, IAccount states, Address inventoryAddress,
-            Address questListAddress, bool migrationRequired, Address worldInformationAddress, DateTimeOffset started)
+            AvatarState enemyAvatarState, IActionContext ctx, IWorld states, Address inventoryAddress,
+            Address questListAddress, DateTimeOffset started)
         {
             Dictionary weeklyArenaMap = (Dictionary) rawWeeklyArenaState["map"];
 
@@ -448,13 +433,6 @@ namespace Nekoyume.Action
             states = states
                 .SetState(inventoryAddress, avatarState.inventory.Serialize())
                 .SetState(questListAddress, avatarState.questList.Serialize());
-
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(avatarAddress, avatarState.SerializeV2());
-            }
 
             sw.Stop();
             Log.Verbose("{AddressesHex}RankingBattle Serialize AvatarState: {Elapsed}", addressesHex, sw.Elapsed);

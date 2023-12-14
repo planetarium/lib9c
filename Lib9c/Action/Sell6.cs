@@ -12,6 +12,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 using BxDictionary = Bencodex.Types.Dictionary;
 using BxList = Bencodex.Types.List;
@@ -58,7 +59,7 @@ namespace Nekoyume.Action
             itemSubType = plainValue[ItemSubTypeKey].ToEnum<ItemSubType>();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -78,10 +79,15 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the price is less than zero: {price}.");
             }
 
-            if (!states.TryGetAgentAvatarStates(
+            if (states.GetAgentState(context.Signer) is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the agent state of the signer was failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(
                 context.Signer,
                 sellerAvatarAddress,
-                out _,
                 out var avatarState))
             {
                 throw new FailedLoadStateException(

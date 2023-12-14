@@ -8,7 +8,6 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Battle;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
@@ -16,6 +15,7 @@ using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Event;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Event;
 using Serilog;
@@ -115,7 +115,7 @@ namespace Nekoyume.Action
             RuneInfos = list[8].ToList(x => new RuneSlotInfo((List)x));
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -129,11 +129,10 @@ namespace Nekoyume.Action
             var sw = new Stopwatch();
             // Get AvatarState
             sw.Start();
-            if (!states.TryGetAvatarStateV2(
+            if (!states.TryGetAvatarState(
                     context.Signer,
                     AvatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
@@ -385,30 +384,12 @@ namespace Nekoyume.Action
 
             // Set states
             sw.Restart();
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyInventoryKey),
-                        avatarState.inventory.Serialize())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize())
-                    .SetState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
-            }
-            else
-            {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(
-                        AvatarAddress.Derive(LegacyInventoryKey),
-                        avatarState.inventory.Serialize())
-                    .SetState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
-            }
+            states = states
+                .SetState(AvatarAddress, avatarState.SerializeV2())
+                .SetState(
+                    AvatarAddress.Derive(LegacyInventoryKey),
+                    avatarState.inventory.Serialize())
+                .SetState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
 
             sw.Stop();
             Log.Verbose(

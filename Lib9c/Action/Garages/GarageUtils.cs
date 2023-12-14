@@ -11,6 +11,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.Garages;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Garages
 {
@@ -107,7 +108,7 @@ namespace Nekoyume.Action.Garages
             Address garageAddr,
             IValue? garageState)> WithGarageStateTuples(
             Address agentAddr,
-            IAccountState states,
+            IWorldState states,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
         {
             var withGarageAddr = fungibleIdAndCounts
@@ -138,7 +139,7 @@ namespace Nekoyume.Action.Garages
             IValue? recipientGarageState)> WithGarageStateTuples(
             Address senderAgentAddr,
             Address recipientAgentAddr,
-            IAccountState states,
+            IWorldState states,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
         {
             var withGarageAddr = fungibleIdAndCounts
@@ -193,7 +194,7 @@ namespace Nekoyume.Action.Garages
             Address garageAddr,
             FungibleItemGarage garage)> WithGarageTuples(
             Address agentAddr,
-            IAccountState states,
+            IWorldState states,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
         {
             return WithGarageStateTuples(agentAddr, states, fungibleIdAndCounts)

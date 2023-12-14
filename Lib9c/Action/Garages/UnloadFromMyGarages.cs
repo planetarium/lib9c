@@ -1,5 +1,4 @@
 #nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -17,6 +16,7 @@ using Nekoyume.Exceptions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Garages
 {
@@ -118,7 +118,7 @@ namespace Nekoyume.Action.Garages
                 : (string)(Text)list[3];
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var state = context.PreviousState;
@@ -168,9 +168,9 @@ namespace Nekoyume.Action.Garages
             }
         }
 
-        private IAccount TransferFungibleAssetValues(
+        private IWorld TransferFungibleAssetValues(
             IActionContext context,
-            IAccount states)
+            IWorld states)
         {
             if (FungibleAssetValues is null)
             {
@@ -186,9 +186,9 @@ namespace Nekoyume.Action.Garages
             return states;
         }
 
-        private IAccount TransferFungibleItems(
+        private IWorld TransferFungibleItems(
             Address signer,
-            IAccount states)
+            IWorld states)
         {
             if (FungibleIdAndCounts is null)
             {
@@ -211,10 +211,10 @@ namespace Nekoyume.Action.Garages
             return states.SetState(inventoryAddr, inventory.Serialize());
         }
 
-        private IAccount SendMail(
+        private IWorld SendMail(
             long blockIndex,
             IRandom random,
-            IAccount states)
+            IWorld states)
         {
             var avatarValue = states.GetState(RecipientAvatarAddr);
             if (!(avatarValue is Dictionary avatarDict))

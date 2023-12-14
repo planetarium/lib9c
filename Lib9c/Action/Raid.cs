@@ -15,6 +15,7 @@ using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -42,16 +43,17 @@ namespace Nekoyume.Action
         IEnumerable<IValue> IRaidV2.RuneSlotInfos => RuneInfos.Select(x => x.Serialize());
         bool IRaidV2.PayNcg => PayNcg;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount states = context.PreviousState;
+            IWorld states = context.PreviousState;
             var addressHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid exec started", addressHex);
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress,
-                    out AvatarState avatarState,
-                    out var migrationRequired))
+            if (!states.TryGetAvatarState(
+                context.Signer,
+                AvatarAddress,
+                out AvatarState avatarState))
             {
                 throw new FailedLoadStateException(
                     $"Aborted as the avatar state of the signer was failed to load.");
@@ -321,15 +323,6 @@ namespace Nekoyume.Action
             var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var worldInfoAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
             var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
-
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                    .SetState(worldInfoAddress, avatarState.worldInformation.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize());
-            }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);

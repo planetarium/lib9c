@@ -11,6 +11,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -43,12 +44,12 @@ namespace Nekoyume.Action
             TryCount = plainValue["t"].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out _, out _))
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out _))
             {
                 throw new FailedLoadStateException(
                     $"Aborted as the avatar state of the signer was failed to load.");

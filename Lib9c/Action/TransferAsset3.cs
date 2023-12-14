@@ -12,6 +12,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action.State;
 using Nekoyume.Helper;
 using Nekoyume.Model;
+using Nekoyume.Module;
 using Serilog;
 
 namespace Nekoyume.Action
@@ -93,7 +94,7 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(4);
             var state = context.PreviousState;

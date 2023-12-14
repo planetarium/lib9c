@@ -7,6 +7,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -37,10 +38,10 @@ namespace Nekoyume.Action
                 }
             ));
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount state = context.PreviousState;
+            IWorld state = context.PreviousState;
             var address = Address.Derive(ActivationKey.DeriveKey);
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);

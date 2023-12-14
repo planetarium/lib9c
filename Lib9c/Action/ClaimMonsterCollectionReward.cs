@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -31,23 +30,29 @@ namespace Nekoyume.Action
 
         Address IClaimMonsterCollectionRewardV2.AvatarAddress => avatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             return Claim(context, avatarAddress, addressesHex);
         }
 
-        public static IAccount Claim(IActionContext context, Address avatarAddress, string addressesHex)
+        public static IWorld Claim(IActionContext context, Address avatarAddress, string addressesHex)
         {
-            IAccount states = context.PreviousState;
+            IWorld states = context.PreviousState;
             Address inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
             Address worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
             Address questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ClaimMonsterCollection exec started", addressesHex);
 
-            if (!states.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress, out AgentState agentState, out AvatarState avatarState, out _))
+            var agentState = states.GetAgentState(context.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException($"Aborted as the agent state of the signer failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(context.Signer, avatarAddress, out AvatarState avatarState))
             {
                 throw new FailedLoadStateException($"Aborted as the avatar state of the signer failed to load.");
             }

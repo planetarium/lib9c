@@ -7,9 +7,9 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 
@@ -24,7 +24,7 @@ namespace Nekoyume.Action
 
         Address IChargeActionPointV1.AvatarAddress => avatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -33,7 +33,12 @@ namespace Nekoyume.Action
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
-            if (!states.TryGetAgentAvatarStates(context.Signer, avatarAddress, out var _, out var avatarState))
+            if (states.GetAgentState(context.Signer) is null)
+            {
+                return states;
+            }
+
+            if (!states.TryGetAvatarState(context.Signer, avatarAddress, out var avatarState))
             {
                 return states;
             }

@@ -12,6 +12,7 @@ using Libplanet.Crypto;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 using BxDictionary = Bencodex.Types.Dictionary;
 using BxList = Bencodex.Types.List;
@@ -88,7 +89,7 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -100,7 +101,7 @@ namespace Nekoyume.Action
             var itemAddress = Addresses.GetItemAddress(tradableId);
             var addressesHex = GetSignerAndOtherAddressesHex(context, sellerAvatarAddress);
 
-            if (!states.TryGetAvatarStateV2(context.Signer, sellerAvatarAddress, out var avatarState, out _))
+            if (!states.TryGetAvatarState(context.Signer, sellerAvatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the seller failed to load.");
@@ -128,7 +129,7 @@ namespace Nekoyume.Action
             return Cancel(context, states, avatarState, addressesHex, order);
         }
 
-        public static IAccount CancelV2(IActionContext context, IAccount states, AvatarState avatarState, string addressesHex, Order order, Guid tradableId, ItemSubType itemSubType)
+        public static IWorld CancelV2(IActionContext context, IWorld states, AvatarState avatarState, string addressesHex, Order order, Guid tradableId, ItemSubType itemSubType)
         {
             var orderTradableId = tradableId;
             var avatarAddress = avatarState.address;
@@ -217,7 +218,7 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public static IAccount Cancel(IActionContext context, IAccount states, AvatarState avatarState, string addressesHex, Order order)
+        public static IWorld Cancel(IActionContext context, IWorld states, AvatarState avatarState, string addressesHex, Order order)
         {
             var orderTradableId = order.TradableId;
             var avatarAddress = avatarState.address;

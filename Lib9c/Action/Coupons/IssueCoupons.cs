@@ -6,6 +6,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.Coupons;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Coupons
 {
@@ -27,7 +28,7 @@ namespace Nekoyume.Action.Coupons
 
         public Address Recipient { get; private set; }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
