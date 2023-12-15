@@ -147,16 +147,16 @@ namespace Nekoyume.Action
             states = CreateAvatar0.AddRunesForTest(ctx, avatarAddress, states);
 
             // Add pets for test
-            if (states.TryGetSheet(out PetSheet petSheet))
-            {
-                foreach (var row in petSheet)
-                {
-                    var petState = new PetState(row.Id);
-                    petState.LevelUp();
-                    var petStateAddress = PetState.DeriveAddress(avatarAddress, row.Id);
-                    states = states.SetState(petStateAddress, petState.Serialize());
-                }
-            }
+            // if (states.TryGetSheet(out PetSheet petSheet))
+            // {
+            //     foreach (var row in petSheet)
+            //     {
+            //         var petState = new PetState(row.Id);
+            //         petState.LevelUp();
+            //         var petStateAddress = PetState.DeriveAddress(avatarAddress, row.Id);
+            //         states = states.SetState(petStateAddress, petState.Serialize());
+            //     }
+            // }
 
             var recipeIds = new int[] {
                 21,

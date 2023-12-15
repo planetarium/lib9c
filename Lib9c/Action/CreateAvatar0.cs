@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
+using Lib9c;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -332,8 +333,15 @@ namespace Nekoyume.Action
             var runeSheet = states.GetSheet<RuneSheet>();
             foreach (var row in runeSheet.Values)
             {
-                var rune = RuneHelper.ToFungibleAssetValue(row, int.MaxValue);
+                var rune = RuneHelper.ToFungibleAssetValue(row, 3000);
                 states = states.MintAsset(context, avatarAddress, rune);
+            }
+
+            var petSheet = states.GetSheet<PetSheet>();
+            var soulStones = Currencies.GetSoulStones(petSheet);
+            foreach (var soulStone in soulStones)
+            {
+                states = states.MintAsset(context, avatarAddress, soulStone * 3000);
             }
             return states;
         }

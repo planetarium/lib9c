@@ -1,7 +1,7 @@
 {
     "BlockDifficulty": 200000,
     "TradableMaterialCount": 9999,
-    "MaterialCount": 10,
+    "MaterialCount": 5000,
     "FoodCount": 10,
     "CustomEquipmentItems": [
         {
