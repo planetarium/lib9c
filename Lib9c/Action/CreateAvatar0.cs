@@ -322,10 +322,10 @@ namespace Nekoyume.Action
             return optionIds;
         }
 
-        public static IAccount AddRunesForTest(
+        public static IWorld AddRunesForTest(
             IActionContext context,
             Address avatarAddress,
-            IAccount states)
+            IWorld states)
         {
             var runeSheet = states.GetSheet<RuneSheet>();
             foreach (var row in runeSheet.Values)

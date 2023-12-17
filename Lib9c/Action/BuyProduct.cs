@@ -63,7 +63,7 @@ namespace Nekoyume.Action
                 productInfo.ValidateType();
             }
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var buyerAvatarState, out var migrationRequired))
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out var buyerAvatarState))
             {
                 throw new FailedLoadStateException("failed load to buyer avatar state.");
             }
@@ -73,8 +73,7 @@ namespace Nekoyume.Action
             {
                 var sellerAgentAddress = productInfo.AgentAddress;
                 var sellerAvatarAddress = productInfo.AvatarAddress;
-                if (!states.TryGetAvatarStateV2(sellerAgentAddress, sellerAvatarAddress,
-                        out var sellerAvatarState, out var sellerMigrationRequired))
+                if (!states.TryGetAvatarState(sellerAgentAddress, sellerAvatarAddress, out var sellerAvatarState))
                 {
                     throw new FailedLoadStateException($"failed load to seller avatar state.");
                 }
@@ -88,17 +87,9 @@ namespace Nekoyume.Action
                 }
                 else
                 {
-                    states = Buy(context, productInfo, sellerAvatarAddress, states, sellerAgentAddress, buyerAvatarState, sellerAvatarState, materialSheet, sellerMigrationRequired);
+                    states = Buy(context, productInfo, sellerAvatarAddress, states, sellerAgentAddress, buyerAvatarState, sellerAvatarState, materialSheet);
                 }
             }
-
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(AvatarAddress.Derive(LegacyQuestListKey), buyerAvatarState.questList.Serialize())
-                    .SetState(AvatarAddress.Derive(LegacyWorldInformationKey), buyerAvatarState.worldInformation.Serialize());
-            }
-
 
             states = states
                 .SetState(AvatarAddress, buyerAvatarState.SerializeV2())
@@ -108,9 +99,9 @@ namespace Nekoyume.Action
             return states;
         }
 
-        private IAccount Buy(IActionContext context, IProductInfo productInfo, Address sellerAvatarAddress,
-            IAccount states, Address sellerAgentAddress, AvatarState buyerAvatarState, AvatarState sellerAvatarState,
-            MaterialItemSheet materialSheet, bool sellerMigrationRequired)
+        private IWorld Buy(IActionContext context, IProductInfo productInfo, Address sellerAvatarAddress,
+            IWorld states, Address sellerAgentAddress, AvatarState buyerAvatarState, AvatarState sellerAvatarState,
+            MaterialItemSheet materialSheet)
         {
             var productId = productInfo.ProductId;
             var productsStateAddress = ProductsState.DeriveAddress(sellerAvatarAddress);
@@ -196,21 +187,13 @@ namespace Nekoyume.Action
                 .TransferAsset(context, context.Signer, feeStoreAddress, tax)
                 .TransferAsset(context, context.Signer, sellerAgentAddress, taxedPrice);
 
-            if (sellerMigrationRequired)
-            {
-                states = states
-                    .SetState(sellerAvatarAddress.Derive(LegacyInventoryKey), sellerAvatarState.inventory.Serialize())
-                    .SetState(sellerAvatarAddress.Derive(LegacyWorldInformationKey),
-                        sellerAvatarState.worldInformation.Serialize());
-            }
-
             return states;
         }
 
 
         // backward compatibility for order - shared shop state.
         // TODO DELETE THIS METHOD AFTER PRODUCT MIGRATION END.
-        private static IAccount Buy_Order(PurchaseInfo purchaseInfo, IActionContext context, IAccount states, AvatarState buyerAvatarState, MaterialItemSheet materialSheet, AvatarState sellerAvatarState)
+        private static IWorld Buy_Order(PurchaseInfo purchaseInfo, IActionContext context, IWorld states, AvatarState buyerAvatarState, MaterialItemSheet materialSheet, AvatarState sellerAvatarState)
         {
             Address shardedShopAddress =
                 ShardedShopStateV2.DeriveAddress(purchaseInfo.ItemSubType, purchaseInfo.OrderId);
