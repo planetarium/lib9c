@@ -90,6 +90,7 @@ namespace Nekoyume.Model.State
             return new List(
                 base.SerializeList(),
                 (Integer)CurrentVersion,
+#pragma warning disable LAA1002
                 new Dictionary(
                     avatarAddresses.Select(
                         kv =>
@@ -97,6 +98,7 @@ namespace Nekoyume.Model.State
                                 new Binary(BitConverter.GetBytes(kv.Key)),
                                 kv.Value.Serialize()))),
                 unlockedOptions.Select(i => i.Serialize()).Serialize(),
+#pragma warning restore LAA1002
                 MonsterCollectionRound.Serialize());
         }
     }
