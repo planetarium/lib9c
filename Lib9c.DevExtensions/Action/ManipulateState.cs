@@ -9,6 +9,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Lib9c.DevExtensions.Action
 {
@@ -44,15 +45,15 @@ namespace Lib9c.DevExtensions.Action
                 .ToList();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             return Execute(context, context.PreviousState, StateList, BalanceList);
         }
 
-        public static IAccount Execute(
+        public static IWorld Execute(
             IActionContext context,
-            IAccount prevStates,
+            IWorld prevStates,
             List<(Address addr, IValue value)> stateList,
             List<(Address addr, FungibleAssetValue fav)> balanceList)
         {

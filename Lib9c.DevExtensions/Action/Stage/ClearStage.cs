@@ -5,10 +5,10 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Lib9c.DevExtensions.Action.Stage
@@ -20,7 +20,7 @@ namespace Lib9c.DevExtensions.Action.Stage
         public Address AvatarAddress { get; set; }
         public int TargetStage { get; set; }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;

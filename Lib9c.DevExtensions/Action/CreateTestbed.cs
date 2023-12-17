@@ -11,12 +11,13 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.State;
+using Nekoyume.Module;
+using Nekoyume.TableData;
+using static Lib9c.SerializeKeys;
 
 namespace Lib9c.DevExtensions.Action
 {
@@ -68,7 +69,7 @@ namespace Lib9c.DevExtensions.Action
             weeklyArenaAddress = plainValue["w"].ToAddress();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var sellData = TestbedHelper.LoadData<TestbedSell>("TestbedSell");

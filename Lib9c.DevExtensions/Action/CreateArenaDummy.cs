@@ -4,15 +4,14 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
-using Lib9c.DevExtensions.Model;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Arena;
-using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -53,7 +52,7 @@ namespace Lib9c.DevExtensions.Action
             equipments = ((List)plainValue["equipments"]).Select(e => e.ToGuid()).ToList();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -117,8 +116,7 @@ namespace Lib9c.DevExtensions.Action
                     context.PreviousState.GetGameConfigState(),
                     rankingMapAddress);
 
-                if (!states.TryGetAvatarStateV2(context.Signer, myAvatarAddress,
-                out var myAvatarState, out var _))
+                if (!states.TryGetAvatarState(context.Signer, myAvatarAddress, out var myAvatarState))
                 {
                     throw new FailedLoadStateException($"error");
                 }
