@@ -3,7 +3,6 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using Bencodex.Types;
     using Lib9c.Tests.Util;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -13,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -20,8 +20,8 @@ namespace Lib9c.Tests.Action
     {
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IAccount _initialStatesWithAvatarStateV1;
-        private readonly IAccount _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarStateV1;
+        private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly int _targetPetId;
         private readonly long _firstRoundStartBlockIndex;
 
@@ -272,8 +272,8 @@ namespace Lib9c.Tests.Action
                     mintAssets: false));
         }
 
-        private static IAccount Execute(
-            IAccount prevStates,
+        private static IWorld Execute(
+            IWorld prevStates,
             long blockIndex,
             Address agentAddr,
             Address avatarAddr,

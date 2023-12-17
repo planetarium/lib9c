@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Model.Stake
     using Nekoyume;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData.Stake;
     using Xunit;
 
@@ -19,7 +20,7 @@ namespace Lib9c.Tests.Model.Stake
         public void TryMigrate_Throw_NullReferenceException_When_IAccountDelta_Null()
         {
             Assert.Throws<NullReferenceException>(() =>
-                StakeStateUtils.TryMigrate((IAccount)null, default, out _));
+                StakeStateUtils.TryMigrate((IWorld)null, default, out _));
         }
 
         [Fact]
@@ -31,7 +32,7 @@ namespace Lib9c.Tests.Model.Stake
         [Fact]
         public void TryMigrate_Return_False_When_Staking_State_Null()
         {
-            var state = new Account(MockState.Empty);
+            var state = new World(new MockWorldState());
             Assert.False(StakeStateUtils.TryMigrate(state, new PrivateKey().Address, out _));
         }
 
@@ -107,7 +108,7 @@ namespace Lib9c.Tests.Model.Stake
             string stakeRegularFixedRewardSheetTableName,
             string stakeRegularRewardSheetTableName)
         {
-            IAccount state = new Account(MockState.Empty);
+            IWorld state = new World(new MockWorldState());
             state = state.SetState(
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());
@@ -139,7 +140,7 @@ namespace Lib9c.Tests.Model.Stake
             long startedBlockIndex,
             long? receivedBlockIndex)
         {
-            IAccount state = new Account(MockState.Empty);
+            IWorld state = new World(new MockWorldState());
             state = state.SetState(
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());

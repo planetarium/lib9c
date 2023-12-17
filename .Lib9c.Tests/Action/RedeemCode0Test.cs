@@ -1,7 +1,6 @@
 namespace Lib9c.Tests.Action
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Common;
@@ -10,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Nekoyume.Model.State.RedeemCodeState;
@@ -68,7 +68,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
 
             var context = new ActionContext();
-            var initialState = new Account(MockState.Empty)
+            var initialState = new World(new MockWorldState())
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(_avatarAddress, avatarState.Serialize())
                 .SetState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
@@ -88,7 +88,7 @@ namespace Lib9c.Tests.Action
                 _avatarAddress
             );
 
-            IAccount nextState = redeemCode.Execute(new ActionContext()
+            IWorld nextState = redeemCode.Execute(new ActionContext()
             {
                 BlockIndex = 1,
                 Miner = default,

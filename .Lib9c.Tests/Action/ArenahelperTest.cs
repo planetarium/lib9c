@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -21,7 +22,7 @@ namespace Lib9c.Tests.Action
 
     public class ArenaHelperTest
     {
-        private IAccount _state;
+        private IWorld _state;
         private Currency _crystal;
         private Address _agent1Address;
         private Address _avatar1Address;
@@ -34,7 +35,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _state = new Account(MockState.Empty);
+            _state = new World(new MockWorldState());
 
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);

@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action.Coupons
     using Nekoyume.Action.Coupons;
     using Nekoyume.Model.Coupons;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -20,7 +21,7 @@ namespace Lib9c.Tests.Action.Coupons
         {
             IRandom random = new TestRandom();
             var sheets = TableSheetsImporter.ImportSheets();
-            IAccount state = new Account(MockState.Empty)
+            IWorld state = new World(new MockWorldState())
                 .SetState(
                     Addresses.GameConfig,
                     new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
@@ -141,7 +142,7 @@ namespace Lib9c.Tests.Action.Coupons
                 .SetCouponWallet(CouponsFixture.AgentAddress2, agent2CouponWallet);
 
             // can't redeem other person's coupon
-            var expected = state.GetAvatarStateV2(agent1Avatar0Address);
+            var expected = state.GetAvatarState(agent1Avatar0Address);
             state = new RedeemCoupon(CouponsFixture.Guid3, agent1Avatar0Address)
                 .Execute(
                     new ActionContext
@@ -152,11 +153,11 @@ namespace Lib9c.Tests.Action.Coupons
                     });
             Assert.Equal(
                 expected.SerializeV2(),
-                state.GetAvatarStateV2(agent1Avatar0Address).SerializeV2());
+                state.GetAvatarState(agent1Avatar0Address).SerializeV2());
             Assert.Equal(agent2CouponWallet, state.GetCouponWallet(CouponsFixture.AgentAddress2));
 
             // can't redeem other person's coupon to their account
-            expected = state.GetAvatarStateV2(agent2Avatar0Address);
+            expected = state.GetAvatarState(agent2Avatar0Address);
             state = new RedeemCoupon(CouponsFixture.Guid3, agent2Avatar0Address)
                 .Execute(
                     new ActionContext
@@ -167,7 +168,7 @@ namespace Lib9c.Tests.Action.Coupons
                     });
             Assert.Equal(
                 expected.SerializeV2(),
-                state.GetAvatarStateV2(agent2Avatar0Address).SerializeV2());
+                state.GetAvatarState(agent2Avatar0Address).SerializeV2());
             Assert.Equal(agent2CouponWallet, state.GetCouponWallet(CouponsFixture.AgentAddress2));
 
             // can't redeem to a nonexistent avatar
@@ -184,13 +185,13 @@ namespace Lib9c.Tests.Action.Coupons
                         RandomSeed = random.Seed,
                     });
             Assert.Null(
-                state.GetAvatarStateV2(
+                state.GetAvatarState(
                     CouponsFixture.AgentAddress1
                         .Derive(SerializeKeys.AvatarAddressKey)
                         .Derive("avatar-states-2")));
             Assert.Equal(agent1CouponWallet, state.GetCouponWallet(CouponsFixture.AgentAddress1));
 
-            expected = state.GetAvatarStateV2(agent2Avatar0Address);
+            expected = state.GetAvatarState(agent2Avatar0Address);
             // can't redeem to an avatar of different agent
             state = new RedeemCoupon(
                     CouponsFixture.Guid1,
@@ -204,11 +205,11 @@ namespace Lib9c.Tests.Action.Coupons
                     });
             Assert.Equal(
                 expected.SerializeV2(),
-                state.GetAvatarStateV2(agent2Avatar0Address).SerializeV2());
+                state.GetAvatarState(agent2Avatar0Address).SerializeV2());
             Assert.Equal(agent1CouponWallet, state.GetCouponWallet(CouponsFixture.AgentAddress1));
 
             // redeem a coupon
-            expected = state.GetAvatarStateV2(agent1Avatar0Address);
+            expected = state.GetAvatarState(agent1Avatar0Address);
             state = new RedeemCoupon(
                     CouponsFixture.Guid1,
                     agent1Avatar0Address)
@@ -219,7 +220,7 @@ namespace Lib9c.Tests.Action.Coupons
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
-            var actual = state.GetAvatarStateV2(agent1Avatar0Address);
+            var actual = state.GetAvatarState(agent1Avatar0Address);
             Assert.Equal(
                 CouponsFixture.RewardSet1.Select(kv => kv.Key).ToImmutableSortedSet(),
                 actual.inventory.Items
@@ -229,7 +230,7 @@ namespace Lib9c.Tests.Action.Coupons
             Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
 
             // can't redeem a coupon twice
-            expected = state.GetAvatarStateV2(agent1Avatar1Address);
+            expected = state.GetAvatarState(agent1Avatar1Address);
             state = new RedeemCoupon(
                     CouponsFixture.Guid1,
                     agent1Avatar1Address)
@@ -240,12 +241,12 @@ namespace Lib9c.Tests.Action.Coupons
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
-            actual = state.GetAvatarStateV2(agent1Avatar1Address);
-            Assert.Equal(0, state.GetAvatarStateV2(agent1Avatar1Address).inventory.Items.Count);
+            actual = state.GetAvatarState(agent1Avatar1Address);
+            Assert.Equal(0, state.GetAvatarState(agent1Avatar1Address).inventory.Items.Count);
             Assert.Empty(actual.inventory.Items);
             Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
 
-            expected = state.GetAvatarStateV2(agent1Avatar1Address);
+            expected = state.GetAvatarState(agent1Avatar1Address);
             state = new RedeemCoupon(
                     CouponsFixture.Guid2,
                     agent1Avatar1Address)
@@ -256,7 +257,7 @@ namespace Lib9c.Tests.Action.Coupons
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
-            actual = state.GetAvatarStateV2(agent1Avatar1Address);
+            actual = state.GetAvatarState(agent1Avatar1Address);
             Assert.Equal(
                 CouponsFixture.RewardSet2.Select(kv => kv.Key).ToImmutableSortedSet(),
                 actual.inventory.Items
@@ -264,7 +265,7 @@ namespace Lib9c.Tests.Action.Coupons
                     .ToImmutableSortedSet());
             Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
 
-            expected = state.GetAvatarStateV2(agent2Avatar0Address);
+            expected = state.GetAvatarState(agent2Avatar0Address);
             state = new RedeemCoupon(
                     CouponsFixture.Guid3,
                     agent2Avatar0Address)
@@ -275,7 +276,7 @@ namespace Lib9c.Tests.Action.Coupons
                         Signer = CouponsFixture.AgentAddress2,
                         RandomSeed = random.Seed,
                     });
-            actual = state.GetAvatarStateV2(agent2Avatar0Address);
+            actual = state.GetAvatarState(agent2Avatar0Address);
             Assert.Equal(
                 CouponsFixture.RewardSet3.Select(kv => kv.Key).ToImmutableSortedSet(),
                 actual.inventory.Items
@@ -285,7 +286,7 @@ namespace Lib9c.Tests.Action.Coupons
 
             state = state
                 .SetCouponWallet(CouponsFixture.AgentAddress1, agent1CouponWallet);
-            expected = state.GetAvatarStateV2(agent1Avatar0Address);
+            expected = state.GetAvatarState(agent1Avatar0Address);
             state = new RedeemCoupon(
                     CouponsFixture.Guid2,
                     agent1Avatar0Address)
@@ -296,7 +297,7 @@ namespace Lib9c.Tests.Action.Coupons
                         Signer = CouponsFixture.AgentAddress1,
                         RandomSeed = random.Seed,
                     });
-            actual = state.GetAvatarStateV2(agent1Avatar0Address);
+            actual = state.GetAvatarState(agent1Avatar0Address);
             var aggregateRewardSet = CouponsFixture.RewardSet1.Aggregate(
                 CouponsFixture.RewardSet2, (rewardSet, kv) =>
                 {

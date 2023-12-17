@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Helper;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -39,7 +40,7 @@ namespace Lib9c.Tests.Action.Scenario
             );
 
             var context = new ActionContext();
-            IAccount initialState = new Account(MockState.Empty)
+            IWorld initialState = new World(new MockWorldState())
                 .SetState(agentAddress, agentState.Serialize())
                 .SetState(avatarAddress, avatarState.SerializeV2())
                 .SetState(
@@ -137,7 +138,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
             });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(avatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(avatarAddress);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(1));
             var rawRuneSlot = Assert.IsType<List>(nextState.GetState(runeSlotStateAddress));
             var runeSlot = new RuneSlotState(rawRuneSlot);

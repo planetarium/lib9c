@@ -47,7 +47,7 @@ public class CustomActionsDeserializableValidatorTest
             AvatarAddress = new Address(((Dictionary)plainValue)["a"]);
         }
 
-        public IAccount Execute(IActionContext context)
+        public IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             return context.PreviousState;

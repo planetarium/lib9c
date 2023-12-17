@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class MintAssetsTest
@@ -23,7 +24,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _adminAddress;
         private readonly ISet<Address> _minters;
         private readonly Currency _ncgCurrency;
-        private readonly IAccount _prevState;
+        private readonly IWorld _prevState;
 
         private readonly TableSheets _tableSheets;
 
@@ -37,10 +38,10 @@ namespace Lib9c.Tests.Action
                 new PrivateKey().Address,
                 new PrivateKey().Address,
             };
-            _prevState = new Account(
-                MockState.Empty
-                    .SetState(AdminState.Address, new AdminState(_adminAddress, 100).Serialize())
-                    .SetState(Addresses.AssetMinters, new List(_minters.Select(m => m.Serialize())))
+            _prevState = new World(
+                new MockWorldState()
+                    .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, new AdminState(_adminAddress, 100).Serialize())
+                    .SetState(ReservedAddresses.LegacyAccount, Addresses.AssetMinters, new List(_minters.Select(m => m.Serialize())))
             );
 
             var sheets = TableSheetsImporter.ImportSheets();
@@ -127,7 +128,7 @@ namespace Lib9c.Tests.Action
                 },
                 null
             );
-            IAccount nextState = action.Execute(
+            IWorld nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = _prevState,
@@ -149,7 +150,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_With_FungibleItemValue()
         {
-            IAccount prevState = GenerateAvatar(_prevState, out Address avatarAddress);
+            IWorld prevState = GenerateAvatar(_prevState, out Address avatarAddress);
             HashDigest<SHA256> fungibleId = HashDigest<SHA256>.FromString(
                 "7f5d25371e58c0f3d5a33511450f73c2e0fa4fac32a92e1cbe64d3bf2fef6328"
             );
@@ -165,7 +166,7 @@ namespace Lib9c.Tests.Action
                 },
                 "Execute_With_FungibleItemValue"
             );
-            IAccount nextState = action.Execute(
+            IWorld nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -188,7 +189,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_With_Mixed()
         {
-            IAccount prevState = GenerateAvatar(_prevState, out Address avatarAddress);
+            IWorld prevState = GenerateAvatar(_prevState, out Address avatarAddress);
             HashDigest<SHA256> fungibleId = HashDigest<SHA256>.FromString(
                 "7f5d25371e58c0f3d5a33511450f73c2e0fa4fac32a92e1cbe64d3bf2fef6328"
             );
@@ -210,7 +211,7 @@ namespace Lib9c.Tests.Action
                 },
                 "Execute_With_FungibleItemValue"
             );
-            IAccount nextState = action.Execute(
+            IWorld nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -287,8 +288,8 @@ namespace Lib9c.Tests.Action
             action.LoadPlainValue(a);
             var address = action.MintSpecs!.First().Recipient;
             var avatarAddress = action.MintSpecs.Last().Recipient;
-            IAccount prevState = GenerateAvatar(_prevState, address, avatarAddress);
-            IAccount nextState = action.Execute(
+            IWorld prevState = GenerateAvatar(_prevState, address, avatarAddress);
+            IWorld nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -327,7 +328,7 @@ namespace Lib9c.Tests.Action
             }
         }
 
-        private IAccount GenerateAvatar(IAccount state, out Address avatarAddress)
+        private IWorld GenerateAvatar(IWorld state, out Address avatarAddress)
         {
             var address = new PrivateKey().Address;
             var agentState = new AgentState(address);
@@ -358,7 +359,7 @@ namespace Lib9c.Tests.Action
             return state;
         }
 
-        private IAccount GenerateAvatar(IAccount state, Address address, Address avatarAddress)
+        private IWorld GenerateAvatar(IWorld state, Address address, Address avatarAddress)
         {
             var agentState = new AgentState(address);
             var rankingMapAddress = new PrivateKey().Address;

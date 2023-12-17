@@ -4,13 +4,13 @@ namespace Lib9c.Tests.Action
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action
     {
         private readonly Address _signer;
         private readonly Address _avatarAddress;
-        private readonly IAccount _state;
+        private readonly IWorld _state;
 
         public MigrateMonsterCollectionTest(ITestOutputHelper outputHelper)
         {
@@ -31,7 +31,7 @@ namespace Lib9c.Tests.Action
 
             _signer = default;
             _avatarAddress = _signer.Derive("avatar");
-            _state = new Account(MockState.Empty);
+            _state = new World(new MockWorldState());
             Dictionary<string, string> sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var rankingMapAddress = new PrivateKey().Address;
@@ -106,11 +106,10 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            Assert.True(states.TryGetAvatarStateV2(
+            Assert.True(states.TryGetAvatarState(
                 _signer,
                 _avatarAddress,
-                out AvatarState avatarState,
-                out bool _));
+                out AvatarState avatarState));
 
             Assert.Equal(80, avatarState.inventory.Items.First(item => item.item.Id == 400000).count);
             Assert.Equal(1, avatarState.inventory.Items.First(item => item.item.Id == 500000).count);
@@ -150,11 +149,10 @@ namespace Lib9c.Tests.Action
             Assert.Equal(receivedBlockIndex, stakeState.ReceivedBlockIndex);
             Assert.Equal(monsterCollectionState.StartedBlockIndex, stakeState.StartedBlockIndex);
             Assert.True(
-                states.TryGetAvatarStateV2(
+                states.TryGetAvatarState(
                     _signer,
                     _avatarAddress,
-                    out AvatarState avatarState,
-                    out bool _));
+                    out AvatarState avatarState));
             foreach (var (itemId, quantity) in expectedItems)
             {
                 Assert.True(avatarState.inventory.HasItem(itemId, quantity));

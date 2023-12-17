@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Module;
     using Xunit;
 
     public class MeadScenarioTest
@@ -19,7 +20,7 @@ namespace Lib9c.Tests.Action.Scenario
             Currency mead = Currencies.Mead;
             var patron = new PrivateKey().Address;
             IActionContext context = new ActionContext();
-            IAccount states = new Account(MockState.Empty).MintAsset(context, patron, 10 * mead);
+            IWorld states = new World(new MockWorldState()).MintAsset(context, patron, 10 * mead);
 
             var agentAddress = new PrivateKey().Address;
             var requestPledge = new RequestPledge
@@ -84,7 +85,7 @@ namespace Lib9c.Tests.Action.Scenario
                 var action = (IAction)Activator.CreateInstance(typeId)!;
                 var actionContext = new ActionContext
                 {
-                    PreviousState = new Account(MockState.Empty),
+                    PreviousState = new World(new MockWorldState()),
                 };
                 try
                 {
@@ -103,7 +104,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
         }
 
-        private IAccount Execute(IActionContext context, IAccount state, IAction action, Address signer)
+        private IWorld Execute(IActionContext context, IWorld state, IAction action, Address signer)
         {
             Assert.True(state.GetBalance(signer, Currencies.Mead) > 0 * Currencies.Mead);
             var nextState = state.BurnAsset(context, signer, 1 * Currencies.Mead);

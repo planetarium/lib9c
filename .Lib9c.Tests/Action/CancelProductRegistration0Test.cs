@@ -3,7 +3,6 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using Bencodex.Types;
-    using Lib9c.Model.Order;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -13,13 +12,14 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
 
     public class CancelProductRegistration0Test
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly GoldCurrencyState _goldCurrencyState;
@@ -33,7 +33,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {

@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Action;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Stake;
     using Serilog;
@@ -26,7 +27,7 @@ namespace Lib9c.Tests.Action.Scenario
     {
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IAccount _initialStateWithoutStakePolicySheet;
+        private readonly IWorld _initialStateWithoutStakePolicySheet;
         private readonly Currency _ncg;
 
         public StakeAndClaimScenarioTest(ITestOutputHelper output)
@@ -153,8 +154,8 @@ namespace Lib9c.Tests.Action.Scenario
                 150);
         }
 
-        private static IAccount MintAsset(
-            IAccount state,
+        private static IWorld MintAsset(
+            IWorld state,
             Address recipient,
             FungibleAssetValue amount,
             long blockIndex)
@@ -170,8 +171,8 @@ namespace Lib9c.Tests.Action.Scenario
                 amount);
         }
 
-        private static IAccount Stake2(
-            IAccount state,
+        private static IWorld Stake2(
+            IWorld state,
             Address agentAddr,
             long stakingAmount,
             long blockIndex)
@@ -185,8 +186,8 @@ namespace Lib9c.Tests.Action.Scenario
             });
         }
 
-        private static IAccount Stake3(
-            IAccount state,
+        private static IWorld Stake3(
+            IWorld state,
             Address agentAddr,
             long stakingAmount,
             long blockIndex)
@@ -200,8 +201,8 @@ namespace Lib9c.Tests.Action.Scenario
             });
         }
 
-        private static IAccount ClaimStakeReward9(
-            IAccount state,
+        private static IWorld ClaimStakeReward9(
+            IWorld state,
             Address agentAddr,
             Address avatarAddr,
             long blockIndex)
@@ -216,7 +217,7 @@ namespace Lib9c.Tests.Action.Scenario
         }
 
         private static void ValidateStakedState(
-            IAccountState state,
+            IWorldState state,
             Address agentAddr,
             FungibleAssetValue expectStakedAmount,
             long expectStartedBlockIndex)
@@ -229,7 +230,7 @@ namespace Lib9c.Tests.Action.Scenario
         }
 
         private static void ValidateStakedStateV2(
-            IAccountState state,
+            IWorldState state,
             Address agentAddr,
             FungibleAssetValue expectStakedAmount,
             long expectStartedBlockIndex,

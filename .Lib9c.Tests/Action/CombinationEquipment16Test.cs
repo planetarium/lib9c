@@ -10,13 +10,12 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
-    using Nekoyume.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model;
-    using Nekoyume.Model.Elemental;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData.Crystal;
     using Serilog;
     using Xunit;
@@ -30,7 +29,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _slotAddress;
         private readonly TableSheets _tableSheets;
         private readonly IRandom _random;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly AgentState _agentState;
         private readonly AvatarState _avatarState;
 
@@ -77,7 +76,7 @@ namespace Lib9c.Tests.Action
                 _slotAddress,
                 0);
 
-            _initialState = new Account(MockState.Empty)
+            _initialState = new World(new MockWorldState())
                 .SetState(_slotAddress, combinationSlotState.Serialize())
                 .SetState(GoldCurrencyState.Address, gold.Serialize());
 
@@ -142,7 +141,7 @@ namespace Lib9c.Tests.Action
         )
         {
             var context = new ActionContext();
-            IAccount state = _initialState;
+            IWorld state = _initialState;
             if (unlockIdsExist)
             {
                 var unlockIds = List.Empty.Add(1.Serialize());
@@ -318,7 +317,7 @@ namespace Lib9c.Tests.Action
                     Assert.Equal(0, equipment.optionCountFromCombination);
                 }
 
-                var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+                var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
                 var mail = nextAvatarState.mailBox.OfType<CombinationMail>().First();
 
                 Assert.Equal(equipment, mail.attachment.itemUsable);
@@ -364,7 +363,7 @@ namespace Lib9c.Tests.Action
             int recipeId)
         {
             var context = new ActionContext();
-            IAccount state = _initialState;
+            IWorld state = _initialState;
             var unlockIds = List.Empty.Add(1.Serialize());
             for (int i = 2; i < recipeId + 1; i++)
             {

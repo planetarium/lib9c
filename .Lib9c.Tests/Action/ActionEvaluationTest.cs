@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class ActionEvaluationTest
@@ -21,7 +22,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _currency;
         private readonly Address _signer;
         private readonly Address _sender;
-        private readonly IAccount _states;
+        private readonly IWorld _states;
 
         public ActionEvaluationTest()
         {
@@ -32,7 +33,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             _signer = new PrivateKey().Address;
             _sender = new PrivateKey().Address;
-            _states = new Account(MockState.Empty)
+            _states = new World(new MockWorldState())
                 .SetState(_signer, (Text)"ANYTHING")
                 .SetState(default, Dictionary.Empty.Add("key", "value"))
                 .MintAsset(context, _signer, _currency * 10000);
@@ -62,9 +63,6 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(ItemEnhancement))]
         [InlineData(typeof(MigrationActivatedAccountsState))]
         [InlineData(typeof(MigrationAvatarState))]
-        [InlineData(typeof(MigrationLegacyShop))]
-        [InlineData(typeof(MimisbrunnrBattle))]
-        [InlineData(typeof(MonsterCollect))]
         [InlineData(typeof(PatchTableSheet))]
         [InlineData(typeof(RankingBattle))]
         [InlineData(typeof(RapidCombination))]
@@ -201,19 +199,6 @@ namespace Lib9c.Tests.Action
                 {
                     avatarStates = new List<Dictionary>(),
                 },
-                MigrationLegacyShop _ => new MigrationLegacyShop(),
-                MimisbrunnrBattle _ => new MimisbrunnrBattle
-                {
-                    Costumes = new List<Guid>(),
-                    Equipments = new List<Guid>(),
-                    Foods = new List<Guid>(),
-                    RuneInfos = new List<RuneSlotInfo>(),
-                    WorldId = 0,
-                    StageId = 0,
-                    PlayCount = 0,
-                    AvatarAddress = default,
-                },
-                MonsterCollect _ => new MonsterCollect(),
                 PatchTableSheet _ => new PatchTableSheet
                 {
                     TableCsv = "table",

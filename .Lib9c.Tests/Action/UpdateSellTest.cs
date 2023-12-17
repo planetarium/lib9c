@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -14,6 +14,7 @@
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -28,7 +29,7 @@
         private readonly AvatarState _avatarState;
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public UpdateSellTest(ITestOutputHelper outputHelper)
         {
@@ -37,7 +38,7 @@
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -256,7 +257,7 @@
             Assert.Throws<ListEmptyException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
                 Signer = _agentAddress,
             }));
         }
@@ -281,7 +282,7 @@
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
                 Signer = _agentAddress,
             }));
         }

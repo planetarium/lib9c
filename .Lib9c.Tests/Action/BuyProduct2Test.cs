@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _buyerAvatarState;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly Guid _orderId;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public BuyProduct2Test(ITestOutputHelper outputHelper)
         {
@@ -45,7 +46,7 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {

@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -63,7 +64,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Signer = minterKey.Address,
                 Miner = default,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
             });
 
             var addresses = new List<Address>()
@@ -130,7 +131,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
             });
 
             var fetchedState = new AuthorizedMinersState(
@@ -179,7 +180,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
             });
 
             var fetchedState = new ActivatedAccountsState(
@@ -231,7 +232,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
             });
 
             var fetchedState = new CreditsState(
@@ -277,7 +278,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
             });
 
             var fetchedState = new ActivatedAccountsState(
@@ -320,7 +321,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
             });
 
             Assert.Equal(0 * ncg, genesisState.GetBalance(GoldCurrencyState.Address, ncg));
@@ -361,7 +362,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
             });
 
             var assetMinters = Assert.IsType<List>(genesisState.GetState(Addresses.AssetMinters));

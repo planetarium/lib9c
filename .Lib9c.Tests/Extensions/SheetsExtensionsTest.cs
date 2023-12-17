@@ -5,18 +5,20 @@ namespace Lib9c.Tests.Extensions
     using System.Linq;
     using System.Reflection;
     using Bencodex.Types;
+    using Lib9c.Tests.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Extensions;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
     public class SheetsExtensionsTest
     {
-        private IAccount _states;
+        private IWorld _states;
         private Dictionary<string, string> _sheetNameAndFiles;
         private Dictionary<Address, IValue> _sheetsAddressAndValues;
         private Type[] _sheetTypes;
@@ -24,7 +26,7 @@ namespace Lib9c.Tests.Extensions
 
         public SheetsExtensionsTest()
         {
-            _states = new Account(Tests.Action.MockState.Empty);
+            _states = new World(new MockWorldState());
             InitSheets(
                 _states,
                 out _sheetNameAndFiles,
@@ -55,7 +57,7 @@ namespace Lib9c.Tests.Extensions
         }
 
         internal static void InitSheets(
-            IAccount states,
+            IWorld states,
             out Dictionary<string, string> sheetNameAndFiles,
             out Dictionary<Address, IValue> sheetsAddressAndValues,
             out Type[] sheetTypes,

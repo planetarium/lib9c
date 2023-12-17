@@ -20,6 +20,7 @@ namespace Lib9c.Tests.Action.Garages
     using Nekoyume.Model.Garages;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
+    using Nekoyume.Module;
     using Xunit;
 
     public class UnloadFromMyGaragesTest
@@ -31,13 +32,13 @@ namespace Lib9c.Tests.Action.Garages
             Addresses.GetAvatarAddress(AgentAddr, AvatarIndex);
 
         private readonly TableSheets _tableSheets;
-        private readonly IAccount _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly Currency _ncg;
         private readonly Address _recipientAvatarAddr;
         private readonly (Address balanceAddr, FungibleAssetValue value)[] _fungibleAssetValues;
         private readonly (HashDigest<SHA256> fungibleId, int count)[] _fungibleIdAndCounts;
         private readonly IFungibleItem[] _fungibleItems;
-        private readonly IAccount _previousStates;
+        private readonly IWorld _previousStates;
 
         public UnloadFromMyGaragesTest()
         {
@@ -323,10 +324,10 @@ namespace Lib9c.Tests.Action.Garages
             }
         }
 
-        private static (UnloadFromMyGarages action, IAccount nextStates) Execute(
+        private static (UnloadFromMyGarages action, IWorld nextStates) Execute(
             Address signer,
             long blockIndex,
-            IAccount previousState,
+            IWorld previousState,
             IRandom random,
             Address recipientAvatarAddr,
             IEnumerable<(Address balanceAddr, FungibleAssetValue value)>? fungibleAssetValues,
@@ -375,7 +376,7 @@ namespace Lib9c.Tests.Action.Garages
             (Address balanceAddr, FungibleAssetValue value)[] fungibleAssetValues,
             (HashDigest<SHA256> fungibleId, int count)[] fungibleIdAndCounts,
             IFungibleItem[] _fungibleItems,
-            IAccount previousStates)
+            IWorld previousStates)
             GetSuccessfulPreviousStatesWithPlainValue()
         {
             var previousStates = _initialStatesWithAvatarStateV2;

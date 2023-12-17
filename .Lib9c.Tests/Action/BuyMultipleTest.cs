@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -12,6 +12,7 @@
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -24,7 +25,7 @@
         private readonly AvatarState _buyerAvatarState;
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public BuyMultipleTest(ITestOutputHelper outputHelper)
         {
@@ -34,7 +35,7 @@
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -307,7 +308,7 @@
                     .SetState(avatarState.address, avatarState.Serialize());
             }
 
-            IAccount previousStates = _initialState;
+            IWorld previousStates = _initialState;
 
             var buyerGold = previousStates.GetBalance(_buyerAgentAddress, goldCurrency);
             var priceSumData = productDatas
@@ -406,7 +407,7 @@
             Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = new Account(MockState.Empty),
+                    PreviousState = new World(new MockWorldState()),
                     RandomSeed = 0,
                     Signer = _buyerAgentAddress,
                 })
@@ -425,7 +426,7 @@
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = new Account(MockState.Empty),
+                    PreviousState = new World(new MockWorldState()),
                     RandomSeed = 0,
                     Signer = _buyerAgentAddress,
                 })
@@ -559,7 +560,7 @@
             var sellerAgentAddress = new PrivateKey().Address;
             var (avatarState, agentState) = CreateAvatarState(sellerAgentAddress, sellerAvatarAddress);
 
-            IAccount previousStates = _initialState;
+            IWorld previousStates = _initialState;
             var shopState = previousStates.GetShopState();
 
             var productId = Guid.NewGuid();

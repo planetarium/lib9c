@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -16,6 +16,7 @@
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -37,7 +38,7 @@
         private readonly Address _avatar4Address;
         private readonly Currency _crystal;
         private readonly Currency _ncg;
-        private IAccount _initialStates;
+        private IWorld _initialStates;
 
         public BattleArenaTest(ITestOutputHelper outputHelper)
         {
@@ -46,7 +47,7 @@
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialStates = new Account(MockState.Empty);
+            _initialStates = new World(new MockWorldState());
 
             _sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in _sheets)
@@ -931,11 +932,10 @@
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            Assert.True(previousStates.TryGetAvatarStateV2(
+            Assert.True(previousStates.TryGetAvatarState(
                 _agent1Address,
                 _avatar1Address,
-                out var previousMyAvatarState,
-                out _));
+                out var previousMyAvatarState));
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
@@ -1161,11 +1161,10 @@
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            Assert.True(previousStates.TryGetAvatarStateV2(
+            Assert.True(previousStates.TryGetAvatarState(
                 myAgentAddress,
                 myAvatarAddress,
-                out var previousMyAvatarState,
-                out _));
+                out var previousMyAvatarState));
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
@@ -1233,7 +1232,7 @@
 
             Assert.Equal(0, balance.RawValue);
 
-            var avatarState = nextStates.GetAvatarStateV2(myAvatarAddress);
+            var avatarState = nextStates.GetAvatarState(myAvatarAddress);
             var medalCount = 0;
             if (roundData.ArenaType != ArenaType.OffSeason)
             {
@@ -1256,9 +1255,9 @@
             Assert.InRange(materialCount, 0, high);
         }
 
-        private IAccount JoinArena(
+        private IWorld JoinArena(
             IActionContext context,
-            IAccount states,
+            IWorld states,
             Address signer,
             Address avatarAddress,
             long blockIndex,

@@ -1,6 +1,5 @@
 namespace Lib9c.Tests.Action.Scenario.Pet
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
@@ -8,8 +7,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume.Action;
-    using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -21,8 +20,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly Address _avatarAddr;
         private readonly Address _recipeAddr;
         private readonly Address _worldInfoAddr;
-        private readonly IAccount _initialStateV1;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV1;
+        private readonly IWorld _initialStateV2;
 
         public CommonTest()
         {

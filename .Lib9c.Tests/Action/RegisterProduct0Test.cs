@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -30,7 +31,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _avatarState;
         private readonly TableSheets _tableSheets;
         private readonly GameConfigState _gameConfigState;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public RegisterProduct0Test()
         {
@@ -54,7 +55,7 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses[0] = AvatarAddress;
 
-            _initialState = new Account(MockState.Empty)
+            _initialState = new World(new MockWorldState())
                 .SetState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize())
                 .SetState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
                 .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
@@ -247,7 +248,7 @@ namespace Lib9c.Tests.Action
                 Signer = _agentAddress,
             });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(AvatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(AvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct0.CostAp, nextAvatarState.actionPoint);
 

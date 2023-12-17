@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -17,7 +18,7 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public ChargeActionPoint2Test()
         {
@@ -43,7 +44,7 @@ namespace Lib9c.Tests.Action
             };
             agent.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new Account(MockState.Empty)
+            _initialState = new World(new MockWorldState())
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize())
                 .SetState(_agentAddress, agent.Serialize())
                 .SetState(_avatarAddress, avatarState.Serialize());
@@ -109,7 +110,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = new Account(MockState.Empty),
+                    PreviousState = new World(new MockWorldState()),
                     RandomSeed = 0,
                     Signer = default,
                 })

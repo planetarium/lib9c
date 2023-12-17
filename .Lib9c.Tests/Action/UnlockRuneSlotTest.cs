@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -22,7 +23,7 @@ namespace Lib9c.Tests.Action
             _goldCurrency = Currency.Legacy("NCG", 2, null);
         }
 
-        public IAccount Init(out Address agentAddress, out Address avatarAddress, out long blockIndex)
+        public IWorld Init(out Address agentAddress, out Address avatarAddress, out long blockIndex)
         {
             agentAddress = new PrivateKey().Address;
             avatarAddress = new PrivateKey().Address;
@@ -34,7 +35,7 @@ namespace Lib9c.Tests.Action
                 .StartedBlockIndex;
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
-            var state = new Account(MockState.Empty)
+            var state = new World(new MockWorldState())
                 .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetState(agentAddress, new AgentState(agentAddress).Serialize());
 

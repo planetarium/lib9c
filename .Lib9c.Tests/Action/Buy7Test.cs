@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -29,7 +30,7 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly Guid _productId;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public Buy7Test(ITestOutputHelper outputHelper)
         {
@@ -39,7 +40,7 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -443,7 +444,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = new Account(MockState.Empty),
+                    PreviousState = new World(new MockWorldState()),
                     RandomSeed = 0,
                     Signer = _buyerAgentAddress,
                 })
@@ -781,7 +782,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_ErrorCode_ShopItemExpired()
         {
-            IAccount previousStates = _initialState;
+            IWorld previousStates = _initialState;
             Address shardedShopStateAddress = ShardedShopState.DeriveAddress(ItemSubType.Weapon, _productId);
             ShardedShopState shopState = new ShardedShopState(shardedShopStateAddress);
             Weapon itemUsable = (Weapon)ItemFactory.CreateItemUsable(
@@ -833,7 +834,7 @@ namespace Lib9c.Tests.Action
         [InlineData(10, 20)]
         public void Execute_ErrorCode_InvalidPrice(int shopPrice, int price)
         {
-            IAccount previousStates = _initialState;
+            IWorld previousStates = _initialState;
             Address shardedShopStateAddress = ShardedShopState.DeriveAddress(ItemSubType.Weapon, _productId);
             ShardedShopState shopState = new ShardedShopState(shardedShopStateAddress);
             Weapon itemUsable = (Weapon)ItemFactory.CreateItemUsable(

@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action.Summon
     using Nekoyume.Action.Exceptions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Summon;
     using Xunit;
@@ -25,7 +26,7 @@ namespace Lib9c.Tests.Action.Summon
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
         private TableSheets _tableSheets;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public RuneSummonTest()
         {
@@ -54,7 +55,7 @@ namespace Lib9c.Tests.Action.Summon
             var gold = new GoldCurrencyState(_currency);
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty)
+            _initialState = new World(new MockWorldState())
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(_avatarAddress, _avatarState.Serialize())
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
@@ -180,7 +181,7 @@ namespace Lib9c.Tests.Action.Summon
                     Assert.Equal(currency * pair.Value, balance - prevBalance);
                 }
 
-                nextState.GetAvatarStateV2(_avatarAddress).inventory
+                nextState.GetAvatarState(_avatarAddress).inventory
                     .TryGetItem((int)materialId!, out var resultMaterial);
                 Assert.Equal(0, resultMaterial?.count ?? 0);
             }

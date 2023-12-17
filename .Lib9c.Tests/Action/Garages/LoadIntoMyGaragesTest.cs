@@ -14,11 +14,11 @@ namespace Lib9c.Tests.Action.Garages
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
-    using Nekoyume.Action;
     using Nekoyume.Action.Garages;
     using Nekoyume.Exceptions;
     using Nekoyume.Model.Garages;
     using Nekoyume.Model.Item;
+    using Nekoyume.Module;
     using Xunit;
 
     public class LoadIntoMyGaragesTest
@@ -28,14 +28,14 @@ namespace Lib9c.Tests.Action.Garages
 
         private readonly TableSheets _tableSheets;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly Currency _ncg;
         private readonly (Address balanceAddr, FungibleAssetValue value)[] _fungibleAssetValues;
         private readonly Address? _inventoryAddr;
         private readonly (HashDigest<SHA256> fungibleId, int count)[] _fungibleIdAndCounts;
         private readonly FungibleAssetValue _cost;
         private readonly ITradableFungibleItem[] _tradableFungibleItems;
-        private readonly IAccount _previousStates;
+        private readonly IWorld _previousStates;
 
         public LoadIntoMyGaragesTest()
         {
@@ -396,10 +396,10 @@ namespace Lib9c.Tests.Action.Garages
             }
         }
 
-        private static (LoadIntoMyGarages action, IAccount nextStates) Execute(
+        private static (LoadIntoMyGarages action, IWorld nextStates) Execute(
             Address signer,
             long blockIndex,
-            IAccount previousState,
+            IWorld previousState,
             IRandom random,
             IEnumerable<(Address balanceAddr, FungibleAssetValue value)>? fungibleAssetValues,
             Address? inventoryAddr,
@@ -454,7 +454,7 @@ namespace Lib9c.Tests.Action.Garages
             (HashDigest<SHA256> fungibleId, int count)[] fungibleIdAndCounts,
             FungibleAssetValue cost,
             ITradableFungibleItem[] _tradableFungibleItems,
-            IAccount previousStates)
+            IWorld previousStates)
             GetSuccessfulPreviousStatesWithPlainValue()
         {
             var previousStates = _initialStatesWithAvatarStateV2;

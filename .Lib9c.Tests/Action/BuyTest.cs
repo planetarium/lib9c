@@ -19,6 +19,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -34,7 +35,7 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly Guid _orderId;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public BuyTest(ITestOutputHelper outputHelper)
         {
@@ -44,7 +45,7 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -370,7 +371,7 @@ namespace Lib9c.Tests.Action
                 FungibleAssetValue totalTax = 0 * _goldCurrencyState.Currency;
                 FungibleAssetValue totalPrice = 0 * _goldCurrencyState.Currency;
                 Currency goldCurrencyState = nextState.GetGoldCurrency();
-                AvatarState nextBuyerAvatarState = nextState.GetAvatarStateV2(_buyerAvatarAddress);
+                AvatarState nextBuyerAvatarState = nextState.GetAvatarState(_buyerAvatarAddress);
                 foreach (var purchaseInfo in purchaseInfos)
                 {
                     Address shardedShopAddress =
@@ -403,7 +404,7 @@ namespace Lib9c.Tests.Action
                     Assert.Equal(expectedCount, inventoryItem.count);
                     Assert.Equal(expectedCount, nextBuyerAvatarState.itemMap[((ItemBase)tradableItem).Id]);
 
-                    var nextSellerAvatarState = nextState.GetAvatarStateV2(purchaseInfo.SellerAvatarAddress);
+                    var nextSellerAvatarState = nextState.GetAvatarState(purchaseInfo.SellerAvatarAddress);
                     Assert.False(
                         nextSellerAvatarState.inventory.TryGetTradableItems(
                             purchaseInfo.TradableId,
@@ -615,7 +616,7 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = new[] { purchaseInfo },
             };
 
-            IAccount nextState = action.Execute(new ActionContext()
+            IWorld nextState = action.Execute(new ActionContext()
             {
                 BlockIndex = blockIndex,
                 PreviousState = _initialState,
@@ -810,7 +811,7 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(expectedCount, inventoryItem.count);
                 Assert.Equal(expectedCount, nextBuyerAvatarState.itemMap[((ItemBase)tradableItem).Id]);
 
-                var nextSellerAvatarState = nextState.GetAvatarStateV2(purchaseInfo.SellerAvatarAddress);
+                var nextSellerAvatarState = nextState.GetAvatarState(purchaseInfo.SellerAvatarAddress);
                 Assert.False(
                     nextSellerAvatarState.inventory.TryGetTradableItems(
                         purchaseInfo.TradableId,
@@ -904,7 +905,7 @@ namespace Lib9c.Tests.Action
                 var tradableId = purchaseInfo.TradableId;
                 var itemCount = order is FungibleOrder fungibleOrder ? fungibleOrder.ItemCount : 1;
                 var nextSellerAvatarState =
-                    nextState.GetAvatarStateV2(purchaseInfo.SellerAvatarAddress);
+                    nextState.GetAvatarState(purchaseInfo.SellerAvatarAddress);
 
                 Assert.True(nextBuyerAvatarState.inventory.TryGetTradableItem(
                     tradableId, 100, itemCount, out var _));

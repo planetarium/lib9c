@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -15,6 +15,7 @@
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -30,7 +31,7 @@
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly GameConfigState _gameConfigState;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public ReRegisterProductTest(ITestOutputHelper outputHelper)
         {
@@ -39,7 +40,7 @@
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -299,7 +300,7 @@
             Assert.Equal(productType, product.Type);
             Assert.Equal(order.Price, product.Price);
 
-            var nextAvatarState = actualState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = actualState.GetAvatarState(_avatarAddress);
             Assert.Equal(_gameConfigState.ActionPointMax - ReRegisterProduct.CostAp, nextAvatarState.actionPoint);
         }
 

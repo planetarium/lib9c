@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -26,7 +27,7 @@ namespace Lib9c.Tests.Action
             var tableSheets = new TableSheets(sheets);
             Address agentAddress = new PrivateKey().Address;
             Address avatarAddress = new PrivateKey().Address;
-            IAccount state = new Account(MockState.Empty);
+            IWorld state = new World(new MockWorldState());
 
             var runeWeightSheet = new RuneWeightSheet();
             runeWeightSheet.Set(@"id,boss_id,rank,rune_id,weight

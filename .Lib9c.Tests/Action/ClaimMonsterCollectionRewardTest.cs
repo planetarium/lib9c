@@ -3,7 +3,6 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
     using Bencodex.Types;
     using Libplanet.Action.State;
@@ -13,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -24,7 +24,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _signer;
         private readonly Address _avatarAddress;
         private readonly ClaimMonsterCollectionReward _action;
-        private IAccount _state;
+        private IWorld _state;
 
         public ClaimMonsterCollectionRewardTest(ITestOutputHelper outputHelper)
         {
@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Action
 
             _signer = default;
             _avatarAddress = _signer.Derive("avatar");
-            _state = new Account(MockState.Empty);
+            _state = new World(new MockWorldState());
             Dictionary<string, string> sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var rankingMapAddress = new PrivateKey().Address;
@@ -86,7 +86,7 @@ namespace Lib9c.Tests.Action
                 monsterCollectionState.Claim(receivedBlockIndexNotNull);
             }
 
-            AvatarState prevAvatarState = _state.GetAvatarStateV2(_avatarAddress);
+            AvatarState prevAvatarState = _state.GetAvatarState(_avatarAddress);
             Assert.Empty(prevAvatarState.mailBox);
 
             Currency currency = _state.GetGoldCurrency();
@@ -109,7 +109,7 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                IAccount nextState = _action.Execute(new ActionContext
+                IWorld nextState = _action.Execute(new ActionContext
                 {
                     PreviousState = _state,
                     Signer = _signer,
@@ -122,7 +122,7 @@ namespace Lib9c.Tests.Action
                 );
                 Assert.Equal(0, nextMonsterCollectionState.RewardLevel);
 
-                AvatarState nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+                AvatarState nextAvatarState = nextState.GetAvatarState(_avatarAddress);
                 Assert.Single(nextAvatarState.mailBox);
                 Mail mail = nextAvatarState.mailBox.First();
                 MonsterCollectionMail monsterCollectionMail = Assert.IsType<MonsterCollectionMail>(mail);

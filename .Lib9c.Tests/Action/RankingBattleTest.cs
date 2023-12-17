@@ -12,11 +12,11 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
 
     public class RankingBattleTest
     {
@@ -25,11 +25,11 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatar1Address;
         private readonly Address _avatar2Address;
         private readonly Address _weeklyArenaAddress;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public RankingBattleTest(ITestOutputHelper outputHelper)
         {
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
 
             var keys = new List<string>
             {

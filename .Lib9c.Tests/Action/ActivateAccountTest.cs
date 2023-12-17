@@ -1,13 +1,13 @@
 namespace Lib9c.Tests.Action
 {
     using System;
-    using System.Collections.Immutable;
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class ActivateAccountTest
@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Action
                 ActivationKey.Create(privateKey, nonce);
 
             Address activatedAddress = default(Address).Derive(ActivationKey.DeriveKey);
-            IAccount state = new Account(MockState.Empty);
+            IWorld state = new World(new MockWorldState());
 
             if (pendingExist)
             {
@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                IAccount nextState = action.Execute(new ActionContext()
+                IWorld nextState = action.Execute(new ActionContext()
                 {
                     PreviousState = state,
                     Signer = default,

@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Crystal;
     using Xunit;
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _rankingMapAddress;
 
         private readonly WeeklyArenaState _weeklyArenaState;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly IRandom _random;
         private readonly Currency _currency;
 
@@ -71,7 +72,7 @@ namespace Lib9c.Tests.Action
 
             _weeklyArenaState = new WeeklyArenaState(0);
 
-            _initialState = new Account(MockState.Empty)
+            _initialState = new World(new MockWorldState())
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetState(_agentAddress, agentState.SerializeV2())
                 .SetState(_avatarAddress, _avatarState.SerializeV2())

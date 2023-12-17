@@ -1,18 +1,17 @@
 namespace Lib9c.Tests.Action
 {
     using System;
-    using System.Collections.Immutable;
-    using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class RenewAdminStateTest
     {
-        private IAccount _stateDelta;
+        private IWorld _stateDelta;
         private long _validUntil;
         private AdminState _adminState;
         private PrivateKey _adminPrivateKey;
@@ -22,9 +21,9 @@ namespace Lib9c.Tests.Action
             _adminPrivateKey = new PrivateKey();
             _validUntil = 1_500_000L;
             _adminState = new AdminState(_adminPrivateKey.Address, _validUntil);
-            _stateDelta = new Account(
-                MockState.Empty
-                    .SetState(Addresses.Admin, _adminState.Serialize()));
+            _stateDelta = new World(
+                new MockWorldState()
+                    .SetState(ReservedAddresses.LegacyAccount, Addresses.Admin, _adminState.Serialize()));
         }
 
         [Fact]

@@ -13,13 +13,14 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
 
     public class ClaimItemsTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly Address _signerAddress;
 
         private readonly TableSheets _tableSheets;
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
 
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
@@ -180,7 +181,7 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var avatarState = states.GetAvatarStateV2(recipientAvatarAddress);
+            var avatarState = states.GetAvatarState(recipientAvatarAddress);
             var mail = Assert.IsType<ClaimItemsMail>(avatarState.mailBox.Single());
             if (string.IsNullOrEmpty(memo))
             {
@@ -320,7 +321,7 @@ namespace Lib9c.Tests.Action
                 }));
         }
 
-        private IAccount GenerateAvatar(IAccount state, out Address avatarAddress, out Address agentAddress)
+        private IWorld GenerateAvatar(IWorld state, out Address avatarAddress, out Address agentAddress)
         {
             agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);

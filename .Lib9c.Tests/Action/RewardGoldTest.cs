@@ -29,15 +29,15 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
-    using Serilog.Core;
     using Xunit;
 
     public class RewardGoldTest
     {
         private readonly AvatarState _avatarState;
         private readonly AvatarState _avatarState2;
-        private readonly IAccount _baseState;
+        private readonly IWorld _baseState;
         private readonly TableSheets _tableSheets;
 
         public RewardGoldTest()
@@ -77,7 +77,7 @@ namespace Lib9c.Tests.Action
             var gold = new GoldCurrencyState(Currency.Legacy("NCG", 2, null));
 #pragma warning restore CS0618
             IActionContext context = new ActionContext();
-            _baseState = new Account(MockState.Empty)
+            _baseState = new World(new MockWorldState())
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
                 .SetState(Addresses.GoldDistribution, GoldDistributionTest.Fixture.Select(v => v.Serialize()).Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100000000000);
@@ -98,7 +98,7 @@ namespace Lib9c.Tests.Action
                 ArenaScoreHelper.GetScoreV4);
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(_tableSheets.GameConfigSheet);
-            IAccount state = new Account(_baseState
+            IWorld state = new World(_baseState
                 .SetState(weekly.address, weekly.Serialize())
                 .SetState(gameConfigState.address, gameConfigState.Serialize()));
             var blockIndex = 0;
@@ -114,7 +114,7 @@ namespace Lib9c.Tests.Action
                 blockIndex = gameConfigState.WeeklyArenaInterval;
                 // Avoid NRE in test case.
                 var nextWeekly = new WeeklyArenaState(1);
-                state = new Account(state
+                state = new World(state
                     .SetState(weekly.address, weekly.Serialize())
                     .SetState(nextWeekly.address, nextWeekly.Serialize()));
             }
@@ -395,7 +395,7 @@ namespace Lib9c.Tests.Action
                 PreviousState = _baseState,
             };
 
-            IAccount delta;
+            IWorld delta;
 
             // 제너시스에 받아야 할 돈들 검사
             delta = action.GenesisGoldDistribution(ctx, _baseState);
@@ -467,7 +467,7 @@ namespace Lib9c.Tests.Action
             void AssertMinerReward(int blockIndex, string expected)
             {
                 ctx.BlockIndex = blockIndex;
-                IAccount delta = action.MinerReward(ctx, _baseState);
+                IWorld delta = action.MinerReward(ctx, _baseState);
                 Assert.Equal(FungibleAssetValue.Parse(currency, expected), delta.GetBalance(miner, currency));
             }
 
@@ -585,7 +585,7 @@ namespace Lib9c.Tests.Action
             var patronAddress = new PrivateKey().Address;
             var contractAddress = agentAddress.GetPledgeAddress();
             IActionContext context = new ActionContext();
-            IAccount states = new Account(MockState.Empty)
+            IWorld states = new World(new MockWorldState())
                 .MintAsset(context, patronAddress, patronMead * Currencies.Mead)
                 .TransferAsset(context, patronAddress, agentAddress, 1 * Currencies.Mead)
                 .SetState(contractAddress, List.Empty.Add(patronAddress.Serialize()).Add(true.Serialize()).Add(balance.Serialize()))
@@ -607,14 +607,14 @@ namespace Lib9c.Tests.Action
             gameConfigState.Set(_tableSheets.GameConfigSheet);
 
             var currency = Currency.Legacy("NCG", 2, null);
-            IAccount states = new Account(MockState.Empty)
+            IWorld states = new World(new MockWorldState())
                 .SetState(GoldCurrencyState.Address, new GoldCurrencyState(currency, 0).Serialize())
                 .SetState(weekly.address, weekly.Serialize())
                 .SetState(Addresses.GoldDistribution, new List())
                 .SetState(gameConfigState.address, gameConfigState.Serialize());
             var action = new RewardGold();
 
-            IAccount nextState = action.Execute(
+            IWorld nextState = action.Execute(
                 new ActionContext()
                 {
                     BlockIndex = 42,

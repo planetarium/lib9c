@@ -1,6 +1,5 @@
 namespace Lib9c.Tests.Action
 {
-    using System;
     using System.Linq;
     using Bencodex.Types;
     using Libplanet.Action.State;
@@ -8,15 +7,15 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
-    using Nekoyume.TableData.Stake;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
 
     public class PatchTableSheetTest
     {
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public PatchTableSheetTest(ITestOutputHelper outputHelper)
         {
@@ -25,7 +24,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -115,12 +114,13 @@ namespace Lib9c.Tests.Action
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
             const string tableName = "TestTable";
-            var initStates = MockState.Empty
-                .SetState(AdminState.Address, adminState.Serialize())
+            var initStates = new MockWorldState()
+                .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize())
                 .SetState(
+                    ReservedAddresses.LegacyAccount,
                     Addresses.TableSheet.Derive(tableName),
                     Dictionary.Empty.Add(tableName, "Initial"));
-            var state = new Account(initStates);
+            var state = new World(initStates);
             var action = new PatchTableSheet()
             {
                 TableName = tableName,
@@ -160,12 +160,13 @@ namespace Lib9c.Tests.Action
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
             const string tableName = "TestTable";
-            var initStates = MockState.Empty
-                .SetState(AdminState.Address, adminState.Serialize())
+            var initStates = new MockWorldState()
+                .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize())
                 .SetState(
+                    ReservedAddresses.LegacyAccount,
                     Addresses.TableSheet.Derive(tableName),
                     Dictionary.Empty.Add(tableName, "Initial"));
-            var state = new Account(initStates);
+            var state = new World(initStates);
             var action = new PatchTableSheet()
             {
                 TableName = nameof(CostumeStatSheet),

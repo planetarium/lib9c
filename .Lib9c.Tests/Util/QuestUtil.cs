@@ -4,13 +4,14 @@ namespace Lib9c.Tests.Util
     using Libplanet.Crypto;
     using Nekoyume.Action;
     using Nekoyume.Model.Quest;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
 
     public static class QuestUtil
     {
-        public static (IAccount, IAccount) DisableQuestList(
-            IAccount stateV1,
-            IAccount stateV2,
+        public static (IWorld, IWorld) DisableQuestList(
+            IWorld stateV1,
+            IWorld stateV2,
             Address avatarAddress
         )
         {

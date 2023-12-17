@@ -12,12 +12,11 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Arena;
-    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
-    using Xunit;
     using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
@@ -28,7 +27,7 @@ namespace Lib9c.Tests.Action.Scenario
         private readonly Currency _ncg;
         private TableSheets _tableSheets;
         private Dictionary<string, string> _sheets;
-        private IAccount _state;
+        private IWorld _state;
 
         public ArenaScenarioTest(ITestOutputHelper outputHelper)
         {
@@ -37,7 +36,7 @@ namespace Lib9c.Tests.Action.Scenario
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _state = new Account(MockState.Empty);
+            _state = new World(new MockWorldState());
 
             _sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(_sheets);
@@ -92,7 +91,7 @@ namespace Lib9c.Tests.Action.Scenario
             return (equipments, costumes);
         }
 
-        public IAccount JoinArena(
+        public IWorld JoinArena(
             IActionContext context,
             IRandom random,
             Address signer,
@@ -121,7 +120,7 @@ namespace Lib9c.Tests.Action.Scenario
             return _state;
         }
 
-        public IAccount BattleArena(
+        public IWorld BattleArena(
             IRandom random,
             Address signer,
             Address myAvatarAddress,

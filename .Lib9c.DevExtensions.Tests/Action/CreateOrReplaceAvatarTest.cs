@@ -15,6 +15,7 @@ using Nekoyume.Action;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Xunit;
@@ -24,12 +25,12 @@ namespace Lib9c.DevExtensions.Tests.Action
 {
     public class CreateOrReplaceAvatarTest
     {
-        private readonly IAccount _initialStates;
+        private readonly IWorld _initialStates;
         private readonly TableSheets _tableSheets;
 
         public CreateOrReplaceAvatarTest()
         {
-            _initialStates = new Account(MockState.Empty);
+            _initialStates = new World(new MockWorldState());
 
 #pragma warning disable CS0618
             var ncgCurrency = Currency.Legacy("NCG", 2, null);
@@ -425,7 +426,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         }
 
         private static void Execute(
-            IAccount previousStates,
+            IWorld previousStates,
             long blockIndex,
             Address agentAddr,
             int avatarIndex,

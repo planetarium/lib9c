@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -28,8 +29,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly Address _inventoryAddr;
         private readonly Address _worldInfoAddr;
         private readonly Address _recipeIdsAddr;
-        private readonly IAccount _initialStateV1;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV1;
+        private readonly IWorld _initialStateV2;
         private readonly TableSheets _tableSheets;
         private readonly int _hourglassItemId;
         private int? _petId;

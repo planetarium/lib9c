@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -13,6 +13,7 @@
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -25,7 +26,7 @@
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public UnlockWorld1Test()
         {
@@ -49,7 +50,7 @@
 
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new Account(MockState.Empty)
+            _initialState = new World(new MockWorldState())
                 .SetState(Addresses.GetSheetAddress<WorldUnlockSheet>(), _tableSheets.WorldUnlockSheet.Serialize())
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize());
         }
@@ -155,7 +156,7 @@
 
             if (exc is null)
             {
-                IAccount nextState = action.Execute(new ActionContext
+                IWorld nextState = action.Execute(new ActionContext
                 {
                     PreviousState = state,
                     Signer = _agentAddress,

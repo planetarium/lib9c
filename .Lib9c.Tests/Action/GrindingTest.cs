@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Crystal;
     using Xunit;
@@ -27,7 +28,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _avatarState;
         private readonly Currency _crystalCurrency;
         private readonly Currency _ncgCurrency;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public GrindingTest()
         {
@@ -60,7 +61,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(_ncgCurrency);
 
-            _initialState = new Account(MockState.Empty)
+            _initialState = new World(new MockWorldState())
                 .SetState(
                     Addresses.GetSheetAddress<CrystalMonsterCollectionMultiplierSheet>(),
                     _tableSheets.CrystalMonsterCollectionMultiplierSheet.Serialize())
@@ -225,7 +226,7 @@ namespace Lib9c.Tests.Action
                     RandomSeed = _random.Seed,
                 });
 
-                var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+                var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
                 FungibleAssetValue asset = totalAsset * _crystalCurrency;
 
                 Assert.Equal(asset, nextState.GetBalance(_agentAddress, _crystalCurrency));

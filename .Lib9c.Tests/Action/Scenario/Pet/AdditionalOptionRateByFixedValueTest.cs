@@ -12,10 +12,10 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Pet;
     using Xunit;
-    using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
     public class AdditionalOptionRateByFixedValueTest
@@ -26,8 +26,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IAccount _initialStateV1;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV1;
+        private readonly IWorld _initialStateV2;
         private readonly Address _inventoryAddr;
         private readonly Address _worldInfoAddr;
         private readonly Address _recipeAddr;

@@ -15,6 +15,7 @@ namespace Lib9c.Tests
     using Nekoyume.Model.Garages;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class IssueTokensFromGarageTest
@@ -23,7 +24,7 @@ namespace Lib9c.Tests
         private static readonly HashDigest<SHA256> SampleFungibleId =
             HashDigest<SHA256>.FromString("baa2081d3b485ef2906c95a3965531ec750a74cfaefe91d0c3061865608b426c");
 
-        private readonly IAccount _prevState;
+        private readonly IWorld _prevState;
         private readonly TableSheets _tableSheets;
         private readonly Address _signer;
 
@@ -34,8 +35,8 @@ namespace Lib9c.Tests
             _tableSheets = new TableSheets(sheets);
 
             var garageBalanceAddr = Addresses.GetGarageBalanceAddress(_signer);
-            _prevState = new Account(
-                MockState.Empty
+            _prevState = new World(
+                new MockWorldState()
                     .SetBalance(garageBalanceAddr, Currencies.Crystal * 1000)
             );
 
@@ -103,7 +104,7 @@ namespace Lib9c.Tests
                 IssueTokensFromGarage.Spec.FromFungibleAssetValue(Currencies.Crystal * 42),
             });
 
-            IAccount nextState = action.Execute(
+            IWorld nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = _prevState,

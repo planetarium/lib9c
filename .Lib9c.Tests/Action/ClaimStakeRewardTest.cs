@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData.Stake;
     using Serilog;
     using Xunit;
@@ -27,7 +28,7 @@ namespace Lib9c.Tests.Action
         private static readonly Address AvatarAddr =
             Addresses.GetAvatarAddress(AgentAddr, AvatarIndex);
 
-        private readonly IAccount[] _initialStates;
+        private readonly IWorld[] _initialStates;
         private readonly Currency _ncg;
         private readonly StakePolicySheet _stakePolicySheet;
 
@@ -60,8 +61,8 @@ namespace Lib9c.Tests.Action
                     StakePolicySheetFixtures.V2
                 },
             };
-            IAccount initialStatesWithAvatarStateV1;
-            IAccount initialStatesWithAvatarStateV2;
+            IWorld initialStatesWithAvatarStateV1;
+            IWorld initialStatesWithAvatarStateV2;
             (
                 _,
                 _,
@@ -672,8 +673,8 @@ namespace Lib9c.Tests.Action
                 : new StakeStateV2(contract, startedBlockIndex, receivedBlockIndex.Value);
         }
 
-        private static IAccount Execute(
-            IAccount prevState,
+        private static IWorld Execute(
+            IWorld prevState,
             Address agentAddr,
             Address avatarAddr,
             long blockIndex)
@@ -702,7 +703,7 @@ namespace Lib9c.Tests.Action
         }
 
         private static void Expect(
-            IAccountState state,
+            IWorldState state,
             (Address balanceAddr, FungibleAssetValue fav)[] expectedBalances,
             Address inventoryAddr,
             (int itemSheetId, int count)[] expectedItems)

@@ -9,14 +9,14 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
-    using Nekoyume.TableData;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
 
     public class Stake2Test
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly Currency _currency;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly TableSheets _tableSheets;
@@ -29,7 +29,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
 
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)

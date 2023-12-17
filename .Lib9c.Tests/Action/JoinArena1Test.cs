@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -32,7 +33,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatar2Address;
         private readonly IRandom _random;
         private readonly Currency _currency;
-        private IAccount _state;
+        private IWorld _state;
 
         public JoinArena1Test(ITestOutputHelper outputHelper)
         {
@@ -45,7 +46,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _state = new Account(MockState.Empty);
+            _state = new World(new MockWorldState());
 
             _signer = new PrivateKey().Address;
             _avatarAddress = _signer.Derive("avatar");
@@ -198,7 +199,7 @@ namespace Lib9c.Tests.Action
                     nameof(ArenaSheet), $"championship Id : {championshipId}");
             }
 
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             avatarState = AddMedal(avatarState, row, 80);
 
@@ -279,7 +280,7 @@ namespace Lib9c.Tests.Action
         [InlineData(3)]
         public void Execute_SheetRowNotFoundException(int championshipId)
         {
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
@@ -304,7 +305,7 @@ namespace Lib9c.Tests.Action
         [InlineData(123)]
         public void Execute_RoundNotFoundByIdsException(int round)
         {
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
@@ -330,7 +331,7 @@ namespace Lib9c.Tests.Action
         [InlineData(8)]
         public void Execute_NotEnoughMedalException(int round)
         {
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = _state.GetAvatarState(_avatarAddress);
             GetAvatarState(avatarState, out var equipments, out var costumes);
             var preCurrency = 99800100000 * _currency;
             var context = new ActionContext();
@@ -359,7 +360,7 @@ namespace Lib9c.Tests.Action
         [InlineData(8, 100)] // entrance_fee
         public void Execute_NotEnoughFungibleAssetValueException(int round, long blockIndex)
         {
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = _state.GetAvatarState(_avatarAddress);
             GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
@@ -384,7 +385,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_ArenaScoreAlreadyContainsException()
         {
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
@@ -420,7 +421,7 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 1;
 
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 
@@ -452,7 +453,7 @@ namespace Lib9c.Tests.Action
             const int championshipId = 1;
             const int round = 1;
 
-            var avatarState = _state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
             var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
 

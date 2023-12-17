@@ -1,8 +1,6 @@
 namespace Lib9c.Tests.Action
 {
     using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
     using Bencodex.Types;
     using Lib9c.Model.Order;
@@ -14,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -28,7 +27,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _currency;
         private readonly AvatarState _avatarState;
         private readonly TableSheets _tableSheets;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public SellTest(ITestOutputHelper outputHelper)
         {
@@ -37,7 +36,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -170,7 +169,7 @@ namespace Lib9c.Tests.Action
             long expiredBlockIndex = Order.ExpirationInterval + blockIndex;
 
             // Check AvatarState and Inventory
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.Single(nextAvatarState.inventory.Items);
             Assert.True(nextAvatarState.inventory.TryGetLockedItem(new OrderLock(orderId), out var inventoryItem));
             Assert.False(nextAvatarState.inventory.TryGetTradableItems(tradableItem.TradableId, blockIndex, itemCount, out _));
@@ -301,7 +300,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
                 Signer = _agentAddress,
             }));
         }
@@ -437,7 +436,7 @@ namespace Lib9c.Tests.Action
             shardedShopState.Add(order.Digest2(avatarState, _tableSheets.CostumeStatSheet), 1);
             Assert.Single(shardedShopState.OrderDigestList);
 
-            IAccount previousStates = _initialState
+            IWorld previousStates = _initialState
                 .SetState(_avatarAddress, avatarState.Serialize())
                 .SetState(shardedShopAddress, shardedShopState.Serialize());
 

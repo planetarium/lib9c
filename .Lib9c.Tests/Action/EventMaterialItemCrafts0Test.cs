@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Event;
     using Xunit;
@@ -18,7 +19,7 @@ namespace Lib9c.Tests.Action
 
     public class EventMaterialItemCrafts0Test
     {
-        private readonly IAccount _initialStates;
+        private readonly IWorld _initialStates;
         private readonly TableSheets _tableSheets;
 
         private readonly Address _agentAddress;
@@ -26,7 +27,7 @@ namespace Lib9c.Tests.Action
 
         public EventMaterialItemCrafts0Test()
         {
-            _initialStates = new Account(MockState.Empty);
+            _initialStates = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -198,13 +199,13 @@ namespace Lib9c.Tests.Action
         }
 
         private void Execute(
-            IAccount previousStates,
+            IWorld previousStates,
             int eventScheduleId,
             int eventMaterialItemRecipeId,
             Dictionary<int, int> materialsToUse,
             long blockIndex = 0)
         {
-            var previousAvatarState = previousStates.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = previousStates.GetAvatarState(_avatarAddress);
 
             var recipeSheet = previousStates.GetSheet<EventMaterialItemRecipeSheet>();
             Assert.True(recipeSheet.TryGetValue(eventMaterialItemRecipeId, out var recipeRow));
@@ -253,7 +254,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
             });
 
-            var nextAvatarState = nextStates.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
 
             var nextMaterialCount = nextAvatarState.inventory.Items
                 .Where(i => recipeRow.RequiredMaterialsId.Contains(i.item.Id))

@@ -6,10 +6,10 @@ using Lib9c.Tests.Util;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Model;
+using Nekoyume.Module;
 using Xunit;
 using static Lib9c.SerializeKeys;
 
@@ -20,7 +20,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV2;
         private readonly Address _worldInformationAddress;
 
         public UnlockCraftActionTest()

@@ -1,7 +1,6 @@
 namespace Lib9c.Tests.Action
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Common;
@@ -10,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -71,7 +71,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
 
             var context = new ActionContext();
-            var initialState = new Account(MockState.Empty)
+            var initialState = new World(new MockWorldState())
                 .SetState(_agentAddress, agentState.Serialize())
                 .SetState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
                 .SetState(GoldCurrencyState.Address, goldState.Serialize())
@@ -103,7 +103,7 @@ namespace Lib9c.Tests.Action
                 _avatarAddress
             );
 
-            IAccount nextState = redeemCode.Execute(new ActionContext()
+            IWorld nextState = redeemCode.Execute(new ActionContext()
             {
                 BlockIndex = 1,
                 Miner = default,
@@ -113,7 +113,7 @@ namespace Lib9c.Tests.Action
             });
 
             // Check target avatar & agent
-            AvatarState nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            AvatarState nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             // See also Data/TableCSV/RedeemRewardSheet.csv
             ItemSheet itemSheet = initialState.GetItemSheet();
             HashSet<int> expectedItems = new[] { 302006, 302004, 302001, 302002 }.ToHashSet();

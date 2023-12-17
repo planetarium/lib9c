@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Event;
     using Xunit;
@@ -16,7 +17,7 @@ namespace Lib9c.Tests.Action
 
     public class EventConsumableItemCrafts0Test
     {
-        private readonly IAccount _initialStates;
+        private readonly IWorld _initialStates;
         private readonly TableSheets _tableSheets;
 
         private readonly Address _agentAddress;
@@ -24,7 +25,7 @@ namespace Lib9c.Tests.Action
 
         public EventConsumableItemCrafts0Test()
         {
-            _initialStates = new Account(MockState.Empty);
+            _initialStates = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -100,13 +101,13 @@ namespace Lib9c.Tests.Action
         }
 
         private void Execute(
-            IAccount previousStates,
+            IWorld previousStates,
             int eventScheduleId,
             int eventConsumableItemRecipeId,
             int slotIndex,
             long blockIndex = 0)
         {
-            var previousAvatarState = previousStates.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = previousStates.GetAvatarState(_avatarAddress);
 
             var recipeSheet = previousStates.GetSheet<EventConsumableItemRecipeSheet>();
             Assert.True(recipeSheet.TryGetValue(
@@ -166,7 +167,7 @@ namespace Lib9c.Tests.Action
             var consumable = (Consumable)slotState.Result.itemUsable;
             Assert.NotNull(consumable);
 
-            var nextAvatarState = nextStates.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
             Assert.Equal(
                 previousActionPoint - recipeRow.RequiredActionPoint,
                 nextAvatarState.actionPoint);

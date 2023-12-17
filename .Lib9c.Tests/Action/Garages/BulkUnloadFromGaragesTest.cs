@@ -17,6 +17,7 @@ namespace Lib9c.Tests.Action.Garages
     using Nekoyume.Model.Garages;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
+    using Nekoyume.Module;
     using Xunit;
 
     public class BulkUnloadFromGaragesTest
@@ -30,7 +31,7 @@ namespace Lib9c.Tests.Action.Garages
 
         private readonly TableSheets _tableSheets;
         private readonly Currency _ncg;
-        private readonly IAccount _previousStates;
+        private readonly IWorld _previousStates;
 
         public BulkUnloadFromGaragesTest()
         {
@@ -187,12 +188,12 @@ namespace Lib9c.Tests.Action.Garages
                 .ToArray();
         }
 
-        private (IAccount states, (
+        private (IWorld states, (
             Address recipientAvatarAddress,
             IEnumerable<(Address balanceAddress, FungibleAssetValue value)>? fungibleAssetValues,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)>? fungibleIdAndCounts,
             string? memo))
-            RegisterPlainValue(IAccount previousStates)
+            RegisterPlainValue(IWorld previousStates)
         {
             var states = previousStates;
 

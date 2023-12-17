@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c.DevExtensions.Action;
@@ -19,6 +18,7 @@ using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Quest;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Xunit;
 
 namespace Lib9c.DevExtensions.Tests.Action
@@ -39,7 +39,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV2;
         private readonly Address _inventoryAddress;
         private readonly Address _worldInformationAddress;
         private readonly Address _questListAddress;
@@ -57,7 +57,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 _avatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey);
             _questListAddress = _avatarAddress.Derive(SerializeKeys.LegacyQuestListKey);
             _recipeAddress = _avatarAddress.Derive("recipe_ids");
-            _avatarState = _initialStateV2.GetAvatarStateV2(_avatarAddress);
+            _avatarState = _initialStateV2.GetAvatarState(_avatarAddress);
         }
 
         // MemberData
@@ -345,8 +345,8 @@ namespace Lib9c.DevExtensions.Tests.Action
         // ~MemberData
 
         // Logics
-        private IAccount Manipulate(
-            IAccount state,
+        private IWorld Manipulate(
+            IWorld state,
             List<(Address addr, IValue value)> targetStateList,
             List<(Address addr, FungibleAssetValue fav)> targetBalanceList
         )
@@ -366,13 +366,13 @@ namespace Lib9c.DevExtensions.Tests.Action
         }
 
         private void TestAvatarState(
-            IAccount state,
+            IWorld state,
             string? name, int? level, long? exp, int? actionPoint,
             long? blockIndex, long? dailyRewardReceivedIndex,
             int? hair, int? lens, int? ear, int? tail
         )
         {
-            var targetAvatarState = state.GetAvatarStateV2(_avatarAddress);
+            var targetAvatarState = state.GetAvatarState(_avatarAddress);
 
             if (name != null)
             {
@@ -425,9 +425,9 @@ namespace Lib9c.DevExtensions.Tests.Action
             }
         }
 
-        private void TestInventoryState(IAccount state, Inventory targetInventory)
+        private void TestInventoryState(IWorld state, Inventory targetInventory)
         {
-            var avatarState = state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = state.GetAvatarState(_avatarAddress);
             var inventoryState = avatarState.inventory;
             Assert.Equal(targetInventory.Items.Count, inventoryState.Items.Count);
             foreach (var item in targetInventory.Items)
@@ -475,9 +475,9 @@ namespace Lib9c.DevExtensions.Tests.Action
             );
         }
 
-        private void TestQuestState(IAccount state, List<int> targetQuestIdList)
+        private void TestQuestState(IWorld state, List<int> targetQuestIdList)
         {
-            var avatarState = state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = state.GetAvatarState(_avatarAddress);
             var questState = avatarState.questList;
             foreach (var target in targetQuestIdList)
             {
@@ -485,9 +485,9 @@ namespace Lib9c.DevExtensions.Tests.Action
             }
         }
 
-        private void TestWorldInformation(IAccount state, int lastClearedStage)
+        private void TestWorldInformation(IWorld state, int lastClearedStage)
         {
-            var avatarState = state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = state.GetAvatarState(_avatarAddress);
             var worldInformation = avatarState.worldInformation;
 
             for (var i = 0; i < lastClearedStage; i++)

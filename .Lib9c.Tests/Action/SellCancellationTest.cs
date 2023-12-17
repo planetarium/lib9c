@@ -2,7 +2,6 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
     using Bencodex.Types;
     using Lib9c.Model.Order;
@@ -16,6 +15,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -24,7 +24,7 @@ namespace Lib9c.Tests.Action
 
     public class SellCancellationTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly GoldCurrencyState _goldCurrencyState;
@@ -38,7 +38,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -167,7 +167,7 @@ namespace Lib9c.Tests.Action
             avatarState.mailBox.Add(expirationMail);
 
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
-            IAccount prevState = _initialState;
+            IWorld prevState = _initialState;
 
             if (inventoryCount > 1)
             {
@@ -269,7 +269,7 @@ namespace Lib9c.Tests.Action
                 ShardedShopStateV2 nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(shardedShopAddress));
                 Assert.Empty(nextShopState.OrderDigestList);
 
-                var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+                var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
                 Assert.Equal(expectedCount, nextAvatarState.inventory.Items.Sum(i => i.count));
                 Assert.False(nextAvatarState.inventory.TryGetTradableItems(
                     itemId,
@@ -334,7 +334,7 @@ namespace Lib9c.Tests.Action
                 ),
             };
 
-            IAccount prevState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            IWorld prevState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
 
             var action = new SellCancellation
             {
@@ -419,7 +419,7 @@ namespace Lib9c.Tests.Action
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
             orderDigestList.Add(orderDigest);
 
-            IAccount prevState = _initialState
+            IWorld prevState = _initialState
                 .SetState(Order.DeriveAddress(orderId), order.Serialize())
                 .SetState(orderDigestList.Address, orderDigestList.Serialize())
                 .SetState(shardedShopAddress, shopState.Serialize());
@@ -483,7 +483,7 @@ namespace Lib9c.Tests.Action
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
             orderDigestList.Add(orderDigest);
 
-            IAccount prevState = _initialState
+            IWorld prevState = _initialState
                 .SetState(Order.DeriveAddress(orderId), order.Serialize())
                 .SetState(orderDigestList.Address, orderDigestList.Serialize())
                 .SetState(shardedShopAddress, shopState.Serialize());
@@ -606,7 +606,7 @@ namespace Lib9c.Tests.Action
             avatarState.mailBox.Add(expirationMail);
 
             var orderDigestList = new OrderDigestListState(OrderDigestListState.DeriveAddress(_avatarAddress));
-            IAccount prevState = _initialState;
+            IWorld prevState = _initialState;
 
             if (inventoryCount > 1)
             {
@@ -679,7 +679,7 @@ namespace Lib9c.Tests.Action
             ShardedShopStateV2 nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(shardedShopAddress));
             Assert.Empty(nextShopState.OrderDigestList);
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.Equal(expectedCount, nextAvatarState.inventory.Items.Sum(i => i.count));
             Assert.False(nextAvatarState.inventory.TryGetTradableItems(
                 itemId,

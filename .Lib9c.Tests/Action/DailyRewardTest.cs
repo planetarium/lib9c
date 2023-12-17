@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -16,7 +17,7 @@ namespace Lib9c.Tests.Action
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public DailyRewardTest(ITestOutputHelper outputHelper)
         {
@@ -25,7 +26,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -63,7 +64,7 @@ namespace Lib9c.Tests.Action
         [InlineData(false)]
         public void Execute(bool legacy)
         {
-            IAccount previousStates = null;
+            IWorld previousStates = null;
             switch (legacy)
             {
                 case true:
@@ -77,8 +78,7 @@ namespace Lib9c.Tests.Action
 
             var nextState = ExecuteInternal(previousStates, 2448);
             var nextGameConfigState = nextState.GetGameConfigState();
-            nextState.TryGetAvatarStateV2(_agentAddress, _avatarAddress, out var nextAvatarState, out var migrationRequired);
-            Assert.Equal(legacy, migrationRequired);
+            nextState.TryGetAvatarState(_agentAddress, _avatarAddress, out var nextAvatarState);
             Assert.NotNull(nextAvatarState);
             Assert.NotNull(nextAvatarState.inventory);
             Assert.NotNull(nextAvatarState.questList);
@@ -92,7 +92,7 @@ namespace Lib9c.Tests.Action
 
         [Fact]
         public void Execute_Throw_FailedLoadStateException() =>
-            Assert.Throws<FailedLoadStateException>(() => ExecuteInternal(new Account(MockState.Empty)));
+            Assert.Throws<FailedLoadStateException>(() => ExecuteInternal(new World(new MockWorldState())));
 
         [Theory]
         [InlineData(0, 0, true)]
@@ -144,14 +144,14 @@ rune_skill_slot_unlock_cost,500";
             Assert.Equal(0, (int)avatarRuneAmount.MajorUnit);
         }
 
-        private IAccount SetAvatarStateAsV2To(IAccount state, AvatarState avatarState) =>
+        private IWorld SetAvatarStateAsV2To(IWorld state, AvatarState avatarState) =>
             state
                 .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
                 .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
                 .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
                 .SetState(_avatarAddress, avatarState.SerializeV2());
 
-        private IAccount ExecuteInternal(IAccount previousStates, long blockIndex = 0)
+        private IWorld ExecuteInternal(IWorld previousStates, long blockIndex = 0)
         {
             var dailyRewardAction = new DailyReward
             {

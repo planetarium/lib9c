@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class ApprovePledgeTest
@@ -19,7 +20,7 @@ namespace Lib9c.Tests.Action
             var address = new PrivateKey().Address;
             var patron = new PrivateKey().Address;
             var contractAddress = address.Derive(nameof(RequestPledge));
-            IAccount states = new Account(MockState.Empty)
+            IWorld states = new World(new MockWorldState())
                 .SetState(
                     contractAddress,
                     List.Empty.Add(patron.Serialize()).Add(false.Serialize()).Add(mead.Serialize())
@@ -61,7 +62,7 @@ namespace Lib9c.Tests.Action
                 contract = List.Empty.Add(patron.Serialize()).Add(true.Serialize());
             }
 
-            IAccount states = new Account(MockState.Empty).SetState(contractAddress, contract);
+            IWorld states = new World(new MockWorldState()).SetState(contractAddress, contract);
 
             var action = new ApprovePledge
             {

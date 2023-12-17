@@ -17,6 +17,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -27,8 +28,8 @@ namespace Lib9c.Tests.Action.Scenario
         private readonly Address _avatarAddr;
         private readonly Address _inventoryAddr;
         private readonly Address _worldInformationAddr;
-        private readonly IAccount _initialStatesWithAvatarStateV1;
-        private readonly IAccount _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarStateV1;
+        private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly TableSheets _tableSheets;
 
         public ItemCraftTest()
