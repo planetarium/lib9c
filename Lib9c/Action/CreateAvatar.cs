@@ -3,22 +3,25 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Lib9c.Abstractions;
-using Lib9c.DevExtensions;
-using Lib9c.DevExtensions.Model;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
+
+#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+using System.Linq;
+using Lib9c.DevExtensions;
+using Lib9c.DevExtensions.Model;
+using Nekoyume.Model.Skill;
+using Nekoyume.Model.Stat;
+#endif
 
 namespace Nekoyume.Action
 {
