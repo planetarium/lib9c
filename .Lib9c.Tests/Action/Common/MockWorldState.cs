@@ -1,6 +1,5 @@
 namespace Lib9c.Tests.Action
 {
-    using System.Linq;
     using System.Numerics;
     using System.Security.Cryptography;
     using Bencodex.Types;
@@ -27,12 +26,7 @@ namespace Lib9c.Tests.Action
         {
             _stateStore = stateStore;
             Trie = stateStore.GetStateRoot(stateRootHash);
-            Legacy = Trie
-                .Get(new[]
-                {
-                    MockKeyConverters.ToStateKey(ReservedAddresses.LegacyAccount),
-                })
-                .Any(v => v == null);
+            Legacy = false;
         }
 
         public ITrie Trie { get; }
@@ -40,19 +34,24 @@ namespace Lib9c.Tests.Action
         public bool Legacy { get; private set; }
 
 #pragma warning disable SA1118 // Parameter should not span multiple lines
-        public IAccount GetAccount(Address address)
-            => Legacy && address.Equals(ReservedAddresses.LegacyAccount)
-                ? new Account(new MockAccountState(_stateStore, Trie.Hash))
-                : new Account(new MockAccountState(
+        public MockAccountState GetAccountState(Address address)
+            => Legacy
+                ? new MockAccountState(_stateStore, Trie.Hash)
+                : new MockAccountState(
                     _stateStore,
                     Trie.Get(MockKeyConverters.ToStateKey(address)) is { } stateRootNotNull
                         ? new HashDigest<SHA256>(stateRootNotNull)
-                        : null));
+                        : null);
+#pragma warning restore SA1118 // Parameter should not span multiple lines
+
+#pragma warning disable SA1118 // Parameter should not span multiple lines
+        public IAccount GetAccount(Address address)
+            => new Account(GetAccountState(address));
 #pragma warning restore SA1118 // Parameter should not span multiple lines
 
 #pragma warning disable SA1118 // Parameter should not span multiple lines
         public MockWorldState SetAccountState(Address address, IAccountState accountState)
-            => Legacy && address.Equals(ReservedAddresses.LegacyAccount)
+            => Legacy
             ? new MockWorldState(_stateStore, accountState.Trie.Hash)
             : new MockWorldState(
                 _stateStore,
@@ -63,7 +62,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore SA1118 // Parameter should not span multiple lines
 
         public MockWorldState SetState(Address accountAddress, Address address, IValue state)
-            => SetAccountState(accountAddress, new MockAccountState(_stateStore).SetState(address, state));
+            => SetAccountState(accountAddress, GetAccountState(accountAddress).SetState(address, state));
 
         public MockWorldState SetBalance(
             Address address,
@@ -79,7 +78,7 @@ namespace Lib9c.Tests.Action
             BigInteger rawAmount)
             => SetAccountState(
                 ReservedAddresses.LegacyAccount,
-                new MockAccountState(_stateStore)
+                GetAccountState(ReservedAddresses.LegacyAccount)
                     .SetBalance((pair.Address, pair.Currency), rawAmount));
 
         public MockWorldState AddBalance(
@@ -95,7 +94,7 @@ namespace Lib9c.Tests.Action
             BigInteger rawAmount)
             => SetAccountState(
                 ReservedAddresses.LegacyAccount,
-                new MockAccountState(_stateStore)
+                GetAccountState(ReservedAddresses.LegacyAccount)
                     .AddBalance(pair, rawAmount));
 
         public MockWorldState SubtractBalance(
@@ -111,7 +110,7 @@ namespace Lib9c.Tests.Action
             BigInteger rawAmount)
             => SetAccountState(
                 ReservedAddresses.LegacyAccount,
-                new MockAccountState(_stateStore)
+                GetAccountState(ReservedAddresses.LegacyAccount)
                     .SubtractBalance(pair, rawAmount));
 
         public MockWorldState TransferBalance(
@@ -138,7 +137,7 @@ namespace Lib9c.Tests.Action
         public MockWorldState SetTotalSupply(Currency currency, BigInteger rawAmount)
             => SetAccountState(
                 ReservedAddresses.LegacyAccount,
-                new MockAccountState(_stateStore)
+                GetAccountState(ReservedAddresses.LegacyAccount)
                     .SetTotalSupply(currency, rawAmount));
 
         public MockWorldState AddTotalSupply(FungibleAssetValue amount)
@@ -147,7 +146,7 @@ namespace Lib9c.Tests.Action
         public MockWorldState AddTotalSupply(Currency currency, BigInteger rawAmount)
             => SetAccountState(
                 ReservedAddresses.LegacyAccount,
-                new MockAccountState(_stateStore)
+                GetAccountState(ReservedAddresses.LegacyAccount)
                     .AddTotalSupply(currency, rawAmount));
 
         public MockWorldState SubtractTotalSupply(FungibleAssetValue amount)
@@ -156,13 +155,13 @@ namespace Lib9c.Tests.Action
         public MockWorldState SubtractTotalSupply(Currency currency, BigInteger rawAmount)
             => SetAccountState(
                 ReservedAddresses.LegacyAccount,
-                new MockAccountState(_stateStore)
+                GetAccountState(ReservedAddresses.LegacyAccount)
                     .SubtractTotalSupply(currency, rawAmount));
 
         public MockWorldState SetValidator(Validator validator)
             => SetAccountState(
                 ReservedAddresses.LegacyAccount,
-                new MockAccountState(_stateStore)
+                GetAccountState(ReservedAddresses.LegacyAccount)
                     .SetValidator(validator));
     }
 }
