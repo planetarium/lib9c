@@ -81,7 +81,7 @@ namespace Nekoyume.Action
             dailyRewardResult = result;
             avatarState.Update(mail);
             avatarState.UpdateFromAddItem2(material, rewardItemCount, false);
-            return states.SetState(avatarAddress, avatarState.Serialize());
+            return states.SetAvatarState(avatarAddress, avatarState, true, false, false, false);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>

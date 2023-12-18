@@ -148,9 +148,9 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}CreateAvatar Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(ctx.Signer, agentState.Serialize())
+                .SetAgentState(ctx.Signer, agentState)
                 .SetState(Addresses.Ranking, rankingState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize());
+                .SetAvatarState(avatarAddress, avatarState, false, false, false, false);
         }
 
         public static AvatarState CreateAvatarState(string name,

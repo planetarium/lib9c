@@ -242,11 +242,8 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CreateAvatar Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(signer, agentState.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+                .SetAgentState(signer, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
         }
 
         public static void AddItem(ItemSheet itemSheet, CreateAvatarItemSheet createAvatarItemSheet,

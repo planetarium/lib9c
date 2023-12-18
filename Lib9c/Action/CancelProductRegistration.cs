@@ -116,8 +116,7 @@ namespace Nekoyume.Action
             }
 
             states = states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
+                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
                 .SetState(productsStateAddress, productsState.Serialize());
 
             return states;

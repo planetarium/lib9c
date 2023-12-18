@@ -33,9 +33,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var unlockedRecipeIdsAddress = AvatarAddress.Derive("recipe_ids");
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
@@ -48,19 +45,17 @@ namespace Nekoyume.Action
             }
 
             WorldInformation worldInformation;
-            bool migrationRequired = false;
-            AvatarState avatarState = null;
-            if (states.TryGetState(worldInformationAddress, out Dictionary rawInfo))
+            if (states.GetWorldInformation(AvatarAddress) is { } worldInfo)
             {
-                worldInformation = new WorldInformation(rawInfo);
+                worldInformation = worldInfo;
             }
             else
             {
                 // AvatarState migration required.
-                if (states.TryGetAvatarState(context.Signer, AvatarAddress, out avatarState))
+                if (states.TryGetAvatarState(context.Signer, AvatarAddress, out AvatarState avatarState))
                 {
                     worldInformation = avatarState.worldInformation;
-                    migrationRequired = true;
+                    states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
                 }
                 else
                 {
@@ -79,15 +74,6 @@ namespace Nekoyume.Action
             if (balance < cost)
             {
                 throw new NotEnoughFungibleAssetValueException($"required {cost}, but balance is {balance}");
-            }
-
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(worldInformationAddress, worldInformation.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize());
             }
 
             states = states.SetState(unlockedRecipeIdsAddress,

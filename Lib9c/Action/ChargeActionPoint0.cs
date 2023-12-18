@@ -58,7 +58,7 @@ namespace Nekoyume.Action
             }
 
             avatarState.actionPoint = gameConfigState.ActionPointMax;
-            return states.SetState(avatarAddress, avatarState.Serialize());
+            return states.SetAvatarState(avatarAddress, avatarState, true, false, false, false);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -122,9 +122,7 @@ namespace Nekoyume.Action
             avatarState.updatedAt = context.BlockIndex;
 
             // Set states
-            return states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize());
+            return states.SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

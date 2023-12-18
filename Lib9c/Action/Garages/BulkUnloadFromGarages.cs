@@ -188,9 +188,7 @@ namespace Nekoyume.Action.Garages
             Address recipientAvatarAddress,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
         {
-            var inventoryAddress = recipientAvatarAddress.Derive(SerializeKeys.LegacyInventoryKey);
-            var inventory = states.GetInventory(inventoryAddress);
-
+            var inventory = states.GetInventory(recipientAvatarAddress);
             var fungibleItemTuples = GarageUtils.WithGarageTuples(
                 signer,
                 states,
@@ -202,7 +200,7 @@ namespace Nekoyume.Action.Garages
                 states = states.SetState(garageAddress, garage.Serialize());
             }
 
-            return states.SetState(inventoryAddress, inventory.Serialize());
+            return states.SetInventory(recipientAvatarAddress, inventory);
         }
 
         private IWorld BulkSendMail(

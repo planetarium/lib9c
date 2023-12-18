@@ -158,10 +158,8 @@ namespace Nekoyume.Action
             }
 
             sw.Restart();
-            states = states.SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(sellerAvatarAddress, avatarState.SerializeV2())
+            states = states
+                .SetAvatarState(sellerAvatarAddress, avatarState, true, true, true, true)
                 .SetState(digestListAddress, digestList.Serialize());
             sw.Stop();
             Log.Verbose("{AddressesHex} UpdateSell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);

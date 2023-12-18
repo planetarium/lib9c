@@ -70,11 +70,7 @@ namespace Nekoyume.Action
             avatarState.actionPoint = gameConfigState.ActionPointMax;
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ChargeActionPoint Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+            return states.SetAvatarState(avatarAddress, avatarState, true, true, true, true);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

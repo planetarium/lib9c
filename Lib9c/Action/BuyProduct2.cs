@@ -101,9 +101,8 @@ namespace Nekoyume.Action
                 }
             }
 
-            states = states
-                .SetState(AvatarAddress, buyerAvatarState.SerializeV2())
-                .SetState(AvatarAddress.Derive(LegacyInventoryKey), buyerAvatarState.inventory.Serialize());
+            states = states.SetAvatarState(AvatarAddress, buyerAvatarState, true, true, false, false);
+
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("BuyProduct Total Executed Time: {Elapsed}", ended - started);
             return states;

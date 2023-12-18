@@ -66,10 +66,7 @@ namespace Nekoyume.Action.Coupons
             }
 
             return states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
+                .SetAvatarState(AvatarAddress, avatarState, true, true, true, true)
                 .SetCouponWallet(context.Signer, wallet);
         }
 

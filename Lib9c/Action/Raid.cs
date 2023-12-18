@@ -320,14 +320,10 @@ namespace Nekoyume.Action
                 states = states.SetState(worldBossKillRewardRecordAddress, rewardRecord.Serialize());
             }
 
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInfoAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
-
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);
             return states
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
+                .SetAvatarState(AvatarAddress, avatarState, false, true, false, false)
                 .SetState(worldBossAddress, bossState.Serialize())
                 .SetState(raiderAddress, raiderState.Serialize());
         }

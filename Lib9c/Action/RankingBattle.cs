@@ -50,10 +50,6 @@ namespace Nekoyume.Action
             context.UseGas(1);
             var ctx = context;
             var states = ctx.PreviousState;
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
-
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress, enemyAddress);
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
@@ -250,10 +246,9 @@ namespace Nekoyume.Action
             sw.Restart();
 
             states = states
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
+                .SetAvatarState(avatarAddress, avatarState, false, true, false, true)
                 .SetState(arenaInfoAddress, arenaInfo.Serialize())
-                .SetState(enemyArenaInfoAddress, enemyArenaInfo.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+                .SetState(enemyArenaInfoAddress, enemyArenaInfo.Serialize());
 
             if (isNewArenaInfo || isNewEnemyArenaInfo)
             {

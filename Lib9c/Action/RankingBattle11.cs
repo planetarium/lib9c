@@ -56,9 +56,6 @@ namespace Nekoyume.Action
             context.UseGas(1);
             IActionContext ctx = context;
             var states = ctx.PreviousState;
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
             // Avoid InvalidBlockStateRootHashException
@@ -262,10 +259,9 @@ namespace Nekoyume.Action
                 sw.Restart();
 
                 states = states
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
+                    .SetAvatarState(avatarAddress, avatarState, false, true, false, true)
                     .SetState(arenaInfoAddress, arenaInfo.Serialize())
-                    .SetState(enemyInfoAddress, enemyInfo.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize());
+                    .SetState(enemyInfoAddress, enemyInfo.Serialize());
 
                 if (listCheck)
                 {
@@ -298,13 +294,12 @@ namespace Nekoyume.Action
             }
 
             // Run Backward compatible
-            return BackwardCompatibleExecute(rawWeeklyArenaState, sheets, avatarState, costumeStatSheet, sw, addressesHex, enemyAvatarState, ctx, states, inventoryAddress, questListAddress, started);
+            return BackwardCompatibleExecute(rawWeeklyArenaState, sheets, avatarState, costumeStatSheet, sw, addressesHex, enemyAvatarState, ctx, states, avatarAddress, started);
         }
 
         private IWorld BackwardCompatibleExecute(Dictionary rawWeeklyArenaState, Dictionary<Type, (Address address, ISheet sheet)> sheets,
             AvatarState avatarState, CostumeStatSheet costumeStatSheet, Stopwatch sw, string addressesHex,
-            AvatarState enemyAvatarState, IActionContext ctx, IWorld states, Address inventoryAddress,
-            Address questListAddress, DateTimeOffset started)
+            AvatarState enemyAvatarState, IActionContext ctx, IWorld states, Address avatarAddress, DateTimeOffset started)
         {
             Dictionary weeklyArenaMap = (Dictionary) rawWeeklyArenaState["map"];
 
@@ -431,8 +426,7 @@ namespace Nekoyume.Action
             sw.Restart();
 
             states = states
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+                .SetAvatarState(avatarAddress, avatarState, false, true, false, true);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}RankingBattle Serialize AvatarState: {Elapsed}", addressesHex, sw.Elapsed);

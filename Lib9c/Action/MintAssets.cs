@@ -82,8 +82,7 @@ namespace Nekoyume.Action
 
                 if (items is { } itemsNotNull)
                 {
-                    Address inventoryAddr = recipient.Derive(SerializeKeys.LegacyInventoryKey);
-                    Inventory inventory = state.GetInventory(inventoryAddr);
+                    Inventory inventory = state.GetInventory(recipient);
                     MaterialItemSheet itemSheet = state.GetSheet<MaterialItemSheet>();
                     if (itemSheet is null || itemSheet.OrderedList is null)
                     {
@@ -99,7 +98,7 @@ namespace Nekoyume.Action
                         }
                     }
 
-                    state = state.SetState(inventoryAddr, inventory.Serialize());
+                    state = state.SetInventory(recipient, inventory);
                     fivs.Add(itemsNotNull);
                 }
             }

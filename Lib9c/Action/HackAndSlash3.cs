@@ -227,7 +227,7 @@ namespace Nekoyume.Action
 
             avatarState.updatedAt = ctx.BlockIndex;
             avatarState.mailBox.CleanUpV1();
-            states = states.SetState(avatarAddress, avatarState.Serialize());
+            states = states.SetAvatarState(avatarAddress, avatarState, true, false, false, false);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);

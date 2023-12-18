@@ -226,17 +226,7 @@ namespace Nekoyume.Action
 
             // Set states
             sw.Restart();
-            states = states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    AvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    AvatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize())
-                .SetState(
-                    AvatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
+            states = states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
             sw.Stop();
             Log.Verbose(
                 "[{ActionTypeString}][{AddressesHex}] Set states: {Elapsed}",

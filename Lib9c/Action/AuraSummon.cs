@@ -267,10 +267,8 @@ namespace Nekoyume.Action
 
             // Set states
             return states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(context.Signer, agentState.Serialize());
+                .SetAvatarState(AvatarAddress, avatarState, true, true, false, true)
+                .SetAgentState(context.Signer, agentState);
         }
 
         public static void AddAndUnlockOption(

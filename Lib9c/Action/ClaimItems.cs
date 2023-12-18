@@ -99,19 +99,19 @@ namespace Nekoyume.Action
 
             foreach (var (avatarAddress, fungibleAssetValues) in ClaimData)
             {
-                var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-                var inventory = states.GetInventory(inventoryAddress)
+                var inventory = states.GetInventory(avatarAddress)
                             ?? throw new FailedLoadStateException(
                                 ActionTypeText,
-                                GetSignerAndOtherAddressesHex(context, inventoryAddress),
+                                GetSignerAndOtherAddressesHex(context, avatarAddress),
                                 typeof(Inventory),
-                                inventoryAddress);
-                if (!states.TryGetState(avatarAddress, out Dictionary avatarDict))
+                                avatarAddress);
+
+                var avatarState = states.GetAvatarState(avatarAddress);
+                if (avatarState is null)
                 {
                     throw new FailedLoadStateException(avatarAddress, typeof(AvatarState));
                 }
 
-                var agentAddress = avatarDict[AgentAddressKey].ToAddress();
                 var favs = new List<FungibleAssetValue>();
                 var items = new List<(int id, int count)>();
                 foreach (var fungibleAssetValue in fungibleAssetValues)
@@ -121,7 +121,7 @@ namespace Nekoyume.Action
                     {
                         var currency = Currencies.GetUnwrappedCurrency(tokenCurrency);
                         var recipientAddress =
-                            Currencies.SelectRecipientAddress(currency, agentAddress,
+                            Currencies.SelectRecipientAddress(currency, avatarState.agentAddress,
                                 avatarAddress);
                         var fav = FungibleAssetValue.FromRawValue(currency, fungibleAssetValue.RawValue);
                         states = states
@@ -161,14 +161,12 @@ namespace Nekoyume.Action
                     }
                 }
 
-                var mailBox = new MailBox((List)avatarDict[MailBoxKey]);
+                var mailBox = avatarState.mailBox;
                 var mail = new ClaimItemsMail(context.BlockIndex, random.GenerateRandomGuid(), context.BlockIndex, favs, items, Memo);
                 mailBox.Add(mail);
                 mailBox.CleanUp();
-                avatarDict = avatarDict.SetItem(MailBoxKey, mailBox.Serialize());
-                states = states
-                    .SetState(inventoryAddress, inventory.Serialize())
-                    .SetState(avatarAddress, avatarDict);
+                avatarState.mailBox = mailBox;
+                states = states.SetAvatarState(avatarAddress, avatarState, true, true, false, false);
             }
 
             return states;

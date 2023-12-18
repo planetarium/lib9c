@@ -268,10 +268,7 @@ namespace Nekoyume.Action
             // ~Create Mail
 
             states = states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    AvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
+                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
                 .SetState(
                     CombinationSlotState.DeriveAddress(AvatarAddress, SlotIndex),
                     slotState.Serialize());

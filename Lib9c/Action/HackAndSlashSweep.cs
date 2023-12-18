@@ -324,13 +324,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
+                .SetAvatarState(avatarAddress, avatarState, true, true, false, true);
         }
 
         public static List<ItemBase> GetRewardItems(IRandom random,

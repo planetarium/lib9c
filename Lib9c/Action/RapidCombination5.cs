@@ -133,10 +133,7 @@ namespace Nekoyume.Action
             avatarState.UpdateFromRapidCombinationV2((ResultModel)slotState.Result, context.BlockIndex);
 
             return states
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
                 .SetState(slotAddress, slotState.Serialize());
         }
 

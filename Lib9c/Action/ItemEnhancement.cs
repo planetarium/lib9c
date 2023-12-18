@@ -363,11 +363,7 @@ namespace Nekoyume.Action
 
             // Set state
             sw.Restart();
-            states = states
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+            states = states.SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
             sw.Stop();
             Log.Verbose("{AddressesHex} ItemEnhancement Set AvatarState: {Elapsed}", addressesHex,

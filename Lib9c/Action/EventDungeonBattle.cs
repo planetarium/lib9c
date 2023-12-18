@@ -385,10 +385,7 @@ namespace Nekoyume.Action
             // Set states
             sw.Restart();
             states = states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    AvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
+                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
                 .SetState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
 
             sw.Stop();

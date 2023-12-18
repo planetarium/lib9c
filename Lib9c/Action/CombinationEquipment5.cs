@@ -234,9 +234,9 @@ namespace Nekoyume.Action
             avatarState.UpdateFromCombination2(equipment);
             avatarState.UpdateQuestRewards2(materialSheet);
             return states
-                .SetState(AvatarAddress, avatarState.Serialize())
+                .SetAvatarState(AvatarAddress, avatarState, true, false, false, false)
                 .SetState(slotAddress, slotState.Serialize())
-                .SetState(ctx.Signer, agentState.Serialize());
+                .SetAgentState(ctx.Signer, agentState);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

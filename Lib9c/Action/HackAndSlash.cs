@@ -581,11 +581,8 @@ namespace Nekoyume.Action
                 states = states.SetState(skillStateAddress, skillState.Serialize());
             }
 
-            states = states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+            states = states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
+
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Set States", blockIndex, sw.Elapsed.TotalMilliseconds);

@@ -87,9 +87,6 @@ namespace Nekoyume.Action
             context.UseGas(1);
             var states = context.PreviousState;
             var shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
-            var inventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = sellerAvatarAddress.Derive(LegacyQuestListKey);
             var digestListAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
             var itemAddress = Addresses.GetItemAddress(tradableId);
 
@@ -188,10 +185,7 @@ namespace Nekoyume.Action
             states = states
                 .SetState(itemAddress, sellItem.Serialize())
                 .SetState(digestListAddress, digestList.Serialize())
-                .SetState(inventoryAddress,avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(sellerAvatarAddress, avatarState.SerializeV2());
+                .SetAvatarState(sellerAvatarAddress, avatarState, true, true, true, true);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();

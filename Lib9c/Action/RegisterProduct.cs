@@ -101,8 +101,7 @@ namespace Nekoyume.Action
 
             sw.Restart();
             states = states
-                .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(AvatarAddress, avatarState.SerializeV2())
+                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
                 .SetState(productsStateAddress, productsState.Serialize());
             
             sw.Stop();
