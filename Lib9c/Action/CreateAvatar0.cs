@@ -2,16 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Numerics;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
+using Lib9c;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
@@ -327,14 +325,46 @@ namespace Nekoyume.Action
         public static IAccount AddRunesForTest(
             IActionContext context,
             Address avatarAddress,
-            IAccount states)
+            IAccount states,
+            int count = int.MaxValue)
         {
             var runeSheet = states.GetSheet<RuneSheet>();
             foreach (var row in runeSheet.Values)
             {
-                var rune = RuneHelper.ToFungibleAssetValue(row, int.MaxValue);
+                var rune = RuneHelper.ToFungibleAssetValue(row, count);
                 states = states.MintAsset(context, avatarAddress, rune);
             }
+            return states;
+        }
+
+        public static IAccount AddSoulStoneForTest(
+            IActionContext context,
+            Address avatarAddress,
+            IAccount states,
+            int count = int.MaxValue)
+        {
+            var petSheet = states.GetSheet<PetSheet>();
+            foreach (var row in petSheet.Values)
+            {
+                var soulStone = Currencies.GetSoulStone(row.SoulStoneTicker) * count;
+                states = states.MintAsset(context, avatarAddress, soulStone);
+            }
+            return states;
+        }
+
+        public static IAccount AddPetsForTest(
+            Address avatarAddress,
+            IAccount states)
+        {
+            var petSheet = states.GetSheet<PetSheet>();
+            foreach (var id in petSheet.Keys)
+            {
+                var petState = new PetState(id);
+                petState.LevelUp();
+                var petStateAddress = PetState.DeriveAddress(avatarAddress, id);
+                states = states.SetState(petStateAddress, petState.Serialize());
+            }
+
             return states;
         }
     }
