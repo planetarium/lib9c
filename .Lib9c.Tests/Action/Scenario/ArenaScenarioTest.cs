@@ -130,7 +130,7 @@ namespace Lib9c.Tests.Action.Scenario
             int ticket,
             long blockIndex)
         {
-            var action = new BattleArena6()
+            var action = new BattleArena()
             {
                 myAvatarAddress = myAvatarAddress,
                 enemyAvatarAddress = enemyAvatarAddress,

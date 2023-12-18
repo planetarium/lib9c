@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -74,28 +75,37 @@ namespace Nekoyume.Action
                     $"[{nameof(UnlockRuneSlot)}] Index : {SlotIndex}");
             }
 
-            // note : You will need to modify it later when applying staking unlock.
-            if (slot.RuneSlotType != RuneSlotType.Ncg)
-            {
-                throw new MismatchRuneSlotTypeException(
-                    $"[{nameof(UnlockRuneSlot)}] RuneSlotType : {slot.RuneSlotType}");
-            }
-
             var gameConfigState = states.GetGameConfigState();
-            var cost = slot.RuneType == RuneType.Stat
-                ? gameConfigState.RuneStatSlotUnlockCost
-                : gameConfigState.RuneSkillSlotUnlockCost;
-            var ncgCurrency = states.GetGoldCurrency();
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
             var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            int cost;
+            Currency currency;
+            switch (slot.RuneSlotType)
+            {
+                case RuneSlotType.Ncg:
+                    cost = slot.RuneType == RuneType.Stat
+                        ? gameConfigState.RuneStatSlotUnlockCost
+                        : gameConfigState.RuneSkillSlotUnlockCost;
+                    currency = states.GetGoldCurrency();
+                    break;
+                case RuneSlotType.Crystal:
+                    cost = slot.RuneType == RuneType.Stat
+                        ? gameConfigState.RuneStatSlotCrystalUnlockCost
+                        : gameConfigState.RuneSkillSlotCrystalUnlockCost;
+                    currency = Currencies.Crystal;
+                    break;
+                default:
+                    throw new MismatchRuneSlotTypeException(
+                        $"[{nameof(UnlockRuneSlot)}] RuneSlotType : {slot.RuneSlotType}");
+            }
 
             adventureSlotState.Unlock(SlotIndex);
             arenaSlotState.Unlock(SlotIndex);
             raidSlotState.Unlock(SlotIndex);
 
             return states
-                .TransferAsset(context, context.Signer, feeStoreAddress, cost * ncgCurrency)
+                .TransferAsset(context, context.Signer, feeStoreAddress, cost * currency)
                 .SetState(adventureSlotStateAddress, adventureSlotState.Serialize())
                 .SetState(arenaSlotStateAddress, arenaSlotState.Serialize())
                 .SetState(raidSlotStateAddress, raidSlotState.Serialize());

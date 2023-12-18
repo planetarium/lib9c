@@ -19,7 +19,7 @@ namespace Lib9c.Tests.Action.Scenario
     public class RuneScenarioTest
     {
         [Fact]
-        public void Craft_And_Equip()
+        public void Craft_And_Unlock_And_Equip()
         {
             var agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);
@@ -69,13 +69,19 @@ namespace Lib9c.Tests.Action.Scenario
             var runeAddress = RuneState.DeriveAddress(avatarAddress, runeId);
             Assert.Null(initialState.GetState(runeAddress));
 
+            initialState = initialState.MintAsset(
+                new ActionContext(),
+                agentAddress,
+                gameConfigState.RuneSkillSlotCrystalUnlockCost * Currencies.Crystal
+            );
+
             var craftAction = new RuneEnhancement
             {
                 AvatarAddress = avatarAddress,
                 RuneId = runeId,
             };
 
-            var state = craftAction.Execute(new ActionContext
+            var prevState = craftAction.Execute(new ActionContext
             {
                 BlockIndex = 1,
                 PreviousState = initialState,
@@ -83,15 +89,33 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
             });
 
-            var rawRuneState = Assert.IsType<List>(state.GetState(runeAddress));
+            var rawRuneState = Assert.IsType<List>(prevState.GetState(runeAddress));
             var runeState = new RuneState(rawRuneState);
             Assert.Equal(1, runeState.Level);
             Assert.Equal(runeId, runeState.RuneId);
 
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
-            Assert.Null(state.GetState(runeSlotStateAddress));
+            Assert.Null(prevState.GetState(runeSlotStateAddress));
 
-            var has = new HackAndSlash21
+            var unlockAction = new UnlockRuneSlot
+            {
+                AvatarAddress = avatarAddress,
+                SlotIndex = 6,
+            };
+
+            var state = unlockAction.Execute(new ActionContext
+            {
+                BlockIndex = 1,
+                PreviousState = prevState,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            });
+
+            var runeSlotState = new RuneSlotState((List)state.GetState(runeSlotStateAddress));
+            Assert.Single(runeSlotState.GetRuneSlot().Where(r => r.RuneSlotType == RuneSlotType.Crystal && !r.IsLock));
+            Assert.Single(runeSlotState.GetRuneSlot().Where(r => r.RuneSlotType == RuneSlotType.Crystal && r.IsLock));
+
+            var has = new HackAndSlash
             {
                 StageId = 1,
                 AvatarAddress = avatarAddress,
@@ -101,7 +125,7 @@ namespace Lib9c.Tests.Action.Scenario
                 WorldId = 1,
                 RuneInfos = new List<RuneSlotInfo>
                 {
-                    new RuneSlotInfo(0, runeId),
+                    new RuneSlotInfo(6, runeId),
                 },
             };
 
@@ -120,7 +144,7 @@ namespace Lib9c.Tests.Action.Scenario
             var runeSlotInfo = runeSlot.GetEquippedRuneSlotInfos().Single();
 
             Assert.Equal(runeId, runeSlotInfo.RuneId);
-            Assert.Equal(0, runeSlotInfo.SlotIndex);
+            Assert.Equal(6, runeSlotInfo.SlotIndex);
         }
     }
 }
