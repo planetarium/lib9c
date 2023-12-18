@@ -56,12 +56,48 @@
     "obsoleteAt": 7000000
   },
   {
+    "id": "claim_monster_collection_reward",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "claim_monster_collection_reward2",
+    "obsoleteAt": 7000000
+  },
+  {
     "id": "claim_monster_collection_reward3",
     "obsoleteAt": 7000000
   },
   {
+    "id": "claim_stake_reward",
+    "obsoleteAt": 7200000
+  },
+  {
     "id": "claim_stake_reward2",
     "obsoleteAt": 7000000
+  },
+  {
+    "id": "claim_stake_reward3",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "claim_stake_reward4",
+    "obsoleteAt": 7206000
+  },
+  {
+    "id": "claim_stake_reward5",
+    "obsoleteAt": 7649999
+  },
+  {
+    "id": "claim_stake_reward6",
+    "obsoleteAt": 7660000
+  },
+  {
+    "id": "claim_stake_reward7",
+    "obsoleteAt": 7700000
+  },
+  {
+    "id": "claim_stake_reward8",
+    "obsoleteAt": 7983895
   },
   {
     "id": "combination_consumable5",
@@ -228,8 +264,24 @@
     "obsoleteAt": 7000000
   },
   {
+    "id": "transfer_asset2",
+    "obsoleteAt": 6219999
+  },
+  {
     "id": "transfer_asset3",
     "obsoleteAt": 7200000
+  },
+  {
+    "id": "transfer_asset4",
+    "obsoleteAt": 7983895
+  },
+  {
+    "id": "transfer_assets",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "transfer_assets2",
+    "obsoleteAt": 8070865
   },
   {
     "id": "unlock_equipment_recipe",
@@ -238,6 +290,22 @@
   {
     "id": "unlock_world",
     "obsoleteAt": 7200000
+  },
+  {
+    "id": "update_sell",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "update_sell2",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "update_sell3",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "update_sell4",
+    "obsoleteAt": 7000000
   },
   {
     "id": "update_sell5",
