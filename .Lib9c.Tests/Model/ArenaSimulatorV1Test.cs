@@ -6,7 +6,6 @@ namespace Lib9c.Tests
     using Libplanet.Action;
     using Nekoyume.Arena;
     using Nekoyume.Model;
-    using Nekoyume.Model.Arena;
     using Nekoyume.Model.BattleStatus.Arena;
     using Nekoyume.Model.State;
     using Xunit;

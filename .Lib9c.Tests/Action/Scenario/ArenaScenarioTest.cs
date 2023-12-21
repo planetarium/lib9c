@@ -12,12 +12,10 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Arena;
-    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Serilog;
-    using Xunit;
     using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 

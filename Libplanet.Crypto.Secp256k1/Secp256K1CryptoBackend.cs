@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Security.Cryptography;
 using Secp256k1Net;
 using Libplanet.Common;
