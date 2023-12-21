@@ -14,7 +14,6 @@ using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
 using Serilog;
 using BxDictionary = Bencodex.Types.Dictionary;
-using BxList = Bencodex.Types.List;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action

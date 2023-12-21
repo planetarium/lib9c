@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
 
 namespace Nekoyume.Model.Stat
 {
@@ -24,7 +22,7 @@ namespace Nekoyume.Model.Stat
 
         protected readonly HashSet<StatType> LegacyDecimalStatTypes =
             new HashSet<StatType>{ StatType.CRI, StatType.HIT, StatType.SPD };
-        
+
         public Stats()
         {
             _statMap = new StatMap();

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Battle;
 using Nekoyume.Helper;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Item;

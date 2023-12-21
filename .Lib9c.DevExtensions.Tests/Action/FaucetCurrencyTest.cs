@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Lib9c.DevExtensions.Action;
 using Lib9c.Tests.Action;
 using Libplanet.Action.State;

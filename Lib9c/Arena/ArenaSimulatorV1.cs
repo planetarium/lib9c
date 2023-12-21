@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Libplanet.Action;
 using Nekoyume.Model;
-using Nekoyume.Model.Arena;
 using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.TableData;
 using Priority_Queue;
