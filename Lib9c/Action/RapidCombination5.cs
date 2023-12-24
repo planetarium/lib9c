@@ -134,7 +134,7 @@ namespace Nekoyume.Action
 
             return states
                 .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
-                .SetState(slotAddress, slotState.Serialize());
+                .SetLegacyState(slotAddress, slotState.Serialize());
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -62,20 +62,20 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_ncgCurrency);
 
             _initialState = new World(new MockWorldState())
-                .SetState(
+                .SetLegacyState(
                     Addresses.GetSheetAddress<CrystalMonsterCollectionMultiplierSheet>(),
                     _tableSheets.CrystalMonsterCollectionMultiplierSheet.Serialize())
-                .SetState(
+                .SetLegacyState(
                     Addresses.GetSheetAddress<CrystalEquipmentGrindingSheet>(),
                     _tableSheets.CrystalEquipmentGrindingSheet.Serialize())
-                .SetState(
+                .SetLegacyState(
                     Addresses.GetSheetAddress<MaterialItemSheet>(),
                     _tableSheets.MaterialItemSheet.Serialize())
-                .SetState(
+                .SetLegacyState(
                     Addresses.GetSheetAddress<StakeRegularRewardSheet>(),
                     _tableSheets.StakeRegularRewardSheet.Serialize())
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize());
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize());
         }
 
         [Theory]
@@ -171,7 +171,7 @@ namespace Lib9c.Tests.Action
 
                 if (stake)
                 {
-                    state = state.SetState(stakeStateAddress, stakeState.SerializeV2());
+                    state = state.SetLegacyState(stakeStateAddress, stakeState.SerializeV2());
 
                     if (requiredGold > 0)
                     {
@@ -186,7 +186,7 @@ namespace Lib9c.Tests.Action
                 if (monsterCollect)
                 {
                     var mcAddress = MonsterCollectionState.DeriveAddress(_agentAddress, 0);
-                    state = state.SetState(
+                    state = state.SetLegacyState(
                         mcAddress,
                         new MonsterCollectionState(mcAddress, monsterCollectLevel, 1).Serialize()
                     );

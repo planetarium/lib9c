@@ -83,7 +83,7 @@ namespace Lib9c.Tests.Action
 
             foreach (var address in addresses)
             {
-                Assert.NotNull(genesisState.GetState(address));
+                Assert.NotNull(genesisState.GetLegacyState(address));
             }
         }
 
@@ -135,7 +135,7 @@ namespace Lib9c.Tests.Action
             });
 
             var fetchedState = new AuthorizedMinersState(
-                (Dictionary)genesisState.GetState(AuthorizedMinersState.Address)
+                (Dictionary)genesisState.GetLegacyState(AuthorizedMinersState.Address)
             );
 
             Assert.Equal(50, fetchedState.Interval);
@@ -184,7 +184,7 @@ namespace Lib9c.Tests.Action
             });
 
             var fetchedState = new ActivatedAccountsState(
-                (Dictionary)genesisState.GetState(Addresses.ActivatedAccount));
+                (Dictionary)genesisState.GetLegacyState(Addresses.ActivatedAccount));
 
             Assert.Contains(adminAddress, fetchedState.Accounts);
         }
@@ -236,7 +236,7 @@ namespace Lib9c.Tests.Action
             });
 
             var fetchedState = new CreditsState(
-                (Dictionary)genesisState.GetState(CreditsState.Address));
+                (Dictionary)genesisState.GetLegacyState(CreditsState.Address));
 
             Assert.Equal(creditState.Names, fetchedState.Names);
         }
@@ -282,10 +282,10 @@ namespace Lib9c.Tests.Action
             });
 
             var fetchedState = new ActivatedAccountsState(
-                (Dictionary)genesisState.GetState(Addresses.ActivatedAccount));
+                (Dictionary)genesisState.GetLegacyState(Addresses.ActivatedAccount));
             Assert.Empty(fetchedState.Accounts);
 
-            Assert.Null(genesisState.GetState(Addresses.Admin));
+            Assert.Null(genesisState.GetLegacyState(Addresses.Admin));
         }
 
         [Fact]
@@ -365,7 +365,7 @@ namespace Lib9c.Tests.Action
                 PreviousState = new World(new MockWorldState()),
             });
 
-            var assetMinters = Assert.IsType<List>(genesisState.GetState(Addresses.AssetMinters));
+            var assetMinters = Assert.IsType<List>(genesisState.GetLegacyState(Addresses.AssetMinters));
             Assert.Contains(default(Address).Serialize(), assetMinters);
         }
     }

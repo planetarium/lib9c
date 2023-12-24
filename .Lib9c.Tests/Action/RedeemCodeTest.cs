@@ -73,13 +73,13 @@ namespace Lib9c.Tests.Action
             var context = new ActionContext();
             var initialState = new World(new MockWorldState())
                 .SetAgentState(_agentAddress, agentState)
-                .SetState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
-                .SetState(GoldCurrencyState.Address, goldState.Serialize())
+                .SetLegacyState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, goldState.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, goldState.Currency * 100000000);
 
             if (backward)
             {
-                initialState = initialState.SetState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
+                initialState = initialState.SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
             }
             else
             {
@@ -88,7 +88,7 @@ namespace Lib9c.Tests.Action
 
             foreach (var (key, value) in _sheets)
             {
-                initialState = initialState.SetState(
+                initialState = initialState.SetLegacyState(
                     Addresses.TableSheet.Derive(key),
                     value.Serialize()
                 );

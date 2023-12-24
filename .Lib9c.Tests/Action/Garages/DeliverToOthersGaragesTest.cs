@@ -163,14 +163,14 @@ namespace Lib9c.Tests.Action.Garages
                     fungibleId);
                 Assert.Equal(
                     0,
-                    new FungibleItemGarage(nextStates.GetState(senderGarageAddr)).Count
+                    new FungibleItemGarage(nextStates.GetLegacyState(senderGarageAddr)).Count
                 );
                 var recipientGarageAddr = Addresses.GetGarageAddress(
                     _recipientAgentAddr,
                     fungibleId);
                 Assert.Equal(
                     count,
-                    new FungibleItemGarage(nextStates.GetState(recipientGarageAddr)).Count);
+                    new FungibleItemGarage(nextStates.GetLegacyState(recipientGarageAddr)).Count);
             }
         }
 
@@ -244,7 +244,7 @@ namespace Lib9c.Tests.Action.Garages
                     SenderAgentAddr,
                     fungibleId);
                 var previousStatesWithNullGarageState =
-                    _previousStates.SetState(garageAddr, Null.Value);
+                    _previousStates.SetLegacyState(garageAddr, Null.Value);
                 Assert.Throws<StateNullException>(() => Execute(
                     SenderAgentAddr,
                     0,
@@ -263,7 +263,7 @@ namespace Lib9c.Tests.Action.Garages
                 var nextIndex = (i + 1) % _fungibleIdAndCounts.Length;
                 var garage = new FungibleItemGarage(_tradableFungibleItems[nextIndex], 1);
                 var previousStatesWithInvalidGarageState =
-                    _previousStates.SetState(addr, garage.Serialize());
+                    _previousStates.SetLegacyState(addr, garage.Serialize());
                 Assert.Throws<ArgumentException>(() => Execute(
                     SenderAgentAddr,
                     0,
@@ -280,11 +280,11 @@ namespace Lib9c.Tests.Action.Garages
                 var garageAddr = Addresses.GetGarageAddress(
                     SenderAgentAddr,
                     fungibleId);
-                var garageState = _previousStates.GetState(garageAddr);
+                var garageState = _previousStates.GetLegacyState(garageAddr);
                 var garage = new FungibleItemGarage(garageState);
                 garage.Unload(1);
                 var previousStatesWithNotEnoughCountOfGarageState =
-                    _previousStates.SetState(garageAddr, garage.Serialize());
+                    _previousStates.SetLegacyState(garageAddr, garage.Serialize());
 
                 Assert.Throws<ArgumentOutOfRangeException>(() => Execute(
                     SenderAgentAddr,
@@ -303,7 +303,7 @@ namespace Lib9c.Tests.Action.Garages
                 var addr = Addresses.GetGarageAddress(_recipientAgentAddr, fungibleId);
                 var garage = new FungibleItemGarage(_tradableFungibleItems[i], int.MaxValue);
                 var previousStatesWithInvalidGarageState =
-                    _previousStates.SetState(addr, garage.Serialize());
+                    _previousStates.SetLegacyState(addr, garage.Serialize());
                 Assert.Throws<ArgumentOutOfRangeException>(() => Execute(
                     SenderAgentAddr,
                     0,
@@ -388,13 +388,13 @@ namespace Lib9c.Tests.Action.Garages
                     var senderGarageAddr = Addresses.GetGarageAddress(
                         SenderAgentAddr,
                         tradableMaterial.FungibleId);
-                    var garageState = previousStates.GetState(senderGarageAddr);
+                    var garageState = previousStates.GetLegacyState(senderGarageAddr);
                     var garage = garageState is null
                         ? new FungibleItemGarage(tradableMaterial, 0)
                         : new FungibleItemGarage(garageState);
                     garage.Load(index + 1);
                     previousStates = previousStates
-                        .SetState(senderGarageAddr, garage.Serialize());
+                        .SetLegacyState(senderGarageAddr, garage.Serialize());
 
                     return (
                         tradableFungibleItem: (ITradableFungibleItem)tradableMaterial,

@@ -53,18 +53,18 @@ namespace Nekoyume.Action
                 });
 
             var adventureSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var adventureSlotState = states.TryGetState(adventureSlotStateAddress, out List rawAdventureSlotState)
+            var adventureSlotState = states.TryGetLegacyState(adventureSlotStateAddress, out List rawAdventureSlotState)
                 ? new RuneSlotState(rawAdventureSlotState)
                 : new RuneSlotState(BattleType.Adventure);
 
 
             var arenaSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Arena);
-            var arenaSlotState = states.TryGetState(arenaSlotStateAddress, out List rawArenaSlotState)
+            var arenaSlotState = states.TryGetLegacyState(arenaSlotStateAddress, out List rawArenaSlotState)
                 ? new RuneSlotState(rawArenaSlotState)
                 : new RuneSlotState(BattleType.Arena);
 
             var raidSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Raid);
-            var raidSlotState = states.TryGetState(raidSlotStateAddress, out List rawRaidSlotState)
+            var raidSlotState = states.TryGetLegacyState(raidSlotStateAddress, out List rawRaidSlotState)
                 ? new RuneSlotState(rawRaidSlotState)
                 : new RuneSlotState(BattleType.Raid);
 
@@ -107,9 +107,9 @@ namespace Nekoyume.Action
 
             return states
                 .TransferAsset(context, context.Signer, feeStoreAddress, cost * currency)
-                .SetState(adventureSlotStateAddress, adventureSlotState.Serialize())
-                .SetState(arenaSlotStateAddress, arenaSlotState.Serialize())
-                .SetState(raidSlotStateAddress, raidSlotState.Serialize());
+                .SetLegacyState(adventureSlotStateAddress, adventureSlotState.Serialize())
+                .SetLegacyState(arenaSlotStateAddress, arenaSlotState.Serialize())
+                .SetLegacyState(raidSlotStateAddress, raidSlotState.Serialize());
         }
     }
 }

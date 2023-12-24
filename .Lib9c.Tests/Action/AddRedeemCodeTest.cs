@@ -69,8 +69,8 @@ namespace Lib9c.Tests.Action
                 Signer = adminAddress,
                 BlockIndex = 0,
                 PreviousState = new World(new MockWorldState())
-                    .SetState(Addresses.Admin, adminState.Serialize())
-                    .SetState(Addresses.RedeemCode, new RedeemCodeState(new RedeemCodeListSheet()).Serialize()),
+                    .SetLegacyState(Addresses.Admin, adminState.Serialize())
+                    .SetLegacyState(Addresses.RedeemCode, new RedeemCodeState(new RedeemCodeListSheet()).Serialize()),
             });
 
             var sheet = new RedeemCodeListSheet();
@@ -91,7 +91,7 @@ namespace Lib9c.Tests.Action
             sheet.Set(csv);
 
             var state = new World(new MockWorldState())
-                    .SetState(Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
+                    .SetLegacyState(Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
 
             var action = new AddRedeemCode
             {

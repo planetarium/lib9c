@@ -72,15 +72,15 @@ namespace Lib9c.Tests.Action.Scenario
             _currency = Currency.Legacy("NCG", 2, minters: null);
             _initialState = _initialState
                 .SetAgentState(_agentAddress, agentState)
-                .SetState(
+                .SetLegacyState(
                     Addresses.GoldCurrency,
                     new GoldCurrencyState(_currency).Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize())
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
                 .MintAsset(new ActionContext(), _agentAddress, Currencies.Crystal * 2);
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
@@ -88,7 +88,7 @@ namespace Lib9c.Tests.Action.Scenario
         public void HackAndSlash()
         {
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(_avatarAddress, BattleType.Adventure);
-            Assert.Null(_initialState.GetState(itemSlotStateAddress));
+            Assert.Null(_initialState.GetLegacyState(itemSlotStateAddress));
 
             var has = new HackAndSlash
             {
@@ -135,14 +135,14 @@ namespace Lib9c.Tests.Action.Scenario
         public void Raid()
         {
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(_avatarAddress, BattleType.Raid);
-            Assert.Null(_initialState.GetState(itemSlotStateAddress));
+            Assert.Null(_initialState.GetLegacyState(itemSlotStateAddress));
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
             for (int i = 0; i < 50; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var prevState = _initialState.SetState(
+            var prevState = _initialState.SetLegacyState(
                 _avatarAddress.Derive(LegacyWorldInformationKey),
                 avatarState.worldInformation.Serialize()
             );
@@ -177,7 +177,7 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var avatarAddress in addresses)
             {
                 var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
-                Assert.Null(_initialState.GetState(itemSlotStateAddress));
+                Assert.Null(_initialState.GetLegacyState(itemSlotStateAddress));
 
                 var avatarState = prevState.GetAvatarState(avatarAddress);
                 for (int i = 0; i < 50; i++)
@@ -207,7 +207,7 @@ namespace Lib9c.Tests.Action.Scenario
                     PreviousState = prevState,
                 });
                 var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(avatarAddress);
-                var serializedArenaAvatarState = (List)nextState.GetState(arenaAvatarStateAdr);
+                var serializedArenaAvatarState = (List)nextState.GetLegacyState(arenaAvatarStateAdr);
                 var arenaAvatarState = new ArenaAvatarState(serializedArenaAvatarState);
                 Assert_Equipments(arenaAvatarState.Equipments);
                 prevState = nextState;
@@ -367,7 +367,7 @@ namespace Lib9c.Tests.Action.Scenario
 
         private ItemSlotState Assert_ItemSlot(IWorld state, Address itemSlotStateAddress)
         {
-            var rawItemSlot = Assert.IsType<List>(state.GetState(itemSlotStateAddress));
+            var rawItemSlot = Assert.IsType<List>(state.GetLegacyState(itemSlotStateAddress));
             var itemSlotState = new ItemSlotState(rawItemSlot);
             Assert_Equipments(itemSlotState.Equipments);
             return itemSlotState;

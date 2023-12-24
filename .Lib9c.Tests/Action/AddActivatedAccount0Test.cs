@@ -31,7 +31,7 @@ namespace Lib9c.Tests.Action
             });
 
             var nextAccountStates = new ActivatedAccountsState(
-                (Dictionary)nextState.GetState(ActivatedAccountsState.Address)
+                (Dictionary)nextState.GetLegacyState(ActivatedAccountsState.Address)
             );
 
             Assert.Equal(

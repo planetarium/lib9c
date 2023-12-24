@@ -60,7 +60,7 @@ namespace Nekoyume.Action
             {
                 states = states
                     .TransferAsset(context, PatronAddress, agentAddress, mead)
-                    .SetState(pledgeAddress, contractList);
+                    .SetLegacyState(pledgeAddress, contractList);
             }
             return states;
         }

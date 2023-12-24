@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -49,7 +49,7 @@ namespace Lib9c.Tests.Action
             _signerAddress = new PrivateKey().Address;
             var context = new ActionContext();
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .MintAsset(context, _signerAddress, _currency * 100);
         }
 
@@ -77,7 +77,7 @@ namespace Lib9c.Tests.Action
             };
             var states = _initialState
                 .SetAgentState(_signerAddress, agentState)
-                .SetState(
+                .SetLegacyState(
                     monsterCollectionAddress,
                     new MonsterCollectionState(monsterCollectionAddress, 1, 0).SerializeV2());
             var action = new Stake2(200);
@@ -96,7 +96,7 @@ namespace Lib9c.Tests.Action
             Address stakeStateAddress = StakeState.DeriveAddress(_signerAddress);
             var context = new ActionContext();
             var states = _initialState
-                .SetState(stakeStateAddress, new StakeState(stakeStateAddress, 0).Serialize())
+                .SetLegacyState(stakeStateAddress, new StakeState(stakeStateAddress, 0).Serialize())
                 .MintAsset(context, stakeStateAddress, _currency * 50);
             var action = new Stake2(100);
             Assert.Throws<StakeExistingClaimableException>(() =>
@@ -140,7 +140,7 @@ namespace Lib9c.Tests.Action
             // Same (since 4611070)
             if (states.TryGetStakeState(_signerAddress, out StakeState stakeState))
             {
-                states = states.SetState(
+                states = states.SetLegacyState(
                     stakeState.address,
                     new StakeState(stakeState.address, 4611070 - 100).Serialize());
             }
@@ -198,7 +198,7 @@ namespace Lib9c.Tests.Action
                 StakeState.LockupInterval - 1,
                 stakeState.CancellableBlockIndex,
                 stakeState.Achievements);
-            states = states.SetState(stakeState.address, producedStakeState.SerializeV2());
+            states = states.SetLegacyState(stakeState.address, producedStakeState.SerializeV2());
             var cancelAction = new Stake2(0);
             states = cancelAction.Execute(new ActionContext
             {
@@ -207,7 +207,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = StakeState.LockupInterval,
             });
 
-            Assert.Equal(Null.Value, states.GetState(stakeState.address));
+            Assert.Equal(Null.Value, states.GetLegacyState(stakeState.address));
             Assert.Equal(_currency * 0, states.GetBalance(stakeState.address, _currency));
             Assert.Equal(_currency * 100, states.GetBalance(_signerAddress, _currency));
         }
@@ -252,7 +252,7 @@ namespace Lib9c.Tests.Action
             var action = new Stake2(50);
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
-                PreviousState = _initialState.SetState(
+                PreviousState = _initialState.SetLegacyState(
                     StakeState.DeriveAddress(_signerAddress),
                     new StakeStateV2(
                         new Contract(

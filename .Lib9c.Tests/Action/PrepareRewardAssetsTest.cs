@@ -38,7 +38,7 @@ namespace Lib9c.Tests.Action
             }
 
             IWorld state = new World(new MockWorldState())
-                .SetState(Addresses.Admin, adminState.Serialize());
+                .SetLegacyState(Addresses.Admin, adminState.Serialize());
 
             var action = new PrepareRewardAssets(poolAddress, assets);
             if (exc is null)

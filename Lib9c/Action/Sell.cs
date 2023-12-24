@@ -72,7 +72,7 @@ namespace Nekoyume.Action
             Address orderReceiptAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
-            if (!(states.GetState(Addresses.Market) is null))
+            if (!(states.GetLegacyState(Addresses.Market) is null))
             {
                 throw new ActionObsoletedException("Sell action is obsoleted. please use SellProduct.");
             }
@@ -141,7 +141,7 @@ namespace Nekoyume.Action
 
             ITradableItem tradableItem = order.Sell(avatarState);
 
-            var shardedShopState = states.TryGetState(shopAddress, out Dictionary serializedState)
+            var shardedShopState = states.TryGetLegacyState(shopAddress, out Dictionary serializedState)
                 ? new ShardedShopStateV2(serializedState)
                 : new ShardedShopStateV2(shopAddress);
 
@@ -160,23 +160,23 @@ namespace Nekoyume.Action
             avatarState.blockIndex = context.BlockIndex;
 
             var orderReceiptList =
-                states.TryGetState(orderReceiptAddress, out Dictionary receiptDict)
+                states.TryGetLegacyState(orderReceiptAddress, out Dictionary receiptDict)
                     ? new OrderDigestListState(receiptDict)
                     : new OrderDigestListState(orderReceiptAddress);
 
             orderReceiptList.Add(orderDigest);
 
             states = states
-                .SetState(orderReceiptAddress, orderReceiptList.Serialize())
+                .SetLegacyState(orderReceiptAddress, orderReceiptList.Serialize())
                 .SetAvatarState(sellerAvatarAddress, avatarState, true, true, true, true);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
             states = states
-                .SetState(itemAddress, tradableItem.Serialize())
-                .SetState(orderAddress, order.Serialize())
-                .SetState(shopAddress, shardedShopState.Serialize());
+                .SetLegacyState(itemAddress, tradableItem.Serialize())
+                .SetLegacyState(orderAddress, order.Serialize())
+                .SetLegacyState(shopAddress, shardedShopState.Serialize());
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}Sell Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);

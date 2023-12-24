@@ -112,7 +112,7 @@ namespace Nekoyume.Action
             }
             return states
                 .SetAvatarState(AvatarAddress, avatarState, true, true, true, true)
-                .SetState(RedeemCodeState.Address, redeemState.Serialize());
+                .SetLegacyState(RedeemCodeState.Address, redeemState.Serialize());
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

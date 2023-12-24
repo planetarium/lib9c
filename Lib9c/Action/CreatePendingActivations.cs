@@ -49,7 +49,7 @@ namespace Nekoyume.Action
             var state = context.PreviousState;
             foreach ((byte[] address, byte[] nonce, byte[] publicKey) in PendingActivations)
             {
-                state = state.SetState(
+                state = state.SetLegacyState(
                     new Address(address),
                     new Dictionary(
                         new[]

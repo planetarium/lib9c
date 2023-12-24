@@ -143,7 +143,7 @@ namespace Lib9c.Tests.Action
         [MemberData(nameof(IsMainNetTestcases))]
         public void IsMainNet(GoldCurrencyState goldCurrencyState, bool expected)
         {
-            var state = new World(new MockWorldState()).SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var state = new World(new MockWorldState()).SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             IActionContext context = new ActionContext
             {
                 PreviousState = state,

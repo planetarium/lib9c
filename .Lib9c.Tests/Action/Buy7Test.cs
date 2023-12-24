@@ -45,7 +45,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -95,12 +95,12 @@ namespace Lib9c.Tests.Action
 
             _productId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetAgentState(_sellerAgentAddress, sellerAgentState)
-                .SetState(_sellerAvatarAddress, MigrationAvatarState.LegacySerializeV1(sellerAvatarState))
+                .SetLegacyState(_sellerAvatarAddress, MigrationAvatarState.LegacySerializeV1(sellerAvatarState))
                 .SetAgentState(_buyerAgentAddress, buyerAgentState)
-                .SetState(_buyerAvatarAddress, MigrationAvatarState.LegacySerializeV1(_buyerAvatarState))
-                .SetState(Addresses.Shop, new ShopState().Serialize())
+                .SetLegacyState(_buyerAvatarAddress, MigrationAvatarState.LegacySerializeV1(_buyerAvatarState))
+                .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
                 .MintAsset(context, _buyerAgentAddress, _goldCurrencyState.Currency * 100);
         }
 
@@ -266,7 +266,7 @@ namespace Lib9c.Tests.Action
                     shopState.Register(shopItem);
                     shardedShopStates[shardedShopAddress] = shopState;
                     sellerAvatarState.inventory.AddItem2((ItemBase)tradableItem, shopItemData.ItemCount);
-                    _initialState = _initialState.SetState(shardedShopAddress, shopState.Serialize());
+                    _initialState = _initialState.SetLegacyState(shardedShopAddress, shopState.Serialize());
                 }
                 else
                 {
@@ -297,8 +297,8 @@ namespace Lib9c.Tests.Action
                 _initialState = _initialState
                     .SetAvatarState(_buyerAvatarAddress, buyerAvatarState, true, true, true, true)
                     .SetAvatarState(sellerAvatarState.address, sellerAvatarState, true, true, true, true)
-                    .SetState(shardedShopAddress, shopState.Serialize())
-                    .SetState(Addresses.Shop, legacyShopState.Serialize());
+                    .SetLegacyState(shardedShopAddress, shopState.Serialize())
+                    .SetLegacyState(Addresses.Shop, legacyShopState.Serialize());
             }
 
             if (shopItemMembers.Any(i => i.ItemType == ItemType.Material))
@@ -336,7 +336,7 @@ namespace Lib9c.Tests.Action
             {
                 Address shardedShopAddress =
                     ShardedShopState.DeriveAddress(purchaseInfo.itemSubType, purchaseInfo.productId);
-                var nextShopState = new ShardedShopState((Dictionary)nextState.GetState(shardedShopAddress));
+                var nextShopState = new ShardedShopState((Dictionary)nextState.GetLegacyState(shardedShopAddress));
                 Assert.Empty(nextShopState.Products);
                 Guid itemId = shopItemMembers
                     .Where(i => i.ProductId == purchaseInfo.productId)
@@ -544,7 +544,7 @@ namespace Lib9c.Tests.Action
             ShardedShopState shopState = new ShardedShopState(shardedShopAddress);
             shopState.Register(shopItem);
 
-            _initialState = _initialState.SetState(shardedShopAddress, shopState.Serialize());
+            _initialState = _initialState.SetLegacyState(shardedShopAddress, shopState.Serialize());
 
             var action = new Buy7
             {
@@ -614,7 +614,7 @@ namespace Lib9c.Tests.Action
             ShardedShopState shopState = new ShardedShopState(shardedShopAddress);
             shopState.Register(shopItem);
 
-            _initialState = _initialState.SetState(shardedShopAddress, shopState.Serialize());
+            _initialState = _initialState.SetLegacyState(shardedShopAddress, shopState.Serialize());
 
             var action = new Buy7
             {
@@ -659,7 +659,7 @@ namespace Lib9c.Tests.Action
 
             var balance = _initialState.GetBalance(_buyerAgentAddress, _goldCurrencyState.Currency);
             _initialState = _initialState.BurnAsset(context, _buyerAgentAddress, balance)
-                .SetState(shardedShopAddress, shopState.Serialize());
+                .SetLegacyState(shardedShopAddress, shopState.Serialize());
 
             PurchaseInfo0 purchaseInfo0 = new PurchaseInfo0(
                 _productId,
@@ -740,7 +740,7 @@ namespace Lib9c.Tests.Action
 
             ShardedShopState shopState = new ShardedShopState(shardedShopAddress);
             shopState.Register(shopItem);
-            _initialState = _initialState.SetState(shardedShopAddress, shopState.Serialize());
+            _initialState = _initialState.SetLegacyState(shardedShopAddress, shopState.Serialize());
 
             Assert.True(shopItem.ExpiredBlockIndex > 0);
 
@@ -798,7 +798,7 @@ namespace Lib9c.Tests.Action
                 itemUsable);
 
             shopState.Register(shopItem);
-            previousStates = previousStates.SetState(shardedShopStateAddress, shopState.Serialize());
+            previousStates = previousStates.SetLegacyState(shardedShopStateAddress, shopState.Serialize());
 
             Assert.True(shopState.Products.ContainsKey(_productId));
 
@@ -850,7 +850,7 @@ namespace Lib9c.Tests.Action
                 itemUsable);
 
             shopState.Register(shopItem);
-            previousStates = previousStates.SetState(shardedShopStateAddress, shopState.Serialize());
+            previousStates = previousStates.SetLegacyState(shardedShopStateAddress, shopState.Serialize());
 
             Assert.True(shopState.Products.ContainsKey(_productId));
 

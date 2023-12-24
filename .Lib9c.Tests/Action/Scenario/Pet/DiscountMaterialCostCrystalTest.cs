@@ -70,7 +70,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             }
 
             var context = new ActionContext();
-            var stateV2 = _initialStateV2.SetState(
+            var stateV2 = _initialStateV2.SetLegacyState(
                 _avatarAddr.Derive("recipe_ids"),
                 stageList
             );
@@ -91,7 +91,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 );
 
                 _petId = petRow.PetId;
-                stateV2 = stateV2.SetState(
+                stateV2 = stateV2.SetLegacyState(
                     PetState.DeriveAddress(_avatarAddr, (int)_petId),
                     new List(_petId.Serialize(), petLevel.Serialize(), 0L.Serialize()));
                 expectedCrystal *= (BigInteger)(

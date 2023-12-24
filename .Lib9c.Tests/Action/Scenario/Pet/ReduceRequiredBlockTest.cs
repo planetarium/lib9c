@@ -65,7 +65,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 stageList = stageList.Add(i.Serialize());
             }
 
-            var stateV2 = _initialStateV2.SetState(_recipeAddr, stageList);
+            var stateV2 = _initialStateV2.SetLegacyState(_recipeAddr, stageList);
 
             // Get pet
             if (!(petLevel is null))
@@ -75,7 +75,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 );
 
                 _petId = petRow.PetId;
-                stateV2 = stateV2.SetState(
+                stateV2 = stateV2.SetLegacyState(
                     PetState.DeriveAddress(_avatarAddr, (int)_petId),
                     new List(_petId!.Serialize(), petLevel.Serialize(), 0L.Serialize())
                 );

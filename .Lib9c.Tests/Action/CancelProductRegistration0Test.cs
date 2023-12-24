@@ -38,7 +38,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -70,9 +70,9 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = _avatarAddress;
 
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
-                .SetState(Addresses.Shop, new ShopState().Serialize())
+                .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
         }
 
@@ -156,7 +156,7 @@ namespace Lib9c.Tests.Action
             );
             var productsState =
                 new ProductsState(
-                    (List)nexState.GetState(ProductsState.DeriveAddress(_avatarAddress)));
+                    (List)nexState.GetLegacyState(ProductsState.DeriveAddress(_avatarAddress)));
             var productId = Assert.Single(productsState.ProductIds);
 
             var action = new CancelProductRegistration0

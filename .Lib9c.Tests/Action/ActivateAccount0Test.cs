@@ -39,7 +39,7 @@ namespace Lib9c.Tests.Action
             });
 
             var activatedAccounts = new ActivatedAccountsState(
-                (Dictionary)nextState.GetState(ActivatedAccountsState.Address)
+                (Dictionary)nextState.GetLegacyState(ActivatedAccountsState.Address)
             );
             Assert.Equal(
                 new[] { default(Address) }.ToImmutableHashSet(),

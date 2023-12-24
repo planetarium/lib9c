@@ -36,12 +36,12 @@ namespace Lib9c.Tests.Action
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new World(new MockWorldState())
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, new AgentState(agentAddress));
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
@@ -53,7 +53,7 @@ namespace Lib9c.Tests.Action
                 gameConfigState,
                 default
             );
-            return state.SetState(gameConfigState.address, gameConfigState.Serialize());
+            return state.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
         }
 
         [Theory]
@@ -85,7 +85,7 @@ namespace Lib9c.Tests.Action
 
             state = action.Execute(ctx);
             var adventureAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
-            if (state.TryGetState(adventureAddr, out List adventureRaw))
+            if (state.TryGetLegacyState(adventureAddr, out List adventureRaw))
             {
                 var s = new RuneSlotState(adventureRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
@@ -94,7 +94,7 @@ namespace Lib9c.Tests.Action
             }
 
             var arenaAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
-            if (state.TryGetState(arenaAddr, out List arenaRaw))
+            if (state.TryGetLegacyState(arenaAddr, out List arenaRaw))
             {
                 var s = new RuneSlotState(arenaRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
@@ -103,7 +103,7 @@ namespace Lib9c.Tests.Action
             }
 
             var raidAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Raid);
-            if (state.TryGetState(raidAddr, out List raidRaw))
+            if (state.TryGetLegacyState(raidAddr, out List raidRaw))
             {
                 var s = new RuneSlotState(raidRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
@@ -254,7 +254,7 @@ namespace Lib9c.Tests.Action
                     var runeSlotState = new RuneSlotState(battleType);
                     var serialized = (List)runeSlotState.Serialize();
                     var rawSlots = new List(((List)serialized[1]).Take(6));
-                    state = state.SetState(
+                    state = state.SetLegacyState(
                         RuneSlotState.DeriveAddress(avatarAddress, battleType),
                         List.Empty.Add(battleType.Serialize()).Add(rawSlots));
                 }
@@ -276,7 +276,7 @@ namespace Lib9c.Tests.Action
 
             state = action.Execute(ctx);
             var adventureAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
-            if (state.TryGetState(adventureAddr, out List adventureRaw))
+            if (state.TryGetLegacyState(adventureAddr, out List adventureRaw))
             {
                 var s = new RuneSlotState(adventureRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
@@ -285,7 +285,7 @@ namespace Lib9c.Tests.Action
             }
 
             var arenaAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
-            if (state.TryGetState(arenaAddr, out List arenaRaw))
+            if (state.TryGetLegacyState(arenaAddr, out List arenaRaw))
             {
                 var s = new RuneSlotState(arenaRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
@@ -294,7 +294,7 @@ namespace Lib9c.Tests.Action
             }
 
             var raidAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Raid);
-            if (state.TryGetState(raidAddr, out List raidRaw))
+            if (state.TryGetLegacyState(raidAddr, out List raidRaw))
             {
                 var s = new RuneSlotState(raidRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);

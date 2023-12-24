@@ -115,13 +115,13 @@ namespace Nekoyume.Action
                     continue;
                 }
 
-                if (!states.TryGetState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
+                if (!states.TryGetLegacyState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
                 {
                     errors.Add((orderId, ErrorCodeFailedLoadingState));
                     continue;
                 }
 
-                if (!states.TryGetState(orderAddress, out Dictionary rawOrder))
+                if (!states.TryGetLegacyState(orderAddress, out Dictionary rawOrder))
                 {
                     errors.Add((orderId, ErrorCodeInvalidOrderId));
                     continue;
@@ -162,7 +162,7 @@ namespace Nekoyume.Action
                 Log.Verbose("{AddressesHex}Buy Get Seller AgentAvatarStates: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();
 
-                if (!states.TryGetState(digestListAddress, out Dictionary rawDigestList))
+                if (!states.TryGetLegacyState(digestListAddress, out Dictionary rawDigestList))
                 {
                     errors.Add((orderId, ErrorCodeFailedLoadingState));
                     continue;
@@ -208,7 +208,7 @@ namespace Nekoyume.Action
                 }
 
                 Address orderReceiptAddress = OrderReceipt.DeriveAddress(orderId);
-                if (!(states.GetState(orderReceiptAddress) is null))
+                if (!(states.GetLegacyState(orderReceiptAddress) is null))
                 {
                     errors.Add((orderId, ErrorCodeDuplicateSell));
                     continue;
@@ -269,13 +269,13 @@ namespace Nekoyume.Action
                 );
 
                 states = states
-                    .SetState(digestListAddress, digestList.Serialize())
-                    .SetState(orderReceiptAddress, orderReceipt.Serialize())
+                    .SetLegacyState(digestListAddress, digestList.Serialize())
+                    .SetLegacyState(orderReceiptAddress, orderReceipt.Serialize())
                     .SetAvatarState(sellerAvatarAddress, sellerAvatarState, true, true, true, true);
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set Seller AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();
-                states = states.SetState(shardedShopAddress, shardedShopState.Serialize());
+                states = states.SetLegacyState(shardedShopAddress, shardedShopState.Serialize());
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
             }

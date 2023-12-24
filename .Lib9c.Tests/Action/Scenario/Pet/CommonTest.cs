@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var random = new TestRandom();
 
             // Get Pet
-            var stateV2 = _initialStateV2.SetState(
+            var stateV2 = _initialStateV2.SetLegacyState(
                 PetState.DeriveAddress(_avatarAddr, petId),
                 new List(petId.Serialize(), petLevel.Serialize(), 0L.Serialize())
             );
@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 stageList = stageList.Add(i.Serialize());
             }
 
-            stateV2 = stateV2.SetState(_recipeAddr, stageList);
+            stateV2 = stateV2.SetLegacyState(_recipeAddr, stageList);
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,

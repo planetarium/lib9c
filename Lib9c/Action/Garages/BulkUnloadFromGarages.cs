@@ -197,7 +197,7 @@ namespace Nekoyume.Action.Garages
             {
                 garage.Unload(count);
                 avatarState.inventory.AddFungibleItem((ItemBase)garage.Item, count);
-                states = states.SetState(garageAddress, garage.Serialize());
+                states = states.SetLegacyState(garageAddress, garage.Serialize());
             }
 
             return states.SetAvatarState(recipientAvatarAddress, avatarState, false, true, false, false);

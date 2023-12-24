@@ -241,7 +241,7 @@ namespace Nekoyume.Action
                 context.BlockIndex);
 
             return states
-                .SetState(stakeStateAddr, stakeStateV2.Serialize())
+                .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize())
                 .SetAvatarState(AvatarAddress, avatarState, false, true, false, false);
         }
     }

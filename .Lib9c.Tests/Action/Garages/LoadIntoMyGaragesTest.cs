@@ -177,7 +177,7 @@ namespace Lib9c.Tests.Action.Garages
                 var garageAddr = Addresses.GetGarageAddress(
                     AgentAddr,
                     fungibleId);
-                var garage = new FungibleItemGarage(nextStates.GetState(garageAddr));
+                var garage = new FungibleItemGarage(nextStates.GetLegacyState(garageAddr));
                 Assert.Equal(fungibleId, garage.Item.FungibleId);
                 Assert.Equal(count, garage.Count);
             }
@@ -338,7 +338,7 @@ namespace Lib9c.Tests.Action.Garages
                 var nextIndex = (i + 1) % _fungibleIdAndCounts.Length;
                 var garage = new FungibleItemGarage(_tradableFungibleItems[nextIndex], 1);
                 var previousStatesWithInvalidGarageState =
-                    _previousStates.SetState(addr, garage.Serialize());
+                    _previousStates.SetLegacyState(addr, garage.Serialize());
                 Assert.Throws<Exception>(() => Execute(
                     AgentAddr,
                     0,
@@ -356,7 +356,7 @@ namespace Lib9c.Tests.Action.Garages
                 var addr = Addresses.GetGarageAddress(AgentAddr, fungibleId);
                 var garage = new FungibleItemGarage(_tradableFungibleItems[i], int.MaxValue);
                 var previousStatesWithInvalidGarageState =
-                    _previousStates.SetState(addr, garage.Serialize());
+                    _previousStates.SetLegacyState(addr, garage.Serialize());
                 Assert.Throws<ArgumentOutOfRangeException>(() => Execute(
                     AgentAddr,
                     0,

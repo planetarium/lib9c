@@ -34,7 +34,7 @@ namespace Lib9c.Tests.Action
             var nextState = action.Execute(actionContext);
             Assert.Equal(
                 pendingActivation.Serialize(),
-                nextState.GetState(pendingActivation.address)
+                nextState.GetLegacyState(pendingActivation.address)
             );
         }
 

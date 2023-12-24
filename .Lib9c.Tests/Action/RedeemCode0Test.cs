@@ -71,13 +71,13 @@ namespace Lib9c.Tests.Action
             var initialState = new World(new MockWorldState())
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
-                .SetState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
-                .SetState(GoldCurrencyState.Address, goldState.Serialize())
+                .SetLegacyState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, goldState.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, goldState.Currency * 100000000);
 
             foreach (var (key, value) in _sheets)
             {
-                initialState = initialState.SetState(
+                initialState = initialState.SetLegacyState(
                     Addresses.TableSheet.Derive(key),
                     value.Serialize()
                 );

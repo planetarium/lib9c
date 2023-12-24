@@ -22,14 +22,14 @@ namespace Lib9c.Tests.Action.Coupons
             IRandom random = new TestRandom();
             var sheets = TableSheetsImporter.ImportSheets();
             IWorld state = new World(new MockWorldState())
-                .SetState(
+                .SetLegacyState(
                     Addresses.GameConfig,
                     new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
                 );
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var agent1Avatar0Address = CouponsFixture.AgentAddress1

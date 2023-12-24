@@ -109,7 +109,7 @@ namespace Lib9c.Tests.Model.Stake
             string stakeRegularRewardSheetTableName)
         {
             IWorld state = new World(new MockWorldState());
-            state = state.SetState(
+            state = state.SetLegacyState(
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());
             var stakeAddr = new PrivateKey().Address;
@@ -119,7 +119,7 @@ namespace Lib9c.Tests.Model.Stake
                 stakeState.Claim(receivedBlockIndex.Value);
             }
 
-            state = state.SetState(stakeAddr, stakeState.Serialize());
+            state = state.SetLegacyState(stakeAddr, stakeState.Serialize());
             Assert.True(StakeStateUtils.TryMigrate(state, stakeAddr, out var stakeStateV2));
             Assert.Equal(
                 stakeRegularFixedRewardSheetTableName,
@@ -141,7 +141,7 @@ namespace Lib9c.Tests.Model.Stake
             long? receivedBlockIndex)
         {
             IWorld state = new World(new MockWorldState());
-            state = state.SetState(
+            state = state.SetLegacyState(
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());
             var stakeAddr = new PrivateKey().Address;
@@ -152,7 +152,7 @@ namespace Lib9c.Tests.Model.Stake
                 ? new StakeStateV2(contract, startedBlockIndex)
                 : new StakeStateV2(contract, receivedBlockIndex.Value);
 
-            state = state.SetState(stakeAddr, stakeStateV2.Serialize());
+            state = state.SetLegacyState(stakeAddr, stakeStateV2.Serialize());
             Assert.True(StakeStateUtils.TryMigrate(state, stakeAddr, out var result));
             Assert.Equal(stakeStateV2.Contract, result.Contract);
             Assert.Equal(stakeStateV2.StartedBlockIndex, result.StartedBlockIndex);

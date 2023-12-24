@@ -138,7 +138,7 @@ namespace Nekoyume.Action
             {
                 var slotState =
                     new CombinationSlotState(address, GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
-                states = states.SetState(address, slotState.Serialize());
+                states = states.SetLegacyState(address, slotState.Serialize());
             }
 
             avatarState.UpdateQuestRewards2(materialItemSheet);
@@ -149,7 +149,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}CreateAvatar Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetAgentState(ctx.Signer, agentState)
-                .SetState(Addresses.Ranking, rankingState.Serialize())
+                .SetLegacyState(Addresses.Ranking, rankingState.Serialize())
                 .SetAvatarState(avatarAddress, avatarState, false, false, false, false);
         }
 

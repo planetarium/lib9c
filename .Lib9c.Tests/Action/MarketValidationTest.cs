@@ -24,7 +24,7 @@ namespace Lib9c.Tests.Action
         public MarketValidationTest()
         {
             _initialState = new World(new MockWorldState())
-                .SetState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize());
+                .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize());
         }
 
         public static IEnumerable<object[]> RegisterInfosMemberData()

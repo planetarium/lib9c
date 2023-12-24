@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action.Scenario
             var tableSheets = new TableSheets(_sheets);
             foreach (var (key, value) in _sheets)
             {
-                _state = _state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _state = _state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(_sheets);
@@ -58,8 +58,8 @@ namespace Lib9c.Tests.Action.Scenario
                 GameConfig.RequireClearedStageLevel.ActionsInRankingBoard);
 
             _state = _state
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .SetState(Addresses.GameConfig, new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize());
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+                .SetLegacyState(Addresses.GameConfig, new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize());
         }
 
         public (List<Guid> Equipments, List<Guid> Costumes) GetDummyItems(AvatarState avatarState)
@@ -175,11 +175,11 @@ namespace Lib9c.Tests.Action.Scenario
             };
             agentState.avatarAddresses.Add(0, avatarAddress);
             _state = _state
-                .SetState(agentState.address, agentState.Serialize())
-                .SetState(avatarState.address.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(avatarState.address.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(avatarState.address.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                .SetState(avatarState.address, avatarState.Serialize());
+                .SetLegacyState(agentState.address, agentState.Serialize())
+                .SetLegacyState(avatarState.address.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
+                .SetLegacyState(avatarState.address.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
+                .SetLegacyState(avatarState.address.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
+                .SetLegacyState(avatarState.address, avatarState.Serialize());
 
             return (agentState, avatarState);
         }

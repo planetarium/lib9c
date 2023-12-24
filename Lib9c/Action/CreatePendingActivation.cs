@@ -50,7 +50,7 @@ namespace Nekoyume.Action
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
             CheckPermission(context);
 
-            return context.PreviousState.SetState(
+            return context.PreviousState.SetLegacyState(
                 PendingActivation.address,
                 PendingActivation.Serialize()
             );

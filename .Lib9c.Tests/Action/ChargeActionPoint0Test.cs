@@ -54,13 +54,13 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0, avatarState.actionPoint);
 
             var state = new World(new MockWorldState())
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize())
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize())
                 .SetAgentState(agentAddress, agent)
                 .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in _sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var action = new ChargeActionPoint0()

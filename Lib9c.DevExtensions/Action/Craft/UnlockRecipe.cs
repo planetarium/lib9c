@@ -28,7 +28,7 @@ namespace Lib9c.DevExtensions.Action.Craft
                 recipeIdList = recipeIdList.Add(i.Serialize());
             }
 
-            return states.SetState(
+            return states.SetLegacyState(
                 AvatarAddress.Derive("recipe_ids"),
                 recipeIdList
             );

@@ -128,11 +128,11 @@ namespace Lib9c.DevExtensions.Action
                 }
 
                 // join arena
-                states = states.SetState(agentAddress, agentState.Serialize())
-                    .SetState(avatarAddress, avatarState.SerializeV2())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize());
+                states = states.SetLegacyState(agentAddress, agentState.Serialize())
+                    .SetLegacyState(avatarAddress, avatarState.SerializeV2())
+                    .SetLegacyState(inventoryAddress, avatarState.inventory.Serialize())
+                    .SetLegacyState(worldInformationAddress, avatarState.worldInformation.Serialize())
+                    .SetLegacyState(questListAddress, avatarState.questList.Serialize());
 
 
                 var sheet = sheets.GetSheet<ArenaSheet>();
@@ -151,7 +151,7 @@ namespace Lib9c.DevExtensions.Action
                 var arenaScoreAdr =
                     ArenaScore.DeriveAddress(avatarAddress, roundData.ChampionshipId,
                         roundData.Round);
-                if (states.TryGetState(arenaScoreAdr, out List _))
+                if (states.TryGetLegacyState(arenaScoreAdr, out List _))
                 {
                     throw new ArenaScoreAlreadyContainsException(
                         $"[{nameof(CreateArenaDummy)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -164,7 +164,7 @@ namespace Lib9c.DevExtensions.Action
                 var arenaInformationAdr =
                     ArenaInformation.DeriveAddress(avatarAddress, roundData.ChampionshipId,
                         roundData.Round);
-                if (states.TryGetState(arenaInformationAdr, out List _))
+                if (states.TryGetLegacyState(arenaInformationAdr, out List _))
                 {
                     throw new ArenaInformationAlreadyContainsException(
                         $"[{nameof(CreateArenaDummy)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -187,11 +187,11 @@ namespace Lib9c.DevExtensions.Action
                 arenaAvatarState.UpdateEquipment(equipments);
 
                 states = states
-                    .SetState(arenaScoreAdr, arenaScore.Serialize())
-                    .SetState(arenaInformationAdr, arenaInformation.Serialize())
-                    .SetState(arenaParticipantsAdr, arenaParticipants.Serialize())
-                    .SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
-                    .SetState(agentAddress, agentState.Serialize());
+                    .SetLegacyState(arenaScoreAdr, arenaScore.Serialize())
+                    .SetLegacyState(arenaInformationAdr, arenaInformation.Serialize())
+                    .SetLegacyState(arenaParticipantsAdr, arenaParticipants.Serialize())
+                    .SetLegacyState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
+                    .SetLegacyState(agentAddress, agentState.Serialize());
             }
 
             return states;

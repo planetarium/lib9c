@@ -384,7 +384,7 @@ namespace Lib9c.DevExtensions.Action
             var avatarAddr = Addresses.GetAvatarAddress(agentAddr, AvatarIndex);
 
             // Set AgentState.
-            var agent = states.GetState(agentAddr) is Dictionary agentDict
+            var agent = states.GetLegacyState(agentAddr) is Dictionary agentDict
                 ? new AgentState(agentDict)
                 : new AgentState(agentAddr);
             if (!agent.avatarAddresses.ContainsKey(AvatarIndex))
@@ -567,7 +567,7 @@ namespace Lib9c.DevExtensions.Action
                 var slot = new CombinationSlotState(
                     slotAddr,
                     GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
-                states = states.SetState(slotAddr, slot.Serialize());
+                states = states.SetLegacyState(slotAddr, slot.Serialize());
             }
             // ~Set CombinationSlot.
 
@@ -580,7 +580,7 @@ namespace Lib9c.DevExtensions.Action
                     rune.LevelUp();
                 }
 
-                states = states.SetState(
+                states = states.SetLegacyState(
                     RuneState.DeriveAddress(avatarAddr, runeId),
                     rune.Serialize());
             }
@@ -591,7 +591,7 @@ namespace Lib9c.DevExtensions.Action
                 Addresses.GetSkillStateAddressFromAvatarAddress(avatarAddr);
             if (CrystalRandomBuff is null)
             {
-                states = states.SetState(crystalRandomSkillAddr, Null.Value);
+                states = states.SetLegacyState(crystalRandomSkillAddr, Null.Value);
             }
             else
             {
@@ -610,7 +610,7 @@ namespace Lib9c.DevExtensions.Action
                 }
 
                 crystalRandomSkillState.Update(crb.crystalRandomBuffIds.ToList());
-                states = states.SetState(crystalRandomSkillAddr,
+                states = states.SetLegacyState(crystalRandomSkillAddr,
                     crystalRandomSkillState.Serialize());
             }
             // ~Set CrystalRandomBuffState

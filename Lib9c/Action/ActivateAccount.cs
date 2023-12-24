@@ -52,11 +52,11 @@ namespace Nekoyume.Action
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
 
-            if (!(state.GetState(activatedAddress) is null))
+            if (!(state.GetLegacyState(activatedAddress) is null))
             {
                 throw new AlreadyActivatedException($"{context.Signer} already activated.");
             }
-            if (!state.TryGetState(PendingAddress, out Dictionary pendingAsDict))
+            if (!state.TryGetLegacyState(PendingAddress, out Dictionary pendingAsDict))
             {
                 throw new PendingActivationDoesNotExistsException(PendingAddress);
             }
@@ -69,8 +69,8 @@ namespace Nekoyume.Action
                 // Please delete it if we have an API for evaluation results on the Libplanet side.
                 Log.Information("{pendingAddress} is activated by {signer} now.", pending.address, context.Signer);
                 return state
-                    .SetState(activatedAddress, true.Serialize())
-                    .SetState(pending.address, new Bencodex.Types.Null());
+                    .SetLegacyState(activatedAddress, true.Serialize())
+                    .SetLegacyState(pending.address, new Bencodex.Types.Null());
             }
             else
             {

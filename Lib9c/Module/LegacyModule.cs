@@ -38,15 +38,15 @@ namespace Nekoyume.Module
             this IWorldState worldState) =>
             worldState.GetAccount(ReservedAddresses.LegacyAccount).TotalUpdatedFungibleAssets;
 
-        public static IValue GetState(this IWorldState worldState, Address address) =>
+        public static IValue GetLegacyState(this IWorldState worldState, Address address) =>
             worldState.GetAccount(ReservedAddresses.LegacyAccount).GetState(address);
 
 #nullable enable
-        public static IReadOnlyList<IValue?> GetStates(this IWorldState worldState, IReadOnlyList<Address> addresses) =>
+        public static IReadOnlyList<IValue?> GetLegacyStates(this IWorldState worldState, IReadOnlyList<Address> addresses) =>
             worldState.GetAccount(ReservedAddresses.LegacyAccount).GetStates(addresses);
 #nullable disable
 
-        public static IWorld SetState(this IWorld world, Address address, IValue state) =>
+        public static IWorld SetLegacyState(this IWorld world, Address address, IValue state) =>
             world.SetAccount(
                 ReservedAddresses.LegacyAccount,
                 world.GetAccount(ReservedAddresses.LegacyAccount).SetState(address, state));
@@ -182,7 +182,7 @@ namespace Nekoyume.Module
                 }
             }
 
-            return SetState(world, rewardInfoAddress, rewardRecord.Serialize());
+            return SetLegacyState(world, rewardInfoAddress, rewardRecord.Serialize());
         }
 
 #nullable enable
@@ -195,7 +195,7 @@ namespace Nekoyume.Module
             IValue serializedWallet = new Bencodex.Types.List(
                 couponWallet.Values.OrderBy(c => c.Id).Select(v => v.Serialize())
             );
-            return SetState(world, walletAddress, serializedWallet);
+            return SetLegacyState(world, walletAddress, serializedWallet);
         }
 #nullable disable
 
@@ -210,7 +210,7 @@ namespace Nekoyume.Module
                 {
                     var requiredMead = price - balance;
                     var contractAddress = signer.Derive(nameof(RequestPledge));
-                    if (GetState(world, contractAddress) is List contract && contract[1].ToBoolean())
+                    if (GetLegacyState(world, contractAddress) is List contract && contract[1].ToBoolean())
                     {
                         var patron = contract[0].ToAddress();
                         try
@@ -234,10 +234,10 @@ namespace Nekoyume.Module
         }
 
         // Methods from AccountStateExtensions
-        public static bool TryGetState<T>(this IWorldState worldState, Address address, out T result)
+        public static bool TryGetLegacyState<T>(this IWorldState worldState, Address address, out T result)
             where T : IValue
         {
-            IValue raw = GetState(worldState, address);
+            IValue raw = GetLegacyState(worldState, address);
             if (raw is T v)
             {
                 result = v;
@@ -248,10 +248,10 @@ namespace Nekoyume.Module
             return false;
         }
 
-        public static Dictionary<Address, IValue> GetStatesAsDict(this IWorldState worldState, params Address[] addresses)
+        public static Dictionary<Address, IValue> GetLegacyStatesAsDict(this IWorldState worldState, params Address[] addresses)
         {
             var result = new Dictionary<Address, IValue>();
-            var values = GetStates(worldState, addresses);
+            var values = GetLegacyStates(worldState, addresses);
             for (var i = 0; i < addresses.Length; i++)
             {
                 var address = addresses[i];
@@ -288,7 +288,7 @@ namespace Nekoyume.Module
 
         public static Currency GetGoldCurrency(this IWorldState worldState)
         {
-            if (TryGetState(worldState, GoldCurrencyState.Address, out Dictionary asDict))
+            if (TryGetLegacyState(worldState, GoldCurrencyState.Address, out Dictionary asDict))
             {
                 return new GoldCurrencyState(asDict).Currency;
             }
@@ -301,7 +301,7 @@ namespace Nekoyume.Module
 
         public static WeeklyArenaState GetWeeklyArenaState(this IWorldState worldState, Address address)
         {
-            var iValue = GetState(worldState, address);
+            var iValue = GetLegacyState(worldState, address);
             if (iValue is null)
             {
                 Log.Warning("No weekly arena state ({0})", address.ToHex());
@@ -343,7 +343,7 @@ namespace Nekoyume.Module
                     index
                 )
             );
-            var value = GetState(worldState, address);
+            var value = GetLegacyState(worldState, address);
             if (value is null)
             {
                 Log.Warning("No combination slot state ({0})", address.ToHex());
@@ -363,7 +363,7 @@ namespace Nekoyume.Module
 
         public static GameConfigState GetGameConfigState(this IWorldState worldState)
         {
-            var value = GetState(worldState, GameConfigState.Address);
+            var value = GetLegacyState(worldState, GameConfigState.Address);
             if (value is null)
             {
                 Log.Warning("No game config state ({0})", GameConfigState.Address.ToHex());
@@ -383,7 +383,7 @@ namespace Nekoyume.Module
 
         public static RedeemCodeState GetRedeemCodeState(this IWorldState worldState)
         {
-            var value = GetState(worldState, RedeemCodeState.Address);
+            var value = GetLegacyState(worldState, RedeemCodeState.Address);
             if (value is null)
             {
                 Log.Warning("RedeemCodeState is null. ({0})", RedeemCodeState.Address.ToHex());
@@ -405,7 +405,7 @@ namespace Nekoyume.Module
         public static IImmutableDictionary<Guid, Coupon> GetCouponWallet(this IWorldState worldState, Address agentAddress)
         {
             Address walletAddress = agentAddress.Derive(CouponWalletKey);
-            IValue? serialized = GetState(worldState, walletAddress);
+            IValue? serialized = GetLegacyState(worldState, walletAddress);
             if (!(serialized is { } serializedValue))
             {
                 return ImmutableDictionary<Guid, Coupon>.Empty;
@@ -420,7 +420,7 @@ namespace Nekoyume.Module
 
         public static IEnumerable<GoldDistribution> GetGoldDistribution(this IWorldState worldState)
         {
-            var value = GetState(worldState, Addresses.GoldDistribution);
+            var value = GetLegacyState(worldState, Addresses.GoldDistribution);
             if (value is null)
             {
                 Log.Warning($"{nameof(GoldDistribution)} is null ({0})", Addresses.GoldDistribution.ToHex());
@@ -672,7 +672,7 @@ namespace Nekoyume.Module
         {
             var sheetTypes = result.Keys.ToArray();
             var addresses = result.Values.Select(e => e.address).ToArray();
-            var csvValues = GetStates(worldState, addresses);
+            var csvValues = GetLegacyStates(worldState, addresses);
             for (var i = 0; i < sheetTypes.Length; i++)
             {
                 var sheetType = sheetTypes[i];
@@ -719,7 +719,7 @@ namespace Nekoyume.Module
 
         public static string GetSheetCsv(this IWorldState worldState, Address address)
         {
-            var value = LegacyModule.GetState(worldState, address);
+            var value = LegacyModule.GetLegacyState(worldState, address);
             if (value is null or Null)
             {
                 throw new FailedLoadStateException(address, typeof(ISheet));
@@ -847,7 +847,7 @@ namespace Nekoyume.Module
 
         public static RankingState GetRankingState(this IWorldState worldState)
         {
-            var value = GetState(worldState, Addresses.Ranking);
+            var value = GetLegacyState(worldState, Addresses.Ranking);
             if (value is null)
             {
                 throw new FailedLoadStateException(nameof(RankingState0));
@@ -858,7 +858,7 @@ namespace Nekoyume.Module
 
         public static RankingState1 GetRankingState1(this IWorldState worldState)
         {
-            var value = GetState(worldState, Addresses.Ranking);
+            var value = GetLegacyState(worldState, Addresses.Ranking);
             if (value is null)
             {
                 throw new FailedLoadStateException(nameof(RankingState1));
@@ -869,7 +869,7 @@ namespace Nekoyume.Module
 
         public static RankingState0 GetRankingState0(this IWorldState worldState)
         {
-            var value = GetState(worldState, Addresses.Ranking);
+            var value = GetLegacyState(worldState, Addresses.Ranking);
             if (value is null)
             {
                 throw new FailedLoadStateException(nameof(RankingState0));
@@ -880,7 +880,7 @@ namespace Nekoyume.Module
 
         public static ShopState GetShopState(this IWorldState worldState)
         {
-            var value = GetState(worldState, Addresses.Shop);
+            var value = GetLegacyState(worldState, Addresses.Shop);
             if (value is null)
             {
                 throw new FailedLoadStateException(nameof(ShopState));
@@ -899,7 +899,7 @@ namespace Nekoyume.Module
             var arenaInfoAddress = weeklyArenaAddress.Derive(avatarState.address.ToByteArray());
             var isNew = false;
             ArenaInfo arenaInfo;
-            if (TryGetState(worldState, arenaInfoAddress, out Dictionary rawArenaInfo))
+            if (TryGetLegacyState(worldState, arenaInfoAddress, out Dictionary rawArenaInfo))
             {
                 arenaInfo = new ArenaInfo(rawArenaInfo);
             }
@@ -917,7 +917,7 @@ namespace Nekoyume.Module
             Address agentAddress,
             out StakeState stakeState)
         {
-            if (TryGetState(worldState, StakeState.DeriveAddress(agentAddress), out Dictionary dictionary))
+            if (TryGetLegacyState(worldState, StakeState.DeriveAddress(agentAddress), out Dictionary dictionary))
             {
                 stakeState = new StakeState(dictionary);
                 return true;
@@ -950,7 +950,7 @@ namespace Nekoyume.Module
         public static ArenaParticipants GetArenaParticipants(
             this IWorldState worldState, Address arenaParticipantsAddress, int id, int round)
         {
-            return TryGetState(worldState, arenaParticipantsAddress, out List list)
+            return TryGetLegacyState(worldState, arenaParticipantsAddress, out List list)
                 ? new ArenaParticipants(list)
                 : new ArenaParticipants(id, round);
         }
@@ -960,7 +960,7 @@ namespace Nekoyume.Module
             Address arenaAvatarStateAddress,
             AvatarState avatarState)
         {
-            return TryGetState(worldState, arenaAvatarStateAddress, out List list)
+            return TryGetLegacyState(worldState, arenaAvatarStateAddress, out List list)
                 ? new ArenaAvatarState(list)
                 : new ArenaAvatarState(avatarState);
         }
@@ -970,7 +970,7 @@ namespace Nekoyume.Module
             Address arenaParticipantsAddress,
             out ArenaParticipants arenaParticipants)
         {
-            if (TryGetState(worldState, arenaParticipantsAddress, out List list))
+            if (TryGetLegacyState(worldState, arenaParticipantsAddress, out List list))
             {
                 arenaParticipants = new ArenaParticipants(list);
                 return true;
@@ -985,7 +985,7 @@ namespace Nekoyume.Module
             Address arenaAvatarStateAddress,
             out ArenaAvatarState arenaAvatarState)
         {
-            if (TryGetState(worldState, arenaAvatarStateAddress, out List list))
+            if (TryGetLegacyState(worldState, arenaAvatarStateAddress, out List list))
             {
                 arenaAvatarState = new ArenaAvatarState(list);
                 return true;
@@ -1000,7 +1000,7 @@ namespace Nekoyume.Module
             Address arenaScoreAddress,
             out ArenaScore arenaScore)
         {
-            if (TryGetState(worldState, arenaScoreAddress, out List list))
+            if (TryGetLegacyState(worldState, arenaScoreAddress, out List list))
             {
                 arenaScore = new ArenaScore(list);
                 return true;
@@ -1015,7 +1015,7 @@ namespace Nekoyume.Module
             Address arenaInformationAddress,
             out ArenaInformation arenaInformation)
         {
-            if (TryGetState(worldState, arenaInformationAddress, out List list))
+            if (TryGetLegacyState(worldState, arenaInformationAddress, out List list))
             {
                 arenaInformation = new ArenaInformation(list);
                 return true;
@@ -1029,7 +1029,7 @@ namespace Nekoyume.Module
             this IWorldState worldState,
             Address address)
         {
-            return TryGetState(worldState, address, out List rawState)
+            return TryGetLegacyState(worldState, address, out List rawState)
                 ? new CrystalCostState(address, rawState)
                 : new CrystalCostState(address, 0 * CrystalCalculator.CRYSTAL);
         }
@@ -1078,7 +1078,7 @@ namespace Nekoyume.Module
                 var unlockedWorldIdsAddress = avatarAddress.Derive("world_ids");
 
                 // Unlock First.
-                if (!TryGetState(worldState, unlockedWorldIdsAddress, out List rawIds))
+                if (!TryGetLegacyState(worldState, unlockedWorldIdsAddress, out List rawIds))
                 {
                     throw new InvalidWorldException();
                 }
@@ -1103,7 +1103,7 @@ namespace Nekoyume.Module
             this IWorldState worldState,
             Address raiderAddress)
         {
-            if (TryGetState(worldState, raiderAddress, out List rawRaider))
+            if (TryGetLegacyState(worldState, raiderAddress, out List rawRaider))
             {
                 return new RaiderState(rawRaider);
             }

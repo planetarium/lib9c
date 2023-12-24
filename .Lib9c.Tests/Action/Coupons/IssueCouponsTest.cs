@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action.Coupons
         public void Execute()
         {
             IWorld state = new World(new MockWorldState())
-                .SetState(
+                .SetLegacyState(
                     AdminState.Address,
                     new AdminState(CouponsFixture.AgentAddress1, 1)
                         .Serialize());

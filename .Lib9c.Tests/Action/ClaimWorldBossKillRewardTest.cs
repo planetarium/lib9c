@@ -65,16 +65,16 @@ namespace Lib9c.Tests.Action
                 rankingMapAddress);
 
             state = state
-                .SetState(Addresses.GetSheetAddress<RuneWeightSheet>(), runeWeightSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<WorldBossListSheet>(), worldBossListSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<WorldBossKillRewardSheet>(), killRewardSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<RuneSheet>(), tableSheets.RuneSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<WorldBossCharacterSheet>(), tableSheets.WorldBossCharacterSheet.Serialize())
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<RuneWeightSheet>(), runeWeightSheet.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<WorldBossListSheet>(), worldBossListSheet.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<WorldBossKillRewardSheet>(), killRewardSheet.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<RuneSheet>(), tableSheets.RuneSheet.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<WorldBossCharacterSheet>(), tableSheets.WorldBossCharacterSheet.Serialize())
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize())
                 .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
-                .SetState(worldBossKillRewardRecordAddress, worldBossKillRewardRecord.Serialize())
-                .SetState(worldBossAddress, worldBossState.Serialize())
-                .SetState(raiderStateAddress, raiderState.Serialize());
+                .SetLegacyState(worldBossKillRewardRecordAddress, worldBossKillRewardRecord.Serialize())
+                .SetLegacyState(worldBossAddress, worldBossState.Serialize())
+                .SetLegacyState(raiderStateAddress, raiderState.Serialize());
 
             var action = new ClaimWordBossKillReward
             {
@@ -95,7 +95,7 @@ namespace Lib9c.Tests.Action
                 var runeCurrency = RuneHelper.ToCurrency(tableSheets.RuneSheet[10001]);
                 Assert.Equal(1 * runeCurrency, nextState.GetBalance(avatarAddress, runeCurrency));
                 Assert.Equal(100 * CrystalCalculator.CRYSTAL, nextState.GetBalance(agentAddress, CrystalCalculator.CRYSTAL));
-                var nextRewardInfo = new WorldBossKillRewardRecord((List)nextState.GetState(worldBossKillRewardRecordAddress));
+                var nextRewardInfo = new WorldBossKillRewardRecord((List)nextState.GetLegacyState(worldBossKillRewardRecordAddress));
                 Assert.All(nextRewardInfo, kv => Assert.True(kv.Value));
 
                 List<FungibleAssetValue> rewards = RuneHelper.CalculateReward(

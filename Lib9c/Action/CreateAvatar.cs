@@ -133,7 +133,7 @@ namespace Nekoyume.Action
             foreach (var address in avatarState.combinationSlotAddresses)
             {
                 var slotState = new CombinationSlotState(address, 0);
-                states = states.SetState(address, slotState.Serialize());
+                states = states.SetLegacyState(address, slotState.Serialize());
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);

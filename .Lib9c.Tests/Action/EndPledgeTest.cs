@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action
             var agent = new PrivateKey().Address;
             var context = new ActionContext();
             IWorld states = new World(new MockWorldState())
-                .SetState(agent.GetPledgeAddress(), List.Empty.Add(patron.Serialize()).Add(true.Serialize()));
+                .SetLegacyState(agent.GetPledgeAddress(), List.Empty.Add(patron.Serialize()).Add(true.Serialize()));
             var mead = Currencies.Mead;
             if (balance > 0)
             {
@@ -36,7 +36,7 @@ namespace Lib9c.Tests.Action
                 Signer = patron,
                 PreviousState = states,
             });
-            Assert.Equal(Null.Value, nextState.GetState(agent.GetPledgeAddress()));
+            Assert.Equal(Null.Value, nextState.GetLegacyState(agent.GetPledgeAddress()));
             Assert.Equal(mead * 0, nextState.GetBalance(agent, mead));
             if (balance > 0)
             {
@@ -52,7 +52,7 @@ namespace Lib9c.Tests.Action
             Address patron = new PrivateKey().Address;
             Address agent = new PrivateKey().Address;
             List contract = List.Empty.Add(patron.Serialize()).Add(true.Serialize());
-            IWorld states = new World(new MockWorldState()).SetState(agent.GetPledgeAddress(), contract);
+            IWorld states = new World(new MockWorldState()).SetLegacyState(agent.GetPledgeAddress(), contract);
 
             var action = new EndPledge
             {

@@ -139,7 +139,7 @@ namespace Nekoyume.Action
             var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
             var costSheetV3Address = Addresses.GetSheetAddress<EnhancementCostSheetV3>();
-            var sheetState = states.GetState(costSheetV3Address);
+            var sheetState = states.GetLegacyState(costSheetV3Address);
             if (sheetState != null)
             {
                 throw new ActionObsoletedException(nameof(ItemEnhancement11));
@@ -322,7 +322,7 @@ namespace Nekoyume.Action
 
                 Currency currency = states.GetGoldCurrency();
                 FungibleAssetValue stakedAmount = states.GetStakedAmount(context.Signer);
-                if (stakedAmount == currency * 0 && states.TryGetState(monsterCollectionAddress, out Dictionary _))
+                if (stakedAmount == currency * 0 && states.TryGetLegacyState(monsterCollectionAddress, out Dictionary _))
                 {
                     stakedAmount = states.GetBalance(monsterCollectionAddress, currency);
                 }
@@ -384,7 +384,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}ItemEnhancement Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ItemEnhancement Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.SetState(slotAddress, slotState.Serialize());
+            return states.SetLegacyState(slotAddress, slotState.Serialize());
         }
 
         public static EnhancementResult GetEnhancementResult(EnhancementCostSheetV2.Row row, IRandom random)

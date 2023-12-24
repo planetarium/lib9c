@@ -58,7 +58,7 @@ namespace Lib9c.Tests.Action.Summon
             _initialState = new World(new MockWorldState())
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true)
-                .SetState(GoldCurrencyState.Address, gold.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, gold.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100000000000)
                 .MintAsset(context, _avatarAddress, 100 * Currencies.GetRune("RUNESTONE_FENRIR1"))
                 .TransferAsset(
@@ -80,7 +80,7 @@ namespace Lib9c.Tests.Action.Summon
             foreach (var (key, value) in sheets)
             {
                 _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    _initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
@@ -119,7 +119,7 @@ namespace Lib9c.Tests.Action.Summon
         {
             var random = new TestRandom(seed);
             var state = _initialState;
-            state = state.SetState(
+            state = state.SetLegacyState(
                 Addresses.TableSheet.Derive(nameof(SummonSheet)),
                 _tableSheets.SummonSheet.Serialize()
             );

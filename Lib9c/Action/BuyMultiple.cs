@@ -259,7 +259,7 @@ namespace Nekoyume.Action
                     current);
             }
 
-            if (!states.TryGetState(ShopState.Address, out Bencodex.Types.Dictionary shopStateDict))
+            if (!states.TryGetLegacyState(ShopState.Address, out Bencodex.Types.Dictionary shopStateDict))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the shop state was failed to load.");
             }
@@ -420,7 +420,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}BuyMultiple Set Buyer AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
-            states = states.SetState(ShopState.Address, shopStateDict);
+            states = states.SetLegacyState(ShopState.Address, shopStateDict);
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}BuyMultiple Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);

@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateAddressKeyNotFoundException()
         {
-            var states = new World(new MockWorldState()).SetState(default, Dictionary.Empty);
+            var states = new World(new MockWorldState()).SetLegacyState(default, Dictionary.Empty);
 
             Assert.False(states.TryGetAvatarState(default, default, out _));
         }
@@ -66,7 +66,7 @@ namespace Lib9c.Tests.Action
         public void TryGetAvatarStateKeyNotFoundException()
         {
             var states = new World(new MockWorldState())
-                .SetState(
+                .SetLegacyState(
                 default,
                 Dictionary.Empty
                     .Add("agentAddress", default(Address).Serialize())
@@ -78,7 +78,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateInvalidCastException()
         {
-            var states = new World(new MockWorldState()).SetState(default, default(Text));
+            var states = new World(new MockWorldState()).SetLegacyState(default, default(Text));
 
             Assert.False(states.TryGetAvatarState(default, default, out _));
         }
@@ -138,7 +138,7 @@ namespace Lib9c.Tests.Action
             if (backward)
             {
                 states = states
-                    .SetState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
+                    .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
             }
             else
             {
@@ -164,10 +164,10 @@ namespace Lib9c.Tests.Action
             };
             foreach (var (address, value) in dict)
             {
-                states = states.SetState(address, value);
+                states = states.SetLegacyState(address, value);
             }
 
-            var stateDict = states.GetStatesAsDict(dict.Keys.ToArray());
+            var stateDict = states.GetLegacyStatesAsDict(dict.Keys.ToArray());
             foreach (var (address, value) in dict)
             {
                 Assert.True(stateDict.ContainsKey(address));
@@ -216,7 +216,7 @@ namespace Lib9c.Tests.Action
             crystalCostState.Count = expectedCount;
             if (exist)
             {
-                states = states.SetState(address, crystalCostState.Serialize());
+                states = states.SetLegacyState(address, crystalCostState.Serialize());
             }
 
             CrystalCostState actual = states.GetCrystalCostState(address);
@@ -240,11 +240,11 @@ namespace Lib9c.Tests.Action
             Address beforePreviousCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 2);
             var crystalCostState = new CrystalCostState(default, 100 * CrystalCalculator.CRYSTAL);
             IWorld state = new World(new MockWorldState())
-                .SetState(dailyCostAddress, crystalCostState.Serialize())
-                .SetState(weeklyCostAddress, crystalCostState.Serialize())
-                .SetState(previousCostAddress, crystalCostState.Serialize())
-                .SetState(Addresses.GetSheetAddress<CrystalFluctuationSheet>(), _tableSheets.CrystalFluctuationSheet.Serialize())
-                .SetState(beforePreviousCostAddress, crystalCostState.Serialize());
+                .SetLegacyState(dailyCostAddress, crystalCostState.Serialize())
+                .SetLegacyState(weeklyCostAddress, crystalCostState.Serialize())
+                .SetLegacyState(previousCostAddress, crystalCostState.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<CrystalFluctuationSheet>(), _tableSheets.CrystalFluctuationSheet.Serialize())
+                .SetLegacyState(beforePreviousCostAddress, crystalCostState.Serialize());
             var (daily, weekly, previousWeekly, beforePreviousWeekly) =
                 state.GetCrystalCostStates(blockIndex, interval);
 
@@ -286,57 +286,57 @@ namespace Lib9c.Tests.Action
                 ImmutableDictionary<Guid, Coupon>.Empty,
                 states.GetCouponWallet(agentAddress2));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 Bencodex.Types.List.Empty);
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress2.Derive(CouponWalletKey),
                 Bencodex.Types.Null.Value);
 
             Assert.Equal(ImmutableDictionary<Guid, Coupon>.Empty, states.GetCouponWallet(agentAddress1));
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress2));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 Bencodex.Types.Dictionary.Empty);
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress2.Derive(CouponWalletKey),
                 (Integer)1);
 
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress1));
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress2));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 (Bencodex.Types.Boolean)true);
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress2.Derive(CouponWalletKey),
                 (Text)"test");
 
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress1));
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress2));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 (Bencodex.Types.Binary)new byte[] { });
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 (Bencodex.Types.Binary)new byte[] { 0x00 });
 
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress1));
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress2));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 Bencodex.Types.List.Empty
                     .Add(coupon1.Serialize())
                     .Add(coupon2.Serialize()));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress2.Derive(CouponWalletKey),
                 Bencodex.Types.List.Empty
                     .Add(coupon3.Serialize()));

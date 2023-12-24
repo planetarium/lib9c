@@ -69,18 +69,18 @@ namespace Nekoyume.Action
             avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
-            if (states.TryGetState(productsStateAddress, out List rawProducts))
+            if (states.TryGetLegacyState(productsStateAddress, out List rawProducts))
             {
                 productsState = new ProductsState(rawProducts);
             }
             else
             {
                 productsState = new ProductsState();
-                var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
+                var marketState = states.TryGetLegacyState(Addresses.Market, out List rawMarketList)
                     ? rawMarketList
                     : List.Empty;
                 marketState = marketState.Add(AvatarAddress.Serialize());
-                states = states.SetState(Addresses.Market, marketState);
+                states = states.SetLegacyState(Addresses.Market, marketState);
             }
             foreach (var info in RegisterInfos.OrderBy(r => r.Type).ThenBy(r => r.Price))
             {
@@ -89,7 +89,7 @@ namespace Nekoyume.Action
 
             states = states
                 .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
-                .SetState(productsStateAddress, productsState.Serialize());
+                .SetLegacyState(productsStateAddress, productsState.Serialize());
 
             return states;
         }
@@ -179,7 +179,7 @@ namespace Nekoyume.Action
                                 SellerAvatarAddress = registerInfo.AvatarAddress,
                             };
                             productsState.ProductIds.Add(productId);
-                            states = states.SetState(Product.DeriveAddress(productId),
+                            states = states.SetLegacyState(Product.DeriveAddress(productId),
                                 product.Serialize());
                             break;
                         }
@@ -203,7 +203,7 @@ namespace Nekoyume.Action
                     };
                     states = states
                         .TransferAsset(context, avatarState.address, productAddress, asset)
-                        .SetState(productAddress, product.Serialize());
+                        .SetLegacyState(productAddress, product.Serialize());
                     productsState.ProductIds.Add(productId);
                     break;
                 }

@@ -51,15 +51,15 @@ namespace Lib9c.Tests.Action.Scenario
             _weeklyArenaState = new WeeklyArenaState(0);
 
             _initialState = new World(new MockWorldState())
-                .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
+                .SetLegacyState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
-                .SetState(_rankingMapAddress, new RankingMapState(_rankingMapAddress).Serialize());
+                .SetLegacyState(_rankingMapAddress, new RankingMapState(_rankingMapAddress).Serialize());
 
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 

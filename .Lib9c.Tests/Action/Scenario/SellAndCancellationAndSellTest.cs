@@ -61,15 +61,15 @@ namespace Lib9c.Tests.Action.Scenario
             };
 
             _initialState = new World(new MockWorldState())
-                .SetState(GoldCurrencyState.Address, gold.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, gold.Serialize())
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 

@@ -58,7 +58,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            List<int> unlockedIds = states.TryGetState(unlockedWorldIdsAddress, out List rawIds)
+            List<int> unlockedIds = states.TryGetLegacyState(unlockedWorldIdsAddress, out List rawIds)
                 ? rawIds.ToList(StateExtensions.ToInteger)
                 : new List<int>
                 {
@@ -104,7 +104,7 @@ namespace Nekoyume.Action
             }
 
             return states
-                .SetState(unlockedWorldIdsAddress, new List(unlockedIds.Select(i => i.Serialize())))
+                .SetLegacyState(unlockedWorldIdsAddress, new List(unlockedIds.Select(i => i.Serialize())))
                 .TransferAsset(context, context.Signer, Addresses.UnlockWorld, cost);
         }
 

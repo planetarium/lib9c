@@ -114,7 +114,7 @@ namespace Nekoyume.Action
         {
             var productId = productInfo.ProductId;
             var productsStateAddress = ProductsState.DeriveAddress(sellerAvatarAddress);
-            var productsState = new ProductsState((List) states.GetState(productsStateAddress));
+            var productsState = new ProductsState((List) states.GetLegacyState(productsStateAddress));
             if (!productsState.ProductIds.Contains(productId))
             {
                 // sold out or canceled product.
@@ -124,7 +124,7 @@ namespace Nekoyume.Action
             productsState.ProductIds.Remove(productId);
 
             var productAddress = Product.DeriveAddress(productId);
-            var product = ProductFactory.DeserializeProduct((List) states.GetState(productAddress));
+            var product = ProductFactory.DeserializeProduct((List) states.GetLegacyState(productAddress));
             product.Validate(productInfo);
 
             switch (product)
@@ -178,11 +178,11 @@ namespace Nekoyume.Action
             var receipt = new ProductReceipt(productId, sellerAvatarAddress, buyerAvatarState.address, product.Price,
                 context.BlockIndex);
             states = states
-                .SetState(productAddress, Null.Value)
-                .SetState(productsStateAddress, productsState.Serialize())
-                .SetState(sellerAvatarAddress, sellerAvatarState.SerializeV2())
-                .SetState(sellerAvatarAddress.Derive(LegacyQuestListKey), sellerAvatarState.questList.Serialize())
-                .SetState(ProductReceipt.DeriveAddress(productId), receipt.Serialize())
+                .SetLegacyState(productAddress, Null.Value)
+                .SetLegacyState(productsStateAddress, productsState.Serialize())
+                .SetLegacyState(sellerAvatarAddress, sellerAvatarState.SerializeV2())
+                .SetLegacyState(sellerAvatarAddress.Derive(LegacyQuestListKey), sellerAvatarState.questList.Serialize())
+                .SetLegacyState(ProductReceipt.DeriveAddress(productId), receipt.Serialize())
                 .TransferAsset(context, context.Signer, feeStoreAddress, tax)
                 .TransferAsset(context, context.Signer, sellerAgentAddress, taxedPrice);
 
@@ -205,12 +205,12 @@ namespace Nekoyume.Action
             Address orderAddress = Order.DeriveAddress(orderId);
             Address digestListAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
 
-            if (!states.TryGetState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
+            if (!states.TryGetLegacyState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
             {
                 throw new FailedLoadStateException("failed to load shop state");
             }
 
-            if (!states.TryGetState(orderAddress, out Dictionary rawOrder))
+            if (!states.TryGetLegacyState(orderAddress, out Dictionary rawOrder))
             {
                 throw new OrderIdDoesNotExistException($"{orderId}");
             }
@@ -220,7 +220,7 @@ namespace Nekoyume.Action
             var shardedShopState = new ShardedShopStateV2(shopStateDict);
             shardedShopState.Remove(order, context.BlockIndex);
 
-            if (!states.TryGetState(digestListAddress, out Dictionary rawDigestList))
+            if (!states.TryGetLegacyState(digestListAddress, out Dictionary rawDigestList))
             {
                 throw new FailedLoadStateException($"{orderId}");
             }
@@ -261,7 +261,7 @@ namespace Nekoyume.Action
             var orderReceipt = order.Transfer(sellerAvatarState, buyerAvatarState, context.BlockIndex);
 
             Address orderReceiptAddress = OrderReceipt.DeriveAddress(orderId);
-            if (!(states.GetState(orderReceiptAddress) is null))
+            if (!(states.GetLegacyState(orderReceiptAddress) is null))
             {
                 throw new DuplicateOrderIdException($"{orderId}");
             }
@@ -321,13 +321,13 @@ namespace Nekoyume.Action
             );
 
             states = states
-                .SetState(digestListAddress, digestList.Serialize())
-                .SetState(orderReceiptAddress, orderReceipt.Serialize())
-                .SetState(sellerInventoryAddress, sellerAvatarState.inventory.Serialize())
-                .SetState(sellerWorldInformationAddress, sellerAvatarState.worldInformation.Serialize())
-                .SetState(sellerQuestListAddress, sellerAvatarState.questList.Serialize())
-                .SetState(sellerAvatarAddress, MigrationAvatarState.LegacySerializeV2(sellerAvatarState));
-            states = states.SetState(shardedShopAddress, shardedShopState.Serialize());
+                .SetLegacyState(digestListAddress, digestList.Serialize())
+                .SetLegacyState(orderReceiptAddress, orderReceipt.Serialize())
+                .SetLegacyState(sellerInventoryAddress, sellerAvatarState.inventory.Serialize())
+                .SetLegacyState(sellerWorldInformationAddress, sellerAvatarState.worldInformation.Serialize())
+                .SetLegacyState(sellerQuestListAddress, sellerAvatarState.questList.Serialize())
+                .SetLegacyState(sellerAvatarAddress, MigrationAvatarState.LegacySerializeV2(sellerAvatarState));
+            states = states.SetLegacyState(shardedShopAddress, shardedShopState.Serialize());
             return states;
         }
 

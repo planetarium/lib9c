@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Action
                 Signer = _adminPrivateKey.Address,
             });
 
-            var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetState(Addresses.Admin));
+            var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetLegacyState(Addresses.Admin));
             Assert.Equal(newValidUntil, adminState.ValidUntil);
             Assert.NotEqual(_validUntil, adminState.ValidUntil);
         }
@@ -70,7 +70,7 @@ namespace Lib9c.Tests.Action
                 Signer = _adminPrivateKey.Address,
             });
 
-            var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetState(Addresses.Admin));
+            var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetLegacyState(Addresses.Admin));
             Assert.Equal(newValidUntil, adminState.ValidUntil);
             Assert.NotEqual(_validUntil, adminState.ValidUntil);
         }
@@ -128,7 +128,7 @@ namespace Lib9c.Tests.Action
 
             Address expectedPendingActivationStateAddress =
                 PendingActivationState.DeriveAddress(nonce, privateKey.PublicKey);
-            Assert.NotNull(stateDelta.GetState(expectedPendingActivationStateAddress));
+            Assert.NotNull(stateDelta.GetLegacyState(expectedPendingActivationStateAddress));
         }
     }
 }

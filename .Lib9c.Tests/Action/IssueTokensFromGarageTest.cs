@@ -47,12 +47,12 @@ namespace Lib9c.Tests
             {
                 var garageAddr = Addresses.GetGarageAddress(_signer, material.FungibleId);
                 var garage = new FungibleItemGarage(material, 1000);
-                _prevState = _prevState.SetState(garageAddr, garage.Serialize());
+                _prevState = _prevState.SetLegacyState(garageAddr, garage.Serialize());
             }
 
             foreach (var (key, value) in sheets)
             {
-                _prevState = _prevState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _prevState = _prevState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
@@ -145,7 +145,7 @@ namespace Lib9c.Tests
             Currency itemCurrency = Currency.Legacy("Item_NT_100000", 0, null);
             var garageAddr = Addresses.GetGarageAddress(_signer, SampleFungibleId);
             Assert.Equal(itemCurrency * 42, nextState.GetBalance(_signer, itemCurrency));
-            Assert.Equal(1000 - 42, new FungibleItemGarage(nextState.GetState(garageAddr)).Count);
+            Assert.Equal(1000 - 42, new FungibleItemGarage(nextState.GetLegacyState(garageAddr)).Count);
         }
     }
 }

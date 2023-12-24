@@ -60,7 +60,7 @@ namespace Lib9c.DevExtensions.Action.Craft
                 states.GetSheet<WorldSheet>(),
                 targetStage
             );
-            return states.SetState(
+            return states.SetLegacyState(
                 AvatarAddress.Derive(LegacyWorldInformationKey),
                 worldInformation.Serialize()
             );

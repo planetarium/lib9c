@@ -150,13 +150,13 @@ namespace Lib9c.DevExtensions.Action
                 var slotState =
                     new CombinationSlotState(address,
                         0);
-                states = states.SetState(address, slotState.Serialize());
+                states = states.SetLegacyState(address, slotState.Serialize());
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);
             states = states
                 .SetAgentState(agentAddress, agentState)
-                .SetState(Addresses.Ranking, rankingState.Serialize())
+                .SetLegacyState(Addresses.Ranking, rankingState.Serialize())
                 .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
             // ~Create Agent and avatar && ~Add item
 
@@ -186,22 +186,22 @@ namespace Lib9c.DevExtensions.Action
                 var tradableItem = order.Sell(avatarState);
 
                 var shardedShopState =
-                    states.TryGetState(shopAddress, out Dictionary serializedState)
+                    states.TryGetLegacyState(shopAddress, out Dictionary serializedState)
                         ? new ShardedShopStateV2(serializedState)
                         : new ShardedShopStateV2(shopAddress);
                 var orderDigest = order.Digest(avatarState, costumeStatSheet);
                 shardedShopState.Add(orderDigest, context.BlockIndex);
                 var orderReceiptList =
-                    states.TryGetState(orderReceiptAddress, out Dictionary receiptDict)
+                    states.TryGetLegacyState(orderReceiptAddress, out Dictionary receiptDict)
                         ? new OrderDigestListState(receiptDict)
                         : new OrderDigestListState(orderReceiptAddress);
                 orderReceiptList.Add(orderDigest);
 
-                states = states.SetState(orderReceiptAddress, orderReceiptList.Serialize())
+                states = states.SetLegacyState(orderReceiptAddress, orderReceiptList.Serialize())
                     .SetAvatarState(avatarAddress, avatarState, true, true, false, false)
-                    .SetState(itemAddress, tradableItem.Serialize())
-                    .SetState(orderAddress, order.Serialize())
-                    .SetState(shopAddress, shardedShopState.Serialize());
+                    .SetLegacyState(itemAddress, tradableItem.Serialize())
+                    .SetLegacyState(orderAddress, order.Serialize())
+                    .SetLegacyState(shopAddress, shardedShopState.Serialize());
             }
 
             result.SellerAgentAddress = agentAddress;

@@ -118,9 +118,9 @@ namespace Nekoyume.Action
             // Check new type of activation first.
             // If result of GetState is not null, it is assumed that it has been activated.
             if (
-                state.GetState(recipientAddress) is null &&
-                state.GetState(Addresses.ActivatedAccount) is Dictionary asDict &&
-                state.GetState(Recipient) is null
+                state.GetLegacyState(recipientAddress) is null &&
+                state.GetLegacyState(Addresses.ActivatedAccount) is Dictionary asDict &&
+                state.GetLegacyState(Recipient) is null
             )
             {
                 var activatedAccountsState = new ActivatedAccountsState(asDict);
@@ -128,7 +128,7 @@ namespace Nekoyume.Action
                 // if ActivatedAccountsState is empty, all user is activate.
                 if (activatedAccounts.Count != 0
                     && !activatedAccounts.Contains(Recipient)
-                    && state.GetState(Recipient) is null)
+                    && state.GetLegacyState(Recipient) is null)
                 {
                     throw new InvalidTransferUnactivatedRecipientException(Sender, Recipient);
                 }

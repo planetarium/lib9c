@@ -122,8 +122,8 @@ namespace Nekoyume.Action
             stakeState.Claim(context.BlockIndex);
 
             return states
-                .SetState(stakeState.address, stakeState.Serialize())
-                .SetState(
+                .SetLegacyState(stakeState.address, stakeState.Serialize())
+                .SetLegacyState(
                     avatarState.address.Derive(LegacyInventoryKey),
                     avatarState.inventory.Serialize());
         }

@@ -38,7 +38,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    _initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var tableSheets = new TableSheets(sheets);

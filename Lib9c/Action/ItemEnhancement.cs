@@ -371,7 +371,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex} ItemEnhancement Total Executed Time: {Elapsed}", addressesHex,
                 ended - started);
-            return states.SetState(slotAddress, slotState.Serialize());
+            return states.SetLegacyState(slotAddress, slotState.Serialize());
         }
 
         public static int GetRequiredBlockCount(Equipment preEquipment, Equipment targetEquipment,

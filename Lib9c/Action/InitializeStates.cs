@@ -133,29 +133,29 @@ namespace Nekoyume.Action
 #pragma warning disable LAA1002
             states = TableSheets
                 .Aggregate(states, (current, pair) =>
-                    current.SetState(Addresses.TableSheet.Derive(pair.Key), pair.Value.Serialize()));
+                    current.SetLegacyState(Addresses.TableSheet.Derive(pair.Key), pair.Value.Serialize()));
             states = rankingState.RankingMap
                 .Aggregate(states, (current, pair) =>
-                    current.SetState(pair.Key, new RankingMapState(pair.Key).Serialize()));
+                    current.SetLegacyState(pair.Key, new RankingMapState(pair.Key).Serialize()));
 #pragma warning restore LAA1002
             states = states
-                .SetState(weeklyArenaState.address, weeklyArenaState.Serialize())
-                .SetState(RankingState0.Address, Ranking)
-                .SetState(ShopState.Address, Shop)
-                .SetState(GameConfigState.Address, GameConfig)
-                .SetState(RedeemCodeState.Address, RedeemCode)
-                .SetState(ActivatedAccountsState.Address, ActivatedAccounts)
-                .SetState(GoldCurrencyState.Address, GoldCurrency)
-                .SetState(Addresses.GoldDistribution, GoldDistributions);
+                .SetLegacyState(weeklyArenaState.address, weeklyArenaState.Serialize())
+                .SetLegacyState(RankingState0.Address, Ranking)
+                .SetLegacyState(ShopState.Address, Shop)
+                .SetLegacyState(GameConfigState.Address, GameConfig)
+                .SetLegacyState(RedeemCodeState.Address, RedeemCode)
+                .SetLegacyState(ActivatedAccountsState.Address, ActivatedAccounts)
+                .SetLegacyState(GoldCurrencyState.Address, GoldCurrency)
+                .SetLegacyState(Addresses.GoldDistribution, GoldDistributions);
 
             if (!(AdminAddressState is null))
             {
-                states = states.SetState(AdminState.Address, AdminAddressState);
+                states = states.SetLegacyState(AdminState.Address, AdminAddressState);
             }
 
             if (!(AuthorizedMiners is null))
             {
-                states = states.SetState(
+                states = states.SetLegacyState(
                     AuthorizedMinersState.Address,
                     AuthorizedMiners
                 );
@@ -163,7 +163,7 @@ namespace Nekoyume.Action
 
             foreach (var rawPending in PendingActivations)
             {
-                states = states.SetState(
+                states = states.SetLegacyState(
                     new PendingActivationState((Dictionary)rawPending).address,
                     rawPending
                 );
@@ -171,7 +171,7 @@ namespace Nekoyume.Action
 
             if (!(Credits is null))
             {
-                states = states.SetState(CreditsState.Address, Credits);
+                states = states.SetLegacyState(CreditsState.Address, Credits);
             }
 
             var currencyState = new GoldCurrencyState(GoldCurrency);
@@ -186,7 +186,7 @@ namespace Nekoyume.Action
 
             if (AssetMinters is { })
             {
-                states = states.SetState(
+                states = states.SetLegacyState(
                     Addresses.AssetMinters,
                     new List(AssetMinters.Select(addr => addr.Serialize()))
                 );

@@ -204,7 +204,7 @@ namespace Nekoyume.Action.Garages
             {
                 garage.Unload(count);
                 avatarState.inventory.AddFungibleItem((ItemBase)garage.Item, count);
-                states = states.SetState(garageAddr, garage.Serialize());
+                states = states.SetLegacyState(garageAddr, garage.Serialize());
             }
 
             return states.SetAvatarState(RecipientAvatarAddr, avatarState, true, true, true, true);
@@ -215,7 +215,7 @@ namespace Nekoyume.Action.Garages
             IRandom random,
             IWorld states)
         {
-            var avatarValue = states.GetState(RecipientAvatarAddr);
+            var avatarValue = states.GetLegacyState(RecipientAvatarAddr);
             if (!(avatarValue is Dictionary avatarDict))
             {
                 throw new FailedLoadStateException(RecipientAvatarAddr, typeof(AvatarState));
@@ -240,7 +240,7 @@ namespace Nekoyume.Action.Garages
                 Memo));
             mailBox.CleanUp();
             avatarDict = avatarDict.SetItem(SerializeKeys.MailBoxKey, mailBox.Serialize());
-            return states.SetState(RecipientAvatarAddr, avatarDict);
+            return states.SetLegacyState(RecipientAvatarAddr, avatarDict);
         }
     }
 }

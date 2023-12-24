@@ -115,7 +115,7 @@ namespace Nekoyume.Action
                     GameConfig.RequireClearedStageLevel.ActionsInShop, current);
             }
 
-            if (!states.TryGetState(shardedShopAddress, out BxDictionary shopStateDict))
+            if (!states.TryGetLegacyState(shardedShopAddress, out BxDictionary shopStateDict))
             {
                 throw new FailedLoadStateException($"{addressesHex}failed to load {nameof(ShardedShopStateV2)}({shardedShopAddress}).");
             }
@@ -124,7 +124,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}Sell Cancel Get ShopState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            if (!states.TryGetState(Order.DeriveAddress(orderId), out Dictionary orderDict))
+            if (!states.TryGetLegacyState(Order.DeriveAddress(orderId), out Dictionary orderDict))
             {
                 throw new FailedLoadStateException($"{addressesHex}failed to load {nameof(Order)}({Order.DeriveAddress(orderId)}).");
             }
@@ -134,8 +134,8 @@ namespace Nekoyume.Action
             ITradableItem sellItem = order.Cancel2(avatarState, context.BlockIndex);
             var shardedShopState = new ShardedShopStateV2(shopStateDict);
             shardedShopState.Remove(order, context.BlockIndex);
-            states = states.SetState(shardedShopAddress, shardedShopState.Serialize());
-            if (!states.TryGetState(orderDigestListAddress, out Dictionary rawList))
+            states = states.SetLegacyState(shardedShopAddress, shardedShopState.Serialize());
+            if (!states.TryGetLegacyState(orderDigestListAddress, out Dictionary rawList))
             {
                 throw new FailedLoadStateException($"{addressesHex}failed to load {nameof(OrderDigest)}({orderDigestListAddress}).");
             }
@@ -165,8 +165,8 @@ namespace Nekoyume.Action
             sw.Restart();
 
             states = states
-                .SetState(itemAddress, sellItem.Serialize())
-                .SetState(orderDigestListAddress, digestList.Serialize())
+                .SetLegacyState(itemAddress, sellItem.Serialize())
+                .SetLegacyState(orderDigestListAddress, digestList.Serialize())
                 .SetAvatarState(sellerAvatarAddress, avatarState, true, true, true, true);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);

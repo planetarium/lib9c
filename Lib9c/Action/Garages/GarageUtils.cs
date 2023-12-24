@@ -120,7 +120,7 @@ namespace Nekoyume.Action.Garages
                     return (tuple.fungibleId, tuple.count, garageAddr);
                 }).ToArray();
             var garageAddresses = withGarageAddr.Select(tuple => tuple.garageAddr).ToArray();
-            var garageStates = states.GetStates(garageAddresses);
+            var garageStates = states.GetLegacyStates(garageAddresses);
             return withGarageAddr
                 .Zip(garageStates, (tuple, garageState) => (
                     tuple.fungibleId,
@@ -161,7 +161,7 @@ namespace Nekoyume.Action.Garages
                 .Select(tuple => tuple.senderGarageAddr)
                 .Concat(withGarageAddr.Select(tuple => tuple.recipientGarageAddr))
                 .ToArray();
-            var garageStates = states.GetStates(garageAddresses);
+            var garageStates = states.GetLegacyStates(garageAddresses);
             if (garageStates.Count != garageAddresses.Length)
             {
                 throw new Exception($"garageStates.Count({garageStates.Count}) != " +

@@ -34,8 +34,8 @@ namespace Lib9c.Tests.Action
             _signer = new PrivateKey().Address;
             _sender = new PrivateKey().Address;
             _states = new World(new MockWorldState())
-                .SetState(_signer, (Text)"ANYTHING")
-                .SetState(default, Dictionary.Empty.Add("key", "value"))
+                .SetLegacyState(_signer, (Text)"ANYTHING")
+                .SetLegacyState(default, Dictionary.Empty.Add("key", "value"))
                 .MintAsset(context, _signer, _currency * 10000);
             var resolver = MessagePack.Resolvers.CompositeResolver.Create(
                 NineChroniclesResolver.Instance,

@@ -36,7 +36,7 @@ namespace Lib9c.Tests.Action
             var pledgeAddress = agentAddress.GetPledgeAddress();
             var context = new ActionContext();
             IWorld states = new World(new MockWorldState())
-                .SetState(Addresses.Admin, adminState.Serialize())
+                .SetLegacyState(Addresses.Admin, adminState.Serialize())
                 .MintAsset(context, patronAddress, 4 * 500 * mead);
 
             var agentAddresses = new List<(Address, Address)>

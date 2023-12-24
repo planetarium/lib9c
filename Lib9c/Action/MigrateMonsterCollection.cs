@@ -70,7 +70,7 @@ namespace Nekoyume.Action
             var currency = states.GetGoldCurrency();
 
             Address collectionAddress = MonsterCollectionState.DeriveAddress(context.Signer, agentState.MonsterCollectionRound);
-            if (!states.TryGetState(collectionAddress, out Dictionary stateDict))
+            if (!states.TryGetLegacyState(collectionAddress, out Dictionary stateDict))
             {
                 throw new FailedLoadStateException($"Aborted as the monster collection state failed to load.");
             }
@@ -86,8 +86,8 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}MigrateMonsterCollection Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.SetState(monsterCollectionState.address, Null.Value)
-                .SetState(migratedStakeStateAddress, migratedStakeState.SerializeV2())
+            return states.SetLegacyState(monsterCollectionState.address, Null.Value)
+                .SetLegacyState(migratedStakeStateAddress, migratedStakeState.SerializeV2())
                 .TransferAsset(
                     context,
                     monsterCollectionState.address,

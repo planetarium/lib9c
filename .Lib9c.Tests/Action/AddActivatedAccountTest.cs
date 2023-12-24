@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Action
             var activatedAddress = newComer.Derive(ActivationKey.DeriveKey);
             if (alreadyActivated)
             {
-                state = state.SetState(activatedAddress, true.Serialize());
+                state = state.SetLegacyState(activatedAddress, true.Serialize());
             }
 
             var action = new AddActivatedAccount(newComer);
@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action
                     PreviousState = state,
                     Signer = signer,
                 });
-                Assert.True(nextState.GetState(activatedAddress).ToBoolean());
+                Assert.True(nextState.GetLegacyState(activatedAddress).ToBoolean());
             }
             else
             {

@@ -40,14 +40,14 @@ namespace Nekoyume.Action
             context.UseGas(1);
             var states = context.PreviousState;
             var contractAddress = AgentAddress.GetPledgeAddress();
-            if (states.TryGetState(contractAddress, out List _))
+            if (states.TryGetLegacyState(contractAddress, out List _))
             {
                 throw new AlreadyContractedException($"{AgentAddress} already contracted.");
             }
 
             return states
                 .TransferAsset(context, context.Signer, AgentAddress, 1 * Currencies.Mead)
-                .SetState(
+                .SetLegacyState(
                     contractAddress,
                     List.Empty
                         .Add(context.Signer.Serialize())

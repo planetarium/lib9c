@@ -54,12 +54,12 @@ namespace Lib9c.Tests.Action
             _state = _state
                 .SetAgentState(_signer, agentState)
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
             foreach ((string key, string value) in sheets)
             {
                 _state = _state
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
@@ -70,9 +70,9 @@ namespace Lib9c.Tests.Action
             var monsterCollectionState = new MonsterCollectionState(
                 monsterCollectionAddress, 1, 0);
             Address stakeStateAddress = StakeState.DeriveAddress(_signer);
-            var states = _state.SetState(
+            var states = _state.SetLegacyState(
                     stakeStateAddress, new StakeState(stakeStateAddress, 0).SerializeV2())
-                .SetState(monsterCollectionAddress, monsterCollectionState.SerializeV2());
+                .SetLegacyState(monsterCollectionAddress, monsterCollectionState.SerializeV2());
             MigrateMonsterCollection action = new MigrateMonsterCollection(_avatarAddress);
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
@@ -92,7 +92,7 @@ namespace Lib9c.Tests.Action
             var currency = _state.GetGoldCurrency();
             var context = new ActionContext();
             var states = _state
-                .SetState(monsterCollectionAddress, monsterCollectionState.Serialize())
+                .SetLegacyState(monsterCollectionAddress, monsterCollectionState.Serialize())
                 .MintAsset(context, monsterCollectionAddress, currency * 100);
             MigrateMonsterCollection action = new MigrateMonsterCollection(_avatarAddress);
             states = action.Execute(new ActionContext
@@ -122,7 +122,7 @@ namespace Lib9c.Tests.Action
 
             var context = new ActionContext();
             var states = _state
-                .SetState(collectionAddress, monsterCollectionState.Serialize())
+                .SetLegacyState(collectionAddress, monsterCollectionState.Serialize())
                 .MintAsset(context, monsterCollectionState.address, stakedAmount * currency);
 
             Assert.Equal(0, states.GetAgentState(_signer).MonsterCollectionRound);

@@ -34,7 +34,7 @@ namespace Lib9c.Tests.Util
                 // ItemEnhancement: 9
                 GameConfig.RequireClearedStageLevel.ItemEnhancementAction
             );
-            return state.SetState(slotAddress, slotState.Serialize());
+            return state.SetLegacyState(slotAddress, slotState.Serialize());
         }
 
         public static IWorld AddMaterialsToInventory(

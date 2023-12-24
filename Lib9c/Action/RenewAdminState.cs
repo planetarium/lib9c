@@ -46,7 +46,7 @@ namespace Nekoyume.Action
                 }
 
                 var newAdminState = new AdminState(adminState.AdminAddress, NewValidUntil);
-                states = states.SetState(Addresses.Admin,
+                states = states.SetLegacyState(Addresses.Admin,
                     newAdminState.Serialize());
             }
 

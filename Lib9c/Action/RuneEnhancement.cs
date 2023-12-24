@@ -73,7 +73,7 @@ namespace Nekoyume.Action
 
             RuneState runeState;
             var runeStateAddress = RuneState.DeriveAddress(AvatarAddress, RuneId);
-            if (states.TryGetState(runeStateAddress, out List rawState))
+            if (states.TryGetLegacyState(runeStateAddress, out List rawState))
             {
                 runeState = new RuneState(rawState);
             }
@@ -115,7 +115,7 @@ namespace Nekoyume.Action
                     cost, random, TryCount, out var tryCount))
             {
                 runeState.LevelUp();
-                states = states.SetState(runeStateAddress, runeState.Serialize());
+                states = states.SetLegacyState(runeStateAddress, runeState.Serialize());
             }
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();

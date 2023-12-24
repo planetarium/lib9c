@@ -42,7 +42,7 @@ namespace Nekoyume.Action
             context.UseGas(1);
             IWorld state = context.PreviousState;
 
-            if (!state.TryGetState(ActivatedAccountsState.Address, out Dictionary accountsAsDict))
+            if (!state.TryGetLegacyState(ActivatedAccountsState.Address, out Dictionary accountsAsDict))
             {
                 throw new ActivatedAccountsDoesNotExistsException();
             }
@@ -51,7 +51,7 @@ namespace Nekoyume.Action
             CheckPermission(context);
 
             var accounts = new ActivatedAccountsState(accountsAsDict);
-            return state.SetState(
+            return state.SetLegacyState(
                 ActivatedAccountsState.Address,
                 accounts.AddAccount(Address).Serialize()
             );

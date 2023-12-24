@@ -251,7 +251,7 @@ namespace Nekoyume.Action
                     continue;
                 }
 
-                if (!states.TryGetState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
+                if (!states.TryGetLegacyState(shardedShopAddress, out Bencodex.Types.Dictionary shopStateDict))
                 {
                     ShardedShopState shardedShopState = new ShardedShopState(shardedShopAddress);
                     shopStateDict = (Dictionary) shardedShopState.Serialize();
@@ -292,7 +292,7 @@ namespace Nekoyume.Action
                         continue;
                     }
                     // Backward compatibility.
-                    IValue rawShop = states.GetState(Addresses.Shop);
+                    IValue rawShop = states.GetLegacyState(Addresses.Shop);
                     if (!(rawShop is null))
                     {
                         Dictionary legacyShopDict = (Dictionary) rawShop;
@@ -308,7 +308,7 @@ namespace Nekoyume.Action
                         productSerialized = (Dictionary) legacyProducts[productKey];
                         legacyProducts = (Dictionary) legacyProducts.Remove(productKey);
                         legacyShopDict = legacyShopDict.SetItem(LegacyProductsKey, legacyProducts);
-                        states = states.SetState(Addresses.Shop, legacyShopDict);
+                        states = states.SetLegacyState(Addresses.Shop, legacyShopDict);
                         fromLegacy = true;
                     }
                 }
@@ -457,7 +457,7 @@ namespace Nekoyume.Action
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set Seller AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();
-                states = states.SetState(shardedShopAddress, shopStateDict);
+                states = states.SetLegacyState(shardedShopAddress, shopStateDict);
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
             }

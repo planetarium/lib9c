@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action
             {
                 if (!keys.Contains(key))
                 {
-                    _initialState = _initialState.SetState(
+                    _initialState = _initialState.SetLegacyState(
                         Addresses.TableSheet.Derive(key),
                         value.Serialize());
                 }
@@ -92,13 +92,13 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(_avatar1Address, avatar1State, true, true, true, true)
                 .SetAgentState(agent2Address, agent2State)
                 .SetAvatarState(_avatar2Address, avatar2State, true, true, true, true)
-                .SetState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize())
-                .SetState(_weeklyArenaAddress, weeklyArenaState.Serialize())
-                .SetState(
+                .SetLegacyState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize())
+                .SetLegacyState(_weeklyArenaAddress, weeklyArenaState.Serialize())
+                .SetLegacyState(
                     weeklyAddressListAddress,
                     weeklyAddressList.Aggregate(List.Empty, (list, address) => list.Add(address.Serialize())))
-                .SetState(arenaInfo1Address, arenaInfo1.Serialize())
-                .SetState(arenaInfo2Address, arenaInfo2.Serialize());
+                .SetLegacyState(arenaInfo1Address, arenaInfo1.Serialize())
+                .SetLegacyState(arenaInfo2Address, arenaInfo2.Serialize());
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -139,7 +139,7 @@ namespace Lib9c.Tests.Action
         public void ExecuteActionObsoletedException()
         {
             var previousArenaInfoAddress = _weeklyArenaAddress.Derive(_avatar1Address.ToByteArray());
-            var previousArenaInfo = new ArenaInfo((Dictionary)_initialState.GetState(previousArenaInfoAddress));
+            var previousArenaInfo = new ArenaInfo((Dictionary)_initialState.GetLegacyState(previousArenaInfoAddress));
             var previousAvatarState = _initialState.GetAvatarState(_avatar1Address);
             while (true)
             {
@@ -150,7 +150,7 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            var previousState = _initialState.SetState(
+            var previousState = _initialState.SetLegacyState(
                 previousArenaInfoAddress,
                 previousArenaInfo.Serialize());
 

@@ -58,12 +58,12 @@ namespace Lib9c.Tests.Action
             _state = _state
                 .SetAgentState(_signer, agentState)
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
             foreach ((string key, string value) in sheets)
             {
                 _state = _state
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _action = new ClaimMonsterCollectionReward
@@ -88,7 +88,7 @@ namespace Lib9c.Tests.Action
 
             Currency currency = _state.GetGoldCurrency();
 
-            _state = _state.SetState(collectionAddress, monsterCollectionState.Serialize());
+            _state = _state.SetLegacyState(collectionAddress, monsterCollectionState.Serialize());
 
             Assert.Equal(0, _state.GetAgentState(_signer).MonsterCollectionRound);
             Assert.Equal(0 * currency, _state.GetBalance(_signer, currency));
@@ -115,7 +115,7 @@ namespace Lib9c.Tests.Action
                 });
 
                 var nextMonsterCollectionState = new MonsterCollectionState(
-                    (Dictionary)nextState.GetState(collectionAddress)
+                    (Dictionary)nextState.GetLegacyState(collectionAddress)
                 );
                 Assert.Equal(0, nextMonsterCollectionState.RewardLevel);
 
@@ -168,7 +168,7 @@ namespace Lib9c.Tests.Action
         {
             Address collectionAddress = MonsterCollectionState.DeriveAddress(_signer, 0);
             var monsterCollectionState = new MonsterCollectionState(collectionAddress, 1, 0);
-            _state = _state.SetState(collectionAddress, monsterCollectionState.Serialize());
+            _state = _state.SetLegacyState(collectionAddress, monsterCollectionState.Serialize());
 
             Assert.Throws<RequiredBlockIndexException>(() => _action.Execute(new ActionContext
                 {

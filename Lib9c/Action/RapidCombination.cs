@@ -98,7 +98,7 @@ namespace Nekoyume.Action
             if (slotState.PetId.HasValue)
             {
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, slotState.PetId.Value);
-                if (!states.TryGetState(petStateAddress, out List rawState))
+                if (!states.TryGetLegacyState(petStateAddress, out List rawState))
                 {
                     throw new FailedLoadStateException($"{addressesHex}Aborted as the {nameof(PetState)} was failed to load.");
                 }
@@ -153,14 +153,14 @@ namespace Nekoyume.Action
             {
                 petState.Update(context.BlockIndex);
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, petState.PetId);
-                states = states.SetState(petStateAddress, petState.Serialize());
+                states = states.SetLegacyState(petStateAddress, petState.Serialize());
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
-                .SetState(slotAddress, slotState.Serialize());
+                .SetLegacyState(slotAddress, slotState.Serialize());
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

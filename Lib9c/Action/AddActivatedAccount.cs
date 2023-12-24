@@ -45,14 +45,14 @@ namespace Nekoyume.Action
             var address = Address.Derive(ActivationKey.DeriveKey);
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
-            if (!(state.GetState(address) is null))
+            if (!(state.GetLegacyState(address) is null))
             {
                 throw new AlreadyActivatedException($"{address} is already activated.");
             }
 
             CheckPermission(context);
 
-            return state.SetState(address, true.Serialize());
+            return state.SetLegacyState(address, true.Serialize());
         }
 
         public override void LoadPlainValue(IValue plainValue)

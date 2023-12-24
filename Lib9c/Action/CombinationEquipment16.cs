@@ -147,7 +147,7 @@ namespace Nekoyume.Action
             if (petId.HasValue)
             {
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, petId.Value);
-                if (!states.TryGetState(petStateAddress, out List rawState))
+                if (!states.TryGetLegacyState(petStateAddress, out List rawState))
                 {
                     throw new FailedLoadStateException($"{addressesHex}Aborted as the {nameof(PetState)} was failed to load.");
                 }
@@ -226,7 +226,7 @@ namespace Nekoyume.Action
             if (equipmentItemRecipeSheet[recipeId].CRYSTAL != 0)
             {
                 var unlockedRecipeIdsAddress = avatarAddress.Derive("recipe_ids");
-                if (!states.TryGetState(unlockedRecipeIdsAddress, out List rawIds))
+                if (!states.TryGetLegacyState(unlockedRecipeIdsAddress, out List rawIds))
                 {
                     throw new FailedLoadStateException("can't find UnlockedRecipeList.");
                 }
@@ -310,7 +310,7 @@ namespace Nekoyume.Action
             CrystalHammerPointSheet.Row hammerPointRow = null;
             if (existHammerPointSheet)
             {
-                if (states.TryGetState(hammerPointAddress, out List serialized))
+                if (states.TryGetLegacyState(hammerPointAddress, out List serialized))
                 {
                     hammerPointState =
                         new HammerPointState(hammerPointAddress, serialized);
@@ -496,7 +496,7 @@ namespace Nekoyume.Action
             {
                 petState.Update(endBlockIndex);
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, petState.PetId);
-                states = states.SetState(petStateAddress, petState.Serialize());
+                states = states.SetLegacyState(petStateAddress, petState.Serialize());
             }
             // ~Update Pet
 
@@ -513,8 +513,8 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex}CombinationEquipment Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
-                .SetState(slotAddress, slotState.Serialize())
-                .SetState(hammerPointAddress,hammerPointState.Serialize())
+                .SetLegacyState(slotAddress, slotState.Serialize())
+                .SetLegacyState(hammerPointAddress,hammerPointState.Serialize())
                 .SetAgentState(context.Signer, agentState);
         }
 
@@ -631,8 +631,8 @@ namespace Nekoyume.Action
                 }
 
                 states = states
-                    .SetState(dailyCostState.Address, dailyCostState.Serialize())
-                    .SetState(weeklyCostState.Address, weeklyCostState.Serialize())
+                    .SetLegacyState(dailyCostState.Address, dailyCostState.Serialize())
+                    .SetLegacyState(weeklyCostState.Address, weeklyCostState.Serialize())
                     .TransferAsset(context, context.Signer, Addresses.MaterialCost, costCrystal);
             }
 

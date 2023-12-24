@@ -65,7 +65,7 @@ namespace Nekoyume.Action
             }
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
-            var arenaSheetState = states.GetState(arenaSheetAddress);
+            var arenaSheetState = states.GetLegacyState(arenaSheetAddress);
             if (arenaSheetState != null)
             {
                 throw new ActionObsoletedException(nameof(RankingBattle11));
@@ -153,7 +153,7 @@ namespace Nekoyume.Action
             sw.Restart();
 
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
-            if (!states.TryGetState(weeklyArenaAddress, out Dictionary rawWeeklyArenaState))
+            if (!states.TryGetLegacyState(weeklyArenaAddress, out Dictionary rawWeeklyArenaState))
             {
                 return states;
             }
@@ -177,7 +177,7 @@ namespace Nekoyume.Action
                 var characterSheet = sheets.GetSheet<CharacterSheet>();
                 var addressListAddress = weeklyArenaAddress.Derive("address_list");
                 bool listCheck = false;
-                if (!states.TryGetState(arenaInfoAddress, out Dictionary rawArenaInfo))
+                if (!states.TryGetLegacyState(arenaInfoAddress, out Dictionary rawArenaInfo))
                 {
                     arenaInfo = new ArenaInfo(avatarState, characterSheet, costumeStatSheet, true);
                     listCheck = true;
@@ -190,7 +190,7 @@ namespace Nekoyume.Action
 
                 var enemyInfoAddress = weeklyArenaAddress.Derive(enemyAddress.ToByteArray());
                 ArenaInfo enemyInfo;
-                if (!states.TryGetState(enemyInfoAddress, out Dictionary rawEnemyInfo))
+                if (!states.TryGetLegacyState(enemyInfoAddress, out Dictionary rawEnemyInfo))
                 {
                     enemyInfo = new ArenaInfo(enemyAvatarState, characterSheet, costumeStatSheet,
                         true);
@@ -260,12 +260,12 @@ namespace Nekoyume.Action
 
                 states = states
                     .SetAvatarState(avatarAddress, avatarState, false, true, false, true)
-                    .SetState(arenaInfoAddress, arenaInfo.Serialize())
-                    .SetState(enemyInfoAddress, enemyInfo.Serialize());
+                    .SetLegacyState(arenaInfoAddress, arenaInfo.Serialize())
+                    .SetLegacyState(enemyInfoAddress, enemyInfo.Serialize());
 
                 if (listCheck)
                 {
-                    var addressList = states.TryGetState(addressListAddress, out List rawAddressList)
+                    var addressList = states.TryGetLegacyState(addressListAddress, out List rawAddressList)
                         ? rawAddressList.ToList(StateExtensions.ToAddress)
                         : new List<Address>();
 
@@ -279,7 +279,7 @@ namespace Nekoyume.Action
                         addressList.Add(enemyAddress);
                     }
 
-                    states = states.SetState(addressListAddress,
+                    states = states.SetLegacyState(addressListAddress,
                         addressList.Aggregate(List.Empty,
                             (current, address) => current.Add(address.Serialize())));
                 }
@@ -419,7 +419,7 @@ namespace Nekoyume.Action
                     : kv.Value;
             }
 
-            states = states.SetState(weeklyArenaAddress, new Dictionary(weeklyArenaDict));
+            states = states.SetLegacyState(weeklyArenaAddress, new Dictionary(weeklyArenaDict));
 
             sw.Stop();
             Log.Verbose("{AddressesHex}RankingBattle Serialize WeeklyArenaState: {Elapsed}", addressesHex, sw.Elapsed);

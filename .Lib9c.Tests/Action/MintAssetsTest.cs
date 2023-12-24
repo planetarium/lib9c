@@ -47,7 +47,7 @@ namespace Lib9c.Tests.Action
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
-                _prevState = _prevState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _prevState = _prevState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);

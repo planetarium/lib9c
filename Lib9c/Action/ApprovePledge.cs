@@ -31,7 +31,7 @@ namespace Nekoyume.Action
             Address signer = context.Signer;
             var states = context.PreviousState;
             var contractAddress = signer.GetPledgeAddress();
-            if (!states.TryGetState(contractAddress, out List contract))
+            if (!states.TryGetLegacyState(contractAddress, out List contract))
             {
                 throw new FailedLoadStateException("failed to find requested pledge.");
             }
@@ -46,7 +46,7 @@ namespace Nekoyume.Action
                 throw new AlreadyContractedException($"{signer} already contracted.");
             }
 
-            return states.SetState(
+            return states.SetLegacyState(
                 contractAddress,
                 List.Empty
                     .Add(PatronAddress.Serialize())

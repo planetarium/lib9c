@@ -31,7 +31,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var tableSheets = new TableSheets(sheets);
@@ -54,7 +54,7 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = _avatarAddress;
 
             _initialState = _initialState
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize())
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
         }
@@ -138,7 +138,7 @@ rune_skill_slot_unlock_cost,500";
             gameConfigState.Set(gameConfigSheet);
 
             var state = _initialState
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize());
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize());
             var nextState = ExecuteInternal(state, 1800);
             var avatarRuneAmount = nextState.GetBalance(_avatarAddress, RuneHelper.DailyRewardRune);
             Assert.Equal(0, (int)avatarRuneAmount.MajorUnit);

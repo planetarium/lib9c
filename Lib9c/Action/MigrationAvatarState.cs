@@ -37,17 +37,17 @@ namespace Nekoyume.Action
                 var inventoryAddress = v1.address.Derive(LegacyInventoryKey);
                 var worldInformationAddress = v1.address.Derive(LegacyWorldInformationKey);
                 var questListAddress = v1.address.Derive(LegacyQuestListKey);
-                if (states.GetState(inventoryAddress) is null)
+                if (states.GetLegacyState(inventoryAddress) is null)
                 {
-                    states = states.SetState(inventoryAddress, v1.inventory.Serialize());
+                    states = states.SetLegacyState(inventoryAddress, v1.inventory.Serialize());
                 }
-                if (states.GetState(worldInformationAddress) is null)
+                if (states.GetLegacyState(worldInformationAddress) is null)
                 {
-                    states = states.SetState(worldInformationAddress, v1.worldInformation.Serialize());
+                    states = states.SetLegacyState(worldInformationAddress, v1.worldInformation.Serialize());
                 }
-                if (states.GetState(questListAddress) is null)
+                if (states.GetLegacyState(questListAddress) is null)
                 {
-                    states = states.SetState(questListAddress, v1.questList.Serialize());
+                    states = states.SetLegacyState(questListAddress, v1.questList.Serialize());
                 }
 
                 var v2 = states.GetAvatarState(v1.address);

@@ -54,9 +54,9 @@ namespace Lib9c.Tests.Action
 
             _initialState = new World(new MockWorldState())
                 .SetAgentState(_agentAddress, agentState)
-                .SetState(Addresses.GetSheetAddress<EquipmentItemSheet>(), _tableSheets.EquipmentItemSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<EquipmentItemRecipeSheet>(), _tableSheets.EquipmentItemRecipeSheet.Serialize())
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize());
+                .SetLegacyState(Addresses.GetSheetAddress<EquipmentItemSheet>(), _tableSheets.EquipmentItemSheet.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<EquipmentItemRecipeSheet>(), _tableSheets.EquipmentItemRecipeSheet.Serialize())
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize());
         }
 
         [Theory]
@@ -131,12 +131,12 @@ namespace Lib9c.Tests.Action
                 if (alreadyUnlocked)
                 {
                     var serializedIds = new List(recipeIds.Select(i => i.Serialize()));
-                    state = state.SetState(unlockedRecipeIdsAddress, serializedIds);
+                    state = state.SetLegacyState(unlockedRecipeIdsAddress, serializedIds);
                 }
 
                 if (migrationRequired)
                 {
-                    state = state.SetState(
+                    state = state.SetLegacyState(
                         _avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
                 }
                 else
@@ -161,7 +161,7 @@ namespace Lib9c.Tests.Action
                     RandomSeed = _random.Seed,
                 });
 
-                Assert.True(nextState.TryGetState(unlockedRecipeIdsAddress, out List rawIds));
+                Assert.True(nextState.TryGetLegacyState(unlockedRecipeIdsAddress, out List rawIds));
 
                 var unlockedIds = rawIds.ToList(StateExtensions.ToInteger);
 

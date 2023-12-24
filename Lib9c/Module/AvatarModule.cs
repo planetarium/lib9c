@@ -80,7 +80,7 @@ namespace Nekoyume.Module
                         LegacyQuestListKey,
                     };
                     var addresses = keys.Select(key => address.Derive(key)).ToArray();
-                    var serializedValues = LegacyModule.GetStates(worldState, addresses);
+                    var serializedValues = LegacyModule.GetLegacyStates(worldState, addresses);
                     for (var i = 0; i < keys.Length; i++)
                     {
                         if (serializedValues[i] is null)

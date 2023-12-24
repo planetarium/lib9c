@@ -51,7 +51,7 @@ namespace Nekoyume.Action
 
             // Restrict staking if there is a monster collection until now.
             if (states.GetAgentState(context.Signer) is { } agentState &&
-                states.TryGetState(MonsterCollectionState.DeriveAddress(
+                states.TryGetLegacyState(MonsterCollectionState.DeriveAddress(
                     context.Signer,
                     agentState.MonsterCollectionRound), out Dictionary _))
             {
@@ -92,7 +92,7 @@ namespace Nekoyume.Action
 
                 stakeState = new StakeState(stakeStateAddress, context.BlockIndex);
                 return states
-                    .SetState(
+                    .SetLegacyState(
                         stakeStateAddress,
                         stakeState.SerializeV2())
                     .TransferAsset(context, context.Signer, stakeStateAddress, targetStakeBalance);
@@ -117,7 +117,7 @@ namespace Nekoyume.Action
                 if (stakeState.IsCancellable(context.BlockIndex))
                 {
                     return states
-                        .SetState(stakeState.address, Null.Value)
+                        .SetLegacyState(stakeState.address, Null.Value)
                         .TransferAsset(context, stakeState.address, context.Signer, stakedBalance);
                 }
             }
@@ -126,7 +126,7 @@ namespace Nekoyume.Action
             return states
                 .TransferAsset(context, stakeState.address, context.Signer, stakedBalance)
                 .TransferAsset(context, context.Signer, stakeState.address, targetStakeBalance)
-                .SetState(
+                .SetLegacyState(
                     stakeState.address,
                     new StakeState(stakeState.address, context.BlockIndex).SerializeV2());
         }

@@ -145,7 +145,7 @@ namespace Lib9c.Tests.Action.Garages
                 foreach (var (fungibleId, count) in fungibleIdAndCounts)
                 {
                     var garageAddress = Addresses.GetGarageAddress(AgentAddress, fungibleId);
-                    Assert.Equal(0, new FungibleItemGarage(states.GetState(garageAddress)).Count);
+                    Assert.Equal(0, new FungibleItemGarage(states.GetLegacyState(garageAddress)).Count);
                     Assert.True(inventory.HasFungibleItem(fungibleId, blockIndex: 0, count));
                 }
             }
@@ -206,7 +206,7 @@ namespace Lib9c.Tests.Action.Garages
                         Addresses.GetGarageAddress(AgentAddress, material.FungibleId);
                     var count = index + 1;
                     var garage = new FungibleItemGarage(material, count);
-                    states = states.SetState(garageAddress, garage.Serialize());
+                    states = states.SetLegacyState(garageAddress, garage.Serialize());
                     return (FungibleItem: (IFungibleItem)material, count);
                 })
                 .ToArray();

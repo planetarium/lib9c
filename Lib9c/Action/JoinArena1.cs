@@ -163,7 +163,7 @@ namespace Nekoyume.Action
             // create ArenaScore
             var arenaScoreAdr =
                 ArenaScore.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
-            if (states.TryGetState(arenaScoreAdr, out List _))
+            if (states.TryGetLegacyState(arenaScoreAdr, out List _))
             {
                 throw new ArenaScoreAlreadyContainsException(
                     $"[{nameof(JoinArena1)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -174,7 +174,7 @@ namespace Nekoyume.Action
             // create ArenaInformation
             var arenaInformationAdr =
                 ArenaInformation.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
-            if (states.TryGetState(arenaInformationAdr, out List _))
+            if (states.TryGetLegacyState(arenaInformationAdr, out List _))
             {
                 throw new ArenaInformationAlreadyContainsException(
                     $"[{nameof(JoinArena1)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -197,10 +197,10 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}JoinArena Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(arenaScoreAdr, arenaScore.Serialize())
-                .SetState(arenaInformationAdr, arenaInformation.Serialize())
-                .SetState(arenaParticipantsAdr, arenaParticipants.Serialize())
-                .SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
+                .SetLegacyState(arenaScoreAdr, arenaScore.Serialize())
+                .SetLegacyState(arenaInformationAdr, arenaInformation.Serialize())
+                .SetLegacyState(arenaParticipantsAdr, arenaParticipants.Serialize())
+                .SetLegacyState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
                 .SetAgentState(context.Signer, agentState);
         }
     }

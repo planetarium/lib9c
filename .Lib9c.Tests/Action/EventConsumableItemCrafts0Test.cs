@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialStates = _initialStates
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -60,13 +60,13 @@ namespace Lib9c.Tests.Action
             _initialStates = _initialStates
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             for (var i = 0; i < GameConfig.SlotCount; i++)
             {
                 var addr = CombinationSlotState.DeriveAddress(_avatarAddress, i);
                 const int unlock = GameConfig.RequireClearedStageLevel.CombinationEquipmentAction;
-                _initialStates = _initialStates.SetState(
+                _initialStates = _initialStates.SetLegacyState(
                     addr,
                     new CombinationSlotState(addr, unlock).Serialize());
             }

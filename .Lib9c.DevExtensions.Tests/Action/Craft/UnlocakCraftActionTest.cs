@@ -59,7 +59,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
             });
 
             var worldInformation =
-                new WorldInformation((Dictionary)state.GetState(_worldInformationAddress));
+                new WorldInformation((Dictionary)state.GetLegacyState(_worldInformationAddress));
             Assert.True(worldInformation.IsStageCleared(expectedStage));
         }
     }

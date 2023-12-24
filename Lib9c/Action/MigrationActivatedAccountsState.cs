@@ -27,16 +27,16 @@ namespace Nekoyume.Action
             CheckPermission(context);
 
             Log.Debug($"Start {nameof(MigrationActivatedAccountsState)}");
-            if (states.TryGetState(Nekoyume.Addresses.ActivatedAccount, out Dictionary rawState))
+            if (states.TryGetLegacyState(Nekoyume.Addresses.ActivatedAccount, out Dictionary rawState))
             {
                 var activatedAccountsState = new ActivatedAccountsState(rawState);
                 var accounts = activatedAccountsState.Accounts;
                 foreach (var agentAddress in accounts)
                 {
                     var address = agentAddress.Derive(ActivationKey.DeriveKey);
-                    if (states.GetState(address) is null)
+                    if (states.GetLegacyState(address) is null)
                     {
-                        states = states.SetState(address, true.Serialize());
+                        states = states.SetLegacyState(address, true.Serialize());
                     }
                 }
                 Log.Debug($"Finish {nameof(MigrationActivatedAccountsState)}");

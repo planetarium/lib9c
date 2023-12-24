@@ -29,7 +29,7 @@ namespace Lib9c.DevExtensions.Action.Stage
                 states.GetSheet<WorldSheet>(),
                 TargetStage
             );
-            return states.SetState(AvatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey),
+            return states.SetLegacyState(AvatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey),
                 worldInformation.Serialize()
             );
         }

@@ -382,7 +382,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
             {
                 PreviousState = baseState
-                    .SetState(
+                    .SetLegacyState(
                         StakeState.DeriveAddress(_recipient),
                         new StakeState(StakeState.DeriveAddress(_recipient), 0).SerializeV2()),
                 Signer = _sender,
@@ -391,7 +391,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
             {
                 PreviousState = baseState
-                    .SetState(
+                    .SetLegacyState(
                         StakeState.DeriveAddress(_recipient),
                         new StakeStateV2(
                             new Contract(
@@ -406,7 +406,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
             {
                 PreviousState = baseState
-                    .SetState(
+                    .SetLegacyState(
                         StakeState.DeriveAddress(_recipient),
                         new MonsterCollectionState(
                                 MonsterCollectionState.DeriveAddress(_sender, 0),
@@ -422,7 +422,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
             {
                 PreviousState = baseState
-                    .SetState(
+                    .SetLegacyState(
                         StakeState.DeriveAddress(_recipient),
                         new MonsterCollectionState0(
                                 MonsterCollectionState.DeriveAddress(_sender, 0),

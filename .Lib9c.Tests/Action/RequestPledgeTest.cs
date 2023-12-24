@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Action
                 Signer = patron,
                 PreviousState = states,
             });
-            var contract = Assert.IsType<List>(nextState.GetState(address.GetPledgeAddress()));
+            var contract = Assert.IsType<List>(nextState.GetLegacyState(address.GetPledgeAddress()));
 
             Assert.Equal(patron, contract[0].ToAddress());
             Assert.False(contract[1].ToBoolean());
@@ -50,7 +50,7 @@ namespace Lib9c.Tests.Action
             Address patron = new PrivateKey().Address;
             var address = new PrivateKey().Address;
             Address contractAddress = address.GetPledgeAddress();
-            IWorld states = new World(new MockWorldState()).SetState(contractAddress, List.Empty);
+            IWorld states = new World(new MockWorldState()).SetLegacyState(contractAddress, List.Empty);
             var action = new RequestPledge
             {
                 AgentAddress = address,

@@ -43,7 +43,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -76,10 +76,10 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = _avatarAddress;
 
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(Addresses.Shop, shopState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetLegacyState(Addresses.Shop, shopState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
-                .SetState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
+                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
         }
 
         [Theory]
@@ -193,7 +193,7 @@ namespace Lib9c.Tests.Action
 
             if (fromPreviousAction)
             {
-                prevState = prevState.SetState(
+                prevState = prevState.SetLegacyState(
                     _avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
             }
             else
@@ -202,10 +202,10 @@ namespace Lib9c.Tests.Action
             }
 
             prevState = prevState
-                .SetState(Addresses.GetItemAddress(itemId), sellItem.Serialize())
-                .SetState(Order.DeriveAddress(order.OrderId), order.Serialize())
-                .SetState(orderDigestList.Address, orderDigestList.Serialize())
-                .SetState(shardedShopAddress, shopState.Serialize());
+                .SetLegacyState(Addresses.GetItemAddress(itemId), sellItem.Serialize())
+                .SetLegacyState(Order.DeriveAddress(order.OrderId), order.Serialize())
+                .SetLegacyState(orderDigestList.Address, orderDigestList.Serialize())
+                .SetLegacyState(shardedShopAddress, shopState.Serialize());
 
             var currencyState = prevState.GetGoldCurrency();
             var price = new FungibleAssetValue(currencyState, ProductPrice, 0);
@@ -234,7 +234,7 @@ namespace Lib9c.Tests.Action
             });
 
             var updateSellShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, updateSellOrderId);
-            var nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(updateSellShopAddress));
+            var nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetLegacyState(updateSellShopAddress));
             Assert.Equal(1, nextShopState.OrderDigestList.Count);
             Assert.NotEqual(orderId, nextShopState.OrderDigestList.First().OrderId);
             Assert.Equal(updateSellOrderId, nextShopState.OrderDigestList.First().OrderId);
@@ -335,7 +335,7 @@ namespace Lib9c.Tests.Action
             var digestList = new OrderDigestListState(digestListAddress);
             _initialState = _initialState
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
-                .SetState(digestListAddress, digestList.Serialize());
+                .SetLegacyState(digestListAddress, digestList.Serialize());
 
             var updateSellInfo = new UpdateSellInfo(
                 default,

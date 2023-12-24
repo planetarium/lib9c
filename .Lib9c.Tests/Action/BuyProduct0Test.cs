@@ -51,7 +51,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
 #pragma warning disable CS0618
@@ -112,13 +112,13 @@ namespace Lib9c.Tests.Action
 
             _orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetAgentState(SellerAgentAddress, sellerAgentState)
-                .SetState(SellerAvatarAddress, MigrationAvatarState.LegacySerializeV1(sellerAvatarState))
+                .SetLegacyState(SellerAvatarAddress, MigrationAvatarState.LegacySerializeV1(sellerAvatarState))
                 .SetAgentState(_sellerAgentAddress2, agentState2)
-                .SetState(_sellerAvatarAddress2, MigrationAvatarState.LegacySerializeV1(sellerAvatarState2))
+                .SetLegacyState(_sellerAvatarAddress2, MigrationAvatarState.LegacySerializeV1(sellerAvatarState2))
                 .SetAgentState(BuyerAgentAddress, buyerAgentState)
-                .SetState(BuyerAvatarAddress, MigrationAvatarState.LegacySerializeV1(_buyerAvatarState))
+                .SetLegacyState(BuyerAvatarAddress, MigrationAvatarState.LegacySerializeV1(_buyerAvatarState))
                 .MintAsset(context, BuyerAgentAddress, _goldCurrencyState.Currency * 1);
         }
 
@@ -282,7 +282,7 @@ namespace Lib9c.Tests.Action
                 var productsState = validateMember.ProductsState;
                 if (!(productsState is null))
                 {
-                    previousState = previousState.SetState(
+                    previousState = previousState.SetLegacyState(
                         ProductsState.DeriveAddress(SellerAvatarAddress),
                         productsState.Serialize());
                 }
@@ -290,7 +290,7 @@ namespace Lib9c.Tests.Action
                 var product = validateMember.Product;
                 if (!(product is null))
                 {
-                    previousState = previousState.SetState(
+                    previousState = previousState.SetLegacyState(
                         Product.DeriveAddress(product.ProductId),
                         product.Serialize());
                 }

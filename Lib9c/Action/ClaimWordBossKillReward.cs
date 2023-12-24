@@ -53,9 +53,9 @@ namespace Nekoyume.Action
             var bossRow = sheets.GetSheet<WorldBossCharacterSheet>().Values.First(x => x.BossId == row.BossId);
             int rank = WorldBossHelper.CalculateRank(bossRow, raiderState.HighScore);
             var worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(AvatarAddress, raidId);
-            var rewardRecord = new WorldBossKillRewardRecord((List) states.GetState(worldBossKillRewardRecordAddress));
+            var rewardRecord = new WorldBossKillRewardRecord((List) states.GetLegacyState(worldBossKillRewardRecordAddress));
             Address worldBossAddress = Addresses.GetWorldBossAddress(raidId);
-            var worldBossState = new WorldBossState((List) states.GetState(worldBossAddress));
+            var worldBossState = new WorldBossState((List) states.GetLegacyState(worldBossAddress));
             var random = context.GetRandom();
             return states.SetWorldBossKillReward(
                 context,

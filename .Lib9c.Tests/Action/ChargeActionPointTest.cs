@@ -47,13 +47,13 @@ namespace Lib9c.Tests.Action
             agent.avatarAddresses.Add(0, _avatarAddress);
 
             _initialState = new World(new MockWorldState())
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize())
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize())
                 .SetAgentState(_agentAddress, agent)
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in _sheets)
             {
-                _initialState = _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _initialState = _initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
@@ -82,7 +82,7 @@ namespace Lib9c.Tests.Action
 
             foreach (var (key, value) in _sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var action = new ChargeActionPoint()

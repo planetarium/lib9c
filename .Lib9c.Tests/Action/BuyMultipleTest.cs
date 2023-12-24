@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -75,8 +75,8 @@ namespace Lib9c.Tests.Action
             var shopState = new ShopState();
 
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(Addresses.Shop, shopState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetLegacyState(Addresses.Shop, shopState.Serialize())
                 .SetAgentState(_buyerAgentAddress, buyerAgentState)
                 .SetAvatarState(_buyerAvatarAddress, _buyerAvatarState, true, true, true, true)
                 .MintAsset(context, _buyerAgentAddress, _goldCurrencyState.Currency * 100);
@@ -295,7 +295,7 @@ namespace Lib9c.Tests.Action
 
             _initialState = _initialState
                 .SetAvatarState(_buyerAvatarAddress, buyerAvatarState, true, true, true, true)
-                .SetState(Addresses.Shop, shopState.Serialize());
+                .SetLegacyState(Addresses.Shop, shopState.Serialize());
 
             var priceData = new PriceData(goldCurrency);
 
@@ -387,7 +387,7 @@ namespace Lib9c.Tests.Action
                 costume));
 
             _initialState = _initialState
-                .SetState(Addresses.Shop, shopState.Serialize());
+                .SetLegacyState(Addresses.Shop, shopState.Serialize());
 
             shopState = _initialState.GetShopState();
             var products = shopState.Products.Values
@@ -519,7 +519,7 @@ namespace Lib9c.Tests.Action
 
             var context = new ActionContext();
             _initialState = _initialState
-                .SetState(Addresses.Shop, shopState.Serialize());
+                .SetLegacyState(Addresses.Shop, shopState.Serialize());
             shopState = _initialState.GetShopState();
             Assert.NotEmpty(shopState.Products);
 
@@ -577,7 +577,7 @@ namespace Lib9c.Tests.Action
                 (ITradableItem)equipment));
 
             previousStates = previousStates
-                .SetState(Addresses.Shop, shopState.Serialize());
+                .SetLegacyState(Addresses.Shop, shopState.Serialize());
             shopState = previousStates.GetShopState();
 
             Assert.True(shopState.Products.ContainsKey(productId));

@@ -131,7 +131,7 @@ namespace Lib9c.Tests.Action.Scenario
                 201_600);
 
             // Patch StakePolicySheet and so on.
-            state = state.SetState(
+            state = state.SetLegacyState(
                 Addresses.GetSheetAddress(nameof(StakePolicySheet)),
                 StakePolicySheetFixtures.V3.Serialize());
 
@@ -225,7 +225,7 @@ namespace Lib9c.Tests.Action.Scenario
             var stakeAddr = StakeState.DeriveAddress(agentAddr);
             var actualStakedAmount = state.GetBalance(stakeAddr, expectStakedAmount.Currency);
             Assert.Equal(expectStakedAmount, actualStakedAmount);
-            var stakeState = new StakeState((Dictionary)state.GetState(stakeAddr));
+            var stakeState = new StakeState((Dictionary)state.GetLegacyState(stakeAddr));
             Assert.Equal(expectStartedBlockIndex, stakeState.StartedBlockIndex);
         }
 
@@ -242,7 +242,7 @@ namespace Lib9c.Tests.Action.Scenario
             var stakeAddr = StakeState.DeriveAddress(agentAddr);
             var actualStakedAmount = state.GetBalance(stakeAddr, expectStakedAmount.Currency);
             Assert.Equal(expectStakedAmount, actualStakedAmount);
-            var stakeState = new StakeStateV2(state.GetState(stakeAddr));
+            var stakeState = new StakeStateV2(state.GetLegacyState(stakeAddr));
             Assert.Equal(expectStartedBlockIndex, stakeState.StartedBlockIndex);
             Assert.Equal(
                 expectStakeRegularFixedRewardSheetName,

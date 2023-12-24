@@ -23,7 +23,7 @@ namespace Lib9c.Tests.Action
             _state = new World(new MockWorldState());
             foreach (var kv in tableCsv)
             {
-                _state = _state.SetState(Addresses.GetSheetAddress(kv.Key), kv.Value.Serialize());
+                _state = _state.SetLegacyState(Addresses.GetSheetAddress(kv.Key), kv.Value.Serialize());
             }
         }
 
@@ -63,7 +63,7 @@ namespace Lib9c.Tests.Action
                 HighScore = highScore,
                 LatestRewardRank = latestRank,
             };
-            IWorld state = _state.SetState(raiderAddress, raiderState.Serialize());
+            IWorld state = _state.SetLegacyState(raiderAddress, raiderState.Serialize());
             var randomSeed = 0;
 
             var rows = _tableSheets.WorldBossRankRewardSheet.Values

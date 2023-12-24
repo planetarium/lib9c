@@ -35,20 +35,20 @@ namespace Lib9c.DevExtensions.Tests.Action
 #pragma warning disable CS0618
             var ncgCurrency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
-            _initialStates = _initialStates.SetState(
+            _initialStates = _initialStates.SetLegacyState(
                 GoldCurrencyState.Address,
                 new GoldCurrencyState(ncgCurrency).Serialize());
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
             foreach (var (key, value) in sheets)
             {
-                _initialStates = _initialStates.SetState(
+                _initialStates = _initialStates.SetLegacyState(
                     Addresses.TableSheet.Derive(key),
                     value.Serialize());
             }
 
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
-            _initialStates = _initialStates.SetState(
+            _initialStates = _initialStates.SetLegacyState(
                 gameConfigState.address,
                 gameConfigState.Serialize());
         }
@@ -551,7 +551,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
             foreach (var (runeId, runeLevel) in action.Runes)
             {
-                var runeList = (List)nextStates.GetState(
+                var runeList = (List)nextStates.GetLegacyState(
                     RuneState.DeriveAddress(avatarAddr.Value, runeId))!;
                 Assert.Equal(runeLevel, runeList[1].ToInteger());
             }
@@ -560,13 +560,13 @@ namespace Lib9c.DevExtensions.Tests.Action
                 Addresses.GetSkillStateAddressFromAvatarAddress(avatarAddr.Value);
             if (action.CrystalRandomBuff is null)
             {
-                Assert.Equal(Null.Value, nextStates.GetState(crystalRandomSkillAddr));
+                Assert.Equal(Null.Value, nextStates.GetLegacyState(crystalRandomSkillAddr));
             }
             else
             {
                 var crystalRandomSkillState = new CrystalRandomSkillState(
                     crystalRandomSkillAddr,
-                    (List)nextStates.GetState(crystalRandomSkillAddr)!);
+                    (List)nextStates.GetLegacyState(crystalRandomSkillAddr)!);
                 var (stageId, crystalRandomBuffIds) = action.CrystalRandomBuff.Value;
                 Assert.Equal(stageId, crystalRandomSkillState.StageId);
                 var crystalStageBuffGachaSheet = nextStates.GetSheet<CrystalStageBuffGachaSheet>();

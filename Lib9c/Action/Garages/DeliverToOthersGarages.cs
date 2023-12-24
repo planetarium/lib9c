@@ -264,8 +264,8 @@ namespace Nekoyume.Action.Garages
                         : new FungibleItemGarage(recipientGarageState);
                 senderGarage.Deliver(recipientGarage, count);
                 states = states
-                    .SetState(senderGarageAddr, senderGarage.Serialize())
-                    .SetState(recipientGarageAddr, recipientGarage.Serialize());
+                    .SetLegacyState(senderGarageAddr, senderGarage.Serialize())
+                    .SetLegacyState(recipientGarageAddr, recipientGarage.Serialize());
             }
 
             return states;

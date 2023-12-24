@@ -289,7 +289,7 @@ namespace Lib9c.Tests.Action
             var petAddress = PetState.DeriveAddress(avatarAddr, petId);
             if (currentPetLevel > 0)
             {
-                prevStates = prevStates.SetState(
+                prevStates = prevStates.SetLegacyState(
                     petAddress,
                     new List(
                         petId.Serialize(),
@@ -331,7 +331,7 @@ namespace Lib9c.Tests.Action
                 var insolventPetSheetCsv = CsvUtil.CsvLinqWhere(
                     petSheetCsv,
                     line => !line.StartsWith($"{petId},"));
-                prevStates = prevStates.SetState(
+                prevStates = prevStates.SetLegacyState(
                     Addresses.GetSheetAddress<PetSheet>(),
                     insolventPetSheetCsv.Serialize());
             }
@@ -363,7 +363,7 @@ namespace Lib9c.Tests.Action
                         });
                 }
 
-                prevStates = prevStates.SetState(
+                prevStates = prevStates.SetLegacyState(
                     Addresses.GetSheetAddress<PetCostSheet>(),
                     insolventPetCostSheetCsv.Serialize());
             }
@@ -386,7 +386,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0, nextNcgBal.MajorUnit);
             Assert.Equal(0, nextSoulStoneBal.MajorUnit);
 
-            var rawPetState = (List)nextStates.GetState(petAddress);
+            var rawPetState = (List)nextStates.GetLegacyState(petAddress);
             var nextPetState = new PetState(rawPetState);
             Assert.Equal(targetPetLevel, nextPetState.Level);
 

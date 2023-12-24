@@ -163,7 +163,7 @@ namespace Nekoyume.Action
             var random = context.GetRandom();
             var productId = random.GenerateRandomGuid();
             var shardedShopAddress = ShardedShopState.DeriveAddress(itemSubType, productId);
-            if (!states.TryGetState(shardedShopAddress, out BxDictionary serializedSharedShopState))
+            if (!states.TryGetLegacyState(shardedShopAddress, out BxDictionary serializedSharedShopState))
             {
                 var shardedShopState = new ShardedShopState(shardedShopAddress);
                 serializedSharedShopState = (BxDictionary) shardedShopState.Serialize();
@@ -278,12 +278,12 @@ namespace Nekoyume.Action
             result.id = mail.id;
             avatarState.Update(mail);
 
-            states = states.SetState(sellerAvatarAddress, avatarState.Serialize());
+            states = states.SetLegacyState(sellerAvatarAddress, avatarState.Serialize());
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            states = states.SetState(shardedShopAddress, serializedSharedShopState);
+            states = states.SetLegacyState(shardedShopAddress, serializedSharedShopState);
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}Sell Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);

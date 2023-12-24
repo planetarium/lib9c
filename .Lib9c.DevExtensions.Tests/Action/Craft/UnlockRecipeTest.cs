@@ -63,7 +63,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
                 BlockIndex = 0L,
             });
 
-            Assert.True(stateV2.TryGetState(_recipeAddress, out List rawIds));
+            Assert.True(stateV2.TryGetLegacyState(_recipeAddress, out List rawIds));
             var unlockedRecipeIds = rawIds.ToList(StateExtensions.ToInteger);
             Assert.Contains(recipeRow.UnlockStage, unlockedRecipeIds);
         }
@@ -97,7 +97,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
                 BlockIndex = 0L,
             });
 
-            Assert.True(stateV2.TryGetState(_recipeAddress, out List rawIds));
+            Assert.True(stateV2.TryGetLegacyState(_recipeAddress, out List rawIds));
             var unlockedRecipeIds = rawIds.ToList(StateExtensions.ToInteger);
             Assert.Contains(targetStage, unlockedRecipeIds);
         }

@@ -65,7 +65,7 @@ namespace Nekoyume.Action
         {
             state = default;
 
-            IValue rawState = ctx.PreviousState.GetState(AdminState.Address);
+            IValue rawState = ctx.PreviousState.GetLegacyState(AdminState.Address);
             if (rawState is Bencodex.Types.Dictionary asDict)
             {
                 state = new AdminState(asDict);

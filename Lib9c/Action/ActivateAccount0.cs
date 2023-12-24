@@ -50,11 +50,11 @@ namespace Nekoyume.Action
 
             CheckObsolete(ActionObsoleteConfig.V100080ObsoleteIndex, context);
 
-            if (!state.TryGetState(ActivatedAccountsState.Address, out Dictionary accountsAsDict))
+            if (!state.TryGetLegacyState(ActivatedAccountsState.Address, out Dictionary accountsAsDict))
             {
                 throw new ActivatedAccountsDoesNotExistsException();
             }
-            if (!state.TryGetState(PendingAddress, out Dictionary pendingAsDict))
+            if (!state.TryGetLegacyState(PendingAddress, out Dictionary pendingAsDict))
             {
                 throw new PendingActivationDoesNotExistsException(PendingAddress);
             }
@@ -67,10 +67,10 @@ namespace Nekoyume.Action
                 // We left this log message to track activation history.
                 // Please delete it if we have an API for evaluation results on the Libplanet side.
                 Log.Information("{pendingAddress} is activated by {signer} now.", pending.address, context.Signer);
-                return state.SetState(
+                return state.SetLegacyState(
                     ActivatedAccountsState.Address,
                     accounts.AddAccount(context.Signer).Serialize()
-                ).SetState(
+                ).SetLegacyState(
                     pending.address,
                     new Bencodex.Types.Null()
                 );

@@ -328,7 +328,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}ItemEnhancement Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}ItemEnhancement Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.SetState(slotAddress, slotState.Serialize());
+            return states.SetLegacyState(slotAddress, slotState.Serialize());
         }
 
         public static EnhancementResult GetEnhancementResult(EnhancementCostSheetV2.Row row, IRandom random)

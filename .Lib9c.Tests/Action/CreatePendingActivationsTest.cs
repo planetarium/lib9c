@@ -44,7 +44,7 @@ namespace Lib9c.Tests.Action
             {
                 Assert.Equal(
                     pa.Serialize(),
-                    nextState.GetState(pa.address)
+                    nextState.GetLegacyState(pa.address)
                 );
             }
         }

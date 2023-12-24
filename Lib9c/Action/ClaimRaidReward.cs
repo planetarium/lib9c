@@ -94,7 +94,7 @@ namespace Nekoyume.Action
 
                 raiderState.LatestRewardRank = rank;
                 raiderState.ClaimedBlockIndex = context.BlockIndex;
-                states = states.SetState(raiderAddress, raiderState.Serialize());
+                states = states.SetLegacyState(raiderAddress, raiderState.Serialize());
                 var ended = DateTimeOffset.UtcNow;
                 Log.Debug("{AddressesHex}ClaimRaidReward Total Executed Time: {Elapsed}", addressesHex, ended - started);
                 return states;

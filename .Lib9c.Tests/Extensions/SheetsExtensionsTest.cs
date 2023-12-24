@@ -69,7 +69,7 @@ namespace Lib9c.Tests.Extensions
                 pair => pair.Value.Serialize());
             foreach (var (address, value) in sheetsAddressAndValues)
             {
-                states = states.SetState(address, value);
+                states = states.SetLegacyState(address, value);
             }
 
             var iSheetType = typeof(ISheet);

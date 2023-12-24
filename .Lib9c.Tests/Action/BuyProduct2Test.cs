@@ -51,7 +51,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
 #pragma warning disable CS0618
@@ -112,7 +112,7 @@ namespace Lib9c.Tests.Action
 
             _orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetAgentState(SellerAgentAddress, sellerAgentState)
                 .SetAvatarState(SellerAvatarAddress, sellerAvatarState, true, true, true, true)
                 .SetAgentState(_sellerAgentAddress2, agentState2)
@@ -282,7 +282,7 @@ namespace Lib9c.Tests.Action
                 var productsState = validateMember.ProductsState;
                 if (!(productsState is null))
                 {
-                    previousState = previousState.SetState(
+                    previousState = previousState.SetLegacyState(
                         ProductsState.DeriveAddress(SellerAvatarAddress),
                         productsState.Serialize());
                 }
@@ -290,7 +290,7 @@ namespace Lib9c.Tests.Action
                 var product = validateMember.Product;
                 if (!(product is null))
                 {
-                    previousState = previousState.SetState(
+                    previousState = previousState.SetLegacyState(
                         Product.DeriveAddress(product.ProductId),
                         product.Serialize());
                 }

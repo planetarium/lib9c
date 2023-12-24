@@ -104,10 +104,10 @@ namespace Lib9c.Tests.Action.Scenario
 
             _currency = Currency.Legacy("NCG", 2, minters: null);
             _initialState = new World(new MockWorldState())
-                .SetState(GoldCurrencyState.Address, new GoldCurrencyState(_currency).Serialize())
-                .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
-                .SetState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<ArenaSheet>(), _tableSheets.ArenaSheet.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(_currency).Serialize())
+                .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<ArenaSheet>(), _tableSheets.ArenaSheet.Serialize())
                 .SetAgentState(_sellerAgentAddress, agentState)
                 .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState, true, true, true, true)
                 .SetAgentState(_sellerAgentAddress2, agentState2)
@@ -172,12 +172,12 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct2.CostAp, nextAvatarState.actionPoint);
 
             var productsState =
-                new ProductsState((List)nextState.GetState(ProductsState.DeriveAddress(_sellerAvatarAddress)));
+                new ProductsState((List)nextState.GetLegacyState(ProductsState.DeriveAddress(_sellerAvatarAddress)));
             Assert.Equal(2, productsState.ProductIds.Count);
             foreach (var productId in productsState.ProductIds)
             {
                 var product =
-                    ProductFactory.DeserializeProduct((List)nextState.GetState(Product.DeriveAddress(productId)));
+                    ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(Product.DeriveAddress(productId)));
                 ProductType productType;
                 switch (product)
                 {
@@ -247,12 +247,12 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct2.CostAp, nextAvatarState2.actionPoint);
 
             var productList2 =
-                new ProductsState((List)nextState2.GetState(ProductsState.DeriveAddress(_sellerAvatarAddress2)));
+                new ProductsState((List)nextState2.GetLegacyState(ProductsState.DeriveAddress(_sellerAvatarAddress2)));
             Assert.Equal(2, productList2.ProductIds.Count);
             foreach (var productId in productList2.ProductIds)
             {
                 var product =
-                    ProductFactory.DeserializeProduct((List)nextState2.GetState(Product.DeriveAddress(productId)));
+                    ProductFactory.DeserializeProduct((List)nextState2.GetLegacyState(Product.DeriveAddress(productId)));
                 ProductType productType;
                 switch (product)
                 {
@@ -317,11 +317,11 @@ namespace Lib9c.Tests.Action.Scenario
                 foreach (var productInfo in group)
                 {
                     var sellerAvatarState = latestState.GetAvatarState(productInfo.AvatarAddress);
-                    var sellProductList = new ProductsState((List)latestState.GetState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));
+                    var sellProductList = new ProductsState((List)latestState.GetLegacyState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));
                     var productId = productInfo.ProductId;
                     Assert.Empty(sellProductList.ProductIds);
-                    Assert.Equal(Null.Value, latestState.GetState(Product.DeriveAddress(productId)));
-                    var product = ProductFactory.DeserializeProduct((List)nextState2.GetState(Product.DeriveAddress(productId)));
+                    Assert.Equal(Null.Value, latestState.GetLegacyState(Product.DeriveAddress(productId)));
+                    var product = ProductFactory.DeserializeProduct((List)nextState2.GetLegacyState(Product.DeriveAddress(productId)));
                     switch (product)
                     {
                         case FavProduct favProduct:
@@ -332,7 +332,7 @@ namespace Lib9c.Tests.Action.Scenario
                             break;
                     }
 
-                    var receipt = new ProductReceipt((List)latestState.GetState(ProductReceipt.DeriveAddress(productId)));
+                    var receipt = new ProductReceipt((List)latestState.GetLegacyState(ProductReceipt.DeriveAddress(productId)));
                     Assert.Equal(productId, receipt.ProductId);
                     Assert.Equal(productInfo.AvatarAddress, receipt.SellerAvatarAddress);
                     Assert.Equal(_buyerAvatarAddress, receipt.BuyerAvatarAddress);
@@ -405,11 +405,11 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Empty(nextAvatarState.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct2.CostAp, nextAvatarState.actionPoint);
 
-            var marketState = new MarketState(nextState.GetState(Addresses.Market));
+            var marketState = new MarketState(nextState.GetLegacyState(Addresses.Market));
             Assert.Contains(_sellerAvatarAddress, marketState.AvatarAddresses);
 
             var productsStateAddress = ProductsState.DeriveAddress(_sellerAvatarAddress);
-            var productsState = new ProductsState((List)nextState.GetState(productsStateAddress));
+            var productsState = new ProductsState((List)nextState.GetLegacyState(productsStateAddress));
             var random = new TestRandom();
             Guid fungibleProductId = default;
             Guid nonFungibleProductId = default;
@@ -420,7 +420,7 @@ namespace Lib9c.Tests.Action.Scenario
 
                 Assert.Contains(guid, productsState.ProductIds);
                 var productAddress = Product.DeriveAddress(guid);
-                var product = ProductFactory.DeserializeProduct((List)nextState.GetState(productAddress));
+                var product = ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(productAddress));
                 Assert.Equal(product.ProductId, guid);
                 Assert.Equal(1 * _currency, product.Price);
                 switch (product)
@@ -500,13 +500,13 @@ namespace Lib9c.Tests.Action.Scenario
 
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct2.CostAp - CancelProductRegistration0.CostAp, latestAvatarState.actionPoint);
 
-            var sellProductList = new ProductsState((List)latestState.GetState(productsStateAddress));
+            var sellProductList = new ProductsState((List)latestState.GetLegacyState(productsStateAddress));
             Assert.Empty(sellProductList.ProductIds);
 
             foreach (var productAddress in action2.ProductInfos.Select(productInfo => Product.DeriveAddress(productInfo.ProductId)))
             {
-                Assert.Equal(Null.Value, latestState.GetState(productAddress));
-                var product = ProductFactory.DeserializeProduct((List)nextState.GetState(productAddress));
+                Assert.Equal(Null.Value, latestState.GetLegacyState(productAddress));
+                var product = ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(productAddress));
                 switch (product)
                 {
                     case FavProduct favProduct:
@@ -577,11 +577,11 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Empty(nextAvatarState.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct2.CostAp, nextAvatarState.actionPoint);
 
-            var marketState = new MarketState(nextState.GetState(Addresses.Market));
+            var marketState = new MarketState(nextState.GetLegacyState(Addresses.Market));
             Assert.Contains(_sellerAvatarAddress, marketState.AvatarAddresses);
 
             var productsStateAddress = ProductsState.DeriveAddress(_sellerAvatarAddress);
-            var productsState = new ProductsState((List)nextState.GetState(productsStateAddress));
+            var productsState = new ProductsState((List)nextState.GetLegacyState(productsStateAddress));
             var random = new TestRandom();
             Guid fungibleProductId = default;
             Guid nonFungibleProductId = default;
@@ -604,7 +604,7 @@ namespace Lib9c.Tests.Action.Scenario
 
                 Assert.Contains(guid, productsState.ProductIds);
                 var productAddress = Product.DeriveAddress(guid);
-                var product = ProductFactory.DeserializeProduct((List)nextState.GetState(productAddress));
+                var product = ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(productAddress));
                 switch (product)
                 {
                     case FavProduct favProduct:
@@ -703,7 +703,7 @@ namespace Lib9c.Tests.Action.Scenario
             var inventoryItem = Assert.Single(latestAvatarState.inventory.Items);
             Assert.Equal(1, inventoryItem.count);
             Assert.IsType<TradableMaterial>(inventoryItem.item);
-            var sellProductList = new ProductsState((List)latestState.GetState(productsStateAddress));
+            var sellProductList = new ProductsState((List)latestState.GetLegacyState(productsStateAddress));
             Assert.Equal(3, sellProductList.ProductIds.Count);
             foreach (var prevProductId in productsState.ProductIds)
             {
@@ -713,7 +713,7 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var newProductId in sellProductList.ProductIds)
             {
                 var productAddress = Product.DeriveAddress(newProductId);
-                var product = ProductFactory.DeserializeProduct((List)latestState.GetState(productAddress));
+                var product = ProductFactory.DeserializeProduct((List)latestState.GetLegacyState(productAddress));
                 switch (product)
                 {
                     case FavProduct favProduct:
@@ -775,10 +775,10 @@ namespace Lib9c.Tests.Action.Scenario
                 shopState.Add(orderDigest, Order.ExpirationInterval);
                 orderDigestList.Add(orderDigest);
                 Assert.True(_sellerAvatarState.inventory.TryGetLockedItem(new OrderLock(orderId), out _));
-                _initialState = _initialState.SetState(Addresses.GetItemAddress(tradableItem.TradableId), sellItem.Serialize())
-                    .SetState(Order.DeriveAddress(order.OrderId), order.Serialize())
-                    .SetState(digestListAddress, orderDigestList.Serialize())
-                    .SetState(shardedShopAddress, shopState.Serialize())
+                _initialState = _initialState.SetLegacyState(Addresses.GetItemAddress(tradableItem.TradableId), sellItem.Serialize())
+                    .SetLegacyState(Order.DeriveAddress(order.OrderId), order.Serialize())
+                    .SetLegacyState(digestListAddress, orderDigestList.Serialize())
+                    .SetLegacyState(shardedShopAddress, shopState.Serialize())
                     .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState, true, true, true, true);
 
                 var productType = tradableItem is TradableMaterial
@@ -819,19 +819,19 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = _sellerAgentAddress,
             });
 
-            Assert.Empty(new OrderDigestListState((Dictionary)nextState.GetState(digestListAddress)).OrderDigestList);
+            Assert.Empty(new OrderDigestListState((Dictionary)nextState.GetLegacyState(digestListAddress)).OrderDigestList);
             Assert.Contains(
                 _sellerAvatarAddress,
-                new MarketState((List)nextState.GetState(Addresses.Market)).AvatarAddresses
+                new MarketState((List)nextState.GetLegacyState(Addresses.Market)).AvatarAddresses
             );
             var productsState =
                 new ProductsState(
-                    (List)nextState.GetState(ProductsState.DeriveAddress(_sellerAvatarAddress)));
+                    (List)nextState.GetLegacyState(ProductsState.DeriveAddress(_sellerAvatarAddress)));
             Assert.Equal(2, productsState.ProductIds.Count);
             foreach (var productId in productsState.ProductIds)
             {
                 var productAddress = Product.DeriveAddress(productId);
-                var product = ProductFactory.DeserializeProduct((List)nextState.GetState(productAddress));
+                var product = ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(productAddress));
                 Assert.Equal(100 * _currency, product.Price);
             }
 
@@ -842,7 +842,7 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var shopAddress in shopAddressList)
             {
                 var shopState =
-                    new ShardedShopStateV2((Dictionary)nextState.GetState(shopAddress));
+                    new ShardedShopStateV2((Dictionary)nextState.GetLegacyState(shopAddress));
                 Assert.Empty(shopState.OrderDigestList);
             }
         }
@@ -905,11 +905,11 @@ namespace Lib9c.Tests.Action.Scenario
             Guid nonFungibleProductId = default;
             Guid assetProductId = default;
             var productsStateAddress = ProductsState.DeriveAddress(_sellerAvatarAddress);
-            var productsState = new ProductsState((List)nextState.GetState(productsStateAddress));
+            var productsState = new ProductsState((List)nextState.GetLegacyState(productsStateAddress));
             foreach (var product in productsState.ProductIds.Select(Product.DeriveAddress)
                          .Select(productAddress =>
                              ProductFactory.DeserializeProduct(
-                                 (List)nextState.GetState(productAddress))))
+                                 (List)nextState.GetLegacyState(productAddress))))
             {
                 switch (product)
                 {
@@ -1092,11 +1092,11 @@ namespace Lib9c.Tests.Action.Scenario
                 foreach (var productInfo in group)
                 {
                     var sellerAvatarState = tradedState.GetAvatarState(productInfo.AvatarAddress);
-                    var sellProductList = new ProductsState((List)tradedState.GetState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));
+                    var sellProductList = new ProductsState((List)tradedState.GetLegacyState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));
                     var productId = productInfo.ProductId;
                     Assert.Empty(sellProductList.ProductIds);
-                    Assert.Equal(Null.Value, tradedState.GetState(Product.DeriveAddress(productId)));
-                    var product = ProductFactory.DeserializeProduct((List)nextState.GetState(Product.DeriveAddress(productId)));
+                    Assert.Equal(Null.Value, tradedState.GetLegacyState(Product.DeriveAddress(productId)));
+                    var product = ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(Product.DeriveAddress(productId)));
                     switch (product)
                     {
                         case FavProduct favProduct:
@@ -1107,7 +1107,7 @@ namespace Lib9c.Tests.Action.Scenario
                             break;
                     }
 
-                    var receipt = new ProductReceipt((List)tradedState.GetState(ProductReceipt.DeriveAddress(productId)));
+                    var receipt = new ProductReceipt((List)tradedState.GetLegacyState(ProductReceipt.DeriveAddress(productId)));
                     Assert.Equal(productId, receipt.ProductId);
                     Assert.Equal(productInfo.AvatarAddress, receipt.SellerAvatarAddress);
                     Assert.Equal(_buyerAvatarAddress, receipt.BuyerAvatarAddress);

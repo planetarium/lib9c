@@ -56,9 +56,9 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = AvatarAddress;
 
             _initialState = new World(new MockWorldState())
-                .SetState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize())
-                .SetState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
-                .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
+                .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(AvatarAddress, _avatarState, true, true, true, true);
         }
@@ -252,18 +252,18 @@ namespace Lib9c.Tests.Action
             Assert.Empty(nextAvatarState.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct0.CostAp, nextAvatarState.actionPoint);
 
-            var marketState = new MarketState(nextState.GetState(Addresses.Market));
+            var marketState = new MarketState(nextState.GetLegacyState(Addresses.Market));
             Assert.Contains(AvatarAddress, marketState.AvatarAddresses);
 
             var productsState =
-                new ProductsState((List)nextState.GetState(ProductsState.DeriveAddress(AvatarAddress)));
+                new ProductsState((List)nextState.GetLegacyState(ProductsState.DeriveAddress(AvatarAddress)));
             var random = new TestRandom();
             for (int i = 0; i < 3; i++)
             {
                 var guid = random.GenerateRandomGuid();
                 Assert.Contains(guid, productsState.ProductIds);
                 var productAddress = Product.DeriveAddress(guid);
-                var product = ProductFactory.DeserializeProduct((List)nextState.GetState(productAddress));
+                var product = ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(productAddress));
                 Assert.Equal(product.ProductId, guid);
                 Assert.Equal(1 * Gold, product.Price);
                 if (product is ItemProduct itemProduct)

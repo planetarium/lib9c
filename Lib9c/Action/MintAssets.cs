@@ -45,12 +45,12 @@ namespace Nekoyume.Action
             IWorld state = context.PreviousState;
             HashSet<Address> allowed = new();
 
-            if (state.TryGetState(Addresses.Admin, out Dictionary rawDict))
+            if (state.TryGetLegacyState(Addresses.Admin, out Dictionary rawDict))
             {
                 allowed.Add(new AdminState(rawDict).AdminAddress);
             }
 
-            if (state.TryGetState(Addresses.AssetMinters, out List minters))
+            if (state.TryGetLegacyState(Addresses.AssetMinters, out List minters))
             {
                 allowed.UnionWith(minters.Select(m => m.ToAddress()));
             }

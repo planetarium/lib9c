@@ -76,7 +76,7 @@ namespace Nekoyume.Action
 
             Currency currency = states.GetGoldCurrency();
             FungibleAssetValue stakedAmount = states.GetStakedAmount(context.Signer);
-            if (stakedAmount == currency * 0 && states.TryGetState(monsterCollectionAddress, out Dictionary _))
+            if (stakedAmount == currency * 0 && states.TryGetLegacyState(monsterCollectionAddress, out Dictionary _))
             {
                 stakedAmount = states.GetBalance(monsterCollectionAddress, currency);
             }

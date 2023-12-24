@@ -92,7 +92,7 @@ namespace Lib9c.Tests.Action.Scenario
                 recipeIds = recipeIds.Add(i.Serialize());
             }
 
-            stateV2 = stateV2.SetState(unlockRecipeIdsAddress, recipeIds);
+            stateV2 = stateV2.SetLegacyState(unlockRecipeIdsAddress, recipeIds);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)

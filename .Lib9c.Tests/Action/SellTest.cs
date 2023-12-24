@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -74,10 +74,10 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = _avatarAddress;
 
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
-                .SetState(Addresses.Shop, shopState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
+                .SetLegacyState(Addresses.Shop, shopState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
-                .SetState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
+                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
         }
 
         [Theory]
@@ -128,7 +128,7 @@ namespace Lib9c.Tests.Action
             var previousStates = _initialState;
             if (backward)
             {
-                previousStates = previousStates.SetState(
+                previousStates = previousStates.SetLegacyState(
                     _avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
             }
             else
@@ -145,7 +145,7 @@ namespace Lib9c.Tests.Action
                 tradableItem.ItemSubType,
                 orderId);
             long blockIndex = 1;
-            Assert.Null(previousStates.GetState(shardedShopAddress));
+            Assert.Null(previousStates.GetLegacyState(shardedShopAddress));
 
             var sellAction = new Sell
             {
@@ -176,7 +176,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(expiredBlockIndex, nextTradableItem.RequiredBlockIndex);
 
             // Check ShardedShopState
-            var nextSerializedShardedShopState = nextState.GetState(shardedShopAddress);
+            var nextSerializedShardedShopState = nextState.GetLegacyState(shardedShopAddress);
             Assert.NotNull(nextSerializedShardedShopState);
             var nextShardedShopState =
                 new ShardedShopStateV2((Dictionary)nextSerializedShardedShopState);
@@ -188,9 +188,9 @@ namespace Lib9c.Tests.Action
             Assert.Equal(((ItemBase)tradableItem).Id, orderDigest.ItemId);
             Assert.Equal(tradableItem.TradableId, orderDigest.TradableId);
 
-            var serializedOrder = nextState.GetState(orderAddress);
+            var serializedOrder = nextState.GetLegacyState(orderAddress);
             Assert.NotNull(serializedOrder);
-            var serializedItem = nextState.GetState(Addresses.GetItemAddress(tradableItem.TradableId));
+            var serializedItem = nextState.GetLegacyState(Addresses.GetItemAddress(tradableItem.TradableId));
             Assert.NotNull(serializedItem);
 
             var order = OrderFactory.Deserialize((Dictionary)serializedOrder);
@@ -205,7 +205,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(_avatarAddress, order.SellerAvatarAddress);
             Assert.Equal(expiredBlockIndex, orderItem.RequiredBlockIndex);
 
-            var receiptDict = nextState.GetState(OrderDigestListState.DeriveAddress(_avatarAddress));
+            var receiptDict = nextState.GetLegacyState(OrderDigestListState.DeriveAddress(_avatarAddress));
             Assert.NotNull(receiptDict);
             var orderDigestList = new OrderDigestListState((Dictionary)receiptDict);
             Assert.Single(orderDigestList.OrderDigestList);
@@ -350,7 +350,7 @@ namespace Lib9c.Tests.Action
                 var orderLock = new OrderLock(Guid.NewGuid());
                 _avatarState.inventory.AddItem(tradableItem, 1, orderLock);
                 Assert.True(_avatarState.inventory.TryGetLockedItem(orderLock, out _));
-                _initialState = _initialState.SetState(
+                _initialState = _initialState.SetLegacyState(
                     _avatarAddress.Derive(LegacyInventoryKey),
                     _avatarState.inventory.Serialize()
                 );
@@ -437,7 +437,7 @@ namespace Lib9c.Tests.Action
 
             IWorld previousStates = _initialState
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
-                .SetState(shardedShopAddress, shardedShopState.Serialize());
+                .SetLegacyState(shardedShopAddress, shardedShopState.Serialize());
 
             var action = new Sell
             {

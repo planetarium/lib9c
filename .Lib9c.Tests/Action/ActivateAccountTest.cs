@@ -29,12 +29,12 @@ namespace Lib9c.Tests.Action
 
             if (pendingExist)
             {
-                state = state.SetState(pendingActivation.address, pendingActivation.Serialize());
+                state = state.SetLegacyState(pendingActivation.address, pendingActivation.Serialize());
             }
 
             if (alreadyActivated)
             {
-                state = state.SetState(activatedAddress, true.Serialize());
+                state = state.SetLegacyState(activatedAddress, true.Serialize());
             }
 
             ActivateAccount action = activationKey.CreateActivateAccount(invalid ? new byte[] { 0x00 } : nonce);
@@ -48,8 +48,8 @@ namespace Lib9c.Tests.Action
                     BlockIndex = 1,
                 });
 
-                Assert.Equal(Null.Value, nextState.GetState(pendingActivation.address));
-                Assert.True(nextState.GetState(activatedAddress).ToBoolean());
+                Assert.Equal(Null.Value, nextState.GetLegacyState(pendingActivation.address));
+                Assert.True(nextState.GetLegacyState(activatedAddress).ToBoolean());
             }
             else
             {

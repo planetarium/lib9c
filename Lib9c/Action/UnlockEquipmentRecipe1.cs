@@ -76,7 +76,7 @@ namespace Nekoyume.Action
                 throw new NotEnoughFungibleAssetValueException($"required {cost}, but balance is {balance}");
             }
 
-            states = states.SetState(unlockedRecipeIdsAddress,
+            states = states.SetLegacyState(unlockedRecipeIdsAddress,
                     unlockedIds.Aggregate(List.Empty,
                         (current, address) => current.Add(address.Serialize())));
             var ended = DateTimeOffset.UtcNow;
@@ -92,7 +92,7 @@ namespace Nekoyume.Action
             List<int> recipeIds
         )
         {
-            List<int> unlockedIds = states.TryGetState(unlockedRecipeIdsAddress, out List rawIds)
+            List<int> unlockedIds = states.TryGetLegacyState(unlockedRecipeIdsAddress, out List rawIds)
                 ? rawIds.ToList(StateExtensions.ToInteger)
                 : new List<int>
                 {

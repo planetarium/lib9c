@@ -30,7 +30,7 @@ namespace Nekoyume.Action
             sheet.Set(redeemCsv);
             redeem.Update(sheet);
             return states
-                .SetState(Addresses.RedeemCode, redeem.Serialize());
+                .SetLegacyState(Addresses.RedeemCode, redeem.Serialize());
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -54,7 +54,7 @@ namespace Lib9c.Tests.Action
                 rewardRecord[i] = false;
             }
 
-            states = states.SetState(rewardInfoAddress, rewardRecord.Serialize());
+            states = states.SetLegacyState(rewardInfoAddress, rewardRecord.Serialize());
 
             var random = new TestRandom();
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
@@ -80,7 +80,7 @@ namespace Lib9c.Tests.Action
                 var nextState = states.SetWorldBossKillReward(context, rewardInfoAddress, rewardRecord, 0, bossState, runeWeightSheet, killRewardSheet, runeSheet, random, avatarAddress, _agentAddress);
                 Assert.Equal(expectedRune * runeCurrency, nextState.GetBalance(avatarAddress, runeCurrency));
                 Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
-                var nextRewardInfo = new WorldBossKillRewardRecord((List)nextState.GetState(rewardInfoAddress));
+                var nextRewardInfo = new WorldBossKillRewardRecord((List)nextState.GetLegacyState(rewardInfoAddress));
                 Assert.All(nextRewardInfo, kv => Assert.True(kv.Value));
             }
             else
@@ -121,10 +121,10 @@ namespace Lib9c.Tests.Action
                 ImmutableDictionary<Guid, Coupon>.Empty);
 
             Assert.Null(
-                states.GetState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
+                states.GetLegacyState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
             Assert.Equal(
                 Bencodex.Types.List.Empty,
-                states.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
+                states.GetLegacyState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
 
             states = states.SetCouponWallet(
                 agentAddress1,
@@ -141,12 +141,12 @@ namespace Lib9c.Tests.Action
                 Bencodex.Types.List.Empty
                     .Add(coupon1.Serialize())
                     .Add(coupon2.Serialize()),
-                states.GetState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
+                states.GetLegacyState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
 
             Assert.Equal(
                 Bencodex.Types.List.Empty
                     .Add(coupon3.Serialize()),
-                states.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
+                states.GetLegacyState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
         }
 
         [Theory]
@@ -163,7 +163,7 @@ namespace Lib9c.Tests.Action
             var price = RequestPledge.DefaultRefillMead * mead;
             ActionContext context = new ActionContext();
             IWorld states = new World(new MockWorldState())
-                .SetState(
+                .SetLegacyState(
                     agentContractAddress,
                     List.Empty.Add(patron.Serialize()).Add(true.Serialize()))
                 .MintAsset(context, patron, price);

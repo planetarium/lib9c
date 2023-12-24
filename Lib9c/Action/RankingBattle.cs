@@ -53,7 +53,7 @@ namespace Nekoyume.Action
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress, enemyAddress);
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
-            var arenaSheetState = states.GetState(arenaSheetAddress);
+            var arenaSheetState = states.GetLegacyState(arenaSheetAddress);
             if (arenaSheetState != null)
             {
                 // exception handling for v100240.
@@ -148,7 +148,7 @@ namespace Nekoyume.Action
             sw.Restart();
 
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
-            if (!states.TryGetState(weeklyArenaAddress, out Dictionary rawWeeklyArenaState))
+            if (!states.TryGetLegacyState(weeklyArenaAddress, out Dictionary rawWeeklyArenaState))
             {
                 return states;
             }
@@ -247,13 +247,13 @@ namespace Nekoyume.Action
 
             states = states
                 .SetAvatarState(avatarAddress, avatarState, false, true, false, true)
-                .SetState(arenaInfoAddress, arenaInfo.Serialize())
-                .SetState(enemyArenaInfoAddress, enemyArenaInfo.Serialize());
+                .SetLegacyState(arenaInfoAddress, arenaInfo.Serialize())
+                .SetLegacyState(enemyArenaInfoAddress, enemyArenaInfo.Serialize());
 
             if (isNewArenaInfo || isNewEnemyArenaInfo)
             {
                 var addressListAddress = weeklyArenaAddress.Derive("address_list");
-                var addressList = states.TryGetState(addressListAddress, out List rawAddressList)
+                var addressList = states.TryGetLegacyState(addressListAddress, out List rawAddressList)
                     ? rawAddressList.ToList(StateExtensions.ToAddress)
                     : new List<Address>();
 
@@ -267,7 +267,7 @@ namespace Nekoyume.Action
                     addressList.Add(enemyAddress);
                 }
 
-                states = states.SetState(addressListAddress,
+                states = states.SetLegacyState(addressListAddress,
                     addressList.Aggregate(List.Empty,
                         (current, address) => current.Add(address.Serialize())));
             }

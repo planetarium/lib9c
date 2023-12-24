@@ -166,7 +166,7 @@ namespace Lib9c.Tests.Action.Garages
                     var garageAddr = Addresses.GetGarageAddress(
                         AgentAddr,
                         fungibleId);
-                    Assert.Equal(0, new FungibleItemGarage(nextStates.GetState(garageAddr)).Count);
+                    Assert.Equal(0, new FungibleItemGarage(nextStates.GetLegacyState(garageAddr)).Count);
                     Assert.True(avatarState.inventory.HasFungibleItem(
                         fungibleId,
                         blockIndex: 0,
@@ -174,7 +174,7 @@ namespace Lib9c.Tests.Action.Garages
                 }
             }
 
-            var avatarDict = (Dictionary)nextStates.GetState(_recipientAvatarAddr)!;
+            var avatarDict = (Dictionary)nextStates.GetLegacyState(_recipientAvatarAddr)!;
             var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey]);
             Assert.Single(mailBox);
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());
@@ -257,7 +257,7 @@ namespace Lib9c.Tests.Action.Garages
                     AgentAddr,
                     fungibleId);
                 var previousStatesWithNullGarageState =
-                    _previousStates.SetState(garageAddr, Null.Value);
+                    _previousStates.SetLegacyState(garageAddr, Null.Value);
                 Assert.Throws<StateNullException>(() => Execute(
                     AgentAddr,
                     0,
@@ -274,11 +274,11 @@ namespace Lib9c.Tests.Action.Garages
                 var garageAddr = Addresses.GetGarageAddress(
                     AgentAddr,
                     fungibleId);
-                var garageState = _previousStates.GetState(garageAddr);
+                var garageState = _previousStates.GetLegacyState(garageAddr);
                 var garage = new FungibleItemGarage(garageState);
                 garage.Unload(1);
                 var previousStatesWithNotEnoughCountOfGarageState =
-                    _previousStates.SetState(garageAddr, garage.Serialize());
+                    _previousStates.SetLegacyState(garageAddr, garage.Serialize());
 
                 Assert.Throws<ArgumentOutOfRangeException>(() => Execute(
                     AgentAddr,
@@ -380,7 +380,7 @@ namespace Lib9c.Tests.Action.Garages
                         material.FungibleId);
                     var count = index + 1;
                     var garage = new FungibleItemGarage(material, count);
-                    previousStates = previousStates.SetState(
+                    previousStates = previousStates.SetLegacyState(
                         garageAddr,
                         garage.Serialize());
 

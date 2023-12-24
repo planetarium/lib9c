@@ -51,8 +51,8 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             _initialState = new World(new MockWorldState())
-                .SetState(Addresses.GetSheetAddress<WorldUnlockSheet>(), _tableSheets.WorldUnlockSheet.Serialize())
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize());
+                .SetLegacyState(Addresses.GetSheetAddress<WorldUnlockSheet>(), _tableSheets.WorldUnlockSheet.Serialize())
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize());
         }
 
         [Theory]
@@ -134,7 +134,7 @@ namespace Lib9c.Tests.Action
                     unlockIds = unlockIds.Add(worldId.Serialize());
                 }
 
-                state = state.SetState(unlockedWorldIdsAddress, unlockIds);
+                state = state.SetLegacyState(unlockedWorldIdsAddress, unlockIds);
             }
 
             var action = new UnlockWorld
@@ -153,7 +153,7 @@ namespace Lib9c.Tests.Action
                     RandomSeed = _random.Seed,
                 });
 
-                Assert.True(nextState.TryGetState(unlockedWorldIdsAddress, out List rawIds));
+                Assert.True(nextState.TryGetLegacyState(unlockedWorldIdsAddress, out List rawIds));
 
                 var unlockedIds = rawIds.ToList(StateExtensions.ToInteger);
 

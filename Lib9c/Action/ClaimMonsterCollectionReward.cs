@@ -59,7 +59,7 @@ namespace Nekoyume.Action
 
             Address collectionAddress = MonsterCollectionState.DeriveAddress(context.Signer, agentState.MonsterCollectionRound);
 
-            if (!states.TryGetState(collectionAddress, out Dictionary stateDict))
+            if (!states.TryGetLegacyState(collectionAddress, out Dictionary stateDict))
             {
                 throw new FailedLoadStateException($"Aborted as the monster collection state failed to load.");
             }
@@ -97,7 +97,7 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex}ClaimMonsterCollection Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
-                .SetState(collectionAddress, monsterCollectionState.Serialize());
+                .SetLegacyState(collectionAddress, monsterCollectionState.Serialize());
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>

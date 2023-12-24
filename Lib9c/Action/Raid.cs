@@ -90,7 +90,7 @@ namespace Nekoyume.Action
             Address raiderAddress = Addresses.GetRaiderAddress(AvatarAddress, raidId);
             // Check challenge count.
             RaiderState raiderState;
-            if (states.TryGetState(raiderAddress, out List rawState))
+            if (states.TryGetLegacyState(raiderAddress, out List rawState))
             {
                 raiderState = new RaiderState(rawState);
             }
@@ -104,11 +104,11 @@ namespace Nekoyume.Action
                 }
                 Address raiderListAddress = Addresses.GetRaiderListAddress(raidId);
                 List<Address> raiderList =
-                    states.TryGetState(raiderListAddress, out List rawRaiderList)
+                    states.TryGetLegacyState(raiderListAddress, out List rawRaiderList)
                         ? rawRaiderList.ToList(StateExtensions.ToAddress)
                         : new List<Address>();
                 raiderList.Add(raiderAddress);
-                states = states.SetState(raiderListAddress,
+                states = states.SetLegacyState(raiderListAddress,
                     new List(raiderList.Select(a => a.Serialize())));
             }
 
@@ -153,26 +153,26 @@ namespace Nekoyume.Action
 
             // Update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Raid);
-            var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+            var runeSlotState = states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Raid);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
-            states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            states = states.SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize());
 
             // Update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(AvatarAddress, BattleType.Raid);
-            var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+            var itemSlotState = states.TryGetLegacyState(itemSlotStateAddress, out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Raid);
             itemSlotState.UpdateEquipment(EquipmentIds);
             itemSlotState.UpdateCostumes(CostumeIds);
-            states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
             int previousHighScore = raiderState.HighScore;
             WorldBossState bossState;
             WorldBossGlobalHpSheet hpSheet = sheets.GetSheet<WorldBossGlobalHpSheet>();
-            if (states.TryGetState(worldBossAddress, out List rawBossState))
+            if (states.TryGetLegacyState(worldBossAddress, out List rawBossState))
             {
                 bossState = new WorldBossState(rawBossState);
             }
@@ -197,7 +197,7 @@ namespace Nekoyume.Action
             var runeStates = new List<RuneState>();
             foreach (var address in RuneInfos.Select(info => RuneState.DeriveAddress(AvatarAddress, info.RuneId)))
             {
-                if (states.TryGetState(address, out List rawRuneState))
+                if (states.TryGetLegacyState(address, out List rawRuneState))
                 {
                     runeStates.Add(new RuneState(rawRuneState));
                 }
@@ -286,7 +286,7 @@ namespace Nekoyume.Action
                 // kill reward
                 var worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(AvatarAddress, raidId);
                 WorldBossKillRewardRecord rewardRecord;
-                if (states.TryGetState(worldBossKillRewardRecordAddress, out List rawList))
+                if (states.TryGetLegacyState(worldBossKillRewardRecordAddress, out List rawList))
                 {
                     var bossRow = raidSimulatorSheets.WorldBossCharacterSheet[row.BossId];
                     rewardRecord = new WorldBossKillRewardRecord(rawList);
@@ -317,15 +317,15 @@ namespace Nekoyume.Action
                 {
                     rewardRecord.Add(raiderState.LatestBossLevel, false);
                 }
-                states = states.SetState(worldBossKillRewardRecordAddress, rewardRecord.Serialize());
+                states = states.SetLegacyState(worldBossKillRewardRecordAddress, rewardRecord.Serialize());
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);
             return states
                 .SetAvatarState(AvatarAddress, avatarState, false, true, false, false)
-                .SetState(worldBossAddress, bossState.Serialize())
-                .SetState(raiderAddress, raiderState.Serialize());
+                .SetLegacyState(worldBossAddress, bossState.Serialize())
+                .SetLegacyState(raiderAddress, raiderState.Serialize());
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

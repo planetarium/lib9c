@@ -52,7 +52,7 @@ namespace Lib9c.Tests.Action
             _sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in _sheets)
             {
-                _initialStates = _initialStates.SetState(
+                _initialStates = _initialStates.SetLegacyState(
                     Addresses.TableSheet.Derive(key),
                     value.Serialize());
             }
@@ -109,7 +109,7 @@ namespace Lib9c.Tests.Action
             _avatar4Address = avatar4State.address;
 
             _initialStates = _initialStates
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetAgentState(_agent1Address, agent1State)
                 .SetAvatarState(_avatar1Address, avatar1State, true, true, true, true)
                 .SetAgentState(_agent2Address, agent2State)
@@ -118,7 +118,7 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(_avatar3Address, avatar3State, true, true, true, true)
                 .SetAgentState(_agent4Address, agent4State)
                 .SetAvatarState(_avatar4Address, avatar4State, true, true, true, true)
-                .SetState(
+                .SetLegacyState(
                     Addresses.GameConfig,
                     new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize());
 
@@ -400,7 +400,7 @@ namespace Lib9c.Tests.Action
                 roundData.Round);
             previousStates.TryGetArenaScore(arenaScoreAdr, out var arenaScore);
             arenaScore.AddScore(900);
-            previousStates = previousStates.SetState(arenaScoreAdr, arenaScore.Serialize());
+            previousStates = previousStates.SetLegacyState(arenaScoreAdr, arenaScore.Serialize());
 
             var action = new BattleArena
             {
@@ -469,7 +469,7 @@ namespace Lib9c.Tests.Action
             }
 
             beforeInfo.UseTicket(beforeInfo.Ticket);
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousStates = previousStates.SetLegacyState(arenaInfoAdr, beforeInfo.Serialize());
 
             var action = new BattleArena
             {
@@ -610,7 +610,7 @@ namespace Lib9c.Tests.Action
                 beforeInfo.BuyTicket(roundData.MaxPurchaseCount);
             }
 
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousStates = previousStates.SetLegacyState(arenaInfoAdr, beforeInfo.Serialize());
             var price = ArenaHelper.GetTicketPrice(
                 roundData,
                 beforeInfo,
@@ -692,8 +692,8 @@ namespace Lib9c.Tests.Action
 
             var purchasedCountDuringInterval = arenaInfoAdr.Derive(BattleArena.PurchasedCountKey);
             previousStates = previousStates
-                .SetState(arenaInfoAdr, beforeInfo.Serialize())
-                .SetState(
+                .SetLegacyState(arenaInfoAdr, beforeInfo.Serialize())
+                .SetLegacyState(
                     purchasedCountDuringInterval,
                     new Integer(beforeInfo.PurchasedTicketCount));
             var price = ArenaHelper.GetTicketPrice(
@@ -770,7 +770,7 @@ namespace Lib9c.Tests.Action
 
             beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
             var max = roundData.MaxPurchaseCountWithInterval;
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousStates = previousStates.SetLegacyState(arenaInfoAdr, beforeInfo.Serialize());
             for (var i = 0; i < max; i++)
             {
                 var price = ArenaHelper.GetTicketPrice(
@@ -921,7 +921,7 @@ namespace Lib9c.Tests.Action
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
-            previousStates = previousStates.SetState(GameConfigState.Address, gameConfigState.Serialize());
+            previousStates = previousStates.SetLegacyState(GameConfigState.Address, gameConfigState.Serialize());
 
             var blockIndex = roundData.StartBlockIndex + nextBlockIndex;
 
@@ -987,8 +987,8 @@ namespace Lib9c.Tests.Action
 
             var purchasedCountDuringInterval = arenaInfoAdr.Derive(BattleArena.PurchasedCountKey);
             previousStates = previousStates
-                .SetState(arenaInfoAdr, beforeInfo.Serialize())
-                .SetState(
+                .SetLegacyState(arenaInfoAdr, beforeInfo.Serialize())
+                .SetLegacyState(
                     purchasedCountDuringInterval,
                     new Integer(beforeInfo.PurchasedTicketCount));
             var price = ArenaHelper.GetTicketPrice(
@@ -1101,7 +1101,7 @@ namespace Lib9c.Tests.Action
             if (isPurchased)
             {
                 beforeInfo.UseTicket(beforeInfo.Ticket);
-                previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+                previousStates = previousStates.SetLegacyState(arenaInfoAdr, beforeInfo.Serialize());
                 for (var i = 0; i < ticket; i++)
                 {
                     var price = ArenaHelper.GetTicketPrice(
@@ -1150,7 +1150,7 @@ namespace Lib9c.Tests.Action
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
-            previousStates = previousStates.SetState(GameConfigState.Address, gameConfigState.Serialize());
+            previousStates = previousStates.SetLegacyState(GameConfigState.Address, gameConfigState.Serialize());
 
             var blockIndex = roundData.StartBlockIndex < arenaInterval
                 ? roundData.StartBlockIndex

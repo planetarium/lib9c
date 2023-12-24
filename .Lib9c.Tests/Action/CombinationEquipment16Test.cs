@@ -77,13 +77,13 @@ namespace Lib9c.Tests.Action
                 0);
 
             _initialState = new World(new MockWorldState())
-                .SetState(_slotAddress, combinationSlotState.Serialize())
-                .SetState(GoldCurrencyState.Address, gold.Serialize());
+                .SetLegacyState(_slotAddress, combinationSlotState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, gold.Serialize());
 
             foreach (var (key, value) in sheets)
             {
                 _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    _initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
@@ -153,7 +153,7 @@ namespace Lib9c.Tests.Action
                     }
                 }
 
-                state = state.SetState(_avatarAddress.Derive("recipe_ids"), unlockIds);
+                state = state.SetLegacyState(_avatarAddress.Derive("recipe_ids"), unlockIds);
             }
 
             if (agentExist)
@@ -197,7 +197,7 @@ namespace Lib9c.Tests.Action
 
                     if (migrationRequired)
                     {
-                        state = state.SetState(
+                        state = state.SetLegacyState(
                             _avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
                     }
                     else
@@ -208,7 +208,7 @@ namespace Lib9c.Tests.Action
                     if (!slotUnlock)
                     {
                         // Lock slot.
-                        state = state.SetState(
+                        state = state.SetLegacyState(
                             _slotAddress,
                             new CombinationSlotState(_slotAddress, stageId + 1).Serialize()
                         );
@@ -245,8 +245,8 @@ namespace Lib9c.Tests.Action
                     var beforePreviousCostState = new CrystalCostState(beforePreviousCostAddress, crystalBalance * CrystalCalculator.CRYSTAL);
 
                     state = state
-                        .SetState(previousCostAddress, previousCostState.Serialize())
-                        .SetState(beforePreviousCostAddress, beforePreviousCostState.Serialize());
+                        .SetLegacyState(previousCostAddress, previousCostState.Serialize())
+                        .SetLegacyState(beforePreviousCostAddress, beforePreviousCostState.Serialize());
                 }
 
                 expectedCrystal = crystalBalance;
@@ -259,8 +259,8 @@ namespace Lib9c.Tests.Action
                 r.Type == CrystalFluctuationSheet.ServiceType.Combination).BlockInterval;
             var weeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress((int)(blockIndex / weeklyInterval));
 
-            Assert.Null(state.GetState(dailyCostAddress));
-            Assert.Null(state.GetState(weeklyCostAddress));
+            Assert.Null(state.GetLegacyState(dailyCostAddress));
+            Assert.Null(state.GetLegacyState(weeklyCostAddress));
 
             var action = new CombinationEquipment16
             {
@@ -311,8 +311,8 @@ namespace Lib9c.Tests.Action
                 var mail = nextAvatarState.mailBox.OfType<CombinationMail>().First();
 
                 Assert.Equal(equipment, mail.attachment.itemUsable);
-                Assert.Equal(payByCrystal, !(nextState.GetState(dailyCostAddress) is null));
-                Assert.Equal(payByCrystal, !(nextState.GetState(weeklyCostAddress) is null));
+                Assert.Equal(payByCrystal, !(nextState.GetLegacyState(dailyCostAddress) is null));
+                Assert.Equal(payByCrystal, !(nextState.GetLegacyState(weeklyCostAddress) is null));
 
                 if (payByCrystal)
                 {
@@ -360,7 +360,7 @@ namespace Lib9c.Tests.Action
                 unlockIds = unlockIds.Add(i.Serialize());
             }
 
-            state = state.SetState(_avatarAddress.Derive("recipe_ids"), unlockIds);
+            state = state.SetLegacyState(_avatarAddress.Derive("recipe_ids"), unlockIds);
             state = state.SetAgentState(_agentAddress, _agentState);
             _avatarState.worldInformation = new WorldInformation(0, _tableSheets.WorldSheet, 200);
             var row = _tableSheets.EquipmentItemRecipeSheet[recipeId];
@@ -400,7 +400,7 @@ namespace Lib9c.Tests.Action
                 hammerPointState.AddHammerPoint(
                     hammerPointSheet[recipeId].MaxPoint,
                     hammerPointSheet);
-                state = state.SetState(hammerPointAddress, hammerPointState.Serialize());
+                state = state.SetLegacyState(hammerPointAddress, hammerPointState.Serialize());
                 if (exc is null)
                 {
                     var costCrystal = CrystalCalculator.CRYSTAL *
@@ -413,7 +413,7 @@ namespace Lib9c.Tests.Action
                 else if (exc.FullName!.Contains(nameof(NotEnoughHammerPointException)))
                 {
                     hammerPointState.ResetHammerPoint();
-                    state = state.SetState(hammerPointAddress, hammerPointState.Serialize());
+                    state = state.SetLegacyState(hammerPointAddress, hammerPointState.Serialize());
                 }
             }
 
@@ -436,7 +436,7 @@ namespace Lib9c.Tests.Action
                     RandomSeed = _random.Seed,
                 });
 
-                Assert.True(nextState.TryGetState(hammerPointAddress, out List serialized));
+                Assert.True(nextState.TryGetLegacyState(hammerPointAddress, out List serialized));
                 var hammerPointState =
                     new HammerPointState(hammerPointAddress, serialized);
                 if (!doSuperCraft)

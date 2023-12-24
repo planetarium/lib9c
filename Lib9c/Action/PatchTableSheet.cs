@@ -59,7 +59,7 @@ namespace Nekoyume.Action
             }
 #endif
 
-            var sheet = states.GetState(sheetAddress);
+            var sheet = states.GetLegacyState(sheetAddress);
             var value = sheet is null ? string.Empty : sheet.ToDotnetString();
 
             Log.Verbose(
@@ -74,12 +74,12 @@ namespace Nekoyume.Action
                 TableCsv
             );
 
-            states = states.SetState(sheetAddress, TableCsv.Serialize());
+            states = states.SetLegacyState(sheetAddress, TableCsv.Serialize());
 
             if (TableName == nameof(GameConfigSheet))
             {
                 var gameConfigState = new GameConfigState(TableCsv);
-                states = states.SetState(GameConfigState.Address, gameConfigState.Serialize());
+                states = states.SetLegacyState(GameConfigState.Address, gameConfigState.Serialize());
             }
 
             return states;

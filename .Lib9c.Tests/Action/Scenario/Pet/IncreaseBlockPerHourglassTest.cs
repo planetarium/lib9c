@@ -86,7 +86,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 recipeIds = recipeIds.Add(i.Serialize());
             }
 
-            stateV2 = stateV2.SetState(_recipeIdsAddr, recipeIds);
+            stateV2 = stateV2.SetLegacyState(_recipeIdsAddr, recipeIds);
 
             var expectedHourglass = (int)Math.Ceiling(
                 ((double)recipe.RequiredBlockIndex
@@ -101,7 +101,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                     pet => pet.LevelOptionMap[(int)petLevel!].OptionType == PetOptionType
                 );
                 _petId = petRow.PetId;
-                stateV2 = stateV2.SetState(
+                stateV2 = stateV2.SetLegacyState(
                     PetState.DeriveAddress(_avatarAddr, (int)_petId),
                     new List(_petId!.Serialize(), petLevel.Serialize(), 0L.Serialize())
                 );

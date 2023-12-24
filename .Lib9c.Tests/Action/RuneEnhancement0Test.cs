@@ -41,12 +41,12 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var context = new ActionContext();
             var state = new World(new MockWorldState())
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, new AgentState(agentAddress));
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var avatarState = new AvatarState(
@@ -62,7 +62,7 @@ namespace Lib9c.Tests.Action
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new RuneState(runeId);
-            state = state.SetState(runeStateAddress, runeState.Serialize());
+            state = state.SetLegacyState(runeStateAddress, runeState.Serialize());
 
             var costSheet = state.GetSheet<RuneCostSheet>();
             if (!costSheet.TryGetValue(runeId, out var costRow))
@@ -125,7 +125,7 @@ namespace Lib9c.Tests.Action
             };
 
             var nextState = action.Execute(ctx);
-            if (!nextState.TryGetState(runeStateAddress, out List nextRuneRawState))
+            if (!nextState.TryGetLegacyState(runeStateAddress, out List nextRuneRawState))
             {
                 throw new Exception();
             }
@@ -192,12 +192,12 @@ namespace Lib9c.Tests.Action
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new World(new MockWorldState())
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, new AgentState(agentAddress));
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var avatarState = new AvatarState(
@@ -213,7 +213,7 @@ namespace Lib9c.Tests.Action
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new RuneState(128381293);
-            state = state.SetState(runeStateAddress, runeState.Serialize());
+            state = state.SetLegacyState(runeStateAddress, runeState.Serialize());
             var action = new RuneEnhancement0()
             {
                 AvatarAddress = avatarState.address,
@@ -245,12 +245,12 @@ namespace Lib9c.Tests.Action
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new World(new MockWorldState())
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, new AgentState(agentAddress));
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var avatarState = new AvatarState(
@@ -277,7 +277,7 @@ namespace Lib9c.Tests.Action
                 runeState.LevelUp();
             }
 
-            state = state.SetState(runeStateAddress, runeState.Serialize());
+            state = state.SetLegacyState(runeStateAddress, runeState.Serialize());
 
             var action = new RuneEnhancement0()
             {
@@ -314,12 +314,12 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var context = new ActionContext();
             var state = new World(new MockWorldState())
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, new AgentState(agentAddress));
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var avatarState = new AvatarState(
@@ -335,7 +335,7 @@ namespace Lib9c.Tests.Action
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new RuneState(runeId);
-            state = state.SetState(runeStateAddress, runeState.Serialize());
+            state = state.SetLegacyState(runeStateAddress, runeState.Serialize());
 
             var costSheet = state.GetSheet<RuneCostSheet>();
             if (!costSheet.TryGetValue(runeId, out var costRow))
@@ -426,12 +426,12 @@ namespace Lib9c.Tests.Action
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new World(new MockWorldState())
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, new AgentState(agentAddress));
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var avatarState = new AvatarState(
@@ -447,7 +447,7 @@ namespace Lib9c.Tests.Action
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new RuneState(runeId);
-            state = state.SetState(runeStateAddress, runeState.Serialize());
+            state = state.SetLegacyState(runeStateAddress, runeState.Serialize());
 
             var action = new RuneEnhancement0()
             {

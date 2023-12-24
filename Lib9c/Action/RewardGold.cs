@@ -48,7 +48,7 @@ namespace Nekoyume.Action
             // Avoid InvalidBlockStateRootHashException before table patch.
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
             // Avoid InvalidBlockStateRootHashException in unit test genesis block evaluate.
-            if (states.GetState(arenaSheetAddress) is null || context.BlockIndex == 0)
+            if (states.GetLegacyState(arenaSheetAddress) is null || context.BlockIndex == 0)
             {
                 states = WeeklyArenaRankingBoard2(context, states);
             }
@@ -105,7 +105,7 @@ namespace Nekoyume.Action
             if (nextWeekly is null)
             {
                 nextWeekly = new WeeklyArenaState(nextIndex);
-                states = states.SetState(nextWeekly.address, nextWeekly.Serialize());
+                states = states.SetLegacyState(nextWeekly.address, nextWeekly.Serialize());
             }
 
             // Beginning block of a new weekly arena.
@@ -116,14 +116,14 @@ namespace Nekoyume.Action
                 {
                     prevWeekly.End();
                     weekly.Update(prevWeekly, ctx.BlockIndex);
-                    states = states.SetState(prevWeekly.address, prevWeekly.Serialize());
-                    states = states.SetState(weekly.address, weekly.Serialize());
+                    states = states.SetLegacyState(prevWeekly.address, prevWeekly.Serialize());
+                    states = states.SetLegacyState(weekly.address, weekly.Serialize());
                 }
             }
             else if (ctx.BlockIndex - weekly.ResetIndex >= gameConfigState.DailyArenaInterval)
             {
                 weekly.ResetCount(ctx.BlockIndex);
-                states = states.SetState(weekly.address, weekly.Serialize());
+                states = states.SetLegacyState(weekly.address, weekly.Serialize());
             }
             return states;
         }
@@ -140,20 +140,20 @@ namespace Nekoyume.Action
             var gameConfigState = states.GetGameConfigState();
             var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
             var weeklyAddress = WeeklyArenaState.DeriveAddress(index);
-            var rawWeekly = (Dictionary) states.GetState(weeklyAddress);
+            var rawWeekly = (Dictionary) states.GetLegacyState(weeklyAddress);
             var nextIndex = index + 1;
             var nextWeekly = states.GetWeeklyArenaState(nextIndex);
             if (nextWeekly is null)
             {
                 nextWeekly = new WeeklyArenaState(nextIndex);
-                states = states.SetState(nextWeekly.address, nextWeekly.Serialize());
+                states = states.SetLegacyState(nextWeekly.address, nextWeekly.Serialize());
             }
 
             // Beginning block of a new weekly arena.
             if (ctx.BlockIndex % gameConfigState.WeeklyArenaInterval == 0 && index > 0)
             {
                 var prevWeeklyAddress = WeeklyArenaState.DeriveAddress(index - 1);
-                var rawPrevWeekly = (Dictionary) states.GetState(prevWeeklyAddress);
+                var rawPrevWeekly = (Dictionary) states.GetLegacyState(prevWeeklyAddress);
                 if (!rawPrevWeekly["ended"].ToBoolean())
                 {
                     rawPrevWeekly = rawPrevWeekly.SetItem("ended", true.Serialize());
@@ -161,7 +161,7 @@ namespace Nekoyume.Action
                     var prevWeekly = new WeeklyArenaState(rawPrevWeekly);
                     var listAddress = weekly.address.Derive("address_list");
                     // Set ArenaInfo, address list for new RankingBattle.
-                    var addressList = states.TryGetState(listAddress, out List rawList)
+                    var addressList = states.TryGetLegacyState(listAddress, out List rawList)
                         ? rawList.ToList(StateExtensions.ToAddress)
                         : new List<Address>();
                     var nextAddresses = rawList ?? List.Empty;
@@ -177,7 +177,7 @@ namespace Nekoyume.Action
                                 var address = kv.Key;
                                 var lazyInfo = kv.Value;
                                 var info = new ArenaInfo(lazyInfo.State);
-                                states = states.SetState(
+                                states = states.SetLegacyState(
                                     weeklyAddress.Derive(address.ToByteArray()), info.Serialize());
                                 if (!addressList.Contains(address))
                                 {
@@ -192,7 +192,7 @@ namespace Nekoyume.Action
                             // Copy addresses from prev weekly address list.
                             var prevListAddress = prevWeekly.address.Derive("address_list");
 
-                            if (states.TryGetState(prevListAddress, out List prevRawList))
+                            if (states.TryGetLegacyState(prevListAddress, out List prevRawList))
                             {
                                 var prevList = prevRawList.ToList(StateExtensions.ToAddress);
                                 foreach (var address in prevList.Where(address => !addressList.Contains(address)))
@@ -204,7 +204,7 @@ namespace Nekoyume.Action
                             // Copy activated ArenaInfo from prev ArenaInfo.
                             foreach (var address in addressList)
                             {
-                                if (states.TryGetState(
+                                if (states.TryGetLegacyState(
                                         prevWeekly.address.Derive(address.ToByteArray()),
                                         out Dictionary rawInfo))
                                 {
@@ -218,14 +218,14 @@ namespace Nekoyume.Action
                                     }
 
                                     nextAddresses = nextAddresses.Add(address.Serialize());
-                                    states = states.SetState(
+                                    states = states.SetLegacyState(
                                         weeklyAddress.Derive(address.ToByteArray()),
                                         new ArenaInfo(prevInfo).Serialize());
                                 }
                             }
                         }
                         // Set address list.
-                        states = states.SetState(listAddress, nextAddresses);
+                        states = states.SetLegacyState(listAddress, nextAddresses);
                     }
                     // Run legacy Update.
                     else
@@ -233,8 +233,8 @@ namespace Nekoyume.Action
                         weekly.Update(prevWeekly, ctx.BlockIndex);
                     }
 
-                    states = states.SetState(prevWeeklyAddress, rawPrevWeekly);
-                    states = states.SetState(weeklyAddress, weekly.Serialize());
+                    states = states.SetLegacyState(prevWeeklyAddress, rawPrevWeekly);
+                    states = states.SetLegacyState(weeklyAddress, weekly.Serialize());
                 }
             }
             return states;
@@ -245,7 +245,7 @@ namespace Nekoyume.Action
             var gameConfigState = states.GetGameConfigState();
             var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
             var weeklyAddress = WeeklyArenaState.DeriveAddress(index);
-            var rawWeekly = (Dictionary) states.GetState(weeklyAddress);
+            var rawWeekly = (Dictionary) states.GetLegacyState(weeklyAddress);
             var resetIndex = rawWeekly["resetIndex"].ToLong();
 
             if (ctx.BlockIndex - resetIndex >= gameConfigState.DailyArenaInterval)
@@ -256,17 +256,17 @@ namespace Nekoyume.Action
                     // Reset count each ArenaInfo.
                     weekly.ResetIndex = ctx.BlockIndex;
                     var listAddress = weeklyAddress.Derive("address_list");
-                    if (states.TryGetState(listAddress, out List rawList))
+                    if (states.TryGetLegacyState(listAddress, out List rawList))
                     {
                         var addressList = rawList.ToList(StateExtensions.ToAddress);
                         foreach (var address in addressList)
                         {
                             var infoAddress = weeklyAddress.Derive(address.ToByteArray());
-                            if (states.TryGetState(infoAddress, out Dictionary rawInfo))
+                            if (states.TryGetLegacyState(infoAddress, out Dictionary rawInfo))
                             {
                                 var info = new ArenaInfo(rawInfo);
                                 info.ResetCount();
-                                states = states.SetState(infoAddress, info.Serialize());
+                                states = states.SetLegacyState(infoAddress, info.Serialize());
                             }
                         }
                     }
@@ -276,7 +276,7 @@ namespace Nekoyume.Action
                     // Run legacy ResetCount.
                     weekly.ResetCount(ctx.BlockIndex);
                 }
-                states = states.SetState(weeklyAddress, weekly.Serialize());
+                states = states.SetLegacyState(weeklyAddress, weekly.Serialize());
             }
             return states;
         }
@@ -317,7 +317,7 @@ namespace Nekoyume.Action
             foreach (var address in targetAddresses)
             {
                 var contractAddress = address.GetPledgeAddress();
-                if (states.TryGetState(contractAddress, out List contract) &&
+                if (states.TryGetLegacyState(contractAddress, out List contract) &&
                     contract[1].ToBoolean())
                 {
                     try

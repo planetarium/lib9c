@@ -100,21 +100,21 @@ namespace Lib9c.Tests.TestHelper
             var weeklyArenaAddress = WeeklyArenaState.DeriveAddress(0);
             var context = new ActionContext();
             var initialState = new World(new MockWorldState())
-                .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
-                .SetState(
+                .SetLegacyState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
+                .SetLegacyState(
                     Addresses.GoldDistribution,
                     GoldDistributionTest.Fixture.Select(v => v.Serialize()).Serialize()
                 )
-                .SetState(
+                .SetLegacyState(
                     Addresses.GameConfig,
                     new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
                 )
-                .SetState(Addresses.Ranking, ranking.Serialize())
-                .SetState(weeklyArenaAddress, new WeeklyArenaState(0).Serialize());
+                .SetLegacyState(Addresses.Ranking, ranking.Serialize())
+                .SetLegacyState(weeklyArenaAddress, new WeeklyArenaState(0).Serialize());
 
             foreach (var (key, value) in sheets)
             {
-                initialState = initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                initialState = initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var tableSheets = new TableSheets(sheets);
@@ -143,10 +143,10 @@ namespace Lib9c.Tests.TestHelper
             var agentCurrencyGold = goldCurrencyState.Currency * 1000;
             var remainCurrencyGold = initCurrencyGold - agentCurrencyGold;
             initialState = initialState
-                .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
-                .SetState(Addresses.Shop, new ShopState().Serialize())
+                .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, initCurrencyGold)
                 .TransferAsset(context, Addresses.GoldCurrency, agentAddress,  agentCurrencyGold);
 

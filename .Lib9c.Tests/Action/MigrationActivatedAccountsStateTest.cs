@@ -32,11 +32,11 @@ namespace Lib9c.Tests.Action
             });
 
             var nextAccountsState = new ActivatedAccountsState(
-                (Dictionary)nextState.GetState(ActivatedAccountsState.Address)
+                (Dictionary)nextState.GetLegacyState(ActivatedAccountsState.Address)
             );
             Assert.Single(nextAccountsState.Accounts);
             Assert.Equal(default, nextAccountsState.Accounts.First());
-            Assert.True(nextState.GetState(default(Address).Derive(ActivationKey.DeriveKey)).ToBoolean());
+            Assert.True(nextState.GetLegacyState(default(Address).Derive(ActivationKey.DeriveKey)).ToBoolean());
         }
     }
 }

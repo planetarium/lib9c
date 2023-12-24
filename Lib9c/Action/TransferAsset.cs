@@ -120,7 +120,7 @@ namespace Nekoyume.Action
 
         public static void ThrowIfStakeState(IWorld state, Address recipient)
         {
-            if (state.TryGetState(recipient, out IValue serializedStakeState))
+            if (state.TryGetLegacyState(recipient, out IValue serializedStakeState))
             {
                 bool isStakeStateOrMonsterCollectionState;
                 if (serializedStakeState is Dictionary dictionary)
