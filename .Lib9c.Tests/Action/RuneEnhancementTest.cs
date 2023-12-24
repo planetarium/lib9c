@@ -57,11 +57,8 @@ namespace Lib9c.Tests.Action
             var context = new ActionContext();
             var state = new World(new MockWorldState())
                 .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.SerializeV2())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in sheets)
             {
@@ -217,11 +214,8 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses.Add(0, avatarAddress);
             var state = new World(new MockWorldState())
                 .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.SerializeV2())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in sheets)
             {
@@ -279,11 +273,8 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses.Add(0, avatarAddress);
             var state = new World(new MockWorldState())
                 .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.SerializeV2())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in sheets)
             {
@@ -357,11 +348,8 @@ namespace Lib9c.Tests.Action
             var context = new ActionContext();
             var state = new World(new MockWorldState())
                 .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.SerializeV2())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in sheets)
             {
@@ -478,11 +466,8 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses.Add(0, avatarAddress);
             var state = new World(new MockWorldState())
                 .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.SerializeV2())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in sheets)
             {
@@ -527,7 +512,7 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new World(new MockWorldState())
                 .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, new AgentState(agentAddress).Serialize());
+                .SetAgentState(agentAddress, new AgentState(agentAddress));
 
             foreach (var (key, value) in sheets)
             {
@@ -542,7 +527,7 @@ namespace Lib9c.Tests.Action
                 new GameConfigState(),
                 default
             );
-            state = state.SetState(avatarAddress, avatarState.SerializeV2());
+            state = state.SetAvatarState(avatarAddress, avatarState, true, false, false, false);
 
             var runeListSheet = state.GetSheet<RuneListSheet>();
             var runeId = runeListSheet.First().Value.Id;

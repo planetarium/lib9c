@@ -69,8 +69,8 @@ namespace Lib9c.Tests.Action
 
             var context = new ActionContext();
             var initialState = new World(new MockWorldState())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
                 .SetState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
                 .SetState(GoldCurrencyState.Address, goldState.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, goldState.Currency * 100000000);

@@ -99,16 +99,10 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
 
             _state = _state
-                .SetState(_signer, agentState.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(_signer2, agent2State.Serialize())
-                .SetState(_avatar2Address.Derive(LegacyInventoryKey), avatar2State.inventory.Serialize())
-                .SetState(_avatar2Address.Derive(LegacyWorldInformationKey), avatar2State.worldInformation.Serialize())
-                .SetState(_avatar2Address.Derive(LegacyQuestListKey), avatar2State.questList.Serialize())
-                .SetState(_avatar2Address, avatar2State.SerializeV2())
+                .SetAgentState(_signer, agentState)
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
+                .SetAgentState(_signer2, agent2State)
+                .SetAvatarState(_avatar2Address, avatar2State, true, true, true, true)
                 .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
             foreach ((string key, string value) in sheets)
@@ -153,10 +147,7 @@ namespace Lib9c.Tests.Action
             (equipments, costumes) = GetDummyItems(avatarState);
 
             _state = _state
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize());
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             return avatarState;
         }
@@ -176,11 +167,7 @@ namespace Lib9c.Tests.Action
                 avatarState.inventory.AddItem(material, count);
             }
 
-            _state = _state
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize());
+            _state = _state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             return avatarState;
         }
@@ -282,7 +269,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
+            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             var action = new JoinArena1()
             {
@@ -307,7 +294,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
+            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             var action = new JoinArena1()
             {
@@ -362,7 +349,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = _state.GetAvatarState(_avatarAddress);
             GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
+            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             var action = new JoinArena1()
             {
@@ -387,7 +374,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
+            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             var action = new JoinArena1()
             {
@@ -423,7 +410,7 @@ namespace Lib9c.Tests.Action
 
             var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
+            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             var arenaScoreAdr = ArenaScore.DeriveAddress(_avatarAddress, championshipId, round);
             var arenaScore = new ArenaScore(_avatarAddress, championshipId, round);
@@ -455,7 +442,7 @@ namespace Lib9c.Tests.Action
 
             var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetState(_avatarAddress, avatarState.SerializeV2());
+            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             var arenaInformationAdr = ArenaInformation.DeriveAddress(_avatarAddress, championshipId, round);
             var arenaInformation = new ArenaInformation(_avatarAddress, championshipId, round);

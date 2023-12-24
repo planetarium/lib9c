@@ -65,21 +65,13 @@ namespace Lib9c.Tests.Action.Scenario
                     rankingMapAddress
                 );
                 avatarState.inventory.AddItem(_aura);
-                _initialState = _initialState.SetState(avatarAddress, avatarState.SerializeV2())
-                    .SetState(
-                        avatarAddress.Derive(LegacyInventoryKey),
-                        avatarState.inventory.Serialize())
-                    .SetState(
-                        avatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize())
-                    .SetState(
-                        avatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize());
+                _initialState = _initialState.SetAvatarState(
+                    avatarAddress, avatarState, true, true, true, true);
             }
 
             _currency = Currency.Legacy("NCG", 2, minters: null);
             _initialState = _initialState
-                .SetState(_agentAddress, agentState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
                 .SetState(
                     Addresses.GoldCurrency,
                     new GoldCurrencyState(_currency).Serialize())
@@ -193,10 +185,8 @@ namespace Lib9c.Tests.Action.Scenario
                     avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                 }
 
-                prevState = prevState.SetState(
-                    avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize()
-                );
+                prevState = prevState.SetAvatarState(
+                    avatarAddress, avatarState, false, false, true, false);
 
                 var join = new JoinArena3
                 {
@@ -325,9 +315,8 @@ namespace Lib9c.Tests.Action.Scenario
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var previousState = _initialState.SetState(
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize());
+            var previousState = _initialState.SetAvatarState(
+                _avatarAddress, avatarState, false, false, true, false);
 
             var register = new RegisterProduct2
             {

@@ -56,11 +56,8 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(currency);
 
             _state = _state
-                .SetState(_signer, agentState.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2())
+                .SetAgentState(_signer, agentState)
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
                 .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
             foreach ((string key, string value) in sheets)

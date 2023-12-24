@@ -71,7 +71,7 @@ namespace Lib9c.Tests.Action
                 .SetState(Addresses.GetSheetAddress<RuneSheet>(), tableSheets.RuneSheet.Serialize())
                 .SetState(Addresses.GetSheetAddress<WorldBossCharacterSheet>(), tableSheets.WorldBossCharacterSheet.Serialize())
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize())
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
                 .SetState(worldBossKillRewardRecordAddress, worldBossKillRewardRecord.Serialize())
                 .SetState(worldBossAddress, worldBossState.Serialize())
                 .SetState(raiderStateAddress, raiderState.Serialize());

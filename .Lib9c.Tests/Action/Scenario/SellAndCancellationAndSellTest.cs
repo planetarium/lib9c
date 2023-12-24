@@ -63,17 +63,8 @@ namespace Lib9c.Tests.Action.Scenario
             _initialState = new World(new MockWorldState())
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
                 .SetState(gameConfigState.address, gameConfigState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in sheets)
             {
@@ -89,11 +80,11 @@ namespace Lib9c.Tests.Action.Scenario
             var apStoneRow = _tableSheets.MaterialItemSheet.OrderedList!.First(row =>
                 row.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(apStoneRow);
-            var inventoryAddr = _avatarAddress.Derive(LegacyInventoryKey);
-            var inventory = new Inventory((List)previousStates.GetState(inventoryAddr));
+            var avatarState = previousStates.GetAvatarState(_avatarAddress);
             // Add 10 ap stones to inventory.
-            inventory.AddFungibleItem(apStone, 10);
-            previousStates = previousStates.SetState(inventoryAddr, inventory.Serialize());
+            avatarState.inventory.AddFungibleItem(apStone, 10);
+            previousStates = previousStates.SetAvatarState(
+                _avatarAddress, avatarState, false, true, false, false);
 
             // sell ap stones with count 1, 2, 3, 4.
             var sellBlockIndex = 1L;
@@ -120,8 +111,8 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Check inventory does not have ap stones.
-            var nextInventory = new Inventory((List)nextStates.GetState(inventoryAddr));
-            Assert.False(nextInventory.RemoveFungibleItem(
+            var nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
+            Assert.False(nextAvatarState.inventory.RemoveFungibleItem(
                 apStone.FungibleId,
                 sellBlockIndex,
                 1));
@@ -147,8 +138,8 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Check inventory has 10 ap stones.
-            nextInventory = new Inventory((List)nextStates.GetState(inventoryAddr));
-            Assert.True(nextInventory.RemoveFungibleItem(
+            nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
+            Assert.True(nextAvatarState.inventory.RemoveFungibleItem(
                 apStone.FungibleId,
                 sellBlockIndex + 1L,
                 10));
@@ -165,8 +156,8 @@ namespace Lib9c.Tests.Action.Scenario
             });
 
             // Check inventory does not have ap stones.
-            nextInventory = new Inventory((List)nextStates.GetState(inventoryAddr));
-            Assert.False(nextInventory.RemoveFungibleItem(
+            nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
+            Assert.False(nextAvatarState.inventory.RemoveFungibleItem(
                 apStone.FungibleId,
                 sellBlockIndex + 2L,
                 1));

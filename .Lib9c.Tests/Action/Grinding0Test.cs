@@ -126,7 +126,7 @@ namespace Lib9c.Tests.Action
             var state = _initialState;
             if (agentExist)
             {
-                state = state.SetState(_agentAddress, _agentState.Serialize());
+                state = state.SetAgentState(_agentAddress, _agentState);
             }
 
             if (avatarExist)
@@ -156,10 +156,7 @@ namespace Lib9c.Tests.Action
                 }
 
                 state = state
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, _avatarState.SerializeV2());
+                    .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
 
                 Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
             }

@@ -113,7 +113,7 @@ namespace Lib9c.Tests.Action
                 }
 
                 previousState = previousState
-                    .SetState(_agentAddr, agentState.Serialize());
+                    .SetAgentState(_agentAddr, agentState);
             }
 
             var monsterCollectionAddr =

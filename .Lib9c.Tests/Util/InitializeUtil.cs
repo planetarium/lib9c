@@ -62,11 +62,11 @@ namespace Lib9c.Tests.Util
             agentState.avatarAddresses.Add(avatarIndex, avatarAddr);
 
             var initialStatesWithAvatarStateV1 = states
-                .SetState(agentAddr.Value, agentState.Serialize())
-                .SetState(avatarAddr, avatarState.Serialize());
+                .SetAgentState(agentAddr.Value, agentState)
+                .SetState(avatarAddr, MigrationAvatarState.LegacySerializeV1(avatarState));
             var initialStatesWithAvatarStateV2 = states
-                .SetState(agentAddr.Value, agentState.Serialize())
-                .SetState(avatarAddr, avatarState.SerializeV2())
+                .SetAgentState(agentAddr.Value, agentState)
+                .SetState(avatarAddr, MigrationAvatarState.LegacySerializeV2(avatarState))
                 .SetState(
                     avatarAddr.Derive(SerializeKeys.LegacyInventoryKey),
                     avatarState.inventory.Serialize())

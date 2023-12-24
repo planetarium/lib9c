@@ -88,10 +88,10 @@ namespace Lib9c.Tests.Action
             _weeklyArenaAddress = weeklyArenaState.address;
 
             _initialState = _initialState
-                .SetState(_agent1Address, agent1State.Serialize())
-                .SetState(_avatar1Address, avatar1State.Serialize())
-                .SetState(agent2Address, agent2State.Serialize())
-                .SetState(_avatar2Address, avatar2State.Serialize())
+                .SetAgentState(_agent1Address, agent1State)
+                .SetAvatarState(_avatar1Address, avatar1State, true, true, true, true)
+                .SetAgentState(agent2Address, agent2State)
+                .SetAvatarState(_avatar2Address, avatar2State, true, true, true, true)
                 .SetState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize())
                 .SetState(_weeklyArenaAddress, weeklyArenaState.Serialize())
                 .SetState(

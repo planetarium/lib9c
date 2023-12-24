@@ -140,9 +140,7 @@ namespace Lib9c.Tests.Action.Garages
             // Test fungibleItems
             if (unloadData[0].fungibleIdAndCounts is { } fungibleIdAndCounts)
             {
-                var inventoryAddress = unloadData[0].recipientAvatarAddress
-                    .Derive(SerializeKeys.LegacyInventoryKey);
-                var inventory = states.GetInventory(inventoryAddress);
+                var inventory = states.GetInventory(unloadData[0].recipientAvatarAddress);
 
                 foreach (var (fungibleId, count) in fungibleIdAndCounts)
                 {
@@ -153,8 +151,8 @@ namespace Lib9c.Tests.Action.Garages
             }
 
             // Test Mailing
-            var avatarDict = (Dictionary)states.GetState(unloadData[0].recipientAvatarAddress)!;
-            var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey]);
+            var avatarState = states.GetAvatarState(unloadData[0].recipientAvatarAddress);
+            var mailBox = avatarState.mailBox;
             Assert.Single(mailBox);
 
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());

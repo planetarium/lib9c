@@ -74,11 +74,8 @@ namespace Lib9c.Tests.Action
 
             _initialState = new World(new MockWorldState())
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
-                .SetState(_agentAddress, agentState.SerializeV2())
-                .SetState(_avatarAddress, _avatarState.SerializeV2())
-                .SetState(_inventoryAddress, _avatarState.inventory.Serialize())
-                .SetState(_worldInformationAddress, _avatarState.worldInformation.Serialize())
-                .SetState(_questListAddress, _avatarState.questList.Serialize())
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true)
                 .SetState(gameConfigState.address, gameConfigState.Serialize());
 
             foreach (var (key, value) in _sheets)
@@ -120,17 +117,7 @@ namespace Lib9c.Tests.Action
             };
             var gachaStateAddress = Addresses.GetSkillStateAddressFromAvatarAddress(_avatarAddress);
             var gachaState = new CrystalRandomSkillState(gachaStateAddress, stageId);
-            states = states
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
+            states = states.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             var crystalStageSheet = _tableSheets.CrystalStageBuffGachaSheet;
             gachaState.Update(gatheredStar, crystalStageSheet);
             states = states.SetState(gachaStateAddress, gachaState.Serialize());
@@ -192,17 +179,7 @@ namespace Lib9c.Tests.Action
             };
             var gachaStateAddress = Addresses.GetSkillStateAddressFromAvatarAddress(_avatarAddress);
             var gachaState = new CrystalRandomSkillState(gachaStateAddress, 1);
-            states = states
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
+            states = states.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             var crystalStageSheet = _tableSheets.CrystalStageBuffGachaSheet;
             var randomBuffSheet = _tableSheets.CrystalRandomBuffSheet;
             gachaState.Update(100_000_000, crystalStageSheet);

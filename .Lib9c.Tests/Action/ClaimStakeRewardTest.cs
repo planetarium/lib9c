@@ -620,7 +620,7 @@ namespace Lib9c.Tests.Action
                 Expect(
                     nextState,
                     expectedBalances,
-                    AvatarAddr.Derive("inventory"),
+                    AvatarAddr,
                     expectedItems);
             }
         }
@@ -657,7 +657,7 @@ namespace Lib9c.Tests.Action
                 Expect(
                     nextState,
                     expectedBalances,
-                    AvatarAddr.Derive("inventory"),
+                    AvatarAddr,
                     expectedItems);
             }
         }
@@ -705,7 +705,7 @@ namespace Lib9c.Tests.Action
         private static void Expect(
             IWorldState state,
             (Address balanceAddr, FungibleAssetValue fav)[] expectedBalances,
-            Address inventoryAddr,
+            Address avatarAddr,
             (int itemSheetId, int count)[] expectedItems)
         {
             if (expectedBalances is not null)
@@ -718,7 +718,7 @@ namespace Lib9c.Tests.Action
 
             if (expectedItems is not null)
             {
-                var inventory = state.GetInventory(inventoryAddr);
+                var inventory = state.GetInventory(avatarAddr);
                 foreach (var (itemSheetId, count) in expectedItems)
                 {
                     Assert.Equal(count, inventory.Items.First(e => e.item.Id == itemSheetId).count);

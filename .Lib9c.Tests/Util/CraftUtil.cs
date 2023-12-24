@@ -53,25 +53,25 @@ namespace Lib9c.Tests.Util
                 avatarState.inventory.AddItem(materialItem, material.Count);
             }
 
-            return state.SetState(
-                avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize()
-            );
+            return state.SetAvatarState(
+                avatarAddress, avatarState, false, true, false, false);
         }
 
         public static IWorld UnlockStage(
             IWorld state,
             TableSheets tableSheets,
-            Address worldInformationAddress,
+            Address avatarAddress,
             int stage
         )
         {
-            var worldInformation = new WorldInformation(
+            var avatarState = state.GetAvatarState(avatarAddress);
+            avatarState.worldInformation = new WorldInformation(
                 0,
                 tableSheets.WorldSheet,
                 Math.Max(stage, GameConfig.RequireClearedStageLevel.ItemEnhancementAction)
             );
-            return state.SetState(worldInformationAddress, worldInformation.Serialize());
+            return state.SetAvatarState(
+                avatarAddress, avatarState, false, false, true, false);
         }
     }
 }

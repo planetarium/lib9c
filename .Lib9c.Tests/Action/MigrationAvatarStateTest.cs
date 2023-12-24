@@ -36,13 +36,13 @@ namespace Lib9c.Tests.Action
             var state = new World(
                 new MockWorldState()
                     .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, new AdminState(admin, 100).Serialize())
-                    .SetState(ReservedAddresses.LegacyAccount, avatarAddress, avatarState.SerializeV2()));
+                    .SetState(ReservedAddresses.LegacyAccount, avatarAddress, MigrationAvatarState.LegacySerializeV2(avatarState)));
 
             var action = new MigrationAvatarState
             {
                 avatarStates = new List<Dictionary>
                 {
-                    (Dictionary)avatarState.Serialize(),
+                    (Dictionary)MigrationAvatarState.LegacySerializeV1(avatarState),
                 },
             };
 

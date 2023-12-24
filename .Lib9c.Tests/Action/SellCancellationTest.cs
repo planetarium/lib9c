@@ -76,10 +76,10 @@ namespace Lib9c.Tests.Action
 
             _initialState = _initialState
                 .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
                 .SetState(Addresses.Shop, new ShopState().Serialize())
                 .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize());
+                .SetState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
         }
 
         [Theory]
@@ -205,15 +205,11 @@ namespace Lib9c.Tests.Action
 
             if (fromPreviousAction)
             {
-                prevState = prevState.SetState(_avatarAddress, avatarState.Serialize());
+                prevState = prevState.SetState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
             }
             else
             {
-                prevState = prevState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                prevState = prevState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             }
 
             prevState = prevState
@@ -334,7 +330,7 @@ namespace Lib9c.Tests.Action
                 ),
             };
 
-            IWorld prevState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            IWorld prevState = _initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             var action = new SellCancellation
             {
@@ -644,15 +640,11 @@ namespace Lib9c.Tests.Action
 
             if (fromPreviousAction)
             {
-                prevState = prevState.SetState(_avatarAddress, avatarState.Serialize());
+                prevState = prevState.SetState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
             }
             else
             {
-                prevState = prevState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                prevState = prevState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             }
 
             prevState = prevState

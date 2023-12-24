@@ -71,9 +71,9 @@ namespace Lib9c.Tests.Action
 
             _initialState = _initialState
                 .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
                 .SetState(Addresses.Shop, new ShopState().Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize());
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
         }
 
         [Theory]

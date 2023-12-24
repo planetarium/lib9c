@@ -86,7 +86,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateInvalidAddress()
         {
-            var states = new World(new MockWorldState()).SetState(default, _avatarState.Serialize());
+            var states = new World(new MockWorldState()).SetAvatarState(
+                default, _avatarState, true, true, true, true);
 
             Assert.False(states.TryGetAvatarState(Addresses.GameConfig, _avatarAddress, out _));
         }
@@ -96,10 +97,7 @@ namespace Lib9c.Tests.Action
         {
             IWorld states = new World(new MockWorldState());
             states = states
-                .SetState(_avatarAddress, _avatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
+                .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
 
             var v2 = states.GetAvatarState(_avatarAddress);
             Assert.NotNull(v2.inventory);
@@ -108,22 +106,27 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(LegacyInventoryKey)]
-        [InlineData(LegacyWorldInformationKey)]
-        [InlineData(LegacyQuestListKey)]
-        public void GetAvatarStateV2_Throw_FailedLoadStateException(string key)
+        [InlineData("inventory")]
+        [InlineData("worldInformation")]
+        [InlineData("questList")]
+        public void GetAvatarStateV2_Throw_FailedLoadStateException(string account)
         {
+            Address accountAddress = account switch
+            {
+                "inventory" => Addresses.Inventory,
+                "worldInformation" => Addresses.WorldInformation,
+                "questList" => Addresses.QuestList,
+                _ => throw new ArgumentException(),
+            };
+
             IWorld states = new World(new MockWorldState());
             states = states
-                .SetState(_avatarAddress, _avatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
+                .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
             states = states.SetAccount(
-                ReservedAddresses.LegacyAccount,
-                states.GetAccount(ReservedAddresses.LegacyAccount).SetNull(_avatarAddress.Derive(key)));
+                accountAddress,
+                states.GetAccount(accountAddress).SetNull(_avatarAddress));
             var exc = Assert.Throws<FailedLoadStateException>(() => states.GetAvatarState(_avatarAddress));
-            Assert.Contains(key, exc.Message);
+            Assert.Contains(account, exc.Message);
         }
 
         [Theory]
@@ -135,15 +138,12 @@ namespace Lib9c.Tests.Action
             if (backward)
             {
                 states = states
-                    .SetState(_avatarAddress, _avatarState.Serialize());
+                    .SetState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
             }
             else
             {
                 states = states
-                    .SetState(_avatarAddress, _avatarState.SerializeV2())
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
+                    .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
             }
 
             Assert.True(states.TryGetAvatarState(_agentAddress, _avatarAddress, out _));

@@ -78,8 +78,8 @@ namespace Lib9c.Tests.Action
             _initialState = _initialState
                 .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetState(Addresses.Shop, shopState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, _avatarState.Serialize());
+                .SetAgentState(_agentAddress, agentState)
+                .SetState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
         }
 
         [Theory]
@@ -193,15 +193,12 @@ namespace Lib9c.Tests.Action
 
             if (fromPreviousAction)
             {
-                prevState = prevState.SetState(_avatarAddress, avatarState.Serialize());
+                prevState = prevState.SetState(
+                    _avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
             }
             else
             {
-                prevState = prevState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                prevState = prevState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             }
 
             prevState = prevState
@@ -299,7 +296,7 @@ namespace Lib9c.Tests.Action
                 ),
             };
 
-            _initialState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            _initialState = _initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             var updateSellInfo = new UpdateSellInfo(
                 default,
@@ -337,7 +334,7 @@ namespace Lib9c.Tests.Action
             var digestListAddress = OrderDigestListState.DeriveAddress(_avatarAddress);
             var digestList = new OrderDigestListState(digestListAddress);
             _initialState = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
                 .SetState(digestListAddress, digestList.Serialize());
 
             var updateSellInfo = new UpdateSellInfo(

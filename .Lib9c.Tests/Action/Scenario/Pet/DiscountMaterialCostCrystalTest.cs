@@ -25,8 +25,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly Address _inventoryAddr;
-        private readonly Address _worldInformationAddr;
         private readonly IWorld _initialStateV2;
         private readonly TableSheets _tableSheets;
         private int? _petId;
@@ -40,8 +38,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 _,
                 _initialStateV2
             ) = InitializeUtil.InitializeStates();
-            _inventoryAddr = _avatarAddr.Derive(LegacyInventoryKey);
-            _worldInformationAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
         }
 
         [Theory]
@@ -110,7 +106,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,
-                _worldInformationAddr,
+                _avatarAddr,
                 recipe.UnlockStage
             );
 

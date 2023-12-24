@@ -175,13 +175,12 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            var inventory = nextState.GetInventory(avatarAddress.Derive(SerializeKeys.LegacyInventoryKey));
+            var inventory = nextState.GetInventory(avatarAddress);
             Assert.Contains(inventory.Items, i => i.count == 42 && i.item is Material m && m.FungibleId.Equals(fungibleId));
 
-            var avatarDict = Assert.IsType<Dictionary>(nextState.GetState(avatarAddress));
-            var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey]);
-            Assert.Single(mailBox);
-            var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());
+            var avatarState = nextState.GetAvatarState(avatarAddress);
+            Assert.Single(avatarState.mailBox);
+            var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(avatarState.mailBox.First());
             Assert.Equal(new[] { (fungibleId, 42) }, mail.FungibleIdAndCounts);
             Assert.Equal(action.Memo, mail.Memo);
         }
@@ -220,13 +219,12 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            var inventory = nextState.GetInventory(avatarAddress.Derive(SerializeKeys.LegacyInventoryKey));
+            var inventory = nextState.GetInventory(avatarAddress);
             Assert.Contains(inventory.Items, i => i.count == 42 && i.item is Material m && m.FungibleId.Equals(fungibleId));
 
-            var avatarDict = Assert.IsType<Dictionary>(nextState.GetState(avatarAddress));
-            var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey]);
-            Assert.Single(mailBox);
-            var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());
+            var avatarState = nextState.GetAvatarState(avatarAddress);
+            Assert.Single(avatarState.mailBox);
+            var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(avatarState.mailBox.First());
             Assert.Equal(new[] { (fungibleId, 42) }, mail.FungibleIdAndCounts);
             Assert.Equal(new[] { (avatarAddress, Currencies.StakeRune * 123) }, mail.FungibleAssetValues);
             Assert.Equal(action.Memo, mail.Memo);
@@ -298,11 +296,10 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            var inventory = nextState.GetInventory(avatarAddress.Derive(SerializeKeys.LegacyInventoryKey));
-            var avatarDict = Assert.IsType<Dictionary>(nextState.GetState(avatarAddress));
-            var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey]);
-            Assert.Single(mailBox);
-            var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());
+            var inventory = nextState.GetInventory(avatarAddress);
+            var avatarState = nextState.GetAvatarState(avatarAddress);
+            Assert.Single(avatarState.mailBox);
+            var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(avatarState.mailBox.First());
             Assert.Equal(action.Memo, mail.Memo);
 
             foreach (var mintSpec in action.MintSpecs)
@@ -350,11 +347,8 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = avatarAddress;
 
             state = state
-                .SetState(address, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    avatarAddress.Derive(SerializeKeys.LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
+                .SetAgentState(address, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
             return state;
         }
@@ -379,11 +373,8 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = avatarAddress;
 
             state = state
-                .SetState(address, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    avatarAddress.Derive(SerializeKeys.LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
+                .SetAgentState(address, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
             return state;
         }

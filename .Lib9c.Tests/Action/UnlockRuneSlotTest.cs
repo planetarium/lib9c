@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new World(new MockWorldState())
                 .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, new AgentState(agentAddress).Serialize());
+                .SetAgentState(agentAddress, new AgentState(agentAddress));
 
             foreach (var (key, value) in sheets)
             {

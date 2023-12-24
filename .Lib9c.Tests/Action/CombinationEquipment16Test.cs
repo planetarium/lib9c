@@ -158,7 +158,7 @@ namespace Lib9c.Tests.Action
 
             if (agentExist)
             {
-                state = state.SetState(_agentAddress, _agentState.Serialize());
+                state = state.SetAgentState(_agentAddress, _agentState);
 
                 if (avatarExist)
                 {
@@ -197,22 +197,12 @@ namespace Lib9c.Tests.Action
 
                     if (migrationRequired)
                     {
-                        state = state.SetState(_avatarAddress, _avatarState.Serialize());
+                        state = state.SetState(
+                            _avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
                     }
                     else
                     {
-                        var inventoryAddress = _avatarAddress.Derive(LegacyInventoryKey);
-                        var worldInformationAddress =
-                            _avatarAddress.Derive(LegacyWorldInformationKey);
-                        var questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
-
-                        state = state
-                            .SetState(_avatarAddress, _avatarState.SerializeV2())
-                            .SetState(inventoryAddress, _avatarState.inventory.Serialize())
-                            .SetState(
-                                worldInformationAddress,
-                                _avatarState.worldInformation.Serialize())
-                            .SetState(questListAddress, _avatarState.questList.Serialize());
+                        state = state.SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
                     }
 
                     if (!slotUnlock)
@@ -371,7 +361,7 @@ namespace Lib9c.Tests.Action
             }
 
             state = state.SetState(_avatarAddress.Derive("recipe_ids"), unlockIds);
-            state = state.SetState(_agentAddress, _agentState.Serialize());
+            state = state.SetAgentState(_agentAddress, _agentState);
             _avatarState.worldInformation = new WorldInformation(0, _tableSheets.WorldSheet, 200);
             var row = _tableSheets.EquipmentItemRecipeSheet[recipeId];
             var materialRow = _tableSheets.MaterialItemSheet[row.MaterialId];
@@ -399,17 +389,8 @@ namespace Lib9c.Tests.Action
                     subRow.RequiredGold * state.GetGoldCurrency());
             }
 
-            var inventoryAddress = _avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress =
-                _avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
             state = state
-                .SetState(_avatarAddress, _avatarState.SerializeV2())
-                .SetState(inventoryAddress, _avatarState.inventory.Serialize())
-                .SetState(
-                    worldInformationAddress,
-                    _avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, _avatarState.questList.Serialize());
+                .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
             var hammerPointAddress =
                 Addresses.GetHammerPointStateAddress(_avatarAddress, recipeId);
             if (doSuperCraft)

@@ -61,11 +61,8 @@ namespace Lib9c.Tests.Action
             };
 
             _initialStates = _initialStates
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddr, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddr, avatarState.worldInformation.Serialize())
-                .SetState(questListAddr, avatarState.questList.Serialize())
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
                 .SetState(gameConfigState.address, gameConfigState.Serialize());
 
             for (var i = 0; i < GameConfig.SlotCount; i++)
@@ -224,12 +221,7 @@ namespace Lib9c.Tests.Action
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
             previousStates = previousStates
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    previousAvatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    previousAvatarState.worldInformation.Serialize());
+                .SetAvatarState(_avatarAddress, previousAvatarState, false, true, true, false);
 
             var previousMaterialCount = previousAvatarState.inventory.Items
                 .Where(i => recipeRow.RequiredMaterialsId.Contains(i.item.Id))

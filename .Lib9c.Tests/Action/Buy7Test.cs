@@ -96,10 +96,10 @@ namespace Lib9c.Tests.Action
             _productId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
             _initialState = _initialState
                 .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(_sellerAgentAddress, sellerAgentState.Serialize())
-                .SetState(_sellerAvatarAddress, sellerAvatarState.Serialize())
-                .SetState(_buyerAgentAddress, buyerAgentState.Serialize())
-                .SetState(_buyerAvatarAddress, _buyerAvatarState.Serialize())
+                .SetAgentState(_sellerAgentAddress, sellerAgentState)
+                .SetState(_sellerAvatarAddress, MigrationAvatarState.LegacySerializeV1(sellerAvatarState))
+                .SetAgentState(_buyerAgentAddress, buyerAgentState)
+                .SetState(_buyerAvatarAddress, MigrationAvatarState.LegacySerializeV1(_buyerAvatarState))
                 .SetState(Addresses.Shop, new ShopState().Serialize())
                 .MintAsset(context, _buyerAgentAddress, _goldCurrencyState.Currency * 100);
         }
@@ -295,8 +295,8 @@ namespace Lib9c.Tests.Action
                 purchaseInfos.Add(purchaseInfo);
 
                 _initialState = _initialState
-                    .SetState(_buyerAvatarAddress, buyerAvatarState.Serialize())
-                    .SetState(sellerAvatarState.address, sellerAvatarState.Serialize())
+                    .SetAvatarState(_buyerAvatarAddress, buyerAvatarState, true, true, true, true)
+                    .SetAvatarState(sellerAvatarState.address, sellerAvatarState, true, true, true, true)
                     .SetState(shardedShopAddress, shopState.Serialize())
                     .SetState(Addresses.Shop, legacyShopState.Serialize());
             }
@@ -462,7 +462,7 @@ namespace Lib9c.Tests.Action
                     0
                 ),
             };
-            _initialState = _initialState.SetState(_buyerAvatarAddress, avatarState.Serialize());
+            _initialState = _initialState.SetAvatarState(_buyerAvatarAddress, avatarState, true, true, true, true);
 
             PurchaseInfo0 purchaseInfo0 = new PurchaseInfo0(
                 default,
@@ -903,8 +903,8 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = avatarAddress;
 
             _initialState = _initialState
-                .SetState(agentAddress, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize());
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
             return (avatarState, agentState);
         }
 

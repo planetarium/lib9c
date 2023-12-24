@@ -74,7 +74,7 @@ namespace Lib9c.Tests.Action
                 avatarAddresses = { [0] = new PrivateKey().Address, },
             };
             var states = _initialState
-                .SetState(_signerAddress, agentState.Serialize())
+                .SetAgentState(_signerAddress, agentState)
                 .SetState(
                     monsterCollectionAddress,
                     new MonsterCollectionState(monsterCollectionAddress, 1, 0).SerializeV2());

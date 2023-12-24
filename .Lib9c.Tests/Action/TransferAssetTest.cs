@@ -135,11 +135,11 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InsufficientBalanceException()
         {
-            var prevState = new World(
+            IWorld prevState = new World(
                 new MockWorldState()
-                    .SetState(ReservedAddresses.LegacyAccount, _recipient, new AgentState(_recipient).Serialize())
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10));
+            prevState = prevState.SetAgentState(_recipient, new AgentState(_recipient));
             var action = new TransferAsset(
                 sender: _sender,
                 recipient: _recipient,
@@ -172,10 +172,10 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var prevState = new World(
                 new MockWorldState()
-                    .SetState(ReservedAddresses.LegacyAccount, _recipient, new AgentState(_recipient).Serialize())
                     .SetBalance(_sender, currencyBySender * 1000)
                     .SetBalance(_recipient, currencyBySender * 10)
-                    .SetBalance(_sender, Currencies.Mead * 1));
+                    .SetBalance(_sender, Currencies.Mead * 1))
+                .SetAgentState(_recipient, new AgentState(_recipient));
             var action = new TransferAsset(
                 sender: _sender,
                 recipient: _recipient,

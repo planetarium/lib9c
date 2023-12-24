@@ -71,11 +71,8 @@ namespace Lib9c.Tests.Action
 
             _state = _state
                 .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .SetState(_agent1Address, agent1State.Serialize())
-                .SetState(_avatar1Address.Derive(LegacyInventoryKey), _avatar1.inventory.Serialize())
-                .SetState(_avatar1Address.Derive(LegacyWorldInformationKey), _avatar1.worldInformation.Serialize())
-                .SetState(_avatar1Address.Derive(LegacyQuestListKey), _avatar1.questList.Serialize())
-                .SetState(_avatar1Address, _avatar1.Serialize())
+                .SetAgentState(_agent1Address, agent1State)
+                .SetAvatarState(_avatar1Address, _avatar1, true, true, true, true)
                 .SetState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize());
 
             Log.Logger = new LoggerConfiguration()

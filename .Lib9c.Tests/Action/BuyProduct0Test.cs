@@ -113,12 +113,12 @@ namespace Lib9c.Tests.Action
             _orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
             _initialState = _initialState
                 .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(SellerAgentAddress, sellerAgentState.Serialize())
-                .SetState(SellerAvatarAddress, sellerAvatarState.Serialize())
-                .SetState(_sellerAgentAddress2, agentState2.Serialize())
-                .SetState(_sellerAvatarAddress2, sellerAvatarState2.Serialize())
-                .SetState(BuyerAgentAddress, buyerAgentState.Serialize())
-                .SetState(BuyerAvatarAddress, _buyerAvatarState.Serialize())
+                .SetAgentState(SellerAgentAddress, sellerAgentState)
+                .SetState(SellerAvatarAddress, MigrationAvatarState.LegacySerializeV1(sellerAvatarState))
+                .SetAgentState(_sellerAgentAddress2, agentState2)
+                .SetState(_sellerAvatarAddress2, MigrationAvatarState.LegacySerializeV1(sellerAvatarState2))
+                .SetAgentState(BuyerAgentAddress, buyerAgentState)
+                .SetState(BuyerAvatarAddress, MigrationAvatarState.LegacySerializeV1(_buyerAvatarState))
                 .MintAsset(context, BuyerAgentAddress, _goldCurrencyState.Currency * 1);
         }
 

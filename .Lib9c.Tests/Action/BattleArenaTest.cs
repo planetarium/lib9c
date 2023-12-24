@@ -110,32 +110,14 @@ namespace Lib9c.Tests.Action
 
             _initialStates = _initialStates
                 .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .SetState(_agent1Address, agent1State.Serialize())
-                .SetState(
-                    _avatar1Address.Derive(LegacyInventoryKey),
-                    avatar1State.inventory.Serialize())
-                .SetState(
-                    _avatar1Address.Derive(LegacyWorldInformationKey),
-                    avatar1State.worldInformation.Serialize())
-                .SetState(
-                    _avatar1Address.Derive(LegacyQuestListKey),
-                    avatar1State.questList.Serialize())
-                .SetState(_avatar1Address, avatar1State.SerializeV2())
-                .SetState(_agent2Address, agent2State.Serialize())
-                .SetState(_avatar2Address, avatar2State.Serialize())
-                .SetState(_agent3Address, agent3State.Serialize())
-                .SetState(_avatar3Address, avatar3State.Serialize())
-                .SetState(_agent4Address, agent4State.Serialize())
-                .SetState(
-                    _avatar4Address.Derive(LegacyInventoryKey),
-                    avatar4State.inventory.Serialize())
-                .SetState(
-                    _avatar4Address.Derive(LegacyWorldInformationKey),
-                    avatar4State.worldInformation.Serialize())
-                .SetState(
-                    _avatar4Address.Derive(LegacyQuestListKey),
-                    avatar4State.questList.Serialize())
-                .SetState(_avatar4Address, avatar4State.SerializeV2())
+                .SetAgentState(_agent1Address, agent1State)
+                .SetAvatarState(_avatar1Address, avatar1State, true, true, true, true)
+                .SetAgentState(_agent2Address, agent2State)
+                .SetAvatarState(_avatar2Address, avatar2State, true, true, true, true)
+                .SetAgentState(_agent3Address, agent3State)
+                .SetAvatarState(_avatar3Address, avatar3State, true, true, true, true)
+                .SetAgentState(_agent4Address, agent4State)
+                .SetAvatarState(_avatar4Address, avatar4State, true, true, true, true)
                 .SetState(
                     Addresses.GameConfig,
                     new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize());

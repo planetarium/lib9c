@@ -15,7 +15,6 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Crypto;
     using Nekoyume.Action;
     using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
@@ -26,8 +25,6 @@ namespace Lib9c.Tests.Action.Scenario
     {
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly Address _inventoryAddr;
-        private readonly Address _worldInformationAddr;
         private readonly IWorld _initialStatesWithAvatarStateV1;
         private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly TableSheets _tableSheets;
@@ -52,8 +49,6 @@ namespace Lib9c.Tests.Action.Scenario
                         EquipmentItemSubRecipeSheetFixtures.V2
                     },
                 });
-            _inventoryAddr = _avatarAddr.Derive(LegacyInventoryKey);
-            _worldInformationAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
         }
 
         [Theory]
@@ -106,8 +101,8 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
-            Assert.Equal(0, inventoryState.Items.Count);
+            var avatarState = stateV2.GetAvatarState(_avatarAddr);
+            Assert.Equal(0, avatarState.inventory.Items.Count);
 
             // Add materials to inventory
             stateV2 = CraftUtil.AddMaterialsToInventory(
@@ -125,7 +120,7 @@ namespace Lib9c.Tests.Action.Scenario
                 stateV2 = CraftUtil.UnlockStage(
                     stateV2,
                     _tableSheets,
-                    _worldInformationAddr,
+                    _avatarAddr,
                     equipmentRecipe.UnlockStage
                 );
 
@@ -151,13 +146,13 @@ namespace Lib9c.Tests.Action.Scenario
                 Assert.Equal(equipmentRecipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            avatarState = stateV2.GetAvatarState(_avatarAddr);
             // TEST: Only created equipments should remain in inventory
-            Assert.Equal(recipeList.Count, inventoryState.Items.Count);
+            Assert.Equal(recipeList.Count, avatarState.inventory.Items.Count);
             foreach (var itemId in targetItemIdList)
             {
                 // TEST: Created equipment should match with targetItemList
-                Assert.NotNull(inventoryState.Items.Where(e => e.item.Id == itemId));
+                Assert.NotNull(avatarState.inventory.Items.Where(e => e.item.Id == itemId));
             }
         }
 
@@ -194,8 +189,8 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
-            Assert.Equal(0, inventoryState.Items.Count);
+            var avatarState = stateV2.GetAvatarState(_avatarAddr);
+            Assert.Equal(0, avatarState.inventory.Items.Count);
 
             // Add materials to inventory
             stateV2 = CraftUtil.AddMaterialsToInventory(
@@ -210,7 +205,7 @@ namespace Lib9c.Tests.Action.Scenario
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,
-                _worldInformationAddr,
+                _avatarAddr,
                 6 // Stage to open craft consumables
             );
 
@@ -238,13 +233,13 @@ namespace Lib9c.Tests.Action.Scenario
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            avatarState = stateV2.GetAvatarState(_avatarAddr);
             // TEST: Only created items should remain in inventory
-            Assert.Equal(recipeList.Count, inventoryState.Items.Count);
+            Assert.Equal(recipeList.Count, avatarState.inventory.Items.Count);
             foreach (var itemId in targetItemIdList)
             {
                 // TEST: Created consumables should be match with targetItemList
-                Assert.NotNull(inventoryState.Items.Where(e => e.item.Id == itemId));
+                Assert.NotNull(avatarState.inventory.Items.Where(e => e.item.Id == itemId));
             }
         }
 
@@ -275,7 +270,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Unlock stage to create consumables
-            stateV2 = CraftUtil.UnlockStage(stateV2, _tableSheets, _worldInformationAddr, 6);
+            stateV2 = CraftUtil.UnlockStage(stateV2, _tableSheets, _avatarAddr, 6);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
@@ -284,8 +279,8 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
-            Assert.Equal(0, inventoryState.Items.Count);
+            var avatarState = stateV2.GetAvatarState(_avatarAddr);
+            Assert.Equal(0, avatarState.inventory.Items.Count);
 
             // Add materials to inventory
             stateV2 = CraftUtil.AddMaterialsToInventory(
@@ -321,13 +316,13 @@ namespace Lib9c.Tests.Action.Scenario
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            avatarState = stateV2.GetAvatarState(_avatarAddr);
             // TEST: Only created items should remain in inventory
-            Assert.Equal(recipeList.Count, inventoryState.Items.Count);
+            Assert.Equal(recipeList.Count, avatarState.inventory.Items.Count);
             foreach (var itemId in targetItemIdList)
             {
                 // TEST: Created comsumables should be match with targetItemList
-                Assert.NotNull(inventoryState.Items.Where(e => e.item.Id == itemId));
+                Assert.NotNull(avatarState.inventory.Items.Where(e => e.item.Id == itemId));
             }
         }
 
@@ -358,7 +353,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Unlock stage to create consumables
-            stateV2 = CraftUtil.UnlockStage(stateV2, _tableSheets, _worldInformationAddr, 6);
+            stateV2 = CraftUtil.UnlockStage(stateV2, _tableSheets, _avatarAddr, 6);
 
             // Prepare combination slot
             for (var i = 0; i < targetItemIdList.Length; i++)
@@ -367,8 +362,8 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Initial inventory must be empty
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
-            Assert.Equal(0, inventoryState.Items.Count);
+            var avatarState = stateV2.GetAvatarState(_avatarAddr);
+            Assert.Equal(0, avatarState.inventory.Items.Count);
 
             // Add materials to inventory
             stateV2 = CraftUtil.AddMaterialsToInventory(
@@ -419,13 +414,13 @@ namespace Lib9c.Tests.Action.Scenario
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
 
-            inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            avatarState = stateV2.GetAvatarState(_avatarAddr);
             // TEST: Only created items should remain in inventory
-            Assert.Equal(recipeList.Count, inventoryState.Items.Count);
+            Assert.Equal(recipeList.Count, avatarState.inventory.Items.Count);
             foreach (var itemId in targetItemIdList)
             {
                 // TEST: Created comsumables should be match with targetItemList
-                Assert.NotNull(inventoryState.Items.Where(e => e.item.Id == itemId));
+                Assert.NotNull(avatarState.inventory.Items.Where(e => e.item.Id == itemId));
             }
         }
     }

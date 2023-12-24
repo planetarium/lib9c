@@ -26,8 +26,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly Address _inventoryAddr;
-        private readonly Address _worldInfoAddr;
         private readonly Address _recipeIdsAddr;
         private readonly IWorld _initialStateV1;
         private readonly IWorld _initialStateV2;
@@ -44,8 +42,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 _initialStateV1,
                 _initialStateV2
             ) = InitializeUtil.InitializeStates();
-            _inventoryAddr = _avatarAddr.Derive(LegacyInventoryKey);
-            _worldInfoAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
             _recipeIdsAddr = _avatarAddr.Derive("recipe_ids");
             _hourglassItemId = _tableSheets.MaterialItemSheet.Values.First(
                 item => item.ItemSubType == ItemSubType.Hourglass
@@ -145,7 +141,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,
-                _worldInfoAddr,
+                _avatarAddr,
                 recipe.UnlockStage
             );
 
@@ -189,9 +185,9 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             );
 
             // TEST: All Hourglasses should be used
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            var avatarState = stateV2.GetAvatarState(_avatarAddr);
             Assert.Throws<InvalidOperationException>(() =>
-                inventoryState.Items.First(item => item.item.Id == _hourglassItemId));
+                avatarState.inventory.Items.First(item => item.item.Id == _hourglassItemId));
         }
     }
 }

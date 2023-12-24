@@ -41,17 +41,8 @@ namespace Lib9c.Tests.Action.Scenario
 
             var context = new ActionContext();
             IWorld initialState = new World(new MockWorldState())
-                .SetState(agentAddress, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize())
-                .SetState(
-                    avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize())
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
                 .SetState(
                     Addresses.GoldCurrency,
                     new GoldCurrencyState(Currency.Legacy("NCG", 2, minters: null)).Serialize())

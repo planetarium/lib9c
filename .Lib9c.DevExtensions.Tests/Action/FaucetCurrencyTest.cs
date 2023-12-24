@@ -39,7 +39,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             var agentState = new AgentState(_agentAddress);
 
             _initialState = _initialState
-                    .SetState(_agentAddress, agentState.Serialize())
+                    .SetAgentState(_agentAddress, agentState)
                     .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
                 ;
         }

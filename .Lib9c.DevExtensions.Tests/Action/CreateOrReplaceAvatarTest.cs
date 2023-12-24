@@ -463,11 +463,11 @@ namespace Lib9c.DevExtensions.Tests.Action
                 RandomSeed = 0,
                 BlockIndex = blockIndex,
             });
-            var agent = new AgentState((Dictionary)nextStates.GetState(agentAddr)!);
+            var agent = nextStates.GetAgentState(agentAddr);
             Assert.Single(agent.avatarAddresses);
             Assert.True(agent.avatarAddresses.ContainsKey(action.AvatarIndex));
             avatarAddr ??= agent.avatarAddresses[action.AvatarIndex];
-            var avatar = new AvatarState((Dictionary)nextStates.GetState(avatarAddr.Value)!);
+            var avatar = nextStates.GetAvatarState(avatarAddr.Value);
             Assert.Equal(action.Name, avatar.name);
             Assert.Equal(action.Hair, avatar.hair);
             Assert.Equal(action.Lens, avatar.lens);
@@ -475,9 +475,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             Assert.Equal(action.Tail, avatar.tail);
             Assert.Equal(action.Level, avatar.level);
 
-            var inventoryAddr = avatarAddr.Value.Derive(LegacyInventoryKey);
-            var inventory =
-                new Inventory((List)nextStates.GetState(inventoryAddr)!);
+            var inventory = avatar.inventory;
             var inventoryEquipments = inventory.Equipments.ToArray();
             var equipmentItemRecipeSheet =
                 nextStates.GetSheet<EquipmentItemRecipeSheet>();

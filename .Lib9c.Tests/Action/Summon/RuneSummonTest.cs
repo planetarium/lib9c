@@ -56,8 +56,8 @@ namespace Lib9c.Tests.Action.Summon
 
             var context = new ActionContext();
             _initialState = new World(new MockWorldState())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, _avatarState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true)
                 .SetState(GoldCurrencyState.Address, gold.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100000000000)
                 .MintAsset(context, _avatarAddress, 100 * Currencies.GetRune("RUNESTONE_FENRIR1"))
@@ -130,23 +130,8 @@ namespace Lib9c.Tests.Action.Summon
                 var material = materialSheet.OrderedList.FirstOrDefault(m => m.Id == materialId);
                 _avatarState.inventory.AddItem(
                     ItemFactory.CreateItem(material, random),
-                    materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount
-                );
-                state = state
-                        .SetState(_avatarAddress, _avatarState.SerializeV2())
-                        .SetState(
-                            _avatarAddress.Derive(LegacyInventoryKey),
-                            _avatarState.inventory.Serialize()
-                        )
-                        .SetState(
-                            _avatarAddress.Derive(LegacyWorldInformationKey),
-                            _avatarState.worldInformation.Serialize()
-                        )
-                        .SetState(
-                            _avatarAddress.Derive(LegacyQuestListKey),
-                            _avatarState.questList.Serialize()
-                        )
-                    ;
+                    materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount);
+                state = state.SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
             }
 
             var action = new RuneSummon

@@ -55,8 +55,8 @@ namespace Lib9c.Tests.Action
 
             var state = new World(new MockWorldState())
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize())
-                .SetState(agentAddress, agent.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize());
+                .SetAgentState(agentAddress, agent)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in _sheets)
             {

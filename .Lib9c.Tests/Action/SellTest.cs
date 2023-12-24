@@ -76,8 +76,8 @@ namespace Lib9c.Tests.Action
             _initialState = _initialState
                 .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
                 .SetState(Addresses.Shop, shopState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, _avatarState.Serialize());
+                .SetAgentState(_agentAddress, agentState)
+                .SetState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
         }
 
         [Theory]
@@ -128,15 +128,13 @@ namespace Lib9c.Tests.Action
             var previousStates = _initialState;
             if (backward)
             {
-                previousStates = previousStates.SetState(_avatarAddress, avatarState.Serialize());
+                previousStates = previousStates.SetState(
+                    _avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
             }
             else
             {
                 previousStates = previousStates
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                    .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             }
 
             var currencyState = previousStates.GetGoldCurrency();
@@ -317,7 +315,7 @@ namespace Lib9c.Tests.Action
                 ),
             };
 
-            _initialState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            _initialState = _initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             var action = new Sell
             {
@@ -387,7 +385,8 @@ namespace Lib9c.Tests.Action
                 10);
             _avatarState.inventory.AddItem(equipment);
 
-            _initialState = _initialState.SetState(_avatarAddress, _avatarState.Serialize());
+            _initialState = _initialState.SetAvatarState(
+                _avatarAddress, _avatarState, true, true, true, true);
 
             var action = new Sell
             {
@@ -437,7 +436,7 @@ namespace Lib9c.Tests.Action
             Assert.Single(shardedShopState.OrderDigestList);
 
             IWorld previousStates = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
                 .SetState(shardedShopAddress, shardedShopState.Serialize());
 
             var action = new Sell

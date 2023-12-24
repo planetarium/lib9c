@@ -48,8 +48,8 @@ namespace Lib9c.Tests.Action
 
             _initialState = new World(new MockWorldState())
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize())
-                .SetState(_agentAddress, agent.Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize());
+                .SetAgentState(_agentAddress, agent)
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in _sheets)
             {
@@ -58,11 +58,9 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(true, true)]
-        [InlineData(false, true)]
-        [InlineData(true, false)]
-        [InlineData(false, false)]
-        public void Execute(bool useTradable, bool backward)
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Execute(bool useTradable)
         {
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
             var row = _tableSheets.MaterialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.ApStone);
@@ -80,18 +78,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0, avatarState.actionPoint);
 
             IWorld state;
-            if (backward)
-            {
-                state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
-            }
-            else
-            {
-                state = _initialState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
-            }
+            state = _initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in _sheets)
             {
@@ -144,13 +131,13 @@ namespace Lib9c.Tests.Action
             if (enough)
             {
                 avatarState.inventory.AddItem(apStone);
-                state = state.SetState(_avatarAddress, avatarState.Serialize());
+                state = state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             }
 
             if (charge)
             {
                 avatarState.actionPoint = state.GetGameConfigState().ActionPointMax;
-                state = state.SetState(_avatarAddress, avatarState.Serialize());
+                state = state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             }
 
             var action = new ChargeActionPoint()

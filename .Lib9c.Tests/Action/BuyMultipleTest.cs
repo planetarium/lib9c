@@ -77,8 +77,8 @@ namespace Lib9c.Tests.Action
             _initialState = _initialState
                 .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetState(Addresses.Shop, shopState.Serialize())
-                .SetState(_buyerAgentAddress, buyerAgentState.Serialize())
-                .SetState(_buyerAvatarAddress, _buyerAvatarState.Serialize())
+                .SetAgentState(_buyerAgentAddress, buyerAgentState)
+                .SetAvatarState(_buyerAvatarAddress, _buyerAvatarState, true, true, true, true)
                 .MintAsset(context, _buyerAgentAddress, _goldCurrencyState.Currency * 100);
         }
 
@@ -294,7 +294,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(3, shopState.Products.Count);
 
             _initialState = _initialState
-                .SetState(_buyerAvatarAddress, buyerAvatarState.Serialize())
+                .SetAvatarState(_buyerAvatarAddress, buyerAvatarState, true, true, true, true)
                 .SetState(Addresses.Shop, shopState.Serialize());
 
             var priceData = new PriceData(goldCurrency);
@@ -305,7 +305,7 @@ namespace Lib9c.Tests.Action
                 priceData.TaxedPriceSum[agentState.address] = new FungibleAssetValue(goldCurrency, 0, 0);
 
                 _initialState = _initialState
-                    .SetState(avatarState.address, avatarState.Serialize());
+                    .SetAvatarState(avatarState.address, avatarState, true, true, true, true);
             }
 
             IWorld previousStates = _initialState;
@@ -444,7 +444,7 @@ namespace Lib9c.Tests.Action
                     0
                 ),
             };
-            _initialState = _initialState.SetState(_buyerAvatarAddress, avatarState.Serialize());
+            _initialState = _initialState.SetAvatarState(_buyerAvatarAddress, avatarState, true, true, true, true);
 
             var action = new BuyMultiple
             {
@@ -630,8 +630,8 @@ namespace Lib9c.Tests.Action
             _sellerAgentStateMap[avatarState] = agentState;
 
             _initialState = _initialState
-                .SetState(agentAddress, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize());
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
             return (avatarState, agentState);
         }
 

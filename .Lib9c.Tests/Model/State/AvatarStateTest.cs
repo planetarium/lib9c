@@ -36,21 +36,15 @@ namespace Lib9c.Tests.Model.State
             Address agentAddress = new PrivateKey().Address;
             var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
 
-            var serialized = avatarState.Serialize();
-            var deserialized = new AvatarState((Bencodex.Types.Dictionary)serialized);
+            var serialized = avatarState.SerializeList();
+            var deserialized = new AvatarState((Bencodex.Types.List)serialized);
 
             Assert.Equal(avatarState.address, deserialized.address);
             Assert.Equal(avatarState.agentAddress, deserialized.agentAddress);
             Assert.Equal(avatarState.blockIndex, deserialized.blockIndex);
-
-            var serializeV2 = avatarState.SerializeV2();
-            var deserializeV2 = new AvatarState((Bencodex.Types.Dictionary)serializeV2);
-            Assert.Equal(avatarState.address, deserializeV2.address);
-            Assert.Equal(avatarState.agentAddress, deserializeV2.agentAddress);
-            Assert.Equal(avatarState.blockIndex, deserializeV2.blockIndex);
-            Assert.Null(deserializeV2.inventory);
-            Assert.Null(deserializeV2.worldInformation);
-            Assert.Null(deserializeV2.questList);
+            Assert.Null(deserialized.inventory);
+            Assert.Null(deserialized.worldInformation);
+            Assert.Null(deserialized.questList);
         }
 
         [Theory]
@@ -66,7 +60,7 @@ namespace Lib9c.Tests.Model.State
             AvatarState avatarStateB = GetNewAvatarState(avatarAddress, agentAddress);
 
             HashDigest<SHA256> Hash(AvatarState avatarState) =>
-                HashDigest<SHA256>.DeriveFrom(new Codec().Encode(avatarState.Serialize()));
+                HashDigest<SHA256>.DeriveFrom(new Codec().Encode(avatarState.SerializeList()));
             Assert.Equal(Hash(avatarStateA), Hash(avatarStateB));
         }
 

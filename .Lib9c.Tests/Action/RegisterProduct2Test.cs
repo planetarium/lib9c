@@ -59,8 +59,8 @@ namespace Lib9c.Tests.Action
                 .SetState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize())
                 .SetState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
                 .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(AvatarAddress, _avatarState.Serialize());
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(AvatarAddress, _avatarState, true, true, true, true);
         }
 
         public static IEnumerable<object[]> Execute_Validate_MemberData()
@@ -208,7 +208,7 @@ namespace Lib9c.Tests.Action
             var asset = 3 * RuneHelper.DailyRewardRune;
             var context = new ActionContext();
             _initialState = _initialState
-                .SetState(AvatarAddress, _avatarState.Serialize())
+                .SetAvatarState(AvatarAddress, _avatarState, true, true, true, true)
                 .MintAsset(context, AvatarAddress, asset);
             var action = new RegisterProduct2
             {
@@ -348,7 +348,7 @@ namespace Lib9c.Tests.Action
                 _avatarState.inventory.AddItem((ItemBase)tradableItem);
             }
 
-            _initialState = _initialState.SetState(AvatarAddress, _avatarState.Serialize());
+            _initialState = _initialState.SetAvatarState(AvatarAddress, _avatarState, true, true, true, true);
             var action = new RegisterProduct2
             {
                 AvatarAddress = AvatarAddress,

@@ -53,7 +53,7 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             _initialState = new World(new MockWorldState())
-                .SetState(_agentAddress, agentState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
                 .SetState(Addresses.GetSheetAddress<EquipmentItemSheet>(), _tableSheets.EquipmentItemSheet.Serialize())
                 .SetState(Addresses.GetSheetAddress<EquipmentItemRecipeSheet>(), _tableSheets.EquipmentItemRecipeSheet.Serialize())
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize());
@@ -136,15 +136,12 @@ namespace Lib9c.Tests.Action
 
                 if (migrationRequired)
                 {
-                    state = state.SetState(_avatarAddress, _avatarState.Serialize());
+                    state = state.SetState(
+                        _avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
                 }
                 else
                 {
-                    state = state
-                        .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                        .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), worldInformation.Serialize())
-                        .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize())
-                        .SetState(_avatarAddress, _avatarState.SerializeV2());
+                    state = state.SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
                 }
             }
 

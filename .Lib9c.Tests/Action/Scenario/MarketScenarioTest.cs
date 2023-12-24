@@ -108,12 +108,12 @@ namespace Lib9c.Tests.Action.Scenario
                 .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
                 .SetState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
                 .SetState(Addresses.GetSheetAddress<ArenaSheet>(), _tableSheets.ArenaSheet.Serialize())
-                .SetState(_sellerAgentAddress, agentState.Serialize())
-                .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize())
-                .SetState(_sellerAgentAddress2, agentState2.Serialize())
-                .SetState(_sellerAvatarAddress2, _sellerAvatarState2.Serialize())
-                .SetState(_buyerAgentAddress, agentState3.Serialize())
-                .SetState(_buyerAvatarAddress, buyerAvatarState.Serialize());
+                .SetAgentState(_sellerAgentAddress, agentState)
+                .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState, true, true, true, true)
+                .SetAgentState(_sellerAgentAddress2, agentState2)
+                .SetAvatarState(_sellerAvatarAddress2, _sellerAvatarState2, true, true, true, true)
+                .SetAgentState(_buyerAgentAddress, agentState3)
+                .SetAvatarState(_buyerAvatarAddress, buyerAvatarState, true, true, true, true);
         }
 
         [Fact]
@@ -128,8 +128,8 @@ namespace Lib9c.Tests.Action.Scenario
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, id, 0L);
             _sellerAvatarState2.inventory.AddItem(equipment);
             _initialState = _initialState
-                .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize())
-                .SetState(_sellerAvatarAddress2, _sellerAvatarState2.Serialize())
+                .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState, true, true, true, true)
+                .SetAvatarState(_sellerAvatarAddress2, _sellerAvatarState2, true, true, true, true)
                 .MintAsset(context, _buyerAgentAddress, 4 * _currency)
                 .MintAsset(context, _sellerAvatarAddress, 1 * RuneHelper.StakeRune)
                 .MintAsset(context, _sellerAvatarAddress2, 1 * RuneHelper.DailyRewardRune);
@@ -361,7 +361,7 @@ namespace Lib9c.Tests.Action.Scenario
             _sellerAvatarState.inventory.AddItem(equipment);
             Assert.Equal(2, _sellerAvatarState.inventory.Items.Count);
             _initialState = _initialState
-                    .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize())
+                    .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState, true, true, true, true)
                     .MintAsset(context, _sellerAvatarAddress, 1 * RuneHelper.StakeRune);
             var action = new RegisterProduct2
             {
@@ -534,7 +534,7 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Equal(2, _sellerAvatarState.inventory.Items.Count);
             _initialState = _initialState
                 .MintAsset(context, _sellerAvatarAddress, 2 * RuneHelper.StakeRune)
-                .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize());
+                .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState, true, true, true, true);
             var action = new RegisterProduct2
             {
                 AvatarAddress = _sellerAvatarAddress,
@@ -746,8 +746,8 @@ namespace Lib9c.Tests.Action.Scenario
             var id = Guid.NewGuid();
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, id, 0L);
             _sellerAvatarState.inventory.AddItem(equipment);
-            _initialState = _initialState
-                .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize());
+            _initialState = _initialState.SetAvatarState(
+                _sellerAvatarAddress, _sellerAvatarState, true, true, true, true);
 
             var digestListAddress = OrderDigestListState.DeriveAddress(_sellerAvatarAddress);
             var orderDigestList = new OrderDigestListState(digestListAddress);
@@ -779,7 +779,7 @@ namespace Lib9c.Tests.Action.Scenario
                     .SetState(Order.DeriveAddress(order.OrderId), order.Serialize())
                     .SetState(digestListAddress, orderDigestList.Serialize())
                     .SetState(shardedShopAddress, shopState.Serialize())
-                    .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize());
+                    .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState, true, true, true, true);
 
                 var productType = tradableItem is TradableMaterial
                     ? ProductType.Fungible
@@ -860,7 +860,7 @@ namespace Lib9c.Tests.Action.Scenario
             _sellerAvatarState.inventory.AddItem(equipment);
             Assert.Equal(2, _sellerAvatarState.inventory.Items.Count);
             _initialState = _initialState
-                .SetState(_sellerAvatarAddress, _sellerAvatarState.Serialize())
+                .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState, true, true, true, true)
                 .MintAsset(context, _buyerAgentAddress, 3 * _currency)
                 .MintAsset(context, _sellerAvatarAddress, 1 * RuneHelper.StakeRune);
             var action = new RegisterProduct0

@@ -52,8 +52,8 @@ namespace Lib9c.Tests.Action.Scenario
 
             _initialState = new World(new MockWorldState())
                 .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
                 .SetState(_rankingMapAddress, new RankingMapState(_rankingMapAddress).Serialize());
 
             foreach (var (key, value) in sheets)
@@ -90,7 +90,7 @@ namespace Lib9c.Tests.Action.Scenario
             var doomfist = Doomfist.GetOne(_tableSheets, avatarState.level, ItemSubType.Weapon);
             avatarState.inventory.AddItem(doomfist);
 
-            var nextState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            var nextState = _initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             var hackAndSlash = new HackAndSlash3
             {
                 worldId = worldIdToClear,

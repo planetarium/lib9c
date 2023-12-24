@@ -53,40 +53,36 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             _initialState = new World(new MockWorldState())
-                .SetState(_agentAddress, agentState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
                 .SetState(Addresses.GetSheetAddress<EquipmentItemSheet>(), _tableSheets.EquipmentItemSheet.Serialize())
                 .SetState(Addresses.GetSheetAddress<EquipmentItemRecipeSheet>(), _tableSheets.EquipmentItemRecipeSheet.Serialize())
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize());
         }
 
         [Theory]
-        [InlineData(new[] { 6, 5 }, true, false, false, true, true, null)]
-        [InlineData(new[] { 6 }, true, false, false, true, true, null)]
+        [InlineData(new[] { 6, 5 }, true, false, true, true, null)]
+        [InlineData(new[] { 6 }, true, false, true, true, null)]
         // Unlock Belt without Armor unlock.
-        [InlineData(new[] { 94 }, true, false, false, true, true, null)]
+        [InlineData(new[] { 94 }, true, false, true, true, null)]
         // Unlock Weapon & Ring
-        [InlineData(new[] { 6, 133 }, true, false, false, true, true, null)]
-        // AvatarState migration.
-        [InlineData(new[] { 6 }, true, true, false, true, true, null)]
+        [InlineData(new[] { 6, 133 }, true, false, true, true, null)]
         // Invalid recipe id.
-        [InlineData(new[] { -1 }, true, false, false, false, false, typeof(InvalidRecipeIdException))]
-        [InlineData(new[] { 1 }, true, false, false, true, false, typeof(InvalidRecipeIdException))]
-        [InlineData(new int[] { }, true, false, false, false, false, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { -1 }, true, false, false, false, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { 1 }, true, false, true, false, typeof(InvalidRecipeIdException))]
+        [InlineData(new int[] { }, true, false, false, false, typeof(InvalidRecipeIdException))]
         // AvatarState is null.
-        [InlineData(new[] { 6 }, false, true, false, true, true, typeof(FailedLoadStateException))]
-        [InlineData(new[] { 6 }, false, false, false, true, true, typeof(FailedLoadStateException))]
+        [InlineData(new[] { 6 }, false, false, true, true, typeof(FailedLoadStateException))]
         // Already unlocked recipe.
-        [InlineData(new[] { 6 }, true, false, true, true, true, typeof(AlreadyRecipeUnlockedException))]
+        [InlineData(new[] { 6 }, true, true, true, true, typeof(AlreadyRecipeUnlockedException))]
         // Skip prev recipe.
-        [InlineData(new[] { 5 }, true, false, false, true, false, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { 5 }, true, false, true, false, typeof(InvalidRecipeIdException))]
         // Stage not cleared.
-        [InlineData(new[] { 6 }, true, false, false, false, true, typeof(NotEnoughClearedStageLevelException))]
+        [InlineData(new[] { 6 }, true, false, false, true, typeof(NotEnoughClearedStageLevelException))]
         // Insufficient CRYSTAL.
-        [InlineData(new[] { 6 }, true, false, false, true, false, typeof(NotEnoughFungibleAssetValueException))]
+        [InlineData(new[] { 6 }, true, false, true, false, typeof(NotEnoughFungibleAssetValueException))]
         public void Execute(
             IEnumerable<int> ids,
             bool stateExist,
-            bool migrationRequired,
             bool alreadyUnlocked,
             bool stageCleared,
             bool balanceEnough,
@@ -134,18 +130,7 @@ namespace Lib9c.Tests.Action
                     state = state.SetState(unlockedRecipeIdsAddress, serializedIds);
                 }
 
-                if (migrationRequired)
-                {
-                    state = state.SetState(_avatarAddress, _avatarState.Serialize());
-                }
-                else
-                {
-                    state = state
-                        .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                        .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), worldInformation.Serialize())
-                        .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize())
-                        .SetState(_avatarAddress, _avatarState.SerializeV2());
-                }
+                state = state.SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
             }
 
             var action = new UnlockEquipmentRecipe1

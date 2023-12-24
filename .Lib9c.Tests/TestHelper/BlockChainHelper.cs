@@ -144,8 +144,8 @@ namespace Lib9c.Tests.TestHelper
             var remainCurrencyGold = initCurrencyGold - agentCurrencyGold;
             initialState = initialState
                 .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
-                .SetState(agentAddress, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize())
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
                 .SetState(Addresses.Shop, new ShopState().Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, initCurrencyGold)
                 .TransferAsset(context, Addresses.GoldCurrency, agentAddress,  agentCurrencyGold);

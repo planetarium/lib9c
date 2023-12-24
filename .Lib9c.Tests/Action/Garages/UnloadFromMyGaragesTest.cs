@@ -160,15 +160,14 @@ namespace Lib9c.Tests.Action.Garages
 
             if (action.FungibleIdAndCounts is { })
             {
-                var inventoryAddr = _recipientAvatarAddr.Derive(SerializeKeys.LegacyInventoryKey);
-                var inventory = nextStates.GetInventory(inventoryAddr);
+                var avatarState = nextStates.GetAvatarState(_recipientAvatarAddr);
                 foreach (var (fungibleId, count) in action.FungibleIdAndCounts)
                 {
                     var garageAddr = Addresses.GetGarageAddress(
                         AgentAddr,
                         fungibleId);
                     Assert.Equal(0, new FungibleItemGarage(nextStates.GetState(garageAddr)).Count);
-                    Assert.True(inventory.HasFungibleItem(
+                    Assert.True(avatarState.inventory.HasFungibleItem(
                         fungibleId,
                         blockIndex: 0,
                         count));
@@ -250,38 +249,6 @@ namespace Lib9c.Tests.Action.Garages
                 _recipientAvatarAddr,
                 _fungibleAssetValues,
                 null));
-
-            // Inventory state is null.
-            var inventoryAddr = _recipientAvatarAddr.Derive(SerializeKeys.LegacyInventoryKey);
-            var previousStatesWithNullInventoryState =
-                _previousStates.SetState(inventoryAddr, Null.Value);
-            Assert.Throws<StateNullException>(() => Execute(
-                AgentAddr,
-                0,
-                previousStatesWithNullInventoryState,
-                new TestRandom(),
-                _recipientAvatarAddr,
-                null,
-                _fungibleIdAndCounts));
-
-            // The state in InventoryAddr is not Inventory.
-            foreach (var invalidInventoryState in new IValue[]
-                     {
-                         new Integer(0),
-                         Dictionary.Empty,
-                     })
-            {
-                var previousStatesWithInvalidInventoryState =
-                    _previousStates.SetState(inventoryAddr, invalidInventoryState);
-                Assert.Throws<InvalidCastException>(() => Execute(
-                    AgentAddr,
-                    0,
-                    previousStatesWithInvalidInventoryState,
-                    new TestRandom(),
-                    _recipientAvatarAddr,
-                    null,
-                    _fungibleIdAndCounts));
-            }
 
             // Agent's fungible item garage state is null.
             foreach (var (fungibleId, _) in _fungibleIdAndCounts)

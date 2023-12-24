@@ -160,9 +160,9 @@ namespace Lib9c.Tests.Action
         {
             var prevState = new World(
                 new MockWorldState()
-                    .SetState(ReservedAddresses.LegacyAccount, _recipient, new AgentState(_recipient).Serialize())
                     .SetBalance(_sender, _currency * 1000)
-                    .SetBalance(_recipient, _currency * 10));
+                    .SetBalance(_recipient, _currency * 10))
+                .SetAgentState(_recipient, new AgentState(_recipient));
             var action = new TransferAssets(
                 sender: _sender,
                 new List<(Address, FungibleAssetValue)>
@@ -194,9 +194,9 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var prevState = new World(
                 new MockWorldState()
-                    .SetState(ReservedAddresses.LegacyAccount, _recipient, new AgentState(_recipient).Serialize())
                     .SetBalance(_sender, currencyBySender * 1000)
-                    .SetBalance(_recipient, currencyBySender * 10));
+                    .SetBalance(_recipient, currencyBySender * 10))
+                .SetAgentState(_recipient, new AgentState(_recipient));
             var action = new TransferAssets(
                 sender: _sender,
                 new List<(Address, FungibleAssetValue)>

@@ -46,8 +46,8 @@ namespace Lib9c.Tests.Action
 
             _initialState = new World(new MockWorldState())
                 .SetState(Addresses.GameConfig, gameConfigState.Serialize())
-                .SetState(_agentAddress, agent.Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize());
+                .SetAgentState(_agentAddress, agent)
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in _sheets)
             {
@@ -75,7 +75,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0, avatarState.actionPoint);
 
-            var state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             foreach (var (key, value) in _sheets)
             {
@@ -134,7 +134,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0, avatarState.actionPoint);
 
-            var state = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             var action = new ChargeActionPoint2()
             {

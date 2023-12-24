@@ -77,36 +77,9 @@ namespace Lib9c.Tests.Action.Coupons
                     default);
 
             state = state
-                .SetState(agent1Avatar0Address, agent1Avatar0State.SerializeV2())
-                .SetState(
-                    agent1Avatar0Address.Derive(SerializeKeys.LegacyInventoryKey),
-                    agent1Avatar0State.inventory.Serialize())
-                .SetState(
-                    agent1Avatar0Address.Derive(SerializeKeys.LegacyWorldInformationKey),
-                    agent1Avatar0State.worldInformation.Serialize())
-                .SetState(
-                    agent1Avatar0Address.Derive(SerializeKeys.LegacyQuestListKey),
-                    agent1Avatar0State.questList.Serialize())
-                .SetState(agent1Avatar1Address, agent1Avatar1State.SerializeV2())
-                .SetState(
-                    agent1Avatar1Address.Derive(SerializeKeys.LegacyInventoryKey),
-                    agent1Avatar1State.inventory.Serialize())
-                .SetState(
-                    agent1Avatar1Address.Derive(SerializeKeys.LegacyWorldInformationKey),
-                    agent1Avatar1State.worldInformation.Serialize())
-                .SetState(
-                    agent1Avatar1Address.Derive(SerializeKeys.LegacyQuestListKey),
-                    agent1Avatar1State.questList.Serialize())
-                .SetState(agent2Avatar0Address, agent2Avatar0State.SerializeV2())
-                .SetState(
-                    agent2Avatar0Address.Derive(SerializeKeys.LegacyInventoryKey),
-                    agent2Avatar0State.inventory.Serialize())
-                .SetState(
-                    agent2Avatar0Address.Derive(SerializeKeys.LegacyWorldInformationKey),
-                    agent2Avatar0State.worldInformation.Serialize())
-                .SetState(
-                    agent2Avatar0Address.Derive(SerializeKeys.LegacyQuestListKey),
-                    agent2Avatar0State.questList.Serialize());
+                .SetAvatarState(agent1Avatar0Address, agent1Avatar0State, true, true, true, true)
+                .SetAvatarState(agent1Avatar1Address, agent1Avatar1State, true, true, true, true)
+                .SetAvatarState(agent2Avatar0Address, agent2Avatar0State, true, true, true, true);
 
             // can't redeem a coupon with an arbitrary guid
             Assert.Equal(
@@ -152,8 +125,8 @@ namespace Lib9c.Tests.Action.Coupons
                         RandomSeed = random.Seed,
                     });
             Assert.Equal(
-                expected.SerializeV2(),
-                state.GetAvatarState(agent1Avatar0Address).SerializeV2());
+                expected.SerializeList(),
+                state.GetAvatarState(agent1Avatar0Address).SerializeList());
             Assert.Equal(agent2CouponWallet, state.GetCouponWallet(CouponsFixture.AgentAddress2));
 
             // can't redeem other person's coupon to their account
@@ -167,8 +140,8 @@ namespace Lib9c.Tests.Action.Coupons
                         RandomSeed = random.Seed,
                     });
             Assert.Equal(
-                expected.SerializeV2(),
-                state.GetAvatarState(agent2Avatar0Address).SerializeV2());
+                expected.SerializeList(),
+                state.GetAvatarState(agent2Avatar0Address).SerializeList());
             Assert.Equal(agent2CouponWallet, state.GetCouponWallet(CouponsFixture.AgentAddress2));
 
             // can't redeem to a nonexistent avatar
@@ -204,8 +177,8 @@ namespace Lib9c.Tests.Action.Coupons
                         RandomSeed = random.Seed,
                     });
             Assert.Equal(
-                expected.SerializeV2(),
-                state.GetAvatarState(agent2Avatar0Address).SerializeV2());
+                expected.SerializeList(),
+                state.GetAvatarState(agent2Avatar0Address).SerializeList());
             Assert.Equal(agent1CouponWallet, state.GetCouponWallet(CouponsFixture.AgentAddress1));
 
             // redeem a coupon
@@ -227,7 +200,7 @@ namespace Lib9c.Tests.Action.Coupons
                     .Select(item => item.item.Id)
                     .ToImmutableSortedSet());
             expected.inventory = actual.inventory;
-            Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
+            Assert.Equal(expected.SerializeList(), actual.SerializeList());
 
             // can't redeem a coupon twice
             expected = state.GetAvatarState(agent1Avatar1Address);
@@ -244,7 +217,7 @@ namespace Lib9c.Tests.Action.Coupons
             actual = state.GetAvatarState(agent1Avatar1Address);
             Assert.Equal(0, state.GetAvatarState(agent1Avatar1Address).inventory.Items.Count);
             Assert.Empty(actual.inventory.Items);
-            Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
+            Assert.Equal(expected.SerializeList(), actual.SerializeList());
 
             expected = state.GetAvatarState(agent1Avatar1Address);
             state = new RedeemCoupon(
@@ -263,7 +236,7 @@ namespace Lib9c.Tests.Action.Coupons
                 actual.inventory.Items
                     .Select(item => item.item.Id)
                     .ToImmutableSortedSet());
-            Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
+            Assert.Equal(expected.SerializeList(), actual.SerializeList());
 
             expected = state.GetAvatarState(agent2Avatar0Address);
             state = new RedeemCoupon(
@@ -282,7 +255,7 @@ namespace Lib9c.Tests.Action.Coupons
                 actual.inventory.Items
                     .Select(item => item.item.Id)
                     .ToImmutableSortedSet());
-            Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
+            Assert.Equal(expected.SerializeList(), actual.SerializeList());
 
             state = state
                 .SetCouponWallet(CouponsFixture.AgentAddress1, agent1CouponWallet);
@@ -326,7 +299,7 @@ namespace Lib9c.Tests.Action.Coupons
             }
 
             expected.inventory = actual.inventory;
-            Assert.Equal(expected.SerializeV2(), actual.SerializeV2());
+            Assert.Equal(expected.SerializeList(), actual.SerializeList());
         }
     }
 }

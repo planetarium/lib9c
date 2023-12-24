@@ -11,6 +11,7 @@ using Lib9c.Tests.Util;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Helper;
 using Nekoyume.Model;
@@ -40,9 +41,6 @@ namespace Lib9c.DevExtensions.Tests.Action
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly IWorld _initialStateV2;
-        private readonly Address _inventoryAddress;
-        private readonly Address _worldInformationAddress;
-        private readonly Address _questListAddress;
         private readonly Address _recipeAddress;
         private readonly AvatarState _avatarState;
 
@@ -52,10 +50,6 @@ namespace Lib9c.DevExtensions.Tests.Action
                 InitializeUtil.InitializeStates(
                     adminAddr: AdminAddr,
                     isDevEx: true);
-            _inventoryAddress = _avatarAddress.Derive(SerializeKeys.LegacyInventoryKey);
-            _worldInformationAddress =
-                _avatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey);
-            _questListAddress = _avatarAddress.Derive(SerializeKeys.LegacyQuestListKey);
             _recipeAddress = _avatarAddress.Derive("recipe_ids");
             _avatarState = _initialStateV2.GetAvatarState(_avatarAddress);
         }
@@ -347,7 +341,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         // Logics
         private IWorld Manipulate(
             IWorld state,
-            List<(Address addr, IValue value)> targetStateList,
+            List<(Address accountAddr, Address addr, IValue value)> targetStateList,
             List<(Address addr, FungibleAssetValue fav)> targetBalanceList
         )
         {
@@ -427,8 +421,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
         private void TestInventoryState(IWorld state, Inventory targetInventory)
         {
-            var avatarState = state.GetAvatarState(_avatarAddress);
-            var inventoryState = avatarState.inventory;
+            var inventoryState = new Inventory((List)state.GetAccount(Addresses.Inventory).GetState(_avatarAddress));
             Assert.Equal(targetInventory.Items.Count, inventoryState.Items.Count);
             foreach (var item in targetInventory.Items)
             {
@@ -460,9 +453,9 @@ namespace Lib9c.DevExtensions.Tests.Action
 
             var state = Manipulate(
                 _initialStateV2,
-                new List<(Address, IValue)>
+                new List<(Address, Address, IValue)>
                 {
-                    (_avatarAddress, newAvatarState.SerializeV2())
+                    (Addresses.Avatar, _avatarAddress, MigrationAvatarState.LegacySerializeV2(newAvatarState))
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -503,9 +496,9 @@ namespace Lib9c.DevExtensions.Tests.Action
             var crystal = new FungibleAssetValue(Crystal, 100, 0);
             var action = new ManipulateState
             {
-                StateList = new List<(Address, IValue)>
+                StateList = new List<(Address, Address, IValue)>
                 {
-                    (_avatarAddress, _avatarState.SerializeV2()),
+                    (Addresses.Avatar, _avatarAddress, _avatarState.SerializeList()),
                 },
                 BalanceList = new List<(Address, FungibleAssetValue)>
                 {
@@ -534,9 +527,9 @@ namespace Lib9c.DevExtensions.Tests.Action
         {
             var state = Manipulate(
                 _initialStateV2,
-                new List<(Address, IValue)>
+                new List<(Address, Address, IValue)>
                 {
-                    (_inventoryAddress, targetInventory.Serialize()),
+                    (Addresses.Inventory, _avatarAddress, targetInventory.Serialize()),
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -550,9 +543,9 @@ namespace Lib9c.DevExtensions.Tests.Action
         {
             var state = Manipulate(
                 _initialStateV2,
-                new List<(Address, IValue)>
+                new List<(Address, Address, IValue)>
                 {
-                    (_worldInformationAddress, targetInfo.Serialize())
+                    (ReservedAddresses.LegacyAccount, _avatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey), targetInfo.Serialize())
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -565,9 +558,9 @@ namespace Lib9c.DevExtensions.Tests.Action
         public void SetQuestState(List<int> targetQuestIdList, QuestList questList)
         {
             var state = Manipulate(_initialStateV2,
-                new List<(Address, IValue)>
+                new List<(Address, Address, IValue)>
                 {
-                    (_questListAddress, questList.Serialize())
+                    (Addresses.QuestList, _avatarAddress, questList.Serialize())
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -581,7 +574,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         {
             var states = Manipulate(
                 _initialStateV2,
-                new List<(Address, IValue)>(),
+                new List<(Address, Address, IValue)>(),
                 new List<(Address, FungibleAssetValue)>
                 {
                     (addr, fav)
@@ -621,12 +614,12 @@ namespace Lib9c.DevExtensions.Tests.Action
 
             var state = Manipulate(
                 _initialStateV2,
-                new List<(Address, IValue)>
+                new List<(Address, Address, IValue)>
                 {
-                    (_avatarAddress, newAvatarState.Serialize()),
-                    (_inventoryAddress, inventory.Serialize()),
-                    (_worldInformationAddress, worldState.Serialize()),
-                    (_questListAddress, questList.Serialize()),
+                    (Addresses.Avatar, _avatarAddress, newAvatarState.SerializeList()),
+                    (Addresses.Inventory, _avatarAddress, inventory.Serialize()),
+                    (Addresses.WorldInformation, _avatarAddress, worldState.Serialize()),
+                    (Addresses.QuestList, _avatarAddress, questList.Serialize()),
                 },
                 balanceList
             );

@@ -2,7 +2,6 @@ namespace Lib9c.Tests.Util
 {
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Nekoyume.Action;
     using Nekoyume.Model.Quest;
     using Nekoyume.Module;
     using Nekoyume.TableData;
@@ -24,11 +23,8 @@ namespace Lib9c.Tests.Util
             );
             var avatarState = stateV1.GetAvatarState(avatarAddress);
             avatarState.questList = emptyQuestList;
-            var newStateV1 = stateV1.SetState(avatarAddress, avatarState.Serialize());
-            var newStateV2 = stateV2.SetState(
-                avatarAddress.Derive(SerializeKeys.LegacyQuestListKey),
-                emptyQuestList.Serialize()
-            );
+            var newStateV1 = stateV1.SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+            var newStateV2 = stateV2.SetAvatarState(avatarAddress, avatarState, false, false, false, true);
             return (newStateV1, newStateV2);
         }
     }

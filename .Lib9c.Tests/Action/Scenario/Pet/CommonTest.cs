@@ -19,7 +19,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
         private readonly Address _recipeAddr;
-        private readonly Address _worldInfoAddr;
         private readonly IWorld _initialStateV1;
         private readonly IWorld _initialStateV2;
 
@@ -28,7 +27,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             (_tableSheets, _agentAddr, _avatarAddr, _initialStateV1, _initialStateV2) =
                 InitializeUtil.InitializeStates();
             _recipeAddr = _avatarAddr.Derive("recipe_ids");
-            _worldInfoAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
         }
 
         // You cannot use one pet to the multiple slots at the same time
@@ -63,7 +61,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,
-                _worldInfoAddr,
+                _avatarAddr,
                 recipe.UnlockStage
             );
 
