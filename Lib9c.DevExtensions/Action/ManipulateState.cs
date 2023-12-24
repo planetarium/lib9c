@@ -17,7 +17,7 @@ namespace Lib9c.DevExtensions.Action
     [ActionType("manipulate_state")]
     public class ManipulateState : GameAction
     {
-        public List<(Address addr, IValue value)> StateList { get; set; }
+        public List<(Address accountAddr, Address addr, IValue value)> StateList { get; set; }
         public List<(Address addr, FungibleAssetValue fav)> BalanceList { get; set; }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
@@ -54,13 +54,15 @@ namespace Lib9c.DevExtensions.Action
         public static IWorld Execute(
             IActionContext context,
             IWorld prevStates,
-            List<(Address addr, IValue value)> stateList,
+            List<(Address accountAddr, Address addr, IValue value)> stateList,
             List<(Address addr, FungibleAssetValue fav)> balanceList)
         {
             var states = prevStates;
-            foreach (var (addr, value) in stateList)
+            foreach (var (accountAddr, addr, value) in stateList)
             {
-                states = states.SetState(addr, value);
+                states = states.SetAccount(
+                    accountAddr,
+                    states.GetAccount(accountAddr).SetState(addr, value));
             }
 
             var ncg = states.GetGoldCurrency();

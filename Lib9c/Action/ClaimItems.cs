@@ -99,18 +99,12 @@ namespace Nekoyume.Action
 
             foreach (var (avatarAddress, fungibleAssetValues) in ClaimData)
             {
-                var inventory = states.GetInventory(avatarAddress)
+                var avatarState = states.GetAvatarState(avatarAddress)
                             ?? throw new FailedLoadStateException(
                                 ActionTypeText,
                                 GetSignerAndOtherAddressesHex(context, avatarAddress),
-                                typeof(Inventory),
+                                typeof(AvatarState),
                                 avatarAddress);
-
-                var avatarState = states.GetAvatarState(avatarAddress);
-                if (avatarState is null)
-                {
-                    throw new FailedLoadStateException(avatarAddress, typeof(AvatarState));
-                }
 
                 var favs = new List<FungibleAssetValue>();
                 var items = new List<(int id, int count)>();
@@ -150,12 +144,12 @@ namespace Nekoyume.Action
                         {
                             foreach (var _ in Enumerable.Range(0, itemCount))
                             {
-                                inventory.AddItem(item, 1);
+                                avatarState.inventory.AddItem(item, 1);
                             }
                         }
                         else
                         {
-                            inventory.AddItem(item, itemCount);
+                            avatarState.inventory.AddItem(item, itemCount);
                         }
                         items.Add((item.Id, itemCount));
                     }

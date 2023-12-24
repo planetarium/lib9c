@@ -122,7 +122,7 @@ namespace Nekoyume.Action
                 context.BlockIndex
             );
             return states
-                .SetAvatarState(avatarAddress, avatarState, true, false, false, false)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
                 .SetState(slotAddress, slotState.Serialize());
         }
 

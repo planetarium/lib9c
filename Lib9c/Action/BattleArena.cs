@@ -430,9 +430,7 @@ namespace Nekoyume.Action
                 .SetState(myArenaScoreAdr, myArenaScore.Serialize())
                 .SetState(enemyArenaScoreAdr, enemyArenaScore.Serialize())
                 .SetState(arenaInformationAdr, arenaInformation.Serialize())
-                .SetState(
-                    myAvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
+                .SetAvatarState(myAvatarAddress, avatarState, false, true, false, false);
         }
     }
 }

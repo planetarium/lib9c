@@ -188,7 +188,7 @@ namespace Nekoyume.Action.Garages
             Address recipientAvatarAddress,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
         {
-            var inventory = states.GetInventory(recipientAvatarAddress);
+            var avatarState = states.GetAvatarState(recipientAvatarAddress);
             var fungibleItemTuples = GarageUtils.WithGarageTuples(
                 signer,
                 states,
@@ -196,11 +196,11 @@ namespace Nekoyume.Action.Garages
             foreach (var (_, count, garageAddress, garage) in fungibleItemTuples)
             {
                 garage.Unload(count);
-                inventory.AddFungibleItem((ItemBase)garage.Item, count);
+                avatarState.inventory.AddFungibleItem((ItemBase)garage.Item, count);
                 states = states.SetState(garageAddress, garage.Serialize());
             }
 
-            return states.SetInventory(recipientAvatarAddress, inventory);
+            return states.SetAvatarState(recipientAvatarAddress, avatarState, false, true, false, false);
         }
 
         private IWorld BulkSendMail(
@@ -215,19 +215,13 @@ namespace Nekoyume.Action.Garages
                     fungibleAssetValues,
                     fungibleIdAndCounts,
                     memo) = tuple;
-                var avatarValue = states.GetState(recipientAvatarAddress);
-                if (!(avatarValue is Dictionary avatarDict))
+                var avatarState = states.GetAvatarState(recipientAvatarAddress);
+                if (avatarState is null)
                 {
                     throw new FailedLoadStateException(recipientAvatarAddress, typeof(AvatarState));
                 }
 
-                if (!avatarDict.ContainsKey(SerializeKeys.MailBoxKey))
-                {
-                    throw new KeyNotFoundException(
-                        $"Dictionary key is not found: {SerializeKeys.MailBoxKey}");
-                }
-
-                var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey])
+                var mailBox = new MailBox((List)avatarState.mailBox.Serialize())
                 {
                     new UnloadFromMyGaragesRecipientMail(
                         blockIndex,
@@ -238,9 +232,9 @@ namespace Nekoyume.Action.Garages
                         memo)
                 };
                 mailBox.CleanUp();
-                avatarDict = avatarDict.SetItem(SerializeKeys.MailBoxKey, mailBox.Serialize());
+                avatarState.mailBox = mailBox;
 
-                return states.SetState(recipientAvatarAddress, avatarDict);
+                return states.SetAvatarState(recipientAvatarAddress, avatarState, true, false, false, false);
             }
 
             return states;

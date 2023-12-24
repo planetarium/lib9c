@@ -326,7 +326,7 @@ namespace Nekoyume.Action
                 .SetState(sellerInventoryAddress, sellerAvatarState.inventory.Serialize())
                 .SetState(sellerWorldInformationAddress, sellerAvatarState.worldInformation.Serialize())
                 .SetState(sellerQuestListAddress, sellerAvatarState.questList.Serialize())
-                .SetState(sellerAvatarAddress, sellerAvatarState.SerializeV2());
+                .SetState(sellerAvatarAddress, MigrationAvatarState.LegacySerializeV2(sellerAvatarState));
             states = states.SetState(shardedShopAddress, shardedShopState.Serialize());
             return states;
         }

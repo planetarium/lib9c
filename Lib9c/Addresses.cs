@@ -145,7 +145,7 @@ namespace Nekoyume
             Address agentAddr,
             Address inventoryAddr) =>
             Enumerable.Range(0, Nekoyume.GameConfig.SlotCount)
-                .Select(index => GetInventoryAddress(agentAddr, index))
+                .Select(index => GetAvatarAddress(agentAddr, index))
                 .Contains(inventoryAddr);
 
 

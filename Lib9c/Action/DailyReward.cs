@@ -36,7 +36,7 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}DailyReward exec started", addressesHex);
 
-            if (states.TryGetAvatarState(context.Signer, avatarAddress, out AvatarState avatarState))
+            if (!states.TryGetAvatarState(context.Signer, avatarAddress, out AvatarState avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");

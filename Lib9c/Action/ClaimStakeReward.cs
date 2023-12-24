@@ -242,9 +242,7 @@ namespace Nekoyume.Action
 
             return states
                 .SetState(stakeStateAddr, stakeStateV2.Serialize())
-                .SetState(
-                    avatarState.address.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
+                .SetAvatarState(AvatarAddress, avatarState, false, true, false, false);
         }
     }
 }

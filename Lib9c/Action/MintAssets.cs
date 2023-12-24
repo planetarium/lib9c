@@ -82,7 +82,7 @@ namespace Nekoyume.Action
 
                 if (items is { } itemsNotNull)
                 {
-                    Inventory inventory = state.GetInventory(recipient);
+                    AvatarState avatarState = state.GetAvatarState(recipient);
                     MaterialItemSheet itemSheet = state.GetSheet<MaterialItemSheet>();
                     if (itemSheet is null || itemSheet.OrderedList is null)
                     {
@@ -94,11 +94,11 @@ namespace Nekoyume.Action
                         if (row.ItemId.Equals(itemsNotNull.Id))
                         {
                             Material item = ItemFactory.CreateMaterial(row);
-                            inventory.AddFungibleItem(item, itemsNotNull.Count);
+                            avatarState.inventory.AddFungibleItem(item, itemsNotNull.Count);
                         }
                     }
 
-                    state = state.SetInventory(recipient, inventory);
+                    state = state.SetAvatarState(recipient, avatarState, false, true, false, false);
                     fivs.Add(itemsNotNull);
                 }
             }
@@ -106,24 +106,18 @@ namespace Nekoyume.Action
             IRandom rng = context.GetRandom();
             foreach (var recipient in mailRecords.Keys)
             {
-                if (
-                    state.GetState(recipient) is Dictionary dict &&
-                    dict.TryGetValue((Text)SerializeKeys.MailBoxKey, out IValue rawMailBox) &&
-                    dict.TryGetValue((Text)SerializeKeys.AgentAddressKey, out IValue rawAgentAddress)
-                )
+                if (state.GetAvatarState(recipient) is { } recipientAvatarState)
                 {
-                    var agentAddress = rawAgentAddress.ToAddress();
-                    var mailBox = new MailBox((List)rawMailBox);
                     (List<FungibleAssetValue> favs, List<FungibleItemValue> fivs) = mailRecords[recipient];
                     List<(Address recipient, FungibleAssetValue v)> mailFavs =
                         favs.Select(v => (recipient, v))
                             .ToList();
 
-                    if (mailRecords.TryGetValue(agentAddress, out (List<FungibleAssetValue> agentFavs, List<FungibleItemValue> _) agentRecords))
+                    if (mailRecords.TryGetValue(recipientAvatarState.agentAddress, out (List<FungibleAssetValue> agentFavs, List<FungibleItemValue> _) agentRecords))
                     {
-                        mailFavs.AddRange(agentRecords.agentFavs.Select(v => (agentAddress, v)));
+                        mailFavs.AddRange(agentRecords.agentFavs.Select(v => (recipientAvatarState.agentAddress, v)));
                     }
-                    mailBox.Add(
+                    recipientAvatarState.mailBox.Add(
                         new UnloadFromMyGaragesRecipientMail(
                             context.BlockIndex,
                             rng.GenerateRandomGuid(),
@@ -133,9 +127,8 @@ namespace Nekoyume.Action
                             Memo
                         )
                     );
-                    mailBox.CleanUp();
-                    dict = dict.SetItem(SerializeKeys.MailBoxKey, mailBox.Serialize());
-                    state = state.SetState(recipient, dict);
+                    recipientAvatarState.mailBox.CleanUp();
+                    state = state.SetAvatarState(recipient, recipientAvatarState, true, false, false, false);
                 }
             }
 

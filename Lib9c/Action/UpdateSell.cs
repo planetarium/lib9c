@@ -56,9 +56,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var inventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = sellerAvatarAddress.Derive(LegacyQuestListKey);
             var digestListAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);

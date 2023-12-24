@@ -164,8 +164,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -178,7 +176,7 @@ namespace Nekoyume.Action
                     $"{addressesHex} Aborted as the agent state of the signer was failed to load.");
             }
 
-            if (states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");

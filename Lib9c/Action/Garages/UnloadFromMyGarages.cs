@@ -195,8 +195,7 @@ namespace Nekoyume.Action.Garages
                 return states;
             }
 
-            var inventoryAddr = RecipientAvatarAddr.Derive(SerializeKeys.LegacyInventoryKey);
-            var inventory = states.GetInventory(inventoryAddr);
+            var avatarState = states.GetAvatarState(RecipientAvatarAddr);
             var fungibleItemTuples = GarageUtils.WithGarageTuples(
                 signer,
                 states,
@@ -204,11 +203,11 @@ namespace Nekoyume.Action.Garages
             foreach (var (_, count, garageAddr, garage) in fungibleItemTuples)
             {
                 garage.Unload(count);
-                inventory.AddFungibleItem((ItemBase)garage.Item, count);
+                avatarState.inventory.AddFungibleItem((ItemBase)garage.Item, count);
                 states = states.SetState(garageAddr, garage.Serialize());
             }
 
-            return states.SetState(inventoryAddr, inventory.Serialize());
+            return states.SetAvatarState(RecipientAvatarAddr, avatarState, true, true, true, true);
         }
 
         private IWorld SendMail(

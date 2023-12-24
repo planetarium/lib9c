@@ -190,8 +190,7 @@ namespace Nekoyume.Action
             states = states
                 .SetState(productAddress, Null.Value)
                 .SetState(productsStateAddress, productsState.Serialize())
-                .SetState(sellerAvatarAddress, sellerAvatarState.SerializeV2())
-                .SetState(sellerAvatarAddress.Derive(LegacyQuestListKey), sellerAvatarState.questList.Serialize())
+                .SetAvatarState(sellerAvatarAddress, sellerAvatarState, true, false, false, true)
                 .SetState(ProductReceipt.DeriveAddress(productId), receipt.Serialize())
                 .TransferAsset(context, context.Signer, feeStoreAddress, tax)
                 .TransferAsset(context, context.Signer, sellerAgentAddress, taxedPrice);
@@ -208,9 +207,6 @@ namespace Nekoyume.Action
                 ShardedShopStateV2.DeriveAddress(purchaseInfo.ItemSubType, purchaseInfo.OrderId);
             Address sellerAgentAddress = purchaseInfo.SellerAgentAddress;
             Address sellerAvatarAddress = purchaseInfo.SellerAvatarAddress;
-            Address sellerInventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
-            var sellerWorldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
-            Address sellerQuestListAddress = sellerAvatarAddress.Derive(LegacyQuestListKey);
             Guid orderId = purchaseInfo.OrderId;
             Address orderAddress = Order.DeriveAddress(orderId);
             Address digestListAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
@@ -333,10 +329,7 @@ namespace Nekoyume.Action
             states = states
                 .SetState(digestListAddress, digestList.Serialize())
                 .SetState(orderReceiptAddress, orderReceipt.Serialize())
-                .SetState(sellerInventoryAddress, sellerAvatarState.inventory.Serialize())
-                .SetState(sellerWorldInformationAddress, sellerAvatarState.worldInformation.Serialize())
-                .SetState(sellerQuestListAddress, sellerAvatarState.questList.Serialize())
-                .SetState(sellerAvatarAddress, sellerAvatarState.SerializeV2());
+                .SetAvatarState(sellerAvatarAddress, sellerAvatarState, true, true, true, true);
             states = states.SetState(shardedShopAddress, shardedShopState.Serialize());
             return states;
         }

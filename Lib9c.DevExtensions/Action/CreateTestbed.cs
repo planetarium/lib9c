@@ -154,12 +154,10 @@ namespace Lib9c.DevExtensions.Action
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);
-            states = states.SetState(agentAddress, agentState.Serialize())
+            states = states
+                .SetAgentState(agentAddress, agentState)
                 .SetState(Addresses.Ranking, rankingState.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
             // ~Create Agent and avatar && ~Add item
 
             // for sell
@@ -200,8 +198,7 @@ namespace Lib9c.DevExtensions.Action
                 orderReceiptList.Add(orderDigest);
 
                 states = states.SetState(orderReceiptAddress, orderReceiptList.Serialize())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                    .SetState(avatarAddress, avatarState.SerializeV2())
+                    .SetAvatarState(avatarAddress, avatarState, true, true, false, false)
                     .SetState(itemAddress, tradableItem.Serialize())
                     .SetState(orderAddress, order.Serialize())
                     .SetState(shopAddress, shardedShopState.Serialize());

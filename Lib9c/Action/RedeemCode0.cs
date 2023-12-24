@@ -106,7 +106,8 @@ namespace Nekoyume.Action
                         break;
                 }
             }
-            states = states.SetAvatarState(AvatarAddress, avatarState, true, false, false, false);
+
+            states = states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
             states = states.SetState(RedeemCodeState.Address, redeemState.Serialize());
             return states;
         }

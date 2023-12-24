@@ -64,9 +64,6 @@ namespace Nekoyume.Action
                     slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -149,11 +146,10 @@ namespace Nekoyume.Action
             // ~Validate Work
 
             // Remove Required Materials
-            var inventory = avatarState.inventory;
             foreach (var pair in requiredFungibleItems.OrderBy(pair => pair.Key))
             {
                 if (!materialItemSheet.TryGetValue(pair.Key, out var materialRow) ||
-                    !inventory.RemoveFungibleItem(materialRow.ItemId, context.BlockIndex, pair.Value))
+                    !avatarState.inventory.RemoveFungibleItem(materialRow.ItemId, context.BlockIndex, pair.Value))
                 {
                     throw new NotEnoughMaterialException(
                         $"{addressesHex}Aborted as the player has no enough material ({pair.Key} * {pair.Value})");

@@ -201,7 +201,7 @@ namespace Nekoyume.Action
                 .SetState(arenaInformationAdr, arenaInformation.Serialize())
                 .SetState(arenaParticipantsAdr, arenaParticipants.Serialize())
                 .SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
-                .SetState(context.Signer, agentState.Serialize());
+                .SetAgentState(context.Signer, agentState);
         }
     }
 }

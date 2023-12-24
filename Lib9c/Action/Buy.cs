@@ -70,9 +70,6 @@ namespace Nekoyume.Action
             context.UseGas(1);
             IActionContext ctx = context;
             var states = ctx.PreviousState;
-            var buyerInventoryAddress = buyerAvatarAddress.Derive(LegacyInventoryKey);
-            var buyerWorldInformationAddress = buyerAvatarAddress.Derive(LegacyWorldInformationKey);
-            var buyerQuestListAddress = buyerAvatarAddress.Derive(LegacyQuestListKey);
             var addressesHex = GetSignerAndOtherAddressesHex(context, buyerAvatarAddress);
 
             var sw = new Stopwatch();
@@ -274,10 +271,7 @@ namespace Nekoyume.Action
                 states = states
                     .SetState(digestListAddress, digestList.Serialize())
                     .SetState(orderReceiptAddress, orderReceipt.Serialize())
-                    .SetState(sellerInventoryAddress, sellerAvatarState.inventory.Serialize())
-                    .SetState(sellerWorldInformationAddress, sellerAvatarState.worldInformation.Serialize())
-                    .SetState(sellerQuestListAddress, sellerAvatarState.questList.Serialize())
-                    .SetState(sellerAvatarAddress, sellerAvatarState.SerializeV2());
+                    .SetAvatarState(sellerAvatarAddress, sellerAvatarState, true, true, true, true);
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set Seller AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();
@@ -289,11 +283,8 @@ namespace Nekoyume.Action
             buyerAvatarState.updatedAt = ctx.BlockIndex;
             buyerAvatarState.blockIndex = ctx.BlockIndex;
 
-            states = states
-                .SetState(buyerInventoryAddress, buyerAvatarState.inventory.Serialize())
-                .SetState(buyerWorldInformationAddress, buyerAvatarState.worldInformation.Serialize())
-                .SetState(buyerQuestListAddress, buyerAvatarState.questList.Serialize())
-                .SetState(buyerAvatarAddress, buyerAvatarState.Serialize());
+            states = states.SetAvatarState(
+                buyerAvatarAddress, buyerAvatarState, true, true, true, true);
             sw.Stop();
             Log.Verbose("{AddressesHex}Buy Set Buyer AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();

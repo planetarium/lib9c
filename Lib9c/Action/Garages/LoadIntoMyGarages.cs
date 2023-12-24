@@ -32,7 +32,7 @@ namespace Nekoyume.Action.Garages
         /// so it should be execute another action first to migrate the avatar state to v2.
         /// And then, the inventory address will be set.
         /// </summary>
-        public Address? InventoryAddr { get; private set; }
+        public Address? AvatarAddr { get; private set; }
 
         public IOrderedEnumerable<(HashDigest<SHA256> fungibleId, int count)>?
             FungibleIdAndCounts { get; private set; }
@@ -50,9 +50,9 @@ namespace Nekoyume.Action.Garages
                             : new List(FungibleAssetValues.Select(tuple => new List(
                                 tuple.balanceAddr.Serialize(),
                                 tuple.value.Serialize()))),
-                        InventoryAddr is null
+                        AvatarAddr is null
                             ? Null.Value
-                            : InventoryAddr.Serialize(),
+                            : AvatarAddr.Serialize(),
                         FungibleIdAndCounts is null
                             ? (IValue)Null.Value
                             : new List(FungibleIdAndCounts.Select(tuple => new List(
@@ -66,12 +66,12 @@ namespace Nekoyume.Action.Garages
 
         public LoadIntoMyGarages(
             IEnumerable<(Address balanceAddr, FungibleAssetValue value)>? fungibleAssetValues,
-            Address? inventoryAddr,
+            Address? avatarAddr,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)>? fungibleIdAndCounts,
             string? memo)
         {
             FungibleAssetValues = GarageUtils.MergeAndSort(fungibleAssetValues);
-            InventoryAddr = inventoryAddr;
+            AvatarAddr = avatarAddr;
             FungibleIdAndCounts = GarageUtils.MergeAndSort(fungibleIdAndCounts);
             Memo = memo;
         }
@@ -105,7 +105,7 @@ namespace Nekoyume.Action.Garages
                         l2[1].ToFungibleAssetValue());
                 });
             FungibleAssetValues = GarageUtils.MergeAndSort(fungibleAssetValues);
-            InventoryAddr = list[1].Kind == ValueKind.Null
+            AvatarAddr = list[1].Kind == ValueKind.Null
                 ? (Address?)null
                 : list[1].ToAddress();
             var fungibleIdAndCounts = list[2].Kind == ValueKind.Null
@@ -183,20 +183,20 @@ namespace Nekoyume.Action.Garages
                 return;
             }
 
-            if (!InventoryAddr.HasValue)
+            if (!AvatarAddr.HasValue)
             {
                 throw new InvalidActionFieldException(
-                    $"[{addressesHex}] {nameof(InventoryAddr)} is required when " +
+                    $"[{addressesHex}] {nameof(AvatarAddr)} is required when " +
                     $"{nameof(FungibleIdAndCounts)} is set.");
             }
 
             if (!Addresses.CheckInventoryAddrIsContainedInAgent(
                     signer,
-                    InventoryAddr.Value))
+                    AvatarAddr.Value))
             {
                 throw new InvalidActionFieldException(
                     innerException: new InvalidAddressException(
-                        $"[{addressesHex}] {signer} doesn't have permission for {InventoryAddr}."));
+                        $"[{addressesHex}] {signer} doesn't have permission for {AvatarAddr}."));
             }
 
             foreach (var (fungibleId, count) in FungibleIdAndCounts)
@@ -234,38 +234,38 @@ namespace Nekoyume.Action.Garages
             long blockIndex,
             IWorld states)
         {
-            if (InventoryAddr is null ||
+            if (AvatarAddr is null ||
                 FungibleIdAndCounts is null)
             {
                 return states;
             }
 
-            var inventory = states.GetInventory(InventoryAddr.Value);
+            var avatarState = states.GetAvatarState(AvatarAddr.Value);
             var fungibleItemTuples = GarageUtils.WithGarageStateTuples(
                 signer,
                 states,
                 FungibleIdAndCounts);
             foreach (var (fungibleId, count, garageAddr, garageState) in fungibleItemTuples)
             {
-                if (!inventory.TryGetTradableFungibleItems(
+                if (!avatarState.inventory.TryGetTradableFungibleItems(
                         fungibleId,
                         requiredBlockIndex: null,
                         blockIndex: blockIndex,
                         out var outItems))
                 {
-                    throw new ItemNotFoundException(InventoryAddr.Value, fungibleId);
+                    throw new ItemNotFoundException(AvatarAddr.Value, fungibleId);
                 }
 
                 var itemArr = outItems as Inventory.Item[] ?? outItems.ToArray();
                 var tradableFungibleItem = (ITradableFungibleItem)itemArr[0].item;
-                if (!inventory.RemoveTradableFungibleItem(
+                if (!avatarState.inventory.RemoveTradableFungibleItem(
                         fungibleId,
                         requiredBlockIndex: null,
                         blockIndex: blockIndex,
                         count))
                 {
                     throw new NotEnoughItemException(
-                        InventoryAddr.Value,
+                        AvatarAddr.Value,
                         fungibleId,
                         count,
                         itemArr.Sum(item => item.count));
@@ -300,7 +300,7 @@ namespace Nekoyume.Action.Garages
                 states = states.SetState(garageAddr, garage.Serialize());
             }
 
-            return states.SetState(InventoryAddr.Value, inventory.Serialize());
+            return states.SetAvatarState(AvatarAddr.Value, avatarState, true, true, true, true);
         }
     }
 }

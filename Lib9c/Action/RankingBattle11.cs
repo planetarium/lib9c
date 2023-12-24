@@ -425,8 +425,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Serialize WeeklyArenaState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            states = states
-                .SetAvatarState(avatarAddress, avatarState, false, true, false, true);
+            states = states.SetAvatarState(avatarAddress, avatarState, false, true, false, true);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}RankingBattle Serialize AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
