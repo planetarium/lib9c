@@ -21,10 +21,12 @@ namespace Lib9c.Tests.Util
                 new EquipmentItemRecipeSheet(),
                 new EquipmentItemSubRecipeSheet()
             );
-            var avatarState = stateV1.GetAvatarState(avatarAddress);
-            avatarState.questList = emptyQuestList;
-            var newStateV1 = stateV1.SetAvatarState(avatarAddress, avatarState, true, true, true, true);
-            var newStateV2 = stateV2.SetAvatarState(avatarAddress, avatarState, false, false, false, true);
+            var avatarState1 = stateV1.GetAvatarState(avatarAddress);
+            var avatarState2 = stateV2.GetAvatarState(avatarAddress);
+            avatarState1.questList = emptyQuestList;
+            avatarState2.questList = emptyQuestList;
+            var newStateV1 = stateV1.SetAvatarState(avatarAddress, avatarState1, false, false, false, true);
+            var newStateV2 = stateV2.SetAvatarState(avatarAddress, avatarState2, false, false, false, true);
             return (newStateV1, newStateV2);
         }
     }
