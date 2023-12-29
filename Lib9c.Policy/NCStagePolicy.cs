@@ -15,7 +15,7 @@ namespace Nekoyume.Blockchain
         private readonly VolatileStagePolicy _impl;
         private readonly ConcurrentDictionary<Address, SortedList<Transaction, TxId>> _txs;
         private readonly int _quotaPerSigner;
-        private readonly Dictionary<Address, int> _quotaPerSignerList;
+        private readonly ConcurrentDictionary<Address, int> _quotaPerSignerList;
         private IAccessControlService? _accessControlService;
 
         public NCStagePolicy(TimeSpan txLifeTime, int quotaPerSigner, IAccessControlService? accessControlService = null)
@@ -32,7 +32,7 @@ namespace Nekoyume.Blockchain
                 ? new VolatileStagePolicy()
                 : new VolatileStagePolicy(txLifeTime);
 
-            _quotaPerSignerList = new Dictionary<Address, int>();
+            _quotaPerSignerList = new ConcurrentDictionary<Address, int>();
             _accessControlService = accessControlService;
         }
 
@@ -52,7 +52,7 @@ namespace Nekoyume.Blockchain
         {
             if (filtered)
             {
-                var txsPerSigner = new Dictionary<Address, SortedSet<Transaction>>();
+                var txsPerSigner = new ConcurrentDictionary<Address, SortedSet<Transaction>>();
                 foreach (Transaction tx in _impl.Iterate(blockChain, filtered))
                 {
                     if (!txsPerSigner.TryGetValue(tx.Signer, out var s))

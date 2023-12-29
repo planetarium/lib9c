@@ -9,7 +9,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;

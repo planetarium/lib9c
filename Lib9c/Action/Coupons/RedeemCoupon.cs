@@ -5,7 +5,6 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.Coupons;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;

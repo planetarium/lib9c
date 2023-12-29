@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Lib9c.Abstractions;
-using Nekoyume.Model;
 using Serilog;
 
 namespace Nekoyume.Action

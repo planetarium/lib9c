@@ -2,7 +2,6 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;

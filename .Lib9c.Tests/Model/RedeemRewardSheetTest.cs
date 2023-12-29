@@ -2,7 +2,6 @@ namespace Lib9c.Tests.Model
 {
     using System.Linq;
     using Bencodex.Types;
-    using Nekoyume.Model.Item;
     using Nekoyume.TableData;
     using Xunit;
 

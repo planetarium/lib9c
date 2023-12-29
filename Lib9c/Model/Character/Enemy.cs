@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nekoyume.Battle;
-using Nekoyume.Model.Character;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
@@ -14,7 +13,7 @@ namespace Nekoyume.Model
     public class Enemy : CharacterBase, ICloneable
     {
         public int spawnIndex = -1;
-        
+
         [NonSerialized]
         private IStageSimulator _stageSimulator;
 

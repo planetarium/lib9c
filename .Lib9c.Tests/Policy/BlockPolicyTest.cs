@@ -23,7 +23,6 @@ namespace Lib9c.Tests
     using Nekoyume.Blockchain.Policy;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
-    using Serilog.Core;
     using Xunit;
 
     public class BlockPolicyTest

@@ -22,6 +22,8 @@ namespace Nekoyume.Model.State
         public int BattleArenaInterval { get; private set; }
         public int RuneStatSlotUnlockCost { get; private set; }
         public int RuneSkillSlotUnlockCost { get; private set; }
+        public int RuneStatSlotCrystalUnlockCost { get; private set; }
+        public int RuneSkillSlotCrystalUnlockCost { get; private set; }
         public int DailyRuneRewardAmount { get; private set; }
         public int DailyWorldBossInterval { get; private set; }
         public int WorldBossRequiredInterval { get; private set; }
@@ -233,7 +235,14 @@ namespace Nekoyume.Model.State
             {
                 RequireCharacterLevel_ConsumableSlot5 = characterConsumableSlot5.ToInteger();
             }
-
+            if (serialized.TryGetValue((Text)"rune_stat_slot_crystal_unlock_cost", out var rscc))
+            {
+                RuneStatSlotCrystalUnlockCost = (Integer)rscc;
+            }
+            if (serialized.TryGetValue((Text)"rune_skill_slot_crystal_unlock_cost", out var rscc2))
+            {
+                RuneSkillSlotCrystalUnlockCost = (Integer)rscc2;
+            }
         }
 
         public GameConfigState(string csv) : base(Address)
@@ -448,6 +457,20 @@ namespace Nekoyume.Model.State
                     RequireCharacterLevel_ConsumableSlot5.Serialize());
             }
 
+            if (RuneSkillSlotCrystalUnlockCost > 0)
+            {
+                values.Add(
+                    (Text)"rune_skill_slot_crystal_unlock_cost",
+                    (Integer)RuneSkillSlotCrystalUnlockCost);
+            }
+
+            if (RuneStatSlotCrystalUnlockCost > 0)
+            {
+                values.Add(
+                    (Text)"rune_stat_slot_crystal_unlock_cost",
+                    (Integer)RuneStatSlotCrystalUnlockCost);
+            }
+
 #pragma warning disable LAA1002
             return new Dictionary(values.Union((Dictionary) base.Serialize()));
 #pragma warning restore LAA1002
@@ -496,6 +519,12 @@ namespace Nekoyume.Model.State
                     break;
                 case "rune_skill_slot_unlock_cost":
                     RuneSkillSlotUnlockCost = TableExtensions.ParseInt(row.Value);
+                    break;
+                case "rune_stat_slot_crystal_unlock_cost":
+                    RuneStatSlotCrystalUnlockCost = TableExtensions.ParseInt(row.Value);
+                    break;
+                case "rune_skill_slot_crystal_unlock_cost":
+                    RuneSkillSlotCrystalUnlockCost = TableExtensions.ParseInt(row.Value);
                     break;
                 case "daily_rune_reward_amount":
                     DailyRuneRewardAmount = TableExtensions.ParseInt(row.Value);
@@ -601,7 +630,6 @@ namespace Nekoyume.Model.State
                     RequireCharacterLevel_ConsumableSlot5 =
                             TableExtensions.ParseInt(row.Value);
                     break;
-
             }
         }
     }

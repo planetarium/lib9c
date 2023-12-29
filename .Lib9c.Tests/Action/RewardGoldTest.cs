@@ -30,7 +30,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
-    using Serilog.Core;
     using Xunit;
 
     public class RewardGoldTest
