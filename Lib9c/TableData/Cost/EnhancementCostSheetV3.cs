@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Numerics;
-using Nekoyume.Model.Item;
 
 namespace Nekoyume.TableData
 {

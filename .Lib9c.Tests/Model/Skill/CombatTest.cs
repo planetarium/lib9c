@@ -1,6 +1,5 @@
 namespace Lib9c.Tests.Model.Skill
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Lib9c.Tests.Action;

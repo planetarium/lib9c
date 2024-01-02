@@ -1,8 +1,5 @@
 namespace Lib9c.Tests.Model
 {
-    using System.Collections.Generic;
-    using Libplanet.Types.Assets;
-    using Nekoyume.Helper;
     using Nekoyume.Model.State;
     using Xunit;
 

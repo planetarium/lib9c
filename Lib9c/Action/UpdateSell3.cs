@@ -9,7 +9,6 @@ using Lib9c.Model.Order;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Battle;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -17,7 +16,6 @@ using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
 using BxDictionary = Bencodex.Types.Dictionary;
-using BxList = Bencodex.Types.List;
 
 namespace Nekoyume.Action
 {
