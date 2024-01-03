@@ -83,14 +83,16 @@ namespace Nekoyume.Action
             championshipId = plainValue[ChampionshipIdKey].ToInteger();
             round = plainValue[RoundKey].ToInteger();
             ticket = plainValue[TicketKey].ToInteger();
-            costumes = ((List)plainValue[CostumesKey]).Select(e => e.ToGuid()).ToList();
-            equipments = ((List)plainValue[EquipmentsKey]).Select(e => e.ToGuid()).ToList();
-            runeInfos = plainValue[RuneInfos].ToList(x => new RuneSlotInfo((List)x));
+            costumes = ((List) plainValue[CostumesKey]).Select(e => e.ToGuid()).ToList();
+            equipments = ((List) plainValue[EquipmentsKey]).Select(e => e.ToGuid()).ToList();
+            runeInfos = plainValue[RuneInfos].ToList(x => new RuneSlotInfo((List) x));
+            ValidateTicket();
         }
 
         public override IAccount Execute(IActionContext context)
         {
             context.UseGas(1);
+            ValidateTicket();
             var states = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(
                 context,
@@ -445,6 +447,14 @@ namespace Nekoyume.Action
                 .SetState(
                     myAvatarAddress.Derive(LegacyInventoryKey),
                     avatarState.inventory.Serialize());
+        }
+
+        private void ValidateTicket()
+        {
+            if (ticket <= 0)
+            {
+                throw new ArgumentException("ticket must be greater than 0");
+            }
         }
     }
 }
