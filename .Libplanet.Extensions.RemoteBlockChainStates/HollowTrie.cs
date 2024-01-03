@@ -46,5 +46,7 @@ namespace Libplanet.Extensions.RemoteBlockChainStates
         public ITrie Set(in KeyBytes key, IValue value)
             => throw new NotSupportedException();
 
+        public ITrie Remove(in KeyBytes key)
+            => throw new NotSupportedException();
     }
 }
