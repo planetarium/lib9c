@@ -1,6 +1,5 @@
 namespace Lib9c.Tests.Action.Scenario.Pet
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
@@ -8,7 +7,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume.Action;
-    using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;

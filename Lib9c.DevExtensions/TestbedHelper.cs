@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using Libplanet.Crypto;
 using Libplanet.Action;
-using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Model;
 using Nekoyume.Model.Item;
@@ -179,7 +178,7 @@ namespace Lib9c.DevExtensions
 #if UNITY_ANDROID
         private static TestbedCreateAvatar buffer = null;
         public static TestbedCreateAvatar LoadTestbedCreateAvatarForQA()
-        {           
+        {
             if (buffer is not null)
             {
                 return buffer;

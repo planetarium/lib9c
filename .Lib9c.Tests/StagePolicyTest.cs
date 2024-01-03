@@ -14,7 +14,6 @@ namespace Lib9c.Tests
     using Nekoyume.Action;
     using Nekoyume.Blockchain;
     using Nekoyume.Blockchain.Policy;
-    using Serilog.Core;
     using Xunit;
 
     public class StagePolicyTest

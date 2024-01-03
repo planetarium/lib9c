@@ -5,10 +5,14 @@ namespace Lib9c.DevExtensions.Model
     [Serializable]
     public class TestbedCreateAvatar : BaseTestbedModel
     {
-        public long BlockDifficulty;
+        public int Level;
         public int TradableMaterialCount;
         public int MaterialCount;
+        public int RuneStoneCount;
+        public int SoulStoneCount;
+        public bool AddPet;
         public int FoodCount;
+        public int[] FullOptionEquipmentRecipeIds;
         public CustomEquipmentItem[] CustomEquipmentItems;
     }
 

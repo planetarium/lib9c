@@ -1,6 +1,5 @@
 namespace Lib9c.Tests.Action
 {
-    using System;
     using System.Linq;
     using Bencodex.Types;
     using Libplanet.Action.State;
@@ -9,7 +8,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
-    using Nekoyume.TableData.Stake;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;

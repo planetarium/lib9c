@@ -104,7 +104,8 @@ namespace Lib9c.Tests.Action
                 null,
                 _states.Trie.Hash,
                 0,
-                new Dictionary<string, IValue>()
+                new Dictionary<string, IValue>(),
+                null
             );
             var evaluation = ncEval.ToActionEvaluation();
             var b = MessagePackSerializer.Serialize(ncEval);
