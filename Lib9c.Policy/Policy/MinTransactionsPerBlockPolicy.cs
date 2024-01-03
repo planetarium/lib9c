@@ -17,7 +17,7 @@ namespace Nekoyume.Blockchain.Policy
         public static IVariableSubPolicy<int> Default =>
             new MinTransactionsPerBlockPolicy(0);
 
-        public static IVariableSubPolicy<int> Mainnet =>
+        public static IVariableSubPolicy<int> Odin =>
             Default
                 // Note: Introduced to prevent selfish mining where certain miners were
                 // only mining empty blocks.  Issued for v100050.

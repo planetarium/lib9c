@@ -17,7 +17,7 @@ namespace Nekoyume.Blockchain.Policy
         public static IVariableSubPolicy<int> Default =>
             new MaxTransactionsPerSignerPerBlockPolicy(int.MaxValue);
 
-        public static IVariableSubPolicy<int> Mainnet =>
+        public static IVariableSubPolicy<int> Odin =>
             Default
                 // Note: Introduced to prevent transactions spamming that may result in
                 // the chain grinding to a halt without meaningful state transitions happening.
@@ -29,7 +29,7 @@ namespace Nekoyume.Blockchain.Policy
                     value: 4));
 
         // Note: For internal testing.
-        public static IVariableSubPolicy<int> Internal =>
+        public static IVariableSubPolicy<int> OdinInternal =>
             Default
                 .Add(new SpannedSubPolicy<int>(
                     startIndex: 2_800_001,

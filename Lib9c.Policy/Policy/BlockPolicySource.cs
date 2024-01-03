@@ -48,20 +48,20 @@ namespace Nekoyume.Blockchain.Policy
         /// </summary>
         public IBlockPolicy GetPolicy() =>
             GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
+                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Odin,
+                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Odin,
+                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Odin,
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Odin);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-internal deployment.
         /// </summary>
         public IBlockPolicy GetInternalPolicy() =>
             GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Internal,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal);
+                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.OdinInternal,
+                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Odin,
+                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Odin,
+                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.OdinInternal);
 
         /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for networks
