@@ -75,6 +75,9 @@ namespace Lib9c.Formatters
         public IAccount SetState(Address address, IValue state) =>
             new AccountStateDelta(_states.SetItem(address, state), _balances, _totalSupplies);
 
+        public IAccount RemoveState(Address address) =>
+            new AccountStateDelta(_states.Remove(address), _balances, _totalSupplies);
+
         public FungibleAssetValue GetBalance(Address address, Currency currency)
         {
             if (!_balances.TryGetValue((address, currency), out BigInteger rawValue))
