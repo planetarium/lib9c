@@ -64,27 +64,6 @@ namespace Nekoyume.Blockchain.Policy
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal);
 
         /// <summary>
-        /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-permanent-test deployment.
-        /// </summary>
-        public IBlockPolicy GetPermanentPolicy() =>
-            GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
-
-        /// <summary>
-        /// Creates an <see cref="IBlockPolicy{T}"/> instance identical to the one deployed
-        /// except with lower minimum difficulty for faster testing and benchmarking.
-        /// </summary>
-        public IBlockPolicy GetTestPolicy() =>
-            GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
-
-        /// <summary>
         /// Creates an <see cref="IBlockPolicy{T}"/> instance for networks
         /// with default options, without authorized mining and permissioned mining.
         /// </summary>
