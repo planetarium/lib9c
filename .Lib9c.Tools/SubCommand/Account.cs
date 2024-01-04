@@ -56,7 +56,7 @@ namespace Lib9c.Tools.SubCommand
             if (address is {} addrStr)
             {
                 Address addr = Utils.ParseAddress(addrStr);
-                FungibleAssetValue balance = chain.GetBalance(addr, gold, ReservedAddresses.LegacyAccount, offset.Hash);
+                FungibleAssetValue balance = chain.GetBalance(offset.Hash, addr, gold);
                 Console.WriteLine("{0}\t{1}", addr, balance);
                 return;
             }
@@ -84,7 +84,7 @@ namespace Lib9c.Tools.SubCommand
                 {
                     if (!printed.Contains(addr))
                     {
-                        FungibleAssetValue balance = chain.GetBalance(addr, gold, ReservedAddresses.LegacyAccount, offset.Hash);
+                        FungibleAssetValue balance = chain.GetBalance(offset.Hash, addr, gold);
                         Console.WriteLine("{0}\t{1}", addr, balance);
                         printed.Add(addr);
                     }

@@ -21,8 +21,8 @@ public class RemoteAccountState : IAccountState
 
     public RemoteAccountState(
         Uri explorerEndpoint,
-        Address? address,
-        BlockHash? offsetBlockHash)
+        BlockHash? offsetBlockHash,
+        Address? address)
     {
         _explorerEndpoint = explorerEndpoint;
         _graphQlHttpClient =
@@ -39,11 +39,11 @@ public class RemoteAccountState : IAccountState
                 operationName: "GetAccount",
                 variables: new
                 {
-                    accountAddress = address is { } addr
-                        ? addr.ToString()
-                        : throw new NotSupportedException(),
                     offsetBlockHash = offsetBlockHash is { } hash
                         ? ByteUtil.Hex(hash.ByteArray)
+                        : throw new NotSupportedException(),
+                    accountAddress = address is { } addr
+                        ? addr.ToString()
                         : throw new NotSupportedException(),
                 })).Result;
         Trie = new HollowTrie(HashDigest<SHA256>.FromString(response.Data.StateQuery.AccountState.StateRootHash));

@@ -175,10 +175,7 @@ namespace Nekoyume.Blockchain.Policy
 
             try
             {
-                if (blockChain.GetBalance(
-                    MeadConfig.PatronAddress,
-                    Currencies.Mead,
-                    ReservedAddresses.LegacyAccount) < 1 * Currencies.Mead)
+                if (blockChain.GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
                 {
                     // Check Activation
                     try
@@ -190,7 +187,7 @@ namespace Nekoyume.Blockchain.Policy
                         {
                             return transaction.Nonce == 0 &&
                                 blockChain.GetState(
-                                    activate.PendingAddress, ReservedAddresses.LegacyAccount) is Dictionary rawPending &&
+                                    ReservedAddresses.LegacyAccount, activate.PendingAddress) is Dictionary rawPending &&
                                 new PendingActivationState(rawPending).Verify(activate.Signature)
                                     ? null
                                     : new TxPolicyViolationException(
@@ -213,11 +210,11 @@ namespace Nekoyume.Blockchain.Policy
                     }
 
                     switch (blockChain.GetState(
-                        transaction.Signer.Derive(ActivationKey.DeriveKey), ReservedAddresses.LegacyAccount))
+                                ReservedAddresses.LegacyAccount, transaction.Signer.Derive(ActivationKey.DeriveKey)))
                     {
                         case null:
                             // Fallback for pre-migration.
-                            if (blockChain.GetState(ActivatedAccountsState.Address, ReservedAddresses.LegacyAccount)
+                            if (blockChain.GetState(ReservedAddresses.LegacyAccount, ActivatedAccountsState.Address)
                                 is Dictionary asDict)
                             {
                                 IImmutableSet<Address> activatedAccounts =
@@ -251,7 +248,7 @@ namespace Nekoyume.Blockchain.Policy
                 }
 
                 if (transaction.MaxGasPrice * transaction.GasLimit
-                    > blockChain.GetBalance(transaction.Signer, Currencies.Mead, ReservedAddresses.LegacyAccount))
+                    > blockChain.GetBalance(transaction.Signer, Currencies.Mead))
                 {
                     return new TxPolicyViolationException(
                         $"Transaction {transaction.Id} signer insufficient transaction fee",

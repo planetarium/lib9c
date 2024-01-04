@@ -181,8 +181,8 @@ namespace Lib9c.Tests
                 ),
                 renderers: new[] { new BlockRenderer() }
             );
-            Assert.Equal(1 * Currencies.Mead, blockChain.GetBalance(adminAddress, Currencies.Mead, ReservedAddresses.LegacyAccount));
-            Assert.Equal(1 * Currencies.Mead, blockChain.GetBalance(MeadConfig.PatronAddress, Currencies.Mead, ReservedAddresses.LegacyAccount));
+            Assert.Equal(1 * Currencies.Mead, blockChain.GetBalance(adminAddress, Currencies.Mead));
+            Assert.Equal(1 * Currencies.Mead, blockChain.GetBalance(MeadConfig.PatronAddress, Currencies.Mead));
             var action = new DailyReward
             {
                 avatarAddress = adminAddress,
@@ -384,7 +384,7 @@ namespace Lib9c.Tests
 
             Block block = blockChain.ProposeBlock(adminPrivateKey);
             blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
-            FungibleAssetValue actualBalance = blockChain.GetBalance(adminAddress, _currency, ReservedAddresses.LegacyAccount);
+            FungibleAssetValue actualBalance = blockChain.GetBalance(adminAddress, _currency);
             FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 10, 0);
             Assert.True(expectedBalance.Equals(actualBalance));
         }
