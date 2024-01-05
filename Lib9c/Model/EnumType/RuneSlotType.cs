@@ -5,5 +5,6 @@ namespace Nekoyume.Model.EnumType
         Default = 1,
         Ncg = 2,
         Stake = 3,
+        Crystal = 4,
     }
 }

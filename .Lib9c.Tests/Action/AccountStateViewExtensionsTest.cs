@@ -31,7 +31,7 @@ namespace Lib9c.Tests.Action
         public AccountStateViewExtensionsTest()
         {
             _agentAddress = default;
-            _avatarAddress = _agentAddress.Derive(string.Format(CultureInfo.InvariantCulture, CreateAvatar2.DeriveFormat, 0));
+            _avatarAddress = _agentAddress.Derive(string.Format(CultureInfo.InvariantCulture, CreateAvatar.DeriveFormat, 0));
             _agentState = new AgentState(_agentAddress);
             _agentState.avatarAddresses[0] = _avatarAddress;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
@@ -129,7 +129,7 @@ namespace Lib9c.Tests.Action
                 .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
                 .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
                 .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
-            states = states.SetState(_avatarAddress.Derive(key), null);
+            states = states.SetNull(_avatarAddress.Derive(key));
             var exc = Assert.Throws<FailedLoadStateException>(() => states.GetAvatarStateV2(_avatarAddress));
             Assert.Contains(key, exc.Message);
         }

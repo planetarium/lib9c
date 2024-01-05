@@ -231,5 +231,78 @@ namespace Lib9c.Tests.Action
                     BlockIndex = blockIndex,
                 }));
         }
+
+        [Theory]
+        [InlineData(true, 6)]
+        [InlineData(false, 6)]
+        [InlineData(true, 7)]
+        [InlineData(false, 7)]
+        public void Execute_CRYSTAL(bool legacyState, int slotIndex)
+        {
+            var context = new ActionContext();
+            var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+            var gameConfig = state.GetGameConfigState();
+            var cost = slotIndex == 6
+                ? gameConfig.RuneStatSlotCrystalUnlockCost
+                : gameConfig.RuneSkillSlotCrystalUnlockCost;
+            state = state.MintAsset(context, agentAddress, cost * Currencies.Crystal);
+            if (legacyState)
+            {
+                foreach (var battleType in new[] { BattleType.Adventure, BattleType.Arena, BattleType.Raid })
+                {
+                    var runeSlotState = new RuneSlotState(battleType);
+                    var serialized = (List)runeSlotState.Serialize();
+                    var rawSlots = new List(((List)serialized[1]).Take(6));
+                    state = state.SetState(
+                        RuneSlotState.DeriveAddress(avatarAddress, battleType),
+                        List.Empty.Add(battleType.Serialize()).Add(rawSlots));
+                }
+            }
+
+            var action = new UnlockRuneSlot()
+            {
+                AvatarAddress = avatarAddress,
+                SlotIndex = slotIndex,
+            };
+
+            var ctx = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = state,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            };
+
+            state = action.Execute(ctx);
+            var adventureAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
+            if (state.TryGetState(adventureAddr, out List adventureRaw))
+            {
+                var s = new RuneSlotState(adventureRaw);
+                var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
+                Assert.NotNull(slot);
+                Assert.False(slot.IsLock);
+            }
+
+            var arenaAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
+            if (state.TryGetState(arenaAddr, out List arenaRaw))
+            {
+                var s = new RuneSlotState(arenaRaw);
+                var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
+                Assert.NotNull(slot);
+                Assert.False(slot.IsLock);
+            }
+
+            var raidAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Raid);
+            if (state.TryGetState(raidAddr, out List raidRaw))
+            {
+                var s = new RuneSlotState(raidRaw);
+                var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
+                Assert.NotNull(slot);
+                Assert.False(slot.IsLock);
+            }
+
+            var balance = state.GetBalance(agentAddress, Currencies.Crystal);
+            Assert.Equal("0", balance.GetQuantityString());
+        }
     }
 }

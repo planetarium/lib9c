@@ -1,4 +1,3 @@
-using Bencodex.Types;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Stat;
 using System;

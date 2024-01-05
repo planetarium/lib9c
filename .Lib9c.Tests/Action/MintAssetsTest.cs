@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Common;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
+    using Libplanet.Types.Tx;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model;
@@ -61,7 +62,7 @@ namespace Lib9c.Tests.Action
             };
             var act = new MintAssets(r, null);
             var expected = Dictionary.Empty
-                .Add("type_id", "mint_assets")
+                .Add("type_id", MintAssets.TypeIdentifier)
                 .Add("values", List.Empty
                     .Add(Null.Value)
                     .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
@@ -73,7 +74,7 @@ namespace Lib9c.Tests.Action
 
             var act2 = new MintAssets(r, "memo");
             var expected2 = Dictionary.Empty
-                .Add("type_id", "mint_assets")
+                .Add("type_id", MintAssets.TypeIdentifier)
                 .Add("values", List.Empty
                     .Add((Text)"memo")
                     .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
@@ -276,11 +277,90 @@ namespace Lib9c.Tests.Action
             ));
         }
 
+        [Fact]
+        public void Execute_Crystal()
+        {
+            var tx = Transaction.Deserialize(Convert.FromBase64String(
+                "ZDE6UzcxOjBFAiEAhzt5mDMzPwi6y+W+DJ53T4TKwt6YMaFTi38rKYqf7ZMCICV36ngA3Gi+rXkdG5hCUtlLXjAz8H2IKMNaCdCy/N90MTphbGR1Nzp0eXBlX2lkdTExOm1pbnRfYXNzZXRzdTY6dmFsdWVzbHU3Mzp7ImlhcCI6IHsiZ19za3UiOiAiZ19wa2dfYmxhY2tmcmlkYXkwMSIsICJhX3NrdSI6ICJhX3BrZ19ibGFja2ZyaWRheTAxIn19bDIwOgNS/yy36WH9ZHgDqZJiTdhQeCGFbGR1MTM6ZGVjaW1hbFBsYWNlczE6EnU3Om1pbnRlcnNudTY6dGlja2VydTc6Q1JZU1RBTGVpMjUwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMGVlbmVsMjA6H3yZ4KY1m33Wn0P0t+LAvTf5oidubDMyOjmR4E3YCNwLwksh9a23vxmXMS+HANrxM0vzSTbooIE6aTMwMDAwZWVlbDIwOh98meCmNZt91p9D9LfiwL03+aInbmwzMjr4+vksnA0OjgZpQ2Hqh7/IspqK6N6TBEuYRwpXY27Q4Gk0MDBlZWVlZWUxOmczMjpyn6JpWGSKNbU+jjkF0R7FOxtJKb9fSZiErtffYW9ZEzE6bGk0ZTE6bWxkdTEzOmRlY2ltYWxQbGFjZXMxOhJ1NzptaW50ZXJzbnU2OnRpY2tlcnU0Ok1lYWRlaTEwMDAwMDAwMDAwMDAwMDAwMDBlZTE6bmkxMTU3N2UxOnA2NToEq54xog2Nv1BCv8Js6dntmg4yrXh6HlqjroGI+lFDhhU1rMcTLNjnTUwfC5T4Q1deOt1piNPMsfVNfFn7lTXXiTE6czIwOhwq6XOAz7T3MgSeRU9tmiXUlnxvMTp0dTI3OjIyMDEtMDEtMzFUMjM6NTk6NTkuOTk5MDAwWjE6dWxlZQ=="));
+            var a = tx.Actions.First();
+            var action = new MintAssets();
+            action.LoadPlainValue(a);
+            var address = action.MintSpecs!.First().Recipient;
+            var avatarAddress = action.MintSpecs.Last().Recipient;
+            IAccount prevState = GenerateAvatar(_prevState, address, avatarAddress);
+            IAccount nextState = action.Execute(
+                new ActionContext()
+                {
+                    PreviousState = prevState,
+                    Signer = _minters.First(),
+                    BlockIndex = 1,
+                }
+            );
+
+            var inventory = nextState.GetInventory(avatarAddress.Derive(SerializeKeys.LegacyInventoryKey));
+            var avatarDict = Assert.IsType<Dictionary>(nextState.GetState(avatarAddress));
+            var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey]);
+            Assert.Single(mailBox);
+            var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());
+            Assert.Equal(action.Memo, mail.Memo);
+
+            foreach (var mintSpec in action.MintSpecs)
+            {
+                if (mintSpec.Assets.HasValue)
+                {
+                    var fav = mintSpec.Assets.Value;
+                    Assert.Equal(fav, nextState.GetBalance(address, fav.Currency));
+                    Assert.Contains(mail.FungibleAssetValues, tuple => tuple.value == fav && tuple.balanceAddr.Equals(address));
+                }
+
+                if (mintSpec.Items.HasValue)
+                {
+                    var item = mintSpec.Items.Value;
+                    var fungibleId = item.Id;
+                    var itemCount = item.Count;
+                    Assert.Contains(inventory.Items, i => i.count == itemCount && i.item is Material m && m.FungibleId.Equals(fungibleId));
+                    Assert.Contains(
+                        mail.FungibleIdAndCounts,
+                        tuple => tuple.count == itemCount && tuple.fungibleId.Equals(fungibleId)
+                    );
+                }
+            }
+        }
+
         private IAccount GenerateAvatar(IAccount state, out Address avatarAddress)
         {
             var address = new PrivateKey().Address;
             var agentState = new AgentState(address);
             avatarAddress = address.Derive("avatar");
+            var rankingMapAddress = new PrivateKey().Address;
+            var avatarState = new AvatarState(
+                avatarAddress,
+                address,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                new GameConfigState(),
+                rankingMapAddress)
+            {
+                worldInformation = new WorldInformation(
+                    0,
+                    _tableSheets.WorldSheet,
+                    GameConfig.RequireClearedStageLevel.ActionsInShop),
+            };
+            agentState.avatarAddresses[0] = avatarAddress;
+
+            state = state
+                .SetState(address, agentState.Serialize())
+                .SetState(avatarAddress, avatarState.SerializeV2())
+                .SetState(
+                    avatarAddress.Derive(SerializeKeys.LegacyInventoryKey),
+                    avatarState.inventory.Serialize());
+
+            return state;
+        }
+
+        private IAccount GenerateAvatar(IAccount state, Address address, Address avatarAddress)
+        {
+            var agentState = new AgentState(address);
             var rankingMapAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(
                 avatarAddress,

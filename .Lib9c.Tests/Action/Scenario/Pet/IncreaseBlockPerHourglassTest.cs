@@ -167,7 +167,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             });
 
             // Do rapid combination
-            var rapidAction = new RapidCombination9
+            var rapidAction = new RapidCombination
             {
                 avatarAddress = _avatarAddr,
                 slotIndex = 0,

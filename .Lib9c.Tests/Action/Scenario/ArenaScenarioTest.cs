@@ -12,12 +12,10 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Arena;
-    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Serilog;
-    using Xunit;
     using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
@@ -130,7 +128,7 @@ namespace Lib9c.Tests.Action.Scenario
             int ticket,
             long blockIndex)
         {
-            var action = new BattleArena6()
+            var action = new BattleArena()
             {
                 myAvatarAddress = myAvatarAddress,
                 enemyAvatarAddress = enemyAvatarAddress,

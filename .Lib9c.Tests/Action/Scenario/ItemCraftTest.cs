@@ -217,7 +217,7 @@ namespace Lib9c.Tests.Action.Scenario
             {
                 // Do combination action
                 var recipe = recipeList[i];
-                var action = new CombinationConsumable8
+                var action = new CombinationConsumable
                 {
                     avatarAddress = _avatarAddr,
                     slotIndex = i,

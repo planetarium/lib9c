@@ -1,0 +1,34 @@
+name: lib9c plugin build and push s3
+
+on:
+  push:
+    branches:
+      - development
+      - main 
+  workflow_dispatch:
+
+jobs:
+  s3-lib9c-plugin:
+    strategy:
+      matrix:
+        runtime: [ "osx-arm64", "linux-arm64", "linux-x64", "win-x64" ]
+    name: Publish Lib9c.Plugin (${{ matrix.runtime }})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.400
+      - name: Publish Lib9c.Plugin
+        run: dotnet publish ./.Lib9c.Plugin/Lib9c.Plugin.csproj -o out -r ${{ matrix.runtime }}
+      - name: Compress the build result
+        run: zip -r ../${{ matrix.runtime }}.zip .
+        working-directory: ./out
+      - name: Upload S3
+        run: aws s3 cp ${{ matrix.runtime }}.zip s3://9c-dx/Lib9c.Plugin/${{ github.sha }}/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "us-east-2"

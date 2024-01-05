@@ -9,7 +9,7 @@ namespace Nekoyume.Model
     {
         public FungibleItemValue(List bencoded)
             : this(
-                new HashDigest<SHA256>((Binary)bencoded[0]),
+                new HashDigest<SHA256>(bencoded[0]),
                 (Integer)bencoded[1]
             )
         {

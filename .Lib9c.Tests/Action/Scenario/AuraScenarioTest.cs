@@ -4,7 +4,6 @@ namespace Lib9c.Tests.Action.Scenario
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
-    using Lib9c.Tests.Fixtures.TableCSV;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -98,7 +97,7 @@ namespace Lib9c.Tests.Action.Scenario
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(_avatarAddress, BattleType.Adventure);
             Assert.Null(_initialState.GetState(itemSlotStateAddress));
 
-            var has = new HackAndSlash21
+            var has = new HackAndSlash
             {
                 StageId = 1,
                 AvatarAddress = _avatarAddress,
@@ -155,7 +154,7 @@ namespace Lib9c.Tests.Action.Scenario
                 avatarState.worldInformation.Serialize()
             );
 
-            var raid = new Raid6
+            var raid = new Raid
             {
                 AvatarAddress = _avatarAddress,
                 EquipmentIds = new List<Guid>
@@ -228,7 +227,7 @@ namespace Lib9c.Tests.Action.Scenario
                 var enemyAvatarAddress = avatarAddress.Equals(_avatarAddress)
                     ? _enemyAvatarAddress
                     : _avatarAddress;
-                var battle = new BattleArena13
+                var battle = new BattleArena
                 {
                     myAvatarAddress = avatarAddress,
                     enemyAvatarAddress = enemyAvatarAddress,

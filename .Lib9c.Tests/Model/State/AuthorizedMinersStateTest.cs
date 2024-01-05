@@ -1,7 +1,5 @@
 namespace Lib9c.Tests.Model.State
 {
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
     using Libplanet.Crypto;
     using Nekoyume.Model.State;

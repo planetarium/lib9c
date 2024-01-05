@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.Skill;
-using static System.Boolean;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData
