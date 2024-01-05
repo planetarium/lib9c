@@ -88,29 +88,39 @@ namespace Nekoyume.Blockchain
 
         public bool Stage(BlockChain blockChain, Transaction transaction)
         {
-            if (_accessControlService?.GetTxQuota(transaction.Signer) is { } acsTxQuota)
+            try
             {
-                _quotaPerSignerList[transaction.Signer] = acsTxQuota;
+                if (_accessControlService?.GetTxQuota(transaction.Signer) is { } acsTxQuota)
+                {
+                    _quotaPerSignerList[transaction.Signer] = acsTxQuota;
 
-                if (acsTxQuota == 0)
+                    if (acsTxQuota == 0)
+                    {
+                        return false;
+                    }
+                }
+
+                var deniedTxs = new[]
+                {
+                    // CreatePledge Transaction with 50000 addresses
+                    TxId.FromHex(
+                        "300826da62b595d8cd663dadf04995a7411534d1cdc17dac75ce88754472f774"),
+                    // CreatePledge Transaction with 5000 addresses
+                    TxId.FromHex(
+                        "210d1374d8f068de657de6b991e63888da9cadbc68e505ac917b35568b5340f8"),
+                };
+                if (deniedTxs.Contains(transaction.Id))
                 {
                     return false;
                 }
-            }
 
-            var deniedTxs = new[]
-            {
-                // CreatePledge Transaction with 50000 addresses
-                TxId.FromHex("300826da62b595d8cd663dadf04995a7411534d1cdc17dac75ce88754472f774"),
-                // CreatePledge Transaction with 5000 addresses
-                TxId.FromHex("210d1374d8f068de657de6b991e63888da9cadbc68e505ac917b35568b5340f8"),
-            };
-            if (deniedTxs.Contains(transaction.Id))
-            {
-                return false;
+                return _impl.Stage(blockChain, transaction);
             }
-
-            return _impl.Stage(blockChain, transaction);
+            catch (Exception ex)
+            {
+                Console.WriteLine("[NCStagePolicy-ACS] {0} {1}", ex.Message, ex.StackTrace);
+                return _impl.Stage(blockChain, transaction);
+            }
         }
 
         public bool Unstage(BlockChain blockChain, TxId id)
