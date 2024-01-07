@@ -52,6 +52,11 @@ public class RemoteAccount : IAccount
         throw new NotSupportedException();
     }
 
+    public IAccount RemoveState(Address address)
+    {
+        throw new NotSupportedException();
+    }
+
     public IAccount SetValidator(Validator validator)
     {
         throw new NotSupportedException();
