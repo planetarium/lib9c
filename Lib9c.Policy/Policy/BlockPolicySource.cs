@@ -37,8 +37,7 @@ namespace Nekoyume.Blockchain.Policy
 
         private readonly IActionLoader _actionLoader;
 
-        public BlockPolicySource(
-            IActionLoader? actionLoader = null)
+        public BlockPolicySource(IActionLoader? actionLoader = null)
         {
             _actionLoader = actionLoader ?? new NCActionLoader();
         }
@@ -138,11 +137,11 @@ namespace Nekoyume.Blockchain.Policy
             // Avoid NRE when genesis block appended
             long index = blockChain.Count > 0 ? blockChain.Tip.Index + 1: 0;
 
-            if (((ITransaction)transaction).Actions?.Count > 1)
+            if (transaction.Actions?.Count > 1)
             {
                 return new TxPolicyViolationException(
                     $"Transaction {transaction.Id} has too many actions: " +
-                    $"{((ITransaction)transaction).Actions?.Count}",
+                    $"{transaction.Actions?.Count}",
                     transaction.Id);
             }
             else if (IsObsolete(transaction, actionLoader, index))
@@ -249,7 +248,7 @@ namespace Nekoyume.Blockchain.Policy
             catch (InvalidSignatureException)
             {
                 return new TxPolicyViolationException(
-                    $"Transaction {transaction.Id} has invalid signautre.",
+                    $"Transaction {transaction.Id} has invalid signature.",
                     transaction.Id);
             }
 
