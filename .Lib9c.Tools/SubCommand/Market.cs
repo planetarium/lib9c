@@ -130,11 +130,12 @@ namespace Lib9c.Tools.SubCommand
                             Price = p.Price,
                             ItemSubType = p.ItemSubType,
                             Quantity = p.OrderId is {} oid
-                                ? chain.GetState(
-                                    GetOrderAddress(oid), ReservedAddresses.LegacyAccount) is Dictionary rawOrder
-                                    ? OrderFactory.Deserialize(rawOrder) is FungibleOrder fo
-                                        ? fo.ItemCount
-                                        : 1
+                                ? chain.GetWorldState()
+                                    .GetAccount(ReservedAddresses.LegacyAccount)
+                                    .GetState(GetOrderAddress(oid)) is Dictionary rawOrder
+                                        ? OrderFactory.Deserialize(rawOrder) is FungibleOrder fo
+                                            ? fo.ItemCount
+                                            : 1
                                     : (int?)null
                                 : (int?)null,
                         }),

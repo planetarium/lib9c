@@ -81,10 +81,12 @@ namespace Nekoyume.Blockchain.Policy
 
         internal static AdminState? GetAdminState(BlockChain blockChain)
         {
-            return blockChain.GetState(
-                ReservedAddresses.LegacyAccount, AdminState.Address) is Dictionary rawAdmin
-                ? new AdminState(rawAdmin)
-                : null;
+            return blockChain
+                .GetWorldState()
+                .GetAccount(ReservedAddresses.LegacyAccount)
+                .GetState(AdminState.Address) is Dictionary rawAdmin
+                    ? new AdminState(rawAdmin)
+                    : null;
         }
 
         private static InvalidBlockBytesLengthException ValidateTransactionsBytesRaw(

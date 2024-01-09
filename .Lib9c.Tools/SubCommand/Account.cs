@@ -49,14 +49,21 @@ namespace Lib9c.Tools.SubCommand
             var actionLoader = new NCActionLoader();
 
             Bencodex.Types.Dictionary goldCurrencyStateDict = (Bencodex.Types.Dictionary)
-                chain.GetState(GoldCurrencyState.Address, ReservedAddresses.LegacyAccount);
+                chain
+                    .GetWorldState()
+                    .GetAccount(ReservedAddresses.LegacyAccount)
+                    .GetState(GoldCurrencyState.Address);
             GoldCurrencyState goldCurrencyState = new GoldCurrencyState(goldCurrencyStateDict);
             Currency gold = goldCurrencyState.Currency;
 
             if (address is {} addrStr)
             {
                 Address addr = Utils.ParseAddress(addrStr);
-                FungibleAssetValue balance = chain.GetBalance(offset.Hash, addr, gold);
+                FungibleAssetValue balance =
+                    chain
+                        .GetWorldState(offset.Hash)
+                        .GetAccount(ReservedAddresses.LegacyAccount)
+                        .GetBalance(addr, gold);
                 Console.WriteLine("{0}\t{1}", addr, balance);
                 return;
             }
@@ -84,7 +91,11 @@ namespace Lib9c.Tools.SubCommand
                 {
                     if (!printed.Contains(addr))
                     {
-                        FungibleAssetValue balance = chain.GetBalance(offset.Hash, addr, gold);
+                        FungibleAssetValue balance =
+                            chain
+                                .GetWorldState(offset.Hash)
+                                .GetAccount(ReservedAddresses.LegacyAccount)
+                                .GetBalance(addr, gold);
                         Console.WriteLine("{0}\t{1}", addr, balance);
                         printed.Add(addr);
                     }
