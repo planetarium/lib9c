@@ -131,7 +131,7 @@ namespace Lib9c.Tools.SubCommand
                             ItemSubType = p.ItemSubType,
                             Quantity = p.OrderId is {} oid
                                 ? chain.GetWorldState()
-                                    .GetAccount(ReservedAddresses.LegacyAccount)
+                                    .GetAccountState(ReservedAddresses.LegacyAccount)
                                     .GetState(GetOrderAddress(oid)) is Dictionary rawOrder
                                         ? OrderFactory.Deserialize(rawOrder) is FungibleOrder fo
                                             ? fo.ItemCount

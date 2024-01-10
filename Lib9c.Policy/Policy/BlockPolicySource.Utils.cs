@@ -83,7 +83,7 @@ namespace Nekoyume.Blockchain.Policy
         {
             return blockChain
                 .GetWorldState()
-                .GetAccount(ReservedAddresses.LegacyAccount)
+                .GetAccountState(ReservedAddresses.LegacyAccount)
                 .GetState(AdminState.Address) is Dictionary rawAdmin
                     ? new AdminState(rawAdmin)
                     : null;

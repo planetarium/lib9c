@@ -215,7 +215,7 @@ namespace Nekoyume.Module
 
         private static Inventory GetInventoryV2(this IWorldState worldState, Address address)
         {
-            var serializedInventory = worldState.GetAccount(Addresses.Inventory).GetState(address);
+            var serializedInventory = worldState.GetAccountState(Addresses.Inventory).GetState(address);
             if (serializedInventory is null || serializedInventory.Equals(Null.Value))
             {
                 throw new FailedLoadStateException(
@@ -250,7 +250,7 @@ namespace Nekoyume.Module
         internal static WorldInformation GetWorldInformationV2(this IWorldState worldState, Address address)
         {
             var serializeWorldInfo =
-                worldState.GetAccount(Addresses.WorldInformation).GetState(address);
+                worldState.GetAccountState(Addresses.WorldInformation).GetState(address);
             if (serializeWorldInfo is null || serializeWorldInfo.Equals(Null.Value))
             {
                 throw new FailedLoadStateException(
@@ -284,7 +284,7 @@ namespace Nekoyume.Module
 
         private static QuestList GetQuestListV2(this IWorldState worldState, Address address)
         {
-            var serializeQuestList = worldState.GetAccount(Addresses.QuestList).GetState(address);
+            var serializeQuestList = worldState.GetAccountState(Addresses.QuestList).GetState(address);
             if (serializeQuestList is null || serializeQuestList.Equals(Null.Value))
             {
                 throw new FailedLoadStateException(

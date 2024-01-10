@@ -35,15 +35,15 @@ namespace Nekoyume.Module
 
         // Basic implementations from IAccount and IAccountState
         public static IImmutableSet<(Address, Currency)> TotalUpdatedFungibleAssets(
-            this IWorldState worldState) =>
+            this IWorld worldState) =>
             worldState.GetAccount(ReservedAddresses.LegacyAccount).TotalUpdatedFungibleAssets;
 
         public static IValue GetLegacyState(this IWorldState worldState, Address address) =>
-            worldState.GetAccount(ReservedAddresses.LegacyAccount).GetState(address);
+            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetState(address);
 
 #nullable enable
         public static IReadOnlyList<IValue?> GetLegacyStates(this IWorldState worldState, IReadOnlyList<Address> addresses) =>
-            worldState.GetAccount(ReservedAddresses.LegacyAccount).GetStates(addresses);
+            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetStates(addresses);
 #nullable disable
 
         public static IWorld SetLegacyState(this IWorld world, Address address, IValue state) =>
@@ -55,10 +55,10 @@ namespace Nekoyume.Module
             this IWorldState worldState,
             Address address,
             Currency currency) =>
-            worldState.GetAccount(ReservedAddresses.LegacyAccount).GetBalance(address, currency);
+            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetBalance(address, currency);
 
         public static FungibleAssetValue GetTotalSupply(this IWorldState worldState, Currency currency) =>
-            worldState.GetAccount(ReservedAddresses.LegacyAccount).GetTotalSupply(currency);
+            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetTotalSupply(currency);
 
         public static IWorld MintAsset(
             this IWorld world,
@@ -71,7 +71,7 @@ namespace Nekoyume.Module
                     .MintAsset(context, recipient, value));
 
         public static ValidatorSet GetValidatorSet(this IWorldState worldState) =>
-            worldState.GetAccount(ReservedAddresses.LegacyAccount).GetValidatorSet();
+            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetValidatorSet();
 
         public static IWorld TransferAsset(
             this IWorld world,
