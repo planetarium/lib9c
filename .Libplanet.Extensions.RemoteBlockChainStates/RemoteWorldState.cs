@@ -74,11 +74,8 @@ public class RemoteWorldState : IWorldState
 
     public bool Legacy { get; private set; }
 
-    public IAccount GetAccount(Address address)
-    {
-        return new RemoteAccount(
-            new RemoteAccountState(_explorerEndpoint, address, Trie.Hash));
-    }
+    public IAccountState GetAccountState(Address address) =>
+        new RemoteAccountState(_explorerEndpoint, address, Trie.Hash);
 
     public class GetWorldStateResponseType
     {

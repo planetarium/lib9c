@@ -51,7 +51,7 @@ namespace Lib9c.Tools.SubCommand
             Bencodex.Types.Dictionary goldCurrencyStateDict = (Bencodex.Types.Dictionary)
                 chain
                     .GetWorldState()
-                    .GetAccount(ReservedAddresses.LegacyAccount)
+                    .GetAccountState(ReservedAddresses.LegacyAccount)
                     .GetState(GoldCurrencyState.Address);
             GoldCurrencyState goldCurrencyState = new GoldCurrencyState(goldCurrencyStateDict);
             Currency gold = goldCurrencyState.Currency;
@@ -62,7 +62,7 @@ namespace Lib9c.Tools.SubCommand
                 FungibleAssetValue balance =
                     chain
                         .GetWorldState(offset.Hash)
-                        .GetAccount(ReservedAddresses.LegacyAccount)
+                        .GetAccountState(ReservedAddresses.LegacyAccount)
                         .GetBalance(addr, gold);
                 Console.WriteLine("{0}\t{1}", addr, balance);
                 return;
@@ -94,7 +94,7 @@ namespace Lib9c.Tools.SubCommand
                         FungibleAssetValue balance =
                             chain
                                 .GetWorldState(offset.Hash)
-                                .GetAccount(ReservedAddresses.LegacyAccount)
+                                .GetAccountState(ReservedAddresses.LegacyAccount)
                                 .GetBalance(addr, gold);
                         Console.WriteLine("{0}\t{1}", addr, balance);
                         printed.Add(addr);
