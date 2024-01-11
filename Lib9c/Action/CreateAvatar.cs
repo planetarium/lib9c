@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Lib9c.Abstractions;
@@ -10,6 +11,8 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Skill;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -150,7 +153,7 @@ namespace Nekoyume.Action
                     var petState = new PetState(row.Id);
                     petState.LevelUp();
                     var petStateAddress = PetState.DeriveAddress(avatarAddress, row.Id);
-                    states = states.SetState(petStateAddress, petState.Serialize());
+                    states = states.SetLegacyState(petStateAddress, petState.Serialize());
                 }
             }
 
