@@ -17,6 +17,66 @@ namespace Nekoyume.Module
     public static class AvatarModule
     {
         // This method automatically determines if given IValue is a legacy avatar state or not.
+        // Returning value is a list of [ Avatar, Inventory, QuestList, WorldInformation ]
+        // if the avatar version is higher than v1, else just a list of [ Avatar ].
+        public static IValue GetFullAvatarStateRaw(this IWorldState worldState, Address address)
+        {
+            var serializedAvatarRaw = worldState.GetResolvedState(address, Addresses.Avatar);
+            IValue serializedInventoryRaw;
+            IValue serializedQuestListRaw;
+            IValue serializedWorldInformationRaw;
+
+            if (serializedAvatarRaw is Dictionary avatarDict)
+            {
+                if (avatarDict.ContainsKey(LegacyInventoryKey))
+                {
+                    return new List(serializedAvatarRaw);
+                }
+
+                serializedInventoryRaw =
+                    worldState.GetLegacyState(address.Derive(LegacyInventoryKey));
+                serializedQuestListRaw =
+                    worldState.GetLegacyState(address.Derive(LegacyQuestListKey));
+                serializedWorldInformationRaw =
+                    worldState.GetLegacyState(address.Derive(LegacyWorldInformationKey));
+            }
+            else if (serializedAvatarRaw is List avatarList)
+            {
+                serializedInventoryRaw =
+                    worldState.GetAccountState(Addresses.Inventory).GetState(address);
+                serializedQuestListRaw =
+                    worldState.GetAccountState(Addresses.QuestList).GetState(address);
+                serializedWorldInformationRaw =
+                    worldState.GetAccountState(Addresses.WorldInformation).GetState(address);
+            }
+            else
+            {
+                Log.Warning(
+                    "Avatar state ({AvatarAddress}) should be " +
+                    "Dictionary or List but: {Raw}",
+                    address.ToHex(),
+                    serializedAvatarRaw);
+                return null;
+            }
+
+            if (serializedInventoryRaw is null ||
+                serializedQuestListRaw is null ||
+                serializedWorldInformationRaw is null)
+            {
+                Log.Warning(
+                    "Given avatar state ({AvatarAddress})'s sub-states are broken.",
+                    address.ToHex());
+                return null;
+            }
+
+            return new List(
+                serializedAvatarRaw,
+                serializedInventoryRaw,
+                serializedQuestListRaw,
+                serializedWorldInformationRaw);
+        }
+
+        // This method automatically determines if given IValue is a legacy avatar state or not.
         public static AvatarState GetAvatarState(this IWorldState worldState, Address address)
         {
             var serializedAvatarRaw = worldState.GetResolvedState(address, Addresses.Avatar);
@@ -80,7 +140,7 @@ namespace Nekoyume.Module
                         LegacyQuestListKey,
                     };
                     var addresses = keys.Select(key => address.Derive(key)).ToArray();
-                    var serializedValues = LegacyModule.GetLegacyStates(worldState, addresses);
+                    var serializedValues = worldState.GetLegacyStates(addresses);
                     for (var i = 0; i < keys.Length; i++)
                     {
                         if (serializedValues[i] is null)
