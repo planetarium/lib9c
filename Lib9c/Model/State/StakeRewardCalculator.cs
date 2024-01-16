@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Numerics;
 using Bencodex.Types;
 using Lib9c;
 using Libplanet.Action;
@@ -32,14 +33,13 @@ namespace Nekoyume.Model.State
 
         public static (Dictionary<ItemBase, int> itemResult, List<FungibleAssetValue> favResult) CalculateRewards(Currency ncg, FungibleAssetValue stakedNcg, int stakingLevel, int rewardSteps, StakeRegularRewardSheet stakeRegularRewardSheet, ItemSheet itemSheet, IRandom random)
         {
+            var stakedNcgDecimal = TableExtensions.ParseDecimal(stakedNcg.GetQuantityString());
             var itemResult = new Dictionary<ItemBase, int>();
             var favResult = new List<FungibleAssetValue>();
             foreach (var reward in stakeRegularRewardSheet[stakingLevel].Rewards)
             {
-                var rateFav = FungibleAssetValue.Parse(
-                    ncg,
-                    reward.DecimalRate.ToString(CultureInfo.InvariantCulture));
-                var rewardQuantityForSingleStep = stakedNcg.DivRem(rateFav, out _);
+                var rewardQuantityForSingleStep =
+                    new BigInteger(stakedNcgDecimal / reward.DecimalRate);
                 if (rewardQuantityForSingleStep <= 0)
                 {
                     continue;
