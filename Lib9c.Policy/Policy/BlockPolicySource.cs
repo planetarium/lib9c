@@ -268,25 +268,20 @@ namespace Nekoyume.Blockchain.Policy
             {
                 return ibble;
             }
-            else if (ValidateTxCountPerBlockRaw(
+
+            if (ValidateTxCountPerBlockRaw(
                 nextBlock,
                 minTransactionsPerBlockPolicy,
                 maxTransactionsPerBlockPolicy) is InvalidBlockTxCountException ibtce)
             {
                 return ibtce;
             }
-            else if (ValidateTxCountPerSignerPerBlockRaw(
+
+            if (ValidateTxCountPerSignerPerBlockRaw(
                 nextBlock,
                 maxTransactionsPerSignerPerBlockPolicy) is InvalidBlockTxCountPerSignerException ibtcpse)
             {
                 return ibtcpse;
-            }
-            else
-            {
-                if (nextBlock.Index == 0)
-                {
-                    return null;
-                }
             }
 
             return null;
