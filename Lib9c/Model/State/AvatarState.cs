@@ -321,18 +321,24 @@ namespace Nekoyume.Model.State
             UpdateStageQuest(stageSimulator.Reward);
         }
 
-        public void Apply(Player player, long blockIndex)
+        public void Apply(Player player, long index)
         {
             characterId = player.RowData.Id;
             level = player.Level;
             exp = player.Exp.Current;
             inventory = player.Inventory;
-            updatedAt = blockIndex;
+            updatedAt = index;
         }
 
         public object Clone()
         {
-            return MemberwiseClone();
+            var avatar = new AvatarState((List)SerializeList())
+            {
+                inventory = (Inventory)inventory.Clone(),
+                worldInformation = (WorldInformation)worldInformation.Clone(),
+                questList = (QuestList)questList.Clone()
+            };
+            return avatar;
         }
 
         public void Update(Mail.Mail mail)

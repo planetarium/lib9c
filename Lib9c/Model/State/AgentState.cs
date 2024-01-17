@@ -67,7 +67,7 @@ namespace Nekoyume.Model.State
 
         public object Clone()
         {
-            return MemberwiseClone();
+            return new AgentState((List)SerializeList());
         }
 
         public void IncreaseCollectionRound()
