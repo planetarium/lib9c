@@ -61,7 +61,7 @@ namespace Nekoyume.Model.Quest
     #endregion
 
     [Serializable]
-    public class QuestList : IEnumerable<Quest>, IState
+    public class QuestList : IEnumerable<Quest>, IState, ICloneable
     {
         public const string QuestsKey = "q";
         private readonly List<Quest> _quests;
@@ -129,6 +129,11 @@ namespace Nekoyume.Model.Quest
                     ? cqi.ToList(StateExtensions.ToInteger)
                     : new List<int>();
             }
+        }
+
+        public object Clone()
+        {
+            return new QuestList((Dictionary)Serialize());
         }
 
         public void UpdateList(

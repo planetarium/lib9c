@@ -10,7 +10,7 @@ using Nekoyume.TableData;
 namespace Nekoyume.Model
 {
     [Serializable]
-    public class WorldInformation : IState, ISerializable
+    public class WorldInformation : IState, ISerializable, ICloneable
     {
         [Serializable]
         public struct World : IState
@@ -554,6 +554,11 @@ namespace Nekoyume.Model
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("serialized", _codec.Encode(Serialize()));
+        }
+
+        public object Clone()
+        {
+            return new WorldInformation((Dictionary)Serialize());
         }
     }
 

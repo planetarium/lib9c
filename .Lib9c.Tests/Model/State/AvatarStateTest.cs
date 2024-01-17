@@ -442,6 +442,32 @@ namespace Lib9c.Tests.Model.State
             }
         }
 
+        [Fact]
+        public void Clone()
+        {
+            var avatarState = GetNewAvatarState(default, default);
+            var clonedAvatar = (AvatarState)avatarState.Clone();
+            Assert.Equal(clonedAvatar.SerializeList(), avatarState.SerializeList());
+            var weaponRows = _tableSheets
+                .EquipmentItemSheet
+                .Values
+                .Where(r => r.ItemSubType == ItemSubType.Weapon)
+                .Take(1);
+            foreach (var row in weaponRows)
+            {
+                var equipment = ItemFactory.CreateItemUsable(
+                        _tableSheets.EquipmentItemSheet[row.Id],
+                        Guid.NewGuid(),
+                        0)
+                    as Equipment;
+
+                clonedAvatar.inventory.AddItem(equipment);
+            }
+
+            // Make sure the inventory is cloned
+            Assert.NotEqual(avatarState.inventory.Serialize(), clonedAvatar.inventory.Serialize());
+        }
+
         [Theory]
         [InlineData(ItemSubType.Weapon, 1, GameConfig.MaxEquipmentSlotCount.Weapon, 0, 0)]
         [InlineData(ItemSubType.Armor, 1, GameConfig.MaxEquipmentSlotCount.Armor, 0, 1)]
