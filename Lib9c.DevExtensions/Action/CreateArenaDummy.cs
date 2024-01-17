@@ -128,11 +128,9 @@ namespace Lib9c.DevExtensions.Action
                 }
 
                 // join arena
-                states = states.SetLegacyState(agentAddress, agentState.Serialize())
-                    .SetLegacyState(avatarAddress, avatarState.SerializeV2())
-                    .SetLegacyState(inventoryAddress, avatarState.inventory.Serialize())
-                    .SetLegacyState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetLegacyState(questListAddress, avatarState.questList.Serialize());
+                states = states
+                    .SetAgentState(agentAddress, agentState)
+                    .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
 
                 var sheet = sheets.GetSheet<ArenaSheet>();
@@ -191,7 +189,7 @@ namespace Lib9c.DevExtensions.Action
                     .SetLegacyState(arenaInformationAdr, arenaInformation.Serialize())
                     .SetLegacyState(arenaParticipantsAdr, arenaParticipants.Serialize())
                     .SetLegacyState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
-                    .SetLegacyState(agentAddress, agentState.Serialize());
+                    .SetAgentState(agentAddress, agentState);
             }
 
             return states;

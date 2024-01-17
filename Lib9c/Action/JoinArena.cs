@@ -204,7 +204,7 @@ namespace Nekoyume.Action
                 .SetLegacyState(arenaInformationAdr, arenaInformation.Serialize())
                 .SetLegacyState(arenaParticipantsAdr, arenaParticipants.Serialize())
                 .SetLegacyState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
-                .SetLegacyState(context.Signer, agentState.Serialize());
+                .SetAgentState(context.Signer, agentState);
         }
     }
 }
