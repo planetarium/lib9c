@@ -24,14 +24,13 @@ namespace Lib9c.DevExtensions.Action.Stage
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var worldInformation = new WorldInformation(
+            var avatarState = states.GetAvatarState(AvatarAddress);
+            avatarState.worldInformation = new WorldInformation(
                 context.BlockIndex,
                 states.GetSheet<WorldSheet>(),
                 TargetStage
             );
-            return states.SetLegacyState(AvatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey),
-                worldInformation.Serialize()
-            );
+            return states.SetAvatarState(AvatarAddress, avatarState, false, false, true, false);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

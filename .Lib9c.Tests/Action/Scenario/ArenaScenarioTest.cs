@@ -175,11 +175,8 @@ namespace Lib9c.Tests.Action.Scenario
             };
             agentState.avatarAddresses.Add(0, avatarAddress);
             _state = _state
-                .SetLegacyState(agentState.address, agentState.Serialize())
-                .SetLegacyState(avatarState.address.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetLegacyState(avatarState.address.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetLegacyState(avatarState.address.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                .SetLegacyState(avatarState.address, avatarState.Serialize());
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
 
             return (agentState, avatarState);
         }
