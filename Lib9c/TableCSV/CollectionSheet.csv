@@ -1,0 +1,3 @@
+id,material_item_id,material_level,material_count,material_item_id,material_level,material_count,material_item_id,material_level,material_count,material_item_id,material_level,material_count,material_item_id,material_level,material_count,material_item_id,material_level,material_count,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value
+1,10110000,0,1,,,,,,,,,,,,,,,,ATK,Add,1,,,,,,
+2,10110000,0,1,,,,,,,,,,,,,,,,ATK,Percentage,100,,,,,,
