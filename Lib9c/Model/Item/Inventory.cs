@@ -415,6 +415,59 @@ namespace Nekoyume.Model.Item
             return true;
         }
 
+
+        public bool RemoveMaterial(int id, int count = 1)
+        {
+            if (count <= 0)
+            {
+                return false;
+            }
+
+            List<Item> targetItems = new List<Item>();
+            foreach (var item in _items)
+            {
+                if (item.Locked)
+                {
+                    continue;
+                }
+                if (item.item is Material material && material.Id == id)
+                {
+                    targetItems.Add(item);
+                }
+            }
+
+            targetItems = targetItems
+                .OrderBy(e => e.count)
+                .ToList();
+
+            if (!targetItems.Any())
+            {
+                return false;
+            }
+
+            var totalCount = targetItems.Sum(e => e.count);
+            if (totalCount < count)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < targetItems.Count; i++)
+            {
+                var item = targetItems[i];
+                if (item.count > count)
+                {
+                    item.count -= count;
+                    break;
+                }
+
+                count -= item.count;
+                item.count = 0;
+                _items.Remove(item);
+            }
+
+            return true;
+        }
+
         [Obsolete("Use RemoveFungibleItem")]
         public bool RemoveFungibleItem2(
             IFungibleItem fungibleItem,

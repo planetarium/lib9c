@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using static Nekoyume.TableData.TableExtensions;
 
@@ -15,6 +17,21 @@ namespace Nekoyume.TableData
             public int Level;
             public int OptionCount;
             public bool SkillContains;
+
+            public bool Validate(ItemUsable itemUsable)
+            {
+                switch (itemUsable)
+                {
+                    case Equipment equipment:
+                        return equipment.Id == ItemId && equipment.level == Level &&
+                               equipment.GetOptionCount() == OptionCount &&
+                               (equipment.Skills.Any() == SkillContains || equipment.BuffSkills.Any() == SkillContains);
+                    case Consumable consumable:
+                        return consumable.Id == ItemId;
+                    default:
+                        return false;
+                }
+            }
         }
 
         public class Row : SheetRow<int>
@@ -40,7 +57,7 @@ namespace Nekoyume.TableData
                     {
                         ItemId = itemId,
                         Count = ParseInt(fields[2 + offset]),
-                        Level = ParseInt(fields[3 + offset]),
+                        Level = ParseInt(fields[3 + offset], 0),
                         OptionCount = ParseInt(fields[4 + offset], 0),
                         SkillContains = ParseBool(fields[5 + offset], false)
                     });
