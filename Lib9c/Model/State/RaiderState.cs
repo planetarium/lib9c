@@ -8,8 +8,8 @@ namespace Nekoyume.Model.State
     [Serializable]
     public class RaiderState : IState
     {
-        public int TotalScore;
-        public int HighScore;
+        public long TotalScore;
+        public long HighScore;
         public int TotalChallengeCount;
         public int RemainChallengeCount;
         public int LatestRewardRank;
@@ -35,8 +35,8 @@ namespace Nekoyume.Model.State
 
         public RaiderState(List rawState)
         {
-            TotalScore = rawState[0].ToInteger();
-            HighScore = rawState[1].ToInteger();
+            TotalScore = rawState[0].ToLong();
+            HighScore = rawState[1].ToLong();
             TotalChallengeCount = rawState[2].ToInteger();
             RemainChallengeCount = rawState[3].ToInteger();
             LatestRewardRank = rawState[4].ToInteger();
@@ -52,7 +52,7 @@ namespace Nekoyume.Model.State
             UpdatedBlockIndex = rawState[14].ToLong();
         }
 
-        public void Update(AvatarState avatarState, int cp, int score, bool payNcg, long blockIndex)
+        public void Update(AvatarState avatarState, int cp, long score, bool payNcg, long blockIndex)
         {
             Level = avatarState.level;
             AvatarAddress = avatarState.address;
