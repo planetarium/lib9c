@@ -11,13 +11,13 @@ namespace Nekoyume.Helper
     {
         public readonly int OptionCountFromCombination;
 
-        public readonly (StatType type, int baseValue, int totalValue) MainStat;
+        public readonly (StatType type, long baseValue, long totalValue) MainStat;
 
-        public readonly List<(StatType type, int value, int count)> StatOptions
-            = new List<(StatType type, int value, int count)>();
+        public readonly List<(StatType type, long value, int count)> StatOptions
+            = new List<(StatType type, long value, int count)>();
 
-        public readonly List<(SkillSheet.Row skillRow, int power, int chance, int statPowerRatio, StatType refStatType)> SkillOptions
-            = new List<(SkillSheet.Row skillRow, int power, int chance, int statPowerRatio, StatType refStatType)>();
+        public readonly List<(SkillSheet.Row skillRow, long power, int chance, int statPowerRatio, StatType refStatType)> SkillOptions
+            = new List<(SkillSheet.Row skillRow, long power, int chance, int statPowerRatio, StatType refStatType)>();
 
         public readonly int CP;
 
@@ -168,7 +168,7 @@ namespace Nekoyume.Helper
         }
 
         public static List<EquipmentItemOptionSheet.Row> GetStatOptionRows(
-            int subRecipeId,
+            long subRecipeId,
             ItemUsable itemUsable,
             EquipmentItemSubRecipeSheetV2 subRecipeSheet,
             EquipmentItemOptionSheet itemOptionSheet)

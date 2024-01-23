@@ -9,9 +9,9 @@ namespace Nekoyume.Model.Buff
     [Serializable]
     public class Bleed : ActionBuff
     {
-        public int Power { get; }
+        public long Power { get; }
 
-        public Bleed(ActionBuffSheet.Row row, int power) : base(row)
+        public Bleed(ActionBuffSheet.Row row, long power) : base(row)
         {
             Power = power;
         }

@@ -11,7 +11,7 @@ namespace Nekoyume.Model.Skill
     {
         public static Skill Get(
             SkillSheet.Row skillRow,
-            int power,
+            long power,
             int chance,
             int statPowerRatio,
             StatType referencedStatType)
@@ -48,7 +48,7 @@ namespace Nekoyume.Model.Skill
         [Obsolete("Use Get() instead.")]
         public static Skill GetV1(
             SkillSheet.Row skillRow,
-            int power,
+            long power,
             int chance)
         {
             switch (skillRow.SkillType)
@@ -83,7 +83,7 @@ namespace Nekoyume.Model.Skill
         // Convert skill to arena skill
         public static ArenaSkill GetForArena(
             SkillSheet.Row skillRow,
-            int power,
+            long power,
             int chance,
             int statPowerRatio,
             StatType referencedStatType)

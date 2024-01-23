@@ -37,10 +37,10 @@ namespace Nekoyume.Model
         public readonly ArenaSkills _runeSkills = new ArenaSkills();
         public readonly Dictionary<int, int> RuneSkillCooldownMap = new Dictionary<int, int>();
 
-        private readonly long _attackCountMax;
+        private readonly int _attackCountMax;
 
         private ArenaCharacter _target;
-        private long _attackCount;
+        private int _attackCount;
 
         public Guid Id { get; } = Guid.NewGuid();
         public BattleStatus.Arena.ArenaSkill SkillLog { get; private set; }
@@ -351,12 +351,12 @@ namespace Nekoyume.Model
                     continue;
                 }
 
-                var power = 0;
+                long power = 0;
                 if (optionInfo.StatReferenceType == EnumType.StatReferenceType.Caster)
                 {
                     if (optionInfo.SkillValueType == StatModifier.OperationType.Add)
                     {
-                        power = (int)optionInfo.SkillValue;
+                        power = (long)optionInfo.SkillValue;
                     }
                     else
                     {
@@ -373,7 +373,7 @@ namespace Nekoyume.Model
                                 break;
                         }
 
-                        power = (int)Math.Round(power * optionInfo.SkillValue);
+                        power = (long)Math.Round(power * optionInfo.SkillValue);
                     }
                 }
                 var skill = SkillFactory.GetForArena(skillRow, power, optionInfo.SkillChance, default, StatType.NONE);
