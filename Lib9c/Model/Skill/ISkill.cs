@@ -10,11 +10,11 @@ namespace Nekoyume.Model.Skill
         /// Determines damage of `AttackSkill`.
         /// Determines effect of `BuffSkill`.
         /// </summary>
-        public int Power { get; }
+        public long Power { get; }
         public int Chance { get; }
         public int StatPowerRatio { get; }
         public StatType ReferencedStatType { get; }
         public SkillCustomField? CustomField { get; }
-        public void Update(int chance, int power, int statPowerRatio);
+        public void Update(int chance, long power, int statPowerRatio);
     }
 }

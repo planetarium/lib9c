@@ -13,11 +13,11 @@ namespace Nekoyume.Model.Stat
 
         public decimal AdditionalValue { get; private set; }
 
-        public bool HasTotalValueAsInt => HasBaseValueAsInt || HasAdditionalValueAsInt;
+        public bool HasTotalValueAsLong => HasBaseValueAsLong || HasAdditionalValueAsLong;
 
-        public bool HasBaseValueAsInt => BaseValue > 0;
+        public bool HasBaseValueAsLong => BaseValue > 0;
 
-        public bool HasAdditionalValueAsInt => AdditionalValue > 0;
+        public bool HasAdditionalValueAsLong => AdditionalValue > 0;
 
         public bool HasBaseValue => BaseValue > 0m;
 
@@ -26,12 +26,12 @@ namespace Nekoyume.Model.Stat
 
         public StatType StatType;
 
-        public int BaseValueAsInt => (int)BaseValue;
+        public long BaseValueAsLong => (long)BaseValue;
 
-        public int AdditionalValueAsInt => (int)AdditionalValue;
+        public long AdditionalValueAsLong => (long)AdditionalValue;
 
         [Obsolete("For legacy equipments. (Before world 7 patch)")]
-        public int TotalValueAsInt => BaseValueAsInt + AdditionalValueAsInt;
+        public long TotalValueAsLong => BaseValueAsLong + AdditionalValueAsLong;
 
         public decimal TotalValue => BaseValue + AdditionalValue;
 

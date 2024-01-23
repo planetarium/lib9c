@@ -13,7 +13,7 @@ namespace Nekoyume.Model.Skill
     public abstract class Skill : IState, ISkill
     {
         public SkillSheet.Row SkillRow { get; }
-        public int Power { get; private set; }
+        public long Power { get; private set; }
         public int Chance { get; private set; }
         public int StatPowerRatio { get; private set; }
         public StatType ReferencedStatType { get; private set; }
@@ -24,7 +24,7 @@ namespace Nekoyume.Model.Skill
 
         protected Skill(
             SkillSheet.Row skillRow,
-            int power,
+            long power,
             int chance,
             int statPowerRatio,
             StatType referencedStatType)
@@ -60,7 +60,7 @@ namespace Nekoyume.Model.Skill
             unchecked
             {
                 var hashCode = SkillRow.GetHashCode();
-                hashCode = (hashCode * 397) ^ Power;
+                hashCode = (hashCode * 397) ^ Power.GetHashCode();
                 hashCode = (hashCode * 397) ^ Chance.GetHashCode();
                 hashCode = (hashCode * 397) ^ StatPowerRatio.GetHashCode();
                 hashCode = (hashCode * 397) ^ ReferencedStatType.GetHashCode();
@@ -88,7 +88,7 @@ namespace Nekoyume.Model.Skill
             return infos;
         }
 
-        public void Update(int chance, int power, int statPowerRatio)
+        public void Update(int chance, long power, int statPowerRatio)
         {
             Chance = chance;
             Power = power;
