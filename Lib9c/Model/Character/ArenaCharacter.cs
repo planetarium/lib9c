@@ -50,7 +50,7 @@ namespace Nekoyume.Model
         public SizeType SizeType { get; }
         public float RunSpeed { get; }
         public float AttackRange { get; }
-        public long CharacterId { get; }
+        public int CharacterId { get; }
         public bool IsEnemy { get; }
 
         private bool _setExtraValueBuffBeforeGetBuffs = false;
