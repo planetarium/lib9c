@@ -62,7 +62,6 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(MigrationActivatedAccountsState))]
         [InlineData(typeof(MigrationAvatarState))]
         [InlineData(typeof(MigrationLegacyShop))]
-        [InlineData(typeof(MimisbrunnrBattle))]
         [InlineData(typeof(PatchTableSheet))]
         [InlineData(typeof(RankingBattle))]
         [InlineData(typeof(RapidCombination))]
@@ -200,17 +199,6 @@ namespace Lib9c.Tests.Action
                     avatarStates = new List<Dictionary>(),
                 },
                 MigrationLegacyShop _ => new MigrationLegacyShop(),
-                MimisbrunnrBattle _ => new MimisbrunnrBattle
-                {
-                    Costumes = new List<Guid>(),
-                    Equipments = new List<Guid>(),
-                    Foods = new List<Guid>(),
-                    RuneInfos = new List<RuneSlotInfo>(),
-                    WorldId = 0,
-                    StageId = 0,
-                    PlayCount = 0,
-                    AvatarAddress = default,
-                },
                 PatchTableSheet _ => new PatchTableSheet
                 {
                     TableCsv = "table",
