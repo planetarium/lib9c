@@ -37,10 +37,10 @@ namespace Nekoyume.Model
         public readonly ArenaSkills _runeSkills = new ArenaSkills();
         public readonly Dictionary<int, int> RuneSkillCooldownMap = new Dictionary<int, int>();
 
-        private readonly int _attackCountMax;
+        private readonly long _attackCountMax;
 
         private ArenaCharacter _target;
-        private int _attackCount;
+        private long _attackCount;
 
         public Guid Id { get; } = Guid.NewGuid();
         public BattleStatus.Arena.ArenaSkill SkillLog { get; private set; }
@@ -50,14 +50,14 @@ namespace Nekoyume.Model
         public SizeType SizeType { get; }
         public float RunSpeed { get; }
         public float AttackRange { get; }
-        public int CharacterId { get; }
+        public long CharacterId { get; }
         public bool IsEnemy { get; }
 
         private bool _setExtraValueBuffBeforeGetBuffs = false;
 
-        private int _currentHP;
+        private long _currentHP;
 
-        public int CurrentHP
+        public long CurrentHP
         {
             get => _currentHP;
             set => _currentHP = Math.Min(Math.Max(0, value), HP);
@@ -69,18 +69,18 @@ namespace Nekoyume.Model
             set => Stats.SetStats(value);
         }
 
-        public int HP => Stats.HP;
-        public int AdditionalHP => Stats.BuffStats.HP;
-        public int ATK => Stats.ATK;
-        public int DEF => Stats.DEF;
-        public int CRI => Stats.CRI;
-        public int HIT => Stats.HIT;
-        public int SPD => Stats.SPD;
-        public int DRV => Stats.DRV;
-        public int DRR => Stats.DRR;
-        public int CDMG => Stats.CDMG;
-        public int ArmorPenetration => Stats.ArmorPenetration;
-        public int Thorn => Stats.Thorn;
+        public long HP => Stats.HP;
+        public long AdditionalHP => Stats.BuffStats.HP;
+        public long ATK => Stats.ATK;
+        public long DEF => Stats.DEF;
+        public long CRI => Stats.CRI;
+        public long HIT => Stats.HIT;
+        public long SPD => Stats.SPD;
+        public long DRV => Stats.DRV;
+        public long DRR => Stats.DRR;
+        public long CDMG => Stats.CDMG;
+        public long ArmorPenetration => Stats.ArmorPenetration;
+        public long Thorn => Stats.Thorn;
 
         public bool IsDead => CurrentHP <= 0;
         public Dictionary<int, Buff.Buff> Buffs { get; } = new Dictionary<int, Buff.Buff>();
@@ -158,7 +158,7 @@ namespace Nekoyume.Model
             IArenaSimulator simulator,
             ArenaPlayerDigest digest,
             ArenaSimulatorSheets sheets,
-            int hpModifier,
+            long hpModifier,
             bool isEnemy = false,
             bool setExtraValueBuffBeforeGetBuffs = false)
         {
@@ -261,7 +261,7 @@ namespace Nekoyume.Model
             CharacterSheet.Row characterRow,
             EquipmentItemSetEffectSheet equipmentItemSetEffectSheet,
             CostumeStatSheet costumeStatSheet,
-            int hpModifier)
+            long hpModifier)
         {
             var stats = new CharacterStats(characterRow, digest.Level)
             {
@@ -310,7 +310,7 @@ namespace Nekoyume.Model
 
         private static bool TryGetStats(
             CostumeStatSheet statSheet,
-            int itemId,
+            long itemId,
             out IEnumerable<StatModifier> statModifiers)
         {
             statModifiers = statSheet.OrderedList
@@ -341,7 +341,7 @@ namespace Nekoyume.Model
                         new StatModifier(
                             x.stat.StatType,
                             x.operationType,
-                            x.stat.TotalValueAsInt)));
+                            x.stat.TotalValueAsLong)));
                 Stats.AddOptional(statModifiers);
                 ResetCurrentHP();
 
@@ -402,7 +402,7 @@ namespace Nekoyume.Model
                         new StatModifier(
                             x.stat.StatType,
                             x.operationType,
-                            x.stat.TotalValueAsInt)));
+                            x.stat.TotalValueAsLong)));
                 Stats.AddOptional(statModifiers);
                 ResetCurrentHP();
 
@@ -420,7 +420,7 @@ namespace Nekoyume.Model
                 }
                 else if (optionInfo.StatReferenceType == EnumType.StatReferenceType.Caster)
                 {
-                    var value = Stats.GetStatAsInt(optionInfo.SkillStatType);
+                    var value = Stats.GetStatAsLong(optionInfo.SkillStatType);
                     power = (int)Math.Round(value * optionInfo.SkillValue);
                 }
                 var skill = SkillFactory.GetForArena(skillRow, power, optionInfo.SkillChance, default, StatType.NONE);
@@ -454,7 +454,7 @@ namespace Nekoyume.Model
                         new StatModifier(
                             x.stat.StatType,
                             x.operationType,
-                            x.stat.TotalValueAsInt)));
+                            x.stat.TotalValueAsLong)));
                 Stats.AddRune(statModifiers);
                 ResetCurrentHP();
 
@@ -472,7 +472,7 @@ namespace Nekoyume.Model
                 }
                 else if (optionInfo.StatReferenceType == EnumType.StatReferenceType.Caster)
                 {
-                    var value = Stats.GetStatAsInt(optionInfo.SkillStatType);
+                    var value = Stats.GetStatAsLong(optionInfo.SkillStatType);
                     power = (int)Math.Round(value * optionInfo.SkillValue);
                 }
                 var skill = SkillFactory.GetForArena(skillRow, power, optionInfo.SkillChance, default, StatType.NONE);
@@ -659,7 +659,7 @@ namespace Nekoyume.Model
             }
         }
 
-        private ArenaSkill GiveThornDamage(int targetThorn)
+        private ArenaSkill GiveThornDamage(long targetThorn)
         {
             var clone = (ArenaCharacter)Clone();
             // minimum 1 damage
@@ -905,7 +905,7 @@ namespace Nekoyume.Model
             }
         }
 
-        public void Heal(int heal)
+        public void Heal(long heal)
         {
             CurrentHP += heal;
         }
@@ -937,7 +937,7 @@ namespace Nekoyume.Model
             return isHit;
         }
 
-        public int GetDamage(int damage, bool considerAttackCount = true)
+        public long GetDamage(long damage, bool considerAttackCount = true)
         {
             if (!considerAttackCount)
                 return damage;

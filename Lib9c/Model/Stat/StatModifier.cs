@@ -13,17 +13,17 @@ namespace Nekoyume.Model.Stat
 
         public StatType StatType { get; }
         public OperationType Operation { get; }
-        public int Value { get; private set; }
+        public long Value { get; private set; }
 
-        public StatModifier(StatType statType, OperationType operation, int value)
+        public StatModifier(StatType statType, OperationType operation, long value)
         {
             StatType = statType;
             Operation = operation;
             Value = value;
         }
-        
+
         public StatModifier(DecimalStat decimalStat) : this(decimalStat.StatType, OperationType.Add,
-            decimalStat.TotalValueAsInt)
+            decimalStat.TotalValueAsLong)
         {
         }
 
@@ -32,9 +32,9 @@ namespace Nekoyume.Model.Stat
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public int GetModifiedAll(int value)
+        public long GetModifiedAll(long value)
         {
-            return value + GetModifiedValue(value);
+            return value + (long)GetModifiedValue(value);
         }
 
         /// <summary>
@@ -53,14 +53,14 @@ namespace Nekoyume.Model.Stat
         /// <param name="value"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public int GetModifiedValue(int value)
+        public long GetModifiedValue(int value)
         {
             switch (Operation)
             {
                 case OperationType.Add:
                     return Value;
                 case OperationType.Percentage:
-                    return (int)(value * Value / 100m);
+                    return (long)(value * Value / 100m);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

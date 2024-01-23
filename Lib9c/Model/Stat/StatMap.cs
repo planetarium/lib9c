@@ -15,41 +15,41 @@ namespace Nekoyume.Model.Stat
             get => _statMap[type];
         }
 
-        public int HP => _statMap[StatType.HP].TotalValueAsInt;
-        public int ATK => _statMap[StatType.ATK].TotalValueAsInt;
-        public int DEF => _statMap[StatType.DEF].TotalValueAsInt;
-        public int CRI => _statMap[StatType.CRI].TotalValueAsInt;
-        public int HIT => _statMap[StatType.HIT].TotalValueAsInt;
-        public int SPD => _statMap[StatType.SPD].TotalValueAsInt;
-        public int DRV => _statMap[StatType.DRV].TotalValueAsInt;
-        public int DRR => _statMap[StatType.DRR].TotalValueAsInt;
-        public int CDMG => _statMap[StatType.CDMG].TotalValueAsInt;
-        public int ArmorPenetration => _statMap[StatType.ArmorPenetration].TotalValueAsInt;
-        public int Thorn => _statMap[StatType.Thorn].TotalValueAsInt;
+        public long HP => _statMap[StatType.HP].TotalValueAsLong;
+        public long ATK => _statMap[StatType.ATK].TotalValueAsLong;
+        public long DEF => _statMap[StatType.DEF].TotalValueAsLong;
+        public long CRI => _statMap[StatType.CRI].TotalValueAsLong;
+        public long HIT => _statMap[StatType.HIT].TotalValueAsLong;
+        public long SPD => _statMap[StatType.SPD].TotalValueAsLong;
+        public long DRV => _statMap[StatType.DRV].TotalValueAsLong;
+        public long DRR => _statMap[StatType.DRR].TotalValueAsLong;
+        public long CDMG => _statMap[StatType.CDMG].TotalValueAsLong;
+        public long ArmorPenetration => _statMap[StatType.ArmorPenetration].TotalValueAsLong;
+        public long Thorn => _statMap[StatType.Thorn].TotalValueAsLong;
 
-        public int BaseHP => _statMap[StatType.HP].BaseValueAsInt;
-        public int BaseATK => _statMap[StatType.ATK].BaseValueAsInt;
-        public int BaseDEF => _statMap[StatType.DEF].BaseValueAsInt;
-        public int BaseCRI => _statMap[StatType.CRI].BaseValueAsInt;
-        public int BaseHIT => _statMap[StatType.HIT].BaseValueAsInt;
-        public int BaseSPD => _statMap[StatType.SPD].BaseValueAsInt;
-        public int BaseDRV => _statMap[StatType.DRV].BaseValueAsInt;
-        public int BaseDRR => _statMap[StatType.DRR].BaseValueAsInt;
-        public int BaseCDMG => _statMap[StatType.CDMG].BaseValueAsInt;
-        public int BaseArmorPenetration => _statMap[StatType.ArmorPenetration].BaseValueAsInt;
-        public int BaseThorn => _statMap[StatType.Thorn].BaseValueAsInt;
+        public long BaseHP => _statMap[StatType.HP].BaseValueAsLong;
+        public long BaseATK => _statMap[StatType.ATK].BaseValueAsLong;
+        public long BaseDEF => _statMap[StatType.DEF].BaseValueAsLong;
+        public long BaseCRI => _statMap[StatType.CRI].BaseValueAsLong;
+        public long BaseHIT => _statMap[StatType.HIT].BaseValueAsLong;
+        public long BaseSPD => _statMap[StatType.SPD].BaseValueAsLong;
+        public long BaseDRV => _statMap[StatType.DRV].BaseValueAsLong;
+        public long BaseDRR => _statMap[StatType.DRR].BaseValueAsLong;
+        public long BaseCDMG => _statMap[StatType.CDMG].BaseValueAsLong;
+        public long BaseArmorPenetration => _statMap[StatType.ArmorPenetration].BaseValueAsLong;
+        public long BaseThorn => _statMap[StatType.Thorn].BaseValueAsLong;
 
-        public int AdditionalHP => _statMap[StatType.HP].AdditionalValueAsInt;
-        public int AdditionalATK => _statMap[StatType.ATK].AdditionalValueAsInt;
-        public int AdditionalDEF => _statMap[StatType.DEF].AdditionalValueAsInt;
-        public int AdditionalCRI => _statMap[StatType.CRI].AdditionalValueAsInt;
-        public int AdditionalHIT => _statMap[StatType.HIT].AdditionalValueAsInt;
-        public int AdditionalSPD => _statMap[StatType.SPD].AdditionalValueAsInt;
-        public int AdditionalDRV => _statMap[StatType.DRV].AdditionalValueAsInt;
-        public int AdditionalDRR => _statMap[StatType.DRR].AdditionalValueAsInt;
-        public int AdditionalCDMG => _statMap[StatType.CDMG].AdditionalValueAsInt;
-        public int AdditionalArmorPenetration => _statMap[StatType.ArmorPenetration].AdditionalValueAsInt;
-        public int AdditionalThorn => _statMap[StatType.Thorn].AdditionalValueAsInt;
+        public long AdditionalHP => _statMap[StatType.HP].AdditionalValueAsLong;
+        public long AdditionalATK => _statMap[StatType.ATK].AdditionalValueAsLong;
+        public long AdditionalDEF => _statMap[StatType.DEF].AdditionalValueAsLong;
+        public long AdditionalCRI => _statMap[StatType.CRI].AdditionalValueAsLong;
+        public long AdditionalHIT => _statMap[StatType.HIT].AdditionalValueAsLong;
+        public long AdditionalSPD => _statMap[StatType.SPD].AdditionalValueAsLong;
+        public long AdditionalDRV => _statMap[StatType.DRV].AdditionalValueAsLong;
+        public long AdditionalDRR => _statMap[StatType.DRR].AdditionalValueAsLong;
+        public long AdditionalCDMG => _statMap[StatType.CDMG].AdditionalValueAsLong;
+        public long AdditionalArmorPenetration => _statMap[StatType.ArmorPenetration].AdditionalValueAsLong;
+        public long AdditionalThorn => _statMap[StatType.Thorn].AdditionalValueAsLong;
 
         private readonly Dictionary<StatType, DecimalStat> _statMap =
             new Dictionary<StatType, DecimalStat>(StatTypeComparer.Instance)
@@ -87,14 +87,14 @@ namespace Nekoyume.Model.Stat
             }
         }
 
-        public int GetStatAsInt(StatType statType)
+        public long GetStatAsLong(StatType statType)
         {
             if (!_statMap.TryGetValue(statType, out var decimalStat))
             {
                 throw new KeyNotFoundException($"StatType {statType} is missing in statMap.");
             }
 
-            return decimalStat.TotalValueAsInt;
+            return decimalStat.TotalValueAsLong;
         }
 
         public decimal GetStat(StatType statType)
@@ -107,95 +107,95 @@ namespace Nekoyume.Model.Stat
             return decimalStat.TotalValue;
         }
 
-        public int GetBaseStat(StatType statType)
+        public long GetBaseStat(StatType statType)
         {
             if (!_statMap.TryGetValue(statType, out var decimalStat))
             {
                 throw new KeyNotFoundException($"StatType {statType} is missing in statMap.");
             }
 
-            return decimalStat.BaseValueAsInt;
+            return decimalStat.BaseValueAsLong;
         }
 
-        public int GetAdditionalStat(StatType statType)
+        public long GetAdditionalStat(StatType statType)
         {
             if (!_statMap.TryGetValue(statType, out var decimalStat))
             {
                 throw new KeyNotFoundException($"StatType {statType} is missing in statMap.");
             }
 
-            return decimalStat.AdditionalValueAsInt;
+            return decimalStat.AdditionalValueAsLong;
         }
 
-        public IEnumerable<(StatType statType, int value)> GetStats(bool ignoreZero = false)
+        public IEnumerable<(StatType statType, long value)> GetStats(bool ignoreZero = false)
         {
             foreach (var (statType, stat) in _statMap.OrderBy(x => x.Key))
             {
                 if (ignoreZero)
                 {
-                    if (stat.HasTotalValueAsInt)
+                    if (stat.HasTotalValueAsLong)
                     {
-                        yield return (statType, stat.TotalValueAsInt);
+                        yield return (statType, stat.TotalValueAsLong);
                     }
                 }
                 else
                 {
-                    yield return (statType, stat.TotalValueAsInt);
+                    yield return (statType, stat.TotalValueAsLong);
                 }
             }
         }
 
-        public IEnumerable<(StatType statType, int baseValue)> GetBaseStats(bool ignoreZero = false)
+        public IEnumerable<(StatType statType, long baseValue)> GetBaseStats(bool ignoreZero = false)
         {
             foreach (var (statType, stat) in _statMap.OrderBy(x => x.Key))
             {
                 if (ignoreZero)
                 {
-                    if (stat.HasBaseValueAsInt)
+                    if (stat.HasBaseValueAsLong)
                     {
-                        yield return (statType, stat.BaseValueAsInt);
+                        yield return (statType, stat.BaseValueAsLong);
                     }
                 }
                 else
                 {
-                    yield return (statType, stat.BaseValueAsInt);
+                    yield return (statType, stat.BaseValueAsLong);
                 }
             }
         }
 
-        public IEnumerable<(StatType statType, int additionalValue)> GetAdditionalStats(bool ignoreZero = false)
+        public IEnumerable<(StatType statType, long additionalValue)> GetAdditionalStats(bool ignoreZero = false)
         {
             foreach (var (statType, stat) in _statMap.OrderBy(x => x.Key))
             {
                 if (ignoreZero)
                 {
-                    if (stat.HasAdditionalValueAsInt)
+                    if (stat.HasAdditionalValueAsLong)
                     {
-                        yield return (statType, stat.AdditionalValueAsInt);
+                        yield return (statType, stat.AdditionalValueAsLong);
                     }
                 }
                 else
                 {
-                    yield return (statType, stat.AdditionalValueAsInt);
+                    yield return (statType, stat.AdditionalValueAsLong);
                 }
             }
         }
 
-        public IEnumerable<(StatType statType, int baseValue, int additionalValue)> GetBaseAndAdditionalStats(
+        public IEnumerable<(StatType statType, long baseValue, long additionalValue)> GetBaseAndAdditionalStats(
             bool ignoreZero = false)
         {
             foreach (var (statType, stat) in _statMap.OrderBy(x => x.Key))
             {
                 if (ignoreZero)
                 {
-                    if (stat.HasBaseValueAsInt || stat.HasAdditionalValueAsInt)
+                    if (stat.HasBaseValueAsLong || stat.HasAdditionalValueAsLong)
                     {
-                        yield return (statType, stat.BaseValueAsInt, stat.AdditionalValueAsInt);
+                        yield return (statType, stat.BaseValueAsLong, stat.AdditionalValueAsLong);
                     }
                 }
                 else
                 {
-                    yield return (statType, stat.BaseValueAsInt, stat.AdditionalValueAsInt);
+                    yield return (statType, stat.BaseValueAsLong, stat.AdditionalValueAsLong);
                 }
             }
         }
@@ -204,7 +204,7 @@ namespace Nekoyume.Model.Stat
         {
             var values = _statMap.OrderBy(x => x.Key).Select(x => x.Value);
             return ignoreZero ?
-                values.Where(x => x.HasBaseValueAsInt || x.HasAdditionalValueAsInt) :
+                values.Where(x => x.HasBaseValueAsLong || x.HasAdditionalValueAsLong) :
                 values;
         }
 
