@@ -5,3 +5,8 @@ id,_memo,currency_ticker,fungible_id,garage_cost_per_unit
 4,golden dust(600201),,f8faf92c9c0d0e8e06694361ea87bfc8b29a8ae8de93044b98470a57636ed0e0,0.01
 5,golden leaf runestone,RUNE_GOLDENLEAF,,0.1
 6,crystal,CRYSTAL,,0.0000001
+7,golden meat(800202),,48e50ecd6d1aa2689fd349c1f0611e6cc1e9c4c74ec4de9d4637ec7b78617308,0.01
+8,soul stone(1001),SOULSTONE_1001,,0.01
+9,soul stone(1002),SOULSTONE_1002,,0.01
+10,soul stone(1003),SOULSTONE_1003,,0.01
+11,soul stone(1004),SOULSTONE_1004,,0.01

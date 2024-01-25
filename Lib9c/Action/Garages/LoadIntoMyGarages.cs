@@ -247,20 +247,13 @@ namespace Nekoyume.Action.Garages
                 FungibleIdAndCounts);
             foreach (var (fungibleId, count, garageAddr, garageState) in fungibleItemTuples)
             {
-                if (!inventory.TryGetTradableFungibleItems(
-                        fungibleId,
-                        requiredBlockIndex: null,
-                        blockIndex: blockIndex,
-                        out var outItems))
+                if (!inventory.TryGetFungibleItems(fungibleId, out var outItems))
                 {
                     throw new ItemNotFoundException(InventoryAddr.Value, fungibleId);
                 }
 
-                var itemArr = outItems as Inventory.Item[] ?? outItems.ToArray();
-                var tradableFungibleItem = (ITradableFungibleItem)itemArr[0].item;
-                if (!inventory.RemoveTradableFungibleItem(
+                if (!inventory.RemoveFungibleItem(
                         fungibleId,
-                        requiredBlockIndex: null,
                         blockIndex: blockIndex,
                         count))
                 {
@@ -268,19 +261,19 @@ namespace Nekoyume.Action.Garages
                         InventoryAddr.Value,
                         fungibleId,
                         count,
-                        itemArr.Sum(item => item.count));
+                        outItems.Sum(i => i.count));
                 }
 
-                IFungibleItem fungibleItem = tradableFungibleItem switch
+                var item = outItems[0].item;
+                if (item is not Material material)
                 {
-                    TradableMaterial tradableMaterial => new Material(tradableMaterial),
-                    _ => throw new InvalidCastException(
-                        $"Invalid type of {nameof(tradableFungibleItem)}: " +
-                        $"{tradableFungibleItem.GetType()}")
-                };
+                    throw new InvalidCastException(
+                        $"Invalid type of {nameof(item)}: " +
+                        $"{item.GetType()}");
+                }
 
                 var garage = garageState is null || garageState is Null
-                    ? new FungibleItemGarage(fungibleItem, 0)
+                    ? new FungibleItemGarage(material, 0)
                     : new FungibleItemGarage(garageState);
                 // NOTE:
                 // Why not compare the garage.Item with tradableFungibleItem?
