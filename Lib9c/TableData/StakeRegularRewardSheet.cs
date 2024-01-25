@@ -94,9 +94,10 @@ namespace Nekoyume.TableData
                     return;
                 }
 
+                DecimalRate = ParseDecimal(fields[5], 0m);
+
                 if (fields.Length == 6)
                 {
-                    DecimalRate = ParseDecimal(fields[5], 0m);
                     return;
                 }
 
