@@ -403,8 +403,11 @@ namespace Lib9c.Tests.Action.Garages
                     SenderAgentAddr,
                     fungibleItem.FungibleId);
                 var garageState = previousStates.GetState(senderGarageAddr);
+                Material material = fungibleItem is TradableMaterial tradableMaterial
+                    ? new Material(tradableMaterial)
+                    : (Material)fungibleItem;
                 var garage = garageState is null
-                    ? new FungibleItemGarage(fungibleItem, 0)
+                    ? new FungibleItemGarage(material, 0)
                     : new FungibleItemGarage(garageState);
                 garage.Load(count);
                 previousStates = previousStates
