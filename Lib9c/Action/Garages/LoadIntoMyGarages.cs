@@ -271,6 +271,10 @@ namespace Nekoyume.Action.Garages
                         $"Invalid type of {nameof(item)}: " +
                         $"{item.GetType()}");
                 }
+                if (material is TradableMaterial tradableMaterial)
+                {
+                    material = new Material(tradableMaterial);
+                }
 
                 var garage = garageState is null || garageState is Null
                     ? new FungibleItemGarage(material, 0)

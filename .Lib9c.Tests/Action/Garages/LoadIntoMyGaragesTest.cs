@@ -36,6 +36,12 @@ namespace Lib9c.Tests.Action.Garages
         private readonly FungibleAssetValue _cost;
         private readonly IFungibleItem[] _fungibleItems;
         private readonly IAccount _previousStates;
+        private readonly int[] _nonTradableIds = new[]
+        {
+            600201,
+            800201,
+            800202,
+        };
 
         public LoadIntoMyGaragesTest()
         {
@@ -170,9 +176,8 @@ namespace Lib9c.Tests.Action.Garages
             var inventory = new Inventory((List)inventoryState);
             foreach (var (fungibleId, count) in action.FungibleIdAndCounts)
             {
-                Assert.False(inventory.HasTradableFungibleItem(
+                Assert.False(inventory.HasFungibleItem(
                     fungibleId,
-                    requiredBlockIndex: null,
                     blockIndex: 0,
                     1));
                 var garageAddr = Addresses.GetGarageAddress(
@@ -181,6 +186,7 @@ namespace Lib9c.Tests.Action.Garages
                 var garage = new FungibleItemGarage(nextStates.GetState(garageAddr));
                 Assert.Equal(fungibleId, garage.Item.FungibleId);
                 Assert.Equal(count, garage.Count);
+                Assert.IsType<Material>(garage.Item);
             }
         }
 
@@ -484,12 +490,6 @@ namespace Lib9c.Tests.Action.Garages
             var inventoryAddr = Addresses.GetInventoryAddress(AgentAddr, AvatarIndex);
             var inventoryState = (List)previousStates.GetState(inventoryAddr)!;
             var inventory = new Inventory(inventoryState);
-            var nonTradableIds = new[]
-            {
-                600201,
-                800201,
-                800202,
-            };
             var fungibleItemAndCounts = new List<(IFungibleItem fungibleItem, int count)>();
             var rows = _tableSheets.MaterialItemSheet.OrderedList!.Where(row =>
                 _tableSheets.LoadIntoMyGaragesCostSheet.HasCost(row.ItemId)).ToList();
@@ -497,7 +497,7 @@ namespace Lib9c.Tests.Action.Garages
             {
                 var row = rows[i];
                 IFungibleItem item;
-                if (nonTradableIds.Contains(row.Id))
+                if (_nonTradableIds.Contains(row.Id))
                 {
                     item = ItemFactory.CreateMaterial(row);
                 }

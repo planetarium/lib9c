@@ -168,9 +168,9 @@ namespace Lib9c.Tests.Action.Garages
                 var recipientGarageAddr = Addresses.GetGarageAddress(
                     _recipientAgentAddr,
                     fungibleId);
-                Assert.Equal(
-                    count,
-                    new FungibleItemGarage(nextStates.GetState(recipientGarageAddr)).Count);
+                var garage = new FungibleItemGarage(nextStates.GetState(recipientGarageAddr));
+                Assert.Equal(count, garage.Count);
+                Assert.IsType<Material>(garage.Item);
             }
         }
 
@@ -387,14 +387,14 @@ namespace Lib9c.Tests.Action.Garages
             {
                 var id = tradableIds[i];
                 var row = _tableSheets.MaterialItemSheet[id];
-                fungibleIdAndCounts.Add((ItemFactory.CreateMaterial(row), i + 1));
+                fungibleIdAndCounts.Add((ItemFactory.CreateTradableMaterial(row), i + 1));
             }
 
             for (int i = 0; i < nonTradableIds.Count(); i++)
             {
                 var id = nonTradableIds[i];
                 var row = _tableSheets.MaterialItemSheet[id];
-                fungibleIdAndCounts.Add((ItemFactory.CreateTradableMaterial(row), i + 1));
+                fungibleIdAndCounts.Add((ItemFactory.CreateMaterial(row), i + 1));
             }
 
             foreach (var (fungibleItem, count) in fungibleIdAndCounts)
