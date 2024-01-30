@@ -7,19 +7,19 @@ namespace Nekoyume.Battle
 {
     public static class HitHelper
     {
-        public const int GetHitStep1LevelDiffMin = -14;
-        public const int GetHitStep1LevelDiffMax = 10;
-        public const int GetHitStep1CorrectionMin = -5;
-        public const int GetHitStep1CorrectionMax = 50;
-        public const int GetHitStep2AdditionalCorrectionMin = 0;
-        public const int GetHitStep2AdditionalCorrectionMax = 50;
-        public const int GetHitStep3CorrectionMin = 10;
-        public const int GetHitStep3CorrectionMax = 90;
+        public const long GetHitStep1LevelDiffMin = -14;
+        public const long GetHitStep1LevelDiffMax = 10;
+        public const long GetHitStep1CorrectionMin = -5;
+        public const long GetHitStep1CorrectionMax = 50;
+        public const long GetHitStep2AdditionalCorrectionMin = 0;
+        public const long GetHitStep2AdditionalCorrectionMax = 50;
+        public const long GetHitStep3CorrectionMin = 10;
+        public const long GetHitStep3CorrectionMax = 90;
 
         public static bool IsHit(
-            int attackerLevel, int attackerHit,
-            int defenderLevel, int defenderHit,
-            int lowLimitChance)
+            long attackerLevel, long attackerHit,
+            long defenderLevel, long defenderHit,
+            long lowLimitChance)
         {
             var correction = GetHitStep1(attackerLevel, defenderLevel);
             correction += GetHitStep2(attackerHit, defenderHit);
@@ -40,11 +40,11 @@ namespace Nekoyume.Battle
         }
 
         public static bool IsHitWithoutLevelCorrection(
-            int attackerLevel, int attackerHit,
-            int defenderLevel, int defenderHit,
-            int lowLimitChance)
+            long attackerLevel, long attackerHit,
+            long defenderLevel, long defenderHit,
+            long lowLimitChance)
         {
-            var correction = 40;
+            long correction = 40;
             correction += GetHitStep2(attackerHit, defenderHit);
             correction = GetHitStep3(correction);
             var isHit = GetHitStep4(lowLimitChance, correction);
@@ -62,7 +62,7 @@ namespace Nekoyume.Battle
             return isHit;
         }
 
-        public static int GetHitStep1(int attackerLevel, int defenderLevel)
+        public static long GetHitStep1(long attackerLevel, long defenderLevel)
         {
             var diff = attackerLevel - defenderLevel;
 
@@ -105,7 +105,7 @@ namespace Nekoyume.Battle
             };
         }
 
-        public static int GetHitStep2(int attackerHit, int defenderHit)
+        public static long GetHitStep2(long attackerHit, long defenderHit)
         {
             attackerHit = Math.Max(1, attackerHit);
             defenderHit = Math.Max(1, defenderHit);
@@ -114,12 +114,12 @@ namespace Nekoyume.Battle
                 GetHitStep2AdditionalCorrectionMax);
         }
 
-        public static int GetHitStep3(int correction)
+        public static long GetHitStep3(long correction)
         {
             return Math.Min(Math.Max(correction, GetHitStep3CorrectionMin), GetHitStep3CorrectionMax);
         }
 
-        public static bool GetHitStep4(int lowLimitChance, int correction)
+        public static bool GetHitStep4(long lowLimitChance, long correction)
         {
             return correction >= lowLimitChance;
         }

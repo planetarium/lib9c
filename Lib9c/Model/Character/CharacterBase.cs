@@ -49,22 +49,22 @@ namespace Nekoyume.Model
             set => Stats.SetStats(value);
         }
 
-        public int HP => Stats.HP;
-        public int AdditionalHP => Stats.BuffStats.HP;
-        public int ATK => Stats.ATK;
-        public int DEF => Stats.DEF;
-        public int CRI => Stats.CRI;
-        public int HIT => Stats.HIT;
-        public int SPD => Stats.SPD;
-        public int DRV => Stats.DRV;
-        public int DRR => Stats.DRR;
-        public int CDMG => Stats.CDMG;
-        public int ArmorPenetration => Stats.ArmorPenetration;
-        public int Thorn => Stats.Thorn;
+        public long HP => Stats.HP;
+        public long AdditionalHP => Stats.BuffStats.HP;
+        public long ATK => Stats.ATK;
+        public long DEF => Stats.DEF;
+        public long CRI => Stats.CRI;
+        public long HIT => Stats.HIT;
+        public long SPD => Stats.SPD;
+        public long DRV => Stats.DRV;
+        public long DRR => Stats.DRR;
+        public long CDMG => Stats.CDMG;
+        public long ArmorPenetration => Stats.ArmorPenetration;
+        public long Thorn => Stats.Thorn;
 
-        private int _currentHP;
+        private long _currentHP;
 
-        public int CurrentHP
+        public long CurrentHP
         {
             get => _currentHP;
             set => _currentHP = Math.Min(Math.Max(0, value), HP);
@@ -447,7 +447,7 @@ namespace Nekoyume.Model
             return isHit;
         }
 
-        public int GetDamage(int damage, bool considerAttackCount = true)
+        public long GetDamage(long damage, bool considerAttackCount = true)
         {
             if (!considerAttackCount)
                 return damage;
@@ -487,7 +487,7 @@ namespace Nekoyume.Model
             }
         }
 
-        public void Heal(int heal)
+        public void Heal(long heal)
         {
             CurrentHP += heal;
         }
@@ -633,7 +633,7 @@ namespace Nekoyume.Model
             FinishTargetIfKilled(usedSkill);
         }
 
-        internal BattleStatus.Skill GiveThornDamage(int targetThorn)
+        internal BattleStatus.Skill GiveThornDamage(long targetThorn)
         {
             bool log = Simulator.LogEvent;
             // Copy not damaged character
