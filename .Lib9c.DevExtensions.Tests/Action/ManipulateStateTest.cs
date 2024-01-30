@@ -60,7 +60,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         }
 
         // MemberData
-        public static IEnumerable<object[]> FetchAvatarState()
+        public static IEnumerable<object?[]> FetchAvatarState()
         {
             var random = new Random();
             var blockIndex = (long)random.Next(1, 100);
@@ -70,42 +70,42 @@ namespace Lib9c.DevExtensions.Tests.Action
              hair, lens, ear, tail */
 
             // Change name
-            yield return new object[]
+            yield return new object?[]
             {
                 "newAvatar", null, null, null,
                 null, null,
                 null, null, null, null
             };
             // Change level and exp
-            yield return new object[]
+            yield return new object?[]
             {
                 null, random.Next(1, 300), (long)random.Next(0, 100), null,
                 null, null,
                 null, null, null, null
             };
             // Change AP
-            yield return new object[]
+            yield return new object?[]
             {
                 null, null, null, random.Next(0, 120),
                 null, null,
                 null, null, null, null
             };
             // Change block indexes
-            yield return new object[]
+            yield return new object?[]
             {
                 null, null, null, null,
                 blockIndex + 1700, blockIndex, // Get another daily reward
                 null, null, null, null
             };
             // Change outfit
-            yield return new object[]
+            yield return new object?[]
             {
                 null, null, null, null,
                 null, null,
                 random.Next(0, 4), random.Next(0, 4), random.Next(0, 4), random.Next(0, 4)
             };
             // Change multiple things
-            yield return new object[]
+            yield return new object?[]
             {
                 "newAvatar", random.Next(1, 300), (long)random.Next(0, 100), random.Next(0, 120),
                 blockIndex + 1700, blockIndex,
@@ -593,7 +593,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         [Fact]
         public void SetMultipleStates()
         {
-            var avatarData = FetchAvatarState().Last();
+            var avatarData = FetchAvatarState().Last().Cast<object>().ToArray();
             var newAvatarState = (AvatarState)_avatarState.Clone();
             newAvatarState.name = (string)avatarData[0];
             newAvatarState.level = (int)avatarData[1];
