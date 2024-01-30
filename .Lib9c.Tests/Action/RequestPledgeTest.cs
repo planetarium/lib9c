@@ -1,11 +1,9 @@
 namespace Lib9c.Tests.Action
 {
     using Bencodex.Types;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
     using Xunit;

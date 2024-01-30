@@ -3,7 +3,6 @@ using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Nekoyume.Model.State;
-using System.Linq;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;

@@ -15,7 +15,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Nekoyume.TableData;
     using Nekoyume.TableData.Pet;
     using Xunit;
-    using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
     public class AdditionalOptionRateByFixedValueTest

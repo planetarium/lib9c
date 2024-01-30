@@ -3,7 +3,6 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using Bencodex.Types;
-    using Lib9c.Model.Order;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;

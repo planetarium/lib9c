@@ -122,27 +122,24 @@ namespace Nekoyume.Action
 
             // Fixed Reward
             var random = context.GetRandom();
-            foreach (var reward in stakeRegularFixedRewardSheet[stakingLevel].Rewards)
+#pragma warning disable LAA1002
+            foreach (var pair in StakeRewardCalculator.CalculateFixedRewards(stakingLevel, random, stakeRegularFixedRewardSheet, itemSheet, rewardSteps))
+#pragma warning restore LAA1002
             {
-                var itemRow = itemSheet[reward.ItemId];
-                var item = itemRow is MaterialItemSheet.Row materialRow
-                    ? ItemFactory.CreateTradableMaterial(materialRow)
-                    : ItemFactory.CreateItem(itemRow, random);
-                avatarState.inventory.AddItem(item, reward.Count * rewardSteps);
+                avatarState.inventory.AddItem(pair.Key, pair.Value);
             }
 
             // Regular Reward
-            foreach (var reward in stakeRegularRewardSheet[stakingLevel].Rewards)
+            var (itemResult, favResult) = StakeRewardCalculator.CalculateRewards(ncg, stakedNcg, stakingLevel, rewardSteps,
+                stakeRegularRewardSheet, itemSheet, random);
+#pragma warning disable LAA1002
+            foreach (var pair in itemResult)
+#pragma warning restore LAA1002
             {
-                var rateFav = FungibleAssetValue.Parse(
-                    stakedNcg.Currency,
-                    reward.DecimalRate.ToString(CultureInfo.InvariantCulture));
-                var rewardQuantityForSingleStep = stakedNcg.DivRem(rateFav, out _);
-                if (rewardQuantityForSingleStep <= 0)
-                {
-                    continue;
-                }
+                avatarState.inventory.AddItem(pair.Key, pair.Value);
+            }
 
+<<<<<<< HEAD
                 switch (reward.Type)
                 {
                     case StakeRegularRewardSheet.StakeRewardType.Item:
@@ -240,6 +237,16 @@ namespace Nekoyume.Action
                     default:
                         throw new ArgumentException($"Can't handle reward type: {reward.Type}");
                 }
+=======
+            foreach (var fav in favResult)
+            {
+                var rewardCurrency = fav.Currency;
+                var recipient = Currencies.IsRuneTicker(rewardCurrency.Ticker) ||
+                                Currencies.IsSoulstoneTicker(rewardCurrency.Ticker)
+                    ? AvatarAddress
+                    : context.Signer;
+                states = states.MintAsset(context, recipient, fav);
+>>>>>>> 98eca018971546069d4fbe35de92fe004d9ab0c8
             }
 
             // NOTE: update claimed block index.

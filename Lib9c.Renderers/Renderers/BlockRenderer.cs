@@ -4,7 +4,6 @@ using Libplanet.Types.Blocks;
 using UniRx;
 #else
 using System.Reactive.Subjects;
-using System.Reactive.Linq;
 #endif
 
 namespace Lib9c.Renderers

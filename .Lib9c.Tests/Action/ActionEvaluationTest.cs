@@ -53,7 +53,6 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(AddRedeemCode))]
         [InlineData(typeof(Buy))]
         [InlineData(typeof(ChargeActionPoint))]
-        [InlineData(typeof(ClaimMonsterCollectionReward))]
         [InlineData(typeof(CombinationConsumable))]
         [InlineData(typeof(CombinationEquipment))]
         [InlineData(typeof(CreatePendingActivation))]
@@ -64,7 +63,6 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(MigrationAvatarState))]
         [InlineData(typeof(MigrationLegacyShop))]
         [InlineData(typeof(MimisbrunnrBattle))]
-        [InlineData(typeof(MonsterCollect))]
         [InlineData(typeof(PatchTableSheet))]
         [InlineData(typeof(RankingBattle))]
         [InlineData(typeof(RapidCombination))]
@@ -104,7 +102,8 @@ namespace Lib9c.Tests.Action
                 null,
                 _states.Trie.Hash,
                 0,
-                new Dictionary<string, IValue>()
+                new Dictionary<string, IValue>(),
+                null
             );
             var evaluation = ncEval.ToActionEvaluation();
             var b = MessagePackSerializer.Serialize(ncEval);
@@ -179,7 +178,6 @@ namespace Lib9c.Tests.Action
                     },
                 },
                 ChargeActionPoint _ => new ChargeActionPoint(),
-                ClaimMonsterCollectionReward _ => new ClaimMonsterCollectionReward(),
                 CombinationConsumable _ => new CombinationConsumable(),
                 CombinationEquipment _ => new CombinationEquipment(),
                 CreatePendingActivation _ => new CreatePendingActivation(
@@ -213,7 +211,6 @@ namespace Lib9c.Tests.Action
                     PlayCount = 0,
                     AvatarAddress = default,
                 },
-                MonsterCollect _ => new MonsterCollect(),
                 PatchTableSheet _ => new PatchTableSheet
                 {
                     TableCsv = "table",

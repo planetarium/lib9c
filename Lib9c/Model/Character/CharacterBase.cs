@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Bencodex.Types;
 using BTAI;
 using Nekoyume.Battle;
 using Nekoyume.Model.BattleStatus;

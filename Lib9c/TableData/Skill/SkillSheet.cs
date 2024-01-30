@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Bencodex.Types;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using static Nekoyume.TableData.TableExtensions;
 

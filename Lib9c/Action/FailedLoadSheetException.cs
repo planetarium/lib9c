@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Nekoyume.TableData;
 
 namespace Nekoyume.Action
 {

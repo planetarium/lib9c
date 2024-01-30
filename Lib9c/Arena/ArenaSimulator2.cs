@@ -4,7 +4,6 @@ using System.Linq;
 using Libplanet.Action;
 using Nekoyume.Battle;
 using Nekoyume.Model;
-using Nekoyume.Model.Arena;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Item;
 using Nekoyume.TableData;
