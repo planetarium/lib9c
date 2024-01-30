@@ -34,8 +34,14 @@ namespace Lib9c.Tests.Action.Garages
         private readonly Address? _inventoryAddr;
         private readonly (HashDigest<SHA256> fungibleId, int count)[] _fungibleIdAndCounts;
         private readonly FungibleAssetValue _cost;
-        private readonly ITradableFungibleItem[] _tradableFungibleItems;
+        private readonly IFungibleItem[] _fungibleItems;
         private readonly IAccount _previousStates;
+        private readonly int[] _nonTradableIds = new[]
+        {
+            600201,
+            800201,
+            800202,
+        };
 
         public LoadIntoMyGaragesTest()
         {
@@ -55,7 +61,7 @@ namespace Lib9c.Tests.Action.Garages
                 _inventoryAddr,
                 _fungibleIdAndCounts,
                 _cost,
-                _tradableFungibleItems,
+                _fungibleItems,
                 _previousStates
             ) = GetSuccessfulPreviousStatesWithPlainValue();
         }
@@ -170,9 +176,8 @@ namespace Lib9c.Tests.Action.Garages
             var inventory = new Inventory((List)inventoryState);
             foreach (var (fungibleId, count) in action.FungibleIdAndCounts)
             {
-                Assert.False(inventory.HasTradableFungibleItem(
+                Assert.False(inventory.HasFungibleItem(
                     fungibleId,
-                    requiredBlockIndex: null,
                     blockIndex: 0,
                     1));
                 var garageAddr = Addresses.GetGarageAddress(
@@ -181,6 +186,7 @@ namespace Lib9c.Tests.Action.Garages
                 var garage = new FungibleItemGarage(nextStates.GetState(garageAddr));
                 Assert.Equal(fungibleId, garage.Item.FungibleId);
                 Assert.Equal(count, garage.Count);
+                Assert.IsType<Material>(garage.Item);
             }
         }
 
@@ -364,7 +370,7 @@ namespace Lib9c.Tests.Action.Garages
                 var (fungibleId, _) = _fungibleIdAndCounts[i];
                 var addr = Addresses.GetGarageAddress(AgentAddr, fungibleId);
                 var nextIndex = (i + 1) % _fungibleIdAndCounts.Length;
-                var garage = new FungibleItemGarage(_tradableFungibleItems[nextIndex], 1);
+                var garage = new FungibleItemGarage(_fungibleItems[nextIndex], 1);
                 var previousStatesWithInvalidGarageState =
                     _previousStates.SetState(addr, garage.Serialize());
                 Assert.Throws<Exception>(() => Execute(
@@ -382,7 +388,7 @@ namespace Lib9c.Tests.Action.Garages
             {
                 var (fungibleId, _) = _fungibleIdAndCounts[i];
                 var addr = Addresses.GetGarageAddress(AgentAddr, fungibleId);
-                var garage = new FungibleItemGarage(_tradableFungibleItems[i], int.MaxValue);
+                var garage = new FungibleItemGarage(_fungibleItems[i], int.MaxValue);
                 var previousStatesWithInvalidGarageState =
                     _previousStates.SetState(addr, garage.Serialize());
                 Assert.Throws<ArgumentOutOfRangeException>(() => Execute(
@@ -453,7 +459,7 @@ namespace Lib9c.Tests.Action.Garages
             Address? inventoryAddr,
             (HashDigest<SHA256> fungibleId, int count)[] fungibleIdAndCounts,
             FungibleAssetValue cost,
-            ITradableFungibleItem[] _tradableFungibleItems,
+            IFungibleItem[] _fungibleItems,
             IAccount previousStates)
             GetSuccessfulPreviousStatesWithPlainValue()
         {
@@ -484,20 +490,31 @@ namespace Lib9c.Tests.Action.Garages
             var inventoryAddr = Addresses.GetInventoryAddress(AgentAddr, AvatarIndex);
             var inventoryState = (List)previousStates.GetState(inventoryAddr)!;
             var inventory = new Inventory(inventoryState);
-            var fungibleItemAndCounts = _tableSheets.MaterialItemSheet.OrderedList!
-                .Where(row => _tableSheets.LoadIntoMyGaragesCostSheet.HasCost(row.ItemId))
-                .Select(ItemFactory.CreateTradableMaterial)
-                .Select((tradableMaterial, index) =>
+            var fungibleItemAndCounts = new List<(IFungibleItem fungibleItem, int count)>();
+            var rows = _tableSheets.MaterialItemSheet.OrderedList!.Where(row =>
+                _tableSheets.LoadIntoMyGaragesCostSheet.HasCost(row.ItemId)).ToList();
+            for (int i = 0; i < rows.Count; i++)
+            {
+                var row = rows[i];
+                IFungibleItem item;
+                if (_nonTradableIds.Contains(row.Id))
                 {
-                    inventory.AddFungibleItem(tradableMaterial, index + 1);
-                    return (
-                        tradableFungibleItem: (ITradableFungibleItem)tradableMaterial,
-                        count: index + 1);
-                }).ToArray();
+                    item = ItemFactory.CreateMaterial(row);
+                }
+                else
+                {
+                    item = ItemFactory.CreateTradableMaterial(row);
+                }
+
+                var count = i + 1;
+                inventory.AddFungibleItem((ItemBase)item, count);
+                fungibleItemAndCounts.Add((item, count));
+            }
+
             var garageCost = _tableSheets.LoadIntoMyGaragesCostSheet.GetGarageCost(
                 fungibleAssetValues.Select(tuple => tuple.value),
                 fungibleItemAndCounts
-                    .Select(tuple => (tuple.tradableFungibleItem.FungibleId, tuple.count)));
+                    .Select(tuple => (tuple.fungibleItem.FungibleId, tuple.count)));
             previousStates = previousStates.MintAsset(
                 new ActionContext { Signer = AgentAddr },
                 AgentAddr,
@@ -506,10 +523,10 @@ namespace Lib9c.Tests.Action.Garages
                 fungibleAssetValues,
                 inventoryAddr,
                 fungibleItemAndCounts
-                    .Select(tuple => (tuple.tradableFungibleItem.FungibleId, tuple.count))
+                    .Select(tuple => (tuple.fungibleItem.FungibleId, tuple.count))
                     .ToArray(),
                 garageCost,
-                fungibleItemAndCounts.Select(tuple => tuple.tradableFungibleItem).ToArray(),
+                fungibleItemAndCounts.Select(tuple => tuple.fungibleItem).ToArray(),
                 previousStates.SetState(inventoryAddr, inventory.Serialize())
             );
         }

@@ -17,7 +17,7 @@ namespace Nekoyume.Battle
     public class RaidSimulatorV2 : Simulator
     {
         public int BossId { get; private set; }
-        public int DamageDealt { get; private set; }
+        public long DamageDealt { get; private set; }
         public List<FungibleAssetValue> AssetReward { get; private set; } = new List<FungibleAssetValue>();
         public override IEnumerable<ItemBase> Reward => new List<ItemBase>();
         private readonly List<RaidBoss> _waves;

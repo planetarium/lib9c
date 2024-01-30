@@ -9,9 +9,9 @@ namespace Nekoyume.Model.Buff
     [Serializable]
     public class Vampiric : ActionBuff
     {
-        public int BasisPoint { get; }
+        public long BasisPoint { get; }
 
-        public Vampiric(ActionBuffSheet.Row row, int basisPoint) : base(row)
+        public Vampiric(ActionBuffSheet.Row row, long basisPoint) : base(row)
         {
             BasisPoint = basisPoint;
         }

@@ -12,7 +12,7 @@ namespace Nekoyume.Model.Skill.Arena
     {
         protected ArenaAttackSkill(
             SkillSheet.Row skillRow,
-            int power,
+            long power,
             int chance,
             int statPowerRatio,
             StatType referencedStatType) : base(skillRow, power, chance, statPowerRatio, referencedStatType)
@@ -37,13 +37,13 @@ namespace Nekoyume.Model.Skill.Arena
             for (var i = 0; i < SkillRow.HitCount; i++)
             {
                 var multiplier = multipliers[i];
-                var damage = 0;
+                long damage = 0;
                 var isCritical = false;
 
                 if (target.IsHit(caster))
                 {
                     damage = caster.ATK + Power + statAdditionalPower;
-                    damage = (int) (damage * multiplier);
+                    damage = (long) (damage * multiplier);
                     damage = caster.GetDamage(damage, isNormalAttack);
                     damage = elementalType.GetDamage(target.DefenseElementalType, damage);
                     isCritical = caster.IsCritical(isNormalAttack);
@@ -53,7 +53,7 @@ namespace Nekoyume.Model.Skill.Arena
                     }
 
                     // Apply armor penetration and DEF.
-                    var finalDEF = Math.Clamp(target.DEF - caster.ArmorPenetration, 0, int.MaxValue);
+                    var finalDEF = Math.Clamp(target.DEF - caster.ArmorPenetration, 0, long.MaxValue);
                     damage = Math.Max(damage - finalDEF, 1);
                     // Apply damage reduce
                     damage = (int)((damage - target.DRV) * (1 - target.DRR / 10000m));

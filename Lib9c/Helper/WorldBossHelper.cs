@@ -11,13 +11,13 @@ namespace Nekoyume.Helper
         public const long RefillInterval = 7200L;
         public const int MaxChallengeCount = 3;
 
-        public static int CalculateRank(WorldBossCharacterSheet.Row row, int score)
+        public static int CalculateRank(WorldBossCharacterSheet.Row row, long score)
         {
             var rank = 0;
             // Wave stats are already sorted by wave number.
             foreach (var waveData in row.WaveStats)
             {
-                score -= (int)waveData.HP;
+                score -= (long)waveData.HP;
                 if (score < 0)
                 {
                     break;
