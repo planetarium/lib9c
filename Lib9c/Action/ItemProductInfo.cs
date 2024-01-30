@@ -1,6 +1,5 @@
 using System;
 using Bencodex.Types;
-using Lib9c.Model.Order;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;

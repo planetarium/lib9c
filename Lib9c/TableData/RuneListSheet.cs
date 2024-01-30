@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Nekoyume.Model.EnumType;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData

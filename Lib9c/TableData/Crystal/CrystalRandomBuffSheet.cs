@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Buff;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData.Crystal

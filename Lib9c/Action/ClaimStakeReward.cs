@@ -122,124 +122,31 @@ namespace Nekoyume.Action
 
             // Fixed Reward
             var random = context.GetRandom();
-            foreach (var reward in stakeRegularFixedRewardSheet[stakingLevel].Rewards)
+#pragma warning disable LAA1002
+            foreach (var pair in StakeRewardCalculator.CalculateFixedRewards(stakingLevel, random, stakeRegularFixedRewardSheet, itemSheet, rewardSteps))
+#pragma warning restore LAA1002
             {
-                var itemRow = itemSheet[reward.ItemId];
-                var item = itemRow is MaterialItemSheet.Row materialRow
-                    ? ItemFactory.CreateTradableMaterial(materialRow)
-                    : ItemFactory.CreateItem(itemRow, random);
-                avatarState.inventory.AddItem(item, reward.Count * rewardSteps);
+                avatarState.inventory.AddItem(pair.Key, pair.Value);
             }
 
             // Regular Reward
-            foreach (var reward in stakeRegularRewardSheet[stakingLevel].Rewards)
+            var (itemResult, favResult) = StakeRewardCalculator.CalculateRewards(ncg, stakedNcg, stakingLevel, rewardSteps,
+                stakeRegularRewardSheet, itemSheet, random);
+#pragma warning disable LAA1002
+            foreach (var pair in itemResult)
+#pragma warning restore LAA1002
             {
-                var rateFav = FungibleAssetValue.Parse(
-                    stakedNcg.Currency,
-                    reward.DecimalRate.ToString(CultureInfo.InvariantCulture));
-                var rewardQuantityForSingleStep = stakedNcg.DivRem(rateFav, out _);
-                if (rewardQuantityForSingleStep <= 0)
-                {
-                    continue;
-                }
+                avatarState.inventory.AddItem(pair.Key, pair.Value);
+            }
 
-                switch (reward.Type)
-                {
-                    case StakeRegularRewardSheet.StakeRewardType.Item:
-                    {
-                        var majorUnit = (int)rewardQuantityForSingleStep * rewardSteps;
-                        if (majorUnit < 1)
-                        {
-                            continue;
-                        }
-
-                        var itemRow = itemSheet[reward.ItemId];
-                        ItemBase item;
-                        if (itemRow is MaterialItemSheet.Row materialRow)
-                        {
-                            item = reward.Tradable
-                                ? ItemFactory.CreateTradableMaterial(materialRow)
-                                : ItemFactory.CreateMaterial(materialRow);
-                        }
-                        else
-                        {
-                            item = ItemFactory.CreateItem(itemRow, random);
-                        }
-                        avatarState.inventory.AddItem(item, majorUnit);
-                        break;
-                    }
-                    case StakeRegularRewardSheet.StakeRewardType.Rune:
-                    {
-                        var majorUnit = rewardQuantityForSingleStep * rewardSteps;
-                        if (majorUnit < 1)
-                        {
-                            continue;
-                        }
-
-                        var runeReward = RuneHelper.StakeRune * majorUnit;
-                        states = states.MintAsset(context, AvatarAddress, runeReward);
-                        break;
-                    }
-                    case StakeRegularRewardSheet.StakeRewardType.Currency:
-                    {
-                        // NOTE: prepare reward currency.
-                        Currency rewardCurrency;
-                        // NOTE: this line covers the reward.CurrencyTicker is following cases:
-                        //       - Currencies.Crystal.Ticker
-                        //       - Currencies.Garage.Ticker
-                        //       - lower case is starting with "rune_" or "runestone_"
-                        //       - lower case is starting with "soulstone_"
-                        try
-                        {
-                            rewardCurrency =
-                                Currencies.GetMinterlessCurrency(reward.CurrencyTicker);
-                        }
-                        // NOTE: throw exception if reward.CurrencyTicker is null or empty.
-                        catch (ArgumentNullException)
-                        {
-                            throw;
-                        }
-                        // NOTE: handle the case that reward.CurrencyTicker isn't covered by
-                        //       Currencies.GetMinterlessCurrency().
-                        catch (ArgumentException)
-                        {
-                            // NOTE: throw exception if reward.CurrencyDecimalPlaces is null.
-                            if (reward.CurrencyDecimalPlaces is null)
-                            {
-                                throw new ArgumentNullException(
-                                    $"Decimal places of {reward.CurrencyTicker} is null");
-                            }
-
-                            // NOTE: new currency is created as uncapped currency.
-                            rewardCurrency = Currency.Uncapped(
-                                reward.CurrencyTicker,
-                                Convert.ToByte(reward.CurrencyDecimalPlaces.Value),
-                                minters: null);
-                        }
-
-                        var majorUnit = rewardQuantityForSingleStep * rewardSteps;
-                        var rewardFav = rewardCurrency * majorUnit;
-                        if (Currencies.IsRuneTicker(rewardCurrency.Ticker) ||
-                            Currencies.IsSoulstoneTicker(rewardCurrency.Ticker))
-                        {
-                            states = states.MintAsset(
-                                context,
-                                AvatarAddress,
-                                rewardFav);
-                        }
-                        else
-                        {
-                            states = states.MintAsset(
-                                context,
-                                context.Signer,
-                                rewardFav);
-                        }
-
-                        break;
-                    }
-                    default:
-                        throw new ArgumentException($"Can't handle reward type: {reward.Type}");
-                }
+            foreach (var fav in favResult)
+            {
+                var rewardCurrency = fav.Currency;
+                var recipient = Currencies.IsRuneTicker(rewardCurrency.Ticker) ||
+                                Currencies.IsSoulstoneTicker(rewardCurrency.Ticker)
+                    ? AvatarAddress
+                    : context.Signer;
+                states = states.MintAsset(context, recipient, fav);
             }
 
             // NOTE: update claimed block index.

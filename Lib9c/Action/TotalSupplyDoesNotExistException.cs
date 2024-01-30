@@ -1,4 +1,3 @@
-using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using System;
 using System.Runtime.Serialization;
