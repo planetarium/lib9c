@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
     using Nekoyume.TableData.Stake;
@@ -658,6 +659,61 @@ namespace Lib9c.Tests.Action
                     expectedBalances,
                     AvatarAddr.Derive("inventory"),
                     expectedItems);
+            }
+        }
+
+        [Fact]
+        public void Execute_V6()
+        {
+            var prevState = _initialStates[1];
+            var stakeAddr = StakeStateV2.DeriveAddress(AgentAddr);
+            var stakePolicySheet = new StakePolicySheet();
+            stakePolicySheet.Set(StakePolicySheetFixtures.V6);
+            var stakeStateV2 = PrepareStakeStateV2(
+                stakePolicySheet,
+                0L,
+                0L);
+            prevState = prevState
+                .SetState(
+                    Addresses.GetSheetAddress<StakePolicySheet>(),
+                    StakePolicySheetFixtures.V6.Serialize())
+                .SetState(
+                    Addresses.GetSheetAddress("StakeRegularRewardSheet_V6"),
+                    StakeRegularRewardSheetFixtures.V6.Serialize())
+                .SetState(
+                    Addresses.GetSheetAddress("StakeRegularRewardFixedRewardSheet_V3"),
+                    StakeRegularFixedRewardSheetFixtures.V3.Serialize())
+                .SetState(stakeAddr, stakeStateV2.Serialize())
+                .MintAsset(
+                    new ActionContext(),
+                    stakeAddr,
+                    _ncg * 10000000);
+            var agentAddr = AgentAddr;
+            var avatarAddr = AvatarAddr;
+            var blockIndex = stakePolicySheet.RewardIntervalValue;
+            var nextState = Execute(prevState, agentAddr, avatarAddr, blockIndex);
+            var avatarState = nextState.GetAvatarStateV2(AvatarAddr);
+            var expected = new[]
+            {
+                (400000, 25000000, true),
+                (500000, 125002, true),
+                (600201, 200000, false),
+                (800201, 200000, false),
+                (800202, 200000, false),
+            };
+            foreach (var (itemId, count, tradable) in expected)
+            {
+                Assert.True(avatarState.inventory.TryGetItem(itemId, out var inventoryItem));
+                Assert.Equal(count, inventoryItem.count);
+                if (tradable)
+                {
+                    Assert.IsType<TradableMaterial>(inventoryItem.item);
+                }
+                else
+                {
+                    Assert.IsNotType<TradableMaterial>(inventoryItem.item);
+                    Assert.IsType<Material>(inventoryItem.item);
+                }
             }
         }
 
