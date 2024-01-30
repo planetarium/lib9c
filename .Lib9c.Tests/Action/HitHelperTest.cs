@@ -10,7 +10,7 @@ namespace Lib9c.Tests.Action
         public void GetHitStep2()
         {
             // copy from previous logic
-            int GetHitStep2Legacy(int attackerHit, int defenderHit)
+            long GetHitStep2Legacy(int attackerHit, int defenderHit)
             {
                 attackerHit = Math.Max(1, attackerHit);
                 defenderHit = Math.Max(1, defenderHit);

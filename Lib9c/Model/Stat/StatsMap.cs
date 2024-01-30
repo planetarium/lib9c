@@ -10,41 +10,41 @@ namespace Nekoyume.Model.Stat
     [Serializable]
     public class StatsMap : IStats, IBaseAndAdditionalStats, IState
     {
-        public int HP => GetStat(StatType.HP);
-        public int ATK => GetStat(StatType.ATK);
-        public int DEF => GetStat(StatType.DEF);
-        public int CRI => GetStat(StatType.CRI);
-        public int HIT => GetStat(StatType.HIT);
-        public int SPD => GetStat(StatType.SPD);
-        public int DRV => GetStat(StatType.DRV);
-        public int DRR => GetStat(StatType.DRR);
-        public int CDMG => GetStat(StatType.CDMG);
-        public int ArmorPenetration => GetStat(StatType.ArmorPenetration);
-        public int Thorn => GetStat(StatType.Thorn);
+        public long HP => GetStat(StatType.HP);
+        public long ATK => GetStat(StatType.ATK);
+        public long DEF => GetStat(StatType.DEF);
+        public long CRI => GetStat(StatType.CRI);
+        public long HIT => GetStat(StatType.HIT);
+        public long SPD => GetStat(StatType.SPD);
+        public long DRV => GetStat(StatType.DRV);
+        public long DRR => GetStat(StatType.DRR);
+        public long CDMG => GetStat(StatType.CDMG);
+        public long ArmorPenetration => GetStat(StatType.ArmorPenetration);
+        public long Thorn => GetStat(StatType.Thorn);
 
-        public int BaseHP => GetBaseStat(StatType.HP);
-        public int BaseATK => GetBaseStat(StatType.ATK);
-        public int BaseDEF => GetBaseStat(StatType.DEF);
-        public int BaseCRI => GetBaseStat(StatType.CRI);
-        public int BaseHIT => GetBaseStat(StatType.HIT);
-        public int BaseSPD => GetBaseStat(StatType.SPD);
-        public int BaseDRV => GetBaseStat(StatType.DRV);
-        public int BaseDRR => GetBaseStat(StatType.DRR);
-        public int BaseCDMG => GetBaseStat(StatType.CDMG);
-        public int BaseArmorPenetration => GetBaseStat(StatType.ArmorPenetration);
-        public int BaseThorn => GetBaseStat(StatType.Thorn);
+        public long BaseHP => GetBaseStat(StatType.HP);
+        public long BaseATK => GetBaseStat(StatType.ATK);
+        public long BaseDEF => GetBaseStat(StatType.DEF);
+        public long BaseCRI => GetBaseStat(StatType.CRI);
+        public long BaseHIT => GetBaseStat(StatType.HIT);
+        public long BaseSPD => GetBaseStat(StatType.SPD);
+        public long BaseDRV => GetBaseStat(StatType.DRV);
+        public long BaseDRR => GetBaseStat(StatType.DRR);
+        public long BaseCDMG => GetBaseStat(StatType.CDMG);
+        public long BaseArmorPenetration => GetBaseStat(StatType.ArmorPenetration);
+        public long BaseThorn => GetBaseStat(StatType.Thorn);
 
-        public int AdditionalHP => GetAdditionalStat(StatType.HP);
-        public int AdditionalATK => GetAdditionalStat(StatType.ATK);
-        public int AdditionalDEF => GetAdditionalStat(StatType.DEF);
-        public int AdditionalCRI => GetAdditionalStat(StatType.CRI);
-        public int AdditionalHIT => GetAdditionalStat(StatType.HIT);
-        public int AdditionalSPD => GetAdditionalStat(StatType.SPD);
-        public int AdditionalDRV => GetAdditionalStat(StatType.DRV);
-        public int AdditionalDRR => GetAdditionalStat(StatType.DRR);
-        public int AdditionalCDMG => GetAdditionalStat(StatType.CDMG);
-        public int AdditionalArmorPenetration => GetAdditionalStat(StatType.ArmorPenetration);
-        public int AdditionalThorn => GetAdditionalStat(StatType.Thorn);
+        public long AdditionalHP => GetAdditionalStat(StatType.HP);
+        public long AdditionalATK => GetAdditionalStat(StatType.ATK);
+        public long AdditionalDEF => GetAdditionalStat(StatType.DEF);
+        public long AdditionalCRI => GetAdditionalStat(StatType.CRI);
+        public long AdditionalHIT => GetAdditionalStat(StatType.HIT);
+        public long AdditionalSPD => GetAdditionalStat(StatType.SPD);
+        public long AdditionalDRV => GetAdditionalStat(StatType.DRV);
+        public long AdditionalDRR => GetAdditionalStat(StatType.DRR);
+        public long AdditionalCDMG => GetAdditionalStat(StatType.CDMG);
+        public long AdditionalArmorPenetration => GetAdditionalStat(StatType.ArmorPenetration);
+        public long AdditionalThorn => GetAdditionalStat(StatType.Thorn);
 
         private readonly StatMap _statMap = new StatMap();
 
@@ -66,17 +66,17 @@ namespace Nekoyume.Model.Stat
             return _statMap != null ? _statMap.GetHashCode() : 0;
         }
 
-        public int GetStat(StatType statType)
+        public long GetStat(StatType statType)
         {
-            return _statMap.GetStatAsInt(statType);
+            return _statMap.GetStatAsLong(statType);
         }
 
-        public int GetBaseStat(StatType statType)
+        public long GetBaseStat(StatType statType)
         {
             return _statMap.GetBaseStat(statType);
         }
 
-        public int GetAdditionalStat(StatType statType)
+        public long GetAdditionalStat(StatType statType)
         {
             return _statMap.GetAdditionalStat(statType);
         }
@@ -105,22 +105,22 @@ namespace Nekoyume.Model.Stat
 
         public void Deserialize(Dictionary serialized) => _statMap.Deserialize(serialized);
 
-        public IEnumerable<(StatType statType, int value)> GetStats(bool ignoreZero = false)
+        public IEnumerable<(StatType statType, long value)> GetStats(bool ignoreZero = false)
         {
             return _statMap.GetStats(ignoreZero);
         }
 
-        public IEnumerable<(StatType statType, int baseValue)> GetBaseStats(bool ignoreZero = false)
+        public IEnumerable<(StatType statType, long baseValue)> GetBaseStats(bool ignoreZero = false)
         {
             return _statMap.GetBaseStats(ignoreZero);
         }
 
-        public IEnumerable<(StatType statType, int additionalValue)> GetAdditionalStats(bool ignoreZero = false)
+        public IEnumerable<(StatType statType, long additionalValue)> GetAdditionalStats(bool ignoreZero = false)
         {
             return _statMap.GetAdditionalStats(ignoreZero);
         }
 
-        public IEnumerable<(StatType statType, int baseValue, int additionalValue)> GetBaseAndAdditionalStats(
+        public IEnumerable<(StatType statType, long baseValue, long additionalValue)> GetBaseAndAdditionalStats(
             bool ignoreZero = false)
         {
             return _statMap.GetBaseAndAdditionalStats(ignoreZero);

@@ -169,7 +169,7 @@ namespace Nekoyume.Action
             itemSlotState.UpdateCostumes(CostumeIds);
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
-            int previousHighScore = raiderState.HighScore;
+            long previousHighScore = raiderState.HighScore;
             WorldBossState bossState;
             WorldBossGlobalHpSheet hpSheet = sheets.GetSheet<WorldBossGlobalHpSheet>();
             if (states.TryGetLegacyState(worldBossAddress, out List rawBossState))
@@ -254,7 +254,7 @@ namespace Nekoyume.Action
                 equipmentList, costumeList,
                 runeOptions, avatarState.level,
                 characterRow, costumeStatSheet);
-            int score = simulator.DamageDealt;
+            long score = simulator.DamageDealt;
             raiderState.Update(avatarState, cp, score, PayNcg, context.BlockIndex);
 
             // Reward.

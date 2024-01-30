@@ -154,9 +154,17 @@ namespace Nekoyume.Action
                         }
 
                         var itemRow = itemSheet[reward.ItemId];
-                        var item = itemRow is MaterialItemSheet.Row materialRow
-                            ? ItemFactory.CreateTradableMaterial(materialRow)
-                            : ItemFactory.CreateItem(itemRow, random);
+                        ItemBase item;
+                        if (itemRow is MaterialItemSheet.Row materialRow)
+                        {
+                            item = reward.Tradable
+                                ? ItemFactory.CreateTradableMaterial(materialRow)
+                                : ItemFactory.CreateMaterial(materialRow);
+                        }
+                        else
+                        {
+                            item = ItemFactory.CreateItem(itemRow, random);
+                        }
                         avatarState.inventory.AddItem(item, majorUnit);
                         break;
                     }

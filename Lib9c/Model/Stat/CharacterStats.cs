@@ -44,32 +44,32 @@ namespace Nekoyume.Model.Stat
         public IStats BuffStats => _buffStats;
         public IStats OptionalStats => _optionalStats;
 
-        public int BaseHP => BaseStats.HP;
-        public int BaseATK => BaseStats.ATK;
-        public int BaseDEF => BaseStats.DEF;
-        public int BaseCRI => BaseStats.CRI;
-        public int BaseHIT => BaseStats.HIT;
-        public int BaseSPD => BaseStats.SPD;
-        public int BaseDRV => BaseStats.DRV;
-        public int BaseDRR => BaseStats.DRR;
-        public int BaseCDMG => BaseStats.CDMG;
-        public int BaseArmorPenetration => BaseStats.ArmorPenetration;
-        public int BaseThorn => BaseStats.Thorn;
+        public long BaseHP => BaseStats.HP;
+        public long BaseATK => BaseStats.ATK;
+        public long BaseDEF => BaseStats.DEF;
+        public long BaseCRI => BaseStats.CRI;
+        public long BaseHIT => BaseStats.HIT;
+        public long BaseSPD => BaseStats.SPD;
+        public long BaseDRV => BaseStats.DRV;
+        public long BaseDRR => BaseStats.DRR;
+        public long BaseCDMG => BaseStats.CDMG;
+        public long BaseArmorPenetration => BaseStats.ArmorPenetration;
+        public long BaseThorn => BaseStats.Thorn;
 
-        public int AdditionalHP => HP - _baseStats.HP;
-        public int AdditionalATK => ATK - _baseStats.ATK;
-        public int AdditionalDEF => DEF - _baseStats.DEF;
-        public int AdditionalCRI => CRI - _baseStats.CRI;
-        public int AdditionalHIT => HIT - _baseStats.HIT;
-        public int AdditionalSPD => SPD - _baseStats.SPD;
-        public int AdditionalDRV => DRV - _baseStats.DRV;
-        public int AdditionalDRR => DRR - _baseStats.DRR;
-        public int AdditionalCDMG => CDMG - _baseStats.CDMG;
-        public int AdditionalArmorPenetration => ArmorPenetration - _baseStats.ArmorPenetration;
-        public int AdditionalThorn => Thorn - _baseStats.Thorn;
+        public long AdditionalHP => HP - _baseStats.HP;
+        public long AdditionalATK => ATK - _baseStats.ATK;
+        public long AdditionalDEF => DEF - _baseStats.DEF;
+        public long AdditionalCRI => CRI - _baseStats.CRI;
+        public long AdditionalHIT => HIT - _baseStats.HIT;
+        public long AdditionalSPD => SPD - _baseStats.SPD;
+        public long AdditionalDRV => DRV - _baseStats.DRV;
+        public long AdditionalDRR => DRR - _baseStats.DRR;
+        public long AdditionalCDMG => CDMG - _baseStats.CDMG;
+        public long AdditionalArmorPenetration => ArmorPenetration - _baseStats.ArmorPenetration;
+        public long AdditionalThorn => Thorn - _baseStats.Thorn;
 
         public bool IsArenaCharacter { private get; set; } = false;
-        public int HpIncreasingModifier { private get; set; } = 2;
+        public long HpIncreasingModifier { private get; set; } = 2;
 
         private readonly Dictionary<StatType, decimal> MinimumStatValues =
             new Dictionary<StatType, decimal>()
@@ -356,7 +356,7 @@ namespace Nekoyume.Model.Stat
         public void IncreaseHpForArena()
         {
             var originalHP = _statMap[StatType.HP];
-            _statMap[StatType.HP].SetBaseValue(Math.Max(0, originalHP.TotalValueAsInt * HpIncreasingModifier));
+            _statMap[StatType.HP].SetBaseValue(Math.Max(0, originalHP.TotalValueAsLong * HpIncreasingModifier));
         }
 
         private void UpdateBaseStats()
@@ -395,7 +395,7 @@ namespace Nekoyume.Model.Stat
             {
                 if (!LegacyDecimalStatTypes.Contains(stat.StatType))
                 {
-                    var value = Math.Max(0m, stat.BaseValueAsInt);
+                    var value = Math.Max(0m, stat.BaseValueAsLong);
                     stat.SetBaseValue(value);
                 }
                 else
@@ -429,7 +429,7 @@ namespace Nekoyume.Model.Stat
                 var minimumValue = MinimumStatValues[stat.StatType];
                 if (!LegacyDecimalStatTypes.Contains(stat.StatType))
                 {
-                    var value = Math.Max(minimumValue, stat.BaseValueAsInt);
+                    var value = Math.Max(minimumValue, stat.BaseValueAsLong);
                     stat.SetBaseValue(value);
                 }
                 else
@@ -450,17 +450,17 @@ namespace Nekoyume.Model.Stat
             return new CharacterStats(this);
         }
 
-        public IEnumerable<(StatType statType, int baseValue)> GetBaseStats(bool ignoreZero = false)
+        public IEnumerable<(StatType statType, long baseValue)> GetBaseStats(bool ignoreZero = false)
         {
             return _baseStats.GetStats(ignoreZero);
         }
 
-        public IEnumerable<(StatType statType, int additionalValue)> GetAdditionalStats(bool ignoreZero = false)
+        public IEnumerable<(StatType statType, long additionalValue)> GetAdditionalStats(bool ignoreZero = false)
         {
             var baseStats = _baseStats.GetStats();
             foreach (var (statType, stat) in baseStats)
             {
-                var value = _statMap[statType].BaseValueAsInt - stat;
+                var value = _statMap[statType].BaseValueAsLong - stat;
                 if (!ignoreZero || value != default)
                 {
                     yield return (statType, value);
@@ -468,13 +468,13 @@ namespace Nekoyume.Model.Stat
             }
         }
 
-        public IEnumerable<(StatType statType, int baseValue, int additionalValue)> GetBaseAndAdditionalStats(
+        public IEnumerable<(StatType statType, long baseValue, long additionalValue)> GetBaseAndAdditionalStats(
             bool ignoreZero = false)
         {
             var additionalStats = GetAdditionalStats();
             foreach (var (statType, additionalStat) in additionalStats)
             {
-                var baseStat = _baseStats.GetStatAsInt(statType);
+                var baseStat = _baseStats.GetStatAsLong(statType);
                 if (!ignoreZero ||
                     (baseStat != default) || (additionalStat != default))
                 {

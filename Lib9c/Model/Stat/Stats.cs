@@ -10,21 +10,21 @@ namespace Nekoyume.Model.Stat
     {
         protected readonly StatMap _statMap;
 
-        public int HP => _statMap[StatType.HP].BaseValueAsInt;
-        public int ATK => _statMap[StatType.ATK].BaseValueAsInt;
-        public int DEF => _statMap[StatType.DEF].BaseValueAsInt;
-        public int CRI => _statMap[StatType.CRI].BaseValueAsInt;
-        public int HIT => _statMap[StatType.HIT].BaseValueAsInt;
-        public int SPD => _statMap[StatType.SPD].BaseValueAsInt;
-        public int DRV => _statMap[StatType.DRV].BaseValueAsInt;
-        public int DRR => _statMap[StatType.DRR].BaseValueAsInt;
-        public int CDMG => _statMap[StatType.CDMG].BaseValueAsInt;
-        public int ArmorPenetration => _statMap[StatType.ArmorPenetration].BaseValueAsInt;
-        public int Thorn => _statMap[StatType.Thorn].BaseValueAsInt;
+        public long HP => _statMap[StatType.HP].BaseValueAsLong;
+        public long ATK => _statMap[StatType.ATK].BaseValueAsLong;
+        public long DEF => _statMap[StatType.DEF].BaseValueAsLong;
+        public long CRI => _statMap[StatType.CRI].BaseValueAsLong;
+        public long HIT => _statMap[StatType.HIT].BaseValueAsLong;
+        public long SPD => _statMap[StatType.SPD].BaseValueAsLong;
+        public long DRV => _statMap[StatType.DRV].BaseValueAsLong;
+        public long DRR => _statMap[StatType.DRR].BaseValueAsLong;
+        public long CDMG => _statMap[StatType.CDMG].BaseValueAsLong;
+        public long ArmorPenetration => _statMap[StatType.ArmorPenetration].BaseValueAsLong;
+        public long Thorn => _statMap[StatType.Thorn].BaseValueAsLong;
 
         protected readonly HashSet<StatType> LegacyDecimalStatTypes =
             new HashSet<StatType>{ StatType.CRI, StatType.HIT, StatType.SPD };
-        
+
         public Stats()
         {
             _statMap = new StatMap();
@@ -46,10 +46,10 @@ namespace Nekoyume.Model.Stat
             {
                 if (!LegacyDecimalStatTypes.Contains(stat.StatType))
                 {
-                    int sum = 0;
+                    long sum = 0;
                     foreach (var s in statsArray)
                     {
-                        sum += s.GetStatAsInt(stat.StatType);
+                        sum += s.GetStatAsLong(stat.StatType);
                     }
                     stat.SetBaseValue(sum);
                 }
@@ -82,7 +82,7 @@ namespace Nekoyume.Model.Stat
                 var statType = statModifier.StatType;
                 if (!LegacyDecimalStatTypes.Contains(statType))
                 {
-                    var originalStatValue = GetStatAsInt(statType);
+                    var originalStatValue = GetStatAsLong(statType);
                     var result = statModifier.GetModifiedValue(originalStatValue);
                     _statMap[statModifier.StatType].AddBaseValue(result);
                 }
@@ -104,13 +104,13 @@ namespace Nekoyume.Model.Stat
                 var statType = statModifier.StatType;
                 if (!LegacyDecimalStatTypes.Contains(statType))
                 {
-                    int originalStatValue = 0;
+                    long originalStatValue = 0;
                     foreach (var stats in baseStats)
                     {
-                        originalStatValue += stats.GetStatAsInt(statType);
+                        originalStatValue += stats.GetStatAsLong(statType);
                     }
 
-                    int result = statModifier.GetModifiedValue(originalStatValue);
+                    long result = (long)statModifier.GetModifiedValue(originalStatValue);
                     _statMap[statModifier.StatType].AddBaseValue(result);
                 }
                 else
@@ -127,9 +127,9 @@ namespace Nekoyume.Model.Stat
             }
         }
 
-        public int GetStatAsInt(StatType statType)
+        public long GetStatAsLong(StatType statType)
         {
-            return _statMap.GetStatAsInt(statType);
+            return _statMap.GetStatAsLong(statType);
         }
 
         public decimal GetStat(StatType statType)
@@ -148,7 +148,7 @@ namespace Nekoyume.Model.Stat
             _statMap[statType].SetBaseValue(value);
         }
 
-        public IEnumerable<(StatType statType, int value)> GetStats(bool ignoreZero = false)
+        public IEnumerable<(StatType statType, long value)> GetStats(bool ignoreZero = false)
         {
             return _statMap.GetStats(ignoreZero);
         }

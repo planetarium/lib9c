@@ -10,7 +10,7 @@ namespace Nekoyume.Model.Skill
     {
         public NormalAttack(
             SkillSheet.Row skillRow,
-            int power,
+            long power,
             int chance,
             int statPowerRatio,
             StatType referencedStatType) : base(skillRow, power, chance, statPowerRatio, referencedStatType)

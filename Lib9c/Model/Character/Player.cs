@@ -588,7 +588,7 @@ namespace Nekoyume.Model
                         new StatModifier(
                             x.stat.StatType,
                             x.operationType,
-                            x.stat.BaseValueAsInt)));
+                            x.stat.BaseValueAsLong)));
                 Stats.AddRune(statModifiers);
                 ResetCurrentHP();
 
@@ -606,7 +606,7 @@ namespace Nekoyume.Model
                 }
                 else if (optionInfo.StatReferenceType == EnumType.StatReferenceType.Caster)
                 {
-                    var value = Stats.GetStatAsInt(optionInfo.SkillStatType);
+                    var value = Stats.GetStatAsLong(optionInfo.SkillStatType);
                     power = (int)Math.Round(value * optionInfo.SkillValue);
                 }
                 var skill = SkillFactory.GetV1(skillRow, power, optionInfo.SkillChance);
@@ -642,7 +642,7 @@ namespace Nekoyume.Model
                         new StatModifier(
                             x.stat.StatType,
                             x.operationType,
-                            x.stat.TotalValueAsInt)));
+                            x.stat.TotalValueAsLong)));
                 Stats.AddOptional(statModifiers);
                 ResetCurrentHP();
 
@@ -660,7 +660,7 @@ namespace Nekoyume.Model
                 }
                 else if (optionInfo.StatReferenceType == EnumType.StatReferenceType.Caster)
                 {
-                    var value = Stats.GetStatAsInt(optionInfo.SkillStatType);
+                    var value = Stats.GetStatAsLong(optionInfo.SkillStatType);
                     power = (int)Math.Round(value * optionInfo.SkillValue);
                 }
                 var skill = SkillFactory.GetV1(skillRow, power, optionInfo.SkillChance);

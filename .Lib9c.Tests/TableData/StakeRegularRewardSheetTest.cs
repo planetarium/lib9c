@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.TableData
 {
+    using System.Linq;
     using Lib9c.Tests.Fixtures.TableCSV.Stake;
     using Libplanet.Action.State;
     using Libplanet.Types.Assets;
@@ -36,6 +37,7 @@ namespace Lib9c.Tests.TableData
             Assert.Equal(string.Empty, reward.CurrencyTicker);
             Assert.Null(reward.CurrencyDecimalPlaces);
             Assert.Equal(10m, reward.DecimalRate);
+            Assert.True(reward.Tradable);
             reward = row.Rewards[1];
             Assert.Equal(500000, reward.ItemId);
             Assert.Equal(0, reward.Rate);
@@ -43,6 +45,7 @@ namespace Lib9c.Tests.TableData
             Assert.Equal(string.Empty, reward.CurrencyTicker);
             Assert.Null(reward.CurrencyDecimalPlaces);
             Assert.Equal(800m, reward.DecimalRate);
+            Assert.True(reward.Tradable);
             reward = row.Rewards[2];
             Assert.Equal(20001, reward.ItemId);
             Assert.Equal(0, reward.Rate);
@@ -50,6 +53,7 @@ namespace Lib9c.Tests.TableData
             Assert.Equal(string.Empty, reward.CurrencyTicker);
             Assert.Null(reward.CurrencyDecimalPlaces);
             Assert.Equal(6000m, reward.DecimalRate);
+            Assert.True(reward.Tradable);
 
             row = _sheet[5];
             Assert.Equal(500000, row.RequiredGold);
@@ -61,6 +65,7 @@ namespace Lib9c.Tests.TableData
             Assert.Equal(string.Empty, reward.CurrencyTicker);
             Assert.Null(reward.CurrencyDecimalPlaces);
             Assert.Equal(5m, reward.DecimalRate);
+            Assert.True(reward.Tradable);
             reward = row.Rewards[1];
             Assert.Equal(500000, reward.ItemId);
             Assert.Equal(0, reward.Rate);
@@ -68,6 +73,7 @@ namespace Lib9c.Tests.TableData
             Assert.Equal(string.Empty, reward.CurrencyTicker);
             Assert.Null(reward.CurrencyDecimalPlaces);
             Assert.Equal(800m, reward.DecimalRate);
+            Assert.True(reward.Tradable);
             reward = row.Rewards[2];
             Assert.Equal(20001, reward.ItemId);
             Assert.Equal(0, reward.Rate);
@@ -75,6 +81,7 @@ namespace Lib9c.Tests.TableData
             Assert.Equal(string.Empty, reward.CurrencyTicker);
             Assert.Null(reward.CurrencyDecimalPlaces);
             Assert.Equal(6000m, reward.DecimalRate);
+            Assert.True(reward.Tradable);
         }
 
         [Theory]
@@ -100,6 +107,28 @@ namespace Lib9c.Tests.TableData
         {
             Assert.Throws<InsufficientBalanceException>(
                 () => _sheet.FindLevelByStakedAmount(default, balance * _currency));
+        }
+
+        [Fact]
+        public void Set_V6()
+        {
+            var csv = TableSheetsImporter.ImportSheets()["StakeRegularRewardSheet_V6"];
+            var sheet = new StakeRegularRewardSheet();
+            sheet.Set(csv);
+            var nonTradableIds = new[]
+            {
+                600201,
+                800201,
+                800202,
+            };
+
+            foreach (var row in sheet.Values)
+            {
+                foreach (var rewardInfo in row.Rewards)
+                {
+                    Assert.Equal(!nonTradableIds.Contains(rewardInfo.ItemId), rewardInfo.Tradable);
+                }
+            }
         }
     }
 }
