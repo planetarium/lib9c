@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Numerics;
-using Bencodex.Types;
 using Lib9c;
 using Libplanet.Action;
 using Libplanet.Types.Assets;
@@ -56,9 +54,17 @@ namespace Nekoyume.Model.State
                         }
 
                         var itemRow = itemSheet[reward.ItemId];
-                        var item = itemRow is MaterialItemSheet.Row materialRow
-                            ? ItemFactory.CreateTradableMaterial(materialRow)
-                            : ItemFactory.CreateItem(itemRow, random);
+                        ItemBase item;
+                        if (itemRow is MaterialItemSheet.Row materialRow)
+                        {
+                            item = reward.Tradable
+                                ? ItemFactory.CreateTradableMaterial(materialRow)
+                                : ItemFactory.CreateMaterial(materialRow);
+                        }
+                        else
+                        {
+                            item = ItemFactory.CreateItem(itemRow, random);
+                        }
                         itemResult.TryAdd(item, 0);
                         itemResult[item] += majorUnit;
                         break;
