@@ -1019,6 +1019,37 @@ namespace Lib9c.Tests.Action
             }));
         }
 
+        [Theory]
+        [InlineData(8, null)]
+        [InlineData(100, null)]
+        [InlineData(0, typeof(ArgumentException))]
+        [InlineData(-1, typeof(ArgumentException))]
+        public void PlainValue(int ticket, Type exc)
+        {
+            BattleArena action = new BattleArena
+            {
+                myAvatarAddress = _avatar1Address,
+                enemyAvatarAddress = _avatar2Address,
+                championshipId = 1,
+                round = 1,
+                ticket = ticket,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+                runeInfos = new List<RuneSlotInfo>(),
+            };
+            IValue plainValue = action.PlainValue;
+            BattleArena des = new BattleArena();
+            if (exc is null)
+            {
+                des.LoadPlainValue(plainValue);
+                Assert.Equal(plainValue, des.PlainValue);
+            }
+            else
+            {
+                Assert.Throws(exc, () => des.LoadPlainValue(plainValue));
+            }
+        }
+
         private static (AgentState AgentState, AvatarState AvatarState) GetAgentStateWithAvatarState(
             IReadOnlyDictionary<string, string> sheets,
             TableSheets tableSheets,
