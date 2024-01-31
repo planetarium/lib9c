@@ -64,11 +64,18 @@ namespace Nekoyume.Blockchain
                     int txQuotaPerSigner = _quotaPerSigner;
 
                     // update txQuotaPerSigner if signer is in the list
-                    if (_quotaPerSignerList.TryGetValue(tx.Signer, out int signerQuota))
+                    try
                     {
-                        txQuotaPerSigner = signerQuota;
+                        if (_accessControlService?.GetTxQuota(tx.Signer) is { } acsTxQuota)
+                        {
+                            txQuotaPerSigner = acsTxQuota;
+                        }
                     }
-
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("[NCStagePolicy-ACS] {0} {1}", ex.Message, ex.StackTrace);
+                        txQuotaPerSigner = _quotaPerSigner;
+                    }
 
                     if (s.Count > txQuotaPerSigner)
                     {

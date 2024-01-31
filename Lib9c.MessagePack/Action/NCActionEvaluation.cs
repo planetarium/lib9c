@@ -7,6 +7,7 @@ using Lib9c.Formatters;
 using Lib9c.Renderers;
 using Libplanet.Crypto;
 using Libplanet.Common;
+using Libplanet.Types.Tx;
 using MessagePack;
 
 namespace Nekoyume.Action
@@ -16,6 +17,7 @@ namespace Nekoyume.Action
     {
 #pragma warning disable MsgPack003
         [Key(0)]
+
         [MessagePackFormatter(typeof(NCActionFormatter))]
         public ActionBase? Action { get; set; }
 
@@ -45,6 +47,9 @@ namespace Nekoyume.Action
         [Key(7)]
         public Dictionary<string, IValue> Extra { get; set; }
 
+        [Key(8)]
+        [MessagePackFormatter(typeof(TxIdFormatter))]
+        public TxId? TxId { get; set; }
 
         [SerializationConstructor]
         public NCActionEvaluation(
@@ -55,7 +60,8 @@ namespace Nekoyume.Action
             Exception? exception,
             HashDigest<SHA256> previousStates,
             int randomSeed,
-            Dictionary<string, IValue> extra
+            Dictionary<string, IValue> extra,
+            TxId? txId
         )
         {
             Action = action;
@@ -66,6 +72,7 @@ namespace Nekoyume.Action
             PreviousState = previousStates;
             RandomSeed = randomSeed;
             Extra = extra;
+            TxId = txId;
         }
 
         public ActionEvaluation<ActionBase> ToActionEvaluation()
@@ -79,7 +86,8 @@ namespace Nekoyume.Action
                 Exception = Exception,
                 PreviousState = PreviousState,
                 RandomSeed = RandomSeed,
-                Extra = Extra
+                Extra = Extra,
+                TxId = TxId
             };
         }
     }

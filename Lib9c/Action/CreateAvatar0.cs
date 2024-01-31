@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
+using Lib9c;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -325,14 +326,46 @@ namespace Nekoyume.Action
         public static IWorld AddRunesForTest(
             IActionContext context,
             Address avatarAddress,
-            IWorld states)
+            IWorld states,
+            int count = int.MaxValue)
         {
             var runeSheet = states.GetSheet<RuneSheet>();
             foreach (var row in runeSheet.Values)
             {
-                var rune = RuneHelper.ToFungibleAssetValue(row, int.MaxValue);
+                var rune = RuneHelper.ToFungibleAssetValue(row, count);
                 states = states.MintAsset(context, avatarAddress, rune);
             }
+            return states;
+        }
+
+        public static IWorld AddSoulStoneForTest(
+            IActionContext context,
+            Address avatarAddress,
+            IWorld states,
+            int count = int.MaxValue)
+        {
+            var petSheet = states.GetSheet<PetSheet>();
+            foreach (var row in petSheet.Values)
+            {
+                var soulStone = Currencies.GetSoulStone(row.SoulStoneTicker) * count;
+                states = states.MintAsset(context, avatarAddress, soulStone);
+            }
+            return states;
+        }
+
+        public static IWorld AddPetsForTest(
+            Address avatarAddress,
+            IWorld states)
+        {
+            var petSheet = states.GetSheet<PetSheet>();
+            foreach (var id in petSheet.Keys)
+            {
+                var petState = new PetState(id);
+                petState.LevelUp();
+                var petStateAddress = PetState.DeriveAddress(avatarAddress, id);
+                states = states.SetLegacyState(petStateAddress, petState.Serialize());
+            }
+
             return states;
         }
     }

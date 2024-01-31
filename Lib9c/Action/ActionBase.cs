@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Text;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -14,8 +12,6 @@ using Nekoyume.Module;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
 #else
-using System.Reactive.Subjects;
-using System.Reactive.Linq;
 #endif
 
 namespace Nekoyume.Action

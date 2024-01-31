@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Bencodex.Types;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Skill.Arena
