@@ -34,5 +34,11 @@ namespace Nekoyume.Blockchain.Policy
                 .Add(new SpannedSubPolicy<int>(
                     startIndex: 2_800_001,
                     value: 4));
+
+        public static IVariableSubPolicy<int> Heimdall =>
+            Default
+                .Add(new SpannedSubPolicy<int>(
+                    startIndex: 1,
+                    value: 4));
     }
 }

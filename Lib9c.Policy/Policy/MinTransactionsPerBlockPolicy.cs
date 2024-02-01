@@ -31,5 +31,7 @@ namespace Nekoyume.Blockchain.Policy
                     startIndex: 3_924_700,
                     value: 0
                 ));
+
+        public static IVariableSubPolicy<int> Heimdall => Default;
     }
 }
