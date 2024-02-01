@@ -43,35 +43,35 @@ namespace Nekoyume.Blockchain.Policy
         }
 
         /// <summary>
-        /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-main deployment.
+        /// Creates an <see cref="IBlockPolicy{T}"/> instance for Odin mainnet.
         /// </summary>
-        public IBlockPolicy GetPolicy() =>
-            GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Odin,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Odin,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Odin,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Odin);
+        public IBlockPolicy GetPolicy() => GetPolicy(Planet.Odin);
 
         /// <summary>
-        /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-internal deployment.
+        /// Creates an <see cref="IBlockPolicy{T}"/> instance for the given planet.
         /// </summary>
-        public IBlockPolicy GetInternalPolicy() =>
-            GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.OdinInternal,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Odin,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Odin,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.OdinInternal);
-
-        /// <summary>
-        /// Creates an <see cref="IBlockPolicy{T}"/> instance for networks
-        /// with default options, without authorized mining and permissioned mining.
-        /// </summary>
-        public IBlockPolicy GetDefaultPolicy() =>
-            GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Default,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Default,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Default,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Default);
+        public IBlockPolicy GetPolicy(Planet planet)
+        {
+            return planet switch
+            {
+                Planet.Odin => GetPolicy(
+                    maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Odin,
+                    minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Odin,
+                    maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Odin,
+                    maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Odin
+                ),
+                Planet.OdinInternal => GetPolicy(
+                    maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.OdinInternal,
+                    minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Odin,
+                    maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Odin,
+                    maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.OdinInternal
+                ),
+                _ => throw new ArgumentException(
+                    $"Can't retrieve policy for given planet ({planet})",
+                    nameof(planet)
+                ),
+            };
+        }
 
         /// <summary>
         /// Gets a <see cref="BlockPolicy"/> constructed from given parameters.
