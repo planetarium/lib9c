@@ -11,12 +11,13 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.State;
+using Nekoyume.Module;
+using Nekoyume.TableData;
+using static Lib9c.SerializeKeys;
 
 namespace Lib9c.DevExtensions.Action
 {
@@ -68,7 +69,7 @@ namespace Lib9c.DevExtensions.Action
             weeklyArenaAddress = plainValue["w"].ToAddress();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var sellData = TestbedHelper.LoadData<TestbedSell>("TestbedSell");
@@ -149,16 +150,14 @@ namespace Lib9c.DevExtensions.Action
                 var slotState =
                     new CombinationSlotState(address,
                         0);
-                states = states.SetState(address, slotState.Serialize());
+                states = states.SetLegacyState(address, slotState.Serialize());
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);
-            states = states.SetState(agentAddress, agentState.Serialize())
-                .SetState(Addresses.Ranking, rankingState.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+            states = states
+                .SetAgentState(agentAddress, agentState)
+                .SetLegacyState(Addresses.Ranking, rankingState.Serialize())
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
             // ~Create Agent and avatar && ~Add item
 
             // for sell
@@ -187,23 +186,22 @@ namespace Lib9c.DevExtensions.Action
                 var tradableItem = order.Sell(avatarState);
 
                 var shardedShopState =
-                    states.TryGetState(shopAddress, out Dictionary serializedState)
+                    states.TryGetLegacyState(shopAddress, out Dictionary serializedState)
                         ? new ShardedShopStateV2(serializedState)
                         : new ShardedShopStateV2(shopAddress);
                 var orderDigest = order.Digest(avatarState, costumeStatSheet);
                 shardedShopState.Add(orderDigest, context.BlockIndex);
                 var orderReceiptList =
-                    states.TryGetState(orderReceiptAddress, out Dictionary receiptDict)
+                    states.TryGetLegacyState(orderReceiptAddress, out Dictionary receiptDict)
                         ? new OrderDigestListState(receiptDict)
                         : new OrderDigestListState(orderReceiptAddress);
                 orderReceiptList.Add(orderDigest);
 
-                states = states.SetState(orderReceiptAddress, orderReceiptList.Serialize())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                    .SetState(avatarAddress, avatarState.SerializeV2())
-                    .SetState(itemAddress, tradableItem.Serialize())
-                    .SetState(orderAddress, order.Serialize())
-                    .SetState(shopAddress, shardedShopState.Serialize());
+                states = states.SetLegacyState(orderReceiptAddress, orderReceiptList.Serialize())
+                    .SetAvatarState(avatarAddress, avatarState, true, true, false, false)
+                    .SetLegacyState(itemAddress, tradableItem.Serialize())
+                    .SetLegacyState(orderAddress, order.Serialize())
+                    .SetLegacyState(shopAddress, shardedShopState.Serialize());
             }
 
             result.SellerAgentAddress = agentAddress;

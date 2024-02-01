@@ -13,6 +13,7 @@ using Libplanet.Crypto;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using Material = Nekoyume.Model.Item.Material;
@@ -104,7 +105,7 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
@@ -245,14 +246,14 @@ namespace Nekoyume.Action
 
             avatarState.updatedAt = ctx.BlockIndex;
             avatarState.blockIndex = ctx.BlockIndex;
-            states = states.SetState(AvatarAddress, avatarState.Serialize());
+            states = states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
             slotState.Update(result, ctx.BlockIndex, requiredBlockIndex);
             sw.Stop();
             Log.Verbose("{AddressesHex}Combination Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}Combination Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(slotAddress, slotState.Serialize());
+                .SetLegacyState(slotAddress, slotState.Serialize());
         }
 
         private static ItemUsable GetFood(ConsumableItemSheet.Row equipmentItemRow, Guid itemId, long ctxBlockIndex)

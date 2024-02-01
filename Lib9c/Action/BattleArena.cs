@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -17,6 +17,7 @@ using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -89,7 +90,7 @@ namespace Nekoyume.Action
             ValidateTicket();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             ValidateTicket();
@@ -107,11 +108,10 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the signer tried to battle for themselves.");
             }
 
-            if (!states.TryGetAvatarStateV2(
+            if (!states.TryGetAvatarState(
                     context.Signer,
                     myAvatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -140,21 +140,21 @@ namespace Nekoyume.Action
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(myAvatarAddress, BattleType.Arena);
-            var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+            var runeSlotState = states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Arena);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(runeInfos, runeListSheet);
-            states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            states = states.SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize());
 
             // update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(myAvatarAddress, BattleType.Arena);
-            var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+            var itemSlotState = states.TryGetLegacyState(itemSlotStateAddress, out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Arena);
             itemSlotState.UpdateEquipment(equipments);
             itemSlotState.UpdateCostumes(costumes);
-            states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             if (!arenaSheet.TryGetValue(championshipId, out var arenaRow))
@@ -275,7 +275,7 @@ namespace Nekoyume.Action
             var currentTicketResetCount = ArenaHelper.GetCurrentTicketResetCount(
                 context.BlockIndex, roundData.StartBlockIndex, dailyArenaInterval);
             var purchasedCountAddr = arenaInformation.Address.Derive(PurchasedCountKey);
-            if (!states.TryGetState(purchasedCountAddr, out Integer purchasedCountDuringInterval))
+            if (!states.TryGetLegacyState(purchasedCountAddr, out Integer purchasedCountDuringInterval))
             {
                 purchasedCountDuringInterval = 0;
             }
@@ -284,7 +284,7 @@ namespace Nekoyume.Action
             {
                 arenaInformation.ResetTicket(currentTicketResetCount);
                 purchasedCountDuringInterval = 0;
-                states = states.SetState(purchasedCountAddr, purchasedCountDuringInterval);
+                states = states.SetLegacyState(purchasedCountAddr, purchasedCountDuringInterval);
             }
 
             if (roundData.ArenaType != ArenaType.OffSeason && ticket > 1)
@@ -320,7 +320,7 @@ namespace Nekoyume.Action
                 purchasedCountDuringInterval++;
                 states = states
                     .TransferAsset(context, context.Signer, arenaAdr, ticketBalance)
-                    .SetState(purchasedCountAddr, purchasedCountDuringInterval);
+                    .SetLegacyState(purchasedCountAddr, purchasedCountDuringInterval);
             }
 
             // update arena avatar state
@@ -330,7 +330,7 @@ namespace Nekoyume.Action
             var runeStates = new List<RuneState>();
             foreach (var address in runeInfos.Select(info => RuneState.DeriveAddress(myAvatarAddress, info.RuneId)))
             {
-                if (states.TryGetState(address, out List rawRuneState))
+                if (states.TryGetLegacyState(address, out List rawRuneState))
                 {
                     runeStates.Add(new RuneState(rawRuneState));
                 }
@@ -338,11 +338,11 @@ namespace Nekoyume.Action
 
             // get enemy equipped items
             var enemyItemSlotStateAddress = ItemSlotState.DeriveAddress(enemyAvatarAddress, BattleType.Arena);
-            var enemyItemSlotState = states.TryGetState(enemyItemSlotStateAddress, out List rawEnemyItemSlotState)
+            var enemyItemSlotState = states.TryGetLegacyState(enemyItemSlotStateAddress, out List rawEnemyItemSlotState)
                 ? new ItemSlotState(rawEnemyItemSlotState)
                 : new ItemSlotState(BattleType.Arena);
             var enemyRuneSlotStateAddress = RuneSlotState.DeriveAddress(enemyAvatarAddress, BattleType.Arena);
-            var enemyRuneSlotState = states.TryGetState(enemyRuneSlotStateAddress, out List enemyRawRuneSlotState)
+            var enemyRuneSlotState = states.TryGetLegacyState(enemyRuneSlotStateAddress, out List enemyRawRuneSlotState)
                 ? new RuneSlotState(enemyRawRuneSlotState)
                 : new RuneSlotState(BattleType.Arena);
 
@@ -350,7 +350,7 @@ namespace Nekoyume.Action
             var enemyRuneSlotInfos = enemyRuneSlotState.GetEquippedRuneSlotInfos();
             foreach (var address in enemyRuneSlotInfos.Select(info => RuneState.DeriveAddress(enemyAvatarAddress, info.RuneId)))
             {
-                if (states.TryGetState(address, out List rawRuneState))
+                if (states.TryGetLegacyState(address, out List rawRuneState))
                 {
                     enemyRuneStates.Add(new RuneState(rawRuneState));
                 }
@@ -425,28 +425,14 @@ namespace Nekoyume.Action
             enemyArenaScore.AddScore(enemyWinScore * winCount);
             arenaInformation.UpdateRecord(winCount, defeatCount);
 
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(myAvatarAddress, avatarState.SerializeV2())
-                    .SetState(
-                        myAvatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize())
-                    .SetState(
-                        myAvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize());
-            }
-
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}BattleArena Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(myArenaAvatarStateAdr, myArenaAvatarState.Serialize())
-                .SetState(myArenaScoreAdr, myArenaScore.Serialize())
-                .SetState(enemyArenaScoreAdr, enemyArenaScore.Serialize())
-                .SetState(arenaInformationAdr, arenaInformation.Serialize())
-                .SetState(
-                    myAvatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
+                .SetLegacyState(myArenaAvatarStateAdr, myArenaAvatarState.Serialize())
+                .SetLegacyState(myArenaScoreAdr, myArenaScore.Serialize())
+                .SetLegacyState(enemyArenaScoreAdr, enemyArenaScore.Serialize())
+                .SetLegacyState(arenaInformationAdr, arenaInformation.Serialize())
+                .SetAvatarState(myAvatarAddress, avatarState, false, true, false, false);
         }
 
         private void ValidateTicket()

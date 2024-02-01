@@ -13,6 +13,7 @@ using Libplanet.Crypto;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using Nekoyume.Helper;
@@ -67,7 +68,7 @@ namespace Nekoyume.Action
             name = (Text) plainValue["name"];
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
@@ -138,7 +139,7 @@ namespace Nekoyume.Action
             {
                 var slotState =
                     new CombinationSlotState(address, GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
-                states = states.SetState(address, slotState.Serialize());
+                states = states.SetLegacyState(address, slotState.Serialize());
             }
 
             avatarState.UpdateQuestRewards2(materialItemSheet);
@@ -148,9 +149,9 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}CreateAvatar Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(ctx.Signer, agentState.Serialize())
-                .SetState(Addresses.Ranking, rankingState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize());
+                .SetAgentState(ctx.Signer, agentState)
+                .SetLegacyState(Addresses.Ranking, rankingState.Serialize())
+                .SetAvatarState(avatarAddress, avatarState, false, false, false, false);
         }
 
         public static AvatarState CreateAvatarState(string name,
@@ -322,10 +323,10 @@ namespace Nekoyume.Action
             return optionIds;
         }
 
-        public static IAccount AddRunesForTest(
+        public static IWorld AddRunesForTest(
             IActionContext context,
             Address avatarAddress,
-            IAccount states,
+            IWorld states,
             int count = int.MaxValue)
         {
             var runeSheet = states.GetSheet<RuneSheet>();
@@ -337,10 +338,10 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public static IAccount AddSoulStoneForTest(
+        public static IWorld AddSoulStoneForTest(
             IActionContext context,
             Address avatarAddress,
-            IAccount states,
+            IWorld states,
             int count = int.MaxValue)
         {
             var petSheet = states.GetSheet<PetSheet>();
@@ -352,9 +353,9 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public static IAccount AddPetsForTest(
+        public static IWorld AddPetsForTest(
             Address avatarAddress,
-            IAccount states)
+            IWorld states)
         {
             var petSheet = states.GetSheet<PetSheet>();
             foreach (var id in petSheet.Keys)
@@ -362,7 +363,7 @@ namespace Nekoyume.Action
                 var petState = new PetState(id);
                 petState.LevelUp();
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, id);
-                states = states.SetState(petStateAddress, petState.Serialize());
+                states = states.SetLegacyState(petStateAddress, petState.Serialize());
             }
 
             return states;

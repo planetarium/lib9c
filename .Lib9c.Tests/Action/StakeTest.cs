@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Exceptions;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData.Stake;
     using Serilog;
     using Xunit;
@@ -21,7 +22,7 @@ namespace Lib9c.Tests.Action
 
     public class StakeTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly Currency _ncg;
         private readonly Address _agentAddr;
         private readonly StakePolicySheet _stakePolicySheet;
@@ -112,7 +113,7 @@ namespace Lib9c.Tests.Action
                 }
 
                 previousState = previousState
-                    .SetState(_agentAddr, agentState.Serialize());
+                    .SetAgentState(_agentAddr, agentState);
             }
 
             var monsterCollectionAddr =
@@ -122,7 +123,7 @@ namespace Lib9c.Tests.Action
                 1,
                 0);
             previousState = previousState
-                .SetState(monsterCollectionAddr, monsterCollectionState.SerializeV2());
+                .SetLegacyState(monsterCollectionAddr, monsterCollectionState.SerializeV2());
             Assert.Throws<MonsterCollectionExistingException>(() =>
                 Execute(
                     0,
@@ -154,7 +155,7 @@ namespace Lib9c.Tests.Action
         [InlineData("StakeRegularRewardSheet_V2")]
         public void Execute_Throw_StateNullException_Via_Sheet(string sheetName)
         {
-            var previousState = _initialState.SetState(
+            var previousState = _initialState.SetLegacyState(
                 Addresses.GetSheetAddress(sheetName),
                 Null.Value);
             Assert.Throws<StateNullException>(() =>
@@ -242,7 +243,7 @@ namespace Lib9c.Tests.Action
                     new ActionContext { Signer = Addresses.Admin },
                     stakeStateAddr,
                     _ncg * previousAmount)
-                .SetState(stakeStateAddr, stakeState.Serialize());
+                .SetLegacyState(stakeStateAddr, stakeState.Serialize());
             Assert.Throws<StakeExistingClaimableException>(() =>
                 Execute(
                     blockIndex,
@@ -274,7 +275,7 @@ namespace Lib9c.Tests.Action
                     new ActionContext { Signer = Addresses.Admin },
                     stakeStateAddr,
                     _ncg * previousAmount)
-                .SetState(stakeStateAddr, stakeStateV2.Serialize());
+                .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
             Assert.Throws<StakeExistingClaimableException>(() =>
                 Execute(
                     blockIndex,
@@ -312,7 +313,7 @@ namespace Lib9c.Tests.Action
                     new ActionContext { Signer = Addresses.Admin },
                     stakeStateAddr,
                     _ncg * previousAmount)
-                .SetState(stakeStateAddr, stakeState.Serialize());
+                .SetLegacyState(stakeStateAddr, stakeState.Serialize());
             Assert.Throws<RequiredBlockIndexException>(() =>
                 Execute(
                     blockIndex,
@@ -348,7 +349,7 @@ namespace Lib9c.Tests.Action
                     new ActionContext { Signer = Addresses.Admin },
                     stakeStateAddr,
                     _ncg * previousAmount)
-                .SetState(stakeStateAddr, stakeStateV2.Serialize());
+                .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
             Assert.Throws<RequiredBlockIndexException>(() =>
                 Execute(
                     blockIndex,
@@ -415,7 +416,7 @@ namespace Lib9c.Tests.Action
                     _agentAddr,
                     stakeStateAddr,
                     _ncg * previousAmount)
-                .SetState(stakeStateAddr, stakeState.Serialize());
+                .SetLegacyState(stakeStateAddr, stakeState.Serialize());
             Execute(
                 blockIndex,
                 previousState,
@@ -464,7 +465,7 @@ namespace Lib9c.Tests.Action
                     _agentAddr,
                     stakeStateAddr,
                     _ncg * previousAmount)
-                .SetState(stakeStateAddr, stakeStateV2.Serialize());
+                .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
             Execute(
                 blockIndex,
                 previousState,
@@ -473,9 +474,9 @@ namespace Lib9c.Tests.Action
                 amount);
         }
 
-        private IAccount Execute(
+        private IWorld Execute(
             long blockIndex,
-            IAccount previousState,
+            IWorld previousState,
             IRandom random,
             Address signer,
             long amount)

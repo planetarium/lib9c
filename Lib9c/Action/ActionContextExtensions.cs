@@ -1,5 +1,6 @@
 using Libplanet.Action;
 using Libplanet.Crypto;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {

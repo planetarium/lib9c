@@ -14,6 +14,7 @@ using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -50,7 +51,7 @@ namespace Nekoyume.Action
             AvatarAddress = plainValue[AvatarAddressKey].ToAddress();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -73,11 +74,10 @@ namespace Nekoyume.Action
                     context.BlockIndex);
             }
 
-            if (!states.TryGetAvatarStateV2(
+            if (!states.TryGetAvatarState(
                     context.Signer,
                     AvatarAddress,
-                    out var avatarState,
-                    out var migrationRequired))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
@@ -155,23 +155,9 @@ namespace Nekoyume.Action
                 stakeStateV2.StartedBlockIndex,
                 context.BlockIndex);
 
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(avatarState.address, avatarState.SerializeV2())
-                    .SetState(
-                        avatarState.address.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize())
-                    .SetState(
-                        avatarState.address.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize());
-            }
-
             return states
-                .SetState(stakeStateAddr, stakeStateV2.Serialize())
-                .SetState(
-                    avatarState.address.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize());
+                .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize())
+                .SetAvatarState(AvatarAddress, avatarState, false, true, false, false);
         }
     }
 }

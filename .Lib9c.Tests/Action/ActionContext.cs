@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     public class ActionContext : IActionContext
     {
         private long _gasUsed;
+
         private IRandom _random = null;
 
         public BlockHash? GenesisHash { get; set; }
@@ -27,7 +28,7 @@ namespace Lib9c.Tests.Action
 
         public int BlockProtocolVersion { get; set; }
 
-        public IAccount PreviousState { get; set; }
+        public IWorld PreviousState { get; set; }
 
         public int RandomSeed { get; set; }
 

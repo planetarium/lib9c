@@ -13,6 +13,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Summon;
 using Serilog;
@@ -159,19 +160,23 @@ namespace Nekoyume.Action
             return result;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug($"{addressesHex} AuraSummon Exec. Started.");
 
-            if (!states.TryGetAgentAvatarStatesV2(context.Signer, AvatarAddress, out var agentState,
-                    out var avatarState, out _))
+            var agentState = states.GetAgentState(context.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex} Aborted as the agent state of the signer was failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
@@ -260,10 +265,8 @@ namespace Nekoyume.Action
 
             // Set states
             return states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(context.Signer, agentState.Serialize());
+                .SetAvatarState(AvatarAddress, avatarState, true, true, false, true)
+                .SetAgentState(context.Signer, agentState);
         }
 
         public static void AddAndUnlockOption(

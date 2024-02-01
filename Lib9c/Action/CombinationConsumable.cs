@@ -11,6 +11,7 @@ using Libplanet.Crypto;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -52,7 +53,7 @@ namespace Nekoyume.Action
             recipeId = plainValue[RecipeIdKey].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -63,15 +64,12 @@ namespace Nekoyume.Action
                     slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Combination exec started", addressesHex);
 
-            if (!states.TryGetAvatarStateV2(context.Signer, avatarAddress, out var avatarState, out _))
+            if (!states.TryGetAvatarState(context.Signer, avatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -148,11 +146,10 @@ namespace Nekoyume.Action
             // ~Validate Work
 
             // Remove Required Materials
-            var inventory = avatarState.inventory;
             foreach (var pair in requiredFungibleItems.OrderBy(pair => pair.Key))
             {
                 if (!materialItemSheet.TryGetValue(pair.Key, out var materialRow) ||
-                    !inventory.RemoveFungibleItem(materialRow.ItemId, context.BlockIndex, pair.Value))
+                    !avatarState.inventory.RemoveFungibleItem(materialRow.ItemId, context.BlockIndex, pair.Value))
                 {
                     throw new NotEnoughMaterialException(
                         $"{addressesHex}Aborted as the player has no enough material ({pair.Key} * {pair.Value})");
@@ -217,11 +214,8 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Combination Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
+                .SetLegacyState(slotAddress, slotState.Serialize());
         }
     }
 }

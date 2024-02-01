@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -15,9 +16,9 @@ namespace Lib9c.Tests.Action
         {
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var initStates = MockState.Empty
-                .SetState(AdminState.Address, adminState.Serialize());
-            var state = new Account(initStates);
+            var initStates = new MockWorldState()
+                .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize());
+            var state = new World(initStates);
             var action = new AddRedeemCode
             {
                 redeemCsv = "New Value",
@@ -67,9 +68,9 @@ namespace Lib9c.Tests.Action
             {
                 Signer = adminAddress,
                 BlockIndex = 0,
-                PreviousState = new Account(MockState.Empty)
-                    .SetState(Addresses.Admin, adminState.Serialize())
-                    .SetState(Addresses.RedeemCode, new RedeemCodeState(new RedeemCodeListSheet()).Serialize()),
+                PreviousState = new World(new MockWorldState())
+                    .SetLegacyState(Addresses.Admin, adminState.Serialize())
+                    .SetLegacyState(Addresses.RedeemCode, new RedeemCodeState(new RedeemCodeListSheet()).Serialize()),
             });
 
             var sheet = new RedeemCodeListSheet();
@@ -89,8 +90,8 @@ namespace Lib9c.Tests.Action
             var sheet = new RedeemCodeListSheet();
             sheet.Set(csv);
 
-            var state = new Account(MockState.Empty)
-                    .SetState(Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
+            var state = new World(new MockWorldState())
+                    .SetLegacyState(Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
 
             var action = new AddRedeemCode
             {

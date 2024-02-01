@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _buyerAvatarState;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly Guid _orderId;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public BuyProduct2Test(ITestOutputHelper outputHelper)
         {
@@ -45,12 +46,12 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
 #pragma warning disable CS0618
@@ -111,13 +112,13 @@ namespace Lib9c.Tests.Action
 
             _orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(SellerAgentAddress, sellerAgentState.Serialize())
-                .SetState(SellerAvatarAddress, sellerAvatarState.Serialize())
-                .SetState(_sellerAgentAddress2, agentState2.Serialize())
-                .SetState(_sellerAvatarAddress2, sellerAvatarState2.Serialize())
-                .SetState(BuyerAgentAddress, buyerAgentState.Serialize())
-                .SetState(BuyerAvatarAddress, _buyerAvatarState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetAgentState(SellerAgentAddress, sellerAgentState)
+                .SetAvatarState(SellerAvatarAddress, sellerAvatarState, true, true, true, true)
+                .SetAgentState(_sellerAgentAddress2, agentState2)
+                .SetAvatarState(_sellerAvatarAddress2, sellerAvatarState2, true, true, true, true)
+                .SetAgentState(BuyerAgentAddress, buyerAgentState)
+                .SetAvatarState(BuyerAvatarAddress, _buyerAvatarState, true, true, true, true)
                 .MintAsset(context, BuyerAgentAddress, _goldCurrencyState.Currency * 1);
         }
 
@@ -281,7 +282,7 @@ namespace Lib9c.Tests.Action
                 var productsState = validateMember.ProductsState;
                 if (!(productsState is null))
                 {
-                    previousState = previousState.SetState(
+                    previousState = previousState.SetLegacyState(
                         ProductsState.DeriveAddress(SellerAvatarAddress),
                         productsState.Serialize());
                 }
@@ -289,7 +290,7 @@ namespace Lib9c.Tests.Action
                 var product = validateMember.Product;
                 if (!(product is null))
                 {
-                    previousState = previousState.SetState(
+                    previousState = previousState.SetLegacyState(
                         Product.DeriveAddress(product.ProductId),
                         product.Serialize());
                 }

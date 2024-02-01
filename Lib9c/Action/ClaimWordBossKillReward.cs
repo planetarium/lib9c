@@ -10,6 +10,7 @@ using Libplanet.Crypto;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -22,10 +23,10 @@ namespace Nekoyume.Action
 
         Address IClaimWordBossKillRewardV1.AvatarAddress => AvatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount states = context.PreviousState;
+            IWorld states = context.PreviousState;
 
             Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new [] {
                 typeof(WorldBossCharacterSheet),
@@ -52,9 +53,9 @@ namespace Nekoyume.Action
             var bossRow = sheets.GetSheet<WorldBossCharacterSheet>().Values.First(x => x.BossId == row.BossId);
             int rank = WorldBossHelper.CalculateRank(bossRow, raiderState.HighScore);
             var worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(AvatarAddress, raidId);
-            var rewardRecord = new WorldBossKillRewardRecord((List) states.GetState(worldBossKillRewardRecordAddress));
+            var rewardRecord = new WorldBossKillRewardRecord((List) states.GetLegacyState(worldBossKillRewardRecordAddress));
             Address worldBossAddress = Addresses.GetWorldBossAddress(raidId);
-            var worldBossState = new WorldBossState((List) states.GetState(worldBossAddress));
+            var worldBossState = new WorldBossState((List) states.GetLegacyState(worldBossAddress));
             var random = context.GetRandom();
             return states.SetWorldBossKillReward(
                 context,

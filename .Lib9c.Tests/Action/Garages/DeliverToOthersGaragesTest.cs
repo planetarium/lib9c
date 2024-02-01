@@ -14,11 +14,11 @@ namespace Lib9c.Tests.Action.Garages
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
-    using Nekoyume.Action;
     using Nekoyume.Action.Garages;
     using Nekoyume.Exceptions;
     using Nekoyume.Model.Garages;
     using Nekoyume.Model.Item;
+    using Nekoyume.Module;
     using Xunit;
 
     public class DeliverToOthersGaragesTest
@@ -27,13 +27,13 @@ namespace Lib9c.Tests.Action.Garages
         private static readonly Address SenderAgentAddr = Addresses.Admin;
 
         private readonly TableSheets _tableSheets;
-        private readonly IAccount _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly Currency _ncg;
         private readonly Address _recipientAgentAddr;
         private readonly FungibleAssetValue[] _fungibleAssetValues;
         private readonly (HashDigest<SHA256> fungibleId, int count)[] _fungibleIdAndCounts;
         private readonly IFungibleItem[] _fungibleItems;
-        private readonly IAccount _previousStates;
+        private readonly IWorld _previousStates;
 
         public DeliverToOthersGaragesTest()
         {
@@ -163,12 +163,12 @@ namespace Lib9c.Tests.Action.Garages
                     fungibleId);
                 Assert.Equal(
                     0,
-                    new FungibleItemGarage(nextStates.GetState(senderGarageAddr)).Count
+                    new FungibleItemGarage(nextStates.GetLegacyState(senderGarageAddr)).Count
                 );
                 var recipientGarageAddr = Addresses.GetGarageAddress(
                     _recipientAgentAddr,
                     fungibleId);
-                var garage = new FungibleItemGarage(nextStates.GetState(recipientGarageAddr));
+                var garage = new FungibleItemGarage(nextStates.GetLegacyState(recipientGarageAddr));
                 Assert.Equal(count, garage.Count);
                 Assert.IsType<Material>(garage.Item);
             }
@@ -244,7 +244,7 @@ namespace Lib9c.Tests.Action.Garages
                     SenderAgentAddr,
                     fungibleId);
                 var previousStatesWithNullGarageState =
-                    _previousStates.SetState(garageAddr, Null.Value);
+                    _previousStates.SetLegacyState(garageAddr, Null.Value);
                 Assert.Throws<StateNullException>(() => Execute(
                     SenderAgentAddr,
                     0,
@@ -263,7 +263,7 @@ namespace Lib9c.Tests.Action.Garages
                 var nextIndex = (i + 1) % _fungibleIdAndCounts.Length;
                 var garage = new FungibleItemGarage(_fungibleItems[nextIndex], 1);
                 var previousStatesWithInvalidGarageState =
-                    _previousStates.SetState(addr, garage.Serialize());
+                    _previousStates.SetLegacyState(addr, garage.Serialize());
                 Assert.Throws<ArgumentException>(() => Execute(
                     SenderAgentAddr,
                     0,
@@ -280,11 +280,11 @@ namespace Lib9c.Tests.Action.Garages
                 var garageAddr = Addresses.GetGarageAddress(
                     SenderAgentAddr,
                     fungibleId);
-                var garageState = _previousStates.GetState(garageAddr);
+                var garageState = _previousStates.GetLegacyState(garageAddr);
                 var garage = new FungibleItemGarage(garageState);
                 garage.Unload(1);
                 var previousStatesWithNotEnoughCountOfGarageState =
-                    _previousStates.SetState(garageAddr, garage.Serialize());
+                    _previousStates.SetLegacyState(garageAddr, garage.Serialize());
 
                 Assert.Throws<ArgumentOutOfRangeException>(() => Execute(
                     SenderAgentAddr,
@@ -303,7 +303,7 @@ namespace Lib9c.Tests.Action.Garages
                 var addr = Addresses.GetGarageAddress(_recipientAgentAddr, fungibleId);
                 var garage = new FungibleItemGarage(_fungibleItems[i], int.MaxValue);
                 var previousStatesWithInvalidGarageState =
-                    _previousStates.SetState(addr, garage.Serialize());
+                    _previousStates.SetLegacyState(addr, garage.Serialize());
                 Assert.Throws<ArgumentOutOfRangeException>(() => Execute(
                     SenderAgentAddr,
                     0,
@@ -315,10 +315,10 @@ namespace Lib9c.Tests.Action.Garages
             }
         }
 
-        private static (DeliverToOthersGarages action, IAccount nextStates) Execute(
+        private static (DeliverToOthersGarages action, IWorld nextStates) Execute(
             Address signer,
             long blockIndex,
-            IAccount previousState,
+            IWorld previousState,
             IRandom random,
             Address recipientAgentAddr,
             IEnumerable<FungibleAssetValue>? fungibleAssetValues,
@@ -354,7 +354,7 @@ namespace Lib9c.Tests.Action.Garages
             FungibleAssetValue[] fungibleAssetValues,
             (HashDigest<SHA256> fungibleId, int count)[] fungibleIdAndCounts,
             IFungibleItem[] _fungibleItems,
-            IAccount previousStates)
+            IWorld previousStates)
             GetSuccessfulPreviousStatesWithPlainValue()
         {
             var previousStates = _initialStatesWithAvatarStateV2;
@@ -402,7 +402,7 @@ namespace Lib9c.Tests.Action.Garages
                 var senderGarageAddr = Addresses.GetGarageAddress(
                     SenderAgentAddr,
                     fungibleItem.FungibleId);
-                var garageState = previousStates.GetState(senderGarageAddr);
+                var garageState = previousStates.GetLegacyState(senderGarageAddr);
                 Material material = fungibleItem is TradableMaterial tradableMaterial
                     ? new Material(tradableMaterial)
                     : (Material)fungibleItem;
@@ -411,7 +411,7 @@ namespace Lib9c.Tests.Action.Garages
                     : new FungibleItemGarage(garageState);
                 garage.Load(count);
                 previousStates = previousStates
-                    .SetState(senderGarageAddr, garage.Serialize());
+                    .SetLegacyState(senderGarageAddr, garage.Serialize());
             }
 
             return (

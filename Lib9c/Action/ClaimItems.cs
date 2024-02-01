@@ -12,6 +12,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -80,7 +81,7 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
 
@@ -98,19 +99,13 @@ namespace Nekoyume.Action
 
             foreach (var (avatarAddress, fungibleAssetValues) in ClaimData)
             {
-                var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-                var inventory = states.GetInventory(inventoryAddress)
+                var avatarState = states.GetAvatarState(avatarAddress)
                             ?? throw new FailedLoadStateException(
                                 ActionTypeText,
-                                GetSignerAndOtherAddressesHex(context, inventoryAddress),
-                                typeof(Inventory),
-                                inventoryAddress);
-                if (!states.TryGetState(avatarAddress, out Dictionary avatarDict))
-                {
-                    throw new FailedLoadStateException(avatarAddress, typeof(AvatarState));
-                }
+                                GetSignerAndOtherAddressesHex(context, avatarAddress),
+                                typeof(AvatarState),
+                                avatarAddress);
 
-                var agentAddress = avatarDict[AgentAddressKey].ToAddress();
                 var favs = new List<FungibleAssetValue>();
                 var items = new List<(int id, int count)>();
                 foreach (var fungibleAssetValue in fungibleAssetValues)
@@ -120,7 +115,7 @@ namespace Nekoyume.Action
                     {
                         var currency = Currencies.GetUnwrappedCurrency(tokenCurrency);
                         var recipientAddress =
-                            Currencies.SelectRecipientAddress(currency, agentAddress,
+                            Currencies.SelectRecipientAddress(currency, avatarState.agentAddress,
                                 avatarAddress);
                         var fav = FungibleAssetValue.FromRawValue(currency, fungibleAssetValue.RawValue);
                         states = states
@@ -149,25 +144,23 @@ namespace Nekoyume.Action
                         {
                             foreach (var _ in Enumerable.Range(0, itemCount))
                             {
-                                inventory.AddItem(item, 1);
+                                avatarState.inventory.AddItem(item, 1);
                             }
                         }
                         else
                         {
-                            inventory.AddItem(item, itemCount);
+                            avatarState.inventory.AddItem(item, itemCount);
                         }
                         items.Add((item.Id, itemCount));
                     }
                 }
 
-                var mailBox = new MailBox((List)avatarDict[MailBoxKey]);
+                var mailBox = avatarState.mailBox;
                 var mail = new ClaimItemsMail(context.BlockIndex, random.GenerateRandomGuid(), context.BlockIndex, favs, items, Memo);
                 mailBox.Add(mail);
                 mailBox.CleanUp();
-                avatarDict = avatarDict.SetItem(MailBoxKey, mailBox.Serialize());
-                states = states
-                    .SetState(inventoryAddress, inventory.Serialize())
-                    .SetState(avatarAddress, avatarDict);
+                avatarState.mailBox = mailBox;
+                states = states.SetAvatarState(avatarAddress, avatarState, true, true, false, false);
             }
 
             return states;

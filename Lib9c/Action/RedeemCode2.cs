@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -37,7 +38,7 @@ namespace Nekoyume.Action
             AvatarAddress = avatarAddress;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -49,7 +50,7 @@ namespace Nekoyume.Action
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out AvatarState avatarState, out _))
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out AvatarState avatarState))
             {
                 return states;
             }
@@ -110,11 +111,8 @@ namespace Nekoyume.Action
                 }
             }
             return states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(RedeemCodeState.Address, redeemState.Serialize());
+                .SetAvatarState(AvatarAddress, avatarState, true, true, true, true)
+                .SetLegacyState(RedeemCodeState.Address, redeemState.Serialize());
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

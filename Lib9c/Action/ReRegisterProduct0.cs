@@ -10,6 +10,7 @@ using Libplanet.Crypto;
 using Nekoyume.Battle;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -24,10 +25,10 @@ namespace Nekoyume.Action
         public List<(IProductInfo, IRegisterInfo)> ReRegisterInfos;
         public bool ChargeAp;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount states = context.PreviousState;
+            IWorld states = context.PreviousState;
 
             if (!ReRegisterInfos.Any())
             {
@@ -53,8 +54,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
-                    out var migrationRequired))
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException("failed to load avatar state");
             }
@@ -62,18 +62,18 @@ namespace Nekoyume.Action
             avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
-            if (states.TryGetState(productsStateAddress, out List rawProductList))
+            if (states.TryGetLegacyState(productsStateAddress, out List rawProductList))
             {
                 productsState = new ProductsState(rawProductList);
             }
             else
             {
-                var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
+                var marketState = states.TryGetLegacyState(Addresses.Market, out List rawMarketList)
                     ? rawMarketList
                     : List.Empty;
                 productsState = new ProductsState();
                 marketState = marketState.Add(AvatarAddress.Serialize());
-                states = states.SetState(Addresses.Market, marketState);
+                states = states.SetLegacyState(Addresses.Market, marketState);
             }
 
             var random = context.GetRandom();
@@ -94,7 +94,7 @@ namespace Nekoyume.Action
 
                     var digestListAddress =
                         OrderDigestListState.DeriveAddress(avatarAddress);
-                    if (!states.TryGetState(digestListAddress, out Dictionary rawList))
+                    if (!states.TryGetLegacyState(digestListAddress, out Dictionary rawList))
                     {
                         throw new FailedLoadStateException(
                             $"{addressesHex} failed to load {nameof(OrderDigest)}({digestListAddress}).");
@@ -102,7 +102,7 @@ namespace Nekoyume.Action
 
                     var digestList = new OrderDigestListState(rawList);
                     var orderAddress = Order.DeriveAddress(productInfo.ProductId);
-                    if (!states.TryGetState(orderAddress, out Dictionary rawOrder))
+                    if (!states.TryGetLegacyState(orderAddress, out Dictionary rawOrder))
                     {
                         throw new FailedLoadStateException(
                             $"{addressesHex} failed to load {nameof(Order)}({orderAddress}).");
@@ -161,18 +161,9 @@ namespace Nekoyume.Action
             }
 
             states = states
-                .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(productsStateAddress, productsState.Serialize());
+                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
+                .SetLegacyState(productsStateAddress, productsState.Serialize());
 
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(AvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize())
-                    .SetState(AvatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize());
-            }
             return states;
         }
 

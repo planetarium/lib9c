@@ -4,6 +4,7 @@ using System.Reflection;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.Loader;
+using Libplanet.Action.State;
 using Libplanet.Blockchain;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
@@ -78,11 +79,14 @@ namespace Nekoyume.Blockchain.Policy
                 && admin.AdminAddress.Equals(transaction.Signer);
         }
 
-        internal static AdminState GetAdminState(BlockChain blockChain)
+        internal static AdminState? GetAdminState(BlockChain blockChain)
         {
-            return blockChain.GetState(AdminState.Address) is Dictionary rawAdmin
-                ? new AdminState(rawAdmin)
-                : null;
+            return blockChain
+                .GetWorldState()
+                .GetAccountState(ReservedAddresses.LegacyAccount)
+                .GetState(AdminState.Address) is Dictionary rawAdmin
+                    ? new AdminState(rawAdmin)
+                    : null;
         }
 
         private static InvalidBlockBytesLengthException ValidateTransactionsBytesRaw(

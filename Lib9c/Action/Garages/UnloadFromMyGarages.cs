@@ -1,5 +1,4 @@
 #nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -17,6 +16,7 @@ using Nekoyume.Exceptions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Garages
 {
@@ -118,7 +118,7 @@ namespace Nekoyume.Action.Garages
                 : (string)(Text)list[3];
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var state = context.PreviousState;
@@ -168,9 +168,9 @@ namespace Nekoyume.Action.Garages
             }
         }
 
-        private IAccount TransferFungibleAssetValues(
+        private IWorld TransferFungibleAssetValues(
             IActionContext context,
-            IAccount states)
+            IWorld states)
         {
             if (FungibleAssetValues is null)
             {
@@ -186,17 +186,16 @@ namespace Nekoyume.Action.Garages
             return states;
         }
 
-        private IAccount TransferFungibleItems(
+        private IWorld TransferFungibleItems(
             Address signer,
-            IAccount states)
+            IWorld states)
         {
             if (FungibleIdAndCounts is null)
             {
                 return states;
             }
 
-            var inventoryAddr = RecipientAvatarAddr.Derive(SerializeKeys.LegacyInventoryKey);
-            var inventory = states.GetInventory(inventoryAddr);
+            var avatarState = states.GetAvatarState(RecipientAvatarAddr);
             var fungibleItemTuples = GarageUtils.WithGarageTuples(
                 signer,
                 states,
@@ -204,19 +203,19 @@ namespace Nekoyume.Action.Garages
             foreach (var (_, count, garageAddr, garage) in fungibleItemTuples)
             {
                 garage.Unload(count);
-                inventory.AddFungibleItem((ItemBase)garage.Item, count);
-                states = states.SetState(garageAddr, garage.Serialize());
+                avatarState.inventory.AddFungibleItem((ItemBase)garage.Item, count);
+                states = states.SetLegacyState(garageAddr, garage.Serialize());
             }
 
-            return states.SetState(inventoryAddr, inventory.Serialize());
+            return states.SetAvatarState(RecipientAvatarAddr, avatarState, true, true, true, true);
         }
 
-        private IAccount SendMail(
+        private IWorld SendMail(
             long blockIndex,
             IRandom random,
-            IAccount states)
+            IWorld states)
         {
-            var avatarValue = states.GetState(RecipientAvatarAddr);
+            var avatarValue = states.GetLegacyState(RecipientAvatarAddr);
             if (!(avatarValue is Dictionary avatarDict))
             {
                 throw new FailedLoadStateException(RecipientAvatarAddr, typeof(AvatarState));
@@ -241,7 +240,7 @@ namespace Nekoyume.Action.Garages
                 Memo));
             mailBox.CleanUp();
             avatarDict = avatarDict.SetItem(SerializeKeys.MailBoxKey, mailBox.Serialize());
-            return states.SetState(RecipientAvatarAddr, avatarDict);
+            return states.SetLegacyState(RecipientAvatarAddr, avatarDict);
         }
     }
 }

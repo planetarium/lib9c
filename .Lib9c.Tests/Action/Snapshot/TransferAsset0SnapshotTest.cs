@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action.Snapshot
     using Libplanet.Types.Assets;
     using Nekoyume.Action;
     using Nekoyume.Helper;
+    using Nekoyume.Module;
     using VerifyTests;
     using VerifyXunit;
     using Xunit;
@@ -52,11 +53,9 @@ namespace Lib9c.Tests.Action.Snapshot
             var context = new ActionContext();
 
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
-            var inputTrie = stateStore.GetStateRoot(null);
-            IAccount state = new Account(new AccountState(inputTrie))
+            IWorld state = new World(new WorldBaseState(stateStore.GetStateRoot(null), stateStore))
                 .MintAsset(context, senderAddress, crystal * 100);
-            inputTrie = stateStore.Commit(state.Trie);
-            state = new Account(new AccountState(inputTrie));
+            var inputLegacyTrie = stateStore.Commit(state.GetAccount(ReservedAddresses.LegacyAccount).Trie);
 
             var actionContext = new ActionContext
             {
@@ -69,9 +68,9 @@ namespace Lib9c.Tests.Action.Snapshot
                 crystal * 20);
 
             var outputState = action.Execute(actionContext);
-            var outputTrie = stateStore.Commit(outputState.Trie);
+            var outputLegacyTrie = stateStore.Commit(outputState.GetAccount(ReservedAddresses.LegacyAccount).Trie);
 
-            var trieDiff = outputTrie.Diff(inputTrie)
+            var trieDiff = outputLegacyTrie.Diff(inputLegacyTrie)
                 .Select(elem => new object[]
                 {
                     ByteUtil.Hex(elem.Path.ByteArray),
@@ -79,7 +78,7 @@ namespace Lib9c.Tests.Action.Snapshot
                     elem.SourceValue.ToString(),
                 })
                 .ToArray();
-            var accountDiff = AccountDiff.Create(inputTrie, outputTrie);
+            var accountDiff = AccountDiff.Create(inputLegacyTrie, outputLegacyTrie);
 
             // Verifier does not handle tuples well when nested.
             var diff = Verifier
@@ -104,11 +103,9 @@ namespace Lib9c.Tests.Action.Snapshot
             var context = new ActionContext();
 
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
-            var inputTrie = stateStore.GetStateRoot(null);
-            IAccount state = new Account(new AccountState(inputTrie))
+            IWorld state = new World(new WorldBaseState(stateStore.GetStateRoot(null), stateStore))
                 .MintAsset(context, senderAddress, crystal * 100);
-            inputTrie = stateStore.Commit(state.Trie);
-            state = new Account(new AccountState(inputTrie));
+            var inputLegacyTrie = stateStore.Commit(state.GetAccount(ReservedAddresses.LegacyAccount).Trie);
 
             var actionContext = new ActionContext
             {
@@ -121,9 +118,9 @@ namespace Lib9c.Tests.Action.Snapshot
                 crystal * 20,
                 "MEMO");
             var outputState = action.Execute(actionContext);
-            var outputTrie = stateStore.Commit(outputState.Trie);
+            var outputLegacyTrie = stateStore.Commit(outputState.GetAccount(ReservedAddresses.LegacyAccount).Trie);
 
-            var trieDiff = outputTrie.Diff(inputTrie)
+            var trieDiff = outputLegacyTrie.Diff(inputLegacyTrie)
                 .Select(elem => new object[]
                 {
                     ByteUtil.Hex(elem.Path.ByteArray),

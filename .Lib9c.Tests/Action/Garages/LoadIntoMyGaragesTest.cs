@@ -14,11 +14,12 @@ namespace Lib9c.Tests.Action.Garages
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
-    using Nekoyume.Action;
     using Nekoyume.Action.Garages;
     using Nekoyume.Exceptions;
     using Nekoyume.Model.Garages;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class LoadIntoMyGaragesTest
@@ -28,14 +29,13 @@ namespace Lib9c.Tests.Action.Garages
 
         private readonly TableSheets _tableSheets;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialStatesWithAvatarStateV2;
+        private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly Currency _ncg;
         private readonly (Address balanceAddr, FungibleAssetValue value)[] _fungibleAssetValues;
-        private readonly Address? _inventoryAddr;
         private readonly (HashDigest<SHA256> fungibleId, int count)[] _fungibleIdAndCounts;
         private readonly FungibleAssetValue _cost;
+        private readonly IWorld _previousStates;
         private readonly IFungibleItem[] _fungibleItems;
-        private readonly IAccount _previousStates;
         private readonly int[] _nonTradableIds = new[]
         {
             600201,
@@ -58,7 +58,6 @@ namespace Lib9c.Tests.Action.Garages
             _ncg = _initialStatesWithAvatarStateV2.GetGoldCurrency();
             (
                 _fungibleAssetValues,
-                _inventoryAddr,
                 _fungibleIdAndCounts,
                 _cost,
                 _fungibleItems,
@@ -114,7 +113,7 @@ namespace Lib9c.Tests.Action.Garages
                 des.LoadPlainValue(ser);
                 Assert.True(action.FungibleAssetValues?.SequenceEqual(des.FungibleAssetValues!) ??
                             des.FungibleAssetValues is null);
-                Assert.Equal(action.InventoryAddr, des.InventoryAddr);
+                Assert.Equal(action.AvatarAddr, des.AvatarAddr);
                 Assert.True(action.FungibleIdAndCounts?.SequenceEqual(des.FungibleIdAndCounts!) ??
                             des.FungibleIdAndCounts is null);
                 Assert.Equal(action.Memo, des.Memo);
@@ -125,7 +124,7 @@ namespace Lib9c.Tests.Action.Garages
                 Assert.True(
                     actionInter.FungibleAssetValues?.SequenceEqual(desInter.FungibleAssetValues!) ??
                     desInter.FungibleAssetValues is null);
-                Assert.Equal(actionInter.InventoryAddr, desInter.InventoryAddr);
+                Assert.Equal(actionInter.AvatarAddr, desInter.AvatarAddr);
                 Assert.True(
                     actionInter.FungibleIdAndCounts?.SequenceEqual(desInter.FungibleIdAndCounts!) ??
                     desInter.FungibleIdAndCounts is null);
@@ -142,7 +141,7 @@ namespace Lib9c.Tests.Action.Garages
                 _previousStates,
                 new TestRandom(),
                 _fungibleAssetValues,
-                _inventoryAddr,
+                _avatarAddress,
                 _fungibleIdAndCounts,
                 "memo");
             Assert.Equal(
@@ -166,14 +165,14 @@ namespace Lib9c.Tests.Action.Garages
                 }
             }
 
-            if (action.InventoryAddr is null ||
+            if (action.AvatarAddr is null ||
                 action.FungibleIdAndCounts is null)
             {
                 return;
             }
 
-            var inventoryState = nextStates.GetState(action.InventoryAddr.Value)!;
-            var inventory = new Inventory((List)inventoryState);
+            var avatarState = nextStates.GetAvatarState(action.AvatarAddr.Value)!;
+            var inventory = avatarState.inventory;
             foreach (var (fungibleId, count) in action.FungibleIdAndCounts)
             {
                 Assert.False(inventory.HasFungibleItem(
@@ -183,7 +182,7 @@ namespace Lib9c.Tests.Action.Garages
                 var garageAddr = Addresses.GetGarageAddress(
                     AgentAddr,
                     fungibleId);
-                var garage = new FungibleItemGarage(nextStates.GetState(garageAddr));
+                var garage = new FungibleItemGarage(nextStates.GetLegacyState(garageAddr));
                 Assert.Equal(fungibleId, garage.Item.FungibleId);
                 Assert.Equal(count, garage.Count);
                 Assert.IsType<Material>(garage.Item);
@@ -258,7 +257,7 @@ namespace Lib9c.Tests.Action.Garages
                 _previousStates,
                 new TestRandom(),
                 null,
-                _inventoryAddr,
+                _avatarAddress,
                 negativeFungibleIdAndCounts));
         }
 
@@ -277,7 +276,7 @@ namespace Lib9c.Tests.Action.Garages
                 previousStatesWithNotEnoughCost,
                 new TestRandom(),
                 _fungibleAssetValues,
-                _inventoryAddr,
+                _avatarAddress,
                 _fungibleIdAndCounts));
 
             // Balance does not enough to send.
@@ -299,54 +298,27 @@ namespace Lib9c.Tests.Action.Garages
                 null,
                 null));
 
-            // Inventory state is null.
-            var previousStatesWithNullInventoryState =
-                _previousStates.SetState(_inventoryAddr!.Value, Null.Value);
-            Assert.Throws<StateNullException>(() => Execute(
-                AgentAddr,
-                0,
-                previousStatesWithNullInventoryState,
-                new TestRandom(),
-                null,
-                _inventoryAddr,
-                _fungibleIdAndCounts));
-
-            // The state in InventoryAddr is not Inventory.
-            foreach (var invalidInventoryState in new IValue[]
-                     {
-                         new Integer(0),
-                         Dictionary.Empty,
-                     })
-            {
-                var previousStatesWithInvalidInventoryState =
-                    _previousStates.SetState(_inventoryAddr.Value, invalidInventoryState);
-                Assert.Throws<InvalidCastException>(() => Execute(
-                    AgentAddr,
-                    0,
-                    previousStatesWithInvalidInventoryState,
-                    new TestRandom(),
-                    null,
-                    _inventoryAddr,
-                    _fungibleIdAndCounts));
-            }
+            AvatarState avatarState;
 
             // Inventory does not contain the tradable fungible item.
+            avatarState = _previousStates.GetAvatarState(_avatarAddress);
+            avatarState.inventory = new Inventory();
             var previousStatesWithEmptyInventoryState =
-                _previousStates.SetState(_inventoryAddr.Value, new Inventory().Serialize());
+                _previousStates.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             Assert.Throws<ItemNotFoundException>(() => Execute(
                 AgentAddr,
                 0,
                 previousStatesWithEmptyInventoryState,
                 new TestRandom(),
                 null,
-                _inventoryAddr,
+                _avatarAddress,
                 _fungibleIdAndCounts));
 
             // Inventory does not have enough tradable fungible item.
-            var notEnoughInventory = _previousStates.GetInventory(_inventoryAddr.Value);
+            avatarState = _previousStates.GetAvatarState(_avatarAddress);
             foreach (var (fungibleId, count) in _fungibleIdAndCounts)
             {
-                notEnoughInventory.RemoveTradableFungibleItem(
+                avatarState.inventory.RemoveTradableFungibleItem(
                     fungibleId,
                     requiredBlockIndex: null,
                     blockIndex: 0,
@@ -354,14 +326,14 @@ namespace Lib9c.Tests.Action.Garages
             }
 
             var previousStatesWithNotEnoughInventoryState =
-                _previousStates.SetState(_inventoryAddr.Value, notEnoughInventory.Serialize());
+                _previousStates.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             Assert.Throws<NotEnoughItemException>(() => Execute(
                 AgentAddr,
                 0,
                 previousStatesWithNotEnoughInventoryState,
                 new TestRandom(),
                 null,
-                _inventoryAddr,
+                _avatarAddress,
                 _fungibleIdAndCounts));
 
             // Fungible item garage's item mismatch with fungible id.
@@ -372,14 +344,14 @@ namespace Lib9c.Tests.Action.Garages
                 var nextIndex = (i + 1) % _fungibleIdAndCounts.Length;
                 var garage = new FungibleItemGarage(_fungibleItems[nextIndex], 1);
                 var previousStatesWithInvalidGarageState =
-                    _previousStates.SetState(addr, garage.Serialize());
+                    _previousStates.SetLegacyState(addr, garage.Serialize());
                 Assert.Throws<Exception>(() => Execute(
                     AgentAddr,
                     0,
                     previousStatesWithInvalidGarageState,
                     new TestRandom(),
                     null,
-                    _inventoryAddr,
+                    _avatarAddress,
                     _fungibleIdAndCounts));
             }
 
@@ -390,31 +362,31 @@ namespace Lib9c.Tests.Action.Garages
                 var addr = Addresses.GetGarageAddress(AgentAddr, fungibleId);
                 var garage = new FungibleItemGarage(_fungibleItems[i], int.MaxValue);
                 var previousStatesWithInvalidGarageState =
-                    _previousStates.SetState(addr, garage.Serialize());
+                    _previousStates.SetLegacyState(addr, garage.Serialize());
                 Assert.Throws<ArgumentOutOfRangeException>(() => Execute(
                     AgentAddr,
                     0,
                     previousStatesWithInvalidGarageState,
                     new TestRandom(),
                     null,
-                    _inventoryAddr,
+                    _avatarAddress,
                     _fungibleIdAndCounts));
             }
         }
 
-        private static (LoadIntoMyGarages action, IAccount nextStates) Execute(
+        private static (LoadIntoMyGarages action, IWorld nextStates) Execute(
             Address signer,
             long blockIndex,
-            IAccount previousState,
+            IWorld previousState,
             IRandom random,
             IEnumerable<(Address balanceAddr, FungibleAssetValue value)>? fungibleAssetValues,
-            Address? inventoryAddr,
+            Address? avatarAddr,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)>? fungibleIdAndCounts,
             string? memo = null)
         {
             var action = new LoadIntoMyGarages(
                 fungibleAssetValues,
-                inventoryAddr,
+                avatarAddr,
                 fungibleIdAndCounts,
                 memo);
             var context = new ActionContext
@@ -456,11 +428,10 @@ namespace Lib9c.Tests.Action.Garages
 
         private (
             (Address balanceAddr, FungibleAssetValue value)[] fungibleAssetValues,
-            Address? inventoryAddr,
             (HashDigest<SHA256> fungibleId, int count)[] fungibleIdAndCounts,
             FungibleAssetValue cost,
             IFungibleItem[] _fungibleItems,
-            IAccount previousStates)
+            IWorld previousStates)
             GetSuccessfulPreviousStatesWithPlainValue()
         {
             var previousStates = _initialStatesWithAvatarStateV2;
@@ -487,30 +458,20 @@ namespace Lib9c.Tests.Action.Garages
                     value);
             }
 
-            var inventoryAddr = Addresses.GetInventoryAddress(AgentAddr, AvatarIndex);
-            var inventoryState = (List)previousStates.GetState(inventoryAddr)!;
-            var inventory = new Inventory(inventoryState);
-            var fungibleItemAndCounts = new List<(IFungibleItem fungibleItem, int count)>();
-            var rows = _tableSheets.MaterialItemSheet.OrderedList!.Where(row =>
-                _tableSheets.LoadIntoMyGaragesCostSheet.HasCost(row.ItemId)).ToList();
-            for (int i = 0; i < rows.Count; i++)
-            {
-                var row = rows[i];
-                IFungibleItem item;
-                if (_nonTradableIds.Contains(row.Id))
+            var avatarState = previousStates.GetAvatarState(_avatarAddress);
+            var inventory = avatarState.inventory;
+            var fungibleItemAndCounts = _tableSheets.MaterialItemSheet.OrderedList!
+                .Where(row => _tableSheets.LoadIntoMyGaragesCostSheet.HasCost(row.ItemId))
+                .Select(row => _nonTradableIds.Contains(row.Id)
+                    ? ItemFactory.CreateMaterial(row)
+                    : ItemFactory.CreateTradableMaterial(row))
+                .Select((material, index) =>
                 {
-                    item = ItemFactory.CreateMaterial(row);
-                }
-                else
-                {
-                    item = ItemFactory.CreateTradableMaterial(row);
-                }
-
-                var count = i + 1;
-                inventory.AddFungibleItem((ItemBase)item, count);
-                fungibleItemAndCounts.Add((item, count));
-            }
-
+                    inventory.AddFungibleItem((ItemBase)material, index + 1);
+                    return (
+                        fungibleItem: (IFungibleItem)material,
+                        count: index + 1);
+                }).ToArray();
             var garageCost = _tableSheets.LoadIntoMyGaragesCostSheet.GetGarageCost(
                 fungibleAssetValues.Select(tuple => tuple.value),
                 fungibleItemAndCounts
@@ -521,13 +482,12 @@ namespace Lib9c.Tests.Action.Garages
                 garageCost);
             return (
                 fungibleAssetValues,
-                inventoryAddr,
                 fungibleItemAndCounts
                     .Select(tuple => (tuple.fungibleItem.FungibleId, tuple.count))
                     .ToArray(),
                 garageCost,
                 fungibleItemAndCounts.Select(tuple => tuple.fungibleItem).ToArray(),
-                previousStates.SetState(inventoryAddr, inventory.Serialize())
+                previousStates.SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
             );
         }
     }

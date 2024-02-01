@@ -88,7 +88,6 @@ namespace Lib9c.Tools.SubCommand
                         nameof(TransferAsset) => new TransferAsset(),
                         nameof(PatchTableSheet) => new PatchTableSheet(),
                         nameof(AddRedeemCode) => new AddRedeemCode(),
-                        nameof(Nekoyume.Action.MigrationLegacyShop) => new MigrationLegacyShop(),
                         nameof(Nekoyume.Action.MigrationActivatedAccountsState) => new MigrationActivatedAccountsState(),
                         nameof(Nekoyume.Action.MigrationAvatarState) => new MigrationAvatarState(),
                         nameof(Nekoyume.Action.CreatePendingActivations) => new CreatePendingActivations(),
@@ -161,21 +160,6 @@ namespace Lib9c.Tools.SubCommand
 
             var bencoded = new List(
                 (Text)nameof(PatchTableSheet),
-                action.PlainValue
-            );
-
-            byte[] raw = _codec.Encode(bencoded);
-            Console.WriteLine(ByteUtil.Hex(raw));
-        }
-
-        [Obsolete("This function is deprecated. Please use `NineChronicles.Headless.Executable tx migration-legacy-shop` command instead.")]
-        [Command(Description = "Create MigrationLegacyShop action and dump it.")]
-        public void MigrationLegacyShop()
-        {
-            var action = new MigrationLegacyShop();
-
-            var bencoded = new List(
-                (Text)nameof(Nekoyume.Action.MigrationLegacyShop),
                 action.PlainValue
             );
 

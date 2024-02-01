@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class ActivateAccountTest
@@ -24,31 +25,31 @@ namespace Lib9c.Tests.Action
                 ActivationKey.Create(privateKey, nonce);
 
             Address activatedAddress = default(Address).Derive(ActivationKey.DeriveKey);
-            IAccount state = new Account(MockState.Empty);
+            IWorld state = new World(new MockWorldState());
 
             if (pendingExist)
             {
-                state = state.SetState(pendingActivation.address, pendingActivation.Serialize());
+                state = state.SetLegacyState(pendingActivation.address, pendingActivation.Serialize());
             }
 
             if (alreadyActivated)
             {
-                state = state.SetState(activatedAddress, true.Serialize());
+                state = state.SetLegacyState(activatedAddress, true.Serialize());
             }
 
             ActivateAccount action = activationKey.CreateActivateAccount(invalid ? new byte[] { 0x00 } : nonce);
 
             if (exc is null)
             {
-                IAccount nextState = action.Execute(new ActionContext()
+                IWorld nextState = action.Execute(new ActionContext()
                 {
                     PreviousState = state,
                     Signer = default,
                     BlockIndex = 1,
                 });
 
-                Assert.Equal(Null.Value, nextState.GetState(pendingActivation.address));
-                Assert.True(nextState.GetState(activatedAddress).ToBoolean());
+                Assert.Equal(Null.Value, nextState.GetLegacyState(pendingActivation.address));
+                Assert.True(nextState.GetLegacyState(activatedAddress).ToBoolean());
             }
             else
             {

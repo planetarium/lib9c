@@ -9,6 +9,7 @@ using Libplanet.Crypto;
 using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Model;
+using Nekoyume.Module;
 using Xunit;
 using static Lib9c.SerializeKeys;
 
@@ -19,7 +20,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV2;
         private readonly Address _worldInformationAddress;
 
         public UnlockCraftActionTest()
@@ -58,7 +59,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
             });
 
             var worldInformation =
-                new WorldInformation((Dictionary)state.GetState(_worldInformationAddress));
+                new WorldInformation((Dictionary)state.GetLegacyState(_worldInformationAddress));
             Assert.True(worldInformation.IsStageCleared(expectedStage));
         }
     }
