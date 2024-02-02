@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Model.State
                 },
             };
 
-            var serialized = (List)state.Serialize();
+            var serialized = (List)state.SerializeList();
             var expected = List.Empty
                 .Add(address.Serialize())
                 .Add(List.Empty.Add(1).Add(2));

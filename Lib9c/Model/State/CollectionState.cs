@@ -30,7 +30,7 @@ namespace Nekoyume.Model.State
             }
         }
 
-        public IValue Serialize()
+        public IValue SerializeList()
         {
             return List.Empty
                 .Add(Address.Serialize())

@@ -12,13 +12,14 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Collection;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static SerializeKeys;
 
     public class ActivateCollectionTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly TableSheets _tableSheets;
@@ -50,18 +51,15 @@ namespace Lib9c.Tests.Action
             var questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new Account(MockState.Empty)
-                .SetState(_agentAddress, agentState.SerializeV2())
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+            _initialState = new World(new MockWorldState())
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
@@ -69,7 +67,7 @@ namespace Lib9c.Tests.Action
         public void Execute()
         {
             var row = _tableSheets.CollectionSheet.Values.First();
-            var avatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var avatarState = _initialState.GetAvatarState(_avatarAddress);
             var materials = new List<ICollectionMaterial>();
             foreach (var material in row.Materials)
             {
@@ -97,7 +95,7 @@ namespace Lib9c.Tests.Action
             }
 
             var inventoryAddress = _avatarAddress.Derive(LegacyInventoryKey);
-            var state = _initialState.SetState(inventoryAddress, avatarState.inventory.Serialize());
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState, false, true, false, false);
             IActionContext context = new ActionContext()
             {
                 PreviousState = state,
@@ -112,11 +110,10 @@ namespace Lib9c.Tests.Action
 
             var nextState = activateCollection.Execute(context);
             var collectionAddress = CollectionState.Derive(_avatarAddress);
-            var rawList = Assert.IsType<List>(nextState.GetState(collectionAddress));
-            var collectionState = new CollectionState(rawList);
+            var collectionState = nextState.GetCollectionState(collectionAddress);
             Assert.Equal(row.Id, collectionState.Ids.Single());
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
         }
     }

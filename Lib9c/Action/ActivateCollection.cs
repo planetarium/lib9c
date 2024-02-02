@@ -10,6 +10,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Model.Collection;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -21,12 +22,11 @@ namespace Nekoyume.Action
         public Address AvatarAddress;
         public int CollectionId;
         public List<ICollectionMaterial> Materials = new();
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            if (states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
-                    out _))
+            if (states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
                 var sheets = states.GetSheets(containItemSheet: true, sheetTypes: new[]
                 {
@@ -77,17 +77,29 @@ namespace Nekoyume.Action
                 }
 
                 var collectionAddress = CollectionState.Derive(AvatarAddress);
-                var collectionState = states.TryGetState(collectionAddress, out List rawState)
-                    ? new CollectionState(rawState)
-                    : new CollectionState
+                CollectionState collectionState;
+                try
+                {
+                    collectionState = states.GetCollectionState(collectionAddress);
+                }
+                catch (FailedLoadStateException)
+                {
+                    collectionState = new CollectionState
                     {
                         Address = collectionAddress
                     };
+                }
+                catch (InvalidCastException)
+                {
+                    collectionState = new CollectionState
+                    {
+                        Address = collectionAddress
+                    };
+                }
                 collectionState.Ids.Add(CollectionId);
-                var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
                 return states
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                    .SetState(collectionAddress, collectionState.Serialize());
+                    .SetAvatarState(AvatarAddress, avatarState, false, true, false, false)
+                    .SetCollectionState(collectionAddress, collectionState);
             }
 
             throw new FailedLoadStateException(AvatarAddress, typeof(Dictionary));
