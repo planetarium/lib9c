@@ -1,13 +1,13 @@
 using System.Collections.Generic;
+using Bencodex;
 using Bencodex.Types;
-using Libplanet.Crypto;
 
 namespace Nekoyume.Model.State
 {
     /// <summary>
     /// Represents the state of a collection.
     /// </summary>
-    public class CollectionState
+    public class CollectionState : IBencodable
     {
         public List<int> Ids = new();
 
@@ -24,10 +24,10 @@ namespace Nekoyume.Model.State
             }
         }
 
-        public IValue SerializeList()
+        public CollectionState(IValue bencoded) : this((List)bencoded)
         {
-            return List.Empty
-                .Add(new List(Ids));
         }
+
+        public IValue Bencoded => List.Empty.Add(new List(Ids));
     }
 }

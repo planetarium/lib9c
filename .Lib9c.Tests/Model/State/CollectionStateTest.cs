@@ -10,7 +10,7 @@ namespace Lib9c.Tests.Model.State
     public class CollectionStateTest
     {
         [Fact]
-        public void Serialize()
+        public void Bencoded()
         {
             var state = new CollectionState
             {
@@ -21,7 +21,7 @@ namespace Lib9c.Tests.Model.State
                 },
             };
 
-            var serialized = (List)state.SerializeList();
+            var serialized = state.Bencoded;
             var expected = List.Empty
                 .Add(List.Empty.Add(1).Add(2));
             Assert.Equal(expected, serialized);

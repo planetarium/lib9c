@@ -44,7 +44,7 @@ namespace Nekoyume.Module
         public static IWorld SetCollectionState(this IWorld world, Address collection, CollectionState state)
         {
             var account = world.GetAccount(Addresses.Collection);
-            account = account.SetState(collection, state.SerializeList());
+            account = account.SetState(collection, state.Bencoded);
             return world.SetAccount(Addresses.Collection, account);
         }
     }
