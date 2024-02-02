@@ -1,9 +1,7 @@
 namespace Lib9c.Tests.Action
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Bencodex.Types;
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
@@ -15,7 +13,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static SerializeKeys;
 
     public class ActivateCollectionTest
     {
@@ -46,9 +43,6 @@ namespace Lib9c.Tests.Action
             {
                 level = 100,
             };
-            var inventoryAddress = _avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = _avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             _initialState = new World(new MockWorldState())
@@ -94,7 +88,6 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            var inventoryAddress = _avatarAddress.Derive(LegacyInventoryKey);
             var state = _initialState.SetAvatarState(_avatarAddress, avatarState, false, true, false, false);
             IActionContext context = new ActionContext()
             {
@@ -109,8 +102,7 @@ namespace Lib9c.Tests.Action
             };
 
             var nextState = activateCollection.Execute(context);
-            var collectionAddress = CollectionState.Derive(_avatarAddress);
-            var collectionState = nextState.GetCollectionState(collectionAddress);
+            var collectionState = nextState.GetCollectionState(_avatarAddress);
             Assert.Equal(row.Id, collectionState.Ids.Single());
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);

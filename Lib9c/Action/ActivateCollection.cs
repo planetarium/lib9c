@@ -76,30 +76,23 @@ namespace Nekoyume.Action
                     throw new Exception();
                 }
 
-                var collectionAddress = CollectionState.Derive(AvatarAddress);
                 CollectionState collectionState;
                 try
                 {
-                    collectionState = states.GetCollectionState(collectionAddress);
+                    collectionState = states.GetCollectionState(AvatarAddress);
                 }
                 catch (FailedLoadStateException)
                 {
-                    collectionState = new CollectionState
-                    {
-                        Address = collectionAddress
-                    };
+                    collectionState = new CollectionState();
                 }
                 catch (InvalidCastException)
                 {
-                    collectionState = new CollectionState
-                    {
-                        Address = collectionAddress
-                    };
+                    collectionState = new CollectionState();
                 }
                 collectionState.Ids.Add(CollectionId);
                 return states
                     .SetAvatarState(AvatarAddress, avatarState, false, true, false, false)
-                    .SetCollectionState(collectionAddress, collectionState);
+                    .SetCollectionState(AvatarAddress, collectionState);
             }
 
             throw new FailedLoadStateException(AvatarAddress, typeof(Dictionary));

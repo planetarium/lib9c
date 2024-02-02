@@ -12,7 +12,7 @@ namespace Nekoyume.Module
     {
         public static CollectionState GetCollectionState(this IWorldState worldState, Address address)
         {
-            var serializedCollection = worldState.GetResolvedState(address, Addresses.Avatar);
+            var serializedCollection = worldState.GetResolvedState(address, Addresses.Collection);
             if (serializedCollection is null)
             {
                 var msg = $"No Collection state ({address.ToHex()})";
@@ -43,9 +43,9 @@ namespace Nekoyume.Module
 
         public static IWorld SetCollectionState(this IWorld world, Address collection, CollectionState state)
         {
-            var account = world.GetAccount(Addresses.Avatar);
+            var account = world.GetAccount(Addresses.Collection);
             account = account.SetState(collection, state.SerializeList());
-            return world.SetAccount(Addresses.Avatar, account);
+            return world.SetAccount(Addresses.Collection, account);
         }
     }
 }
