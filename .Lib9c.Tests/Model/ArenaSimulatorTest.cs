@@ -7,6 +7,7 @@ namespace Lib9c.Tests
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus.Arena;
+    using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Xunit;
 
@@ -54,7 +55,19 @@ namespace Lib9c.Tests
             var myDigest = new ArenaPlayerDigest(_avatarState1, _arenaAvatarState1);
             var enemyDigest = new ArenaPlayerDigest(_avatarState2, _arenaAvatarState2);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
-            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets);
+            var log = simulator.Simulate(
+                myDigest,
+                enemyDigest,
+                arenaSheets,
+                new List<StatModifier>
+                {
+                    new (StatType.ATK, StatModifier.OperationType.Add, 1),
+                },
+                new List<StatModifier>
+                {
+                    new (StatType.DEF, StatModifier.OperationType.Add, 1),
+                }
+            );
 
             Assert.Equal(_random, simulator.Random);
 
@@ -73,8 +86,10 @@ namespace Lib9c.Tests
 
             Assert.Equal(2, players.Count());
             Assert.Equal(2, arenaCharacters.Count);
-            Assert.Equal(1, arenaCharacters.Count(x => x.IsEnemy));
-            Assert.Equal(1, arenaCharacters.Count(x => !x.IsEnemy));
+            var challenger = arenaCharacters.Single(a => !a.IsEnemy);
+            var enemy = arenaCharacters.Single(a => a.IsEnemy);
+            Assert.Equal(enemy.ATK + 1, challenger.ATK);
+            Assert.Equal(challenger.DEF + 1, enemy.DEF);
 
             var dead = log.Events.OfType<ArenaDead>();
             Assert.Single(dead);
@@ -101,7 +116,7 @@ namespace Lib9c.Tests
             var myDigest = new ArenaPlayerDigest(_avatarState1, _arenaAvatarState1);
             var enemyDigest = new ArenaPlayerDigest(_avatarState2, _arenaAvatarState2);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
-            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets);
+            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>());
             var expectedHpModifier = modifier ?? 2;
 
             Assert.Equal(_random, simulator.Random);

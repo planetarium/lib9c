@@ -59,7 +59,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -92,7 +93,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -142,7 +144,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
 
@@ -192,7 +195,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -246,7 +250,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -373,7 +378,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             Assert.Empty(player.eventMap);
@@ -451,7 +457,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -519,7 +526,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var skill = SkillFactory.Get(_tableSheets.SkillSheet[700004], 0, 100, 0, StatType.NONE);
             skill.CustomField = new SkillCustomField { BuffDuration = 2 };
@@ -601,7 +609,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(

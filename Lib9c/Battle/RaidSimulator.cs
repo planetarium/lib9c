@@ -10,6 +10,7 @@ using Priority_Queue;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nekoyume.Model.Stat;
 
 namespace Nekoyume.Battle
 {
@@ -33,13 +34,16 @@ namespace Nekoyume.Battle
             List<Guid> foods,
             List<RuneState> runeStates,
             RaidSimulatorSheets simulatorSheets,
-            CostumeStatSheet costumeStatSheet) : base(random, avatarState, foods, simulatorSheets)
+            CostumeStatSheet costumeStatSheet,
+            List<StatModifier> collectionModifiers) : base(random, avatarState, foods, simulatorSheets)
         {
             Player.SetCostumeStat(costumeStatSheet);
             if (runeStates != null)
             {
                 Player.SetRune(runeStates, simulatorSheets.RuneOptionSheet, simulatorSheets.SkillSheet);
             }
+
+            Player.Stats.SetCollections(collectionModifiers);
 
             BossId = bossId;
             _waves = new List<RaidBoss>();

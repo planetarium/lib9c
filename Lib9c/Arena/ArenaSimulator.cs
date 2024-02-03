@@ -3,6 +3,7 @@ using System.Linq;
 using Libplanet.Action;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus.Arena;
+using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
 using Priority_Queue;
 
@@ -32,10 +33,12 @@ namespace Nekoyume.Arena
             ArenaPlayerDigest challenger,
             ArenaPlayerDigest enemy,
             ArenaSimulatorSheets sheets,
+            List<StatModifier> challengerCollectionModifiers,
+            List<StatModifier> enemyCollectionModifiers,
             bool setExtraValueBuffBeforeGetBuffs = false)
         {
             Log = new ArenaLog();
-            var players = SpawnPlayers(this, challenger, enemy, sheets, Log, setExtraValueBuffBeforeGetBuffs);
+            var players = SpawnPlayers(this, challenger, enemy, sheets, Log, challengerCollectionModifiers, enemyCollectionModifiers, setExtraValueBuffBeforeGetBuffs);
             Turn = 1;
 
             while (true)
@@ -103,6 +106,8 @@ namespace Nekoyume.Arena
             ArenaPlayerDigest enemyDigest,
             ArenaSimulatorSheets simulatorSheets,
             ArenaLog log,
+            List<StatModifier> challengerCollectionModifiers,
+            List<StatModifier> enemyCollectionModifiers,
             bool setExtraValueBuffBeforeGetBuffs = false)
         {
             var challenger = new ArenaCharacter(
@@ -119,6 +124,8 @@ namespace Nekoyume.Arena
                     simulatorSheets.SkillSheet);
             }
 
+            challenger.Stats.SetCollections(challengerCollectionModifiers);
+
             var enemy = new ArenaCharacter(
                 simulator,
                 enemyDigest,
@@ -133,6 +140,8 @@ namespace Nekoyume.Arena
                     simulatorSheets.RuneOptionSheet,
                     simulatorSheets.SkillSheet);
             }
+
+            enemy.Stats.SetCollections(enemyCollectionModifiers);
 
             challenger.Spawn(enemy);
             enemy.Spawn(challenger);
