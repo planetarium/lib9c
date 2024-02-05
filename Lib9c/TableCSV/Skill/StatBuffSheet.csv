@@ -122,5 +122,5 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 701000,701000,DRV (Rune),100,0,Self,DRV,Add,0,true
 702000,701000,DRR (Rune),100,0,Self,DRR,Add,0,true
 703000,703000,CDMG (Rune),100,0,Self,CDMG,Add,0,true
-704000,704000,집중,100,10,Self,AttackHIT,Add,100,true
-705000,705000,디버프 제거,100,5,Self,AntideBuff,Add,100,true
+704000,704000,집중,100,10,Self,CDMG,Add,100,true
+705000,705000,디버프 제거,100,5,Self,CDMG,Add,100,true
