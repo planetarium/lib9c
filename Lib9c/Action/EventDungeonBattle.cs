@@ -14,6 +14,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Event;
 using Nekoyume.Model.Skill;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -347,7 +348,8 @@ namespace Nekoyume.Action
                     random,
                     stageRow,
                     sheets.GetSheet<MaterialItemSheet>(),
-                    PlayCount));
+                    PlayCount),
+                new List<StatModifier>());
             simulator.Simulate();
             sw.Stop();
             Log.Verbose(

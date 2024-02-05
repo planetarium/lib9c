@@ -47,6 +47,7 @@ namespace Nekoyume.Battle
             EnemySkillSheet enemySkillSheet,
             CostumeStatSheet costumeStatSheet,
             List<ItemBase> waveRewards,
+            List<StatModifier> collectionModifiers,
             bool logEvent = true)
             : base(
                 random,
@@ -60,6 +61,8 @@ namespace Nekoyume.Battle
             {
                 Player.SetRune(runeStates, simulatorSheets.RuneOptionSheet, simulatorSheets.SkillSheet);
             }
+
+            Player.Stats.SetCollections(collectionModifiers);
 
             _waves = new List<Wave>();
             _waveRewards = waveRewards;

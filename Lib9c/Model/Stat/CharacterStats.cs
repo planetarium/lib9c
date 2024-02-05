@@ -25,6 +25,7 @@ namespace Nekoyume.Model.Stat
         private readonly Stats _runeStats = new Stats();
         private readonly Stats _buffStats = new Stats();
         private readonly Stats _optionalStats = new Stats();
+        private readonly Stats _collectionStats = new Stats();
 
         private readonly List<StatModifier> _initialStatModifiers = new List<StatModifier>();
         private readonly List<StatModifier> _equipmentStatModifiers = new List<StatModifier>();
@@ -32,6 +33,7 @@ namespace Nekoyume.Model.Stat
         private readonly List<StatModifier> _runeStatModifiers = new List<StatModifier>();
         private readonly Dictionary<int, StatModifier> _buffStatModifiers = new Dictionary<int, StatModifier>();
         private readonly List<StatModifier> _optionalStatModifiers = new List<StatModifier>();
+        private readonly List<StatModifier> _collectionStatModifiers = new List<StatModifier>();
 
         public readonly StatMap StatWithItems = new StatMap();
 
@@ -43,6 +45,7 @@ namespace Nekoyume.Model.Stat
         public IStats RuneStats => _runeStats;
         public IStats BuffStats => _buffStats;
         public IStats OptionalStats => _optionalStats;
+        public IStats CollectionStats => _collectionStats;
 
         public long BaseHP => BaseStats.HP;
         public long BaseATK => BaseStats.ATK;
@@ -298,6 +301,45 @@ namespace Nekoyume.Model.Stat
             return this;
         }
 
+        public CharacterStats SetCollections(IEnumerable<StatModifier> statModifiers,
+            bool updateImmediate = true)
+        {
+            _collectionStatModifiers.Clear();
+            var perModifiers = new List<StatModifier>();
+            foreach (var modifier in statModifiers)
+            {
+                switch (modifier.Operation)
+                {
+                    case StatModifier.OperationType.Add:
+                        _collectionStatModifiers.Add(modifier);
+                        break;
+                    case StatModifier.OperationType.Percentage:
+                        perModifiers.Add(modifier);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            var groupBy = perModifiers.GroupBy(m => m.StatType).ToList();
+            foreach (var group in groupBy)
+            {
+                var statType = group.Key;
+                var sum = group.Sum(g => g.Value);
+                if (sum > 0L)
+                {
+                    _collectionStatModifiers.Add(new StatModifier(statType, StatModifier.OperationType.Percentage, sum));
+                }
+            }
+
+            if (updateImmediate)
+            {
+                UpdateEquipmentStats();
+            }
+
+            return this;
+        }
+
         public void AddBuff(Buff.StatBuff buff, bool updateImmediate = true)
         {
             _buffStatModifiers[buff.RowData.GroupId] = buff.GetModifier();
@@ -417,12 +459,18 @@ namespace Nekoyume.Model.Stat
         private void UpdateOptionalStats()
         {
             _optionalStats.Set(_optionalStatModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats, _buffStats);
+            UpdateCollectionStats();
+        }
+
+        private void UpdateCollectionStats()
+        {
+            _collectionStats.Set(_collectionStatModifiers, _baseStats, _equipmentStats, _collectionStats, _runeStats, _buffStats, _optionalStats);
             UpdateTotalStats();
         }
 
         private void UpdateTotalStats()
         {
-            Set(_statMap, _baseStats, _equipmentStats, _consumableStats, _runeStats, _buffStats, _optionalStats);
+            Set(_statMap, _baseStats, _equipmentStats, _consumableStats, _runeStats, _buffStats, _optionalStats, _collectionStats);
 
             foreach (var stat in _statMap.GetDecimalStats(false))
             {
