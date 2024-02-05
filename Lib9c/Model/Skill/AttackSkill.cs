@@ -13,7 +13,7 @@ namespace Nekoyume.Model.Skill
     {
         protected AttackSkill(
             SkillSheet.Row skillRow,
-            int power,
+            long power,
             int chance,
             int statPowerRatio,
             StatType referencedStatType) : base(skillRow, power, chance, statPowerRatio, referencedStatType)
@@ -41,7 +41,7 @@ namespace Nekoyume.Model.Skill
             var statAdditionalPower = ReferencedStatType != StatType.NONE ?
                 (int)(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
 
-            var totalDamage = caster.ATK + Power + statAdditionalPower;
+            long totalDamage = caster.ATK + Power + statAdditionalPower;
             var multipliers = GetMultiplier(SkillRow.HitCount, 1m);
             for (var i = 0; i < SkillRow.HitCount; i++)
             {
@@ -49,7 +49,7 @@ namespace Nekoyume.Model.Skill
 
                 foreach (var target in targets)
                 {
-                    var damage = 0;
+                    long damage = 0;
                     var isCritical = false;
                     // Skill or when normal attack hit.
                     if (!isNormalAttack ||
@@ -59,9 +59,9 @@ namespace Nekoyume.Model.Skill
                         var finalDEF = Math.Clamp(target.DEF - caster.ArmorPenetration, 0, int.MaxValue);
                         damage = totalDamage - finalDEF;
                         // Apply multiple hits
-                        damage = (int) (damage * multiplier);
+                        damage = (long) (damage * multiplier);
                         // Apply damage reduction
-                        damage = (int) ((damage - target.DRV) * (1 - target.DRR / 10000m));
+                        damage = (long) ((damage - target.DRV) * (1 - target.DRR / 10000m));
 
                         if (damage < 1)
                         {

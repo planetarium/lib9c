@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Libplanet.Crypto;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -18,16 +19,14 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
         private readonly Address _recipeAddr;
-        private readonly Address _worldInfoAddr;
-        private readonly IAccount _initialStateV1;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV1;
+        private readonly IWorld _initialStateV2;
 
         public CommonTest()
         {
             (_tableSheets, _agentAddr, _avatarAddr, _initialStateV1, _initialStateV2) =
                 InitializeUtil.InitializeStates();
             _recipeAddr = _avatarAddr.Derive("recipe_ids");
-            _worldInfoAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
         }
 
         // You cannot use one pet to the multiple slots at the same time
@@ -41,7 +40,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var random = new TestRandom();
 
             // Get Pet
-            var stateV2 = _initialStateV2.SetState(
+            var stateV2 = _initialStateV2.SetLegacyState(
                 PetState.DeriveAddress(_avatarAddr, petId),
                 new List(petId.Serialize(), petLevel.Serialize(), 0L.Serialize())
             );
@@ -58,11 +57,11 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 stageList = stageList.Add(i.Serialize());
             }
 
-            stateV2 = stateV2.SetState(_recipeAddr, stageList);
+            stateV2 = stateV2.SetLegacyState(_recipeAddr, stageList);
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,
-                _worldInfoAddr,
+                _avatarAddr,
                 recipe.UnlockStage
             );
 

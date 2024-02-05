@@ -11,6 +11,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Lib9c.Abstractions;
 using Nekoyume.Model.Stake;
+using Nekoyume.Module;
 using Serilog;
 
 namespace Nekoyume.Action
@@ -80,7 +81,7 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(4);
             Address signer = context.Signer;
@@ -117,9 +118,9 @@ namespace Nekoyume.Action
             return state.TransferAsset(context, Sender, Recipient, Amount);
         }
 
-        public static void ThrowIfStakeState(IAccount state, Address recipient)
+        public static void ThrowIfStakeState(IWorld state, Address recipient)
         {
-            if (state.TryGetState(recipient, out IValue serializedStakeState))
+            if (state.TryGetLegacyState(recipient, out IValue serializedStakeState))
             {
                 bool isStakeStateOrMonsterCollectionState;
                 if (serializedStakeState is Dictionary dictionary)

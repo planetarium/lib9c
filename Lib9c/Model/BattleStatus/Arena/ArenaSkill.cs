@@ -13,17 +13,17 @@ namespace Nekoyume.Model.BattleStatus.Arena
         public class ArenaSkillInfo
         {
             public readonly ArenaCharacter Target;
-            public readonly int Effect;
+            public readonly long Effect;
             public readonly bool Critical;
             public readonly SkillCategory SkillCategory;
             public readonly ElementalType ElementalType;
             public readonly SkillTargetType SkillTargetType;
             public readonly int Turn;
 
-            
+
             public readonly Model.Buff.Buff? Buff;
 
-            public ArenaSkillInfo(ArenaCharacter character, int effect, bool critical, SkillCategory skillCategory,
+            public ArenaSkillInfo(ArenaCharacter character, long effect, bool critical, SkillCategory skillCategory,
                 int turn, ElementalType elementalType = ElementalType.Normal,
                 SkillTargetType targetType = SkillTargetType.Enemy, Model.Buff.Buff? buff = null)
             {
@@ -40,7 +40,7 @@ namespace Nekoyume.Model.BattleStatus.Arena
 
         public readonly IEnumerable<ArenaSkillInfo> SkillInfos;
 
-        
+
         public readonly IEnumerable<ArenaSkillInfo>? BuffInfos;
 
         protected ArenaSkill(

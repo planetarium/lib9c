@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action.Coupons
     using Nekoyume.Action.Coupons;
     using Nekoyume.Model.Coupons;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class IssueCouponsTest
@@ -18,8 +19,8 @@ namespace Lib9c.Tests.Action.Coupons
         [Fact]
         public void Execute()
         {
-            IAccount state = new Account(MockState.Empty)
-                .SetState(
+            IWorld state = new World(new MockWorldState())
+                .SetLegacyState(
                     AdminState.Address,
                     new AdminState(CouponsFixture.AgentAddress1, 1)
                         .Serialize());

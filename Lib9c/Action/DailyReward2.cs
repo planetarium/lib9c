@@ -10,6 +10,7 @@ using Libplanet.Crypto;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -26,7 +27,7 @@ namespace Nekoyume.Action
 
         Address IDailyRewardV1.AvatarAddress => avatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
@@ -36,7 +37,12 @@ namespace Nekoyume.Action
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
-            if (!states.TryGetAgentAvatarStates(ctx.Signer, avatarAddress, out _, out AvatarState avatarState))
+            if (states.GetAgentState(context.Signer) is null)
+            {
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the agent state of the signer was failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(ctx.Signer, avatarAddress, out AvatarState avatarState))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
@@ -75,7 +81,7 @@ namespace Nekoyume.Action
             dailyRewardResult = result;
             avatarState.Update(mail);
             avatarState.UpdateFromAddItem2(material, rewardItemCount, false);
-            return states.SetState(avatarAddress, avatarState.Serialize());
+            return states.SetAvatarState(avatarAddress, avatarState, true, false, false, false);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>

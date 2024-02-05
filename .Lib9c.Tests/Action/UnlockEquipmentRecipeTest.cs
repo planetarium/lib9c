@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -24,7 +25,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public UnlockEquipmentRecipeTest()
         {
@@ -51,11 +52,11 @@ namespace Lib9c.Tests.Action
 
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new Account(MockState.Empty)
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(Addresses.GetSheetAddress<EquipmentItemSheet>(), _tableSheets.EquipmentItemSheet.Serialize())
-                .SetState(Addresses.GetSheetAddress<EquipmentItemRecipeSheet>(), _tableSheets.EquipmentItemRecipeSheet.Serialize())
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize());
+            _initialState = new World(new MockWorldState())
+                .SetAgentState(_agentAddress, agentState)
+                .SetLegacyState(Addresses.GetSheetAddress<EquipmentItemSheet>(), _tableSheets.EquipmentItemSheet.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<EquipmentItemRecipeSheet>(), _tableSheets.EquipmentItemRecipeSheet.Serialize())
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize());
         }
 
         [Theory]
@@ -130,20 +131,17 @@ namespace Lib9c.Tests.Action
                 if (alreadyUnlocked)
                 {
                     var serializedIds = new List(recipeIds.Select(i => i.Serialize()));
-                    state = state.SetState(unlockedRecipeIdsAddress, serializedIds);
+                    state = state.SetLegacyState(unlockedRecipeIdsAddress, serializedIds);
                 }
 
                 if (migrationRequired)
                 {
-                    state = state.SetState(_avatarAddress, _avatarState.Serialize());
+                    state = state.SetLegacyState(
+                        _avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
                 }
                 else
                 {
-                    state = state
-                        .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                        .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), worldInformation.Serialize())
-                        .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize())
-                        .SetState(_avatarAddress, _avatarState.SerializeV2());
+                    state = state.SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
                 }
             }
 
@@ -155,7 +153,7 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                IAccount nextState = action.Execute(new ActionContext
+                IWorld nextState = action.Execute(new ActionContext
                 {
                     PreviousState = state,
                     Signer = _agentAddress,
@@ -163,7 +161,7 @@ namespace Lib9c.Tests.Action
                     RandomSeed = _random.Seed,
                 });
 
-                Assert.True(nextState.TryGetState(unlockedRecipeIdsAddress, out List rawIds));
+                Assert.True(nextState.TryGetLegacyState(unlockedRecipeIdsAddress, out List rawIds));
 
                 var unlockedIds = rawIds.ToList(StateExtensions.ToInteger);
 

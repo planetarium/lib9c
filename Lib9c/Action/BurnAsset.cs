@@ -6,6 +6,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -28,11 +29,11 @@ namespace Nekoyume.Action
             Memo = memo;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
 
-            IAccount state = context.PreviousState;
+            IWorld state = context.PreviousState;
 
             if (!Addresses.CheckAgentHasPermissionOnBalanceAddr(context.Signer, Owner))
             {

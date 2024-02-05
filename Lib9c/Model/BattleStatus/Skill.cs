@@ -13,20 +13,20 @@ namespace Nekoyume.Model.BattleStatus
         public class SkillInfo
         {
             public readonly CharacterBase? Target;
-            public readonly int Effect;
+            public readonly long Effect;
             public readonly bool Critical;
             public readonly SkillCategory SkillCategory;
             public readonly ElementalType ElementalType;
             public readonly SkillTargetType SkillTargetType;
             public readonly int WaveTurn;
-            public readonly int Thorn;
+            public readonly long Thorn;
             public readonly bool IsDead;
             public readonly Guid CharacterId;
 
 
             public readonly Model.Buff.Buff? Buff;
 
-            public SkillInfo(Guid characterId, bool isDead, int thorn, int effect, bool critical, SkillCategory skillCategory,
+            public SkillInfo(Guid characterId, bool isDead, long thorn, long effect, bool critical, SkillCategory skillCategory,
                 int waveTurn, ElementalType elementalType = ElementalType.Normal,
                 SkillTargetType targetType = SkillTargetType.Enemy, Model.Buff.Buff? buff = null, CharacterBase? target = null)
             {

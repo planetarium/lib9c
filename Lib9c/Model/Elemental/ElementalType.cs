@@ -117,9 +117,9 @@ namespace Nekoyume.Model.Elemental
             return ElementalResult.Draw;
         }
 
-        public static int GetDamage(this ElementalType from, ElementalType to, int damage)
+        public static long GetDamage(this ElementalType from, ElementalType to, long damage)
         {
-            return Convert.ToInt32(damage * GetMultiplier(from, to));
+            return Convert.ToInt64(damage * GetMultiplier(from, to));
         }
 
         public static decimal GetMultiplier(this ElementalType from, ElementalType to)

@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class ActionEvaluationTest
@@ -21,7 +22,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _currency;
         private readonly Address _signer;
         private readonly Address _sender;
-        private readonly IAccount _states;
+        private readonly IWorld _states;
 
         public ActionEvaluationTest()
         {
@@ -32,9 +33,9 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             _signer = new PrivateKey().Address;
             _sender = new PrivateKey().Address;
-            _states = new Account(MockState.Empty)
-                .SetState(_signer, (Text)"ANYTHING")
-                .SetState(default, Dictionary.Empty.Add("key", "value"))
+            _states = new World(new MockWorldState())
+                .SetLegacyState(_signer, (Text)"ANYTHING")
+                .SetLegacyState(default, Dictionary.Empty.Add("key", "value"))
                 .MintAsset(context, _signer, _currency * 10000);
             var resolver = MessagePack.Resolvers.CompositeResolver.Create(
                 NineChroniclesResolver.Instance,
@@ -61,8 +62,6 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(ItemEnhancement))]
         [InlineData(typeof(MigrationActivatedAccountsState))]
         [InlineData(typeof(MigrationAvatarState))]
-        [InlineData(typeof(MigrationLegacyShop))]
-        [InlineData(typeof(MimisbrunnrBattle))]
         [InlineData(typeof(PatchTableSheet))]
         [InlineData(typeof(RankingBattle))]
         [InlineData(typeof(RapidCombination))]
@@ -198,18 +197,6 @@ namespace Lib9c.Tests.Action
                 MigrationAvatarState _ => new MigrationAvatarState
                 {
                     avatarStates = new List<Dictionary>(),
-                },
-                MigrationLegacyShop _ => new MigrationLegacyShop(),
-                MimisbrunnrBattle _ => new MimisbrunnrBattle
-                {
-                    Costumes = new List<Guid>(),
-                    Equipments = new List<Guid>(),
-                    Foods = new List<Guid>(),
-                    RuneInfos = new List<RuneSlotInfo>(),
-                    WorldId = 0,
-                    StageId = 0,
-                    PlayCount = 0,
-                    AvatarAddress = default,
                 },
                 PatchTableSheet _ => new PatchTableSheet
                 {

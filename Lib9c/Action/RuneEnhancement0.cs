@@ -11,6 +11,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -44,7 +45,7 @@ namespace Nekoyume.Action
             TryCount = plainValue["t"].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -69,7 +70,7 @@ namespace Nekoyume.Action
 
             RuneState runeState;
             var runeStateAddress = RuneState.DeriveAddress(AvatarAddress, RuneId);
-            if (states.TryGetState(runeStateAddress, out List rawState))
+            if (states.TryGetLegacyState(runeStateAddress, out List rawState))
             {
                 runeState = new RuneState(rawState);
             }
@@ -111,7 +112,7 @@ namespace Nekoyume.Action
                     cost, random, TryCount, out var tryCount))
             {
                 runeState.LevelUp();
-                states = states.SetState(runeStateAddress, runeState.Serialize());
+                states = states.SetLegacyState(runeStateAddress, runeState.Serialize());
             }
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();

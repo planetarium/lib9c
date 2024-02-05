@@ -5,9 +5,10 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Model.State;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
-using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -45,7 +46,7 @@ namespace Nekoyume.Action
             AvatarAddress = dictionary[AvatarAddressKey].ToAddress();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -73,7 +74,7 @@ namespace Nekoyume.Action
             var currency = states.GetGoldCurrency();
 
             Address collectionAddress = MonsterCollectionState.DeriveAddress(context.Signer, agentState.MonsterCollectionRound);
-            if (!states.TryGetState(collectionAddress, out Dictionary stateDict))
+            if (!states.TryGetLegacyState(collectionAddress, out Dictionary stateDict))
             {
                 throw new FailedLoadStateException($"Aborted as the monster collection state failed to load.");
             }
@@ -89,8 +90,8 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}MigrateMonsterCollection Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.SetState(monsterCollectionState.address, Null.Value)
-                .SetState(migratedStakeStateAddress, migratedStakeState.SerializeV2())
+            return states.SetLegacyState(monsterCollectionState.address, Null.Value)
+                .SetLegacyState(migratedStakeStateAddress, migratedStakeState.SerializeV2())
                 .TransferAsset(
                     context,
                     monsterCollectionState.address,
@@ -98,25 +99,26 @@ namespace Nekoyume.Action
                     states.GetBalance(monsterCollectionState.address, currency));
         }
 
-        private static IAccount ClaimMonsterCollectionReward(IActionContext context, Address avatarAddress, string addressesHex)
+        private static IWorld ClaimMonsterCollectionReward(IActionContext context, Address avatarAddress, string addressesHex)
         {
             const long MonsterCollectionRewardEndBlockIndex = 4_481_909;
 
-            IAccount states = context.PreviousState;
+            IWorld states = context.PreviousState;
             Address inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
             Address worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
             Address questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ClaimMonsterCollection exec started", addressesHex);
 
-            if (!states.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress, out AgentState agentState, out AvatarState avatarState, out _))
+            var agentState = states.GetAgentState(context.Signer);
+            if (!states.TryGetAvatarState(context.Signer, avatarAddress, out AvatarState avatarState))
             {
                 throw new FailedLoadStateException($"Aborted as the avatar state of the signer failed to load.");
             }
 
             Address collectionAddress = MonsterCollectionState.DeriveAddress(context.Signer, agentState.MonsterCollectionRound);
 
-            if (!states.TryGetState(collectionAddress, out Dictionary stateDict))
+            if (!states.TryGetLegacyState(collectionAddress, out Dictionary stateDict))
             {
                 throw new FailedLoadStateException($"Aborted as the monster collection state failed to load.");
             }
@@ -153,11 +155,8 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ClaimMonsterCollection Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(collectionAddress, monsterCollectionState.Serialize());
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
+                .SetLegacyState(collectionAddress, monsterCollectionState.Serialize());
         }
     }
 }

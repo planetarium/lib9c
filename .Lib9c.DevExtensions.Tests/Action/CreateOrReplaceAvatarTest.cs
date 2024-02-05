@@ -15,6 +15,7 @@ using Nekoyume.Action;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Xunit;
@@ -24,30 +25,30 @@ namespace Lib9c.DevExtensions.Tests.Action
 {
     public class CreateOrReplaceAvatarTest
     {
-        private readonly IAccount _initialStates;
+        private readonly IWorld _initialStates;
         private readonly TableSheets _tableSheets;
 
         public CreateOrReplaceAvatarTest()
         {
-            _initialStates = new Account(MockState.Empty);
+            _initialStates = new World(new MockWorldState());
 
 #pragma warning disable CS0618
             var ncgCurrency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
-            _initialStates = _initialStates.SetState(
+            _initialStates = _initialStates.SetLegacyState(
                 GoldCurrencyState.Address,
                 new GoldCurrencyState(ncgCurrency).Serialize());
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
             foreach (var (key, value) in sheets)
             {
-                _initialStates = _initialStates.SetState(
+                _initialStates = _initialStates.SetLegacyState(
                     Addresses.TableSheet.Derive(key),
                     value.Serialize());
             }
 
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
-            _initialStates = _initialStates.SetState(
+            _initialStates = _initialStates.SetLegacyState(
                 gameConfigState.address,
                 gameConfigState.Serialize());
         }
@@ -425,7 +426,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         }
 
         private static void Execute(
-            IAccount previousStates,
+            IWorld previousStates,
             long blockIndex,
             Address agentAddr,
             int avatarIndex,
@@ -462,11 +463,11 @@ namespace Lib9c.DevExtensions.Tests.Action
                 RandomSeed = 0,
                 BlockIndex = blockIndex,
             });
-            var agent = new AgentState((Dictionary)nextStates.GetState(agentAddr)!);
+            var agent = nextStates.GetAgentState(agentAddr);
             Assert.Single(agent.avatarAddresses);
             Assert.True(agent.avatarAddresses.ContainsKey(action.AvatarIndex));
             avatarAddr ??= agent.avatarAddresses[action.AvatarIndex];
-            var avatar = new AvatarState((Dictionary)nextStates.GetState(avatarAddr.Value)!);
+            var avatar = nextStates.GetAvatarState(avatarAddr.Value);
             Assert.Equal(action.Name, avatar.name);
             Assert.Equal(action.Hair, avatar.hair);
             Assert.Equal(action.Lens, avatar.lens);
@@ -474,9 +475,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             Assert.Equal(action.Tail, avatar.tail);
             Assert.Equal(action.Level, avatar.level);
 
-            var inventoryAddr = avatarAddr.Value.Derive(LegacyInventoryKey);
-            var inventory =
-                new Inventory((List)nextStates.GetState(inventoryAddr)!);
+            var inventory = avatar.inventory;
             var inventoryEquipments = inventory.Equipments.ToArray();
             var equipmentItemRecipeSheet =
                 nextStates.GetSheet<EquipmentItemRecipeSheet>();
@@ -552,7 +551,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
             foreach (var (runeId, runeLevel) in action.Runes)
             {
-                var runeList = (List)nextStates.GetState(
+                var runeList = (List)nextStates.GetLegacyState(
                     RuneState.DeriveAddress(avatarAddr.Value, runeId))!;
                 Assert.Equal(runeLevel, runeList[1].ToInteger());
             }
@@ -561,13 +560,13 @@ namespace Lib9c.DevExtensions.Tests.Action
                 Addresses.GetSkillStateAddressFromAvatarAddress(avatarAddr.Value);
             if (action.CrystalRandomBuff is null)
             {
-                Assert.Equal(Null.Value, nextStates.GetState(crystalRandomSkillAddr));
+                Assert.Equal(Null.Value, nextStates.GetLegacyState(crystalRandomSkillAddr));
             }
             else
             {
                 var crystalRandomSkillState = new CrystalRandomSkillState(
                     crystalRandomSkillAddr,
-                    (List)nextStates.GetState(crystalRandomSkillAddr)!);
+                    (List)nextStates.GetLegacyState(crystalRandomSkillAddr)!);
                 var (stageId, crystalRandomBuffIds) = action.CrystalRandomBuff.Value;
                 Assert.Equal(stageId, crystalRandomSkillState.StageId);
                 var crystalStageBuffGachaSheet = nextStates.GetSheet<CrystalStageBuffGachaSheet>();

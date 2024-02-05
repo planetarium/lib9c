@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -15,6 +15,7 @@
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -30,7 +31,7 @@
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly GameConfigState _gameConfigState;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public ReRegisterProduct0Test(ITestOutputHelper outputHelper)
         {
@@ -39,12 +40,12 @@
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -78,11 +79,11 @@
             agentState.avatarAddresses[0] = _avatarAddress;
 
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(Addresses.Shop, shopState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
-                .SetState(_avatarAddress, _avatarState.Serialize());
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetLegacyState(Addresses.Shop, shopState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
+                .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
+                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
         }
 
         [Theory]
@@ -196,22 +197,19 @@
 
             if (fromPreviousAction)
             {
-                prevState = prevState.SetState(_avatarAddress, avatarState.Serialize());
+                prevState = prevState.SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
             }
             else
             {
                 prevState = prevState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                    .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             }
 
             prevState = prevState
-                .SetState(Addresses.GetItemAddress(itemId), sellItem.Serialize())
-                .SetState(Order.DeriveAddress(order.OrderId), order.Serialize())
-                .SetState(orderDigestList.Address, orderDigestList.Serialize())
-                .SetState(shardedShopAddress, shopState.Serialize());
+                .SetLegacyState(Addresses.GetItemAddress(itemId), sellItem.Serialize())
+                .SetLegacyState(Order.DeriveAddress(order.OrderId), order.Serialize())
+                .SetLegacyState(orderDigestList.Address, orderDigestList.Serialize())
+                .SetLegacyState(shardedShopAddress, shopState.Serialize());
 
             var currencyState = prevState.GetGoldCurrency();
             var price = new FungibleAssetValue(currencyState, ProductPrice, 0);
@@ -240,7 +238,7 @@
             });
 
             var updateSellShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, updateSellOrderId);
-            var nextShopState = new ShardedShopStateV2((Dictionary)expectedState.GetState(updateSellShopAddress));
+            var nextShopState = new ShardedShopStateV2((Dictionary)expectedState.GetLegacyState(updateSellShopAddress));
             Assert.Equal(1, nextShopState.OrderDigestList.Count);
             Assert.NotEqual(orderId, nextShopState.OrderDigestList.First().OrderId);
             Assert.Equal(updateSellOrderId, nextShopState.OrderDigestList.First().OrderId);
@@ -285,21 +283,21 @@
                 Signer = _agentAddress,
             });
 
-            var targetShopState = new ShardedShopStateV2((Dictionary)actualState.GetState(shardedShopAddress));
-            var nextOrderDigestListState = new OrderDigestListState((Dictionary)actualState.GetState(orderDigestList.Address));
+            var targetShopState = new ShardedShopStateV2((Dictionary)actualState.GetLegacyState(shardedShopAddress));
+            var nextOrderDigestListState = new OrderDigestListState((Dictionary)actualState.GetLegacyState(orderDigestList.Address));
             Assert.Empty(targetShopState.OrderDigestList);
             Assert.Empty(nextOrderDigestListState.OrderDigestList);
             var productsState =
                 new ProductsState(
-                    (List)actualState.GetState(ProductsState.DeriveAddress(_avatarAddress)));
+                    (List)actualState.GetLegacyState(ProductsState.DeriveAddress(_avatarAddress)));
             var productId = Assert.Single(productsState.ProductIds);
             var product =
-                ProductFactory.DeserializeProduct((List)actualState.GetState(Product.DeriveAddress(productId)));
+                ProductFactory.DeserializeProduct((List)actualState.GetLegacyState(Product.DeriveAddress(productId)));
             Assert.Equal(productId, product.ProductId);
             Assert.Equal(productType, product.Type);
             Assert.Equal(order.Price, product.Price);
 
-            var nextAvatarState = actualState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = actualState.GetAvatarState(_avatarAddress);
             Assert.Equal(_gameConfigState.ActionPointMax - ReRegisterProduct0.CostAp, nextAvatarState.actionPoint);
         }
 

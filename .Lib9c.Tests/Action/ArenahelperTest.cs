@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -21,7 +22,7 @@ namespace Lib9c.Tests.Action
 
     public class ArenaHelperTest
     {
-        private IAccount _state;
+        private IWorld _state;
         private Currency _crystal;
         private Address _agent1Address;
         private Address _avatar1Address;
@@ -34,13 +35,13 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _state = new Account(MockState.Empty);
+            _state = new World(new MockWorldState());
 
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             foreach (var (key, value) in sheets)
             {
-                _state = _state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                _state = _state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             tableSheets = new TableSheets(sheets);
@@ -69,13 +70,10 @@ namespace Lib9c.Tests.Action
             _avatar1Address = avatar1State.address;
 
             _state = _state
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .SetState(_agent1Address, agent1State.Serialize())
-                .SetState(_avatar1Address.Derive(LegacyInventoryKey), _avatar1.inventory.Serialize())
-                .SetState(_avatar1Address.Derive(LegacyWorldInformationKey), _avatar1.worldInformation.Serialize())
-                .SetState(_avatar1Address.Derive(LegacyQuestListKey), _avatar1.questList.Serialize())
-                .SetState(_avatar1Address, _avatar1.Serialize())
-                .SetState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize());
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+                .SetAgentState(_agent1Address, agent1State)
+                .SetAvatarState(_avatar1Address, _avatar1, true, true, true, true)
+                .SetLegacyState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize());
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -121,7 +119,7 @@ namespace Lib9c.Tests.Action
                 {
                     var arenaInformationAdr =
                         ArenaInformation.DeriveAddress(_avatar1Address, roundData.ChampionshipId, roundData.Round);
-                    if (_state.TryGetState(arenaInformationAdr, out List _))
+                    if (_state.TryGetLegacyState(arenaInformationAdr, out List _))
                     {
                         throw new ArenaInformationAlreadyContainsException(
                             $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");

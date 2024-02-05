@@ -8,6 +8,7 @@ namespace Lib9c.Tests
     using Bencodex.Types;
     using Lib9c.Renderers;
     using Libplanet.Action;
+    using Libplanet.Action.State;
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
     using Libplanet.Crypto;
@@ -23,6 +24,7 @@ namespace Lib9c.Tests
     using Nekoyume.Blockchain.Policy;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class BlockPolicyTest
@@ -179,8 +181,18 @@ namespace Lib9c.Tests
                 ),
                 renderers: new[] { new BlockRenderer() }
             );
-            Assert.Equal(1 * Currencies.Mead, blockChain.GetBalance(adminAddress, Currencies.Mead));
-            Assert.Equal(1 * Currencies.Mead, blockChain.GetBalance(MeadConfig.PatronAddress, Currencies.Mead));
+            Assert.Equal(
+                1 * Currencies.Mead,
+                blockChain
+                    .GetWorldState()
+                    .GetAccountState(ReservedAddresses.LegacyAccount)
+                    .GetBalance(adminAddress, Currencies.Mead));
+            Assert.Equal(
+                1 * Currencies.Mead,
+                blockChain
+                    .GetWorldState()
+                    .GetAccountState(ReservedAddresses.LegacyAccount)
+                    .GetBalance(MeadConfig.PatronAddress, Currencies.Mead));
             var action = new DailyReward
             {
                 avatarAddress = adminAddress,
@@ -382,7 +394,10 @@ namespace Lib9c.Tests
 
             Block block = blockChain.ProposeBlock(adminPrivateKey);
             blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
-            FungibleAssetValue actualBalance = blockChain.GetBalance(adminAddress, _currency);
+            FungibleAssetValue actualBalance = blockChain
+                .GetWorldState()
+                .GetAccountState(ReservedAddresses.LegacyAccount)
+                .GetBalance(adminAddress, _currency);
             FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 10, 0);
             Assert.True(expectedBalance.Equals(actualBalance));
         }

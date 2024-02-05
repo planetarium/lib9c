@@ -6,11 +6,12 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class RenewAdminStateTest
     {
-        private IAccount _stateDelta;
+        private IWorld _stateDelta;
         private long _validUntil;
         private AdminState _adminState;
         private PrivateKey _adminPrivateKey;
@@ -20,9 +21,9 @@ namespace Lib9c.Tests.Action
             _adminPrivateKey = new PrivateKey();
             _validUntil = 1_500_000L;
             _adminState = new AdminState(_adminPrivateKey.Address, _validUntil);
-            _stateDelta = new Account(
-                MockState.Empty
-                    .SetState(Addresses.Admin, _adminState.Serialize()));
+            _stateDelta = new World(
+                new MockWorldState()
+                    .SetState(ReservedAddresses.LegacyAccount, Addresses.Admin, _adminState.Serialize()));
         }
 
         [Fact]
@@ -36,7 +37,7 @@ namespace Lib9c.Tests.Action
                 Signer = _adminPrivateKey.Address,
             });
 
-            var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetState(Addresses.Admin));
+            var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetLegacyState(Addresses.Admin));
             Assert.Equal(newValidUntil, adminState.ValidUntil);
             Assert.NotEqual(_validUntil, adminState.ValidUntil);
         }
@@ -69,7 +70,7 @@ namespace Lib9c.Tests.Action
                 Signer = _adminPrivateKey.Address,
             });
 
-            var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetState(Addresses.Admin));
+            var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetLegacyState(Addresses.Admin));
             Assert.Equal(newValidUntil, adminState.ValidUntil);
             Assert.NotEqual(_validUntil, adminState.ValidUntil);
         }
@@ -127,7 +128,7 @@ namespace Lib9c.Tests.Action
 
             Address expectedPendingActivationStateAddress =
                 PendingActivationState.DeriveAddress(nonce, privateKey.PublicKey);
-            Assert.NotNull(stateDelta.GetState(expectedPendingActivationStateAddress));
+            Assert.NotNull(stateDelta.GetLegacyState(expectedPendingActivationStateAddress));
         }
     }
 }

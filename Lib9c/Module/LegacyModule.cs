@@ -1,38 +1,243 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using Bencodex.Types;
-using LruCacheNet;
-using Nekoyume.Model.Arena;
-using Nekoyume.Helper;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Serilog;
-using static Lib9c.SerializeKeys;
-using System.Collections.Immutable;
+using Lib9c;
+using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Exceptions;
+using Libplanet.Types.Consensus;
+using LruCacheNet;
+using Nekoyume.Action;
+using Nekoyume.Helper;
+using Nekoyume.Model.Arena;
 using Nekoyume.Model.Coupons;
-using Nekoyume.Model.Item;
 using Nekoyume.Model.Stake;
+using Nekoyume.Model.State;
+using Nekoyume.TableData;
+using Serilog;
+using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Module
 {
-    public static class AccountStateExtensions
+    public static class LegacyModule
     {
         private const int SheetsCacheSize = 100;
-        private static readonly LruCache<string, ISheet> SheetsCache = new LruCache<string, ISheet>(SheetsCacheSize);
+        private static readonly LruCache<string, ISheet> SheetsCache =
+            new LruCache<string, ISheet>(SheetsCacheSize);
 
-        public static bool TryGetState<T>(this IAccountState states, Address address, out T result)
+        // Basic implementations from IAccount and IAccountState
+        public static IImmutableSet<(Address, Currency)> TotalUpdatedFungibleAssets(
+            this IWorld worldState) =>
+            worldState.GetAccount(ReservedAddresses.LegacyAccount).TotalUpdatedFungibleAssets;
+
+        public static IValue GetLegacyState(this IWorldState worldState, Address address) =>
+            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetState(address);
+
+#nullable enable
+        public static IReadOnlyList<IValue?> GetLegacyStates(this IWorldState worldState, IReadOnlyList<Address> addresses) =>
+            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetStates(addresses);
+#nullable disable
+
+        public static IWorld SetLegacyState(this IWorld world, Address address, IValue state) =>
+            world.SetAccount(
+                ReservedAddresses.LegacyAccount,
+                world.GetAccount(ReservedAddresses.LegacyAccount).SetState(address, state));
+
+        public static FungibleAssetValue GetBalance(
+            this IWorldState worldState,
+            Address address,
+            Currency currency) =>
+            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetBalance(address, currency);
+
+        public static FungibleAssetValue GetTotalSupply(this IWorldState worldState, Currency currency) =>
+            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetTotalSupply(currency);
+
+        public static IWorld MintAsset(
+            this IWorld world,
+            IActionContext context,
+            Address recipient,
+            FungibleAssetValue value) =>
+            world.SetAccount(
+                ReservedAddresses.LegacyAccount,
+                world.GetAccount(ReservedAddresses.LegacyAccount)
+                    .MintAsset(context, recipient, value));
+
+        public static ValidatorSet GetValidatorSet(this IWorldState worldState) =>
+            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetValidatorSet();
+
+        public static IWorld TransferAsset(
+            this IWorld world,
+            IActionContext context,
+            Address sender,
+            Address recipient,
+            FungibleAssetValue value,
+            bool allowNegativeBalance = false) =>
+            world.SetAccount(
+                ReservedAddresses.LegacyAccount,
+                world.GetAccount(ReservedAddresses.LegacyAccount)
+                    .TransferAsset(context, sender, recipient, value, allowNegativeBalance));
+
+        public static IWorld BurnAsset(
+            this IWorld world,
+            IActionContext context,
+            Address owner,
+            FungibleAssetValue value) =>
+            world.SetAccount(
+                ReservedAddresses.LegacyAccount,
+                world.GetAccount(ReservedAddresses.LegacyAccount)
+                    .BurnAsset(context, owner, value));
+
+        public static IWorld SetValidator(
+            this IWorld world,
+            Libplanet.Types.Consensus.Validator validator) =>
+            world.SetAccount(
+                ReservedAddresses.LegacyAccount,
+                world.GetAccount(ReservedAddresses.LegacyAccount)
+                    .SetValidator(validator));
+
+        // Methods from AccountExtensions
+        public static IWorld MarkBalanceChanged(
+            this IWorld world,
+            IActionContext context,
+            Currency currency,
+            params Address[] accounts
+        )
+        {
+            if (accounts.Length == 1)
+            {
+                return MintAsset(world, context, accounts[0], currency * 1);
+            }
+            else if (accounts.Length < 1)
+            {
+                return world;
+            }
+
+            for (int i = 1; i < accounts.Length; i++)
+            {
+                world = TransferAsset(
+                    world,
+                    context,
+                    accounts[i - 1],
+                    accounts[i],
+                    currency * 1,
+                    true);
+            }
+
+            return world;
+        }
+
+        public static IWorld SetWorldBossKillReward(
+            this IWorld world,
+            IActionContext context,
+            Address rewardInfoAddress,
+            WorldBossKillRewardRecord rewardRecord,
+            int rank,
+            WorldBossState bossState,
+            RuneWeightSheet runeWeightSheet,
+            WorldBossKillRewardSheet worldBossKillRewardSheet,
+            RuneSheet runeSheet,
+            IRandom random,
+            Address avatarAddress,
+            Address agentAddress)
+        {
+            if (!rewardRecord.IsClaimable(bossState.Level))
+            {
+                throw new InvalidClaimException();
+            }
+#pragma warning disable LAA1002
+            var filtered = rewardRecord
+                .Where(kv => !kv.Value)
+                .Select(kv => kv.Key)
+                .ToList();
+#pragma warning restore LAA1002
+            foreach (var level in filtered)
+            {
+                List<FungibleAssetValue> rewards = RuneHelper.CalculateReward(
+                    rank,
+                    bossState.Id,
+                    runeWeightSheet,
+                    worldBossKillRewardSheet,
+                    runeSheet,
+                    random
+                );
+                rewardRecord[level] = true;
+                foreach (var reward in rewards)
+                {
+                    if (reward.Currency.Equals(CrystalCalculator.CRYSTAL))
+                    {
+                        world = MintAsset(world, context, agentAddress, reward);
+                    }
+                    else
+                    {
+                        world = MintAsset(world, context, avatarAddress, reward);
+                    }
+                }
+            }
+
+            return SetLegacyState(world, rewardInfoAddress, rewardRecord.Serialize());
+        }
+
+#nullable enable
+        public static IWorld SetCouponWallet(
+            this IWorld world,
+            Address agentAddress,
+            IImmutableDictionary<Guid, Coupon> couponWallet)
+        {
+            Address walletAddress = agentAddress.Derive(CouponWalletKey);
+            IValue serializedWallet = new Bencodex.Types.List(
+                couponWallet.Values.OrderBy(c => c.Id).Select(v => v.Serialize())
+            );
+            return SetLegacyState(world, walletAddress, serializedWallet);
+        }
+#nullable disable
+
+        public static IWorld Mead(
+            this IWorld world, IActionContext context, Address signer, BigInteger rawValue)
+        {
+            while (true)
+            {
+                var price = rawValue * Currencies.Mead;
+                var balance = GetBalance(world, signer, Currencies.Mead);
+                if (balance < price)
+                {
+                    var requiredMead = price - balance;
+                    var contractAddress = signer.Derive(nameof(RequestPledge));
+                    if (GetLegacyState(world, contractAddress) is List contract && contract[1].ToBoolean())
+                    {
+                        var patron = contract[0].ToAddress();
+                        try
+                        {
+                            world = TransferAsset(world, context, patron, signer, requiredMead);
+                        }
+                        catch (InsufficientBalanceException)
+                        {
+                            world = Mead(world, context, patron, rawValue);
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        throw new InsufficientBalanceException("", signer, balance);
+                    }
+                }
+
+                return world;
+            }
+        }
+
+        // Methods from AccountStateExtensions
+        public static bool TryGetLegacyState<T>(this IWorldState worldState, Address address, out T result)
             where T : IValue
         {
-            IValue raw = states.GetState(address);
+            IValue raw = GetLegacyState(worldState, address);
             if (raw is T v)
             {
                 result = v;
@@ -43,10 +248,10 @@ namespace Nekoyume.Action
             return false;
         }
 
-        public static Dictionary<Address, IValue> GetStatesAsDict(this IAccountState states, params Address[] addresses)
+        public static Dictionary<Address, IValue> GetLegacyStatesAsDict(this IWorldState worldState, params Address[] addresses)
         {
             var result = new Dictionary<Address, IValue>();
-            var values = states.GetStates(addresses);
+            var values = GetLegacyStates(worldState, addresses);
             for (var i = 0; i < addresses.Length; i++)
             {
                 var address = addresses[i];
@@ -57,41 +262,15 @@ namespace Nekoyume.Action
             return result;
         }
 
-        public static AgentState GetAgentState(this IAccountState states, Address address)
-        {
-            var serializedAgent = states.GetState(address);
-            if (serializedAgent is null)
-            {
-                Log.Warning("No agent state ({0})", address.ToHex());
-                return null;
-            }
-
-            try
-            {
-                return new AgentState((Bencodex.Types.Dictionary)serializedAgent);
-            }
-            catch (InvalidCastException e)
-            {
-                Log.Error(
-                    e,
-                    "Invalid agent state ({0}): {1}",
-                    address.ToHex(),
-                    serializedAgent
-                );
-
-                return null;
-            }
-        }
-
         public static bool TryGetGoldBalance(
-            this IAccountState states,
+            this IWorldState worldState,
             Address address,
             Currency currency,
             out FungibleAssetValue balance)
         {
             try
             {
-                balance = states.GetBalance(address, currency);
+                balance = GetBalance(worldState, address, currency);
                 return true;
             }
             catch (BalanceDoesNotExistsException)
@@ -102,14 +281,14 @@ namespace Nekoyume.Action
         }
 
         public static GoldBalanceState GetGoldBalanceState(
-            this IAccountState states,
+            this IWorldState worldState,
             Address address,
             Currency currency
-        ) => new GoldBalanceState(address, states.GetBalance(address, currency));
+        ) => new GoldBalanceState(address, GetBalance(worldState, address, currency));
 
-        public static Currency GetGoldCurrency(this IAccountState states)
+        public static Currency GetGoldCurrency(this IWorldState worldState)
         {
-            if (states.TryGetState(GoldCurrencyState.Address, out Dictionary asDict))
+            if (TryGetLegacyState(worldState, GoldCurrencyState.Address, out Dictionary asDict))
             {
                 return new GoldCurrencyState(asDict).Currency;
             }
@@ -120,219 +299,9 @@ namespace Nekoyume.Action
             );
         }
 
-        public static AvatarState GetAvatarState(this IAccountState states, Address address)
+        public static WeeklyArenaState GetWeeklyArenaState(this IWorldState worldState, Address address)
         {
-            var serializedAvatar = states.GetState(address);
-            if (serializedAvatar is null)
-            {
-                Log.Warning("No avatar state ({AvatarAddress})", address.ToHex());
-                return null;
-            }
-
-            try
-            {
-                return new AvatarState((Bencodex.Types.Dictionary)serializedAvatar);
-            }
-            catch (InvalidCastException e)
-            {
-                Log.Error(
-                    e,
-                    "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
-                    address.ToHex(),
-                    serializedAvatar
-                );
-
-                return null;
-            }
-        }
-
-        public static AvatarState GetAvatarStateV2(this IAccountState states, Address address)
-        {
-            var addresses = new List<Address>
-            {
-                address,
-            };
-            string[] keys =
-            {
-                LegacyInventoryKey,
-                LegacyWorldInformationKey,
-                LegacyQuestListKey,
-            };
-            addresses.AddRange(keys.Select(key => address.Derive(key)));
-            var serializedValues = states.GetStates(addresses);
-            if (!(serializedValues[0] is Dictionary serializedAvatar))
-            {
-                Log.Warning("No avatar state ({AvatarAddress})", address.ToHex());
-                return null;
-            }
-
-            for (var i = 0; i < keys.Length; i++)
-            {
-                var key = keys[i];
-                var serializedValue = serializedValues[i + 1];
-                if (serializedValue is null)
-                {
-                    throw new FailedLoadStateException($"failed to load {key}.");
-                }
-
-                serializedAvatar = serializedAvatar.SetItem(key, serializedValue);
-            }
-
-            try
-            {
-                return new AvatarState(serializedAvatar);
-            }
-            catch (InvalidCastException e)
-            {
-                Log.Error(
-                    e,
-                    "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
-                    address.ToHex(),
-                    serializedAvatar
-                );
-
-                return null;
-            }
-        }
-
-        public static bool TryGetAvatarState(
-            this IAccountState states,
-            Address agentAddress,
-            Address avatarAddress,
-            out AvatarState avatarState
-        )
-        {
-            avatarState = null;
-            var value = states.GetState(avatarAddress);
-            if (value is null)
-            {
-                return false;
-            }
-
-            try
-            {
-                var serializedAvatar = (Dictionary)value;
-                if (serializedAvatar["agentAddress"].ToAddress() != agentAddress)
-                {
-                    return false;
-                }
-
-                avatarState = new AvatarState(serializedAvatar);
-                return true;
-            }
-            catch (InvalidCastException)
-            {
-                return false;
-            }
-            catch (KeyNotFoundException)
-            {
-                return false;
-            }
-        }
-
-        public static bool TryGetAvatarStateV2(
-            this IAccountState states,
-            Address agentAddress,
-            Address avatarAddress,
-            out AvatarState avatarState,
-            out bool migrationRequired
-        )
-        {
-            avatarState = null;
-            migrationRequired = false;
-            if (states.GetState(avatarAddress) is Dictionary serializedAvatar)
-            {
-                try
-                {
-                    if (serializedAvatar[AgentAddressKey].ToAddress() != agentAddress)
-                    {
-                        return false;
-                    }
-
-                    avatarState = GetAvatarStateV2(states, avatarAddress);
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    // BackWardCompatible.
-                    if (e is KeyNotFoundException || e is FailedLoadStateException)
-                    {
-                        migrationRequired = true;
-                        return states.TryGetAvatarState(agentAddress, avatarAddress, out avatarState);
-                    }
-
-                    return false;
-                }
-            }
-
-            return false;
-        }
-
-        public static bool TryGetAgentAvatarStates(
-            this IAccountState states,
-            Address agentAddress,
-            Address avatarAddress,
-            out AgentState agentState,
-            out AvatarState avatarState
-        )
-        {
-            avatarState = null;
-            agentState = states.GetAgentState(agentAddress);
-            if (agentState is null)
-            {
-                return false;
-            }
-
-            if (!agentState.avatarAddresses.ContainsValue(avatarAddress))
-            {
-                throw new AgentStateNotContainsAvatarAddressException(
-                    $"The avatar {avatarAddress.ToHex()} does not belong to the agent {agentAddress.ToHex()}.");
-            }
-
-            avatarState = states.GetAvatarState(avatarAddress);
-            return !(avatarState is null);
-        }
-
-        public static bool TryGetAgentAvatarStatesV2(
-            this IAccountState states,
-            Address agentAddress,
-            Address avatarAddress,
-            out AgentState agentState,
-            out AvatarState avatarState,
-            out bool avatarMigrationRequired
-        )
-        {
-            avatarState = null;
-            avatarMigrationRequired = false;
-            agentState = states.GetAgentState(agentAddress);
-            if (agentState is null)
-            {
-                return false;
-            }
-
-            if (!agentState.avatarAddresses.ContainsValue(avatarAddress))
-            {
-                throw new AgentStateNotContainsAvatarAddressException(
-                    $"The avatar {avatarAddress.ToHex()} does not belong to the agent {agentAddress.ToHex()}.");
-            }
-
-            try
-            {
-                avatarState = states.GetAvatarStateV2(avatarAddress);
-            }
-            catch (FailedLoadStateException)
-            {
-                // BackWardCompatible.
-                avatarState = states.GetAvatarState(avatarAddress);
-                avatarMigrationRequired = true;
-            }
-
-            return !(avatarState is null);
-        }
-
-        public static WeeklyArenaState GetWeeklyArenaState(this IAccountState states, Address address)
-        {
-            var iValue = states.GetState(address);
+            var iValue = GetLegacyState(worldState, address);
             if (iValue is null)
             {
                 Log.Warning("No weekly arena state ({0})", address.ToHex());
@@ -356,14 +325,14 @@ namespace Nekoyume.Action
             }
         }
 
-        public static WeeklyArenaState GetWeeklyArenaState(this IAccountState states, int index)
+        public static WeeklyArenaState GetWeeklyArenaState(this IWorldState worldState, int index)
         {
             var address = WeeklyArenaState.DeriveAddress(index);
-            return GetWeeklyArenaState(states, address);
+            return GetWeeklyArenaState(worldState, address);
         }
 
         public static CombinationSlotState GetCombinationSlotState(
-            this IAccountState states,
+            this IWorldState worldState,
             Address avatarAddress,
             int index)
         {
@@ -374,7 +343,7 @@ namespace Nekoyume.Action
                     index
                 )
             );
-            var value = states.GetState(address);
+            var value = GetLegacyState(worldState, address);
             if (value is null)
             {
                 Log.Warning("No combination slot state ({0})", address.ToHex());
@@ -392,9 +361,9 @@ namespace Nekoyume.Action
             }
         }
 
-        public static GameConfigState GetGameConfigState(this IAccountState states)
+        public static GameConfigState GetGameConfigState(this IWorldState worldState)
         {
-            var value = states.GetState(GameConfigState.Address);
+            var value = GetLegacyState(worldState, GameConfigState.Address);
             if (value is null)
             {
                 Log.Warning("No game config state ({0})", GameConfigState.Address.ToHex());
@@ -412,9 +381,9 @@ namespace Nekoyume.Action
             }
         }
 
-        public static RedeemCodeState GetRedeemCodeState(this IAccountState states)
+        public static RedeemCodeState GetRedeemCodeState(this IWorldState worldState)
         {
-            var value = states.GetState(RedeemCodeState.Address);
+            var value = GetLegacyState(worldState, RedeemCodeState.Address);
             if (value is null)
             {
                 Log.Warning("RedeemCodeState is null. ({0})", RedeemCodeState.Address.ToHex());
@@ -433,10 +402,10 @@ namespace Nekoyume.Action
         }
 
 #nullable enable
-        public static IImmutableDictionary<Guid, Coupon> GetCouponWallet(this IAccountState states, Address agentAddress)
+        public static IImmutableDictionary<Guid, Coupon> GetCouponWallet(this IWorldState worldState, Address agentAddress)
         {
             Address walletAddress = agentAddress.Derive(CouponWalletKey);
-            IValue? serialized = states.GetState(walletAddress);
+            IValue? serialized = GetLegacyState(worldState, walletAddress);
             if (!(serialized is { } serializedValue))
             {
                 return ImmutableDictionary<Guid, Coupon>.Empty;
@@ -449,10 +418,9 @@ namespace Nekoyume.Action
         }
 #nullable disable
 
-        public static IEnumerable<GoldDistribution> GetGoldDistribution(
-            this IAccountState states)
+        public static IEnumerable<GoldDistribution> GetGoldDistribution(this IWorldState worldState)
         {
-            var value = states.GetState(Addresses.GoldDistribution);
+            var value = GetLegacyState(worldState, Addresses.GoldDistribution);
             if (value is null)
             {
                 Log.Warning($"{nameof(GoldDistribution)} is null ({0})", Addresses.GoldDistribution.ToHex());
@@ -471,21 +439,20 @@ namespace Nekoyume.Action
             }
         }
 
-        public static T GetSheet<T>(
-            this IAccountState states) where T : ISheet, new()
+        public static T GetSheet<T>(this IWorldState worldState) where T : ISheet, new()
         {
             var address = Addresses.GetSheetAddress<T>();
-            return GetSheet<T>(states, address);
+            return GetSheet<T>(worldState, address);
         }
 
         public static T GetSheet<T>(
-            this IAccountState states,
+            this IWorldState worldState,
             Address sheetAddr)
             where T : ISheet, new()
         {
             try
             {
-                var csv = GetSheetCsv(states, sheetAddr);
+                var csv = GetSheetCsv<T>(worldState);
                 byte[] hash;
                 using (var sha256 = SHA256.Create())
                 {
@@ -510,12 +477,11 @@ namespace Nekoyume.Action
             }
         }
 
-        public static bool TryGetSheet<T>(this IAccountState states, out T sheet)
-            where T : ISheet, new()
+        public static bool TryGetSheet<T>(this IWorldState worldState, out T sheet) where T : ISheet, new()
         {
             try
             {
-                sheet = states.GetSheet<T>();
+                sheet = GetSheet<T>(worldState);
                 return true;
             }
             catch (Exception)
@@ -525,12 +491,12 @@ namespace Nekoyume.Action
             }
         }
 
-        public static bool TryGetSheet<T>(this IAccountState states, Address address, out T sheet)
+        public static bool TryGetSheet<T>(this IWorldState worldState, Address address, out T sheet)
             where T : ISheet, new()
         {
             try
             {
-                sheet = states.GetSheet<T>(address);
+                sheet = GetSheet<T>(worldState, address);
                 return true;
             }
             catch (Exception)
@@ -541,7 +507,7 @@ namespace Nekoyume.Action
         }
 
         public static Dictionary<Type, (Address address, ISheet sheet)> GetSheets(
-            this IAccountState states,
+            this IWorldState worldState,
             bool containAvatarSheets = false,
             bool containItemSheet = false,
             bool containQuestSheet = false,
@@ -677,36 +643,36 @@ namespace Nekoyume.Action
                 sheetTypeList.Add(typeof(RuneOptionSheet));
             }
 
-            return states.GetSheets(sheetTypeList.Distinct().ToArray());
+            return GetSheets(worldState, sheetTypeList.Distinct().ToArray());
         }
 
         public static Dictionary<Type, (Address address, ISheet sheet)> GetSheets(
-            this IAccountState state,
+            this IWorldState worldState,
             params Type[] sheetTypes)
         {
             Dictionary<Type, (Address address, ISheet sheet)> result = sheetTypes.ToDictionary(
                 sheetType => sheetType,
                 sheetType => (Addresses.GetSheetAddress(sheetType.Name), (ISheet)null));
-            return state.GetSheetsInternal(result);
+            return GetSheetsInternal(worldState, result);
         }
 
         public static Dictionary<Type, (Address address, ISheet sheet)> GetSheets(
-            this IAccountState state,
+            this IWorldState worldState,
             params (Type sheetType, string sheetName)[] sheetTuples)
         {
             Dictionary<Type, (Address address, ISheet sheet)> result = sheetTuples.ToDictionary(
                 tuple => tuple.sheetType,
                 tuple => (Addresses.GetSheetAddress(tuple.sheetName), (ISheet)null));
-            return state.GetSheetsInternal(result);
+            return GetSheetsInternal(worldState, result);
         }
 
         private static Dictionary<Type, (Address address, ISheet sheet)> GetSheetsInternal(
-            this IAccountState state,
+            this IWorldState worldState,
             Dictionary<Type, (Address address, ISheet sheet)> result)
         {
             var sheetTypes = result.Keys.ToArray();
             var addresses = result.Values.Select(e => e.address).ToArray();
-            var csvValues = state.GetStates(addresses);
+            var csvValues = GetLegacyStates(worldState, addresses);
             for (var i = 0; i < sheetTypes.Length; i++)
             {
                 var sheetType = sheetTypes[i];
@@ -745,15 +711,15 @@ namespace Nekoyume.Action
             return result;
         }
 
-        public static string GetSheetCsv<T>(this IAccountState states) where T : ISheet, new()
+        public static string GetSheetCsv<T>(this IWorldState worldState) where T : ISheet, new()
         {
             var address = Addresses.GetSheetAddress<T>();
-            return states.GetSheetCsv(address);
+            return LegacyModule.GetSheetCsv(worldState, address);
         }
 
-        public static string GetSheetCsv(this IAccountState states, Address address)
+        public static string GetSheetCsv(this IWorldState worldState, Address address)
         {
-            var value = states.GetState(address);
+            var value = LegacyModule.GetLegacyState(worldState, address);
             if (value is null or Null)
             {
                 throw new FailedLoadStateException(address, typeof(ISheet));
@@ -770,118 +736,118 @@ namespace Nekoyume.Action
             }
         }
 
-        public static ItemSheet GetItemSheet(this IAccountState states)
+        public static ItemSheet GetItemSheet(this IWorldState worldState)
         {
             var sheet = new ItemSheet();
-            sheet.Set(GetSheet<ConsumableItemSheet>(states), false);
-            sheet.Set(GetSheet<CostumeItemSheet>(states), false);
-            sheet.Set(GetSheet<EquipmentItemSheet>(states), false);
-            sheet.Set(GetSheet<MaterialItemSheet>(states));
+            sheet.Set(GetSheet<ConsumableItemSheet>(worldState), false);
+            sheet.Set(GetSheet<CostumeItemSheet>(worldState), false);
+            sheet.Set(GetSheet<EquipmentItemSheet>(worldState), false);
+            sheet.Set(GetSheet<MaterialItemSheet>(worldState));
             return sheet;
         }
 
-        public static StageSimulatorSheetsV1 GetStageSimulatorSheetsV1(this IAccountState states)
+        public static StageSimulatorSheetsV1 GetStageSimulatorSheetsV1(this IWorldState worldState)
         {
             return new StageSimulatorSheetsV1(
-                GetSheet<MaterialItemSheet>(states),
-                GetSheet<SkillSheet>(states),
-                GetSheet<SkillBuffSheet>(states),
-                GetSheet<StatBuffSheet>(states),
-                GetSheet<SkillActionBuffSheet>(states),
-                GetSheet<ActionBuffSheet>(states),
-                GetSheet<CharacterSheet>(states),
-                GetSheet<CharacterLevelSheet>(states),
-                GetSheet<EquipmentItemSetEffectSheet>(states),
-                GetSheet<StageSheet>(states),
-                GetSheet<StageWaveSheet>(states),
-                GetSheet<EnemySkillSheet>(states)
+                GetSheet<MaterialItemSheet>(worldState),
+                GetSheet<SkillSheet>(worldState),
+                GetSheet<SkillBuffSheet>(worldState),
+                GetSheet<StatBuffSheet>(worldState),
+                GetSheet<SkillActionBuffSheet>(worldState),
+                GetSheet<ActionBuffSheet>(worldState),
+                GetSheet<CharacterSheet>(worldState),
+                GetSheet<CharacterLevelSheet>(worldState),
+                GetSheet<EquipmentItemSetEffectSheet>(worldState),
+                GetSheet<StageSheet>(worldState),
+                GetSheet<StageWaveSheet>(worldState),
+                GetSheet<EnemySkillSheet>(worldState)
             );
         }
 
-        public static StageSimulatorSheets GetStageSimulatorSheets(this IAccountState states)
+        public static StageSimulatorSheets GetStageSimulatorSheets(this IWorldState worldState)
         {
             return new StageSimulatorSheets(
-                GetSheet<MaterialItemSheet>(states),
-                GetSheet<SkillSheet>(states),
-                GetSheet<SkillBuffSheet>(states),
-                GetSheet<StatBuffSheet>(states),
-                GetSheet<SkillActionBuffSheet>(states),
-                GetSheet<ActionBuffSheet>(states),
-                GetSheet<CharacterSheet>(states),
-                GetSheet<CharacterLevelSheet>(states),
-                GetSheet<EquipmentItemSetEffectSheet>(states),
-                GetSheet<StageSheet>(states),
-                GetSheet<StageWaveSheet>(states),
-                GetSheet<EnemySkillSheet>(states),
-                GetSheet<RuneOptionSheet>(states)
+                GetSheet<MaterialItemSheet>(worldState),
+                GetSheet<SkillSheet>(worldState),
+                GetSheet<SkillBuffSheet>(worldState),
+                GetSheet<StatBuffSheet>(worldState),
+                GetSheet<SkillActionBuffSheet>(worldState),
+                GetSheet<ActionBuffSheet>(worldState),
+                GetSheet<CharacterSheet>(worldState),
+                GetSheet<CharacterLevelSheet>(worldState),
+                GetSheet<EquipmentItemSetEffectSheet>(worldState),
+                GetSheet<StageSheet>(worldState),
+                GetSheet<StageWaveSheet>(worldState),
+                GetSheet<EnemySkillSheet>(worldState),
+                GetSheet<RuneOptionSheet>(worldState)
             );
         }
 
-        public static RankingSimulatorSheetsV1 GetRankingSimulatorSheetsV1(this IAccountState states)
+        public static RankingSimulatorSheetsV1 GetRankingSimulatorSheetsV1(this IWorldState worldState)
         {
             return new RankingSimulatorSheetsV1(
-                GetSheet<MaterialItemSheet>(states),
-                GetSheet<SkillSheet>(states),
-                GetSheet<SkillBuffSheet>(states),
-                GetSheet<StatBuffSheet>(states),
-                GetSheet<SkillActionBuffSheet>(states),
-                GetSheet<ActionBuffSheet>(states),
-                GetSheet<CharacterSheet>(states),
-                GetSheet<CharacterLevelSheet>(states),
-                GetSheet<EquipmentItemSetEffectSheet>(states),
-                GetSheet<WeeklyArenaRewardSheet>(states)
+                GetSheet<MaterialItemSheet>(worldState),
+                GetSheet<SkillSheet>(worldState),
+                GetSheet<SkillBuffSheet>(worldState),
+                GetSheet<StatBuffSheet>(worldState),
+                GetSheet<SkillActionBuffSheet>(worldState),
+                GetSheet<ActionBuffSheet>(worldState),
+                GetSheet<CharacterSheet>(worldState),
+                GetSheet<CharacterLevelSheet>(worldState),
+                GetSheet<EquipmentItemSetEffectSheet>(worldState),
+                GetSheet<WeeklyArenaRewardSheet>(worldState)
             );
         }
 
-        public static RankingSimulatorSheets GetRankingSimulatorSheets(this IAccountState states)
+        public static RankingSimulatorSheets GetRankingSimulatorSheets(this IWorldState worldState)
         {
             return new RankingSimulatorSheets(
-                GetSheet<MaterialItemSheet>(states),
-                GetSheet<SkillSheet>(states),
-                GetSheet<SkillBuffSheet>(states),
-                GetSheet<StatBuffSheet>(states),
-                GetSheet<SkillActionBuffSheet>(states),
-                GetSheet<ActionBuffSheet>(states),
-                GetSheet<CharacterSheet>(states),
-                GetSheet<CharacterLevelSheet>(states),
-                GetSheet<EquipmentItemSetEffectSheet>(states),
-                GetSheet<WeeklyArenaRewardSheet>(states),
-                GetSheet<RuneOptionSheet>(states)
+                GetSheet<MaterialItemSheet>(worldState),
+                GetSheet<SkillSheet>(worldState),
+                GetSheet<SkillBuffSheet>(worldState),
+                GetSheet<StatBuffSheet>(worldState),
+                GetSheet<SkillActionBuffSheet>(worldState),
+                GetSheet<ActionBuffSheet>(worldState),
+                GetSheet<CharacterSheet>(worldState),
+                GetSheet<CharacterLevelSheet>(worldState),
+                GetSheet<EquipmentItemSetEffectSheet>(worldState),
+                GetSheet<WeeklyArenaRewardSheet>(worldState),
+                GetSheet<RuneOptionSheet>(worldState)
             );
         }
 
-        public static QuestSheet GetQuestSheet(this IAccountState states)
+        public static QuestSheet GetQuestSheet(this IWorldState worldState)
         {
             var questSheet = new QuestSheet();
-            questSheet.Set(GetSheet<WorldQuestSheet>(states), false);
-            questSheet.Set(GetSheet<CollectQuestSheet>(states), false);
-            questSheet.Set(GetSheet<CombinationQuestSheet>(states), false);
-            questSheet.Set(GetSheet<TradeQuestSheet>(states), false);
-            questSheet.Set(GetSheet<MonsterQuestSheet>(states), false);
-            questSheet.Set(GetSheet<ItemEnhancementQuestSheet>(states), false);
-            questSheet.Set(GetSheet<GeneralQuestSheet>(states), false);
-            questSheet.Set(GetSheet<ItemGradeQuestSheet>(states), false);
-            questSheet.Set(GetSheet<ItemTypeCollectQuestSheet>(states), false);
-            questSheet.Set(GetSheet<GoldQuestSheet>(states), false);
-            questSheet.Set(GetSheet<CombinationEquipmentQuestSheet>(states));
+            questSheet.Set(GetSheet<WorldQuestSheet>(worldState), false);
+            questSheet.Set(GetSheet<CollectQuestSheet>(worldState), false);
+            questSheet.Set(GetSheet<CombinationQuestSheet>(worldState), false);
+            questSheet.Set(GetSheet<TradeQuestSheet>(worldState), false);
+            questSheet.Set(GetSheet<MonsterQuestSheet>(worldState), false);
+            questSheet.Set(GetSheet<ItemEnhancementQuestSheet>(worldState), false);
+            questSheet.Set(GetSheet<GeneralQuestSheet>(worldState), false);
+            questSheet.Set(GetSheet<ItemGradeQuestSheet>(worldState), false);
+            questSheet.Set(GetSheet<ItemTypeCollectQuestSheet>(worldState), false);
+            questSheet.Set(GetSheet<GoldQuestSheet>(worldState), false);
+            questSheet.Set(GetSheet<CombinationEquipmentQuestSheet>(worldState));
             return questSheet;
         }
 
-        public static AvatarSheets GetAvatarSheets(this IAccountState states)
+        public static AvatarSheets GetAvatarSheets(this IWorldState worldState)
         {
             return new AvatarSheets(
-                GetSheet<WorldSheet>(states),
-                GetQuestSheet(states),
-                GetSheet<QuestRewardSheet>(states),
-                GetSheet<QuestItemRewardSheet>(states),
-                GetSheet<EquipmentItemRecipeSheet>(states),
-                GetSheet<EquipmentItemSubRecipeSheet>(states)
+                GetSheet<WorldSheet>(worldState),
+                GetQuestSheet(worldState),
+                GetSheet<QuestRewardSheet>(worldState),
+                GetSheet<QuestItemRewardSheet>(worldState),
+                GetSheet<EquipmentItemRecipeSheet>(worldState),
+                GetSheet<EquipmentItemSubRecipeSheet>(worldState)
             );
         }
 
-        public static RankingState GetRankingState(this IAccountState states)
+        public static RankingState GetRankingState(this IWorldState worldState)
         {
-            var value = states.GetState(Addresses.Ranking);
+            var value = GetLegacyState(worldState, Addresses.Ranking);
             if (value is null)
             {
                 throw new FailedLoadStateException(nameof(RankingState0));
@@ -890,9 +856,9 @@ namespace Nekoyume.Action
             return new RankingState((Dictionary)value);
         }
 
-        public static RankingState1 GetRankingState1(this IAccountState states)
+        public static RankingState1 GetRankingState1(this IWorldState worldState)
         {
-            var value = states.GetState(Addresses.Ranking);
+            var value = GetLegacyState(worldState, Addresses.Ranking);
             if (value is null)
             {
                 throw new FailedLoadStateException(nameof(RankingState1));
@@ -901,9 +867,9 @@ namespace Nekoyume.Action
             return new RankingState1((Dictionary)value);
         }
 
-        public static RankingState0 GetRankingState0(this IAccountState states)
+        public static RankingState0 GetRankingState0(this IWorldState worldState)
         {
-            var value = states.GetState(Addresses.Ranking);
+            var value = GetLegacyState(worldState, Addresses.Ranking);
             if (value is null)
             {
                 throw new FailedLoadStateException(nameof(RankingState0));
@@ -912,9 +878,9 @@ namespace Nekoyume.Action
             return new RankingState0((Dictionary)value);
         }
 
-        public static ShopState GetShopState(this IAccountState states)
+        public static ShopState GetShopState(this IWorldState worldState)
         {
-            var value = states.GetState(Addresses.Shop);
+            var value = GetLegacyState(worldState, Addresses.Shop);
             if (value is null)
             {
                 throw new FailedLoadStateException(nameof(ShopState));
@@ -924,7 +890,7 @@ namespace Nekoyume.Action
         }
 
         public static (Address arenaInfoAddress, ArenaInfo arenaInfo, bool isNewArenaInfo) GetArenaInfo(
-            this IAccountState states,
+            this IWorldState worldState,
             Address weeklyArenaAddress,
             AvatarState avatarState,
             CharacterSheet characterSheet,
@@ -933,7 +899,7 @@ namespace Nekoyume.Action
             var arenaInfoAddress = weeklyArenaAddress.Derive(avatarState.address.ToByteArray());
             var isNew = false;
             ArenaInfo arenaInfo;
-            if (states.TryGetState(arenaInfoAddress, out Dictionary rawArenaInfo))
+            if (TryGetLegacyState(worldState, arenaInfoAddress, out Dictionary rawArenaInfo))
             {
                 arenaInfo = new ArenaInfo(rawArenaInfo);
             }
@@ -947,11 +913,11 @@ namespace Nekoyume.Action
         }
 
         public static bool TryGetStakeState(
-            this IAccountState states,
+            this IWorldState worldState,
             Address agentAddress,
             out StakeState stakeState)
         {
-            if (states.TryGetState(StakeState.DeriveAddress(agentAddress), out Dictionary dictionary))
+            if (TryGetLegacyState(worldState, StakeState.DeriveAddress(agentAddress), out Dictionary dictionary))
             {
                 stakeState = new StakeState(dictionary);
                 return true;
@@ -962,45 +928,49 @@ namespace Nekoyume.Action
         }
 
         public static FungibleAssetValue GetStakedAmount(
-            this IAccountState state,
+            this IWorldState worldState,
             Address agentAddr)
         {
-            var goldCurrency = state.GetGoldCurrency();
-            return state.GetBalance(StakeState.DeriveAddress(agentAddr), goldCurrency);
+            var goldCurrency = GetGoldCurrency(worldState);
+            return GetBalance(worldState, StakeState.DeriveAddress(agentAddr), goldCurrency);
         }
 
         public static bool TryGetStakeStateV2(
-            this IAccountState state,
+            this IWorldState worldState,
             Address agentAddr,
             out StakeStateV2 stakeStateV2)
         {
             var stakeStateAddr = StakeStateV2.DeriveAddress(agentAddr);
             return StakeStateUtils.TryMigrate(
-                state,
+                worldState,
                 stakeStateAddr,
                 out stakeStateV2);
         }
 
-        public static ArenaParticipants GetArenaParticipants(this IAccountState states,
-            Address arenaParticipantsAddress, int id, int round)
+        public static ArenaParticipants GetArenaParticipants(
+            this IWorldState worldState, Address arenaParticipantsAddress, int id, int round)
         {
-            return states.TryGetState(arenaParticipantsAddress, out List list)
+            return TryGetLegacyState(worldState, arenaParticipantsAddress, out List list)
                 ? new ArenaParticipants(list)
                 : new ArenaParticipants(id, round);
         }
 
-        public static ArenaAvatarState GetArenaAvatarState(this IAccountState states,
-            Address arenaAvatarStateAddress, AvatarState avatarState)
+        public static ArenaAvatarState GetArenaAvatarState(
+            this IWorldState worldState,
+            Address arenaAvatarStateAddress,
+            AvatarState avatarState)
         {
-            return states.TryGetState(arenaAvatarStateAddress, out List list)
+            return TryGetLegacyState(worldState, arenaAvatarStateAddress, out List list)
                 ? new ArenaAvatarState(list)
                 : new ArenaAvatarState(avatarState);
         }
 
-        public static bool TryGetArenaParticipants(this IAccountState states,
-            Address arenaParticipantsAddress, out ArenaParticipants arenaParticipants)
+        public static bool TryGetArenaParticipants(
+            this IWorldState worldState,
+            Address arenaParticipantsAddress,
+            out ArenaParticipants arenaParticipants)
         {
-            if (states.TryGetState(arenaParticipantsAddress, out List list))
+            if (TryGetLegacyState(worldState, arenaParticipantsAddress, out List list))
             {
                 arenaParticipants = new ArenaParticipants(list);
                 return true;
@@ -1010,10 +980,12 @@ namespace Nekoyume.Action
             return false;
         }
 
-        public static bool TryGetArenaAvatarState(this IAccountState states,
-            Address arenaAvatarStateAddress, out ArenaAvatarState arenaAvatarState)
+        public static bool TryGetArenaAvatarState(
+            this IWorldState worldState,
+            Address arenaAvatarStateAddress,
+            out ArenaAvatarState arenaAvatarState)
         {
-            if (states.TryGetState(arenaAvatarStateAddress, out List list))
+            if (TryGetLegacyState(worldState, arenaAvatarStateAddress, out List list))
             {
                 arenaAvatarState = new ArenaAvatarState(list);
                 return true;
@@ -1023,10 +995,12 @@ namespace Nekoyume.Action
             return false;
         }
 
-        public static bool TryGetArenaScore(this IAccountState states,
-            Address arenaScoreAddress, out ArenaScore arenaScore)
+        public static bool TryGetArenaScore(
+            this IWorldState worldState,
+            Address arenaScoreAddress,
+            out ArenaScore arenaScore)
         {
-            if (states.TryGetState(arenaScoreAddress, out List list))
+            if (TryGetLegacyState(worldState, arenaScoreAddress, out List list))
             {
                 arenaScore = new ArenaScore(list);
                 return true;
@@ -1036,10 +1010,12 @@ namespace Nekoyume.Action
             return false;
         }
 
-        public static bool TryGetArenaInformation(this IAccountState states,
-            Address arenaInformationAddress, out ArenaInformation arenaInformation)
+        public static bool TryGetArenaInformation(
+            this IWorldState worldState,
+            Address arenaInformationAddress,
+            out ArenaInformation arenaInformation)
         {
-            if (states.TryGetState(arenaInformationAddress, out List list))
+            if (TryGetLegacyState(worldState, arenaInformationAddress, out List list))
             {
                 arenaInformation = new ArenaInformation(list);
                 return true;
@@ -1049,32 +1025,11 @@ namespace Nekoyume.Action
             return false;
         }
 
-        public static AvatarState GetEnemyAvatarState(this IAccountState states, Address avatarAddress)
-        {
-            AvatarState enemyAvatarState;
-            try
-            {
-                enemyAvatarState = states.GetAvatarStateV2(avatarAddress);
-            }
-            // BackWard compatible.
-            catch (FailedLoadStateException)
-            {
-                enemyAvatarState = states.GetAvatarState(avatarAddress);
-            }
-
-            if (enemyAvatarState is null)
-            {
-                throw new FailedLoadStateException(
-                    $"Aborted as the avatar state of the opponent ({avatarAddress}) was failed to load.");
-            }
-
-            return enemyAvatarState;
-        }
-
-        public static CrystalCostState GetCrystalCostState(this IAccountState states,
+        public static CrystalCostState GetCrystalCostState(
+            this IWorldState worldState,
             Address address)
         {
-            return states.TryGetState(address, out List rawState)
+            return TryGetLegacyState(worldState, address, out List rawState)
                 ? new CrystalCostState(address, rawState)
                 : new CrystalCostState(address, 0 * CrystalCalculator.CRYSTAL);
         }
@@ -1084,31 +1039,34 @@ namespace Nekoyume.Action
             CrystalCostState WeeklyCostState,
             CrystalCostState PrevWeeklyCostState,
             CrystalCostState BeforePrevWeeklyCostState
-            ) GetCrystalCostStates(this IAccountState states, long blockIndex, long interval)
+            ) GetCrystalCostStates(this IWorldState worldState, long blockIndex, long interval)
         {
-            int dailyCostIndex = (int) (blockIndex / CrystalCostState.DailyIntervalIndex);
-            int weeklyCostIndex = (int) (blockIndex / interval);
+            int dailyCostIndex = (int)(blockIndex / CrystalCostState.DailyIntervalIndex);
+            int weeklyCostIndex = (int)(blockIndex / interval);
             Address dailyCostAddress = Addresses.GetDailyCrystalCostAddress(dailyCostIndex);
-            CrystalCostState dailyCostState = states.GetCrystalCostState(dailyCostAddress);
+            CrystalCostState dailyCostState = GetCrystalCostState(worldState, dailyCostAddress);
             Address weeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyCostIndex);
-            CrystalCostState weeklyCostState = states.GetCrystalCostState(weeklyCostAddress);
+            CrystalCostState weeklyCostState = GetCrystalCostState(worldState, weeklyCostAddress);
             CrystalCostState prevWeeklyCostState = null;
             CrystalCostState beforePrevWeeklyCostState = null;
             if (weeklyCostIndex > 1)
             {
                 Address prevWeeklyCostAddress =
                     Addresses.GetWeeklyCrystalCostAddress(weeklyCostIndex - 1);
-                prevWeeklyCostState = states.GetCrystalCostState(prevWeeklyCostAddress);
+                prevWeeklyCostState = GetCrystalCostState(worldState, prevWeeklyCostAddress);
                 Address beforePrevWeeklyCostAddress =
                     Addresses.GetWeeklyCrystalCostAddress(weeklyCostIndex - 2);
-                beforePrevWeeklyCostState = states.GetCrystalCostState(beforePrevWeeklyCostAddress);
+                beforePrevWeeklyCostState = GetCrystalCostState(worldState, beforePrevWeeklyCostAddress);
             }
 
             return (dailyCostState, weeklyCostState, prevWeeklyCostState,
                 beforePrevWeeklyCostState);
         }
 
-        public static void ValidateWorldId(this IAccountState states, Address avatarAddress, int worldId)
+        public static void ValidateWorldId(
+            this IWorldState worldState,
+            Address avatarAddress,
+            int worldId)
         {
             if (worldId > 1)
             {
@@ -1120,7 +1078,7 @@ namespace Nekoyume.Action
                 var unlockedWorldIdsAddress = avatarAddress.Derive("world_ids");
 
                 // Unlock First.
-                if (!states.TryGetState(unlockedWorldIdsAddress, out List rawIds))
+                if (!TryGetLegacyState(worldState, unlockedWorldIdsAddress, out List rawIds))
                 {
                     throw new InvalidWorldException();
                 }
@@ -1133,16 +1091,19 @@ namespace Nekoyume.Action
             }
         }
 
-        public static RaiderState GetRaiderState(this IAccountState states,
-            Address avatarAddress, int raidId)
+        public static RaiderState GetRaiderState(
+            this IWorldState worldState,
+            Address avatarAddress,
+            int raidId)
         {
-            return GetRaiderState(states, Addresses.GetRaiderAddress(avatarAddress, raidId));
+            return GetRaiderState(worldState, Addresses.GetRaiderAddress(avatarAddress, raidId));
         }
 
-        public static RaiderState GetRaiderState(this IAccountState states,
+        public static RaiderState GetRaiderState(
+            this IWorldState worldState,
             Address raiderAddress)
         {
-            if (states.TryGetState(raiderAddress, out List rawRaider))
+            if (TryGetLegacyState(worldState, raiderAddress, out List rawRaider))
             {
                 return new RaiderState(rawRaider);
             }
@@ -1151,7 +1112,7 @@ namespace Nekoyume.Action
         }
 
         public static Dictionary<Type, (Address address, ISheet sheet)> GetSheetsV100291(
-            this IAccountState states,
+            this IWorldState worldState,
             bool containAvatarSheets = false,
             bool containItemSheet = false,
             bool containQuestSheet = false,
@@ -1255,11 +1216,11 @@ namespace Nekoyume.Action
                 sheetTypeList.Add(typeof(EquipmentItemOptionSheet));
             }
 
-            return states.GetSheets(sheetTypeList.Distinct().ToArray());
+            return GetSheets(worldState, sheetTypeList.Distinct().ToArray());
         }
 
         public static Dictionary<Type, (Address address, ISheet sheet)> GetSheetsV1(
-            this IAccountState states,
+            this IWorldState worldState,
             bool containAvatarSheets = false,
             bool containItemSheet = false,
             bool containQuestSheet = false,
@@ -1390,28 +1351,7 @@ namespace Nekoyume.Action
                 sheetTypeList.Add(typeof(RuneSheet));
             }
 
-            return states.GetSheets(sheetTypeList.Distinct().ToArray());
-        }
-
-        public static IValue GetInventoryState(
-            this IAccountState accountStateView,
-            Address inventoryAddr)
-        {
-            var inventoryState = accountStateView.GetState(inventoryAddr);
-            if (inventoryState is null || inventoryState is Null)
-            {
-                throw new StateNullException(inventoryAddr);
-            }
-
-            return inventoryState;
-        }
-
-        public static Inventory GetInventory(
-            this IAccountState accountStateView,
-            Address inventoryAddr)
-        {
-            var inventoryState = GetInventoryState(accountStateView, inventoryAddr);
-            return new Inventory((List)inventoryState);
+            return GetSheets(worldState, sheetTypeList.Distinct().ToArray());
         }
     }
 }

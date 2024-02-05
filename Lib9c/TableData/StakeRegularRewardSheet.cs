@@ -51,10 +51,12 @@ namespace Nekoyume.TableData
             /// </summary>
             public readonly decimal DecimalRate;
 
+            public readonly bool Tradable;
             public RewardInfo(params string[] fields)
             {
                 ItemId = ParseInt(fields[0], 0);
                 Rate = ParseInt(fields[1], 0);
+                Tradable = true;
                 if (fields.Length == 2)
                 {
                     Type = StakeRewardType.Item;
@@ -93,6 +95,16 @@ namespace Nekoyume.TableData
                 }
 
                 DecimalRate = ParseDecimal(fields[5], 0m);
+
+                if (fields.Length == 6)
+                {
+                    return;
+                }
+
+                if (fields.Length == 7)
+                {
+                    Tradable = ParseBool(fields[6], true);
+                }
             }
 
             public RewardInfo(

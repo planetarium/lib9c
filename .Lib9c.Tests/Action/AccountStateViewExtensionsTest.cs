@@ -15,6 +15,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model.Coupons;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Crystal;
     using Xunit;
@@ -46,20 +47,9 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void TryGetAvatarState()
-        {
-            IAccount states = new Account(MockState.Empty);
-            states = states.SetState(_avatarAddress, _avatarState.Serialize());
-
-            Assert.True(states.TryGetAvatarState(_agentAddress, _avatarAddress, out var avatarState2));
-            Assert.Equal(_avatarAddress, avatarState2.address);
-            Assert.Equal(_agentAddress, avatarState2.agentAddress);
-        }
-
-        [Fact]
         public void TryGetAvatarStateEmptyAddress()
         {
-            var states = new Account(MockState.Empty);
+            var states = new World(new MockWorldState());
 
             Assert.False(states.TryGetAvatarState(default, default, out _));
         }
@@ -67,7 +57,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateAddressKeyNotFoundException()
         {
-            var states = new Account(MockState.Empty).SetState(default, Dictionary.Empty);
+            var states = new World(new MockWorldState()).SetLegacyState(default, Dictionary.Empty);
 
             Assert.False(states.TryGetAvatarState(default, default, out _));
         }
@@ -75,8 +65,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateKeyNotFoundException()
         {
-            var states = new Account(MockState.Empty)
-                .SetState(
+            var states = new World(new MockWorldState())
+                .SetLegacyState(
                 default,
                 Dictionary.Empty
                     .Add("agentAddress", default(Address).Serialize())
@@ -88,7 +78,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateInvalidCastException()
         {
-            var states = new Account(MockState.Empty).SetState(default, default(Text));
+            var states = new World(new MockWorldState()).SetLegacyState(default, default(Text));
 
             Assert.False(states.TryGetAvatarState(default, default, out _));
         }
@@ -96,7 +86,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateInvalidAddress()
         {
-            var states = new Account(MockState.Empty).SetState(default, _avatarState.Serialize());
+            var states = new World(new MockWorldState()).SetAvatarState(
+                default, _avatarState, true, true, true, true);
 
             Assert.False(states.TryGetAvatarState(Addresses.GameConfig, _avatarAddress, out _));
         }
@@ -104,89 +95,64 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void GetAvatarStateV2()
         {
-            IAccount states = new Account(MockState.Empty);
+            IWorld states = new World(new MockWorldState());
             states = states
-                .SetState(_avatarAddress, _avatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
+                .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
 
-            var v2 = states.GetAvatarStateV2(_avatarAddress);
+            var v2 = states.GetAvatarState(_avatarAddress);
             Assert.NotNull(v2.inventory);
             Assert.NotNull(v2.worldInformation);
             Assert.NotNull(v2.questList);
         }
 
         [Theory]
-        [InlineData(LegacyInventoryKey)]
-        [InlineData(LegacyWorldInformationKey)]
-        [InlineData(LegacyQuestListKey)]
-        public void GetAvatarStateV2_Throw_FailedLoadStateException(string key)
+        [InlineData("inventory")]
+        [InlineData("worldInformation")]
+        [InlineData("questList")]
+        public void GetAvatarStateV2_Throw_FailedLoadStateException(string account)
         {
-            IAccount states = new Account(MockState.Empty);
+            Address accountAddress = account switch
+            {
+                "inventory" => Addresses.Inventory,
+                "worldInformation" => Addresses.WorldInformation,
+                "questList" => Addresses.QuestList,
+                _ => throw new ArgumentException(),
+            };
+
+            IWorld states = new World(new MockWorldState());
             states = states
-                .SetState(_avatarAddress, _avatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
-            states = states.SetNull(_avatarAddress.Derive(key));
-            var exc = Assert.Throws<FailedLoadStateException>(() => states.GetAvatarStateV2(_avatarAddress));
-            Assert.Contains(key, exc.Message);
+                .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
+            states = states.SetAccount(
+                accountAddress,
+                states.GetAccount(accountAddress).SetNull(_avatarAddress));
+            var exc = Assert.Throws<FailedLoadStateException>(() => states.GetAvatarState(_avatarAddress));
+            Assert.Contains(account, exc.Message);
         }
 
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public void TryGetAvatarStateV2(bool backward)
+        public void TryGetAvatarState(bool backward)
         {
-            IAccount states = new Account(MockState.Empty);
+            IWorld states = new World(new MockWorldState());
             if (backward)
             {
                 states = states
-                    .SetState(_avatarAddress, _avatarState.Serialize());
+                    .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
             }
             else
             {
                 states = states
-                    .SetState(_avatarAddress, _avatarState.SerializeV2())
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
+                    .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
             }
 
-            Assert.True(states.TryGetAvatarStateV2(_agentAddress, _avatarAddress, out _, out bool migrationRequired));
-            Assert.Equal(backward, migrationRequired);
-        }
-
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void TryGetAgentAvatarStatesV2(bool backward)
-        {
-            IAccount states = new Account(MockState.Empty).SetState(_agentAddress, _agentState.Serialize());
-
-            if (backward)
-            {
-                states = states
-                    .SetState(_avatarAddress, _avatarState.Serialize());
-            }
-            else
-            {
-                states = states
-                    .SetState(_avatarAddress, _avatarState.SerializeV2())
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), _avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize());
-            }
-
-            Assert.True(states.TryGetAgentAvatarStatesV2(_agentAddress, _avatarAddress, out _, out _, out bool avatarMigrationRequired));
-            Assert.Equal(backward, avatarMigrationRequired);
+            Assert.True(states.TryGetAvatarState(_agentAddress, _avatarAddress, out _));
         }
 
         [Fact]
         public void GetStatesAsDict()
         {
-            IAccount states = new Account(MockState.Empty);
+            IWorld states = new World(new MockWorldState());
             var dict = new Dictionary<Address, IValue>
             {
                 { new PrivateKey().Address, Null.Value },
@@ -198,10 +164,10 @@ namespace Lib9c.Tests.Action
             };
             foreach (var (address, value) in dict)
             {
-                states = states.SetState(address, value);
+                states = states.SetLegacyState(address, value);
             }
 
-            var stateDict = states.GetStatesAsDict(dict.Keys.ToArray());
+            var stateDict = states.GetLegacyStatesAsDict(dict.Keys.ToArray());
             foreach (var (address, value) in dict)
             {
                 Assert.True(stateDict.ContainsKey(address));
@@ -213,7 +179,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void GetSheets()
         {
-            IAccount states = new Account(MockState.Empty);
+            IWorld states = new World(new MockWorldState());
             SheetsExtensionsTest.InitSheets(
                 states,
                 out _,
@@ -240,7 +206,7 @@ namespace Lib9c.Tests.Action
         [InlineData(true)]
         public void GetCrystalCostState(bool exist)
         {
-            IAccount state = new Account(MockState.Empty);
+            IWorld states = new World(new MockWorldState());
             int expectedCount = exist ? 1 : 0;
             FungibleAssetValue expectedCrystal = exist
                 ? 100 * CrystalCalculator.CRYSTAL
@@ -250,10 +216,10 @@ namespace Lib9c.Tests.Action
             crystalCostState.Count = expectedCount;
             if (exist)
             {
-                state = state.SetState(address, crystalCostState.Serialize());
+                states = states.SetLegacyState(address, crystalCostState.Serialize());
             }
 
-            CrystalCostState actual = state.GetCrystalCostState(address);
+            CrystalCostState actual = states.GetCrystalCostState(address);
             Assert.Equal(expectedCount, actual.Count);
             Assert.Equal(expectedCrystal, actual.CRYSTAL);
         }
@@ -273,12 +239,12 @@ namespace Lib9c.Tests.Action
             Address previousCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 1);
             Address beforePreviousCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 2);
             var crystalCostState = new CrystalCostState(default, 100 * CrystalCalculator.CRYSTAL);
-            IAccount state = new Account(MockState.Empty)
-                .SetState(dailyCostAddress, crystalCostState.Serialize())
-                .SetState(weeklyCostAddress, crystalCostState.Serialize())
-                .SetState(previousCostAddress, crystalCostState.Serialize())
-                .SetState(Addresses.GetSheetAddress<CrystalFluctuationSheet>(), _tableSheets.CrystalFluctuationSheet.Serialize())
-                .SetState(beforePreviousCostAddress, crystalCostState.Serialize());
+            IWorld state = new World(new MockWorldState())
+                .SetLegacyState(dailyCostAddress, crystalCostState.Serialize())
+                .SetLegacyState(weeklyCostAddress, crystalCostState.Serialize())
+                .SetLegacyState(previousCostAddress, crystalCostState.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<CrystalFluctuationSheet>(), _tableSheets.CrystalFluctuationSheet.Serialize())
+                .SetLegacyState(beforePreviousCostAddress, crystalCostState.Serialize());
             var (daily, weekly, previousWeekly, beforePreviousWeekly) =
                 state.GetCrystalCostStates(blockIndex, interval);
 
@@ -303,7 +269,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void GetCouponWallet()
         {
-            IAccount states = new Account(MockState.Empty);
+            IWorld states = new World(new MockWorldState());
             var guid1 = new Guid("6856AE42-A820-4041-92B0-5D7BAA52F2AA");
             var guid2 = new Guid("701BA698-CCB9-4FC7-B88F-7CB8C707D135");
             var guid3 = new Guid("910296E7-34E4-45D7-9B4E-778ED61F278B");
@@ -320,57 +286,57 @@ namespace Lib9c.Tests.Action
                 ImmutableDictionary<Guid, Coupon>.Empty,
                 states.GetCouponWallet(agentAddress2));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 Bencodex.Types.List.Empty);
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress2.Derive(CouponWalletKey),
                 Bencodex.Types.Null.Value);
 
             Assert.Equal(ImmutableDictionary<Guid, Coupon>.Empty, states.GetCouponWallet(agentAddress1));
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress2));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 Bencodex.Types.Dictionary.Empty);
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress2.Derive(CouponWalletKey),
                 (Integer)1);
 
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress1));
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress2));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 (Bencodex.Types.Boolean)true);
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress2.Derive(CouponWalletKey),
                 (Text)"test");
 
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress1));
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress2));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 (Bencodex.Types.Binary)new byte[] { });
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 (Bencodex.Types.Binary)new byte[] { 0x00 });
 
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress1));
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress2));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
                 Bencodex.Types.List.Empty
                     .Add(coupon1.Serialize())
                     .Add(coupon2.Serialize()));
 
-            states = states.SetState(
+            states = states.SetLegacyState(
                 agentAddress2.Derive(CouponWalletKey),
                 Bencodex.Types.List.Empty
                     .Add(coupon3.Serialize()));
