@@ -19,7 +19,7 @@ namespace Lib9c.Tests.Model.Collection
         {
             var inventory = new Inventory();
             var row = _tableSheets.ItemSheet.Values.First(r => r.ItemType == itemType);
-            var materialInfo = new CollectionSheet.CollectionMaterial
+            var materialInfo = new CollectionSheet.RequiredMaterial
             {
                 ItemId = row.Id,
                 Count = 1,
@@ -47,7 +47,7 @@ namespace Lib9c.Tests.Model.Collection
         {
             var inventory = new Inventory();
             var row = _tableSheets.ItemSheet.Values.First(r => r.ItemType == itemType);
-            var materialInfo = new CollectionSheet.CollectionMaterial
+            var materialInfo = new CollectionSheet.RequiredMaterial
             {
                 ItemId = row.Id,
                 Count = 1,
@@ -76,7 +76,7 @@ namespace Lib9c.Tests.Model.Collection
             inventory.AddItem(item);
             Assert.Single(inventory.Items);
 
-            var materialInfo = new CollectionSheet.CollectionMaterial
+            var materialInfo = new CollectionSheet.RequiredMaterial
             {
                 ItemId = row.Id,
                 Count = 1,

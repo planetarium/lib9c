@@ -33,6 +33,7 @@ namespace Nekoyume.Action
                     CollectionData.Count,
                     $"CollectionData count exceeds the {MaxCollectionDataCount}");
             }
+
             var states = context.PreviousState;
             if (states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
@@ -46,29 +47,29 @@ namespace Nekoyume.Action
                     ? state
                     : new CollectionState();
                 var itemSheet = sheets.GetItemSheet();
-                foreach (var (collectionId, materials) in CollectionData)
+                foreach (var (collectionId, collectionMaterials) in CollectionData)
                 {
                     var row = collectionSheet[collectionId];
-                    foreach (var materialInfo in row.Materials)
+                    foreach (var requiredMaterial in row.Materials)
                     {
-                        ICollectionMaterial material = materialInfo.GetMaterial(materials);
-                        ItemSheet.Row itemRow = itemSheet[material.ItemId];
-                        switch (material)
+                        ICollectionMaterial registeredMaterial = requiredMaterial.GetMaterial(collectionMaterials);
+                        ItemSheet.Row itemRow = itemSheet[registeredMaterial.ItemId];
+                        switch (registeredMaterial)
                         {
                             case FungibleCollectionMaterial fungibleCollectionMaterial:
                                 fungibleCollectionMaterial.BurnMaterial(itemRow, avatarState.inventory, context.BlockIndex);
                                 break;
                             case NonFungibleCollectionMaterial nonFungibleCollectionMaterial:
-                                nonFungibleCollectionMaterial.BurnMaterial(itemRow, avatarState.inventory, materialInfo);
+                                nonFungibleCollectionMaterial.BurnMaterial(itemRow, avatarState.inventory, requiredMaterial);
                                 break;
                             default:
-                                throw new ArgumentOutOfRangeException(nameof(material));
+                                throw new ArgumentOutOfRangeException(nameof(registeredMaterial));
                         }
 
-                        materials.Remove(material);
+                        collectionMaterials.Remove(registeredMaterial);
                     }
 
-                    if (materials.Any())
+                    if (collectionMaterials.Any())
                     {
                         throw new ArgumentOutOfRangeException(
                             $"material does not match collection {row.Id}");

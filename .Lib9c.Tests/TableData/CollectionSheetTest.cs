@@ -50,7 +50,7 @@ namespace Lib9c.Tests.TableData
         {
             var row = new TableSheets(TableSheetsImporter.ImportSheets()).ItemSheet.Values.First(r => r.ItemType == itemType);
             var item = ItemFactory.CreateItem(row, new TestRandom());
-            var materialInfo = new CollectionSheet.CollectionMaterial
+            var materialInfo = new CollectionSheet.RequiredMaterial
             {
                 ItemId = row.Id,
                 Count = 1,
@@ -68,20 +68,20 @@ namespace Lib9c.Tests.TableData
         [Fact]
         public void GetMaterial()
         {
-            var collectionMaterials = new List<CollectionSheet.CollectionMaterial>();
+            var collectionMaterials = new List<CollectionSheet.RequiredMaterial>();
             var materials = new List<ICollectionMaterial>();
             for (int i = 0; i < 2; i++)
             {
                 var itemId = i + 1;
                 var count = 3 - i;
-                CollectionSheet.CollectionMaterial collectionMaterial = new ()
+                CollectionSheet.RequiredMaterial requiredMaterial = new ()
                 {
                     ItemId = itemId,
                     Count = count,
                     Level = 0,
                     SkillContains = false,
                 };
-                collectionMaterials.Add(collectionMaterial);
+                collectionMaterials.Add(requiredMaterial);
                 var material = new FungibleCollectionMaterial
                 {
                     ItemId = itemId,

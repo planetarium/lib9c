@@ -11,7 +11,7 @@ namespace Nekoyume.TableData
 {
     public class CollectionSheet : Sheet<int, CollectionSheet.Row>
     {
-        public class CollectionMaterial
+        public class RequiredMaterial
         {
             public int ItemId;
             public int Count;
@@ -67,7 +67,7 @@ namespace Nekoyume.TableData
 
             public int Id { get; private set; }
 
-            public List<CollectionMaterial> Materials = new();
+            public List<RequiredMaterial> Materials = new();
 
             public List<StatModifier> StatModifiers = new();
             public override void Set(IReadOnlyList<string> fields)
@@ -80,7 +80,7 @@ namespace Nekoyume.TableData
                     {
                         continue;
                     }
-                    Materials.Add(new CollectionMaterial
+                    Materials.Add(new RequiredMaterial
                     {
                         ItemId = itemId,
                         Count = ParseInt(fields[2 + offset]),
