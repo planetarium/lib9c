@@ -492,6 +492,39 @@ namespace Nekoyume.Model.Item
             return true;
         }
 
+        public List<Consumable> FilterConsumables(int id, long blockIndex)
+        {
+            var consumables = Items.Where(i => !i.Locked && i.item.Id == id)
+                .Select(i => i.item)
+                .OfType<Consumable>();
+            return consumables
+                .Where(consumable => consumable.RequiredBlockIndex <= blockIndex)
+                .OrderBy(c => c.RequiredBlockIndex)
+                .ThenBy(c => c.NonFungibleId)
+                .ToList();
+        }
+
+        public bool RemoveConsumable(int id, long blockIndex, int count = 1)
+        {
+            var consumableItems = FilterConsumables(id, blockIndex);
+
+            var isSufficientItems = consumableItems.Count >= count;
+            if (!isSufficientItems)
+            {
+                return false;
+            }
+
+            foreach (var consumable in consumableItems.Take(count))
+            {
+                if (!RemoveNonFungibleItem(consumable))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         [Obsolete("Use RemoveFungibleItem")]
         public bool RemoveFungibleItem2(
             IFungibleItem fungibleItem,
