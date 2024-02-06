@@ -37,5 +37,38 @@ namespace Nekoyume.Model.Collection
         {
             ItemCount = 1;
         }
+
+        /// <summary>
+        /// Burns the specified material from the inventory based on the item type.
+        /// </summary>
+        /// <param name="itemRow">The <see cref="ItemSheet.Row"/> object representing the item.</param>
+        /// <param name="inventory">The <see cref="Inventory"/> object representing the player's inventory.</param>
+        /// <param name="materialInfo">The <see cref="CollectionSheet.CollectionMaterial"/> object representing the material info.</param>
+        /// <exception cref="ItemDoesNotExistException">Thrown when the material item does not exist in the inventory.</exception>
+        /// <exception cref="InvalidItemTypeException">Thrown when the item type is not supported by <see cref="NonFungibleCollectionMaterial"/>.</exception>
+        public void BurnMaterial(ItemSheet.Row itemRow, Inventory inventory, CollectionSheet.CollectionMaterial materialInfo)
+        {
+            switch (itemRow.ItemType)
+            {
+                case ItemType.Costume:
+                case ItemType.Equipment:
+                    if (inventory.TryGetNonFungibleItem(NonFungibleId,
+                            out INonFungibleItem materialItem) && materialInfo.Validate(materialItem))
+                    {
+                        inventory.RemoveNonFungibleItem(materialItem);
+                    }
+                    else
+                    {
+                        throw new ItemDoesNotExistException($"failed to load {itemRow.ItemType}");
+                    }
+
+                    break;
+                case ItemType.Consumable:
+                case ItemType.Material:
+                default:
+                    throw new InvalidItemTypeException(
+                        $"{nameof(NonFungibleCollectionMaterial)} does not support {itemRow.ItemType}");
+            }
+        }
     }
 }
