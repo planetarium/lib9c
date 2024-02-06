@@ -132,25 +132,6 @@ namespace Nekoyume.Model.Stat
             Level = value.Level;
         }
 
-        public CharacterStats SetAll(
-            int level,
-            IEnumerable<Equipment> equipments,
-            IEnumerable<Costume> costumes,
-            IEnumerable<Consumable> consumables,
-            IEnumerable<StatModifier> runeStats,
-            EquipmentItemSetEffectSheet equipmentItemSetEffectSheet,
-            CostumeStatSheet costumeStatSheet)
-        {
-            SetStats(level, false);
-            SetEquipments(equipments, equipmentItemSetEffectSheet, false);
-            SetCostumes(costumes, costumeStatSheet);
-            SetConsumables(consumables, false);
-            SetRunes(runeStats, false);
-            UpdateBaseStats();
-
-            return this;
-        }
-
         /// <summary>
         /// Set base stats based on character level.
         /// </summary>
@@ -429,22 +410,7 @@ namespace Nekoyume.Model.Stat
         private void UpdateRuneStats()
         {
             _runeStats.Set(_runeStatModifiers, _baseStats, _equipmentStats, _consumableStats);
-            Set(StatWithItems, _baseStats, _equipmentStats, _consumableStats, _runeStats);
-            foreach (var stat in StatWithItems.GetDecimalStats(false))
-            {
-                if (!LegacyDecimalStatTypes.Contains(stat.StatType))
-                {
-                    var value = Math.Max(0m, stat.BaseValueAsLong);
-                    stat.SetBaseValue(value);
-                }
-                else
-                {
-                    var value = Math.Max(0m, stat.BaseValue);
-                    stat.SetBaseValue(value);
-                }
-            }
-
-            UpdateBuffStats();
+            UpdateCostumeStats();
         }
 
         private void UpdateBuffStats()
@@ -474,17 +440,35 @@ namespace Nekoyume.Model.Stat
                 buffModifiers.Add(new StatModifier(statType, StatModifier.OperationType.Percentage, sum));
             }
 
-            _buffStats.Set(buffModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats);
+            _buffStats.Set(buffModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats, _collectionStats);
+            UpdateTotalStats();
         }
 
         private void UpdateCostumeStats()
         {
-            UpdateTotalStats();
+            _costumeStats.Set(_costumeStatModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats);
+            UpdateCollectionStats();
         }
 
         private void UpdateCollectionStats()
         {
             _collectionStats.Set(_collectionStatModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats);
+            Set(StatWithItems, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats, _collectionStats);
+            foreach (var stat in StatWithItems.GetDecimalStats(false))
+            {
+                if (!LegacyDecimalStatTypes.Contains(stat.StatType))
+                {
+                    var value = Math.Max(0m, stat.BaseValueAsLong);
+                    stat.SetBaseValue(value);
+                }
+                else
+                {
+                    var value = Math.Max(0m, stat.BaseValue);
+                    stat.SetBaseValue(value);
+                }
+            }
+
+            UpdateBuffStats();
         }
 
         private void UpdateTotalStats()

@@ -703,6 +703,8 @@ namespace Lib9c.Tests.Model
                 _tableSheets.EquipmentItemSetEffectSheet
             );
             Assert.Equal(player.ATK, player.Stats.BaseATK + player.Stats.EquipmentStats.ATK);
+            // BaseAtk 20, EquipmentStats 1
+            // Assert.Equal(21, player.ATK);
             var equipmentLayerAtk = player.ATK;
 
             // Update consumable stats
@@ -711,6 +713,8 @@ namespace Lib9c.Tests.Model
                 food.ItemId,
             });
             Assert.Equal(player.ATK, equipmentLayerAtk + food.Stats.Where(s => s.StatType == StatType.ATK).Sum(s => s.BaseValueAsLong));
+            // ConsumableStats 18
+            // Assert.Equal(39, player.ATK);
             var consumableLayerAtk = player.ATK;
 
             // Update rune stat
@@ -727,7 +731,16 @@ namespace Lib9c.Tests.Model
             var runeOptionRow = _tableSheets.RuneOptionSheet.Values.First(r => r.RuneId == runeId);
             var runeAtk = runeOptionRow.LevelOptionMap[1].Stats.Sum(r => r.stat.BaseValueAsLong);
             Assert.Equal(player.ATK, consumableLayerAtk + runeAtk);
+            // RuneStats 235
+            // Assert.Equal(274, player.ATK);
             var runeLayerAtk = player.ATK;
+
+            // Update costume stats
+            player.SetCostumeStat(_tableSheets.CostumeStatSheet);
+            Assert.Equal(player.ATK, runeLayerAtk + costumeStatRow.Stat);
+            // CostumeStats 1829
+            // Assert.Equal(2103, player.ATK);
+            var costumeLayerAtk = player.ATK;
 
             // Update collection stat
             var modifiers = new List<StatModifier>();
@@ -736,13 +749,10 @@ namespace Lib9c.Tests.Model
             modifiers.Add(addModifier);
             modifiers.Add(new StatModifier(StatType.ATK, StatModifier.OperationType.Percentage, -100));
             player.Stats.SetCollections(modifiers);
-            Assert.Equal(player.ATK, runeLayerAtk + addModifier.Value);
+            Assert.Equal(player.ATK, costumeLayerAtk + addModifier.Value);
+            // CollectionStats 100
+            // Assert.Equal(2203, player.ATK);
             var collectionLayerAtk = player.ATK;
-
-            // Update optional stats
-            player.SetCostumeStat(_tableSheets.CostumeStatSheet);
-            Assert.Equal(player.ATK, collectionLayerAtk + costumeStatRow.Stat);
-            var costumeLayerAtk = player.ATK;
 
             // Update stage buff stats
             var stageBuffSkill = CrystalRandomSkillState.GetSkill(
@@ -770,7 +780,11 @@ namespace Lib9c.Tests.Model
 
             StatBuff stageAtkBuff = statBuffs.Single(s => s.GetModifier().StatType == StatType.ATK);
             var stageModifier = stageAtkBuff.GetModifier();
-            Assert.Equal(player.ATK, (long)(costumeLayerAtk + stageModifier.GetModifiedValue(runeLayerAtk)));
+            var stageBuffAtk = (long)stageModifier.GetModifiedValue(collectionLayerAtk);
+            // StageBuffStats 1101(50%)
+            // Assert.Equal(1101, stageBuffAtk);
+            Assert.Equal(player.ATK, collectionLayerAtk + stageBuffAtk);
+            // Assert.Equal(3304, player.ATK);
 
             // Update skill buff stats
             var percentageBuffRow = _tableSheets.StatBuffSheet.Values.First(r =>
@@ -779,6 +793,10 @@ namespace Lib9c.Tests.Model
             var percentageBuff = new StatBuff(percentageBuffRow);
             statBuffs.Add(percentageBuff);
             var percentageModifier = percentageBuff.GetModifier();
+            var totalBuffPercentageModifier = new StatModifier(StatType.ATK, StatModifier.OperationType.Percentage, stageModifier.Value + percentageModifier.Value);
+            var percentageBuffAtk = (long)totalBuffPercentageModifier.GetModifiedValue(costumeLayerAtk + 100);
+            // Total PercentageStats 1652(StageBuffStats 50% + BuffStats 25%)
+            // Assert.Equal(1652, percentageBuffAtk);
 
             // Divide buff group id for test
             var addBuffRow = new StatBuffSheet.Row();
@@ -787,10 +805,13 @@ namespace Lib9c.Tests.Model
             var addBuff = new StatBuff(addBuffRow);
             statBuffs.Add(addBuff);
             var addBuffModifier = addBuff.GetModifier();
+            var addBuffAtk = addBuffModifier.GetModifiedValue(costumeLayerAtk);
+            Assert.Equal(10, addBuffAtk);
 
             player.Stats.SetBuffs(statBuffs);
-            var totalBuffPercentageModifier = new StatModifier(StatType.ATK, StatModifier.OperationType.Percentage, stageModifier.Value + percentageModifier.Value);
-            Assert.Equal(player.ATK, (long)(costumeLayerAtk + addBuffModifier.Value + totalBuffPercentageModifier.GetModifiedValue(runeLayerAtk)));
+            Assert.Equal(player.ATK, collectionLayerAtk + addBuffAtk + percentageBuffAtk);
+            // 20 + 1 + 18 + 1829 + 235 + 100 + 1662
+            // Assert.Equal(3865, player.ATK);
         }
     }
 }
