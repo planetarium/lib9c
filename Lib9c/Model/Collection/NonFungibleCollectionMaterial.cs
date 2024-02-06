@@ -1,7 +1,9 @@
 using System;
 using Bencodex.Types;
+using Nekoyume.Action;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Collection
 {
@@ -12,20 +14,15 @@ namespace Nekoyume.Model.Collection
         public int ItemCount { get; set; }
         public Guid NonFungibleId { get; set; }
         public int Level { get; set; }
-        public int OptionCount { get; set; }
         public bool SkillContains { get; set; }
 
-        public IValue Serialize()
-        {
-            return List.Empty
-                .Add((int)Type)
-                .Add(ItemId)
-                .Add(ItemCount)
-                .Add(NonFungibleId.Serialize())
-                .Add(Level)
-                .Add(OptionCount)
-                .Add(SkillContains.Serialize());
-        }
+        public IValue Bencoded => List.Empty
+            .Add((int)Type)
+            .Add(ItemId)
+            .Add(ItemCount)
+            .Add(NonFungibleId.Serialize())
+            .Add(Level)
+            .Add(SkillContains.Serialize());
 
         public NonFungibleCollectionMaterial(List serialized)
         {
@@ -33,8 +30,7 @@ namespace Nekoyume.Model.Collection
             ItemCount = (Integer)serialized[2];
             NonFungibleId = serialized[3].ToGuid();
             Level = (Integer)serialized[4];
-            OptionCount = (Integer)serialized[5];
-            SkillContains = serialized[6].ToBoolean();
+            SkillContains = serialized[5].ToBoolean();
         }
 
         public NonFungibleCollectionMaterial()
