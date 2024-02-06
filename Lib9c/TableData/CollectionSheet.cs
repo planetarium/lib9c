@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nekoyume.Action;
+using Nekoyume.Model.Collection;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using static Nekoyume.TableData.TableExtensions;
@@ -9,7 +11,6 @@ namespace Nekoyume.TableData
 {
     public class CollectionSheet : Sheet<int, CollectionSheet.Row>
     {
-
         public class CollectionMaterial
         {
             public int ItemId;
@@ -27,6 +28,25 @@ namespace Nekoyume.TableData
             {
                 return costume.Id == ItemId;
             }
+
+            /// <summary>
+            /// Retrieves the <see cref="ICollectionMaterial"/> object from the given collection of materials based on the item ID and count.
+            /// </summary>
+            /// <param name="materials">The collection of materials to search.</param>
+            /// <returns>The <see cref="ICollectionMaterial"/> object if found; otherwise, an exception is thrown.</returns>
+            public ICollectionMaterial GetMaterial(IEnumerable<ICollectionMaterial> materials)
+            {
+                var material = materials.FirstOrDefault(m =>
+                    m.ItemId == ItemId && m.ItemCount == Count);
+                if (material is null)
+                {
+                    throw new InvalidMaterialException(
+                        $"can't find material {ItemId}/{Count}");
+                }
+
+                return material;
+            }
+
             public bool Validate(INonFungibleItem nonFungibleItem)
             {
                 switch (nonFungibleItem)

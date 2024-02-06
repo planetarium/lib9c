@@ -64,5 +64,43 @@ namespace Lib9c.Tests.TableData
                 Assert.False(materialInfo.Validate(equipment));
             }
         }
+
+        [Fact]
+        public void GetMaterial()
+        {
+            var collectionMaterials = new List<CollectionSheet.CollectionMaterial>();
+            var materials = new List<ICollectionMaterial>();
+            for (int i = 0; i < 2; i++)
+            {
+                var itemId = i + 1;
+                var count = 3 - i;
+                CollectionSheet.CollectionMaterial collectionMaterial = new ()
+                {
+                    ItemId = itemId,
+                    Count = count,
+                    Level = 0,
+                    SkillContains = false,
+                };
+                collectionMaterials.Add(collectionMaterial);
+                var material = new FungibleCollectionMaterial
+                {
+                    ItemId = itemId,
+                    ItemCount = count,
+                };
+                materials.Add(material);
+            }
+
+            materials.Reverse();
+            for (var index = 0; index < collectionMaterials.Count; index++)
+            {
+                var collectionMaterial = collectionMaterials[index];
+                Assert.Equal(index + 1, collectionMaterial.ItemId);
+                Assert.Equal(3 - index, collectionMaterial.Count);
+                var m = collectionMaterial.GetMaterial(materials);
+                materials.Remove(m);
+            }
+
+            Assert.Empty(materials);
+        }
     }
 }
