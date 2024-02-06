@@ -885,6 +885,55 @@
             Assert.Equal(inventoryCount, inventory.Items.Count);
         }
 
+        [Theory]
+        [InlineData(false, false, 0L, 0L, true)]
+        [InlineData(false, false, 0L, 1L, true)]
+        [InlineData(true, false, 0L, 0L, false)]
+        [InlineData(true, true, 0L, 1L, false)]
+        public void IsMaterialRemovable(bool locked, bool tradable, long requiredBlockIndex, long blockIndex, bool expected)
+        {
+            var row = TableSheets.MaterialItemSheet.Values.First();
+            Inventory.Item item;
+            if (tradable)
+            {
+                var tradableMaterial = ItemFactory.CreateTradableMaterial(row);
+                tradableMaterial.RequiredBlockIndex = requiredBlockIndex;
+                item = new Inventory.Item(tradableMaterial);
+            }
+            else
+            {
+                var material = ItemFactory.CreateMaterial(row);
+                item = new Inventory.Item(material);
+            }
+
+            if (locked)
+            {
+                item.LockUp(new OrderLock(Guid.NewGuid()));
+            }
+
+            Assert.Equal(expected, Inventory.IsMaterialRemovable(item, row.Id, blockIndex));
+        }
+
+        [Fact]
+        public void RemoveMaterial()
+        {
+            var row = TableSheets.MaterialItemSheet.Values.First();
+            var inventory = new Inventory();
+            var material = ItemFactory.CreateMaterial(row);
+            var tradableMaterial = ItemFactory.CreateTradableMaterial(row);
+            tradableMaterial.RequiredBlockIndex = 1L;
+            inventory.AddItem(tradableMaterial);
+            inventory.AddItem(material);
+            Assert.Equal(2, inventory.Items.Count);
+
+            // Check Non-tradable material remove first
+            Assert.True(inventory.RemoveMaterial(row.Id, 0L));
+            var item = Assert.Single(inventory.Items);
+            Assert.IsType<TradableMaterial>(item.item);
+
+            Assert.True(inventory.RemoveMaterial(row.Id, 1L));
+            Assert.Empty(inventory.Items);
+        }
         private static Consumable GetFirstConsumable()
         {
             var row = TableSheets.ConsumableItemSheet.First;
