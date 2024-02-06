@@ -52,8 +52,19 @@ namespace Lib9c.Tests.Action
 
             foreach (var (key, value) in sheets)
             {
+                var s = value;
+                // Fix csv data for test
+                if (key == nameof(CollectionSheet))
+                {
+                    s =
+                        @"id,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value
+1,10110000,1,0,,302000,2,,,200000,2,,,40100000,1,,,,,,,,,,,ATK,Add,1,,,,,,
+2,10110000,1,0,,,,,,,,,,,,,,,,,,,,,,ATK,Percentage,1,,,,,,
+";
+                }
+
                 _initialState = _initialState
-                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), s.Serialize());
             }
         }
 
@@ -63,28 +74,50 @@ namespace Lib9c.Tests.Action
             var row = _tableSheets.CollectionSheet.Values.First();
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
             var materials = new List<ICollectionMaterial>();
+            var random = new TestRandom();
             foreach (var material in row.Materials)
             {
                 var itemRow = _tableSheets.ItemSheet[material.ItemId];
-                var item = ItemFactory.CreateItem(itemRow, new TestRandom());
-                avatarState.inventory.AddItem(item, material.Count);
-                if (item is ItemUsable itemUsable)
+                var itemType = itemRow.ItemType;
+                if (itemType == ItemType.Material)
                 {
-                    materials.Add(new NonFungibleCollectionMaterial
-                    {
-                        ItemId = item.Id,
-                        NonFungibleId = itemUsable.NonFungibleId,
-                        OptionCount = material.OptionCount,
-                        SkillContains = material.SkillContains,
-                    });
-                }
-                else
-                {
+                    var item = ItemFactory.CreateItem(itemRow, random);
+                    avatarState.inventory.AddItem(item, material.Count);
                     materials.Add(new FungibleCollectionMaterial
                     {
                         ItemId = item.Id,
                         ItemCount = material.Count,
                     });
+                }
+                else
+                {
+                    for (int i = 0; i < material.Count; i++)
+                    {
+                        var item = ItemFactory.CreateItem(itemRow, random);
+                        var nonFungibleId = ((INonFungibleItem)item).NonFungibleId;
+                        avatarState.inventory.AddItem(item);
+                        if (item.ItemType != ItemType.Consumable)
+                        {
+                            materials.Add(new NonFungibleCollectionMaterial
+                            {
+                                ItemId = item.Id,
+                                NonFungibleId = nonFungibleId,
+                                SkillContains = material.SkillContains,
+                            });
+                        }
+                        else
+                        {
+                            // Add consumable material only one.
+                            if (i == 0)
+                            {
+                                materials.Add(new FungibleCollectionMaterial
+                                {
+                                    ItemId = item.Id,
+                                    ItemCount = material.Count,
+                                });
+                            }
+                        }
+                    }
                 }
             }
 
@@ -97,8 +130,10 @@ namespace Lib9c.Tests.Action
             ActivateCollection activateCollection = new ActivateCollection()
             {
                 AvatarAddress = _avatarAddress,
-                CollectionId = row.Id,
-                Materials = materials,
+                CollectionData =
+                {
+                    (row.Id, materials),
+                },
             };
 
             var nextState = activateCollection.Execute(context);
