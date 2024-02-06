@@ -24,6 +24,11 @@ namespace Lib9c.Tests.Action
         public ActivateCollectionTest()
         {
             var sheets = TableSheetsImporter.ImportSheets();
+            // Fix csv data for test
+            sheets[nameof(CollectionSheet)] = @"id,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value
+1,10110000,1,0,,302000,2,,,200000,2,,,40100000,1,,,,,,,,,,,ATK,Add,1,,,,,,
+2,10110000,1,0,,,,,,,,,,,,,,,,,,,,,,ATK,Percentage,1,,,,,,";
+
             _tableSheets = new TableSheets(sheets);
 
             var privateKey = new PrivateKey();
@@ -52,19 +57,8 @@ namespace Lib9c.Tests.Action
 
             foreach (var (key, value) in sheets)
             {
-                var s = value;
-                // Fix csv data for test
-                if (key == nameof(CollectionSheet))
-                {
-                    s =
-                        @"id,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value
-1,10110000,1,0,,302000,2,,,200000,2,,,40100000,1,,,,,,,,,,,ATK,Add,1,,,,,,
-2,10110000,1,0,,,,,,,,,,,,,,,,,,,,,,ATK,Percentage,1,,,,,,
-";
-                }
-
                 _initialState = _initialState
-                    .SetLegacyState(Addresses.TableSheet.Derive(key), s.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
