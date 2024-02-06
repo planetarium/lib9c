@@ -158,9 +158,9 @@ namespace Lib9c.Tests.Action.Garages
                 }
             }
 
+            var avatarState = nextStates.GetAvatarState(_recipientAvatarAddr);
             if (action.FungibleIdAndCounts is { })
             {
-                var avatarState = nextStates.GetAvatarState(_recipientAvatarAddr);
                 foreach (var (fungibleId, count) in action.FungibleIdAndCounts)
                 {
                     var garageAddr = Addresses.GetGarageAddress(
@@ -174,8 +174,7 @@ namespace Lib9c.Tests.Action.Garages
                 }
             }
 
-            var avatarDict = (Dictionary)nextStates.GetLegacyState(_recipientAvatarAddr)!;
-            var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey]);
+            var mailBox = avatarState.mailBox;
             Assert.Single(mailBox);
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());
             Assert.Equal(blockIndex, mail.blockIndex);
