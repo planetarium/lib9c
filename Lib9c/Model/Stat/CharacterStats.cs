@@ -23,9 +23,9 @@ namespace Nekoyume.Model.Stat
         private readonly Stats _equipmentStats = new Stats();
         private readonly Stats _consumableStats = new Stats();
         private readonly Stats _runeStats = new Stats();
+        private readonly Stats _collectionStats = new Stats();
         private readonly Stats _buffStats = new Stats();
         private readonly Stats _optionalStats = new Stats();
-        private readonly Stats _collectionStats = new Stats();
 
         private readonly List<StatModifier> _initialStatModifiers = new List<StatModifier>();
         private readonly List<StatModifier> _equipmentStatModifiers = new List<StatModifier>();
@@ -334,7 +334,7 @@ namespace Nekoyume.Model.Stat
 
             if (updateImmediate)
             {
-                UpdateEquipmentStats();
+                UpdateCollectionStats();
             }
 
             return this;
@@ -459,13 +459,13 @@ namespace Nekoyume.Model.Stat
         private void UpdateOptionalStats()
         {
             _optionalStats.Set(_optionalStatModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats, _buffStats);
-            UpdateCollectionStats();
+            UpdateTotalStats();
         }
 
         private void UpdateCollectionStats()
         {
             _collectionStats.Set(_collectionStatModifiers, _baseStats, _equipmentStats, _collectionStats, _runeStats, _buffStats, _optionalStats);
-            UpdateTotalStats();
+            UpdateOptionalStats();
         }
 
         private void UpdateTotalStats()

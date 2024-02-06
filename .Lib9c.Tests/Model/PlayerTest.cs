@@ -675,30 +675,83 @@ namespace Lib9c.Tests.Model
         }
 
         [Fact]
-        public void SetCollectionStatsTest()
+        public void StatsLayerTest()
         {
-            var row = _tableSheets.EquipmentItemSheet.Values.First(r => r.Stat.StatType == StatType.HP);
-            var costume = (Equipment)ItemFactory.CreateItem(_tableSheets.ItemSheet[row.Id], new TestRandom());
+            var row = _tableSheets.EquipmentItemSheet.Values.First(r =>
+                r.Stat.StatType == StatType.HP);
+            var equipment = (Equipment)ItemFactory.CreateItem(_tableSheets.ItemSheet[row.Id], new TestRandom());
+            equipment.equipped = true;
+            _avatarState.inventory.AddItem(equipment);
+            var costumeStatRow =
+                _tableSheets.CostumeStatSheet.Values.First(r => r.StatType == StatType.HP);
+            var costumeId = costumeStatRow.CostumeId;
+            var costume = ItemFactory.CreateCostume(_tableSheets.CostumeItemSheet[costumeId], Guid.NewGuid());
             costume.equipped = true;
             _avatarState.inventory.AddItem(costume);
+            var foodRow =
+                _tableSheets.ConsumableItemSheet.Values.First(r =>
+                    r.Stats.Any(s => s.StatType == StatType.HP));
+            var food = (Consumable)ItemFactory.CreateItem(foodRow, _random);
+            _avatarState.inventory.AddItem(food);
 
+            // Update equipment stats
             var player = new Player(
                 _avatarState,
                 _tableSheets.CharacterSheet,
                 _tableSheets.CharacterLevelSheet,
                 _tableSheets.EquipmentItemSetEffectSheet
             );
+            Assert.Equal(player.HP, player.Stats.BaseHP + player.Stats.EquipmentStats.HP);
+            var equipmentLayerHp = player.HP;
 
-            Assert.Equal(row.Stat.BaseValue, player.Stats.EquipmentStats.HP);
-            Assert.Equal(player.HP, player.Stats.BaseHP + row.Stat.BaseValue);
+            // Update consumable stats
+            player.Use(new List<Guid>
+            {
+                food.ItemId,
+            });
+            Assert.Equal(player.HP, equipmentLayerHp + food.Stats.Where(s => s.StatType == StatType.HP).Sum(s => s.BaseValueAsLong));
+            var consumableLayerHp = player.HP;
 
+            // Update rune stat
+            var runeId = 30001;
+            var runeState = new RuneState(runeId);
+            runeState.LevelUp();
+            Assert.Equal(1, runeState.Level);
+
+            var runeStates = new List<RuneState>
+            {
+                runeState,
+            };
+            player.SetRune(runeStates, _tableSheets.RuneOptionSheet, _tableSheets.SkillSheet);
+            var runeOptionRow = _tableSheets.RuneOptionSheet.Values.First(r => r.RuneId == runeId);
+            var runeHp = runeOptionRow.LevelOptionMap[1].Stats.Sum(r => r.stat.BaseValueAsLong);
+            Assert.Equal(player.HP, consumableLayerHp + runeHp);
+            var runeLayerHp = player.HP;
+
+            // Update collection stat
             var modifiers = new List<StatModifier>();
             var addModifier = new StatModifier(StatType.HP, StatModifier.OperationType.Add, 100);
             modifiers.Add(new StatModifier(StatType.HP, StatModifier.OperationType.Percentage, 100));
-            modifiers.Add(new StatModifier(StatType.HP, StatModifier.OperationType.Percentage, -100));
             modifiers.Add(addModifier);
+            modifiers.Add(
+                new StatModifier(StatType.HP, StatModifier.OperationType.Percentage, -100));
             player.Stats.SetCollections(modifiers);
-            Assert.Equal(player.HP, player.Stats.BaseHP + row.Stat.BaseValue + addModifier.Value);
+            Assert.Equal(player.HP, runeLayerHp + addModifier.Value);
+            var collectionLayerHp = player.HP;
+
+            // Update optional stats
+            player.SetCostumeStat(_tableSheets.CostumeStatSheet);
+            Assert.Equal(player.HP, collectionLayerHp + costumeStatRow.Stat);
+            var costumeLayerHp = player.HP;
+
+            // Update buff stats
+            var buffRow = _tableSheets.StatBuffSheet.Values.First(r =>
+                r.StatType == StatType.HP &&
+                r.OperationType == StatModifier.OperationType.Percentage);
+            var buff = new StatBuff(buffRow);
+            var modifier = buff.GetModifier();
+            player.Stats.SetBuffs(new[] { buff });
+            Assert.Equal(player.HP, (long)(costumeLayerHp + modifier.GetModifiedValue(runeLayerHp)));
         }
     }
 }
