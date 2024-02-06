@@ -15,21 +15,28 @@ namespace Nekoyume.TableData
             public int ItemId;
             public int Count;
             public int Level;
-            public int OptionCount;
             public bool SkillContains;
 
-            public bool Validate(ItemUsable itemUsable)
+            private bool Validate(Equipment equipment)
             {
-                switch (itemUsable)
+                return equipment.Id == ItemId && equipment.level == Level &&
+                       (equipment.Skills.Any() == SkillContains || equipment.BuffSkills.Any() == SkillContains);
+            }
+
+            private bool Validate(Costume costume)
+            {
+                return costume.Id == ItemId;
+            }
+            public bool Validate(INonFungibleItem nonFungibleItem)
+            {
+                switch (nonFungibleItem)
                 {
+                    case Costume costume:
+                        return Validate(costume);
                     case Equipment equipment:
-                        return equipment.Id == ItemId && equipment.level == Level &&
-                               equipment.GetOptionCount() == OptionCount &&
-                               (equipment.Skills.Any() == SkillContains || equipment.BuffSkills.Any() == SkillContains);
-                    case Consumable consumable:
-                        return consumable.Id == ItemId;
+                        return Validate(equipment);
                     default:
-                        return false;
+                        throw new ArgumentOutOfRangeException(nameof(nonFungibleItem));
                 }
             }
         }
@@ -48,7 +55,7 @@ namespace Nekoyume.TableData
                 Id = ParseInt(fields[0]);
                 for (int i = 0; i < 6; i++)
                 {
-                    var offset = i * 5;
+                    var offset = i * 4;
                     if (!TryParseInt(fields[1 + offset], out var itemId) || itemId == 0)
                     {
                         continue;
@@ -58,23 +65,22 @@ namespace Nekoyume.TableData
                         ItemId = itemId,
                         Count = ParseInt(fields[2 + offset]),
                         Level = ParseInt(fields[3 + offset], 0),
-                        OptionCount = ParseInt(fields[4 + offset], 0),
-                        SkillContains = ParseBool(fields[5 + offset], false)
+                        SkillContains = ParseBool(fields[4 + offset], false)
                     });
                 }
 
                 for (int i = 0; i < 3; i++)
                 {
                     var offset = i * 3;
-                    var statType = fields[28 + offset];
+                    var statType = fields[25 + offset];
                     if (string.IsNullOrEmpty(statType))
                     {
                         continue;
                     }
                     StatModifiers.Add(new StatModifier(
                         (StatType) Enum.Parse(typeof(StatType), statType),
-                        (StatModifier.OperationType) Enum.Parse(typeof(StatModifier.OperationType), fields[29 + offset]),
-                        ParseInt(fields[30 + offset])));
+                        (StatModifier.OperationType) Enum.Parse(typeof(StatModifier.OperationType), fields[26 + offset]),
+                        ParseInt(fields[27 + offset])));
                 }
             }
         }
