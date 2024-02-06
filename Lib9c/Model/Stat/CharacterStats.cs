@@ -452,7 +452,35 @@ namespace Nekoyume.Model.Stat
 
         private void UpdateBuffStats()
         {
-            _buffStats.Set(_buffStatModifiers.Values, _baseStats, _equipmentStats, _consumableStats, _runeStats);
+            var buffModifiers = new List<StatModifier>();
+            var perModifiers = new List<StatModifier>();
+            foreach (var modifier in _buffStatModifiers.Values)
+            {
+                switch (modifier.Operation)
+                {
+                    case StatModifier.OperationType.Add:
+                        buffModifiers.Add(modifier);
+                        break;
+                    case StatModifier.OperationType.Percentage:
+                        perModifiers.Add(modifier);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            var groupBy = perModifiers.GroupBy(m => m.StatType).ToList();
+            foreach (var group in groupBy)
+            {
+                var statType = group.Key;
+                var sum = group.Sum(g => g.Value);
+                if (sum > 0L)
+                {
+                    buffModifiers.Add(new StatModifier(statType, StatModifier.OperationType.Percentage, sum));
+                }
+            }
+
+            _buffStats.Set(buffModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats);
             UpdateOptionalStats();
         }
 
