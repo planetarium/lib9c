@@ -326,10 +326,7 @@ namespace Nekoyume.Model.Stat
             {
                 var statType = group.Key;
                 var sum = group.Sum(g => g.Value);
-                if (sum > 0L)
-                {
-                    _collectionStatModifiers.Add(new StatModifier(statType, StatModifier.OperationType.Percentage, sum));
-                }
+                _collectionStatModifiers.Add(new StatModifier(statType, StatModifier.OperationType.Percentage, sum));
             }
 
             if (updateImmediate)
@@ -474,10 +471,7 @@ namespace Nekoyume.Model.Stat
             {
                 var statType = group.Key;
                 var sum = group.Sum(g => g.Value);
-                if (sum > 0L)
-                {
-                    buffModifiers.Add(new StatModifier(statType, StatModifier.OperationType.Percentage, sum));
-                }
+                buffModifiers.Add(new StatModifier(statType, StatModifier.OperationType.Percentage, sum));
             }
 
             _buffStats.Set(buffModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats);
