@@ -23,17 +23,17 @@ namespace Nekoyume.Model.Stat
         private readonly Stats _equipmentStats = new Stats();
         private readonly Stats _consumableStats = new Stats();
         private readonly Stats _runeStats = new Stats();
+        private readonly Stats _costumeStats = new Stats();
         private readonly Stats _collectionStats = new Stats();
         private readonly Stats _buffStats = new Stats();
-        private readonly Stats _optionalStats = new Stats();
 
         private readonly List<StatModifier> _initialStatModifiers = new List<StatModifier>();
         private readonly List<StatModifier> _equipmentStatModifiers = new List<StatModifier>();
         private readonly List<StatModifier> _consumableStatModifiers = new List<StatModifier>();
         private readonly List<StatModifier> _runeStatModifiers = new List<StatModifier>();
-        private readonly Dictionary<int, StatModifier> _buffStatModifiers = new Dictionary<int, StatModifier>();
-        private readonly List<StatModifier> _optionalStatModifiers = new List<StatModifier>();
+        private readonly List<StatModifier> _costumeStatModifiers = new List<StatModifier>();
         private readonly List<StatModifier> _collectionStatModifiers = new List<StatModifier>();
+        private readonly Dictionary<int, StatModifier> _buffStatModifiers = new Dictionary<int, StatModifier>();
 
         public readonly StatMap StatWithItems = new StatMap();
 
@@ -44,7 +44,7 @@ namespace Nekoyume.Model.Stat
         public IStats ConsumableStats => _consumableStats;
         public IStats RuneStats => _runeStats;
         public IStats BuffStats => _buffStats;
-        public IStats OptionalStats => _optionalStats;
+        public IStats CostumeStats => _costumeStats;
         public IStats CollectionStats => _collectionStats;
 
         public long BaseHP => BaseStats.HP;
@@ -120,13 +120,13 @@ namespace Nekoyume.Model.Stat
             _consumableStats = new Stats(value._consumableStats);
             _runeStats = new Stats(value._runeStats);
             _buffStats = new Stats(value._buffStats);
-            _optionalStats = new Stats(value._optionalStats);
+            _costumeStats = new Stats(value._costumeStats);
 
             _equipmentStatModifiers = value._equipmentStatModifiers;
             _consumableStatModifiers = value._consumableStatModifiers;
             _runeStatModifiers = value._runeStatModifiers;
             _buffStatModifiers = value._buffStatModifiers;
-            _optionalStatModifiers = value._optionalStatModifiers;
+            _costumeStatModifiers = value._costumeStatModifiers;
             IsArenaCharacter = value.IsArenaCharacter;
 
             Level = value.Level;
@@ -366,10 +366,10 @@ namespace Nekoyume.Model.Stat
             UpdateRuneStats();
         }
 
-        public void AddOptional(IEnumerable<StatModifier> statModifiers)
+        public void AddCostume(IEnumerable<StatModifier> statModifiers)
         {
-            _optionalStatModifiers.AddRange(statModifiers);
-            UpdateOptionalStats();
+            _costumeStatModifiers.AddRange(statModifiers);
+            UpdateCostumeStats();
         }
 
         private void SetCostumes(IEnumerable<Costume> costumes, CostumeStatSheet costumeStatSheet)
@@ -383,13 +383,13 @@ namespace Nekoyume.Model.Stat
                         (int)row.Stat));
                 statModifiers.AddRange(stat);
             }
-            SetOption(statModifiers);
+            SetCostume(statModifiers);
         }
 
-        public void SetOption(IEnumerable<StatModifier> statModifiers)
+        public void SetCostume(IEnumerable<StatModifier> statModifiers)
         {
-            _optionalStatModifiers.Clear();
-            AddOptional(statModifiers);
+            _costumeStatModifiers.Clear();
+            AddCostume(statModifiers);
         }
 
         public void IncreaseHpForArena()
@@ -475,24 +475,21 @@ namespace Nekoyume.Model.Stat
             }
 
             _buffStats.Set(buffModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats);
-            UpdateOptionalStats();
         }
 
-        private void UpdateOptionalStats()
+        private void UpdateCostumeStats()
         {
-            _optionalStats.Set(_optionalStatModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats, _buffStats);
             UpdateTotalStats();
         }
 
         private void UpdateCollectionStats()
         {
-            _collectionStats.Set(_collectionStatModifiers, _baseStats, _equipmentStats, _collectionStats, _runeStats, _buffStats, _optionalStats);
-            UpdateOptionalStats();
+            _collectionStats.Set(_collectionStatModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats);
         }
 
         private void UpdateTotalStats()
         {
-            Set(_statMap, _baseStats, _equipmentStats, _consumableStats, _runeStats, _buffStats, _optionalStats, _collectionStats);
+            Set(_statMap, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats, _collectionStats, _buffStats);
 
             foreach (var stat in _statMap.GetDecimalStats(false))
             {

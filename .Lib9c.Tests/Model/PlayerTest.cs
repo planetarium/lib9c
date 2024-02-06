@@ -289,11 +289,11 @@ namespace Lib9c.Tests.Model
             );
             player.SetCostumeStat(_tableSheets.CostumeStatSheet);
 
-            Assert.Equal(row.Stat, player.Stats.OptionalStats.ATK);
+            Assert.Equal(row.Stat, player.Stats.CostumeStats.ATK);
 
             var copy = (Player)player.Clone();
 
-            Assert.Equal(row.Stat, copy.Stats.OptionalStats.ATK);
+            Assert.Equal(row.Stat, copy.Stats.CostumeStats.ATK);
         }
 
         [Fact]
