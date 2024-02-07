@@ -885,6 +885,99 @@
             Assert.Equal(inventoryCount, inventory.Items.Count);
         }
 
+        [Theory]
+        [InlineData(false, false, 0L, 0L, true)]
+        [InlineData(false, false, 0L, 1L, true)]
+        [InlineData(true, false, 0L, 0L, false)]
+        [InlineData(true, true, 0L, 1L, false)]
+        public void IsMaterialRemovable(bool locked, bool tradable, long requiredBlockIndex, long blockIndex, bool expected)
+        {
+            var row = TableSheets.MaterialItemSheet.Values.First();
+            Inventory.Item item;
+            if (tradable)
+            {
+                var tradableMaterial = ItemFactory.CreateTradableMaterial(row);
+                tradableMaterial.RequiredBlockIndex = requiredBlockIndex;
+                item = new Inventory.Item(tradableMaterial);
+            }
+            else
+            {
+                var material = ItemFactory.CreateMaterial(row);
+                item = new Inventory.Item(material);
+            }
+
+            if (locked)
+            {
+                item.LockUp(new OrderLock(Guid.NewGuid()));
+            }
+
+            Assert.Equal(expected, Inventory.IsMaterialRemovable(item, row.Id, blockIndex));
+        }
+
+        [Fact]
+        public void RemoveMaterial()
+        {
+            var row = TableSheets.MaterialItemSheet.Values.First();
+            var inventory = new Inventory();
+            var material = ItemFactory.CreateMaterial(row);
+            var tradableMaterial = ItemFactory.CreateTradableMaterial(row);
+            tradableMaterial.RequiredBlockIndex = 1L;
+            inventory.AddItem(tradableMaterial);
+            inventory.AddItem(material);
+            Assert.Equal(2, inventory.Items.Count);
+
+            // Check Non-tradable material remove first
+            Assert.True(inventory.RemoveMaterial(row.Id, 0L));
+            var item = Assert.Single(inventory.Items);
+            Assert.IsType<TradableMaterial>(item.item);
+
+            Assert.True(inventory.RemoveMaterial(row.Id, 1L));
+            Assert.Empty(inventory.Items);
+        }
+
+        [Theory]
+        [InlineData(0L, 0L, 1)]
+        [InlineData(1L, 0L, 0)]
+        [InlineData(1L, 2L, 1)]
+        public void FilterConsumables(long requiredBlockIndex, long blockIndex, int expected)
+        {
+            var row = TableSheets.ConsumableItemSheet.Values.First();
+            var inventory = new Inventory();
+            var consumable = ItemFactory.CreateItemUsable(row, Guid.NewGuid(), requiredBlockIndex);
+            inventory.AddItem(consumable);
+
+            Assert.Equal(expected, inventory.FilterConsumables(row.Id, blockIndex).Count);
+        }
+
+        [Fact]
+        public void RemoveConsumable()
+        {
+            var row = TableSheets.ConsumableItemSheet.Values.First();
+            var inventory = new Inventory();
+            for (int i = 0; i < 3; i++)
+            {
+                var consumable = ItemFactory.CreateItemUsable(row, Guid.NewGuid(), 4 + i);
+                inventory.AddItem(consumable);
+            }
+
+            Assert.Equal(3, inventory.Consumables.Count());
+
+            // Check required block index
+            Assert.Empty(inventory.FilterConsumables(row.Id, 3L));
+
+            // Check insufficient target item count
+            Assert.False(inventory.RemoveConsumable(row.Id, 6L, 4));
+
+            // Check remove by block index
+            Assert.True(inventory.RemoveConsumable(row.Id, 6L));
+            Assert.Equal(5L, inventory.Consumables.Min(c => c.RequiredBlockIndex));
+            Assert.Equal(2, inventory.Consumables.Count());
+
+            // Check remove multiple consumable
+            Assert.True(inventory.RemoveConsumable(row.Id, 6L, 2));
+            Assert.Empty(inventory.Items);
+        }
+
         private static Consumable GetFirstConsumable()
         {
             var row = TableSheets.ConsumableItemSheet.First;

@@ -8,88 +8,75 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Collection;
-using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
-    [ActionType("activate_collection")]
-    public class ActivateCollection: GameAction
+    [ActionType(ActionTypeText)]
+    public class ActivateCollection : GameAction
     {
+        private const string ActionTypeText = "activate_collection";
+        private const int MaxCollectionDataCount = 10;
         public Address AvatarAddress;
-        public int CollectionId;
-        public List<ICollectionMaterial> Materials = new();
+
+        public List<(int collectionId, List<ICollectionMaterial> materials)> CollectionData = new();
+
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
+            if (CollectionData.Count > MaxCollectionDataCount)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(CollectionData),
+                    CollectionData.Count,
+                    $"CollectionData count exceeds the {MaxCollectionDataCount}");
+            }
+
             var states = context.PreviousState;
             if (states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
-                var sheets = states.GetSheets(containItemSheet: true, sheetTypes: new[]
-                {
-                    typeof(CollectionSheet)
-                });
+                var sheets = states.GetSheets(containItemSheet: true,
+                    sheetTypes: new[]
+                    {
+                        typeof(CollectionSheet),
+                    });
                 var collectionSheet = sheets.GetSheet<CollectionSheet>();
-                var row = collectionSheet[CollectionId];
-                var materials = Materials;
-                foreach (var materialInfo in row.Materials)
+                var collectionState = states.TryGetCollectionState(AvatarAddress, out var state)
+                    ? state
+                    : new CollectionState();
+                var itemSheet = sheets.GetItemSheet();
+                foreach (var (collectionId, collectionMaterials) in CollectionData)
                 {
-                    var material = materials.FirstOrDefault(m =>
-                        m.ItemId == materialInfo.ItemId && m.ItemCount == materialInfo.Count);
-                    if (material is null)
+                    var row = collectionSheet[collectionId];
+                    foreach (var requiredMaterial in row.Materials)
                     {
-                        throw new Exception();
-                    }
-                    switch (material)
-                    {
-                        case FungibleCollectionMaterial fungibleCollectionMaterial:
-                            if (!avatarState.inventory.RemoveMaterial(materialInfo.ItemId,
-                                    materialInfo.Count))
-                            {
-                                throw new Exception();
-                            }
-                            break;
-                        case NonFungibleCollectionMaterial nonFungibleCollectionMaterial:
-                            var nonFungibleId = nonFungibleCollectionMaterial.NonFungibleId;
-                            if (avatarState.inventory.TryGetNonFungibleItem(nonFungibleId,
-                                    out ItemUsable materialItem) && materialInfo.Validate(materialItem))
-                            {
-                                avatarState.inventory.RemoveNonFungibleItem(materialItem);
-                            }
-                            else
-                            {
-                                throw new Exception();
-                            }
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(material));
+                        ICollectionMaterial registeredMaterial = requiredMaterial.GetMaterial(collectionMaterials);
+                        ItemSheet.Row itemRow = itemSheet[registeredMaterial.ItemId];
+                        switch (registeredMaterial)
+                        {
+                            case FungibleCollectionMaterial fungibleCollectionMaterial:
+                                fungibleCollectionMaterial.BurnMaterial(itemRow, avatarState.inventory, context.BlockIndex);
+                                break;
+                            case NonFungibleCollectionMaterial nonFungibleCollectionMaterial:
+                                nonFungibleCollectionMaterial.BurnMaterial(itemRow, avatarState.inventory, requiredMaterial);
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException(nameof(registeredMaterial));
+                        }
+
+                        collectionMaterials.Remove(registeredMaterial);
                     }
 
-                    materials.Remove(material);
-                }
+                    if (collectionMaterials.Any())
+                    {
+                        throw new ArgumentOutOfRangeException(
+                            $"material does not match collection {row.Id}");
+                    }
 
-                if (materials.Any())
-                {
-                    throw new Exception();
+                    collectionState.Ids.Add(collectionId);
                 }
-
-                CollectionState collectionState;
-                try
-                {
-                    collectionState = states.GetCollectionState(AvatarAddress);
-                }
-                catch (FailedLoadStateException)
-                {
-                    collectionState = new CollectionState();
-                }
-                catch (InvalidCastException)
-                {
-                    collectionState = new CollectionState();
-                }
-                collectionState.Ids.Add(CollectionId);
                 return states
                     .SetAvatarState(AvatarAddress, avatarState, false, true, false, false)
                     .SetCollectionState(AvatarAddress, collectionState);
@@ -102,17 +89,25 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>
             {
                 ["a"] = AvatarAddress.Serialize(),
-                ["c"] = (Integer)CollectionId,
-                ["m"] = new List(Materials.Select(i => i.Serialize())),
+                ["c"] = new List(
+                    CollectionData
+                        .Select(c => List.Empty
+                            .Add((Integer) c.collectionId)
+                            .Add(new List(c.materials.Select(i => i.Bencoded))))
+                ),
             }.ToImmutableDictionary();
-        protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
+
+        protected override void LoadPlainValueInternal(
+            IImmutableDictionary<string, IValue> plainValue)
         {
             AvatarAddress = plainValue["a"].ToAddress();
-            CollectionId = (Integer)plainValue["c"];
-            var list = (List) plainValue["m"];
-            foreach (var innerList in list)
+            var list = (List) plainValue["c"];
+            foreach (var value in list)
             {
-                Materials.Add(CollectionFactory.DeserializeMaterial((List)innerList));
+                var innerList = (List) value;
+                CollectionData.Add(((Integer) innerList[0],
+                    ((List) innerList[1]).Select(i => CollectionFactory.DeserializeMaterial((List) i))
+                    .ToList()));
             }
         }
     }
