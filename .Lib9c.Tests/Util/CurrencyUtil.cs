@@ -4,12 +4,13 @@ namespace Lib9c.Tests.Util
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
+    using Nekoyume.Module;
 
     public static class CurrencyUtil
     {
-        public static IAccount AddCurrency(
+        public static IWorld AddCurrency(
             IActionContext context,
-            IAccount state,
+            IWorld state,
             Address agentAddress,
             Currency currency,
             FungibleAssetValue amount

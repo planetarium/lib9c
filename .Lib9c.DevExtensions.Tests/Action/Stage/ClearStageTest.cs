@@ -6,6 +6,7 @@ using Lib9c.Tests.Util;
 using Libplanet.Crypto;
 using Libplanet.Action.State;
 using Nekoyume.Action;
+using Nekoyume.Module;
 using Xunit;
 
 namespace Lib9c.DevExtensions.Tests.Action.Stage
@@ -15,7 +16,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Stage
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV2;
         private readonly Address _worldInfoAddress;
 
         public ClearStageTest()
@@ -44,7 +45,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Stage
                 BlockIndex = 0L,
             });
 
-            var avatarState = state.GetAvatarStateV2(_avatarAddress);
+            var avatarState = state.GetAvatarState(_avatarAddress);
             for (var i = 1; i <= targetStage; i++)
             {
                 Assert.True(avatarState.worldInformation.IsStageCleared(i));

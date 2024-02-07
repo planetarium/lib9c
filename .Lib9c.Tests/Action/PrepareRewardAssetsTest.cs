@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class PrepareRewardAssetsTest
@@ -36,8 +37,8 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             }
 
-            IAccount state = new Account(MockState.Empty)
-                .SetState(Addresses.Admin, adminState.Serialize());
+            IWorld state = new World(new MockWorldState())
+                .SetLegacyState(Addresses.Admin, adminState.Serialize());
 
             var action = new PrepareRewardAssets(poolAddress, assets);
             if (exc is null)

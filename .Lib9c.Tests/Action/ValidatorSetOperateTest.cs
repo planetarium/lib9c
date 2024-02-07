@@ -10,13 +10,14 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Action.Loader;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
 
     public class ValidatorSetOperateTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly Validator _validator;
 
         public ValidatorSetOperateTest(ITestOutputHelper outputHelper)
@@ -26,14 +27,14 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             _validator = new Validator(new PrivateKey().PublicKey, BigInteger.One);
 
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize())
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize())
                     .SetValidator(_validator);
             }
         }
@@ -43,9 +44,9 @@ namespace Lib9c.Tests.Action
         {
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var initStates = MockState.Empty
-                .SetState(AdminState.Address, adminState.Serialize());
-            var state = new Account(initStates);
+            var initStates = new MockWorldState()
+                .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize());
+            var state = new World(initStates);
             var action = ValidatorSetOperate.Append(_validator);
             var nextState = action.Execute(
                 new ActionContext()
@@ -64,9 +65,9 @@ namespace Lib9c.Tests.Action
         {
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var initStates = MockState.Empty
-                .SetState(AdminState.Address, adminState.Serialize());
-            var state = new Account(initStates);
+            var initStates = new MockWorldState()
+                .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize());
+            var state = new World(initStates);
             var action = ValidatorSetOperate.Append(_validator);
 
             PermissionDeniedException exc1 = Assert.Throws<PermissionDeniedException>(() =>
@@ -100,7 +101,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Update_Throws_WhenDoNotExistValidator()
         {
-            var state = new Account(MockState.Empty);
+            var state = new World(new MockWorldState());
             var action = ValidatorSetOperate.Update(_validator);
             InvalidOperationException exc = Assert.Throws<InvalidOperationException>(() =>
                 action.Execute(new ActionContext
@@ -115,7 +116,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Remove_Throws_WhenDoNotExistValidator()
         {
-            var state = new Account(MockState.Empty);
+            var state = new World(new MockWorldState());
             var action = ValidatorSetOperate.Remove(_validator);
             InvalidOperationException exc = Assert.Throws<InvalidOperationException>(() =>
                 action.Execute(new ActionContext

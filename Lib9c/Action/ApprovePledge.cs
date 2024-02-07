@@ -3,6 +3,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -24,13 +25,13 @@ namespace Nekoyume.Action
             PatronAddress = ((Dictionary)plainValue)["values"].ToAddress();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             Address signer = context.Signer;
             var states = context.PreviousState;
             var contractAddress = signer.GetPledgeAddress();
-            if (!states.TryGetState(contractAddress, out List contract))
+            if (!states.TryGetLegacyState(contractAddress, out List contract))
             {
                 throw new FailedLoadStateException("failed to find requested pledge.");
             }
@@ -45,7 +46,7 @@ namespace Nekoyume.Action
                 throw new AlreadyContractedException($"{signer} already contracted.");
             }
 
-            return states.SetState(
+            return states.SetLegacyState(
                 contractAddress,
                 List.Empty
                     .Add(PatronAddress.Serialize())

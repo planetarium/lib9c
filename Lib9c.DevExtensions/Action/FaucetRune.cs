@@ -11,6 +11,7 @@ using Nekoyume.Action;
 using Nekoyume.Helper;
 using Nekoyume.Model.Faucet;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Lib9c.DevExtensions.Action
@@ -22,7 +23,7 @@ namespace Lib9c.DevExtensions.Action
         public Address AvatarAddress { get; set; }
         public List<FaucetRuneInfo> FaucetRuneInfos { get; set; }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;

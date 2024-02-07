@@ -11,6 +11,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Stake;
 using Serilog;
@@ -45,15 +46,15 @@ namespace Nekoyume.Action
             Amount = plainValue[AmountKey].ToBigInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             var started = DateTimeOffset.UtcNow;
             context.UseGas(1);
-            IAccount states = context.PreviousState;
+            IWorld states = context.PreviousState;
 
             // NOTE: Restrict staking if there is a monster collection until now.
             if (states.GetAgentState(context.Signer) is { } agentState &&
-                states.TryGetState(MonsterCollectionState.DeriveAddress(
+                states.TryGetLegacyState(MonsterCollectionState.DeriveAddress(
                     context.Signer,
                     agentState.MonsterCollectionRound), out Dictionary _))
             {
@@ -152,7 +153,7 @@ namespace Nekoyume.Action
             if (Amount == 0)
             {
                 return states
-                    .SetState(stakeStateAddress, Null.Value)
+                    .SetLegacyState(stakeStateAddress, Null.Value)
                     .TransferAsset(context, stakeStateAddress, context.Signer, stakedBalance);
             }
 
@@ -171,9 +172,9 @@ namespace Nekoyume.Action
             return states;
         }
 
-        private static IAccount ContractNewStake(
+        private static IWorld ContractNewStake(
             IActionContext context,
-            IAccount state,
+            IWorld state,
             Address stakeStateAddr,
             FungibleAssetValue? stakedBalance,
             FungibleAssetValue targetStakeBalance,
@@ -191,7 +192,7 @@ namespace Nekoyume.Action
 
             return state
                 .TransferAsset(context, context.Signer, stakeStateAddr, targetStakeBalance)
-                .SetState(stakeStateAddr, newStakeState.Serialize());
+                .SetLegacyState(stakeStateAddr, newStakeState.Serialize());
         }
     }
 }

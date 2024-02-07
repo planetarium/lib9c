@@ -10,6 +10,7 @@ using Libplanet.Crypto;
 using Nekoyume.Battle;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData.Crystal;
 using Serilog;
 
@@ -43,7 +44,7 @@ namespace Nekoyume.Action
             AdvancedGacha = plainValue["adv"].ToBoolean();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -53,7 +54,7 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex}HackAndSlashRandomBuff exec started", addressesHex);
 
             // Invalid Avatar address, or does not have GachaState.
-            if (!states.TryGetState(gachaStateAddress, out List rawGachaState))
+            if (!states.TryGetLegacyState(gachaStateAddress, out List rawGachaState))
             {
                 throw new FailedLoadStateException(
                     $"Can't find {nameof(CrystalRandomSkillState)}. Gacha state address:{gachaStateAddress}");
@@ -115,7 +116,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}HackAndSlashRandomBuff Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(gachaStateAddress, gachaState.Serialize())
+                .SetLegacyState(gachaStateAddress, gachaState.Serialize())
                 .TransferAsset(context, context.Signer, Addresses.StageRandomBuff, cost);
         }
 

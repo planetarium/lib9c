@@ -17,6 +17,7 @@ namespace Lib9c.Tests.Action.Garages
     using Nekoyume.Model.Garages;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
+    using Nekoyume.Module;
     using Xunit;
 
     public class BulkUnloadFromGaragesTest
@@ -30,7 +31,7 @@ namespace Lib9c.Tests.Action.Garages
 
         private readonly TableSheets _tableSheets;
         private readonly Currency _ncg;
-        private readonly IAccount _previousStates;
+        private readonly IWorld _previousStates;
 
         public BulkUnloadFromGaragesTest()
         {
@@ -139,21 +140,19 @@ namespace Lib9c.Tests.Action.Garages
             // Test fungibleItems
             if (unloadData[0].fungibleIdAndCounts is { } fungibleIdAndCounts)
             {
-                var inventoryAddress = unloadData[0].recipientAvatarAddress
-                    .Derive(SerializeKeys.LegacyInventoryKey);
-                var inventory = states.GetInventory(inventoryAddress);
+                var inventory = states.GetInventory(unloadData[0].recipientAvatarAddress);
 
                 foreach (var (fungibleId, count) in fungibleIdAndCounts)
                 {
                     var garageAddress = Addresses.GetGarageAddress(AgentAddress, fungibleId);
-                    Assert.Equal(0, new FungibleItemGarage(states.GetState(garageAddress)).Count);
+                    Assert.Equal(0, new FungibleItemGarage(states.GetLegacyState(garageAddress)).Count);
                     Assert.True(inventory.HasFungibleItem(fungibleId, blockIndex: 0, count));
                 }
             }
 
             // Test Mailing
-            var avatarDict = (Dictionary)states.GetState(unloadData[0].recipientAvatarAddress)!;
-            var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey]);
+            var avatarState = states.GetAvatarState(unloadData[0].recipientAvatarAddress);
+            var mailBox = avatarState.mailBox;
             Assert.Single(mailBox);
 
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());
@@ -187,12 +186,12 @@ namespace Lib9c.Tests.Action.Garages
                 .ToArray();
         }
 
-        private (IAccount states, (
+        private (IWorld states, (
             Address recipientAvatarAddress,
             IEnumerable<(Address balanceAddress, FungibleAssetValue value)>? fungibleAssetValues,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)>? fungibleIdAndCounts,
             string? memo))
-            RegisterPlainValue(IAccount previousStates)
+            RegisterPlainValue(IWorld previousStates)
         {
             var states = previousStates;
 
@@ -207,7 +206,7 @@ namespace Lib9c.Tests.Action.Garages
                         Addresses.GetGarageAddress(AgentAddress, material.FungibleId);
                     var count = index + 1;
                     var garage = new FungibleItemGarage(material, count);
-                    states = states.SetState(garageAddress, garage.Serialize());
+                    states = states.SetLegacyState(garageAddress, garage.Serialize());
                     return (FungibleItem: (IFungibleItem)material, count);
                 })
                 .ToArray();

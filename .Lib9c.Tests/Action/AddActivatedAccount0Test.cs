@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class AddActivatedAccount0Test
@@ -14,14 +15,14 @@ namespace Lib9c.Tests.Action
         public void Execute()
         {
             var admin = new Address("8d9f76aF8Dc5A812aCeA15d8bf56E2F790F47fd7");
-            var state = new Account(
-                MockState.Empty
-                    .SetState(AdminState.Address, new AdminState(admin, 100).Serialize())
-                    .SetState(ActivatedAccountsState.Address, new ActivatedAccountsState().Serialize()));
+            var state = new World(
+                new MockWorldState()
+                    .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, new AdminState(admin, 100).Serialize())
+                    .SetState(ReservedAddresses.LegacyAccount, ActivatedAccountsState.Address, new ActivatedAccountsState().Serialize()));
             var newComer = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var action = new AddActivatedAccount0(newComer);
 
-            IAccount nextState = action.Execute(new ActionContext()
+            IWorld nextState = action.Execute(new ActionContext()
             {
                 BlockIndex = 1,
                 Miner = default,
@@ -30,7 +31,7 @@ namespace Lib9c.Tests.Action
             });
 
             var nextAccountStates = new ActivatedAccountsState(
-                (Dictionary)nextState.GetState(ActivatedAccountsState.Address)
+                (Dictionary)nextState.GetLegacyState(ActivatedAccountsState.Address)
             );
 
             Assert.Equal(
@@ -43,7 +44,7 @@ namespace Lib9c.Tests.Action
         public void ExecuteWithNonExistsAccounts()
         {
             var admin = new Address("8d9f76aF8Dc5A812aCeA15d8bf56E2F790F47fd7");
-            var state = new Account(MockState.Empty);
+            var state = new World(new MockWorldState());
             var newComer = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var action = new AddActivatedAccount0(newComer);
 
@@ -63,10 +64,10 @@ namespace Lib9c.Tests.Action
         public void CheckPermission()
         {
             var admin = new Address("8d9f76aF8Dc5A812aCeA15d8bf56E2F790F47fd7");
-            var state = new Account(
-                MockState.Empty
-                    .SetState(AdminState.Address, new AdminState(admin, 100).Serialize())
-                    .SetState(ActivatedAccountsState.Address, new ActivatedAccountsState().Serialize()));
+            var state = new World(
+                new MockWorldState()
+                    .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, new AdminState(admin, 100).Serialize())
+                    .SetState(ReservedAddresses.LegacyAccount, ActivatedAccountsState.Address, new ActivatedAccountsState().Serialize()));
             var newComer = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var action = new AddActivatedAccount0(newComer);
 

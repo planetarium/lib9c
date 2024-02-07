@@ -25,10 +25,10 @@ namespace Lib9c.Plugin
 
         public byte[][] Evaluate(byte[] blockBytes, byte[]? baseStateRootHashBytes)
         {
-            return _actionEvaluator.Evaluate(
+            var evals = _actionEvaluator.Evaluate(
                 PreEvaluationBlockMarshaller.Deserialize(blockBytes),
-                baseStateRootHashBytes is { } bytes ? new HashDigest<SHA256>(bytes) : null)
-                .Select(eval => ActionEvaluationMarshaller.Serialize(eval)).ToArray();
+                baseStateRootHashBytes is { } bytes ? new HashDigest<SHA256>(bytes) : null);
+            return evals.Select(eval => ActionEvaluationMarshaller.Serialize(eval)).ToArray();
         }
     }
 }

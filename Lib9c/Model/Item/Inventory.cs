@@ -16,7 +16,7 @@ using Serilog;
 namespace Nekoyume.Model.Item
 {
     [Serializable]
-    public class Inventory : IState
+    public class Inventory : IState, ICloneable
     {
         // ToDo. Item 클래스를 FungibleItem과 NonFungibleItem으로 분리하기.
         [Serializable]
@@ -167,6 +167,11 @@ namespace Nekoyume.Model.Item
         public override int GetHashCode()
         {
             return (_items != null ? _items.GetHashCode() : 0);
+        }
+
+        public object Clone()
+        {
+            return new Inventory((List)Serialize());
         }
 
         #region Add

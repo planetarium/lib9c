@@ -6,6 +6,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -45,7 +46,7 @@ namespace Nekoyume.Action
             AgentAddresses = agentAddresses;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             CheckPermission(context);
@@ -59,7 +60,7 @@ namespace Nekoyume.Action
             {
                 states = states
                     .TransferAsset(context, PatronAddress, agentAddress, mead)
-                    .SetState(pledgeAddress, contractList);
+                    .SetLegacyState(pledgeAddress, contractList);
             }
             return states;
         }

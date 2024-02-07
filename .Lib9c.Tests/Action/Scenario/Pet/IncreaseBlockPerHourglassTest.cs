@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -25,11 +26,9 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly Address _inventoryAddr;
-        private readonly Address _worldInfoAddr;
         private readonly Address _recipeIdsAddr;
-        private readonly IAccount _initialStateV1;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV1;
+        private readonly IWorld _initialStateV2;
         private readonly TableSheets _tableSheets;
         private readonly int _hourglassItemId;
         private int? _petId;
@@ -43,8 +42,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 _initialStateV1,
                 _initialStateV2
             ) = InitializeUtil.InitializeStates();
-            _inventoryAddr = _avatarAddr.Derive(LegacyInventoryKey);
-            _worldInfoAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
             _recipeIdsAddr = _avatarAddr.Derive("recipe_ids");
             _hourglassItemId = _tableSheets.MaterialItemSheet.Values.First(
                 item => item.ItemSubType == ItemSubType.Hourglass
@@ -89,7 +86,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 recipeIds = recipeIds.Add(i.Serialize());
             }
 
-            stateV2 = stateV2.SetState(_recipeIdsAddr, recipeIds);
+            stateV2 = stateV2.SetLegacyState(_recipeIdsAddr, recipeIds);
 
             var expectedHourglass = (int)Math.Ceiling(
                 ((double)recipe.RequiredBlockIndex
@@ -104,7 +101,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                     pet => pet.LevelOptionMap[(int)petLevel!].OptionType == PetOptionType
                 );
                 _petId = petRow.PetId;
-                stateV2 = stateV2.SetState(
+                stateV2 = stateV2.SetLegacyState(
                     PetState.DeriveAddress(_avatarAddr, (int)_petId),
                     new List(_petId!.Serialize(), petLevel.Serialize(), 0L.Serialize())
                 );
@@ -144,7 +141,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,
-                _worldInfoAddr,
+                _avatarAddr,
                 recipe.UnlockStage
             );
 
@@ -188,9 +185,9 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             );
 
             // TEST: All Hourglasses should be used
-            var inventoryState = new Inventory((List)stateV2.GetState(_inventoryAddr));
+            var avatarState = stateV2.GetAvatarState(_avatarAddr);
             Assert.Throws<InvalidOperationException>(() =>
-                inventoryState.Items.First(item => item.item.Id == _hourglassItemId));
+                avatarState.inventory.Items.First(item => item.item.Id == _hourglassItemId));
         }
     }
 }

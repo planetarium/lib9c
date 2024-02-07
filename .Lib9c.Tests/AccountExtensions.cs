@@ -39,7 +39,7 @@ namespace Lib9c.Tests
         /// </returns>
         public static IAccount SetNull(this IAccount account, Address address)
         {
-            var trie = MockState.Empty.Trie;
+            var trie = new MockAccountState().Trie;
             var path = ToStateKey(address);
             foreach (var kv in account.Trie.IterateValues())
             {

@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -14,6 +14,7 @@
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -28,7 +29,7 @@
         private readonly AvatarState _avatarState;
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public UpdateSellTest(ITestOutputHelper outputHelper)
         {
@@ -37,12 +38,12 @@
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -75,10 +76,10 @@
             agentState.avatarAddresses[0] = _avatarAddress;
 
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(Addresses.Shop, shopState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, _avatarState.Serialize());
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetLegacyState(Addresses.Shop, shopState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
+                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
         }
 
         [Theory]
@@ -192,22 +193,19 @@
 
             if (fromPreviousAction)
             {
-                prevState = prevState.SetState(_avatarAddress, avatarState.Serialize());
+                prevState = prevState.SetLegacyState(
+                    _avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
             }
             else
             {
-                prevState = prevState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                prevState = prevState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             }
 
             prevState = prevState
-                .SetState(Addresses.GetItemAddress(itemId), sellItem.Serialize())
-                .SetState(Order.DeriveAddress(order.OrderId), order.Serialize())
-                .SetState(orderDigestList.Address, orderDigestList.Serialize())
-                .SetState(shardedShopAddress, shopState.Serialize());
+                .SetLegacyState(Addresses.GetItemAddress(itemId), sellItem.Serialize())
+                .SetLegacyState(Order.DeriveAddress(order.OrderId), order.Serialize())
+                .SetLegacyState(orderDigestList.Address, orderDigestList.Serialize())
+                .SetLegacyState(shardedShopAddress, shopState.Serialize());
 
             var currencyState = prevState.GetGoldCurrency();
             var price = new FungibleAssetValue(currencyState, ProductPrice, 0);
@@ -236,7 +234,7 @@
             });
 
             var updateSellShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, updateSellOrderId);
-            var nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetState(updateSellShopAddress));
+            var nextShopState = new ShardedShopStateV2((Dictionary)nextState.GetLegacyState(updateSellShopAddress));
             Assert.Equal(1, nextShopState.OrderDigestList.Count);
             Assert.NotEqual(orderId, nextShopState.OrderDigestList.First().OrderId);
             Assert.Equal(updateSellOrderId, nextShopState.OrderDigestList.First().OrderId);
@@ -256,7 +254,7 @@
             Assert.Throws<ListEmptyException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
                 Signer = _agentAddress,
             }));
         }
@@ -281,7 +279,7 @@
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new Account(MockState.Empty),
+                PreviousState = new World(new MockWorldState()),
                 Signer = _agentAddress,
             }));
         }
@@ -298,7 +296,7 @@
                 ),
             };
 
-            _initialState = _initialState.SetState(_avatarAddress, avatarState.Serialize());
+            _initialState = _initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
 
             var updateSellInfo = new UpdateSellInfo(
                 default,
@@ -336,8 +334,8 @@
             var digestListAddress = OrderDigestListState.DeriveAddress(_avatarAddress);
             var digestList = new OrderDigestListState(digestListAddress);
             _initialState = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(digestListAddress, digestList.Serialize());
+                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
+                .SetLegacyState(digestListAddress, digestList.Serialize());
 
             var updateSellInfo = new UpdateSellInfo(
                 default,

@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Nekoyume.Action;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -24,9 +25,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly Address _inventoryAddr;
-        private readonly Address _worldInformationAddr;
-        private readonly IAccount _initialStateV2;
+        private readonly IWorld _initialStateV2;
         private readonly TableSheets _tableSheets;
         private int? _petId;
 
@@ -39,8 +38,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 _,
                 _initialStateV2
             ) = InitializeUtil.InitializeStates();
-            _inventoryAddr = _avatarAddr.Derive(LegacyInventoryKey);
-            _worldInformationAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
         }
 
         [Theory]
@@ -73,7 +70,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             }
 
             var context = new ActionContext();
-            var stateV2 = _initialStateV2.SetState(
+            var stateV2 = _initialStateV2.SetLegacyState(
                 _avatarAddr.Derive("recipe_ids"),
                 stageList
             );
@@ -94,7 +91,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 );
 
                 _petId = petRow.PetId;
-                stateV2 = stateV2.SetState(
+                stateV2 = stateV2.SetLegacyState(
                     PetState.DeriveAddress(_avatarAddr, (int)_petId),
                     new List(_petId.Serialize(), petLevel.Serialize(), 0L.Serialize()));
                 expectedCrystal *= (BigInteger)(
@@ -109,7 +106,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,
-                _worldInformationAddr,
+                _avatarAddr,
                 recipe.UnlockStage
             );
 

@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -12,6 +12,7 @@
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -24,7 +25,7 @@
         private readonly AvatarState _buyerAvatarState;
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public BuyMultipleTest(ITestOutputHelper outputHelper)
         {
@@ -34,12 +35,12 @@
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -74,10 +75,10 @@
             var shopState = new ShopState();
 
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(Addresses.Shop, shopState.Serialize())
-                .SetState(_buyerAgentAddress, buyerAgentState.Serialize())
-                .SetState(_buyerAvatarAddress, _buyerAvatarState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetLegacyState(Addresses.Shop, shopState.Serialize())
+                .SetAgentState(_buyerAgentAddress, buyerAgentState)
+                .SetAvatarState(_buyerAvatarAddress, _buyerAvatarState, true, true, true, true)
                 .MintAsset(context, _buyerAgentAddress, _goldCurrencyState.Currency * 100);
         }
 
@@ -293,8 +294,8 @@
             Assert.Equal(3, shopState.Products.Count);
 
             _initialState = _initialState
-                .SetState(_buyerAvatarAddress, buyerAvatarState.Serialize())
-                .SetState(Addresses.Shop, shopState.Serialize());
+                .SetAvatarState(_buyerAvatarAddress, buyerAvatarState, true, true, true, true)
+                .SetLegacyState(Addresses.Shop, shopState.Serialize());
 
             var priceData = new PriceData(goldCurrency);
 
@@ -304,10 +305,10 @@
                 priceData.TaxedPriceSum[agentState.address] = new FungibleAssetValue(goldCurrency, 0, 0);
 
                 _initialState = _initialState
-                    .SetState(avatarState.address, avatarState.Serialize());
+                    .SetAvatarState(avatarState.address, avatarState, true, true, true, true);
             }
 
-            IAccount previousStates = _initialState;
+            IWorld previousStates = _initialState;
 
             var buyerGold = previousStates.GetBalance(_buyerAgentAddress, goldCurrency);
             var priceSumData = productDatas
@@ -386,7 +387,7 @@
                 costume));
 
             _initialState = _initialState
-                .SetState(Addresses.Shop, shopState.Serialize());
+                .SetLegacyState(Addresses.Shop, shopState.Serialize());
 
             shopState = _initialState.GetShopState();
             var products = shopState.Products.Values
@@ -406,7 +407,7 @@
             Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = new Account(MockState.Empty),
+                    PreviousState = new World(new MockWorldState()),
                     RandomSeed = 0,
                     Signer = _buyerAgentAddress,
                 })
@@ -425,7 +426,7 @@
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = new Account(MockState.Empty),
+                    PreviousState = new World(new MockWorldState()),
                     RandomSeed = 0,
                     Signer = _buyerAgentAddress,
                 })
@@ -443,7 +444,7 @@
                     0
                 ),
             };
-            _initialState = _initialState.SetState(_buyerAvatarAddress, avatarState.Serialize());
+            _initialState = _initialState.SetAvatarState(_buyerAvatarAddress, avatarState, true, true, true, true);
 
             var action = new BuyMultiple
             {
@@ -518,7 +519,7 @@
 
             var context = new ActionContext();
             _initialState = _initialState
-                .SetState(Addresses.Shop, shopState.Serialize());
+                .SetLegacyState(Addresses.Shop, shopState.Serialize());
             shopState = _initialState.GetShopState();
             Assert.NotEmpty(shopState.Products);
 
@@ -559,7 +560,7 @@
             var sellerAgentAddress = new PrivateKey().Address;
             var (avatarState, agentState) = CreateAvatarState(sellerAgentAddress, sellerAvatarAddress);
 
-            IAccount previousStates = _initialState;
+            IWorld previousStates = _initialState;
             var shopState = previousStates.GetShopState();
 
             var productId = Guid.NewGuid();
@@ -576,7 +577,7 @@
                 (ITradableItem)equipment));
 
             previousStates = previousStates
-                .SetState(Addresses.Shop, shopState.Serialize());
+                .SetLegacyState(Addresses.Shop, shopState.Serialize());
             shopState = previousStates.GetShopState();
 
             Assert.True(shopState.Products.ContainsKey(productId));
@@ -629,8 +630,8 @@
             _sellerAgentStateMap[avatarState] = agentState;
 
             _initialState = _initialState
-                .SetState(agentAddress, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize());
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
             return (avatarState, agentState);
         }
 

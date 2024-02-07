@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class SecureMiningRewardTest
@@ -33,10 +34,10 @@ namespace Lib9c.Tests.Action
             new Address("636d187B4d434244A92B65B06B5e7da14b3810A9"),
         }.ToImmutableList();
 
-        private static readonly IAccount _previousState = new Account(
-            MockState.Empty
-                .SetState(AdminState.Address, new AdminState(_admin, 100).Serialize())
-                .SetState(GoldCurrencyState.Address, new GoldCurrencyState(NCG).Serialize())
+        private static readonly IWorld _previousState = new World(
+            new MockWorldState()
+                .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, new AdminState(_admin, 100).Serialize())
+                .SetState(ReservedAddresses.LegacyAccount, GoldCurrencyState.Address, new GoldCurrencyState(NCG).Serialize())
                 .SetBalance(_authMiners[0], NCG * 1000)
                 .SetBalance(_authMiners[1], NCG * 2000)
                 .SetBalance(_authMiners[2], NCG * 3000)
@@ -46,7 +47,7 @@ namespace Lib9c.Tests.Action
         public void Execute()
         {
             var action = new SecureMiningReward(recipient: _recipient);
-            IAccount nextState = action.Execute(
+            IWorld nextState = action.Execute(
                 new ActionContext
                 {
                     PreviousState = _previousState,

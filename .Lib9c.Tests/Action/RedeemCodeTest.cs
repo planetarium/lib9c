@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -70,28 +71,24 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
 
             var context = new ActionContext();
-            var initialState = new Account(MockState.Empty)
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
-                .SetState(GoldCurrencyState.Address, goldState.Serialize())
+            var initialState = new World(new MockWorldState())
+                .SetAgentState(_agentAddress, agentState)
+                .SetLegacyState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, goldState.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, goldState.Currency * 100000000);
 
             if (backward)
             {
-                initialState = initialState.SetState(_avatarAddress, avatarState.Serialize());
+                initialState = initialState.SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
             }
             else
             {
-                initialState = initialState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
+                initialState = initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
             }
 
             foreach (var (key, value) in _sheets)
             {
-                initialState = initialState.SetState(
+                initialState = initialState.SetLegacyState(
                     Addresses.TableSheet.Derive(key),
                     value.Serialize()
                 );
@@ -102,7 +99,7 @@ namespace Lib9c.Tests.Action
                 _avatarAddress
             );
 
-            IAccount nextState = redeemCode.Execute(new ActionContext()
+            IWorld nextState = redeemCode.Execute(new ActionContext()
             {
                 BlockIndex = 1,
                 Miner = default,
@@ -112,7 +109,7 @@ namespace Lib9c.Tests.Action
             });
 
             // Check target avatar & agent
-            AvatarState nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            AvatarState nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             // See also Data/TableCSV/RedeemRewardSheet.csv
             ItemSheet itemSheet = initialState.GetItemSheet();
             HashSet<int> expectedItems = new[] { 302006, 302004, 302001, 302002 }.ToHashSet();

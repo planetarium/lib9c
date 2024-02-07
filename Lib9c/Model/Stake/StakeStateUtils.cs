@@ -1,20 +1,20 @@
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Model.Stake
 {
     public static class StakeStateUtils
     {
         public static bool TryMigrate(
-            IAccountState state,
+            IWorldState state,
             Address stakeStateAddr,
             out StakeStateV2 stakeStateV2)
         {
             var nullableStateState =
-                Migrate(state.GetState(stakeStateAddr), state.GetGameConfigState());
+                Migrate(state.GetLegacyState(stakeStateAddr), state.GetGameConfigState());
             if (nullableStateState is null)
             {
                 stakeStateV2 = default;

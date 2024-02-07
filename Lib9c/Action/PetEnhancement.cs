@@ -9,6 +9,7 @@ using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -39,7 +40,7 @@ namespace Nekoyume.Action
             TargetLevel = plainValue["t"].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -73,7 +74,7 @@ namespace Nekoyume.Action
             }
 
             var petStateAddress = PetState.DeriveAddress(AvatarAddress, PetId);
-            var petState = states.TryGetState(petStateAddress, out List rawState)
+            var petState = states.TryGetLegacyState(petStateAddress, out List rawState)
                 ? new PetState(rawState)
                 : new PetState(PetId);
             if (TargetLevel <= petState.Level)
@@ -171,7 +172,7 @@ namespace Nekoyume.Action
                 petState.LevelUp();
             }
 
-            return states.SetState(petStateAddress, petState.Serialize());
+            return states.SetLegacyState(petStateAddress, petState.Serialize());
         }
     }
 }

@@ -8,6 +8,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
@@ -40,7 +41,7 @@ namespace Nekoyume.Action
             PendingActivations = states.Select(pa => (pa.address.ToByteArray(), pa.Nonce, pa.PublicKey.Format(true))).ToImmutableList();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
@@ -48,7 +49,7 @@ namespace Nekoyume.Action
             var state = context.PreviousState;
             foreach ((byte[] address, byte[] nonce, byte[] publicKey) in PendingActivations)
             {
-                state = state.SetState(
+                state = state.SetLegacyState(
                     new Address(address),
                     new Dictionary(
                         new[]

@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
@@ -54,10 +55,10 @@ namespace Nekoyume.Action
             .Add("type_id", "secure_mining_reward")
             .Add("values", Recipient.Bencoded);
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount state = context.PreviousState;
+            IWorld state = context.PreviousState;
 
             CheckPermission(context);
 

@@ -11,6 +11,7 @@ using Nekoyume.Action;
 using Nekoyume.Helper;
 using Nekoyume.Model.Faucet;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using Xunit;
@@ -21,7 +22,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 {
     public class FaucetRuneTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly Address _avatarAddress;
         private readonly RuneSheet _runeSheet;
 
@@ -32,12 +33,12 @@ namespace Lib9c.DevExtensions.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
                 _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    _initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var tableSheets = new TableSheets(sheets);
@@ -57,23 +58,8 @@ namespace Lib9c.DevExtensions.Tests.Action
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             _initialState = _initialState
-                    .SetState(agentAddress, agentState.Serialize())
-                    .SetState(
-                        _avatarAddress.Derive(LegacyInventoryKey),
-                        avatarState.inventory.Serialize()
-                    )
-                    .SetState(
-                        _avatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize()
-                    )
-                    .SetState(
-                        _avatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize()
-                    )
-                    .SetState(
-                        _avatarAddress, avatarState.Serialize()
-                    )
-                ;
+                    .SetAgentState(agentAddress, agentState)
+                    .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
         }
 
         [Theory]

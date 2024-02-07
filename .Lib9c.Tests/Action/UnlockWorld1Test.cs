@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -13,6 +13,7 @@
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -25,7 +26,7 @@
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public UnlockWorld1Test()
         {
@@ -49,36 +50,34 @@
 
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new Account(MockState.Empty)
-                .SetState(Addresses.GetSheetAddress<WorldUnlockSheet>(), _tableSheets.WorldUnlockSheet.Serialize())
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize());
+            _initialState = new World(new MockWorldState())
+                .SetLegacyState(Addresses.GetSheetAddress<WorldUnlockSheet>(), _tableSheets.WorldUnlockSheet.Serialize())
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize());
         }
 
         [Theory]
-        [InlineData(new[] { 2 }, true, false, false, true, 500, null)]
+        [InlineData(new[] { 2 }, true, false, true, 500, null)]
         // Migration AvatarState.
-        [InlineData(new[] { 2, 3, 4, 5 }, true, true, false, true, 153000, null)]
+        [InlineData(new[] { 2, 3, 4, 5 }, true, false, true, 153000, null)]
         // Try open Yggdrasil.
-        [InlineData(new[] { 1 }, false, true, false, true, 0, typeof(InvalidWorldException))]
+        [InlineData(new[] { 1 }, false, false, true, 0, typeof(InvalidWorldException))]
         // Try open Mimisbrunnr.
-        [InlineData(new[] { GameConfig.MimisbrunnrWorldId }, false, true, false, true, 0, typeof(InvalidWorldException))]
+        [InlineData(new[] { GameConfig.MimisbrunnrWorldId }, false, false, true, 0, typeof(InvalidWorldException))]
         // Empty WorldId.
-        [InlineData(new int[] { }, false, true, false, true, 0, typeof(InvalidWorldException))]
+        [InlineData(new int[] { }, false, false, true, 0, typeof(InvalidWorldException))]
         // AvatarState is null.
-        [InlineData(new[] { 2 }, false, true, false, true, 0, typeof(FailedLoadStateException))]
-        [InlineData(new[] { 2 }, false, false, false, true, 0, typeof(FailedLoadStateException))]
+        [InlineData(new[] { 2 }, false, false, true, 0, typeof(FailedLoadStateException))]
         // Already unlocked world.
-        [InlineData(new[] { 2 }, true, false, true, true, 0, typeof(AlreadyWorldUnlockedException))]
+        [InlineData(new[] { 2 }, true, true, true, 0, typeof(AlreadyWorldUnlockedException))]
         // Skip previous world.
-        [InlineData(new[] { 3 }, true, false, false, true, 0, typeof(FailedToUnlockWorldException))]
+        [InlineData(new[] { 3 }, true, false, true, 0, typeof(FailedToUnlockWorldException))]
         // Stage not cleared.
-        [InlineData(new[] { 2 }, true, false, false, false, 0, typeof(FailedToUnlockWorldException))]
+        [InlineData(new[] { 2 }, true, false, false, 0, typeof(FailedToUnlockWorldException))]
         // Insufficient CRYSTAL.
-        [InlineData(new[] { 2 }, true, false, false, true, 100, typeof(NotEnoughFungibleAssetValueException))]
+        [InlineData(new[] { 2 }, true, false, true, 100, typeof(NotEnoughFungibleAssetValueException))]
         public void Execute(
             IEnumerable<int> ids,
             bool stateExist,
-            bool migrationRequired,
             bool alreadyUnlocked,
             bool stageCleared,
             int balance,
@@ -121,18 +120,7 @@
                     }
                 }
 
-                if (migrationRequired)
-                {
-                    state = state.SetState(_avatarAddress, _avatarState.Serialize());
-                }
-                else
-                {
-                    state = state
-                        .SetState(_avatarAddress.Derive(LegacyInventoryKey), _avatarState.inventory.Serialize())
-                        .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), worldInformation.Serialize())
-                        .SetState(_avatarAddress.Derive(LegacyQuestListKey), _avatarState.questList.Serialize())
-                        .SetState(_avatarAddress, _avatarState.SerializeV2());
-                }
+                state = state.SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
             }
 
             var unlockedWorldIdsAddress = _avatarAddress.Derive("world_ids");
@@ -144,7 +132,7 @@
                     unlockIds = unlockIds.Add(worldId.Serialize());
                 }
 
-                state = state.SetState(unlockedWorldIdsAddress, unlockIds);
+                state = state.SetLegacyState(unlockedWorldIdsAddress, unlockIds);
             }
 
             var action = new UnlockWorld1
@@ -155,7 +143,7 @@
 
             if (exc is null)
             {
-                IAccount nextState = action.Execute(new ActionContext
+                IWorld nextState = action.Execute(new ActionContext
                 {
                     PreviousState = state,
                     Signer = _agentAddress,
@@ -163,7 +151,7 @@
                     RandomSeed = _random.Seed,
                 });
 
-                Assert.True(nextState.TryGetState(unlockedWorldIdsAddress, out List rawIds));
+                Assert.True(nextState.TryGetLegacyState(unlockedWorldIdsAddress, out List rawIds));
 
                 var unlockedIds = rawIds.ToList(StateExtensions.ToInteger);
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -11,6 +11,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -29,13 +30,10 @@ namespace Nekoyume.Action
         IEnumerable<int> IUnlockWorldV1.WorldIds => WorldIds;
         Address IUnlockWorldV1.AvatarAddress => AvatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var unlockedWorldIdsAddress = AvatarAddress.Derive("world_ids");
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -46,20 +44,17 @@ namespace Nekoyume.Action
             }
 
             WorldInformation worldInformation;
-            AvatarState avatarState = null;
-            bool migrationRequired = false;
-
-            if (states.TryGetState(worldInformationAddress, out Dictionary rawInfo))
+            if (states.GetWorldInformation(AvatarAddress) is { } worldInfo)
             {
-                worldInformation = new WorldInformation(rawInfo);
+                worldInformation = worldInfo;
             }
             else
             {
                 // AvatarState migration required.
-                if (states.TryGetAvatarState(context.Signer, AvatarAddress, out avatarState))
+                if (states.TryGetAvatarState(context.Signer, AvatarAddress, out AvatarState avatarState))
                 {
                     worldInformation = avatarState.worldInformation;
-                    migrationRequired = true;
+                    states = states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
                 }
                 else
                 {
@@ -68,7 +63,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            List<int> unlockedIds = states.TryGetState(unlockedWorldIdsAddress, out List rawIds)
+            List<int> unlockedIds = states.TryGetLegacyState(unlockedWorldIdsAddress, out List rawIds)
                 ? rawIds.ToList(StateExtensions.ToInteger)
                 : new List<int>
                 {
@@ -114,19 +109,10 @@ namespace Nekoyume.Action
                 throw new NotEnoughFungibleAssetValueException($"UnlockWorld required {cost}, but balance is {balance}");
             }
 
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(questListAddress, avatarState.questList.Serialize())
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize());
-            }
-
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}UnlockWorld Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(unlockedWorldIdsAddress, new List(unlockedIds.Select(i => i.Serialize())))
+                .SetLegacyState(unlockedWorldIdsAddress, new List(unlockedIds.Select(i => i.Serialize())))
                 .TransferAsset(context, context.Signer, Addresses.UnlockWorld, cost);
         }
 

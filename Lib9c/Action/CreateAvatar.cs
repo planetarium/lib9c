@@ -11,6 +11,7 @@ using Libplanet.Action.State;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -68,7 +69,7 @@ namespace Nekoyume.Action
             name = (Text) plainValue["name"];
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
@@ -140,7 +141,7 @@ namespace Nekoyume.Action
             foreach (var address in avatarState.combinationSlotAddresses)
             {
                 var slotState = new CombinationSlotState(address, 0);
-                states = states.SetState(address, slotState.Serialize());
+                states = states.SetLegacyState(address, slotState.Serialize());
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);
@@ -236,11 +237,8 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CreateAvatar Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(signer, agentState.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+                .SetAgentState(signer, agentState)
+                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
         }
 
         public static void AddItem(ItemSheet itemSheet, CreateAvatarItemSheet createAvatarItemSheet,
@@ -267,8 +265,8 @@ namespace Nekoyume.Action
             }
         }
 
-        public static IAccount MintAsset(CreateAvatarFavSheet favSheet,
-            AvatarState avatarState, IAccount states, IActionContext context)
+        public static IWorld MintAsset(CreateAvatarFavSheet favSheet,
+            AvatarState avatarState, IWorld states, IActionContext context)
         {
             foreach (var row in favSheet.Values)
             {

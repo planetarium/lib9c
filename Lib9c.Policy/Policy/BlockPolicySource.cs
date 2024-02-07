@@ -12,6 +12,7 @@ using Nekoyume.Action.Loader;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
 using Lib9c;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
@@ -36,63 +37,47 @@ namespace Nekoyume.Blockchain.Policy
 
         private readonly IActionLoader _actionLoader;
 
-        public BlockPolicySource(
-            IActionLoader? actionLoader = null)
+        public BlockPolicySource(IActionLoader? actionLoader = null)
         {
             _actionLoader = actionLoader ?? new NCActionLoader();
         }
 
         /// <summary>
-        /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-main deployment.
+        /// Creates an <see cref="IBlockPolicy{T}"/> instance for Odin mainnet.
         /// </summary>
-        public IBlockPolicy GetPolicy() =>
-            GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
+        public IBlockPolicy GetPolicy() => GetPolicy(Planet.Odin);
 
         /// <summary>
-        /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-internal deployment.
+        /// Creates an <see cref="IBlockPolicy{T}"/> instance for the given planet.
         /// </summary>
-        public IBlockPolicy GetInternalPolicy() =>
-            GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Internal,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Internal);
-
-        /// <summary>
-        /// Creates an <see cref="IBlockPolicy{T}"/> instance for 9c-permanent-test deployment.
-        /// </summary>
-        public IBlockPolicy GetPermanentPolicy() =>
-            GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
-
-        /// <summary>
-        /// Creates an <see cref="IBlockPolicy{T}"/> instance identical to the one deployed
-        /// except with lower minimum difficulty for faster testing and benchmarking.
-        /// </summary>
-        public IBlockPolicy GetTestPolicy() =>
-            GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Mainnet,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Mainnet,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Mainnet);
-
-        /// <summary>
-        /// Creates an <see cref="IBlockPolicy{T}"/> instance for networks
-        /// with default options, without authorized mining and permissioned mining.
-        /// </summary>
-        public IBlockPolicy GetDefaultPolicy() =>
-            GetPolicy(
-                maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Default,
-                minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Default,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Default,
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Default);
+        public IBlockPolicy GetPolicy(Planet planet)
+        {
+            return planet switch
+            {
+                Planet.Odin => GetPolicy(
+                    maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Odin,
+                    minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Odin,
+                    maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Odin,
+                    maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Odin
+                ),
+                Planet.OdinInternal => GetPolicy(
+                    maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.OdinInternal,
+                    minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Odin,
+                    maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Odin,
+                    maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.OdinInternal
+                ),
+                Planet.Heimdall => GetPolicy(
+                    maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Heimdall,
+                    minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Heimdall,
+                    maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Heimdall,
+                    maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Heimdall
+                ),
+                _ => throw new ArgumentException(
+                    $"Can't retrieve policy for given planet ({planet})",
+                    nameof(planet)
+                ),
+            };
+        }
 
         /// <summary>
         /// Gets a <see cref="BlockPolicy"/> constructed from given parameters.
@@ -126,10 +111,10 @@ namespace Nekoyume.Blockchain.Policy
             maxTransactionsPerSignerPerBlockPolicy = maxTransactionsPerSignerPerBlockPolicy
                 ?? MaxTransactionsPerSignerPerBlockPolicy.Default;
 
-            Func<BlockChain, Transaction, TxPolicyViolationException> validateNextBlockTx =
+            Func<BlockChain, Transaction, TxPolicyViolationException?> validateNextBlockTx =
                 (blockChain, transaction) => ValidateNextBlockTxRaw(
                     blockChain, _actionLoader, transaction);
-            Func<BlockChain, Block, BlockPolicyViolationException> validateNextBlock =
+            Func<BlockChain, Block, BlockPolicyViolationException?> validateNextBlock =
                 (blockchain, block) => ValidateNextBlockRaw(
                     block,
                     maxTransactionsBytesPolicy,
@@ -150,7 +135,7 @@ namespace Nekoyume.Blockchain.Policy
 #endif
         }
 
-        internal static TxPolicyViolationException ValidateNextBlockTxRaw(
+        internal static TxPolicyViolationException? ValidateNextBlockTxRaw(
             BlockChain blockChain,
             IActionLoader actionLoader,
             Transaction transaction)
@@ -158,11 +143,11 @@ namespace Nekoyume.Blockchain.Policy
             // Avoid NRE when genesis block appended
             long index = blockChain.Count > 0 ? blockChain.Tip.Index + 1: 0;
 
-            if (((ITransaction)transaction).Actions?.Count > 1)
+            if (transaction.Actions?.Count > 1)
             {
                 return new TxPolicyViolationException(
                     $"Transaction {transaction.Id} has too many actions: " +
-                    $"{((ITransaction)transaction).Actions?.Count}",
+                    $"{transaction.Actions?.Count}",
                     transaction.Id);
             }
             else if (IsObsolete(transaction, actionLoader, index))
@@ -174,7 +159,10 @@ namespace Nekoyume.Blockchain.Policy
 
             try
             {
-                if (blockChain.GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
+                if (blockChain
+                    .GetWorldState()
+                    .GetAccountState(ReservedAddresses.LegacyAccount)
+                    .GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
                 {
                     // Check Activation
                     try
@@ -185,7 +173,10 @@ namespace Nekoyume.Blockchain.Policy
                             action is IActivateAccount activate)
                         {
                             return transaction.Nonce == 0 &&
-                                blockChain.GetState(activate.PendingAddress) is Dictionary rawPending &&
+                                blockChain
+                                    .GetWorldState()
+                                    .GetAccountState(ReservedAddresses.LegacyAccount)
+                                    .GetState(activate.PendingAddress) is Dictionary rawPending &&
                                 new PendingActivationState(rawPending).Verify(activate.Signature)
                                     ? null
                                     : new TxPolicyViolationException(
@@ -207,12 +198,17 @@ namespace Nekoyume.Blockchain.Policy
                         return null;
                     }
 
-                    switch (blockChain.GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
+                    switch (blockChain
+                        .GetWorldState()
+                        .GetAccountState(ReservedAddresses.LegacyAccount)
+                        .GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
                     {
                         case null:
                             // Fallback for pre-migration.
-                            if (blockChain.GetState(ActivatedAccountsState.Address)
-                                is Dictionary asDict)
+                            if (blockChain
+                                .GetWorldState()
+                                .GetAccountState(ReservedAddresses.LegacyAccount)
+                                .GetState(ActivatedAccountsState.Address) is Dictionary asDict)
                             {
                                 IImmutableSet<Address> activatedAccounts =
                                     new ActivatedAccountsState(asDict).Accounts;
@@ -244,7 +240,11 @@ namespace Nekoyume.Blockchain.Policy
                         transaction.Id);
                 }
 
-                if (transaction.MaxGasPrice * transaction.GasLimit > blockChain.GetBalance(transaction.Signer, Currencies.Mead))
+                if (transaction.MaxGasPrice * transaction.GasLimit >
+                    blockChain
+                        .GetWorldState()
+                        .GetAccountState(ReservedAddresses.LegacyAccount)
+                        .GetBalance(transaction.Signer, Currencies.Mead))
                 {
                     return new TxPolicyViolationException(
                         $"Transaction {transaction.Id} signer insufficient transaction fee",
@@ -254,14 +254,14 @@ namespace Nekoyume.Blockchain.Policy
             catch (InvalidSignatureException)
             {
                 return new TxPolicyViolationException(
-                    $"Transaction {transaction.Id} has invalid signautre.",
+                    $"Transaction {transaction.Id} has invalid signature.",
                     transaction.Id);
             }
 
             return null;
         }
 
-        internal static BlockPolicyViolationException ValidateNextBlockRaw(
+        internal static BlockPolicyViolationException? ValidateNextBlockRaw(
             Block nextBlock,
             IVariableSubPolicy<long> maxTransactionsBytesPolicy,
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
@@ -274,25 +274,20 @@ namespace Nekoyume.Blockchain.Policy
             {
                 return ibble;
             }
-            else if (ValidateTxCountPerBlockRaw(
+
+            if (ValidateTxCountPerBlockRaw(
                 nextBlock,
                 minTransactionsPerBlockPolicy,
                 maxTransactionsPerBlockPolicy) is InvalidBlockTxCountException ibtce)
             {
                 return ibtce;
             }
-            else if (ValidateTxCountPerSignerPerBlockRaw(
+
+            if (ValidateTxCountPerSignerPerBlockRaw(
                 nextBlock,
                 maxTransactionsPerSignerPerBlockPolicy) is InvalidBlockTxCountPerSignerException ibtcpse)
             {
                 return ibtcpse;
-            }
-            else
-            {
-                if (nextBlock.Index == 0)
-                {
-                    return null;
-                }
             }
 
             return null;

@@ -16,6 +16,7 @@ using Nekoyume.Exceptions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.Garages
 {
@@ -114,7 +115,7 @@ namespace Nekoyume.Action.Garages
             }).ToList();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
 
@@ -167,9 +168,9 @@ namespace Nekoyume.Action.Garages
             return states;
         }
 
-        private IAccount TransferFungibleAssetValues(
+        private IWorld TransferFungibleAssetValues(
             IActionContext context,
-            IAccount states,
+            IWorld states,
             IEnumerable<(Address balanceAddress, FungibleAssetValue value)> fungibleAssetValues)
         {
             var garageBalanceAddress = Addresses.GetGarageBalanceAddress(context.Signer);
@@ -181,15 +182,13 @@ namespace Nekoyume.Action.Garages
             return states;
         }
 
-        private IAccount TransferFungibleItems(
-            IAccount states,
+        private IWorld TransferFungibleItems(
+            IWorld states,
             Address signer,
             Address recipientAvatarAddress,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
         {
-            var inventoryAddress = recipientAvatarAddress.Derive(SerializeKeys.LegacyInventoryKey);
-            var inventory = states.GetInventory(inventoryAddress);
-
+            var avatarState = states.GetAvatarState(recipientAvatarAddress);
             var fungibleItemTuples = GarageUtils.WithGarageTuples(
                 signer,
                 states,
@@ -197,17 +196,17 @@ namespace Nekoyume.Action.Garages
             foreach (var (_, count, garageAddress, garage) in fungibleItemTuples)
             {
                 garage.Unload(count);
-                inventory.AddFungibleItem((ItemBase)garage.Item, count);
-                states = states.SetState(garageAddress, garage.Serialize());
+                avatarState.inventory.AddFungibleItem((ItemBase)garage.Item, count);
+                states = states.SetLegacyState(garageAddress, garage.Serialize());
             }
 
-            return states.SetState(inventoryAddress, inventory.Serialize());
+            return states.SetAvatarState(recipientAvatarAddress, avatarState, false, true, false, false);
         }
 
-        private IAccount BulkSendMail(
+        private IWorld BulkSendMail(
             long blockIndex,
             IRandom random,
-            IAccount states)
+            IWorld states)
         {
             foreach (var tuple in UnloadData)
             {
@@ -216,19 +215,13 @@ namespace Nekoyume.Action.Garages
                     fungibleAssetValues,
                     fungibleIdAndCounts,
                     memo) = tuple;
-                var avatarValue = states.GetState(recipientAvatarAddress);
-                if (!(avatarValue is Dictionary avatarDict))
+                var avatarState = states.GetAvatarState(recipientAvatarAddress);
+                if (avatarState is null)
                 {
                     throw new FailedLoadStateException(recipientAvatarAddress, typeof(AvatarState));
                 }
 
-                if (!avatarDict.ContainsKey(SerializeKeys.MailBoxKey))
-                {
-                    throw new KeyNotFoundException(
-                        $"Dictionary key is not found: {SerializeKeys.MailBoxKey}");
-                }
-
-                var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey])
+                var mailBox = new MailBox((List)avatarState.mailBox.Serialize())
                 {
                     new UnloadFromMyGaragesRecipientMail(
                         blockIndex,
@@ -239,9 +232,9 @@ namespace Nekoyume.Action.Garages
                         memo)
                 };
                 mailBox.CleanUp();
-                avatarDict = avatarDict.SetItem(SerializeKeys.MailBoxKey, mailBox.Serialize());
+                avatarState.mailBox = mailBox;
 
-                return states.SetState(recipientAvatarAddress, avatarDict);
+                return states.SetAvatarState(recipientAvatarAddress, avatarState, true, false, false, false);
             }
 
             return states;
