@@ -74,7 +74,7 @@ namespace Nekoyume.Arena
                 foreach (var other in players)
                 {
                     var current = players.GetPriority(other);
-                    var speed = current * 0.6m;
+                    var speed = current * (other.usedSkill != null ? 0.9m : 0.6m);
                     players.UpdatePriority(other, speed);
                 }
 

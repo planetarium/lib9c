@@ -160,7 +160,7 @@ namespace Nekoyume.Battle
                     foreach (var other in Characters)
                     {
                         var current = Characters.GetPriority(other);
-                        var speed = current * 0.6m;
+                        var speed = current * (other == Player && other.usedSkill != null ? 0.9m : 0.6m);
                         Characters.UpdatePriority(other, speed);
                     }
 
