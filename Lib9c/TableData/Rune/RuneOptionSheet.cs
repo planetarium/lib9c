@@ -155,10 +155,10 @@ namespace Nekoyume.TableData
             row.LevelOptionMap[pair.Key] = pair.Value;
         }
 
-        public bool TryGetOptionInfo(int runId, int level, out Row.RuneOptionInfo optionInfo)
+        public bool TryGetOptionInfo(int runeId, int level, out Row.RuneOptionInfo optionInfo)
         {
             optionInfo = null;
-            return TryGetValue(runId, out var row) &&
+            return TryGetValue(runeId, out var row) &&
                    row.LevelOptionMap.TryGetValue(level, out optionInfo);
         }
     }
