@@ -18,27 +18,16 @@ namespace Nekoyume.Blockchain.Policy
             new MaxTransactionsPerSignerPerBlockPolicy(int.MaxValue);
 
         public static IVariableSubPolicy<int> Odin =>
-            Default
-                // Note: Introduced to prevent transactions spamming that may result in
-                // the chain grinding to a halt without meaningful state transitions happening.
-                // See https://github.com/planetarium/libplanet/issues/1449.
-                // Issued for v100086.
-                // FIXME: Starting index and value must be finalized accordingly before deployment.
-                .Add(new SpannedSubPolicy<int>(
-                    startIndex: 2_800_001,
-                    value: 4));
+            Default;
+
+        public static IVariableSubPolicy<int> Heimdall =>
+            Default;
 
         // Note: For internal testing.
         public static IVariableSubPolicy<int> OdinInternal =>
-            Default
-                .Add(new SpannedSubPolicy<int>(
-                    startIndex: 2_800_001,
-                    value: 4));
+            Default;
 
-        public static IVariableSubPolicy<int> Heimdall =>
-            Default
-                .Add(new SpannedSubPolicy<int>(
-                    startIndex: 1,
-                    value: 4));
+        public static IVariableSubPolicy<int> HeimdallInternal =>
+            Default;
     }
 }
