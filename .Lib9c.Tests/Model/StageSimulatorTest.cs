@@ -125,7 +125,14 @@ namespace Lib9c.Tests.Model
             var unskilledPlayer = simulator.Player;
             Assert.Contains(item, unskilledPlayer.Inventory.Equipments);
             simulator.Simulate();
-            var unSkilledLogs = simulator.Log.Count(l => l.Character == unskilledPlayer);
+
+            var unSkilledActions = simulator.Log.Where(l => l.Character?.Id == unskilledPlayer.Id);
+            /* foreach (var log in unSkilledActions)
+             * {
+             *     _testOutputHelper.WriteLine($"{log}");
+             * }
+             * _testOutputHelper.WriteLine("=============================================");
+             */
 
             // Reset and simulate with skilled equipment
             _avatarState.inventory.Equipments.First().equipped = false;
@@ -133,6 +140,8 @@ namespace Lib9c.Tests.Model
             Assert.Empty(_avatarState.inventory.Equipments);
             var skilledItem = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
             Assert.Empty(skilledItem.Skills);
+
+            // Add BlowAttack
             CombinationEquipment.AddSkillOption(
                 new AgentState(new PrivateKey().Address),
                 skilledItem,
@@ -167,15 +176,17 @@ namespace Lib9c.Tests.Model
             var skilledPlayer = simulator.Player;
             Assert.Contains(skilledItem, skilledPlayer.Inventory.Equipments);
             simulator.Simulate();
-            var skilledActions = simulator.Log.Where(l => l.Character == skilledPlayer);
-            foreach (var skill in skilledActions)
-            {
-                _testOutputHelper.WriteLine(skill.ToString());
-            }
+            var skilledActions = simulator.Log.Where(l => l.Character?.Id == skilledPlayer.Id);
+            /*
+             * foreach (var log in skilledActions)
+             * {
+             *     _testOutputHelper.WriteLine($"{log}");
+             * }
+             */
 
-            var skilledLogs = simulator.Log.Count(l => l.Character == skilledPlayer);
-
-            Assert.True(skilledLogs > unSkilledLogs);
+            Assert.Contains(skilledActions, e => e is BlowAttack);
+            // Skill scales speed by 0.9, so this makes way more player actions.
+            Assert.True(skilledActions.Count() > unSkilledActions.Count());
         }
     }
 }
