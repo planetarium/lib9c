@@ -19,7 +19,7 @@ namespace Nekoyume.Battle
             CharacterSheet.Row row,
             CostumeStatSheet costumeStatSheet, List<StatModifier> collectionStatModifiers)
         {
-            decimal levelStatsCp;
+            decimal levelStatsCp = GetStatsCP(row.ToStats(level), level);
             var collectionCp = 0m;
             // CharacterStats.BaseStats CP equals row.ToStats
             if (collectionStatModifiers.Any())
@@ -34,15 +34,10 @@ namespace Nekoyume.Battle
                 }
 
                 characterStats.SetCollections(collectionStatModifiers);
-                levelStatsCp = GetStatsCP(characterStats.BaseStats, level);
                 foreach (var (statType, value) in characterStats.CollectionStats.GetStats())
                 {
                     collectionCp += GetStatCP(statType, value);
                 }
-            }
-            else
-            {
-                levelStatsCp = GetStatsCP(row.ToStats(level), level);
             }
 
             var equipmentsCp = 0;
