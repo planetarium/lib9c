@@ -533,5 +533,31 @@ namespace Nekoyume.Model.Stat
                 }
             }
         }
+
+        public void SetCostumeStat(IReadOnlyCollection<Costume> costumes, CostumeStatSheet costumeStatSheet)
+        {
+            var statModifiers = new List<StatModifier>();
+            foreach (var itemId in costumes.Select(costume => costume.Id))
+            {
+                statModifiers.AddRange(
+                    costumeStatSheet.OrderedList
+                        .Where(r => r.CostumeId == itemId)
+                        .Select(row => new StatModifier(row.StatType, StatModifier.OperationType.Add, (int) row.Stat))
+                );
+            }
+            SetCostume(statModifiers);
+        }
+
+        public void AddRuneStat(RuneOptionSheet.Row.RuneOptionInfo optionInfo)
+        {
+            var statModifiers = new List<StatModifier>();
+            statModifiers.AddRange(
+                optionInfo.Stats.Select(x =>
+                    new StatModifier(
+                        x.stat.StatType,
+                        x.operationType,
+                        x.stat.BaseValueAsLong)));
+            AddRune(statModifiers);
+        }
     }
 }
