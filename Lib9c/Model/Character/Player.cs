@@ -555,16 +555,7 @@ namespace Nekoyume.Model
 
         public void SetCostumeStat(CostumeStatSheet costumeStatSheet)
         {
-            var statModifiers = new List<StatModifier>();
-            foreach (var itemId in costumes.Select(costume => costume.Id))
-            {
-                statModifiers.AddRange(
-                    costumeStatSheet.OrderedList
-                        .Where(r => r.CostumeId == itemId)
-                        .Select(row => new StatModifier(row.StatType, StatModifier.OperationType.Add, (int) row.Stat))
-                );
-            }
-            Stats.SetCostume(statModifiers);
+            Stats.SetCostumeStat(costumes, costumeStatSheet);
             ResetCurrentHP();
         }
 
@@ -575,20 +566,12 @@ namespace Nekoyume.Model
         {
             foreach (var rune in runes)
             {
-                if (!runeOptionSheet.TryGetValue(rune.RuneId, out var optionRow) ||
-                    !optionRow.LevelOptionMap.TryGetValue(rune.Level, out var optionInfo))
+                if (!runeOptionSheet.TryGetOptionInfo(rune.RuneId, rune.Level, out var optionInfo))
                 {
                     continue;
                 }
 
-                var statModifiers = new List<StatModifier>();
-                statModifiers.AddRange(
-                    optionInfo.Stats.Select(x =>
-                        new StatModifier(
-                            x.stat.StatType,
-                            x.operationType,
-                            x.stat.BaseValueAsLong)));
-                Stats.AddRune(statModifiers);
+                Stats.AddRuneStat(optionInfo);
                 ResetCurrentHP();
 
                 if (optionInfo.SkillId == default ||
