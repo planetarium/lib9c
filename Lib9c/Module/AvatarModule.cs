@@ -99,6 +99,17 @@ namespace Nekoyume.Module
 
                     return null;
                 }
+                catch (KeyNotFoundException e)
+                {
+                    Log.Error(
+                        e,
+                        "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
+                        address.ToHex(),
+                        avatarDict
+                    );
+
+                    return null;
+                }
             }
             else if (serializedAvatarRaw is List avatarList)
             {
@@ -107,6 +118,17 @@ namespace Nekoyume.Module
                     avatarState = new AvatarState(avatarList);
                 }
                 catch (InvalidCastException e)
+                {
+                    Log.Error(
+                        e,
+                        "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
+                        address.ToHex(),
+                        avatarList
+                    );
+
+                    return null;
+                }
+                catch (IndexOutOfRangeException e)
                 {
                     Log.Error(
                         e,
