@@ -103,23 +103,23 @@ namespace Lib9c.Tests.Model
 
             // Simulate with un-skilled equipment
             var simulator = new StageSimulator(
-                _random,
+                new TestRandom(1),
                 _avatarState,
                 new List<Guid>(),
                 null,
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
-                1,
-                _tableSheets.StageSheet[1],
-                _tableSheets.StageWaveSheet[1],
+                3,
+                _tableSheets.StageSheet[3],
+                _tableSheets.StageWaveSheet[7],
                 false,
                 20,
                 _tableSheets.GetSimulatorSheets(),
                 _tableSheets.EnemySkillSheet,
                 _tableSheets.CostumeStatSheet,
                 StageSimulator.GetWaveRewards(
-                    _random,
-                    _tableSheets.StageSheet[1],
+                    new TestRandom(1),
+                    _tableSheets.StageSheet[3],
                     _tableSheets.MaterialItemSheet)
             );
             var unskilledPlayer = simulator.Player;
@@ -144,25 +144,24 @@ namespace Lib9c.Tests.Model
             Assert.True(skilledItem.Skills.Any());
             skilledItem.equipped = true;
             _avatarState.inventory.AddItem(skilledItem);
-            var random = new TestRandom(1);
             simulator = new StageSimulator(
-                random,
+                new TestRandom(1),
                 _avatarState,
                 new List<Guid>(),
                 null,
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
-                1,
-                _tableSheets.StageSheet[1],
-                _tableSheets.StageWaveSheet[1],
+                3,
+                _tableSheets.StageSheet[3],
+                _tableSheets.StageWaveSheet[7],
                 false,
                 20,
                 _tableSheets.GetSimulatorSheets(),
                 _tableSheets.EnemySkillSheet,
                 _tableSheets.CostumeStatSheet,
                 StageSimulator.GetWaveRewards(
-                    random,
-                    _tableSheets.StageSheet[1],
+                    new TestRandom(1),
+                    _tableSheets.StageSheet[3],
                     _tableSheets.MaterialItemSheet)
             );
             var skilledPlayer = simulator.Player;
