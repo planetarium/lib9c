@@ -123,7 +123,7 @@ namespace Nekoyume.Battle
             return 0;
         }
 
-        private static decimal GetStatsCP(IStats stats, int characterLevel = 1)
+        public static decimal GetStatsCP(IStats stats, int characterLevel = 1)
         {
             var statTuples = stats.GetStats(true);
             decimal cp = 0m;
