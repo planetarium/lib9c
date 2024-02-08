@@ -564,7 +564,7 @@ namespace Nekoyume.Model
                         .Select(row => new StatModifier(row.StatType, StatModifier.OperationType.Add, (int) row.Stat))
                 );
             }
-            Stats.SetOption(statModifiers);
+            Stats.SetCostume(statModifiers);
             ResetCurrentHP();
         }
 
@@ -642,7 +642,7 @@ namespace Nekoyume.Model
                             x.stat.StatType,
                             x.operationType,
                             x.stat.TotalValueAsLong)));
-                Stats.AddOptional(statModifiers);
+                Stats.AddCostume(statModifiers);
                 ResetCurrentHP();
 
                 if (optionInfo.SkillId == default ||
