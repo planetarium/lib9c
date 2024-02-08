@@ -273,7 +273,7 @@ namespace Nekoyume.Action
             var cp = CPHelper.TotalCP(
                 equipmentList, costumeList,
                 runeOptions, avatarState.level,
-                characterRow, costumeStatSheet);
+                characterRow, costumeStatSheet, collectionModifiers);
             long score = simulator.DamageDealt;
             raiderState.Update(avatarState, cp, score, PayNcg, context.BlockIndex);
 
