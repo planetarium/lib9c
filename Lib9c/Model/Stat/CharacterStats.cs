@@ -35,7 +35,7 @@ namespace Nekoyume.Model.Stat
         private readonly List<StatModifier> _collectionStatModifiers = new List<StatModifier>();
         private readonly Dictionary<int, StatModifier> _buffStatModifiers = new Dictionary<int, StatModifier>();
 
-        public readonly StatMap StatWithItems = new StatMap();
+        public readonly StatMap StatWithoutBuffs = new StatMap();
 
         public int Level { get; private set; }
 
@@ -453,8 +453,8 @@ namespace Nekoyume.Model.Stat
         private void UpdateCollectionStats()
         {
             _collectionStats.Set(_collectionStatModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats);
-            Set(StatWithItems, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats, _collectionStats);
-            foreach (var stat in StatWithItems.GetDecimalStats(false))
+            Set(StatWithoutBuffs, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats, _collectionStats);
+            foreach (var stat in StatWithoutBuffs.GetDecimalStats(false))
             {
                 if (!LegacyDecimalStatTypes.Contains(stat.StatType))
                 {
