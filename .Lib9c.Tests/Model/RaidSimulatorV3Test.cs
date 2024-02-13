@@ -5,19 +5,25 @@ namespace Lib9c.Tests.Model
     using System.Linq;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
+    using Libplanet.Crypto;
+    using Nekoyume.Action;
     using Nekoyume.Battle;
     using Nekoyume.Model.BattleStatus;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class RaidSimulatorV3Test
     {
+        private readonly ITestOutputHelper _testOutputHelper;
         private readonly TableSheets _tableSheets;
         private readonly IRandom _random;
         private readonly AvatarState _avatarState;
 
-        public RaidSimulatorV3Test()
+        public RaidSimulatorV3Test(ITestOutputHelper testOutputHelper)
         {
+            _testOutputHelper = testOutputHelper;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             _random = new TestRandom();
 
@@ -60,6 +66,78 @@ namespace Lib9c.Tests.Model
             {
                 Assert.True(dead.Character.IsDead);
             }
+        }
+
+        [Fact]
+        public void TestSpeedMultiplierBySkill()
+        {
+            var bossId = _tableSheets.WorldBossListSheet.First().Value.BossId;
+
+            // Unskilled
+            var equipmentRow =
+                _tableSheets.EquipmentItemSheet.OrderedList.First(e => e.Id == 10114000);
+            var item = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
+            Assert.Empty(item.Skills);
+            item.equipped = true;
+            _avatarState.inventory.AddItem(item);
+
+            var simulator = new RaidSimulator(
+                bossId,
+                new TestRandom(),
+                _avatarState,
+                new List<Guid>(),
+                null,
+                _tableSheets.GetRaidSimulatorSheets(),
+                _tableSheets.CostumeStatSheet
+            );
+            var player = simulator.Player;
+            var unskilledLogs = simulator.Simulate();
+            var unSkilledActions = unskilledLogs.Where(l => l.Character?.Id == player.Id);
+            foreach (var log in unSkilledActions)
+            {
+                _testOutputHelper.WriteLine($"{log}");
+            }
+
+            _testOutputHelper.WriteLine("==========");
+
+            // Reset
+            _avatarState.inventory.Equipments.First().equipped = false;
+            _avatarState.inventory.RemoveNonFungibleItem(item.ItemId);
+            Assert.Empty(_avatarState.inventory.Equipments);
+
+            // Skilled
+            var skilledItem = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
+            Assert.Empty(skilledItem.Skills);
+            CombinationEquipment.AddSkillOption(
+                new AgentState(new PrivateKey().Address),
+                skilledItem,
+                new TestRandom(0),
+                _tableSheets.EquipmentItemSubRecipeSheetV2.OrderedList!.First(r => r.Id == 10),
+                _tableSheets.EquipmentItemOptionSheet,
+                _tableSheets.SkillSheet
+            );
+            Assert.True(skilledItem.Skills.Any());
+            skilledItem.equipped = true;
+            _avatarState.inventory.AddItem(skilledItem);
+
+            simulator = new RaidSimulator(
+                bossId,
+                new TestRandom(),
+                _avatarState,
+                new List<Guid>(),
+                null,
+                _tableSheets.GetRaidSimulatorSheets(),
+                _tableSheets.CostumeStatSheet
+            );
+            player = simulator.Player;
+            var skilledLogs = simulator.Simulate();
+            var skilledActions = skilledLogs.Where(l => l.Character?.Id == player.Id);
+            foreach (var log in skilledActions)
+            {
+                _testOutputHelper.WriteLine($"{log}");
+            }
+
+            Assert.True(skilledActions.Count() > unSkilledActions.Count());
         }
     }
 }
