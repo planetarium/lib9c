@@ -67,6 +67,7 @@ namespace Lib9c.Tests.Model.Skill
                     random,
                     tableSheets.StageSheet[1],
                     tableSheets.MaterialItemSheet),
+                new List<StatModifier>(),
                 copyCharacter
             );
             var player = new Player(avatarState, simulator);

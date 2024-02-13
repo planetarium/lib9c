@@ -65,18 +65,24 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>
+                {
+                    new (StatType.ATK, StatModifier.OperationType.Add, 100),
+                }
             );
 
             var player = simulator.Player;
-            Assert.Equal(row.Stat, player.Stats.OptionalStats.ATK);
+            Assert.Equal(row.Stat, player.Stats.CostumeStats.ATK);
+            Assert.Equal(100, player.Stats.CollectionStats.ATK);
+            Assert.Equal(100 + row.Stat + player.Stats.BaseStats.ATK, player.Stats.ATK);
             while (player.Level == 1)
             {
                 simulator.Simulate();
             }
 
             var player2 = simulator.Player;
-            Assert.Equal(row.Stat, player2.Stats.OptionalStats.ATK);
+            Assert.Equal(row.Stat, player2.Stats.CostumeStats.ATK);
             Assert.Equal(2, player2.Level);
             Assert.Equal(1, player2.eventMap[(int)QuestEventType.Level]);
             Assert.True(simulator.Log.OfType<GetExp>().Any());

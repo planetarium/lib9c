@@ -277,7 +277,7 @@ namespace Nekoyume.Model
                 }
             }
 
-            stats.SetOption(options);
+            stats.SetCostume(options);
             return stats;
         }
 
@@ -302,7 +302,7 @@ namespace Nekoyume.Model
                 }
             }
 
-            stats.SetOption(options);
+            stats.SetCostume(options);
             return stats;
         }
 
@@ -340,7 +340,7 @@ namespace Nekoyume.Model
                             x.stat.StatType,
                             x.operationType,
                             x.stat.TotalValueAsLong)));
-                Stats.AddOptional(statModifiers);
+                Stats.AddCostume(statModifiers);
                 ResetCurrentHP();
 
                 if (optionInfo.SkillId == default ||
@@ -401,7 +401,7 @@ namespace Nekoyume.Model
                             x.stat.StatType,
                             x.operationType,
                             x.stat.TotalValueAsLong)));
-                Stats.AddOptional(statModifiers);
+                Stats.AddCostume(statModifiers);
                 ResetCurrentHP();
 
                 if (optionInfo.SkillId == default ||

@@ -174,14 +174,14 @@ namespace Lib9c.Tests.Model
             );
 
             var player = simulator.Player;
-            Assert.Equal(row.Stat, player.Stats.OptionalStats.ATK);
+            Assert.Equal(row.Stat, player.Stats.CostumeStats.ATK);
 
             var player2 = simulator.Simulate();
-            Assert.Equal(row.Stat, player2.Stats.OptionalStats.ATK);
+            Assert.Equal(row.Stat, player2.Stats.CostumeStats.ATK);
 
             var e = simulator.Log.OfType<SpawnEnemyPlayer>().First();
             var enemyPlayer = (EnemyPlayer)e.Character;
-            Assert.Equal(row2.Stat, enemyPlayer.Stats.OptionalStats.DEF);
+            Assert.Equal(row2.Stat, enemyPlayer.Stats.CostumeStats.DEF);
         }
 
         [Theory]

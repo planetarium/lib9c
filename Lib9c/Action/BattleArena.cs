@@ -16,6 +16,7 @@ using Nekoyume.Model.Arena;
 using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -117,18 +118,26 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
+            var collectionStates =
+                states.GetCollectionStates(new[]{ myAvatarAddress, enemyAvatarAddress });
+            var collectionExist = collectionStates.Any(r => r is not null);
+            var sheetTypes = new List<Type>
+            {
+                typeof(ArenaSheet),
+                typeof(ItemRequirementSheet),
+                typeof(EquipmentItemRecipeSheet),
+                typeof(EquipmentItemSubRecipeSheetV2),
+                typeof(EquipmentItemOptionSheet),
+                typeof(MaterialItemSheet),
+                typeof(RuneListSheet),
+            };
+            if (collectionExist)
+            {
+                sheetTypes.Add(typeof(CollectionSheet));
+            }
             var sheets = states.GetSheets(
                 containArenaSimulatorSheets: true,
-                sheetTypes: new[]
-                {
-                    typeof(ArenaSheet),
-                    typeof(ItemRequirementSheet),
-                    typeof(EquipmentItemRecipeSheet),
-                    typeof(EquipmentItemSubRecipeSheetV2),
-                    typeof(EquipmentItemOptionSheet),
-                    typeof(MaterialItemSheet),
-                    typeof(RuneListSheet),
-                });
+                sheetTypes: sheetTypes);
 
             var gameConfigState = states.GetGameConfigState();
             avatarState.ValidEquipmentAndCostumeV2(costumes, equipments,
@@ -374,6 +383,29 @@ namespace Nekoyume.Action
             var defeatCount = 0;
             var rewards = new List<ItemBase>();
             var random = context.GetRandom();
+            var modifiers = new List<List<StatModifier>>
+            {
+                new(),
+                new(),
+            };
+            if (collectionExist)
+            {
+                var collectionSheet = sheets.GetSheet<CollectionSheet>();
+                for (int i = 0; i < collectionStates.Count; i++)
+                {
+                    var state = collectionStates[i];
+                    if (state is null)
+                    {
+                        continue;
+                    }
+
+                    var modifier = modifiers[i];
+                    foreach (var collectionId in state.Ids)
+                    {
+                        modifier.AddRange(collectionSheet[collectionId].StatModifiers);
+                    }
+                }
+            }
             for (var i = 0; i < ticket; i++)
             {
                 var simulator = new ArenaSimulator(random, HpIncreasingModifier);
@@ -381,6 +413,8 @@ namespace Nekoyume.Action
                     myArenaPlayerDigest,
                     enemyArenaPlayerDigest,
                     arenaSheets,
+                    modifiers[0],
+                    modifiers[1],
                     true);
                 if (log.Result.Equals(ArenaLog.ArenaResult.Win))
                 {

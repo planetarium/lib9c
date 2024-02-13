@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Model
     using Nekoyume.Battle;
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Xunit;
     using Xunit.Abstractions;
@@ -50,8 +51,14 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 null,
                 _tableSheets.GetRaidSimulatorSheets(),
-                _tableSheets.CostumeStatSheet);
+                _tableSheets.CostumeStatSheet,
+                new List<StatModifier>
+                {
+                    new (StatType.DEF, StatModifier.OperationType.Percentage, 100),
+                });
             Assert.Equal(_random, simulator.Random);
+            Assert.Equal(simulator.Player.Stats.BaseStats.DEF * 2, simulator.Player.Stats.DEF);
+            Assert.Equal(simulator.Player.Stats.BaseStats.DEF, simulator.Player.Stats.CollectionStats.DEF);
 
             var log = simulator.Simulate();
 

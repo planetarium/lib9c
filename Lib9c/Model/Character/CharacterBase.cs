@@ -88,7 +88,7 @@ namespace Nekoyume.Model
             Stats = new CharacterStats(RowData, level);
             if (!(optionalStatModifiers is null))
             {
-                Stats.AddOptional(optionalStatModifiers);
+                Stats.AddCostume(optionalStatModifiers);
             }
             ResetCurrentHP();
 

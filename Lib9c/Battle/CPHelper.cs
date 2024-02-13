@@ -12,14 +12,34 @@ namespace Nekoyume.Battle
     public static class CPHelper
     {
         public static int TotalCP(
-            IEnumerable<Equipment> equipments,
-            IEnumerable<Costume> costumes,
-            IEnumerable<RuneOptionSheet.Row.RuneOptionInfo> runeOptions,
+            IReadOnlyCollection<Equipment> equipments,
+            IReadOnlyCollection<Costume> costumes,
+            IReadOnlyCollection<RuneOptionSheet.Row.RuneOptionInfo> runeOptions,
             int level,
             CharacterSheet.Row row,
-            CostumeStatSheet costumeStatSheet)
+            CostumeStatSheet costumeStatSheet, List<StatModifier> collectionStatModifiers)
         {
-            var levelStatsCp = GetStatsCP(row.ToStats(level), level);
+            decimal levelStatsCp = GetStatsCP(row.ToStats(level), level);
+            var collectionCp = 0m;
+            // CharacterStats.BaseStats CP equals row.ToStats
+            if (collectionStatModifiers.Any())
+            {
+                // Prepare CharacterStats for calculate collection Stats
+                var characterStats = new CharacterStats(row, level);
+                characterStats.SetEquipments(equipments, new EquipmentItemSetEffectSheet());
+                characterStats.SetCostumeStat(costumes, costumeStatSheet);
+                foreach (var runeOption in runeOptions)
+                {
+                    characterStats.AddRuneStat(runeOption);
+                }
+
+                characterStats.SetCollections(collectionStatModifiers);
+                foreach (var (statType, value) in characterStats.CollectionStats.GetStats())
+                {
+                    collectionCp += GetStatCP(statType, value);
+                }
+            }
+
             var equipmentsCp = 0;
             var costumeCp = 0;
             var runeCp = 0;
@@ -36,7 +56,8 @@ namespace Nekoyume.Battle
             {
                 runeCp += runeOption.Cp;
             }
-            var totalCp = DecimalToInt(levelStatsCp + equipmentsCp + costumeCp + runeCp);
+
+            var totalCp = DecimalToInt(levelStatsCp + equipmentsCp + costumeCp + runeCp + collectionCp);
             return totalCp;
         }
 
@@ -123,7 +144,7 @@ namespace Nekoyume.Battle
             return 0;
         }
 
-        private static decimal GetStatsCP(IStats stats, int characterLevel = 1)
+        public static decimal GetStatsCP(IStats stats, int characterLevel = 1)
         {
             var statTuples = stats.GetStats(true);
             decimal cp = 0m;
