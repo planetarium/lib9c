@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Extensions;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -225,6 +226,55 @@ namespace Lib9c.Tests.Action.Scenario
                     RandomSeed = 0,
                 });
             }
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void EventDungeonBattle(bool collectionExist)
+        {
+            var states = _initialState;
+            if (collectionExist)
+            {
+                var collectionState = new CollectionState();
+                collectionState.Ids.Add(1);
+                states = states.SetCollectionState(_avatarAddress, collectionState);
+            }
+
+            foreach (var (key, value) in _sheets)
+            {
+                if (key == nameof(CollectionSheet) && !collectionExist)
+                {
+                    continue;
+                }
+
+                states = states
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var scheduleRow = _tableSheets.EventScheduleSheet.Values.First();
+            Assert.True(_tableSheets.EventDungeonSheet.TryGetRowByEventScheduleId(
+                scheduleRow.Id,
+                out var eventDungeonRow));
+            var action = new EventDungeonBattle
+            {
+                AvatarAddress = _avatarAddress,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                Foods = new List<Guid>(),
+                EventScheduleId = scheduleRow.Id,
+                EventDungeonStageId = eventDungeonRow.StageBegin,
+                EventDungeonId = eventDungeonRow.Id,
+            };
+
+            action.Execute(new ActionContext
+            {
+                PreviousState = states,
+                Signer = _agentAddress,
+                RandomSeed = 0,
+                BlockIndex = scheduleRow.StartBlockIndex,
+            });
         }
     }
 }

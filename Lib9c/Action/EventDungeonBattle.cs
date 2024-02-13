@@ -150,22 +150,29 @@ namespace Nekoyume.Action
                 sw.Elapsed);
             // ~Get AvatarState
 
+            var collectionExist = states.TryGetCollectionState(AvatarAddress, out var collectionState);
             // Get sheets
             sw.Restart();
+            var sheetTypes = new List<Type>
+            {
+                typeof(EventScheduleSheet),
+                typeof(EventDungeonSheet),
+                typeof(EventDungeonStageSheet),
+                typeof(EventDungeonStageWaveSheet),
+                typeof(EnemySkillSheet),
+                typeof(CostumeStatSheet),
+                typeof(MaterialItemSheet),
+                typeof(RuneListSheet),
+            };
+            if (collectionExist)
+            {
+                sheetTypes.Add(typeof(CollectionSheet));
+            }
             var sheets = states.GetSheets(
                 containSimulatorSheets: true,
                 containValidateItemRequirementSheets: true,
-                sheetTypes: new[]
-                {
-                    typeof(EventScheduleSheet),
-                    typeof(EventDungeonSheet),
-                    typeof(EventDungeonStageSheet),
-                    typeof(EventDungeonStageWaveSheet),
-                    typeof(EnemySkillSheet),
-                    typeof(CostumeStatSheet),
-                    typeof(MaterialItemSheet),
-                    typeof(RuneListSheet),
-                });
+                sheetTypes: sheetTypes
+);
             sw.Stop();
             Log.Verbose(
                 "[{ActionTypeString}][{AddressesHex}] Get sheets: {Elapsed}",
@@ -329,6 +336,16 @@ namespace Nekoyume.Action
             }
 
             var random = context.GetRandom();
+            var collectionModifiers = new List<StatModifier>();
+            if (collectionExist)
+            {
+                var collectionSheet = sheets.GetSheet<CollectionSheet>();
+                foreach (var collectionId in collectionState.Ids)
+                {
+                    collectionModifiers.AddRange(collectionSheet[collectionId].StatModifiers);
+                }
+            }
+
             var simulator = new StageSimulator(
                 random,
                 avatarState,
@@ -349,7 +366,7 @@ namespace Nekoyume.Action
                     stageRow,
                     sheets.GetSheet<MaterialItemSheet>(),
                     PlayCount),
-                new List<StatModifier>());
+                collectionModifiers);
             simulator.Simulate();
             sw.Stop();
             Log.Verbose(
