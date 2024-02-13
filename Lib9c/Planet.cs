@@ -6,5 +6,6 @@ namespace Nekoyume
         Heimdall,
         Idun,
         OdinInternal,
+        HeimdallInternal,
     }
 }
