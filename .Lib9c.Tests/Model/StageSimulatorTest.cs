@@ -92,7 +92,7 @@ namespace Lib9c.Tests.Model
         }
 
         [Fact]
-        public void TestSkillSpeed()
+        public void TestSpeedModifierBySkill()
         {
             var equipmentRow =
                 _tableSheets.EquipmentItemSheet.OrderedList.First(e => e.Id == 10114000);
