@@ -4,14 +4,19 @@ namespace Lib9c.Tests
     using System.Linq;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
+    using Libplanet.Crypto;
+    using Nekoyume.Action;
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus.Arena;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class ArenaSimulatorTest
     {
+        private readonly ITestOutputHelper _testOutputHelper;
         private readonly TableSheets _tableSheets;
         private readonly IRandom _random;
         private readonly AvatarState _avatarState1;
@@ -20,8 +25,9 @@ namespace Lib9c.Tests
         private readonly ArenaAvatarState _arenaAvatarState1;
         private readonly ArenaAvatarState _arenaAvatarState2;
 
-        public ArenaSimulatorTest()
+        public ArenaSimulatorTest(ITestOutputHelper testOutputHelper)
         {
+            _testOutputHelper = testOutputHelper;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             _random = new TestRandom();
 
@@ -119,6 +125,91 @@ namespace Lib9c.Tests
             {
                 Assert.Equal(player.Stats.BaseHP * expectedHpModifier, player.CurrentHP);
             }
+        }
+
+        [Fact]
+        public void TestSpeedModifierBySkill()
+        {
+            // Unskilled
+            var equipmentRow =
+                _tableSheets.EquipmentItemSheet.OrderedList.First(e => e.Id == 10114000);
+
+            var item1 = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
+            Assert.Empty(item1.Skills);
+            item1.equipped = true;
+            _avatarState1.inventory.AddItem(item1);
+
+            var item2 = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
+            Assert.Empty(item2.Skills);
+            item2.equipped = true;
+            _avatarState2.inventory.AddItem(item2);
+
+            var simulator = new ArenaSimulator(new TestRandom(), 10);
+            var arenaAvatarState1 = new ArenaAvatarState(_avatarState1);
+            arenaAvatarState1.Equipments.Add(item1.ItemId);
+            var arenaAvatarState2 = new ArenaAvatarState(_avatarState2);
+            arenaAvatarState2.Equipments.Add(item2.ItemId);
+            var myDigest = new ArenaPlayerDigest(_avatarState1, arenaAvatarState1);
+            var enemyDigest = new ArenaPlayerDigest(_avatarState2, arenaAvatarState2);
+            var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
+            var unskilledLog = simulator.Simulate(myDigest, enemyDigest, arenaSheets);
+            // foreach (var log in unskilledLog)
+            // {
+            //     _testOutputHelper.WriteLine($"{log.Character.Id} :: {log}");
+            // }
+            //
+            // _testOutputHelper.WriteLine("================================");
+
+            // Skilled
+            // Remove Items
+            _avatarState1.inventory.Equipments.First().equipped = false;
+            _avatarState1.inventory.RemoveNonFungibleItem(item1.ItemId);
+            Assert.Empty(_avatarState1.inventory.Equipments);
+            _avatarState2.inventory.Equipments.First().equipped = false;
+            _avatarState2.inventory.RemoveNonFungibleItem(item2.ItemId);
+            Assert.Empty(_avatarState2.inventory.Equipments);
+
+            // Use skilled items
+            var skilledItem1 = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
+            Assert.Empty(skilledItem1.Skills);
+            CombinationEquipment.AddSkillOption(
+                new AgentState(new PrivateKey().Address),
+                skilledItem1,
+                new TestRandom(0),
+                _tableSheets.EquipmentItemSubRecipeSheetV2.OrderedList!.First(r => r.Id == 10),
+                _tableSheets.EquipmentItemOptionSheet,
+                _tableSheets.SkillSheet
+            );
+            Assert.True(skilledItem1.Skills.Any());
+            skilledItem1.equipped = true;
+            _avatarState1.inventory.AddItem(skilledItem1);
+            var skilledItem2 = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
+            Assert.Empty(skilledItem2.Skills);
+            CombinationEquipment.AddSkillOption(
+                new AgentState(new PrivateKey().Address),
+                skilledItem2,
+                new TestRandom(0),
+                _tableSheets.EquipmentItemSubRecipeSheetV2.OrderedList!.First(r => r.Id == 10),
+                _tableSheets.EquipmentItemOptionSheet,
+                _tableSheets.SkillSheet
+            );
+            Assert.True(skilledItem2.Skills.Any());
+            skilledItem2.equipped = true;
+            _avatarState2.inventory.AddItem(skilledItem2);
+
+            simulator = new ArenaSimulator(new TestRandom(), 10);
+            arenaAvatarState1 = new ArenaAvatarState(_avatarState1);
+            arenaAvatarState1.Equipments.Add(skilledItem1.ItemId);
+            arenaAvatarState2 = new ArenaAvatarState(_avatarState2);
+            arenaAvatarState2.Equipments.Add(skilledItem2.ItemId);
+            myDigest = new ArenaPlayerDigest(_avatarState1, arenaAvatarState1);
+            enemyDigest = new ArenaPlayerDigest(_avatarState2, arenaAvatarState2);
+            arenaSheets = _tableSheets.GetArenaSimulatorSheets();
+            var skilledLog = simulator.Simulate(myDigest, enemyDigest, arenaSheets);
+            // foreach (var log in skilledLog)
+            // {
+            //     _testOutputHelper.WriteLine($"{log.Character.Id} :: {log}");
+            // }
         }
     }
 }
