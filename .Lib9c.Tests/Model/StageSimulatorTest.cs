@@ -126,7 +126,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     new TestRandom(1),
                     _tableSheets.StageSheet[3],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var unskilledPlayer = simulator.Player;
             Assert.Contains(item, unskilledPlayer.Inventory.Equipments);
@@ -177,7 +178,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     new TestRandom(1),
                     _tableSheets.StageSheet[3],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var skilledPlayer = simulator.Player;
             Assert.Contains(skilledItem, skilledPlayer.Inventory.Equipments);

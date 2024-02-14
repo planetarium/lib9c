@@ -167,7 +167,7 @@ namespace Lib9c.Tests
             var myDigest = new ArenaPlayerDigest(_avatarState1, arenaAvatarState1);
             var enemyDigest = new ArenaPlayerDigest(_avatarState2, arenaAvatarState2);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
-            var unskilledLog = simulator.Simulate(myDigest, enemyDigest, arenaSheets);
+            var unskilledLog = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>());
             // foreach (var log in unskilledLog)
             // {
             //     _testOutputHelper.WriteLine($"{log.Character.Id} :: {log}");
@@ -220,7 +220,7 @@ namespace Lib9c.Tests
             myDigest = new ArenaPlayerDigest(_avatarState1, arenaAvatarState1);
             enemyDigest = new ArenaPlayerDigest(_avatarState2, arenaAvatarState2);
             arenaSheets = _tableSheets.GetArenaSimulatorSheets();
-            var skilledLog = simulator.Simulate(myDigest, enemyDigest, arenaSheets);
+            var skilledLog = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>());
             // foreach (var log in skilledLog)
             // {
             //     _testOutputHelper.WriteLine($"{log.Character.Id} :: {log}");

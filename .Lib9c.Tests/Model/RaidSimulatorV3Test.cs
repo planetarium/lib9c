@@ -95,7 +95,8 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 null,
                 _tableSheets.GetRaidSimulatorSheets(),
-                _tableSheets.CostumeStatSheet
+                _tableSheets.CostumeStatSheet,
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var unskilledLogs = simulator.Simulate();
@@ -134,7 +135,8 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 null,
                 _tableSheets.GetRaidSimulatorSheets(),
-                _tableSheets.CostumeStatSheet
+                _tableSheets.CostumeStatSheet,
+                new List<StatModifier>()
             );
             player = simulator.Player;
             var skilledLogs = simulator.Simulate();
