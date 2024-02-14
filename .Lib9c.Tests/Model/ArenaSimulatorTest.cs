@@ -227,7 +227,8 @@ namespace Lib9c.Tests
             // {
             //     _testOutputHelper.WriteLine($"{log.Character.Id} :: {log}");
             // }
-          
+        }
+
         [Fact]
         public void Thorns()
         {
