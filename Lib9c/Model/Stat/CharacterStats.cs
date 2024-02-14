@@ -35,7 +35,7 @@ namespace Nekoyume.Model.Stat
         private readonly List<StatModifier> _collectionStatModifiers = new List<StatModifier>();
         private readonly Dictionary<int, StatModifier> _buffStatModifiers = new Dictionary<int, StatModifier>();
 
-        public readonly StatMap StatWithItems = new StatMap();
+        public readonly StatMap StatWithoutBuffs = new StatMap();
 
         public int Level { get; private set; }
 
@@ -373,10 +373,28 @@ namespace Nekoyume.Model.Stat
             AddCostume(statModifiers);
         }
 
+        /// <summary>
+        /// Increases the HP of the character for the arena.
+        /// </summary>
         public void IncreaseHpForArena()
         {
-            var originalHP = _statMap[StatType.HP];
-            _statMap[StatType.HP].SetBaseValue(Math.Max(0, originalHP.TotalValueAsLong * HpIncreasingModifier));
+            var originalHp = _statMap[StatType.HP];
+            var modifiedHp = CalculateModifiedBaseHp(originalHp);
+
+            _statMap[StatType.HP].SetBaseValue(modifiedHp);
+            var modifiedStatHp = CalculateModifiedHpWithoutBuffs(modifiedHp);
+
+            StatWithoutBuffs[StatType.HP].SetBaseValue(modifiedStatHp);
+        }
+
+        private long CalculateModifiedBaseHp(DecimalStat originalHp)
+        {
+            return Math.Max(0, originalHp.TotalValueAsLong * HpIncreasingModifier);
+        }
+
+        private long CalculateModifiedHpWithoutBuffs(long modifiedHp)
+        {
+            return Math.Max(0, modifiedHp - _buffStats.HP * HpIncreasingModifier);
         }
 
         private void UpdateBaseStats()
@@ -453,8 +471,8 @@ namespace Nekoyume.Model.Stat
         private void UpdateCollectionStats()
         {
             _collectionStats.Set(_collectionStatModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats);
-            Set(StatWithItems, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats, _collectionStats);
-            foreach (var stat in StatWithItems.GetDecimalStats(false))
+            Set(StatWithoutBuffs, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats, _collectionStats);
+            foreach (var stat in StatWithoutBuffs.GetDecimalStats(false))
             {
                 if (!LegacyDecimalStatTypes.Contains(stat.StatType))
                 {
