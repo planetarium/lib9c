@@ -1,6 +1,7 @@
 namespace Lib9c.Tests.Model.Skill
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Lib9c.Tests.Action;
     using Nekoyume.Arena;
     using Nekoyume.Model;
@@ -87,6 +88,65 @@ namespace Lib9c.Tests.Model.Skill
             );
             var buff = Assert.IsType<StatBuff>(Assert.Single(buffs));
             Assert.NotNull(buff.CustomField);
+        }
+
+        [Fact]
+        public void Thorns()
+        {
+            var player = new Player(
+                level: 1,
+                _tableSheets.CharacterSheet,
+                _tableSheets.CharacterLevelSheet,
+                _tableSheets.EquipmentItemSetEffectSheet);
+            // Aegis aura atk down
+            var skillId = 270000;
+            var skillRow = _tableSheets.SkillSheet[skillId];
+            var skill = SkillFactory.Get(skillRow, 0, 100, 700, StatType.HP);
+            var buffs = BuffFactory.GetBuffs(
+                player.Stats,
+                skill,
+                _tableSheets.SkillBuffSheet,
+                _tableSheets.StatBuffSheet,
+                _tableSheets.SkillActionBuffSheet,
+                _tableSheets.ActionBuffSheet
+            );
+            var hp = player.Stats.HP;
+            var buff = Assert.IsType<StatBuff>(Assert.Single(buffs));
+            Assert.NotNull(buff.CustomField);
+
+            // Equip item
+            var equipmentRow =
+                _tableSheets.EquipmentItemSheet.Values.Where(r => r.Stat.StatType == StatType.HP).OrderByDescending(r => r.Stat.TotalValue).First();
+            var equipment = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
+            player.Stats.SetEquipments(new[] { equipment }, _tableSheets.EquipmentItemSetEffectSheet);
+            Assert.True(player.Stats.HP > hp);
+            buffs = BuffFactory.GetBuffs(
+                player.Stats,
+                skill,
+                _tableSheets.SkillBuffSheet,
+                _tableSheets.StatBuffSheet,
+                _tableSheets.SkillActionBuffSheet,
+                _tableSheets.ActionBuffSheet
+            );
+            var buff2 = Assert.IsType<StatBuff>(Assert.Single(buffs));
+            Assert.NotNull(buff2.CustomField);
+            Assert.True(buff2.CustomField.Value.BuffValue > buff.CustomField.Value.BuffValue);
+            hp = player.Stats.HP;
+
+            // Arena buff
+            player.Stats.IncreaseHpForArena();
+            Assert.True(player.Stats.HP > hp);
+            buffs = BuffFactory.GetBuffs(
+                player.Stats,
+                skill,
+                _tableSheets.SkillBuffSheet,
+                _tableSheets.StatBuffSheet,
+                _tableSheets.SkillActionBuffSheet,
+                _tableSheets.ActionBuffSheet
+            );
+            var buff3 = Assert.IsType<StatBuff>(Assert.Single(buffs));
+            Assert.NotNull(buff3.CustomField);
+            Assert.True(buff3.CustomField.Value.BuffValue > buff2.CustomField.Value.BuffValue);
         }
     }
 }

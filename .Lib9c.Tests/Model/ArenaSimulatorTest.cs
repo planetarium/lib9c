@@ -1,5 +1,6 @@
 namespace Lib9c.Tests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Lib9c.Tests.Action;
@@ -10,6 +11,7 @@ namespace Lib9c.Tests
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus.Arena;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Xunit;
@@ -225,6 +227,50 @@ namespace Lib9c.Tests
             // {
             //     _testOutputHelper.WriteLine($"{log.Character.Id} :: {log}");
             // }
+          
+        [Fact]
+        public void Thorns()
+        {
+            var random = new TestRandom();
+            var equipmentRow =
+                _tableSheets.EquipmentItemSheet.Values.First(r => r.Stat.StatType == StatType.HP);
+            var skillId = 270000;
+            var skillRow = _tableSheets.SkillSheet[skillId];
+            var skill = SkillFactory.Get(skillRow, 0, 100, 700, StatType.HP);
+            var equipment = (Equipment)ItemFactory.CreateItem(equipmentRow, random);
+            equipment.Skills.Add(skill);
+            var equipmentRow2 =
+                _tableSheets.EquipmentItemSheet.Values.First(r => r.Stat.StatType == StatType.HIT);
+            var equipment2 = (Equipment)ItemFactory.CreateItem(equipmentRow2, random);
+            equipment2.Skills.Add(skill);
+            var avatarState1 = _avatarState1;
+            var avatarState2 = _avatarState2;
+            avatarState1.inventory.AddItem(equipment);
+            avatarState2.inventory.AddItem(equipment2);
+
+            var arenaAvatarState1 = new ArenaAvatarState(avatarState1);
+            arenaAvatarState1.UpdateEquipment(new List<Guid>
+            {
+                equipment.ItemId,
+            });
+            var arenaAvatarState2 = new ArenaAvatarState(avatarState2);
+            arenaAvatarState2.UpdateEquipment(new List<Guid>
+            {
+                equipment2.ItemId,
+            });
+
+            var simulator = new ArenaSimulator(_random);
+            var myDigest = new ArenaPlayerDigest(avatarState1, arenaAvatarState1);
+            var enemyDigest = new ArenaPlayerDigest(avatarState2, arenaAvatarState2);
+            var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
+            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), true);
+            var ticks = log.Events
+                .OfType<ArenaTickDamage>()
+                .ToList();
+            var challengerTick = ticks.First(r => !r.Character.IsEnemy);
+            var enemyTick = ticks.First(r => r.Character.IsEnemy);
+            Assert.True(challengerTick.Character.HP > enemyTick.Character.HP);
+            Assert.True(enemyTick.SkillInfos.First().Effect > challengerTick.SkillInfos.First().Effect);
         }
     }
 }
