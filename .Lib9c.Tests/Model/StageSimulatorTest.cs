@@ -5,6 +5,8 @@ namespace Lib9c.Tests.Model
     using System.Linq;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
+    using Libplanet.Crypto;
+    using Nekoyume.Action;
     using Nekoyume.Battle;
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.Item;
@@ -12,15 +14,18 @@ namespace Lib9c.Tests.Model
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class StageSimulatorTest
     {
+        private readonly ITestOutputHelper _testOutputHelper;
         private readonly TableSheets _tableSheets;
         private readonly IRandom _random;
         private readonly AvatarState _avatarState;
 
-        public StageSimulatorTest()
+        public StageSimulatorTest(ITestOutputHelper testOutputHelper)
         {
+            _testOutputHelper = testOutputHelper;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             _random = new TestRandom();
 
@@ -90,6 +95,106 @@ namespace Lib9c.Tests.Model
                         type != typeof(DropBox));
             Assert.Equal(typeof(WaveTurnEnd), filtered.Last());
             Assert.Equal(1, simulator.Log.OfType<WaveTurnEnd>().First().TurnNumber);
+        }
+
+        [Fact]
+        public void TestSpeedModifierBySkill()
+        {
+            var equipmentRow =
+                _tableSheets.EquipmentItemSheet.OrderedList.First(e => e.Id == 10114000);
+            var item = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
+            Assert.Empty(item.Skills);
+            item.equipped = true;
+            _avatarState.inventory.AddItem(item);
+
+            // Simulate with un-skilled equipment
+            var simulator = new StageSimulator(
+                new TestRandom(1),
+                _avatarState,
+                new List<Guid>(),
+                null,
+                new List<Nekoyume.Model.Skill.Skill>(),
+                1,
+                3,
+                _tableSheets.StageSheet[3],
+                _tableSheets.StageWaveSheet[7],
+                false,
+                20,
+                _tableSheets.GetSimulatorSheets(),
+                _tableSheets.EnemySkillSheet,
+                _tableSheets.CostumeStatSheet,
+                StageSimulator.GetWaveRewards(
+                    new TestRandom(1),
+                    _tableSheets.StageSheet[3],
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
+            );
+            var unskilledPlayer = simulator.Player;
+            Assert.Contains(item, unskilledPlayer.Inventory.Equipments);
+            simulator.Simulate();
+
+            var unSkilledActions = simulator.Log.Where(l => l.Character?.Id == unskilledPlayer.Id);
+            /* foreach (var log in unSkilledActions)
+             * {
+             *     _testOutputHelper.WriteLine($"{log}");
+             * }
+             * _testOutputHelper.WriteLine("=============================================");
+             */
+
+            // Reset and simulate with skilled equipment
+            _avatarState.inventory.Equipments.First().equipped = false;
+            _avatarState.inventory.RemoveNonFungibleItem(item.ItemId);
+            Assert.Empty(_avatarState.inventory.Equipments);
+            var skilledItem = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
+            Assert.Empty(skilledItem.Skills);
+
+            // Add BlowAttack
+            CombinationEquipment.AddSkillOption(
+                new AgentState(new PrivateKey().Address),
+                skilledItem,
+                new TestRandom(0),
+                _tableSheets.EquipmentItemSubRecipeSheetV2.OrderedList!.First(r => r.Id == 10),
+                _tableSheets.EquipmentItemOptionSheet,
+                _tableSheets.SkillSheet
+            );
+            Assert.True(skilledItem.Skills.Any());
+            skilledItem.equipped = true;
+            _avatarState.inventory.AddItem(skilledItem);
+            simulator = new StageSimulator(
+                new TestRandom(1),
+                _avatarState,
+                new List<Guid>(),
+                null,
+                new List<Nekoyume.Model.Skill.Skill>(),
+                1,
+                3,
+                _tableSheets.StageSheet[3],
+                _tableSheets.StageWaveSheet[7],
+                false,
+                20,
+                _tableSheets.GetSimulatorSheets(),
+                _tableSheets.EnemySkillSheet,
+                _tableSheets.CostumeStatSheet,
+                StageSimulator.GetWaveRewards(
+                    new TestRandom(1),
+                    _tableSheets.StageSheet[3],
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
+            );
+            var skilledPlayer = simulator.Player;
+            Assert.Contains(skilledItem, skilledPlayer.Inventory.Equipments);
+            simulator.Simulate();
+            var skilledActions = simulator.Log.Where(l => l.Character?.Id == skilledPlayer.Id);
+            /*
+             * foreach (var log in skilledActions)
+             * {
+             *     _testOutputHelper.WriteLine($"{log}");
+             * }
+             */
+
+            Assert.Contains(skilledActions, e => e is BlowAttack);
+            // Skill scales speed by 0.9, so this makes way more player actions.
+            Assert.True(skilledActions.Count() > unSkilledActions.Count());
         }
     }
 }

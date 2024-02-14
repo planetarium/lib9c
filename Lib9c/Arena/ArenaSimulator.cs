@@ -76,8 +76,14 @@ namespace Nekoyume.Arena
 
                 foreach (var other in players)
                 {
+                    var spdMultiplier = 0.6m;
                     var current = players.GetPriority(other);
-                    var speed = current * 0.6m;
+                    if (other.usedSkill is not null && other.usedSkill is not ArenaNormalAttack)
+                    {
+                        spdMultiplier = 0.9m;
+                    }
+
+                    var speed = current * spdMultiplier;
                     players.UpdatePriority(other, speed);
                 }
 

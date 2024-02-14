@@ -38,6 +38,7 @@ namespace Nekoyume.Model
 
         private ArenaCharacter _target;
         private int _attackCount;
+        public ArenaSkill usedSkill;
 
         public Guid Id { get; } = Guid.NewGuid();
         public BattleStatus.Arena.ArenaSkill SkillLog { get; private set; }
@@ -563,7 +564,6 @@ namespace Nekoyume.Model
 
             ReduceDurationOfBuffs();
             ReduceSkillCooldown();
-            ArenaSkill usedSkill;
             if (OnPreSkill())
             {
                 usedSkill = new ArenaTick((ArenaCharacter)Clone());
@@ -703,7 +703,7 @@ namespace Nekoyume.Model
             var selectedRuneSkill = _runeSkills.SelectWithoutDefaultAttack(_simulator.Random);
             var selectedSkill = selectedRuneSkill ??
                 _skills.Select(_simulator.Random);
-            var usedSkill = selectedSkill.Use(
+            usedSkill = selectedSkill.Use(
                 this,
                 _target,
                 _simulator.Turn,

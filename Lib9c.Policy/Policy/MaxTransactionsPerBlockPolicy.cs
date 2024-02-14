@@ -17,7 +17,13 @@ namespace Nekoyume.Blockchain.Policy
         public static IVariableSubPolicy<int> Default =>
             new MaxTransactionsPerBlockPolicy(int.MaxValue);
 
-        public static IVariableSubPolicy<int> Mainnet =>
+        public static IVariableSubPolicy<int> Odin =>
+            Default
+                .Add(new SpannedSubPolicy<int>(
+                    startIndex: 0,
+                    value: BlockPolicySource.MaxTransactionsPerBlock));
+
+        public static IVariableSubPolicy<int> Heimdall =>
             Default
                 .Add(new SpannedSubPolicy<int>(
                     startIndex: 0,
