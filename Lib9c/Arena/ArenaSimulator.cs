@@ -3,7 +3,6 @@ using System.Linq;
 using Libplanet.Action;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus.Arena;
-using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
 using Priority_Queue;
@@ -79,11 +78,7 @@ namespace Nekoyume.Arena
                 {
                     var spdMultiplier = 0.6m;
                     var current = players.GetPriority(other);
-                    var skills = sheets.SkillSheet.OrderedList.Select(s => s.SkillCategory);
-                    var skillCategory =
-                        other.usedSkill?.SkillInfos.Where(si => skills.Contains(si.SkillCategory))
-                            .Select(si => si.SkillCategory);
-                    if (skillCategory != null && skillCategory.Any(sc => sc != SkillCategory.NormalAttack))
+                    if (other.usedSkill is not null && other.usedSkill is not ArenaNormalAttack)
                     {
                         spdMultiplier = 0.9m;
                     }

@@ -10,8 +10,8 @@ using Priority_Queue;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
+using NormalAttack = Nekoyume.Model.BattleStatus.NormalAttack;
 
 namespace Nekoyume.Battle
 {
@@ -166,10 +166,7 @@ namespace Nekoyume.Battle
                     {
                         var spdMultiplier = 0.6m;
                         var current = Characters.GetPriority(other);
-                        var skillRow = SkillSheet.OrderedList.FirstOrDefault(skill =>
-                            skill.Id == other.usedSkill?.SkillId);
-                        if (other == Player &&
-                            skillRow?.SkillCategory != SkillCategory.NormalAttack)
+                        if (other == Player && other.usedSkill is not null && other.usedSkill is not NormalAttack)
                         {
                             spdMultiplier = 0.9m;
                         }
