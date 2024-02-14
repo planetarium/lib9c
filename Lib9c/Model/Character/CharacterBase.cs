@@ -437,6 +437,11 @@ namespace Nekoyume.Model
 
         public virtual bool IsHit(CharacterBase caster)
         {
+            if (caster.Buffs.Values.Any(buff => buff is Focus))
+            {
+                return true;
+            }
+
             var isHit = HitHelper.IsHit(caster.Level, caster.HIT, Level, HIT, Simulator.Random.Next(0, 100));
             if (!isHit)
             {
