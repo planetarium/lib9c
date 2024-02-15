@@ -437,7 +437,7 @@ namespace Nekoyume.Model
 
         public virtual bool IsHit(CharacterBase caster)
         {
-            if (caster.Buffs.Values.Any(buff => buff is Focus))
+            if (caster.ActionBuffs.Any(buff => buff is Focus))
             {
                 return true;
             }
