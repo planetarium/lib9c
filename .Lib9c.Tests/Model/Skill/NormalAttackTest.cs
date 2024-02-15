@@ -17,6 +17,8 @@ namespace Lib9c.Tests.Model.Skill
 
     public class NormalAttackTest
     {
+        private readonly TableSheets _tableSheets = new (TableSheetsImporter.ImportSheets());
+
         public NormalAttackTest(ITestOutputHelper outputHelper)
         {
             Log.Logger = new LoggerConfiguration()
@@ -30,21 +32,18 @@ namespace Lib9c.Tests.Model.Skill
         [InlineData(false)]
         public void Use(bool copyCharacter)
         {
-            var sheets = TableSheetsImporter.ImportSheets();
-            var tableSheets = new TableSheets(sheets);
-
-            Assert.True(tableSheets.SkillSheet.TryGetValue(100000, out var skillRow));
+            Assert.True(_tableSheets.SkillSheet.TryGetValue(100000, out var skillRow));
             var normalAttack = new NormalAttack(skillRow, 100, 100, default, StatType.NONE);
 
             var avatarState = new AvatarState(
                 new PrivateKey().Address,
                 new PrivateKey().Address,
                 0,
-                tableSheets.GetAvatarSheets(),
+                _tableSheets.GetAvatarSheets(),
                 new GameConfigState(),
                 new PrivateKey().Address);
 
-            var worldRow = tableSheets.WorldSheet.First;
+            var worldRow = _tableSheets.WorldSheet.First;
             Assert.NotNull(worldRow);
 
             var random = new TestRandom();
@@ -56,22 +55,22 @@ namespace Lib9c.Tests.Model.Skill
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
-                tableSheets.StageSheet[1],
-                tableSheets.StageWaveSheet[1],
+                _tableSheets.StageSheet[1],
+                _tableSheets.StageWaveSheet[1],
                 false,
                 20,
-                tableSheets.GetSimulatorSheets(),
-                tableSheets.EnemySkillSheet,
-                tableSheets.CostumeStatSheet,
+                _tableSheets.GetSimulatorSheets(),
+                _tableSheets.EnemySkillSheet,
+                _tableSheets.CostumeStatSheet,
                 StageSimulator.GetWaveRewards(
                     random,
-                    tableSheets.StageSheet[1],
-                    tableSheets.MaterialItemSheet),
+                    _tableSheets.StageSheet[1],
+                    _tableSheets.MaterialItemSheet),
                 copyCharacter
             );
             var player = new Player(avatarState, simulator);
 
-            var enemyRow = tableSheets.CharacterSheet.OrderedList
+            var enemyRow = _tableSheets.CharacterSheet.OrderedList
                 .FirstOrDefault(e => e.Id > 200000);
             Assert.NotNull(enemyRow);
 
