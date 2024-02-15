@@ -33,9 +33,6 @@ namespace Nekoyume.Action.Coupons
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
 
             if (!states.TryGetAvatarState(
                     context.Signer,

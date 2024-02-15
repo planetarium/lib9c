@@ -93,9 +93,6 @@ namespace Nekoyume.Action
             context.UseGas(1);
             var states = context.PreviousState;
             var shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
-            var inventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = sellerAvatarAddress.Derive(LegacyQuestListKey);
             var digestListAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
             var itemAddress = Addresses.GetItemAddress(tradableId);
             var addressesHex = GetSignerAndOtherAddressesHex(context, sellerAvatarAddress);
@@ -135,9 +132,6 @@ namespace Nekoyume.Action
             Address shardedShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, order.OrderId);
             Address digestListAddress = OrderDigestListState.DeriveAddress(avatarAddress);
             Address itemAddress = Addresses.GetItemAddress(orderTradableId);
-            Address inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            Address worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            Address questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;
@@ -221,9 +215,6 @@ namespace Nekoyume.Action
             Address shardedShopAddress = ShardedShopStateV2.DeriveAddress(order.ItemSubType, order.OrderId);
             Address digestListAddress = OrderDigestListState.DeriveAddress(avatarAddress);
             Address itemAddress = Addresses.GetItemAddress(orderTradableId);
-            Address inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            Address worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            Address questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;

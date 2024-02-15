@@ -13,7 +13,6 @@ using Nekoyume.Model.Arena;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 
 namespace Lib9c.DevExtensions.Action
 {
@@ -85,9 +84,6 @@ namespace Lib9c.DevExtensions.Action
                 }
 
                 agentState.avatarAddresses.Add(0, avatarAddress);
-                var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-                var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-                var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
                 var rankingState = context.PreviousState.GetRankingState();
                 var rankingMapAddress = rankingState.UpdateRankingMap(avatarAddress);
