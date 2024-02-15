@@ -6,5 +6,6 @@ namespace Nekoyume.Model.Skill
         Bleed,
         Stun,
         Vampiric,
+        Focus,
     }
 }
