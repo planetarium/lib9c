@@ -17,13 +17,11 @@ namespace Lib9c.DevExtensions.Tests.Action.Stage
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly IWorld _initialStateV2;
-        private readonly Address _worldInfoAddress;
 
         public ClearStageTest()
         {
             (_tableSheets, _agentAddress, _avatarAddress, _, _initialStateV2) =
                 InitializeUtil.InitializeStates(isDevEx: true);
-            _worldInfoAddress = _avatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey);
         }
 
         [Fact]

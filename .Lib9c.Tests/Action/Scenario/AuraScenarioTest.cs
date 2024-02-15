@@ -21,7 +21,6 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static SerializeKeys;
 
     public class AuraScenarioTest
     {
@@ -142,10 +141,13 @@ namespace Lib9c.Tests.Action.Scenario
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var prevState = _initialState.SetLegacyState(
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize()
-            );
+            var prevState = _initialState.SetAvatarState(
+                _avatarAddress,
+                avatarState,
+                false,
+                false,
+                true,
+                false);
 
             var raid = new Raid
             {

@@ -40,10 +40,6 @@ namespace Lib9c.Tests.Action
             _agentAddress = new PrivateKey().Address;
             _avatarAddress = _agentAddress.Derive("avatar");
 
-            var inventoryAddr = _avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddr = _avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddr = _avatarAddress.Derive(LegacyQuestListKey);
-
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses.Add(0, _avatarAddress);
 

@@ -102,9 +102,6 @@ namespace Nekoyume.Action
                     ShardedShopStateV2.DeriveAddress(purchaseInfo.ItemSubType, purchaseInfo.OrderId);
                 Address sellerAgentAddress = purchaseInfo.SellerAgentAddress;
                 Address sellerAvatarAddress = purchaseInfo.SellerAvatarAddress;
-                Address sellerInventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
-                var sellerWorldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
-                Address sellerQuestListAddress = sellerAvatarAddress.Derive(LegacyQuestListKey);
                 Guid orderId = purchaseInfo.OrderId;
                 Address orderAddress = Order.DeriveAddress(orderId);
                 Address digestListAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);

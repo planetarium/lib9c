@@ -17,7 +17,6 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 
 namespace Lib9c.DevExtensions.Action
 {
@@ -90,9 +89,6 @@ namespace Lib9c.DevExtensions.Action
                     _slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var orderReceiptAddress = OrderDigestListState.DeriveAddress(avatarAddress);
 
             // Create Agent and avatar

@@ -14,7 +14,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class RuneEnhancementTest
     {
@@ -32,9 +31,6 @@ namespace Lib9c.Tests.Action
         {
             var agentAddress = new PrivateKey().Address;
             var avatarAddress = new PrivateKey().Address;
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var blockIndex = tableSheets.WorldBossListSheet.Values
@@ -190,9 +186,6 @@ namespace Lib9c.Tests.Action
         {
             var agentAddress = new PrivateKey().Address;
             var avatarAddress = new PrivateKey().Address;
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var blockIndex = tableSheets.WorldBossListSheet.Values
@@ -249,9 +242,6 @@ namespace Lib9c.Tests.Action
         {
             var agentAddress = new PrivateKey().Address;
             var avatarAddress = new PrivateKey().Address;
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var blockIndex = tableSheets.WorldBossListSheet.Values
@@ -323,9 +313,6 @@ namespace Lib9c.Tests.Action
         {
             var agentAddress = new PrivateKey().Address;
             var avatarAddress = new PrivateKey().Address;
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var blockIndex = tableSheets.WorldBossListSheet.Values
@@ -442,9 +429,6 @@ namespace Lib9c.Tests.Action
         {
             var agentAddress = new PrivateKey().Address;
             var avatarAddress = new PrivateKey().Address;
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var blockIndex = tableSheets.WorldBossListSheet.Values

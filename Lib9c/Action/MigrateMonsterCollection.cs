@@ -104,9 +104,6 @@ namespace Nekoyume.Action
             const long MonsterCollectionRewardEndBlockIndex = 4_481_909;
 
             IWorld states = context.PreviousState;
-            Address inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            Address worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            Address questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ClaimMonsterCollection exec started", addressesHex);
 
