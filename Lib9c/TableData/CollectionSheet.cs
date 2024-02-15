@@ -20,8 +20,22 @@ namespace Nekoyume.TableData
 
             private bool Validate(Equipment equipment)
             {
-                return equipment.Id == ItemId && equipment.level == Level &&
-                       (equipment.Skills.Any() == SkillContains || equipment.BuffSkills.Any() == SkillContains);
+                return equipment.Id == ItemId && equipment.level == Level && CheckSkill(equipment);
+            }
+
+            /// <summary>
+            /// Checks if the given equipment has skills or buff skills based on the RequiredMaterial configuration.
+            /// </summary>
+            /// <param name="equipment">The equipment to check.</param>
+            /// <returns>True if the equipment has skills or buff skills when SkillContains. otherwise equipment has no skills and buff skills.</returns>
+            private bool CheckSkill(Equipment equipment)
+            {
+                if (SkillContains)
+                {
+                    return equipment.Skills.Any() || equipment.BuffSkills.Any();
+                }
+
+                return !equipment.Skills.Any() && !equipment.BuffSkills.Any();
             }
 
             private bool Validate(Costume costume)
