@@ -511,7 +511,7 @@ namespace Lib9c.Tests.Action
                 new GameConfigState(),
                 default
             );
-            state = state.SetAvatarState(avatarAddress, avatarState);
+            state = state.SetAvatarState(avatarAddress, avatarState, true, false, false, false);
 
             var runeListSheet = state.GetSheet<RuneListSheet>();
             var runeId = runeListSheet.First().Value.Id;
