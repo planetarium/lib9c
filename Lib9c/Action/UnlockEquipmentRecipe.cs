@@ -51,7 +51,7 @@ namespace Nekoyume.Action
                 if (states.TryGetAvatarState(context.Signer, AvatarAddress, out AvatarState avatarState))
                 {
                     worldInformation = avatarState.worldInformation;
-                    states.SetAvatarState(AvatarAddress, avatarState);
+                    states = states.SetAvatarState(AvatarAddress, avatarState);
                 }
                 else
                 {
