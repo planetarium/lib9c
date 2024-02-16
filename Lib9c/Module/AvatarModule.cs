@@ -234,12 +234,41 @@ namespace Nekoyume.Module
         public static IWorld SetAvatarState(
             this IWorld world,
             Address avatarAddress,
-            AvatarState state)
+            AvatarState state,
+            bool setAvatar = true,
+            bool setInventory = true,
+            bool setWorldInformation = true,
+            bool setQuestList = true)
         {
-            world = SetAvatar(world, avatarAddress, state);
-            world = SetInventory(world, avatarAddress, state.inventory);
-            world = SetWorldInformation(world, avatarAddress, state.worldInformation);
-            world = SetQuestList(world, avatarAddress, state.questList);
+            // TODO: Overwrite legacy address to null state?
+            if (state.Version < 2)
+            {
+                // If the version of the avatar state is 0 or 1, overwrite flags to true.
+                setAvatar = true;
+                setInventory = true;
+                setWorldInformation = true;
+                setQuestList = true;
+            }
+
+            if (setAvatar)
+            {
+                world = SetAvatar(world, avatarAddress, state);
+            }
+
+            if (setInventory)
+            {
+                world = SetInventory(world, avatarAddress, state.inventory);
+            }
+
+            if (setWorldInformation)
+            {
+                world = SetWorldInformation(world, avatarAddress, state.worldInformation);
+            }
+
+            if (setQuestList)
+            {
+                world = SetQuestList(world, avatarAddress, state.questList);
+            }
 
             return world;
         }
