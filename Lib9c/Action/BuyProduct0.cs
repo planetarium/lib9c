@@ -180,9 +180,8 @@ namespace Nekoyume.Action
             states = states
                 .SetLegacyState(productAddress, Null.Value)
                 .SetLegacyState(productsStateAddress, productsState.Serialize())
-                .SetLegacyState(sellerAvatarAddress, sellerAvatarState.SerializeV2())
-                .SetLegacyState(sellerAvatarAddress.Derive(LegacyQuestListKey), sellerAvatarState.questList.Serialize())
                 .SetLegacyState(ProductReceipt.DeriveAddress(productId), receipt.Serialize())
+                .SetAvatarState(sellerAvatarAddress, sellerAvatarState)
                 .TransferAsset(context, context.Signer, feeStoreAddress, tax)
                 .TransferAsset(context, context.Signer, sellerAgentAddress, taxedPrice);
 
@@ -323,10 +322,7 @@ namespace Nekoyume.Action
             states = states
                 .SetLegacyState(digestListAddress, digestList.Serialize())
                 .SetLegacyState(orderReceiptAddress, orderReceipt.Serialize())
-                .SetLegacyState(sellerInventoryAddress, sellerAvatarState.inventory.Serialize())
-                .SetLegacyState(sellerWorldInformationAddress, sellerAvatarState.worldInformation.Serialize())
-                .SetLegacyState(sellerQuestListAddress, sellerAvatarState.questList.Serialize())
-                .SetLegacyState(sellerAvatarAddress, MigrationAvatarState.LegacySerializeV2(sellerAvatarState));
+                .SetAvatarState(sellerAvatarAddress, sellerAvatarState);
             states = states.SetLegacyState(shardedShopAddress, shardedShopState.Serialize());
             return states;
         }
