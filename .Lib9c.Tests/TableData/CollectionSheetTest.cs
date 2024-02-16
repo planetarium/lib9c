@@ -5,12 +5,16 @@ namespace Lib9c.Tests.TableData
     using Lib9c.Tests.Action;
     using Nekoyume.Model.Collection;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
     using Nekoyume.TableData;
     using Xunit;
 
     public class CollectionSheetTest
     {
+        private readonly TableSheets _tableSheets =
+            new TableSheets(TableSheetsImporter.ImportSheets());
+
         [Fact]
         public void Set()
         {
@@ -44,11 +48,50 @@ namespace Lib9c.Tests.TableData
         }
 
         [Theory]
-        [InlineData(ItemType.Equipment)]
-        [InlineData(ItemType.Costume)]
-        public void Validate(ItemType itemType)
+        [InlineData(true, 0, 0, false)]
+        [InlineData(true, 1, 0, true)]
+        [InlineData(true, 1, 1, true)]
+        [InlineData(true, 0, 1, true)]
+        [InlineData(false, 0, 0, true)]
+        [InlineData(false, 1, 0, false)]
+        [InlineData(false, 1, 1, false)]
+        [InlineData(false, 0, 1, false)]
+        public void Validate_Equipment(bool skillContains, int skillCount, int buffSkillCount, bool expected)
         {
-            var row = new TableSheets(TableSheetsImporter.ImportSheets()).ItemSheet.Values.First(r => r.ItemType == itemType);
+            var row = _tableSheets.ItemSheet.Values.First(r => r.ItemType == ItemType.Equipment);
+            var item = (Equipment)ItemFactory.CreateItem(row, new TestRandom());
+            for (int i = 0; i < skillCount; i++)
+            {
+                var skillRow = _tableSheets.SkillSheet.Values.First();
+                var skill = SkillFactory.Get(skillRow, 0, 0, 0, StatType.NONE);
+                item.Skills.Add(skill);
+            }
+
+            for (int i = 0; i < buffSkillCount; i++)
+            {
+                var skillId = _tableSheets.SkillBuffSheet.Values.First().SkillId;
+                var buffSkillRow = _tableSheets.SkillSheet[skillId];
+                var buffSkill = (BuffSkill)SkillFactory.Get(buffSkillRow, 0, 0, 0, StatType.NONE);
+                item.BuffSkills.Add(buffSkill);
+            }
+
+            Assert.Equal(skillCount, item.Skills.Count);
+
+            var materialInfo = new CollectionSheet.RequiredMaterial
+            {
+                ItemId = row.Id,
+                Count = 1,
+                Level = 0,
+                SkillContains = skillContains,
+            };
+
+            Assert.Equal(expected, materialInfo.Validate(item));
+        }
+
+        [Fact]
+        public void Validate_Costume()
+        {
+            var row = _tableSheets.ItemSheet.Values.First(r => r.ItemType == ItemType.Costume);
             var item = ItemFactory.CreateItem(row, new TestRandom());
             var materialInfo = new CollectionSheet.RequiredMaterial
             {
@@ -58,11 +101,6 @@ namespace Lib9c.Tests.TableData
                 SkillContains = false,
             };
             Assert.True(materialInfo.Validate((INonFungibleItem)item));
-            if (item is Equipment equipment)
-            {
-                materialInfo.SkillContains = true;
-                Assert.False(materialInfo.Validate(equipment));
-            }
         }
 
         [Fact]
