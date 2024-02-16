@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
@@ -92,6 +93,8 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
+            var sw = new Stopwatch();
+
             context.UseGas(1);
             ValidateTicket();
             var states = context.PreviousState;
@@ -101,6 +104,7 @@ namespace Nekoyume.Action
                 enemyAvatarAddress);
 
             var started = DateTimeOffset.UtcNow;
+            sw.Start();
             Log.Debug("{AddressesHex}BattleArena exec started", addressesHex);
             if (myAvatarAddress.Equals(enemyAvatarAddress))
             {
@@ -271,6 +275,12 @@ namespace Nekoyume.Action
                     $"diff({scoreDiff})");
             }
 
+            sw.Stop();
+            Log.Debug("{AddressesHex} {Source} {Process} from #{BlockIndex}: {Elapsed}",
+                addressesHex, nameof(BattleArena), "Get States", context.BlockIndex, sw.Elapsed.TotalMilliseconds);
+
+            sw.Restart();
+
             var dailyArenaInterval = gameConfigState.DailyArenaInterval;
             var currentTicketResetCount = ArenaHelper.GetCurrentTicketResetCount(
                 context.BlockIndex, roundData.StartBlockIndex, dailyArenaInterval);
@@ -323,6 +333,12 @@ namespace Nekoyume.Action
                     .SetLegacyState(purchasedCountAddr, purchasedCountDuringInterval);
             }
 
+            sw.Stop();
+            Log.Debug("{AddressesHex} {Source} {Process} from #{BlockIndex}: {Elapsed}",
+                addressesHex, nameof(BattleArena), "Check Ticket", context.BlockIndex, sw.Elapsed.TotalMilliseconds);
+
+            sw.Restart();
+
             // update arena avatar state
             myArenaAvatarState.UpdateEquipment(equipments);
             myArenaAvatarState.UpdateCostumes(costumes);
@@ -355,6 +371,12 @@ namespace Nekoyume.Action
                     enemyRuneStates.Add(new RuneState(rawRuneState));
                 }
             }
+
+            sw.Stop();
+            Log.Debug("{AddressesHex} {Source} {Process} from #{BlockIndex}: {Elapsed}",
+                addressesHex, nameof(BattleArena), "Update avatar state", context.BlockIndex, sw.Elapsed.TotalMilliseconds);
+
+            sw.Restart();
 
             // simulate
             var enemyAvatarState = states.GetEnemyAvatarState(enemyAvatarAddress);
@@ -426,7 +448,11 @@ namespace Nekoyume.Action
             arenaInformation.UpdateRecord(winCount, defeatCount);
 
             var ended = DateTimeOffset.UtcNow;
-            Log.Debug("{AddressesHex}BattleArena Total Executed Time: {Elapsed}", addressesHex, ended - started);
+            sw.Stop();
+
+            Log.Debug("{AddressesHex} {Source} {Process} from #{BlockIndex}: {Elapsed}",
+                addressesHex, nameof(BattleArena), "Simulate", context.BlockIndex, sw.Elapsed.TotalMilliseconds);
+
             return states
                 .SetLegacyState(myArenaAvatarStateAdr, myArenaAvatarState.Serialize())
                 .SetLegacyState(myArenaScoreAdr, myArenaScore.Serialize())
