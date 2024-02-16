@@ -121,33 +121,17 @@ namespace Nekoyume.Arena
                 challengerDigest,
                 simulatorSheets,
                 simulator.HpModifier,
+                challengerCollectionModifiers,
                 setExtraValueBuffBeforeGetBuffs: setExtraValueBuffBeforeGetBuffs);
-            if (challengerDigest.Runes != null)
-            {
-                challenger.SetRune(
-                    challengerDigest.Runes,
-                    simulatorSheets.RuneOptionSheet,
-                    simulatorSheets.SkillSheet);
-            }
-
-            challenger.Stats.SetCollections(challengerCollectionModifiers);
 
             var enemy = new ArenaCharacter(
                 simulator,
                 enemyDigest,
                 simulatorSheets,
                 simulator.HpModifier,
+                enemyCollectionModifiers,
                 isEnemy: true,
                 setExtraValueBuffBeforeGetBuffs: setExtraValueBuffBeforeGetBuffs);
-            if (enemyDigest.Runes != null)
-            {
-                enemy.SetRune(
-                    enemyDigest.Runes,
-                    simulatorSheets.RuneOptionSheet,
-                    simulatorSheets.SkillSheet);
-            }
-
-            enemy.Stats.SetCollections(enemyCollectionModifiers);
 
             challenger.Spawn(enemy);
             enemy.Spawn(challenger);

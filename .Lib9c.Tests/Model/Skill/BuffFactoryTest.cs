@@ -52,6 +52,7 @@ namespace Lib9c.Tests.Model.Skill
                 digest,
                 arenaSheets,
                 simulator.HpModifier,
+                new List<StatModifier>(),
                 setExtraValueBuffBeforeGetBuffs: setExtraValueBuffBeforeGetBuffs);
             var buffs = BuffFactory.GetBuffs(
                 challenger.Stats,

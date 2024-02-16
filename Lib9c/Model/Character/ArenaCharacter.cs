@@ -157,6 +157,7 @@ namespace Nekoyume.Model
             ArenaPlayerDigest digest,
             ArenaSimulatorSheets sheets,
             long hpModifier,
+            List<StatModifier> collectionModifiers,
             bool isEnemy = false,
             bool setExtraValueBuffBeforeGetBuffs = false)
         {
@@ -186,6 +187,15 @@ namespace Nekoyume.Model
             _skills = GetSkills(digest.Equipments, sheets.SkillSheet);
             _attackCountMax = AttackCountHelper.GetCountMax(digest.Level);
             ResetCurrentHP();
+            if (digest.Runes != null)
+            {
+                SetRune(
+                    digest.Runes,
+                    sheets.RuneOptionSheet,
+                    sheets.SkillSheet);
+            }
+
+            Stats.SetCollections(collectionModifiers);
         }
 
         private ArenaCharacter(ArenaCharacter value)
