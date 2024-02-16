@@ -26,14 +26,7 @@ namespace Nekoyume.Battle
             {
                 // Prepare CharacterStats for calculate collection Stats
                 var characterStats = new CharacterStats(row, level);
-                characterStats.SetEquipments(equipments, new EquipmentItemSetEffectSheet());
-                characterStats.SetCostumeStat(costumes, costumeStatSheet);
-                foreach (var runeOption in runeOptions)
-                {
-                    characterStats.AddRuneStat(runeOption);
-                }
-
-                characterStats.SetCollections(collectionStatModifiers);
+                characterStats.ConfigureStats(equipments, costumes, runeOptions, costumeStatSheet, collectionStatModifiers);
                 foreach (var (statType, value) in characterStats.CollectionStats.GetStats())
                 {
                     collectionCp += GetStatCP(statType, value);
