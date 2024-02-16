@@ -53,7 +53,7 @@ namespace Lib9c.Tests.Action
 
             _state = _state
                 .SetAgentState(_signer, agentState)
-                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(_avatarAddress, avatarState)
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
             foreach ((string key, string value) in sheets)

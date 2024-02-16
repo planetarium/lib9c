@@ -202,7 +202,7 @@ namespace Lib9c.Tests.Action
                     }
                     else
                     {
-                        state = state.SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
+                        state = state.SetAvatarState(_avatarAddress, _avatarState);
                     }
 
                     if (!slotUnlock)
@@ -390,7 +390,7 @@ namespace Lib9c.Tests.Action
             }
 
             state = state
-                .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
+                .SetAvatarState(_avatarAddress, _avatarState);
             var hammerPointAddress =
                 Addresses.GetHammerPointStateAddress(_avatarAddress, recipeId);
             if (doSuperCraft)

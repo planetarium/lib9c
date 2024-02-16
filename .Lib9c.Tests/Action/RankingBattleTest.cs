@@ -89,9 +89,9 @@ namespace Lib9c.Tests.Action
 
             _initialState = _initialState
                 .SetAgentState(_agent1Address, agent1State)
-                .SetAvatarState(_avatar1Address, avatar1State, true, true, true, true)
+                .SetAvatarState(_avatar1Address, avatar1State)
                 .SetAgentState(agent2Address, agent2State)
-                .SetAvatarState(_avatar2Address, avatar2State, true, true, true, true)
+                .SetAvatarState(_avatar2Address, avatar2State)
                 .SetLegacyState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize())
                 .SetLegacyState(_weeklyArenaAddress, weeklyArenaState.Serialize())
                 .SetLegacyState(

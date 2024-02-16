@@ -113,7 +113,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RedeemCode Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetLegacyState(RedeemCodeState.Address, redeemState.Serialize());
         }
 

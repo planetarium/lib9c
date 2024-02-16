@@ -202,7 +202,7 @@ namespace Lib9c.Tests.Action
             else
             {
                 prevState = prevState
-                    .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                    .SetAvatarState(_avatarAddress, avatarState);
             }
 
             prevState = prevState

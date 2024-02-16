@@ -130,7 +130,7 @@ namespace Nekoyume.Action
             avatarState.UpdateFromRapidCombinationV2((ResultModel)slotState.Result, context.BlockIndex);
 
             return states
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(slotAddress, slotState.Serialize());
         }
 

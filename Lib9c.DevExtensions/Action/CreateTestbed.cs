@@ -153,7 +153,7 @@ namespace Lib9c.DevExtensions.Action
             states = states
                 .SetAgentState(agentAddress, agentState)
                 .SetLegacyState(Addresses.Ranking, rankingState.Serialize())
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
             // ~Create Agent and avatar && ~Add item
 
             // for sell
@@ -194,7 +194,7 @@ namespace Lib9c.DevExtensions.Action
                 orderReceiptList.Add(orderDigest);
 
                 states = states.SetLegacyState(orderReceiptAddress, orderReceiptList.Serialize())
-                    .SetAvatarState(avatarAddress, avatarState, true, true, false, false)
+                    .SetAvatarState(avatarAddress, avatarState)
                     .SetLegacyState(itemAddress, tradableItem.Serialize())
                     .SetLegacyState(orderAddress, order.Serialize())
                     .SetLegacyState(shopAddress, shardedShopState.Serialize());

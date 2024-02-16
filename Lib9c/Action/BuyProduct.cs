@@ -91,7 +91,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            states = states.SetAvatarState(AvatarAddress, buyerAvatarState, true, true, false, false);
+            states = states.SetAvatarState(AvatarAddress, buyerAvatarState);
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("BuyProduct Total Executed Time: {Elapsed}", ended - started);
@@ -180,7 +180,7 @@ namespace Nekoyume.Action
             states = states
                 .SetLegacyState(productAddress, Null.Value)
                 .SetLegacyState(productsStateAddress, productsState.Serialize())
-                .SetAvatarState(sellerAvatarAddress, sellerAvatarState, true, false, false, true)
+                .SetAvatarState(sellerAvatarAddress, sellerAvatarState)
                 .SetLegacyState(ProductReceipt.DeriveAddress(productId), receipt.Serialize())
                 .TransferAsset(context, context.Signer, feeStoreAddress, tax)
                 .TransferAsset(context, context.Signer, sellerAgentAddress, taxedPrice);
@@ -319,7 +319,7 @@ namespace Nekoyume.Action
             states = states
                 .SetLegacyState(digestListAddress, digestList.Serialize())
                 .SetLegacyState(orderReceiptAddress, orderReceipt.Serialize())
-                .SetAvatarState(sellerAvatarAddress, sellerAvatarState, true, true, true, true);
+                .SetAvatarState(sellerAvatarAddress, sellerAvatarState);
             states = states.SetLegacyState(shardedShopAddress, shardedShopState.Serialize());
             return states;
         }

@@ -55,7 +55,7 @@ namespace Lib9c.Tests.Action
 
             _initialStates = _initialStates
                 .SetAgentState(_agentAddress, agentState)
-                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(_avatarAddress, avatarState)
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             for (var i = 0; i < GameConfig.SlotCount; i++)
@@ -124,7 +124,7 @@ namespace Lib9c.Tests.Action
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
             previousStates = previousStates
-                .SetAvatarState(_avatarAddress, previousAvatarState, false, true, true, false);
+                .SetAvatarState(_avatarAddress, previousAvatarState);
 
             var previousActionPoint = previousAvatarState.actionPoint;
             var previousResultConsumableCount =

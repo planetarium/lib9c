@@ -297,7 +297,7 @@ namespace Nekoyume.Action.Garages
                 states = states.SetLegacyState(garageAddr, garage.Serialize());
             }
 
-            return states.SetAvatarState(AvatarAddr.Value, avatarState, true, true, true, true);
+            return states.SetAvatarState(AvatarAddr.Value, avatarState);
         }
     }
 }

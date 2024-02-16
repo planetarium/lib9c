@@ -226,7 +226,7 @@ namespace Nekoyume.Action
 
             // Set states
             sw.Restart();
-            states = states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
+            states = states.SetAvatarState(AvatarAddress, avatarState);
             sw.Stop();
             Log.Verbose(
                 "[{ActionTypeString}][{AddressesHex}] Set states: {Elapsed}",

@@ -148,7 +148,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Grinding Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .MintAsset(context, context.Signer, crystal);
         }
 

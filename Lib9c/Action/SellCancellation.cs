@@ -196,7 +196,7 @@ namespace Nekoyume.Action
             states = states
                 .SetLegacyState(itemAddress, sellItem.Serialize())
                 .SetLegacyState(digestListAddress, digestList.Serialize())
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
@@ -279,7 +279,7 @@ namespace Nekoyume.Action
             states = states
                 .SetLegacyState(itemAddress, sellItem.Serialize())
                 .SetLegacyState(digestListAddress, digestList.Serialize())
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
