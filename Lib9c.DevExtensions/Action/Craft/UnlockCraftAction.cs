@@ -60,7 +60,7 @@ namespace Lib9c.DevExtensions.Action.Craft
                 states.GetSheet<WorldSheet>(),
                 targetStage
             );
-            return states.SetAvatarState(AvatarAddress, avatarState, false, false, true, false);
+            return states.SetAvatarState(AvatarAddress, avatarState);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

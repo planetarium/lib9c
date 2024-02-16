@@ -67,7 +67,7 @@ namespace Nekoyume.Action
             avatarState.actionPoint = gameConfigState.ActionPointMax;
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ChargeActionPoint Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+            return states.SetAvatarState(avatarAddress, avatarState);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

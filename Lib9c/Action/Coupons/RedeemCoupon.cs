@@ -63,7 +63,7 @@ namespace Nekoyume.Action.Coupons
             }
 
             return states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetCouponWallet(context.Signer, wallet);
         }
 

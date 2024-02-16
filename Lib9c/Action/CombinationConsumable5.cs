@@ -246,7 +246,7 @@ namespace Nekoyume.Action
 
             avatarState.updatedAt = ctx.BlockIndex;
             avatarState.blockIndex = ctx.BlockIndex;
-            states = states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
+            states = states.SetAvatarState(AvatarAddress, avatarState);
             slotState.Update(result, ctx.BlockIndex, requiredBlockIndex);
             sw.Stop();
             Log.Verbose("{AddressesHex}Combination Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);

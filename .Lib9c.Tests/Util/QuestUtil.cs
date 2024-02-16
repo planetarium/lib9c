@@ -25,8 +25,8 @@ namespace Lib9c.Tests.Util
             var avatarState2 = stateV2.GetAvatarState(avatarAddress);
             avatarState1.questList = emptyQuestList;
             avatarState2.questList = emptyQuestList;
-            var newStateV1 = stateV1.SetAvatarState(avatarAddress, avatarState1, false, false, false, true);
-            var newStateV2 = stateV2.SetAvatarState(avatarAddress, avatarState2, false, false, false, true);
+            var newStateV1 = stateV1.SetAvatarState(avatarAddress, avatarState1);
+            var newStateV2 = stateV2.SetAvatarState(avatarAddress, avatarState2);
             return (newStateV1, newStateV2);
         }
     }

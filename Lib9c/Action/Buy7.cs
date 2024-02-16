@@ -452,8 +452,7 @@ namespace Nekoyume.Action
                 buyerAvatarState.UpdateQuestRewards2(materialSheet);
                 sellerAvatarState.UpdateQuestRewards2(materialSheet);
 
-                states = states.SetAvatarState(
-                    sellerAvatarAddress, sellerAvatarState, true, true, true, true);
+                states = states.SetAvatarState(sellerAvatarAddress, sellerAvatarState);
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set Seller AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();
@@ -468,7 +467,7 @@ namespace Nekoyume.Action
             buyerAvatarState.updatedAt = ctx.BlockIndex;
             buyerAvatarState.blockIndex = ctx.BlockIndex;
 
-            states = states.SetAvatarState(buyerAvatarAddress, buyerAvatarState, true, true, true, true);
+            states = states.SetAvatarState(buyerAvatarAddress, buyerAvatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}Buy Set Buyer AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();

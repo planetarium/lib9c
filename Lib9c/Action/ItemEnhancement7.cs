@@ -275,7 +275,7 @@ namespace Nekoyume.Action
             sw.Stop();
             Log.Verbose("{AddressesHex}ItemEnhancement Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
-            states = states.SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+            states = states.SetAvatarState(avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}ItemEnhancement Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;

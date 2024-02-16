@@ -60,7 +60,7 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
                 .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
-                .SetAvatarState(AvatarAddress, _avatarState, true, true, true, true);
+                .SetAvatarState(AvatarAddress, _avatarState);
         }
 
         public static IEnumerable<object[]> Execute_Validate_MemberData()
@@ -208,7 +208,7 @@ namespace Lib9c.Tests.Action
             var asset = 3 * RuneHelper.DailyRewardRune;
             var context = new ActionContext();
             _initialState = _initialState
-                .SetAvatarState(AvatarAddress, _avatarState, true, true, true, true)
+                .SetAvatarState(AvatarAddress, _avatarState)
                 .MintAsset(context, AvatarAddress, asset);
             var action = new RegisterProduct0
             {
@@ -347,7 +347,7 @@ namespace Lib9c.Tests.Action
                 _avatarState.inventory.AddItem((ItemBase)tradableItem);
             }
 
-            _initialState = _initialState.SetAvatarState(AvatarAddress, _avatarState, true, true, true, true);
+            _initialState = _initialState.SetAvatarState(AvatarAddress, _avatarState);
             var action = new RegisterProduct0
             {
                 AvatarAddress = AvatarAddress,

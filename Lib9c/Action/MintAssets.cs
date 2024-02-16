@@ -100,7 +100,7 @@ namespace Nekoyume.Action
                             }
                         }
 
-                        state = state.SetAvatarState(recipient, recipientAvatarState, false, true, false, false);
+                        state = state.SetAvatarState(recipient, recipientAvatarState);
                         fivs.Add(itemsNotNull);
                     }
                     else
@@ -135,7 +135,7 @@ namespace Nekoyume.Action
                         )
                     );
                     recipientAvatarState.mailBox.CleanUp();
-                    state = state.SetAvatarState(recipient, recipientAvatarState, true, false, false, false);
+                    state = state.SetAvatarState(recipient, recipientAvatarState);
                 }
             }
 

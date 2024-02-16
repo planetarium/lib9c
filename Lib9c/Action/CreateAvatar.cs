@@ -235,7 +235,7 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex}CreateAvatar Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetAgentState(signer, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
         }
 
         public static void AddItem(ItemSheet itemSheet, CreateAvatarItemSheet createAvatarItemSheet,

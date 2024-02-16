@@ -54,7 +54,7 @@ namespace Lib9c.Tests.Action
             var state = new World(new MockWorldState())
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
 
             foreach (var (key, value) in sheets)
             {
@@ -208,7 +208,7 @@ namespace Lib9c.Tests.Action
             var state = new World(new MockWorldState())
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
 
             foreach (var (key, value) in sheets)
             {
@@ -264,7 +264,7 @@ namespace Lib9c.Tests.Action
             var state = new World(new MockWorldState())
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
 
             foreach (var (key, value) in sheets)
             {
@@ -336,7 +336,7 @@ namespace Lib9c.Tests.Action
             var state = new World(new MockWorldState())
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
 
             foreach (var (key, value) in sheets)
             {
@@ -451,7 +451,7 @@ namespace Lib9c.Tests.Action
             var state = new World(new MockWorldState())
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
 
             foreach (var (key, value) in sheets)
             {
@@ -511,7 +511,7 @@ namespace Lib9c.Tests.Action
                 new GameConfigState(),
                 default
             );
-            state = state.SetAvatarState(avatarAddress, avatarState, true, false, false, false);
+            state = state.SetAvatarState(avatarAddress, avatarState);
 
             var runeListSheet = state.GetSheet<RuneListSheet>();
             var runeId = runeListSheet.First().Value.Id;

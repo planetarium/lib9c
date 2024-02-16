@@ -72,7 +72,7 @@ namespace Lib9c.Tests.Action
             _state = _state
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetAgentState(_agent1Address, agent1State)
-                .SetAvatarState(_avatar1Address, _avatar1, true, true, true, true)
+                .SetAvatarState(_avatar1Address, _avatar1)
                 .SetLegacyState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize());
 
             Log.Logger = new LoggerConfiguration()

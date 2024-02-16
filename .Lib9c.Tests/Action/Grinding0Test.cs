@@ -156,7 +156,7 @@ namespace Lib9c.Tests.Action
                 }
 
                 state = state
-                    .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
+                    .SetAvatarState(_avatarAddress, _avatarState);
 
                 Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
             }

@@ -234,7 +234,7 @@ namespace Nekoyume.Action
             avatarState.UpdateFromCombination2(equipment);
             avatarState.UpdateQuestRewards2(materialSheet);
             return states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetLegacyState(slotAddress, slotState.Serialize())
                 .SetAgentState(ctx.Signer, agentState);
         }

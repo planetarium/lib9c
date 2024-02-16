@@ -64,8 +64,7 @@ namespace Lib9c.Tests.Action.Scenario
                     rankingMapAddress
                 );
                 avatarState.inventory.AddItem(_aura);
-                _initialState = _initialState.SetAvatarState(
-                    avatarAddress, avatarState, true, true, true, true);
+                _initialState = _initialState.SetAvatarState(avatarAddress, avatarState);
             }
 
             _currency = Currency.Legacy("NCG", 2, minters: null);
@@ -141,13 +140,7 @@ namespace Lib9c.Tests.Action.Scenario
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var prevState = _initialState.SetAvatarState(
-                _avatarAddress,
-                avatarState,
-                false,
-                false,
-                true,
-                false);
+            var prevState = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             var raid = new Raid
             {
@@ -187,8 +180,7 @@ namespace Lib9c.Tests.Action.Scenario
                     avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                 }
 
-                prevState = prevState.SetAvatarState(
-                    avatarAddress, avatarState, false, false, true, false);
+                prevState = prevState.SetAvatarState(avatarAddress, avatarState);
 
                 var join = new JoinArena3
                 {
@@ -317,8 +309,7 @@ namespace Lib9c.Tests.Action.Scenario
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var previousState = _initialState.SetAvatarState(
-                _avatarAddress, avatarState, false, false, true, false);
+            var previousState = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             var register = new RegisterProduct2
             {

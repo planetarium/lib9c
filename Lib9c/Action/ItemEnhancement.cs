@@ -360,7 +360,7 @@ namespace Nekoyume.Action
 
             // Set state
             sw.Restart();
-            states = states.SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+            states = states.SetAvatarState(avatarAddress, avatarState);
 
             sw.Stop();
             Log.Verbose("{AddressesHex} ItemEnhancement Set AvatarState: {Elapsed}", addressesHex,

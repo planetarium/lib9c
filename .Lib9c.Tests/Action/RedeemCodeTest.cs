@@ -83,7 +83,7 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                initialState = initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                initialState = initialState.SetAvatarState(_avatarAddress, avatarState);
             }
 
             foreach (var (key, value) in _sheets)

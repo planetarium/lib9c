@@ -126,7 +126,7 @@ namespace Lib9c.DevExtensions.Action
                 // join arena
                 states = states
                     .SetAgentState(agentAddress, agentState)
-                    .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                    .SetAvatarState(avatarAddress, avatarState);
 
 
                 var sheet = sheets.GetSheet<ArenaSheet>();

@@ -304,7 +304,7 @@ namespace Lib9c.Tests.Action.Garages
             avatarState = _previousStates.GetAvatarState(_avatarAddress);
             avatarState.inventory = new Inventory();
             var previousStatesWithEmptyInventoryState =
-                _previousStates.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                _previousStates.SetAvatarState(_avatarAddress, avatarState);
             Assert.Throws<ItemNotFoundException>(() => Execute(
                 AgentAddr,
                 0,
@@ -326,7 +326,7 @@ namespace Lib9c.Tests.Action.Garages
             }
 
             var previousStatesWithNotEnoughInventoryState =
-                _previousStates.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                _previousStates.SetAvatarState(_avatarAddress, avatarState);
             Assert.Throws<NotEnoughItemException>(() => Execute(
                 AgentAddr,
                 0,
@@ -487,7 +487,7 @@ namespace Lib9c.Tests.Action.Garages
                     .ToArray(),
                 garageCost,
                 fungibleItemAndCounts.Select(tuple => tuple.fungibleItem).ToArray(),
-                previousStates.SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
+                previousStates.SetAvatarState(_avatarAddress, avatarState)
             );
         }
     }

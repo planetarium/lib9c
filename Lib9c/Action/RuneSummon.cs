@@ -121,7 +121,7 @@ namespace Nekoyume.Action
             avatarState.updatedAt = context.BlockIndex;
 
             // Set states
-            return states.SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
+            return states.SetAvatarState(AvatarAddress, avatarState);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
