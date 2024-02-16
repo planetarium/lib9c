@@ -57,13 +57,7 @@ namespace Nekoyume.Battle
                 simulatorSheets,
                 logEvent)
         {
-            Player.SetCostumeStat(costumeStatSheet);
-            if (runeStates != null)
-            {
-                Player.SetRune(runeStates, simulatorSheets.RuneOptionSheet, simulatorSheets.SkillSheet);
-            }
-
-            Player.Stats.SetCollections(collectionModifiers);
+            Player.ConfigureStats(costumeStatSheet, runeStates, simulatorSheets.RuneOptionSheet, simulatorSheets.SkillSheet, collectionModifiers);
 
             _waves = new List<Wave>();
             _waveRewards = waveRewards;

@@ -38,13 +38,7 @@ namespace Nekoyume.Battle
             CostumeStatSheet costumeStatSheet,
             List<StatModifier> collectionModifiers) : base(random, avatarState, foods, simulatorSheets)
         {
-            Player.SetCostumeStat(costumeStatSheet);
-            if (runeStates != null)
-            {
-                Player.SetRune(runeStates, simulatorSheets.RuneOptionSheet, simulatorSheets.SkillSheet);
-            }
-
-            Player.Stats.SetCollections(collectionModifiers);
+            Player.ConfigureStats(costumeStatSheet, runeStates, simulatorSheets.RuneOptionSheet, simulatorSheets.SkillSheet, collectionModifiers);
 
             BossId = bossId;
             _waves = new List<RaidBoss>();

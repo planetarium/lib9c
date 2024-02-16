@@ -604,6 +604,17 @@ namespace Nekoyume.Model
             }
         }
 
+        public void ConfigureStats(CostumeStatSheet costumeStatSheet, List<RuneState> runeStates, RuneOptionSheet runeOptionSheet, SkillSheet skillSheet, List<StatModifier> collectionModifiers)
+        {
+            SetCostumeStat(costumeStatSheet);
+            if (runeStates != null)
+            {
+                SetRune(runeStates, runeOptionSheet, skillSheet);
+            }
+
+            Stats.SetCollections(collectionModifiers);
+        }
+
         [Obsolete("Use SetRune")]
         public void SetRuneV1(
             List<RuneState> runes,
