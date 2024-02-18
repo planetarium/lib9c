@@ -1,11 +1,10 @@
-using System.Collections.Immutable;
 using Lib9c.DevExtensions.Action;
 using Lib9c.Tests.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 using Xunit;
 using Xunit.Abstractions;
@@ -14,7 +13,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 {
     public class FaucetCurrencyTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly Address _agentAddress;
         private readonly Currency _ncg;
         private readonly Currency _crystal;
@@ -31,8 +30,8 @@ namespace Lib9c.DevExtensions.Tests.Action
             _crystal = Currency.Legacy("CRYSTAL", 18, null);
 #pragma warning restore CS0618
 
-            _initialState = new Account(
-                MockState.Empty
+            _initialState = new World(
+                new MockWorldState()
                     .AddBalance(GoldCurrencyState.Address, _ncg * int.MaxValue));
 
             var goldCurrencyState = new GoldCurrencyState(_ncg);
@@ -40,8 +39,8 @@ namespace Lib9c.DevExtensions.Tests.Action
             var agentState = new AgentState(_agentAddress);
 
             _initialState = _initialState
-                    .SetState(_agentAddress, agentState.Serialize())
-                    .SetState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
+                    .SetAgentState(_agentAddress, agentState)
+                    .SetLegacyState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
                 ;
         }
 

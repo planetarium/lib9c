@@ -7,13 +7,12 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
-using Nekoyume.Helper;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Serilog;
@@ -96,7 +95,7 @@ namespace Nekoyume.Action
             ApStoneCount = plainValue["apStoneCount"].ToInteger();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var random = context.GetRandom();
@@ -107,16 +106,12 @@ namespace Nekoyume.Action
                 random);
         }
 
-        public IAccount Execute(
-            IAccount states,
+        public IWorld Execute(
+            IWorld states,
             Address signer,
             long blockIndex,
             IRandom random)
         {
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
-
             var addressesHex = $"[{signer.ToHex()}, {AvatarAddress.ToHex()}]";
             var started = DateTimeOffset.UtcNow;
             const string source = "HackAndSlash";
@@ -148,7 +143,7 @@ namespace Nekoyume.Action
 
             var sw = new Stopwatch();
             sw.Start();
-            if (!states.TryGetAvatarStateV2(signer, AvatarAddress, out AvatarState avatarState, out _))
+            if (!states.TryGetAvatarState(signer, AvatarAddress, out AvatarState avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -388,7 +383,7 @@ namespace Nekoyume.Action
             if (isNotClearedStage)
             {
                 // If state exists, get CrystalRandomSkillState. If not, create new state.
-                skillState = states.TryGetState<List>(skillStateAddress, out var serialized)
+                skillState = states.TryGetLegacyState<List>(skillStateAddress, out var serialized)
                     ? new CrystalRandomSkillState(skillStateAddress, serialized)
                     : new CrystalRandomSkillState(skillStateAddress, StageId);
 
@@ -427,26 +422,26 @@ namespace Nekoyume.Action
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+            var runeSlotState = states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Adventure);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
-            states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            states = states.SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize());
 
             // update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+            var itemSlotState = states.TryGetLegacyState(itemSlotStateAddress, out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Adventure);
             itemSlotState.UpdateEquipment(Equipments);
             itemSlotState.UpdateCostumes(Costumes);
-            states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
             var runeStates = new List<RuneState>();
             foreach (var address in RuneInfos.Select(info => RuneState.DeriveAddress(AvatarAddress, info.RuneId)))
             {
-                if (states.TryGetState(address, out List rawRuneState))
+                if (states.TryGetLegacyState(address, out List rawRuneState))
                 {
                     runeStates.Add(new RuneState(rawRuneState));
                 }
@@ -579,14 +574,11 @@ namespace Nekoyume.Action
                 }
 
                 skillState.Update(new List<int>());
-                states = states.SetState(skillStateAddress, skillState.Serialize());
+                states = states.SetLegacyState(skillStateAddress, skillState.Serialize());
             }
 
-            states = states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
+            states = states.SetAvatarState(AvatarAddress, avatarState);
+
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Set States", blockIndex, sw.Elapsed.TotalMilliseconds);

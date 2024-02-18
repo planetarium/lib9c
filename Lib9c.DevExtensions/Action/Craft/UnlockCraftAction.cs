@@ -5,14 +5,13 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Exceptions;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 
 namespace Lib9c.DevExtensions.Action.Craft
 {
@@ -23,7 +22,7 @@ namespace Lib9c.DevExtensions.Action.Craft
         public Address AvatarAddress { get; set; }
         public ActionTypeAttribute ActionType { get; set; }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -55,15 +54,13 @@ namespace Lib9c.DevExtensions.Action.Craft
                     $"{ActionType.TypeIdentifier} is not valid action");
             }
 
-            var worldInformation = new WorldInformation(
+            var avatarState = states.GetAvatarState(AvatarAddress);
+            avatarState.worldInformation = new WorldInformation(
                 context.BlockIndex,
                 states.GetSheet<WorldSheet>(),
                 targetStage
             );
-            return states.SetState(
-                AvatarAddress.Derive(LegacyWorldInformationKey),
-                worldInformation.Serialize()
-            );
+            return states.SetAvatarState(AvatarAddress, avatarState);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -15,7 +15,7 @@ namespace Lib9c.Abstractions
             get;
         }
 
-        Address? InventoryAddr { get; }
+        Address? AvatarAddr { get; }
         IOrderedEnumerable<(HashDigest<SHA256> fungibleId, int count)>? FungibleIdAndCounts { get; }
         string? Memo { get; }
     }

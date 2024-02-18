@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action.Coupons
     using Nekoyume.Action.Coupons;
     using Nekoyume.Model.Coupons;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class TransferCouponsTest
@@ -17,7 +18,7 @@ namespace Lib9c.Tests.Action.Coupons
         [Fact]
         public void Execute()
         {
-            IAccount state = new Account(MockState.Empty);
+            IWorld state = new World(new MockWorldState());
             IRandom random = new TestRandom();
 
             var coupon1 = new Coupon(CouponsFixture.Guid1, CouponsFixture.RewardSet1);

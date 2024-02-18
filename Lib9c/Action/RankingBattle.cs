@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -12,6 +12,7 @@ using Nekoyume.Battle;
 using Nekoyume.Model;
 using Nekoyume.Extensions;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -44,19 +45,15 @@ namespace Nekoyume.Action
         IEnumerable<Guid> IRankingBattleV2.CostumeIds => costumeIds;
         IEnumerable<Guid> IRankingBattleV2.EquipmentIds => equipmentIds;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var ctx = context;
             var states = ctx.PreviousState;
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
-
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress, enemyAddress);
 
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
-            var arenaSheetState = states.GetState(arenaSheetAddress);
+            var arenaSheetState = states.GetLegacyState(arenaSheetAddress);
             if (arenaSheetState != null)
             {
                 // exception handling for v100240.
@@ -85,7 +82,7 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the signer tried to battle for themselves.");
             }
 
-            if (!states.TryGetAvatarStateV2(ctx.Signer, avatarAddress, out var avatarState, out var migrationRequired))
+            if (!states.TryGetAvatarState(ctx.Signer, avatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -138,15 +135,7 @@ namespace Nekoyume.Action
             }
 
             AvatarState enemyAvatarState;
-            try
-            {
-                enemyAvatarState = states.GetAvatarStateV2(enemyAddress);
-            }
-            // BackWard compatible.
-            catch (FailedLoadStateException)
-            {
-                enemyAvatarState = states.GetAvatarState(enemyAddress);
-            }
+            enemyAvatarState = states.GetAvatarState(enemyAddress);
 
             if (enemyAvatarState is null)
             {
@@ -159,7 +148,7 @@ namespace Nekoyume.Action
             sw.Restart();
 
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
-            if (!states.TryGetState(weeklyArenaAddress, out Dictionary rawWeeklyArenaState))
+            if (!states.TryGetLegacyState(weeklyArenaAddress, out Dictionary rawWeeklyArenaState))
             {
                 return states;
             }
@@ -257,22 +246,14 @@ namespace Nekoyume.Action
             sw.Restart();
 
             states = states
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(arenaInfoAddress, arenaInfo.Serialize())
-                .SetState(enemyArenaInfoAddress, enemyArenaInfo.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize());
-
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(avatarAddress, avatarState.SerializeV2());
-            }
+                .SetAvatarState(avatarAddress, avatarState)
+                .SetLegacyState(arenaInfoAddress, arenaInfo.Serialize())
+                .SetLegacyState(enemyArenaInfoAddress, enemyArenaInfo.Serialize());
 
             if (isNewArenaInfo || isNewEnemyArenaInfo)
             {
                 var addressListAddress = weeklyArenaAddress.Derive("address_list");
-                var addressList = states.TryGetState(addressListAddress, out List rawAddressList)
+                var addressList = states.TryGetLegacyState(addressListAddress, out List rawAddressList)
                     ? rawAddressList.ToList(StateExtensions.ToAddress)
                     : new List<Address>();
 
@@ -286,7 +267,7 @@ namespace Nekoyume.Action
                     addressList.Add(enemyAddress);
                 }
 
-                states = states.SetState(addressListAddress,
+                states = states.SetLegacyState(addressListAddress,
                     addressList.Aggregate(List.Empty,
                         (current, address) => current.Add(address.Serialize())));
             }

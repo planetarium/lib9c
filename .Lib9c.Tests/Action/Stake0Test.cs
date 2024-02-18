@@ -7,14 +7,14 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
-    using Nekoyume.TableData;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
 
     public class Stake0Test
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
         private readonly Currency _currency;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly TableSheets _tableSheets;
@@ -28,13 +28,13 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
 
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -47,7 +47,7 @@ namespace Lib9c.Tests.Action
 
             _signerAddress = new PrivateKey().Address;
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .MintAsset(context, _signerAddress, _currency * 100);
         }
 
@@ -74,8 +74,8 @@ namespace Lib9c.Tests.Action
                 avatarAddresses = { [0] = new PrivateKey().Address, },
             };
             var states = _initialState
-                .SetState(_signerAddress, agentState.Serialize())
-                .SetState(
+                .SetAgentState(_signerAddress, agentState)
+                .SetLegacyState(
                     monsterCollectionAddress,
                     new MonsterCollectionState(monsterCollectionAddress, 1, 0).SerializeV2());
             var action = new Stake0(200);
@@ -94,7 +94,7 @@ namespace Lib9c.Tests.Action
             Address stakeStateAddress = StakeState.DeriveAddress(_signerAddress);
             var context = new ActionContext();
             var states = _initialState
-                .SetState(stakeStateAddress, new StakeState(stakeStateAddress, 0).Serialize())
+                .SetLegacyState(stakeStateAddress, new StakeState(stakeStateAddress, 0).Serialize())
                 .MintAsset(context, stakeStateAddress, _currency * 50);
             var action = new Stake0(100);
             Assert.Throws<StakeExistingClaimableException>(() =>
@@ -138,7 +138,7 @@ namespace Lib9c.Tests.Action
             // Same (since 4611070)
             if (states.TryGetStakeState(_signerAddress, out StakeState stakeState))
             {
-                states = states.SetState(
+                states = states.SetLegacyState(
                     stakeState.address,
                     new StakeState(stakeState.address, 4611070 - 100).Serialize());
             }
@@ -196,7 +196,7 @@ namespace Lib9c.Tests.Action
                 StakeState.LockupInterval - 1,
                 stakeState.CancellableBlockIndex,
                 stakeState.Achievements);
-            states = states.SetState(stakeState.address, producedStakeState.SerializeV2());
+            states = states.SetLegacyState(stakeState.address, producedStakeState.SerializeV2());
             var cancelAction = new Stake0(0);
             states = cancelAction.Execute(new ActionContext
             {
@@ -205,7 +205,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = StakeState.LockupInterval,
             });
 
-            Assert.Equal(Null.Value, states.GetState(stakeState.address));
+            Assert.Equal(Null.Value, states.GetLegacyState(stakeState.address));
             Assert.Equal(_currency * 0, states.GetBalance(stakeState.address, _currency));
             Assert.Equal(_currency * 100, states.GetBalance(_signerAddress, _currency));
         }

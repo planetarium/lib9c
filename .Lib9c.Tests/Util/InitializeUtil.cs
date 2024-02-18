@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Util
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
 
     public static class InitializeUtil
@@ -17,8 +18,8 @@ namespace Lib9c.Tests.Util
             TableSheets tableSheets,
             Address agentAddr,
             Address avatarAddr,
-            IAccount initialStatesWithAvatarStateV1,
-            IAccount initialStatesWithAvatarStateV2
+            IWorld initialStatesWithAvatarStateV1,
+            IWorld initialStatesWithAvatarStateV2
             ) InitializeStates(
                 Address? adminAddr = null,
                 Address? agentAddr = null,
@@ -28,7 +29,7 @@ namespace Lib9c.Tests.Util
         {
             adminAddr ??= new PrivateKey().Address;
             var context = new ActionContext();
-            var states = new Account(MockState.Empty).SetState(
+            var states = new World(new MockWorldState()).SetLegacyState(
                 Addresses.Admin,
                 new AdminState(adminAddr.Value, long.MaxValue).Serialize());
 
@@ -39,14 +40,14 @@ namespace Lib9c.Tests.Util
             );
             var goldCurrencyState = new GoldCurrencyState(goldCurrency);
             states = states
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .MintAsset(context, goldCurrencyState.address, goldCurrency * 1_000_000_000);
 
             var tuple = InitializeTableSheets(states, isDevEx, sheetsOverride);
             states = tuple.states;
             var tableSheets = new TableSheets(tuple.sheets, ignoreFailedGetProperty: true);
             var gameConfigState = new GameConfigState(tuple.sheets[nameof(GameConfigSheet)]);
-            states = states.SetState(gameConfigState.address, gameConfigState.Serialize());
+            states = states.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             agentAddr ??= new PrivateKey().Address;
             var avatarAddr = Addresses.GetAvatarAddress(agentAddr.Value, avatarIndex);
@@ -61,18 +62,18 @@ namespace Lib9c.Tests.Util
             agentState.avatarAddresses.Add(avatarIndex, avatarAddr);
 
             var initialStatesWithAvatarStateV1 = states
-                .SetState(agentAddr.Value, agentState.Serialize())
-                .SetState(avatarAddr, avatarState.Serialize());
+                .SetAgentState(agentAddr.Value, agentState)
+                .SetLegacyState(avatarAddr, MigrationAvatarState.LegacySerializeV1(avatarState));
             var initialStatesWithAvatarStateV2 = states
-                .SetState(agentAddr.Value, agentState.Serialize())
-                .SetState(avatarAddr, avatarState.SerializeV2())
-                .SetState(
+                .SetAgentState(agentAddr.Value, agentState)
+                .SetLegacyState(avatarAddr, MigrationAvatarState.LegacySerializeV2(avatarState))
+                .SetLegacyState(
                     avatarAddr.Derive(SerializeKeys.LegacyInventoryKey),
                     avatarState.inventory.Serialize())
-                .SetState(
+                .SetLegacyState(
                     avatarAddr.Derive(SerializeKeys.LegacyWorldInformationKey),
                     avatarState.worldInformation.Serialize())
-                .SetState(
+                .SetLegacyState(
                     avatarAddr.Derive(SerializeKeys.LegacyQuestListKey),
                     avatarState.questList.Serialize());
 
@@ -84,9 +85,9 @@ namespace Lib9c.Tests.Util
                 initialStatesWithAvatarStateV2);
         }
 
-        public static (IAccount states, Dictionary<string, string> sheets)
+        public static (IWorld states, Dictionary<string, string> sheets)
             InitializeTableSheets(
-                IAccount states,
+                IWorld states,
                 bool isDevEx = false,
                 Dictionary<string, string> sheetsOverride = null)
         {
@@ -107,7 +108,7 @@ namespace Lib9c.Tests.Util
 
             foreach (var (key, value) in sheets)
             {
-                states = states.SetState(
+                states = states.SetLegacyState(
                     Addresses.TableSheet.Derive(key),
                     value.Serialize());
             }

@@ -1,5 +1,4 @@
 ﻿using System;
-using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.Skill;
 using Nekoyume.TableData;
 

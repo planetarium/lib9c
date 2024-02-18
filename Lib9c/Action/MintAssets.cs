@@ -9,10 +9,12 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Exceptions;
 using Nekoyume.Model;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -32,7 +34,7 @@ namespace Nekoyume.Action
             Memo = memo;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
 
@@ -41,15 +43,15 @@ namespace Nekoyume.Action
                 throw new InvalidOperationException();
             }
 
-            IAccount state = context.PreviousState;
+            IWorld state = context.PreviousState;
             HashSet<Address> allowed = new();
 
-            if (state.TryGetState(Addresses.Admin, out Dictionary rawDict))
+            if (state.TryGetLegacyState(Addresses.Admin, out Dictionary rawDict))
             {
                 allowed.Add(new AdminState(rawDict).AdminAddress);
             }
 
-            if (state.TryGetState(Addresses.AssetMinters, out List minters))
+            if (state.TryGetLegacyState(Addresses.AssetMinters, out List minters))
             {
                 allowed.UnionWith(minters.Select(m => m.ToAddress()));
             }
@@ -81,49 +83,48 @@ namespace Nekoyume.Action
 
                 if (items is { } itemsNotNull)
                 {
-                    Address inventoryAddr = recipient.Derive(SerializeKeys.LegacyInventoryKey);
-                    Inventory inventory = state.GetInventory(inventoryAddr);
-                    MaterialItemSheet itemSheet = state.GetSheet<MaterialItemSheet>();
-                    if (itemSheet is null || itemSheet.OrderedList is null)
+                    if (state.GetAvatarState(recipient) is AvatarState recipientAvatarState)
                     {
-                        throw new InvalidOperationException();
-                    }
-
-                    foreach (MaterialItemSheet.Row row in itemSheet.OrderedList)
-                    {
-                        if (row.ItemId.Equals(itemsNotNull.Id))
+                        MaterialItemSheet itemSheet = state.GetSheet<MaterialItemSheet>();
+                        if (itemSheet is null || itemSheet.OrderedList is null)
                         {
-                            Material item = ItemFactory.CreateMaterial(row);
-                            inventory.AddFungibleItem(item, itemsNotNull.Count);
+                            throw new InvalidOperationException();
                         }
-                    }
 
-                    state = state.SetState(inventoryAddr, inventory.Serialize());
-                    fivs.Add(itemsNotNull);
+                        foreach (MaterialItemSheet.Row row in itemSheet.OrderedList)
+                        {
+                            if (row.ItemId.Equals(itemsNotNull.Id))
+                            {
+                                Material item = ItemFactory.CreateMaterial(row);
+                                recipientAvatarState.inventory.AddFungibleItem(item, itemsNotNull.Count);
+                            }
+                        }
+
+                        state = state.SetAvatarState(recipient, recipientAvatarState);
+                        fivs.Add(itemsNotNull);
+                    }
+                    else
+                    {
+                        throw new StateNullException(Addresses.Avatar, recipient);
+                    }
                 }
             }
 
             IRandom rng = context.GetRandom();
             foreach (var recipient in mailRecords.Keys)
             {
-                if (
-                    state.GetState(recipient) is Dictionary dict &&
-                    dict.TryGetValue((Text)SerializeKeys.MailBoxKey, out IValue rawMailBox) &&
-                    dict.TryGetValue((Text)SerializeKeys.AgentAddressKey, out IValue rawAgentAddress)
-                )
+                if (state.GetAvatarState(recipient) is AvatarState recipientAvatarState)
                 {
-                    var agentAddress = rawAgentAddress.ToAddress();
-                    var mailBox = new MailBox((List)rawMailBox);
                     (List<FungibleAssetValue> favs, List<FungibleItemValue> fivs) = mailRecords[recipient];
                     List<(Address recipient, FungibleAssetValue v)> mailFavs =
                         favs.Select(v => (recipient, v))
                             .ToList();
 
-                    if (mailRecords.TryGetValue(agentAddress, out (List<FungibleAssetValue> agentFavs, List<FungibleItemValue> _) agentRecords))
+                    if (mailRecords.TryGetValue(recipientAvatarState.agentAddress, out (List<FungibleAssetValue> agentFavs, List<FungibleItemValue> _) agentRecords))
                     {
-                        mailFavs.AddRange(agentRecords.agentFavs.Select(v => (agentAddress, v)));
+                        mailFavs.AddRange(agentRecords.agentFavs.Select(v => (recipientAvatarState.agentAddress, v)));
                     }
-                    mailBox.Add(
+                    recipientAvatarState.mailBox.Add(
                         new UnloadFromMyGaragesRecipientMail(
                             context.BlockIndex,
                             rng.GenerateRandomGuid(),
@@ -133,9 +134,8 @@ namespace Nekoyume.Action
                             Memo
                         )
                     );
-                    mailBox.CleanUp();
-                    dict = dict.SetItem(SerializeKeys.MailBoxKey, mailBox.Serialize());
-                    state = state.SetState(recipient, dict);
+                    recipientAvatarState.mailBox.CleanUp();
+                    state = state.SetAvatarState(recipient, recipientAvatarState);
                 }
             }
 

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Action;
 using Nekoyume.Exceptions;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Event;

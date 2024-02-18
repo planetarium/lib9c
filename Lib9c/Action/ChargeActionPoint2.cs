@@ -7,9 +7,9 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
@@ -23,7 +23,7 @@ namespace Nekoyume.Action
 
         Address IChargeActionPointV1.AvatarAddress => avatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -53,7 +53,7 @@ namespace Nekoyume.Action
             }
 
             avatarState.actionPoint = gameConfigState.ActionPointMax;
-            return states.SetState(avatarAddress, avatarState.Serialize());
+            return states.SetAvatarState(avatarAddress, avatarState);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -1,13 +1,12 @@
 namespace Lib9c.Tests.Action
 {
     using Bencodex.Types;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class RequestPledgeTest
@@ -20,7 +19,7 @@ namespace Lib9c.Tests.Action
             Currency mead = Currencies.Mead;
             Address patron = new PrivateKey().Address;
             var context = new ActionContext();
-            IAccount states = new Account(MockState.Empty).MintAsset(context, patron, 2 * mead);
+            IWorld states = new World(new MockWorldState()).MintAsset(context, patron, 2 * mead);
             var address = new PrivateKey().Address;
             var action = new RequestPledge
             {
@@ -36,7 +35,7 @@ namespace Lib9c.Tests.Action
                 Signer = patron,
                 PreviousState = states,
             });
-            var contract = Assert.IsType<List>(nextState.GetState(address.GetPledgeAddress()));
+            var contract = Assert.IsType<List>(nextState.GetLegacyState(address.GetPledgeAddress()));
 
             Assert.Equal(patron, contract[0].ToAddress());
             Assert.False(contract[1].ToBoolean());
@@ -51,7 +50,7 @@ namespace Lib9c.Tests.Action
             Address patron = new PrivateKey().Address;
             var address = new PrivateKey().Address;
             Address contractAddress = address.GetPledgeAddress();
-            IAccount states = new Account(MockState.Empty).SetState(contractAddress, List.Empty);
+            IWorld states = new World(new MockWorldState()).SetLegacyState(contractAddress, List.Empty);
             var action = new RequestPledge
             {
                 AgentAddress = address,

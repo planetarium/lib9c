@@ -72,7 +72,7 @@ namespace Lib9c.Tests.Policy
         {
             public IValue PlainValue => (Bencodex.Types.Integer)42;
 
-            public IAccount Execute(IActionContext context)
+            public IWorld Execute(IActionContext context)
             {
                 throw new System.NotImplementedException();
             }

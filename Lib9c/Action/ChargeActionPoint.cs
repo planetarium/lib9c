@@ -7,9 +7,9 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -31,18 +31,15 @@ namespace Nekoyume.Action
 
         Address IChargeActionPointV1.AvatarAddress => avatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ChargeActionPoint exec started", addressesHex);
 
-            if (!states.TryGetAvatarStateV2(context.Signer, avatarAddress, out var avatarState, out _))
+            if (!states.TryGetAvatarState(context.Signer, avatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -70,11 +67,7 @@ namespace Nekoyume.Action
             avatarState.actionPoint = gameConfigState.ActionPointMax;
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ChargeActionPoint Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+            return states.SetAvatarState(avatarAddress, avatarState);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

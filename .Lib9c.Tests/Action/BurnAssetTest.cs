@@ -7,19 +7,20 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Nekoyume.Action;
     using Nekoyume.Exceptions;
+    using Nekoyume.Module;
     using Xunit;
 
     public class BurnAssetTest
     {
         private readonly Address _signer;
 
-        private readonly IAccount _prevState;
+        private readonly IWorld _prevState;
 
         public BurnAssetTest()
         {
             _signer = new PrivateKey().Address;
-            _prevState = new Account(
-                MockState.Empty
+            _prevState = new World(
+                new MockWorldState()
                     .SetBalance(_signer, Currencies.Crystal * 100)
                     .SetBalance(
                         _signer.Derive(string.Format(
@@ -123,14 +124,14 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute()
         {
-            IAccount prevState = _prevState;
+            IWorld prevState = _prevState;
 
             var action = new BurnAsset(
                 _signer,
                 Currencies.Crystal * 42,
                 "42"
             );
-            IAccount nextState = action.Execute(
+            IWorld nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -148,7 +149,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_With_AvatarAddress()
         {
-            IAccount prevState = _prevState;
+            IWorld prevState = _prevState;
             Address avatarAddress = _signer.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
@@ -162,7 +163,7 @@ namespace Lib9c.Tests.Action
                 Currencies.DailyRewardRune * 10,
                 "10"
             );
-            IAccount nextState = action.Execute(
+            IWorld nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -180,7 +181,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throws_InsufficientBalanceException()
         {
-            IAccount prevState = _prevState;
+            IWorld prevState = _prevState;
 
             var action = new BurnAsset(
                 _signer,
@@ -203,7 +204,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throws_InvalidActionFieldException()
         {
-            IAccount prevState = _prevState;
+            IWorld prevState = _prevState;
 
             var action = new BurnAsset(
                 default, // Wrong address

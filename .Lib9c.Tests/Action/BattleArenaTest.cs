@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
@@ -16,6 +16,7 @@
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -37,7 +38,7 @@
         private readonly Address _avatar4Address;
         private readonly Currency _crystal;
         private readonly Currency _ncg;
-        private IAccount _initialStates;
+        private IWorld _initialStates;
 
         public BattleArenaTest(ITestOutputHelper outputHelper)
         {
@@ -46,12 +47,12 @@
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialStates = new Account(MockState.Empty);
+            _initialStates = new World(new MockWorldState());
 
             _sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in _sheets)
             {
-                _initialStates = _initialStates.SetState(
+                _initialStates = _initialStates.SetLegacyState(
                     Addresses.TableSheet.Derive(key),
                     value.Serialize());
             }
@@ -108,34 +109,16 @@
             _avatar4Address = avatar4State.address;
 
             _initialStates = _initialStates
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .SetState(_agent1Address, agent1State.Serialize())
-                .SetState(
-                    _avatar1Address.Derive(LegacyInventoryKey),
-                    avatar1State.inventory.Serialize())
-                .SetState(
-                    _avatar1Address.Derive(LegacyWorldInformationKey),
-                    avatar1State.worldInformation.Serialize())
-                .SetState(
-                    _avatar1Address.Derive(LegacyQuestListKey),
-                    avatar1State.questList.Serialize())
-                .SetState(_avatar1Address, avatar1State.SerializeV2())
-                .SetState(_agent2Address, agent2State.Serialize())
-                .SetState(_avatar2Address, avatar2State.Serialize())
-                .SetState(_agent3Address, agent3State.Serialize())
-                .SetState(_avatar3Address, avatar3State.Serialize())
-                .SetState(_agent4Address, agent4State.Serialize())
-                .SetState(
-                    _avatar4Address.Derive(LegacyInventoryKey),
-                    avatar4State.inventory.Serialize())
-                .SetState(
-                    _avatar4Address.Derive(LegacyWorldInformationKey),
-                    avatar4State.worldInformation.Serialize())
-                .SetState(
-                    _avatar4Address.Derive(LegacyQuestListKey),
-                    avatar4State.questList.Serialize())
-                .SetState(_avatar4Address, avatar4State.SerializeV2())
-                .SetState(
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+                .SetAgentState(_agent1Address, agent1State)
+                .SetAvatarState(_avatar1Address, avatar1State)
+                .SetAgentState(_agent2Address, agent2State)
+                .SetAvatarState(_avatar2Address, avatar2State)
+                .SetAgentState(_agent3Address, agent3State)
+                .SetAvatarState(_avatar3Address, avatar3State)
+                .SetAgentState(_agent4Address, agent4State)
+                .SetAvatarState(_avatar4Address, avatar4State)
+                .SetLegacyState(
                     Addresses.GameConfig,
                     new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize());
 
@@ -417,7 +400,7 @@
                 roundData.Round);
             previousStates.TryGetArenaScore(arenaScoreAdr, out var arenaScore);
             arenaScore.AddScore(900);
-            previousStates = previousStates.SetState(arenaScoreAdr, arenaScore.Serialize());
+            previousStates = previousStates.SetLegacyState(arenaScoreAdr, arenaScore.Serialize());
 
             var action = new BattleArena
             {
@@ -486,7 +469,7 @@
             }
 
             beforeInfo.UseTicket(beforeInfo.Ticket);
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousStates = previousStates.SetLegacyState(arenaInfoAdr, beforeInfo.Serialize());
 
             var action = new BattleArena
             {
@@ -627,7 +610,7 @@
                 beforeInfo.BuyTicket(roundData.MaxPurchaseCount);
             }
 
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousStates = previousStates.SetLegacyState(arenaInfoAdr, beforeInfo.Serialize());
             var price = ArenaHelper.GetTicketPrice(
                 roundData,
                 beforeInfo,
@@ -709,8 +692,8 @@
 
             var purchasedCountDuringInterval = arenaInfoAdr.Derive(BattleArena.PurchasedCountKey);
             previousStates = previousStates
-                .SetState(arenaInfoAdr, beforeInfo.Serialize())
-                .SetState(
+                .SetLegacyState(arenaInfoAdr, beforeInfo.Serialize())
+                .SetLegacyState(
                     purchasedCountDuringInterval,
                     new Integer(beforeInfo.PurchasedTicketCount));
             var price = ArenaHelper.GetTicketPrice(
@@ -787,7 +770,7 @@
 
             beforeInfo.UseTicket(ArenaInformation.MaxTicketCount);
             var max = roundData.MaxPurchaseCountWithInterval;
-            previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+            previousStates = previousStates.SetLegacyState(arenaInfoAdr, beforeInfo.Serialize());
             for (var i = 0; i < max; i++)
             {
                 var price = ArenaHelper.GetTicketPrice(
@@ -931,15 +914,14 @@
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            Assert.True(previousStates.TryGetAvatarStateV2(
+            Assert.True(previousStates.TryGetAvatarState(
                 _agent1Address,
                 _avatar1Address,
-                out var previousMyAvatarState,
-                out _));
+                out var previousMyAvatarState));
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
-            previousStates = previousStates.SetState(GameConfigState.Address, gameConfigState.Serialize());
+            previousStates = previousStates.SetLegacyState(GameConfigState.Address, gameConfigState.Serialize());
 
             var blockIndex = roundData.StartBlockIndex + nextBlockIndex;
 
@@ -1005,8 +987,8 @@
 
             var purchasedCountDuringInterval = arenaInfoAdr.Derive(BattleArena.PurchasedCountKey);
             previousStates = previousStates
-                .SetState(arenaInfoAdr, beforeInfo.Serialize())
-                .SetState(
+                .SetLegacyState(arenaInfoAdr, beforeInfo.Serialize())
+                .SetLegacyState(
                     purchasedCountDuringInterval,
                     new Integer(beforeInfo.PurchasedTicketCount));
             var price = ArenaHelper.GetTicketPrice(
@@ -1150,7 +1132,7 @@
             if (isPurchased)
             {
                 beforeInfo.UseTicket(beforeInfo.Ticket);
-                previousStates = previousStates.SetState(arenaInfoAdr, beforeInfo.Serialize());
+                previousStates = previousStates.SetLegacyState(arenaInfoAdr, beforeInfo.Serialize());
                 for (var i = 0; i < ticket; i++)
                 {
                     var price = ArenaHelper.GetTicketPrice(
@@ -1192,15 +1174,14 @@
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            Assert.True(previousStates.TryGetAvatarStateV2(
+            Assert.True(previousStates.TryGetAvatarState(
                 myAgentAddress,
                 myAvatarAddress,
-                out var previousMyAvatarState,
-                out _));
+                out var previousMyAvatarState));
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
-            previousStates = previousStates.SetState(GameConfigState.Address, gameConfigState.Serialize());
+            previousStates = previousStates.SetLegacyState(GameConfigState.Address, gameConfigState.Serialize());
 
             var blockIndex = roundData.StartBlockIndex < arenaInterval
                 ? roundData.StartBlockIndex
@@ -1264,7 +1245,7 @@
 
             Assert.Equal(0, balance.RawValue);
 
-            var avatarState = nextStates.GetAvatarStateV2(myAvatarAddress);
+            var avatarState = nextStates.GetAvatarState(myAvatarAddress);
             var medalCount = 0;
             if (roundData.ArenaType != ArenaType.OffSeason)
             {
@@ -1287,9 +1268,9 @@
             Assert.InRange(materialCount, 0, high);
         }
 
-        private IAccount JoinArena(
+        private IWorld JoinArena(
             IActionContext context,
-            IAccount states,
+            IWorld states,
             Address signer,
             Address avatarAddress,
             long blockIndex,

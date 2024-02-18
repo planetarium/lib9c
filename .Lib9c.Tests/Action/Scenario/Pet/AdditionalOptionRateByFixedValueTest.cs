@@ -12,10 +12,10 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Pet;
     using Xunit;
-    using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
     public class AdditionalOptionRateByFixedValueTest
@@ -26,10 +26,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IAccount _initialStateV1;
-        private readonly IAccount _initialStateV2;
-        private readonly Address _inventoryAddr;
-        private readonly Address _worldInfoAddr;
+        private readonly IWorld _initialStateV1;
+        private readonly IWorld _initialStateV2;
         private readonly Address _recipeAddr;
         private int? _petId;
 
@@ -159,8 +157,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 1004,꼬마 펜리르,30,AdditionalOptionRateByFixedValue,20";
             (_tableSheets, _agentAddr, _avatarAddr, _initialStateV1, _initialStateV2)
                 = InitializeUtil.InitializeStates(sheetsOverride: sheets);
-            _inventoryAddr = _avatarAddr.Derive(LegacyInventoryKey);
-            _worldInfoAddr = _avatarAddr.Derive(LegacyWorldInformationKey);
             _recipeAddr = _avatarAddr.Derive("recipe_ids");
         }
 
@@ -191,11 +187,11 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 stageList = stageList.Add(i.Serialize());
             }
 
-            var stateV2 = _initialStateV2.SetState(_recipeAddr, stageList);
+            var stateV2 = _initialStateV2.SetLegacyState(_recipeAddr, stageList);
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,
                 _tableSheets,
-                _worldInfoAddr,
+                _avatarAddr,
                 recipe.UnlockStage
             );
 
@@ -211,7 +207,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 pet => pet.LevelOptionMap[(int)petLevel!].OptionType == PetOptionType
             );
             _petId = petRow.PetId;
-            stateV2 = stateV2.SetState(
+            stateV2 = stateV2.SetLegacyState(
                 PetState.DeriveAddress(_avatarAddr, (int)_petId),
                 new List(_petId!.Serialize(), petLevel.Serialize(), 0L.Serialize())
             );

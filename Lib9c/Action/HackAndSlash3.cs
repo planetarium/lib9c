@@ -8,10 +8,10 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Battle;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 
@@ -68,7 +68,7 @@ namespace Nekoyume.Action
             RankingMapAddress = plainValue["rankingMapAddress"].ToAddress();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
@@ -227,13 +227,13 @@ namespace Nekoyume.Action
 
             avatarState.updatedAt = ctx.BlockIndex;
             avatarState.mailBox.CleanUpV1();
-            states = states.SetState(avatarAddress, avatarState.Serialize());
+            states = states.SetAvatarState(avatarAddress, avatarState);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}HAS Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
 
             sw.Restart();
-            if (states.TryGetState(RankingMapAddress, out Dictionary d) && simulator.Log.IsClear)
+            if (states.TryGetLegacyState(RankingMapAddress, out Dictionary d) && simulator.Log.IsClear)
             {
                 var ranking = new RankingMapState(d);
                 ranking.Update(avatarState);
@@ -247,7 +247,7 @@ namespace Nekoyume.Action
                 sw.Stop();
                 Log.Verbose("{AddressesHex}HAS Serialize RankingState: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();
-                states = states.SetState(RankingMapAddress, serialized);
+                states = states.SetLegacyState(RankingMapAddress, serialized);
             }
 
             sw.Stop();
@@ -256,7 +256,7 @@ namespace Nekoyume.Action
             sw.Restart();
             if (simulator.Log.stageId >= GameConfig.RequireClearedStageLevel.ActionsInRankingBoard &&
                 simulator.Log.IsClear &&
-                states.TryGetState(WeeklyArenaAddress, out Dictionary weeklyDict))
+                states.TryGetLegacyState(WeeklyArenaAddress, out Dictionary weeklyDict))
             {
                 var weekly = new WeeklyArenaState(weeklyDict);
                 if (!weekly.Ended)
@@ -280,7 +280,7 @@ namespace Nekoyume.Action
                     sw.Stop();
                     Log.Verbose("{AddressesHex}HAS Serialize RankingState: {Elapsed}", addressesHex, sw.Elapsed);
 
-                    states = states.SetState(weekly.address, weeklySerialized);
+                    states = states.SetLegacyState(weekly.address, weeklySerialized);
                 }
             }
 

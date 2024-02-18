@@ -60,7 +60,7 @@ namespace Nekoyume.Model.State
         //       Because we need to make sure that the reward sheet V3 is applied
         //       after the `ClaimStakeReward5` action is deprecated.
         //       And we expect the index will be 7_650_000L.
-        public const long StakeRewardSheetV3Index = ClaimStakeReward5.ObsoleteBlockIndex + 1;
+        public const long StakeRewardSheetV3Index = ActionObsoleteConfig.V200060ObsoleteIndex + 1;
 
         public long CancellableBlockIndex { get; private set; }
         public long StartedBlockIndex { get; private set; }

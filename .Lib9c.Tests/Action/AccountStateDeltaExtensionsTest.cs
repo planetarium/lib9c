@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model.Coupons;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -45,7 +46,7 @@ namespace Lib9c.Tests.Action
         public void SetWorldBossKillReward(int level, int expectedRune, int expectedCrystal, Type exc)
         {
             var context = new ActionContext();
-            IAccount states = new Account(MockState.Empty);
+            IWorld states = new World(new MockWorldState());
             var rewardInfoAddress = new PrivateKey().Address;
             var rewardRecord = new WorldBossKillRewardRecord();
             for (int i = 0; i < level; i++)
@@ -53,7 +54,7 @@ namespace Lib9c.Tests.Action
                 rewardRecord[i] = false;
             }
 
-            states = states.SetState(rewardInfoAddress, rewardRecord.Serialize());
+            states = states.SetLegacyState(rewardInfoAddress, rewardRecord.Serialize());
 
             var random = new TestRandom();
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
@@ -79,7 +80,7 @@ namespace Lib9c.Tests.Action
                 var nextState = states.SetWorldBossKillReward(context, rewardInfoAddress, rewardRecord, 0, bossState, runeWeightSheet, killRewardSheet, runeSheet, random, avatarAddress, _agentAddress);
                 Assert.Equal(expectedRune * runeCurrency, nextState.GetBalance(avatarAddress, runeCurrency));
                 Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
-                var nextRewardInfo = new WorldBossKillRewardRecord((List)nextState.GetState(rewardInfoAddress));
+                var nextRewardInfo = new WorldBossKillRewardRecord((List)nextState.GetLegacyState(rewardInfoAddress));
                 Assert.All(nextRewardInfo, kv => Assert.True(kv.Value));
             }
             else
@@ -105,7 +106,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void SetCouponWallet()
         {
-            IAccount states = new Account(MockState.Empty);
+            IWorld states = new World(new MockWorldState());
             var guid1 = new Guid("6856AE42-A820-4041-92B0-5D7BAA52F2AA");
             var guid2 = new Guid("701BA698-CCB9-4FC7-B88F-7CB8C707D135");
             var guid3 = new Guid("910296E7-34E4-45D7-9B4E-778ED61F278B");
@@ -120,10 +121,10 @@ namespace Lib9c.Tests.Action
                 ImmutableDictionary<Guid, Coupon>.Empty);
 
             Assert.Null(
-                states.GetState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
+                states.GetLegacyState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
             Assert.Equal(
                 Bencodex.Types.List.Empty,
-                states.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
+                states.GetLegacyState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
 
             states = states.SetCouponWallet(
                 agentAddress1,
@@ -140,12 +141,12 @@ namespace Lib9c.Tests.Action
                 Bencodex.Types.List.Empty
                     .Add(coupon1.Serialize())
                     .Add(coupon2.Serialize()),
-                states.GetState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
+                states.GetLegacyState(agentAddress1.Derive(SerializeKeys.CouponWalletKey)));
 
             Assert.Equal(
                 Bencodex.Types.List.Empty
                     .Add(coupon3.Serialize()),
-                states.GetState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
+                states.GetLegacyState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
         }
 
         [Theory]
@@ -161,8 +162,8 @@ namespace Lib9c.Tests.Action
             var mead = Currencies.Mead;
             var price = RequestPledge.DefaultRefillMead * mead;
             ActionContext context = new ActionContext();
-            IAccount states = new Account(MockState.Empty)
-                .SetState(
+            IWorld states = new World(new MockWorldState())
+                .SetLegacyState(
                     agentContractAddress,
                     List.Empty.Add(patron.Serialize()).Add(true.Serialize()))
                 .MintAsset(context, patron, price);

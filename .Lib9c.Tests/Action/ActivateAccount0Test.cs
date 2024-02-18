@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class ActivateAccount0Test
@@ -18,13 +19,19 @@ namespace Lib9c.Tests.Action
             var privateKey = new PrivateKey();
             (ActivationKey activationKey, PendingActivationState pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
-            var state = new Account(
-                MockState.Empty
-                    .SetState(ActivatedAccountsState.Address, new ActivatedAccountsState().Serialize())
-                    .SetState(pendingActivation.address, pendingActivation.Serialize()));
+            var state = new World(
+                new MockWorldState()
+                    .SetState(
+                        ReservedAddresses.LegacyAccount,
+                        ActivatedAccountsState.Address,
+                        new ActivatedAccountsState().Serialize())
+                    .SetState(
+                        ReservedAddresses.LegacyAccount,
+                        pendingActivation.address,
+                        pendingActivation.Serialize()));
 
             ActivateAccount0 action = activationKey.CreateActivateAccount0(nonce);
-            IAccount nextState = action.Execute(new ActionContext()
+            IWorld nextState = action.Execute(new ActionContext()
             {
                 PreviousState = state,
                 Signer = default,
@@ -32,7 +39,7 @@ namespace Lib9c.Tests.Action
             });
 
             var activatedAccounts = new ActivatedAccountsState(
-                (Dictionary)nextState.GetState(ActivatedAccountsState.Address)
+                (Dictionary)nextState.GetLegacyState(ActivatedAccountsState.Address)
             );
             Assert.Equal(
                 new[] { default(Address) }.ToImmutableHashSet(),
@@ -46,10 +53,16 @@ namespace Lib9c.Tests.Action
             var privateKey = new PrivateKey();
             (ActivationKey activationKey, PendingActivationState pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
-            var state = new Account(
-                MockState.Empty
-                    .SetState(ActivatedAccountsState.Address, new ActivatedAccountsState().Serialize())
-                    .SetState(pendingActivation.address, pendingActivation.Serialize()));
+            var state = new World(
+                new MockWorldState()
+                    .SetState(
+                        ReservedAddresses.LegacyAccount,
+                        ActivatedAccountsState.Address,
+                        new ActivatedAccountsState().Serialize())
+                    .SetState(
+                        ReservedAddresses.LegacyAccount,
+                        pendingActivation.address,
+                        pendingActivation.Serialize()));
 
             // 잘못된 논스를 넣습니다.
             ActivateAccount0 action = activationKey.CreateActivateAccount0(new byte[] { 0x00, });
@@ -73,9 +86,12 @@ namespace Lib9c.Tests.Action
                 ActivationKey.Create(privateKey, nonce);
 
             // state에는 pendingActivation에 해당하는 대기가 없는 상태를 가정합니다.
-            var state = new Account(
-                MockState.Empty
-                    .SetState(ActivatedAccountsState.Address, new ActivatedAccountsState().Serialize()));
+            var state = new World(
+                new MockWorldState()
+                    .SetState(
+                        ReservedAddresses.LegacyAccount,
+                        ActivatedAccountsState.Address,
+                        new ActivatedAccountsState().Serialize()));
 
             ActivateAccount0 action = activationKey.CreateActivateAccount0(nonce);
             Assert.Throws<PendingActivationDoesNotExistsException>(() =>
@@ -98,7 +114,7 @@ namespace Lib9c.Tests.Action
                 ActivationKey.Create(privateKey, nonce);
 
             // state가 올바르게 초기화되지 않은 상태를 가정합니다.
-            var state = new Account(MockState.Empty);
+            var state = new World(new MockWorldState());
 
             ActivateAccount0 action = activationKey.CreateActivateAccount0(nonce);
             Assert.Throws<ActivatedAccountsDoesNotExistsException>(() =>
@@ -119,13 +135,19 @@ namespace Lib9c.Tests.Action
             var privateKey = new PrivateKey();
             (ActivationKey activationKey, PendingActivationState pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
-            var state = new Account(
-                MockState.Empty
-                    .SetState(ActivatedAccountsState.Address, new ActivatedAccountsState().Serialize())
-                    .SetState(pendingActivation.address, pendingActivation.Serialize()));
+            var state = new World(
+                new MockWorldState()
+                    .SetState(
+                        ReservedAddresses.LegacyAccount,
+                        ActivatedAccountsState.Address,
+                        new ActivatedAccountsState().Serialize())
+                    .SetState(
+                        ReservedAddresses.LegacyAccount,
+                        pendingActivation.address,
+                        pendingActivation.Serialize()));
 
             ActivateAccount0 action = activationKey.CreateActivateAccount0(nonce);
-            IAccount nextState = action.Execute(new ActionContext()
+            IWorld nextState = action.Execute(new ActionContext()
             {
                 PreviousState = state,
                 Signer = default,

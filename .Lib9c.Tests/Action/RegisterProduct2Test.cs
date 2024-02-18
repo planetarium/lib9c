@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -30,7 +31,7 @@ namespace Lib9c.Tests.Action
         private readonly AvatarState _avatarState;
         private readonly TableSheets _tableSheets;
         private readonly GameConfigState _gameConfigState;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public RegisterProduct2Test()
         {
@@ -54,12 +55,12 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses[0] = AvatarAddress;
 
-            _initialState = new Account(MockState.Empty)
-                .SetState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize())
-                .SetState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
-                .SetState(Addresses.GameConfig, _gameConfigState.Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(AvatarAddress, _avatarState.Serialize());
+            _initialState = new World(new MockWorldState())
+                .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
+                .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(AvatarAddress, _avatarState);
         }
 
         public static IEnumerable<object[]> Execute_Validate_MemberData()
@@ -207,7 +208,7 @@ namespace Lib9c.Tests.Action
             var asset = 3 * RuneHelper.DailyRewardRune;
             var context = new ActionContext();
             _initialState = _initialState
-                .SetState(AvatarAddress, _avatarState.Serialize())
+                .SetAvatarState(AvatarAddress, _avatarState)
                 .MintAsset(context, AvatarAddress, asset);
             var action = new RegisterProduct2
             {
@@ -247,22 +248,22 @@ namespace Lib9c.Tests.Action
                 Signer = _agentAddress,
             });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(AvatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(AvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
             Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct2.CostAp, nextAvatarState.actionPoint);
 
-            var marketState = new MarketState(nextState.GetState(Addresses.Market));
+            var marketState = new MarketState(nextState.GetLegacyState(Addresses.Market));
             Assert.Contains(AvatarAddress, marketState.AvatarAddresses);
 
             var productsState =
-                new ProductsState((List)nextState.GetState(ProductsState.DeriveAddress(AvatarAddress)));
+                new ProductsState((List)nextState.GetLegacyState(ProductsState.DeriveAddress(AvatarAddress)));
             var random = new TestRandom();
             for (int i = 0; i < 3; i++)
             {
                 var guid = random.GenerateRandomGuid();
                 Assert.Contains(guid, productsState.ProductIds);
                 var productAddress = Product.DeriveAddress(guid);
-                var product = ProductFactory.DeserializeProduct((List)nextState.GetState(productAddress));
+                var product = ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(productAddress));
                 Assert.Equal(product.ProductId, guid);
                 Assert.Equal(1 * Gold, product.Price);
                 if (product is ItemProduct itemProduct)
@@ -347,7 +348,7 @@ namespace Lib9c.Tests.Action
                 _avatarState.inventory.AddItem((ItemBase)tradableItem);
             }
 
-            _initialState = _initialState.SetState(AvatarAddress, _avatarState.Serialize());
+            _initialState = _initialState.SetAvatarState(AvatarAddress, _avatarState);
             var action = new RegisterProduct2
             {
                 AvatarAddress = AvatarAddress,

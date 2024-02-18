@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Serilog;
     using Xunit;
@@ -29,7 +30,7 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly GoldCurrencyState _goldCurrencyState;
         private readonly Guid _productId;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public Buy7Test(ITestOutputHelper outputHelper)
         {
@@ -39,12 +40,12 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
@@ -94,12 +95,12 @@ namespace Lib9c.Tests.Action
 
             _productId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
             _initialState = _initialState
-                .SetState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
-                .SetState(_sellerAgentAddress, sellerAgentState.Serialize())
-                .SetState(_sellerAvatarAddress, sellerAvatarState.Serialize())
-                .SetState(_buyerAgentAddress, buyerAgentState.Serialize())
-                .SetState(_buyerAvatarAddress, _buyerAvatarState.Serialize())
-                .SetState(Addresses.Shop, new ShopState().Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
+                .SetAgentState(_sellerAgentAddress, sellerAgentState)
+                .SetLegacyState(_sellerAvatarAddress, MigrationAvatarState.LegacySerializeV1(sellerAvatarState))
+                .SetAgentState(_buyerAgentAddress, buyerAgentState)
+                .SetLegacyState(_buyerAvatarAddress, MigrationAvatarState.LegacySerializeV1(_buyerAvatarState))
+                .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
                 .MintAsset(context, _buyerAgentAddress, _goldCurrencyState.Currency * 100);
         }
 
@@ -265,7 +266,7 @@ namespace Lib9c.Tests.Action
                     shopState.Register(shopItem);
                     shardedShopStates[shardedShopAddress] = shopState;
                     sellerAvatarState.inventory.AddItem2((ItemBase)tradableItem, shopItemData.ItemCount);
-                    _initialState = _initialState.SetState(shardedShopAddress, shopState.Serialize());
+                    _initialState = _initialState.SetLegacyState(shardedShopAddress, shopState.Serialize());
                 }
                 else
                 {
@@ -294,10 +295,10 @@ namespace Lib9c.Tests.Action
                 purchaseInfos.Add(purchaseInfo);
 
                 _initialState = _initialState
-                    .SetState(_buyerAvatarAddress, buyerAvatarState.Serialize())
-                    .SetState(sellerAvatarState.address, sellerAvatarState.Serialize())
-                    .SetState(shardedShopAddress, shopState.Serialize())
-                    .SetState(Addresses.Shop, legacyShopState.Serialize());
+                    .SetAvatarState(_buyerAvatarAddress, buyerAvatarState)
+                    .SetAvatarState(sellerAvatarState.address, sellerAvatarState)
+                    .SetLegacyState(shardedShopAddress, shopState.Serialize())
+                    .SetLegacyState(Addresses.Shop, legacyShopState.Serialize());
             }
 
             if (shopItemMembers.Any(i => i.ItemType == ItemType.Material))
@@ -335,7 +336,7 @@ namespace Lib9c.Tests.Action
             {
                 Address shardedShopAddress =
                     ShardedShopState.DeriveAddress(purchaseInfo.itemSubType, purchaseInfo.productId);
-                var nextShopState = new ShardedShopState((Dictionary)nextState.GetState(shardedShopAddress));
+                var nextShopState = new ShardedShopState((Dictionary)nextState.GetLegacyState(shardedShopAddress));
                 Assert.Empty(nextShopState.Products);
                 Guid itemId = shopItemMembers
                     .Where(i => i.ProductId == purchaseInfo.productId)
@@ -443,7 +444,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = new Account(MockState.Empty),
+                    PreviousState = new World(new MockWorldState()),
                     RandomSeed = 0,
                     Signer = _buyerAgentAddress,
                 })
@@ -461,7 +462,7 @@ namespace Lib9c.Tests.Action
                     0
                 ),
             };
-            _initialState = _initialState.SetState(_buyerAvatarAddress, avatarState.Serialize());
+            _initialState = _initialState.SetAvatarState(_buyerAvatarAddress, avatarState);
 
             PurchaseInfo0 purchaseInfo0 = new PurchaseInfo0(
                 default,
@@ -543,7 +544,7 @@ namespace Lib9c.Tests.Action
             ShardedShopState shopState = new ShardedShopState(shardedShopAddress);
             shopState.Register(shopItem);
 
-            _initialState = _initialState.SetState(shardedShopAddress, shopState.Serialize());
+            _initialState = _initialState.SetLegacyState(shardedShopAddress, shopState.Serialize());
 
             var action = new Buy7
             {
@@ -613,7 +614,7 @@ namespace Lib9c.Tests.Action
             ShardedShopState shopState = new ShardedShopState(shardedShopAddress);
             shopState.Register(shopItem);
 
-            _initialState = _initialState.SetState(shardedShopAddress, shopState.Serialize());
+            _initialState = _initialState.SetLegacyState(shardedShopAddress, shopState.Serialize());
 
             var action = new Buy7
             {
@@ -658,7 +659,7 @@ namespace Lib9c.Tests.Action
 
             var balance = _initialState.GetBalance(_buyerAgentAddress, _goldCurrencyState.Currency);
             _initialState = _initialState.BurnAsset(context, _buyerAgentAddress, balance)
-                .SetState(shardedShopAddress, shopState.Serialize());
+                .SetLegacyState(shardedShopAddress, shopState.Serialize());
 
             PurchaseInfo0 purchaseInfo0 = new PurchaseInfo0(
                 _productId,
@@ -739,7 +740,7 @@ namespace Lib9c.Tests.Action
 
             ShardedShopState shopState = new ShardedShopState(shardedShopAddress);
             shopState.Register(shopItem);
-            _initialState = _initialState.SetState(shardedShopAddress, shopState.Serialize());
+            _initialState = _initialState.SetLegacyState(shardedShopAddress, shopState.Serialize());
 
             Assert.True(shopItem.ExpiredBlockIndex > 0);
 
@@ -781,7 +782,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_ErrorCode_ShopItemExpired()
         {
-            IAccount previousStates = _initialState;
+            IWorld previousStates = _initialState;
             Address shardedShopStateAddress = ShardedShopState.DeriveAddress(ItemSubType.Weapon, _productId);
             ShardedShopState shopState = new ShardedShopState(shardedShopStateAddress);
             Weapon itemUsable = (Weapon)ItemFactory.CreateItemUsable(
@@ -797,7 +798,7 @@ namespace Lib9c.Tests.Action
                 itemUsable);
 
             shopState.Register(shopItem);
-            previousStates = previousStates.SetState(shardedShopStateAddress, shopState.Serialize());
+            previousStates = previousStates.SetLegacyState(shardedShopStateAddress, shopState.Serialize());
 
             Assert.True(shopState.Products.ContainsKey(_productId));
 
@@ -833,7 +834,7 @@ namespace Lib9c.Tests.Action
         [InlineData(10, 20)]
         public void Execute_ErrorCode_InvalidPrice(int shopPrice, int price)
         {
-            IAccount previousStates = _initialState;
+            IWorld previousStates = _initialState;
             Address shardedShopStateAddress = ShardedShopState.DeriveAddress(ItemSubType.Weapon, _productId);
             ShardedShopState shopState = new ShardedShopState(shardedShopStateAddress);
             Weapon itemUsable = (Weapon)ItemFactory.CreateItemUsable(
@@ -849,7 +850,7 @@ namespace Lib9c.Tests.Action
                 itemUsable);
 
             shopState.Register(shopItem);
-            previousStates = previousStates.SetState(shardedShopStateAddress, shopState.Serialize());
+            previousStates = previousStates.SetLegacyState(shardedShopStateAddress, shopState.Serialize());
 
             Assert.True(shopState.Products.ContainsKey(_productId));
 
@@ -902,8 +903,8 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = avatarAddress;
 
             _initialState = _initialState
-                .SetState(agentAddress, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize());
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
             return (avatarState, agentState);
         }
 

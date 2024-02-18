@@ -16,6 +16,7 @@ using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Serilog;
@@ -121,7 +122,7 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var ctx = context;
@@ -133,12 +134,9 @@ namespace Nekoyume.Action
                     slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
             var costSheetV3Address = Addresses.GetSheetAddress<EnhancementCostSheetV3>();
-            var sheetState = states.GetState(costSheetV3Address);
+            var sheetState = states.GetLegacyState(costSheetV3Address);
             if (sheetState != null)
             {
                 throw new ActionObsoletedException(nameof(ItemEnhancement11));
@@ -150,7 +148,13 @@ namespace Nekoyume.Action
             sw.Start();
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ItemEnhancement exec started", addressesHex);
-            if (!states.TryGetAgentAvatarStatesV2(ctx.Signer, avatarAddress, out var agentState, out var avatarState, out _))
+            var agentState = states.GetAgentState(ctx.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the agent state of the signer was failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(ctx.Signer, avatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
@@ -315,7 +319,7 @@ namespace Nekoyume.Action
 
                 Currency currency = states.GetGoldCurrency();
                 FungibleAssetValue stakedAmount = states.GetStakedAmount(context.Signer);
-                if (stakedAmount == currency * 0 && states.TryGetState(monsterCollectionAddress, out Dictionary _))
+                if (stakedAmount == currency * 0 && states.TryGetLegacyState(monsterCollectionAddress, out Dictionary _))
                 {
                     stakedAmount = states.GetBalance(monsterCollectionAddress, currency);
                 }
@@ -372,16 +376,12 @@ namespace Nekoyume.Action
 
             // Set state
             sw.Restart();
-            states = states
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+            states = states.SetAvatarState(avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}ItemEnhancement Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ItemEnhancement Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.SetState(slotAddress, slotState.Serialize());
+            return states.SetLegacyState(slotAddress, slotState.Serialize());
         }
 
         public static EnhancementResult GetEnhancementResult(EnhancementCostSheetV2.Row row, IRandom random)

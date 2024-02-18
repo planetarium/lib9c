@@ -1,11 +1,11 @@
 namespace Lib9c.Tests.Action
 {
-    using System.Collections.Immutable;
     using Libplanet.Action.State;
     using Libplanet.Common;
     using Libplanet.Crypto;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class CreatePendingActivationTest
@@ -21,9 +21,9 @@ namespace Lib9c.Tests.Action
             var action = new CreatePendingActivation(pendingActivation);
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var state = new Account(
-                MockState.Empty
-                    .SetState(AdminState.Address, adminState.Serialize()));
+            var state = new World(
+                new MockWorldState()
+                    .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize()));
             var actionContext = new ActionContext()
             {
                 BlockIndex = 1,
@@ -34,7 +34,7 @@ namespace Lib9c.Tests.Action
             var nextState = action.Execute(actionContext);
             Assert.Equal(
                 pendingActivation.Serialize(),
-                nextState.GetState(pendingActivation.address)
+                nextState.GetLegacyState(pendingActivation.address)
             );
         }
 
@@ -49,9 +49,9 @@ namespace Lib9c.Tests.Action
             var action = new CreatePendingActivation(pendingActivation);
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var state = new Account(
-                MockState.Empty
-                    .SetState(AdminState.Address, adminState.Serialize()));
+            var state = new World(
+                new MockWorldState()
+                    .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize()));
 
             Assert.Throws<PolicyExpiredException>(
                 () => action.Execute(new ActionContext()

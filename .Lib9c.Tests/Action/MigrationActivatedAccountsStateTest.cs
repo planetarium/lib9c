@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class MigrationActivatedAccountsStateTest
@@ -16,14 +17,14 @@ namespace Lib9c.Tests.Action
         {
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
             var admin = new Address("8d9f76aF8Dc5A812aCeA15d8bf56E2F790F47fd7");
-            var state = new Account(
-                MockState.Empty
-                    .SetState(AdminState.Address, new AdminState(admin, 100).Serialize())
-                    .SetState(ActivatedAccountsState.Address, new ActivatedAccountsState().AddAccount(default).Serialize()));
+            var state = new World(
+                new MockWorldState()
+                    .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, new AdminState(admin, 100).Serialize())
+                    .SetState(ReservedAddresses.LegacyAccount, ActivatedAccountsState.Address, new ActivatedAccountsState().AddAccount(default).Serialize()));
 
             var action = new MigrationActivatedAccountsState();
 
-            IAccount nextState = action.Execute(new ActionContext()
+            IWorld nextState = action.Execute(new ActionContext()
             {
                 PreviousState = state,
                 Signer = admin,
@@ -31,11 +32,11 @@ namespace Lib9c.Tests.Action
             });
 
             var nextAccountsState = new ActivatedAccountsState(
-                (Dictionary)nextState.GetState(ActivatedAccountsState.Address)
+                (Dictionary)nextState.GetLegacyState(ActivatedAccountsState.Address)
             );
             Assert.Single(nextAccountsState.Accounts);
             Assert.Equal(default, nextAccountsState.Accounts.First());
-            Assert.True(nextState.GetState(default(Address).Derive(ActivationKey.DeriveKey)).ToBoolean());
+            Assert.True(nextState.GetLegacyState(default(Address).Derive(ActivationKey.DeriveKey)).ToBoolean());
         }
     }
 }

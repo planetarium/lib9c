@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Helper;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -39,26 +40,17 @@ namespace Lib9c.Tests.Action.Scenario
             );
 
             var context = new ActionContext();
-            IAccount initialState = new Account(MockState.Empty)
-                .SetState(agentAddress, agentState.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize())
-                .SetState(
-                    avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize())
-                .SetState(
+            IWorld initialState = new World(new MockWorldState())
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState)
+                .SetLegacyState(
                     Addresses.GoldCurrency,
                     new GoldCurrencyState(Currency.Legacy("NCG", 2, minters: null)).Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
             foreach (var (key, value) in sheets)
             {
                 initialState = initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var runeId = 30001;
@@ -67,7 +59,7 @@ namespace Lib9c.Tests.Action.Scenario
             initialState = initialState.MintAsset(context, avatarAddress, rune * 1);
 
             var runeAddress = RuneState.DeriveAddress(avatarAddress, runeId);
-            Assert.Null(initialState.GetState(runeAddress));
+            Assert.Null(initialState.GetLegacyState(runeAddress));
 
             initialState = initialState.MintAsset(
                 new ActionContext(),
@@ -89,13 +81,13 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
             });
 
-            var rawRuneState = Assert.IsType<List>(prevState.GetState(runeAddress));
+            var rawRuneState = Assert.IsType<List>(prevState.GetLegacyState(runeAddress));
             var runeState = new RuneState(rawRuneState);
             Assert.Equal(1, runeState.Level);
             Assert.Equal(runeId, runeState.RuneId);
 
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
-            Assert.Null(prevState.GetState(runeSlotStateAddress));
+            Assert.Null(prevState.GetLegacyState(runeSlotStateAddress));
 
             var unlockAction = new UnlockRuneSlot
             {
@@ -111,7 +103,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
             });
 
-            var runeSlotState = new RuneSlotState((List)state.GetState(runeSlotStateAddress));
+            var runeSlotState = new RuneSlotState((List)state.GetLegacyState(runeSlotStateAddress));
             Assert.Single(runeSlotState.GetRuneSlot().Where(r => r.RuneSlotType == RuneSlotType.Crystal && !r.IsLock));
             Assert.Single(runeSlotState.GetRuneSlot().Where(r => r.RuneSlotType == RuneSlotType.Crystal && r.IsLock));
 
@@ -137,9 +129,9 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
             });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(avatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(avatarAddress);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(1));
-            var rawRuneSlot = Assert.IsType<List>(nextState.GetState(runeSlotStateAddress));
+            var rawRuneSlot = Assert.IsType<List>(nextState.GetLegacyState(runeSlotStateAddress));
             var runeSlot = new RuneSlotState(rawRuneSlot);
             var runeSlotInfo = runeSlot.GetEquippedRuneSlotInfos().Single();
 

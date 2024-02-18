@@ -12,6 +12,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
@@ -25,10 +26,10 @@ namespace Nekoyume.Action
         public Address AvatarAddress;
         public List<IProductInfo> ProductInfos;
         public bool ChargeAp;
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount states = context.PreviousState;
+            IWorld states = context.PreviousState;
 
             if (!ProductInfos.Any())
             {
@@ -50,8 +51,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            if (!states.TryGetAvatarStateV2(context.Signer, AvatarAddress, out var avatarState,
-                    out var migrationRequired))
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException("failed to load avatar state");
             }
@@ -59,19 +59,19 @@ namespace Nekoyume.Action
             avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
-            if (states.TryGetState(productsStateAddress, out List rawProductList))
+            if (states.TryGetLegacyState(productsStateAddress, out List rawProductList))
             {
                 productsState = new ProductsState(rawProductList);
             }
             else
             {
                 // cancel order before product registered case.
-                var marketState = states.TryGetState(Addresses.Market, out List rawMarketList)
+                var marketState = states.TryGetLegacyState(Addresses.Market, out List rawMarketList)
                     ? rawMarketList
                     : List.Empty;
                 productsState = new ProductsState();
                 marketState = marketState.Add(AvatarAddress.Serialize());
-                states = states.SetState(Addresses.Market, marketState);
+                states = states.SetLegacyState(Addresses.Market, marketState);
             }
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             foreach (var productInfo in ProductInfos)
@@ -80,7 +80,7 @@ namespace Nekoyume.Action
                 {
                     var productType = productInfo.Type;
                     var orderAddress = Order.DeriveAddress(productInfo.ProductId);
-                    if (!states.TryGetState(orderAddress, out Dictionary rawOrder))
+                    if (!states.TryGetLegacyState(orderAddress, out Dictionary rawOrder))
                     {
                         throw new FailedLoadStateException(
                             $"{addressesHex} failed to load {nameof(Order)}({orderAddress}).");
@@ -107,8 +107,7 @@ namespace Nekoyume.Action
                             throw new ArgumentOutOfRangeException(nameof(order));
                     }
 
-                    states = SellCancellation.Cancel(context, states, avatarState, addressesHex,
-                        order);
+                    states = SellCancellation.Cancel(context, states, avatarState, addressesHex, order);
                 }
                 else
                 {
@@ -117,24 +116,18 @@ namespace Nekoyume.Action
             }
 
             states = states
-                .SetState(AvatarAddress, avatarState.SerializeV2())
-                .SetState(AvatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(productsStateAddress, productsState.Serialize());
-
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(AvatarAddress.Derive(LegacyQuestListKey),
-                        avatarState.questList.Serialize())
-                    .SetState(AvatarAddress.Derive(LegacyWorldInformationKey),
-                        avatarState.worldInformation.Serialize());
-            }
+                .SetAvatarState(AvatarAddress, avatarState)
+                .SetLegacyState(productsStateAddress, productsState.Serialize());
 
             return states;
         }
 
-        public static IAccount Cancel(ProductsState productsState, IProductInfo productInfo, IAccount states,
-            AvatarState avatarState, IActionContext context)
+        public static IWorld Cancel(
+            ProductsState productsState,
+            IProductInfo productInfo,
+            IWorld states,
+            AvatarState avatarState,
+            IActionContext context)
         {
             var productId = productInfo.ProductId;
             if (!productsState.ProductIds.Contains(productId))
@@ -145,7 +138,7 @@ namespace Nekoyume.Action
             productsState.ProductIds.Remove(productId);
 
             var productAddress = Product.DeriveAddress(productId);
-            var product = ProductFactory.DeserializeProduct((List) states.GetState(productAddress));
+            var product = ProductFactory.DeserializeProduct((List) states.GetLegacyState(productAddress));
             product.Validate(productInfo);
 
             switch (product)
@@ -177,7 +170,7 @@ namespace Nekoyume.Action
 
             var mail = new ProductCancelMail(context.BlockIndex, productId, context.BlockIndex, productId);
             avatarState.Update(mail);
-            states = states.SetState(productAddress, Null.Value);
+            states = states.SetLegacyState(productAddress, Null.Value);
             return states;
         }
 

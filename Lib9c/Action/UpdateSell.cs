@@ -12,11 +12,11 @@ using Libplanet.Crypto;
 using Nekoyume.Battle;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
 using BxDictionary = Bencodex.Types.Dictionary;
-using BxList = Bencodex.Types.List;
 
 namespace Nekoyume.Action
 {
@@ -51,17 +51,14 @@ namespace Nekoyume.Action
                 .ToEnumerable(info => new UpdateSellInfo((List)info));
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var inventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = sellerAvatarAddress.Derive(LegacyQuestListKey);
             var digestListAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
-            if (!(states.GetState(Addresses.Market) is null))
+            if (!(states.GetLegacyState(Addresses.Market) is null))
             {
                 throw new ActionObsoletedException("UpdateSell action is obsoleted. please use ReRegisterProduct.");
             }
@@ -82,7 +79,7 @@ namespace Nekoyume.Action
             {
                 throw new ListEmptyException($"{addressesHex} List - UpdateSell infos was empty.");
             }
-            if (!states.TryGetAvatarStateV2(context.Signer, sellerAvatarAddress, out var avatarState, out _))
+            if (!states.TryGetAvatarState(context.Signer, sellerAvatarAddress, out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
@@ -106,7 +103,7 @@ namespace Nekoyume.Action
 
             var costumeStatSheet = states.GetSheet<CostumeStatSheet>();
 
-            if (!states.TryGetState(digestListAddress, out Dictionary rawList))
+            if (!states.TryGetLegacyState(digestListAddress, out Dictionary rawList))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex} failed to load {nameof(OrderDigest)}({digestListAddress}).");
@@ -123,7 +120,7 @@ namespace Nekoyume.Action
 
                 // for updateSell
                 var updateSellShopState =
-                    states.TryGetState(updateSellShopAddress, out Dictionary serializedState)
+                    states.TryGetLegacyState(updateSellShopAddress, out Dictionary serializedState)
                         ? new ShardedShopStateV2(serializedState)
                         : new ShardedShopStateV2(updateSellShopAddress);
 
@@ -149,19 +146,17 @@ namespace Nekoyume.Action
                 digestList.Add(orderDigest);
 
                 states = states
-                    .SetState(itemAddress, tradableItem.Serialize())
-                    .SetState(updateSellOrderAddress, newOrder.Serialize())
-                    .SetState(updateSellShopAddress, updateSellShopState.Serialize());
+                    .SetLegacyState(itemAddress, tradableItem.Serialize())
+                    .SetLegacyState(updateSellOrderAddress, newOrder.Serialize())
+                    .SetLegacyState(updateSellShopAddress, updateSellShopState.Serialize());
                 sw.Stop();
                 Log.Verbose("{AddressesHex} UpdateSell Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);
             }
 
             sw.Restart();
-            states = states.SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(sellerAvatarAddress, avatarState.SerializeV2())
-                .SetState(digestListAddress, digestList.Serialize());
+            states = states
+                .SetAvatarState(sellerAvatarAddress, avatarState)
+                .SetLegacyState(digestListAddress, digestList.Serialize());
             sw.Stop();
             Log.Verbose("{AddressesHex} UpdateSell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
 
@@ -171,7 +166,7 @@ namespace Nekoyume.Action
             return states;
         }
 
-        public static IAccount Cancel(IAccount states,
+        public static IWorld Cancel(IWorld states,
             UpdateSellInfo updateSellInfo, string addressesHex, AvatarState avatarState,
             OrderDigestListState digestList, IActionContext context, Address sellerAvatarAddress)
         {
@@ -192,7 +187,7 @@ namespace Nekoyume.Action
 
             // for sell cancel
             sw.Start();
-            if (!states.TryGetState(shopAddress, out BxDictionary shopStateDict))
+            if (!states.TryGetLegacyState(shopAddress, out BxDictionary shopStateDict))
             {
                 throw new FailedLoadStateException($"{addressesHex}failed to load {nameof(ShardedShopStateV2)}({shopAddress}).");
             }
@@ -200,7 +195,7 @@ namespace Nekoyume.Action
             sw.Stop();
             Log.Verbose("{AddressesHex} UpdateSell Sell Cancel Get ShopState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
-            if (!states.TryGetState(Order.DeriveAddress(orderId), out Dictionary orderDict))
+            if (!states.TryGetLegacyState(Order.DeriveAddress(orderId), out Dictionary orderDict))
             {
                 throw new FailedLoadStateException($"{addressesHex} failed to load {nameof(Order)}({Order.DeriveAddress(updateSellInfo.orderId)}).");
             }
@@ -212,7 +207,7 @@ namespace Nekoyume.Action
             {
                 var shardedShopState = new ShardedShopStateV2(shopStateDict);
                 shardedShopState.Remove(orderOnSale, context.BlockIndex);
-                states = states.SetState(shopAddress, shardedShopState.Serialize());
+                states = states.SetLegacyState(shopAddress, shardedShopState.Serialize());
             }
 
             digestList.Remove(orderOnSale.OrderId);
@@ -225,7 +220,7 @@ namespace Nekoyume.Action
                 avatarState.mailBox.Remove(expirationMail);
             }
 
-            return states.SetState(digestList.Address, digestList.Serialize());
+            return states.SetLegacyState(digestList.Address, digestList.Serialize());
         }
     }
 }

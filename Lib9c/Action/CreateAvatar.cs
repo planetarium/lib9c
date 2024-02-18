@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Extensions;
-using Nekoyume.Helper;
 using Nekoyume.Model.Item;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
-using Nekoyume.TableData.Pet;
 using Serilog;
 using static Lib9c.SerializeKeys;
+
+#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+using System.Linq;
+using Lib9c.DevExtensions;
+using Lib9c.DevExtensions.Model;
+using Nekoyume.Model.Skill;
+using Nekoyume.Model.Stat;
+#endif
 
 namespace Nekoyume.Action
 {
@@ -65,7 +69,7 @@ namespace Nekoyume.Action
             name = (Text) plainValue["name"];
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
@@ -78,9 +82,6 @@ namespace Nekoyume.Action
                     index
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
@@ -137,35 +138,23 @@ namespace Nekoyume.Action
             foreach (var address in avatarState.combinationSlotAddresses)
             {
                 var slotState = new CombinationSlotState(address, 0);
-                states = states.SetState(address, slotState.Serialize());
+                states = states.SetLegacyState(address, slotState.Serialize());
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);
 
-            // Add Runes when executing on editor mode.
-#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
-            states = CreateAvatar0.AddRunesForTest(ctx, avatarAddress, states);
 
-            // Add pets for test
-            if (states.TryGetSheet(out PetSheet petSheet))
+#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+            // prepare for test when executing on editor mode.
+            var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
+
+            states = CreateAvatar0.AddRunesForTest(ctx, avatarAddress, states, data.RuneStoneCount);
+            states = CreateAvatar0.AddSoulStoneForTest(ctx, avatarAddress, states, data.SoulStoneCount);
+            if (data.AddPet)
             {
-                foreach (var row in petSheet)
-                {
-                    var petState = new PetState(row.Id);
-                    petState.LevelUp();
-                    var petStateAddress = PetState.DeriveAddress(avatarAddress, row.Id);
-                    states = states.SetState(petStateAddress, petState.Serialize());
-                }
+                states = CreateAvatar0.AddPetsForTest(avatarAddress, states);
             }
 
-            var recipeIds = new int[] {
-                21,
-                62,
-                103,
-                128,
-                148,
-                152,
-            };
             var equipmentSheet = states.GetSheet<EquipmentItemSheet>();
             var recipeSheet = states.GetSheet<EquipmentItemRecipeSheet>();
             var subRecipeSheet = states.GetSheet<EquipmentItemSubRecipeSheetV2>();
@@ -175,11 +164,10 @@ namespace Nekoyume.Action
             var enhancementCostSheet = states.GetSheet<EnhancementCostSheetV2>();
             var random = context.GetRandom();
 
-            avatarState.level = 300;
-            avatarState.exp = characterLevelSheet[300].Exp;
+            avatarState.level = data.Level;
+            avatarState.exp = characterLevelSheet[data.Level].Exp;
 
-            // prepare equipments for test
-            foreach (var recipeId in recipeIds)
+            foreach (var recipeId in data.FullOptionEquipmentRecipeIds)
             {
                 var recipeRow = recipeSheet[recipeId];
                 var subRecipeId = recipeRow.SubRecipeIds[1];
@@ -246,11 +234,8 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CreateAvatar Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(signer, agentState.Serialize())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(avatarAddress, avatarState.SerializeV2());
+                .SetAgentState(signer, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
         }
 
         public static void AddItem(ItemSheet itemSheet, CreateAvatarItemSheet createAvatarItemSheet,
@@ -277,8 +262,8 @@ namespace Nekoyume.Action
             }
         }
 
-        public static IAccount MintAsset(CreateAvatarFavSheet favSheet,
-            AvatarState avatarState, IAccount states, IActionContext context)
+        public static IWorld MintAsset(CreateAvatarFavSheet favSheet,
+            AvatarState avatarState, IWorld states, IActionContext context)
         {
             foreach (var row in favSheet.Values)
             {

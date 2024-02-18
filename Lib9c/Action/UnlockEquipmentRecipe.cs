@@ -8,11 +8,10 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model;
-using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -28,13 +27,10 @@ namespace Nekoyume.Action
         IEnumerable<int> IUnlockEquipmentRecipeV1.RecipeIds => RecipeIds;
         Address IUnlockEquipmentRecipeV1.AvatarAddress => AvatarAddress;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
             var unlockedRecipeIdsAddress = AvatarAddress.Derive("recipe_ids");
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -45,19 +41,17 @@ namespace Nekoyume.Action
             }
 
             WorldInformation worldInformation;
-            bool migrationRequired = false;
-            AvatarState avatarState = null;
-            if (states.TryGetState(worldInformationAddress, out Dictionary rawInfo))
+            try
             {
-                worldInformation = new WorldInformation(rawInfo);
+                worldInformation = states.GetWorldInformation(AvatarAddress);
             }
-            else
+            catch (FailedLoadStateException)
             {
                 // AvatarState migration required.
-                if (states.TryGetAvatarState(context.Signer, AvatarAddress, out avatarState))
+                if (states.TryGetAvatarState(context.Signer, AvatarAddress, out AvatarState avatarState))
                 {
                     worldInformation = avatarState.worldInformation;
-                    migrationRequired = true;
+                    states = states.SetAvatarState(AvatarAddress, avatarState);
                 }
                 else
                 {
@@ -78,16 +72,7 @@ namespace Nekoyume.Action
                 throw new NotEnoughFungibleAssetValueException($"required {cost}, but balance is {balance}");
             }
 
-            if (migrationRequired)
-            {
-                states = states
-                    .SetState(AvatarAddress, avatarState.SerializeV2())
-                    .SetState(worldInformationAddress, worldInformation.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize());
-            }
-
-            states = states.SetState(unlockedRecipeIdsAddress,
+            states = states.SetLegacyState(unlockedRecipeIdsAddress,
                     unlockedIds.Aggregate(List.Empty,
                         (current, address) => current.Add(address.Serialize())));
             var ended = DateTimeOffset.UtcNow;
@@ -96,14 +81,14 @@ namespace Nekoyume.Action
         }
 
         public static List<int> UnlockedIds(
-            IAccount states,
+            IWorld states,
             Address unlockedRecipeIdsAddress,
             EquipmentItemRecipeSheet equipmentRecipeSheet,
             WorldInformation worldInformation,
             List<int> recipeIds
         )
         {
-            var unlockedIds = states.TryGetState(unlockedRecipeIdsAddress, out List rawIds)
+            var unlockedIds = states.TryGetLegacyState(unlockedRecipeIdsAddress, out List rawIds)
                 ? rawIds.ToList(StateExtensions.ToInteger)
                 : equipmentRecipeSheet.Values.Where(r => r.CRYSTAL == 0).Select(r => r.Id).ToList();
 

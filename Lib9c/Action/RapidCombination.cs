@@ -12,6 +12,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Pet;
 using Serilog;
@@ -32,7 +33,7 @@ namespace Nekoyume.Action
         Address IRapidCombinationV1.AvatarAddress => avatarAddress;
         int IRapidCombinationV1.SlotIndex => slotIndex;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -43,19 +44,20 @@ namespace Nekoyume.Action
                     slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination exec started", addressesHex);
 
-            if (!states.TryGetAgentAvatarStatesV2(
+            var agentState = states.GetAgentState(context.Signer);
+            if (agentState is null)
+            {
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(
                 context.Signer,
                 avatarAddress,
-                out var agentState,
-                out var avatarState,
-                out _))
+                out var avatarState))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
@@ -93,7 +95,7 @@ namespace Nekoyume.Action
             if (slotState.PetId.HasValue)
             {
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, slotState.PetId.Value);
-                if (!states.TryGetState(petStateAddress, out List rawState))
+                if (!states.TryGetLegacyState(petStateAddress, out List rawState))
                 {
                     throw new FailedLoadStateException($"{addressesHex}Aborted as the {nameof(PetState)} was failed to load.");
                 }
@@ -148,17 +150,14 @@ namespace Nekoyume.Action
             {
                 petState.Update(context.BlockIndex);
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, petState.PetId);
-                states = states.SetState(petStateAddress, petState.Serialize());
+                states = states.SetLegacyState(petStateAddress, petState.Serialize());
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
+                .SetAvatarState(avatarAddress, avatarState)
+                .SetLegacyState(slotAddress, slotState.Serialize());
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

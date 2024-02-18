@@ -11,13 +11,14 @@ namespace Lib9c.Tests.Util
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using static Lib9c.SerializeKeys;
 
     public static class CraftUtil
     {
-        public static IAccount PrepareCombinationSlot(
-            IAccount state,
+        public static IWorld PrepareCombinationSlot(
+            IWorld state,
             Address avatarAddress,
             int slotIndex
         )
@@ -33,18 +34,18 @@ namespace Lib9c.Tests.Util
                 // ItemEnhancement: 9
                 GameConfig.RequireClearedStageLevel.ItemEnhancementAction
             );
-            return state.SetState(slotAddress, slotState.Serialize());
+            return state.SetLegacyState(slotAddress, slotState.Serialize());
         }
 
-        public static IAccount AddMaterialsToInventory(
-            IAccount state,
+        public static IWorld AddMaterialsToInventory(
+            IWorld state,
             TableSheets tableSheets,
             Address avatarAddress,
             IEnumerable<EquipmentItemSubRecipeSheet.MaterialInfo> materialList,
             IRandom random
         )
         {
-            var avatarState = state.GetAvatarStateV2(avatarAddress);
+            var avatarState = state.GetAvatarState(avatarAddress);
             foreach (var material in materialList)
             {
                 var materialRow = tableSheets.MaterialItemSheet[material.Id];
@@ -52,25 +53,23 @@ namespace Lib9c.Tests.Util
                 avatarState.inventory.AddItem(materialItem, material.Count);
             }
 
-            return state.SetState(
-                avatarAddress.Derive(LegacyInventoryKey),
-                avatarState.inventory.Serialize()
-            );
+            return state.SetAvatarState(avatarAddress, avatarState);
         }
 
-        public static IAccount UnlockStage(
-            IAccount state,
+        public static IWorld UnlockStage(
+            IWorld state,
             TableSheets tableSheets,
-            Address worldInformationAddress,
+            Address avatarAddress,
             int stage
         )
         {
-            var worldInformation = new WorldInformation(
+            var avatarState = state.GetAvatarState(avatarAddress);
+            avatarState.worldInformation = new WorldInformation(
                 0,
                 tableSheets.WorldSheet,
                 Math.Max(stage, GameConfig.RequireClearedStageLevel.ItemEnhancementAction)
             );
-            return state.SetState(worldInformationAddress, worldInformation.Serialize());
+            return state.SetAvatarState(avatarAddress, avatarState);
         }
     }
 }

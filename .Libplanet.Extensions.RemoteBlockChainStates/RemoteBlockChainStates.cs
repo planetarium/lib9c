@@ -18,35 +18,10 @@ namespace Libplanet.Extensions.RemoteBlockChainStates
             _explorerEndpoint = explorerEndpoint;
         }
 
-        public IValue? GetState(Address address, BlockHash? offset) =>
-            GetStates(new[] { address }, offset).First();
+        public IWorldState GetWorldState(HashDigest<SHA256>? offsetStateRootHash)
+            => new RemoteWorldState(_explorerEndpoint, offsetStateRootHash);
 
-        public IReadOnlyList<IValue?> GetStates(IReadOnlyList<Address> addresses, BlockHash? offset)
-        {
-            return new RemoteBlockState(_explorerEndpoint, offset).GetStates(addresses);
-        }
-
-        public FungibleAssetValue GetBalance(Address address, Currency currency, BlockHash? offset)
-        {
-            return new RemoteBlockState(_explorerEndpoint, offset).GetBalance(address, currency);
-        }
-
-        public FungibleAssetValue GetTotalSupply(Currency currency, BlockHash? offset)
-        {
-            return new RemoteBlockState(_explorerEndpoint, offset).GetTotalSupply(currency);
-        }
-
-        public ValidatorSet GetValidatorSet(BlockHash? offset)
-        {
-            return new RemoteBlockState(_explorerEndpoint, offset).GetValidatorSet();
-        }
-
-        public IAccountState GetAccountState(BlockHash? offset)
-        {
-            return new RemoteBlockState(_explorerEndpoint, offset);
-        }
-
-        public IAccountState GetAccountState(HashDigest<SHA256>? hash) =>
-            throw new NotImplementedException();
+        public IWorldState GetWorldState(BlockHash? offsetBlockHash)
+            => new RemoteWorldState(_explorerEndpoint, offsetBlockHash);
     }
 }

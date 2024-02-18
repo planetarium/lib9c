@@ -9,14 +9,14 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Event;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class EventConsumableItemCrafts0Test
     {
-        private readonly IAccount _initialStates;
+        private readonly IWorld _initialStates;
         private readonly TableSheets _tableSheets;
 
         private readonly Address _agentAddress;
@@ -24,21 +24,18 @@ namespace Lib9c.Tests.Action
 
         public EventConsumableItemCrafts0Test()
         {
-            _initialStates = new Account(MockState.Empty);
+            _initialStates = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
                 _initialStates = _initialStates
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
 
             _agentAddress = new PrivateKey().Address;
             _avatarAddress = _agentAddress.Derive("avatar");
-            var inventoryAddr = _avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddr = _avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddr = _avatarAddress.Derive(LegacyQuestListKey);
 
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses.Add(0, _avatarAddress);
@@ -57,18 +54,15 @@ namespace Lib9c.Tests.Action
             };
 
             _initialStates = _initialStates
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddr, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddr, avatarState.worldInformation.Serialize())
-                .SetState(questListAddr, avatarState.questList.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             for (var i = 0; i < GameConfig.SlotCount; i++)
             {
                 var addr = CombinationSlotState.DeriveAddress(_avatarAddress, i);
                 const int unlock = GameConfig.RequireClearedStageLevel.CombinationEquipmentAction;
-                _initialStates = _initialStates.SetState(
+                _initialStates = _initialStates.SetLegacyState(
                     addr,
                     new CombinationSlotState(addr, unlock).Serialize());
             }
@@ -100,13 +94,13 @@ namespace Lib9c.Tests.Action
         }
 
         private void Execute(
-            IAccount previousStates,
+            IWorld previousStates,
             int eventScheduleId,
             int eventConsumableItemRecipeId,
             int slotIndex,
             long blockIndex = 0)
         {
-            var previousAvatarState = previousStates.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = previousStates.GetAvatarState(_avatarAddress);
 
             var recipeSheet = previousStates.GetSheet<EventConsumableItemRecipeSheet>();
             Assert.True(recipeSheet.TryGetValue(
@@ -130,12 +124,7 @@ namespace Lib9c.Tests.Action
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
             previousStates = previousStates
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    previousAvatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    previousAvatarState.worldInformation.Serialize());
+                .SetAvatarState(_avatarAddress, previousAvatarState);
 
             var previousActionPoint = previousAvatarState.actionPoint;
             var previousResultConsumableCount =
@@ -166,7 +155,7 @@ namespace Lib9c.Tests.Action
             var consumable = (Consumable)slotState.Result.itemUsable;
             Assert.NotNull(consumable);
 
-            var nextAvatarState = nextStates.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
             Assert.Equal(
                 previousActionPoint - recipeRow.RequiredActionPoint,
                 nextAvatarState.actionPoint);

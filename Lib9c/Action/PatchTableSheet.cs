@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
-using Nekoyume.TableData.Stake;
 using Serilog;
 
 namespace Nekoyume.Action
@@ -37,7 +36,7 @@ namespace Nekoyume.Action
         string IPatchTableSheetV1.TableName => TableName;
         string IPatchTableSheetV1.TableCsv => TableCsv;
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             IActionContext ctx = context;
@@ -60,7 +59,7 @@ namespace Nekoyume.Action
             }
 #endif
 
-            var sheet = states.GetState(sheetAddress);
+            var sheet = states.GetLegacyState(sheetAddress);
             var value = sheet is null ? string.Empty : sheet.ToDotnetString();
 
             Log.Verbose(
@@ -75,12 +74,12 @@ namespace Nekoyume.Action
                 TableCsv
             );
 
-            states = states.SetState(sheetAddress, TableCsv.Serialize());
+            states = states.SetLegacyState(sheetAddress, TableCsv.Serialize());
 
             if (TableName == nameof(GameConfigSheet))
             {
                 var gameConfigState = new GameConfigState(TableCsv);
-                states = states.SetState(GameConfigState.Address, gameConfigState.Serialize());
+                states = states.SetLegacyState(GameConfigState.Address, gameConfigState.Serialize());
             }
 
             return states;

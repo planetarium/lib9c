@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action.Summon
     using Nekoyume.Action.Exceptions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Summon;
     using Xunit;
@@ -25,7 +26,7 @@ namespace Lib9c.Tests.Action.Summon
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
         private TableSheets _tableSheets;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public RuneSummonTest()
         {
@@ -54,10 +55,10 @@ namespace Lib9c.Tests.Action.Summon
             var gold = new GoldCurrencyState(_currency);
 
             var context = new ActionContext();
-            _initialState = new Account(MockState.Empty)
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, _avatarState.Serialize())
-                .SetState(GoldCurrencyState.Address, gold.Serialize())
+            _initialState = new World(new MockWorldState())
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, _avatarState)
+                .SetLegacyState(GoldCurrencyState.Address, gold.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100000000000)
                 .MintAsset(context, _avatarAddress, 100 * Currencies.GetRune("RUNESTONE_FENRIR1"))
                 .TransferAsset(
@@ -79,7 +80,7 @@ namespace Lib9c.Tests.Action.Summon
             foreach (var (key, value) in sheets)
             {
                 _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    _initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
@@ -118,7 +119,7 @@ namespace Lib9c.Tests.Action.Summon
         {
             var random = new TestRandom(seed);
             var state = _initialState;
-            state = state.SetState(
+            state = state.SetLegacyState(
                 Addresses.TableSheet.Derive(nameof(SummonSheet)),
                 _tableSheets.SummonSheet.Serialize()
             );
@@ -129,23 +130,8 @@ namespace Lib9c.Tests.Action.Summon
                 var material = materialSheet.OrderedList.FirstOrDefault(m => m.Id == materialId);
                 _avatarState.inventory.AddItem(
                     ItemFactory.CreateItem(material, random),
-                    materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount
-                );
-                state = state
-                        .SetState(_avatarAddress, _avatarState.SerializeV2())
-                        .SetState(
-                            _avatarAddress.Derive(LegacyInventoryKey),
-                            _avatarState.inventory.Serialize()
-                        )
-                        .SetState(
-                            _avatarAddress.Derive(LegacyWorldInformationKey),
-                            _avatarState.worldInformation.Serialize()
-                        )
-                        .SetState(
-                            _avatarAddress.Derive(LegacyQuestListKey),
-                            _avatarState.questList.Serialize()
-                        )
-                    ;
+                    materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount);
+                state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
             var action = new RuneSummon
@@ -180,7 +166,7 @@ namespace Lib9c.Tests.Action.Summon
                     Assert.Equal(currency * pair.Value, balance - prevBalance);
                 }
 
-                nextState.GetAvatarStateV2(_avatarAddress).inventory
+                nextState.GetAvatarState(_avatarAddress).inventory
                     .TryGetItem((int)materialId!, out var resultMaterial);
                 Assert.Equal(0, resultMaterial?.count ?? 0);
             }

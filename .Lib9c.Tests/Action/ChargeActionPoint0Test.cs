@@ -2,13 +2,13 @@ namespace Lib9c.Tests.Action
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -53,14 +53,14 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0, avatarState.actionPoint);
 
-            var state = new Account(MockState.Empty)
-                .SetState(Addresses.GameConfig, gameConfigState.Serialize())
-                .SetState(agentAddress, agent.Serialize())
-                .SetState(avatarAddress, avatarState.Serialize());
+            var state = new World(new MockWorldState())
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize())
+                .SetAgentState(agentAddress, agent)
+                .SetAvatarState(avatarAddress, avatarState);
 
             foreach (var (key, value) in _sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var action = new ChargeActionPoint0()

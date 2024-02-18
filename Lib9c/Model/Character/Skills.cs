@@ -4,7 +4,6 @@ using Libplanet.Action;
 using System.Collections;
 using System.Linq;
 using Nekoyume.Battle;
-using Nekoyume.Model.Skill;
 
 namespace Nekoyume.Model
 {

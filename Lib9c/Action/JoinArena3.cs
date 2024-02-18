@@ -7,14 +7,13 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 
@@ -67,7 +66,7 @@ namespace Nekoyume.Action
             runeInfos = plainValue["runeInfos"].ToList(x => new RuneSlotInfo((List)x));
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -75,13 +74,17 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}JoinArena exec started", addressesHex);
 
-            if (!states.TryGetAgentAvatarStatesV2(context.Signer, avatarAddress,
-                    out var agentState, out var avatarState, out _))
+            var agentState = states.GetAgentState(context.Signer);
+            if (agentState is null)
             {
-                throw new FailedLoadStateException(
-                    $"[{nameof(JoinArena)}] Aborted as the avatar state of the signer failed to load.");
+                throw new FailedLoadStateException($"[{nameof(JoinArena)}] Aborted as the agent state of the signer was failed to load.");
             }
 
+            if (!states.TryGetAvatarState(context.Signer, avatarAddress, out var avatarState))
+            {
+                throw new FailedLoadStateException($"[{nameof(JoinArena)}] Aborted as the avatar state of the signer was failed to load.");
+            }
+            
             if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(
                     out var world))
             {
@@ -117,21 +120,21 @@ namespace Nekoyume.Action
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
-            var runeSlotState = states.TryGetState(runeSlotStateAddress, out List rawRuneSlotState)
+            var runeSlotState = states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
                 : new RuneSlotState(BattleType.Arena);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(runeInfos, runeListSheet);
-            states = states.SetState(runeSlotStateAddress, runeSlotState.Serialize());
+            states = states.SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize());
 
             // update item slot
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
-            var itemSlotState = states.TryGetState(itemSlotStateAddress, out List rawItemSlotState)
+            var itemSlotState = states.TryGetLegacyState(itemSlotStateAddress, out List rawItemSlotState)
                 ? new ItemSlotState(rawItemSlotState)
                 : new ItemSlotState(BattleType.Arena);
             itemSlotState.UpdateEquipment(equipments);
             itemSlotState.UpdateCostumes(costumes);
-            states = states.SetState(itemSlotStateAddress, itemSlotState.Serialize());
+            states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
             var sheet = sheets.GetSheet<ArenaSheet>();
             if (!sheet.TryGetValue(championshipId, out var row))
@@ -176,7 +179,7 @@ namespace Nekoyume.Action
             // create ArenaScore
             var arenaScoreAdr =
                 ArenaScore.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
-            if (states.TryGetState(arenaScoreAdr, out List _))
+            if (states.TryGetLegacyState(arenaScoreAdr, out List _))
             {
                 throw new ArenaScoreAlreadyContainsException(
                     $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -187,7 +190,7 @@ namespace Nekoyume.Action
             // create ArenaInformation
             var arenaInformationAdr =
                 ArenaInformation.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
-            if (states.TryGetState(arenaInformationAdr, out List _))
+            if (states.TryGetLegacyState(arenaInformationAdr, out List _))
             {
                 throw new ArenaInformationAlreadyContainsException(
                     $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -210,11 +213,11 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}JoinArena Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetState(arenaScoreAdr, arenaScore.Serialize())
-                .SetState(arenaInformationAdr, arenaInformation.Serialize())
-                .SetState(arenaParticipantsAdr, arenaParticipants.Serialize())
-                .SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
-                .SetState(context.Signer, agentState.Serialize());
+                .SetLegacyState(arenaScoreAdr, arenaScore.Serialize())
+                .SetLegacyState(arenaInformationAdr, arenaInformation.Serialize())
+                .SetLegacyState(arenaParticipantsAdr, arenaParticipants.Serialize())
+                .SetLegacyState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
+                .SetAgentState(context.Signer, agentState);
         }
     }
 }

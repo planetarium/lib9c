@@ -11,6 +11,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 
@@ -33,10 +34,10 @@ namespace Nekoyume.Action
             AvatarAddress = avatarAddress;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount states = context.PreviousState;
+            IWorld states = context.PreviousState;
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -93,7 +94,7 @@ namespace Nekoyume.Action
 
                 raiderState.LatestRewardRank = rank;
                 raiderState.ClaimedBlockIndex = context.BlockIndex;
-                states = states.SetState(raiderAddress, raiderState.Serialize());
+                states = states.SetLegacyState(raiderAddress, raiderState.Serialize());
                 var ended = DateTimeOffset.UtcNow;
                 Log.Debug("{AddressesHex}ClaimRaidReward Total Executed Time: {Elapsed}", addressesHex, ended - started);
                 return states;

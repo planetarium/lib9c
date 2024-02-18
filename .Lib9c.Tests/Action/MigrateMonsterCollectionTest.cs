@@ -4,13 +4,13 @@ namespace Lib9c.Tests.Action
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action
     {
         private readonly Address _signer;
         private readonly Address _avatarAddress;
-        private readonly IAccount _state;
+        private readonly IWorld _state;
 
         public MigrateMonsterCollectionTest(ITestOutputHelper outputHelper)
         {
@@ -31,7 +31,7 @@ namespace Lib9c.Tests.Action
 
             _signer = default;
             _avatarAddress = _signer.Derive("avatar");
-            _state = new Account(MockState.Empty);
+            _state = new World(new MockWorldState());
             Dictionary<string, string> sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
             var rankingMapAddress = new PrivateKey().Address;
@@ -52,17 +52,14 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(currency);
 
             _state = _state
-                .SetState(_signer, agentState.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+                .SetAgentState(_signer, agentState)
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
             foreach ((string key, string value) in sheets)
             {
                 _state = _state
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
         }
 
@@ -73,9 +70,9 @@ namespace Lib9c.Tests.Action
             var monsterCollectionState = new MonsterCollectionState(
                 monsterCollectionAddress, 1, 0);
             Address stakeStateAddress = StakeState.DeriveAddress(_signer);
-            var states = _state.SetState(
+            var states = _state.SetLegacyState(
                     stakeStateAddress, new StakeState(stakeStateAddress, 0).SerializeV2())
-                .SetState(monsterCollectionAddress, monsterCollectionState.SerializeV2());
+                .SetLegacyState(monsterCollectionAddress, monsterCollectionState.SerializeV2());
             MigrateMonsterCollection action = new MigrateMonsterCollection(_avatarAddress);
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
@@ -95,7 +92,7 @@ namespace Lib9c.Tests.Action
             var currency = _state.GetGoldCurrency();
             var context = new ActionContext();
             var states = _state
-                .SetState(monsterCollectionAddress, monsterCollectionState.Serialize())
+                .SetLegacyState(monsterCollectionAddress, monsterCollectionState.Serialize())
                 .MintAsset(context, monsterCollectionAddress, currency * 100);
             MigrateMonsterCollection action = new MigrateMonsterCollection(_avatarAddress);
             states = action.Execute(new ActionContext
@@ -106,11 +103,10 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            Assert.True(states.TryGetAvatarStateV2(
+            Assert.True(states.TryGetAvatarState(
                 _signer,
                 _avatarAddress,
-                out AvatarState avatarState,
-                out bool _));
+                out AvatarState avatarState));
 
             Assert.Equal(80, avatarState.inventory.Items.First(item => item.item.Id == 400000).count);
             Assert.Equal(1, avatarState.inventory.Items.First(item => item.item.Id == 500000).count);
@@ -126,7 +122,7 @@ namespace Lib9c.Tests.Action
 
             var context = new ActionContext();
             var states = _state
-                .SetState(collectionAddress, monsterCollectionState.Serialize())
+                .SetLegacyState(collectionAddress, monsterCollectionState.Serialize())
                 .MintAsset(context, monsterCollectionState.address, stakedAmount * currency);
 
             Assert.Equal(0, states.GetAgentState(_signer).MonsterCollectionRound);
@@ -150,11 +146,10 @@ namespace Lib9c.Tests.Action
             Assert.Equal(receivedBlockIndex, stakeState.ReceivedBlockIndex);
             Assert.Equal(monsterCollectionState.StartedBlockIndex, stakeState.StartedBlockIndex);
             Assert.True(
-                states.TryGetAvatarStateV2(
+                states.TryGetAvatarState(
                     _signer,
                     _avatarAddress,
-                    out AvatarState avatarState,
-                    out bool _));
+                    out AvatarState avatarState));
             foreach (var (itemId, quantity) in expectedItems)
             {
                 Assert.True(avatarState.inventory.HasItem(itemId, quantity));

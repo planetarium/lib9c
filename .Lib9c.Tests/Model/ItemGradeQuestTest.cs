@@ -1,9 +1,7 @@
 namespace Lib9c.Tests.Model
 {
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Quest;

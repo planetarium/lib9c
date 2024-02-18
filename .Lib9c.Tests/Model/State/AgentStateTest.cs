@@ -14,8 +14,8 @@ namespace Lib9c.Tests.Model.State
             var agentStateAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentStateAddress);
 
-            var serialized = agentState.Serialize();
-            var deserialized = new AgentState((Bencodex.Types.Dictionary)serialized);
+            var serialized = agentState.SerializeList();
+            var deserialized = new AgentState((Bencodex.Types.List)serialized);
 
             Assert.Equal(agentStateAddress, deserialized.address);
         }

@@ -11,6 +11,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -61,20 +62,17 @@ namespace Nekoyume.Action
             orderId = plainValue[OrderIdKey].ToGuid();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var inventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = sellerAvatarAddress.Derive(LegacyQuestListKey);
             Address shopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, orderId);
             Address itemAddress = Addresses.GetItemAddress(tradableId);
             Address orderAddress = Order.DeriveAddress(orderId);
             Address orderReceiptAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
-            if (!(states.GetState(Addresses.Market) is null))
+            if (!(states.GetLegacyState(Addresses.Market) is null))
             {
                 throw new ActionObsoletedException("Sell action is obsoleted. please use SellProduct.");
             }
@@ -94,12 +92,16 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the price is less than zero: {price}.");
             }
 
-            if (!states.TryGetAgentAvatarStatesV2(
+            if (states.GetAgentState(context.Signer) is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the agent state of the signer was failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(
                     context.Signer,
                     sellerAvatarAddress,
-                    out _,
-                    out var avatarState,
-                    out _))
+                    out var avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
@@ -139,7 +141,7 @@ namespace Nekoyume.Action
 
             ITradableItem tradableItem = order.Sell(avatarState);
 
-            var shardedShopState = states.TryGetState(shopAddress, out Dictionary serializedState)
+            var shardedShopState = states.TryGetLegacyState(shopAddress, out Dictionary serializedState)
                 ? new ShardedShopStateV2(serializedState)
                 : new ShardedShopStateV2(shopAddress);
 
@@ -158,26 +160,23 @@ namespace Nekoyume.Action
             avatarState.blockIndex = context.BlockIndex;
 
             var orderReceiptList =
-                states.TryGetState(orderReceiptAddress, out Dictionary receiptDict)
+                states.TryGetLegacyState(orderReceiptAddress, out Dictionary receiptDict)
                     ? new OrderDigestListState(receiptDict)
                     : new OrderDigestListState(orderReceiptAddress);
 
             orderReceiptList.Add(orderDigest);
 
-            states = states.SetState(orderReceiptAddress, orderReceiptList.Serialize());
             states = states
-                .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(questListAddress, avatarState.questList.Serialize())
-                .SetState(sellerAvatarAddress, avatarState.SerializeV2());
+                .SetLegacyState(orderReceiptAddress, orderReceiptList.Serialize())
+                .SetAvatarState(sellerAvatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
             states = states
-                .SetState(itemAddress, tradableItem.Serialize())
-                .SetState(orderAddress, order.Serialize())
-                .SetState(shopAddress, shardedShopState.Serialize());
+                .SetLegacyState(itemAddress, tradableItem.Serialize())
+                .SetLegacyState(orderAddress, order.Serialize())
+                .SetLegacyState(shopAddress, shardedShopState.Serialize());
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}Sell Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);

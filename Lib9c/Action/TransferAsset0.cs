@@ -5,6 +5,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,7 +75,7 @@ namespace Nekoyume.Action
             }
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(4);
             var state = context.PreviousState;

@@ -12,6 +12,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 using BxDictionary = Bencodex.Types.Dictionary;
 using BxList = Bencodex.Types.List;
@@ -58,7 +59,7 @@ namespace Nekoyume.Action
             itemSubType = plainValue[ItemSubTypeKey].ToEnum<ItemSubType>();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -78,10 +79,15 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the price is less than zero: {price}.");
             }
 
-            if (!states.TryGetAgentAvatarStates(
+            if (states.GetAgentState(context.Signer) is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the agent state of the signer was failed to load.");
+            }
+
+            if (!states.TryGetAvatarState(
                 context.Signer,
                 sellerAvatarAddress,
-                out _,
                 out var avatarState))
             {
                 throw new FailedLoadStateException(
@@ -157,7 +163,7 @@ namespace Nekoyume.Action
             var random = context.GetRandom();
             var productId = random.GenerateRandomGuid();
             var shardedShopAddress = ShardedShopState.DeriveAddress(itemSubType, productId);
-            if (!states.TryGetState(shardedShopAddress, out BxDictionary serializedSharedShopState))
+            if (!states.TryGetLegacyState(shardedShopAddress, out BxDictionary serializedSharedShopState))
             {
                 var shardedShopState = new ShardedShopState(shardedShopAddress);
                 serializedSharedShopState = (BxDictionary) shardedShopState.Serialize();
@@ -272,12 +278,12 @@ namespace Nekoyume.Action
             result.id = mail.id;
             avatarState.Update(mail);
 
-            states = states.SetState(sellerAvatarAddress, avatarState.Serialize());
+            states = states.SetAvatarState(sellerAvatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            states = states.SetState(shardedShopAddress, serializedSharedShopState);
+            states = states.SetLegacyState(shardedShopAddress, serializedSharedShopState);
             sw.Stop();
             var ended = DateTimeOffset.UtcNow;
             Log.Verbose("{AddressesHex}Sell Set ShopState: {Elapsed}", addressesHex, sw.Elapsed);

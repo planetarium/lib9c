@@ -7,6 +7,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Serilog;
 
 namespace Nekoyume.Action
@@ -43,19 +44,19 @@ namespace Nekoyume.Action
             Signature = signature;
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IAccount state = context.PreviousState;
+            IWorld state = context.PreviousState;
             Address activatedAddress = context.Signer.Derive(ActivationKey.DeriveKey);
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
 
-            if (!(state.GetState(activatedAddress) is null))
+            if (!(state.GetLegacyState(activatedAddress) is null))
             {
                 throw new AlreadyActivatedException($"{context.Signer} already activated.");
             }
-            if (!state.TryGetState(PendingAddress, out Dictionary pendingAsDict))
+            if (!state.TryGetLegacyState(PendingAddress, out Dictionary pendingAsDict))
             {
                 throw new PendingActivationDoesNotExistsException(PendingAddress);
             }
@@ -68,8 +69,8 @@ namespace Nekoyume.Action
                 // Please delete it if we have an API for evaluation results on the Libplanet side.
                 Log.Information("{pendingAddress} is activated by {signer} now.", pending.address, context.Signer);
                 return state
-                    .SetState(activatedAddress, true.Serialize())
-                    .SetState(pending.address, new Bencodex.Types.Null());
+                    .SetLegacyState(activatedAddress, true.Serialize())
+                    .SetLegacyState(pending.address, new Bencodex.Types.Null());
             }
             else
             {

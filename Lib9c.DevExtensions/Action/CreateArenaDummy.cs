@@ -4,17 +4,15 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
-using Lib9c.DevExtensions.Model;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Arena;
-using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 
 namespace Lib9c.DevExtensions.Action
 {
@@ -53,7 +51,7 @@ namespace Lib9c.DevExtensions.Action
             equipments = ((List)plainValue["equipments"]).Select(e => e.ToGuid()).ToList();
         }
 
-        public override IAccount Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
@@ -86,9 +84,6 @@ namespace Lib9c.DevExtensions.Action
                 }
 
                 agentState.avatarAddresses.Add(0, avatarAddress);
-                var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-                var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-                var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
                 var rankingState = context.PreviousState.GetRankingState();
                 var rankingMapAddress = rankingState.UpdateRankingMap(avatarAddress);
@@ -117,8 +112,7 @@ namespace Lib9c.DevExtensions.Action
                     context.PreviousState.GetGameConfigState(),
                     rankingMapAddress);
 
-                if (!states.TryGetAvatarStateV2(context.Signer, myAvatarAddress,
-                out var myAvatarState, out var _))
+                if (!states.TryGetAvatarState(context.Signer, myAvatarAddress, out var myAvatarState))
                 {
                     throw new FailedLoadStateException($"error");
                 }
@@ -130,11 +124,9 @@ namespace Lib9c.DevExtensions.Action
                 }
 
                 // join arena
-                states = states.SetState(agentAddress, agentState.Serialize())
-                    .SetState(avatarAddress, avatarState.SerializeV2())
-                    .SetState(inventoryAddress, avatarState.inventory.Serialize())
-                    .SetState(worldInformationAddress, avatarState.worldInformation.Serialize())
-                    .SetState(questListAddress, avatarState.questList.Serialize());
+                states = states
+                    .SetAgentState(agentAddress, agentState)
+                    .SetAvatarState(avatarAddress, avatarState);
 
 
                 var sheet = sheets.GetSheet<ArenaSheet>();
@@ -153,7 +145,7 @@ namespace Lib9c.DevExtensions.Action
                 var arenaScoreAdr =
                     ArenaScore.DeriveAddress(avatarAddress, roundData.ChampionshipId,
                         roundData.Round);
-                if (states.TryGetState(arenaScoreAdr, out List _))
+                if (states.TryGetLegacyState(arenaScoreAdr, out List _))
                 {
                     throw new ArenaScoreAlreadyContainsException(
                         $"[{nameof(CreateArenaDummy)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -166,7 +158,7 @@ namespace Lib9c.DevExtensions.Action
                 var arenaInformationAdr =
                     ArenaInformation.DeriveAddress(avatarAddress, roundData.ChampionshipId,
                         roundData.Round);
-                if (states.TryGetState(arenaInformationAdr, out List _))
+                if (states.TryGetLegacyState(arenaInformationAdr, out List _))
                 {
                     throw new ArenaInformationAlreadyContainsException(
                         $"[{nameof(CreateArenaDummy)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -189,11 +181,11 @@ namespace Lib9c.DevExtensions.Action
                 arenaAvatarState.UpdateEquipment(equipments);
 
                 states = states
-                    .SetState(arenaScoreAdr, arenaScore.Serialize())
-                    .SetState(arenaInformationAdr, arenaInformation.Serialize())
-                    .SetState(arenaParticipantsAdr, arenaParticipants.Serialize())
-                    .SetState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
-                    .SetState(agentAddress, agentState.Serialize());
+                    .SetLegacyState(arenaScoreAdr, arenaScore.Serialize())
+                    .SetLegacyState(arenaInformationAdr, arenaInformation.Serialize())
+                    .SetLegacyState(arenaParticipantsAdr, arenaParticipants.Serialize())
+                    .SetLegacyState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
+                    .SetAgentState(agentAddress, agentState);
             }
 
             return states;
