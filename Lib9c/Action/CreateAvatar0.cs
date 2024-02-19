@@ -151,7 +151,7 @@ namespace Nekoyume.Action
             return states
                 .SetAgentState(ctx.Signer, agentState)
                 .SetLegacyState(Addresses.Ranking, rankingState.Serialize())
-                .SetAvatarState(avatarAddress, avatarState, false, false, false, false);
+                .SetAvatarState(avatarAddress, avatarState);
         }
 
         public static AvatarState CreateAvatarState(string name,

@@ -12,7 +12,6 @@ using Nekoyume.Model;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 
 namespace Lib9c.DevExtensions.Action.Craft
 {
@@ -55,15 +54,13 @@ namespace Lib9c.DevExtensions.Action.Craft
                     $"{ActionType.TypeIdentifier} is not valid action");
             }
 
-            var worldInformation = new WorldInformation(
+            var avatarState = states.GetAvatarState(AvatarAddress);
+            avatarState.worldInformation = new WorldInformation(
                 context.BlockIndex,
                 states.GetSheet<WorldSheet>(),
                 targetStage
             );
-            return states.SetLegacyState(
-                AvatarAddress.Derive(LegacyWorldInformationKey),
-                worldInformation.Serialize()
-            );
+            return states.SetAvatarState(AvatarAddress, avatarState);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

@@ -9,6 +9,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Exceptions;
 using Nekoyume.Model;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
@@ -82,31 +83,37 @@ namespace Nekoyume.Action
 
                 if (items is { } itemsNotNull)
                 {
-                    AvatarState avatarState = state.GetAvatarState(recipient);
-                    MaterialItemSheet itemSheet = state.GetSheet<MaterialItemSheet>();
-                    if (itemSheet is null || itemSheet.OrderedList is null)
+                    if (state.GetAvatarState(recipient) is AvatarState recipientAvatarState)
                     {
-                        throw new InvalidOperationException();
-                    }
-
-                    foreach (MaterialItemSheet.Row row in itemSheet.OrderedList)
-                    {
-                        if (row.ItemId.Equals(itemsNotNull.Id))
+                        MaterialItemSheet itemSheet = state.GetSheet<MaterialItemSheet>();
+                        if (itemSheet is null || itemSheet.OrderedList is null)
                         {
-                            Material item = ItemFactory.CreateMaterial(row);
-                            avatarState.inventory.AddFungibleItem(item, itemsNotNull.Count);
+                            throw new InvalidOperationException();
                         }
-                    }
 
-                    state = state.SetAvatarState(recipient, avatarState, false, true, false, false);
-                    fivs.Add(itemsNotNull);
+                        foreach (MaterialItemSheet.Row row in itemSheet.OrderedList)
+                        {
+                            if (row.ItemId.Equals(itemsNotNull.Id))
+                            {
+                                Material item = ItemFactory.CreateMaterial(row);
+                                recipientAvatarState.inventory.AddFungibleItem(item, itemsNotNull.Count);
+                            }
+                        }
+
+                        state = state.SetAvatarState(recipient, recipientAvatarState);
+                        fivs.Add(itemsNotNull);
+                    }
+                    else
+                    {
+                        throw new StateNullException(Addresses.Avatar, recipient);
+                    }
                 }
             }
 
             IRandom rng = context.GetRandom();
             foreach (var recipient in mailRecords.Keys)
             {
-                if (state.GetAvatarState(recipient) is { } recipientAvatarState)
+                if (state.GetAvatarState(recipient) is AvatarState recipientAvatarState)
                 {
                     (List<FungibleAssetValue> favs, List<FungibleItemValue> fivs) = mailRecords[recipient];
                     List<(Address recipient, FungibleAssetValue v)> mailFavs =
@@ -128,7 +135,7 @@ namespace Nekoyume.Action
                         )
                     );
                     recipientAvatarState.mailBox.CleanUp();
-                    state = state.SetAvatarState(recipient, recipientAvatarState, true, false, false, false);
+                    state = state.SetAvatarState(recipient, recipientAvatarState);
                 }
             }
 

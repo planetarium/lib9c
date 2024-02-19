@@ -176,7 +176,7 @@ namespace Lib9c.Tests.Action.Scenario
             agentState.avatarAddresses.Add(0, avatarAddress);
             _state = _state
                 .SetAgentState(agentAddress, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
 
             return (agentState, avatarState);
         }

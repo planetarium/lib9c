@@ -86,8 +86,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateInvalidAddress()
         {
-            var states = new World(new MockWorldState()).SetAvatarState(
-                default, _avatarState, true, true, true, true);
+            var states = new World(new MockWorldState()).SetAvatarState(default, _avatarState);
 
             Assert.False(states.TryGetAvatarState(Addresses.GameConfig, _avatarAddress, out _));
         }
@@ -97,7 +96,7 @@ namespace Lib9c.Tests.Action
         {
             IWorld states = new World(new MockWorldState());
             states = states
-                .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
+                .SetAvatarState(_avatarAddress, _avatarState);
 
             var v2 = states.GetAvatarState(_avatarAddress);
             Assert.NotNull(v2.inventory);
@@ -121,7 +120,7 @@ namespace Lib9c.Tests.Action
 
             IWorld states = new World(new MockWorldState());
             states = states
-                .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
+                .SetAvatarState(_avatarAddress, _avatarState);
             states = states.SetAccount(
                 accountAddress,
                 states.GetAccount(accountAddress).SetNull(_avatarAddress));
@@ -143,7 +142,7 @@ namespace Lib9c.Tests.Action
             else
             {
                 states = states
-                    .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
+                    .SetAvatarState(_avatarAddress, _avatarState);
             }
 
             Assert.True(states.TryGetAvatarState(_agentAddress, _avatarAddress, out _));

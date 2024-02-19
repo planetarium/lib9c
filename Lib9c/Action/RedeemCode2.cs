@@ -42,9 +42,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
 
             CheckObsolete(ActionObsoleteConfig.V100080ObsoleteIndex, context);
 
@@ -111,7 +108,7 @@ namespace Nekoyume.Action
                 }
             }
             return states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetLegacyState(RedeemCodeState.Address, redeemState.Serialize());
         }
 

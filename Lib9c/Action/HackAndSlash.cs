@@ -594,7 +594,7 @@ namespace Nekoyume.Action
                 states = states.SetLegacyState(skillStateAddress, skillState.Serialize());
             }
 
-            states = states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
+            states = states.SetAvatarState(AvatarAddress, avatarState);
 
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",

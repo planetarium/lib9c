@@ -558,8 +558,8 @@ namespace Lib9c.DevExtensions.Action
             }
             // ~Set Inventory.
 
-            states = states.SetAvatarState(avatarAddr, avatar, true, true, true, true);
-          
+            states = states.SetAvatarState(avatarAddr, avatar);
+
             // Set CombinationSlot.
             for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
             {

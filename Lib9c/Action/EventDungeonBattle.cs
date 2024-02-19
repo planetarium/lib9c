@@ -404,7 +404,7 @@ namespace Nekoyume.Action
             // Set states
             sw.Restart();
             states = states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
 
             sw.Stop();

@@ -246,7 +246,7 @@ namespace Nekoyume.Action
             sw.Restart();
 
             states = states
-                .SetAvatarState(avatarAddress, avatarState, false, true, false, true)
+                .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(arenaInfoAddress, arenaInfo.Serialize())
                 .SetLegacyState(enemyArenaInfoAddress, enemyArenaInfo.Serialize());
 

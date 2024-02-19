@@ -343,7 +343,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);
             return states
-                .SetAvatarState(AvatarAddress, avatarState, false, true, false, false)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetLegacyState(worldBossAddress, bossState.Serialize())
                 .SetLegacyState(raiderAddress, raiderState.Serialize());
         }

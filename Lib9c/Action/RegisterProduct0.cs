@@ -89,7 +89,7 @@ namespace Nekoyume.Action
             }
 
             states = states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetLegacyState(productsStateAddress, productsState.Serialize());
 
             return states;

@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action.Scenario
             var context = new ActionContext();
             IWorld initialState = new World(new MockWorldState())
                 .SetAgentState(agentAddress, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(
                     Addresses.GoldCurrency,
                     new GoldCurrencyState(Currency.Legacy("NCG", 2, minters: null)).Serialize())

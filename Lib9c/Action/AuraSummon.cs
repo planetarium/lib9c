@@ -265,7 +265,7 @@ namespace Nekoyume.Action
 
             // Set states
             return states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, false, true)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetAgentState(context.Signer, agentState);
         }
 

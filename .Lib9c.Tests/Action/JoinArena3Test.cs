@@ -102,9 +102,9 @@ namespace Lib9c.Tests.Action
 
             _state = _state
                 .SetAgentState(_signer, agentState)
-                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(_avatarAddress, avatarState)
                 .SetAgentState(_signer2, agent2State)
-                .SetAvatarState(_avatar2Address, avatar2State, true, true, true, true)
+                .SetAvatarState(_avatar2Address, avatar2State)
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
@@ -149,7 +149,7 @@ namespace Lib9c.Tests.Action
             avatarState.level = 999;
             (equipments, costumes) = GetDummyItems(avatarState);
 
-            _state = _state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+            _state = _state.SetAvatarState(_avatarAddress, avatarState);
 
             return avatarState;
         }
@@ -169,7 +169,7 @@ namespace Lib9c.Tests.Action
                 avatarState.inventory.AddItem(material, count);
             }
 
-            _state = _state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+            _state = _state.SetAvatarState(_avatarAddress, avatarState);
 
             return avatarState;
         }
@@ -272,7 +272,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, false, false, false);
+            var state = _state.SetAvatarState(_avatarAddress, avatarState);
 
             var action = new JoinArena3()
             {
@@ -298,7 +298,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, false, false, false);
+            var state = _state.SetAvatarState(_avatarAddress, avatarState);
 
             var action = new JoinArena3()
             {
@@ -355,7 +355,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = _state.GetAvatarState(_avatarAddress);
             GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, false, false, false);
+            var state = _state.SetAvatarState(_avatarAddress, avatarState);
 
             var action = new JoinArena3()
             {
@@ -381,7 +381,7 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, false, false, false);
+            var state = _state.SetAvatarState(_avatarAddress, avatarState);
 
             var action = new JoinArena3()
             {
@@ -418,7 +418,7 @@ namespace Lib9c.Tests.Action
 
             var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, false, false, false);
+            var state = _state.SetAvatarState(_avatarAddress, avatarState);
 
             var arenaScoreAdr = ArenaScore.DeriveAddress(_avatarAddress, championshipId, round);
             var arenaScore = new ArenaScore(_avatarAddress, championshipId, round);
@@ -451,7 +451,7 @@ namespace Lib9c.Tests.Action
 
             var avatarState = _state.GetAvatarState(_avatarAddress);
             avatarState = GetAvatarState(avatarState, out var equipments, out var costumes);
-            var state = _state.SetAvatarState(_avatarAddress, avatarState, true, false, false, false);
+            var state = _state.SetAvatarState(_avatarAddress, avatarState);
 
             var arenaInformationAdr = ArenaInformation.DeriveAddress(_avatarAddress, championshipId, round);
             var arenaInformation = new ArenaInformation(_avatarAddress, championshipId, round);

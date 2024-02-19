@@ -155,7 +155,7 @@ namespace Nekoyume.Action
 
             sw.Restart();
             states = states
-                .SetAvatarState(sellerAvatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(sellerAvatarAddress, avatarState)
                 .SetLegacyState(digestListAddress, digestList.Serialize());
             sw.Stop();
             Log.Verbose("{AddressesHex} UpdateSell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);

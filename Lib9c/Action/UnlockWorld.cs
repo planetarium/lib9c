@@ -44,17 +44,18 @@ namespace Nekoyume.Action
             }
 
             WorldInformation worldInformation;
-            if (states.GetWorldInformation(AvatarAddress) is { } worldInfo)
+
+            try
             {
-                worldInformation = worldInfo;
+                worldInformation = states.GetWorldInformation(AvatarAddress);
             }
-            else
+            catch (FailedLoadStateException)
             {
                 // AvatarState migration required.
                 if (states.TryGetAvatarState(context.Signer, AvatarAddress, out AvatarState avatarState))
                 {
                     worldInformation = avatarState.worldInformation;
-                    states = states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
+                    states = states.SetAvatarState(AvatarAddress, avatarState);
                 }
                 else
                 {

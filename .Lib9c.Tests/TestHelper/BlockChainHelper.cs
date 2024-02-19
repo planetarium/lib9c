@@ -145,7 +145,7 @@ namespace Lib9c.Tests.TestHelper
             initialState = initialState
                 .SetLegacyState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, initCurrencyGold)
                 .TransferAsset(context, Addresses.GoldCurrency, agentAddress,  agentCurrencyGold);

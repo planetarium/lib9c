@@ -160,7 +160,7 @@ namespace Nekoyume.Action
                 mailBox.Add(mail);
                 mailBox.CleanUp();
                 avatarState.mailBox = mailBox;
-                states = states.SetAvatarState(avatarAddress, avatarState, true, true, false, false);
+                states = states.SetAvatarState(avatarAddress, avatarState);
             }
 
             return states;

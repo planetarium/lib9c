@@ -107,7 +107,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            states = states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
+            states = states.SetAvatarState(AvatarAddress, avatarState);
             states = states.SetLegacyState(RedeemCodeState.Address, redeemState.Serialize());
             return states;
         }

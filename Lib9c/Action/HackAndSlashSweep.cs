@@ -341,7 +341,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetAvatarState(avatarAddress, avatarState, true, true, false, true);
+                .SetAvatarState(avatarAddress, avatarState);
         }
 
         public static List<ItemBase> GetRewardItems(IRandom random,
