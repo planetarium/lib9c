@@ -259,7 +259,7 @@ namespace Nekoyume.Action
                 sw.Restart();
 
                 states = states
-                    .SetAvatarState(avatarAddress, avatarState, false, true, false, true)
+                    .SetAvatarState(avatarAddress, avatarState)
                     .SetLegacyState(arenaInfoAddress, arenaInfo.Serialize())
                     .SetLegacyState(enemyInfoAddress, enemyInfo.Serialize());
 
@@ -425,7 +425,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex}RankingBattle Serialize WeeklyArenaState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
-            states = states.SetAvatarState(avatarAddress, avatarState, false, true, false, true);
+            states = states.SetAvatarState(avatarAddress, avatarState);
 
             sw.Stop();
             Log.Verbose("{AddressesHex}RankingBattle Serialize AvatarState: {Elapsed}", addressesHex, sw.Elapsed);

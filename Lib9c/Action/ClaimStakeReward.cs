@@ -157,7 +157,7 @@ namespace Nekoyume.Action
 
             return states
                 .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize())
-                .SetAvatarState(AvatarAddress, avatarState, false, true, false, false);
+                .SetAvatarState(AvatarAddress, avatarState);
         }
     }
 }

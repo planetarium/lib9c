@@ -280,7 +280,7 @@ namespace Nekoyume.Action
 
             // Set states
             states = states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetLegacyState(
                     CombinationSlotState.DeriveAddress(AvatarAddress, SlotIndex),
                     slotState.Serialize());

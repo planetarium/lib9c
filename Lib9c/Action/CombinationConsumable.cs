@@ -214,7 +214,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Combination Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(slotAddress, slotState.Serialize());
         }
     }

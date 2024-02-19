@@ -25,9 +25,10 @@ namespace Nekoyume.Exceptions
         }
 
         public StateNullException(
+            Address accountAddress,
             Address address,
             Exception? innerException = null)
-            : base($"State is null or Null.Value: {address}", innerException)
+            : base($"State is null or Null.Value: {accountAddress}.{address}", innerException)
         {
         }
 

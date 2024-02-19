@@ -13,7 +13,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume.TableData;
     using Nekoyume.TableData.Event;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class EventConsumableItemCrafts0Test
     {
@@ -37,9 +36,6 @@ namespace Lib9c.Tests.Action
 
             _agentAddress = new PrivateKey().Address;
             _avatarAddress = _agentAddress.Derive("avatar");
-            var inventoryAddr = _avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddr = _avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddr = _avatarAddress.Derive(LegacyQuestListKey);
 
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses.Add(0, _avatarAddress);
@@ -59,7 +55,7 @@ namespace Lib9c.Tests.Action
 
             _initialStates = _initialStates
                 .SetAgentState(_agentAddress, agentState)
-                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(_avatarAddress, avatarState)
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             for (var i = 0; i < GameConfig.SlotCount; i++)
@@ -128,7 +124,7 @@ namespace Lib9c.Tests.Action
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
             previousStates = previousStates
-                .SetAvatarState(_avatarAddress, previousAvatarState, false, true, true, false);
+                .SetAvatarState(_avatarAddress, previousAvatarState);
 
             var previousActionPoint = previousAvatarState.actionPoint;
             var previousResultConsumableCount =

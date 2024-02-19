@@ -432,7 +432,7 @@ namespace Nekoyume.Action
                 .SetLegacyState(myArenaScoreAdr, myArenaScore.Serialize())
                 .SetLegacyState(enemyArenaScoreAdr, enemyArenaScore.Serialize())
                 .SetLegacyState(arenaInformationAdr, arenaInformation.Serialize())
-                .SetAvatarState(myAvatarAddress, avatarState, false, true, false, false);
+                .SetAvatarState(myAvatarAddress, avatarState);
         }
 
         private void ValidateTicket()

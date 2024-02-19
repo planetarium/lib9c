@@ -33,28 +33,8 @@ namespace Nekoyume.Action
 
             foreach (var rawAvatar in avatarStates)
             {
-                var v1 = new AvatarState(rawAvatar);
-                var inventoryAddress = v1.address.Derive(LegacyInventoryKey);
-                var worldInformationAddress = v1.address.Derive(LegacyWorldInformationKey);
-                var questListAddress = v1.address.Derive(LegacyQuestListKey);
-                if (states.GetLegacyState(inventoryAddress) is null)
-                {
-                    states = states.SetLegacyState(inventoryAddress, v1.inventory.Serialize());
-                }
-                if (states.GetLegacyState(worldInformationAddress) is null)
-                {
-                    states = states.SetLegacyState(worldInformationAddress, v1.worldInformation.Serialize());
-                }
-                if (states.GetLegacyState(questListAddress) is null)
-                {
-                    states = states.SetLegacyState(questListAddress, v1.questList.Serialize());
-                }
-
-                var v2 = states.GetAvatarState(v1.address);
-                if (v2.inventory is null || v2.worldInformation is null || v2.questList is null)
-                {
-                    throw new FailedLoadStateException(v1.address.ToHex());
-                }
+                var avatarState = new AvatarState(rawAvatar);
+                states = states.SetAvatarState(avatarState.address, avatarState);
             }
 
             return states;

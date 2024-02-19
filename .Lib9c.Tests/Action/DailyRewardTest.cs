@@ -56,7 +56,7 @@ namespace Lib9c.Tests.Action
             _initialState = _initialState
                 .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
-                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(_avatarAddress, avatarState);
         }
 
         [Theory]
@@ -145,7 +145,7 @@ rune_skill_slot_unlock_cost,500";
         }
 
         private IWorld SetAvatarStateAsV2To(IWorld state, AvatarState avatarState) =>
-            state.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+            state.SetAvatarState(_avatarAddress, avatarState);
 
         private IWorld ExecuteInternal(IWorld previousStates, long blockIndex = 0)
         {

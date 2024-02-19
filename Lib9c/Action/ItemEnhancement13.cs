@@ -143,9 +143,6 @@ namespace Nekoyume.Action
                     slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
             var sw = new Stopwatch();
@@ -417,7 +414,7 @@ namespace Nekoyume.Action
 
             // Set state
             sw.Restart();
-            states = states.SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+            states = states.SetAvatarState(avatarAddress, avatarState);
 
             sw.Stop();
             Log.Verbose("{AddressesHex} ItemEnhancement Set AvatarState: {Elapsed}", addressesHex,

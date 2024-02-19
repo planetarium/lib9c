@@ -35,9 +35,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ChargeActionPoint exec started", addressesHex);
@@ -70,7 +67,7 @@ namespace Nekoyume.Action
             avatarState.actionPoint = gameConfigState.ActionPointMax;
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ChargeActionPoint Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+            return states.SetAvatarState(avatarAddress, avatarState);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
