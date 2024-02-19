@@ -256,16 +256,6 @@ namespace Nekoyume.Blockchain.Policy
                         transaction.Id);
                 }
 
-                if (transaction.MaxGasPrice * transaction.GasLimit >
-                    blockChain
-                        .GetWorldState()
-                        .GetAccountState(ReservedAddresses.LegacyAccount)
-                        .GetBalance(transaction.Signer, Currencies.Mead))
-                {
-                    return new TxPolicyViolationException(
-                        $"Transaction {transaction.Id} signer insufficient transaction fee",
-                        transaction.Id);
-                }
             }
             catch (InvalidSignatureException)
             {
