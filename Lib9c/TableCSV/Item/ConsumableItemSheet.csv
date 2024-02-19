@@ -44,6 +44,6 @@ id,_name,item_sub_type,grade,elemental_type,stat_type_1,stat_value_1,stat_type_2
 900104,9C_New_Year_Cookie,Food,3,Normal,ATK,90,DEF,145
 900105,Great_9C_New_Year_Cookie,Food,4,Normal,ATK,154,DEF,177
 900106,Legendary_9C_New_Year_Cookie,Food,5,Normal,HP,4354,ATK,242
-900107,모카 번,Food,3,Normal,HP,7941,ATK,1581
+900107,모카 번,Food,3,Normal,HP,2384,ATK,415
 900108,무지개 솜사탕,Food,4,Normal,HP,4508,ATK,787
-900109,모카두카 버블티,Food,5,Normal,HP,2384,ATK,415
+900109,모카두카 버블티,Food,5,Normal,HP,7941,ATK,1581
