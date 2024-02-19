@@ -130,7 +130,7 @@ namespace Lib9c.Tests.Action
                     state = state.SetLegacyState(unlockedRecipeIdsAddress, serializedIds);
                 }
 
-                state = state.SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
+                state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
             var action = new UnlockEquipmentRecipe1

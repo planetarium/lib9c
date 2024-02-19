@@ -209,7 +209,7 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                prevState = prevState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                prevState = prevState.SetAvatarState(_avatarAddress, avatarState);
             }
 
             prevState = prevState
@@ -330,7 +330,7 @@ namespace Lib9c.Tests.Action
                 ),
             };
 
-            IWorld prevState = _initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+            IWorld prevState = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             var action = new SellCancellation
             {
@@ -644,7 +644,7 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                prevState = prevState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                prevState = prevState.SetAvatarState(_avatarAddress, avatarState);
             }
 
             prevState = prevState

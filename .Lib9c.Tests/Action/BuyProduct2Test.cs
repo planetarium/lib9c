@@ -114,11 +114,11 @@ namespace Lib9c.Tests.Action
             _initialState = _initialState
                 .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetAgentState(SellerAgentAddress, sellerAgentState)
-                .SetAvatarState(SellerAvatarAddress, sellerAvatarState, true, true, true, true)
+                .SetAvatarState(SellerAvatarAddress, sellerAvatarState)
                 .SetAgentState(_sellerAgentAddress2, agentState2)
-                .SetAvatarState(_sellerAvatarAddress2, sellerAvatarState2, true, true, true, true)
+                .SetAvatarState(_sellerAvatarAddress2, sellerAvatarState2)
                 .SetAgentState(BuyerAgentAddress, buyerAgentState)
-                .SetAvatarState(BuyerAvatarAddress, _buyerAvatarState, true, true, true, true)
+                .SetAvatarState(BuyerAvatarAddress, _buyerAvatarState)
                 .MintAsset(context, BuyerAgentAddress, _goldCurrencyState.Currency * 1);
         }
 

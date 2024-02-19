@@ -102,9 +102,6 @@ namespace Nekoyume.Action
                     ShardedShopStateV2.DeriveAddress(purchaseInfo.ItemSubType, purchaseInfo.OrderId);
                 Address sellerAgentAddress = purchaseInfo.SellerAgentAddress;
                 Address sellerAvatarAddress = purchaseInfo.SellerAvatarAddress;
-                Address sellerInventoryAddress = sellerAvatarAddress.Derive(LegacyInventoryKey);
-                var sellerWorldInformationAddress = sellerAvatarAddress.Derive(LegacyWorldInformationKey);
-                Address sellerQuestListAddress = sellerAvatarAddress.Derive(LegacyQuestListKey);
                 Guid orderId = purchaseInfo.OrderId;
                 Address orderAddress = Order.DeriveAddress(orderId);
                 Address digestListAddress = OrderDigestListState.DeriveAddress(sellerAvatarAddress);
@@ -271,7 +268,7 @@ namespace Nekoyume.Action
                 states = states
                     .SetLegacyState(digestListAddress, digestList.Serialize())
                     .SetLegacyState(orderReceiptAddress, orderReceipt.Serialize())
-                    .SetAvatarState(sellerAvatarAddress, sellerAvatarState, true, true, true, true);
+                    .SetAvatarState(sellerAvatarAddress, sellerAvatarState);
                 sw.Stop();
                 Log.Verbose("{AddressesHex}Buy Set Seller AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
                 sw.Restart();
@@ -283,8 +280,7 @@ namespace Nekoyume.Action
             buyerAvatarState.updatedAt = ctx.BlockIndex;
             buyerAvatarState.blockIndex = ctx.BlockIndex;
 
-            states = states.SetAvatarState(
-                buyerAvatarAddress, buyerAvatarState, true, true, true, true);
+            states = states.SetAvatarState(buyerAvatarAddress, buyerAvatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}Buy Set Buyer AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();

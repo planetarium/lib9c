@@ -77,9 +77,9 @@ namespace Lib9c.Tests.Action.Coupons
                     default);
 
             state = state
-                .SetAvatarState(agent1Avatar0Address, agent1Avatar0State, true, true, true, true)
-                .SetAvatarState(agent1Avatar1Address, agent1Avatar1State, true, true, true, true)
-                .SetAvatarState(agent2Avatar0Address, agent2Avatar0State, true, true, true, true);
+                .SetAvatarState(agent1Avatar0Address, agent1Avatar0State)
+                .SetAvatarState(agent1Avatar1Address, agent1Avatar1State)
+                .SetAvatarState(agent2Avatar0Address, agent2Avatar0State);
 
             // can't redeem a coupon with an arbitrary guid
             Assert.Equal(

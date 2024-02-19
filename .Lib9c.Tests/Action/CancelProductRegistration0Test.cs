@@ -73,7 +73,7 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
-                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(_avatarAddress, avatarState);
         }
 
         [Theory]

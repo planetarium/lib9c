@@ -16,7 +16,6 @@ namespace Lib9c.Tests.Action
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
 
     public class SellTest
     {
@@ -134,7 +133,7 @@ namespace Lib9c.Tests.Action
             else
             {
                 previousStates = previousStates
-                    .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                    .SetAvatarState(_avatarAddress, avatarState);
             }
 
             var currencyState = previousStates.GetGoldCurrency();
@@ -315,7 +314,7 @@ namespace Lib9c.Tests.Action
                 ),
             };
 
-            _initialState = _initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+            _initialState = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             var action = new Sell
             {
@@ -350,10 +349,7 @@ namespace Lib9c.Tests.Action
                 var orderLock = new OrderLock(Guid.NewGuid());
                 _avatarState.inventory.AddItem(tradableItem, 1, orderLock);
                 Assert.True(_avatarState.inventory.TryGetLockedItem(orderLock, out _));
-                _initialState = _initialState.SetLegacyState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    _avatarState.inventory.Serialize()
-                );
+                _initialState = _initialState.SetAvatarState(_avatarAddress, _avatarState);
             }
 
             var action = new Sell
@@ -385,8 +381,7 @@ namespace Lib9c.Tests.Action
                 10);
             _avatarState.inventory.AddItem(equipment);
 
-            _initialState = _initialState.SetAvatarState(
-                _avatarAddress, _avatarState, true, true, true, true);
+            _initialState = _initialState.SetAvatarState(_avatarAddress, _avatarState);
 
             var action = new Sell
             {
@@ -436,7 +431,7 @@ namespace Lib9c.Tests.Action
             Assert.Single(shardedShopState.OrderDigestList);
 
             IWorld previousStates = _initialState
-                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(_avatarAddress, avatarState)
                 .SetLegacyState(shardedShopAddress, shardedShopState.Serialize());
 
             var action = new Sell

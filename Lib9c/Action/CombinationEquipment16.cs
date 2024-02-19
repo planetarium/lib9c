@@ -512,7 +512,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CombinationEquipment Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(slotAddress, slotState.Serialize())
                 .SetLegacyState(hammerPointAddress,hammerPointState.Serialize())
                 .SetAgentState(context.Signer, agentState);

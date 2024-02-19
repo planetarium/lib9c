@@ -235,10 +235,10 @@ namespace Nekoyume.Module
             this IWorld world,
             Address avatarAddress,
             AvatarState state,
-            bool setAvatar,
-            bool setInventory,
-            bool setWorldInformation,
-            bool setQuestList)
+            bool setAvatar = true,
+            bool setInventory = true,
+            bool setWorldInformation = true,
+            bool setQuestList = true)
         {
             // TODO: Overwrite legacy address to null state?
             if (state.Version < 2)

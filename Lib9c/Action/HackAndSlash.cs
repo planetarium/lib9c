@@ -112,10 +112,6 @@ namespace Nekoyume.Action
             long blockIndex,
             IRandom random)
         {
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
-
             var addressesHex = $"[{signer.ToHex()}, {AvatarAddress.ToHex()}]";
             var started = DateTimeOffset.UtcNow;
             const string source = "HackAndSlash";
@@ -581,7 +577,7 @@ namespace Nekoyume.Action
                 states = states.SetLegacyState(skillStateAddress, skillState.Serialize());
             }
 
-            states = states.SetAvatarState(AvatarAddress, avatarState, true, true, true, true);
+            states = states.SetAvatarState(AvatarAddress, avatarState);
 
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",

@@ -101,7 +101,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            states = states.SetAvatarState(AvatarAddress, buyerAvatarState, true, true, false, false);
+            states = states.SetAvatarState(AvatarAddress, buyerAvatarState);
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("BuyProduct Total Executed Time: {Elapsed}", ended - started);

@@ -200,7 +200,7 @@ namespace Nekoyume.Action.Garages
                 states = states.SetLegacyState(garageAddress, garage.Serialize());
             }
 
-            return states.SetAvatarState(recipientAvatarAddress, avatarState, false, true, false, false);
+            return states.SetAvatarState(recipientAvatarAddress, avatarState);
         }
 
         private IWorld BulkSendMail(
@@ -234,7 +234,7 @@ namespace Nekoyume.Action.Garages
                 mailBox.CleanUp();
                 avatarState.mailBox = mailBox;
 
-                return states.SetAvatarState(recipientAvatarAddress, avatarState, true, false, false, false);
+                return states.SetAvatarState(recipientAvatarAddress, avatarState);
             }
 
             return states;
