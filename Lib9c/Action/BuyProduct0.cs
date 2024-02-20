@@ -181,7 +181,7 @@ namespace Nekoyume.Action
                 .SetLegacyState(productAddress, Null.Value)
                 .SetLegacyState(productsStateAddress, productsState.Serialize())
                 .SetLegacyState(ProductReceipt.DeriveAddress(productId), receipt.Serialize())
-                .SetAvatarState(sellerAvatarAddress, sellerAvatarState)
+                .SetAvatarState(sellerAvatarAddress, sellerAvatarState, true, true, true, true)
                 .TransferAsset(context, context.Signer, feeStoreAddress, tax)
                 .TransferAsset(context, context.Signer, sellerAgentAddress, taxedPrice);
 
@@ -322,7 +322,7 @@ namespace Nekoyume.Action
             states = states
                 .SetLegacyState(digestListAddress, digestList.Serialize())
                 .SetLegacyState(orderReceiptAddress, orderReceipt.Serialize())
-                .SetAvatarState(sellerAvatarAddress, sellerAvatarState);
+                .SetAvatarState(sellerAvatarAddress, sellerAvatarState, true, true, true, true);
             states = states.SetLegacyState(shardedShopAddress, shardedShopState.Serialize());
             return states;
         }

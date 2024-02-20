@@ -31,7 +31,7 @@ namespace Nekoyume.Blockchain.Policy
 {
     public partial class BlockPolicySource
     {
-        public const int MaxTransactionsPerBlock = 200;
+        public const int MaxTransactionsPerBlock = 80;
 
         public static readonly TimeSpan BlockInterval = TimeSpan.FromSeconds(8);
 
@@ -256,16 +256,6 @@ namespace Nekoyume.Blockchain.Policy
                         transaction.Id);
                 }
 
-                if (transaction.MaxGasPrice * transaction.GasLimit >
-                    blockChain
-                        .GetWorldState()
-                        .GetAccountState(ReservedAddresses.LegacyAccount)
-                        .GetBalance(transaction.Signer, Currencies.Mead))
-                {
-                    return new TxPolicyViolationException(
-                        $"Transaction {transaction.Id} signer insufficient transaction fee",
-                        transaction.Id);
-                }
             }
             catch (InvalidSignatureException)
             {
