@@ -203,7 +203,7 @@ namespace Lib9c.Tests.Action
             {
                 foreach (var registerInfo in validateMember.RegisterInfos)
                 {
-                    var registerProduct = new RegisterProduct2
+                    var registerProduct = new RegisterProduct
                     {
                         AvatarAddress = AvatarAddress,
                         RegisterInfos = new[] { registerInfo },
