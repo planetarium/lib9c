@@ -237,7 +237,7 @@ namespace Lib9c.Tests.Action
             {
                 foreach (var productInfo in validateMember.ProductInfos)
                 {
-                    var buyProduct = new BuyProduct2
+                    var buyProduct = new BuyProduct
                     {
                         AvatarAddress = AvatarAddress,
                         ProductInfos = new[] { productInfo },

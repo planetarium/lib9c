@@ -287,7 +287,7 @@ namespace Lib9c.Tests.Action.Scenario
                 }
             }
 
-            var action3 = new BuyProduct2
+            var action3 = new BuyProduct
             {
                 AvatarAddress = _buyerAvatarAddress,
                 ProductInfos = productInfoList,
@@ -1062,7 +1062,7 @@ namespace Lib9c.Tests.Action.Scenario
             }));
 
             //Buy
-            var buyAction = new BuyProduct2
+            var buyAction = new BuyProduct
             {
                 AvatarAddress = _buyerAvatarAddress,
                 ProductInfos = productInfos,
