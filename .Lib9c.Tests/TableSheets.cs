@@ -246,6 +246,8 @@ namespace Lib9c.Tests
 
         public CreateAvatarFavSheet CreateAvatarFavSheet { get; set; }
 
+        public CollectionSheet CollectionSheet { get; private set; }
+
         public void ItemSheetInitialize()
         {
             ItemSheet ??= new ItemSheet();

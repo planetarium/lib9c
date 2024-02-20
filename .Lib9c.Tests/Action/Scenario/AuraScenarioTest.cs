@@ -255,7 +255,9 @@ namespace Lib9c.Tests.Action.Scenario
                 var log = simulator.Simulate(
                     myArenaPlayerDigest,
                     enemyArenaPlayerDigest,
-                    _tableSheets.GetArenaSimulatorSheets());
+                    _tableSheets.GetArenaSimulatorSheets(),
+                    new List<StatModifier>(),
+                    new List<StatModifier>());
                 // Check player, enemy equip aura
                 foreach (var spawn in log.OfType<ArenaSpawnCharacter>())
                 {

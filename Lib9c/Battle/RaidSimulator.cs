@@ -10,6 +10,8 @@ using Priority_Queue;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nekoyume.Model.Stat;
+using NormalAttack = Nekoyume.Model.BattleStatus.NormalAttack;
 
 namespace Nekoyume.Battle
 {
@@ -33,13 +35,10 @@ namespace Nekoyume.Battle
             List<Guid> foods,
             List<RuneState> runeStates,
             RaidSimulatorSheets simulatorSheets,
-            CostumeStatSheet costumeStatSheet) : base(random, avatarState, foods, simulatorSheets)
+            CostumeStatSheet costumeStatSheet,
+            List<StatModifier> collectionModifiers) : base(random, avatarState, foods, simulatorSheets)
         {
-            Player.SetCostumeStat(costumeStatSheet);
-            if (runeStates != null)
-            {
-                Player.SetRune(runeStates, simulatorSheets.RuneOptionSheet, simulatorSheets.SkillSheet);
-            }
+            Player.ConfigureStats(costumeStatSheet, runeStates, simulatorSheets.RuneOptionSheet, simulatorSheets.SkillSheet, collectionModifiers);
 
             BossId = bossId;
             _waves = new List<RaidBoss>();
@@ -159,8 +158,14 @@ namespace Nekoyume.Battle
 
                     foreach (var other in Characters)
                     {
+                        var spdMultiplier = 0.6m;
                         var current = Characters.GetPriority(other);
-                        var speed = current * 0.6m;
+                        if (other == Player && other.usedSkill is not null && other.usedSkill is not NormalAttack)
+                        {
+                            spdMultiplier = 0.9m;
+                        }
+
+                        var speed = current * spdMultiplier;
                         Characters.UpdatePriority(other, speed);
                     }
 

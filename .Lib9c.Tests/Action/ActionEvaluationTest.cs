@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using MessagePack.Resolvers;
     using Nekoyume.Action;
     using Nekoyume.Helper;
+    using Nekoyume.Model.Collection;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
@@ -90,6 +91,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(CreatePledge))]
         [InlineData(typeof(TransferAssets))]
         [InlineData(typeof(RuneSummon))]
+        [InlineData(typeof(ActivateCollection))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -452,6 +454,32 @@ namespace Lib9c.Tests.Action
                     AvatarAddress = _sender,
                     GroupId = 20001,
                     SummonCount = 10,
+                },
+                ActivateCollection _ => new ActivateCollection
+                {
+                    AvatarAddress = _sender,
+                    CollectionData =
+                    {
+                        (
+                            1,
+                            new List<ICollectionMaterial>
+                            {
+                                new FungibleCollectionMaterial
+                                {
+                                    ItemId = 1,
+                                    ItemCount = 2,
+                                },
+                                new NonFungibleCollectionMaterial
+                                {
+                                    ItemId = 2,
+                                    ItemCount = 3,
+                                    NonFungibleId = Guid.NewGuid(),
+                                    Level = 1,
+                                    SkillContains = true,
+                                },
+                            }
+                        ),
+                    },
                 },
                 _ => throw new InvalidCastException(),
             };

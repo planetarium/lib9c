@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Model
     using Libplanet.Crypto;
     using Nekoyume.Battle;
     using Nekoyume.Model.BattleStatus;
+    using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Xunit;
 
@@ -51,7 +52,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
                 );
             Assert.False(simulator.Log.IsClear);
         }
