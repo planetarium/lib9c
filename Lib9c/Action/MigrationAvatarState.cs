@@ -34,7 +34,13 @@ namespace Nekoyume.Action
             foreach (var rawAvatar in avatarStates)
             {
                 var avatarState = new AvatarState(rawAvatar);
-                states = states.SetAvatarState(avatarState.address, avatarState);
+                states = states.SetAvatarState(
+                    avatarState.address,
+                    avatarState,
+                    true,
+                    true,
+                    true,
+                    true);
             }
 
             return states;
