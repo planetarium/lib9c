@@ -72,10 +72,10 @@ namespace Lib9c.Tests.Model
                 2);
 
             var player = simulator.Player;
-            Assert.Equal(row.Stat, player.Stats.OptionalStats.ATK);
+            Assert.Equal(row.Stat, player.Stats.CostumeStats.ATK);
 
             var player2 = simulator.SimulateV2();
-            Assert.Equal(row.Stat, player2.Stats.OptionalStats.ATK);
+            Assert.Equal(row.Stat, player2.Stats.CostumeStats.ATK);
         }
 
         [Fact]
