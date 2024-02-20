@@ -7,6 +7,7 @@ namespace Nekoyume.Model.Skill
         DoubleAttack,
         AreaAttack,
         BuffRemovalAttack,
+        TwinAttack,
 
         Heal,
 
