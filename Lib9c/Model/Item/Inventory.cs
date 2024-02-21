@@ -769,14 +769,24 @@ namespace Nekoyume.Model.Item
             where T : INonFungibleItem =>
             TryGetNonFungibleItem(nonFungibleItem.NonFungibleId, out outNonFungibleItem);
 
-        public bool TryGetNonFungibleItem<T>(Guid itemId, out T outNonFungibleItem)
+        /// <summary>
+        /// Tries to get a non-fungible item from the inventory with the specified item ID.
+        /// </summary>
+        /// <typeparam name="T">The type of non-fungible item to retrieve.</typeparam>
+        /// <param name="itemId">The ID of the non-fungible item to retrieve.</param>
+        /// <param name="outNonFungibleItem">When this method returns, contains the non-fungible item with the specified ID, if found; otherwise, the default value for the type.</param>
+        /// <param name="blockIndex">The block index for the non-fungible item to be considered valid. Defaults to <see cref="long.MaxValue"/>.</param>
+        /// <returns><c>true</c> if a non-fungible item with the specified ID is found in the inventory; otherwise, <c>false</c>.</returns>
+        public bool TryGetNonFungibleItem<T>(Guid itemId, out T outNonFungibleItem,
+            long blockIndex = long.MaxValue)
             where T : INonFungibleItem
         {
             foreach (var item in _items)
             {
                 if (item.Locked ||
                     !(item.item is T nonFungibleItem) ||
-                    !nonFungibleItem.NonFungibleId.Equals(itemId))
+                    !nonFungibleItem.NonFungibleId.Equals(itemId) ||
+                    nonFungibleItem.RequiredBlockIndex > blockIndex)
                 {
                     continue;
                 }

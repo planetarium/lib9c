@@ -60,7 +60,7 @@ namespace Nekoyume.Action
                                 fungibleCollectionMaterial.BurnMaterial(itemRow, avatarState.inventory, context.BlockIndex);
                                 break;
                             case NonFungibleCollectionMaterial nonFungibleCollectionMaterial:
-                                nonFungibleCollectionMaterial.BurnMaterial(itemRow, avatarState.inventory, requiredMaterial);
+                                nonFungibleCollectionMaterial.BurnMaterial(itemRow, avatarState.inventory, requiredMaterial, context.BlockIndex);
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException(nameof(registeredMaterial));

@@ -978,6 +978,23 @@
             Assert.Empty(inventory.Items);
         }
 
+        [Fact]
+        public void TryGetNonFungibleItem()
+        {
+            var equipment = GetFirstEquipment();
+            Assert.Equal(0L, equipment.RequiredBlockIndex);
+            var inventory = new Inventory();
+            inventory.AddItem(equipment);
+            // True because default blockIndex is long.MaxValue
+            Assert.True(inventory.TryGetNonFungibleItem(equipment.NonFungibleId, out Equipment item));
+            Assert.Equal(equipment, item);
+
+            equipment.RequiredBlockIndex = 10L;
+            inventory = new Inventory();
+            inventory.AddItem(equipment);
+            Assert.False(inventory.TryGetNonFungibleItem(equipment.NonFungibleId, out Equipment _, 1L));
+        }
+
         private static Consumable GetFirstConsumable()
         {
             var row = TableSheets.ConsumableItemSheet.First;
