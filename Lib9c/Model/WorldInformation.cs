@@ -155,7 +155,19 @@ namespace Nekoyume.Model
             {
                 foreach (var row in orderedSheet)
                 {
-                    _worlds.Add(row.Id, new World(row, blockIndex, blockIndex, row.StageEnd));
+                    //for test world 8
+                    if(row.Id == 7)
+                    {
+                        _worlds.Add(row.Id, new World(row, blockIndex, blockIndex, row.StageEnd - 1));
+                    }
+                    else if(row.Id == 8)
+                    {
+                        _worlds.Add(row.Id, new World(row));
+                    }
+                    else
+                    {
+                        _worlds.Add(row.Id, new World(row, blockIndex, blockIndex, row.StageEnd));
+                    }
                 }
             }
             else

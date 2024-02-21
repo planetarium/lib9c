@@ -1,5 +1,5 @@
 {
-    "Level": 300,
+    "Level": 400,
     "TradableMaterialCount": 6000,
     "MaterialCount": 5000,
     "RuneStoneCount": 4000,
@@ -12,7 +12,13 @@
         103,
         128,
         148,
-        152
+        152,
+        170,
+        165,
+        160,
+        157,
+        71,
+        30
     ],
     "CustomEquipmentItems": [
         {
