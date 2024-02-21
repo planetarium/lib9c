@@ -44,16 +44,19 @@ namespace Nekoyume.Model.Collection
         /// <param name="itemRow">The <see cref="ItemSheet.Row"/> object representing the item.</param>
         /// <param name="inventory">The <see cref="Inventory"/> object representing the player's inventory.</param>
         /// <param name="materialInfo">The <see cref="CollectionSheet.RequiredMaterial"/> object representing the material info.</param>
+        /// <param name="blockIndex">The block index where the burn operation is taking place.</param>
         /// <exception cref="ItemDoesNotExistException">Thrown when the material item does not exist in the inventory.</exception>
         /// <exception cref="InvalidItemTypeException">Thrown when the item type is not supported by <see cref="NonFungibleCollectionMaterial"/>.</exception>
-        public void BurnMaterial(ItemSheet.Row itemRow, Inventory inventory, CollectionSheet.RequiredMaterial materialInfo)
+        public void BurnMaterial(ItemSheet.Row itemRow, Inventory inventory,
+            CollectionSheet.RequiredMaterial materialInfo, long blockIndex)
         {
             switch (itemRow.ItemType)
             {
                 case ItemType.Costume:
                 case ItemType.Equipment:
                     if (inventory.TryGetNonFungibleItem(NonFungibleId,
-                            out INonFungibleItem materialItem) && materialInfo.Validate(materialItem))
+                            out INonFungibleItem materialItem, blockIndex) &&
+                        materialInfo.Validate(materialItem))
                     {
                         inventory.RemoveNonFungibleItem(materialItem);
                     }
