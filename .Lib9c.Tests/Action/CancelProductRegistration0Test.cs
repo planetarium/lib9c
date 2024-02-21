@@ -129,7 +129,7 @@ namespace Lib9c.Tests.Action
         {
             var context = new ActionContext();
             var prevState = _initialState.MintAsset(context, _avatarAddress, 1 * RuneHelper.StakeRune);
-            var registerProduct = new RegisterProduct2
+            var registerProduct = new RegisterProduct
             {
                 AvatarAddress = _avatarAddress,
                 RegisterInfos = new List<IRegisterInfo>

@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.TableData;
     using Xunit;
 
-    public class RegisterProduct2Test
+    public class RegisterProductTest
     {
         private static readonly Address AvatarAddress =
             new Address("47d082a115c63e7b58b1532d20e631538eafadde");
@@ -33,7 +33,7 @@ namespace Lib9c.Tests.Action
         private readonly GameConfigState _gameConfigState;
         private IWorld _initialState;
 
-        public RegisterProduct2Test()
+        public RegisterProductTest()
         {
             _agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(_agentAddress);
@@ -210,7 +210,7 @@ namespace Lib9c.Tests.Action
             _initialState = _initialState
                 .SetAvatarState(AvatarAddress, _avatarState)
                 .MintAsset(context, AvatarAddress, asset);
-            var action = new RegisterProduct2
+            var action = new RegisterProduct
             {
                 AvatarAddress = AvatarAddress,
                 RegisterInfos = new List<IRegisterInfo>
@@ -250,7 +250,7 @@ namespace Lib9c.Tests.Action
 
             var nextAvatarState = nextState.GetAvatarState(AvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct2.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
 
             var marketState = new MarketState(nextState.GetLegacyState(Addresses.Market));
             Assert.Contains(AvatarAddress, marketState.AvatarAddresses);
@@ -289,7 +289,7 @@ namespace Lib9c.Tests.Action
             {
                 foreach (var registerInfo in validateMember.RegisterInfos)
                 {
-                    var action = new RegisterProduct2
+                    var action = new RegisterProduct
                     {
                         AvatarAddress = AvatarAddress,
                         RegisterInfos = new[] { registerInfo },
@@ -349,7 +349,7 @@ namespace Lib9c.Tests.Action
             }
 
             _initialState = _initialState.SetAvatarState(AvatarAddress, _avatarState);
-            var action = new RegisterProduct2
+            var action = new RegisterProduct
             {
                 AvatarAddress = AvatarAddress,
                 RegisterInfos = new List<IRegisterInfo>
@@ -378,12 +378,12 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_ArgumentOutOfRangeException()
         {
             var registerInfos = new List<RegisterInfo>();
-            for (int i = 0; i < RegisterProduct2.Capacity + 1; i++)
+            for (int i = 0; i < RegisterProduct.Capacity + 1; i++)
             {
                 registerInfos.Add(new RegisterInfo());
             }
 
-            var action = new RegisterProduct2
+            var action = new RegisterProduct
             {
                 AvatarAddress = _avatarState.address,
                 RegisterInfos = registerInfos,
