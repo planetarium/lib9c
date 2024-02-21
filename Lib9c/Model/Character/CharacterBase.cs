@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+#if TEST_LOG
+using System.Text;
+using UnityEngine;
+#endif
 using BTAI;
 using Nekoyume.Battle;
 using Nekoyume.Model.BattleStatus;
