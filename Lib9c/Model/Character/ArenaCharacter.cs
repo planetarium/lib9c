@@ -37,7 +37,7 @@ namespace Nekoyume.Model
         private readonly int _attackCountMax;
 
         private ArenaCharacter _target;
-        private int _attackCount;
+        public int _attackCount { get; private set; }
 
         public Guid Id { get; } = Guid.NewGuid();
         public BattleStatus.Arena.ArenaSkill SkillLog { get; private set; }

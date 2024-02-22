@@ -44,9 +44,9 @@ namespace Nekoyume.Model.Skill.Arena
                 {
                     damage = caster.ATK + Power + statAdditionalPower;
                     damage = (long) (damage * multiplier);
-                    damage = caster.GetDamage(damage, isNormalAttack);
+                    damage = caster.GetDamage(damage, isNormalAttack || SkillRow.Combo);
                     damage = elementalType.GetDamage(target.DefenseElementalType, damage);
-                    isCritical = caster.IsCritical(isNormalAttack);
+                    isCritical = caster.IsCritical(isNormalAttack || SkillRow.Combo);
                     if (isCritical)
                     {
                         damage = CriticalHelper.GetCriticalDamageForArena(caster, damage);
