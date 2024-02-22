@@ -4,10 +4,9 @@ namespace Nekoyume.Model.Skill
     {
         NormalAttack,
         BlowAttack,
-        DoubleAttack,
+        DoubleAttack, // Attack enemy two times
         AreaAttack,
         BuffRemovalAttack,
-        TwinAttack,
 
         Heal,
 
