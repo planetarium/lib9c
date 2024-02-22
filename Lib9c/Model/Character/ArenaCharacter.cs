@@ -37,7 +37,7 @@ namespace Nekoyume.Model
         private readonly int _attackCountMax;
 
         private ArenaCharacter _target;
-        private int _attackCount;
+        public int AttackCount { get; private set; }
 
         public Guid Id { get; } = Guid.NewGuid();
         public BattleStatus.Arena.ArenaSkill SkillLog { get; private set; }
@@ -216,8 +216,8 @@ namespace Nekoyume.Model
                 Buffs.Add(pair.Key, (Buff.Buff) pair.Value.Clone());
             }
 
-            _attackCountMax = value._attackCount;
-            _attackCount = value._attackCount;
+            _attackCountMax = value.AttackCount;
+            AttackCount = value.AttackCount;
             _target = value._target;
             CurrentHP = value.CurrentHP;
         }
@@ -933,7 +933,7 @@ namespace Nekoyume.Model
                 _simulator.Random.Next(0, 100));
             if (!isHit)
             {
-                caster._attackCount = 0;
+                caster.AttackCount = 0;
             }
 
             return isHit;
@@ -944,13 +944,13 @@ namespace Nekoyume.Model
             if (!considerAttackCount)
                 return damage;
 
-            _attackCount++;
-            if (_attackCount > _attackCountMax)
+            AttackCount++;
+            if (AttackCount > _attackCountMax)
             {
-                _attackCount = 1;
+                AttackCount = 1;
             }
 
-            var damageMultiplier = AttackCountHelper.GetDamageMultiplier(_attackCount, _attackCountMax);
+            var damageMultiplier = AttackCountHelper.GetDamageMultiplier(AttackCount, _attackCountMax);
             damage *= damageMultiplier;
             return damage;
         }
