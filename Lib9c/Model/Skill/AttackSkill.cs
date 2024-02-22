@@ -69,27 +69,22 @@ namespace Nekoyume.Model.Skill
                         }
                         else
                         {
-                            // Consider attack count: combo bonus
-                            var considerAttackCount =
-                                isNormalAttack
-                                || SkillRow.SkillCategory is SkillCategory.TwinAttack;
                             // 모션 배율 적용.
                             damage = caster.GetDamage(
                                 damage,
-                                considerAttackCount
+                                isNormalAttack || SkillRow.Combo
                             );
                             // 속성 적용.
                             damage = elementalType.GetDamage(target.defElementType, damage);
                             // 치명 적용.
-                            isCritical = caster.IsCritical(considerAttackCount);
+                            isCritical = caster.IsCritical(isNormalAttack || SkillRow.Combo);
                             if (isCritical)
                             {
                                 damage = CriticalHelper.GetCriticalDamage(caster, damage);
                             }
 
                             // double attack must be shown as critical attack
-                            isCritical |= SkillRow.SkillCategory is SkillCategory.DoubleAttack
-                                or SkillCategory.TwinAttack;
+                            isCritical |= SkillRow.SkillCategory is SkillCategory.DoubleAttack;
                         }
 
                         target.CurrentHP -= damage;
