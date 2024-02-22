@@ -914,12 +914,17 @@ namespace Nekoyume.Model
                 return CRI >= chance;
 
             var additionalCriticalChance =
-                AttackCountHelper.GetAdditionalCriticalChance(_attackCount, _attackCountMax);
+                AttackCountHelper.GetAdditionalCriticalChance(AttackCount, _attackCountMax);
             return CRI + additionalCriticalChance >= chance;
         }
 
         public virtual bool IsHit(ArenaCharacter caster)
         {
+            if (caster.ActionBuffs.Any(buff => buff is Focus))
+            {
+                return true;
+            }
+
             var isHit = HitHelper.IsHitWithoutLevelCorrection(
                 caster.Level,
                 caster.HIT,
