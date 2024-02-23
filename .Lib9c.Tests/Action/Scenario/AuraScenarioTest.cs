@@ -313,7 +313,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             var previousState = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
-            var register = new RegisterProduct2
+            var register = new RegisterProduct
             {
                 AvatarAddress = _avatarAddress,
                 RegisterInfos = new List<IRegisterInfo>
