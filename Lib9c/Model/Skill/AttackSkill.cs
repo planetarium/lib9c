@@ -70,18 +70,21 @@ namespace Nekoyume.Model.Skill
                         else
                         {
                             // 모션 배율 적용.
-                            damage = caster.GetDamage(damage, isNormalAttack);
+                            damage = caster.GetDamage(
+                                damage,
+                                isNormalAttack || SkillRow.Combo
+                            );
                             // 속성 적용.
                             damage = elementalType.GetDamage(target.defElementType, damage);
                             // 치명 적용.
-                            isCritical = caster.IsCritical(isNormalAttack);
+                            isCritical = caster.IsCritical(isNormalAttack || SkillRow.Combo);
                             if (isCritical)
                             {
                                 damage = CriticalHelper.GetCriticalDamage(caster, damage);
                             }
 
                             // double attack must be shown as critical attack
-                            isCritical |= SkillRow.SkillCategory == SkillCategory.DoubleAttack;
+                            isCritical |= SkillRow.SkillCategory is SkillCategory.DoubleAttack;
                         }
 
                         target.CurrentHP -= damage;

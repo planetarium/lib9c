@@ -1,4 +1,4 @@
-id,_name,elemental_type,skill_type,skill_category,skill_target_type,hit_count,cooldown
+id,_name,elemental_type,skill_type,skill_category,skill_target_type,hit_count,cooldown,combo
 100000,기본 공격,Normal,Attack,NormalAttack,Enemy,1,0
 100001,일격,Normal,Attack,BlowAttack,Enemy,1,1
 _100002,일격(전체),Normal,Attack,BlowAttack,Enemies,1,1 // 노멀 속성의 전체 일격은 추가하면 안 됩니다.
@@ -171,6 +171,6 @@ _250001,속도 증가(전체),Normal,Buff,SpeedBuff,Ally,1,1 // 미구현
 700005,기절,Normal,Debuff,Buff,Enemies,1,15
 700006,흡혈,Normal,Buff,Buff,Self,1,15
 700007,집중,Normal,Buff,Buff,Self,1,15
-700008,더블 어택,Normal,Attack,BlowAttack,Enemy,1,15
+700008,더블 어택,Normal,Attack,DoubleAttack,Enemy,2,15,true
 700009,디버프 제거,Normal,Buff,Buff,Self,1,15
 700010,HP 비례 데미지,Normal,Attack,BlowAttack,Enemy,1,15
