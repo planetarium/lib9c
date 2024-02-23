@@ -60,7 +60,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
             var skillRow = _tableSheets.SkillSheet.OrderedList.First(s => s.Id == skillId);
             var skill = new ArenaDoubleAttack(skillRow, 100, 100, 0, StatType.NONE);
             var used = skill.Use(challenger, enemy, simulator.Turn, new List<Buff>());
-            Assert.Equal(expectedAttackCount, challenger._attackCount);
+            Assert.Equal(expectedAttackCount, challenger.AttackCount);
             Assert.Equal(2, used.SkillInfos.Count());
             Assert.True(used.SkillInfos.First().Effect <= used.SkillInfos.Last().Effect);
         }
