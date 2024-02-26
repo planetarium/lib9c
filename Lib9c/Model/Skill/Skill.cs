@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Nekoyume.Model.Buff;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
@@ -76,12 +77,39 @@ namespace Nekoyume.Model.Skill
             foreach (var buff in buffs)
             {
                 var targets = buff.GetTarget(caster);
-                foreach (var target in targets.Where(target => target.GetChance(buff.BuffInfo.Chance)))
+                foreach (var target in targets.Where(target =>
+                             target.GetChance(buff.BuffInfo.Chance)))
                 {
                     target.AddBuff(buff);
-                    infos.Add(new Model.BattleStatus.Skill.SkillInfo(target.Id, target.IsDead, target.Thorn, 0, false,
-                        SkillRow.SkillCategory, simulatorWaveTurn, ElementalType.Normal, SkillRow.SkillTargetType,
-                        buff, copyCharacter ? (CharacterBase)target.Clone() : target));
+                    var dispelList = new List<Buff.Buff>();
+                    if (buff is Dispel)
+                    {
+                        foreach (var debuff in caster.StatBuffs.Where(bf => bf.RowData.Value < 0))
+                        {
+                            if (caster.Simulator.Random.Next(0, 100) < Chance)
+                            {
+                                dispelList.Add(debuff);
+                                caster.RemoveStatBuff(debuff);
+                            }
+                        }
+
+                        foreach (var debuff in caster.ActionBuffs.Where(bf =>
+                                     bf.RowData.ActionBuffType is ActionBuffType.Bleed
+                                         or ActionBuffType.Stun or ActionBuffType.Vampiric))
+                        {
+                            if (caster.Simulator.Random.Next(0, 100) < Chance)
+                            {
+                                dispelList.Add(debuff);
+                                caster.RemoveActionBuff(debuff);
+                            }
+                        }
+                    }
+
+                    infos.Add(new Model.BattleStatus.Skill.SkillInfo(target.Id, target.IsDead,
+                        target.Thorn, 0, false,
+                        SkillRow.SkillCategory, simulatorWaveTurn, ElementalType.Normal,
+                        SkillRow.SkillTargetType,
+                        buff, copyCharacter ? (CharacterBase)target.Clone() : target, dispelList));
                 }
             }
 

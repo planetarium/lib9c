@@ -375,6 +375,17 @@ namespace Nekoyume.Model
             }
         }
 
+        public void RemoveActionBuff(ActionBuff removedBuff)
+        {
+            Buffs.Remove(removedBuff.RowData.GroupId);
+        }
+
+        public void RemoveStatBuff(StatBuff removedBuff)
+        {
+            Stats.RemoveBuff(removedBuff);
+            Buffs.Remove(removedBuff.RowData.GroupId);
+        }
+
         public void RemoveRecentStatBuff()
         {
             StatBuff removedBuff = null;
@@ -405,8 +416,7 @@ namespace Nekoyume.Model
 
             if (removedBuff != null)
             {
-                Stats.RemoveBuff(removedBuff);
-                Buffs.Remove(removedBuff.RowData.GroupId);
+                RemoveStatBuff(removedBuff);
             }
         }
 

@@ -22,13 +22,17 @@ namespace Nekoyume.Model.BattleStatus
             public readonly long Thorn;
             public readonly bool IsDead;
             public readonly Guid CharacterId;
+            public readonly IEnumerable<Nekoyume.Model.Buff.Buff>? DispelList;
 
 
             public readonly Model.Buff.Buff? Buff;
 
-            public SkillInfo(Guid characterId, bool isDead, long thorn, long effect, bool critical, SkillCategory skillCategory,
+            public SkillInfo(Guid characterId, bool isDead, long thorn, long effect, bool critical,
+                SkillCategory skillCategory,
                 int waveTurn, ElementalType elementalType = ElementalType.Normal,
-                SkillTargetType targetType = SkillTargetType.Enemy, Model.Buff.Buff? buff = null, CharacterBase? target = null)
+                SkillTargetType targetType = SkillTargetType.Enemy, Model.Buff.Buff? buff = null,
+                CharacterBase? target = null,
+                IEnumerable<Nekoyume.Model.Buff.Buff>? dispelList = null)
             {
                 CharacterId = characterId;
                 IsDead = isDead;
@@ -41,6 +45,7 @@ namespace Nekoyume.Model.BattleStatus
                 Buff = buff;
                 WaveTurn = waveTurn;
                 Target = target;
+                DispelList = dispelList;
             }
         }
 
