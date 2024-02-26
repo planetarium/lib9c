@@ -120,7 +120,7 @@ namespace Nekoyume.Action
 
             var collectionStates =
                 states.GetCollectionStates(new[]{ myAvatarAddress, enemyAvatarAddress });
-            var collectionExist = collectionStates.Any(r => r is not null);
+            var collectionExist = collectionStates.Count > 0;
             var sheetTypes = new List<Type>
             {
                 typeof(ArenaSheet),
@@ -383,23 +383,19 @@ namespace Nekoyume.Action
             var defeatCount = 0;
             var rewards = new List<ItemBase>();
             var random = context.GetRandom();
-            var modifiers = new List<List<StatModifier>>
+            var modifiers = new Dictionary<Address, List<StatModifier>>
             {
-                new(),
-                new(),
+                [myAvatarAddress] = new(),
+                [enemyAvatarAddress] = new(),
             };
             if (collectionExist)
             {
                 var collectionSheet = sheets.GetSheet<CollectionSheet>();
-                for (int i = 0; i < collectionStates.Count; i++)
+#pragma warning disable LAA1002
+                foreach (var (address, state) in collectionStates)
+#pragma warning restore LAA1002
                 {
-                    var state = collectionStates[i];
-                    if (state is null)
-                    {
-                        continue;
-                    }
-
-                    var modifier = modifiers[i];
+                    var modifier = modifiers[address];
                     foreach (var collectionId in state.Ids)
                     {
                         modifier.AddRange(collectionSheet[collectionId].StatModifiers);
@@ -413,8 +409,8 @@ namespace Nekoyume.Action
                     myArenaPlayerDigest,
                     enemyArenaPlayerDigest,
                     arenaSheets,
-                    modifiers[0],
-                    modifiers[1],
+                    modifiers[myAvatarAddress],
+                    modifiers[enemyAvatarAddress],
                     true);
                 if (log.Result.Equals(ArenaLog.ArenaResult.Win))
                 {
