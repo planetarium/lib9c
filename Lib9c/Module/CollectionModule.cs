@@ -24,7 +24,7 @@ namespace Nekoyume.Module
         /// <exception cref="InvalidCastException">Thrown when the serialized Collection state is not in the correct format.</exception>
         public static CollectionState GetCollectionState(this IWorldState worldState, Address address)
         {
-            var serializedCollection = worldState.GetResolvedState(address, Addresses.Collection);
+            var serializedCollection = worldState.GetAccountState(Addresses.Collection).GetState(address);
             if (serializedCollection is null)
             {
                 var msg = $"No Collection state ({address.ToHex()})";
