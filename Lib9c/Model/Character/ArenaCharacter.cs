@@ -28,9 +28,9 @@ namespace Nekoyume.Model
         private readonly StatBuffSheet _statBuffSheet;
         private readonly SkillActionBuffSheet _skillActionBuffSheet;
         private readonly ActionBuffSheet _actionBuffSheet;
-        private readonly IArenaSimulator _simulator;
         private readonly ArenaSkills _skills;
 
+        public readonly IArenaSimulator Simulator;
         public readonly ArenaSkills _runeSkills = new ArenaSkills();
         public readonly Dictionary<int, int> RuneSkillCooldownMap = new Dictionary<int, int>();
 
@@ -108,7 +108,7 @@ namespace Nekoyume.Model
             _skillActionBuffSheet = sheets.SkillActionBuffSheet;
             _actionBuffSheet = sheets.ActionBuffSheet;
 
-            _simulator = simulator;
+            Simulator = simulator;
             Stats = GetStatV1(
                 digest,
                 row,
@@ -140,7 +140,7 @@ namespace Nekoyume.Model
             _skillActionBuffSheet = sheets.SkillActionBuffSheet;
             _actionBuffSheet = sheets.ActionBuffSheet;
 
-            _simulator = simulator;
+            Simulator = simulator;
             Stats = GetStatV1(
                 digest,
                 row,
@@ -175,7 +175,7 @@ namespace Nekoyume.Model
             _skillActionBuffSheet = sheets.SkillActionBuffSheet;
             _actionBuffSheet = sheets.ActionBuffSheet;
 
-            _simulator = simulator;
+            Simulator = simulator;
             Stats = GetStat(
                 digest,
                 row,
@@ -205,7 +205,7 @@ namespace Nekoyume.Model
             _skillActionBuffSheet = value._skillActionBuffSheet;
             _actionBuffSheet = value._actionBuffSheet;
 
-            _simulator = value._simulator;
+            Simulator = value.Simulator;
             Stats = new CharacterStats(value.Stats);
             _skills = value._skills;
             Buffs = new Dictionary<int, Buff.Buff>();
@@ -567,7 +567,7 @@ namespace Nekoyume.Model
             if (OnPreSkill())
             {
                 usedSkill = new ArenaTick((ArenaCharacter)Clone());
-                _simulator.Log.Add(usedSkill);
+                Simulator.Log.Add(usedSkill);
             }
             else
             {
@@ -631,9 +631,9 @@ namespace Nekoyume.Model
                 {
                     foreach (var effect in attackSkills
                                  .Select(skillInfo =>
-                                     vampiric.GiveEffectForArena(this, skillInfo, _simulator.Turn)))
+                                     vampiric.GiveEffectForArena(this, skillInfo, Simulator.Turn)))
                     {
-                        _simulator.Log.Add(effect);
+                        Simulator.Log.Add(effect);
                     }
                 }
             }
@@ -641,8 +641,8 @@ namespace Nekoyume.Model
             var bleeds = Buffs.Values.OfType<Bleed>().OrderBy(x => x.BuffInfo.Id);
             foreach (var bleed in bleeds)
             {
-                var effect = bleed.GiveEffectForArena(this, _simulator.Turn);
-                _simulator.Log.Add(effect);
+                var effect = bleed.GiveEffectForArena(this, Simulator.Turn);
+                Simulator.Log.Add(effect);
             }
 
             // Apply thorn damage if target has thorn
@@ -651,7 +651,7 @@ namespace Nekoyume.Model
                 if (skillInfo.Target.Thorn > 0)
                 {
                     var effect = GiveThornDamage(skillInfo.Target.Thorn);
-                    _simulator.Log.Add(effect);
+                    Simulator.Log.Add(effect);
                 }
             }
         }
@@ -669,7 +669,7 @@ namespace Nekoyume.Model
                     thornDamage,
                     false,
                     SkillCategory.TickDamage,
-                    _simulator.Turn,
+                    Simulator.Turn,
                     ElementalType.Normal,
                     SkillTargetType.Enemy)
             };
@@ -700,13 +700,13 @@ namespace Nekoyume.Model
 
         private BattleStatus.Arena.ArenaSkill UseSkill()
         {
-            var selectedRuneSkill = _runeSkills.SelectWithoutDefaultAttack(_simulator.Random);
+            var selectedRuneSkill = _runeSkills.SelectWithoutDefaultAttack(Simulator.Random);
             var selectedSkill = selectedRuneSkill ??
-                _skills.Select(_simulator.Random);
+                _skills.Select(Simulator.Random);
             var usedSkill = selectedSkill.Use(
                 this,
                 _target,
-                _simulator.Turn,
+                Simulator.Turn,
                 BuffFactory.GetBuffs(
                     Stats,
                     selectedSkill,
@@ -736,18 +736,18 @@ namespace Nekoyume.Model
                 _runeSkills.SetCooldown(selectedSkill.SkillRow.Id, row.Cooldown);
             }
 
-            _simulator.Log.Add(usedSkill);
+            Simulator.Log.Add(usedSkill);
             return usedSkill;
         }
 
         [Obsolete("Use UseSkill")]
         private void UseSkillV1()
         {
-            var selectedSkill = _skills.Select(_simulator.Random);
+            var selectedSkill = _skills.Select(Simulator.Random);
             SkillLog = selectedSkill.UseV1(
                 this,
                 _target,
-                _simulator.Turn,
+                Simulator.Turn,
                 BuffFactory.GetBuffs(
                     Stats,
                     selectedSkill,
@@ -909,7 +909,7 @@ namespace Nekoyume.Model
 
         public bool IsCritical(bool considerAttackCount = true)
         {
-            var chance = _simulator.Random.Next(0, 100);
+            var chance = Simulator.Random.Next(0, 100);
             if (!considerAttackCount)
                 return CRI >= chance;
 
@@ -930,7 +930,7 @@ namespace Nekoyume.Model
                 caster.HIT,
                 Level,
                 HIT,
-                _simulator.Random.Next(0, 100));
+                Simulator.Random.Next(0, 100));
             if (!isHit)
             {
                 caster.AttackCount = 0;
