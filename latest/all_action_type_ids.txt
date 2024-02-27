@@ -1,5 +1,6 @@
 activate_account
 activate_account2
+activate_collection
 add_activated_account
 add_activated_account2
 add_redeem_code
