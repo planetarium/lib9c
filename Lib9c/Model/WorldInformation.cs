@@ -141,7 +141,7 @@ namespace Nekoyume.Model
         public WorldInformation(
             long blockIndex,
             WorldSheet worldSheet,
-            bool openAllOfWorldsAndStages = false)
+            bool openAllOfWorldsAndStages = false, string avatarName = "")
         {
             if (worldSheet is null)
             {
@@ -153,18 +153,28 @@ namespace Nekoyume.Model
 
             if (openAllOfWorldsAndStages)
             {
-                foreach (var row in orderedSheet)
+                if(avatarName == "8World")
                 {
-                    //for test world 8
-                    if(row.Id == 7)
+                    foreach (var row in orderedSheet)
                     {
-                        _worlds.Add(row.Id, new World(row, blockIndex, blockIndex, row.StageEnd - 1));
+                        //for test world 8
+                        if(row.Id == 7)
+                        {
+                            _worlds.Add(row.Id, new World(row, blockIndex, blockIndex, row.StageEnd - 1));
+                        }
+                        else if(row.Id == 8)
+                        {
+                            _worlds.Add(row.Id, new World(row));
+                        }
+                        else
+                        {
+                            _worlds.Add(row.Id, new World(row, blockIndex, blockIndex, row.StageEnd));
+                        }
                     }
-                    else if(row.Id == 8)
-                    {
-                        _worlds.Add(row.Id, new World(row));
-                    }
-                    else
+                }
+                else
+                {
+                    foreach (var row in orderedSheet)
                     {
                         _worlds.Add(row.Id, new World(row, blockIndex, blockIndex, row.StageEnd));
                     }

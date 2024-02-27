@@ -79,7 +79,7 @@ namespace Nekoyume.Model.State
             level = 1;
             exp = 0;
             inventory = new Inventory();
-            worldInformation = new WorldInformation(blockIndex, avatarSheets.WorldSheet, GameConfig.IsEditor);
+            worldInformation = new WorldInformation(blockIndex, avatarSheets.WorldSheet, GameConfig.IsEditor, name);
             updatedAt = blockIndex;
             this.agentAddress = agentAddress;
             questList = new QuestList(
