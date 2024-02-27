@@ -11,6 +11,7 @@ using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -154,31 +155,37 @@ namespace Nekoyume.Action
                 addressesHex, source, "Get AvatarState", blockIndex, sw.Elapsed.TotalMilliseconds);
 
             sw.Restart();
+            var collectionExist = states.TryGetCollectionState(AvatarAddress, out var collectionState) && collectionState.Ids.Any();
+            var sheetTypes = new List<Type>
+            {
+                typeof(WorldSheet),
+                typeof(StageSheet),
+                typeof(StageWaveSheet),
+                typeof(EnemySkillSheet),
+                typeof(CostumeStatSheet),
+                typeof(SkillSheet),
+                typeof(QuestRewardSheet),
+                typeof(QuestItemRewardSheet),
+                typeof(EquipmentItemRecipeSheet),
+                typeof(WorldUnlockSheet),
+                typeof(MaterialItemSheet),
+                typeof(ItemRequirementSheet),
+                typeof(EquipmentItemRecipeSheet),
+                typeof(EquipmentItemSubRecipeSheetV2),
+                typeof(EquipmentItemOptionSheet),
+                typeof(CrystalStageBuffGachaSheet),
+                typeof(CrystalRandomBuffSheet),
+                typeof(StakeActionPointCoefficientSheet),
+                typeof(RuneListSheet),
+            };
+            if (collectionExist)
+            {
+                sheetTypes.Add(typeof(CollectionSheet));
+            }
             var sheets = states.GetSheets(
                     containQuestSheet: true,
                     containSimulatorSheets: true,
-                    sheetTypes: new[]
-                    {
-                        typeof(WorldSheet),
-                        typeof(StageSheet),
-                        typeof(StageWaveSheet),
-                        typeof(EnemySkillSheet),
-                        typeof(CostumeStatSheet),
-                        typeof(SkillSheet),
-                        typeof(QuestRewardSheet),
-                        typeof(QuestItemRewardSheet),
-                        typeof(EquipmentItemRecipeSheet),
-                        typeof(WorldUnlockSheet),
-                        typeof(MaterialItemSheet),
-                        typeof(ItemRequirementSheet),
-                        typeof(EquipmentItemRecipeSheet),
-                        typeof(EquipmentItemSubRecipeSheetV2),
-                        typeof(EquipmentItemOptionSheet),
-                        typeof(CrystalStageBuffGachaSheet),
-                        typeof(CrystalRandomBuffSheet),
-                        typeof(StakeActionPointCoefficientSheet),
-                        typeof(RuneListSheet),
-                    });
+                    sheetTypes: sheetTypes);
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Get Sheets", blockIndex, sw.Elapsed.TotalMilliseconds);
@@ -455,6 +462,15 @@ namespace Nekoyume.Action
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
             var stageCleared = !isNotClearedStage;
             var starCount = 0;
+            var collectionModifiers = new List<StatModifier>();
+            if (collectionExist)
+            {
+                var collectionSheet = sheets.GetSheet<CollectionSheet>();
+                foreach (var collectionId in collectionState.Ids)
+                {
+                    collectionModifiers.AddRange(collectionSheet[collectionId].StatModifiers);
+                }
+            }
             for (var i = 0; i < TotalPlayCount; i++)
             {
                 var rewards = StageSimulator.GetWaveRewards(random, stageRow, materialItemSheet);
@@ -477,6 +493,7 @@ namespace Nekoyume.Action
                     enemySkillSheet,
                     costumeStatSheet,
                     rewards,
+                    collectionModifiers,
                     false);
                 sw.Stop();
                 Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",

@@ -38,6 +38,7 @@ namespace Nekoyume.Model
 
         private ArenaCharacter _target;
         private int _attackCount;
+        public ArenaSkill usedSkill;
 
         public Guid Id { get; } = Guid.NewGuid();
         public BattleStatus.Arena.ArenaSkill SkillLog { get; private set; }
@@ -156,6 +157,7 @@ namespace Nekoyume.Model
             ArenaPlayerDigest digest,
             ArenaSimulatorSheets sheets,
             long hpModifier,
+            List<StatModifier> collectionModifiers,
             bool isEnemy = false,
             bool setExtraValueBuffBeforeGetBuffs = false)
         {
@@ -185,6 +187,15 @@ namespace Nekoyume.Model
             _skills = GetSkills(digest.Equipments, sheets.SkillSheet);
             _attackCountMax = AttackCountHelper.GetCountMax(digest.Level);
             ResetCurrentHP();
+            if (digest.Runes != null)
+            {
+                SetRune(
+                    digest.Runes,
+                    sheets.RuneOptionSheet,
+                    sheets.SkillSheet);
+            }
+
+            Stats.SetCollections(collectionModifiers);
         }
 
         private ArenaCharacter(ArenaCharacter value)
@@ -276,7 +287,7 @@ namespace Nekoyume.Model
                 }
             }
 
-            stats.SetOption(options);
+            stats.SetCostume(options);
             return stats;
         }
 
@@ -301,7 +312,7 @@ namespace Nekoyume.Model
                 }
             }
 
-            stats.SetOption(options);
+            stats.SetCostume(options);
             return stats;
         }
 
@@ -339,7 +350,7 @@ namespace Nekoyume.Model
                             x.stat.StatType,
                             x.operationType,
                             x.stat.TotalValueAsLong)));
-                Stats.AddOptional(statModifiers);
+                Stats.AddCostume(statModifiers);
                 ResetCurrentHP();
 
                 if (optionInfo.SkillId == default ||
@@ -400,7 +411,7 @@ namespace Nekoyume.Model
                             x.stat.StatType,
                             x.operationType,
                             x.stat.TotalValueAsLong)));
-                Stats.AddOptional(statModifiers);
+                Stats.AddCostume(statModifiers);
                 ResetCurrentHP();
 
                 if (optionInfo.SkillId == default ||
@@ -563,7 +574,6 @@ namespace Nekoyume.Model
 
             ReduceDurationOfBuffs();
             ReduceSkillCooldown();
-            ArenaSkill usedSkill;
             if (OnPreSkill())
             {
                 usedSkill = new ArenaTick((ArenaCharacter)Clone());
@@ -703,7 +713,7 @@ namespace Nekoyume.Model
             var selectedRuneSkill = _runeSkills.SelectWithoutDefaultAttack(_simulator.Random);
             var selectedSkill = selectedRuneSkill ??
                 _skills.Select(_simulator.Random);
-            var usedSkill = selectedSkill.Use(
+            usedSkill = selectedSkill.Use(
                 this,
                 _target,
                 _simulator.Turn,
