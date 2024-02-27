@@ -43,5 +43,14 @@
     </ProjectReference>
     <ProjectReference Include="..\Lib9c.Abstractions\Lib9c.Abstractions.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Odin.resources">
+      <LogicalName>Odin.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Heimdall.resources">
+      <LogicalName>Heimdall.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>
