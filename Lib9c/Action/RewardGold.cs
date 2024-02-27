@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
@@ -12,6 +13,7 @@ using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
+using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -39,6 +41,11 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var states = context.PreviousState;
+            var migrationStarted = DateTimeOffset.UtcNow;
+            Log.Debug("Start migration");
+            states = MigrateAgentAvatar(context.BlockIndex, states);
+            Log.Debug("Migration finished in: {Elapsed}", DateTimeOffset.UtcNow - migrationStarted);
+
             states = TransferMead(context, states);
             states = GenesisGoldDistribution(context, states);
             var addressesHex = GetSignerAndOtherAddressesHex(context, context.Signer);
@@ -56,6 +63,51 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RewardGold Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return MinerReward(context, states);
+        }
+
+        private IWorld MigrateAgentAvatar(long blockIndex, IWorld states)
+        {
+            int start = (int)((blockIndex % (AgentList.Count / 10)) * 10);
+            var agentAddresses = AgentList.Addresses.Skip(start).Take(10).Select(a => new Address(a)).ToList();
+            foreach (var address in agentAddresses)
+            {
+                var avatarAddresses = new[] { 0, 1, 2 }.Select(
+                        index => address.Derive(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "avatar-state-{0}",
+                                index
+                            )
+                        ))
+                    .ToArray();
+                if (states.GetAccountState(Addresses.Agent).GetState(address) is null)
+                {
+                    var agentState = states.GetAgentState(address);
+                    if (agentState is null) continue;
+                    states = states.SetAgentState(address, agentState);
+                }
+
+                foreach (var avatar in avatarAddresses)
+                {
+                    if (states.GetAccountState(Addresses.Avatar).GetState(avatar) is null)
+                    {
+                        var avatarState = states.GetAvatarState(avatar);
+                        if (avatarState is null) continue;
+                        states = states.SetAvatarState(avatar, avatarState);
+                    }
+
+                    // Delete AvatarState
+                    states = states.SetLegacyState(avatar, null);
+                    states = states.SetLegacyState(avatar.Derive(LegacyInventoryKey), null);
+                    states = states.SetLegacyState(avatar.Derive(LegacyQuestListKey), null);
+                    states = states.SetLegacyState(avatar.Derive(LegacyWorldInformationKey), null);
+                }
+
+                // Delete AgentState
+                states = states.SetLegacyState(address, null);
+            }
+
+            return states;
         }
 
         public IWorld GenesisGoldDistribution(IActionContext ctx, IWorld states)
