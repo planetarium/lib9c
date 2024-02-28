@@ -14,7 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.TableData.Event;
     using Xunit;
 
-    public class EventConsumableItemCrafts0Test
+    public class EventConsumableItemCraftsTest
     {
         private readonly IWorld _initialStates;
         private readonly TableSheets _tableSheets;
@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
 
-        public EventConsumableItemCrafts0Test()
+        public EventConsumableItemCraftsTest()
         {
             _initialStates = new World(new MockWorldState());
             var sheets = TableSheetsImporter.ImportSheets();
@@ -132,7 +132,7 @@ namespace Lib9c.Tests.Action
                     .Count(e => e.Id == recipeRow.ResultConsumableItemId);
             var previousMailCount = previousAvatarState.mailBox.Count;
 
-            var action = new EventConsumableItemCrafts0
+            var action = new EventConsumableItemCrafts
             {
                 AvatarAddress = _avatarAddress,
                 EventScheduleId = eventScheduleId,

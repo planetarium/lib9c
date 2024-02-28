@@ -157,7 +157,7 @@ namespace Nekoyume.Action
                         states, avatarState, context);
                 }
 
-                states = RegisterProduct2.Register(context, info, avatarState, productsState, states, random);
+                states = RegisterProduct.Register(context, info, avatarState, productsState, states, random);
             }
 
             states = states
