@@ -685,7 +685,6 @@ namespace Nekoyume.Action
                     equipment.StatsMap.AddStatAdditionalValue(stat.StatType, stat.BaseValue);
                     equipment.Update(equipment.RequiredBlockIndex + optionInfo.RequiredBlockIndex);
                     equipment.optionCountFromCombination++;
-                    agentState.unlockedOptions.Add(optionRow.Id);
                 }
                 else
                 {
@@ -695,7 +694,6 @@ namespace Nekoyume.Action
                         equipment.Skills.Add(skill);
                         equipment.Update(equipment.RequiredBlockIndex + optionInfo.RequiredBlockIndex);
                         equipment.optionCountFromCombination++;
-                        agentState.unlockedOptions.Add(optionRow.Id);
                     }
                 }
             }
@@ -746,7 +744,6 @@ namespace Nekoyume.Action
                     equipment.Skills.Add(skill);
                     equipment.Update(equipment.RequiredBlockIndex + optionInfo.RequiredBlockIndex);
                     equipment.optionCountFromCombination++;
-                    agentState.unlockedOptions.Add(optionRow.Id);
                 }
             }
         }
