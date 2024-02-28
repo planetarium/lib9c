@@ -604,6 +604,12 @@ namespace Nekoyume.Model
             }
         }
 
+        public void SetCollections(IEnumerable<StatModifier> statModifiers)
+        {
+            Stats.SetCollections(statModifiers);
+            ResetCurrentHP();
+        }
+
         public void ConfigureStats(CostumeStatSheet costumeStatSheet, List<RuneState> runeStates, RuneOptionSheet runeOptionSheet, SkillSheet skillSheet, List<StatModifier> collectionModifiers)
         {
             SetCostumeStat(costumeStatSheet);
@@ -612,7 +618,7 @@ namespace Nekoyume.Model
                 SetRune(runeStates, runeOptionSheet, skillSheet);
             }
 
-            Stats.SetCollections(collectionModifiers);
+            SetCollections(collectionModifiers);
         }
 
         [Obsolete("Use SetRune")]

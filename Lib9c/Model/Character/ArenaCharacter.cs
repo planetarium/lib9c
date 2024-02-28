@@ -186,7 +186,6 @@ namespace Nekoyume.Model
                 hpModifier);
             _skills = GetSkills(digest.Equipments, sheets.SkillSheet);
             _attackCountMax = AttackCountHelper.GetCountMax(digest.Level);
-            ResetCurrentHP();
             if (digest.Runes != null)
             {
                 SetRune(
@@ -196,6 +195,7 @@ namespace Nekoyume.Model
             }
 
             Stats.SetCollections(collectionModifiers);
+            ResetCurrentHP();
         }
 
         private ArenaCharacter(ArenaCharacter value)
