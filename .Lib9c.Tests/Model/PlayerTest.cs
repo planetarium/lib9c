@@ -873,6 +873,7 @@ namespace Lib9c.Tests.Model
             // RuneStats 520
             // Assert.Equal(879, player.HP);
             var runeLayerHp = player.HP;
+            Assert.Equal(player.CurrentHP, runeLayerHp);
 
             // Update costume stats
             player.SetCostumeStat(_tableSheets.CostumeStatSheet);
@@ -880,6 +881,7 @@ namespace Lib9c.Tests.Model
             // CostumeStats 26990
             // Assert.Equal(27869, player.HP);
             var costumeLayerHp = player.HP;
+            Assert.Equal(player.CurrentHP, costumeLayerHp);
 
             // Update collection stat
             var modifiers = new List<StatModifier>();
@@ -887,11 +889,12 @@ namespace Lib9c.Tests.Model
             modifiers.Add(new StatModifier(StatType.HP, StatModifier.OperationType.Percentage, 200));
             modifiers.Add(addModifier);
             modifiers.Add(new StatModifier(StatType.HP, StatModifier.OperationType.Percentage, -100));
-            player.Stats.SetCollections(modifiers);
+            player.SetCollections(modifiers);
             Assert.Equal(costumeLayerHp + addModifier.Value + costumeLayerHp, player.HP);
             // CollectionStats 100 + 27869(100%)
             // Assert.Equal(55838, player.HP);
             var collectionLayerHp = player.HP;
+            Assert.Equal(player.CurrentHP, collectionLayerHp);
 
             // Arena
             player.Stats.IsArenaCharacter = true;
