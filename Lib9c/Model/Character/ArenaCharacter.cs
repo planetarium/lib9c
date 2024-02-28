@@ -186,16 +186,21 @@ namespace Nekoyume.Model
                 hpModifier);
             _skills = GetSkills(digest.Equipments, sheets.SkillSheet);
             _attackCountMax = AttackCountHelper.GetCountMax(digest.Level);
-            if (digest.Runes != null)
-            {
-                SetRune(
-                    digest.Runes,
-                    sheets.RuneOptionSheet,
-                    sheets.SkillSheet);
-            }
 
+            var runes = digest.Runes;
+            var runeOptionSheet = sheets.RuneOptionSheet;
+            bool runeExist = runes != null;
+            if (runeExist)
+            {
+                SetRuneStats(runes, runeOptionSheet);
+            }
             Stats.SetCollections(collectionModifiers);
             ResetCurrentHP();
+            if (runeExist)
+            {
+                // call SetRuneSkills last. because rune skills affect from total calculated stats
+                SetRuneSkills(runes, runeOptionSheet, sheets.SkillSheet);
+            }
         }
 
         private ArenaCharacter(ArenaCharacter value)
@@ -443,10 +448,7 @@ namespace Nekoyume.Model
             }
         }
 
-        public void SetRune(
-            List<RuneState> runes,
-            RuneOptionSheet runeOptionSheet,
-            SkillSheet skillSheet)
+        public void SetRuneStats(List<RuneState> runes, RuneOptionSheet runeOptionSheet)
         {
             foreach (var rune in runes)
             {
@@ -465,6 +467,21 @@ namespace Nekoyume.Model
                             x.stat.TotalValueAsLong)));
                 Stats.AddRune(statModifiers);
                 ResetCurrentHP();
+            }
+        }
+
+        public void SetRuneSkills(
+            List<RuneState> runes,
+            RuneOptionSheet runeOptionSheet,
+            SkillSheet skillSheet)
+        {
+            foreach (var rune in runes)
+            {
+                if (!runeOptionSheet.TryGetValue(rune.RuneId, out var optionRow) ||
+                    !optionRow.LevelOptionMap.TryGetValue(rune.Level, out var optionInfo))
+                {
+                    continue;
+                }
 
                 if (optionInfo.SkillId == default ||
                     !skillSheet.TryGetValue(optionInfo.SkillId, out var skillRow))
