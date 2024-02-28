@@ -24,7 +24,7 @@ namespace Nekoyume.Module
         /// <exception cref="InvalidCastException">Thrown when the serialized Collection state is not in the correct format.</exception>
         public static CollectionState GetCollectionState(this IWorldState worldState, Address address)
         {
-            var serializedCollection = worldState.GetResolvedState(address, Addresses.Collection);
+            var serializedCollection = worldState.GetAccountState(Addresses.Collection).GetState(address);
             if (serializedCollection is null)
             {
                 var msg = $"No Collection state ({address.ToHex()})";
@@ -92,21 +92,25 @@ namespace Nekoyume.Module
         /// </summary>
         /// <param name="worldState">The world state used to retrieve the collection states.</param>
         /// <param name="addresses">The list of addresses to retrieve the collection states for.</param>
-        /// <returns>A list of CollectionState objects representing the collection states for the given addresses,
-        /// or null for addresses that do not have a collection state.</returns>
-        public static List<CollectionState> GetCollectionStates(this IWorldState worldState,
+        /// <returns>A dictionary of Address and CollectionState pairs representing the collection states
+        /// for the given addresses,
+        /// or an empty dictionary for addresses that do not have a collection state.</returns>
+        public static Dictionary<Address, CollectionState> GetCollectionStates(
+            this IWorldState worldState,
             IReadOnlyList<Address> addresses)
         {
-            var result = new List<CollectionState>();
-            foreach (var serialized in worldState.GetAccountState(Addresses.Collection).GetStates(addresses))
+            var result = new Dictionary<Address, CollectionState>();
+            IReadOnlyList<IValue> values =
+                worldState
+                    .GetAccountState(Addresses.Collection)
+                    .GetStates(addresses);
+            for (int i = 0; i < addresses.Count; i++)
             {
+                var serialized = values[i];
+                var address = addresses[i];
                 if (serialized is List bencoded)
                 {
-                    result.Add(new CollectionState(bencoded));
-                }
-                else
-                {
-                    result.Add(null);
+                    result.TryAdd(address, new CollectionState(bencoded));
                 }
             }
 

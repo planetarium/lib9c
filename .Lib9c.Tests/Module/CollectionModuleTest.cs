@@ -42,8 +42,7 @@ namespace Lib9c.Tests.Module
             var address2 = new PrivateKey().Address;
             var addresses = new[] { address, address2 };
             var result = states.GetCollectionStates(addresses);
-            Assert.Equal(addresses.Length, result.Count);
-            Assert.All(result, Assert.Null);
+            Assert.Empty(result);
 
             var state = new CollectionState
             {
@@ -54,19 +53,9 @@ namespace Lib9c.Tests.Module
             };
             states = states.SetCollectionState(address, state);
             result = states.GetCollectionStates(addresses);
-            for (int i = 0; i < addresses.Length; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        Assert.NotNull(result[i]);
-                        Assert.Equal(state.Ids, result[i].Ids);
-                        break;
-                    case 1:
-                        Assert.Null(result[i]);
-                        break;
-                }
-            }
+            Assert.Contains(address, result.Keys);
+            Assert.Equal(state.Ids, result[address].Ids);
+            Assert.DoesNotContain(address2, result.Keys);
         }
     }
 }

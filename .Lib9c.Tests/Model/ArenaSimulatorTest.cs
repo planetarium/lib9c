@@ -6,6 +6,7 @@ namespace Lib9c.Tests
     using Lib9c.Tests.Action;
     using Libplanet.Action;
     using Libplanet.Crypto;
+    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Arena;
     using Nekoyume.Model;
@@ -14,6 +15,7 @@ namespace Lib9c.Tests
     using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
+    using Nekoyume.TableData;
     using Xunit;
     using Xunit.Abstractions;
 
@@ -70,12 +72,17 @@ namespace Lib9c.Tests
                 new List<StatModifier>
                 {
                     new (StatType.ATK, StatModifier.OperationType.Add, 1),
+                    new (StatType.HP, StatModifier.OperationType.Add, 100),
                 },
                 new List<StatModifier>
                 {
                     new (StatType.DEF, StatModifier.OperationType.Add, 1),
+                    new (StatType.HP, StatModifier.OperationType.Add, 100),
                 }
             );
+            CharacterSheet.Row row =
+                _tableSheets.CharacterSheet[GameConfig.DefaultAvatarCharacterId];
+            var expectedHp = (new CharacterStats(row, myDigest.Level).HP + 100) * simulator.HpModifier;
 
             Assert.Equal(_random, simulator.Random);
 
@@ -88,6 +95,8 @@ namespace Lib9c.Tests
             {
                 if (player.Character is ArenaCharacter arenaCharacter)
                 {
+                    Assert.Equal(expectedHp, arenaCharacter.HP);
+                    Assert.Equal(expectedHp, arenaCharacter.CurrentHP);
                     arenaCharacters.Add(arenaCharacter);
                 }
             }
