@@ -727,7 +727,7 @@ namespace Lib9c.Tests.Model
             {
                 runeState,
             };
-            player.SetRune(runeStates, _tableSheets.RuneOptionSheet, _tableSheets.SkillSheet);
+            player.SetRuneStats(runeStates, _tableSheets.RuneOptionSheet);
             var runeOptionRow = _tableSheets.RuneOptionSheet.Values.First(r => r.RuneId == runeId);
             var runeAtk = runeOptionRow.LevelOptionMap[1].Stats.Sum(r => r.stat.BaseValueAsLong);
             Assert.Equal(player.ATK, consumableLayerAtk + runeAtk);
@@ -866,7 +866,7 @@ namespace Lib9c.Tests.Model
             {
                 runeState,
             };
-            player.SetRune(runeStates, _tableSheets.RuneOptionSheet, _tableSheets.SkillSheet);
+            player.SetRuneStats(runeStates, _tableSheets.RuneOptionSheet);
             var runeOptionRow = _tableSheets.RuneOptionSheet.Values.First(r => r.RuneId == runeId);
             var runeHp = runeOptionRow.LevelOptionMap[1].Stats.Sum(r => r.stat.BaseValueAsLong);
             Assert.Equal(consumableLayerHp + runeHp, player.HP);
