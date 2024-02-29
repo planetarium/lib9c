@@ -57,7 +57,15 @@ namespace Nekoyume.Battle
                 simulatorSheets,
                 logEvent)
         {
-            Player.ConfigureStats(costumeStatSheet, runeStates, simulatorSheets.RuneOptionSheet, simulatorSheets.SkillSheet, collectionModifiers);
+            var runeOptionSheet = simulatorSheets.RuneOptionSheet;
+            var skillSheet = simulatorSheets.SkillSheet;
+            Player.ConfigureStats(costumeStatSheet, runeStates, runeOptionSheet, skillSheet,
+                collectionModifiers);
+            if (runeStates is not null)
+            {
+                // call SetRuneSkills last. because rune skills affect from total calculated stats
+                Player.SetRuneSkills(runeStates, runeOptionSheet, skillSheet);
+            }
 
             _waves = new List<Wave>();
             _waveRewards = waveRewards;

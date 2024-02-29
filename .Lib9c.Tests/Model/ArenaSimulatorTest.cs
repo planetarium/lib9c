@@ -282,5 +282,72 @@ namespace Lib9c.Tests
             Assert.True(challengerTick.Character.HP > enemyTick.Character.HP);
             Assert.True(enemyTick.SkillInfos.First().Effect > challengerTick.SkillInfos.First().Effect);
         }
+
+        [Fact]
+        public void Bleed()
+        {
+            var random = new TestRandom();
+            var avatarState1 = _avatarState1;
+            var avatarState2 = _avatarState2;
+
+            var arenaAvatarState1 = new ArenaAvatarState(avatarState1);
+            var arenaAvatarState2 = new ArenaAvatarState(avatarState2);
+
+            var characterRow = _tableSheets.CharacterSheet[GameConfig.DefaultAvatarCharacterId];
+            var stats = characterRow.ToStats(avatarState1.level);
+            var totalAtk = 141138;
+            var baseAtk = stats.ATK;
+            var runeOptionSheet = _tableSheets.RuneOptionSheet;
+            var runeRow = runeOptionSheet[10003];
+            var rune = new RuneState(10003);
+            while (rune.Level < 89)
+            {
+                rune.LevelUp();
+            }
+
+            var optionInfo = runeRow.LevelOptionMap[89];
+            var statModifiers = new List<StatModifier>();
+            statModifiers.AddRange(
+                optionInfo.Stats.Select(x =>
+                    new StatModifier(
+                        x.stat.StatType,
+                        x.operationType,
+                        x.stat.TotalValueAsLong)));
+            foreach (var modifier in statModifiers)
+            {
+                if (modifier.StatType == StatType.ATK)
+                {
+                    baseAtk += modifier.Value;
+                }
+            }
+
+            // Add collection modifier without level stats, rune stats
+            var collectionModifier = new StatModifier(StatType.ATK, StatModifier.OperationType.Add, totalAtk - baseAtk);
+            var modifiers = new List<StatModifier>
+            {
+                collectionModifier,
+                new (StatType.HP, StatModifier.OperationType.Add, totalAtk * 10),
+            };
+
+            var simulator = new ArenaSimulator(random);
+            var myDigest = new ArenaPlayerDigest(avatarState1, arenaAvatarState1);
+            myDigest.Runes.Add(rune);
+            var enemyDigest = new ArenaPlayerDigest(avatarState2, arenaAvatarState2);
+            enemyDigest.Runes.Add(rune);
+            var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
+            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, modifiers, modifiers, true);
+            var spawns = log.Events.OfType<ArenaSpawnCharacter>().ToList();
+            Assert.All(spawns, spawn => Assert.Equal(totalAtk, spawn.Character.ATK));
+            var ticks = log.Events
+                .OfType<ArenaTickDamage>()
+                .ToList();
+            var challengerTick = ticks.First(r => !r.Character.IsEnemy);
+            var enemyTick = ticks.First(r => r.Character.IsEnemy);
+            var challengerInfo = challengerTick.SkillInfos.First();
+            var enemyInfo = enemyTick.SkillInfos.First();
+            var dmg = (int)decimal.Round(totalAtk * optionInfo.SkillValue);
+            Assert.Equal(dmg, challengerInfo.Effect);
+            Assert.Equal(dmg, enemyInfo.Effect);
+        }
     }
 }

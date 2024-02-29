@@ -559,10 +559,12 @@ namespace Nekoyume.Model
             ResetCurrentHP();
         }
 
-        public void SetRune(
-            List<RuneState> runes,
-            RuneOptionSheet runeOptionSheet,
-            SkillSheet skillSheet)
+        /// <summary>
+        /// Sets the rune stats for a player character.
+        /// </summary>
+        /// <param name="runes">The list of rune states for the player character.</param>
+        /// <param name="runeOptionSheet">The rune option sheet that contains information about rune options.</param>
+        public void SetRuneStats(List<RuneState> runes, RuneOptionSheet runeOptionSheet)
         {
             foreach (var rune in runes)
             {
@@ -573,6 +575,26 @@ namespace Nekoyume.Model
 
                 Stats.AddRuneStat(optionInfo);
                 ResetCurrentHP();
+            }
+        }
+
+        /// <summary>
+        /// Sets the rune skills for the player.
+        /// </summary>
+        /// <param name="runes">The list of rune states.</param>
+        /// <param name="runeOptionSheet">The rune option sheet.</param>
+        /// <param name="skillSheet">The skill sheet.</param>
+        public void SetRuneSkills(
+            List<RuneState> runes,
+            RuneOptionSheet runeOptionSheet,
+            SkillSheet skillSheet)
+        {
+            foreach (var rune in runes)
+            {
+                if (!runeOptionSheet.TryGetOptionInfo(rune.RuneId, rune.Level, out var optionInfo))
+                {
+                    continue;
+                }
 
                 if (optionInfo.SkillId == default ||
                     !skillSheet.TryGetValue(optionInfo.SkillId, out var skillRow))
@@ -615,7 +637,7 @@ namespace Nekoyume.Model
             SetCostumeStat(costumeStatSheet);
             if (runeStates != null)
             {
-                SetRune(runeStates, runeOptionSheet, skillSheet);
+                SetRuneStats(runeStates, runeOptionSheet);
             }
 
             SetCollections(collectionModifiers);
