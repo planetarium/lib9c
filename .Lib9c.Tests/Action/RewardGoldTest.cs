@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -32,6 +33,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
+    using static Lib9c.SerializeKeys;
 
     public class RewardGoldTest
     {
@@ -624,6 +626,146 @@ namespace Lib9c.Tests.Action
             );
 
             Assert.Equal(0 * currency, nextState.GetBalance(default, currency));
+        }
+
+        [Theory]
+        [InlineData(1, false)]
+        [InlineData(1, true)]
+        [InlineData(2, false)]
+        [InlineData(2, true)]
+        public void MigrateAgentAvatar(int legacyAvatarVersion, bool alreadyMigrated)
+        {
+            // 423 is in the range for block index of 42
+            var blockIndex = 42;
+            var avatarIndex = 0;
+
+            var agentAddress = new Address(AgentList.Addresses[423]);
+            var agentState = new AgentState(agentAddress);
+            var avatarAddress = agentAddress.Derive(string.Format(CultureInfo.InvariantCulture, CreateAvatar.DeriveFormat, avatarIndex));
+            agentState.avatarAddresses.Add(avatarIndex, avatarAddress);
+
+            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
+            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
+            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
+
+            var weekly = new WeeklyArenaState(0);
+            var gameConfigState = new GameConfigState();
+            gameConfigState.Set(_tableSheets.GameConfigSheet);
+            var currency = Currency.Legacy("NCG", 2, null);
+
+            var avatarState = new AvatarState(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                new GameConfigState(),
+                default);
+
+            MockWorldState mock = new MockWorldState()
+                .SetState(
+                    ReservedAddresses.LegacyAccount,
+                    GoldCurrencyState.Address,
+                    new GoldCurrencyState(currency, 0).Serialize())
+                .SetState(
+                    ReservedAddresses.LegacyAccount,
+                    weekly.address,
+                    weekly.Serialize())
+                .SetState(
+                    ReservedAddresses.LegacyAccount,
+                    Addresses.GoldDistribution,
+                    new List())
+                .SetState(
+                    ReservedAddresses.LegacyAccount,
+                    gameConfigState.address,
+                    gameConfigState.Serialize());
+
+            switch (legacyAvatarVersion)
+            {
+                case 1:
+                    mock = mock
+                        .SetState(
+                            ReservedAddresses.LegacyAccount,
+                            agentAddress,
+                            agentState.SerializeList())
+                        .SetState(
+                            ReservedAddresses.LegacyAccount,
+                            avatarAddress,
+                            MigrationAvatarState.LegacySerializeV1(avatarState));
+                    break;
+                case 2:
+                    mock = mock
+                        .SetState(
+                            ReservedAddresses.LegacyAccount,
+                            agentAddress,
+                            agentState.SerializeList())
+                        .SetState(
+                            ReservedAddresses.LegacyAccount,
+                            avatarAddress,
+                            MigrationAvatarState.LegacySerializeV1(avatarState))
+                        .SetState(
+                            ReservedAddresses.LegacyAccount,
+                            inventoryAddress,
+                            avatarState.inventory.Serialize())
+                        .SetState(
+                            ReservedAddresses.LegacyAccount,
+                            worldInformationAddress,
+                            avatarState.questList.Serialize())
+                        .SetState(
+                            ReservedAddresses.LegacyAccount,
+                            questListAddress,
+                            avatarState.questList.Serialize());
+                    break;
+                default:
+                    throw new ArgumentException($"Invalid legacy avatar version: {legacyAvatarVersion}");
+            }
+
+            if (alreadyMigrated)
+            {
+                mock = mock
+                    .SetState(
+                        Addresses.Agent,
+                        agentAddress,
+                        agentState.SerializeList())
+                    .SetState(
+                        Addresses.Avatar,
+                        avatarAddress,
+                        avatarState.SerializeList())
+                    .SetState(
+                        Addresses.Inventory,
+                        avatarAddress,
+                        avatarState.inventory.Serialize())
+                    .SetState(
+                        Addresses.WorldInformation,
+                        avatarAddress,
+                        avatarState.worldInformation.Serialize())
+                    .SetState(
+                        Addresses.QuestList,
+                        avatarAddress,
+                        avatarState.questList.Serialize());
+            }
+
+            var action = new RewardGold();
+            var states = new World(mock);
+            IWorld nextState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = states,
+                    Miner = default,
+                }
+            );
+
+            Assert.Null(nextState.GetLegacyState(agentAddress));
+            Assert.Null(nextState.GetLegacyState(avatarAddress));
+            Assert.Null(nextState.GetLegacyState(inventoryAddress));
+            Assert.Null(nextState.GetLegacyState(worldInformationAddress));
+            Assert.Null(nextState.GetLegacyState(questListAddress));
+
+            Assert.NotNull(nextState.GetAccount(Addresses.Agent).GetState(agentAddress));
+            Assert.NotNull(nextState.GetAccount(Addresses.Avatar).GetState(avatarAddress));
+            Assert.NotNull(nextState.GetAccount(Addresses.Inventory).GetState(avatarAddress));
+            Assert.NotNull(nextState.GetAccount(Addresses.WorldInformation).GetState(avatarAddress));
+            Assert.NotNull(nextState.GetAccount(Addresses.QuestList).GetState(avatarAddress));
         }
     }
 }

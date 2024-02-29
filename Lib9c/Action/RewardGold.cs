@@ -67,19 +67,27 @@ namespace Nekoyume.Action
 
         private IWorld MigrateAgentAvatar(long blockIndex, IWorld states)
         {
-            int start = (int)((blockIndex % (AgentList.Count / 10)) * 10);
-            var agentAddresses = AgentList.Addresses.Skip(start).Take(10).Select(a => new Address(a)).ToList();
+            // This assumes blockIndex is small enough.
+            // Also note,
+            //   blockIndex * chunkSize + i == (blockIndex % AgentList.Count) * chunkSize + i (mod AgentList.Count)
+            // and the latter form is used for safety as only int is allowed as an index.
+            const int chunkSize = 10;
+            const int maxAvatarCount = 3;
+            var agentAddresses = Enumerable
+                .Range(0, chunkSize)
+                .Select(i => ((int)(blockIndex % AgentList.Count) * chunkSize + i) % AgentList.Count)
+                .Select(i => new Address(AgentList.Addresses[i]))
+                .ToList();
+            var avatarAddresses = Enumerable
+                .Range(0, agentAddresses.Count * maxAvatarCount)
+                .Select(i => agentAddresses[i / maxAvatarCount]
+                    .Derive(
+                        string.Format(CultureInfo.InvariantCulture, CreateAvatar.DeriveFormat, i % maxAvatarCount)))
+                .ToList();
+
             foreach (var address in agentAddresses)
             {
-                var avatarAddresses = new[] { 0, 1, 2 }.Select(
-                        index => address.Derive(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "avatar-state-{0}",
-                                index
-                            )
-                        ))
-                    .ToArray();
+                // Try migrating if not already migrated
                 if (states.GetAccountState(Addresses.Agent).GetState(address) is null)
                 {
                     var agentState = states.GetAgentState(address);
@@ -87,24 +95,25 @@ namespace Nekoyume.Action
                     states = states.SetAgentState(address, agentState);
                 }
 
-                foreach (var avatar in avatarAddresses)
-                {
-                    if (states.GetAccountState(Addresses.Avatar).GetState(avatar) is null)
-                    {
-                        var avatarState = states.GetAvatarState(avatar);
-                        if (avatarState is null) continue;
-                        states = states.SetAvatarState(avatar, avatarState);
-                    }
+                // Delete AgentState in Legacy
+                states = states.SetLegacyState(address, null);
+            }
 
-                    // Delete AvatarState
-                    states = states.SetLegacyState(avatar, null);
-                    states = states.SetLegacyState(avatar.Derive(LegacyInventoryKey), null);
-                    states = states.SetLegacyState(avatar.Derive(LegacyQuestListKey), null);
-                    states = states.SetLegacyState(avatar.Derive(LegacyWorldInformationKey), null);
+            foreach (var address in avatarAddresses)
+            {
+                // Try migrating if not already migrated
+                if (states.GetAccountState(Addresses.Avatar).GetState(address) is null)
+                {
+                    var avatarState = states.GetAvatarState(address);
+                    if (avatarState is null) continue;
+                    states = states.SetAvatarState(address, avatarState);
                 }
 
-                // Delete AgentState
+                // Delete AvatarState in Legacy
                 states = states.SetLegacyState(address, null);
+                states = states.SetLegacyState(address.Derive(LegacyInventoryKey), null);
+                states = states.SetLegacyState(address.Derive(LegacyQuestListKey), null);
+                states = states.SetLegacyState(address.Derive(LegacyWorldInformationKey), null);
             }
 
             return states;
