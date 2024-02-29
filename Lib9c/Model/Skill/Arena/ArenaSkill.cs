@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Nekoyume.Model.Buff;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
@@ -97,31 +95,6 @@ namespace Nekoyume.Model.Skill.Arena
                     case SkillTargetType.Self:
                     case SkillTargetType.Ally:
                         caster.AddBuff(buff);
-                        var dispelList = new List<Buff.Buff>();
-                        if (buff is Dispel)
-                        {
-                            foreach (var debuff in caster.StatBuffs.Where(bf =>
-                                         bf.RowData.Value < 0))
-                            {
-                                if (caster.Simulator.Random.Next(0, 100) < Chance)
-                                {
-                                    dispelList.Add(debuff);
-                                    caster.RemoveStatBuff(debuff);
-                                }
-                            }
-
-                            foreach (var debuff in caster.ActionBuffs.Where(bf =>
-                                         bf.RowData.ActionBuffType is ActionBuffType.Bleed
-                                             or ActionBuffType.Stun or ActionBuffType.Vampiric))
-                            {
-                                if (caster.Simulator.Random.Next(0, 100) < Chance)
-                                {
-                                    dispelList.Add(debuff);
-                                    caster.RemoveActionBuff(debuff);
-                                }
-                            }
-                        }
-
                         infos.Add(GetSkillInfo(caster, turn, buff));
                         break;
                     default:
