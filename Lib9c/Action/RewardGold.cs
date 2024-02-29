@@ -42,9 +42,12 @@ namespace Nekoyume.Action
             context.UseGas(1);
             var states = context.PreviousState;
             var migrationStarted = DateTimeOffset.UtcNow;
-            Log.Debug("Start migration");
+            Log.Debug("Migration in block index #{Index} started", context.BlockIndex);
             states = MigrateAgentAvatar(context.BlockIndex, states);
-            Log.Debug("Migration finished in: {Elapsed}", DateTimeOffset.UtcNow - migrationStarted);
+            Log.Debug(
+                "Migration in block index #{Index} finished in: {Elapsed}",
+                context.BlockIndex,
+                DateTimeOffset.UtcNow - migrationStarted);
 
             states = TransferMead(context, states);
             states = GenesisGoldDistribution(context, states);
@@ -71,8 +74,12 @@ namespace Nekoyume.Action
             // Also note,
             //   blockIndex * chunkSize + i == (blockIndex % AgentList.Count) * chunkSize + i (mod AgentList.Count)
             // and the latter form is used for safety as only int is allowed as an index.
-            const int chunkSize = 10;
+            const int chunkSize = 5;
             const int maxAvatarCount = 3;
+            Log.Debug(
+                "Migration agent addresses from #{Start} to #{End}",
+                ((int)(blockIndex % AgentList.Count) * chunkSize) % AgentList.Count,
+                ((int)(blockIndex % AgentList.Count) * chunkSize + (chunkSize - 1)) % AgentList.Count);
             var agentAddresses = Enumerable
                 .Range(0, chunkSize)
                 .Select(i => ((int)(blockIndex % AgentList.Count) * chunkSize + i) % AgentList.Count)
@@ -88,32 +95,50 @@ namespace Nekoyume.Action
             foreach (var address in agentAddresses)
             {
                 // Try migrating if not already migrated
+                var started = DateTimeOffset.UtcNow;
+                Log.Debug("Migrating agent {Address}", address);
                 if (states.GetAccountState(Addresses.Agent).GetState(address) is null)
                 {
+                    Log.Debug("Getting agent {Address}", address);
                     var agentState = states.GetAgentState(address);
                     if (agentState is null) continue;
+                    Log.Debug("Setting agent {Address} to modern account", address);
                     states = states.SetAgentState(address, agentState);
                 }
 
                 // Delete AgentState in Legacy
+                Log.Debug("Deleting agent {Address} from legacy account", address);
                 states = states.SetLegacyState(address, null);
+                Log.Debug(
+                    "Migrating agent {Address} finished in: {Elapsed}",
+                    address,
+                    DateTimeOffset.UtcNow - started);
             }
 
             foreach (var address in avatarAddresses)
             {
+                var started = DateTimeOffset.UtcNow;
+                Log.Debug("Migrating avatar {Address}", address);
                 // Try migrating if not already migrated
                 if (states.GetAccountState(Addresses.Avatar).GetState(address) is null)
                 {
+                    Log.Debug("Getting avatar {Address}", address);
                     var avatarState = states.GetAvatarState(address);
                     if (avatarState is null) continue;
+                    Log.Debug("Setting avatar {Address} to modern account", address);
                     states = states.SetAvatarState(address, avatarState);
                 }
 
                 // Delete AvatarState in Legacy
+                Log.Debug("Deleting avatar {Address} from legacy account", address);
                 states = states.SetLegacyState(address, null);
                 states = states.SetLegacyState(address.Derive(LegacyInventoryKey), null);
                 states = states.SetLegacyState(address.Derive(LegacyQuestListKey), null);
                 states = states.SetLegacyState(address.Derive(LegacyWorldInformationKey), null);
+                Log.Debug(
+                    "Migrating avatar {Address} finished in: {Elapsed}",
+                    address,
+                    DateTimeOffset.UtcNow - started);
             }
 
             return states;
