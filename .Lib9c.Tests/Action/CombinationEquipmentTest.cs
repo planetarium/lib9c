@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Action
     using Xunit.Abstractions;
     using static Lib9c.SerializeKeys;
 
-    public class CombinationEquipment16Test
+    public class CombinationEquipmentTest
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -33,7 +33,7 @@ namespace Lib9c.Tests.Action
         private readonly AgentState _agentState;
         private readonly AvatarState _avatarState;
 
-        public CombinationEquipment16Test(ITestOutputHelper outputHelper)
+        public CombinationEquipmentTest(ITestOutputHelper outputHelper)
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -111,8 +111,6 @@ namespace Lib9c.Tests.Action
         // AvatarState not exist.
         [InlineData(typeof(FailedLoadStateException), true, true, true, false, false, 3, 0, true, 0L, 1, null, true, false, false, false)]
         [InlineData(typeof(FailedLoadStateException), true, true, true, false, true, 3, 0, true, 0L, 1, null, true, false, false, false)]
-        // Tutorial not cleared.
-        [InlineData(typeof(NotEnoughClearedStageLevelException), true, true, true, true, false, 1, 0, true, 0L, 1, null, true, false, false, false)]
         // CombinationSlotState not exist.
         [InlineData(typeof(FailedLoadStateException), true, true, true, true, false, 3, 5, true, 0L, 1, null, true, false, false, false)]
         // CombinationSlotState locked.
@@ -210,8 +208,10 @@ namespace Lib9c.Tests.Action
                         // Lock slot.
                         state = state.SetLegacyState(
                             _slotAddress,
-                            new CombinationSlotState(_slotAddress, stageId + 1).Serialize()
-                        );
+                            new CombinationSlotState(
+                                ((Dictionary)new CombinationSlotState(_slotAddress, 0).Serialize())
+                                    .SetItem("unlockBlockIndex", (blockIndex + 1).Serialize()))
+                                .Serialize());
                     }
                 }
             }
@@ -262,7 +262,7 @@ namespace Lib9c.Tests.Action
             Assert.Null(state.GetLegacyState(dailyCostAddress));
             Assert.Null(state.GetLegacyState(weeklyCostAddress));
 
-            var action = new CombinationEquipment16
+            var action = new CombinationEquipment
             {
                 avatarAddress = _avatarAddress,
                 slotIndex = slotIndex,
@@ -417,7 +417,7 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            var action = new CombinationEquipment16
+            var action = new CombinationEquipment
             {
                 avatarAddress = _avatarAddress,
                 slotIndex = 0,

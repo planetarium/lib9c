@@ -125,7 +125,7 @@ namespace Lib9c.Tests.Action.Scenario
                 );
 
                 // Do Combination Action
-                var action = new CombinationEquipment16
+                var action = new CombinationEquipment
                 {
                     avatarAddress = _avatarAddr,
                     slotIndex = i,

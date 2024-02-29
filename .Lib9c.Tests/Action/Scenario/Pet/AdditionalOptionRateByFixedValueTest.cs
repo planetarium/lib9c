@@ -236,7 +236,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             );
 
             // Do combination without pet
-            var action = new CombinationEquipment16
+            var action = new CombinationEquipment
             {
                 avatarAddress = _avatarAddr,
                 slotIndex = 0,
@@ -276,7 +276,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 random
             );
 
-            var petAction = new CombinationEquipment16
+            var petAction = new CombinationEquipment
             {
                 avatarAddress = _avatarAddr,
                 slotIndex = 1,
