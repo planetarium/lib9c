@@ -300,7 +300,6 @@ namespace Nekoyume.Action
                     var stat = CombinationEquipment5.GetStat(optionRow, random);
                     equipment.StatsMap.AddStatAdditionalValue(stat.StatType, stat.BaseValue);
                     equipment.optionCountFromCombination++;
-                    agentState.unlockedOptions.Add(optionRow.Id);
                 }
                 else
                 {
@@ -309,7 +308,6 @@ namespace Nekoyume.Action
 
                     equipment.Skills.Add(skill);
                     equipment.optionCountFromCombination++;
-                    agentState.unlockedOptions.Add(optionRow.Id);
                 }
             }
         }
