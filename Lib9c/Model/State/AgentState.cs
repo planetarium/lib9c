@@ -56,6 +56,7 @@ namespace Nekoyume.Model.State
                     kv => kv.Value.ToAddress()
                 );
 #pragma warning restore LAA1002
+            // serialized[3] is unused and ignored.
             MonsterCollectionRound = serialized[4].ToInteger();
         }
 
