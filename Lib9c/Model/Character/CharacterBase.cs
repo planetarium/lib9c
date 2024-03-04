@@ -383,11 +383,22 @@ namespace Nekoyume.Model
                         // Dispel removes debuffs
                         case Dispel dispel:
                         {
-                            var debuffList = Simulator.SkillSheet.Values
-                                .Where(s => s.SkillType == SkillType.Debuff).Select(s => s.Id);
                             Buffs[dispel.BuffInfo.GroupId] = clone;
+                            var debuffSkillIdList = Simulator.SkillSheet.Values
+                                .Where(s => s.SkillType == SkillType.Debuff).Select(s => s.Id);
+                            var statDebuffList = Simulator.SkillBuffSheet.Values.Where(
+                                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
+                                new List<int>(),
+                                (current, bf) => current.Concat(bf.BuffIds).ToList()
+                            );
+                            var actionDebuffList = Simulator.SkillActionBuffSheet.Values.Where(
+                                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
+                                new List<int>(),
+                                (current, bf) => current.Concat(bf.BuffIds).ToList()
+                            );
+
                             foreach (var debuff in
-                                     StatBuffs.Where(bf => debuffList.Contains(bf.RowData.Id)))
+                                     StatBuffs.Where(bf => statDebuffList.Contains(bf.RowData.Id)))
                             {
                                 if (Simulator.Random.Next(0, 100) < action.RowData.Chance)
                                 {
@@ -397,7 +408,8 @@ namespace Nekoyume.Model
                             }
 
                             foreach (var debuff in
-                                     ActionBuffs.Where(bf => debuffList.Contains(bf.RowData.Id)))
+                                     ActionBuffs.Where(bf =>
+                                         actionDebuffList.Contains(bf.RowData.Id)))
                             {
                                 if (Simulator.Random.Next(0, 100) < action.RowData.Chance)
                                 {
