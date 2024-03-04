@@ -84,18 +84,19 @@ namespace Nekoyume.Model.Skill.Arena
             var infos = new List<BattleStatus.Arena.ArenaSkill.ArenaSkillInfo>();
             foreach (var buff in buffs)
             {
+                IEnumerable<Buff.Buff> dispelList;
                 switch (buff.BuffInfo.SkillTargetType)
                 {
                     case SkillTargetType.Enemy:
                     case SkillTargetType.Enemies:
-                        target.AddBuff(buff);
-                        infos.Add(GetSkillInfo(target, turn, buff));
+                        dispelList = target.AddBuff(buff);
+                        infos.Add(GetSkillInfo(target, turn, buff, dispelList: dispelList));
                         break;
 
                     case SkillTargetType.Self:
                     case SkillTargetType.Ally:
-                        caster.AddBuff(buff);
-                        infos.Add(GetSkillInfo(caster, turn, buff));
+                        dispelList = caster.AddBuff(buff);
+                        infos.Add(GetSkillInfo(caster, turn, buff, dispelList:dispelList));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

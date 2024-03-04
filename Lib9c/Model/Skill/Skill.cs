@@ -80,12 +80,29 @@ namespace Nekoyume.Model.Skill
                 foreach (var target in targets.Where(target =>
                              target.GetChance(buff.BuffInfo.Chance)))
                 {
+                    var affected = true;
+                    IEnumerable<Buff.Buff> dispelList = null;
+                    var dispel = target.Buffs.Values.FirstOrDefault(bf => bf is Dispel);
+                    // Defence debuff if target has dispel
+                    if (dispel is not null)
+                    {
+                        if (target.Simulator.Random.Next(0, 100) < dispel.BuffInfo.Chance)
+                        {
+                            affected = false;
+                        }
+                    }
+
+                    if (affected)
+                    {
+                        dispelList = target.AddBuff(buff);
+                    }
 
                     infos.Add(new Model.BattleStatus.Skill.SkillInfo(target.Id, target.IsDead,
                         target.Thorn, 0, false,
                         SkillRow.SkillCategory, simulatorWaveTurn, ElementalType.Normal,
                         SkillRow.SkillTargetType,
-                        buff, copyCharacter ? (CharacterBase)target.Clone() : target, dispelList));
+                        buff, copyCharacter ? (CharacterBase)target.Clone() : target,
+                        affected: affected, dispelList: dispelList));
                 }
             }
 

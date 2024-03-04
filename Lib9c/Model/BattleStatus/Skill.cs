@@ -32,6 +32,7 @@ namespace Nekoyume.Model.BattleStatus
                 int waveTurn, ElementalType elementalType = ElementalType.Normal,
                 SkillTargetType targetType = SkillTargetType.Enemy, Model.Buff.Buff? buff = null,
                 CharacterBase? target = null,
+                bool affected = true,
                 IEnumerable<Nekoyume.Model.Buff.Buff>? dispelList = null)
             {
                 CharacterId = characterId;

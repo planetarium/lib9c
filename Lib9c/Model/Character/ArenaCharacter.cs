@@ -836,23 +836,73 @@ namespace Nekoyume.Model
             InitAIV2();
         }
 
-        public void AddBuff(Buff.Buff buff, bool updateImmediate = true)
+        public IEnumerable<Buff.Buff> AddBuff(Buff.Buff buff, bool updateImmediate = true)
         {
             if (Buffs.TryGetValue(buff.BuffInfo.GroupId, out var outBuff) &&
                 outBuff.BuffInfo.Id > buff.BuffInfo.Id)
-                return;
+                return null;
 
-            if (buff is StatBuff stat)
+            var dispelList = new List<Buff.Buff>();
+            switch (buff)
             {
-                var clone = (StatBuff)stat.Clone();
-                Buffs[stat.RowData.GroupId] = clone;
-                Stats.AddBuff(clone, updateImmediate);
+                // StatBuff Modifies stats
+                case StatBuff stat:
+                {
+                    var clone = (StatBuff)stat.Clone();
+                    Buffs[stat.RowData.GroupId] = clone;
+                    Stats.AddBuff(clone, updateImmediate);
+                    break;
+                }
+                case ActionBuff action:
+                {
+                    var clone = (ActionBuff)action.Clone();
+
+                    switch (action)
+                    {
+                        // Stun freezes target
+                        case Stun stun:
+                        {
+                            Buffs[stun.BuffInfo.GroupId] = clone;
+                            break;
+                        }
+                        // Dispel removes debuffs
+                        case Dispel dispel:
+                        {
+                            var debuffList = _skillSheet.Values
+                                .Where(s => s.SkillType == SkillType.Debuff).Select(s => s.Id);
+                            Buffs[dispel.BuffInfo.GroupId] = clone;
+                            foreach (var debuff in
+                                     StatBuffs.Where(bf => debuffList.Contains(bf.RowData.Id)))
+                            {
+                                if (Simulator.Random.Next(0, 100) < action.RowData.Chance)
+                                {
+                                    dispelList.Add(debuff);
+                                    RemoveStatBuff(debuff);
+                                }
+                            }
+
+                            foreach (var debuff in
+                                     ActionBuffs.Where(bf => debuffList.Contains(bf.RowData.Id)))
+                            {
+                                if (Simulator.Random.Next(0, 100) < action.RowData.Chance)
+                                {
+                                    dispelList.Add(debuff);
+                                    RemoveActionBuff(debuff);
+                                }
+                            }
+
+                            break;
+                        }
+                        default:
+                            Buffs[action.RowData.GroupId] = clone;
+                            break;
+                    }
+
+                    break;
+                }
             }
-            else if (buff is ActionBuff action)
-            {
-                var clone = (ActionBuff)action.Clone();
-                Buffs[action.RowData.GroupId] = clone;
-            }
+
+            return dispelList;
         }
 
         [Obsolete("Use AddBuff")]
