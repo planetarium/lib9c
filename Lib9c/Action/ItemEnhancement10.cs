@@ -131,9 +131,6 @@ namespace Nekoyume.Action
                     slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
             CheckObsolete(ActionObsoleteConfig.V200030ObsoleteIndex, context);
             var arenaSheetAddress = Addresses.GetSheetAddress<ArenaSheet>();
@@ -339,7 +336,7 @@ namespace Nekoyume.Action
 
             // Set state
             sw.Restart();
-            states = states.SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+            states = states.SetAvatarState(avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}ItemEnhancement Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;

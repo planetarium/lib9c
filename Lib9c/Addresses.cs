@@ -44,6 +44,7 @@ namespace Nekoyume
         public static readonly Address Inventory             = new Address("000000000000000000000000000000000000001c");
         public static readonly Address WorldInformation      = new Address("000000000000000000000000000000000000001d");
         public static readonly Address QuestList             = new Address("000000000000000000000000000000000000001e");
+        public static readonly Address Collection            = new Address("000000000000000000000000000000000000001f");
 
         public static Address GetSheetAddress<T>() where T : ISheet => GetSheetAddress(typeof(T).Name);
 

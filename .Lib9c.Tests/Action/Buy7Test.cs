@@ -295,8 +295,8 @@ namespace Lib9c.Tests.Action
                 purchaseInfos.Add(purchaseInfo);
 
                 _initialState = _initialState
-                    .SetAvatarState(_buyerAvatarAddress, buyerAvatarState, true, true, true, true)
-                    .SetAvatarState(sellerAvatarState.address, sellerAvatarState, true, true, true, true)
+                    .SetAvatarState(_buyerAvatarAddress, buyerAvatarState)
+                    .SetAvatarState(sellerAvatarState.address, sellerAvatarState)
                     .SetLegacyState(shardedShopAddress, shopState.Serialize())
                     .SetLegacyState(Addresses.Shop, legacyShopState.Serialize());
             }
@@ -462,7 +462,7 @@ namespace Lib9c.Tests.Action
                     0
                 ),
             };
-            _initialState = _initialState.SetAvatarState(_buyerAvatarAddress, avatarState, true, true, true, true);
+            _initialState = _initialState.SetAvatarState(_buyerAvatarAddress, avatarState);
 
             PurchaseInfo0 purchaseInfo0 = new PurchaseInfo0(
                 default,
@@ -904,7 +904,7 @@ namespace Lib9c.Tests.Action
 
             _initialState = _initialState
                 .SetAgentState(agentAddress, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
             return (avatarState, agentState);
         }
 

@@ -66,6 +66,7 @@ namespace Lib9c.Tests.Model.Skill
                     random,
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
+                new List<StatModifier>(),
                 copyCharacter
             );
             var player = new Player(avatarState, simulator);
@@ -128,7 +129,8 @@ namespace Lib9c.Tests.Model.Skill
                 StageSimulator.GetWaveRewards(
                     new TestRandom(seed),
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = new Player(avatarState, simulator);
 
@@ -175,7 +177,8 @@ namespace Lib9c.Tests.Model.Skill
                 StageSimulator.GetWaveRewards(
                     new TestRandom(seed),
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             player = new Player(avatarState, simulator);
             player.AddBuff(new Focus(_tableSheets.ActionBuffSheet.OrderedList.First(s => s.ActionBuffType == ActionBuffType.Focus)));

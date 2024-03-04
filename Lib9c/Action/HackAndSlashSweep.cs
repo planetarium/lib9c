@@ -12,6 +12,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -100,25 +101,31 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
+            var collectionExist = states.TryGetCollectionState(avatarAddress, out var collectionState) && collectionState.Ids.Any();
+            var sheetTypes = new List<Type>
+            {
+                typeof(WorldSheet),
+                typeof(StageSheet),
+                typeof(MaterialItemSheet),
+                typeof(StageWaveSheet),
+                typeof(CharacterLevelSheet),
+                typeof(ItemRequirementSheet),
+                typeof(EquipmentItemRecipeSheet),
+                typeof(EquipmentItemSubRecipeSheetV2),
+                typeof(EquipmentItemOptionSheet),
+                typeof(CharacterSheet),
+                typeof(CostumeStatSheet),
+                typeof(SweepRequiredCPSheet),
+                typeof(StakeActionPointCoefficientSheet),
+                typeof(RuneListSheet),
+                typeof(RuneOptionSheet),
+            };
+            if (collectionExist)
+            {
+                sheetTypes.Add(typeof(CollectionSheet));
+            }
             var sheets = states.GetSheets(
-                sheetTypes: new[]
-                {
-                    typeof(WorldSheet),
-                    typeof(StageSheet),
-                    typeof(MaterialItemSheet),
-                    typeof(StageWaveSheet),
-                    typeof(CharacterLevelSheet),
-                    typeof(ItemRequirementSheet),
-                    typeof(EquipmentItemRecipeSheet),
-                    typeof(EquipmentItemSubRecipeSheetV2),
-                    typeof(EquipmentItemOptionSheet),
-                    typeof(CharacterSheet),
-                    typeof(CostumeStatSheet),
-                    typeof(SweepRequiredCPSheet),
-                    typeof(StakeActionPointCoefficientSheet),
-                    typeof(RuneListSheet),
-                    typeof(RuneOptionSheet),
-                });
+                sheetTypes: sheetTypes);
 
             var worldSheet = sheets.GetSheet<WorldSheet>();
             if (!worldSheet.TryGetValue(worldId, out var worldRow, false))
@@ -245,11 +252,21 @@ namespace Nekoyume.Action
                 throw new SheetRowNotFoundException("CharacterSheet", avatarState.characterId);
             }
 
+            var collectionModifiers = new List<StatModifier>();
+            if (collectionExist)
+            {
+                var collectionSheet = sheets.GetSheet<CollectionSheet>();
+                foreach (var collectionId in collectionState.Ids)
+                {
+                    collectionModifiers.AddRange(collectionSheet[collectionId].StatModifiers);
+                }
+            }
+
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
             var cp = CPHelper.TotalCP(
                 equipmentList, costumeList,
                 runeOptions, avatarState.level,
-                characterRow, costumeStatSheet);
+                characterRow, costumeStatSheet, collectionModifiers);
             if (cp < cpRow.RequiredCP)
             {
                 throw new NotEnoughCombatPointException(
@@ -324,7 +341,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetAvatarState(avatarAddress, avatarState, true, true, false, true);
+                .SetAvatarState(avatarAddress, avatarState);
         }
 
         public static List<ItemBase> GetRewardItems(IRandom random,

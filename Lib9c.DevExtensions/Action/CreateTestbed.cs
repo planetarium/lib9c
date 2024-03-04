@@ -17,7 +17,6 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 
 namespace Lib9c.DevExtensions.Action
 {
@@ -90,9 +89,6 @@ namespace Lib9c.DevExtensions.Action
                     _slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
             var orderReceiptAddress = OrderDigestListState.DeriveAddress(avatarAddress);
 
             // Create Agent and avatar
@@ -157,7 +153,7 @@ namespace Lib9c.DevExtensions.Action
             states = states
                 .SetAgentState(agentAddress, agentState)
                 .SetLegacyState(Addresses.Ranking, rankingState.Serialize())
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
             // ~Create Agent and avatar && ~Add item
 
             // for sell
@@ -198,7 +194,7 @@ namespace Lib9c.DevExtensions.Action
                 orderReceiptList.Add(orderDigest);
 
                 states = states.SetLegacyState(orderReceiptAddress, orderReceiptList.Serialize())
-                    .SetAvatarState(avatarAddress, avatarState, true, true, false, false)
+                    .SetAvatarState(avatarAddress, avatarState)
                     .SetLegacyState(itemAddress, tradableItem.Serialize())
                     .SetLegacyState(orderAddress, order.Serialize())
                     .SetLegacyState(shopAddress, shardedShopState.Serialize());

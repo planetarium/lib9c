@@ -16,7 +16,6 @@ using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -87,9 +86,6 @@ namespace Nekoyume.Action
                     slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
             CheckObsolete(ActionObsoleteConfig.V100080ObsoleteIndex, context);
 
@@ -279,7 +275,7 @@ namespace Nekoyume.Action
             sw.Stop();
             Log.Verbose("{AddressesHex}ItemEnhancement Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
-            states = states.SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+            states = states.SetAvatarState(avatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}ItemEnhancement Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;

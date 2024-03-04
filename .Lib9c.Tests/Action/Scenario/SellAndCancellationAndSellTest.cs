@@ -64,7 +64,7 @@ namespace Lib9c.Tests.Action.Scenario
                 .SetLegacyState(GoldCurrencyState.Address, gold.Serialize())
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
-                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(_avatarAddress, avatarState);
 
             foreach (var (key, value) in sheets)
             {
@@ -83,8 +83,7 @@ namespace Lib9c.Tests.Action.Scenario
             var avatarState = previousStates.GetAvatarState(_avatarAddress);
             // Add 10 ap stones to inventory.
             avatarState.inventory.AddFungibleItem(apStone, 10);
-            previousStates = previousStates.SetAvatarState(
-                _avatarAddress, avatarState, false, true, false, false);
+            previousStates = previousStates.SetAvatarState(_avatarAddress, avatarState);
 
             // sell ap stones with count 1, 2, 3, 4.
             var sellBlockIndex = 1L;

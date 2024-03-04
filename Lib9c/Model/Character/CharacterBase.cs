@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+#if TEST_LOG
+using System.Text;
+using UnityEngine;
+#endif
 using BTAI;
 using Nekoyume.Battle;
 using Nekoyume.Model.BattleStatus;
@@ -73,6 +77,7 @@ namespace Nekoyume.Model
 
         public int AttackCount { get; set; }
         public int AttackCountMax { get; protected set; }
+        public BattleStatus.Skill usedSkill { get; set; }
 
         protected CharacterBase(Simulator simulator, CharacterSheet characterSheet, int characterId, int level,
             IEnumerable<StatModifier> optionalStatModifiers = null)
@@ -87,7 +92,7 @@ namespace Nekoyume.Model
             Stats = new CharacterStats(RowData, level);
             if (!(optionalStatModifiers is null))
             {
-                Stats.AddOptional(optionalStatModifiers);
+                Stats.AddCostume(optionalStatModifiers);
             }
             ResetCurrentHP();
 
@@ -240,7 +245,7 @@ namespace Nekoyume.Model
         {
             var selectedSkill = Skills.Select(Simulator.Random);
             bool log = Simulator.LogEvent;
-            var usedSkill = selectedSkill.Use(
+            usedSkill = selectedSkill.Use(
                 this,
                 Simulator.WaveTurn,
                 BuffFactory.GetBuffs(
@@ -272,7 +277,7 @@ namespace Nekoyume.Model
         {
             var selectedSkill = Skills.SelectV1(Simulator.Random);
 
-            var usedSkill = selectedSkill.Use(
+            usedSkill = selectedSkill.Use(
                 this,
                 Simulator.WaveTurn,
                 BuffFactory.GetBuffs(
@@ -296,7 +301,7 @@ namespace Nekoyume.Model
         {
             var selectedSkill = Skills.SelectV2(Simulator.Random);
 
-            var usedSkill = selectedSkill.Use(
+            usedSkill = selectedSkill.Use(
                 this,
                 Simulator.WaveTurn,
                 BuffFactory.GetBuffs(
@@ -565,6 +570,7 @@ namespace Nekoyume.Model
 
         protected virtual void SetSkill()
         {
+            usedSkill = null;
             if (!Simulator.SkillSheet.TryGetValue(GameConfig.DefaultAttackId, out var skillRow))
             {
                 throw new KeyNotFoundException(GameConfig.DefaultAttackId.ToString(CultureInfo.InvariantCulture));
@@ -581,11 +587,11 @@ namespace Nekoyume.Model
 
         private void Act()
         {
+            usedSkill = null;
             if (IsAlive())
             {
                 ReduceDurationOfBuffs();
                 ReduceSkillCooldown();
-                BattleStatus.Skill usedSkill;
                 if (OnPreSkill())
                 {
                     usedSkill = new Tick((CharacterBase)Clone());
@@ -613,7 +619,7 @@ namespace Nekoyume.Model
                 ReduceDurationOfBuffs();
                 ReduceSkillCooldownV1();
                 OnPreSkill();
-                var usedSkill = UseSkillV1();
+                usedSkill = UseSkillV1();
                 if (usedSkill != null)
                 {
                     OnPostSkill(usedSkill);
@@ -631,7 +637,7 @@ namespace Nekoyume.Model
                 ReduceDurationOfBuffs();
                 ReduceSkillCooldownV1();
                 OnPreSkill();
-                var usedSkill = UseSkillV2();
+                usedSkill = UseSkillV2();
                 if (usedSkill != null)
                 {
                     OnPostSkill(usedSkill);

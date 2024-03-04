@@ -207,7 +207,7 @@ namespace Nekoyume.Action.Garages
                 states = states.SetLegacyState(garageAddr, garage.Serialize());
             }
 
-            return states.SetAvatarState(RecipientAvatarAddr, avatarState, true, true, true, true);
+            return states.SetAvatarState(RecipientAvatarAddr, avatarState);
         }
 
         private IWorld SendMail(
@@ -215,32 +215,17 @@ namespace Nekoyume.Action.Garages
             IRandom random,
             IWorld states)
         {
-            var avatarValue = states.GetLegacyState(RecipientAvatarAddr);
-            if (!(avatarValue is Dictionary avatarDict))
-            {
-                throw new FailedLoadStateException(RecipientAvatarAddr, typeof(AvatarState));
-            }
-
-            // NOTE:
-            // This action supports the avatar state v2 only.
-            // So, we just check the mail box with a newer key.
-            if (!avatarDict.ContainsKey(SerializeKeys.MailBoxKey))
-            {
-                throw new KeyNotFoundException(
-                    $"Dictionary key is not found: {SerializeKeys.MailBoxKey}");
-            }
-
-            var mailBox = new MailBox((List)avatarDict[SerializeKeys.MailBoxKey]);
-            mailBox.Add(new UnloadFromMyGaragesRecipientMail(
-                blockIndex,
-                random.GenerateRandomGuid(),
-                blockIndex,
-                FungibleAssetValues,
-                FungibleIdAndCounts,
-                Memo));
-            mailBox.CleanUp();
-            avatarDict = avatarDict.SetItem(SerializeKeys.MailBoxKey, mailBox.Serialize());
-            return states.SetLegacyState(RecipientAvatarAddr, avatarDict);
+            var avatarState = states.GetAvatarState(RecipientAvatarAddr);
+            avatarState.mailBox.Add(
+                new UnloadFromMyGaragesRecipientMail(
+                    blockIndex,
+                    random.GenerateRandomGuid(),
+                    blockIndex,
+                    FungibleAssetValues,
+                    FungibleIdAndCounts,
+                    Memo));
+            avatarState.mailBox.CleanUp();
+            return states.SetAvatarState(RecipientAvatarAddr, avatarState);
         }
     }
 }

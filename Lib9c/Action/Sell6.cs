@@ -278,7 +278,7 @@ namespace Nekoyume.Action
             result.id = mail.id;
             avatarState.Update(mail);
 
-            states = states.SetLegacyState(sellerAvatarAddress, avatarState.Serialize());
+            states = states.SetAvatarState(sellerAvatarAddress, avatarState, true, false, false, false);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();

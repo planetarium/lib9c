@@ -145,7 +145,7 @@ namespace Lib9c.Tests.Action
                 }
                 else
                 {
-                    state = state.SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
+                    state = state.SetAvatarState(_avatarAddress, _avatarState);
                 }
             }
 

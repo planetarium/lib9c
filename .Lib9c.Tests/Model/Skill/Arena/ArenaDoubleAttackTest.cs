@@ -53,9 +53,9 @@ namespace Lib9c.Tests.Model.Skill.Arena
             var enemyDigest = new ArenaPlayerDigest(_avatar2, _arenaAvatar2);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
             var challenger =
-                new ArenaCharacter(simulator, myDigest, arenaSheets, simulator.HpModifier);
+                new ArenaCharacter(simulator, myDigest, arenaSheets, simulator.HpModifier, new List<StatModifier>());
             var enemy =
-                new ArenaCharacter(simulator, enemyDigest, arenaSheets, simulator.HpModifier);
+                new ArenaCharacter(simulator, enemyDigest, arenaSheets, simulator.HpModifier, new List<StatModifier>());
 
             var skillRow = _tableSheets.SkillSheet.OrderedList.First(s => s.Id == skillId);
             var skill = new ArenaDoubleAttack(skillRow, 100, 100, 0, StatType.NONE);

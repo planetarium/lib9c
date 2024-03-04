@@ -17,9 +17,9 @@ namespace Nekoyume.Blockchain.Policy
         public static IVariableSubPolicy<long> Default =>
             new MaxTransactionsBytesPolicy(long.MaxValue);
 
-        public static IVariableSubPolicy<long> Mainnet =>
+        public static IVariableSubPolicy<long> Odin =>
             Default
-                // Note: The genesis block of 9c-main weighs 11,085,640 B (11 MiB).
+                // Note: The genesis block of Odin weighs 11,085,640 B (11 MiB).
                 .Add(new SpannedSubPolicy<long>(
                     startIndex: 0L,
                     value: 1024L * 1024L * 15L))    // 15 MiB
@@ -48,8 +48,19 @@ namespace Nekoyume.Blockchain.Policy
                     startIndex: 3_150_001L,
                     value: 1024L * 500L));          // 500 KiB
 
+        public static IVariableSubPolicy<long> Heimdall =>
+            Default
+                // Note: The genesis block of Heimdall weights 4,700,853 B (4.5 MiB).
+                .Add(new SpannedSubPolicy<long>(
+                    startIndex: 0L,
+                    value: 1024L * 1024L * 5L))    // 5 MiB
+                // Note: Heimdall has been started after v100098
+                .Add(new SpannedSubPolicy<long>(
+                    startIndex: 1L,
+                    value: 1024L * 500L));          // 500 KiB
+
         // Note: For internal testing.
-        public static IVariableSubPolicy<long> Internal =>
+        public static IVariableSubPolicy<long> OdinInternal =>
             Default
                 .Add(new SpannedSubPolicy<long>(
                     startIndex: 0L,

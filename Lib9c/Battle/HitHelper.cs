@@ -2,6 +2,11 @@
 
 using System;
 
+#if TEST_LOG
+using System.Text;
+using UnityEngine;
+#endif
+
 namespace Nekoyume.Battle
 {
     public static class HitHelper
