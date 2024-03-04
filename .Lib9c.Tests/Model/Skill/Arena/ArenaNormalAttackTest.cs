@@ -53,9 +53,9 @@ namespace Lib9c.Tests.Model.Skill.Arena
             var enemyDigest = new ArenaPlayerDigest(_avatar2, _arenaAvatar2);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
             var challenger =
-                new ArenaCharacter(simulator, myDigest, arenaSheets, simulator.HpModifier);
+                new ArenaCharacter(simulator, myDigest, arenaSheets, simulator.HpModifier, new List<StatModifier>());
             var enemy =
-                new ArenaCharacter(simulator, enemyDigest, arenaSheets, simulator.HpModifier);
+                new ArenaCharacter(simulator, enemyDigest, arenaSheets, simulator.HpModifier, new List<StatModifier>());
 
             var skillRow = _tableSheets.SkillSheet.OrderedList.First(s => s.Id == 100000);
             var skill = new ArenaNormalAttack(skillRow, 100, 100, 0, StatType.NONE);
@@ -75,9 +75,9 @@ namespace Lib9c.Tests.Model.Skill.Arena
             // Without Focus buff
             var simulator = new ArenaSimulator(new TestRandom(seed));
             var challenger =
-                new ArenaCharacter(simulator, myDigest, arenaSheets, simulator.HpModifier);
+                new ArenaCharacter(simulator, myDigest, arenaSheets, simulator.HpModifier, new List<StatModifier>());
             var enemy =
-                new ArenaCharacter(simulator, enemyDigest, arenaSheets, simulator.HpModifier);
+                new ArenaCharacter(simulator, enemyDigest, arenaSheets, simulator.HpModifier, new List<StatModifier>());
             var skillRow = _tableSheets.SkillSheet.OrderedList.First(s => s.Id == 100000);
             var skill = new ArenaNormalAttack(skillRow, 100, 100, 0, StatType.NONE);
             var used = skill.Use(challenger, enemy, simulator.Turn, new List<Buff>());
@@ -85,8 +85,8 @@ namespace Lib9c.Tests.Model.Skill.Arena
 
             // With Focus Buff
             simulator = new ArenaSimulator(new TestRandom(seed));
-            challenger = new ArenaCharacter(simulator, myDigest, arenaSheets, simulator.HpModifier);
-            enemy = new ArenaCharacter(simulator, enemyDigest, arenaSheets, simulator.HpModifier);
+            challenger = new ArenaCharacter(simulator, myDigest, arenaSheets, simulator.HpModifier, new List<StatModifier>());
+            enemy = new ArenaCharacter(simulator, enemyDigest, arenaSheets, simulator.HpModifier, new List<StatModifier>());
 
             challenger.AddBuff(new Focus(
                 _tableSheets.ActionBuffSheet.OrderedList.First(s =>

@@ -555,41 +555,46 @@ namespace Nekoyume.Model
 
         public void SetCostumeStat(CostumeStatSheet costumeStatSheet)
         {
-            var statModifiers = new List<StatModifier>();
-            foreach (var itemId in costumes.Select(costume => costume.Id))
-            {
-                statModifiers.AddRange(
-                    costumeStatSheet.OrderedList
-                        .Where(r => r.CostumeId == itemId)
-                        .Select(row => new StatModifier(row.StatType, StatModifier.OperationType.Add, (int) row.Stat))
-                );
-            }
-            Stats.SetOption(statModifiers);
+            Stats.SetCostumeStat(costumes, costumeStatSheet);
             ResetCurrentHP();
         }
 
-        public void SetRune(
+        /// <summary>
+        /// Sets the rune stats for a player character.
+        /// </summary>
+        /// <param name="runes">The list of rune states for the player character.</param>
+        /// <param name="runeOptionSheet">The rune option sheet that contains information about rune options.</param>
+        public void SetRuneStats(List<RuneState> runes, RuneOptionSheet runeOptionSheet)
+        {
+            foreach (var rune in runes)
+            {
+                if (!runeOptionSheet.TryGetOptionInfo(rune.RuneId, rune.Level, out var optionInfo))
+                {
+                    continue;
+                }
+
+                Stats.AddRuneStat(optionInfo);
+                ResetCurrentHP();
+            }
+        }
+
+        /// <summary>
+        /// Sets the rune skills for the player.
+        /// </summary>
+        /// <param name="runes">The list of rune states.</param>
+        /// <param name="runeOptionSheet">The rune option sheet.</param>
+        /// <param name="skillSheet">The skill sheet.</param>
+        public void SetRuneSkills(
             List<RuneState> runes,
             RuneOptionSheet runeOptionSheet,
             SkillSheet skillSheet)
         {
             foreach (var rune in runes)
             {
-                if (!runeOptionSheet.TryGetValue(rune.RuneId, out var optionRow) ||
-                    !optionRow.LevelOptionMap.TryGetValue(rune.Level, out var optionInfo))
+                if (!runeOptionSheet.TryGetOptionInfo(rune.RuneId, rune.Level, out var optionInfo))
                 {
                     continue;
                 }
-
-                var statModifiers = new List<StatModifier>();
-                statModifiers.AddRange(
-                    optionInfo.Stats.Select(x =>
-                        new StatModifier(
-                            x.stat.StatType,
-                            x.operationType,
-                            x.stat.BaseValueAsLong)));
-                Stats.AddRune(statModifiers);
-                ResetCurrentHP();
 
                 if (optionInfo.SkillId == default ||
                     !skillSheet.TryGetValue(optionInfo.SkillId, out var skillRow))
@@ -621,6 +626,23 @@ namespace Nekoyume.Model
             }
         }
 
+        public void SetCollections(IEnumerable<StatModifier> statModifiers)
+        {
+            Stats.SetCollections(statModifiers);
+            ResetCurrentHP();
+        }
+
+        public void ConfigureStats(CostumeStatSheet costumeStatSheet, List<RuneState> runeStates, RuneOptionSheet runeOptionSheet, SkillSheet skillSheet, List<StatModifier> collectionModifiers)
+        {
+            SetCostumeStat(costumeStatSheet);
+            if (runeStates != null)
+            {
+                SetRuneStats(runeStates, runeOptionSheet);
+            }
+
+            SetCollections(collectionModifiers);
+        }
+
         [Obsolete("Use SetRune")]
         public void SetRuneV1(
             List<RuneState> runes,
@@ -642,7 +664,7 @@ namespace Nekoyume.Model
                             x.stat.StatType,
                             x.operationType,
                             x.stat.TotalValueAsLong)));
-                Stats.AddOptional(statModifiers);
+                Stats.AddCostume(statModifiers);
                 ResetCurrentHP();
 
                 if (optionInfo.SkillId == default ||

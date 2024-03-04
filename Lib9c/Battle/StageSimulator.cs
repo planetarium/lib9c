@@ -12,6 +12,7 @@ using Nekoyume.Model.State;
 using Nekoyume.Model.Buff;
 using Nekoyume.TableData;
 using Priority_Queue;
+using NormalAttack = Nekoyume.Model.BattleStatus.NormalAttack;
 using Skill = Nekoyume.Model.Skill.Skill;
 
 namespace Nekoyume.Battle
@@ -47,6 +48,7 @@ namespace Nekoyume.Battle
             EnemySkillSheet enemySkillSheet,
             CostumeStatSheet costumeStatSheet,
             List<ItemBase> waveRewards,
+            List<StatModifier> collectionModifiers,
             bool logEvent = true)
             : base(
                 random,
@@ -55,10 +57,14 @@ namespace Nekoyume.Battle
                 simulatorSheets,
                 logEvent)
         {
-            Player.SetCostumeStat(costumeStatSheet);
-            if (runeStates != null)
+            var runeOptionSheet = simulatorSheets.RuneOptionSheet;
+            var skillSheet = simulatorSheets.SkillSheet;
+            Player.ConfigureStats(costumeStatSheet, runeStates, runeOptionSheet, skillSheet,
+                collectionModifiers);
+            if (runeStates is not null)
             {
-                Player.SetRune(runeStates, simulatorSheets.RuneOptionSheet, simulatorSheets.SkillSheet);
+                // call SetRuneSkills last. because rune skills affect from total calculated stats
+                Player.SetRuneSkills(runeStates, runeOptionSheet, skillSheet);
             }
 
             _waves = new List<Wave>();
@@ -232,8 +238,14 @@ namespace Nekoyume.Battle
 
                     foreach (var other in Characters)
                     {
+                        var spdMultiplier = 0.6m;
                         var current = Characters.GetPriority(other);
-                        var speed = current * 0.6m;
+                        if (other == Player && other.usedSkill is not null && other.usedSkill is not NormalAttack)
+                        {
+                            spdMultiplier = 0.9m;
+                        }
+
+                        var speed = current * spdMultiplier;
                         Characters.UpdatePriority(other, speed);
                     }
 

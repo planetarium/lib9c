@@ -478,7 +478,7 @@ namespace Lib9c.DevExtensions.Action
                 var recipe = recipeSheet.OrderedList!
                     .First(e => e.ResultEquipmentId == equipmentId);
                 var subRecipe = subRecipeSheetV2[recipe.SubRecipeIds[1]];
-                CombinationEquipment16.AddAndUnlockOption(
+                CombinationEquipment.AddAndUnlockOption(
                     agent,
                     null,
                     equipment,
@@ -558,8 +558,8 @@ namespace Lib9c.DevExtensions.Action
             }
             // ~Set Inventory.
 
-            states = states.SetAvatarState(avatarAddr, avatar, true, true, true, true);
-          
+            states = states.SetAvatarState(avatarAddr, avatar);
+
             // Set CombinationSlot.
             for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
             {

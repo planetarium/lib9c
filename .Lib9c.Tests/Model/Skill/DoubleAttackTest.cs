@@ -97,6 +97,7 @@ namespace Lib9c.Tests.Model.Skill
                     new TestRandom(),
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
+                new List<StatModifier>(),
                 copyCharacter
             );
             var player = new Player(avatarState, simulator)

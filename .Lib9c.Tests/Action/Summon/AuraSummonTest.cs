@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Action.Summon
             var context = new ActionContext();
             _initialState = new World(new MockWorldState())
                 .SetAgentState(_agentAddress, agentState)
-                .SetAvatarState(_avatarAddress, _avatarState, true, true, true, true)
+                .SetAvatarState(_avatarAddress, _avatarState)
                 .SetLegacyState(GoldCurrencyState.Address, gold.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100000000000)
                 .TransferAsset(
@@ -209,7 +209,7 @@ namespace Lib9c.Tests.Action.Summon
                 _avatarState.inventory.AddItem(
                     ItemFactory.CreateItem(material, random),
                     materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount);
-                state = state.SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
+                state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
             var action = new AuraSummon(

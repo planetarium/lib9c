@@ -14,6 +14,7 @@ using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -59,9 +60,9 @@ namespace Nekoyume.Action
                     $"Aborted as the avatar state of the signer was failed to load.");
             }
 
-            Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(
-                containRaidSimulatorSheets: true,
-                sheetTypes: new [] {
+            var collectionExist = states.TryGetCollectionState(AvatarAddress, out var collectionState) && collectionState.Ids.Any();
+            var sheetTypes = new List<Type>
+            {
                 typeof(MaterialItemSheet),
                 typeof(SkillSheet),
                 typeof(SkillBuffSheet),
@@ -82,7 +83,15 @@ namespace Nekoyume.Action
                 typeof(WorldBossKillRewardSheet),
                 typeof(RuneSheet),
                 typeof(RuneListSheet),
-            });
+            };
+            if (collectionExist)
+            {
+                sheetTypes.Add(typeof(CollectionSheet));
+            }
+
+            Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(
+                containRaidSimulatorSheets: true,
+                sheetTypes: sheetTypes);
             var worldBossListSheet = sheets.GetSheet<WorldBossListSheet>();
             var row = worldBossListSheet.FindRowByBlockIndex(context.BlockIndex);
             int raidId = row.Id;
@@ -203,6 +212,15 @@ namespace Nekoyume.Action
                 }
             }
 
+            var collectionModifiers = new List<StatModifier>();
+            if (collectionExist)
+            {
+                var collectionSheet = sheets.GetSheet<CollectionSheet>();
+                foreach (var collectionId in collectionState.Ids)
+                {
+                    collectionModifiers.AddRange(collectionSheet[collectionId].StatModifiers);
+                }
+            }
             // Simulate.
             var random = context.GetRandom();
             var simulator = new RaidSimulator(
@@ -212,7 +230,9 @@ namespace Nekoyume.Action
                 FoodIds,
                 runeStates,
                 raidSimulatorSheets,
-                sheets.GetSheet<CostumeStatSheet>());
+                sheets.GetSheet<CostumeStatSheet>(),
+                collectionModifiers
+                );
             simulator.Simulate();
             avatarState.inventory = simulator.Player.Inventory;
 
@@ -253,7 +273,7 @@ namespace Nekoyume.Action
             var cp = CPHelper.TotalCP(
                 equipmentList, costumeList,
                 runeOptions, avatarState.level,
-                characterRow, costumeStatSheet);
+                characterRow, costumeStatSheet, collectionModifiers);
             long score = simulator.DamageDealt;
             raiderState.Update(avatarState, cp, score, PayNcg, context.BlockIndex);
 
@@ -323,7 +343,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);
             return states
-                .SetAvatarState(AvatarAddress, avatarState, false, true, false, false)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetLegacyState(worldBossAddress, bossState.Serialize())
                 .SetLegacyState(raiderAddress, raiderState.Serialize());
         }

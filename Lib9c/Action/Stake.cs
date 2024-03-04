@@ -73,7 +73,7 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex}Stake exec started", addressesHex);
             if (!states.TryGetSheet<StakePolicySheet>(out var stakePolicySheet))
             {
-                throw new StateNullException(Addresses.GetSheetAddress<StakePolicySheet>());
+                throw new StateNullException(ReservedAddresses.LegacyAccount, Addresses.GetSheetAddress<StakePolicySheet>());
             }
 
             var currentStakeRegularRewardSheetAddr = Addresses.GetSheetAddress(
@@ -82,7 +82,7 @@ namespace Nekoyume.Action
                     currentStakeRegularRewardSheetAddr,
                     out var stakeRegularRewardSheet))
             {
-                throw new StateNullException(currentStakeRegularRewardSheetAddr);
+                throw new StateNullException(ReservedAddresses.LegacyAccount, currentStakeRegularRewardSheetAddr);
             }
 
             var minimumRequiredGold = stakeRegularRewardSheet.OrderedRows.Min(x => x.RequiredGold);
@@ -115,7 +115,7 @@ namespace Nekoyume.Action
                 // NOTE: Cannot withdraw staking.
                 if (Amount == 0)
                 {
-                    throw new StateNullException(stakeStateAddress);
+                    throw new StateNullException(ReservedAddresses.LegacyAccount, stakeStateAddress);
                 }
 
                 // NOTE: Contract a new staking.

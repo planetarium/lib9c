@@ -122,7 +122,7 @@ namespace Lib9c.Tests.Action
                     }
                 }
 
-                state = state.SetAvatarState(_avatarAddress, _avatarState, true, true, true, true);
+                state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
             var unlockedWorldIdsAddress = _avatarAddress.Derive("world_ids");

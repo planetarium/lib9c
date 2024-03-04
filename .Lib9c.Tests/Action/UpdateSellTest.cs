@@ -198,7 +198,7 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                prevState = prevState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                prevState = prevState.SetAvatarState(_avatarAddress, avatarState);
             }
 
             prevState = prevState
@@ -296,7 +296,7 @@ namespace Lib9c.Tests.Action
                 ),
             };
 
-            _initialState = _initialState.SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+            _initialState = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             var updateSellInfo = new UpdateSellInfo(
                 default,
@@ -334,7 +334,7 @@ namespace Lib9c.Tests.Action
             var digestListAddress = OrderDigestListState.DeriveAddress(_avatarAddress);
             var digestList = new OrderDigestListState(digestListAddress);
             _initialState = _initialState
-                .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(_avatarAddress, avatarState)
                 .SetLegacyState(digestListAddress, digestList.Serialize());
 
             var updateSellInfo = new UpdateSellInfo(

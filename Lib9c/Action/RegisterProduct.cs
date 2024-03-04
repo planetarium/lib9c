@@ -101,9 +101,9 @@ namespace Nekoyume.Action
 
             sw.Restart();
             states = states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetLegacyState(productsStateAddress, productsState.Serialize());
-            
+
             sw.Stop();
             Log.Debug("{Source} {Process} from #{BlockIndex}: {Elapsed}",
                 nameof(RegisterProduct), "Set States", context.BlockIndex, sw.Elapsed.TotalMilliseconds);

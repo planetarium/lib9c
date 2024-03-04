@@ -344,7 +344,7 @@ namespace Lib9c.Tests.Action
 
             state = state
                 .SetAgentState(agentAddress, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
 
             return state;
         }

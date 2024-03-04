@@ -95,9 +95,6 @@ namespace Nekoyume.Action
                     slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -502,7 +499,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CombinationEquipment Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(slotAddress, slotState.Serialize())
                 .SetLegacyState(hammerPointAddress,hammerPointState.Serialize())
                 .SetAgentState(context.Signer, agentState);
@@ -692,7 +689,7 @@ namespace Nekoyume.Action
                 }
                 else
                 {
-                    var skill = CombinationEquipment16.GetSkill(optionRow, skillSheet, random);
+                    var skill = CombinationEquipment.GetSkill(optionRow, skillSheet, random);
                     if (!(skill is null))
                     {
                         equipment.Skills.Add(skill);

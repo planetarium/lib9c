@@ -59,7 +59,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
             _initialState = _initialState
                     .SetAgentState(agentAddress, agentState)
-                    .SetAvatarState(_avatarAddress, avatarState, true, true, true, true);
+                    .SetAvatarState(_avatarAddress, avatarState);
         }
 
         [Theory]

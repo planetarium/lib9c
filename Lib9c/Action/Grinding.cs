@@ -39,9 +39,6 @@ namespace Nekoyume.Action
             context.UseGas(1);
             IActionContext ctx = context;
             IWorld states = ctx.PreviousState;
-            var inventoryAddress = AvatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = AvatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = AvatarAddress.Derive(LegacyQuestListKey);
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Grinding exec started", addressesHex);
@@ -151,7 +148,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Grinding Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .MintAsset(context, context.Signer, crystal);
         }
 

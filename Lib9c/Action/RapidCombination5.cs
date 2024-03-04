@@ -65,9 +65,6 @@ namespace Nekoyume.Action
                     slotIndex
                 )
             );
-            var inventoryAddress = avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddress = avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddress = avatarAddress.Derive(LegacyQuestListKey);
 
             CheckObsolete(ActionObsoleteConfig.V100083ObsoleteIndex, context);
 
@@ -133,7 +130,7 @@ namespace Nekoyume.Action
             avatarState.UpdateFromRapidCombinationV2((ResultModel)slotState.Result, context.BlockIndex);
 
             return states
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true)
+                .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(slotAddress, slotState.Serialize());
         }
 

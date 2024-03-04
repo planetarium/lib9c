@@ -111,13 +111,13 @@ namespace Lib9c.Tests.Action
             _initialStates = _initialStates
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetAgentState(_agent1Address, agent1State)
-                .SetAvatarState(_avatar1Address, avatar1State, true, true, true, true)
+                .SetAvatarState(_avatar1Address, avatar1State)
                 .SetAgentState(_agent2Address, agent2State)
-                .SetAvatarState(_avatar2Address, avatar2State, true, true, true, true)
+                .SetAvatarState(_avatar2Address, avatar2State)
                 .SetAgentState(_agent3Address, agent3State)
-                .SetAvatarState(_avatar3Address, avatar3State, true, true, true, true)
+                .SetAvatarState(_avatar3Address, avatar3State)
                 .SetAgentState(_agent4Address, agent4State)
-                .SetAvatarState(_avatar4Address, avatar4State, true, true, true, true)
+                .SetAvatarState(_avatar4Address, avatar4State)
                 .SetLegacyState(
                     Addresses.GameConfig,
                     new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize());

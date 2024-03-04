@@ -166,7 +166,7 @@ namespace Nekoyume.Action
             states = states
                 .SetLegacyState(itemAddress, sellItem.Serialize())
                 .SetLegacyState(orderDigestListAddress, digestList.Serialize())
-                .SetAvatarState(sellerAvatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(sellerAvatarAddress, avatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}Sell Cancel Set AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();

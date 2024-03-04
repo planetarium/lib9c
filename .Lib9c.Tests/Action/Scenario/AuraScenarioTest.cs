@@ -21,7 +21,6 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static SerializeKeys;
 
     public class AuraScenarioTest
     {
@@ -65,8 +64,7 @@ namespace Lib9c.Tests.Action.Scenario
                     rankingMapAddress
                 );
                 avatarState.inventory.AddItem(_aura);
-                _initialState = _initialState.SetAvatarState(
-                    avatarAddress, avatarState, true, true, true, true);
+                _initialState = _initialState.SetAvatarState(avatarAddress, avatarState);
             }
 
             _currency = Currency.Legacy("NCG", 2, minters: null);
@@ -142,10 +140,7 @@ namespace Lib9c.Tests.Action.Scenario
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var prevState = _initialState.SetLegacyState(
-                _avatarAddress.Derive(LegacyWorldInformationKey),
-                avatarState.worldInformation.Serialize()
-            );
+            var prevState = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             var raid = new Raid
             {
@@ -185,8 +180,7 @@ namespace Lib9c.Tests.Action.Scenario
                     avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                 }
 
-                prevState = prevState.SetAvatarState(
-                    avatarAddress, avatarState, false, false, true, false);
+                prevState = prevState.SetAvatarState(avatarAddress, avatarState);
 
                 var join = new JoinArena3
                 {
@@ -261,7 +255,9 @@ namespace Lib9c.Tests.Action.Scenario
                 var log = simulator.Simulate(
                     myArenaPlayerDigest,
                     enemyArenaPlayerDigest,
-                    _tableSheets.GetArenaSimulatorSheets());
+                    _tableSheets.GetArenaSimulatorSheets(),
+                    new List<StatModifier>(),
+                    new List<StatModifier>());
                 // Check player, enemy equip aura
                 foreach (var spawn in log.OfType<ArenaSpawnCharacter>())
                 {
@@ -315,10 +311,9 @@ namespace Lib9c.Tests.Action.Scenario
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
 
-            var previousState = _initialState.SetAvatarState(
-                _avatarAddress, avatarState, false, false, true, false);
+            var previousState = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
-            var register = new RegisterProduct2
+            var register = new RegisterProduct
             {
                 AvatarAddress = _avatarAddress,
                 RegisterInfos = new List<IRegisterInfo>
