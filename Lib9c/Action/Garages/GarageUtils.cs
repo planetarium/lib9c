@@ -221,7 +221,7 @@ namespace Nekoyume.Action.Garages
         {
             if (garageState is null || garageState is Null)
             {
-                throw new StateNullException(garageAddr);
+                throw new StateNullException(ReservedAddresses.LegacyAccount, garageAddr);
             }
 
             var garage = new FungibleItemGarage(garageState);

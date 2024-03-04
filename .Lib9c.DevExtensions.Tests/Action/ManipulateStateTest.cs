@@ -541,6 +541,8 @@ namespace Lib9c.DevExtensions.Tests.Action
         [MemberData(nameof(FetchWorldInfo))]
         public void SetWorldInformation(int lastClearedStage, WorldInformation targetInfo)
         {
+            // FIXME: The test now writes worldInformation in LegacyAccount,
+            // which should be moved to Addresses.WorldInformation
             var state = Manipulate(
                 _initialStateV2,
                 new List<(Address, Address, IValue)>

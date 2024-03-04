@@ -102,9 +102,9 @@ namespace Lib9c.Tests.Action
             _initialState = _initialState
                 .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetAgentState(_sellerAgentAddress, sellerAgentState)
-                .SetAvatarState(_sellerAvatarAddress, sellerAvatarState, true, true, true, true)
+                .SetAvatarState(_sellerAvatarAddress, sellerAvatarState)
                 .SetAgentState(_buyerAgentAddress, buyerAgentState)
-                .SetAvatarState(_buyerAvatarAddress, _buyerAvatarState, true, true, true, true)
+                .SetAvatarState(_buyerAvatarAddress, _buyerAvatarState)
                 .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
                 .MintAsset(context, _buyerAgentAddress, _goldCurrencyState.Currency * 100);
         }
@@ -332,8 +332,8 @@ namespace Lib9c.Tests.Action
 
                 _initialState = _initialState
                     .SetLegacyState(Order.DeriveAddress(orderId), order.Serialize())
-                    .SetAvatarState(_buyerAvatarAddress, buyerAvatarState, true, true, true, true)
-                    .SetAvatarState(sellerAvatarState.address, sellerAvatarState, true, true, true, true)
+                    .SetAvatarState(_buyerAvatarAddress, buyerAvatarState)
+                    .SetAvatarState(sellerAvatarState.address, sellerAvatarState)
                     .SetLegacyState(shardedShopAddress, shopState.Serialize())
                     .SetLegacyState(orderDigestListState.Address, orderDigestListState.Serialize());
             }
@@ -351,7 +351,7 @@ namespace Lib9c.Tests.Action
                 Signer = _buyerAgentAddress,
             });
 
-            var buyProductAction = new BuyProduct2
+            var buyProductAction = new BuyProduct
             {
                 AvatarAddress = _buyerAvatarAddress,
                 ProductInfos = productInfos,
@@ -476,8 +476,7 @@ namespace Lib9c.Tests.Action
                         0
                     ),
                 };
-                _initialState = _initialState.SetAvatarState(
-                    _buyerAvatarAddress, avatarState, true, true, true, true);
+                _initialState = _initialState.SetAvatarState(_buyerAvatarAddress, avatarState);
             }
 
             var avatarAddress = equalAvatarAddress ? _buyerAvatarAddress : default;
@@ -575,8 +574,7 @@ namespace Lib9c.Tests.Action
 
                         var digest = order.Digest(sellerAvatarState, _tableSheets.CostumeStatSheet);
                         shopState.Add(digest, 0);
-                        _initialState = _initialState.SetAvatarState(
-                            sellerAvatarAddress, sellerAvatarState, true, true, true, true);
+                        _initialState = _initialState.SetAvatarState(sellerAvatarAddress, sellerAvatarState);
                     }
 
                     _initialState = _initialState.SetLegacyState(Order.DeriveAddress(_orderId), order.Serialize());
@@ -631,7 +629,7 @@ namespace Lib9c.Tests.Action
                 action.errors.Select(r => r.errorCode)
             );
 
-            var buyProductAction = new BuyProduct2
+            var buyProductAction = new BuyProduct
             {
                 AvatarAddress = _buyerAvatarAddress,
                 ProductInfos = new[] { productInfo },
@@ -717,8 +715,7 @@ namespace Lib9c.Tests.Action
                     itemSubType,
                     orderData.ItemCount
                 );
-                _initialState.SetAvatarState(
-                    orderData.SellerAvatarAddress, sellerAvatarState, false, true, false, false);
+                _initialState.SetAvatarState(orderData.SellerAvatarAddress, sellerAvatarState);
 
                 var sellItem = order.Sell3(sellerAvatarState);
                 var orderDigest = order.Digest(sellerAvatarState, _tableSheets.CostumeStatSheet);
@@ -757,8 +754,8 @@ namespace Lib9c.Tests.Action
 
                 _initialState = _initialState
                     .SetLegacyState(Order.DeriveAddress(orderId), order.Serialize())
-                    .SetAvatarState(_buyerAvatarAddress, buyerAvatarState, true, true, true, true)
-                    .SetAvatarState(sellerAvatarState.address, sellerAvatarState, true, true, true, true)
+                    .SetAvatarState(_buyerAvatarAddress, buyerAvatarState)
+                    .SetAvatarState(sellerAvatarState.address, sellerAvatarState)
                     .SetLegacyState(shardedShopAddress, shopState.Serialize())
                     .SetLegacyState(orderDigestListState.Address, orderDigestListState.Serialize());
             }
@@ -985,7 +982,7 @@ namespace Lib9c.Tests.Action
 
             _initialState = _initialState
                 .SetAgentState(agentAddress, agentState)
-                .SetAvatarState(avatarAddress, avatarState, true, true, true, true);
+                .SetAvatarState(avatarAddress, avatarState);
             return (avatarState, agentState);
         }
 

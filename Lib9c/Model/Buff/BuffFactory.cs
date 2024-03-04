@@ -85,7 +85,7 @@ namespace Nekoyume.Model.Buff
                         var additionalValue = skill.Power;
                         if (skill.ReferencedStatType != StatType.NONE)
                         {
-                            var statMap = stats.StatWithItems;
+                            var statMap = stats.StatWithoutBuffs;
                             var multiplier = skill.StatPowerRatio / 10000m;
                             additionalValue += (int)Math.Round(statMap.GetStat(skill.ReferencedStatType) * multiplier);
                         }

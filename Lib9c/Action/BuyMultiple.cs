@@ -401,7 +401,7 @@ namespace Nekoyume.Action
                 sellerAvatarState.UpdateQuestRewards2(materialSheet);
 
                 sw.Restart();
-                states = states.SetAvatarState(productInfo.sellerAvatarAddress, sellerAvatarState, true, true, true, true);
+                states = states.SetAvatarState(productInfo.sellerAvatarAddress, sellerAvatarState);
                 sw.Stop();
                 Log.Verbose("{AddressesHex}BuyMultiple Set Seller AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             }
@@ -415,7 +415,7 @@ namespace Nekoyume.Action
             buyerAvatarState.UpdateQuestRewards2(materialSheet);
 
             sw.Restart();
-            states = states.SetAvatarState(buyerAvatarAddress, buyerAvatarState, true, true, true, true);
+            states = states.SetAvatarState(buyerAvatarAddress, buyerAvatarState);
             sw.Stop();
             Log.Verbose("{AddressesHex}BuyMultiple Set Buyer AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
 

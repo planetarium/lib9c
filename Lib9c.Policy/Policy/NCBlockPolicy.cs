@@ -12,14 +12,14 @@ namespace Nekoyume.Blockchain.Policy
         public NCBlockPolicy(
             IAction blockAction,
             TimeSpan blockInterval,
-            Func<BlockChain, Transaction, TxPolicyViolationException>
+            Func<BlockChain, Transaction, TxPolicyViolationException>?
                 validateNextBlockTx = null,
-            Func<BlockChain, Block, BlockPolicyViolationException>
+            Func<BlockChain, Block, BlockPolicyViolationException>?
                 validateNextBlock = null,
-            Func<long, long> getMaxTransactionsBytes = null,
-            Func<long, int> getMinTransactionsPerBlock = null,
-            Func<long, int> getMaxTransactionsPerBlock = null,
-            Func<long, int> getMaxTransactionsPerSignerPerBlock = null)
+            Func<long, long>? getMaxTransactionsBytes = null,
+            Func<long, int>? getMinTransactionsPerBlock = null,
+            Func<long, int>? getMaxTransactionsPerBlock = null,
+            Func<long, int>? getMaxTransactionsPerSignerPerBlock = null)
             : base(
                 blockAction: blockAction,
                 blockInterval: blockInterval,

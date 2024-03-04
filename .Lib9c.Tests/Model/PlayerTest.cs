@@ -15,6 +15,7 @@ namespace Lib9c.Tests.Model
     using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
+    using Nekoyume.TableData;
     using Priority_Queue;
     using Xunit;
 
@@ -59,7 +60,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -92,7 +94,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -142,7 +145,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
 
@@ -192,7 +196,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -246,7 +251,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -283,11 +289,11 @@ namespace Lib9c.Tests.Model
             );
             player.SetCostumeStat(_tableSheets.CostumeStatSheet);
 
-            Assert.Equal(row.Stat, player.Stats.OptionalStats.ATK);
+            Assert.Equal(row.Stat, player.Stats.CostumeStats.ATK);
 
             var copy = (Player)player.Clone();
 
-            Assert.Equal(row.Stat, copy.Stats.OptionalStats.ATK);
+            Assert.Equal(row.Stat, copy.Stats.CostumeStats.ATK);
         }
 
         [Fact]
@@ -373,7 +379,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             Assert.Empty(player.eventMap);
@@ -451,7 +458,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -519,7 +527,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var skill = SkillFactory.Get(_tableSheets.SkillSheet[700004], 0, 100, 0, StatType.NONE);
             skill.CustomField = new SkillCustomField { BuffDuration = 2 };
@@ -601,7 +610,8 @@ namespace Lib9c.Tests.Model
                 StageSimulator.GetWaveRewards(
                     _random,
                     _tableSheets.StageSheet[1],
-                    _tableSheets.MaterialItemSheet)
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>()
             );
             var player = simulator.Player;
             var enemy = new Enemy(
@@ -663,6 +673,248 @@ namespace Lib9c.Tests.Model
             Assert.Contains(logList, e => e is TickDamage);
             Assert.Contains(logList, e => e is RemoveBuffs);
             Assert.Contains(logList, e => e is Tick);
+        }
+
+        [Fact]
+        public void StatsLayerTest()
+        {
+            var row = _tableSheets.EquipmentItemSheet.Values.First(r =>
+                r.Stat.StatType == StatType.ATK);
+            var equipment = (Equipment)ItemFactory.CreateItem(_tableSheets.ItemSheet[row.Id], new TestRandom());
+            equipment.equipped = true;
+            _avatarState.inventory.AddItem(equipment);
+            var costumeStatRow =
+                _tableSheets.CostumeStatSheet.Values.First(r => r.StatType == StatType.ATK);
+            var costumeId = costumeStatRow.CostumeId;
+            var costume = ItemFactory.CreateCostume(_tableSheets.CostumeItemSheet[costumeId], Guid.NewGuid());
+            costume.equipped = true;
+            _avatarState.inventory.AddItem(costume);
+            var foodRow =
+                _tableSheets.ConsumableItemSheet.Values.First(r =>
+                    r.Stats.Any(s => s.StatType == StatType.ATK));
+            var food = (Consumable)ItemFactory.CreateItem(foodRow, _random);
+            _avatarState.inventory.AddItem(food);
+
+            // Update equipment stats
+            var player = new Player(
+                _avatarState,
+                _tableSheets.CharacterSheet,
+                _tableSheets.CharacterLevelSheet,
+                _tableSheets.EquipmentItemSetEffectSheet
+            );
+            Assert.Equal(player.ATK, player.Stats.BaseATK + player.Stats.EquipmentStats.ATK);
+            // BaseAtk 20, EquipmentStats 1
+            // Assert.Equal(21, player.ATK);
+            var equipmentLayerAtk = player.ATK;
+
+            // Update consumable stats
+            player.Use(new List<Guid>
+            {
+                food.ItemId,
+            });
+            Assert.Equal(player.ATK, equipmentLayerAtk + food.Stats.Where(s => s.StatType == StatType.ATK).Sum(s => s.BaseValueAsLong));
+            // ConsumableStats 18
+            // Assert.Equal(39, player.ATK);
+            var consumableLayerAtk = player.ATK;
+
+            // Update rune stat
+            var runeId = 10002;
+            var runeState = new RuneState(runeId);
+            runeState.LevelUp();
+            Assert.Equal(1, runeState.Level);
+
+            var runeStates = new List<RuneState>
+            {
+                runeState,
+            };
+            player.SetRuneStats(runeStates, _tableSheets.RuneOptionSheet);
+            var runeOptionRow = _tableSheets.RuneOptionSheet.Values.First(r => r.RuneId == runeId);
+            var runeAtk = runeOptionRow.LevelOptionMap[1].Stats.Sum(r => r.stat.BaseValueAsLong);
+            Assert.Equal(player.ATK, consumableLayerAtk + runeAtk);
+            // RuneStats 235
+            // Assert.Equal(274, player.ATK);
+            var runeLayerAtk = player.ATK;
+
+            // Update costume stats
+            player.SetCostumeStat(_tableSheets.CostumeStatSheet);
+            Assert.Equal(player.ATK, runeLayerAtk + costumeStatRow.Stat);
+            // CostumeStats 1829
+            // Assert.Equal(2103, player.ATK);
+            var costumeLayerAtk = player.ATK;
+
+            // Update collection stat
+            var modifiers = new List<StatModifier>();
+            var addModifier = new StatModifier(StatType.ATK, StatModifier.OperationType.Add, 100);
+            modifiers.Add(new StatModifier(StatType.ATK, StatModifier.OperationType.Percentage, 100));
+            modifiers.Add(addModifier);
+            modifiers.Add(new StatModifier(StatType.ATK, StatModifier.OperationType.Percentage, -100));
+            player.Stats.SetCollections(modifiers);
+            Assert.Equal(player.ATK, costumeLayerAtk + addModifier.Value);
+            // CollectionStats 100
+            // Assert.Equal(2203, player.ATK);
+            var collectionLayerAtk = player.ATK;
+
+            // Update stage buff stats
+            var stageBuffSkill = CrystalRandomSkillState.GetSkill(
+                1,
+                _tableSheets.CrystalRandomBuffSheet,
+                _tableSheets.SkillSheet);
+            var stageBuffs = BuffFactory.GetBuffs(
+                player.Stats,
+                stageBuffSkill,
+                _tableSheets.SkillBuffSheet,
+                _tableSheets.StatBuffSheet,
+                _tableSheets.SkillActionBuffSheet,
+                _tableSheets.ActionBuffSheet
+            );
+            var statBuffs = new List<StatBuff>();
+
+            foreach (var stageBuff in stageBuffs)
+            {
+                player.AddBuff(stageBuff);
+                if (stageBuff is StatBuff s)
+                {
+                    statBuffs.Add(s);
+                }
+            }
+
+            StatBuff stageAtkBuff = statBuffs.Single(s => s.GetModifier().StatType == StatType.ATK);
+            var stageModifier = stageAtkBuff.GetModifier();
+            var stageBuffAtk = (long)stageModifier.GetModifiedValue(collectionLayerAtk);
+            // StageBuffStats 1101(50%)
+            // Assert.Equal(1101, stageBuffAtk);
+            Assert.Equal(player.ATK, collectionLayerAtk + stageBuffAtk);
+            // Assert.Equal(3304, player.ATK);
+
+            // Update skill buff stats
+            var percentageBuffRow = _tableSheets.StatBuffSheet.Values.First(r =>
+                r.StatType == StatType.ATK &&
+                r.OperationType == StatModifier.OperationType.Percentage);
+            var percentageBuff = new StatBuff(percentageBuffRow);
+            statBuffs.Add(percentageBuff);
+            var percentageModifier = percentageBuff.GetModifier();
+            var totalBuffPercentageModifier = new StatModifier(StatType.ATK, StatModifier.OperationType.Percentage, stageModifier.Value + percentageModifier.Value);
+            var percentageBuffAtk = (long)totalBuffPercentageModifier.GetModifiedValue(costumeLayerAtk + 100);
+            // Total PercentageStats 1652(StageBuffStats 50% + BuffStats 25%)
+            // Assert.Equal(1652, percentageBuffAtk);
+
+            // Divide buff group id for test
+            var addBuffRow = new StatBuffSheet.Row();
+            addBuffRow.Set("102003,102003,100,10,Self,ATK,Add,10,true\n".Split(","));
+
+            var addBuff = new StatBuff(addBuffRow);
+            statBuffs.Add(addBuff);
+            var addBuffModifier = addBuff.GetModifier();
+            var addBuffAtk = addBuffModifier.GetModifiedValue(costumeLayerAtk);
+            Assert.Equal(10, addBuffAtk);
+
+            player.Stats.SetBuffs(statBuffs);
+            Assert.Equal(player.ATK, collectionLayerAtk + addBuffAtk + percentageBuffAtk);
+            // 20 + 1 + 18 + 1829 + 235 + 100 + 1662
+            // Assert.Equal(3865, player.ATK);
+        }
+
+        [Fact]
+        public void IncreaseHpForArena()
+        {
+            var row = _tableSheets.EquipmentItemSheet.Values.First(r =>
+                r.Stat.StatType == StatType.HP);
+            var equipment = (Equipment)ItemFactory.CreateItem(_tableSheets.ItemSheet[row.Id], new TestRandom());
+            equipment.equipped = true;
+            _avatarState.inventory.AddItem(equipment);
+            var costumeStatRow =
+                _tableSheets.CostumeStatSheet.Values.First(r => r.StatType == StatType.HP);
+            var costumeId = costumeStatRow.CostumeId;
+            var costume = ItemFactory.CreateCostume(_tableSheets.CostumeItemSheet[costumeId], Guid.NewGuid());
+            costume.equipped = true;
+            _avatarState.inventory.AddItem(costume);
+            var foodRow =
+                _tableSheets.ConsumableItemSheet.Values.First(r =>
+                    r.Stats.Any(s => s.StatType == StatType.HP));
+            var food = (Consumable)ItemFactory.CreateItem(foodRow, _random);
+            _avatarState.inventory.AddItem(food);
+
+            // Update equipment stats
+            var player = new Player(
+                _avatarState,
+                _tableSheets.CharacterSheet,
+                _tableSheets.CharacterLevelSheet,
+                _tableSheets.EquipmentItemSetEffectSheet
+            );
+            Assert.Equal(player.Stats.BaseHP + player.Stats.EquipmentStats.HP, player.HP);
+            // BaseHp 300, EquipmentStats 30
+            // Assert.Equal(330, player.HP);
+            var equipmentLayerHp = player.HP;
+
+            // Update consumable stats
+            player.Use(new List<Guid>
+            {
+                food.ItemId,
+            });
+            Assert.Equal(equipmentLayerHp + food.Stats.Where(s => s.StatType == StatType.HP).Sum(s => s.BaseValueAsLong), player.HP);
+            // ConsumableStats 29
+            // Assert.Equal(359, player.HP);
+            var consumableLayerHp = player.HP;
+
+            // Update rune stat
+            var runeId = 30001;
+            var runeState = new RuneState(runeId);
+            runeState.LevelUp();
+            Assert.Equal(1, runeState.Level);
+
+            var runeStates = new List<RuneState>
+            {
+                runeState,
+            };
+            player.SetRuneStats(runeStates, _tableSheets.RuneOptionSheet);
+            var runeOptionRow = _tableSheets.RuneOptionSheet.Values.First(r => r.RuneId == runeId);
+            var runeHp = runeOptionRow.LevelOptionMap[1].Stats.Sum(r => r.stat.BaseValueAsLong);
+            Assert.Equal(consumableLayerHp + runeHp, player.HP);
+            // RuneStats 520
+            // Assert.Equal(879, player.HP);
+            var runeLayerHp = player.HP;
+            Assert.Equal(player.CurrentHP, runeLayerHp);
+
+            // Update costume stats
+            player.SetCostumeStat(_tableSheets.CostumeStatSheet);
+            Assert.Equal(runeLayerHp + costumeStatRow.Stat, player.HP);
+            // CostumeStats 26990
+            // Assert.Equal(27869, player.HP);
+            var costumeLayerHp = player.HP;
+            Assert.Equal(player.CurrentHP, costumeLayerHp);
+
+            // Update collection stat
+            var modifiers = new List<StatModifier>();
+            var addModifier = new StatModifier(StatType.HP, StatModifier.OperationType.Add, 100);
+            modifiers.Add(new StatModifier(StatType.HP, StatModifier.OperationType.Percentage, 200));
+            modifiers.Add(addModifier);
+            modifiers.Add(new StatModifier(StatType.HP, StatModifier.OperationType.Percentage, -100));
+            player.SetCollections(modifiers);
+            Assert.Equal(costumeLayerHp + addModifier.Value + costumeLayerHp, player.HP);
+            // CollectionStats 100 + 27869(100%)
+            // Assert.Equal(55838, player.HP);
+            var collectionLayerHp = player.HP;
+            Assert.Equal(player.CurrentHP, collectionLayerHp);
+
+            // Arena
+            player.Stats.IsArenaCharacter = true;
+            player.Stats.IncreaseHpForArena();
+            Assert.Equal(collectionLayerHp * 2, player.HP);
+            Assert.Equal(player.HP, player.Stats.StatWithoutBuffs.HP);
+            // Assert.Equal(111676, player.HP);
+            var arenaHp = player.HP;
+
+            var statBuffs = new List<StatBuff>();
+            var percentageBuffRow = _tableSheets.StatBuffSheet.Values.First(r =>
+                r.StatType == StatType.HP &&
+                r.OperationType == StatModifier.OperationType.Percentage);
+            var percentageBuff = new StatBuff(percentageBuffRow);
+            statBuffs.Add(percentageBuff);
+            var percentageModifier = percentageBuff.GetModifier();
+            var percentageBuffAtk = (long)percentageModifier.GetModifiedValue(arenaHp);
+            player.Stats.SetBuffs(statBuffs);
+            Assert.Equal(arenaHp + percentageBuffAtk, player.HP);
+            Assert.Equal(arenaHp, player.Stats.StatWithoutBuffs.HP);
         }
     }
 }

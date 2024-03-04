@@ -265,7 +265,7 @@ namespace Nekoyume.Action
 
             // Set states
             return states
-                .SetAvatarState(AvatarAddress, avatarState, true, true, false, true)
+                .SetAvatarState(AvatarAddress, avatarState)
                 .SetAgentState(context.Signer, agentState);
         }
 
@@ -304,7 +304,7 @@ namespace Nekoyume.Action
                 }
                 else
                 {
-                    var skill = CombinationEquipment16.GetSkill(optionRow, skillSheet, random);
+                    var skill = CombinationEquipment.GetSkill(optionRow, skillSheet, random);
                     if (skill is null) continue;
 
                     equipment.Skills.Add(skill);

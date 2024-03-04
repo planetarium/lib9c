@@ -53,8 +53,7 @@ namespace Lib9c.Tests.Util
                 avatarState.inventory.AddItem(materialItem, material.Count);
             }
 
-            return state.SetAvatarState(
-                avatarAddress, avatarState, false, true, false, false);
+            return state.SetAvatarState(avatarAddress, avatarState);
         }
 
         public static IWorld UnlockStage(
@@ -70,8 +69,7 @@ namespace Lib9c.Tests.Util
                 tableSheets.WorldSheet,
                 Math.Max(stage, GameConfig.RequireClearedStageLevel.ItemEnhancementAction)
             );
-            return state.SetAvatarState(
-                avatarAddress, avatarState, false, false, true, false);
+            return state.SetAvatarState(avatarAddress, avatarState);
         }
     }
 }

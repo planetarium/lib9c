@@ -3,6 +3,7 @@ using System.Linq;
 using Libplanet.Action;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus.Arena;
+using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
 using Priority_Queue;
 
@@ -32,10 +33,12 @@ namespace Nekoyume.Arena
             ArenaPlayerDigest challenger,
             ArenaPlayerDigest enemy,
             ArenaSimulatorSheets sheets,
+            List<StatModifier> challengerCollectionModifiers,
+            List<StatModifier> enemyCollectionModifiers,
             bool setExtraValueBuffBeforeGetBuffs = false)
         {
             Log = new ArenaLog();
-            var players = SpawnPlayers(this, challenger, enemy, sheets, Log, setExtraValueBuffBeforeGetBuffs);
+            var players = SpawnPlayers(this, challenger, enemy, sheets, Log, challengerCollectionModifiers, enemyCollectionModifiers, setExtraValueBuffBeforeGetBuffs);
             Turn = 1;
 
             while (true)
@@ -73,8 +76,14 @@ namespace Nekoyume.Arena
 
                 foreach (var other in players)
                 {
+                    var spdMultiplier = 0.6m;
                     var current = players.GetPriority(other);
-                    var speed = current * 0.6m;
+                    if (other.usedSkill is not null && other.usedSkill is not ArenaNormalAttack)
+                    {
+                        spdMultiplier = 0.9m;
+                    }
+
+                    var speed = current * spdMultiplier;
                     players.UpdatePriority(other, speed);
                 }
 
@@ -103,6 +112,8 @@ namespace Nekoyume.Arena
             ArenaPlayerDigest enemyDigest,
             ArenaSimulatorSheets simulatorSheets,
             ArenaLog log,
+            List<StatModifier> challengerCollectionModifiers,
+            List<StatModifier> enemyCollectionModifiers,
             bool setExtraValueBuffBeforeGetBuffs = false)
         {
             var challenger = new ArenaCharacter(
@@ -110,29 +121,17 @@ namespace Nekoyume.Arena
                 challengerDigest,
                 simulatorSheets,
                 simulator.HpModifier,
+                challengerCollectionModifiers,
                 setExtraValueBuffBeforeGetBuffs: setExtraValueBuffBeforeGetBuffs);
-            if (challengerDigest.Runes != null)
-            {
-                challenger.SetRune(
-                    challengerDigest.Runes,
-                    simulatorSheets.RuneOptionSheet,
-                    simulatorSheets.SkillSheet);
-            }
 
             var enemy = new ArenaCharacter(
                 simulator,
                 enemyDigest,
                 simulatorSheets,
                 simulator.HpModifier,
+                enemyCollectionModifiers,
                 isEnemy: true,
                 setExtraValueBuffBeforeGetBuffs: setExtraValueBuffBeforeGetBuffs);
-            if (enemyDigest.Runes != null)
-            {
-                enemy.SetRune(
-                    enemyDigest.Runes,
-                    simulatorSheets.RuneOptionSheet,
-                    simulatorSheets.SkillSheet);
-            }
 
             challenger.Spawn(enemy);
             enemy.Spawn(challenger);

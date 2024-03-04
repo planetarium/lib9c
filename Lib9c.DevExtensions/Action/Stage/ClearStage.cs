@@ -30,7 +30,7 @@ namespace Lib9c.DevExtensions.Action.Stage
                 states.GetSheet<WorldSheet>(),
                 TargetStage
             );
-            return states.SetAvatarState(AvatarAddress, avatarState, false, false, true, false);
+            return states.SetAvatarState(AvatarAddress, avatarState);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
