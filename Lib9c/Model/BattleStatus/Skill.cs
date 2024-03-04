@@ -23,7 +23,7 @@ namespace Nekoyume.Model.BattleStatus
             public readonly bool IsDead;
             public readonly Guid CharacterId;
             public readonly IEnumerable<Nekoyume.Model.Buff.Buff>? DispelList;
-
+            public readonly bool Affected;
 
             public readonly Model.Buff.Buff? Buff;
 
@@ -46,6 +46,7 @@ namespace Nekoyume.Model.BattleStatus
                 Buff = buff;
                 WaveTurn = waveTurn;
                 Target = target;
+                Affected = affected;
                 DispelList = dispelList;
             }
         }
