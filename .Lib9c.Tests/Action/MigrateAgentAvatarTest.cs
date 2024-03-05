@@ -4,11 +4,13 @@
     using System.Collections.Generic;
     using System.Globalization;
     using Bencodex.Types;
+    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Loader;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
@@ -36,7 +38,7 @@
         [InlineData(2, true)]
         public void MigrateAgentAvatar(int legacyAvatarVersion, bool alreadyMigrated)
         {
-            var avatarIndex = 0;
+            var avatarIndex = 1;
             var agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);
             var avatarAddress = agentAddress.Derive(string.Format(CultureInfo.InvariantCulture, CreateAvatar.DeriveFormat, avatarIndex));
@@ -54,9 +56,9 @@
             var avatarState = new AvatarState(
                 avatarAddress,
                 agentAddress,
-                0,
+                456,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
+                gameConfigState,
                 default);
 
             MockWorldState mock = new MockWorldState()
@@ -142,10 +144,15 @@
                         avatarState.questList.Serialize());
             }
 
-            var action = new MigrateAgentAvatar
+            IAction action = new MigrateAgentAvatar
             {
                 AgentAddresses = new List<Address> { agentAddress },
             };
+
+            var plainValue = action.PlainValue;
+            var actionLoader = new NCActionLoader();
+            action = actionLoader.LoadAction(123, plainValue);
+
             var states = new World(mock);
             IWorld nextState = action.Execute(
                 new ActionContext()

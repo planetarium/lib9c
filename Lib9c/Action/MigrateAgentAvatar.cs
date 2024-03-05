@@ -13,22 +13,24 @@ using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
-    [ActionType("migrate_agent_avatar")]
+    [ActionType(TypeIdentifier)]
     public class MigrateAgentAvatar : ActionBase
     {
+        public const string TypeIdentifier = "migrate_agent_avatar";
+
         public List<Address> AgentAddresses;
 
+        public MigrateAgentAvatar()
+        {
+        }
+
         public override IValue PlainValue => Dictionary.Empty
-            .Add("type_id", "migrate_agent_avatar")
-            .Add("values", new Dictionary(
-                new[]
-                {
-                    new KeyValuePair<IKey, IValue>(
-                        (Text)"agent_addresses",
-                        new List(AgentAddresses.Select(a => a.Serialize()))
-                    ),
-                }
-            ));
+            .Add("type_id", TypeIdentifier)
+            .Add(
+                "values",
+                Dictionary.Empty.Add(
+                    "agent_addresses",
+                    new List(AgentAddresses.Select(address => address.Bencoded))));
 
         public override void LoadPlainValue(IValue plainValue)
         {
@@ -101,7 +103,8 @@ namespace Nekoyume.Action
             }
 
             Log.Debug(
-                "Migration in block index #{Index} finished in: {Elapsed}",
+                "Migration of {Count} agents in block index #{Index} finished in: {Elapsed}",
+                AgentAddresses.Count,
                 context.BlockIndex,
                 DateTimeOffset.UtcNow - migrationStarted);
             return states;
