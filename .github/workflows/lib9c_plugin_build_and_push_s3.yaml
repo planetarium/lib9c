@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - development
-      - main 
+      - main
   workflow_dispatch:
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
         run: zip -r ../${{ matrix.runtime }}.zip .
         working-directory: ./out
       - name: Upload S3
-        run: aws s3 cp ${{ matrix.runtime }}.zip s3://9c-dx/Lib9c.Plugin/${{ github.sha }}/
+        run: aws s3 cp ${{ matrix.runtime }}.zip s3://${{ vars.LIB9C_PLUGIN_S3_PATH }}/${{ github.sha }}/
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
