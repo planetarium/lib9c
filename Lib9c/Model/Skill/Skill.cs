@@ -84,7 +84,12 @@ namespace Nekoyume.Model.Skill
                     IEnumerable<Buff.Buff> dispelList = null;
                     var dispel = target.Buffs.Values.FirstOrDefault(bf => bf is Dispel);
                     // Defence debuff if target has dispel
-                    if (dispel is not null)
+                    if (dispel is not null &&
+                        ((buff is StatBuff statBuff && statBuff.RowData.Value < 0) ||
+                         (buff is ActionBuff actionBuff &&
+                          actionBuff.RowData.ActionBuffType is
+                              ActionBuffType.Bleed or ActionBuffType.Stun))
+                       )
                     {
                         if (target.Simulator.Random.Next(0, 100) < dispel.BuffInfo.Chance)
                         {
