@@ -917,35 +917,35 @@ namespace Nekoyume.Model
                             Buffs[dispel.BuffInfo.GroupId] = clone;
                             var debuffSkillIdList = _skillSheet.Values
                                 .Where(s => s.SkillType == SkillType.Debuff).Select(s => s.Id);
-                            var statDebuffList = _skillBuffSheet.Values.Where(
-                                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
-                                new List<int>(),
-                                (current, bf) => current.Concat(bf.BuffIds).ToList()
-                            );
-                            var actionDebuffList = _skillActionBuffSheet.Values.Where(
+                            var debuffList = _skillBuffSheet.Values.Where(
                                 bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
                                 new List<int>(),
                                 (current, bf) => current.Concat(bf.BuffIds).ToList()
                             );
 
-                            foreach (var debuff in
-                                     StatBuffs.Where(bf => statDebuffList.Contains(bf.RowData.Id)))
+                            debuffList = _skillActionBuffSheet.Values.Where(
+                                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
+                                debuffList,
+                                (current, bf) => current.Concat(bf.BuffIds).ToList()
+                            );
+
+                            foreach (var debuff in Buffs.Values)
                             {
-                                if (Simulator.Random.Next(0, 100) < action.RowData.Chance)
+                                if (debuff is StatBuff statBuff &&
+                                    debuffList.Contains(statBuff.RowData.Id) &&
+                                    Simulator.Random.Next(0, 100) < action.RowData.Chance
+                                    )
                                 {
-                                    dispelList.Add(debuff);
-                                    RemoveStatBuff(debuff);
+                                    dispelList.Add(statBuff);
+                                    RemoveStatBuff(statBuff);
                                 }
-                            }
-
-                            foreach (var debuff in
-                                     ActionBuffs.Where(bf =>
-                                         actionDebuffList.Contains(bf.RowData.Id)))
-                            {
-                                if (Simulator.Random.Next(0, 100) < action.RowData.Chance)
+                                else if (debuff is ActionBuff actionBuff &&
+                                         debuffList.Contains(actionBuff.RowData.Id) &&
+                                         Simulator.Random.Next(0, 100) < action.RowData.Chance
+                                        )
                                 {
-                                    dispelList.Add(debuff);
-                                    RemoveActionBuff(debuff);
+                                    dispelList.Add(actionBuff);
+                                    RemoveActionBuff(actionBuff);
                                 }
                             }
 
