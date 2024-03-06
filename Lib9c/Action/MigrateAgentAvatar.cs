@@ -6,7 +6,6 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Serilog;
 using static Lib9c.SerializeKeys;
@@ -43,7 +42,7 @@ namespace Nekoyume.Action
             context.UseGas(1);
             var states = context.PreviousState;
             var migrationStarted = DateTimeOffset.UtcNow;
-            Log.Debug("Migration in block index #{Index} started", context.BlockIndex);
+            Log.Debug("Migrating agent/avatar states in block index #{Index} started", context.BlockIndex);
 
             const int maxAvatarCount = 3;
             var avatarAddresses = Enumerable
@@ -71,9 +70,9 @@ namespace Nekoyume.Action
                 Log.Debug("Deleting agent {Address} from legacy account", address);
                 states = states.SetLegacyState(address, null);
                 Log.Debug(
-                    "Migrating agent {Address} finished in: {Elapsed}",
+                    "Migrating agent {Address} finished in: {Elapsed} ms",
                     address,
-                    DateTimeOffset.UtcNow - started);
+                    (DateTimeOffset.UtcNow - started).Milliseconds);
             }
 
             foreach (var address in avatarAddresses)
@@ -97,16 +96,16 @@ namespace Nekoyume.Action
                 states = states.SetLegacyState(address.Derive(LegacyQuestListKey), null);
                 states = states.SetLegacyState(address.Derive(LegacyWorldInformationKey), null);
                 Log.Debug(
-                    "Migrating avatar {Address} finished in: {Elapsed}",
+                    "Migrating avatar {Address} finished in: {Elapsed} ms",
                     address,
-                    DateTimeOffset.UtcNow - started);
+                    (DateTimeOffset.UtcNow - started).Milliseconds);
             }
 
             Log.Debug(
-                "Migration of {Count} agents in block index #{Index} finished in: {Elapsed}",
+                "Migrating {Count} agents in block index #{Index} finished in: {Elapsed} ms",
                 AgentAddresses.Count,
                 context.BlockIndex,
-                DateTimeOffset.UtcNow - migrationStarted);
+                (DateTimeOffset.UtcNow - migrationStarted).Milliseconds);
             return states;
         }
     }
