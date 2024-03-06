@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using Bencodex.Types;
     using Libplanet.Action;
     using Libplanet.Action.State;
@@ -86,7 +87,7 @@
                         .SetState(
                             ReservedAddresses.LegacyAccount,
                             agentAddress,
-                            agentState.SerializeList())
+                            SerializeLegacyAgent(agentState))
                         .SetState(
                             ReservedAddresses.LegacyAccount,
                             avatarAddress,
@@ -97,11 +98,11 @@
                         .SetState(
                             ReservedAddresses.LegacyAccount,
                             agentAddress,
-                            agentState.SerializeList())
+                            SerializeLegacyAgent(agentState))
                         .SetState(
                             ReservedAddresses.LegacyAccount,
                             avatarAddress,
-                            MigrationAvatarState.LegacySerializeV1(avatarState))
+                            MigrationAvatarState.LegacySerializeV2(avatarState))
                         .SetState(
                             ReservedAddresses.LegacyAccount,
                             inventoryAddress,
@@ -174,6 +175,29 @@
             Assert.NotNull(nextState.GetAccount(Addresses.Inventory).GetState(avatarAddress));
             Assert.NotNull(nextState.GetAccount(Addresses.WorldInformation).GetState(avatarAddress));
             Assert.NotNull(nextState.GetAccount(Addresses.QuestList).GetState(avatarAddress));
+        }
+
+        private static IValue SerializeLegacyAgent(AgentState agentState)
+        {
+            var innerDict = new Dictionary<IKey, IValue>
+            {
+                [(Text)"avatarAddresses"] = new Dictionary(
+                    agentState.avatarAddresses.Select(kv =>
+                        new KeyValuePair<IKey, IValue>(
+                            new Binary(BitConverter.GetBytes(kv.Key)),
+                            kv.Value.Serialize()
+                        )
+                    )
+                ),
+                [(Text)"unlockedOptions"] = new List(),
+                [(Text)LegacyAddressKey] = agentState.address.Serialize(),
+            };
+            if (agentState.MonsterCollectionRound > 0)
+            {
+                innerDict.Add((Text)MonsterCollectionRoundKey, agentState.MonsterCollectionRound.Serialize());
+            }
+
+            return new Dictionary(innerDict);
         }
     }
 }
