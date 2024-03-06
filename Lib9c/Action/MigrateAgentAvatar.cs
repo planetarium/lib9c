@@ -17,6 +17,9 @@ namespace Nekoyume.Action
     {
         public const string TypeIdentifier = "migrate_agent_avatar";
 
+        private static readonly Address Operator =
+            new Address("e2D18a50472e93d3165c478DefA69fa149214E72");
+
         public List<Address> AgentAddresses;
 
         public MigrateAgentAvatar()
@@ -40,6 +43,14 @@ namespace Nekoyume.Action
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
+
+#if !LIB9C_DEV_EXTENSIONS && !UNITY_EDITOR
+            if (context.Signer != Operator)
+            {
+                throw new Exception("Migration action must be signed by given operator.");
+            }
+#endif
+
             var states = context.PreviousState;
             var migrationStarted = DateTimeOffset.UtcNow;
             Log.Debug("Migrating agent/avatar states in block index #{Index} started", context.BlockIndex);

@@ -159,6 +159,7 @@
                 {
                     PreviousState = states,
                     Miner = default,
+                    Signer = new Address("e2D18a50472e93d3165c478DefA69fa149214E72"),
                 }
             );
 
