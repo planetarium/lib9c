@@ -92,6 +92,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(TransferAssets))]
         [InlineData(typeof(RuneSummon))]
         [InlineData(typeof(ActivateCollection))]
+        [InlineData(typeof(RetrieveAvatarAssets))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -481,6 +482,7 @@ namespace Lib9c.Tests.Action
                         ),
                     },
                 },
+                RetrieveAvatarAssets _ => new RetrieveAvatarAssets(avatarAddress: new PrivateKey().Address),
                 _ => throw new InvalidCastException(),
             };
         }
