@@ -356,6 +356,14 @@ namespace Nekoyume.Model
 
         #region Buff
 
+        /// <summary>
+        /// Add buff/debuff to target; it means buff/debuff is used by caster.
+        /// When `Dispel` is used, it can remove prev. debuffs on target.
+        /// All the removed debuffs will be returned and saved in battle log.
+        /// </summary>
+        /// <param name="buff"></param>
+        /// <param name="updateImmediate"></param>
+        /// <returns>An enumerable of removed debuffs from target. `null` will be returned if nothing eliminated.</returns>
         public IEnumerable<Buff.Buff> AddBuff(Buff.Buff buff, bool updateImmediate = true)
         {
             if (Buffs.TryGetValue(buff.BuffInfo.GroupId, out var outBuff) &&
@@ -408,7 +416,7 @@ namespace Nekoyume.Model
                                 if (debuff is StatBuff statBuff &&
                                     debuffList.Contains(statBuff.RowData.Id) &&
                                     Simulator.Random.Next(0, 100) < action.RowData.Chance
-                                    )
+                                   )
                                 {
                                     dispelList.Add(statBuff);
                                     RemoveStatBuff(statBuff);
