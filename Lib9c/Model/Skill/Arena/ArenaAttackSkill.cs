@@ -42,11 +42,14 @@ namespace Nekoyume.Model.Skill.Arena
 
                 if (target.IsHit(caster))
                 {
-                    damage = caster.ATK + Power + statAdditionalPower;
-                    damage = (long) (damage * multiplier);
+                    damage = (long)(SkillRow.SkillCategory is SkillCategory.ShatterStrike
+                        ? target.HP * powerMultiplier
+                        : caster.ATK + Power + statAdditionalPower);
+                    damage = (long)(damage * multiplier);
                     damage = caster.GetDamage(damage, isNormalAttack || SkillRow.Combo);
                     damage = elementalType.GetDamage(target.DefenseElementalType, damage);
-                    isCritical = caster.IsCritical(isNormalAttack || SkillRow.Combo);
+                    isCritical = SkillRow.SkillCategory is not SkillCategory.ShatterStrike &&
+                                 caster.IsCritical(isNormalAttack || SkillRow.Combo);
                     if (isCritical)
                     {
                         damage = CriticalHelper.GetCriticalDamageForArena(caster, damage);

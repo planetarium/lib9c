@@ -20,7 +20,7 @@ namespace Nekoyume.Model
         IEnumerator CoHeal(CharacterBase caster, int skillId, IEnumerable<BattleStatus.Skill.SkillInfo> skillInfos, IEnumerable<BattleStatus.Skill.SkillInfo> buffInfos);
         IEnumerator CoBuff(CharacterBase caster, int skillId, IEnumerable<BattleStatus.Skill.SkillInfo> skillInfos, IEnumerable<BattleStatus.Skill.SkillInfo> buffInfos);
         IEnumerator CoTickDamage(CharacterBase affectedCharacter, int skillId, IEnumerable<BattleStatus.Skill.SkillInfo> skillInfos);
-
+        IEnumerator CoShatterStrike(CharacterBase caster, int skillId, IEnumerable<BattleStatus.Skill.SkillInfo> skillInfos, IEnumerable<BattleStatus.Skill.SkillInfo> buffInfos);
         #endregion
 
         IEnumerator CoRemoveBuffs(CharacterBase caster);
