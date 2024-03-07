@@ -93,11 +93,7 @@ namespace Nekoyume.Model.Skill.Arena
                     case SkillTargetType.Enemies:
                         var affected = true;
                         var dispel = target.Buffs.Values.FirstOrDefault(bf => bf is Dispel);
-                        if (dispel is not null &&
-                            ((buff is StatBuff statBuff && statBuff.RowData.Value < 0) ||
-                             (buff is ActionBuff actionBuff && actionBuff.RowData.ActionBuffType is
-                                 ActionBuffType.Bleed or ActionBuffType.Stun))
-                           )
+                        if (dispel is not null && buff.IsDebuff())
                         {
                             if (target.Simulator.Random.Next(0, 100) < dispel.BuffInfo.Chance)
                             {
@@ -110,13 +106,14 @@ namespace Nekoyume.Model.Skill.Arena
                             dispelList = target.AddBuff(buff);
                         }
 
-                        infos.Add(GetSkillInfo(target, turn, buff, affected: affected, dispelList: dispelList));
+                        infos.Add(GetSkillInfo(target, turn, buff, affected: affected,
+                            dispelList: dispelList));
                         break;
 
                     case SkillTargetType.Self:
                     case SkillTargetType.Ally:
                         dispelList = caster.AddBuff(buff);
-                        infos.Add(GetSkillInfo(caster, turn, buff, dispelList:dispelList));
+                        infos.Add(GetSkillInfo(caster, turn, buff, dispelList: dispelList));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -159,7 +156,8 @@ namespace Nekoyume.Model.Skill.Arena
         }
 
         private BattleStatus.Arena.ArenaSkill.ArenaSkillInfo GetSkillInfo(ICloneable target,
-            int turn, Buff.Buff buff, bool affected = true, IEnumerable<Buff.Buff> dispelList = null)
+            int turn, Buff.Buff buff, bool affected = true,
+            IEnumerable<Buff.Buff> dispelList = null)
         {
             return new BattleStatus.Arena.ArenaSkill.ArenaSkillInfo(
                 (ArenaCharacter)target.Clone(),

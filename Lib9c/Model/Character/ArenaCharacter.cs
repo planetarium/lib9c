@@ -915,37 +915,22 @@ namespace Nekoyume.Model
                         case Dispel dispel:
                         {
                             Buffs[dispel.BuffInfo.GroupId] = clone;
-                            var debuffSkillIdList = _skillSheet.Values
-                                .Where(s => s.SkillType == SkillType.Debuff).Select(s => s.Id);
-                            var debuffList = _skillBuffSheet.Values.Where(
-                                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
-                                new List<int>(),
-                                (current, bf) => current.Concat(bf.BuffIds).ToList()
-                            );
 
-                            debuffList = _skillActionBuffSheet.Values.Where(
-                                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
-                                debuffList,
-                                (current, bf) => current.Concat(bf.BuffIds).ToList()
-                            );
-
-                            foreach (var debuff in Buffs.Values)
-                            {
-                                if (debuff is StatBuff statBuff &&
-                                    debuffList.Contains(statBuff.RowData.Id) &&
-                                    Simulator.Random.Next(0, 100) < action.RowData.Chance
+                            foreach (var bff in Buffs.Values.Where(
+                                         bff => bff.IsDebuff() &&
+                                                Simulator.Random.Next(0, 100) <
+                                                action.RowData.Chance)
                                     )
+                            {
+                                dispelList.Add(bff);
+                                switch (bff)
                                 {
-                                    dispelList.Add(statBuff);
-                                    RemoveStatBuff(statBuff);
-                                }
-                                else if (debuff is ActionBuff actionBuff &&
-                                         debuffList.Contains(actionBuff.RowData.Id) &&
-                                         Simulator.Random.Next(0, 100) < action.RowData.Chance
-                                        )
-                                {
-                                    dispelList.Add(actionBuff);
-                                    RemoveActionBuff(actionBuff);
+                                    case StatBuff statBuff:
+                                        RemoveStatBuff(statBuff);
+                                        break;
+                                    case ActionBuff actionBuff:
+                                        RemoveActionBuff(actionBuff);
+                                        break;
                                 }
                             }
 
@@ -982,9 +967,8 @@ namespace Nekoyume.Model
 
         public void RemoveStatBuff(StatBuff removedBuff)
         {
-                Stats.RemoveBuff(removedBuff);
-                Buffs.Remove(removedBuff.RowData.GroupId);
-
+            Stats.RemoveBuff(removedBuff);
+            Buffs.Remove(removedBuff.RowData.GroupId);
         }
 
         public void RemoveRecentStatBuff()
