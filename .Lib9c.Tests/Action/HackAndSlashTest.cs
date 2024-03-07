@@ -22,6 +22,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.Skill;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -43,7 +44,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _rankingMapAddress;
 
         private readonly WeeklyArenaState _weeklyArenaState;
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         public HackAndSlashTest()
         {
@@ -78,20 +79,18 @@ namespace Lib9c.Tests.Action
             var currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(currency);
-            _initialState = new Account(MockState.Empty)
-                .SetState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .SetState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
-                .SetState(_agentAddress, agentState.SerializeV2())
-                .SetState(_avatarAddress, _avatarState.SerializeV2())
-                .SetState(_inventoryAddress, _avatarState.inventory.Serialize())
-                .SetState(_worldInformationAddress, _avatarState.worldInformation.Serialize())
-                .SetState(_questListAddress, _avatarState.questList.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+            _initialState = new World(new MockWorldState());
+            _initialState = _initialState
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+                .SetLegacyState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, _avatarState)
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             foreach (var (key, value) in _sheets)
             {
                 _initialState = _initialState
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             foreach (var address in _avatarState.combinationSlotAddresses)
@@ -99,29 +98,26 @@ namespace Lib9c.Tests.Action
                 var slotState = new CombinationSlotState(
                     address,
                     GameConfig.RequireClearedStageLevel.CombinationEquipmentAction);
-                _initialState = _initialState.SetState(address, slotState.Serialize());
+                _initialState = _initialState.SetLegacyState(address, slotState.Serialize());
             }
         }
 
         [Theory]
-        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 2, false, false, true)]
-        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 2, false, true, true)]
-        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, true, false, true)]
-        [InlineData(200, 1, GameConfig.RequireClearedStageLevel.ActionsInRankingBoard, false, false, true)]
-        [InlineData(200, 1, GameConfig.RequireClearedStageLevel.ActionsInRankingBoard, true, false, true)]
-        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, false, false, false)]
-        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, false, true, false)]
-        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, true, false, false)]
-        [InlineData(200, 1, GameConfig.RequireClearedStageLevel.ActionsInRankingBoard, false, false, false)]
-        [InlineData(200, 1, GameConfig.RequireClearedStageLevel.ActionsInRankingBoard, true, false, false)]
-        public void Execute(int avatarLevel, int worldId, int stageId, bool backward, bool isWeaponLock, bool isClearedBefore)
+        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 2, false, true)]
+        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 2, true, true)]
+        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, false, true)]
+        [InlineData(200, 1, GameConfig.RequireClearedStageLevel.ActionsInRankingBoard, false, true)]
+        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, false, false)]
+        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, true, false)]
+        [InlineData(200, 1, GameConfig.RequireClearedStageLevel.ActionsInRankingBoard, false, false)]
+        public void Execute(int avatarLevel, int worldId, int stageId, bool isWeaponLock, bool isClearedBefore)
         {
             Assert.True(_tableSheets.WorldSheet.TryGetValue(worldId, out var worldRow));
             Assert.True(stageId >= worldRow.StageBegin);
             Assert.True(stageId <= worldRow.StageEnd);
             Assert.True(_tableSheets.StageSheet.TryGetValue(stageId, out _));
 
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
             previousAvatarState.level = avatarLevel;
             var clearedStageId = _tableSheets.StageSheet.First?.Id ?? 0;
             clearedStageId = isClearedBefore ? Math.Max(clearedStageId, stageId - 1) : stageId - 1;
@@ -172,26 +168,13 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.Update(mail);
             }
 
-            IAccount state;
-            if (backward)
-            {
-                state = _initialState.SetState(_avatarAddress, previousAvatarState.Serialize());
-            }
-            else
-            {
-                state = _initialState
-                    .SetState(_avatarAddress, previousAvatarState.SerializeV2())
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), previousAvatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), previousAvatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), previousAvatarState.questList.Serialize());
-            }
+            IWorld state = _initialState
+                .SetAvatarState(_avatarAddress, previousAvatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(worldId.Serialize()));
 
-            state = state.SetState(
-                _avatarAddress.Derive("world_ids"),
-                List.Empty.Add(worldId.Serialize())
-            );
-
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = costumes,
                 Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
@@ -210,7 +193,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
             });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
 
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
             Assert.Equal(30, nextAvatarState.mailBox.Count);
@@ -247,10 +230,7 @@ namespace Lib9c.Tests.Action
             }
 
             state = state
-                .SetState(avatarState.address, avatarState.SerializeV2())
-                .SetState(_inventoryAddress, avatarState.inventory.Serialize())
-                .SetState(_worldInformationAddress, avatarState.worldInformation.Serialize())
-                .SetState(_questListAddress, avatarState.questList.Serialize());
+                .SetAvatarState(avatarState.address, avatarState);
             Assert.Equal(400, avatarState.level);
             Assert.True(avatarState.worldInformation.IsWorldUnlocked(worldId));
             Assert.True(avatarState.worldInformation.IsStageCleared(stageId));
@@ -261,7 +241,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(equipments.Count, avatarState.inventory.Items.Count);
 
             // HackAndSlash
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
@@ -272,11 +252,11 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = avatarState.address,
             };
 
-            avatarState = state.GetAvatarStateV2(avatarState.address);
+            avatarState = state.GetAvatarState(avatarState.address);
             avatarWorldQuests = avatarState.questList.OfType<WorldQuest>().ToList();
             Assert.DoesNotContain(avatarWorldQuests, e => e.Complete);
 
-            state = state.SetState(
+            state = state.SetLegacyState(
                 _avatarAddress.Derive("world_ids"),
                 List.Empty.Add(worldId.Serialize())
             );
@@ -289,7 +269,7 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            avatarState = state.GetAvatarStateV2(avatarState.address);
+            avatarState = state.GetAvatarState(avatarState.address);
             avatarWorldQuests = avatarState.questList.OfType<WorldQuest>().ToList();
             Assert.Equal(worldQuestSheet.Count, avatarWorldQuests.Count);
             Assert.Single(avatarWorldQuests, e => e.Goal == stageId && e.Complete);
@@ -298,7 +278,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void MaxLevelTest()
         {
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
             var maxLevel = _tableSheets.CharacterLevelSheet.Max(row => row.Value.Level);
             var expRow = _tableSheets.CharacterLevelSheet[maxLevel];
             var maxLevelExp = expRow.Exp;
@@ -332,9 +312,9 @@ namespace Lib9c.Tests.Action
                 _tableSheets.WorldSheet,
                 Math.Max(_tableSheets.StageSheet.First?.Id ?? 1, stageId));
 
-            var state = _initialState.SetState(_avatarAddress, previousAvatarState.SerializeV2());
+            var state = _initialState.SetAvatarState(_avatarAddress, previousAvatarState);
 
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -352,7 +332,7 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.Equal(maxLevelExp + requiredExp - 1, nextAvatarState.exp);
             Assert.Equal(previousAvatarState.level, nextAvatarState.level);
         }
@@ -365,7 +345,7 @@ namespace Lib9c.Tests.Action
         [InlineData(ItemSubType.Ring, GameConfig.MaxEquipmentSlotCount.Ring)]
         public void MultipleEquipmentTest(ItemSubType type, int maxCount)
         {
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
             var maxLevel = _tableSheets.CharacterLevelSheet.Max(row => row.Value.Level);
             var expRow = _tableSheets.CharacterLevelSheet[maxLevel];
             var maxLevelExp = expRow.Exp;
@@ -391,11 +371,9 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.inventory.AddItem(equipment);
             }
 
-            var state = _initialState
-                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
-                .SetState(_inventoryAddress, previousAvatarState.inventory.Serialize());
+            var state = _initialState.SetAvatarState(_avatarAddress, previousAvatarState);
 
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = equipments,
@@ -419,9 +397,9 @@ namespace Lib9c.Tests.Action
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public void Execute_Throw_FailedLoadStateException(bool backward)
+        public void Execute_Throw_FailedLoadStateException(bool empty)
         {
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -432,15 +410,11 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            IAccount state = backward ? new Account(MockState.Empty) : _initialState;
-            if (!backward)
-            {
-                state = _initialState
-                    .SetState(_avatarAddress, _avatarState.SerializeV2())
-                    .SetNull(_avatarAddress.Derive(LegacyInventoryKey))
-                    .SetNull(_avatarAddress.Derive(LegacyWorldInformationKey))
-                    .SetNull(_avatarAddress.Derive(LegacyQuestListKey));
-            }
+            IWorld state = empty
+                ? new World(new MockWorldState())
+                : _initialState
+                    .SetAvatarState(_avatarAddress, _avatarState)
+                    .SetAccount(Addresses.Inventory, new Account(new MockAccountState()));
 
             var exec = Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
             {
@@ -457,7 +431,7 @@ namespace Lib9c.Tests.Action
         [InlineData(51)]
         public void ExecuteThrowSheetRowColumnException(int stageId)
         {
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -481,7 +455,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteThrowSheetRowNotFoundExceptionByStage()
         {
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -493,7 +467,7 @@ namespace Lib9c.Tests.Action
             };
 
             var state = _initialState;
-            state = state.SetState(Addresses.TableSheet.Derive(nameof(StageSheet)), "test".Serialize());
+            state = state.SetLegacyState(Addresses.TableSheet.Derive(nameof(StageSheet)), "test".Serialize());
 
             var exec = Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext
             {
@@ -508,7 +482,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteThrowFailedAddWorldException()
         {
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -526,7 +500,7 @@ namespace Lib9c.Tests.Action
             {
                 worldInformation = new WorldInformation(0, worldSheet, false),
             };
-            state = state.SetState(_worldInformationAddress, avatarState.worldInformation.Serialize());
+            state = state.SetAvatarState(_avatarAddress, avatarState);
 
             Assert.False(avatarState.worldInformation.IsStageCleared(0));
 
@@ -548,7 +522,7 @@ namespace Lib9c.Tests.Action
         [InlineData(2, 51, true)]
         public void Execute_Throw_InvalidWorldException(int worldId, int stageId, bool unlockedIdsExist)
         {
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -559,10 +533,10 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            IAccount state = _initialState;
+            IWorld state = _initialState;
             if (unlockedIdsExist)
             {
-                state = state.SetState(
+                state = state.SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(worldId.Serialize())
                 );
@@ -581,7 +555,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteThrowInvalidStageException()
         {
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -607,7 +581,7 @@ namespace Lib9c.Tests.Action
             Assert.True(avatarState.worldInformation.IsWorldUnlocked(1));
 
             var state = _initialState;
-            state = state.SetState(_avatarAddress, avatarState.SerializeV2());
+            state = state.SetAvatarState(_avatarAddress, avatarState);
 
             var exec = Assert.Throws<InvalidStageException>(() => action.Execute(new ActionContext
             {
@@ -622,7 +596,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteThrowInvalidStageExceptionUnlockedWorld()
         {
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -659,7 +633,7 @@ namespace Lib9c.Tests.Action
             var equipment = ItemFactory.CreateItemUsable(equipRow, Guid.NewGuid(), 100);
             avatarState.inventory.AddItem(equipment);
 
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>
@@ -673,9 +647,7 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var state = _initialState
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(_inventoryAddress, avatarState.inventory.Serialize());
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             var exec = Assert.Throws<RequiredBlockIndexException>(() => action.Execute(new ActionContext
             {
@@ -700,14 +672,14 @@ namespace Lib9c.Tests.Action
             {
                 level = 0,
             };
-            state = state.SetState(_avatarAddress, avatarState.SerializeV2());
+            state = state.SetAvatarState(_avatarAddress, avatarState);
 
             var equipRow = _tableSheets.EquipmentItemSheet.Values.First(r => r.ItemSubType == itemSubType);
             var equipment = ItemFactory.CreateItemUsable(equipRow, Guid.NewGuid(), 0);
             avatarState.inventory.AddItem(equipment);
-            state = state.SetState(_inventoryAddress, avatarState.inventory.Serialize());
+            state = state.SetAvatarState(_avatarAddress, avatarState);
 
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>
@@ -742,7 +714,7 @@ namespace Lib9c.Tests.Action
                 actionPoint = ap,
             };
 
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -755,7 +727,7 @@ namespace Lib9c.Tests.Action
             };
 
             var state = _initialState;
-            state = state.SetState(_avatarAddress, avatarState.SerializeV2());
+            state = state.SetAvatarState(_avatarAddress, avatarState);
 
             var exec = Assert.Throws<NotEnoughActionPointException>(() => action.Execute(new ActionContext
             {
@@ -770,7 +742,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ExecuteWithoutPlayCount()
         {
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
             previousAvatarState.level = 1;
             var clearedStageId = 0;
             previousAvatarState.worldInformation = new WorldInformation(
@@ -798,19 +770,9 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.Update(mail);
             }
 
-            IAccount state = _initialState
-                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    previousAvatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    previousAvatarState.worldInformation.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    previousAvatarState.questList.Serialize());
+            IWorld state = _initialState.SetAvatarState(_avatarAddress, previousAvatarState);
 
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = costumes,
                 Equipments = equipments,
@@ -829,7 +791,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 1,
             });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(1));
         }
 
@@ -874,12 +836,9 @@ namespace Lib9c.Tests.Action
                         costumes.Add(((INonFungibleItem)costume).NonFungibleId);
                     }
 
-                    state = state.SetState(avatarState.address, avatarState.SerializeV2())
-                        .SetState(
-                            avatarState.address.Derive(LegacyInventoryKey),
-                            avatarState.inventory.Serialize());
+                    state = state.SetAvatarState(avatarState.address, avatarState);
 
-                    var action = new HackAndSlash21
+                    var action = new HackAndSlash
                     {
                         Costumes = costumes,
                         Equipments = equipments,
@@ -912,7 +871,7 @@ namespace Lib9c.Tests.Action
             };
 
             var state = _initialState;
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -949,7 +908,7 @@ namespace Lib9c.Tests.Action
             };
 
             var state = _initialState;
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -976,7 +935,7 @@ namespace Lib9c.Tests.Action
         public void ExecuteThrowUsageLimitExceedException()
         {
             var state = _initialState;
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -1003,7 +962,7 @@ namespace Lib9c.Tests.Action
         public void ExecuteThrowNotEnoughMaterialException()
         {
             var state = _initialState;
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -1027,22 +986,18 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(true, 1, 15)]
-        [InlineData(true, 2, 55)]
-        [InlineData(true, 3, 111)]
-        [InlineData(true, 4, 189)]
-        [InlineData(false, 1, 15)]
-        [InlineData(false, 2, 55)]
-        [InlineData(false, 3, 111)]
-        [InlineData(false, 4, 189)]
-        public void CheckRewardItems(bool backward, int worldId, int stageId)
+        [InlineData(1, 15)]
+        [InlineData(2, 55)]
+        [InlineData(3, 111)]
+        [InlineData(4, 189)]
+        public void CheckRewardItems(int worldId, int stageId)
         {
             Assert.True(_tableSheets.WorldSheet.TryGetValue(worldId, out var worldRow));
             Assert.True(stageId >= worldRow.StageBegin);
             Assert.True(stageId <= worldRow.StageEnd);
             Assert.True(_tableSheets.StageSheet.TryGetValue(stageId, out var stageRow));
 
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
             previousAvatarState.actionPoint = 999999;
             previousAvatarState.level = 400;
             previousAvatarState.worldInformation = new WorldInformation(
@@ -1086,32 +1041,13 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.Update(mail);
             }
 
-            IAccount state;
-            if (backward)
-            {
-                state = _initialState.SetState(_avatarAddress, previousAvatarState.Serialize());
-            }
-            else
-            {
-                state = _initialState
-                    .SetState(_avatarAddress, previousAvatarState.SerializeV2())
-                    .SetState(
-                        _avatarAddress.Derive(LegacyInventoryKey),
-                        previousAvatarState.inventory.Serialize())
-                    .SetState(
-                        _avatarAddress.Derive(LegacyWorldInformationKey),
-                        previousAvatarState.worldInformation.Serialize())
-                    .SetState(
-                        _avatarAddress.Derive(LegacyQuestListKey),
-                        previousAvatarState.questList.Serialize());
-            }
+            IWorld state = _initialState
+                .SetAvatarState(_avatarAddress, previousAvatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    Enumerable.Range(1, worldId).ToList().Select(i => i.Serialize()).Serialize());
 
-            state = state.SetState(
-                _avatarAddress.Derive("world_ids"),
-                Enumerable.Range(1, worldId).ToList().Select(i => i.Serialize()).Serialize()
-            );
-
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = costumes,
                 Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
@@ -1130,7 +1066,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 1,
             });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
             Assert.Equal(30, nextAvatarState.mailBox.Count);
 
@@ -1188,7 +1124,7 @@ namespace Lib9c.Tests.Action
             const int worldId = 1;
             const int stageId = 10;
             const int clearedStageId = 9;
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
             previousAvatarState.actionPoint = 999999;
             previousAvatarState.level = clear ? 400 : 1;
             previousAvatarState.worldInformation = new WorldInformation(
@@ -1232,19 +1168,9 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.Update(mail);
             }
 
-            var state = _initialState
-                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    previousAvatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    previousAvatarState.worldInformation.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    previousAvatarState.questList.Serialize());
+            var state = _initialState.SetAvatarState(_avatarAddress, previousAvatarState);
 
-            state = state.SetState(
+            state = state.SetLegacyState(
                 _avatarAddress.Derive("world_ids"),
                 List.Empty.Add(worldId.Serialize())
             );
@@ -1261,7 +1187,7 @@ namespace Lib9c.Tests.Action
                         .Select(pair => pair.Value.Id).ToList());
                 }
 
-                state = state.SetState(skillStateAddress, skillState.Serialize());
+                state = state.SetLegacyState(skillStateAddress, skillState.Serialize());
             }
 
             int? stageBuffId = null;
@@ -1276,7 +1202,7 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.EquipItems(costumes.Concat(equipments.Select(e => e.ItemId)));
             }
 
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = clear ? costumes : new List<Guid>(),
                 Equipments = clear
@@ -1336,7 +1262,7 @@ namespace Lib9c.Tests.Action
             simulator.Simulate();
             var log = simulator.Log;
             var skillStateIValue =
-                nextState.GetState(skillStateAddress);
+                nextState.GetLegacyState(skillStateAddress);
             var serialized = skillStateIValue as List;
             Assert.NotNull(serialized);
             var nextSkillState = new CrystalRandomSkillState(skillStateAddress, serialized);
@@ -1367,7 +1293,7 @@ namespace Lib9c.Tests.Action
             const int worldId = 1;
             const int stageId = 5;
             const int clearedStageId = 4;
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
             previousAvatarState.actionPoint = 120;
             previousAvatarState.level = 400;
             previousAvatarState.worldInformation = new WorldInformation(
@@ -1381,18 +1307,9 @@ namespace Lib9c.Tests.Action
                 .FirstOrDefault(r => r.Level == level)?.RequiredGold ?? 0;
             var context = new ActionContext();
             var state = _initialState
-                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    previousAvatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    previousAvatarState.worldInformation.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    previousAvatarState.questList.Serialize())
-                .SetState(stakeStateAddress, stakeState.SerializeV2())
-                .SetState(
+                .SetAvatarState(_avatarAddress, previousAvatarState)
+                .SetLegacyState(stakeStateAddress, stakeState.SerializeV2())
+                .SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(worldId.Serialize()))
                 .MintAsset(context, stakeStateAddress, requiredGold * _initialState.GetGoldCurrency());
@@ -1400,7 +1317,7 @@ namespace Lib9c.Tests.Action
             var expectedAp = previousAvatarState.actionPoint -
                              _tableSheets.StakeActionPointCoefficientSheet.GetActionPointByStaking(
                                  _tableSheets.StageSheet[stageId].CostAP, playCount, level);
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -1421,7 +1338,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 1,
             };
             var nextState = action.Execute(ctx);
-            var nextAvatar = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
             Assert.Equal(expectedAp, nextAvatar.actionPoint);
         }
 
@@ -1442,7 +1359,7 @@ namespace Lib9c.Tests.Action
             const int stageId = 5;
             const int clearedStageId = 4;
             const int itemId = 303100;
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
             previousAvatarState.actionPoint = expectedUsingAp;
             previousAvatarState.level = 400;
             previousAvatarState.worldInformation = new WorldInformation(
@@ -1459,18 +1376,9 @@ namespace Lib9c.Tests.Action
                 .FirstOrDefault(r => r.Level == level)?.RequiredGold ?? 0;
             var context = new ActionContext();
             var state = _initialState
-                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    previousAvatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    previousAvatarState.worldInformation.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    previousAvatarState.questList.Serialize())
-                .SetState(stakeStateAddress, stakeState.SerializeV2())
-                .SetState(
+                .SetAvatarState(_avatarAddress, previousAvatarState)
+                .SetLegacyState(stakeStateAddress, stakeState.SerializeV2())
+                .SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(worldId.Serialize()))
                 .MintAsset(context, stakeStateAddress, requiredGold * _initialState.GetGoldCurrency());
@@ -1478,7 +1386,7 @@ namespace Lib9c.Tests.Action
             var itemCount = previousAvatarState.inventory.Items
                 .FirstOrDefault(i => i.item.Id == itemId)?.count ?? 0;
             var expectedItemCount = itemCount + totalRepeatCount;
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -1500,7 +1408,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 1,
             };
             var nextState = action.Execute(ctx);
-            var nextAvatar = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
             Assert.Equal(expectedItemCount, nextAvatar.inventory.Items.First(i => i.item.Id == itemId).count);
             Assert.False(nextAvatar.inventory.HasItem(apStoneRow.Id));
             Assert.Equal(0, nextAvatar.actionPoint);
@@ -1519,18 +1427,8 @@ namespace Lib9c.Tests.Action
                 r.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(apStoneRow);
             avatarState.inventory.AddItem(apStone);
-            var state = _initialState
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    avatarState.inventory.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    avatarState.worldInformation.Serialize())
-                .SetState(
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    avatarState.questList.Serialize());
-            var action = new HackAndSlash21
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
@@ -1564,7 +1462,7 @@ namespace Lib9c.Tests.Action
             Assert.True(stageId <= worldRow.StageEnd);
             Assert.True(_tableSheets.StageSheet.TryGetValue(stageId, out _));
 
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
             previousAvatarState.level = avatarLevel;
             var clearedStageId = _tableSheets.StageSheet.First?.Id ?? 0;
             clearedStageId = Math.Max(clearedStageId, stageId - 1);
@@ -1613,17 +1511,12 @@ namespace Lib9c.Tests.Action
             }
 
             var state = _initialState
-                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), previousAvatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), previousAvatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), previousAvatarState.questList.Serialize());
+                .SetAvatarState(_avatarAddress, previousAvatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(worldId.Serialize()));
 
-            state = state.SetState(
-                _avatarAddress.Derive("world_ids"),
-                List.Empty.Add(worldId.Serialize())
-            );
-
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = costumes,
                 Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
@@ -1646,7 +1539,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
             });
 
-            var action2 = new HackAndSlash21
+            var action2 = new HackAndSlash
             {
                 Costumes = costumes,
                 Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
@@ -1683,7 +1576,7 @@ namespace Lib9c.Tests.Action
             Assert.True(stageId <= worldRow.StageEnd);
             Assert.True(_tableSheets.StageSheet.TryGetValue(stageId, out _));
 
-            var previousAvatarState = _initialState.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
             previousAvatarState.level = avatarLevel;
             var clearedStageId = _tableSheets.StageSheet.First?.Id ?? 0;
             clearedStageId = Math.Max(clearedStageId, stageId - 1);
@@ -1732,13 +1625,9 @@ namespace Lib9c.Tests.Action
             }
 
             var context = new ActionContext();
-            var state = _initialState
-                .SetState(_avatarAddress, previousAvatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), previousAvatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), previousAvatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), previousAvatarState.questList.Serialize());
+            var state = _initialState.SetAvatarState(_avatarAddress, previousAvatarState);
 
-            state = state.SetState(
+            state = state.SetLegacyState(
                 _avatarAddress.Derive("world_ids"),
                 List.Empty.Add(worldId.Serialize())
             );
@@ -1760,7 +1649,7 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var action = new HackAndSlash21
+            var action = new HackAndSlash
             {
                 Costumes = costumes,
                 Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
