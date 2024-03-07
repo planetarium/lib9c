@@ -7,6 +7,7 @@ namespace Nekoyume.Model.Skill
         DoubleAttack, // Attack enemy two times
         AreaAttack,
         BuffRemovalAttack,
+        ShatterStrike,  // Damage based on enemy's full HP
 
         Heal,
 
