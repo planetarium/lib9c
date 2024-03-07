@@ -182,5 +182,15 @@ namespace Nekoyume.Model.Skill.Arena
             Power = power;
             StatPowerRatio = statPowerRatio;
         }
+
+        public bool IsBuff()
+        {
+            return SkillRow.SkillType is SkillType.Buff;
+        }
+
+        public bool IsDebuff()
+        {
+            return SkillRow.SkillType is SkillType.Debuff;
+        }
     }
 }

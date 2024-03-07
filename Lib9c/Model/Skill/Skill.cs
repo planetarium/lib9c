@@ -121,6 +121,16 @@ namespace Nekoyume.Model.Skill
             StatPowerRatio = statPowerRatio;
         }
 
+        public bool IsBuff()
+        {
+            return SkillRow.SkillType is SkillType.Buff;
+        }
+
+        public bool IsDebuff()
+        {
+            return SkillRow.SkillType is SkillType.Debuff;
+        }
+
         public IValue Serialize()
         {
             var dict = new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
