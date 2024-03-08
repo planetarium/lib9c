@@ -44,8 +44,12 @@ namespace Lib9c.Tests.Model.Skill.Arena
             _arenaAvatar2 = new ArenaAvatarState(_avatar2);
         }
 
-        [Fact]
-        public void Use()
+        [Theory]
+        // 1bp == 0.01%
+        [InlineData(10000)]
+        [InlineData(1000)]
+        [InlineData(3700)]
+        public void Use(int ratioBp)
         {
             var simulator = new ArenaSimulator(new TestRandom());
             var myDigest = new ArenaPlayerDigest(_avatar1, _arenaAvatar1);
@@ -69,10 +73,13 @@ namespace Lib9c.Tests.Model.Skill.Arena
                 );
 
             var skillRow = _tableSheets.SkillSheet.OrderedList.First(s => s.Id == 700010);
-            var shatterStrike = new ArenaShatterStrike(skillRow, 0, 0, 10000, StatType.NONE);
+            var shatterStrike = new ArenaShatterStrike(skillRow, 0, 0, ratioBp, StatType.NONE);
             var used = shatterStrike.Use(challenger, enemy, simulator.Turn, new List<Buff>());
             Assert.Single(used.SkillInfos);
-            Assert.Equal(enemy.HP - enemy.DEF, used.SkillInfos.First().Effect);
+            Assert.Equal(
+                (long)(enemy.HP * ratioBp / 10000m) - enemy.DEF + challenger.ArmorPenetration,
+                used.SkillInfos.First().Effect
+            );
         }
     }
 }

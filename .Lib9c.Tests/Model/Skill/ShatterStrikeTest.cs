@@ -18,12 +18,21 @@ namespace Lib9c.Tests.Model.Skill
         private readonly TableSheets _tableSheets = new (TableSheetsImporter.ImportSheets());
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Use(bool copyCharacter)
+        // 10000bp == 100%
+        [InlineData(10000, true)]
+        [InlineData(10000, false)]
+        // 1000bp == 10%
+        [InlineData(1000, true)]
+        [InlineData(1000, false)]
+        // 3700bp == 37%
+        [InlineData(3700, true)]
+        [InlineData(3700, false)]
+        public void Use(int ratioBp, bool copyCharacter)
         {
-            Assert.True(_tableSheets.SkillSheet.TryGetValue(700010, out var skillRow));  // 700010 is ShatterStrike
-            var shatterStrike = new ShatterStrike(skillRow, 0, 0, 10000, StatType.NONE);
+            Assert.True(
+                _tableSheets.SkillSheet.TryGetValue(700010, out var skillRow)
+            ); // 700010 is ShatterStrike
+            var shatterStrike = new ShatterStrike(skillRow, 0, 0, ratioBp, StatType.NONE);
 
             var avatarState = new AvatarState(
                 new PrivateKey().Address,
@@ -70,7 +79,10 @@ namespace Lib9c.Tests.Model.Skill
             var used = shatterStrike.Use(player, 0, new List<Buff>(), copyCharacter);
             Assert.NotNull(used);
             var skillInfo = Assert.Single(used.SkillInfos);
-            Assert.Equal(enemy.HP - enemy.DEF, skillInfo.Effect);
+            Assert.Equal(
+                (long)(enemy.HP * ratioBp / 10000m) - enemy.DEF + player.ArmorPenetration,
+                skillInfo.Effect
+            );
         }
     }
 }
