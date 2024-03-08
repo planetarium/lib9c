@@ -30,6 +30,42 @@ namespace Lib9c.Tests.Action
         private static readonly Dictionary<string, string>
             _csv = TableSheetsImporter.ImportSheets();
 
+        private readonly Address _signer;
+        private readonly IWorld _state;
+
+        public RetrieveAvatarAssetsTest()
+        {
+            var ca = new CreateAvatar
+            {
+                index = 0,
+                hair = 2,
+                lens = 3,
+                ear = 4,
+                tail = 5,
+                name = "JohnDoe",
+            };
+            _signer = new PrivateKey().Address;
+            IWorld state = new World(new MockWorldState());
+            foreach (var (key, value) in _csv)
+            {
+                state = state.SetLegacyState(Addresses.GetSheetAddress(key), (Text)value);
+            }
+
+            state = state
+                .SetLegacyState(
+                    Addresses.GameConfig,
+                    new GameConfigState(_csv[nameof(GameConfigSheet)]).Serialize())
+                .SetLegacyState(Addresses.GoldCurrency, new GoldCurrencyState(_currency).Serialize());
+
+            _state = ca.Execute(new ActionContext
+            {
+                PreviousState = state,
+                BlockIndex = 0,
+                Signer = _signer,
+                RandomSeed = 0,
+            });
+        }
+
         [Fact]
         public void PlainValue()
         {
@@ -63,39 +99,10 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute()
         {
-            var ca = new CreateAvatar
-            {
-                index = 0,
-                hair = 2,
-                lens = 3,
-                ear = 4,
-                tail = 5,
-                name = "JohnDoe",
-            };
-            var signer = new PrivateKey().Address;
-            IWorld state = new World(new MockWorldState());
-            foreach (var (key, value) in _csv)
-            {
-                state = state.SetLegacyState(Addresses.GetSheetAddress(key), (Text)value);
-            }
-
-            state = state
-                .SetLegacyState(
-                Addresses.GameConfig,
-                new GameConfigState(_csv[nameof(GameConfigSheet)]).Serialize())
-                .SetLegacyState(Addresses.GoldCurrency, new GoldCurrencyState(_currency).Serialize());
-
-            var prevState = ca.Execute(new ActionContext
-            {
-                PreviousState = state,
-                BlockIndex = 0,
-                Signer = signer,
-                RandomSeed = 0,
-            });
-            var agentState = prevState.GetAgentState(signer);
+            var agentState = _state.GetAgentState(_signer);
             Assert.NotNull(agentState);
             var avatarAddress = agentState.avatarAddresses[0];
-            prevState = prevState.MintAsset(
+            var prevState = _state.MintAsset(
                 new ActionContext
             {
                 Signer = _minter,
@@ -110,11 +117,11 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = prevState,
                 BlockIndex = 1L,
-                Signer = signer,
+                Signer = _signer,
                 RandomSeed = 0,
             });
             Assert.Equal(0 * _currency, nextState.GetBalance(avatarAddress, _currency));
-            Assert.Equal(1 * _currency, nextState.GetBalance(signer, _currency));
+            Assert.Equal(1 * _currency, nextState.GetBalance(_signer, _currency));
         }
 
         [Fact]
@@ -132,6 +139,24 @@ namespace Lib9c.Tests.Action
             };
 
             Assert.Throws<FailedLoadStateException>(() => action.Execute(context));
+        }
+
+        [Fact]
+        public void Execute_Throw_InsufficientBalanceException()
+        {
+            var agentState = _state.GetAgentState(_signer);
+            Assert.NotNull(agentState);
+            var avatarAddress = agentState.avatarAddresses[0];
+            Assert.Equal(0 * _currency, _state.GetBalance(avatarAddress, _currency));
+
+            var action = new RetrieveAvatarAssets(avatarAddress);
+            Assert.Throws<InsufficientBalanceException>(() => action.Execute(new ActionContext
+            {
+                PreviousState = _state,
+                BlockIndex = 1L,
+                Signer = _signer,
+                RandomSeed = 0,
+            }));
         }
     }
 }

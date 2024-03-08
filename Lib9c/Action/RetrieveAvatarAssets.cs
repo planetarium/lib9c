@@ -43,10 +43,7 @@ namespace Nekoyume.Action
             {
                 var currency = state.GetGoldCurrency();
                 var balance = state.GetBalance(AvatarAddress, currency);
-                if (balance > 0 * currency)
-                {
-                    return state.TransferAsset(context, AvatarAddress, signer, balance);
-                }
+                return state.TransferAsset(context, AvatarAddress, signer, balance);
             }
 
             throw new FailedLoadStateException($"signer({signer}) does not contains avatar address({AvatarAddress}).");
