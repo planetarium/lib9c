@@ -173,4 +173,4 @@ _250001,속도 증가(전체),Normal,Buff,SpeedBuff,Ally,1,1 // 미구현
 700007,집중,Normal,Buff,Focus,Self,1,15
 700008,더블 어택,Normal,Attack,DoubleAttack,Enemy,2,15,true
 700009,디버프 제거,Normal,Buff,Buff,Self,1,15
-700010,HP 비례 데미지,Normal,Attack,BlowAttack,Enemy,1,15
+700010,HP 비례 데미지,Normal,Attack,ShatterStrike,Enemy,1,15
