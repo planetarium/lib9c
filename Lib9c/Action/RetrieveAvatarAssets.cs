@@ -39,7 +39,8 @@ namespace Nekoyume.Action
             context.UseGas(1);
             Address signer = context.Signer;
             var state = context.PreviousState;
-            if (state.TryGetAvatarState(signer, AvatarAddress, out _))
+            var agentState = state.GetAgentState(signer);
+            if (agentState is not null && agentState.avatarAddresses.ContainsValue(AvatarAddress))
             {
                 var currency = state.GetGoldCurrency();
                 var balance = state.GetBalance(AvatarAddress, currency);
