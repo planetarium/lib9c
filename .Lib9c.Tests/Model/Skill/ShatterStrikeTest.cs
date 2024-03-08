@@ -18,15 +18,15 @@ namespace Lib9c.Tests.Model.Skill
         private readonly TableSheets _tableSheets = new (TableSheetsImporter.ImportSheets());
 
         [Theory]
-        // 10000bp == 100%
+        // 1bp == 0.01%
         [InlineData(10000, true)]
         [InlineData(10000, false)]
-        // 1000bp == 10%
         [InlineData(1000, true)]
         [InlineData(1000, false)]
-        // 3700bp == 37%
         [InlineData(3700, true)]
         [InlineData(3700, false)]
+        [InlineData(100000, true)]
+        [InlineData(100000, false)]
         public void Use(int ratioBp, bool copyCharacter)
         {
             Assert.True(
@@ -83,6 +83,10 @@ namespace Lib9c.Tests.Model.Skill
                 (long)(enemy.HP * ratioBp / 10000m) - enemy.DEF + player.ArmorPenetration,
                 skillInfo.Effect
             );
+            if (ratioBp > 10000)
+            {
+                Assert.True(skillInfo.IsDead);
+            }
         }
     }
 }

@@ -49,6 +49,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
         [InlineData(10000)]
         [InlineData(1000)]
         [InlineData(3700)]
+        [InlineData(100000)]
         public void Use(int ratioBp)
         {
             var simulator = new ArenaSimulator(new TestRandom());
@@ -80,6 +81,10 @@ namespace Lib9c.Tests.Model.Skill.Arena
                 (long)(enemy.HP * ratioBp / 10000m) - enemy.DEF + challenger.ArmorPenetration,
                 used.SkillInfos.First().Effect
             );
+            if (ratioBp > 10000)
+            {
+                Assert.True(enemy.IsDead);
+            }
         }
     }
 }
