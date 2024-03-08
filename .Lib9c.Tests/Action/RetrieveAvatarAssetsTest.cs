@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Action
 {
+    using System;
     using System.Collections.Generic;
     using Bencodex.Types;
     using Libplanet.Action.State;
@@ -142,7 +143,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void Execute_Throw_InsufficientBalanceException()
+        public void Execute_Throw_ArgumentOutOfRangeException()
         {
             var agentState = _state.GetAgentState(_signer);
             Assert.NotNull(agentState);
@@ -150,7 +151,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0 * _currency, _state.GetBalance(avatarAddress, _currency));
 
             var action = new RetrieveAvatarAssets(avatarAddress);
-            Assert.Throws<InsufficientBalanceException>(() => action.Execute(new ActionContext
+            Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(new ActionContext
             {
                 PreviousState = _state,
                 BlockIndex = 1L,
