@@ -24,8 +24,14 @@ namespace Nekoyume.Model.Skill
             var clone = copyCharacter ? (CharacterBase) caster.Clone() : null;
             var damage = ProcessDamage(caster, simulatorWaveTurn, copyCharacter: copyCharacter);
             var buff = ProcessBuff(caster, simulatorWaveTurn, buffs, copyCharacter);
-
-            return new Model.BattleStatus.DoubleAttack(SkillRow.Id, clone, damage, buff);
+            if (SkillRow.Combo)
+            {
+                return new Model.BattleStatus.DoubleAttackWithCombo(SkillRow.Id, clone, damage, buff);
+            }
+            else
+            {
+                return new Model.BattleStatus.DoubleAttack(SkillRow.Id, clone, damage, buff);
+            }
         }
     }
 }

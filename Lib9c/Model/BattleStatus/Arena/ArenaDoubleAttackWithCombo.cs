@@ -5,9 +5,9 @@ using System.Collections.Generic;
 namespace Nekoyume.Model.BattleStatus.Arena
 {
     [Serializable]
-    public class ArenaDoubleAttack : ArenaSkill
+    public class ArenaDoubleAttackWithCombo : ArenaSkill
     {
-        public ArenaDoubleAttack(
+        public ArenaDoubleAttackWithCombo(
             ArenaCharacter character,
             IEnumerable<ArenaSkillInfo> skillInfos,
             IEnumerable<ArenaSkillInfo> buffInfos)
@@ -17,7 +17,7 @@ namespace Nekoyume.Model.BattleStatus.Arena
 
         public override IEnumerator CoExecute(IArena arena)
         {
-            yield return arena.CoDoubleAttack(Character, SkillInfos, BuffInfos);
+            yield return arena.CoDoubleAttackWithCombo(Character, SkillInfos, BuffInfos);
         }
     }
 }
