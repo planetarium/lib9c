@@ -24,5 +24,6 @@ namespace Nekoyume.Model.Skill
         Debuff,
         TickDamage,
         Focus,  // Always hit enemy.
+        Dispel, // Remove/defence debuffs
     }
 }

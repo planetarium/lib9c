@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Nekoyume.Model.Buff;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
@@ -76,12 +77,32 @@ namespace Nekoyume.Model.Skill
             foreach (var buff in buffs)
             {
                 var targets = buff.GetTarget(caster);
-                foreach (var target in targets.Where(target => target.GetChance(buff.BuffInfo.Chance)))
+                foreach (var target in targets.Where(target =>
+                             target.GetChance(buff.BuffInfo.Chance)))
                 {
-                    target.AddBuff(buff);
-                    infos.Add(new Model.BattleStatus.Skill.SkillInfo(target.Id, target.IsDead, target.Thorn, 0, false,
-                        SkillRow.SkillCategory, simulatorWaveTurn, ElementalType.Normal, SkillRow.SkillTargetType,
-                        buff, copyCharacter ? (CharacterBase)target.Clone() : target));
+                    var affected = true;
+                    IEnumerable<Buff.Buff> dispelList = null;
+                    var dispel = target.Buffs.Values.FirstOrDefault(bf => bf is Dispel);
+                    // Defence debuff if target has dispel
+                    if (dispel is not null && buff.IsDebuff())
+                    {
+                        if (target.Simulator.Random.Next(0, 100) < dispel.BuffInfo.Chance)
+                        {
+                            affected = false;
+                        }
+                    }
+
+                    if (affected)
+                    {
+                        dispelList = target.AddBuff(buff);
+                    }
+
+                    infos.Add(new Model.BattleStatus.Skill.SkillInfo(target.Id, target.IsDead,
+                        target.Thorn, 0, false,
+                        SkillRow.SkillCategory, simulatorWaveTurn, ElementalType.Normal,
+                        SkillRow.SkillTargetType,
+                        buff, copyCharacter ? (CharacterBase)target.Clone() : target,
+                        affected: affected, dispelList: dispelList));
                 }
             }
 
@@ -93,6 +114,16 @@ namespace Nekoyume.Model.Skill
             Chance = chance;
             Power = power;
             StatPowerRatio = statPowerRatio;
+        }
+
+        public bool IsBuff()
+        {
+            return SkillRow.SkillType is SkillType.Buff;
+        }
+
+        public bool IsDebuff()
+        {
+            return SkillRow.SkillType is SkillType.Debuff;
         }
 
         public IValue Serialize()
