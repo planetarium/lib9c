@@ -31,6 +31,9 @@ namespace Nekoyume.Model.Skill
                             return new AreaAttack(skillRow, power, chance, statPowerRatio, referencedStatType);
                         case SkillCategory.BuffRemovalAttack:
                             return new BuffRemovalAttack(skillRow, power, chance, statPowerRatio, referencedStatType);
+                        case SkillCategory.ShatterStrike:
+                            return new ShatterStrike(skillRow, power, chance, statPowerRatio,
+                                referencedStatType);
                         default:
                             return new NormalAttack(skillRow, power, chance, statPowerRatio, referencedStatType);
                     }
