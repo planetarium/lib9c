@@ -30,8 +30,8 @@ namespace Lib9c.Tests.Model.Skill
         public void Use(int ratioBp, bool copyCharacter)
         {
             Assert.True(
-                _tableSheets.SkillSheet.TryGetValue(700010, out var skillRow)
-            ); // 700010 is ShatterStrike
+                _tableSheets.SkillSheet.TryGetValue(700011, out var skillRow)
+            ); // 700011 is ShatterStrike
             var shatterStrike = new ShatterStrike(skillRow, 0, 0, ratioBp, StatType.NONE);
 
             var avatarState = new AvatarState(
