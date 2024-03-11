@@ -8,4 +8,4 @@ id,group,_name,chance,duration,target_type,buff_type,elemental_type,atk_power_ra
 705000,705000,흡혈,100,0,Self,Vampiric,Normal,0
 706000,706000,집중,100,20,Self,Focus,Normal,0
 707000,707000,치유,100,0,Self,Dispel,Normal,0
-708000,708000,면역(1),100,1,Self,Dispel,Normal,0
+708000,708000,면역(1),100,20,Self,Dispel,Normal,0
