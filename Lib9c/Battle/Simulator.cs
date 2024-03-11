@@ -5,6 +5,7 @@ using Libplanet.Action;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Skill;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Priority_Queue;
@@ -28,6 +29,10 @@ namespace Nekoyume.Battle
         public readonly CharacterSheet CharacterSheet;
         public readonly CharacterLevelSheet CharacterLevelSheet;
         public readonly EquipmentItemSetEffectSheet EquipmentItemSetEffectSheet;
+
+        public readonly List<int> StatDebuffList;
+        public readonly List<int> ActionDebuffList;
+
         protected const int MaxTurn = 200;
         public int TurnNumber;
         public int WaveNumber { get; protected set; }
@@ -60,6 +65,18 @@ namespace Nekoyume.Battle
             CharacterSheet = simulatorSheets.CharacterSheet;
             CharacterLevelSheet = simulatorSheets.CharacterLevelSheet;
             EquipmentItemSetEffectSheet = simulatorSheets.EquipmentItemSetEffectSheet;
+            var debuffSkillIdList = SkillSheet.Values
+                .Where(s => s.SkillType == SkillType.Debuff).Select(s => s.Id);
+            StatDebuffList = SkillBuffSheet.Values.Where(
+                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
+                new List<int>(),
+                (current, bf) => current.Concat(bf.BuffIds).ToList()
+            );
+            ActionDebuffList = SkillActionBuffSheet.Values.Where(
+                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
+                new List<int>(),
+                (current, bf) => current.Concat(bf.BuffIds).ToList()
+            );
             Log = new BattleLog();
             player.Simulator = this;
             Player = player;
