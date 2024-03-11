@@ -49,7 +49,9 @@ namespace Nekoyume.Action
 
         [Key(8)]
         [MessagePackFormatter(typeof(TxIdFormatter))]
+#pragma warning disable MsgPack003
         public TxId? TxId { get; set; }
+#pragma warning restore MsgPack003
 
         [SerializationConstructor]
         public NCActionEvaluation(
