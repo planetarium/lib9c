@@ -400,8 +400,9 @@ namespace Nekoyume.Model
 
                             dispelList = Buffs.Values.Where(
                                             bff => bff.IsDebuff() &&
-                                            Simulator.Random.Next(0, 100) <
-                                            action.RowData.Chance).ToList();
+                                                Simulator.Random.Next(0, 100) <
+                                                action.RowData.Chance).ToList();
+
                             foreach (var bff in dispelList)
                             {
                                 switch (bff)
