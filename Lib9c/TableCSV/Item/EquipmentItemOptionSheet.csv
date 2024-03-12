@@ -2070,3 +2070,4 @@ id,stat_type,stat_min,stat_max,skill_id,skill_damage_min,skill_damage_max,skill_
 1055400122,HIT,1,1,,,,,,,,
 1055400123,DEF,1,1,,,,,,,,
 1055400124,,,,700010,50,80,28,28,,,
+1055400125,,,,700011,50,80,28,28,,,
