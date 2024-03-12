@@ -404,7 +404,8 @@ namespace Nekoyume.Action
             }
             for (var i = 0; i < ticket; i++)
             {
-                var simulator = new ArenaSimulator(random, HpIncreasingModifier);
+                var simulator = new ArenaSimulator(random, HpIncreasingModifier,
+                    gameConfigState.ShatterStrikeMaxDamage);
                 var log = simulator.Simulate(
                     myArenaPlayerDigest,
                     enemyArenaPlayerDigest,

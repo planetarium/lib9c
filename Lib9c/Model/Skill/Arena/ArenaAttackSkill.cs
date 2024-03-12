@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Stat;
@@ -64,6 +65,13 @@ namespace Nekoyume.Model.Skill.Arena
 
                     // double attack must be shown as critical attack
                     isCritical |= SkillRow.SkillCategory == SkillCategory.DoubleAttack;
+
+                    // ShatterStrike has max damage limitation
+                    if (SkillRow.SkillCategory is SkillCategory.ShatterStrike)
+                    {
+                        damage = Math.Clamp(damage,
+                            1, ((ArenaSimulator)caster.Simulator).ShatterStrikeMaxDamage);
+                    }
                 }
 
                 infos.Add(new BattleStatus.Arena.ArenaSkill.ArenaSkillInfo(
