@@ -19,7 +19,7 @@ namespace Nekoyume.Model.Skill.Arena
         {
         }
 
-         protected IEnumerable<BattleStatus.Arena.ArenaSkill.ArenaSkillInfo> ProcessDamage(
+        protected IEnumerable<BattleStatus.Arena.ArenaSkill.ArenaSkillInfo> ProcessDamage(
             ArenaCharacter caster,
             ArenaCharacter target,
             int simulatorWaveTurn,
@@ -42,11 +42,14 @@ namespace Nekoyume.Model.Skill.Arena
 
                 if (target.IsHit(caster))
                 {
-                    damage = caster.ATK + Power + statAdditionalPower;
-                    damage = (long) (damage * multiplier);
-                    damage = caster.GetDamage(damage, isNormalAttack);
+                    damage = (long)(SkillRow.SkillCategory is SkillCategory.ShatterStrike
+                        ? target.HP * powerMultiplier
+                        : caster.ATK + Power + statAdditionalPower);
+                    damage = (long)(damage * multiplier);
+                    damage = caster.GetDamage(damage, isNormalAttack || SkillRow.Combo);
                     damage = elementalType.GetDamage(target.DefenseElementalType, damage);
-                    isCritical = caster.IsCritical(isNormalAttack);
+                    isCritical = SkillRow.SkillCategory is not SkillCategory.ShatterStrike &&
+                                 caster.IsCritical(isNormalAttack || SkillRow.Combo);
                     if (isCritical)
                     {
                         damage = CriticalHelper.GetCriticalDamageForArena(caster, damage);
@@ -76,21 +79,21 @@ namespace Nekoyume.Model.Skill.Arena
             return infos;
         }
 
-         private static decimal[] GetMultiplier(int hitCount, decimal totalDamage)
-         {
-             if (hitCount == 1) return new[] {totalDamage};
-             var multiplier = new List<decimal>();
-             var avg = totalDamage / hitCount;
-             var lastDamage = avg * 1.3m;
-             var lastHitIndex = hitCount - 1;
-             var eachDamage = (totalDamage - lastDamage) / lastHitIndex;
-             for (var i = 0; i < hitCount; i++)
-             {
-                 var result = i == lastHitIndex ? lastDamage : eachDamage;
-                 multiplier.Add(result);
-             }
+        private static decimal[] GetMultiplier(int hitCount, decimal totalDamage)
+        {
+            if (hitCount == 1) return new[] { totalDamage };
+            var multiplier = new List<decimal>();
+            var avg = totalDamage / hitCount;
+            var lastDamage = avg * 1.3m;
+            var lastHitIndex = hitCount - 1;
+            var eachDamage = (totalDamage - lastDamage) / lastHitIndex;
+            for (var i = 0; i < hitCount; i++)
+            {
+                var result = i == lastHitIndex ? lastDamage : eachDamage;
+                multiplier.Add(result);
+            }
 
-             return multiplier.ToArray();
-         }
+            return multiplier.ToArray();
+        }
     }
 }

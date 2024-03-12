@@ -28,16 +28,19 @@ namespace Nekoyume.Model
         private readonly StatBuffSheet _statBuffSheet;
         private readonly SkillActionBuffSheet _skillActionBuffSheet;
         private readonly ActionBuffSheet _actionBuffSheet;
-        private readonly IArenaSimulator _simulator;
         private readonly ArenaSkills _skills;
 
+        private readonly List<int> _statDebuffList;
+        private readonly List<int> _actionDebuffList;
+
+        public readonly IArenaSimulator Simulator;
         public readonly ArenaSkills _runeSkills = new ArenaSkills();
         public readonly Dictionary<int, int> RuneSkillCooldownMap = new Dictionary<int, int>();
 
         private readonly int _attackCountMax;
 
         private ArenaCharacter _target;
-        private int _attackCount;
+        public int AttackCount { get; private set; }
         public ArenaSkill usedSkill;
 
         public Guid Id { get; } = Guid.NewGuid();
@@ -109,7 +112,7 @@ namespace Nekoyume.Model
             _skillActionBuffSheet = sheets.SkillActionBuffSheet;
             _actionBuffSheet = sheets.ActionBuffSheet;
 
-            _simulator = simulator;
+            Simulator = simulator;
             Stats = GetStatV1(
                 digest,
                 row,
@@ -141,7 +144,21 @@ namespace Nekoyume.Model
             _skillActionBuffSheet = sheets.SkillActionBuffSheet;
             _actionBuffSheet = sheets.ActionBuffSheet;
 
-            _simulator = simulator;
+            var debuffSkillIdList = _skillSheet.Values
+                .Where(s => s.SkillType == SkillType.Debuff).Select(s => s.Id);
+            _statDebuffList = _skillBuffSheet.Values.Where(
+                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
+                new List<int>(),
+                (current, bf) => current.Concat(bf.BuffIds).ToList()
+            );
+            _actionDebuffList = _skillActionBuffSheet.Values.Where(
+                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
+                new List<int>(),
+                (current, bf) => current.Concat(bf.BuffIds).ToList()
+            );
+
+
+            Simulator = simulator;
             Stats = GetStatV1(
                 digest,
                 row,
@@ -177,7 +194,7 @@ namespace Nekoyume.Model
             _skillActionBuffSheet = sheets.SkillActionBuffSheet;
             _actionBuffSheet = sheets.ActionBuffSheet;
 
-            _simulator = simulator;
+            Simulator = simulator;
             Stats = GetStat(
                 digest,
                 row,
@@ -221,7 +238,10 @@ namespace Nekoyume.Model
             _skillActionBuffSheet = value._skillActionBuffSheet;
             _actionBuffSheet = value._actionBuffSheet;
 
-            _simulator = value._simulator;
+            _statDebuffList = value._statDebuffList;
+            _actionDebuffList = value._actionDebuffList;
+
+            Simulator = value.Simulator;
             Stats = new CharacterStats(value.Stats);
             _skills = value._skills;
             Buffs = new Dictionary<int, Buff.Buff>();
@@ -232,8 +252,8 @@ namespace Nekoyume.Model
                 Buffs.Add(pair.Key, (Buff.Buff) pair.Value.Clone());
             }
 
-            _attackCountMax = value._attackCount;
-            _attackCount = value._attackCount;
+            _attackCountMax = value.AttackCount;
+            AttackCount = value.AttackCount;
             _target = value._target;
             CurrentHP = value.CurrentHP;
         }
@@ -594,7 +614,7 @@ namespace Nekoyume.Model
             if (OnPreSkill())
             {
                 usedSkill = new ArenaTick((ArenaCharacter)Clone());
-                _simulator.Log.Add(usedSkill);
+                Simulator.Log.Add(usedSkill);
             }
             else
             {
@@ -658,9 +678,9 @@ namespace Nekoyume.Model
                 {
                     foreach (var effect in attackSkills
                                  .Select(skillInfo =>
-                                     vampiric.GiveEffectForArena(this, skillInfo, _simulator.Turn)))
+                                     vampiric.GiveEffectForArena(this, skillInfo, Simulator.Turn)))
                     {
-                        _simulator.Log.Add(effect);
+                        Simulator.Log.Add(effect);
                     }
                 }
             }
@@ -668,8 +688,8 @@ namespace Nekoyume.Model
             var bleeds = Buffs.Values.OfType<Bleed>().OrderBy(x => x.BuffInfo.Id);
             foreach (var bleed in bleeds)
             {
-                var effect = bleed.GiveEffectForArena(this, _simulator.Turn);
-                _simulator.Log.Add(effect);
+                var effect = bleed.GiveEffectForArena(this, Simulator.Turn);
+                Simulator.Log.Add(effect);
             }
 
             // Apply thorn damage if target has thorn
@@ -678,7 +698,7 @@ namespace Nekoyume.Model
                 if (skillInfo.Target.Thorn > 0)
                 {
                     var effect = GiveThornDamage(skillInfo.Target.Thorn);
-                    _simulator.Log.Add(effect);
+                    Simulator.Log.Add(effect);
                 }
             }
         }
@@ -696,7 +716,7 @@ namespace Nekoyume.Model
                     thornDamage,
                     false,
                     SkillCategory.TickDamage,
-                    _simulator.Turn,
+                    Simulator.Turn,
                     ElementalType.Normal,
                     SkillTargetType.Enemy)
             };
@@ -727,13 +747,12 @@ namespace Nekoyume.Model
 
         private BattleStatus.Arena.ArenaSkill UseSkill()
         {
-            var selectedRuneSkill = _runeSkills.SelectWithoutDefaultAttack(_simulator.Random);
-            var selectedSkill = selectedRuneSkill ??
-                _skills.Select(_simulator.Random);
+            var selectedRuneSkill = _runeSkills.SelectWithoutDefaultAttack(Simulator.Random);
+            var selectedSkill = selectedRuneSkill ?? _skills.Select(Simulator.Random);
             usedSkill = selectedSkill.Use(
                 this,
                 _target,
-                _simulator.Turn,
+                Simulator.Turn,
                 BuffFactory.GetBuffs(
                     Stats,
                     selectedSkill,
@@ -763,18 +782,18 @@ namespace Nekoyume.Model
                 _runeSkills.SetCooldown(selectedSkill.SkillRow.Id, row.Cooldown);
             }
 
-            _simulator.Log.Add(usedSkill);
+            Simulator.Log.Add(usedSkill);
             return usedSkill;
         }
 
         [Obsolete("Use UseSkill")]
         private void UseSkillV1()
         {
-            var selectedSkill = _skills.Select(_simulator.Random);
+            var selectedSkill = _skills.Select(Simulator.Random);
             SkillLog = selectedSkill.UseV1(
                 this,
                 _target,
-                _simulator.Turn,
+                Simulator.Turn,
                 BuffFactory.GetBuffs(
                     Stats,
                     selectedSkill,
@@ -863,23 +882,70 @@ namespace Nekoyume.Model
             InitAIV2();
         }
 
-        public void AddBuff(Buff.Buff buff, bool updateImmediate = true)
+        public IEnumerable<Buff.Buff> AddBuff(Buff.Buff buff, bool updateImmediate = true)
         {
             if (Buffs.TryGetValue(buff.BuffInfo.GroupId, out var outBuff) &&
                 outBuff.BuffInfo.Id > buff.BuffInfo.Id)
-                return;
+                return null;
 
-            if (buff is StatBuff stat)
+            var dispelList = new List<Buff.Buff>();
+            switch (buff)
             {
-                var clone = (StatBuff)stat.Clone();
-                Buffs[stat.RowData.GroupId] = clone;
-                Stats.AddBuff(clone, updateImmediate);
+                // StatBuff Modifies stats
+                case StatBuff stat:
+                {
+                    var clone = (StatBuff)stat.Clone();
+                    Buffs[stat.RowData.GroupId] = clone;
+                    Stats.AddBuff(clone, updateImmediate);
+                    break;
+                }
+                case ActionBuff action:
+                {
+                    var clone = (ActionBuff)action.Clone();
+
+                    switch (action)
+                    {
+                        // Stun freezes target
+                        case Stun stun:
+                        {
+                            Buffs[stun.BuffInfo.GroupId] = clone;
+                            break;
+                        }
+                        // Dispel removes debuffs
+                        case Dispel dispel:
+                        {
+                            Buffs[dispel.BuffInfo.GroupId] = clone;
+
+                            dispelList = Buffs.Values.Where(
+                                            bff => bff.IsDebuff() &&
+                                                Simulator.Random.Next(0, 100) <
+                                                action.RowData.Chance).ToList();
+
+                            foreach (var bff in dispelList)
+                            {
+                                switch (bff)
+                                {
+                                    case StatBuff statBuff:
+                                        RemoveStatBuff(statBuff);
+                                        break;
+                                    case ActionBuff actionBuff:
+                                        RemoveActionBuff(actionBuff);
+                                        break;
+                                }
+                            }
+
+                            break;
+                        }
+                        default:
+                            Buffs[action.RowData.GroupId] = clone;
+                            break;
+                    }
+
+                    break;
+                }
             }
-            else if (buff is ActionBuff action)
-            {
-                var clone = (ActionBuff)action.Clone();
-                Buffs[action.RowData.GroupId] = clone;
-            }
+
+            return dispelList;
         }
 
         [Obsolete("Use AddBuff")]
@@ -892,6 +958,17 @@ namespace Nekoyume.Model
             var clone = (Buff.StatBuff) buff.Clone();
             Buffs[buff.BuffInfo.GroupId] = clone;
             Stats.AddBuff(clone, updateImmediate);
+        }
+
+        public void RemoveActionBuff(ActionBuff removedBuff)
+        {
+            Buffs.Remove(removedBuff.RowData.GroupId);
+        }
+
+        public void RemoveStatBuff(StatBuff removedBuff)
+        {
+            Stats.RemoveBuff(removedBuff);
+            Buffs.Remove(removedBuff.RowData.GroupId);
         }
 
         public void RemoveRecentStatBuff()
@@ -924,8 +1001,7 @@ namespace Nekoyume.Model
 
             if (removedBuff != null)
             {
-                Stats.RemoveBuff(removedBuff);
-                Buffs.Remove(removedBuff.RowData.GroupId);
+                RemoveStatBuff(removedBuff);
             }
         }
 
@@ -936,26 +1012,31 @@ namespace Nekoyume.Model
 
         public bool IsCritical(bool considerAttackCount = true)
         {
-            var chance = _simulator.Random.Next(0, 100);
+            var chance = Simulator.Random.Next(0, 100);
             if (!considerAttackCount)
                 return CRI >= chance;
 
             var additionalCriticalChance =
-                AttackCountHelper.GetAdditionalCriticalChance(_attackCount, _attackCountMax);
+                AttackCountHelper.GetAdditionalCriticalChance(AttackCount, _attackCountMax);
             return CRI + additionalCriticalChance >= chance;
         }
 
         public virtual bool IsHit(ArenaCharacter caster)
         {
+            if (caster.ActionBuffs.Any(buff => buff is Focus))
+            {
+                return true;
+            }
+
             var isHit = HitHelper.IsHitWithoutLevelCorrection(
                 caster.Level,
                 caster.HIT,
                 Level,
                 HIT,
-                _simulator.Random.Next(0, 100));
+                Simulator.Random.Next(0, 100));
             if (!isHit)
             {
-                caster._attackCount = 0;
+                caster.AttackCount = 0;
             }
 
             return isHit;
@@ -966,13 +1047,13 @@ namespace Nekoyume.Model
             if (!considerAttackCount)
                 return damage;
 
-            _attackCount++;
-            if (_attackCount > _attackCountMax)
+            AttackCount++;
+            if (AttackCount > _attackCountMax)
             {
-                _attackCount = 1;
+                AttackCount = 1;
             }
 
-            var damageMultiplier = AttackCountHelper.GetDamageMultiplier(_attackCount, _attackCountMax);
+            var damageMultiplier = AttackCountHelper.GetDamageMultiplier(AttackCount, _attackCountMax);
             damage *= damageMultiplier;
             return damage;
         }

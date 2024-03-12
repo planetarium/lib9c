@@ -60,6 +60,10 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
+        // Recipe 5 unlocks at stage 99
+        // Recipe 6 unlocks at stage 27
+        // Recipe 94 unlocks at stage 90
+        // Recipe 133 unlocks at stage 17
         [InlineData(new[] { 6, 5 }, true, false, false, true, true, null)]
         [InlineData(new[] { 6 }, true, false, false, true, true, null)]
         // Unlock Belt without Armor unlock.

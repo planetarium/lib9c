@@ -29,7 +29,13 @@ namespace Nekoyume.Action
                 var skillRow = skillSheet.OrderedList.First(r => r.Id == row.SkillId);
                 var dmg = random.Next(row.SkillDamageMin, row.SkillDamageMax + 1);
                 var chance = random.Next(row.SkillChanceMin, row.SkillChanceMax + 1);
-                var skill = SkillFactory.GetV1(skillRow, dmg, chance);
+
+                var hasStatDamageRatio = row.StatDamageRatioMin != default && row.StatDamageRatioMax != default;
+                var statDamageRatio = hasStatDamageRatio ?
+                    random.Next(row.StatDamageRatioMin, row.StatDamageRatioMax + 1) : default;
+                var refStatType = hasStatDamageRatio ? row.ReferencedStatType : StatType.NONE;
+
+                var skill = SkillFactory.Get(skillRow, dmg, chance, statDamageRatio, refStatType);
                 return skill;
             }
             catch (InvalidOperationException)

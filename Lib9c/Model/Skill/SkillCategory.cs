@@ -4,9 +4,10 @@ namespace Nekoyume.Model.Skill
     {
         NormalAttack,
         BlowAttack,
-        DoubleAttack,
+        DoubleAttack, // Attack enemy two times
         AreaAttack,
         BuffRemovalAttack,
+        ShatterStrike,  // Damage based on enemy's full HP
 
         Heal,
 
@@ -22,5 +23,7 @@ namespace Nekoyume.Model.Skill
         Buff,
         Debuff,
         TickDamage,
+        Focus,  // Always hit enemy.
+        Dispel, // Remove/defence debuffs
     }
 }

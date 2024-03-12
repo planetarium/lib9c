@@ -6,5 +6,7 @@ namespace Nekoyume.Model.Skill
         Bleed,
         Stun,
         Vampiric,
+        Focus,
+        Dispel,  // Erase/defence debuffs on me
     }
 }
