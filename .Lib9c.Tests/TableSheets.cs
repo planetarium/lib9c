@@ -285,7 +285,8 @@ namespace Lib9c.Tests
                 CharacterSheet,
                 CharacterLevelSheet,
                 EquipmentItemSetEffectSheet,
-                RuneOptionSheet
+                RuneOptionSheet,
+                GameConfigSheet
             );
         }
 
@@ -319,7 +320,8 @@ namespace Lib9c.Tests
                 StageSheet,
                 StageWaveSheet,
                 EnemySkillSheet,
-                RuneOptionSheet
+                RuneOptionSheet,
+                GameConfigSheet
             );
         }
 
@@ -370,7 +372,8 @@ namespace Lib9c.Tests
                 CharacterLevelSheet,
                 EquipmentItemSetEffectSheet,
                 WeeklyArenaRewardSheet,
-                RuneOptionSheet
+                RuneOptionSheet,
+                GameConfigSheet
             );
         }
 
@@ -405,7 +408,8 @@ namespace Lib9c.Tests
                 EquipmentItemSetEffectSheet,
                 CostumeStatSheet,
                 WeeklyArenaRewardSheet,
-                RuneOptionSheet
+                RuneOptionSheet,
+                GameConfigSheet
             );
         }
 
@@ -446,7 +450,8 @@ namespace Lib9c.Tests
                 WorldBossBattleRewardSheet,
                 RuneWeightSheet,
                 RuneSheet,
-                RuneOptionSheet
+                RuneOptionSheet,
+                GameConfigSheet
             );
         }
 

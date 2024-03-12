@@ -566,6 +566,7 @@ namespace Nekoyume.Module
                 sheetTypeList.Add(typeof(CharacterLevelSheet));
                 sheetTypeList.Add(typeof(EquipmentItemSetEffectSheet));
                 sheetTypeList.Add(typeof(RuneOptionSheet));
+                sheetTypeList.Add(typeof(GameConfigSheet));
             }
 
             if (containStageSimulatorSheets)
@@ -583,6 +584,7 @@ namespace Nekoyume.Module
                 sheetTypeList.Add(typeof(StageWaveSheet));
                 sheetTypeList.Add(typeof(EnemySkillSheet));
                 sheetTypeList.Add(typeof(RuneOptionSheet));
+                sheetTypeList.Add(typeof(GameConfigSheet));
             }
 
             if (containRankingSimulatorSheets)
@@ -614,6 +616,7 @@ namespace Nekoyume.Module
                 sheetTypeList.Add(typeof(WeeklyArenaRewardSheet));
                 sheetTypeList.Add(typeof(CostumeStatSheet));
                 sheetTypeList.Add(typeof(RuneOptionSheet));
+                sheetTypeList.Add(typeof(GameConfigSheet));
             }
 
             if (containValidateItemRequirementSheets)
@@ -641,6 +644,7 @@ namespace Nekoyume.Module
                 sheetTypeList.Add(typeof(RuneWeightSheet));
                 sheetTypeList.Add(typeof(RuneSheet));
                 sheetTypeList.Add(typeof(RuneOptionSheet));
+                sheetTypeList.Add(typeof(GameConfigSheet));
             }
 
             return GetSheets(worldState, sheetTypeList.Distinct().ToArray());
@@ -779,7 +783,8 @@ namespace Nekoyume.Module
                 GetSheet<StageSheet>(worldState),
                 GetSheet<StageWaveSheet>(worldState),
                 GetSheet<EnemySkillSheet>(worldState),
-                GetSheet<RuneOptionSheet>(worldState)
+                GetSheet<RuneOptionSheet>(worldState),
+                GetSheet<GameConfigSheet>(worldState)
             );
         }
 
@@ -812,7 +817,8 @@ namespace Nekoyume.Module
                 GetSheet<CharacterLevelSheet>(worldState),
                 GetSheet<EquipmentItemSetEffectSheet>(worldState),
                 GetSheet<WeeklyArenaRewardSheet>(worldState),
-                GetSheet<RuneOptionSheet>(worldState)
+                GetSheet<RuneOptionSheet>(worldState),
+                GetSheet<GameConfigSheet>(worldState)
             );
         }
 
