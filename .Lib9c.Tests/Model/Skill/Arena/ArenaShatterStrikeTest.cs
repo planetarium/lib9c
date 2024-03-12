@@ -1,7 +1,9 @@
 namespace Lib9c.Tests.Model.Skill.Arena
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Bencodex.Types;
     using Lib9c.Tests.Action;
     using Nekoyume.Arena;
     using Nekoyume.Model;
@@ -46,13 +48,15 @@ namespace Lib9c.Tests.Model.Skill.Arena
 
         [Theory]
         // 1bp == 0.01%
-        [InlineData(10000)]
-        [InlineData(1000)]
-        [InlineData(3700)]
-        [InlineData(100000)]
-        public void Use(int ratioBp)
+        [InlineData(2, 1000, false)]
+        [InlineData(2, 3700, false)]
+        [InlineData(2, 100_000, true)]
+        [InlineData(100_000, 100_000, false)]
+        public void Use(int hpModifier, int ratioBp, bool expectedEnemyDead)
         {
-            var simulator = new ArenaSimulator(new TestRandom());
+            var gameConfigState =
+                new GameConfigState((Text)_tableSheets.GameConfigSheet.Serialize());
+            var simulator = new ArenaSimulator(new TestRandom(), hpModifier: hpModifier);
             var myDigest = new ArenaPlayerDigest(_avatar1, _arenaAvatar1);
             var enemyDigest = new ArenaPlayerDigest(_avatar2, _arenaAvatar2);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
@@ -78,13 +82,14 @@ namespace Lib9c.Tests.Model.Skill.Arena
             var used = shatterStrike.Use(challenger, enemy, simulator.Turn, new List<Buff>());
             Assert.Single(used.SkillInfos);
             Assert.Equal(
-                (long)(enemy.HP * ratioBp / 10000m) - enemy.DEF + challenger.ArmorPenetration,
+                Math.Clamp(
+                    enemy.HP * ratioBp / 10000m - enemy.DEF + challenger.ArmorPenetration,
+                    1,
+                    gameConfigState.ShatterStrikeMaxDamage
+                ),
                 used.SkillInfos.First().Effect
             );
-            if (ratioBp > 10000)
-            {
-                Assert.True(enemy.IsDead);
-            }
+            Assert.Equal(expectedEnemyDead, enemy.IsDead);
         }
     }
 }
