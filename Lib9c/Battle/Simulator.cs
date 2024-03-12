@@ -31,9 +31,6 @@ namespace Nekoyume.Battle
         public readonly CharacterLevelSheet CharacterLevelSheet;
         public readonly EquipmentItemSetEffectSheet EquipmentItemSetEffectSheet;
 
-        public readonly List<int> StatDebuffList;
-        public readonly List<int> ActionDebuffList;
-
         public long ShatterStrikeMaxDamage { get; private set; }
 
         protected const int MaxTurn = 200;
@@ -80,18 +77,6 @@ namespace Nekoyume.Battle
             CharacterSheet = simulatorSheets.CharacterSheet;
             CharacterLevelSheet = simulatorSheets.CharacterLevelSheet;
             EquipmentItemSetEffectSheet = simulatorSheets.EquipmentItemSetEffectSheet;
-            var debuffSkillIdList = SkillSheet.Values
-                .Where(s => s.SkillType == SkillType.Debuff).Select(s => s.Id);
-            StatDebuffList = SkillBuffSheet.Values.Where(
-                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
-                new List<int>(),
-                (current, bf) => current.Concat(bf.BuffIds).ToList()
-            );
-            ActionDebuffList = SkillActionBuffSheet.Values.Where(
-                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
-                new List<int>(),
-                (current, bf) => current.Concat(bf.BuffIds).ToList()
-            );
             Log = new BattleLog();
             player.Simulator = this;
             Player = player;
@@ -116,18 +101,6 @@ namespace Nekoyume.Battle
             CharacterSheet = simulatorSheets.CharacterSheet;
             CharacterLevelSheet = simulatorSheets.CharacterLevelSheet;
             EquipmentItemSetEffectSheet = simulatorSheets.EquipmentItemSetEffectSheet;
-            var debuffSkillIdList = SkillSheet.Values
-                .Where(s => s.SkillType == SkillType.Debuff).Select(s => s.Id);
-            StatDebuffList = SkillBuffSheet.Values.Where(
-                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
-                new List<int>(),
-                (current, bf) => current.Concat(bf.BuffIds).ToList()
-            );
-            ActionDebuffList = SkillActionBuffSheet.Values.Where(
-                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
-                new List<int>(),
-                (current, bf) => current.Concat(bf.BuffIds).ToList()
-            );
             Log = new BattleLog();
             player.Simulator = this;
             Player = player;
