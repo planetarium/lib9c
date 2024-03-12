@@ -17,7 +17,6 @@ namespace Nekoyume.Model.State
 
         public readonly Dictionary<int, Address> avatarAddresses;
 
-        public HashSet<int> unlockedOptions;
         public int MonsterCollectionRound { get; private set; }
 
         public int Version { get; private set; }
@@ -26,7 +25,6 @@ namespace Nekoyume.Model.State
         {
             Version = CurrentVersion;
             avatarAddresses = new Dictionary<int, Address>();
-            unlockedOptions = new HashSet<int>();
         }
 
         public AgentState(Dictionary serialized)
@@ -41,9 +39,6 @@ namespace Nekoyume.Model.State
                     kv => kv.Value.ToAddress()
                 );
 #pragma warning restore LAA1002
-            unlockedOptions = serialized.ContainsKey((IKey)(Text) "unlockedOptions")
-                ? serialized["unlockedOptions"].ToHashSet(StateExtensions.ToInteger)
-                : new HashSet<int>();
             MonsterCollectionRound = serialized.ContainsKey((IKey) (Text) MonsterCollectionRoundKey)
                 ? serialized[MonsterCollectionRoundKey].ToInteger()
                 : 0;
@@ -61,7 +56,7 @@ namespace Nekoyume.Model.State
                     kv => kv.Value.ToAddress()
                 );
 #pragma warning restore LAA1002
-            unlockedOptions = serialized[3].ToHashSet(StateExtensions.ToInteger);
+            // serialized[3] is unused and ignored.
             MonsterCollectionRound = serialized[4].ToInteger();
         }
 
@@ -97,7 +92,7 @@ namespace Nekoyume.Model.State
                             new KeyValuePair<IKey, IValue>(
                                 new Binary(BitConverter.GetBytes(kv.Key)),
                                 kv.Value.Serialize()))),
-                unlockedOptions.Select(i => i.Serialize()).Serialize(),
+                new List(), // A placeholder list for now removed unlockedOptions property.
 #pragma warning restore LAA1002
                 MonsterCollectionRound.Serialize());
         }

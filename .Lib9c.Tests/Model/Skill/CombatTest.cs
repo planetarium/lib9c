@@ -225,16 +225,16 @@ namespace Lib9c.Tests.Model.Skill
             _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, dispel));
             Assert.Single(_player.Buffs);
 
-            // Use Bleed
-            var debuffRow =
+            // Use Focus
+            var buffRow =
                 _tableSheets.SkillSheet.Values.First(bf => bf.Id == 700007); // 700007 is Focus
-            var debuff = new BuffSkill(debuffRow, 100, 100, 0, StatType.NONE);
-            var battleStatus = debuff.Use(
+            var buff = new BuffSkill(buffRow, 100, 100, 0, StatType.NONE);
+            var battleStatus = buff.Use(
                 _player,
                 0,
                 BuffFactory.GetBuffs(
                     _player.Stats,
-                    debuff,
+                    buff,
                     _tableSheets.SkillBuffSheet,
                     _tableSheets.StatBuffSheet,
                     _tableSheets.SkillActionBuffSheet,

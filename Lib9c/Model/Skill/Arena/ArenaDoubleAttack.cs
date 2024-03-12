@@ -27,7 +27,14 @@ namespace Nekoyume.Model.Skill.Arena
             var damage = ProcessDamage(caster, target, turn);
             var buff = ProcessBuff(caster, target, turn, buffs);
 
-            return new BattleStatus.Arena.ArenaDoubleAttack(clone, damage, buff);
+            if (SkillRow.Combo)
+            {
+                return new BattleStatus.Arena.ArenaDoubleAttackWithCombo(clone, damage, buff);
+            }
+            else
+            {
+                return new BattleStatus.Arena.ArenaDoubleAttack(clone, damage, buff);
+            }
         }
 
         [Obsolete("Use Use")]
@@ -41,7 +48,14 @@ namespace Nekoyume.Model.Skill.Arena
             var damage = ProcessDamage(caster, target, turn);
             var buff = ProcessBuffV1(caster, target, turn, buffs);
 
-            return new BattleStatus.Arena.ArenaDoubleAttack(clone, damage, buff);
+            if (SkillRow.Combo)
+            {
+                return new BattleStatus.Arena.ArenaDoubleAttackWithCombo(clone, damage, buff);
+            }
+            else
+            {
+                return new BattleStatus.Arena.ArenaDoubleAttack(clone, damage, buff);
+            }
         }
     }
 }

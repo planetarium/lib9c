@@ -896,13 +896,13 @@ namespace Nekoyume.Model
                         {
                             Buffs[dispel.BuffInfo.GroupId] = clone;
 
-                            foreach (var bff in Buffs.Values.Where(
-                                         bff => bff.IsDebuff() &&
+                            dispelList = Buffs.Values.Where(
+                                            bff => bff.IsDebuff() &&
                                                 Simulator.Random.Next(0, 100) <
-                                                action.RowData.Chance)
-                                    )
+                                                action.RowData.Chance).ToList();
+
+                            foreach (var bff in dispelList)
                             {
-                                dispelList.Add(bff);
                                 switch (bff)
                                 {
                                     case StatBuff statBuff:
