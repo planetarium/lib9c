@@ -508,17 +508,14 @@ namespace Nekoyume.Action
                 sw.Restart();
                 if (simulator.Log.IsClear)
                 {
-                    if (!stageCleared)
-                    {
-                        avatarState.worldInformation.ClearStage(
-                            WorldId,
-                            StageId,
-                            blockIndex,
-                            worldSheet,
-                            worldUnlockSheet
-                        );
-                        stageCleared = true;
-                    }
+                    avatarState.worldInformation.ClearStage(
+                        WorldId,
+                        StageId,
+                        blockIndex,
+                        worldSheet,
+                        worldUnlockSheet
+                    );
+                    stageCleared = true;
                     sw.Stop();
                     Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                         addressesHex, source, "ClearStage", blockIndex, sw.Elapsed.TotalMilliseconds);
