@@ -1,9 +1,9 @@
+
 namespace Nekoyume.TableData
 {
     public class SimulatorSheets : SimulatorSheetsV1
     {
         public readonly RuneOptionSheet RuneOptionSheet;
-        public readonly GameConfigSheet GameConiConfigSheet;
 
         public SimulatorSheets(
             MaterialItemSheet materialItemSheet,
@@ -15,8 +15,7 @@ namespace Nekoyume.TableData
             CharacterSheet characterSheet,
             CharacterLevelSheet characterLevelSheet,
             EquipmentItemSetEffectSheet equipmentItemSetEffectSheet,
-            RuneOptionSheet runeOptionSheet,
-            GameConfigSheet gameConfigSheet
+            RuneOptionSheet runeOptionSheet
         ) : base(
             materialItemSheet,
             skillSheet,
@@ -29,7 +28,6 @@ namespace Nekoyume.TableData
             equipmentItemSetEffectSheet)
         {
             RuneOptionSheet = runeOptionSheet;
-            GameConiConfigSheet = gameConfigSheet;
         }
     }
 
@@ -52,8 +50,7 @@ namespace Nekoyume.TableData
             StageSheet stageSheet,
             StageWaveSheet stageWaveSheet,
             EnemySkillSheet enemySkillSheet,
-            RuneOptionSheet runeOptionSheet,
-            GameConfigSheet gameConfigSheet
+            RuneOptionSheet runeOptionSheet
         ) : base(
             materialItemSheet,
             skillSheet,
@@ -64,8 +61,7 @@ namespace Nekoyume.TableData
             characterSheet,
             characterLevelSheet,
             equipmentItemSetEffectSheet,
-            runeOptionSheet,
-            gameConfigSheet
+            runeOptionSheet
         )
         {
             StageSheet = stageSheet;
@@ -89,8 +85,7 @@ namespace Nekoyume.TableData
             CharacterLevelSheet characterLevelSheet,
             EquipmentItemSetEffectSheet equipmentItemSetEffectSheet,
             WeeklyArenaRewardSheet weeklyArenaRewardSheet,
-            RuneOptionSheet runeOptionSheet,
-            GameConfigSheet gameConfigSheet
+            RuneOptionSheet runeOptionSheet
         ) : base(
             materialItemSheet,
             skillSheet,
@@ -101,8 +96,7 @@ namespace Nekoyume.TableData
             characterSheet,
             characterLevelSheet,
             equipmentItemSetEffectSheet,
-            runeOptionSheet,
-            gameConfigSheet
+            runeOptionSheet
         )
         {
             WeeklyArenaRewardSheet = weeklyArenaRewardSheet;
@@ -126,8 +120,7 @@ namespace Nekoyume.TableData
             EquipmentItemSetEffectSheet equipmentItemSetEffectSheet,
             CostumeStatSheet costumeStatSheet,
             WeeklyArenaRewardSheet weeklyArenaRewardSheet,
-            RuneOptionSheet runeOptionSheet,
-            GameConfigSheet gameConfigSheet
+            RuneOptionSheet runeOptionSheet
         ) : base(materialItemSheet,
             skillSheet,
             skillBuffSheet,
@@ -137,12 +130,11 @@ namespace Nekoyume.TableData
             characterSheet,
             characterLevelSheet,
             equipmentItemSetEffectSheet,
-            runeOptionSheet,
-            gameConfigSheet
-        )
+            runeOptionSheet)
         {
             CostumeStatSheet = costumeStatSheet;
             WeeklyArenaRewardSheet = weeklyArenaRewardSheet;
+
         }
     }
 
@@ -169,8 +161,7 @@ namespace Nekoyume.TableData
             WorldBossBattleRewardSheet worldBossBattleRewardSheet,
             RuneWeightSheet runeWeightSheet,
             RuneSheet runeSheet,
-            RuneOptionSheet runeOptionSheet,
-            GameConfigSheet gameConfigSheet
+            RuneOptionSheet runeOptionSheet
         ) : base(materialItemSheet,
             skillSheet,
             skillBuffSheet,
@@ -180,9 +171,7 @@ namespace Nekoyume.TableData
             characterSheet,
             characterLevelSheet,
             equipmentItemSetEffectSheet,
-            runeOptionSheet,
-            gameConfigSheet
-        )
+            runeOptionSheet)
         {
             WorldBossCharacterSheet = worldBossCharacterSheet;
             WorldBossActionPatternSheet = worldBossActionPatternSheet;
