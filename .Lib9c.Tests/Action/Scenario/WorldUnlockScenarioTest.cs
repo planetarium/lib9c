@@ -3,9 +3,9 @@ namespace Lib9c.Tests.Action.Scenario
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model;
@@ -35,12 +35,13 @@ namespace Lib9c.Tests.Action.Scenario
 
             _avatarAddress = _agentAddress.Derive("avatar");
             _rankingMapAddress = _avatarAddress.Derive("ranking_map");
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
             var avatarState = new AvatarState(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(sheets[nameof(GameConfigSheet)]),
+                gameConfigState,
                 _rankingMapAddress
             )
             {
@@ -50,11 +51,18 @@ namespace Lib9c.Tests.Action.Scenario
 
             _weeklyArenaState = new WeeklyArenaState(0);
 
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+            var currency = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
+            var goldCurrencyState = new GoldCurrencyState(currency);
             _initialState = new World(new MockWorldState())
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetLegacyState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, avatarState)
-                .SetLegacyState(_rankingMapAddress, new RankingMapState(_rankingMapAddress).Serialize());
+                .SetLegacyState(_rankingMapAddress, new RankingMapState(_rankingMapAddress).Serialize())
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             foreach (var (key, value) in sheets)
             {
@@ -90,17 +98,20 @@ namespace Lib9c.Tests.Action.Scenario
             var doomfist = Doomfist.GetOne(_tableSheets, avatarState.level, ItemSubType.Weapon);
             avatarState.inventory.AddItem(doomfist);
 
-            var nextState = _initialState.SetAvatarState(_avatarAddress, avatarState);
-            var hackAndSlash = new HackAndSlash3
+            var nextState = _initialState
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    new Bencodex.Types.List(Enumerable.Range(1, worldIdToClear).Select(i => i.Serialize())));
+            var hackAndSlash = new HackAndSlash
             {
-                worldId = worldIdToClear,
-                stageId = stageIdToClear,
-                avatarAddress = _avatarAddress,
-                costumes = new List<int>(),
-                equipments = new List<Guid> { doomfist.NonFungibleId },
-                foods = new List<Guid>(),
-                WeeklyArenaAddress = _weeklyArenaState.address,
-                RankingMapAddress = _rankingMapAddress,
+                WorldId = worldIdToClear,
+                StageId = stageIdToClear,
+                AvatarAddress = _avatarAddress,
+                Costumes = new List<Guid>(),
+                Equipments = new List<Guid> { doomfist.NonFungibleId },
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
             };
             nextState = hackAndSlash.Execute(new ActionContext
             {
@@ -108,7 +119,6 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = _agentAddress,
                 RandomSeed = 0,
             });
-            Assert.True(hackAndSlash.Result.IsClear);
 
             avatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.True(avatarState.worldInformation.IsStageCleared(stageIdToClear));
@@ -149,7 +159,6 @@ id,world_id,stage_id,world_id_to_unlock,required_crystal
                 Signer = _agentAddress,
                 RandomSeed = 0,
             });
-            Assert.True(hackAndSlash.Result.IsClear);
 
             avatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.True(avatarState.worldInformation.IsWorldUnlocked(worldIdToUnlock));
