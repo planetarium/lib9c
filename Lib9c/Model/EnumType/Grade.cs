@@ -7,5 +7,6 @@ namespace Nekoyume.Model.EnumType
         Epic = 3,
         Unique = 4,
         Legendary = 5,
+        Divinity = 6,
     }
 }

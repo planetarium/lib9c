@@ -16,5 +16,8 @@ namespace Nekoyume.Model.Skill
         public StatType ReferencedStatType { get; }
         public SkillCustomField? CustomField { get; }
         public void Update(int chance, long power, int statPowerRatio);
+
+        public bool IsBuff();
+        public bool IsDebuff();
     }
 }

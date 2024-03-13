@@ -138,6 +138,118 @@ namespace Lib9c.Tests.Model.Skill
         }
 
         [Theory]
+        [InlineData(700009, new[] { 600001 })]
+        [InlineData(700010, new[] { 600001, 704000 })]
+        public void DispelOnUse(int dispelId, int[] debuffIdList)
+        {
+            var actionBuffSheet = _tableSheets.ActionBuffSheet;
+
+            // Add Debuff
+            foreach (var debuffId in debuffIdList)
+            {
+                var debuff = actionBuffSheet.Values.First(bf => bf.Id == debuffId); // 600001 is bleed
+                _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, debuff));
+            }
+
+            Assert.Equal(debuffIdList.Length, _player.Buffs.Count());
+
+            // Use Dispel
+            var skillRow = _tableSheets.SkillSheet.Values.First(bf => bf.Id == dispelId);
+            var dispelRow = _tableSheets.ActionBuffSheet.Values.First(
+                bf => bf.Id == _tableSheets.SkillActionBuffSheet.OrderedList.First(
+                        abf => abf.SkillId == dispelId)
+                    .BuffIds.First()
+            );
+            var dispel = new BuffSkill(skillRow, 0, 100, 0, StatType.NONE);
+            var battleStatus = dispel.Use(
+                _player,
+                0,
+                BuffFactory.GetBuffs(
+                    _player.Stats,
+                    dispel,
+                    _tableSheets.SkillBuffSheet,
+                    _tableSheets.StatBuffSheet,
+                    _tableSheets.SkillActionBuffSheet,
+                    _tableSheets.ActionBuffSheet
+                ),
+                false);
+            Assert.NotNull(battleStatus);
+            // Remove Bleed, add Dispel
+            Assert.Single(_player.Buffs);
+            Assert.Equal(dispelRow.GroupId, _player.Buffs.First().Value.BuffInfo.GroupId);
+        }
+
+        [Fact]
+        public void DispelOnDuration_Block()
+        {
+            const int actionBuffId = 708000; // Dispel with duration
+            var actionBuffSheet = _tableSheets.ActionBuffSheet;
+
+            // Use Dispel first
+            var dispel = actionBuffSheet.Values.First(bf => bf.Id == actionBuffId);
+            _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, dispel));
+            Assert.Single(_player.Buffs);
+
+            // Use Bleed
+            var debuffRow =
+                _tableSheets.SkillSheet.Values.First(bf => bf.Id == 600001); // 600001 is bleed
+            var debuff = new BuffSkill(debuffRow, 100, 100, 0, StatType.NONE);
+            var battleStatus = debuff.Use(
+                _enemy,
+                0,
+                BuffFactory.GetBuffs(
+                    _enemy.Stats,
+                    debuff,
+                    _tableSheets.SkillBuffSheet,
+                    _tableSheets.StatBuffSheet,
+                    _tableSheets.SkillActionBuffSheet,
+                    _tableSheets.ActionBuffSheet
+                ),
+                false);
+
+            // Bleed should be blocked
+            Assert.NotNull(battleStatus);
+            // Remove Bleed, add Dispel
+            Assert.Single(_player.Buffs);
+            Assert.False(battleStatus.SkillInfos.First().Affected);
+        }
+
+        [Fact]
+        public void DispelOnDuration_Affect()
+        {
+            const int actionBuffId = 708000; // Dispel with duration
+            var actionBuffSheet = _tableSheets.ActionBuffSheet;
+
+            // Use Dispel first
+            var dispel = actionBuffSheet.Values.First(bf => bf.Id == actionBuffId);
+            _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, dispel));
+            Assert.Single(_player.Buffs);
+
+            // Use Focus
+            var buffRow =
+                _tableSheets.SkillSheet.Values.First(bf => bf.Id == 700007); // 700007 is Focus
+            var buff = new BuffSkill(buffRow, 100, 100, 0, StatType.NONE);
+            var battleStatus = buff.Use(
+                _player,
+                0,
+                BuffFactory.GetBuffs(
+                    _player.Stats,
+                    buff,
+                    _tableSheets.SkillBuffSheet,
+                    _tableSheets.StatBuffSheet,
+                    _tableSheets.SkillActionBuffSheet,
+                    _tableSheets.ActionBuffSheet
+                ),
+                false);
+
+            // Bleed should be blocked
+            Assert.NotNull(battleStatus);
+            // Add Focus without block
+            Assert.Equal(2, _player.Buffs.Count);
+            Assert.True(battleStatus.SkillInfos.First().Affected);
+        }
+
+        [Theory]
         // Buff
         [InlineData(SkillType.Buff, true)]
         [InlineData(SkillType.Buff, false)]

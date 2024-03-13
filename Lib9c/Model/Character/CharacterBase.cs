@@ -356,28 +356,89 @@ namespace Nekoyume.Model
 
         #region Buff
 
-        public void AddBuff(Buff.Buff buff, bool updateImmediate = true)
+        /// <summary>
+        /// Add buff/debuff to target; it means buff/debuff is used by caster.
+        /// When `Dispel` is used, it can remove prev. debuffs on target.
+        /// All the removed debuffs will be returned and saved in battle log.
+        /// </summary>
+        /// <param name="buff"></param>
+        /// <param name="updateImmediate"></param>
+        /// <returns>An enumerable of removed debuffs from target. `null` will be returned if nothing eliminated.</returns>
+        public IEnumerable<Buff.Buff> AddBuff(Buff.Buff buff, bool updateImmediate = true)
         {
             if (Buffs.TryGetValue(buff.BuffInfo.GroupId, out var outBuff) &&
                 outBuff.BuffInfo.Id > buff.BuffInfo.Id)
-                return;
+                return null;
 
-            if (buff is StatBuff stat)
+            var dispelList = new List<Buff.Buff>();
+            switch (buff)
             {
-                var clone = (StatBuff)stat.Clone();
-                Buffs[stat.RowData.GroupId] = clone;
-                Stats.AddBuff(clone, updateImmediate);
+                // StatBuff Modifies stats
+                case StatBuff stat:
+                {
+                    var clone = (StatBuff)stat.Clone();
+                    Buffs[stat.RowData.GroupId] = clone;
+                    Stats.AddBuff(clone, updateImmediate);
+                    break;
+                }
+                case ActionBuff action:
+                {
+                    var clone = (ActionBuff)action.Clone();
+
+                    switch (action)
+                    {
+                        // Stun freezes target
+                        case Stun stun:
+                        {
+                            Buffs[stun.BuffInfo.GroupId] = clone;
+                            break;
+                        }
+                        // Dispel removes debuffs
+                        case Dispel dispel:
+                        {
+                            Buffs[dispel.BuffInfo.GroupId] = clone;
+
+                            dispelList = Buffs.Values.Where(
+                                            bff => bff.IsDebuff() &&
+                                                Simulator.Random.Next(0, 100) <
+                                                action.RowData.Chance).ToList();
+
+                            foreach (var bff in dispelList)
+                            {
+                                switch (bff)
+                                {
+                                    case StatBuff statBuff:
+                                        RemoveStatBuff(statBuff);
+                                        break;
+                                    case ActionBuff actionBuff:
+                                        RemoveActionBuff(actionBuff);
+                                        break;
+                                }
+                            }
+
+                            break;
+                        }
+                        default:
+                            Buffs[action.RowData.GroupId] = clone;
+                            break;
+                    }
+
+                    break;
+                }
             }
-            else if (buff is ActionBuff action)
-            {
-                var clone = (ActionBuff)action.Clone();
-                Buffs[action.RowData.GroupId] = clone;
-            }
-            else if (buff is Stun stun)
-            {
-                var clone = (Stun)stun.Clone();
-                Buffs[stun.BuffInfo.GroupId] = clone;
-            }
+
+            return dispelList;
+        }
+
+        public void RemoveActionBuff(ActionBuff removedBuff)
+        {
+            Buffs.Remove(removedBuff.RowData.GroupId);
+        }
+
+        public void RemoveStatBuff(StatBuff removedBuff)
+        {
+            Stats.RemoveBuff(removedBuff);
+            Buffs.Remove(removedBuff.RowData.GroupId);
         }
 
         public void RemoveRecentStatBuff()
@@ -410,8 +471,7 @@ namespace Nekoyume.Model
 
             if (removedBuff != null)
             {
-                Stats.RemoveBuff(removedBuff);
-                Buffs.Remove(removedBuff.RowData.GroupId);
+                RemoveStatBuff(removedBuff);
             }
         }
 
