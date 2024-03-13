@@ -249,6 +249,63 @@ namespace Lib9c.Tests.Model.Skill
             Assert.True(battleStatus.SkillInfos.First().Affected);
         }
 
+        [Fact]
+        public void DispelOnDuration_Nothing()
+        {
+            const int actionBuffId = 708000; // Dispel with duration
+            var actionBuffSheet = _tableSheets.ActionBuffSheet;
+
+            // Use Dispel first
+            var dispel = actionBuffSheet.Values.First(bf => bf.Id == actionBuffId);
+            _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, dispel));
+            Assert.Single(_player.Buffs);
+
+            // Add Bleed
+            var bleed = actionBuffSheet.Values.First(bf => bf.Id == 600001);
+            _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, bleed));
+
+            // Attack
+            _enemy.Targets.Add(_player);
+            var skillRow =
+                _tableSheets.SkillSheet.Values.First(bf => bf.Id == 100000);
+            var attack = new NormalAttack(skillRow, 100, 100, default, StatType.NONE);
+            var battleStatus = attack.Use(
+                _enemy,
+                0,
+                BuffFactory.GetBuffs(
+                    _enemy.Stats,
+                    attack,
+                    _tableSheets.SkillBuffSheet,
+                    _tableSheets.StatBuffSheet,
+                    _tableSheets.SkillActionBuffSheet,
+                    _tableSheets.ActionBuffSheet
+                ),
+                false);
+
+            // keep debuff
+            Assert.Equal(2, _player.Buffs.Count);
+            Assert.True(battleStatus.SkillInfos.First().Affected);
+
+            // Attack
+            _player.Targets.Add(_enemy);
+            battleStatus = attack.Use(
+                _player,
+                0,
+                BuffFactory.GetBuffs(
+                    _player.Stats,
+                    attack,
+                    _tableSheets.SkillBuffSheet,
+                    _tableSheets.StatBuffSheet,
+                    _tableSheets.SkillActionBuffSheet,
+                    _tableSheets.ActionBuffSheet
+                ),
+                false);
+
+            // keep debuff
+            Assert.Equal(2, _player.Buffs.Count);
+            Assert.True(battleStatus.SkillInfos.First().Affected);
+        }
+
         [Theory]
         // Buff
         [InlineData(SkillType.Buff, true)]
