@@ -56,7 +56,11 @@ namespace Lib9c.Tests.Model.Skill.Arena
         {
             var gameConfigState =
                 new GameConfigState((Text)_tableSheets.GameConfigSheet.Serialize());
-            var simulator = new ArenaSimulator(new TestRandom(), hpModifier: hpModifier);
+            var simulator = new ArenaSimulator(
+                new TestRandom(),
+                hpModifier: hpModifier,
+                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
+            );
             var myDigest = new ArenaPlayerDigest(_avatar1, _arenaAvatar1);
             var enemyDigest = new ArenaPlayerDigest(_avatar2, _arenaAvatar2);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();

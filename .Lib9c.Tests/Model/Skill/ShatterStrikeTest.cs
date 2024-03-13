@@ -71,7 +71,8 @@ namespace Lib9c.Tests.Model.Skill
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                copyCharacter
+                copyCharacter,
+                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
             );
             var player = new Player(avatarState, simulator);
             var enemyRow = _tableSheets.CharacterSheet.OrderedList
