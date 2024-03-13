@@ -494,7 +494,8 @@ namespace Nekoyume.Action
                     costumeStatSheet,
                     rewards,
                     collectionModifiers,
-                    false);
+                    false,
+                    gameConfigState.ShatterStrikeMaxDamage);
                 sw.Stop();
                 Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                     addressesHex, source, "Initialize Simulator", blockIndex, sw.Elapsed.TotalMilliseconds);

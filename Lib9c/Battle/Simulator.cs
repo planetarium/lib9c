@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Bencodex.Types;
 using Libplanet.Action;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Item;
-using Nekoyume.Model.Skill;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Priority_Queue;
@@ -51,13 +49,14 @@ namespace Nekoyume.Battle
         protected Simulator(IRandom random,
             AvatarState avatarState,
             List<Guid> foods,
-            SimulatorSheets simulatorSheets, bool logEvent = true)
+            SimulatorSheets simulatorSheets,
+            bool logEvent = true,
+            long shatterStrikeMaxDamage = 400_000  //  400k is initial limit of ShatterStrike. Use this as default
+            )
             : this(random, new Player(avatarState, simulatorSheets), foods, simulatorSheets)
         {
             LogEvent = logEvent;
-            ShatterStrikeMaxDamage =
-                new GameConfigState((Text)simulatorSheets.GameConiConfigSheet.Serialize())
-                    .ShatterStrikeMaxDamage;
+            ShatterStrikeMaxDamage = shatterStrikeMaxDamage;
         }
 
         protected Simulator(
