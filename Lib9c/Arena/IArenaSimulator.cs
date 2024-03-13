@@ -9,5 +9,6 @@ namespace Nekoyume.Arena
         public ArenaLog Log { get; }
         public IRandom Random { get; }
         public int Turn { get; }
+        public long ShatterStrikeMaxDamage { get; }
     }
 }

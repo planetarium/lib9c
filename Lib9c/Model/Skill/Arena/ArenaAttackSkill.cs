@@ -66,7 +66,7 @@ namespace Nekoyume.Model.Skill.Arena
                     if (SkillRow.SkillCategory is SkillCategory.ShatterStrike)
                     {
                         damage = Math.Clamp(damage,
-                            1, ((ArenaSimulator)caster.Simulator).ShatterStrikeMaxDamage);
+                            1, caster.Simulator.ShatterStrikeMaxDamage);
                     }
 
                     target.CurrentHP -= damage;
