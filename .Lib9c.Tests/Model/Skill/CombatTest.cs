@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Model.Skill
     public class CombatTest
     {
         private readonly TableSheets _tableSheets;
+        private readonly AvatarState _avatarState;
         private readonly Player _player;
         private readonly Enemy _enemy;
 
@@ -25,7 +26,7 @@ namespace Lib9c.Tests.Model.Skill
             _tableSheets = new TableSheets(csv);
 
             var gameConfigState = new GameConfigState(csv[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            _avatarState = new AvatarState(
                 default,
                 default,
                 0,
@@ -40,7 +41,7 @@ namespace Lib9c.Tests.Model.Skill
                 _tableSheets.EquipmentItemSetEffectSheet);
             var simulator = new TestSimulator(
                 new TestRandom(),
-                avatarState,
+                _avatarState,
                 new List<System.Guid>(),
                 _tableSheets.GetSimulatorSheets());
             _player.Simulator = simulator;
@@ -138,16 +139,23 @@ namespace Lib9c.Tests.Model.Skill
         }
 
         [Theory]
-        [InlineData(700009, new[] { 600001 })]
-        [InlineData(700010, new[] { 600001, 704000 })]
-        public void DispelOnUse(int dispelId, int[] debuffIdList)
+        [InlineData(700009, 50, 1, new[] { 600001 }, new[] { 600001 })]
+        [InlineData(700009, 100, 0, new[] { 600001 }, new[] { 707000 })]
+        [InlineData(700010, 100, 0, new[] { 600001, 704000 }, new[] { 708000 })]
+        public void DispelOnUse(int dispelId, int chance, int seed, int[] debuffIdList, int[] expectedResult)
         {
+            var simulator = new TestSimulator(
+                new TestRandom(seed),
+                _avatarState,
+                new List<System.Guid>(),
+                _tableSheets.GetSimulatorSheets());
             var actionBuffSheet = _tableSheets.ActionBuffSheet;
 
             // Add Debuff
             foreach (var debuffId in debuffIdList)
             {
-                var debuff = actionBuffSheet.Values.First(bf => bf.Id == debuffId); // 600001 is bleed
+                var debuff =
+                    actionBuffSheet.Values.First(bf => bf.Id == debuffId); // 600001 is bleed
                 _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, debuff));
             }
 
@@ -160,7 +168,7 @@ namespace Lib9c.Tests.Model.Skill
                         abf => abf.SkillId == dispelId)
                     .BuffIds.First()
             );
-            var dispel = new BuffSkill(skillRow, 0, 100, 0, StatType.NONE);
+            var dispel = new BuffSkill(skillRow, 0, chance, 0, StatType.NONE);
             var battleStatus = dispel.Use(
                 _player,
                 0,
@@ -176,7 +184,7 @@ namespace Lib9c.Tests.Model.Skill
             Assert.NotNull(battleStatus);
             // Remove Bleed, add Dispel
             Assert.Single(_player.Buffs);
-            Assert.Equal(dispelRow.GroupId, _player.Buffs.First().Value.BuffInfo.GroupId);
+            Assert.Equal(expectedResult, _player.Buffs.Values.Select(bf => bf.BuffInfo.GroupId).ToArray());
         }
 
         [Fact]
