@@ -30,9 +30,6 @@ namespace Nekoyume.Model
         private readonly ActionBuffSheet _actionBuffSheet;
         private readonly ArenaSkills _skills;
 
-        private readonly List<int> _statDebuffList;
-        private readonly List<int> _actionDebuffList;
-
         public readonly IArenaSimulator Simulator;
         public readonly ArenaSkills _runeSkills = new ArenaSkills();
         public readonly Dictionary<int, int> RuneSkillCooldownMap = new Dictionary<int, int>();
@@ -144,20 +141,6 @@ namespace Nekoyume.Model
             _skillActionBuffSheet = sheets.SkillActionBuffSheet;
             _actionBuffSheet = sheets.ActionBuffSheet;
 
-            var debuffSkillIdList = _skillSheet.Values
-                .Where(s => s.SkillType == SkillType.Debuff).Select(s => s.Id);
-            _statDebuffList = _skillBuffSheet.Values.Where(
-                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
-                new List<int>(),
-                (current, bf) => current.Concat(bf.BuffIds).ToList()
-            );
-            _actionDebuffList = _skillActionBuffSheet.Values.Where(
-                bf => debuffSkillIdList.Contains(bf.SkillId)).Aggregate(
-                new List<int>(),
-                (current, bf) => current.Concat(bf.BuffIds).ToList()
-            );
-
-
             Simulator = simulator;
             Stats = GetStatV1(
                 digest,
@@ -237,9 +220,6 @@ namespace Nekoyume.Model
             _statBuffSheet = value._statBuffSheet;
             _skillActionBuffSheet = value._skillActionBuffSheet;
             _actionBuffSheet = value._actionBuffSheet;
-
-            _statDebuffList = value._statDebuffList;
-            _actionDebuffList = value._actionDebuffList;
 
             Simulator = value.Simulator;
             Stats = new CharacterStats(value.Stats);

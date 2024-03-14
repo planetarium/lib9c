@@ -21,6 +21,8 @@ namespace Nekoyume.Arena
         public int Turn { get; private set; }
         public ArenaLog Log { get; private set; }
 
+        public long ShatterStrikeMaxDamage { get; }
+
         public ArenaSimulatorV1(IRandom random)
         {
             Random = random;

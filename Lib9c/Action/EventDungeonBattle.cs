@@ -366,7 +366,8 @@ namespace Nekoyume.Action
                     stageRow,
                     sheets.GetSheet<MaterialItemSheet>(),
                     PlayCount),
-                collectionModifiers);
+                collectionModifiers,
+                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage);
             simulator.Simulate();
             sw.Stop();
             Log.Verbose(

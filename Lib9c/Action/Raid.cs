@@ -231,8 +231,9 @@ namespace Nekoyume.Action
                 runeStates,
                 raidSimulatorSheets,
                 sheets.GetSheet<CostumeStatSheet>(),
-                collectionModifiers
-                );
+                collectionModifiers,
+                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
+            );
             simulator.Simulate();
             avatarState.inventory = simulator.Player.Inventory;
 

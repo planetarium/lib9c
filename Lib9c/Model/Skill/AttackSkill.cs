@@ -92,6 +92,13 @@ namespace Nekoyume.Model.Skill
 
                             // double attack must be shown as critical attack
                             isCritical |= SkillRow.SkillCategory is SkillCategory.DoubleAttack;
+
+                            // ShatterStrike has max damage limitation
+                            if (SkillRow.SkillCategory is SkillCategory.ShatterStrike)
+                            {
+                                damage = Math.Clamp(damage,
+                                    1, caster.Simulator.ShatterStrikeMaxDamage);
+                            }
                         }
 
                         target.CurrentHP -= damage;

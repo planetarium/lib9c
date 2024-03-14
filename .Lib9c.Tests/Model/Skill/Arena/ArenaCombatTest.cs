@@ -194,5 +194,79 @@ namespace Lib9c.Tests.Model.Skill.Arena
             Assert.Equal(2, challenger.Buffs.Count);
             Assert.True(battleStatus.SkillInfos.First().Affected);
         }
+
+        [Fact]
+        public void DispelOnDuration_Nothing()
+        {
+            var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
+            var myDigest = new ArenaPlayerDigest(_avatar1, _arenaAvatar1);
+            var enemyDigest = new ArenaPlayerDigest(_avatar2, _arenaAvatar2);
+            var simulator = new ArenaSimulator(new TestRandom());
+            var challenger = new ArenaCharacter(
+                simulator,
+                myDigest,
+                arenaSheets,
+                simulator.HpModifier,
+                new List<StatModifier>()
+            );
+            var enemy = new ArenaCharacter(
+                simulator,
+                enemyDigest,
+                arenaSheets,
+                simulator.HpModifier,
+                new List<StatModifier>()
+            );
+
+            // Use Dispel first
+            var dispel = _tableSheets.ActionBuffSheet.Values.First(bf => bf.Id == ActionBuffId);
+            challenger.AddBuff(BuffFactory.GetActionBuff(challenger.Stats, dispel));
+            Assert.Single(challenger.Buffs);
+
+            // Use Bleed
+            var bleed = _tableSheets.ActionBuffSheet.Values.First(bf => bf.Id == 600001);
+            challenger.AddBuff(BuffFactory.GetActionBuff(challenger.Stats, bleed));
+            Assert.Equal(2, challenger.Buffs.Count);
+
+            // NormalAttack to test. This must not remove debuff by dispel
+            var attackRow =
+                _tableSheets.SkillSheet.Values.First(bf => bf.Id == 100000);
+            var attack = new ArenaNormalAttack(attackRow, 100, 100, 0, StatType.NONE);
+
+            // Hit
+            var battleStatus = attack.Use(
+                enemy,
+                challenger,
+                simulator.Turn,
+                BuffFactory.GetBuffs(
+                    challenger.Stats,
+                    attack,
+                    _tableSheets.SkillBuffSheet,
+                    _tableSheets.StatBuffSheet,
+                    _tableSheets.SkillActionBuffSheet,
+                    _tableSheets.ActionBuffSheet
+                )
+            );
+            Assert.Equal(2, challenger.Buffs.Count);
+            Assert.True(battleStatus.SkillInfos.First().Affected);
+            Assert.Contains(600001, challenger.Buffs.Values.Select(bf => bf.BuffInfo.Id));
+
+            // Attack
+            battleStatus = attack.Use(
+                challenger,
+                enemy,
+                simulator.Turn,
+                BuffFactory.GetBuffs(
+                    challenger.Stats,
+                    attack,
+                    _tableSheets.SkillBuffSheet,
+                    _tableSheets.StatBuffSheet,
+                    _tableSheets.SkillActionBuffSheet,
+                    _tableSheets.ActionBuffSheet
+                )
+            );
+            Assert.Equal(2, challenger.Buffs.Count);
+            Assert.True(battleStatus.SkillInfos.First().Affected);
+            Assert.Contains(600001, challenger.Buffs.Values.Select(bf => bf.BuffInfo.Id));
+        }
     }
 }

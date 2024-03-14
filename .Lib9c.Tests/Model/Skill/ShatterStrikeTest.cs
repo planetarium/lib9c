@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Model.Skill
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Bencodex.Types;
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
     using Nekoyume.Battle;
@@ -19,16 +20,20 @@ namespace Lib9c.Tests.Model.Skill
 
         [Theory]
         // 1bp == 0.01%
-        [InlineData(10000, true)]
-        [InlineData(10000, false)]
-        [InlineData(1000, true)]
-        [InlineData(1000, false)]
-        [InlineData(3700, true)]
-        [InlineData(3700, false)]
-        [InlineData(100000, true)]
-        [InlineData(100000, false)]
-        public void Use(int ratioBp, bool copyCharacter)
+        [InlineData(100, 10000, false, true)]
+        [InlineData(100, 10000, false, false)]
+        [InlineData(100, 1000, false, true)]
+        [InlineData(100, 1000, false, false)]
+        [InlineData(100, 3700, false, true)]
+        [InlineData(100, 3700, false, false)]
+        [InlineData(100, 100_000, true, true)]
+        [InlineData(100, 100_000, true, false)]
+        [InlineData(1_000_000, 100_000, false, true)]
+        [InlineData(1_000_000, 100_000, false, false)]
+        public void Use(int enemyHp, int ratioBp, bool expectedEnemyDead, bool copyCharacter)
         {
+            var gameConfigState =
+                new GameConfigState((Text)_tableSheets.GameConfigSheet.Serialize());
             Assert.True(
                 _tableSheets.SkillSheet.TryGetValue(700011, out var skillRow)
             ); // 700011 is ShatterStrike
@@ -66,11 +71,17 @@ namespace Lib9c.Tests.Model.Skill
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                copyCharacter
+                copyCharacter,
+                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
             );
             var player = new Player(avatarState, simulator);
             var enemyRow = _tableSheets.CharacterSheet.OrderedList
                 .FirstOrDefault(e => e.Id > 200000);
+            enemyRow.Set(new[]
+            {
+                "201000", "XS", "2", enemyHp.ToString(), "16", "6", "4", "90", "15", "3.2", "0.64",
+                "0.24", "0", "3.6", "0.6", "0.8", "1.2",
+            });
             Assert.NotNull(enemyRow);
 
             var enemy = new Enemy(player, enemyRow, 1);
@@ -80,13 +91,14 @@ namespace Lib9c.Tests.Model.Skill
             Assert.NotNull(used);
             var skillInfo = Assert.Single(used.SkillInfos);
             Assert.Equal(
-                (long)(enemy.HP * ratioBp / 10000m) - enemy.DEF + player.ArmorPenetration,
+                Math.Clamp(
+                    enemy.HP * ratioBp / 10000m - enemy.DEF + player.ArmorPenetration,
+                    1,
+                    gameConfigState.ShatterStrikeMaxDamage
+                ),
                 skillInfo.Effect
             );
-            if (ratioBp > 10000)
-            {
-                Assert.True(skillInfo.IsDead);
-            }
+            Assert.Equal(expectedEnemyDead, skillInfo.IsDead);
         }
     }
 }
