@@ -28,7 +28,7 @@ namespace Nekoyume.Action
     [ActionType("hack_and_slash_sweep10")]
     public class HackAndSlashSweep : GameAction, IHackAndSlashSweepV3
     {
-        public const int UsableApStoneCount = 10;
+        public const int UsableApStoneCount = 20;
 
         public List<Guid> costumes;
         public List<Guid> equipments;
