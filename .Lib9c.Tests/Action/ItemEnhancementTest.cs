@@ -21,7 +21,7 @@ namespace Lib9c.Tests.Action
     using Xunit;
     using static SerializeKeys;
 
-    public class ItemEnhancement13Test
+    public class ItemEnhancementTest
     {
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddress;
@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _currency;
         private IAccount _initialState;
 
-        public ItemEnhancement13Test()
+        public ItemEnhancementTest()
         {
             _initialState = new Account(MockState.Empty);
             Dictionary<string, string> sheets;
@@ -297,7 +297,7 @@ namespace Lib9c.Tests.Action
                 )
                 .SetState(_avatarAddress, _avatarState.SerializeV2());
 
-            var action = new ItemEnhancement13
+            var action = new ItemEnhancement
             {
                 itemId = default,
                 materialIds = materialIds,

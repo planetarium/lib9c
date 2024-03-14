@@ -23,7 +23,7 @@ namespace Lib9c.Tests.Action
     using Xunit;
     using static Lib9c.SerializeKeys;
 
-    public class RapidCombination9Test
+    public class RapidCombinationTest
     {
         private readonly IAccount _initialState;
 
@@ -32,7 +32,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
 
-        public RapidCombination9Test()
+        public RapidCombinationTest()
         {
             _initialState = new Account(MockState.Empty);
             Dictionary<string, string> sheets;
@@ -147,7 +147,7 @@ namespace Lib9c.Tests.Action
                     .SetState(_avatarAddress, avatarState.SerializeV2());
             }
 
-            var action = new RapidCombination9
+            var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
                 slotIndex = 0,
@@ -181,7 +181,7 @@ namespace Lib9c.Tests.Action
             var tempState = _initialState
                 .SetState(slotAddress, slotState.Serialize());
 
-            var action = new RapidCombination9
+            var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
                 slotIndex = 0,
@@ -235,7 +235,7 @@ namespace Lib9c.Tests.Action
                 .SetState(_avatarAddress, avatarState.Serialize())
                 .SetState(slotAddress, slotState.Serialize());
 
-            var action = new RapidCombination9
+            var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
                 slotIndex = 0,
@@ -291,7 +291,7 @@ namespace Lib9c.Tests.Action
                 .SetState(_avatarAddress, avatarState.Serialize())
                 .SetState(slotAddress, slotState.Serialize());
 
-            var action = new RapidCombination9
+            var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
                 slotIndex = 0,
@@ -367,7 +367,7 @@ namespace Lib9c.Tests.Action
                 .SetState(_avatarAddress, avatarState.Serialize())
                 .SetState(slotAddress, slotState.Serialize());
 
-            var action = new RapidCombination9
+            var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
                 slotIndex = 0,
@@ -496,7 +496,7 @@ namespace Lib9c.Tests.Action
                 .SetState(_avatarAddress, avatarState.Serialize())
                 .SetState(slotAddress, slotState.Serialize());
 
-            var action = new RapidCombination9
+            var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
                 slotIndex = 0,
@@ -667,7 +667,7 @@ namespace Lib9c.Tests.Action
                 .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
                 .SetState(_avatarAddress, avatarState.SerializeV2());
 
-            var action = new RapidCombination9
+            var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
                 slotIndex = 0,

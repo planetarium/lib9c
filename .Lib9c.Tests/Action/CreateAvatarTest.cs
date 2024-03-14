@@ -17,12 +17,12 @@ namespace Lib9c.Tests.Action
     using Xunit;
     using static Lib9c.SerializeKeys;
 
-    public class CreateAvatar10Test
+    public class CreateAvatarTest
     {
         private readonly Address _agentAddress;
         private readonly TableSheets _tableSheets;
 
-        public CreateAvatar10Test()
+        public CreateAvatarTest()
         {
             _agentAddress = default;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
@@ -34,7 +34,7 @@ namespace Lib9c.Tests.Action
         [InlineData(7_210_001L)]
         public void Execute(long blockIndex)
         {
-            var action = new CreateAvatar10()
+            var action = new CreateAvatar()
             {
                 index = 0,
                 hair = 0,
@@ -106,7 +106,7 @@ namespace Lib9c.Tests.Action
         {
             var agentAddress = default(Address);
 
-            var action = new CreateAvatar10()
+            var action = new CreateAvatar()
             {
                 index = 0,
                 hair = 0,
@@ -147,7 +147,7 @@ namespace Lib9c.Tests.Action
                 default
             );
 
-            var action = new CreateAvatar10()
+            var action = new CreateAvatar()
             {
                 index = 0,
                 hair = 0,
@@ -175,7 +175,7 @@ namespace Lib9c.Tests.Action
         {
             var agentState = new AgentState(_agentAddress);
             var state = new Account(MockState.Empty).SetState(_agentAddress, agentState.Serialize());
-            var action = new CreateAvatar10()
+            var action = new CreateAvatar()
             {
                 index = index,
                 hair = 0,
@@ -211,7 +211,7 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[index] = avatarAddress;
             var state = new Account(MockState.Empty).SetState(_agentAddress, agentState.Serialize());
 
-            var action = new CreateAvatar10()
+            var action = new CreateAvatar()
             {
                 index = index,
                 hair = 0,
@@ -234,7 +234,7 @@ namespace Lib9c.Tests.Action
         public void Serialize_With_DotnetAPI()
         {
             var formatter = new BinaryFormatter();
-            var action = new CreateAvatar10()
+            var action = new CreateAvatar()
             {
                 index = 2,
                 hair = 1,

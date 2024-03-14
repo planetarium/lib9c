@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action
     using Xunit;
     using static Lib9c.SerializeKeys;
 
-    public class EventDungeonBattleV5Test
+    public class EventDungeonBattleTest
     {
         private readonly Currency _ncgCurrency;
         private readonly TableSheets _tableSheets;
@@ -29,7 +29,7 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private IAccount _initialStates;
 
-        public EventDungeonBattleV5Test()
+        public EventDungeonBattleTest()
         {
             _initialStates = new Account(MockState.Empty);
 
@@ -456,7 +456,7 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.inventory.AddItem(equipment, iLock: null);
             }
 
-            var action = new EventDungeonBattleV5
+            var action = new EventDungeonBattle
             {
                 AvatarAddress = _avatarAddress,
                 EventScheduleId = eventScheduleId,

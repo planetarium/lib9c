@@ -15,7 +15,7 @@ namespace Lib9c.Tests.Action
     using Xunit;
     using static Lib9c.SerializeKeys;
 
-    public class CombinationConsumable8Test
+    public class CombinationConsumableTest
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -23,7 +23,7 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private IAccount _initialState;
 
-        public CombinationConsumable8Test()
+        public CombinationConsumableTest()
         {
             _agentAddress = new PrivateKey().Address;
             _avatarAddress = _agentAddress.Derive("avatar");
@@ -113,7 +113,7 @@ namespace Lib9c.Tests.Action
                     .SetState(_avatarAddress, avatarState.SerializeV2());
             }
 
-            var action = new CombinationConsumable8
+            var action = new CombinationConsumable
             {
                 avatarAddress = _avatarAddress,
                 recipeId = row.Id,
