@@ -401,7 +401,7 @@ namespace Nekoyume.Model
                             dispelList = Buffs.Values.Where(
                                             bff => bff.IsDebuff() &&
                                                 Simulator.Random.Next(0, 100) <
-                                                action.RowData.Chance).ToList();
+                                                dispel.BuffInfo.Chance).ToList();
 
                             foreach (var bff in dispelList)
                             {

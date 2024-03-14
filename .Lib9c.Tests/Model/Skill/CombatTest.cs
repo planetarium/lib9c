@@ -139,9 +139,9 @@ namespace Lib9c.Tests.Model.Skill
         }
 
         [Theory]
-        [InlineData(700009, 50, 1, new[] { 600001 }, new[] { 600001 })]
+        [InlineData(700009, 50, 3, new[] { 600001 }, new[] { 600001, 707000 })]
         [InlineData(700009, 100, 0, new[] { 600001 }, new[] { 707000 })]
-        [InlineData(700010, 100, 0, new[] { 600001, 704000 }, new[] { 708000 })]
+        [InlineData(700010, 100, 0, new[] { 600001, 704000 }, new[] { 707000 })]
         public void DispelOnUse(int dispelId, int chance, int seed, int[] debuffIdList, int[] expectedResult)
         {
             var simulator = new TestSimulator(
@@ -149,6 +149,7 @@ namespace Lib9c.Tests.Model.Skill
                 _avatarState,
                 new List<System.Guid>(),
                 _tableSheets.GetSimulatorSheets());
+            _player.Simulator = simulator;
             var actionBuffSheet = _tableSheets.ActionBuffSheet;
 
             // Add Debuff
@@ -162,28 +163,18 @@ namespace Lib9c.Tests.Model.Skill
             Assert.Equal(debuffIdList.Length, _player.Buffs.Count());
 
             // Use Dispel
-            var skillRow = _tableSheets.SkillSheet.Values.First(bf => bf.Id == dispelId);
-            var dispelRow = _tableSheets.ActionBuffSheet.Values.First(
-                bf => bf.Id == _tableSheets.SkillActionBuffSheet.OrderedList.First(
-                        abf => abf.SkillId == dispelId)
-                    .BuffIds.First()
-            );
-            var dispel = new BuffSkill(skillRow, 0, chance, 0, StatType.NONE);
+            var actionBuffRow = new ActionBuffSheet.Row();
+            actionBuffRow.Set(new[] { "707000", "707000", chance.ToString(), "0", "Self", "Dispel", "Normal", "0" });
+            var dispelRow = _tableSheets.SkillSheet.Values.First(bf => bf.Id == dispelId);
+            var dispel = new BuffSkill(dispelRow, 0, chance, 0, StatType.NONE);
             var battleStatus = dispel.Use(
                 _player,
                 0,
-                BuffFactory.GetBuffs(
-                    _player.Stats,
-                    dispel,
-                    _tableSheets.SkillBuffSheet,
-                    _tableSheets.StatBuffSheet,
-                    _tableSheets.SkillActionBuffSheet,
-                    _tableSheets.ActionBuffSheet
-                ),
+                new List<Buff>() { new Dispel(actionBuffRow) },
                 false);
             Assert.NotNull(battleStatus);
             // Remove Bleed, add Dispel
-            Assert.Single(_player.Buffs);
+            Assert.Equal(expectedResult.Length, _player.Buffs.Count);
             Assert.Equal(expectedResult, _player.Buffs.Values.Select(bf => bf.BuffInfo.GroupId).ToArray());
         }
 
