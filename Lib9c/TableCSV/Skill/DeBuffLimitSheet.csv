@@ -1,0 +1,6 @@
+id,stat_type,percentage
+1,ATK,-1
+2,DEF,-10
+3,CRI,-20
+4,HIT,-50
+5,SPD,-100

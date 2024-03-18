@@ -83,6 +83,7 @@ namespace Nekoyume.Action
                 typeof(WorldBossKillRewardSheet),
                 typeof(RuneSheet),
                 typeof(RuneListSheet),
+                typeof(DeBuffLimitSheet),
             };
             if (collectionExist)
             {
@@ -232,6 +233,7 @@ namespace Nekoyume.Action
                 raidSimulatorSheets,
                 sheets.GetSheet<CostumeStatSheet>(),
                 collectionModifiers,
+                sheets.GetSheet<DeBuffLimitSheet>(),
                 shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
             );
             simulator.Simulate();

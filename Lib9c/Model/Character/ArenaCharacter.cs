@@ -728,7 +728,7 @@ namespace Nekoyume.Model
             if (!isBuffRemoved)
                 return;
 
-            Stats.SetBuffs(StatBuffs);
+            Stats.SetBuffs(StatBuffs, Simulator.DeBuffLimitSheet);
         }
 
         [Obsolete("Use RemoveBuffs")]
@@ -750,7 +750,7 @@ namespace Nekoyume.Model
 
             if (isApply)
             {
-                Stats.SetBuffs(StatBuffs);
+                Stats.SetBuffs(StatBuffs, Simulator.DeBuffLimitSheet);
             }
         }
 
