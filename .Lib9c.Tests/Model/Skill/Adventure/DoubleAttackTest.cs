@@ -1,4 +1,4 @@
-namespace Lib9c.Tests.Model.Skill
+namespace Lib9c.Tests.Model.Skill.Adventure
 {
     using System;
     using System.Collections.Generic;
@@ -54,7 +54,7 @@ namespace Lib9c.Tests.Model.Skill
         [InlineData(700008, 250, 4, 1, false)]
         [InlineData(700008, 250, 5, 2, true)]
         [InlineData(700008, 250, 5, 2, false)]
-        public void DoubleAttack(
+        public void DoubleAttackStage(
             int skillId,
             int level,
             int initialAttackCount,
