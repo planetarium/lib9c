@@ -43,7 +43,8 @@ namespace Lib9c.Tests.Model.Skill.Raid
                 new List<StatModifier>
                 {
                     new (StatType.DEF, StatModifier.OperationType.Percentage, 100),
-                }
+                },
+                _tableSheets.DeBuffLimitSheet
             );
             var player = simulator.Player;
             var buffRow = new ActionBuffSheet.Row();
