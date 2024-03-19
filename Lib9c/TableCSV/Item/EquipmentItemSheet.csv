@@ -35,11 +35,11 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10142001,Asgardian Sword,Weapon,5,Water,13,ATK,798,2,10142001,2
 10143001,Asgardian Sword,Weapon,5,Land,14,ATK,1221,2,10143001,2
 10144001,Asgardian Sword,Weapon,5,Wind,15,ATK,1525,2,10144001,2
-10150001,Surt's Sword,Weapon,6,Normal,0,ATK,2157,2,10150001,2
-10151001,Surt's Sword,Weapon,6,Fire,0,ATK,2190,2,10151001,2
-10152001,Surt's Sword,Weapon,6,Water,0,ATK,2223,2,10152001,2
-10153001,Surt's Sword,Weapon,6,Land,0,ATK,3390,2,10153001,2
-10154001,Surt's Sword,Weapon,6,Wind,0,ATK,4219,2,10154001,2
+10150001,Surt's Sword,Weapon,6,Normal,0,ATK,13877,2,10150001,2
+10151001,Surt's Sword,Weapon,6,Fire,0,ATK,9912,2,10151001,2
+10152001,Surt's Sword,Weapon,6,Water,0,ATK,9912,2,10152001,2
+10153001,Surt's Sword,Weapon,6,Land,0,ATK,13877,2,10153001,2
+10154001,Surt's Sword,Weapon,6,Wind,0,ATK,13877,2,10154001,2
 10155000,Valkyrie’s Sword,Weapon,5,Normal,15,ATK,2902,2,10155000,2
 10200000,Ragged Clothes,Armor,0,Normal,0,HP,30,2,Character/Player/10200000,12
 10210000,Casual Clothes,Armor,1,Normal,1,HP,180,2,Character/Player/10210000,5
@@ -72,11 +72,11 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10252001,Ancient Armor,Armor,5,Water,13,HP,48224,2,Character/Player/10252001,1800000
 10253001,Ancient Armor,Armor,5,Land,14,HP,67513,2,Character/Player/10253001,2400000
 10254001,Ancient Armor,Armor,5,Wind,15,HP,67513,2,Character/Player/10254001,2400000
-10250000,Legendary Armor,Armor,6,Normal,0,HP,15550,2,Character/Player/10250000,2
-10251000,Legendary Armor,Armor,6,Fire,0,HP,15848,2,Character/Player/10251000,2
-10252000,Legendary Armor,Armor,6,Water,0,HP,16146,2,Character/Player/10252000,2
-10253000,Legendary Armor,Armor,6,Land,0,HP,24665,2,Character/Player/10253000,2
-10254000,Legendary Armor,Armor,6,Wind,0,HP,30823,2,Character/Player/10254000,2
+10250000,Surt's Armor,Armor,6,Normal,0,HP,154532,2,Character/Player/10250000,2
+10251000,Surt's Armor,Armor,6,Fire,0,HP,110380,2,Character/Player/10251000,2
+10252000,Surt's Armor,Armor,6,Water,0,HP,110380,2,Character/Player/10252000,2
+10253000,Surt's Armor,Armor,6,Land,0,HP,154532,2,Character/Player/10253000,2
+10254000,Surt's Armor,Armor,6,Wind,0,HP,154532,2,Character/Player/10254000,2
 10240001,Asgardian Armor,Armor,5,Normal,11,HP,10358,2,Character/Player/10240001,2
 10241001,Asgardian Armor,Armor,5,Fire,12,HP,10571,2,Character/Player/10241001,2
 10242001,Asgardian Armor,Armor,5,Water,13,HP,10783,2,Character/Player/10242001,2
@@ -193,18 +193,18 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10640003,Barrage Aura,Aura,4,Normal,0,ATK,10,0,10620001,6000
 10650005,Barrage Aura,Aura,5,Normal,0,ATK,10,0,10620001,60000
 10650006,Lord's Barrage Aura,Aura,5,Normal,0,ATK,10,0,10620001,60000
-10350002,,Belt,6,Normal,0,SPD,1,2,10350002,1
-10351002,,Belt,6,Fire,0,SPD,1,2,10351002,1
-10352002,,Belt,6,Water,0,SPD,1,2,10352002,1
-10353002,,Belt,6,Land,0,SPD,1,2,10353002,1
-10354002,,Belt,6,Wind,0,SPD,1,2,10354002,1
-10450002,,Necklace,6,Normal,0,HIT,1,0,10450002,1
-10451002,,Necklace,6,Fire,0,HIT,1,0,10451002,1
-10452002,,Necklace,6,Water,0,HIT,1,0,10452002,1
-10453002,,Necklace,6,Land,0,HIT,1,0,10453002,1
-10454002,,Necklace,6,Wind,0,HIT,1,0,10454002,1
-10550001,,Ring,6,Normal,0,DEF,1,0,10550001,1
-10551001,,Ring,6,Fire,0,DEF,1,0,10551001,1
-10552001,,Ring,6,Water,0,DEF,1,0,10552001,1
-10553001,,Ring,6,Land,0,DEF,1,0,10553001,1
-10554001,,Ring,6,Wind,0,DEF,1,0,10554001,1
+10350002,Surt's Belt,Belt,6,Normal,0,SPD,49347,2,10350002,1
+10351002,Surt's Belt,Belt,6,Fire,0,SPD,35249,2,10351002,1
+10352002,Surt's Belt,Belt,6,Water,0,SPD,35249,2,10352002,1
+10353002,Surt's Belt,Belt,6,Land,0,SPD,49347,2,10353002,1
+10354002,Surt's Belt,Belt,6,Wind,0,SPD,49347,2,10354002,1
+10450002,Surt's Necklace,Necklace,6,Normal,0,HIT,35163,0,10450002,1
+10451002,Surt's Necklace,Necklace,6,Fire,0,HIT,25117,0,10451002,1
+10452002,Surt's Necklace,Necklace,6,Water,0,HIT,25117,0,10452002,1
+10453002,Surt's Necklace,Necklace,6,Land,0,HIT,35163,0,10453002,1
+10454002,Surt's Necklace,Necklace,6,Wind,0,HIT,35163,0,10454002,1
+10550001,Surt's Ring,Ring,6,Normal,0,DEF,4453,0,10550001,1
+10551001,Surt's Ring,Ring,6,Fire,0,DEF,3181,0,10551001,1
+10552001,Surt's Ring,Ring,6,Water,0,DEF,3181,0,10552001,1
+10553001,Surt's Ring,Ring,6,Land,0,DEF,4453,0,10553001,1
+10554001,Surt's Ring,Ring,6,Wind,0,DEF,4453,0,10554001,1
