@@ -1,4 +1,4 @@
-namespace Lib9c.Tests.Model.Skill
+namespace Lib9c.Tests.Model.Skill.Adventure
 {
     using System;
     using System.Collections.Generic;
