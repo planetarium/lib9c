@@ -163,6 +163,7 @@ namespace Nekoyume.Action
                 typeof(CostumeStatSheet),
                 typeof(MaterialItemSheet),
                 typeof(RuneListSheet),
+                typeof(DeBuffLimitSheet),
             };
             if (collectionExist)
             {
@@ -346,6 +347,7 @@ namespace Nekoyume.Action
                 }
             }
 
+            var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
             var simulator = new StageSimulator(
                 random,
                 avatarState,
@@ -367,6 +369,7 @@ namespace Nekoyume.Action
                     sheets.GetSheet<MaterialItemSheet>(),
                     PlayCount),
                 collectionModifiers,
+                deBuffLimitSheet,
                 shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage);
             simulator.Simulate();
             sw.Stop();

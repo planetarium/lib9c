@@ -53,7 +53,8 @@ namespace Lib9c.Tests.Model
                     _random,
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
-                new List<StatModifier>()
+                new List<StatModifier>(),
+                _tableSheets.DeBuffLimitSheet
                 );
             Assert.False(simulator.Log.IsClear);
         }

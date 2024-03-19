@@ -257,7 +257,8 @@ namespace Lib9c.Tests.Action.Scenario
                     enemyArenaPlayerDigest,
                     _tableSheets.GetArenaSimulatorSheets(),
                     new List<StatModifier>(),
-                    new List<StatModifier>());
+                    new List<StatModifier>(),
+                    _tableSheets.DeBuffLimitSheet);
                 // Check player, enemy equip aura
                 foreach (var spawn in log.OfType<ArenaSpawnCharacter>())
                 {

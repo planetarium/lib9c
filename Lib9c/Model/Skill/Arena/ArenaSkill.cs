@@ -42,14 +42,6 @@ namespace Nekoyume.Model.Skill.Arena
             IEnumerable<Buff.Buff> buffs
         );
 
-        [Obsolete("Use Use")]
-        public abstract BattleStatus.Arena.ArenaSkill UseV1(
-            ArenaCharacter caster,
-            ArenaCharacter target,
-            int turn,
-            IEnumerable<Buff.Buff> buffs
-        );
-
         protected bool Equals(Skill other)
         {
             return SkillRow.Equals(other.SkillRow) && Power == other.Power && Chance.Equals(other.Chance);
@@ -114,38 +106,6 @@ namespace Nekoyume.Model.Skill.Arena
                     case SkillTargetType.Ally:
                         dispelList = caster.AddBuff(buff);
                         infos.Add(GetSkillInfo(caster, turn, buff, dispelList: dispelList));
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            return infos;
-        }
-
-        [Obsolete("Use ProcessBuff")]
-        protected IEnumerable<BattleStatus.Arena.ArenaSkill.ArenaSkillInfo> ProcessBuffV1(
-            ArenaCharacter caster,
-            ArenaCharacter target,
-            int turn,
-            IEnumerable<Buff.Buff> buffs
-        )
-        {
-            var infos = new List<BattleStatus.Arena.ArenaSkill.ArenaSkillInfo>();
-            foreach (var buff in buffs)
-            {
-                switch (buff.BuffInfo.SkillTargetType)
-                {
-                    case SkillTargetType.Enemy:
-                    case SkillTargetType.Enemies:
-                        target.AddBuffV1(buff);
-                        infos.Add(GetSkillInfo(target, turn, buff));
-                        break;
-
-                    case SkillTargetType.Self:
-                    case SkillTargetType.Ally:
-                        caster.AddBuffV1(buff);
-                        infos.Add(GetSkillInfo(caster, turn, buff));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

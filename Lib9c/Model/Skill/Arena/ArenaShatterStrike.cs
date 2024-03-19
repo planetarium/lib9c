@@ -20,11 +20,5 @@ namespace Nekoyume.Model.Skill.Arena
 
             return new BattleStatus.Arena.ArenaShatterStrike(clone, damage, buff);
         }
-
-        [Obsolete("Use Use")]
-        public override BattleStatus.Arena.ArenaSkill UseV1(ArenaCharacter caster, ArenaCharacter target, int turn, IEnumerable<Buff.Buff> buffs)
-        {
-            return Use(caster, target, turn, buffs);
-        }
     }
 }
