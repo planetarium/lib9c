@@ -98,6 +98,7 @@ namespace Lib9c.Tests.Model.Skill
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
+                _tableSheets.DeBuffLimitSheet,
                 copyCharacter
             );
             var player = new Player(avatarState, simulator)

@@ -87,39 +87,6 @@ namespace Nekoyume.Model
 
         public object Clone() => new ArenaCharacter(this);
 
-        [Obsolete("It using at ArenaSimulatorV1.")]
-        public ArenaCharacter(
-            ArenaSimulatorV1 simulator,
-            ArenaPlayerDigest digest,
-            ArenaSimulatorSheetsV1 sheets,
-            bool isEnemy = false)
-        {
-            OffensiveElementalType = GetElementalType(digest.Equipments, ItemSubType.Weapon);
-            DefenseElementalType = GetElementalType(digest.Equipments, ItemSubType.Armor);
-            var row = CharacterRow(digest.CharacterId, sheets);
-            SizeType = row?.SizeType ?? SizeType.S;
-            RunSpeed = row?.RunSpeed ?? 1f;
-            AttackRange = row?.AttackRange ?? 1f;
-            CharacterId = digest.CharacterId;
-            IsEnemy = isEnemy;
-
-            _skillSheet = sheets.SkillSheet;
-            _skillBuffSheet = sheets.SkillBuffSheet;
-            _statBuffSheet = sheets.StatBuffSheet;
-            _skillActionBuffSheet = sheets.SkillActionBuffSheet;
-            _actionBuffSheet = sheets.ActionBuffSheet;
-
-            Simulator = simulator;
-            Stats = GetStatV1(
-                digest,
-                row,
-                sheets.EquipmentItemSetEffectSheet,
-                sheets.CostumeStatSheet);
-            _skills = GetSkills(digest.Equipments, sheets.SkillSheet);
-            _attackCountMax = AttackCountHelper.GetCountMax(digest.Level);
-            ResetCurrentHP();
-        }
-
         public ArenaCharacter(
             IArenaSimulator simulator,
             ArenaPlayerDigest digest,
@@ -573,15 +540,6 @@ namespace Nekoyume.Model
             );
         }
 
-        [Obsolete("Use InitAI")]
-        private void InitAIV1()
-        {
-            _root = new Root();
-            _root.OpenBranch(
-                BT.Call(ActV1)
-            );
-        }
-
         private void Act()
         {
             if (IsDead)
@@ -606,20 +564,6 @@ namespace Nekoyume.Model
                 OnPostSkill(usedSkill);
             }
             RemoveBuffs();
-        }
-
-        [Obsolete("Use Act")]
-        private void ActV1()
-        {
-            if (IsDead)
-            {
-                return;
-            }
-
-            ReduceDurationOfBuffs();
-            ReduceSkillCooldown();
-            UseSkillV1();
-            RemoveBuffsV1();
         }
 
         [Obsolete("Use Act")]
@@ -766,32 +710,6 @@ namespace Nekoyume.Model
             return usedSkill;
         }
 
-        [Obsolete("Use UseSkill")]
-        private void UseSkillV1()
-        {
-            var selectedSkill = _skills.Select(Simulator.Random);
-            SkillLog = selectedSkill.UseV1(
-                this,
-                _target,
-                Simulator.Turn,
-                BuffFactory.GetBuffs(
-                    Stats,
-                    selectedSkill,
-                    _skillBuffSheet,
-                    _statBuffSheet,
-                    _skillActionBuffSheet,
-                    _actionBuffSheet)
-            );
-
-            if (!_skillSheet.TryGetValue(selectedSkill.SkillRow.Id, out var row))
-            {
-                throw new KeyNotFoundException(
-                    selectedSkill.SkillRow.Id.ToString(CultureInfo.InvariantCulture));
-            }
-
-            _skills.SetCooldown(selectedSkill.SkillRow.Id, row.Cooldown);
-        }
-
         private void RemoveBuffs()
         {
             var isBuffRemoved = false;
@@ -810,7 +728,7 @@ namespace Nekoyume.Model
             if (!isBuffRemoved)
                 return;
 
-            Stats.SetBuffs(StatBuffs);
+            Stats.SetBuffs(StatBuffs, Simulator.DeBuffLimitSheet);
         }
 
         [Obsolete("Use RemoveBuffs")]
@@ -832,7 +750,7 @@ namespace Nekoyume.Model
 
             if (isApply)
             {
-                Stats.SetBuffs(StatBuffs);
+                Stats.SetBuffs(StatBuffs, Simulator.DeBuffLimitSheet);
             }
         }
 
@@ -846,13 +764,6 @@ namespace Nekoyume.Model
         {
             _target = target;
             InitAI();
-        }
-
-        [Obsolete("Use Spawn")]
-        public void SpawnV1(ArenaCharacter target)
-        {
-            _target = target;
-            InitAIV1();
         }
 
         [Obsolete("Use Spawn")]
@@ -876,7 +787,7 @@ namespace Nekoyume.Model
                 {
                     var clone = (StatBuff)stat.Clone();
                     Buffs[stat.RowData.GroupId] = clone;
-                    Stats.AddBuff(clone, updateImmediate);
+                    Stats.AddBuff(clone, Simulator.DeBuffLimitSheet, updateImmediate);
                     break;
                 }
                 case ActionBuff action:
@@ -926,18 +837,6 @@ namespace Nekoyume.Model
             }
 
             return dispelList;
-        }
-
-        [Obsolete("Use AddBuff")]
-        public void AddBuffV1(Buff.Buff buff, bool updateImmediate = true)
-        {
-            if (Buffs.TryGetValue(buff.BuffInfo.GroupId, out var outBuff) &&
-                outBuff.BuffInfo.Id > buff.BuffInfo.Id)
-                return;
-
-            var clone = (Buff.StatBuff) buff.Clone();
-            Buffs[buff.BuffInfo.GroupId] = clone;
-            Stats.AddBuff(clone, updateImmediate);
         }
 
         public void RemoveActionBuff(ActionBuff removedBuff)

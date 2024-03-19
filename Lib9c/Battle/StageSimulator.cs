@@ -49,6 +49,7 @@ namespace Nekoyume.Battle
             CostumeStatSheet costumeStatSheet,
             List<ItemBase> waveRewards,
             List<StatModifier> collectionModifiers,
+            DeBuffLimitSheet deBuffLimitSheet,
             bool logEvent = true,
             long shatterStrikeMaxDamage = 400_000
             )
@@ -61,6 +62,7 @@ namespace Nekoyume.Battle
                 shatterStrikeMaxDamage
                 )
         {
+            DeBuffLimitSheet = deBuffLimitSheet;
             var runeOptionSheet = simulatorSheets.RuneOptionSheet;
             var skillSheet = simulatorSheets.SkillSheet;
             Player.ConfigureStats(costumeStatSheet, runeStates, runeOptionSheet, skillSheet,
