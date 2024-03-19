@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nekoyume.Model.Item;
-using Nekoyume.Model.Skill;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Stat
@@ -326,24 +325,7 @@ namespace Nekoyume.Model.Stat
 
         public void AddBuff(Buff.StatBuff buff, DeBuffLimitSheet deBuffLimitSheet, bool updateImmediate = true)
         {
-            var modifier = buff.GetModifier();
-            if (buff.IsDebuff())
-            {
-                var statType = modifier.StatType;
-                var stat = _statMap.GetStatAsLong(statType);
-                var buffModified = modifier.GetModifiedValue(stat);
-                var row = deBuffLimitSheet.Values.FirstOrDefault(r =>
-                    r.Modifier.StatType == statType);
-                if (row is not null)
-                {
-                    var limitModifier = row.Modifier;
-                    var maxModified = (long)limitModifier.GetModifiedValue(stat);
-                    if (maxModified > buffModified)
-                    {
-                        modifier = limitModifier;
-                    }
-                }
-            }
+            var modifier = GetBuffModifier(buff, deBuffLimitSheet);
             _buffStatModifiers[buff.RowData.GroupId] = modifier;
 
             if (updateImmediate)
@@ -629,6 +611,32 @@ namespace Nekoyume.Model.Stat
             }
 
             SetCollections(collectionStatModifiers);
+        }
+
+        private StatModifier GetBuffModifier(Buff.StatBuff buff, DeBuffLimitSheet deBuffLimitSheet)
+        {
+            var modifier = buff.GetModifier();
+            if (buff.IsDebuff())
+            {
+                try
+                {
+                    var statType = modifier.StatType;
+                    var limitModifier = deBuffLimitSheet[buff.RowData.GroupId].GetModifier(statType);
+                    var stat = _statMap.GetStatAsLong(statType);
+                    var buffModified = modifier.GetModifiedValue(stat);
+                    var maxModified = (long)limitModifier.GetModifiedValue(stat);
+                    if (maxModified > buffModified)
+                    {
+                        return limitModifier;
+                    }
+                }
+                catch (KeyNotFoundException)
+                {
+                    // pass
+                }
+            }
+
+            return modifier;
         }
     }
 }

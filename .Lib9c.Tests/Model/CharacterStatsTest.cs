@@ -23,13 +23,20 @@ namespace Lib9c.Tests.Model
                     _tableSheets.CharacterSheet[GameConfig.DefaultAvatarCharacterId],
                     1);
             var deBuffLimitSheet = new DeBuffLimitSheet();
-            deBuffLimitSheet.Set("id,stat_type,percentage\n1,DEF,-50");
-            var def = stats.DEF;
+            // -100% def but limit -50% stats
             var deBuff = new StatBuff(_tableSheets.StatBuffSheet[503012]);
+            var groupId = deBuff.RowData.GroupId;
+            deBuffLimitSheet.Set($"group_id,percentage\n{groupId},-50");
+            var def = stats.DEF;
             stats.AddBuff(deBuff, deBuffLimitSheet: deBuffLimitSheet);
-            var limitModifier =
-                new StatModifier(StatType.DEF, StatModifier.OperationType.Percentage, -50);
-            Assert.Equal(limitModifier.GetModifiedAll(def), stats.DEF);
+            var modifier = deBuffLimitSheet[groupId].GetModifier(deBuff.RowData.StatType);
+            Assert.Equal(modifier.GetModifiedAll(def), stats.DEF);
+
+            // -500% critical with no limit
+            var deBuff2 = new StatBuff(_tableSheets.StatBuffSheet[204003]);
+            Assert.True(stats.CRI > 0);
+            stats.AddBuff(deBuff2, deBuffLimitSheet: deBuffLimitSheet);
+            Assert.Equal(0, stats.CRI);
         }
     }
 }

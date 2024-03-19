@@ -10,19 +10,21 @@ namespace Nekoyume.TableData
     {
         public class Row : SheetRow<int>
         {
-            public override int Key => Id;
+            public override int Key => GroupId;
 
-            public int Id { get; set; }
-            public StatModifier Modifier { get; set; }
+            public int GroupId { get; set; }
+
+            public int Value { get; set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
-                Id = ParseInt(fields[0]);
-                Modifier = new StatModifier(
-                    (StatType) Enum.Parse(typeof(StatType), fields[1]),
-                    StatModifier.OperationType.Percentage,
-                    ParseInt(fields[2])
-                );
+                GroupId = ParseInt(fields[0]);
+                Value = ParseInt(fields[1]);
+            }
+
+            public StatModifier GetModifier(StatType statType)
+            {
+                return new StatModifier(statType, StatModifier.OperationType.Percentage, Value);
             }
         }
 
