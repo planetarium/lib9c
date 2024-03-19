@@ -118,6 +118,11 @@ namespace Nekoyume.Model
                 return base.IsHit(caster);
             }
 
+            if (caster.ActionBuffs.Any(buff => buff is Focus))
+            {
+                return true;
+            }
+
             var isHit = HitHelper.IsHitWithoutLevelCorrection(
                 caster.Level,
                 caster.HIT,
