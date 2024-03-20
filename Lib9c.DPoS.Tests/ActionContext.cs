@@ -1,22 +1,20 @@
-namespace Lib9c.Tests.Action
-{
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Security.Cryptography;
-    using Libplanet.Action;
-    using Libplanet.Action.State;
-    using Libplanet.Common;
-    using Libplanet.Crypto;
-    using Libplanet.Types.Blocks;
-    using Libplanet.Types.Tx;
+﻿#nullable disable
 
+using System.Security.Cryptography;
+using Libplanet.Action;
+using Libplanet.Action.State;
+using Libplanet.Common;
+using Libplanet.Crypto;
+using Libplanet.Types.Blocks;
+using Libplanet.Types.Tx;
+
+namespace Lib9c.DPoS.Tests
+{
     public class ActionContext : IActionContext
     {
         private long _gasUsed;
 
         private IRandom _random = null;
-
-        private IReadOnlyList<ITransaction> _txs = null;
 
         public BlockHash? GenesisHash { get; set; }
 
@@ -41,12 +39,6 @@ namespace Lib9c.Tests.Action
         public HashDigest<SHA256>? PreviousStateRootHash { get; set; }
 
         public bool BlockAction { get; }
-
-        public IReadOnlyList<ITransaction> Txs
-        {
-            get => _txs ?? ImmutableList<ITransaction>.Empty;
-            set => _txs = value;
-        }
 
         public void UseGas(long gas)
         {
