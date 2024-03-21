@@ -139,7 +139,7 @@ namespace Lib9c.Tests.Model.Skill
 
         [Theory]
         [InlineData(700009, new[] { 600001 })]
-        [InlineData(700010, new[] { 600001, 704000 })]
+        [InlineData(700009, new[] { 600001, 704000 })]
         public void DispelOnUse(int dispelId, int[] debuffIdList)
         {
             var actionBuffSheet = _tableSheets.ActionBuffSheet;
@@ -182,11 +182,10 @@ namespace Lib9c.Tests.Model.Skill
         [Fact]
         public void DispelOnDuration_Block()
         {
-            const int actionBuffId = 708000; // Dispel with duration
             var actionBuffSheet = _tableSheets.ActionBuffSheet;
 
             // Use Dispel first
-            var dispel = actionBuffSheet.Values.First(bf => bf.Id == actionBuffId);
+            var dispel = actionBuffSheet.Values.First(bf => bf.ActionBuffType == ActionBuffType.Dispel);
             _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, dispel));
             Assert.Single(_player.Buffs);
 
@@ -217,11 +216,10 @@ namespace Lib9c.Tests.Model.Skill
         [Fact]
         public void DispelOnDuration_Affect()
         {
-            const int actionBuffId = 708000; // Dispel with duration
             var actionBuffSheet = _tableSheets.ActionBuffSheet;
 
             // Use Dispel first
-            var dispel = actionBuffSheet.Values.First(bf => bf.Id == actionBuffId);
+            var dispel = actionBuffSheet.Values.First(bf => bf.ActionBuffType == ActionBuffType.Dispel);
             _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, dispel));
             Assert.Single(_player.Buffs);
 
