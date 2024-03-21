@@ -44,7 +44,9 @@ namespace Nekoyume.Blockchain.Policy
             int? maxTransactionPerBlock = null)
         {
             _actionLoader = actionLoader ?? new NCActionLoader();
-            MaxTransactionsPerBlock = maxTransactionPerBlock ?? DefaultMaxTransactionsPerBlock;
+            MaxTransactionsPerBlock = Math.Min(
+                maxTransactionPerBlock ?? DefaultMaxTransactionsPerBlock,
+                DefaultMaxTransactionsPerBlock);
         }
 
         /// <summary>
