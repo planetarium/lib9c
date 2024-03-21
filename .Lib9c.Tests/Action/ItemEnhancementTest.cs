@@ -5,9 +5,7 @@ namespace Lib9c.Tests.Action
     using System.Globalization;
     using System.Linq;
     using Bencodex.Types;
-    using Lib9c.Tests.Fixtures.TableCSV;
     using Lib9c.Tests.Fixtures.TableCSV.Cost;
-    using Lib9c.Tests.Fixtures.TableCSV.Item;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
@@ -18,8 +16,8 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
-    using static SerializeKeys;
 
     public class ItemEnhancementTest
     {
@@ -28,11 +26,11 @@ namespace Lib9c.Tests.Action
         private readonly Address _avatarAddress;
         private readonly AvatarState _avatarState;
         private readonly Currency _currency;
-        private IAccount _initialState;
+        private IWorld _initialState;
 
         public ItemEnhancementTest()
         {
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             Dictionary<string, string> sheets;
             (_initialState, sheets) = InitializeUtil.InitializeTableSheets(
                 _initialState,
@@ -47,7 +45,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    _initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var privateKey = new PrivateKey();
@@ -79,10 +77,10 @@ namespace Lib9c.Tests.Action
 
             var context = new ActionContext();
             _initialState = _initialState
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, _avatarState.Serialize())
-                .SetState(slotAddress, new CombinationSlotState(slotAddress, 0).Serialize())
-                .SetState(GoldCurrencyState.Address, gold.Serialize())
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, _avatarState)
+                .SetLegacyState(slotAddress, new CombinationSlotState(slotAddress, 0).Serialize())
+                .SetLegacyState(GoldCurrencyState.Address, gold.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100_000_000_000)
                 .TransferAsset(
                     context,
@@ -282,20 +280,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(startLevel, equipment.level);
 
-            _initialState = _initialState
-                .SetState(
-                    _avatarAddress.Derive(LegacyInventoryKey),
-                    _avatarState.inventory.Serialize()
-                )
-                .SetState(
-                    _avatarAddress.Derive(LegacyWorldInformationKey),
-                    _avatarState.worldInformation.Serialize()
-                )
-                .SetState(
-                    _avatarAddress.Derive(LegacyQuestListKey),
-                    _avatarState.questList.Serialize()
-                )
-                .SetState(_avatarAddress, _avatarState.SerializeV2());
+            _initialState = _initialState.SetAvatarState(_avatarAddress, _avatarState);
 
             var action = new ItemEnhancement
             {
@@ -340,7 +325,7 @@ namespace Lib9c.Tests.Action
             );
             Assert.Equal(30, nextAvatarState.mailBox.Count);
 
-            var stateDict = (Dictionary)nextState.GetState(slotAddress);
+            var stateDict = (Dictionary)nextState.GetLegacyState(slotAddress);
             var slot = new CombinationSlotState(stateDict);
             var slotResult = (ItemEnhancement13.ResultModel)slot.Result;
             if (startLevel != level)
