@@ -9,16 +9,15 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
-    using Nekoyume.Blockchain.Policy;
     using Nekoyume.Exceptions;
     using Nekoyume.Extensions;
     using Nekoyume.Model.Event;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Event;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class EventDungeonBattleTest
     {
@@ -27,33 +26,30 @@ namespace Lib9c.Tests.Action
 
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private IAccount _initialStates;
+        private IWorld _initialStates;
 
         public EventDungeonBattleTest()
         {
-            _initialStates = new Account(MockState.Empty);
+            _initialStates = new World(new MockWorldState());
 
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             _ncgCurrency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
-            _initialStates = _initialStates.SetState(
+            _initialStates = _initialStates.SetLegacyState(
                 GoldCurrencyState.Address,
                 new GoldCurrencyState(_ncgCurrency).Serialize());
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
                 _initialStates = _initialStates
-                    .SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _tableSheets = new TableSheets(sheets);
 
             _agentAddress = new PrivateKey().Address;
             _avatarAddress = _agentAddress.Derive("avatar");
-            var inventoryAddr = _avatarAddress.Derive(LegacyInventoryKey);
-            var worldInformationAddr = _avatarAddress.Derive(LegacyWorldInformationKey);
-            var questListAddr = _avatarAddress.Derive(LegacyQuestListKey);
 
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses.Add(0, _avatarAddress);
@@ -72,12 +68,9 @@ namespace Lib9c.Tests.Action
             };
 
             _initialStates = _initialStates
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(inventoryAddr, avatarState.inventory.Serialize())
-                .SetState(worldInformationAddr, avatarState.worldInformation.Serialize())
-                .SetState(questListAddr, avatarState.questList.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
         }
 
         [Theory]
@@ -99,7 +92,7 @@ namespace Lib9c.Tests.Action
             var eventDungeonInfoAddr =
                 EventDungeonInfo.DeriveAddress(_avatarAddress, eventDungeonId);
             var eventDungeonInfo =
-                new EventDungeonInfo(nextStates.GetState(eventDungeonInfoAddr));
+                new EventDungeonInfo(nextStates.GetLegacyState(eventDungeonInfoAddr));
             Assert.Equal(
                 scheduleRow.DungeonTicketsMax - 1,
                 eventDungeonInfo.RemainingTickets);
@@ -112,7 +105,7 @@ namespace Lib9c.Tests.Action
                 eventDungeonStageId,
                 blockIndex: contextBlockIndex);
             eventDungeonInfo =
-                new EventDungeonInfo(nextStates.GetState(eventDungeonInfoAddr));
+                new EventDungeonInfo(nextStates.GetLegacyState(eventDungeonInfoAddr));
             Assert.Equal(
                 scheduleRow.DungeonTicketsMax - 1,
                 eventDungeonInfo.RemainingTickets);
@@ -148,7 +141,7 @@ namespace Lib9c.Tests.Action
                 $",{dungeonTicketAdditionalPrice}" +
                 $",{scheduleRow.DungeonExpSeedValue}" +
                 $",{scheduleRow.RecipeEndBlockIndex}");
-            previousStates = previousStates.SetState(
+            previousStates = previousStates.SetLegacyState(
                 Addresses.GetSheetAddress<EventScheduleSheet>(),
                 sb.ToString().Serialize());
 
@@ -157,7 +150,7 @@ namespace Lib9c.Tests.Action
             var eventDungeonInfo = new EventDungeonInfo(
                 remainingTickets: 0,
                 numberOfTicketPurchases: numberOfTicketPurchases);
-            previousStates = previousStates.SetState(
+            previousStates = previousStates.SetLegacyState(
                 eventDungeonInfoAddr,
                 eventDungeonInfo.Serialize());
 
@@ -179,7 +172,7 @@ namespace Lib9c.Tests.Action
                 buyTicketIfNeeded: true,
                 blockIndex: scheduleRow.StartBlockIndex);
             var nextEventDungeonInfoList =
-                (Bencodex.Types.List)nextStates.GetState(eventDungeonInfoAddr)!;
+                (Bencodex.Types.List)nextStates.GetLegacyState(eventDungeonInfoAddr)!;
             Assert.Equal(
                 numberOfTicketPurchases + 1,
                 nextEventDungeonInfoList[2].ToInteger());
@@ -284,7 +277,7 @@ namespace Lib9c.Tests.Action
                 EventDungeonInfo.DeriveAddress(_avatarAddress, eventDungeonId);
             var eventDungeonInfo = new EventDungeonInfo();
             previousStates = previousStates
-                .SetState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+                .SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
             Assert.True(_tableSheets.EventScheduleSheet
                 .TryGetValue(eventScheduleId, out var scheduleRow));
             Assert.Throws<NotEnoughEventDungeonTicketsException>(() =>
@@ -313,7 +306,7 @@ namespace Lib9c.Tests.Action
                 remainingTickets: 0,
                 numberOfTicketPurchases: numberOfTicketPurchases);
             previousStates = previousStates
-                .SetState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+                .SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
 
             Assert.True(_tableSheets.EventScheduleSheet
                 .TryGetValue(eventScheduleId, out var scheduleRow));
@@ -401,7 +394,7 @@ namespace Lib9c.Tests.Action
             var csv = $@"id,_name,start_block_index,dungeon_end_block_index,dungeon_tickets_max,dungeon_tickets_reset_interval_block_range,dungeon_ticket_price,dungeon_ticket_additional_price,dungeon_exp_seed_value,recipe_end_block_index
             1001,2022 Summer Event,{ActionObsoleteConfig.V100301ExecutedBlockIndex},{ActionObsoleteConfig.V100301ExecutedBlockIndex + 100},5,7200,5,2,1,5018000";
             _initialStates =
-                _initialStates.SetState(
+                _initialStates.SetLegacyState(
                     Addresses.GetSheetAddress<EventScheduleSheet>(),
                     csv.Serialize());
             var sheet = new EventScheduleSheet();
@@ -417,7 +410,7 @@ namespace Lib9c.Tests.Action
             var eventDungeonInfoAddr =
                 EventDungeonInfo.DeriveAddress(_avatarAddress, eventDungeonId);
             var eventDungeonInfo =
-                new EventDungeonInfo(nextStates.GetState(eventDungeonInfoAddr));
+                new EventDungeonInfo(nextStates.GetLegacyState(eventDungeonInfoAddr));
             Assert.Equal(
                 scheduleRow.DungeonTicketsMax - 1,
                 eventDungeonInfo.RemainingTickets);
@@ -430,14 +423,14 @@ namespace Lib9c.Tests.Action
                 eventDungeonStageId,
                 blockIndex: contextBlockIndex);
             eventDungeonInfo =
-                new EventDungeonInfo(nextStates.GetState(eventDungeonInfoAddr));
+                new EventDungeonInfo(nextStates.GetLegacyState(eventDungeonInfoAddr));
             Assert.Equal(
                 scheduleRow.DungeonTicketsMax - 1,
                 eventDungeonInfo.RemainingTickets);
         }
 
-        private IAccount Execute(
-            IAccount previousStates,
+        private IWorld Execute(
+            IWorld previousStates,
             int eventScheduleId,
             int eventDungeonId,
             int eventDungeonStageId,
@@ -448,7 +441,7 @@ namespace Lib9c.Tests.Action
             int slotIndex2 = 1,
             int runeId2 = 30001)
         {
-            var previousAvatarState = previousStates.GetAvatarStateV2(_avatarAddress);
+            var previousAvatarState = previousStates.GetAvatarState(_avatarAddress);
             var equipments =
                 Doomfist.GetAllParts(_tableSheets, previousAvatarState.level);
             foreach (var equipment in equipments)
@@ -486,7 +479,7 @@ namespace Lib9c.Tests.Action
             Assert.True(nextStates.GetSheet<EventScheduleSheet>().TryGetValue(
                 eventScheduleId,
                 out var scheduleRow));
-            var nextAvatarState = nextStates.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
             var expectExp = scheduleRow.GetStageExp(
                 eventDungeonStageId.ToEventDungeonStageNumber());
             Assert.Equal(
