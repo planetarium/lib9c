@@ -19,13 +19,14 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
 
     public class RapidCombinationTest
     {
-        private readonly IAccount _initialState;
+        private readonly IWorld _initialState;
 
         private readonly TableSheets _tableSheets;
 
@@ -34,7 +35,7 @@ namespace Lib9c.Tests.Action
 
         public RapidCombinationTest()
         {
-            _initialState = new Account(MockState.Empty);
+            _initialState = new World(new MockWorldState());
             Dictionary<string, string> sheets;
             (_initialState, sheets) = InitializeUtil.InitializeTableSheets(
                 _initialState,
@@ -57,7 +58,7 @@ namespace Lib9c.Tests.Action
             foreach (var (key, value) in sheets)
             {
                 _initialState =
-                    _initialState.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                    _initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             _agentAddress = new PrivateKey().Address;
@@ -76,15 +77,13 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses[0] = _avatarAddress;
 
             _initialState = _initialState
-                .SetState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize())
-                .SetState(_agentAddress, agentState.Serialize())
-                .SetState(_avatarAddress, avatarState.Serialize());
+                .SetLegacyState(Addresses.GameConfig, new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize())
+                .SetAgentState(_agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, avatarState);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute(bool backward)
+        [Fact]
+        public void Execute()
         {
             const int slotStateUnlockStage = 1;
 
@@ -132,20 +131,9 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
             slotState.Update(result, 0, requiredBlockIndex);
 
-            var tempState = _initialState.SetState(slotAddress, slotState.Serialize());
-
-            if (backward)
-            {
-                tempState = tempState.SetState(_avatarAddress, avatarState.Serialize());
-            }
-            else
-            {
-                tempState = tempState
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(_avatarAddress, avatarState.SerializeV2());
-            }
+            var tempState = _initialState
+                .SetLegacyState(slotAddress, slotState.Serialize())
+                .SetAvatarState(_avatarAddress, avatarState);
 
             var action = new RapidCombination
             {
@@ -160,7 +148,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 51,
             });
 
-            var nextAvatarState = nextState.GetAvatarStateV2(_avatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             var item = nextAvatarState.inventory.Equipments.First();
 
             Assert.Empty(nextAvatarState.inventory.Materials.Select(r => r.ItemSubType == ItemSubType.Hourglass));
@@ -179,7 +167,7 @@ namespace Lib9c.Tests.Action
             slotState.Update(null, 0, 0);
 
             var tempState = _initialState
-                .SetState(slotAddress, slotState.Serialize());
+                .SetLegacyState(slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
             {
@@ -188,60 +176,6 @@ namespace Lib9c.Tests.Action
             };
 
             Assert.Throws<CombinationSlotResultNullException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = tempState,
-                Signer = _agentAddress,
-                BlockIndex = 1,
-            }));
-        }
-
-        [Theory]
-        [InlineData(0, 1)]
-        [InlineData(1, 2)]
-        public void Execute_Throw_NotEnoughClearedStageLevelException(int avatarClearedStage, int slotStateUnlockStage)
-        {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
-            avatarState.worldInformation = new WorldInformation(
-                0,
-                _initialState.GetSheet<WorldSheet>(),
-                avatarClearedStage);
-
-            var firstEquipmentRow = _tableSheets.EquipmentItemSheet.First;
-            Assert.NotNull(firstEquipmentRow);
-
-            var equipment = (Equipment)ItemFactory.CreateItemUsable(
-                firstEquipmentRow,
-                Guid.NewGuid(),
-                100);
-
-            var result = new CombinationConsumable5.ResultModel
-            {
-                actionPoint = 0,
-                gold = 0,
-                materials = new Dictionary<Material, int>(),
-                itemUsable = equipment,
-                recipeId = 0,
-                itemType = ItemType.Equipment,
-            };
-
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
-            var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
-            slotState.Update(result, 0, 0);
-
-            var tempState = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
-
-            var action = new RapidCombination
-            {
-                avatarAddress = _avatarAddress,
-                slotIndex = 0,
-            };
-
-            Assert.Throws<NotEnoughClearedStageLevelException>(() => action.Execute(new ActionContext
             {
                 PreviousState = tempState,
                 Signer = _agentAddress,
@@ -288,8 +222,8 @@ namespace Lib9c.Tests.Action
             slotState.Update(result, 0, 0);
 
             var tempState = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
             {
@@ -364,8 +298,8 @@ namespace Lib9c.Tests.Action
             slotState.Update(result, 0, 0);
 
             var tempState = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
             {
@@ -493,8 +427,8 @@ namespace Lib9c.Tests.Action
             slotState.Update(result, 0, 0);
 
             var tempState = _initialState
-                .SetState(_avatarAddress, avatarState.Serialize())
-                .SetState(slotAddress, slotState.Serialize());
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(slotAddress, slotState.Serialize());
 
             var action = new RapidCombination
             {
@@ -661,11 +595,8 @@ namespace Lib9c.Tests.Action
             var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
             slotState.Update(resultModel, 0, requiredBlockIndex);
 
-            var tempState = _initialState.SetState(slotAddress, slotState.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                .SetState(_avatarAddress, avatarState.SerializeV2());
+            var tempState = _initialState.SetLegacyState(slotAddress, slotState.Serialize())
+                .SetAvatarState(_avatarAddress, avatarState);
 
             var action = new RapidCombination
             {
