@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -45,15 +46,15 @@ namespace Lib9c.Tests.Action
             };
 
             var sheets = TableSheetsImporter.ImportSheets();
-            var state = new Account(MockState.Empty)
-                .SetState(
+            var state = new World(new MockWorldState())
+                .SetLegacyState(
                     Addresses.GameConfig,
                     new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
                 );
 
             foreach (var (key, value) in sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             Assert.Equal(0 * CrystalCalculator.CRYSTAL, state.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
@@ -69,17 +70,17 @@ namespace Lib9c.Tests.Action
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    CreateAvatar2.DeriveFormat,
+                    CreateAvatar.DeriveFormat,
                     0
                 )
             );
-            Assert.True(nextState.TryGetAgentAvatarStatesV2(
+            Assert.True(nextState.TryGetAvatarState(
                 default,
                 avatarAddress,
-                out var agentState,
-                out var nextAvatarState,
-                out _)
+                out var nextAvatarState)
             );
+            var agentState = nextState.GetAgentState(default);
+            Assert.NotNull(agentState);
             Assert.True(agentState.avatarAddresses.Any());
             Assert.Equal("test", nextAvatarState.name);
             Assert.Equal(200_000 * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
@@ -116,7 +117,7 @@ namespace Lib9c.Tests.Action
                 name = nickName,
             };
 
-            var state = new Account(MockState.Empty);
+            var state = new World(new MockWorldState());
 
             Assert.Throws<InvalidNamePatternException>(() => action.Execute(new ActionContext()
                 {
@@ -133,7 +134,7 @@ namespace Lib9c.Tests.Action
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    CreateAvatar2.DeriveFormat,
+                    CreateAvatar.DeriveFormat,
                     0
                 )
             );
@@ -157,7 +158,7 @@ namespace Lib9c.Tests.Action
                 name = "test",
             };
 
-            var state = new Account(MockState.Empty).SetState(avatarAddress, avatarState.Serialize());
+            var state = new World(new MockWorldState()).SetAvatarState(avatarAddress, avatarState);
 
             Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext()
                 {
@@ -174,7 +175,7 @@ namespace Lib9c.Tests.Action
         public void ExecuteThrowAvatarIndexOutOfRangeException(int index)
         {
             var agentState = new AgentState(_agentAddress);
-            var state = new Account(MockState.Empty).SetState(_agentAddress, agentState.Serialize());
+            var state = new World(new MockWorldState()).SetAgentState(_agentAddress, agentState);
             var action = new CreateAvatar()
             {
                 index = index,
@@ -204,12 +205,12 @@ namespace Lib9c.Tests.Action
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    CreateAvatar2.DeriveFormat,
+                    CreateAvatar.DeriveFormat,
                     0
                 )
             );
             agentState.avatarAddresses[index] = avatarAddress;
-            var state = new Account(MockState.Empty).SetState(_agentAddress, agentState.Serialize());
+            var state = new World(new MockWorldState()).SetAgentState(_agentAddress, agentState);
 
             var action = new CreateAvatar()
             {
@@ -231,34 +232,6 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void Serialize_With_DotnetAPI()
-        {
-            var formatter = new BinaryFormatter();
-            var action = new CreateAvatar()
-            {
-                index = 2,
-                hair = 1,
-                ear = 4,
-                lens = 5,
-                tail = 7,
-                name = "test",
-            };
-
-            using var ms = new MemoryStream();
-            formatter.Serialize(ms, action);
-
-            ms.Seek(0, SeekOrigin.Begin);
-            var deserialized = (CreateAvatar10)formatter.Deserialize(ms);
-
-            Assert.Equal(2, deserialized.index);
-            Assert.Equal(1, deserialized.hair);
-            Assert.Equal(4, deserialized.ear);
-            Assert.Equal(5, deserialized.lens);
-            Assert.Equal(7, deserialized.tail);
-            Assert.Equal("test", deserialized.name);
-        }
-
-        [Fact]
         public void AddItem()
         {
             var itemSheet = _tableSheets.ItemSheet;
@@ -269,7 +242,7 @@ namespace Lib9c.Tests.Action
 600201,2
 ");
             var avatarState = new AvatarState(default, default, 0L, _tableSheets.GetAvatarSheets(), new GameConfigState(), default, "test");
-            CreateAvatar10.AddItem(itemSheet, createAvatarItemSheet, avatarState, new TestRandom());
+            CreateAvatar.AddItem(itemSheet, createAvatarItemSheet, avatarState, new TestRandom());
             foreach (var row in createAvatarItemSheet.Values)
             {
                 Assert.True(avatarState.inventory.HasItem(row.ItemId, row.Count));
@@ -294,7 +267,7 @@ RUNE_GOLDENLEAF,200000,Avatar
             var avatarAddress = new PrivateKey().Address;
             var agentAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(avatarAddress, agentAddress, 0L, _tableSheets.GetAvatarSheets(), new GameConfigState(), default, "test");
-            var nextState = CreateAvatar10.MintAsset(createAvatarFavSheet, avatarState, new Account(MockState.Empty), new ActionContext());
+            var nextState = CreateAvatar.MintAsset(createAvatarFavSheet, avatarState, new World(new MockWorldState()), new ActionContext());
             foreach (var row in createAvatarFavSheet.Values)
             {
                 var targetAddress = row.Target == CreateAvatarFavSheet.Target.Agent
