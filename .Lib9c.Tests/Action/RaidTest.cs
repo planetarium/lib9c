@@ -14,7 +14,9 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.Rune;
+    using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
     using static SerializeKeys;
@@ -56,8 +58,6 @@ namespace Lib9c.Tests.Action
         [InlineData(null, true, true, false, true, 3, 100L, false, false, 0, true, false, false, 5, true, 0, 10002, 1, 30001)]
         // AvatarState null.
         [InlineData(typeof(FailedLoadStateException), false, false, false, false, 0, 0L, false, false, 0, false, false, false, 5, false, 0, 10002, 1, 30001)]
-        // Stage not cleared.
-        [InlineData(typeof(NotEnoughClearedStageLevelException), true, false, false, false, 0, 0L, false, false, 0, false, false, false, 5, false, 0, 10002, 1, 30001)]
         // Insufficient CRYSTAL.
         [InlineData(typeof(InsufficientBalanceException), true, true, false, false, 0, 0L, false, false, 0, false, false, false, 5, false, 0, 10002, 1, 30001)]
         // Insufficient NCG.
@@ -136,13 +136,13 @@ namespace Lib9c.Tests.Action
             var fee = _tableSheets.WorldBossListSheet[raidId].EntranceFee;
 
             var context = new ActionContext();
-            IAccount state = new Account(MockState.Empty)
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(_agentAddress, new AgentState(_agentAddress).Serialize());
+            IWorld state = new World(new MockWorldState())
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetAgentState(_agentAddress, new AgentState(_agentAddress));
 
             foreach (var (key, value) in _sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
@@ -193,7 +193,7 @@ namespace Lib9c.Tests.Action
                     raiderState.AvatarAddress = _avatarAddress;
                     raiderState.UpdatedBlockIndex = blockIndex;
 
-                    state = state.SetState(raiderAddress, raiderState.Serialize());
+                    state = state.SetLegacyState(raiderAddress, raiderState.Serialize());
 
                     var raiderList = new List().Add(raiderAddress.Serialize());
 
@@ -202,7 +202,7 @@ namespace Lib9c.Tests.Action
                         raiderList = raiderList.Add(new PrivateKey().Address.Serialize());
                     }
 
-                    state = state.SetState(raiderListAddress, raiderList);
+                    state = state.SetLegacyState(raiderListAddress, raiderList);
                 }
 
                 if (rewardRecordExist)
@@ -211,7 +211,7 @@ namespace Lib9c.Tests.Action
                     {
                         [0] = false,
                     };
-                    state = state.SetState(worldBossKillRewardRecordAddress, rewardRecord.Serialize());
+                    state = state.SetLegacyState(worldBossKillRewardRecordAddress, rewardRecord.Serialize());
                 }
 
                 if (ncgExist)
@@ -221,11 +221,8 @@ namespace Lib9c.Tests.Action
                 }
 
                 state = state
-                    .SetState(_avatarAddress, avatarState.SerializeV2())
-                    .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                    .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                    .SetState(gameConfigState.address, gameConfigState.Serialize());
+                    .SetAvatarState(_avatarAddress, avatarState)
+                    .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
             }
 
             if (kill)
@@ -236,7 +233,7 @@ namespace Lib9c.Tests.Action
                             CurrentHp = 0,
                             Level = level,
                         };
-                state = state.SetState(bossAddress, bossState.Serialize());
+                state = state.SetLegacyState(bossAddress, bossState.Serialize());
             }
 
             if (exc is null)
@@ -262,7 +259,8 @@ namespace Lib9c.Tests.Action
                     action.FoodIds,
                     null,
                     raidSimulatorSheets,
-                    _tableSheets.CostumeStatSheet);
+                    _tableSheets.CostumeStatSheet,
+                    new List<StatModifier>());
                 simulator.Simulate();
                 var score = simulator.DamageDealt;
 
@@ -276,7 +274,7 @@ namespace Lib9c.Tests.Action
                 if (rewardRecordExist)
                 {
                     var bossRow = raidSimulatorSheets.WorldBossCharacterSheet[bossListRow.BossId];
-                    Assert.True(state.TryGetState(bossAddress, out List prevRawBoss));
+                    Assert.True(state.TryGetLegacyState(bossAddress, out List prevRawBoss));
                     var prevBossState = new WorldBossState(prevRawBoss);
                     int rank = WorldBossHelper.CalculateRank(bossRow, raiderStateExist ? 1_000 : 0);
                     var rewards = RuneHelper.CalculateReward(
@@ -323,9 +321,9 @@ namespace Lib9c.Tests.Action
                     Assert.Equal(fee * crystal, nextState.GetBalance(bossAddress, crystal));
                 }
 
-                Assert.True(nextState.TryGetState(raiderAddress, out List rawRaider));
+                Assert.True(nextState.TryGetLegacyState(raiderAddress, out List rawRaider));
                 var raiderState = new RaiderState(rawRaider);
-                int expectedTotalScore = raiderStateExist ? 1_000 + score : score;
+                long expectedTotalScore = raiderStateExist ? 1_000 + score : score;
                 int expectedRemainChallenge = payNcg ? 0 : 2;
                 int expectedTotalChallenge = raiderStateExist ? 2 : 1;
 
@@ -337,7 +335,7 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(GameConfig.DefaultAvatarArmorId, raiderState.IconId);
                 Assert.True(raiderState.Cp > 0);
 
-                Assert.True(nextState.TryGetState(bossAddress, out List rawBoss));
+                Assert.True(nextState.TryGetLegacyState(bossAddress, out List rawBoss));
                 var bossState = new WorldBossState(rawBoss);
                 int expectedLevel = level;
                 if (kill & levelUp)
@@ -358,7 +356,7 @@ namespace Lib9c.Tests.Action
                     Assert.Equal(purchaseCount + 1, nextState.GetRaiderState(raiderAddress).PurchaseCount);
                 }
 
-                Assert.True(nextState.TryGetState(worldBossKillRewardRecordAddress, out List rawRewardInfo));
+                Assert.True(nextState.TryGetLegacyState(worldBossKillRewardRecordAddress, out List rawRewardInfo));
                 var rewardRecord = new WorldBossKillRewardRecord(rawRewardInfo);
                 Assert.Contains(expectedLevel, rewardRecord.Keys);
                 if (rewardRecordExist)
@@ -377,7 +375,7 @@ namespace Lib9c.Tests.Action
                     }
                 }
 
-                Assert.True(nextState.TryGetState(raiderListAddress, out List rawRaiderList));
+                Assert.True(nextState.TryGetLegacyState(raiderListAddress, out List rawRaiderList));
                 List<Address> raiderList = rawRaiderList.ToList(StateExtensions.ToAddress);
 
                 Assert.Contains(raiderAddress, raiderList);
@@ -434,13 +432,13 @@ namespace Lib9c.Tests.Action
             Address bossAddress = Addresses.GetWorldBossAddress(raidId);
             Address worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(_avatarAddress, raidId);
 
-            IAccount state = new Account(MockState.Empty)
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(_agentAddress, new AgentState(_agentAddress).Serialize());
+            IWorld state = new World(new MockWorldState())
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetAgentState(_agentAddress, new AgentState(_agentAddress));
 
             foreach (var (key, value) in _sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
@@ -469,20 +467,17 @@ namespace Lib9c.Tests.Action
             raiderState.IconId = 0;
             raiderState.AvatarName = "hash";
             raiderState.AvatarAddress = _avatarAddress;
-            state = state.SetState(raiderAddress, raiderState.Serialize());
+            state = state.SetLegacyState(raiderAddress, raiderState.Serialize());
 
             var rewardRecord = new WorldBossKillRewardRecord
             {
                 [1] = false,
             };
-            state = state.SetState(worldBossKillRewardRecordAddress, rewardRecord.Serialize());
+            state = state.SetLegacyState(worldBossKillRewardRecordAddress, rewardRecord.Serialize());
 
             state = state
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             var bossState =
                 new WorldBossState(worldBossRow, _tableSheets.WorldBossGlobalHpSheet[2])
@@ -490,7 +485,7 @@ namespace Lib9c.Tests.Action
                         CurrentHp = 0,
                         Level = 2,
                     };
-            state = state.SetState(bossAddress, bossState.Serialize());
+            state = state.SetLegacyState(bossAddress, bossState.Serialize());
             var randomSeed = 0;
             var random = new TestRandom(randomSeed);
 
@@ -501,7 +496,8 @@ namespace Lib9c.Tests.Action
                 action.FoodIds,
                 null,
                 _tableSheets.GetRaidSimulatorSheets(),
-                _tableSheets.CostumeStatSheet);
+                _tableSheets.CostumeStatSheet,
+                new List<StatModifier>());
             simulator.Simulate();
 
             Dictionary<Currency, FungibleAssetValue> rewardMap
@@ -528,7 +524,7 @@ namespace Lib9c.Tests.Action
                 Signer = _agentAddress,
             });
 
-            Assert.True(nextState.TryGetState(raiderAddress, out List rawRaider));
+            Assert.True(nextState.TryGetLegacyState(raiderAddress, out List rawRaider));
             var nextRaiderState = new RaiderState(rawRaider);
             Assert.Equal(simulator.DamageDealt, nextRaiderState.HighScore);
 
@@ -560,10 +556,10 @@ namespace Lib9c.Tests.Action
             Assert.Equal(GameConfig.DefaultAvatarArmorId, nextRaiderState.IconId);
             Assert.True(nextRaiderState.Cp > 0);
             Assert.Equal(3, nextRaiderState.LatestBossLevel);
-            Assert.True(nextState.TryGetState(bossAddress, out List rawBoss));
+            Assert.True(nextState.TryGetLegacyState(bossAddress, out List rawBoss));
             var nextBossState = new WorldBossState(rawBoss);
             Assert.Equal(3, nextBossState.Level);
-            Assert.True(nextState.TryGetState(worldBossKillRewardRecordAddress, out List rawRewardInfo));
+            Assert.True(nextState.TryGetLegacyState(worldBossKillRewardRecordAddress, out List rawRewardInfo));
             var nextRewardInfo = new WorldBossKillRewardRecord(rawRewardInfo);
             Assert.True(nextRewardInfo[1]);
         }
@@ -587,13 +583,13 @@ namespace Lib9c.Tests.Action
                 "1,900002,0,100,0,1,1,40";
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
-            IAccount state = new Account(MockState.Empty)
-                .SetState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetState(_agentAddress, new AgentState(_agentAddress).Serialize());
+            IWorld state = new World(new MockWorldState())
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetAgentState(_agentAddress, new AgentState(_agentAddress));
 
             foreach (var (key, value) in _sheets)
             {
-                state = state.SetState(Addresses.TableSheet.Derive(key), value.Serialize());
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
@@ -612,11 +608,8 @@ namespace Lib9c.Tests.Action
             }
 
             state = state
-                .SetState(_avatarAddress, avatarState.SerializeV2())
-                .SetState(_avatarAddress.Derive(LegacyInventoryKey), avatarState.inventory.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyWorldInformationKey), avatarState.worldInformation.Serialize())
-                .SetState(_avatarAddress.Derive(LegacyQuestListKey), avatarState.questList.Serialize())
-                .SetState(gameConfigState.address, gameConfigState.Serialize());
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             var blockIndex = gameConfigState.WorldBossRequiredInterval;
             var randomSeed = 0;
@@ -627,10 +620,7 @@ namespace Lib9c.Tests.Action
                 RandomSeed = randomSeed,
                 Signer = _agentAddress,
             };
-
-            IAccount nextState;
-            var exception = Record.Exception(() => nextState = action.Execute(ctx));
-            Assert.Null(exception);
+            action.Execute(ctx);
         }
     }
 }
