@@ -12,6 +12,7 @@ namespace Lib9c.Tests.TestHelper
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Store;
     using Libplanet.Store.Trie;
     using Libplanet.Types.Assets;
@@ -99,16 +100,14 @@ namespace Lib9c.Tests.TestHelper
             var sheets = TableSheetsImporter.ImportSheets();
             var weeklyArenaAddress = WeeklyArenaState.DeriveAddress(0);
             var context = new ActionContext();
-            var initialState = new World(new MockWorldState())
+            var initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(GoldCurrencyState.Address, goldCurrencyState.Serialize())
                 .SetLegacyState(
                     Addresses.GoldDistribution,
-                    GoldDistributionTest.Fixture.Select(v => v.Serialize()).Serialize()
-                )
+                    GoldDistributionTest.Fixture.Select(v => v.Serialize()).Serialize())
                 .SetLegacyState(
                     Addresses.GameConfig,
-                    new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
-                )
+                    new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize())
                 .SetLegacyState(Addresses.Ranking, ranking.Serialize())
                 .SetLegacyState(weeklyArenaAddress, new WeeklyArenaState(0).Serialize());
 

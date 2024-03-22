@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using Lib9c.Formatters;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using MessagePack;
     using MessagePack.Resolvers;
@@ -34,7 +35,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             _signer = new PrivateKey().Address;
             _sender = new PrivateKey().Address;
-            _states = new World(new MockWorldState())
+            _states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(_signer, (Text)"ANYTHING")
                 .SetLegacyState(default, Dictionary.Empty.Add("key", "value"))
                 .MintAsset(context, _signer, _currency * 10000);

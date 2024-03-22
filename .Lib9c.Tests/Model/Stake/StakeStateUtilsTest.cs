@@ -2,11 +2,11 @@ namespace Lib9c.Tests.Model.Stake
 {
     using System;
     using Bencodex.Types;
-    using Lib9c.Tests.Action;
     using Lib9c.Tests.Fixtures.TableCSV;
     using Lib9c.Tests.Fixtures.TableCSV.Stake;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
@@ -32,7 +32,7 @@ namespace Lib9c.Tests.Model.Stake
         [Fact]
         public void TryMigrate_Return_False_When_Staking_State_Null()
         {
-            var state = new World(new MockWorldState());
+            var state = new World(MockUtil.MockModernWorldState);
             Assert.False(StakeStateUtils.TryMigrate(state, new PrivateKey().Address, out _));
         }
 
@@ -108,7 +108,7 @@ namespace Lib9c.Tests.Model.Stake
             string stakeRegularFixedRewardSheetTableName,
             string stakeRegularRewardSheetTableName)
         {
-            IWorld state = new World(new MockWorldState());
+            IWorld state = new World(MockUtil.MockModernWorldState);
             state = state.SetLegacyState(
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());
@@ -140,7 +140,7 @@ namespace Lib9c.Tests.Model.Stake
             long startedBlockIndex,
             long? receivedBlockIndex)
         {
-            IWorld state = new World(new MockWorldState());
+            IWorld state = new World(MockUtil.MockModernWorldState);
             state = state.SetLegacyState(
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());

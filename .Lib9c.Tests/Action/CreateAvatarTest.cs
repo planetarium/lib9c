@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using System.Runtime.Serialization.Formatters.Binary;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -46,7 +47,7 @@ namespace Lib9c.Tests.Action
             };
 
             var sheets = TableSheetsImporter.ImportSheets();
-            var state = new World(new MockWorldState())
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                     Addresses.GameConfig,
                     new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
@@ -117,7 +118,7 @@ namespace Lib9c.Tests.Action
                 name = nickName,
             };
 
-            var state = new World(new MockWorldState());
+            var state = new World(MockUtil.MockModernWorldState);
 
             Assert.Throws<InvalidNamePatternException>(() => action.Execute(new ActionContext()
                 {
@@ -158,7 +159,7 @@ namespace Lib9c.Tests.Action
                 name = "test",
             };
 
-            var state = new World(new MockWorldState()).SetAvatarState(avatarAddress, avatarState);
+            var state = new World(MockUtil.MockModernWorldState).SetAvatarState(avatarAddress, avatarState);
 
             Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext()
                 {
@@ -175,7 +176,7 @@ namespace Lib9c.Tests.Action
         public void ExecuteThrowAvatarIndexOutOfRangeException(int index)
         {
             var agentState = new AgentState(_agentAddress);
-            var state = new World(new MockWorldState()).SetAgentState(_agentAddress, agentState);
+            var state = new World(MockUtil.MockModernWorldState).SetAgentState(_agentAddress, agentState);
             var action = new CreateAvatar()
             {
                 index = index,
@@ -210,7 +211,7 @@ namespace Lib9c.Tests.Action
                 )
             );
             agentState.avatarAddresses[index] = avatarAddress;
-            var state = new World(new MockWorldState()).SetAgentState(_agentAddress, agentState);
+            var state = new World(MockUtil.MockModernWorldState).SetAgentState(_agentAddress, agentState);
 
             var action = new CreateAvatar()
             {
@@ -267,7 +268,7 @@ RUNE_GOLDENLEAF,200000,Avatar
             var avatarAddress = new PrivateKey().Address;
             var agentAddress = new PrivateKey().Address;
             var avatarState = new AvatarState(avatarAddress, agentAddress, 0L, _tableSheets.GetAvatarSheets(), new GameConfigState(), default, "test");
-            var nextState = CreateAvatar.MintAsset(createAvatarFavSheet, avatarState, new World(new MockWorldState()), new ActionContext());
+            var nextState = CreateAvatar.MintAsset(createAvatarFavSheet, avatarState, new World(MockUtil.MockModernWorldState), new ActionContext());
             foreach (var row in createAvatarFavSheet.Values)
             {
                 var targetAddress = row.Target == CreateAvatarFavSheet.Target.Agent

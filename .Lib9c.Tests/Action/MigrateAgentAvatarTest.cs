@@ -8,6 +8,7 @@
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -62,21 +63,17 @@
                 gameConfigState,
                 default);
 
-            MockWorldState mock = new MockWorldState()
-                .SetState(
-                    ReservedAddresses.LegacyAccount,
+            IWorld mock = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(
                     GoldCurrencyState.Address,
                     new GoldCurrencyState(currency, 0).Serialize())
-                .SetState(
-                    ReservedAddresses.LegacyAccount,
+                .SetLegacyState(
                     weekly.address,
                     weekly.Serialize())
-                .SetState(
-                    ReservedAddresses.LegacyAccount,
+                .SetLegacyState(
                     Addresses.GoldDistribution,
                     new List())
-                .SetState(
-                    ReservedAddresses.LegacyAccount,
+                .SetLegacyState(
                     gameConfigState.address,
                     gameConfigState.Serialize());
 
@@ -84,35 +81,28 @@
             {
                 case 1:
                     mock = mock
-                        .SetState(
-                            ReservedAddresses.LegacyAccount,
+                        .SetLegacyState(
                             agentAddress,
                             SerializeLegacyAgent(agentState))
-                        .SetState(
-                            ReservedAddresses.LegacyAccount,
+                        .SetLegacyState(
                             avatarAddress,
                             MigrationAvatarState.LegacySerializeV1(avatarState));
                     break;
                 case 2:
                     mock = mock
-                        .SetState(
-                            ReservedAddresses.LegacyAccount,
+                        .SetLegacyState(
                             agentAddress,
                             SerializeLegacyAgent(agentState))
-                        .SetState(
-                            ReservedAddresses.LegacyAccount,
+                        .SetLegacyState(
                             avatarAddress,
                             MigrationAvatarState.LegacySerializeV2(avatarState))
-                        .SetState(
-                            ReservedAddresses.LegacyAccount,
+                        .SetLegacyState(
                             inventoryAddress,
                             avatarState.inventory.Serialize())
-                        .SetState(
-                            ReservedAddresses.LegacyAccount,
+                        .SetLegacyState(
                             worldInformationAddress,
                             avatarState.questList.Serialize())
-                        .SetState(
-                            ReservedAddresses.LegacyAccount,
+                        .SetLegacyState(
                             questListAddress,
                             avatarState.questList.Serialize());
                     break;
@@ -122,27 +112,26 @@
 
             if (alreadyMigrated)
             {
-                mock = mock
-                    .SetState(
-                        Addresses.Agent,
-                        agentAddress,
-                        agentState.SerializeList())
-                    .SetState(
-                        Addresses.Avatar,
-                        avatarAddress,
-                        avatarState.SerializeList())
-                    .SetState(
-                        Addresses.Inventory,
-                        avatarAddress,
-                        avatarState.inventory.Serialize())
-                    .SetState(
-                        Addresses.WorldInformation,
-                        avatarAddress,
-                        avatarState.worldInformation.Serialize())
-                    .SetState(
-                        Addresses.QuestList,
-                        avatarAddress,
-                        avatarState.questList.Serialize());
+                mock = mock.SetAccount(
+                    Addresses.Agent,
+                    mock.GetAccount(Addresses.Agent)
+                        .SetState(agentAddress, agentState.SerializeList()));
+                mock = mock.SetAccount(
+                    Addresses.Avatar,
+                    mock.GetAccount(Addresses.Avatar)
+                        .SetState(avatarAddress, avatarState.SerializeList()));
+                mock = mock.SetAccount(
+                    Addresses.Inventory,
+                    mock.GetAccount(Addresses.Inventory)
+                        .SetState(avatarAddress, avatarState.inventory.Serialize()));
+                mock = mock.SetAccount(
+                    Addresses.WorldInformation,
+                    mock.GetAccount(Addresses.WorldInformation)
+                        .SetState(avatarAddress, avatarState.worldInformation.Serialize()));
+                mock = mock.SetAccount(
+                    Addresses.QuestList,
+                    mock.GetAccount(Addresses.QuestList)
+                        .SetState(avatarAddress, avatarState.questList.Serialize()));
             }
 
             IAction action = new MigrateAgentAvatar
@@ -154,11 +143,10 @@
             var actionLoader = new NCActionLoader();
             action = actionLoader.LoadAction(123, plainValue);
 
-            var states = new World(mock);
             IWorld nextState = action.Execute(
                 new ActionContext()
                 {
-                    PreviousState = states,
+                    PreviousState = mock,
                     Miner = default,
                     Signer = new Address("e2D18a50472e93d3165c478DefA69fa149214E72"),
                 }

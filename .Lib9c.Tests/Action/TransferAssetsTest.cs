@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -69,7 +70,7 @@ namespace Lib9c.Tests.Action
             var contractAddress = _sender.Derive(nameof(RequestPledge));
             var patronAddress = new PrivateKey().Address;
             var prevState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10));
             var action = new TransferAssets(
@@ -98,7 +99,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InvalidTransferSignerException()
         {
             var prevState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10));
             var action = new TransferAssets(
@@ -129,7 +130,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InvalidTransferRecipientException()
         {
             var prevState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, _currency * 1000));
             // Should not allow TransferAsset with same sender and recipient.
             var action = new TransferAssets(
@@ -158,7 +159,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InsufficientBalanceException()
         {
             var prevState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10))
                 .SetAgentState(_recipient, new AgentState(_recipient));
@@ -192,7 +193,7 @@ namespace Lib9c.Tests.Action
             var currencyBySender = Currency.Legacy("NCG", 2, _sender);
 #pragma warning restore CS0618
             var prevState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, currencyBySender * 1000)
                     .SetBalance(_recipient, currencyBySender * 10))
                 .SetAgentState(_recipient, new AgentState(_recipient));
@@ -332,7 +333,7 @@ namespace Lib9c.Tests.Action
             {
                 action.Execute(new ActionContext()
                 {
-                    PreviousState = new World(new MockWorldState()),
+                    PreviousState = new World(MockUtil.MockModernWorldState),
                     Signer = _sender,
                     BlockIndex = 1,
                 });
@@ -344,9 +345,9 @@ namespace Lib9c.Tests.Action
         {
             var crystal = CrystalCalculator.CRYSTAL;
             var prevState = new World(
-                new MockWorldState()
-                    .SetState(ReservedAddresses.LegacyAccount, _recipient.Derive(ActivationKey.DeriveKey), true.Serialize())
-                    .SetBalance(_sender, crystal * 1000));
+                MockWorldState.CreateModern()
+                    .SetBalance(_sender, crystal * 1000))
+                .SetLegacyState(_recipient.Derive(ActivationKey.DeriveKey), true.Serialize());
             var action = new TransferAssets(
                 sender: _sender,
                 recipients: new List<(Address, FungibleAssetValue)>
@@ -366,9 +367,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_ArgumentException()
         {
-            var baseState = new World(
-                new MockWorldState()
-                    .SetBalance(_sender, _currency * 1000));
+            var baseState = new World(MockWorldState.CreateModern().SetBalance(_sender, _currency * 1000));
             var action = new TransferAssets(
                 sender: _sender,
                 new List<(Address, FungibleAssetValue)>

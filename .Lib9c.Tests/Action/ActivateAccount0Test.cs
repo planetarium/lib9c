@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
@@ -19,16 +20,13 @@ namespace Lib9c.Tests.Action
             var privateKey = new PrivateKey();
             (ActivationKey activationKey, PendingActivationState pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
-            var state = new World(
-                new MockWorldState()
-                    .SetState(
-                        ReservedAddresses.LegacyAccount,
-                        ActivatedAccountsState.Address,
-                        new ActivatedAccountsState().Serialize())
-                    .SetState(
-                        ReservedAddresses.LegacyAccount,
-                        pendingActivation.address,
-                        pendingActivation.Serialize()));
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(
+                    ActivatedAccountsState.Address,
+                    new ActivatedAccountsState().Serialize())
+                .SetLegacyState(
+                    pendingActivation.address,
+                    pendingActivation.Serialize());
 
             ActivateAccount0 action = activationKey.CreateActivateAccount0(nonce);
             IWorld nextState = action.Execute(new ActionContext()
@@ -53,16 +51,13 @@ namespace Lib9c.Tests.Action
             var privateKey = new PrivateKey();
             (ActivationKey activationKey, PendingActivationState pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
-            var state = new World(
-                new MockWorldState()
-                    .SetState(
-                        ReservedAddresses.LegacyAccount,
-                        ActivatedAccountsState.Address,
-                        new ActivatedAccountsState().Serialize())
-                    .SetState(
-                        ReservedAddresses.LegacyAccount,
-                        pendingActivation.address,
-                        pendingActivation.Serialize()));
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(
+                    ActivatedAccountsState.Address,
+                    new ActivatedAccountsState().Serialize())
+                .SetLegacyState(
+                    pendingActivation.address,
+                    pendingActivation.Serialize());
 
             // 잘못된 논스를 넣습니다.
             ActivateAccount0 action = activationKey.CreateActivateAccount0(new byte[] { 0x00, });
@@ -86,12 +81,10 @@ namespace Lib9c.Tests.Action
                 ActivationKey.Create(privateKey, nonce);
 
             // state에는 pendingActivation에 해당하는 대기가 없는 상태를 가정합니다.
-            var state = new World(
-                new MockWorldState()
-                    .SetState(
-                        ReservedAddresses.LegacyAccount,
-                        ActivatedAccountsState.Address,
-                        new ActivatedAccountsState().Serialize()));
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(
+                    ActivatedAccountsState.Address,
+                    new ActivatedAccountsState().Serialize());
 
             ActivateAccount0 action = activationKey.CreateActivateAccount0(nonce);
             Assert.Throws<PendingActivationDoesNotExistsException>(() =>
@@ -114,7 +107,7 @@ namespace Lib9c.Tests.Action
                 ActivationKey.Create(privateKey, nonce);
 
             // state가 올바르게 초기화되지 않은 상태를 가정합니다.
-            var state = new World(new MockWorldState());
+            var state = new World(MockUtil.MockModernWorldState);
 
             ActivateAccount0 action = activationKey.CreateActivateAccount0(nonce);
             Assert.Throws<ActivatedAccountsDoesNotExistsException>(() =>
@@ -135,16 +128,13 @@ namespace Lib9c.Tests.Action
             var privateKey = new PrivateKey();
             (ActivationKey activationKey, PendingActivationState pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
-            var state = new World(
-                new MockWorldState()
-                    .SetState(
-                        ReservedAddresses.LegacyAccount,
-                        ActivatedAccountsState.Address,
-                        new ActivatedAccountsState().Serialize())
-                    .SetState(
-                        ReservedAddresses.LegacyAccount,
-                        pendingActivation.address,
-                        pendingActivation.Serialize()));
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(
+                    ActivatedAccountsState.Address,
+                    new ActivatedAccountsState().Serialize())
+                .SetLegacyState(
+                    pendingActivation.address,
+                    pendingActivation.Serialize());
 
             ActivateAccount0 action = activationKey.CreateActivateAccount0(nonce);
             IWorld nextState = action.Execute(new ActionContext()

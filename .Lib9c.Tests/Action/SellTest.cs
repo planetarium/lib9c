@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using Lib9c.Model.Order;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -297,7 +298,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
                 BlockIndex = 0,
-                PreviousState = new World(new MockWorldState()),
+                PreviousState = new World(MockUtil.MockModernWorldState),
                 Signer = _agentAddress,
             }));
         }

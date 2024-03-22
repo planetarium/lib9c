@@ -2,6 +2,7 @@ namespace Lib9c.Tests.Action
 {
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Helper;
@@ -26,7 +27,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -92,7 +93,7 @@ namespace Lib9c.Tests.Action
 
         [Fact]
         public void Execute_Throw_FailedLoadStateException() =>
-            Assert.Throws<FailedLoadStateException>(() => ExecuteInternal(new World(new MockWorldState())));
+            Assert.Throws<FailedLoadStateException>(() => ExecuteInternal(new World(MockUtil.MockModernWorldState)));
 
         [Theory]
         [InlineData(0, 0, true)]

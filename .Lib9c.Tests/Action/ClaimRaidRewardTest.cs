@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Helper;
@@ -20,7 +21,7 @@ namespace Lib9c.Tests.Action
         {
             var tableCsv = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(tableCsv);
-            _state = new World(new MockWorldState());
+            _state = new World(MockUtil.MockModernWorldState);
             foreach (var kv in tableCsv)
             {
                 _state = _state.SetLegacyState(Addresses.GetSheetAddress(kv.Key), kv.Value.Serialize());

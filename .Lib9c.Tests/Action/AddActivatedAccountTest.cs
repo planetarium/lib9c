@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
@@ -19,9 +20,8 @@ namespace Lib9c.Tests.Action
         public void Execute(bool isAdmin, long blockIndex, bool alreadyActivated, Type exc)
         {
             var admin = new Address("8d9f76aF8Dc5A812aCeA15d8bf56E2F790F47fd7");
-            IWorld state = new World(
-                new MockWorldState()
-                    .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, new AdminState(admin, 100).Serialize()));
+            IWorld state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(AdminState.Address, new AdminState(admin, 100).Serialize());
             var newComer = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var activatedAddress = newComer.Derive(ActivationKey.DeriveKey);
             if (alreadyActivated)

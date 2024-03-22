@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume.Action;
     using Nekoyume.Exceptions;
     using Nekoyume.Module;
@@ -20,17 +21,14 @@ namespace Lib9c.Tests.Action
         {
             _signer = new PrivateKey().Address;
             _prevState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_signer, Currencies.Crystal * 100)
                     .SetBalance(
                         _signer.Derive(string.Format(
                             CultureInfo.InvariantCulture,
                             CreateAvatar.DeriveFormat,
-                            1
-                        )),
-                        Currencies.DailyRewardRune * 20
-                    )
-            );
+                            1)),
+                        Currencies.DailyRewardRune * 20));
         }
 
         [Fact]

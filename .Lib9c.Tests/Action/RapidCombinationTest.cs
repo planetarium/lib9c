@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Helper;
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Action
 
         public RapidCombinationTest()
         {
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             Dictionary<string, string> sheets;
             (_initialState, sheets) = InitializeUtil.InitializeTableSheets(
                 _initialState,

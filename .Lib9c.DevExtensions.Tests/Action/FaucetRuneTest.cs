@@ -17,6 +17,7 @@ using Serilog;
 using Xunit;
 using Xunit.Abstractions;
 using static Lib9c.SerializeKeys;
+using Libplanet.Mocks;
 
 namespace Lib9c.DevExtensions.Tests.Action
 {
@@ -33,7 +34,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
