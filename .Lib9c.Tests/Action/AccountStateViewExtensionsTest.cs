@@ -124,7 +124,7 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(_avatarAddress, _avatarState);
             states = states.SetAccount(
                 accountAddress,
-                states.GetAccount(accountAddress).SetNull(_avatarAddress));
+                states.GetAccount(accountAddress).RemoveState(_avatarAddress));
             var exc = Assert.Throws<FailedLoadStateException>(() => states.GetAvatarState(_avatarAddress));
             Assert.Contains(account, exc.Message);
         }
