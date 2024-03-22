@@ -415,7 +415,7 @@ namespace Lib9c.Tests.Action
                 ? new World(MockUtil.MockModernWorldState)
                 : _initialState
                     .SetAvatarState(_avatarAddress, _avatarState)
-                    .SetAccount(Addresses.Inventory, new Account(new MockAccountState()));
+                    .SetAccount(Addresses.Inventory, new Account(MockUtil.MockAccountState));
 
             var exec = Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
             {
