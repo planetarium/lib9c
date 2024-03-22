@@ -31,7 +31,7 @@ namespace Nekoyume.Blockchain.Policy
 {
     public partial class BlockPolicySource
     {
-        public const int MaxTransactionsPerBlock = 200;
+        public const int MaxTransactionsPerBlock = 100;
 
         public static readonly TimeSpan BlockInterval = TimeSpan.FromSeconds(8);
 
