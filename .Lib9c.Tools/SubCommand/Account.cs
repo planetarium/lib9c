@@ -62,7 +62,6 @@ namespace Lib9c.Tools.SubCommand
                 FungibleAssetValue balance =
                     chain
                         .GetWorldState(offset.Hash)
-                        .GetAccountState(ReservedAddresses.LegacyAccount)
                         .GetBalance(addr, gold);
                 Console.WriteLine("{0}\t{1}", addr, balance);
                 return;
@@ -94,7 +93,6 @@ namespace Lib9c.Tools.SubCommand
                         FungibleAssetValue balance =
                             chain
                                 .GetWorldState(offset.Hash)
-                                .GetAccountState(ReservedAddresses.LegacyAccount)
                                 .GetBalance(addr, gold);
                         Console.WriteLine("{0}\t{1}", addr, balance);
                         printed.Add(addr);

@@ -61,6 +61,11 @@ namespace Lib9c.Tests.Action
         public MockWorldState SetState(Address accountAddress, Address address, IValue state)
             => SetAccountState(accountAddress, GetMockAccountState(accountAddress).SetState(address, state));
 
+        public FungibleAssetValue GetBalance(Address address, Currency currency)
+            => GetAccountState(ReservedAddresses.LegacyAccount).Trie.Get(MockKeyConverters.ToFungibleAssetKey(address, currency)) is Integer value
+                ? FungibleAssetValue.FromRawValue(currency, value)
+                : currency * 0;
+
         public MockWorldState SetBalance(
             Address address,
             FungibleAssetValue amount)
@@ -128,6 +133,11 @@ namespace Lib9c.Tests.Action
             => SubtractBalance(sender, currency, rawAmount)
             .AddBalance(recipient, currency, rawAmount);
 
+        public FungibleAssetValue GetTotalSupply(Currency currency)
+            => GetAccountState(ReservedAddresses.LegacyAccount).Trie.Get(MockKeyConverters.ToTotalSupplyKey(currency)) is Integer value
+                ? FungibleAssetValue.FromRawValue(currency, value)
+                : currency * 0;
+
         public MockWorldState SetTotalSupply(FungibleAssetValue amount)
             => SetTotalSupply(amount.Currency, amount.RawValue);
 
@@ -154,6 +164,11 @@ namespace Lib9c.Tests.Action
                 ReservedAddresses.LegacyAccount,
                 GetMockAccountState(ReservedAddresses.LegacyAccount)
                     .SubtractTotalSupply(currency, rawAmount));
+
+        public ValidatorSet GetValidatorSet()
+            => GetMockAccountState(ReservedAddresses.LegacyAccount).Trie.Get(MockKeyConverters.ValidatorSetKey) is { } value
+                ? new ValidatorSet(value)
+                : new ValidatorSet();
 
         public MockWorldState SetValidator(Validator validator)
             => SetAccountState(
