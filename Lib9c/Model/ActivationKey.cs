@@ -64,11 +64,5 @@ namespace Nekoyume.Model
         {
             return new ActivateAccount(PendingAddress, PrivateKey.Sign(nonce));
         }
-
-        [Obsolete("ActivateAccount0 is obsolete. use CreateActivateAccount")]
-        public ActivateAccount0 CreateActivateAccount0(byte[] nonce)
-        {
-            return new ActivateAccount0(PendingAddress, PrivateKey.Sign(nonce));
-        }
     }
 }
