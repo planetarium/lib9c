@@ -246,7 +246,7 @@ namespace Lib9c.Tests.Action
 
                     Assert.Throws(validateMember.Exc, () => buyProduct.Execute(actionContext));
 
-                    var cancelRegister = new CancelProductRegistration0
+                    var cancelRegister = new CancelProductRegistration
                     {
                         AvatarAddress = AvatarAddress,
                         ProductInfos = new List<IProductInfo>() { productInfo },
