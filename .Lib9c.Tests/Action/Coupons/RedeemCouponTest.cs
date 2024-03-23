@@ -43,7 +43,7 @@ namespace Lib9c.Tests.Action.Coupons
                 .Derive(SerializeKeys.AvatarAddressKey)
                 .Derive("avatar-states-0");
 
-            var agent1Avatar0State = CreateAvatar0.CreateAvatarState(
+            var agent1Avatar0State = CreateAvatar.CreateAvatarState(
                     "agent1avatar0",
                     agent1Avatar0Address,
                     new ActionContext
@@ -54,7 +54,7 @@ namespace Lib9c.Tests.Action.Coupons
                     },
                     state.GetSheet<MaterialItemSheet>(),
                     default);
-            var agent1Avatar1State = CreateAvatar0.CreateAvatarState(
+            var agent1Avatar1State = CreateAvatar.CreateAvatarState(
                     "agent1avatar1",
                     agent1Avatar1Address,
                     new ActionContext
@@ -65,7 +65,7 @@ namespace Lib9c.Tests.Action.Coupons
                     },
                     state.GetSheet<MaterialItemSheet>(),
                     default);
-            var agent2Avatar0State = CreateAvatar0.CreateAvatarState(
+            var agent2Avatar0State = CreateAvatar.CreateAvatarState(
                     "agent2avatar0",
                     agent2Avatar0Address,
                     new ActionContext
