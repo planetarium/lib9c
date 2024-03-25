@@ -234,7 +234,7 @@ namespace Lib9c.Tests.Action
                 Signer = _agentAddress,
             });
 
-            var cancelProductRegistration = new CancelProductRegistration0
+            var cancelProductRegistration = new CancelProductRegistration
             {
                 AvatarAddress = _avatarAddress,
                 ProductInfos = new List<IProductInfo>

@@ -447,7 +447,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             Assert.All(new[] { nonFungibleProductId, fungibleProductId, assetProductId }, productId => Assert.NotEqual(default, productId));
-            var action2 = new CancelProductRegistration0
+            var action2 = new CancelProductRegistration
             {
                 AvatarAddress = _sellerAvatarAddress,
                 ProductInfos = new List<IProductInfo>
@@ -499,7 +499,9 @@ namespace Lib9c.Tests.Action.Scenario
                 );
             }
 
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp - CancelProductRegistration0.CostAp, latestAvatarState.actionPoint);
+            Assert.Equal(
+                _gameConfigState.ActionPointMax - RegisterProduct.CostAp - CancelProductRegistration.CostAp,
+                latestAvatarState.actionPoint);
 
             var sellProductList = new ProductsState((List)latestState.GetLegacyState(productsStateAddress));
             Assert.Empty(sellProductList.ProductIds);
@@ -966,7 +968,7 @@ namespace Lib9c.Tests.Action.Scenario
                 },
             };
             //Cancel
-            var cancelAction = new CancelProductRegistration0
+            var cancelAction = new CancelProductRegistration
             {
                 AvatarAddress = _sellerAvatarAddress,
                 ProductInfos = productInfos,
