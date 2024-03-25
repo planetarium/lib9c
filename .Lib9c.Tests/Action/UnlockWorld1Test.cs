@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -50,7 +51,7 @@ namespace Lib9c.Tests.Action
 
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(Addresses.GetSheetAddress<WorldUnlockSheet>(), _tableSheets.WorldUnlockSheet.Serialize())
                 .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize());
         }

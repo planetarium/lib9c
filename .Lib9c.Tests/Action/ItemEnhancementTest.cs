@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -30,7 +31,7 @@ namespace Lib9c.Tests.Action
 
         public ItemEnhancementTest()
         {
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             Dictionary<string, string> sheets;
             (_initialState, sheets) = InitializeUtil.InitializeTableSheets(
                 _initialState,

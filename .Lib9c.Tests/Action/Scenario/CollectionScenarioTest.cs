@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action.Scenario
     using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Action.Scenario
             _tableSheets = new TableSheets(_sheets);
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             for (int i = 0; i < addresses.Length; i++)
             {
                 var avatarAddress = addresses[i];

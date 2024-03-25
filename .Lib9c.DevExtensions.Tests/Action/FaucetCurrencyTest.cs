@@ -2,6 +2,7 @@ using Lib9c.DevExtensions.Action;
 using Lib9c.Tests.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Libplanet.Mocks;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
@@ -30,9 +31,8 @@ namespace Lib9c.DevExtensions.Tests.Action
             _crystal = Currency.Legacy("CRYSTAL", 18, null);
 #pragma warning restore CS0618
 
-            _initialState = new World(
-                new MockWorldState()
-                    .AddBalance(GoldCurrencyState.Address, _ncg * int.MaxValue));
+            _initialState = new World(MockWorldState.CreateModern()
+                .SetBalance(GoldCurrencyState.Address, _ncg * int.MaxValue));
 
             var goldCurrencyState = new GoldCurrencyState(_ncg);
             _agentAddress = new PrivateKey().Address;

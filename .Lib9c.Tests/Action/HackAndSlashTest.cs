@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -79,7 +80,7 @@ namespace Lib9c.Tests.Action
             var currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(currency);
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             _initialState = _initialState
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetLegacyState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
@@ -411,10 +412,10 @@ namespace Lib9c.Tests.Action
             };
 
             IWorld state = empty
-                ? new World(new MockWorldState())
+                ? new World(MockUtil.MockModernWorldState)
                 : _initialState
                     .SetAvatarState(_avatarAddress, _avatarState)
-                    .SetAccount(Addresses.Inventory, new Account(new MockAccountState()));
+                    .SetAccount(Addresses.Inventory, new Account(MockUtil.MockAccountState));
 
             var exec = Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
             {

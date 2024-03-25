@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
@@ -20,7 +21,7 @@ namespace Lib9c.Tests.Action
             var address = new PrivateKey().Address;
             var patron = new PrivateKey().Address;
             var contractAddress = address.Derive(nameof(RequestPledge));
-            IWorld states = new World(new MockWorldState())
+            IWorld states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                     contractAddress,
                     List.Empty.Add(patron.Serialize()).Add(false.Serialize()).Add(mead.Serialize())
@@ -62,7 +63,7 @@ namespace Lib9c.Tests.Action
                 contract = List.Empty.Add(patron.Serialize()).Add(true.Serialize());
             }
 
-            IWorld states = new World(new MockWorldState()).SetLegacyState(contractAddress, contract);
+            IWorld states = new World(MockUtil.MockModernWorldState).SetLegacyState(contractAddress, contract);
 
             var action = new ApprovePledge
             {

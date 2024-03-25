@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action.Scenario
     using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -56,7 +57,7 @@ namespace Lib9c.Tests.Action.Scenario
             var currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(currency);
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetLegacyState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetAgentState(_agentAddress, agentState)

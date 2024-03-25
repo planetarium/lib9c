@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action.Coupons
     using System.Linq;
     using Libplanet.Action;
     using Libplanet.Action.State;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Coupons;
@@ -21,7 +22,7 @@ namespace Lib9c.Tests.Action.Coupons
         {
             IRandom random = new TestRandom();
             var sheets = TableSheetsImporter.ImportSheets();
-            IWorld state = new World(new MockWorldState())
+            IWorld state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                     Addresses.GameConfig,
                     new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()

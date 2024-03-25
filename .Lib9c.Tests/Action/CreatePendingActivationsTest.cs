@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -28,9 +29,8 @@ namespace Lib9c.Tests.Action
             var action = new CreatePendingActivations(activations);
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var state = new World(
-                new MockWorldState().SetState(
-                    ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize()));
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(AdminState.Address, adminState.Serialize());
             var actionContext = new ActionContext()
             {
                 BlockIndex = 1,
@@ -79,9 +79,8 @@ namespace Lib9c.Tests.Action
             var action = new CreatePendingActivations();
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var state = new World(
-                new MockWorldState().SetState(
-                    ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize()));
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(AdminState.Address, adminState.Serialize());
 
             Assert.Throws<PolicyExpiredException>(
                 () => action.Execute(new ActionContext()

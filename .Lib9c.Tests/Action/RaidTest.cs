@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -136,7 +137,7 @@ namespace Lib9c.Tests.Action
             var fee = _tableSheets.WorldBossListSheet[raidId].EntranceFee;
 
             var context = new ActionContext();
-            IWorld state = new World(new MockWorldState())
+            IWorld state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(_agentAddress, new AgentState(_agentAddress));
 
@@ -432,7 +433,7 @@ namespace Lib9c.Tests.Action
             Address bossAddress = Addresses.GetWorldBossAddress(raidId);
             Address worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(_avatarAddress, raidId);
 
-            IWorld state = new World(new MockWorldState())
+            IWorld state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(_agentAddress, new AgentState(_agentAddress));
 
@@ -583,7 +584,7 @@ namespace Lib9c.Tests.Action
                 "1,900002,0,100,0,1,1,40";
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
-            IWorld state = new World(new MockWorldState())
+            IWorld state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(_agentAddress, new AgentState(_agentAddress));
 

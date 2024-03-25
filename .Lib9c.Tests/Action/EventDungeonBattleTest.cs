@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using System.Text;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -30,7 +31,7 @@ namespace Lib9c.Tests.Action
 
         public EventDungeonBattleTest()
         {
-            _initialStates = new World(new MockWorldState());
+            _initialStates = new World(MockUtil.MockModernWorldState);
 
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319

@@ -15,6 +15,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Blockchain.Policies;
     using Libplanet.Blockchain.Renderers;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Store;
     using Libplanet.Store.Trie;
     using Libplanet.Types.Assets;
@@ -77,7 +78,7 @@ namespace Lib9c.Tests.Action
             var gold = new GoldCurrencyState(Currency.Legacy("NCG", 2, null));
 #pragma warning restore CS0618
             IActionContext context = new ActionContext();
-            _baseState = new World(new MockWorldState())
+            _baseState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(GoldCurrencyState.Address, gold.Serialize())
                 .SetLegacyState(Addresses.GoldDistribution, GoldDistributionTest.Fixture.Select(v => v.Serialize()).Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100000000000);
@@ -585,7 +586,7 @@ namespace Lib9c.Tests.Action
             var patronAddress = new PrivateKey().Address;
             var contractAddress = agentAddress.GetPledgeAddress();
             IActionContext context = new ActionContext();
-            IWorld states = new World(new MockWorldState())
+            IWorld states = new World(MockUtil.MockModernWorldState)
                 .MintAsset(context, patronAddress, patronMead * Currencies.Mead)
                 .TransferAsset(context, patronAddress, agentAddress, 1 * Currencies.Mead)
                 .SetLegacyState(contractAddress, List.Empty.Add(patronAddress.Serialize()).Add(true.Serialize()).Add(balance.Serialize()))
@@ -607,7 +608,7 @@ namespace Lib9c.Tests.Action
             gameConfigState.Set(_tableSheets.GameConfigSheet);
 
             var currency = Currency.Legacy("NCG", 2, null);
-            IWorld states = new World(new MockWorldState())
+            IWorld states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(currency, 0).Serialize())
                 .SetLegacyState(weekly.address, weekly.Serialize())
                 .SetLegacyState(Addresses.GoldDistribution, new List())

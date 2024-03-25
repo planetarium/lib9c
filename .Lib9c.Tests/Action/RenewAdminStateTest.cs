@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
@@ -21,9 +22,8 @@ namespace Lib9c.Tests.Action
             _adminPrivateKey = new PrivateKey();
             _validUntil = 1_500_000L;
             _adminState = new AdminState(_adminPrivateKey.Address, _validUntil);
-            _stateDelta = new World(
-                new MockWorldState()
-                    .SetState(ReservedAddresses.LegacyAccount, Addresses.Admin, _adminState.Serialize()));
+            _stateDelta = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(Addresses.Admin, _adminState.Serialize());
         }
 
         [Fact]

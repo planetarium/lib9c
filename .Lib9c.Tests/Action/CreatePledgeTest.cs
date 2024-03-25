@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using System.Collections.Generic;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Action
             var agentAddress = new PrivateKey().Address;
             var pledgeAddress = agentAddress.GetPledgeAddress();
             var context = new ActionContext();
-            IWorld states = new World(new MockWorldState())
+            IWorld states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(Addresses.Admin, adminState.Serialize())
                 .MintAsset(context, patronAddress, 4 * 500 * mead);
 
