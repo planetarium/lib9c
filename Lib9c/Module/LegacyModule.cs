@@ -13,7 +13,6 @@ using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Libplanet.Types.Consensus;
 using LruCacheNet;
 using Nekoyume.Action;
 using Nekoyume.Helper;
@@ -33,11 +32,6 @@ namespace Nekoyume.Module
         private static readonly LruCache<string, ISheet> SheetsCache =
             new LruCache<string, ISheet>(SheetsCacheSize);
 
-        // Basic implementations from IAccount and IAccountState
-        public static IImmutableSet<(Address, Currency)> TotalUpdatedFungibleAssets(
-            this IWorld worldState) =>
-            worldState.GetAccount(ReservedAddresses.LegacyAccount).TotalUpdatedFungibleAssets;
-
         public static IValue GetLegacyState(this IWorldState worldState, Address address) =>
             worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetState(address);
 
@@ -51,58 +45,6 @@ namespace Nekoyume.Module
                 ReservedAddresses.LegacyAccount,
                 world.GetAccount(ReservedAddresses.LegacyAccount).SetState(address, state));
 
-        public static FungibleAssetValue GetBalance(
-            this IWorldState worldState,
-            Address address,
-            Currency currency) =>
-            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetBalance(address, currency);
-
-        public static FungibleAssetValue GetTotalSupply(this IWorldState worldState, Currency currency) =>
-            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetTotalSupply(currency);
-
-        public static IWorld MintAsset(
-            this IWorld world,
-            IActionContext context,
-            Address recipient,
-            FungibleAssetValue value) =>
-            world.SetAccount(
-                ReservedAddresses.LegacyAccount,
-                world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .MintAsset(context, recipient, value));
-
-        public static ValidatorSet GetValidatorSet(this IWorldState worldState) =>
-            worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetValidatorSet();
-
-        public static IWorld TransferAsset(
-            this IWorld world,
-            IActionContext context,
-            Address sender,
-            Address recipient,
-            FungibleAssetValue value,
-            bool allowNegativeBalance = false) =>
-            world.SetAccount(
-                ReservedAddresses.LegacyAccount,
-                world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .TransferAsset(context, sender, recipient, value, allowNegativeBalance));
-
-        public static IWorld BurnAsset(
-            this IWorld world,
-            IActionContext context,
-            Address owner,
-            FungibleAssetValue value) =>
-            world.SetAccount(
-                ReservedAddresses.LegacyAccount,
-                world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .BurnAsset(context, owner, value));
-
-        public static IWorld SetValidator(
-            this IWorld world,
-            Libplanet.Types.Consensus.Validator validator) =>
-            world.SetAccount(
-                ReservedAddresses.LegacyAccount,
-                world.GetAccount(ReservedAddresses.LegacyAccount)
-                    .SetValidator(validator));
-
         // Methods from AccountExtensions
         public static IWorld MarkBalanceChanged(
             this IWorld world,
@@ -113,7 +55,7 @@ namespace Nekoyume.Module
         {
             if (accounts.Length == 1)
             {
-                return MintAsset(world, context, accounts[0], currency * 1);
+                return world.MintAsset(context, accounts[0], currency * 1);
             }
             else if (accounts.Length < 1)
             {
@@ -122,8 +64,7 @@ namespace Nekoyume.Module
 
             for (int i = 1; i < accounts.Length; i++)
             {
-                world = TransferAsset(
-                    world,
+                world = world.TransferAsset(
                     context,
                     accounts[i - 1],
                     accounts[i],
@@ -173,11 +114,11 @@ namespace Nekoyume.Module
                 {
                     if (reward.Currency.Equals(CrystalCalculator.CRYSTAL))
                     {
-                        world = MintAsset(world, context, agentAddress, reward);
+                        world = world.MintAsset(context, agentAddress, reward);
                     }
                     else
                     {
-                        world = MintAsset(world, context, avatarAddress, reward);
+                        world = world.MintAsset(context, avatarAddress, reward);
                     }
                 }
             }
@@ -205,7 +146,7 @@ namespace Nekoyume.Module
             while (true)
             {
                 var price = rawValue * Currencies.Mead;
-                var balance = GetBalance(world, signer, Currencies.Mead);
+                var balance = world.GetBalance(signer, Currencies.Mead);
                 if (balance < price)
                 {
                     var requiredMead = price - balance;
@@ -215,7 +156,7 @@ namespace Nekoyume.Module
                         var patron = contract[0].ToAddress();
                         try
                         {
-                            world = TransferAsset(world, context, patron, signer, requiredMead);
+                            world = world.TransferAsset(context, patron, signer, requiredMead);
                         }
                         catch (InsufficientBalanceException)
                         {
@@ -270,7 +211,7 @@ namespace Nekoyume.Module
         {
             try
             {
-                balance = GetBalance(worldState, address, currency);
+                balance = worldState.GetBalance(address, currency);
                 return true;
             }
             catch (BalanceDoesNotExistsException)
@@ -284,7 +225,7 @@ namespace Nekoyume.Module
             this IWorldState worldState,
             Address address,
             Currency currency
-        ) => new GoldBalanceState(address, GetBalance(worldState, address, currency));
+        ) => new GoldBalanceState(address, worldState.GetBalance(address, currency));
 
         public static Currency GetGoldCurrency(this IWorldState worldState)
         {
@@ -932,7 +873,7 @@ namespace Nekoyume.Module
             Address agentAddr)
         {
             var goldCurrency = GetGoldCurrency(worldState);
-            return GetBalance(worldState, StakeState.DeriveAddress(agentAddr), goldCurrency);
+            return worldState.GetBalance(StakeState.DeriveAddress(agentAddr), goldCurrency);
         }
 
         public static bool TryGetStakeStateV2(
