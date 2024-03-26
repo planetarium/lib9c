@@ -11,8 +11,17 @@ namespace Lib9c.DPoS.Control
 {
     internal static class ValidatorPowerIndexCtrl
     {
-        internal static (IWorld, ValidatorPowerIndex) FetchValidatorPowerIndex(
-            IWorld states)
+        internal static ValidatorPowerIndex? GetValidatorPowerIndex(IWorldState states)
+        {
+            if (states.GetDPoSState(ReservedAddress.ValidatorPowerIndex) is { } value)
+            {
+                return new ValidatorPowerIndex(value);
+            }
+
+            return null;
+        }
+
+        internal static (IWorld, ValidatorPowerIndex) FetchValidatorPowerIndex(IWorld states)
         {
             ValidatorPowerIndex validatorPowerIndex;
             if (states.GetDPoSState(ReservedAddress.ValidatorPowerIndex) is { } value)
