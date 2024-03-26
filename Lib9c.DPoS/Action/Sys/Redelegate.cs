@@ -14,8 +14,11 @@ namespace Lib9c.DPoS.Action.Sys
     /// A system action for DPoS that <see cref="Redelegate"/> specified <see cref="ShareAmount"/>
     /// of shared tokens to <see cref="DstValidator"/> from <see cref="SrcValidator"/>.
     /// </summary>
+    [ActionType(ActionTypeValue)]
     public sealed class Redelegate : IAction
     {
+        private const string ActionTypeValue = "redelegate";
+
         /// <summary>
         /// Creates a new instance of <see cref="Redelegate"/> action.
         /// </summary>
@@ -53,6 +56,7 @@ namespace Lib9c.DPoS.Action.Sys
 
         /// <inheritdoc cref="IAction.PlainValue"/>
         public IValue PlainValue => Bencodex.Types.Dictionary.Empty
+            .Add("type_id", new Text(ActionTypeValue))
             .Add("src", SrcValidator.Serialize())
             .Add("dst", DstValidator.Serialize())
             .Add("amount", ShareAmount.Serialize());
