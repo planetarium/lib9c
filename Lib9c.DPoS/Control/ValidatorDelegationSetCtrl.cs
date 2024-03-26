@@ -7,6 +7,20 @@ namespace Lib9c.DPoS.Control
 {
     internal static class ValidatorDelegationSetCtrl
     {
+        internal static ValidatorDelegationSet? GetValidatorDelegationSet(
+            IWorldState states, Address validatorAddress)
+        {
+            Address validatorDelegationSetAddress = ValidatorDelegationSet.DeriveAddress(
+                validatorAddress);
+
+            if (states.GetDPoSState(validatorDelegationSetAddress) is { } value)
+            {
+                return new ValidatorDelegationSet(value);
+            }
+
+            return null;
+        }
+
         internal static (IWorld, ValidatorDelegationSet) FetchValidatorDelegationSet(
             IWorld states, Address validatorAddress)
         {
