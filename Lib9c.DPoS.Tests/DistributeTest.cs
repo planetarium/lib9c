@@ -186,14 +186,14 @@ namespace Lib9c.DPoS.Tests
                     = (validatorRewardSum * 205)
                     .DivRem(100 + (101 + 200) * 50 - 101 - 102 + 204 + 306);
             var (commissionA, _)
-                    = (validatorRewardA * Validator.CommissionNumer)
-                    .DivRem(Validator.CommissionDenom);
+                    = (validatorRewardA * Validator.CommissionNumerator)
+                    .DivRem(Validator.CommissionDenominator);
             var (validatorRewardB, _)
                     = (validatorRewardSum * 307)
                     .DivRem(100 + (101 + 200) * 50 - 101 - 102 + 204 + 306);
             var (commissionB, _)
-                    = (validatorRewardB * Validator.CommissionNumer)
-                    .DivRem(Validator.CommissionDenom);
+                    = (validatorRewardB * Validator.CommissionNumerator)
+                    .DivRem(Validator.CommissionDenominator);
 
             Assert.Equal(
                 Asset.ConsensusToken * 0,

@@ -43,9 +43,9 @@ namespace Lib9c.DPoS.Model
         // May be it would be better to be serialized
         public static FungibleAssetValue MinSelfDelegation => Asset.ConsensusToken * 1;
 
-        public static BigInteger CommissionNumer => 1;
+        public static BigInteger CommissionNumerator => 1;
 
-        public static BigInteger CommissionDenom => 10;
+        public static BigInteger CommissionDenominator => 10;
 
         public static double CommissionMaxRate => 0.2;
 
