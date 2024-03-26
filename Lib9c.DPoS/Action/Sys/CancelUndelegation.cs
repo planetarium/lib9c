@@ -15,8 +15,11 @@ namespace Lib9c.DPoS.Action.Sys
     /// A system action for DPoS that cancel <see cref="Undelegate"/> specified
     /// <see cref="Amount"/> of tokens to a given <see cref="Validator"/>.
     /// </summary>
+    [ActionType(ActionTypeValue)]
     public sealed class CancelUndelegation : IAction
     {
+        private const string ActionTypeValue = "cancel_undelegation";
+
         /// <summary>
         /// Creates a new instance of <see cref="CancelUndelegation"/> action.
         /// </summary>
@@ -29,7 +32,7 @@ namespace Lib9c.DPoS.Action.Sys
             Amount = amount;
         }
 
-        internal CancelUndelegation()
+        public CancelUndelegation()
         {
             // Used only for deserialization.  See also class Libplanet.Action.Sys.Registry.
         }
@@ -47,6 +50,7 @@ namespace Lib9c.DPoS.Action.Sys
 
         /// <inheritdoc cref="IAction.PlainValue"/>
         public IValue PlainValue => Bencodex.Types.Dictionary.Empty
+            .Add("type_id", new Text(ActionTypeValue))
             .Add("validator", Validator.Serialize())
             .Add("amount", Amount.Serialize());
 

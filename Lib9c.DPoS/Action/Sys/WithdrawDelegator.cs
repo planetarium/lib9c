@@ -15,8 +15,11 @@ namespace Lib9c.DPoS.Action.Sys
     /// <summary>
     /// A system action for DPoS that withdraws reward tokens from given <see cref="Validator"/>.
     /// </summary>
+    [ActionType(ActionTypeValue)]
     public sealed class WithdrawDelegator : IAction
     {
+        private const string ActionTypeValue = "withdraw_delegator";
+
         /// <summary>
         /// Creates a new instance of <see cref="WithdrawDelegator"/> action.
         /// </summary>
@@ -27,7 +30,7 @@ namespace Lib9c.DPoS.Action.Sys
             Validator = validator;
         }
 
-        internal WithdrawDelegator()
+        public WithdrawDelegator()
         {
             // Used only for deserialization.  See also class Libplanet.Action.Sys.Registry.
         }
@@ -38,7 +41,9 @@ namespace Lib9c.DPoS.Action.Sys
         public Address Validator { get; set; }
 
         /// <inheritdoc cref="IAction.PlainValue"/>
-        public IValue PlainValue => Validator.Serialize();
+        public IValue PlainValue => Bencodex.Types.Dictionary.Empty
+            .Add("type_id", new Text(ActionTypeValue))
+            .Add("validator", Validator.Serialize());
 
         /// <inheritdoc cref="IAction.LoadPlainValue(IValue)"/>
         public void LoadPlainValue(IValue plainValue)
