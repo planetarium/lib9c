@@ -83,6 +83,7 @@ namespace Nekoyume.Action
                 typeof(WorldBossKillRewardSheet),
                 typeof(RuneSheet),
                 typeof(RuneListSheet),
+                typeof(DeBuffLimitSheet),
             };
             if (collectionExist)
             {
@@ -231,8 +232,10 @@ namespace Nekoyume.Action
                 runeStates,
                 raidSimulatorSheets,
                 sheets.GetSheet<CostumeStatSheet>(),
-                collectionModifiers
-                );
+                collectionModifiers,
+                sheets.GetSheet<DeBuffLimitSheet>(),
+                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
+            );
             simulator.Simulate();
             avatarState.inventory = simulator.Player.Inventory;
 

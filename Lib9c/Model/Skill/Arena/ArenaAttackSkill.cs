@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Stat;
@@ -19,7 +20,7 @@ namespace Nekoyume.Model.Skill.Arena
         {
         }
 
-         protected IEnumerable<BattleStatus.Arena.ArenaSkill.ArenaSkillInfo> ProcessDamage(
+        protected IEnumerable<BattleStatus.Arena.ArenaSkill.ArenaSkillInfo> ProcessDamage(
             ArenaCharacter caster,
             ArenaCharacter target,
             int simulatorWaveTurn,
@@ -42,11 +43,14 @@ namespace Nekoyume.Model.Skill.Arena
 
                 if (target.IsHit(caster))
                 {
-                    damage = caster.ATK + Power + statAdditionalPower;
-                    damage = (long) (damage * multiplier);
-                    damage = caster.GetDamage(damage, isNormalAttack);
+                    damage = (long)(SkillRow.SkillCategory is SkillCategory.ShatterStrike
+                        ? target.HP * powerMultiplier
+                        : caster.ATK + Power + statAdditionalPower);
+                    damage = (long)(damage * multiplier);
+                    damage = caster.GetDamage(damage, isNormalAttack || SkillRow.Combo);
                     damage = elementalType.GetDamage(target.DefenseElementalType, damage);
-                    isCritical = caster.IsCritical(isNormalAttack);
+                    isCritical = SkillRow.SkillCategory is not SkillCategory.ShatterStrike &&
+                                 caster.IsCritical(isNormalAttack || SkillRow.Combo);
                     if (isCritical)
                     {
                         damage = CriticalHelper.GetCriticalDamageForArena(caster, damage);
@@ -57,6 +61,14 @@ namespace Nekoyume.Model.Skill.Arena
                     damage = Math.Max(damage - finalDEF, 1);
                     // Apply damage reduce
                     damage = (int)((damage - target.DRV) * (1 - target.DRR / 10000m));
+
+                    // ShatterStrike has max damage limitation
+                    if (SkillRow.SkillCategory is SkillCategory.ShatterStrike)
+                    {
+                        damage = Math.Clamp(damage,
+                            1, caster.Simulator.ShatterStrikeMaxDamage);
+                    }
+
                     target.CurrentHP -= damage;
 
                     // double attack must be shown as critical attack
@@ -76,21 +88,21 @@ namespace Nekoyume.Model.Skill.Arena
             return infos;
         }
 
-         private static decimal[] GetMultiplier(int hitCount, decimal totalDamage)
-         {
-             if (hitCount == 1) return new[] {totalDamage};
-             var multiplier = new List<decimal>();
-             var avg = totalDamage / hitCount;
-             var lastDamage = avg * 1.3m;
-             var lastHitIndex = hitCount - 1;
-             var eachDamage = (totalDamage - lastDamage) / lastHitIndex;
-             for (var i = 0; i < hitCount; i++)
-             {
-                 var result = i == lastHitIndex ? lastDamage : eachDamage;
-                 multiplier.Add(result);
-             }
+        private static decimal[] GetMultiplier(int hitCount, decimal totalDamage)
+        {
+            if (hitCount == 1) return new[] { totalDamage };
+            var multiplier = new List<decimal>();
+            var avg = totalDamage / hitCount;
+            var lastDamage = avg * 1.3m;
+            var lastHitIndex = hitCount - 1;
+            var eachDamage = (totalDamage - lastDamage) / lastHitIndex;
+            for (var i = 0; i < hitCount; i++)
+            {
+                var result = i == lastHitIndex ? lastDamage : eachDamage;
+                multiplier.Add(result);
+            }
 
-             return multiplier.ToArray();
-         }
+            return multiplier.ToArray();
+        }
     }
 }

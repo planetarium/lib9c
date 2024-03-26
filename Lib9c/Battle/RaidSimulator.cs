@@ -36,8 +36,13 @@ namespace Nekoyume.Battle
             List<RuneState> runeStates,
             RaidSimulatorSheets simulatorSheets,
             CostumeStatSheet costumeStatSheet,
-            List<StatModifier> collectionModifiers) : base(random, avatarState, foods, simulatorSheets)
+            List<StatModifier> collectionModifiers,
+            DeBuffLimitSheet deBuffLimitSheet,
+            long shatterStrikeMaxDamage = 400_000
+        ) : base(random, avatarState, foods, simulatorSheets,
+            shatterStrikeMaxDamage: shatterStrikeMaxDamage)
         {
+            DeBuffLimitSheet = deBuffLimitSheet;
             var runeOptionSheet = simulatorSheets.RuneOptionSheet;
             var skillSheet = simulatorSheets.SkillSheet;
             Player.ConfigureStats(costumeStatSheet, runeStates, runeOptionSheet, skillSheet,

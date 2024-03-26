@@ -29,6 +29,9 @@ namespace Nekoyume.Model.Buff
             return BuffInfo.SkillTargetType.GetTarget(caster);
         }
 
+        public abstract bool IsBuff();
+        public abstract bool IsDebuff();
+
         public abstract object Clone();
     }
 

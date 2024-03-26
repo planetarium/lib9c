@@ -22,11 +22,18 @@ namespace Nekoyume.Arena
         public ArenaLog Log { get; private set; }
         public int HpModifier { get; }
 
-        public ArenaSimulator(IRandom random, int hpModifier = 2)
+        public long ShatterStrikeMaxDamage { get; private set; }
+        public DeBuffLimitSheet DeBuffLimitSheet { get; private set; }
+
+        public ArenaSimulator(IRandom random,
+            int hpModifier = 2,
+            long shatterStrikeMaxDamage = 400_000  // 400K is initial limit of ShatterStrike. Use this as default.
+        )
         {
             Random = random;
             Turn = 1;
             HpModifier = hpModifier;
+            ShatterStrikeMaxDamage = shatterStrikeMaxDamage;
         }
 
         public ArenaLog Simulate(
@@ -35,9 +42,11 @@ namespace Nekoyume.Arena
             ArenaSimulatorSheets sheets,
             List<StatModifier> challengerCollectionModifiers,
             List<StatModifier> enemyCollectionModifiers,
+            DeBuffLimitSheet deBuffLimitSheet,
             bool setExtraValueBuffBeforeGetBuffs = false)
         {
             Log = new ArenaLog();
+            DeBuffLimitSheet = deBuffLimitSheet;
             var players = SpawnPlayers(this, challenger, enemy, sheets, Log, challengerCollectionModifiers, enemyCollectionModifiers, setExtraValueBuffBeforeGetBuffs);
             Turn = 1;
 

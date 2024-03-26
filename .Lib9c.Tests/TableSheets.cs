@@ -248,6 +248,8 @@ namespace Lib9c.Tests
 
         public CollectionSheet CollectionSheet { get; private set; }
 
+        public DeBuffLimitSheet DeBuffLimitSheet { get; set; }
+
         public void ItemSheetInitialize()
         {
             ItemSheet ??= new ItemSheet();

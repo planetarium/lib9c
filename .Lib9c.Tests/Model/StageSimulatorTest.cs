@@ -69,7 +69,8 @@ namespace Lib9c.Tests.Model
                 new List<StatModifier>
                 {
                     new (StatType.ATK, StatModifier.OperationType.Add, 100),
-                }
+                },
+                _tableSheets.DeBuffLimitSheet
             );
 
             var player = simulator.Player;
@@ -127,7 +128,8 @@ namespace Lib9c.Tests.Model
                     new TestRandom(1),
                     _tableSheets.StageSheet[3],
                     _tableSheets.MaterialItemSheet),
-                new List<StatModifier>()
+                new List<StatModifier>(),
+                _tableSheets.DeBuffLimitSheet
             );
             var unskilledPlayer = simulator.Player;
             Assert.Contains(item, unskilledPlayer.Inventory.Equipments);
@@ -179,7 +181,8 @@ namespace Lib9c.Tests.Model
                     new TestRandom(1),
                     _tableSheets.StageSheet[3],
                     _tableSheets.MaterialItemSheet),
-                new List<StatModifier>()
+                new List<StatModifier>(),
+                _tableSheets.DeBuffLimitSheet
             );
             var skilledPlayer = simulator.Player;
             Assert.Contains(skilledItem, skilledPlayer.Inventory.Equipments);

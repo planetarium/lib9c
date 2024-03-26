@@ -49,6 +49,11 @@ namespace Nekoyume.Model.Skill
 
                 foreach (var target in targets)
                 {
+                    if (SkillRow.SkillCategory is SkillCategory.ShatterStrike)
+                    {
+                        totalDamage = (long)(target.HP * powerMultiplier);
+                    }
+
                     long damage = 0;
                     var isCritical = false;
                     // Skill or when normal attack hit.
@@ -70,18 +75,30 @@ namespace Nekoyume.Model.Skill
                         else
                         {
                             // 모션 배율 적용.
-                            damage = caster.GetDamage(damage, isNormalAttack);
+                            damage = caster.GetDamage(
+                                damage,
+                                isNormalAttack || SkillRow.Combo
+                            );
                             // 속성 적용.
                             damage = elementalType.GetDamage(target.defElementType, damage);
                             // 치명 적용.
-                            isCritical = caster.IsCritical(isNormalAttack);
+                            isCritical =
+                                SkillRow.SkillCategory is not SkillCategory.ShatterStrike &&
+                                caster.IsCritical(isNormalAttack || SkillRow.Combo);
                             if (isCritical)
                             {
                                 damage = CriticalHelper.GetCriticalDamage(caster, damage);
                             }
 
                             // double attack must be shown as critical attack
-                            isCritical |= SkillRow.SkillCategory == SkillCategory.DoubleAttack;
+                            isCritical |= SkillRow.SkillCategory is SkillCategory.DoubleAttack;
+
+                            // ShatterStrike has max damage limitation
+                            if (SkillRow.SkillCategory is SkillCategory.ShatterStrike)
+                            {
+                                damage = Math.Clamp(damage,
+                                    1, caster.Simulator.ShatterStrikeMaxDamage);
+                            }
                         }
 
                         target.CurrentHP -= damage;

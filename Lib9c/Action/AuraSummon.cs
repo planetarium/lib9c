@@ -300,16 +300,14 @@ namespace Nekoyume.Action
                     var stat = CombinationEquipment5.GetStat(optionRow, random);
                     equipment.StatsMap.AddStatAdditionalValue(stat.StatType, stat.BaseValue);
                     equipment.optionCountFromCombination++;
-                    agentState.unlockedOptions.Add(optionRow.Id);
                 }
                 else
                 {
-                    var skill = CombinationEquipment16.GetSkill(optionRow, skillSheet, random);
+                    var skill = CombinationEquipment.GetSkill(optionRow, skillSheet, random);
                     if (skill is null) continue;
 
                     equipment.Skills.Add(skill);
                     equipment.optionCountFromCombination++;
-                    agentState.unlockedOptions.Add(optionRow.Id);
                 }
             }
         }

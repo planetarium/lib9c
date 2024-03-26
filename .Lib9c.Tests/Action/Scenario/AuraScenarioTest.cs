@@ -257,7 +257,8 @@ namespace Lib9c.Tests.Action.Scenario
                     enemyArenaPlayerDigest,
                     _tableSheets.GetArenaSimulatorSheets(),
                     new List<StatModifier>(),
-                    new List<StatModifier>());
+                    new List<StatModifier>(),
+                    _tableSheets.DeBuffLimitSheet);
                 // Check player, enemy equip aura
                 foreach (var spawn in log.OfType<ArenaSpawnCharacter>())
                 {
@@ -313,7 +314,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             var previousState = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
-            var register = new RegisterProduct2
+            var register = new RegisterProduct
             {
                 AvatarAddress = _avatarAddress,
                 RegisterInfos = new List<IRegisterInfo>

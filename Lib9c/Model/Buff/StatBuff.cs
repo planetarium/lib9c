@@ -42,6 +42,16 @@ namespace Nekoyume.Model.Buff
                 value);
         }
 
+        public override bool IsBuff()
+        {
+            return !IsDebuff();
+        }
+
+        public override bool IsDebuff()
+        {
+            return RowData.Value < 0 || CustomField?.BuffValue < 0;
+        }
+
         public override object Clone()
         {
             return new StatBuff(this);

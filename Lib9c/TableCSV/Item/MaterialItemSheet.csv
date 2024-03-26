@@ -29,6 +29,11 @@ id,_name,item_sub_type,grade,elemental_type
 302025,동글이 잎사귀,FoodMaterial,3,Normal
 302026,얼어붙은 열매,FoodMaterial,4,Normal
 302027,서리 결정,FoodMaterial,5,Normal
+302028,빨간 열매,FoodMaterial,2,Normal
+302029,거친 나무 조각,FoodMaterial,3,Normal
+302030,어둠 물고기,FoodMaterial,3,Normal
+302031,영혼수,FoodMaterial,4,Normal
+302032,붉은 파우더,FoodMaterial,5,Normal
 800101,조개껍질,FoodMaterial,2,Normal
 800102,선글라스,FoodMaterial,3,Normal
 800103,아이스크림,FoodMaterial,4,Normal
@@ -159,13 +164,29 @@ id,_name,item_sub_type,grade,elemental_type
 306082,뽀족한 칼날 가면,MonsterPart,4,Water
 306083,랜턴 파편,MonsterPart,4,Water
 306084,어둠의 정수 파편,MonsterPart,4,Water
+306085,신규 무색 결정,MonsterPart,5,Normal
+306086,화염 결정,MonsterPart,5,Fire
+306087,물 결정,MonsterPart,5,Water
+306088,대지 결정,MonsterPart,5,Land
+306089,바람 결정,MonsterPart,5,Wind
+306090,얼어붙은 잎사귀,MonsterPart,4,Water
+306091,얼어붙은 열매,MonsterPart,4,Water
+306092,날카로운 얼음 파편,MonsterPart,4,Water
+306093,짙은 보석 결정,MonsterPart,4,Water
+306094,튼튼한 뿔 조각,MonsterPart,4,Water
+306095,뾰족한 철재 파편,MonsterPart,4,Water
+306096,얼어붙은 방패 파편,MonsterPart,4,Water
+306097,뽀족한 칼날 가면,MonsterPart,4,Water
+306098,랜턴 파편,MonsterPart,4,Water
+306099,어둠의 정수 파편,MonsterPart,4,Water
 400000,모래시계,Hourglass,4,Normal
 500000,AP 스톤,ApStone,4,Normal
 600101,Special Crystal Piece,EquipmentMaterial,1,Normal
 600102,Special Crystal Lump,EquipmentMaterial,2,Normal
 600103,Special Crystal Ore,EquipmentMaterial,3,Normal
 600104,Special Crystal Jewel,EquipmentMaterial,4,Normal
-600201,golden dust,EquipmentMaterial,4,Normal
+600201,Golden Dust,EquipmentMaterial,4,Normal
+600202,Ruby Dust,EquipmentMaterial,4,Normal
 600301,망치 커먼,EquipmentMaterial,1,Normal
 600302,망치 레어,EquipmentMaterial,2,Normal
 600303,망치 에픽,EquipmentMaterial,3,Normal
@@ -183,9 +204,9 @@ id,_name,item_sub_type,grade,elemental_type
 700009,시즌 3 메달 (헤임달용),NormalMaterial,5,Normal
 700010,아레나 시즌10 메달,NormalMaterial,5,Normal
 700011,챔피언 쉽 0 메달 (헤임달용),NormalMaterial,5,Normal
-700102,시즌 3 메달,NormalMaterial,5,Normal
-700104,시즌 4 메달,NormalMaterial,5,Normal
-700106,시즌 5 메달,NormalMaterial,5,Normal
+700102,시즌 4 메달,NormalMaterial,5,Normal
+700104,시즌 5 메달,NormalMaterial,5,Normal
+700106,시즌 6 메달,NormalMaterial,5,Normal
 700108,챔피언 쉽 1 메달,NormalMaterial,5,Normal
 700202,시즌 7 메달,NormalMaterial,5,Normal
 700204,시즌 8 메달,NormalMaterial,5,Normal
