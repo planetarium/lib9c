@@ -7,9 +7,9 @@ namespace Lib9c.DPoS.Action
 {
     public static class DPoSModule
     {
-        public static IValue? GetDPoSState(this IWorld world, Address address)
+        public static IValue? GetDPoSState(this IWorldState world, Address address)
         {
-            return world.GetAccount(ReservedAddress.DPoSAccountAddress).GetState(address);
+            return world.GetAccountState(ReservedAddress.DPoSAccountAddress).GetState(address);
         }
 
         public static IWorld SetDPoSState(this IWorld world, Address address, IValue value)
