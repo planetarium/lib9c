@@ -14,8 +14,11 @@ namespace Lib9c.DPoS.Action.Sys
     /// A system action for DPoS that <see cref="Delegate"/> specified <see cref="Amount"/>
     /// of tokens to a given <see cref="Validator"/>.
     /// </summary>
+    [ActionType(ActionTypeValue)]
     public sealed class Delegate : IAction
     {
+        private const string ActionTypeValue = "delegate";
+
         /// <summary>
         /// Creates a new instance of <see cref="Delegate"/> action.
         /// </summary>
@@ -28,7 +31,7 @@ namespace Lib9c.DPoS.Action.Sys
             Amount = amount;
         }
 
-        internal Delegate()
+        public Delegate()
         {
             // Used only for deserialization.  See also class Libplanet.Action.Sys.Registry.
         }
@@ -42,6 +45,7 @@ namespace Lib9c.DPoS.Action.Sys
 
         /// <inheritdoc cref="IAction.PlainValue"/>
         public IValue PlainValue => Bencodex.Types.Dictionary.Empty
+            .Add("type_id", new Text(ActionTypeValue))
             .Add("validator", Validator.Serialize())
             .Add("amount", Amount.Serialize());
 

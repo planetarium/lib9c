@@ -13,8 +13,11 @@ namespace Lib9c.DPoS.Action.Sys
     /// <summary>
     /// A system action for DPoS that withdraws commission tokens from <see cref="Validator"/>.
     /// </summary>
+    [ActionType(ActionTypeValue)]
     public sealed class WithdrawValidator : IAction
     {
+        private const string ActionTypeValue = "withdraw_validator";
+
         /// <summary>
         /// Creates a new instance of <see cref="WithdrawValidator"/> action.
         /// </summary>
@@ -23,7 +26,8 @@ namespace Lib9c.DPoS.Action.Sys
         }
 
         /// <inheritdoc cref="IAction.PlainValue"/>
-        public IValue PlainValue => Bencodex.Types.Dictionary.Empty;
+        public IValue PlainValue => Bencodex.Types.Dictionary.Empty
+            .Add("type_id", new Text(ActionTypeValue));
 
         /// <inheritdoc cref="IAction.LoadPlainValue(IValue)"/>
         public void LoadPlainValue(IValue plainValue)
