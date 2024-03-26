@@ -49,6 +49,10 @@ namespace Nekoyume.Action
                 var itemSheet = sheets.GetItemSheet();
                 foreach (var (collectionId, collectionMaterials) in CollectionData)
                 {
+                    if (collectionState.Ids.Contains(collectionId))
+                    {
+                        throw new AlreadyActivatedException($"{collectionId} already activated.");
+                    }
                     var row = collectionSheet[collectionId];
                     foreach (var requiredMaterial in row.Materials)
                     {

@@ -136,6 +136,12 @@ namespace Lib9c.Tests.Action
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
+
+            Assert.Throws<AlreadyActivatedException>(() => activateCollection.Execute(new ActionContext
+            {
+                PreviousState = nextState,
+                Signer = _agentAddress,
+            }));
         }
     }
 }
