@@ -153,8 +153,8 @@ namespace Lib9c.DPoS.Control
                     = (validatorRewardSum * powerNumer.RawValue)
                     .DivRem(powerDenom.RawValue);
                 var (commission, _)
-                    = (validatorReward * Validator.CommissionNumer)
-                    .DivRem(Validator.CommissionDenom);
+                    = (validatorReward * Validator.CommissionNumerator)
+                    .DivRem(Validator.CommissionDenominator);
 
                 FungibleAssetValue delegationRewardSum = validatorReward - commission;
 

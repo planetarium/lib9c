@@ -15,7 +15,7 @@ namespace Lib9c.DPoS.Control
     internal static class UndelegateCtrl
     {
         internal static Undelegation? GetUndelegation(
-            IWorld state,
+            IWorldState state,
             Address undelegationAddress)
         {
             if (state.GetDPoSState(undelegationAddress) is { } value)

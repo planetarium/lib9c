@@ -15,7 +15,7 @@ namespace Lib9c.DPoS.Control
     internal static class RedelegateCtrl
     {
         internal static Redelegation? GetRedelegation(
-            IWorld states,
+            IWorldState states,
             Address redelegationAddress)
         {
             if (states.GetDPoSState(redelegationAddress) is { } value)
