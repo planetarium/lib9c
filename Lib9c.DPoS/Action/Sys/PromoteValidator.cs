@@ -14,8 +14,11 @@ namespace Lib9c.DPoS.Action.Sys
     /// <summary>
     /// A system action for DPoS that promotes non-validator node to a validator.
     /// </summary>
+    [ActionType(ActionTypeValue)]
     public sealed class PromoteValidator : IAction
     {
+        private const string ActionTypeValue = "promote_validator";
+
         /// <summary>
         /// Create a new instance of <see cref="PromoteValidator"/> action.
         /// </summary>
@@ -28,7 +31,7 @@ namespace Lib9c.DPoS.Action.Sys
             Amount = amount;
         }
 
-        internal PromoteValidator()
+        public PromoteValidator()
         {
             // Used only for deserialization.  See also class Libplanet.Action.Sys.Registry.
             // FIXME: do not fill ambiguous validator field.
@@ -48,6 +51,7 @@ namespace Lib9c.DPoS.Action.Sys
 
         /// <inheritdoc cref="IAction.PlainValue"/>
         public IValue PlainValue => Bencodex.Types.Dictionary.Empty
+            .Add("type_id", new Text(ActionTypeValue))
             .Add("validator", Validator.Serialize())
             .Add("amount", Amount.Serialize());
 
