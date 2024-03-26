@@ -1,13 +1,15 @@
-namespace Lib9c.Tests.Action
-{
-    using System.Security.Cryptography;
-    using Libplanet.Action;
-    using Libplanet.Action.State;
-    using Libplanet.Common;
-    using Libplanet.Crypto;
-    using Libplanet.Types.Blocks;
-    using Libplanet.Types.Tx;
+﻿#nullable disable
 
+using System.Security.Cryptography;
+using Libplanet.Action;
+using Libplanet.Action.State;
+using Libplanet.Common;
+using Libplanet.Crypto;
+using Libplanet.Types.Blocks;
+using Libplanet.Types.Tx;
+
+namespace Lib9c.DPoS.Tests
+{
     public class ActionContext : IActionContext
     {
         private long _gasUsed;
