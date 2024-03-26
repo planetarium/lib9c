@@ -11,6 +11,16 @@ namespace Lib9c.DPoS.Control
 {
     internal static class ValidatorSetCtrl
     {
+        internal static ValidatorSet? GetValidatorSet(IWorldState states, Address address)
+        {
+            if (states.GetDPoSState(address) is { } value)
+            {
+                return new ValidatorSet(value);
+            }
+
+            return null;
+        }
+
         internal static (IWorld, ValidatorSet) FetchValidatorSet(IWorld states, Address address)
         {
             ValidatorSet validatorSet;

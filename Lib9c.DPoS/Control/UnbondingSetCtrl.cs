@@ -9,6 +9,16 @@ namespace Lib9c.DPoS.Control
 {
     internal static class UnbondingSetCtrl
     {
+        internal static UnbondingSet? GetUnbondingSet(IWorldState states)
+        {
+            if (states.GetDPoSState(ReservedAddress.UnbondingSet) is { } value)
+            {
+                return new UnbondingSet(value);
+            }
+
+            return null;
+        }
+
         internal static (IWorld, UnbondingSet) FetchUnbondingSet(IWorld states)
         {
             UnbondingSet unbondingSet;

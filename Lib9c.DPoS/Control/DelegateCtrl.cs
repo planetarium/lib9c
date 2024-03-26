@@ -13,9 +13,7 @@ namespace Lib9c.DPoS.Control
 {
     internal static class DelegateCtrl
     {
-        internal static Delegation? GetDelegation(
-            IWorld states,
-            Address delegationAddress)
+        internal static Delegation? GetDelegation(IWorldState states, Address delegationAddress)
         {
             if (states.GetDPoSState(delegationAddress) is { } value)
             {
