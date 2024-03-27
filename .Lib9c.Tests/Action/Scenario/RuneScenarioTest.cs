@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -40,7 +41,7 @@ namespace Lib9c.Tests.Action.Scenario
             );
 
             var context = new ActionContext();
-            IWorld initialState = new World(new MockWorldState())
+            IWorld initialState = new World(MockUtil.MockModernWorldState)
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(

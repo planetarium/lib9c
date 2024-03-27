@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Util
     using Lib9c.Tests.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -29,9 +30,10 @@ namespace Lib9c.Tests.Util
         {
             adminAddr ??= new PrivateKey().Address;
             var context = new ActionContext();
-            var states = new World(new MockWorldState()).SetLegacyState(
-                Addresses.Admin,
-                new AdminState(adminAddr.Value, long.MaxValue).Serialize());
+            var states = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(
+                    Addresses.Admin,
+                    new AdminState(adminAddr.Value, long.MaxValue).Serialize());
 
             var goldCurrency = Currency.Legacy(
                 "NCG",

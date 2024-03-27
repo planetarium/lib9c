@@ -9,6 +9,7 @@ using Lib9c.Tests;
 using Lib9c.Tests.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Libplanet.Mocks;
 using Libplanet.Types.Assets;
 using Nekoyume;
 using Nekoyume.Action;
@@ -30,7 +31,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
         public CreateOrReplaceAvatarTest()
         {
-            _initialStates = new World(new MockWorldState());
+            _initialStates = new World(MockUtil.MockModernWorldState);
 
 #pragma warning disable CS0618
             var ncgCurrency = Currency.Legacy("NCG", 2, null);

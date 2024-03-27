@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using System.Collections.Generic;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume.Action;
     using Nekoyume.Battle;
@@ -23,7 +24,7 @@ namespace Lib9c.Tests.Action
 
         public MarketValidationTest()
         {
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize());
         }
 
@@ -245,7 +246,7 @@ namespace Lib9c.Tests.Action
 
                     Assert.Throws(validateMember.Exc, () => buyProduct.Execute(actionContext));
 
-                    var cancelRegister = new CancelProductRegistration0
+                    var cancelRegister = new CancelProductRegistration
                     {
                         AvatarAddress = AvatarAddress,
                         ProductInfos = new List<IProductInfo>() { productInfo },

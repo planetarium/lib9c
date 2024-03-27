@@ -22,20 +22,11 @@ public class RemoteAccount : IAccount
 
     public ITrie Trie => _baseState.Trie;
 
-    public FungibleAssetValue GetBalance(Address address, Currency currency)
-        => _baseState.GetBalance(address, currency);
-
     public IValue? GetState(Address address)
         => _baseState.GetState(address);
 
     public IReadOnlyList<IValue?> GetStates(IReadOnlyList<Address> addresses)
         => _baseState.GetStates(addresses);
-
-    public FungibleAssetValue GetTotalSupply(Currency currency)
-        => _baseState.GetTotalSupply(currency);
-
-    public ValidatorSet GetValidatorSet()
-        => _baseState.GetValidatorSet();
 
     public IAccount MintAsset(IActionContext context, Address recipient, FungibleAssetValue value)
     {

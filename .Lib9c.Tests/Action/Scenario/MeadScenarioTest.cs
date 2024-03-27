@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -20,7 +21,7 @@ namespace Lib9c.Tests.Action.Scenario
             Currency mead = Currencies.Mead;
             var patron = new PrivateKey().Address;
             IActionContext context = new ActionContext();
-            IWorld states = new World(new MockWorldState()).MintAsset(context, patron, 10 * mead);
+            IWorld states = new World(MockUtil.MockModernWorldState).MintAsset(context, patron, 10 * mead);
 
             var agentAddress = new PrivateKey().Address;
             var requestPledge = new RequestPledge
@@ -85,7 +86,7 @@ namespace Lib9c.Tests.Action.Scenario
                 var action = (IAction)Activator.CreateInstance(typeId)!;
                 var actionContext = new ActionContext
                 {
-                    PreviousState = new World(new MockWorldState()),
+                    PreviousState = new World(MockUtil.MockModernWorldState),
                 };
                 try
                 {

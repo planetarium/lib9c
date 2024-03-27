@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -27,7 +28,7 @@ namespace Lib9c.Tests.Action
             var tableSheets = new TableSheets(sheets);
             Address agentAddress = new PrivateKey().Address;
             Address avatarAddress = new PrivateKey().Address;
-            IWorld state = new World(new MockWorldState());
+            IWorld state = new World(MockUtil.MockModernWorldState);
 
             var runeWeightSheet = new RuneWeightSheet();
             runeWeightSheet.Set(@"id,boss_id,rank,rune_id,weight

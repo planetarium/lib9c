@@ -396,7 +396,6 @@ namespace Lib9c.Tests
             blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
             FungibleAssetValue actualBalance = blockChain
                 .GetWorldState()
-                .GetAccountState(ReservedAddresses.LegacyAccount)
                 .GetBalance(adminAddress, _currency);
             FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 10, 0);
             Assert.True(expectedBalance.Equals(actualBalance));

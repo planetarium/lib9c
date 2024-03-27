@@ -2,6 +2,7 @@ namespace Lib9c.Tests.Action
 {
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
@@ -16,9 +17,8 @@ namespace Lib9c.Tests.Action
         {
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var initStates = new MockWorldState()
-                .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize());
-            var state = new World(initStates);
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(AdminState.Address, adminState.Serialize());
             var action = new AddRedeemCode
             {
                 redeemCsv = "New Value",
@@ -68,7 +68,7 @@ namespace Lib9c.Tests.Action
             {
                 Signer = adminAddress,
                 BlockIndex = 0,
-                PreviousState = new World(new MockWorldState())
+                PreviousState = new World(MockUtil.MockModernWorldState)
                     .SetLegacyState(Addresses.Admin, adminState.Serialize())
                     .SetLegacyState(Addresses.RedeemCode, new RedeemCodeState(new RedeemCodeListSheet()).Serialize()),
             });
@@ -90,7 +90,7 @@ namespace Lib9c.Tests.Action
             var sheet = new RedeemCodeListSheet();
             sheet.Set(csv);
 
-            var state = new World(new MockWorldState())
+            var state = new World(MockUtil.MockModernWorldState)
                     .SetLegacyState(Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
 
             var action = new AddRedeemCode
