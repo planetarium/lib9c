@@ -23,12 +23,12 @@ jobs:
         with:
           dotnet-version: 6.0.400
       - name: Publish Lib9c.Plugin
-        run: aws s3 cp ${{ matrix.runtime }}.zip s3://${{ vars.LIB9C_PLUGIN_S3_PATH }}/${{ github.sha }}/
+        run: dotnet publish ./.Lib9c.Plugin/Lib9c.Plugin.csproj -o out -r ${{ matrix.runtime }}
       - name: Compress the build result
         run: zip -r ../${{ matrix.runtime }}.zip .
         working-directory: ./out
       - name: Upload S3
-        run: aws s3 cp ${{ matrix.runtime }}.zip s3://9c-dx/Lib9c.Plugin/${{ github.sha }}/
+        run: aws s3 cp ${{ matrix.runtime }}.zip s3://${{ vars.LIB9C_PLUGIN_S3_PATH }}/${{ github.sha }}/
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
