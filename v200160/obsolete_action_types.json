@@ -1,0 +1,150 @@
+[
+  {
+    "id": "activate_account",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "activate_account2",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "add_activated_account2",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "buy_multiple",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "buy12",
+    "obsoleteAt": 8324909
+  },
+  {
+    "id": "buy7",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "cancel_product_registration",
+    "obsoleteAt": 8324909
+  },
+  {
+    "id": "combination_consumable5",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "create_avatar",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "create_pending_activation",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "create_pending_activations",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "daily_reward2",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "item_enhancement10",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "item_enhancement12",
+    "obsoleteAt": 7718878
+  },
+  {
+    "id": "item_enhancement13",
+    "obsoleteAt": 8324909
+  },
+  {
+    "id": "item_enhancement7",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "item_enhancement9",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "join_arena",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "join_arena3",
+    "obsoleteAt": 8324909
+  },
+  {
+    "id": "ranking_battle11",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "ranking_battle12",
+    "obsoleteAt": 8324909
+  },
+  {
+    "id": "rapid_combination",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "rapid_combination5",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "redeem_code2",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "register_product",
+    "obsoleteAt": 8324909
+  },
+  {
+    "id": "runeEnhancement",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "sell_cancellation7",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "sell_cancellation8",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "sell_cancellation9",
+    "obsoleteAt": 8324909
+  },
+  {
+    "id": "sell12",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "sell6",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "stake",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "stake2",
+    "obsoleteAt": 7983895
+  },
+  {
+    "id": "transfer_asset",
+    "obsoleteAt": 7000000
+  },
+  {
+    "id": "unlock_equipment_recipe",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "unlock_world",
+    "obsoleteAt": 7200000
+  },
+  {
+    "id": "update_sell5",
+    "obsoleteAt": 7200000
+  }
+]
