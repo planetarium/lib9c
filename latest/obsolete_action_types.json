@@ -8,24 +8,12 @@
     "obsoleteAt": 7200000
   },
   {
-    "id": "add_activated_account",
-    "obsoleteAt": 7000000
-  },
-  {
     "id": "add_activated_account2",
     "obsoleteAt": 7200000
   },
   {
     "id": "buy_multiple",
     "obsoleteAt": 7000000
-  },
-  {
-    "id": "buy_product",
-    "obsoleteAt": 8324909
-  },
-  {
-    "id": "buy_product2",
-    "obsoleteAt": 8324909
   },
   {
     "id": "buy12",
@@ -40,23 +28,7 @@
     "obsoleteAt": 8324909
   },
   {
-    "id": "charge_action_point",
-    "obsoleteAt": 7000000
-  },
-  {
-    "id": "charge_action_point2",
-    "obsoleteAt": 7000000
-  },
-  {
     "id": "combination_consumable5",
-    "obsoleteAt": 7000000
-  },
-  {
-    "id": "combination_equipment16",
-    "obsoleteAt": 8324909
-  },
-  {
-    "id": "combination_equipment5",
     "obsoleteAt": 7000000
   },
   {
@@ -73,18 +45,6 @@
   },
   {
     "id": "daily_reward2",
-    "obsoleteAt": 7000000
-  },
-  {
-    "id": "event_consumable_item_crafts",
-    "obsoleteAt": 8324909
-  },
-  {
-    "id": "event_material_item_crafts",
-    "obsoleteAt": 8324909
-  },
-  {
-    "id": "hack_and_slash3",
     "obsoleteAt": 7000000
   },
   {
@@ -132,19 +92,11 @@
     "obsoleteAt": 7000000
   },
   {
-    "id": "redeem_code",
-    "obsoleteAt": 7000000
-  },
-  {
     "id": "redeem_code2",
     "obsoleteAt": 7000000
   },
   {
     "id": "register_product",
-    "obsoleteAt": 8324909
-  },
-  {
-    "id": "register_product2",
     "obsoleteAt": 8324909
   },
   {
