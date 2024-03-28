@@ -217,7 +217,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
             );
 
             // Use Dispel first
-            var dispel = _tableSheets.ActionBuffSheet.Values.First(bf => bf.Id == ActionBuffId);
+            var dispel = _tableSheets.ActionBuffSheet.Values.First(bf => bf.ActionBuffType == ActionBuffType.Dispel);
             challenger.AddBuff(BuffFactory.GetActionBuff(challenger.Stats, dispel));
             Assert.Single(challenger.Buffs);
 
