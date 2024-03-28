@@ -23,6 +23,7 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 106000,106000,속도 증가,20,10,Self,SPD,Percentage,50,true
 106001,106000,속도 증가,100,25,Self,SPD,Percentage,75,true
 106002,106000,속도 증가,100,10,Self,SPD,Percentage,25,true
+106003,106000,SPD UP (Stat conversion),100,10,Self,SPD,Add,0,true
 107000,107000,Armor Penetration (Stat conversion),100,10,Self,ArmorPenetration,Add,0,true
 108000,108000,Thorn (Stat conversion),100,10,Self,Thorn,Add,0,true
 202000,202000,공격 약화,20,10,Enemy,ATK,Percentage,-25,true
