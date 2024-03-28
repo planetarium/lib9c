@@ -80,11 +80,11 @@ namespace Lib9c.Tests.Action
             var nextState = ExecuteInternal(previousStates, 2448);
             var nextGameConfigState = nextState.GetGameConfigState();
             nextState.TryGetAvatarState(_agentAddress, _avatarAddress, out var nextAvatarState);
-            Assert.NotNull(nextAvatarState);
-            Assert.NotNull(nextAvatarState.inventory);
-            Assert.NotNull(nextAvatarState.questList);
-            Assert.NotNull(nextAvatarState.worldInformation);
-            Assert.Equal(nextGameConfigState.ActionPointMax, nextAvatarState.actionPoint);
+            var dailyRewardInfo = nextState.GetDailyRewardInfo(_avatarAddress);
+            Assert.NotNull(dailyRewardInfo);
+            Assert.Equal(2448L, dailyRewardInfo.ReceivedBlockIndex);
+            var actionPoint = nextState.GetActionPoint(_avatarAddress);
+            Assert.Equal(nextGameConfigState.ActionPointMax, actionPoint);
 
             var avatarRuneAmount = nextState.GetBalance(_avatarAddress, RuneHelper.DailyRewardRune);
             var expectedRune = RuneHelper.DailyRewardRune * nextGameConfigState.DailyRuneRewardAmount;
