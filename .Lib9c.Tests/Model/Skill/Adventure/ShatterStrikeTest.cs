@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
             var gameConfigState =
                 new GameConfigState((Text)_tableSheets.GameConfigSheet.Serialize());
             Assert.True(
-                _tableSheets.SkillSheet.TryGetValue(700011, out var skillRow)
+                _tableSheets.SkillSheet.TryGetValue(700010, out var skillRow)
             ); // 700011 is ShatterStrike
             var shatterStrike = new ShatterStrike(skillRow, 0, 0, ratioBp, StatType.NONE);
 

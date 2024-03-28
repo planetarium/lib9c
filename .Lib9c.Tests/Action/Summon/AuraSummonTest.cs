@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action.Summon
     using Lib9c.Tests.Fixtures.TableCSV.Summon;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -55,7 +56,7 @@ namespace Lib9c.Tests.Action.Summon
             var gold = new GoldCurrencyState(_currency);
 
             var context = new ActionContext();
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, _avatarState)
                 .SetLegacyState(GoldCurrencyState.Address, gold.Serialize())

@@ -31,15 +31,22 @@ namespace Nekoyume.Blockchain.Policy
 {
     public partial class BlockPolicySource
     {
-        public const int MaxTransactionsPerBlock = 200;
+        public static int MaxTransactionsPerBlock;
+
+        public const int DefaultMaxTransactionsPerBlock = 200;
 
         public static readonly TimeSpan BlockInterval = TimeSpan.FromSeconds(8);
 
         private readonly IActionLoader _actionLoader;
 
-        public BlockPolicySource(IActionLoader? actionLoader = null)
+        public BlockPolicySource(
+            IActionLoader? actionLoader = null,
+            int? maxTransactionPerBlock = null)
         {
             _actionLoader = actionLoader ?? new NCActionLoader();
+            MaxTransactionsPerBlock = Math.Min(
+                maxTransactionPerBlock ?? DefaultMaxTransactionsPerBlock,
+                DefaultMaxTransactionsPerBlock);
         }
 
         /// <summary>
@@ -167,7 +174,6 @@ namespace Nekoyume.Blockchain.Policy
             {
                 if (blockChain
                     .GetWorldState()
-                    .GetAccountState(ReservedAddresses.LegacyAccount)
                     .GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
                 {
                     // Check Activation

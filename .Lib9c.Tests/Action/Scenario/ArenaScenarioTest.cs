@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -36,7 +37,7 @@ namespace Lib9c.Tests.Action.Scenario
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _state = new World(new MockWorldState());
+            _state = new World(MockUtil.MockModernWorldState);
 
             _sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(_sheets);

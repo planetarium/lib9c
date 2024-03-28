@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -47,7 +48,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialStates = new World(new MockWorldState());
+            _initialStates = new World(MockUtil.MockModernWorldState);
 
             _sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in _sheets)

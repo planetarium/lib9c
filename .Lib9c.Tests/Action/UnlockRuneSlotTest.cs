@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Action
                 .StartedBlockIndex;
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
-            var state = new World(new MockWorldState())
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, new AgentState(agentAddress));
 

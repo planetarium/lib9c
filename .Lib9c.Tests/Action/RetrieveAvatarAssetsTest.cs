@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -46,7 +47,7 @@ namespace Lib9c.Tests.Action
                 name = "JohnDoe",
             };
             _signer = new PrivateKey().Address;
-            IWorld state = new World(new MockWorldState());
+            IWorld state = new World(MockWorldState.CreateModern());
             foreach (var (key, value) in _csv)
             {
                 state = state.SetLegacyState(Addresses.GetSheetAddress(key), (Text)value);
@@ -134,7 +135,7 @@ namespace Lib9c.Tests.Action
             var context = new ActionContext()
             {
                 BlockIndex = 0,
-                PreviousState = new World(new MockWorldState()),
+                PreviousState = new World(MockWorldState.CreateModern()),
                 RandomSeed = 0,
                 Signer = avatarAddress,
             };

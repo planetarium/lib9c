@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Consensus;
     using Nekoyume;
     using Nekoyume.Action;
@@ -27,7 +28,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             _validator = new Validator(new PrivateKey().PublicKey, BigInteger.One);
 
             var sheets = TableSheetsImporter.ImportSheets();
@@ -44,9 +45,8 @@ namespace Lib9c.Tests.Action
         {
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var initStates = new MockWorldState()
-                .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize());
-            var state = new World(initStates);
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(AdminState.Address, adminState.Serialize());
             var action = ValidatorSetOperate.Append(_validator);
             var nextState = action.Execute(
                 new ActionContext()
@@ -65,9 +65,8 @@ namespace Lib9c.Tests.Action
         {
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var adminState = new AdminState(adminAddress, 100);
-            var initStates = new MockWorldState()
-                .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, adminState.Serialize());
-            var state = new World(initStates);
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(AdminState.Address, adminState.Serialize());
             var action = ValidatorSetOperate.Append(_validator);
 
             PermissionDeniedException exc1 = Assert.Throws<PermissionDeniedException>(() =>
@@ -101,7 +100,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Update_Throws_WhenDoNotExistValidator()
         {
-            var state = new World(new MockWorldState());
+            var state = new World(MockUtil.MockModernWorldState);
             var action = ValidatorSetOperate.Update(_validator);
             InvalidOperationException exc = Assert.Throws<InvalidOperationException>(() =>
                 action.Execute(new ActionContext
@@ -116,7 +115,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Remove_Throws_WhenDoNotExistValidator()
         {
-            var state = new World(new MockWorldState());
+            var state = new World(MockUtil.MockModernWorldState);
             var action = ValidatorSetOperate.Remove(_validator);
             InvalidOperationException exc = Assert.Throws<InvalidOperationException>(() =>
                 action.Execute(new ActionContext

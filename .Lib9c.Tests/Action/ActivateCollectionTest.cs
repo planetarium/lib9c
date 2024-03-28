@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.Collection;
@@ -50,7 +51,7 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, avatarState, true, true, true, true)
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
@@ -136,6 +137,12 @@ namespace Lib9c.Tests.Action
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
+
+            Assert.Throws<AlreadyActivatedException>(() => activateCollection.Execute(new ActionContext
+            {
+                PreviousState = nextState,
+                Signer = _agentAddress,
+            }));
         }
     }
 }

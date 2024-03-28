@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
@@ -25,7 +26,7 @@ namespace Lib9c.Tests.Action
                 ActivationKey.Create(privateKey, nonce);
 
             Address activatedAddress = default(Address).Derive(ActivationKey.DeriveKey);
-            IWorld state = new World(new MockWorldState());
+            IWorld state = new World(MockUtil.MockModernWorldState);
 
             if (pendingExist)
             {

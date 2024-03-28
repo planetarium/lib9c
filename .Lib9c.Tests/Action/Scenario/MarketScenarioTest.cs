@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -103,7 +104,7 @@ namespace Lib9c.Tests.Action.Scenario
             agentState3.avatarAddresses[0] = _buyerAvatarAddress;
 
             _currency = Currency.Legacy("NCG", 2, minters: null);
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(_currency).Serialize())
                 .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
                 .SetLegacyState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
@@ -446,7 +447,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             Assert.All(new[] { nonFungibleProductId, fungibleProductId, assetProductId }, productId => Assert.NotEqual(default, productId));
-            var action2 = new CancelProductRegistration0
+            var action2 = new CancelProductRegistration
             {
                 AvatarAddress = _sellerAvatarAddress,
                 ProductInfos = new List<IProductInfo>
@@ -498,7 +499,9 @@ namespace Lib9c.Tests.Action.Scenario
                 );
             }
 
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp - CancelProductRegistration0.CostAp, latestAvatarState.actionPoint);
+            Assert.Equal(
+                _gameConfigState.ActionPointMax - RegisterProduct.CostAp - CancelProductRegistration.CostAp,
+                latestAvatarState.actionPoint);
 
             var sellProductList = new ProductsState((List)latestState.GetLegacyState(productsStateAddress));
             Assert.Empty(sellProductList.ProductIds);
@@ -965,7 +968,7 @@ namespace Lib9c.Tests.Action.Scenario
                 },
             };
             //Cancel
-            var cancelAction = new CancelProductRegistration0
+            var cancelAction = new CancelProductRegistration
             {
                 AvatarAddress = _sellerAvatarAddress,
                 ProductInfos = productInfos,

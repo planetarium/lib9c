@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
+using Libplanet.Crypto;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -126,7 +129,7 @@ namespace Nekoyume.Action
             // Avoid NullReferenceException in test
             var materialItemSheet = ctx.PreviousState.GetSheet<MaterialItemSheet>();
 
-            avatarState = CreateAvatar0.CreateAvatarState(name, avatarAddress, ctx, materialItemSheet, default);
+            avatarState = CreateAvatarState(name, avatarAddress, ctx, materialItemSheet, default);
 
             if (hair < 0) hair = 0;
             if (lens < 0) lens = 0;
@@ -148,11 +151,11 @@ namespace Nekoyume.Action
             // prepare for test when executing on editor mode.
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
 
-            states = CreateAvatar0.AddRunesForTest(ctx, avatarAddress, states, data.RuneStoneCount);
-            states = CreateAvatar0.AddSoulStoneForTest(ctx, avatarAddress, states, data.SoulStoneCount);
+            states = AddRunesForTest(ctx, avatarAddress, states, data.RuneStoneCount);
+            states = AddSoulStoneForTest(ctx, avatarAddress, states, data.SoulStoneCount);
             if (data.AddPet)
             {
-                states = CreateAvatar0.AddPetsForTest(avatarAddress, states);
+                states = AddPetsForTest(avatarAddress, states);
             }
 
             var equipmentSheet = states.GetSheet<EquipmentItemSheet>();
@@ -278,6 +281,175 @@ namespace Nekoyume.Action
             }
 
             return states;
+        }
+
+        public static AvatarState CreateAvatarState(string name,
+            Address avatarAddress,
+            IActionContext ctx,
+            MaterialItemSheet materialItemSheet,
+            Address rankingMapAddress)
+        {
+            var state = ctx.PreviousState;
+            var random = ctx.GetRandom();
+            var gameConfigState = state.GetGameConfigState();
+            var avatarState = new AvatarState(
+                avatarAddress,
+                ctx.Signer,
+                ctx.BlockIndex,
+                state.GetAvatarSheets(),
+                gameConfigState,
+                rankingMapAddress,
+                name
+            );
+
+#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+            var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
+            var costumeItemSheet = ctx.PreviousState.GetSheet<CostumeItemSheet>();
+            var equipmentItemSheet = ctx.PreviousState.GetSheet<EquipmentItemSheet>();
+            var consumableItemSheet = ctx.PreviousState.GetSheet<ConsumableItemSheet>();
+
+            AddItemsForTest(
+                avatarState: avatarState,
+                random: random,
+                costumeItemSheet: costumeItemSheet,
+                materialItemSheet: materialItemSheet,
+                equipmentItemSheet: equipmentItemSheet,
+                consumableItemSheet: consumableItemSheet,
+                data.MaterialCount,
+                data.TradableMaterialCount,
+                data.FoodCount);
+
+            var skillSheet = ctx.PreviousState.GetSheet<SkillSheet>();
+            var optionSheet = ctx.PreviousState.GetSheet<EquipmentItemOptionSheet>();
+
+            var items = data.CustomEquipmentItems;
+            foreach (var item in items)
+            {
+                AddCustomEquipment(
+                    avatarState: avatarState,
+                    random: random,
+                    skillSheet: skillSheet,
+                    equipmentItemSheet: equipmentItemSheet,
+                    equipmentItemOptionSheet: optionSheet,
+                    // Set level of equipment here.
+                    level: item.Level,
+                    // Set recipeId of target equipment here.
+                    recipeId: item.ID,
+                    // Add optionIds here.
+                    item.OptionIds);
+            }
+#endif
+
+            return avatarState;
+        }
+
+        private static void AddItemsForTest(
+            AvatarState avatarState,
+            IRandom random,
+            CostumeItemSheet costumeItemSheet,
+            MaterialItemSheet materialItemSheet,
+            EquipmentItemSheet equipmentItemSheet,
+            ConsumableItemSheet consumableItemSheet,
+            int materialCount,
+            int tradableMaterialCount,
+            int foodCount)
+        {
+            foreach (var row in costumeItemSheet.OrderedList)
+            {
+                avatarState.inventory.AddItem2(ItemFactory.CreateCostume(row, random.GenerateRandomGuid()));
+            }
+
+            foreach (var row in materialItemSheet.OrderedList)
+            {
+                avatarState.inventory.AddItem2(ItemFactory.CreateMaterial(row), materialCount);
+
+                if (row.ItemSubType == ItemSubType.Hourglass ||
+                    row.ItemSubType == ItemSubType.ApStone)
+                {
+                    avatarState.inventory.AddItem2(ItemFactory.CreateTradableMaterial(row), tradableMaterialCount);
+                }
+            }
+
+            foreach (var row in equipmentItemSheet.OrderedList.Where(row =>
+                row.Id > GameConfig.DefaultAvatarWeaponId))
+            {
+                var itemId = random.GenerateRandomGuid();
+                avatarState.inventory.AddItem2(ItemFactory.CreateItemUsable(row, itemId, default));
+            }
+
+            foreach (var row in consumableItemSheet.OrderedList)
+            {
+                for (var i = 0; i < foodCount; i++)
+                {
+                    var itemId = random.GenerateRandomGuid();
+                    var consumable = (Consumable)ItemFactory.CreateItemUsable(row, itemId,
+                        0, 0);
+                    avatarState.inventory.AddItem2(consumable);
+                }
+            }
+        }
+
+        private static void AddCustomEquipment(
+            AvatarState avatarState,
+            IRandom random,
+            SkillSheet skillSheet,
+            EquipmentItemSheet equipmentItemSheet,
+            EquipmentItemOptionSheet equipmentItemOptionSheet,
+            int level,
+            int recipeId,
+            params int[] optionIds
+            )
+        {
+            if (!equipmentItemSheet.TryGetValue(recipeId, out var equipmentRow))
+            {
+                return;
+            }
+
+            var itemId = random.GenerateRandomGuid();
+            var equipment = (Equipment)ItemFactory.CreateItemUsable(equipmentRow, itemId, 0, level);
+            var optionRows = new List<EquipmentItemOptionSheet.Row>();
+            foreach (var optionId in optionIds)
+            {
+                if (!equipmentItemOptionSheet.TryGetValue(optionId, out var optionRow))
+                {
+                    continue;
+                }
+                optionRows.Add(optionRow);
+            }
+
+            AddOption(skillSheet, equipment, optionRows, random);
+
+            avatarState.inventory.AddItem2(equipment);
+        }
+
+        private static HashSet<int> AddOption(
+            SkillSheet skillSheet,
+            Equipment equipment,
+            IEnumerable<EquipmentItemOptionSheet.Row> optionRows,
+            IRandom random)
+        {
+            var optionIds = new HashSet<int>();
+
+            foreach (var optionRow in optionRows.OrderBy(r => r.Id))
+            {
+                if (optionRow.StatType != StatType.NONE)
+                {
+                    var stat = CombinationEquipment5.GetStat(optionRow, random);
+                    equipment.StatsMap.AddStatAdditionalValue(stat.StatType, stat.BaseValue);
+                }
+                else
+                {
+                    var skill = CombinationEquipment5.GetSkill(optionRow, skillSheet, random);
+                    if (!(skill is null))
+                    {
+                        equipment.Skills.Add(skill);
+                    }
+                }
+
+                optionIds.Add(optionRow.Id);
+            }
+
+            return optionIds;
         }
     }
 }

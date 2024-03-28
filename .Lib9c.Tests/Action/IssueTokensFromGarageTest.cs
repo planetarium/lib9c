@@ -8,6 +8,7 @@ namespace Lib9c.Tests
     using Libplanet.Action.State;
     using Libplanet.Common;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -36,9 +37,8 @@ namespace Lib9c.Tests
 
             var garageBalanceAddr = Addresses.GetGarageBalanceAddress(_signer);
             _prevState = new World(
-                new MockWorldState()
-                    .SetBalance(garageBalanceAddr, Currencies.Crystal * 1000)
-            );
+                MockWorldState.CreateModern()
+                    .SetBalance(garageBalanceAddr, Currencies.Crystal * 1000));
 
             IEnumerable<Material> materials = _tableSheets.MaterialItemSheet.OrderedList!
                 .Take(3)

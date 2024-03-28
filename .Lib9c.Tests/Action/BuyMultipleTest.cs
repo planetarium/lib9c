@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using System.Numerics;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -407,7 +408,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = new World(new MockWorldState()),
+                    PreviousState = new World(MockUtil.MockModernWorldState),
                     RandomSeed = 0,
                     Signer = _buyerAgentAddress,
                 })
@@ -426,7 +427,7 @@ namespace Lib9c.Tests.Action
             Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
                 {
                     BlockIndex = 0,
-                    PreviousState = new World(new MockWorldState()),
+                    PreviousState = new World(MockUtil.MockModernWorldState),
                     RandomSeed = 0,
                     Signer = _buyerAgentAddress,
                 })

@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -51,7 +52,7 @@ namespace Lib9c.Tests.Action
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
             var context = new ActionContext();
-            var state = new World(new MockWorldState())
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState);
@@ -205,7 +206,7 @@ namespace Lib9c.Tests.Action
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
-            var state = new World(new MockWorldState())
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState);
@@ -261,7 +262,7 @@ namespace Lib9c.Tests.Action
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
-            var state = new World(new MockWorldState())
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState);
@@ -333,7 +334,7 @@ namespace Lib9c.Tests.Action
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
             var context = new ActionContext();
-            var state = new World(new MockWorldState())
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState);
@@ -448,7 +449,7 @@ namespace Lib9c.Tests.Action
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
-            var state = new World(new MockWorldState())
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState);
@@ -494,7 +495,7 @@ namespace Lib9c.Tests.Action
                 .StartedBlockIndex;
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
-            var state = new World(new MockWorldState())
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(agentAddress, new AgentState(agentAddress));
 

@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -19,7 +20,7 @@ namespace Lib9c.Tests.Action
             var patron = new PrivateKey().Address;
             var agent = new PrivateKey().Address;
             var context = new ActionContext();
-            IWorld states = new World(new MockWorldState())
+            IWorld states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(agent.GetPledgeAddress(), List.Empty.Add(patron.Serialize()).Add(true.Serialize()));
             var mead = Currencies.Mead;
             if (balance > 0)
@@ -52,7 +53,7 @@ namespace Lib9c.Tests.Action
             Address patron = new PrivateKey().Address;
             Address agent = new PrivateKey().Address;
             List contract = List.Empty.Add(patron.Serialize()).Add(true.Serialize());
-            IWorld states = new World(new MockWorldState()).SetLegacyState(agent.GetPledgeAddress(), contract);
+            IWorld states = new World(MockUtil.MockModernWorldState).SetLegacyState(agent.GetPledgeAddress(), contract);
 
             var action = new EndPledge
             {

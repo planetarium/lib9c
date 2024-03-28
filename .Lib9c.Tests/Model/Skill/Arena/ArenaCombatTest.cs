@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Buff;
+    using Nekoyume.Model.Skill;
     using Nekoyume.Model.Skill.Arena;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
@@ -13,8 +14,6 @@ namespace Lib9c.Tests.Model.Skill.Arena
 
     public class ArenaCombatTest
     {
-        private const int ActionBuffId = 708000; // Dispel with duration
-
         private readonly TableSheets _tableSheets;
         private readonly AvatarState _avatar1;
         private readonly AvatarState _avatar2;
@@ -48,7 +47,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
 
         [Theory]
         [InlineData(700009, new[] { 600001 })]
-        [InlineData(700010, new[] { 600001, 704000 })]
+        [InlineData(700009, new[] { 600001, 704000 })]
         public void DispelOnUse(int dispelId, int[] debuffIdList)
         {
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
@@ -122,7 +121,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
             );
 
             // Use Dispel first
-            var dispel = _tableSheets.ActionBuffSheet.Values.First(bf => bf.Id == ActionBuffId);
+            var dispel = _tableSheets.ActionBuffSheet.Values.First(bf => bf.ActionBuffType == ActionBuffType.Dispel);
             challenger.AddBuff(BuffFactory.GetActionBuff(challenger.Stats, dispel));
             Assert.Single(challenger.Buffs);
 
@@ -170,7 +169,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
             );
 
             // Use Dispel first
-            var dispel = _tableSheets.ActionBuffSheet.Values.First(bf => bf.Id == ActionBuffId);
+            var dispel = _tableSheets.ActionBuffSheet.Values.First(bf => bf.ActionBuffType == ActionBuffType.Dispel);
             challenger.AddBuff(BuffFactory.GetActionBuff(challenger.Stats, dispel));
             Assert.Single(challenger.Buffs);
 
@@ -218,7 +217,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
             );
 
             // Use Dispel first
-            var dispel = _tableSheets.ActionBuffSheet.Values.First(bf => bf.Id == ActionBuffId);
+            var dispel = _tableSheets.ActionBuffSheet.Values.First(bf => bf.ActionBuffType == ActionBuffType.Dispel);
             challenger.AddBuff(BuffFactory.GetActionBuff(challenger.Stats, dispel));
             Assert.Single(challenger.Buffs);
 

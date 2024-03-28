@@ -149,5 +149,67 @@ namespace Lib9c.Tests.Model.Skill
             Assert.NotNull(buff3.CustomField);
             Assert.True(buff3.CustomField.Value.BuffValue > buff2.CustomField.Value.BuffValue);
         }
+
+        [Theory]
+        [InlineData(204003, false)]
+        [InlineData(206002, true)]
+        public void IsDebuff(int buffId, bool hasCustom)
+        {
+            var player = new Player(
+                level: 1,
+                _tableSheets.CharacterSheet,
+                _tableSheets.CharacterLevelSheet,
+                _tableSheets.EquipmentItemSetEffectSheet);
+            var skillId = _tableSheets.SkillBuffSheet.Values.First(r => r.BuffIds.Contains(buffId)).SkillId;
+            var skillRow = _tableSheets.SkillSheet[skillId];
+            int power = hasCustom ? 0 : 100;
+            int statPower = hasCustom ? 250 : 0;
+            StatType referencedStat = hasCustom ? StatType.HP : StatType.NONE;
+            var skill = SkillFactory.Get(skillRow, power, 100, statPower, referencedStat);
+            var buffs = BuffFactory.GetBuffs(
+                player.Stats,
+                skill,
+                _tableSheets.SkillBuffSheet,
+                _tableSheets.StatBuffSheet,
+                _tableSheets.SkillActionBuffSheet,
+                _tableSheets.ActionBuffSheet,
+                hasCustom
+            );
+            var buff = Assert.IsType<StatBuff>(buffs.Single(r => r.BuffInfo.Id == buffId));
+            Assert.Equal(buff.CustomField is not null, hasCustom);
+            Assert.False(buff.IsBuff());
+            Assert.True(buff.IsDebuff());
+        }
+
+        [Theory]
+        [InlineData(102001, false)]
+        [InlineData(102003, true)]
+        public void IsBuff(int buffId, bool hasCustom)
+        {
+            var player = new Player(
+                level: 1,
+                _tableSheets.CharacterSheet,
+                _tableSheets.CharacterLevelSheet,
+                _tableSheets.EquipmentItemSetEffectSheet);
+            var skillId = _tableSheets.SkillBuffSheet.Values.First(r => r.BuffIds.Contains(buffId)).SkillId;
+            var skillRow = _tableSheets.SkillSheet[skillId];
+            int power = hasCustom ? 0 : 100;
+            int statPower = hasCustom ? 250 : 0;
+            StatType referencedStat = hasCustom ? StatType.ATK : StatType.NONE;
+            var skill = SkillFactory.Get(skillRow, power, 100, statPower, referencedStat);
+            var buffs = BuffFactory.GetBuffs(
+                player.Stats,
+                skill,
+                _tableSheets.SkillBuffSheet,
+                _tableSheets.StatBuffSheet,
+                _tableSheets.SkillActionBuffSheet,
+                _tableSheets.ActionBuffSheet,
+                hasCustom
+            );
+            var buff = Assert.IsType<StatBuff>(buffs.Single(r => r.BuffInfo.Id == buffId));
+            Assert.NotNull(buff.CustomField);
+            Assert.True(buff.IsBuff());
+            Assert.False(buff.IsDebuff());
+        }
     }
 }
