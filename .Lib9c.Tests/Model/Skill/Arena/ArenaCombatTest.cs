@@ -53,7 +53,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
             var myDigest = new ArenaPlayerDigest(_avatar1, _arenaAvatar1);
             var enemyDigest = new ArenaPlayerDigest(_avatar2, _arenaAvatar2);
-            var simulator = new ArenaSimulator(new TestRandom());
+            var simulator = new ArenaSimulator(new TestRandom(1));
             var challenger = new ArenaCharacter(
                 simulator,
                 myDigest,
