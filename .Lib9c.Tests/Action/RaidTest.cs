@@ -261,7 +261,9 @@ namespace Lib9c.Tests.Action
                     null,
                     raidSimulatorSheets,
                     _tableSheets.CostumeStatSheet,
-                    new List<StatModifier>());
+                    new List<StatModifier>(),
+                    _tableSheets.DeBuffLimitSheet
+                    );
                 simulator.Simulate();
                 var score = simulator.DamageDealt;
 
@@ -498,7 +500,9 @@ namespace Lib9c.Tests.Action
                 null,
                 _tableSheets.GetRaidSimulatorSheets(),
                 _tableSheets.CostumeStatSheet,
-                new List<StatModifier>());
+                new List<StatModifier>(),
+                _tableSheets.DeBuffLimitSheet
+                );
             simulator.Simulate();
 
             Dictionary<Currency, FungibleAssetValue> rewardMap
