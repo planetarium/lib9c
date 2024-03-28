@@ -4,8 +4,8 @@ using System.Linq;
 using Lib9c;
 using Libplanet.Action;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
 using Nekoyume.Battle;
+using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Helper
@@ -86,61 +86,32 @@ namespace Nekoyume.Helper
         }
 
         public static bool TryEnhancement(
-            FungibleAssetValue ncg,
-            FungibleAssetValue crystal,
-            FungibleAssetValue rune,
-            Currency ncgCurrency,
-            Currency crystalCurrency,
-            Currency runeCurrency,
-            RuneCostSheet.RuneCostData cost,
+            RuneState runeState,
+            RuneCostSheet.Row costRow,
             IRandom random,
             int maxTryCount,
-            out int tryCount)
+            out (int levelUpCount, int ncgCost, int crystalCost, int runeCost) levelUpResult)
         {
-            tryCount = 0;
-            var value = cost.LevelUpSuccessRate + 1;
-            while (value > cost.LevelUpSuccessRate)
-            {
-                tryCount++;
-                if (tryCount > maxTryCount)
-                {
-                    tryCount = maxTryCount;
-                    return false;
-                }
+            levelUpResult = (0, 0, 0, 0);
 
-                if (!CheckBalance(ncg, crystal, rune, ncgCurrency, crystalCurrency, runeCurrency, cost, tryCount))
+            for (var i = 0; i < maxTryCount; i++)
+            {
+                // No cost Found : throw exception at caller
+                if (!costRow.TryGetCost(runeState.Level + levelUpResult.levelUpCount + 1,
+                        out var cost))
                 {
                     return false;
                 }
 
-                value = random.Next(1, GameConfig.MaximumProbability + 1);
-            }
+                // Cost burns in every try
+                levelUpResult.ncgCost += cost.NcgQuantity;
+                levelUpResult.crystalCost += cost.CrystalQuantity;
+                levelUpResult.runeCost += cost.RuneStoneQuantity;
 
-            return true;
-        }
-
-        private static bool CheckBalance(
-            FungibleAssetValue ncg,
-            FungibleAssetValue crystal,
-            FungibleAssetValue rune,
-            Currency ncgCurrency,
-            Currency crystalCurrency,
-            Currency runeCurrency,
-            RuneCostSheet.RuneCostData cost,
-            int tryCount)
-        {
-            var ncgCost = tryCount * cost.NcgQuantity * ncgCurrency;
-            var crystalCost = tryCount * cost.CrystalQuantity * crystalCurrency;
-            var runeCost = tryCount * cost.RuneStoneQuantity * runeCurrency;
-            if (ncg < ncgCost || crystal < crystalCost || rune < runeCost)
-            {
-                if (tryCount == 1)
+                if (random.Next(0, GameConfig.MaximumProbability) < cost.LevelUpSuccessRate)
                 {
-                    throw new NotEnoughFungibleAssetValueException($"{nameof(RuneHelper)}" +
-                        $"[ncg:{ncg} < {ncgCost}] [crystal:{crystal} < {crystalCost}] [rune:{rune} < {runeCost}]");
+                    levelUpResult.levelUpCount++;
                 }
-
-                return false;
             }
 
             return true;
