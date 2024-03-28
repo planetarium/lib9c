@@ -11,7 +11,6 @@ using Nekoyume.Helper;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -25,6 +24,9 @@ namespace Nekoyume.Action
     {
         public Address avatarAddress;
         public const string AvatarAddressKey = "a";
+        public const long DailyRewardInterval = 2550L;
+        public const int DailyRuneRewardAmount = 1;
+        public const int ActionPointMax = 120;
 
         Address IDailyRewardV1.AvatarAddress => avatarAddress;
 
@@ -56,37 +58,31 @@ namespace Nekoyume.Action
             states.TryGetDailyRewardReceivedBlockIndex(context.Signer, avatarAddress,
                 out var receivedBlockIndex);
 
-            var gameConfigState = states.GetGameConfigState();
-            if (gameConfigState is null)
-            {
-                throw new FailedLoadStateException($"{addressesHex}Aborted as the game config was failed to load.");
-            }
-
-            if (context.BlockIndex < receivedBlockIndex + gameConfigState.DailyRewardInterval)
+            if (context.BlockIndex < receivedBlockIndex + DailyRewardInterval)
             {
                 var sb = new StringBuilder()
                     .Append($"{addressesHex}Not enough block index to receive daily rewards.")
                     .Append(
-                        $" Expected: Equals or greater than ({receivedBlockIndex + gameConfigState.DailyRewardInterval}).")
+                        $" Expected: Equals or greater than ({receivedBlockIndex + DailyRewardInterval}).")
                     .Append($" Actual: ({context.BlockIndex})");
                 throw new RequiredBlockIndexException(sb.ToString());
             }
 
             receivedBlockIndex = context.BlockIndex;
 
-            if (gameConfigState.DailyRuneRewardAmount > 0)
+            if (DailyRuneRewardAmount > 0)
             {
                 states = states.MintAsset(
                     context,
                     avatarAddress,
-                    RuneHelper.DailyRewardRune * gameConfigState.DailyRuneRewardAmount);
+                    RuneHelper.DailyRewardRune * DailyRuneRewardAmount);
             }
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}DailyReward Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetDailyRewardReceivedBlockIndex(avatarAddress, receivedBlockIndex)
-                .SetActionPoint(avatarAddress, gameConfigState.ActionPointMax);
+                .SetActionPoint(avatarAddress, ActionPointMax);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
