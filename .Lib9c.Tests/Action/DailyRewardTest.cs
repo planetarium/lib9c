@@ -12,7 +12,6 @@ namespace Lib9c.Tests.Action
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
 
     public class DailyRewardTest
     {
@@ -39,52 +38,30 @@ namespace Lib9c.Tests.Action
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(tableSheets.GameConfigSheet);
             _agentAddress = new PrivateKey().Address;
-            var agentState = new AgentState(_agentAddress);
-            _avatarAddress = new PrivateKey().Address;
-            var rankingMapAddress = new PrivateKey().Address;
-            var avatarState = new AvatarState(
-                _avatarAddress,
-                _agentAddress,
-                0,
-                tableSheets.GetAvatarSheets(),
-                gameConfigState,
-                rankingMapAddress)
-            {
-                actionPoint = 0,
-            };
-            agentState.avatarAddresses[0] = _avatarAddress;
+            _avatarAddress = Addresses.GetAvatarAddress(_agentAddress, 0);
 
             _initialState = _initialState
-                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize())
-                .SetAgentState(_agentAddress, agentState)
-                .SetAvatarState(_avatarAddress, avatarState);
+                .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize());
         }
 
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public void Execute(bool legacy)
+        public void Execute(bool stateExist)
         {
-            IWorld previousStates = null;
-            switch (legacy)
+            IWorld previousStates = stateExist switch
             {
-                case true:
-                    previousStates = _initialState;
-                    break;
-                case false:
-                    var avatarState = _initialState.GetAvatarState(_avatarAddress);
-                    previousStates = SetAvatarStateAsV2To(_initialState, avatarState);
-                    break;
-            }
+                true => _initialState.SetDailyRewardReceivedBlockIndex(_agentAddress, 0L)
+                    .SetActionPoint(_avatarAddress, 0),
+                false => _initialState
+            };
 
-            var nextState = ExecuteInternal(previousStates, 2448);
+            var nextState = ExecuteInternal(previousStates, _avatarAddress, 2448);
             var nextGameConfigState = nextState.GetGameConfigState();
-            nextState.TryGetAvatarState(_agentAddress, _avatarAddress, out var nextAvatarState);
-            Assert.NotNull(nextAvatarState);
-            Assert.NotNull(nextAvatarState.inventory);
-            Assert.NotNull(nextAvatarState.questList);
-            Assert.NotNull(nextAvatarState.worldInformation);
-            Assert.Equal(nextGameConfigState.ActionPointMax, nextAvatarState.actionPoint);
+            var receivedBlockIndex = nextState.GetDailyRewardReceivedBlockIndex(_avatarAddress);
+            Assert.Equal(2448L, receivedBlockIndex);
+            var actionPoint = nextState.GetActionPoint(_avatarAddress);
+            Assert.Equal(nextGameConfigState.ActionPointMax, actionPoint);
 
             var avatarRuneAmount = nextState.GetBalance(_avatarAddress, RuneHelper.DailyRewardRune);
             var expectedRune = RuneHelper.DailyRewardRune * nextGameConfigState.DailyRuneRewardAmount;
@@ -93,7 +70,7 @@ namespace Lib9c.Tests.Action
 
         [Fact]
         public void Execute_Throw_FailedLoadStateException() =>
-            Assert.Throws<FailedLoadStateException>(() => ExecuteInternal(new World(MockUtil.MockModernWorldState)));
+            Assert.Throws<FailedLoadStateException>(() => ExecuteInternal(new World(MockUtil.MockModernWorldState), _avatarAddress));
 
         [Theory]
         [InlineData(0, 0, true)]
@@ -107,12 +84,13 @@ namespace Lib9c.Tests.Action
             long executeBlockIndex,
             bool throwsException)
         {
-            var avatarState = _initialState.GetAvatarState(_avatarAddress);
-            avatarState.dailyRewardReceivedIndex = dailyRewardReceivedIndex;
-            var previousStates = SetAvatarStateAsV2To(_initialState, avatarState);
+            var previousStates =
+                _initialState.SetDailyRewardReceivedBlockIndex(
+                    _avatarAddress,
+                    dailyRewardReceivedIndex);
             try
             {
-                ExecuteInternal(previousStates, executeBlockIndex);
+                ExecuteInternal(previousStates, _avatarAddress, executeBlockIndex);
             }
             catch (RequiredBlockIndexException)
             {
@@ -121,7 +99,17 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        private void Execute_Without_Runereward()
+        public void Execute_Throw_InvalidAddressException()
+        {
+            Assert.Throws<InvalidAddressException>(() =>
+                ExecuteInternal(
+                    new World(MockUtil.MockModernWorldState),
+                    new PrivateKey().Address,
+                    2448L));
+        }
+
+        [Fact]
+        public void Execute_Without_Runereward()
         {
             var gameConfigSheet = new GameConfigSheet();
             var csv = @"key,value
@@ -140,19 +128,16 @@ rune_skill_slot_unlock_cost,500";
 
             var state = _initialState
                 .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize());
-            var nextState = ExecuteInternal(state, 1800);
+            var nextState = ExecuteInternal(state, _avatarAddress, 1800);
             var avatarRuneAmount = nextState.GetBalance(_avatarAddress, RuneHelper.DailyRewardRune);
             Assert.Equal(0, (int)avatarRuneAmount.MajorUnit);
         }
 
-        private IWorld SetAvatarStateAsV2To(IWorld state, AvatarState avatarState) =>
-            state.SetAvatarState(_avatarAddress, avatarState);
-
-        private IWorld ExecuteInternal(IWorld previousStates, long blockIndex = 0)
+        private IWorld ExecuteInternal(IWorld previousStates, Address avatarAddress, long blockIndex = 0)
         {
             var dailyRewardAction = new DailyReward
             {
-                avatarAddress = _avatarAddress,
+                avatarAddress = avatarAddress,
             };
 
             return dailyRewardAction.Execute(new ActionContext

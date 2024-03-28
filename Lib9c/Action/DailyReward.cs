@@ -36,11 +36,25 @@ namespace Nekoyume.Action
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}DailyReward exec started", addressesHex);
 
-            if (!states.TryGetAvatarState(context.Signer, avatarAddress, out AvatarState avatarState))
+            var agentAddress = context.Signer;
+            var avatarContains = false;
+            for (int i = 0; i < GameConfig.SlotCount; i++)
             {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                var address = Addresses.GetAvatarAddress(agentAddress, i);
+                if (address.Equals(avatarAddress))
+                {
+                    avatarContains = true;
+                    break;
+                }
             }
+
+            if (!avatarContains)
+            {
+                throw new InvalidAddressException();
+            }
+
+            states.TryGetDailyRewardReceivedBlockIndex(context.Signer, avatarAddress,
+                out var receivedBlockIndex);
 
             var gameConfigState = states.GetGameConfigState();
             if (gameConfigState is null)
@@ -48,18 +62,17 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the game config was failed to load.");
             }
 
-            if (context.BlockIndex < avatarState.dailyRewardReceivedIndex + gameConfigState.DailyRewardInterval)
+            if (context.BlockIndex < receivedBlockIndex + gameConfigState.DailyRewardInterval)
             {
                 var sb = new StringBuilder()
                     .Append($"{addressesHex}Not enough block index to receive daily rewards.")
                     .Append(
-                        $" Expected: Equals or greater than ({avatarState.dailyRewardReceivedIndex + gameConfigState.DailyRewardInterval}).")
+                        $" Expected: Equals or greater than ({receivedBlockIndex + gameConfigState.DailyRewardInterval}).")
                     .Append($" Actual: ({context.BlockIndex})");
                 throw new RequiredBlockIndexException(sb.ToString());
             }
 
-            avatarState.dailyRewardReceivedIndex = context.BlockIndex;
-            avatarState.actionPoint = gameConfigState.ActionPointMax;
+            receivedBlockIndex = context.BlockIndex;
 
             if (gameConfigState.DailyRuneRewardAmount > 0)
             {
@@ -71,7 +84,9 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}DailyReward Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.SetAvatarState(avatarAddress, avatarState);
+            return states
+                .SetDailyRewardReceivedBlockIndex(avatarAddress, receivedBlockIndex)
+                .SetActionPoint(avatarAddress, gameConfigState.ActionPointMax);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>
