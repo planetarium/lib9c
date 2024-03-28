@@ -177,6 +177,7 @@ namespace Nekoyume.Action
                 typeof(CrystalRandomBuffSheet),
                 typeof(StakeActionPointCoefficientSheet),
                 typeof(RuneListSheet),
+                typeof(DeBuffLimitSheet),
             };
             if (collectionExist)
             {
@@ -471,6 +472,8 @@ namespace Nekoyume.Action
                     collectionModifiers.AddRange(collectionSheet[collectionId].StatModifiers);
                 }
             }
+
+            var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
             for (var i = 0; i < TotalPlayCount; i++)
             {
                 var rewards = StageSimulator.GetWaveRewards(random, stageRow, materialItemSheet);
@@ -494,7 +497,9 @@ namespace Nekoyume.Action
                     costumeStatSheet,
                     rewards,
                     collectionModifiers,
-                    false);
+                    deBuffLimitSheet,
+                    false,
+                    gameConfigState.ShatterStrikeMaxDamage);
                 sw.Stop();
                 Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                     addressesHex, source, "Initialize Simulator", blockIndex, sw.Elapsed.TotalMilliseconds);

@@ -338,7 +338,7 @@ namespace Nekoyume.Model
             if (!isBuffRemoved)
                 return;
 
-            Stats.SetBuffs(StatBuffs);
+            Stats.SetBuffs(StatBuffs, Simulator.DeBuffLimitSheet);
             if (Simulator.LogEvent)
             {
                 Simulator.Log.Add(new RemoveBuffs((CharacterBase) Clone()));
@@ -378,7 +378,7 @@ namespace Nekoyume.Model
                 {
                     var clone = (StatBuff)stat.Clone();
                     Buffs[stat.RowData.GroupId] = clone;
-                    Stats.AddBuff(clone, updateImmediate);
+                    Stats.AddBuff(clone, Simulator.DeBuffLimitSheet, updateImmediate);
                     break;
                 }
                 case ActionBuff action:
@@ -401,7 +401,7 @@ namespace Nekoyume.Model
                             dispelList = Buffs.Values.Where(
                                             bff => bff.IsDebuff() &&
                                                 Simulator.Random.Next(0, 100) <
-                                                action.RowData.Chance).ToList();
+                                                dispel.BuffInfo.Chance).ToList();
 
                             foreach (var bff in dispelList)
                             {

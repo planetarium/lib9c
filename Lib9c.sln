@@ -70,6 +70,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib9c.Plugin", ".Lib9c.Plug
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib9c.Plugin.Shared", ".Lib9c.Plugin.Shared\Lib9c.Plugin.Shared.csproj", "{76F6C25E-94D2-4EA9-B88D-0249F44D1D16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libplanet.Mocks", ".Libplanet\Libplanet.Mocks\Libplanet.Mocks.csproj", "{8BC561CB-91EF-4290-893F-025E9E6A0CF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -196,6 +198,10 @@ Global
 		{76F6C25E-94D2-4EA9-B88D-0249F44D1D16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76F6C25E-94D2-4EA9-B88D-0249F44D1D16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76F6C25E-94D2-4EA9-B88D-0249F44D1D16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BC561CB-91EF-4290-893F-025E9E6A0CF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BC561CB-91EF-4290-893F-025E9E6A0CF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BC561CB-91EF-4290-893F-025E9E6A0CF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BC561CB-91EF-4290-893F-025E9E6A0CF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -211,6 +217,7 @@ Global
 		{E29043C5-43C9-4EBB-9632-8A80F9F35EE6} = {AFA609F0-8CAE-4494-A4E2-EABD9E95D678}
 		{BB4464CB-B9DD-45E5-9450-38A2922FB178} = {AFA609F0-8CAE-4494-A4E2-EABD9E95D678}
 		{82BCD815-0AB6-4EEF-A12B-CDB9CD98EEA1} = {AFA609F0-8CAE-4494-A4E2-EABD9E95D678}
+		{8BC561CB-91EF-4290-893F-025E9E6A0CF7} = {AFA609F0-8CAE-4494-A4E2-EABD9E95D678}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {547C7D6E-6301-4BB4-AEF7-979CD504D913}

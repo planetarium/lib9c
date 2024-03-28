@@ -44,12 +44,12 @@ namespace Nekoyume.Model.Buff
 
         public override bool IsBuff()
         {
-            return RowData.Value >= 0;
+            return !IsDebuff();
         }
 
         public override bool IsDebuff()
         {
-            return RowData.Value < 0;
+            return RowData.Value < 0 || CustomField?.BuffValue < 0;
         }
 
         public override object Clone()

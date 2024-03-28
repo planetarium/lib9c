@@ -55,7 +55,8 @@ namespace Lib9c.Tests.Model
                 new List<StatModifier>
                 {
                     new (StatType.DEF, StatModifier.OperationType.Percentage, 100),
-                });
+                },
+                _tableSheets.DeBuffLimitSheet);
             Assert.Equal(_random, simulator.Random);
             Assert.Equal(simulator.Player.Stats.BaseStats.DEF * 2, simulator.Player.Stats.DEF);
             Assert.Equal(simulator.Player.Stats.BaseStats.DEF, simulator.Player.Stats.CollectionStats.DEF);
@@ -96,7 +97,8 @@ namespace Lib9c.Tests.Model
                 null,
                 _tableSheets.GetRaidSimulatorSheets(),
                 _tableSheets.CostumeStatSheet,
-                new List<StatModifier>()
+                new List<StatModifier>(),
+                _tableSheets.DeBuffLimitSheet
             );
             var player = simulator.Player;
             var unskilledLogs = simulator.Simulate();
@@ -136,7 +138,8 @@ namespace Lib9c.Tests.Model
                 null,
                 _tableSheets.GetRaidSimulatorSheets(),
                 _tableSheets.CostumeStatSheet,
-                new List<StatModifier>()
+                new List<StatModifier>(),
+                _tableSheets.DeBuffLimitSheet
             );
             player = simulator.Player;
             var skilledLogs = simulator.Simulate();

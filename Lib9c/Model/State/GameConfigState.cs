@@ -53,6 +53,7 @@ namespace Nekoyume.Model.State
         public int RequireCharacterLevel_ConsumableSlot3 { get; private set; }
         public int RequireCharacterLevel_ConsumableSlot4 { get; private set; }
         public int RequireCharacterLevel_ConsumableSlot5 { get; private set; }
+        public long ShatterStrikeMaxDamage { get; private set; }
 
         public GameConfigState() : base(Address)
         {
@@ -242,6 +243,11 @@ namespace Nekoyume.Model.State
             if (serialized.TryGetValue((Text)"rune_skill_slot_crystal_unlock_cost", out var rscc2))
             {
                 RuneSkillSlotCrystalUnlockCost = (Integer)rscc2;
+            }
+
+            if (serialized.TryGetValue((Text)"shatter_strike_max_damage", out var ssmd))
+            {
+                ShatterStrikeMaxDamage = ssmd.ToLong();
             }
         }
 
@@ -471,6 +477,14 @@ namespace Nekoyume.Model.State
                     (Integer)RuneStatSlotCrystalUnlockCost);
             }
 
+            if (ShatterStrikeMaxDamage > 0)
+            {
+                values.Add(
+                    (Text)"shatter_strike_max_damage",
+                    ShatterStrikeMaxDamage.Serialize()
+                );
+            }
+
 #pragma warning disable LAA1002
             return new Dictionary(values.Union((Dictionary) base.Serialize()));
 #pragma warning restore LAA1002
@@ -629,6 +643,9 @@ namespace Nekoyume.Model.State
                 case "character_consumable_slot_5":
                     RequireCharacterLevel_ConsumableSlot5 =
                             TableExtensions.ParseInt(row.Value);
+                    break;
+                case "shatter_strike_max_damage":
+                    ShatterStrikeMaxDamage = TableExtensions.ParseLong(row.Value);
                     break;
             }
         }

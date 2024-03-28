@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Stat;
@@ -60,6 +61,14 @@ namespace Nekoyume.Model.Skill.Arena
                     damage = Math.Max(damage - finalDEF, 1);
                     // Apply damage reduce
                     damage = (int)((damage - target.DRV) * (1 - target.DRR / 10000m));
+
+                    // ShatterStrike has max damage limitation
+                    if (SkillRow.SkillCategory is SkillCategory.ShatterStrike)
+                    {
+                        damage = Math.Clamp(damage,
+                            1, caster.Simulator.ShatterStrikeMaxDamage);
+                    }
+
                     target.CurrentHP -= damage;
 
                     // double attack must be shown as critical attack
