@@ -26,10 +26,34 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(10000)]
-        [InlineData(1)]
-        public void Execute(int seed)
+        // All success
+        [InlineData(1, 1, 2, 0, 0, 1, null, 0)]
+        [InlineData(1, 2, 3, 0, 0, 2, null, 0)]
+        // Success 1 of 2
+        [InlineData(202, 2, 203, 0, 1000, 40, null, 2)]
+        // All fail
+        [InlineData(202, 2, 202, 0, 1000, 40, null, 0)]
+        // Reaching max level
+        [InlineData(299, 1, 300, 0, 500, 20, null, 1)]
+        // Cannot exceed max level
+        [InlineData(299, 2, 299, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
+        [InlineData(300, 1, 300, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
+        public void Execute(
+            int startLevel,
+            int tryCount,
+            int expectedLevel,
+            int expectedNcgCost,
+            int expectedCrystalCost,
+            int expectedRuneCost,
+            Type expectedException,
+            int seed
+        )
         {
+            const int initialNcg = 10_000;
+            const int initialCrystal = 1_000_000;
+            const int initialRune = 1_000;
+            var s = seed;
+            // Set states
             var agentAddress = new PrivateKey().Address;
             var avatarAddress = new PrivateKey().Address;
             var sheets = TableSheetsImporter.ImportSheets();
@@ -66,55 +90,22 @@ namespace Lib9c.Tests.Action
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new RuneState(runeId);
+            runeState.LevelUp(startLevel);
             state = state.SetLegacyState(runeStateAddress, runeState.Serialize());
 
-            var costSheet = state.GetSheet<RuneCostSheet>();
-            if (!costSheet.TryGetValue(runeId, out var costRow))
-            {
-                throw new RuneCostNotFoundException($"[{nameof(Execute)}] ");
-            }
-
-            if (!costRow.TryGetCost(runeState.Level + 1, out var cost))
-            {
-                throw new RuneCostDataNotFoundException($"[{nameof(Execute)}] ");
-            }
-
-            var runeSheet = state.GetSheet<RuneSheet>();
-            if (!runeSheet.TryGetValue(runeId, out var runeRow))
-            {
-                throw new RuneNotFoundException($"[{nameof(Execute)}] ");
-            }
-
+            // Prepare materials
             var ncgCurrency = state.GetGoldCurrency();
             var crystalCurrency = CrystalCalculator.CRYSTAL;
-            var runeCurrency = Currency.Legacy(runeRow.Ticker, 0, minters: null);
+            var runeTicker = tableSheets.RuneSheet.Values.First(r => r.Id == runeId).Ticker;
+            var runeCurrency = Currency.Legacy(runeTicker, 0, minters: null);
+            var r = new TestRandom(seed: 1);
 
-            var ncgBal = cost.NcgQuantity * ncgCurrency * 10000;
-            var crystalBal = cost.CrystalQuantity * crystalCurrency * 10000;
-            var runeBal = cost.RuneStoneQuantity * runeCurrency * 10000;
+            state = state.MintAsset(context, agentAddress, ncgCurrency * initialNcg);
+            state = state.MintAsset(context, agentAddress, crystalCurrency * initialCrystal);
+            state = state.MintAsset(context, avatarAddress, runeCurrency * initialRune);
 
-            var rand = new TestRandom(seed);
-            if (!RuneHelper.TryEnhancement(ncgBal, crystalBal, runeBal, ncgCurrency, crystalCurrency, runeCurrency, cost, rand, 99, out var tryCount))
-            {
-                throw new RuneNotFoundException($"[{nameof(Execute)}] ");
-            }
-
-            if (ncgBal.Sign > 0)
-            {
-                state = state.MintAsset(context, agentAddress, ncgBal);
-            }
-
-            if (crystalBal.Sign > 0)
-            {
-                state = state.MintAsset(context, agentAddress, crystalBal);
-            }
-
-            if (runeBal.Sign > 0)
-            {
-                state = state.MintAsset(context, avatarState.address, runeBal);
-            }
-
-            var action = new RuneEnhancement()
+            // Action
+            var action = new RuneEnhancement
             {
                 AvatarAddress = avatarState.address,
                 RuneId = runeId,
@@ -124,62 +115,35 @@ namespace Lib9c.Tests.Action
             {
                 BlockIndex = blockIndex,
                 PreviousState = state,
-                RandomSeed = rand.Seed,
+                RandomSeed = seed,
                 Signer = agentAddress,
             };
 
-            var nextState = action.Execute(ctx);
-            if (!nextState.TryGetLegacyState(runeStateAddress, out List nextRuneRawState))
+            if (expectedException is not null)
             {
-                throw new Exception();
+                Assert.Throws(expectedException, () => { action.Execute(ctx); });
             }
-
-            var nextRunState = new RuneState(nextRuneRawState);
-            var nextNcgBal = nextState.GetBalance(agentAddress, ncgCurrency);
-            var nextCrystalBal = nextState.GetBalance(agentAddress, crystalCurrency);
-            var nextRuneBal = nextState.GetBalance(agentAddress, runeCurrency);
-
-            if (cost.NcgQuantity != 0)
+            else
             {
-                Assert.NotEqual(ncgBal, nextNcgBal);
+                var nextState = action.Execute(ctx);
+                if (!nextState.TryGetLegacyState(runeStateAddress, out List nextRuneRawState))
+                {
+                    throw new Exception();
+                }
+
+                var nextRuneState = new RuneState(nextRuneRawState);
+                var nextNcgBal = nextState.GetBalance(agentAddress, ncgCurrency);
+                var nextCrystalBal = nextState.GetBalance(agentAddress, crystalCurrency);
+                var nextRuneBal = nextState.GetBalance(avatarAddress, runeCurrency);
+
+                Assert.Equal((initialNcg - expectedNcgCost) * ncgCurrency, nextNcgBal);
+                Assert.Equal(
+                    (initialCrystal - expectedCrystalCost) * crystalCurrency,
+                    nextCrystalBal
+                );
+                Assert.Equal((initialRune - expectedRuneCost) * runeCurrency, nextRuneBal);
+                Assert.Equal(expectedLevel, nextRuneState.Level);
             }
-
-            if (cost.CrystalQuantity != 0)
-            {
-                Assert.NotEqual(crystalBal, nextCrystalBal);
-            }
-
-            if (cost.RuneStoneQuantity != 0)
-            {
-                Assert.NotEqual(runeBal, nextRuneBal);
-            }
-
-            var costNcg = tryCount * cost.NcgQuantity * ncgCurrency;
-            var costCrystal = tryCount * cost.CrystalQuantity * crystalCurrency;
-            var costRune = tryCount * cost.RuneStoneQuantity * runeCurrency;
-
-            if (costNcg.Sign > 0)
-            {
-                nextState = nextState.MintAsset(context, agentAddress, costNcg);
-            }
-
-            if (costCrystal.Sign > 0)
-            {
-                nextState = nextState.MintAsset(context, agentAddress, costCrystal);
-            }
-
-            if (costRune.Sign > 0)
-            {
-                nextState = nextState.MintAsset(context, avatarState.address, costRune);
-            }
-
-            var finalNcgBal = nextState.GetBalance(agentAddress, ncgCurrency);
-            var finalCrystalBal = nextState.GetBalance(agentAddress, crystalCurrency);
-            var finalRuneBal = nextState.GetBalance(avatarState.address, runeCurrency);
-            Assert.Equal(ncgBal, finalNcgBal);
-            Assert.Equal(crystalBal, finalCrystalBal);
-            Assert.Equal(runeBal, finalRuneBal);
-            Assert.Equal(runeState.Level + 1, nextRunState.Level);
         }
 
         [Fact]
