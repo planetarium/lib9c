@@ -6,9 +6,9 @@ namespace Nekoyume.Module
 {
     public static class ActionPointModule
     {
-        public static long GetActionPoint(this IWorldState worldState, Address address)
+        public static long GetActionPoint(this IWorldState worldState, Address avatarAddress)
         {
-            var value = worldState.GetAccountState(Addresses.ActionPoint).GetState(address);
+            var value = worldState.GetAccountState(Addresses.ActionPoint).GetState(avatarAddress);
             if (value is Integer integer)
             {
                 return integer;
@@ -17,10 +17,10 @@ namespace Nekoyume.Module
             return 0;
         }
 
-        public static IWorld SetActionPoint(this IWorld world, Address address, long actionPoint)
+        public static IWorld SetActionPoint(this IWorld world, Address avatarAddress, long actionPoint)
         {
             var account = world.GetAccount(Addresses.ActionPoint);
-            account = account.SetState(address, (Integer)actionPoint);
+            account = account.SetState(avatarAddress, (Integer)actionPoint);
             return world.SetAccount(Addresses.ActionPoint, account);
         }
     }

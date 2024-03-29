@@ -55,7 +55,7 @@ namespace Nekoyume.Action
                 throw new InvalidAddressException();
             }
 
-            states.TryGetDailyRewardReceivedBlockIndex(context.Signer, avatarAddress,
+            states.TryGetDailyRewardReceivedBlockIndex(avatarAddress,
                 out var receivedBlockIndex);
 
             if (context.BlockIndex < receivedBlockIndex + DailyRewardInterval)

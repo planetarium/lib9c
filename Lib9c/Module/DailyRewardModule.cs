@@ -20,8 +20,7 @@ namespace Nekoyume.Module
             throw new FailedLoadStateException("");
         }
 
-        public static bool TryGetDailyRewardReceivedBlockIndex(this IWorldState worldState,
-            Address agentAddress, Address avatarAddress, out long receivedBlockIndex)
+        public static bool TryGetDailyRewardReceivedBlockIndex(this IWorldState worldState, Address avatarAddress, out long receivedBlockIndex)
         {
             receivedBlockIndex = 0L;
             try
