@@ -52,22 +52,16 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the player has no enough material ({row.Id})");
             }
 
-            var gameConfigState = states.GetGameConfigState();
-            if (gameConfigState is null)
-            {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the game config state was failed to load.");
-            }
-
-            if (avatarState.actionPoint == gameConfigState.ActionPointMax)
+            var actionPoint = states.GetActionPoint(avatarAddress);
+            if (actionPoint == DailyReward.ActionPointMax)
             {
                 throw new ActionPointExceededException();
             }
 
-            avatarState.actionPoint = gameConfigState.ActionPointMax;
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}ChargeActionPoint Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states.SetAvatarState(avatarAddress, avatarState);
+            return states.SetAvatarState(avatarAddress, avatarState, false, true, false, false)
+                .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
