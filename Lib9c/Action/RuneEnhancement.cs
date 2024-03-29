@@ -17,7 +17,7 @@ using Nekoyume.TableData;
 namespace Nekoyume.Action
 {
     [Serializable]
-    [ActionType("runeEnhancement3")]
+    [ActionType("runeEnhancement2")]
     public class RuneEnhancement : GameAction, IRuneEnhancementV1
     {
         public Address AvatarAddress;
