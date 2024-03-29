@@ -386,10 +386,5 @@ namespace Nekoyume.Action
         {
             return sheet.OrderedList.Where(x => x.Grade == equipment.Grade).Max(x => x.Level);
         }
-
-        public static int GetRequiredAp()
-        {
-            return GameConfig.EnhanceEquipmentCostAP;
-        }
     }
 }
