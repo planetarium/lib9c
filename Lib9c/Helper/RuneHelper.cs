@@ -46,6 +46,7 @@ namespace Nekoyume.Helper
             {
                 rr.SetRune(random);
             }
+
             var total = 0;
             var dictionary = new Dictionary<int, int>();
             while (total < rewardRow.Rune)
@@ -82,6 +83,7 @@ namespace Nekoyume.Helper
             {
                 result.Add(rewardRow.Crystal * CrystalCalculator.CRYSTAL);
             }
+
             return result;
         }
 

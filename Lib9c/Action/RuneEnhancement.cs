@@ -72,16 +72,10 @@ namespace Nekoyume.Action
                     $"current TryCount : {TryCount}");
             }
 
-            RuneState runeState;
             var runeStateAddress = RuneState.DeriveAddress(AvatarAddress, RuneId);
-            if (states.TryGetLegacyState(runeStateAddress, out List rawState))
-            {
-                runeState = new RuneState(rawState);
-            }
-            else
-            {
-                runeState = new RuneState(RuneId);
-            }
+            var runeState = states.TryGetLegacyState(runeStateAddress, out List rawState)
+                ? new RuneState(rawState)
+                : new RuneState(RuneId);
 
             var costSheet = sheets.GetSheet<RuneCostSheet>();
             if (!costSheet.TryGetValue(runeState.RuneId, out var costRow))
