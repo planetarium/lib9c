@@ -4,8 +4,8 @@ using System.Linq;
 using Lib9c;
 using Libplanet.Action;
 using Libplanet.Types.Assets;
+using Nekoyume.Action;
 using Nekoyume.Battle;
-using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Helper
@@ -91,12 +91,12 @@ namespace Nekoyume.Helper
             int startRuneLevel,
             RuneCostSheet.Row costRow,
             IRandom random,
-            int maxTryCount,
-            out (int levelUpCount, int ncgCost, int crystalCost, int runeCost) levelUpResult)
+            int tryCount,
+            out RuneEnhancement.LevelUpResult levelUpResult)
         {
-            levelUpResult = (0, 0, 0, 0);
+            levelUpResult = new RuneEnhancement.LevelUpResult();
 
-            for (var i = 0; i < maxTryCount; i++)
+            for (var i = 0; i < tryCount; i++)
             {
                 // No cost Found : throw exception at caller
                 if (!costRow.TryGetCost(startRuneLevel + levelUpResult.LevelUpCount + 1,
@@ -106,13 +106,13 @@ namespace Nekoyume.Helper
                 }
 
                 // Cost burns in every try
-                levelUpResult.ncgCost += cost.NcgQuantity;
-                levelUpResult.crystalCost += cost.CrystalQuantity;
-                levelUpResult.runeCost += cost.RuneStoneQuantity;
+                levelUpResult.NcgCost += cost.NcgQuantity;
+                levelUpResult.CrystalCost += cost.CrystalQuantity;
+                levelUpResult.RuneCost += cost.RuneStoneQuantity;
 
                 if (random.Next(0, GameConfig.MaximumProbability) < cost.LevelUpSuccessRate)
                 {
-                    levelUpResult.levelUpCount++;
+                    levelUpResult.LevelUpCount++;
                 }
             }
 

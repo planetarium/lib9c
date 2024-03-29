@@ -24,6 +24,17 @@ namespace Nekoyume.Action
         public int RuneId;
         public int TryCount = 1;
 
+        public struct LevelUpResult
+        {
+            public int LevelUpCount { get; set; }
+            public int NcgCost { get; set; }
+            public int CrystalCost { get; set; }
+            public int RuneCost { get; set; }
+
+            public override string ToString() =>
+                $"{LevelUpCount} level up with cost {NcgCost} NCG, {CrystalCost} Crystal, {RuneCost} Runestone.";
+        }
+
         Address IRuneEnhancementV1.AvatarAddress => AvatarAddress;
         int IRuneEnhancementV1.RuneId => RuneId;
         int IRuneEnhancementV1.TryCount => TryCount;
@@ -85,9 +96,9 @@ namespace Nekoyume.Action
             }
 
             var targetLevel = runeState.Level + TryCount;
-            if (!costRow.TryGetCost(targetLevel, out var cost))
+            if (!costRow.TryGetCost(targetLevel, out _))
             {
-                throw new RuneCostNotFoundException(
+                throw new RuneCostDataNotFoundException(
                     $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress} : Maybe max level reached");
             }
 
@@ -98,58 +109,60 @@ namespace Nekoyume.Action
                     $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress}");
             }
 
+            var random = context.GetRandom();
+            if (!RuneHelper.TryEnhancement(runeState.Level, costRow, random, TryCount,
+                    out var levelUpResult))
+            {
+                // Rune cost not found while level up
+                throw new RuneCostDataNotFoundException(
+                    $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress} : Maybe max level reached");
+            }
+
+            // Check final balance
             var ncgCurrency = states.GetGoldCurrency();
             var crystalCurrency = CrystalCalculator.CRYSTAL;
             var runeCurrency = Currency.Legacy(runeRow.Ticker, 0, minters: null);
             var ncgBalance = states.GetBalance(context.Signer, ncgCurrency);
             var crystalBalance = states.GetBalance(context.Signer, crystalCurrency);
             var runeBalance = states.GetBalance(AvatarAddress, runeCurrency);
-            var random = context.GetRandom();
-            if (!RuneHelper.TryEnhancement(runeState.Level, costRow, random, TryCount,
-                    out var levelUpResult))
-            {
-                // Rune cost not found while level up
-                throw new RuneCostNotFoundException(
-                    $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress} : Maybe max level reached");
-            }
 
-            // Check final balance
-            if (ncgBalance < levelUpResult.ncgCost * ncgCurrency ||
-                crystalBalance < levelUpResult.crystalCost * crystalCurrency ||
-                runeBalance < levelUpResult.runeCost * runeCurrency)
+            if (ncgBalance < levelUpResult.NcgCost * ncgCurrency ||
+                crystalBalance < levelUpResult.CrystalCost * crystalCurrency ||
+                runeBalance < levelUpResult.RuneCost * runeCurrency)
             {
                 throw new NotEnoughFungibleAssetValueException(
                     $"{nameof(RuneEnhancement)}" +
-                    $"[ncg:{ncgBalance} < {levelUpResult.ncgCost * ncgCurrency}] " +
-                    $"[crystal:{crystalBalance} < {levelUpResult.crystalCost * crystalCurrency}] " +
-                    $"[rune:{runeBalance} < {levelUpResult.runeCost * runeCurrency}]"
+                    $"[ncg:{ncgBalance} < {levelUpResult.NcgCost * ncgCurrency}] " +
+                    $"[crystal:{crystalBalance} < {levelUpResult.CrystalCost * crystalCurrency}] " +
+                    $"[rune:{runeBalance} < {levelUpResult.RuneCost * runeCurrency}]"
                 );
             }
 
-            runeState.LevelUp(levelUpResult.levelUpCount);
+            runeState.LevelUp(levelUpResult.LevelUpCount);
             states = states.SetLegacyState(runeStateAddress, runeState.Serialize());
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            var feeStoreAddress =
+                Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
 
             // Burn costs
-            if (levelUpResult.ncgCost > 0)
+            if (levelUpResult.NcgCost > 0)
             {
                 states = states.TransferAsset(context, context.Signer, feeStoreAddress,
-                    levelUpResult.ncgCost * ncgCurrency);
+                    levelUpResult.NcgCost * ncgCurrency);
             }
 
-            if (levelUpResult.crystalCost > 0)
+            if (levelUpResult.CrystalCost > 0)
             {
                 states = states.TransferAsset(context, context.Signer, feeStoreAddress,
-                    levelUpResult.crystalCost * crystalCurrency);
+                    levelUpResult.CrystalCost * crystalCurrency);
             }
 
-            if (levelUpResult.runeCost > 0)
+            if (levelUpResult.RuneCost > 0)
             {
                 states = states.TransferAsset(context, AvatarAddress, feeStoreAddress,
-                    levelUpResult.runeCost * runeCurrency);
+                    levelUpResult.RuneCost * runeCurrency);
             }
 
             return states;
