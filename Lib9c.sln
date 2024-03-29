@@ -70,10 +70,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib9c.Plugin.Shared", ".Lib
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libplanet.Mocks", ".Libplanet\Libplanet.Mocks\Libplanet.Mocks.csproj", "{8BC561CB-91EF-4290-893F-025E9E6A0CF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib9c.DPoS", "Lib9c.DPoS\Lib9c.DPoS.csproj", "{23848A39-37DD-4B73-A108-1915E10FEE50}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib9c.DPoS.Tests", "Lib9c.DPoS.Tests\Lib9c.DPoS.Tests.csproj", "{447DEF1C-01B0-4FC7-8444-B9DB5C26AFB7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -200,14 +196,6 @@ Global
 		{8BC561CB-91EF-4290-893F-025E9E6A0CF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BC561CB-91EF-4290-893F-025E9E6A0CF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BC561CB-91EF-4290-893F-025E9E6A0CF7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{23848A39-37DD-4B73-A108-1915E10FEE50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{23848A39-37DD-4B73-A108-1915E10FEE50}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{23848A39-37DD-4B73-A108-1915E10FEE50}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{23848A39-37DD-4B73-A108-1915E10FEE50}.Release|Any CPU.Build.0 = Release|Any CPU
-		{447DEF1C-01B0-4FC7-8444-B9DB5C26AFB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{447DEF1C-01B0-4FC7-8444-B9DB5C26AFB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{447DEF1C-01B0-4FC7-8444-B9DB5C26AFB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{447DEF1C-01B0-4FC7-8444-B9DB5C26AFB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
