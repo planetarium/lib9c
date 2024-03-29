@@ -88,7 +88,7 @@ namespace Lib9c.Tests.Action
                 avatarState.inventory.AddItem(material, materialInfo.Count);
             }
 
-            var previousActionPoint = avatarState.actionPoint;
+            var previousActionPoint = _initialState.GetActionPoint(_avatarAddress);
             var previousResultConsumableCount =
                 avatarState.inventory.Equipments.Count(e => e.Id == row.ResultConsumableItemId);
             var previousMailCount = avatarState.mailBox.Count;
@@ -123,7 +123,7 @@ namespace Lib9c.Tests.Action
             Assert.NotNull(consumable);
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
-            Assert.Equal(previousActionPoint - costActionPoint, nextAvatarState.actionPoint);
+            Assert.Equal(previousActionPoint - costActionPoint, nextState.GetActionPoint(_avatarAddress));
             Assert.Equal(previousMailCount + 1, nextAvatarState.mailBox.Count);
             Assert.IsType<CombinationMail>(nextAvatarState.mailBox.First());
             Assert.Equal(
