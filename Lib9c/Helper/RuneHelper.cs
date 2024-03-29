@@ -88,7 +88,7 @@ namespace Nekoyume.Helper
         }
 
         public static bool TryEnhancement(
-            RuneState runeState,
+            int startRuneLevel,
             RuneCostSheet.Row costRow,
             IRandom random,
             int maxTryCount,
@@ -99,7 +99,7 @@ namespace Nekoyume.Helper
             for (var i = 0; i < maxTryCount; i++)
             {
                 // No cost Found : throw exception at caller
-                if (!costRow.TryGetCost(runeState.Level + levelUpResult.levelUpCount + 1,
+                if (!costRow.TryGetCost(startRuneLevel + levelUpResult.LevelUpCount + 1,
                         out var cost))
                 {
                     return false;

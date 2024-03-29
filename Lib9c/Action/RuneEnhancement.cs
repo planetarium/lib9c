@@ -105,7 +105,7 @@ namespace Nekoyume.Action
             var crystalBalance = states.GetBalance(context.Signer, crystalCurrency);
             var runeBalance = states.GetBalance(AvatarAddress, runeCurrency);
             var random = context.GetRandom();
-            if (!RuneHelper.TryEnhancement(runeState, costRow, random, TryCount,
+            if (!RuneHelper.TryEnhancement(runeState.Level, costRow, random, TryCount,
                     out var levelUpResult))
             {
                 // Rune cost not found while level up
