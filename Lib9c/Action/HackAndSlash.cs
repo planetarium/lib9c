@@ -337,15 +337,17 @@ namespace Nekoyume.Action
                     apPlayCount * minimumCostAp);
             }
 
-            if (avatarState.actionPoint < minimumCostAp * apPlayCount)
+            var actionPoint = states.GetActionPoint(AvatarAddress);
+            if (actionPoint < minimumCostAp * apPlayCount)
             {
                 throw new NotEnoughActionPointException(
                     $"{addressesHex}Aborted due to insufficient action point: " +
-                    $"{avatarState.actionPoint} < cost({minimumCostAp * apPlayCount}))"
+                    $"{actionPoint} < cost({minimumCostAp * apPlayCount}))"
                 );
             }
 
-            avatarState.actionPoint -= minimumCostAp * apPlayCount;
+            actionPoint -= minimumCostAp * apPlayCount;
+            states = states.SetActionPoint(AvatarAddress, actionPoint);
             avatarState.ValidateItemRequirement(
                 costumeIds.Concat(foodIds).ToList(),
                 equipmentList,
