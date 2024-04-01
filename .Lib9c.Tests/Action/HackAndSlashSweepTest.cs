@@ -74,7 +74,8 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, _avatarState)
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax);
 
             foreach (var (key, value) in _sheets)
             {
@@ -329,19 +330,20 @@ namespace Lib9c.Tests.Action
             avatarState.inventory.AddItem(apStone, holdingApStoneCount);
 
             IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            var actionPoint = _initialState.GetActionPoint(_avatarAddress);
 
             var stageSheet = _initialState.GetSheet<StageSheet>();
             var (expectedLevel, expectedExp) = (0, 0L);
             if (stageSheet.TryGetValue(2, out var stageRow))
             {
                 var itemPlayCount =
-                    gameConfigState.ActionPointMax / stageRow.CostAP * useApStoneCount;
-                var apPlayCount = avatarState.actionPoint / stageRow.CostAP;
+                    DailyReward.ActionPointMax / stageRow.CostAP * useApStoneCount;
+                var apPlayCount = actionPoint / stageRow.CostAP;
                 var playCount = apPlayCount + itemPlayCount;
                 (expectedLevel, expectedExp) = avatarState.GetLevelAndExp(
                     _tableSheets.CharacterLevelSheet,
                     2,
-                    playCount);
+                    (int)playCount);
 
                 var (equipments, costumes) = GetDummyItems(avatarState);
 
@@ -351,7 +353,7 @@ namespace Lib9c.Tests.Action
                     costumes = costumes,
                     runeInfos = new List<RuneSlotInfo>(),
                     avatarAddress = _avatarAddress,
-                    actionPoint = avatarState.actionPoint,
+                    actionPoint = (int)actionPoint,
                     apStoneCount = useApStoneCount,
                     worldId = 1,
                     stageId = 2,
@@ -381,23 +383,24 @@ namespace Lib9c.Tests.Action
                 worldInformation =
                     new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
                 level = 400,
-                actionPoint = 0,
             };
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+                .SetActionPoint(_avatarAddress, 0);
+            var actionPoint = _initialState.GetActionPoint(_avatarAddress);
 
             var stageSheet = _initialState.GetSheet<StageSheet>();
             var (expectedLevel, expectedExp) = (0, 0L);
             if (stageSheet.TryGetValue(2, out var stageRow))
             {
                 var itemPlayCount =
-                    gameConfigState.ActionPointMax / stageRow.CostAP * 1;
-                var apPlayCount = avatarState.actionPoint / stageRow.CostAP;
+                    DailyReward.ActionPointMax / stageRow.CostAP * 1;
+                var apPlayCount = actionPoint / stageRow.CostAP;
                 var playCount = apPlayCount + itemPlayCount;
                 (expectedLevel, expectedExp) = avatarState.GetLevelAndExp(
                     _tableSheets.CharacterLevelSheet,
                     2,
-                    playCount);
+                    (int)playCount);
 
                 var (equipments, costumes) = GetDummyItems(avatarState);
                 var action = new HackAndSlashSweep
@@ -437,10 +440,11 @@ namespace Lib9c.Tests.Action
                 worldInformation =
                     new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
                 level = 400,
-                actionPoint = 0,
             };
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+                .SetActionPoint(_avatarAddress, 0);
+            var actionPoint = state.GetActionPoint(_avatarAddress);
 
             var stageSheet = _initialState.GetSheet<StageSheet>();
             var (expectedLevel, expectedExp) = (0, 0L);
@@ -448,12 +452,12 @@ namespace Lib9c.Tests.Action
             {
                 var itemPlayCount =
                     gameConfigState.ActionPointMax / stageRow.CostAP * 1;
-                var apPlayCount = avatarState.actionPoint / stageRow.CostAP;
+                var apPlayCount = actionPoint / stageRow.CostAP;
                 var playCount = apPlayCount + itemPlayCount;
                 (expectedLevel, expectedExp) = avatarState.GetLevelAndExp(
                     _tableSheets.CharacterLevelSheet,
                     2,
-                    playCount);
+                    (int)playCount);
 
                 var (equipments, costumes) = GetDummyItems(avatarState);
                 var action = new HackAndSlashSweep
@@ -492,11 +496,12 @@ namespace Lib9c.Tests.Action
             {
                 worldInformation =
                     new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
-                actionPoint = 0,
                 level = 1,
             };
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+                .SetActionPoint(_avatarAddress, 0);
+            var actionPoint = state.GetActionPoint(_avatarAddress);
 
             var stageSheet = _initialState.GetSheet<StageSheet>();
             var (expectedLevel, expectedExp) = (0, 0L);
@@ -504,13 +509,13 @@ namespace Lib9c.Tests.Action
             if (stageSheet.TryGetValue(stageId, out var stageRow))
             {
                 var itemPlayCount =
-                    gameConfigState.ActionPointMax / stageRow.CostAP * 1;
-                var apPlayCount = avatarState.actionPoint / stageRow.CostAP;
+                    DailyReward.ActionPointMax / stageRow.CostAP * 1;
+                var apPlayCount = actionPoint / stageRow.CostAP;
                 var playCount = apPlayCount + itemPlayCount;
                 (expectedLevel, expectedExp) = avatarState.GetLevelAndExp(
                     _tableSheets.CharacterLevelSheet,
                     stageId,
-                    playCount);
+                    (int)playCount);
 
                 var action = new HackAndSlashSweep
                 {
@@ -518,7 +523,7 @@ namespace Lib9c.Tests.Action
                     equipments = new List<Guid>(),
                     runeInfos = new List<RuneSlotInfo>(),
                     avatarAddress = _avatarAddress,
-                    actionPoint = avatarState.actionPoint,
+                    actionPoint = (int)actionPoint,
                     apStoneCount = 1,
                     worldId = 1,
                     stageId = stageId,
@@ -555,7 +560,6 @@ namespace Lib9c.Tests.Action
             {
                 worldInformation =
                     new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
-                actionPoint = 120,
                 level = 3,
             };
             var itemRow = _tableSheets.MaterialItemSheet.Values.First(r =>
@@ -576,15 +580,16 @@ namespace Lib9c.Tests.Action
             if (stageSheet.TryGetValue(stageId, out var stageRow))
             {
                 var apSheet = _initialState.GetSheet<StakeActionPointCoefficientSheet>();
+                var actionPoint = _initialState.GetActionPoint(_avatarAddress);
                 var costAp = apSheet.GetActionPointByStaking(stageRow.CostAP, 1, stakingLevel);
                 var itemPlayCount =
                     gameConfigState.ActionPointMax / costAp * 1;
-                var apPlayCount = avatarState.actionPoint / costAp;
+                var apPlayCount = actionPoint / costAp;
                 var playCount = apPlayCount + itemPlayCount;
                 var (expectedLevel, expectedExp) = avatarState.GetLevelAndExp(
                     _initialState.GetSheet<CharacterLevelSheet>(),
                     stageId,
-                    playCount);
+                    (int)playCount);
 
                 var action = new HackAndSlashSweep
                 {
@@ -592,7 +597,7 @@ namespace Lib9c.Tests.Action
                     equipments = new List<Guid>(),
                     runeInfos = new List<RuneSlotInfo>(),
                     avatarAddress = _avatarAddress,
-                    actionPoint = avatarState.actionPoint,
+                    actionPoint = (int)actionPoint,
                     apStoneCount = 1,
                     worldId = worldId,
                     stageId = stageId,
@@ -655,14 +660,15 @@ namespace Lib9c.Tests.Action
             {
                 var apSheet = _initialState.GetSheet<StakeActionPointCoefficientSheet>();
                 var costAp = apSheet.GetActionPointByStaking(stageRow.CostAP, 1, stakingLevel);
+                var actionPoint = _initialState.GetActionPoint(_avatarAddress);
                 var itemPlayCount =
-                    gameConfigState.ActionPointMax / costAp * 1;
-                var apPlayCount = avatarState.actionPoint / costAp;
+                    DailyReward.ActionPointMax / costAp * 1;
+                var apPlayCount = actionPoint / costAp;
                 var playCount = apPlayCount + itemPlayCount;
                 var (expectedLevel, expectedExp) = avatarState.GetLevelAndExp(
                     _initialState.GetSheet<CharacterLevelSheet>(),
                     stageId,
-                    playCount);
+                    (int)playCount);
 
                 var ncgCurrency = state.GetGoldCurrency();
                 state = state.MintAsset(context, _agentAddress, 99999 * ncgCurrency);
@@ -691,7 +697,7 @@ namespace Lib9c.Tests.Action
                         new RuneSlotInfo(slotIndex2, runeId2),
                     },
                     avatarAddress = _avatarAddress,
-                    actionPoint = avatarState.actionPoint,
+                    actionPoint = (int)actionPoint,
                     apStoneCount = 1,
                     worldId = worldId,
                     stageId = stageId,
