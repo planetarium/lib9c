@@ -638,7 +638,6 @@ namespace Lib9c.Tests.Action
             {
                 worldInformation =
                     new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
-                actionPoint = 120,
                 level = 3,
             };
             var itemRow = _tableSheets.MaterialItemSheet.Values.First(r =>
