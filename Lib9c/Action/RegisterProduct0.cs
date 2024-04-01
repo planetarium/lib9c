@@ -8,6 +8,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Battle;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
@@ -65,7 +66,13 @@ namespace Nekoyume.Action
                     current);
             }
 
-            avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
+            states = avatarState.inventory.UseActionPoint(
+                AvatarAddress,
+                CostAp,
+                ChargeAp,
+                states.GetSheet<MaterialItemSheet>(),
+                context.BlockIndex,
+                states);
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
             if (states.TryGetLegacyState(productsStateAddress, out List rawProducts))
