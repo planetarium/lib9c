@@ -1,0 +1,73 @@
+﻿namespace Lib9c.Tests.Helper
+{
+    using System;
+    using System.Linq;
+    using Libplanet.Action.State;
+    using Libplanet.Crypto;
+    using Libplanet.Mocks;
+    using Nekoyume;
+    using Nekoyume.Action;
+    using Nekoyume.Helper;
+    using Nekoyume.Model.Item;
+    using Nekoyume.Model.State;
+    using Nekoyume.Module;
+    using Xunit;
+
+    public class InventoryExtensionsTest
+    {
+        private readonly TableSheets _tableSheets;
+        private readonly IWorld _state;
+
+        public InventoryExtensionsTest()
+        {
+            var sheets = TableSheetsImporter.ImportSheets();
+            _tableSheets = new TableSheets(sheets);
+            _state = new World(MockUtil.MockModernWorldState);
+            foreach (var kv in sheets)
+            {
+                _state = _state.SetLegacyState(Addresses.GetSheetAddress(kv.Key), kv.Value.Serialize());
+            }
+        }
+
+        [Theory]
+        [InlineData(0, 5, false, false, typeof(NotEnoughActionPointException))]
+        [InlineData(0, 5, true, false, typeof(NotEnoughMaterialException))]
+        [InlineData(120, 5, false, true, null)]
+        [InlineData(120, 5, false, false, null)]
+        [InlineData(120, 5, true, false, null)]
+        [InlineData(120, 5, true, true, null)]
+        public void UseAp(int ap, int requiredAp, bool chargeAp, bool materialExist, Type exc)
+        {
+            var avatarAddress = new PrivateKey().Address;
+            var inventory = new Inventory();
+            var row = _tableSheets.MaterialItemSheet.Values.First(r =>
+                r.ItemSubType == ItemSubType.ApStone);
+            if (materialExist)
+            {
+                var apStone = ItemFactory.CreateMaterial(row);
+                inventory.AddItem(apStone);
+            }
+
+            var state = _state.SetActionPoint(avatarAddress, ap);
+            Assert.Equal(inventory.HasItem(row.Id), materialExist);
+
+            if (exc is null)
+            {
+                var nextState = inventory.UseActionPoint(avatarAddress, requiredAp, chargeAp, _tableSheets.MaterialItemSheet, 0L, state);
+                Assert.Equal(materialExist, inventory.TryGetItem(row.Id, out var inventoryItem));
+                if (materialExist)
+                {
+                    Assert.Equal(1, inventoryItem.count);
+                }
+
+                Assert.Equal(DailyReward.ActionPointMax - requiredAp, nextState.GetActionPoint(avatarAddress));
+            }
+            else
+            {
+                Assert.Throws(
+                    exc, () => inventory.UseActionPoint(avatarAddress, requiredAp, chargeAp, _tableSheets.MaterialItemSheet, 0L, state)
+                );
+            }
+        }
+    }
+}
