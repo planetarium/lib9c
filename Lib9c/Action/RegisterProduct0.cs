@@ -66,13 +66,27 @@ namespace Nekoyume.Action
                     current);
             }
 
-            states = avatarState.inventory.UseActionPoint(
-                AvatarAddress,
-                CostAp,
-                ChargeAp,
-                states.GetSheet<MaterialItemSheet>(),
-                context.BlockIndex,
-                states);
+            if (avatarState.actionPoint < CostAp)
+            {
+                switch (ChargeAp)
+                {
+                    case true:
+                        var row = states.GetSheet<MaterialItemSheet>()
+                            .OrderedList!
+                            .First(r => r.ItemSubType == ItemSubType.ApStone);
+                        if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, context.BlockIndex))
+                        {
+                            throw new NotEnoughMaterialException("not enough ap stone.");
+                        }
+
+                        avatarState.actionPoint = states.GetGameConfigState().ActionPointMax;
+                        break;
+                    case false:
+                        throw new NotEnoughActionPointException("");
+                }
+            }
+
+            avatarState.actionPoint -= CostAp;
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
             if (states.TryGetLegacyState(productsStateAddress, out List rawProducts))
