@@ -311,7 +311,7 @@ namespace Nekoyume.Action
                 }
 
                 var apStonePlayCount =
-                    ApStoneCount * (gameConfigState.ActionPointMax / minimumCostAp);
+                    ApStoneCount * (DailyReward.ActionPointMax / minimumCostAp);
                 apPlayCount = TotalPlayCount - apStonePlayCount;
                 if (apPlayCount < 0)
                 {
