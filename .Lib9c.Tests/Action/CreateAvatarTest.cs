@@ -85,6 +85,7 @@ namespace Lib9c.Tests.Action
             Assert.True(agentState.avatarAddresses.Any());
             Assert.Equal("test", nextAvatarState.name);
             Assert.Equal(200_000 * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
+            Assert.Equal(DailyReward.ActionPointMax, nextState.GetActionPoint(avatarAddress));
             var avatarItemSheet = nextState.GetSheet<CreateAvatarItemSheet>();
             foreach (var row in avatarItemSheet.Values)
             {
