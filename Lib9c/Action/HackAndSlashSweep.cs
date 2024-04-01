@@ -286,16 +286,17 @@ namespace Nekoyume.Action
                 }
             }
 
-            if (actionPoint > avatarState.actionPoint)
+            var hasActionPoint = states.GetActionPoint(avatarAddress);
+            if (actionPoint > hasActionPoint)
             {
                 throw new NotEnoughActionPointException(
                     $"{addressesHex}Aborted due to insufficient action point: " +
-                    $"use AP({actionPoint}) > current AP({avatarState.actionPoint})"
+                    $"use AP({actionPoint}) > current AP({hasActionPoint})"
                 );
             }
 
             // burn ap
-            avatarState.actionPoint -= actionPoint;
+            states = states.SetActionPoint(avatarAddress, hasActionPoint - actionPoint);
             var costAp = sheets.GetSheet<StageSheet>()[stageId].CostAP;
             var goldCurrency = states.GetGoldCurrency();
             var stakedAmount = states.GetStakedAmount(context.Signer);
