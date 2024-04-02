@@ -63,6 +63,12 @@ namespace Nekoyume.Action.DPoS.Control
                 states = DelegateCtrl.Distribute(states, ctx, nativeTokens, addrs);
             }
 
+            states = ValidatorDelegationSetCtrl.Add(
+                    states: states,
+                    validatorAddress: validatorAddress,
+                    delegationAddress: delegationAddress
+                );
+
             return (states, issuedShare);
         }
 
@@ -139,6 +145,12 @@ namespace Nekoyume.Action.DPoS.Control
             {
                 states = DelegateCtrl.Distribute(states, ctx, nativeTokens, addrs);
             }
+
+            states = ValidatorDelegationSetCtrl.Remove(
+                    states: states,
+                    validatorAddress: validatorAddress,
+                    delegationAddress: delegationAddress
+                );
 
             return (states, unbondingConsensusToken);
         }
