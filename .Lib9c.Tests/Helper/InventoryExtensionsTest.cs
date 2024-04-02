@@ -48,24 +48,22 @@
                 inventory.AddItem(apStone);
             }
 
-            var state = _state.SetActionPoint(avatarAddress, ap);
             Assert.Equal(inventory.HasItem(row.Id), materialExist);
-
             if (exc is null)
             {
-                var nextState = inventory.UseActionPoint(avatarAddress, requiredAp, chargeAp, _tableSheets.MaterialItemSheet, 0L, state);
+                var resultActionPoint = inventory.UseActionPoint(ap, requiredAp, chargeAp, _tableSheets.MaterialItemSheet, 0L);
                 Assert.Equal(materialExist, inventory.TryGetItem(row.Id, out var inventoryItem));
                 if (materialExist)
                 {
                     Assert.Equal(1, inventoryItem.count);
                 }
 
-                Assert.Equal(DailyReward.ActionPointMax - requiredAp, nextState.GetActionPoint(avatarAddress));
+                Assert.Equal(DailyReward.ActionPointMax - requiredAp, resultActionPoint);
             }
             else
             {
                 Assert.Throws(
-                    exc, () => inventory.UseActionPoint(avatarAddress, requiredAp, chargeAp, _tableSheets.MaterialItemSheet, 0L, state)
+                    exc, () => inventory.UseActionPoint(ap, requiredAp, chargeAp, _tableSheets.MaterialItemSheet, 0L)
                 );
             }
         }
