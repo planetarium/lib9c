@@ -1,6 +1,5 @@
 using System.Linq;
 using Libplanet.Action.State;
-using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Model.Item;
 using Nekoyume.Module;
@@ -31,17 +30,15 @@ namespace Nekoyume.Helper
             return GameConfig.DefaultAvatarArmorId;
         }
 
-        public static IWorld UseActionPoint(
+        public static long UseActionPoint(
             this Inventory inventory,
-            Address avatarAddress,
+            long originalAp,
             int requiredAp,
             bool chargeAp,
             MaterialItemSheet materialItemSheet,
-            long blockIndex,
-            IWorld state)
+            long blockIndex)
         {
-            var actionPointState = state.GetActionPoint(avatarAddress);
-            if (actionPointState < requiredAp)
+            if (originalAp < requiredAp)
             {
                 switch (chargeAp)
                 {
@@ -54,15 +51,15 @@ namespace Nekoyume.Helper
                             throw new NotEnoughMaterialException("not enough ap stone.");
                         }
 
-                        actionPointState = DailyReward.ActionPointMax;
+                        originalAp = DailyReward.ActionPointMax;
                         break;
                     case false:
                         throw new NotEnoughActionPointException("");
                 }
             }
 
-            actionPointState -= requiredAp;
-            return state.SetActionPoint(avatarAddress, actionPointState);
+            originalAp -= requiredAp;
+            return originalAp;
         }
     }
 }
