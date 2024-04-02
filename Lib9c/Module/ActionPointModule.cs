@@ -1,6 +1,7 @@
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action;
 
 namespace Nekoyume.Module
 {
@@ -14,7 +15,22 @@ namespace Nekoyume.Module
                 return integer;
             }
 
-            return 0;
+            throw new FailedLoadStateException("");
+        }
+
+        public static bool TryGetActionPoint(this IWorldState worldState, Address avatarAddress, out long actionPoint)
+        {
+            actionPoint = 0L;
+            try
+            {
+                var temp = GetActionPoint(worldState, avatarAddress);
+                actionPoint = temp;
+                return true;
+            }
+            catch (FailedLoadStateException)
+            {
+                return false;
+            }
         }
 
         public static IWorld SetActionPoint(this IWorld world, Address avatarAddress, long actionPoint)
