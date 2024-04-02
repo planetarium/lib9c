@@ -73,7 +73,8 @@ namespace Lib9c.Tests.Action
                 avatarState.inventory.AddItem(apStone);
             }
 
-            Assert.Equal(0, _initialState.GetActionPoint(_avatarAddress));
+            Assert.False(_initialState.TryGetActionPoint(_avatarAddress, out var actionPoint));
+            Assert.Equal(0L, actionPoint);
 
             var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
             foreach (var (key, value) in _sheets)
@@ -93,7 +94,7 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var nextActionPoint = nextState.GetActionPoint(_avatarAddress);
+            Assert.True(nextState.TryGetActionPoint(_avatarAddress, out var nextActionPoint));
             Assert.Equal(DailyReward.ActionPointMax, nextActionPoint);
         }
 
@@ -106,7 +107,8 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_Exception(bool useAvatarAddress, bool useTradable, bool enoughApStone, bool actionPointIsAlreadyCharged, Type exc)
         {
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
-            Assert.Equal(0, _initialState.GetActionPoint(_avatarAddress));
+            _initialState.TryGetActionPoint(_avatarAddress, out var prevActionPoint);
+            Assert.Equal(0L, prevActionPoint);
 
             var avatarAddress = useAvatarAddress ? _avatarAddress : default;
             var state = _initialState;

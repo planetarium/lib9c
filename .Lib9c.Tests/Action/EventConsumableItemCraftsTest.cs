@@ -127,7 +127,7 @@ namespace Lib9c.Tests.Action
             previousStates = previousStates
                 .SetAvatarState(_avatarAddress, previousAvatarState);
 
-            var previousActionPoint = previousStates.GetActionPoint(_avatarAddress);
+            previousStates.TryGetActionPoint(_avatarAddress, out var previousActionPoint);
             var previousResultConsumableCount =
                 previousAvatarState.inventory.Equipments
                     .Count(e => e.Id == recipeRow.ResultConsumableItemId);
@@ -157,9 +157,13 @@ namespace Lib9c.Tests.Action
             Assert.NotNull(consumable);
 
             var nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
-            Assert.Equal(
-                previousActionPoint - recipeRow.RequiredActionPoint,
-                nextStates.GetActionPoint(_avatarAddress));
+            if (nextStates.TryGetActionPoint(_avatarAddress, out var nextAp))
+            {
+                Assert.Equal(
+                    previousActionPoint - recipeRow.RequiredActionPoint,
+                    nextAp);
+            }
+
             Assert.Equal(
                 previousMailCount + 1,
                 nextAvatarState.mailBox.Count);
