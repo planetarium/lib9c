@@ -111,8 +111,10 @@ namespace Lib9c.Tests.Action.Scenario
                 .SetLegacyState(Addresses.GetSheetAddress<ArenaSheet>(), _tableSheets.ArenaSheet.Serialize())
                 .SetAgentState(_sellerAgentAddress, agentState)
                 .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState)
+                .SetActionPoint(_sellerAvatarAddress, DailyReward.ActionPointMax)
                 .SetAgentState(_sellerAgentAddress2, agentState2)
                 .SetAvatarState(_sellerAvatarAddress2, _sellerAvatarState2)
+                .SetActionPoint(_sellerAvatarAddress2, DailyReward.ActionPointMax)
                 .SetAgentState(_buyerAgentAddress, agentState3)
                 .SetAvatarState(_buyerAvatarAddress, buyerAvatarState);
         }
@@ -170,7 +172,7 @@ namespace Lib9c.Tests.Action.Scenario
             var nextState = action.Execute(ctx);
             var nextAvatarState = nextState.GetAvatarState(_sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - RegisterProduct.CostAp, nextState.GetActionPoint(_sellerAvatarAddress));
 
             var productsState =
                 new ProductsState((List)nextState.GetLegacyState(ProductsState.DeriveAddress(_sellerAvatarAddress)));
@@ -245,7 +247,7 @@ namespace Lib9c.Tests.Action.Scenario
             var nextState2 = action2.Execute(ctx);
             var nextAvatarState2 = nextState2.GetAvatarState(_sellerAvatarAddress2);
             Assert.Empty(nextAvatarState2.inventory.Items);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState2.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - RegisterProduct.CostAp, nextState2.GetActionPoint(_sellerAvatarAddress2));
 
             var productList2 =
                 new ProductsState((List)nextState2.GetLegacyState(ProductsState.DeriveAddress(_sellerAvatarAddress2)));
@@ -404,7 +406,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             var nextAvatarState = nextState.GetAvatarState(_sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - RegisterProduct.CostAp, nextState.GetActionPoint(_sellerAvatarAddress));
 
             var marketState = new MarketState(nextState.GetLegacyState(Addresses.Market));
             Assert.Contains(_sellerAvatarAddress, marketState.AvatarAddresses);
@@ -500,8 +502,8 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             Assert.Equal(
-                _gameConfigState.ActionPointMax - RegisterProduct.CostAp - CancelProductRegistration.CostAp,
-                latestAvatarState.actionPoint);
+                DailyReward.ActionPointMax - RegisterProduct.CostAp - CancelProductRegistration.CostAp,
+                latestState.GetActionPoint(_sellerAvatarAddress));
 
             var sellProductList = new ProductsState((List)latestState.GetLegacyState(productsStateAddress));
             Assert.Empty(sellProductList.ProductIds);
@@ -578,7 +580,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             var nextAvatarState = nextState.GetAvatarState(_sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - RegisterProduct.CostAp, nextState.GetActionPoint(_sellerAvatarAddress));
 
             var marketState = new MarketState(nextState.GetLegacyState(Addresses.Market));
             Assert.Contains(_sellerAvatarAddress, marketState.AvatarAddresses);
@@ -702,7 +704,7 @@ namespace Lib9c.Tests.Action.Scenario
             var latestState = action2.Execute(ctx);
 
             var latestAvatarState = latestState.GetAvatarState(_sellerAvatarAddress);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp - ReRegisterProduct.CostAp, latestAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - RegisterProduct.CostAp - ReRegisterProduct.CostAp, latestState.GetActionPoint(_sellerAvatarAddress));
             var inventoryItem = Assert.Single(latestAvatarState.inventory.Items);
             Assert.Equal(1, inventoryItem.count);
             Assert.IsType<TradableMaterial>(inventoryItem.item);
@@ -838,7 +840,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             var nextAvatarState = nextState.GetAvatarState(_sellerAvatarAddress);
-            Assert.Equal(_gameConfigState.ActionPointMax - ReRegisterProduct.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - ReRegisterProduct.CostAp, nextState.GetActionPoint(_sellerAvatarAddress));
             Assert.Empty(nextAvatarState.inventory.Items);
 
             foreach (var shopAddress in shopAddressList)
