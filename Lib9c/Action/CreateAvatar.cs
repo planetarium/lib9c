@@ -239,7 +239,8 @@ namespace Nekoyume.Action
             return states
                 .SetAgentState(signer, agentState)
                 .SetAvatarState(avatarAddress, avatarState)
-                .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
+                .SetActionPoint(avatarAddress, DailyReward.ActionPointMax)
+                .SetDailyRewardReceivedBlockIndex(avatarAddress, 0L);
         }
 
         public static void AddItem(ItemSheet itemSheet, CreateAvatarItemSheet createAvatarItemSheet,
