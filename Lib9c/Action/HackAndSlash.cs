@@ -337,7 +337,11 @@ namespace Nekoyume.Action
                     apPlayCount * minimumCostAp);
             }
 
-            var actionPoint = states.GetActionPoint(AvatarAddress);
+            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+            {
+                actionPoint = avatarState.actionPoint;
+            }
+
             if (actionPoint < minimumCostAp * apPlayCount)
             {
                 throw new NotEnoughActionPointException(

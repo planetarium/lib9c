@@ -79,7 +79,11 @@ namespace Nekoyume.Action
                 stakedAmount = states.GetBalance(monsterCollectionAddress, currency);
             }
 
-            var actionPoint = states.GetActionPoint(AvatarAddress);
+            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+            {
+                actionPoint = avatarState.actionPoint;
+            }
+
             if (actionPoint < CostAp)
             {
                 switch (ChargeAp)

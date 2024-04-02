@@ -221,7 +221,11 @@ namespace Nekoyume.Action
             // Subtract Required ActionPoint
             if (costActionPoint > 0)
             {
-                var actionPoint = states.GetActionPoint(AvatarAddress);
+                if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+                {
+                    actionPoint = avatarState.actionPoint;
+                }
+
                 if (actionPoint < costActionPoint)
                 {
                     throw new NotEnoughActionPointException(

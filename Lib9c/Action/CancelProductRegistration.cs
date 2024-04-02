@@ -57,13 +57,16 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException("failed to load avatar state");
             }
 
-            states = avatarState.inventory.UseActionPoint(
-                AvatarAddress,
+            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+            {
+                actionPoint = avatarState.actionPoint;
+            }
+
+            var resultActionPoint = avatarState.inventory.UseActionPoint(actionPoint,
                 CostAp,
                 ChargeAp,
                 states.GetSheet<MaterialItemSheet>(),
-                context.BlockIndex,
-                states);
+                context.BlockIndex);
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
             if (states.TryGetLegacyState(productsStateAddress, out List rawProductList))
@@ -124,6 +127,7 @@ namespace Nekoyume.Action
 
             states = states
                 .SetAvatarState(AvatarAddress, avatarState)
+                .SetActionPoint(AvatarAddress, resultActionPoint)
                 .SetLegacyState(productsStateAddress, productsState.Serialize());
 
             return states;

@@ -286,7 +286,11 @@ namespace Nekoyume.Action
                 }
             }
 
-            var hasActionPoint = states.GetActionPoint(avatarAddress);
+            if (!states.TryGetActionPoint(avatarAddress, out var hasActionPoint))
+            {
+                hasActionPoint = avatarState.actionPoint;
+            }
+
             if (actionPoint > hasActionPoint)
             {
                 throw new NotEnoughActionPointException(

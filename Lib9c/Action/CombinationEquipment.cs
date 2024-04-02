@@ -362,7 +362,11 @@ namespace Nekoyume.Action
             // 2024-03-29 기준: 레시피에 CostActionPoint가 포함된 케이스는 없으나 TableSheets 상태에 의해 동작이 변경될 수 있기에 작성해둔다.
             if (costActionPoint > 0)
             {
-                var actionPoint = states.GetActionPoint(avatarAddress);
+                if (!states.TryGetActionPoint(avatarAddress, out var actionPoint))
+                {
+                    actionPoint = avatarState.actionPoint;
+                }
+
                 if (actionPoint < costActionPoint)
                 {
                     throw new NotEnoughActionPointException(

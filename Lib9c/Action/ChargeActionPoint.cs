@@ -52,7 +52,7 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the player has no enough material ({row.Id})");
             }
 
-            var actionPoint = states.GetActionPoint(avatarAddress);
+            states.TryGetActionPoint(avatarAddress, out var actionPoint);
             if (actionPoint == DailyReward.ActionPointMax)
             {
                 throw new ActionPointExceededException();
