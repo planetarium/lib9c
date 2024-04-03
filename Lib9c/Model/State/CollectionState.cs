@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Bencodex;
 using Bencodex.Types;
 using Nekoyume.Model.Stat;
@@ -24,13 +25,15 @@ namespace Nekoyume.Model.State
             {
                 Ids.Add((Integer)value);
             }
+
+            Ids = Ids.Distinct().ToList();
         }
 
         public CollectionState(IValue bencoded) : this((List)bencoded)
         {
         }
 
-        public IValue Bencoded => List.Empty.Add(new List(Ids));
+        public IValue Bencoded => List.Empty.Add(new List(Ids.Distinct()));
 
         public List<StatModifier> GetModifiers(CollectionSheet collectionSheet)
         {

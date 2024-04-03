@@ -18,6 +18,8 @@ namespace Lib9c.Tests.Model.State
                 {
                     1,
                     2,
+                    1,
+                    2,
                 },
             };
 
@@ -27,7 +29,7 @@ namespace Lib9c.Tests.Model.State
             Assert.Equal(expected, serialized);
 
             var deserialized = new CollectionState(serialized);
-            Assert.Equal(state.Ids, deserialized.Ids);
+            Assert.Equal(new List<int> { 1, 2, }, deserialized.Ids);
         }
     }
 }
