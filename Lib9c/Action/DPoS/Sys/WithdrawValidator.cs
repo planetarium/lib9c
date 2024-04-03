@@ -14,7 +14,7 @@ namespace Nekoyume.Action.DPoS.Sys
     /// A system action for DPoS that withdraws commission tokens from <see cref="Validator"/>.
     /// </summary>
     [ActionType(ActionTypeValue)]
-    public sealed class WithdrawValidator : IAction
+    public sealed class WithdrawValidator : ActionBase
     {
         private const string ActionTypeValue = "withdraw_validator";
 
@@ -26,17 +26,17 @@ namespace Nekoyume.Action.DPoS.Sys
         }
 
         /// <inheritdoc cref="IAction.PlainValue"/>
-        public IValue PlainValue => Bencodex.Types.Dictionary.Empty
+        public override IValue PlainValue => Bencodex.Types.Dictionary.Empty
             .Add("type_id", new Text(ActionTypeValue));
 
         /// <inheritdoc cref="IAction.LoadPlainValue(IValue)"/>
-        public void LoadPlainValue(IValue plainValue)
+        public override void LoadPlainValue(IValue plainValue)
         {
             // Method intentionally left empty.
         }
 
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
-        public IWorld Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             IActionContext ctx = context;
             var states = ctx.PreviousState;
