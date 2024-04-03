@@ -16,7 +16,7 @@ namespace Nekoyume.Action.DPoS.Sys
     /// A system action for DPoS that withdraws reward tokens from given <see cref="Validator"/>.
     /// </summary>
     [ActionType(ActionTypeValue)]
-    public sealed class WithdrawDelegator : IAction
+    public sealed class WithdrawDelegator : ActionBase
     {
         private const string ActionTypeValue = "withdraw_delegator";
 
@@ -41,18 +41,18 @@ namespace Nekoyume.Action.DPoS.Sys
         public Address Validator { get; set; }
 
         /// <inheritdoc cref="IAction.PlainValue"/>
-        public IValue PlainValue => Bencodex.Types.Dictionary.Empty
+        public override IValue PlainValue => Bencodex.Types.Dictionary.Empty
             .Add("type_id", new Text(ActionTypeValue))
             .Add("validator", Validator.Serialize());
 
         /// <inheritdoc cref="IAction.LoadPlainValue(IValue)"/>
-        public void LoadPlainValue(IValue plainValue)
+        public override void LoadPlainValue(IValue plainValue)
         {
             Validator = plainValue.ToAddress();
         }
 
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
-        public IWorld Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             IActionContext ctx = context;
             var states = ctx.PreviousState;
