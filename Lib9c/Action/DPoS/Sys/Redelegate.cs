@@ -15,7 +15,7 @@ namespace Nekoyume.Action.DPoS.Sys
     /// of shared tokens to <see cref="DstValidator"/> from <see cref="SrcValidator"/>.
     /// </summary>
     [ActionType(ActionTypeValue)]
-    public sealed class Redelegate : IAction
+    public sealed class Redelegate : ActionBase
     {
         private const string ActionTypeValue = "redelegate";
 
@@ -55,14 +55,14 @@ namespace Nekoyume.Action.DPoS.Sys
         public FungibleAssetValue ShareAmount { get; set; }
 
         /// <inheritdoc cref="IAction.PlainValue"/>
-        public IValue PlainValue => Bencodex.Types.Dictionary.Empty
+        public override IValue PlainValue => Bencodex.Types.Dictionary.Empty
             .Add("type_id", new Text(ActionTypeValue))
             .Add("src", SrcValidator.Serialize())
             .Add("dst", DstValidator.Serialize())
             .Add("amount", ShareAmount.Serialize());
 
         /// <inheritdoc cref="IAction.LoadPlainValue(IValue)"/>
-        public void LoadPlainValue(IValue plainValue)
+        public override void LoadPlainValue(IValue plainValue)
         {
             var dict = (Bencodex.Types.Dictionary)plainValue;
             SrcValidator = dict["src"].ToAddress();
@@ -71,7 +71,7 @@ namespace Nekoyume.Action.DPoS.Sys
         }
 
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
-        public IWorld Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             IActionContext ctx = context;
             var states = ctx.PreviousState;
