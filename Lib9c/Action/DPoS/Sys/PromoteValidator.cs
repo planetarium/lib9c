@@ -15,7 +15,7 @@ namespace Nekoyume.Action.DPoS.Sys
     /// A system action for DPoS that promotes non-validator node to a validator.
     /// </summary>
     [ActionType(ActionTypeValue)]
-    public sealed class PromoteValidator : IAction
+    public sealed class PromoteValidator : ActionBase
     {
         private const string ActionTypeValue = "promote_validator";
 
@@ -50,13 +50,13 @@ namespace Nekoyume.Action.DPoS.Sys
         public FungibleAssetValue Amount { get; set; }
 
         /// <inheritdoc cref="IAction.PlainValue"/>
-        public IValue PlainValue => Bencodex.Types.Dictionary.Empty
+        public override IValue PlainValue => Bencodex.Types.Dictionary.Empty
             .Add("type_id", new Text(ActionTypeValue))
             .Add("validator", Validator.Serialize())
             .Add("amount", Amount.Serialize());
 
         /// <inheritdoc cref="IAction.LoadPlainValue(IValue)"/>
-        public void LoadPlainValue(IValue plainValue)
+        public override void LoadPlainValue(IValue plainValue)
         {
             var dict = (Bencodex.Types.Dictionary)plainValue;
             Validator = dict["validator"].ToPublicKey();
@@ -64,7 +64,7 @@ namespace Nekoyume.Action.DPoS.Sys
         }
 
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
-        public IWorld Execute(IActionContext context)
+        public override IWorld Execute(IActionContext context)
         {
             IActionContext ctx = context;
             if (!ctx.Signer.Equals(Validator.Address))
