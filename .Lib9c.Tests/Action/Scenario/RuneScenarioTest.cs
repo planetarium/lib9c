@@ -46,7 +46,8 @@ namespace Lib9c.Tests.Action.Scenario
                 .SetLegacyState(
                     Addresses.GoldCurrency,
                     new GoldCurrencyState(Currency.Legacy("NCG", 2, minters: null)).Serialize())
-                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
+                .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
             foreach (var (key, value) in sheets)
             {
                 initialState = initialState

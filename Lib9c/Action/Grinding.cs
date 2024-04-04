@@ -79,7 +79,12 @@ namespace Nekoyume.Action
                 stakedAmount = states.GetBalance(monsterCollectionAddress, currency);
             }
 
-            if (avatarState.actionPoint < CostAp)
+            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+            {
+                actionPoint = avatarState.actionPoint;
+            }
+
+            if (actionPoint < CostAp)
             {
                 switch (ChargeAp)
                 {
@@ -94,14 +99,13 @@ namespace Nekoyume.Action
                         {
                             throw new NotEnoughMaterialException("not enough ap stone.");
                         }
-                        GameConfigState gameConfigState = states.GetGameConfigState();
-                        avatarState.actionPoint = gameConfigState.ActionPointMax;
+                        actionPoint = DailyReward.ActionPointMax;
                         break;
                     }
                 }
             }
 
-            avatarState.actionPoint -= CostAp;
+            actionPoint -= CostAp;
 
             List<Equipment> equipmentList = new List<Equipment>();
             foreach (var equipmentId in EquipmentIds)
@@ -148,7 +152,8 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Grinding Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetAvatarState(AvatarAddress, avatarState)
+                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
+                .SetActionPoint(AvatarAddress, actionPoint)
                 .MintAsset(context, context.Signer, crystal);
         }
 

@@ -65,7 +65,8 @@ namespace Lib9c.Tests.Action.Scenario
                     rankingMapAddress
                 );
                 avatarState.inventory.AddItem(_aura);
-                _initialState = _initialState.SetAvatarState(avatarAddress, avatarState);
+                _initialState = _initialState.SetAvatarState(avatarAddress, avatarState)
+                    .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
             }
 
             _currency = Currency.Legacy("NCG", 2, minters: null);

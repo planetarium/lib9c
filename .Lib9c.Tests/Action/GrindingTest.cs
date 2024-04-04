@@ -132,7 +132,7 @@ namespace Lib9c.Tests.Action
 
             if (avatarExist)
             {
-                _avatarState.actionPoint = ap;
+                state = state.SetActionPoint(_avatarAddress, ap);
 
                 if (equipmentExist)
                 {
@@ -229,7 +229,7 @@ namespace Lib9c.Tests.Action
 
                 Assert.Equal(asset, nextState.GetBalance(_agentAddress, _crystalCurrency));
                 Assert.False(nextAvatarState.inventory.HasNonFungibleItem(default));
-                Assert.Equal(115, nextAvatarState.actionPoint);
+                Assert.Equal(115, nextState.GetActionPoint(_avatarAddress));
 
                 var mail = nextAvatarState.mailBox.OfType<GrindingMail>().First(i => i.id.Equals(action.Id));
 
