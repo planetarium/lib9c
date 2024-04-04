@@ -17,6 +17,12 @@ namespace Nekoyume.Model.State
             RuneId = runeId;
         }
 
+        public RuneState(int runeId, int level)
+        {
+            RuneId = runeId;
+            Level = level;
+        }
+
         public RuneState(List serialized)
         {
             RuneId = serialized[0].ToInteger();
