@@ -84,7 +84,8 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(Addresses.Shop, shopState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
-                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
+                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState))
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax);
         }
 
         [Theory]
@@ -296,9 +297,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(productId, product.ProductId);
             Assert.Equal(productType, product.Type);
             Assert.Equal(order.Price, product.Price);
-
-            var nextAvatarState = actualState.GetAvatarState(_avatarAddress);
-            Assert.Equal(_gameConfigState.ActionPointMax - ReRegisterProduct.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - ReRegisterProduct.CostAp, actualState.GetActionPoint(_avatarAddress));
         }
 
         [Fact]

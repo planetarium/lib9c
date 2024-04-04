@@ -62,6 +62,7 @@ namespace Lib9c.Tests.Action.Scenario
                 .SetLegacyState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, avatarState)
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax)
                 .SetLegacyState(_rankingMapAddress, new RankingMapState(_rankingMapAddress).Serialize())
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
