@@ -16,7 +16,6 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class RuneScenarioTest
     {
@@ -82,8 +81,8 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
             });
 
-            var rawRuneState = Assert.IsType<List>(prevState.GetLegacyState(runeAddress));
-            var runeState = new RuneState(rawRuneState);
+            var runeState = Assert.IsType<RuneState>(prevState.GetRuneState(avatarAddress, runeId));
+
             Assert.Equal(1, runeState.Level);
             Assert.Equal(runeId, runeState.RuneId);
 
