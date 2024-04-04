@@ -87,9 +87,10 @@ namespace Lib9c.Tests.Action
 
             var runeListSheet = state.GetSheet<RuneListSheet>();
             var runeId = runeListSheet.First().Value.Id;
-            var runeState = new RuneState(runeId);
+            var allRuneState = new AllRuneState(runeId);
+            var runeState = allRuneState.GetRuneState(runeId);
             runeState.LevelUp(startLevel);
-            state = state.SetRuneState(avatarAddress, runeState);
+            state = state.SetRuneState(avatarAddress, allRuneState);
 
             // Prepare materials
             var ncgCurrency = state.GetGoldCurrency();
@@ -124,7 +125,8 @@ namespace Lib9c.Tests.Action
             else
             {
                 var nextState = action.Execute(ctx);
-                var nextRuneState = nextState.GetRuneState(avatarAddress, runeId);
+                var nextAllRuneState = nextState.GetRuneState(avatarAddress);
+                var nextRuneState = nextAllRuneState.GetRuneState(runeId);
                 if (nextRuneState is null)
                 {
                     throw new Exception();
@@ -178,9 +180,8 @@ namespace Lib9c.Tests.Action
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
-            var runeListSheet = state.GetSheet<RuneListSheet>();
-            var runeId = runeListSheet.First().Value.Id;
-            var runeState = new RuneState(128381293);
+            const int runeId = 128381293;
+            var runeState = new AllRuneState(runeId);
             state = state.SetRuneState(avatarState.address, runeState);
 
             var action = new RuneEnhancement()
@@ -236,8 +237,10 @@ namespace Lib9c.Tests.Action
 
             var runeListSheet = state.GetSheet<RuneListSheet>();
             var runeId = runeListSheet.First().Value.Id;
-            var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
-            var runeState = new RuneState(runeId);
+            var allRuneState = new AllRuneState(runeId);
+            var runeState = allRuneState.GetRuneState(runeId);
+            Assert.NotNull(runeState);
+
             var costSheet = state.GetSheet<RuneCostSheet>();
             if (!costSheet.TryGetValue(runeId, out var costRow))
             {
@@ -245,8 +248,8 @@ namespace Lib9c.Tests.Action
             }
 
             runeState.LevelUp(costRow.Cost.Count);
-
-            state = state.SetRuneState(runeStateAddress, runeState);
+            allRuneState.SetRuneState(runeState);
+            state = state.SetRuneState(avatarAddress, allRuneState);
 
             var action = new RuneEnhancement()
             {
@@ -306,8 +309,9 @@ namespace Lib9c.Tests.Action
             var runeListSheet = state.GetSheet<RuneListSheet>();
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
-            var runeState = new RuneState(runeId);
-            state = state.SetRuneState(runeStateAddress, runeState);
+            var allRuneState = new AllRuneState(runeId);
+            var runeState = allRuneState.GetRuneState(runeId);
+            state = state.SetRuneState(runeStateAddress, allRuneState);
 
             var costSheet = state.GetSheet<RuneCostSheet>();
             if (!costSheet.TryGetValue(runeId, out var costRow))
@@ -421,7 +425,7 @@ namespace Lib9c.Tests.Action
             var runeListSheet = state.GetSheet<RuneListSheet>();
             var runeId = runeListSheet.First().Value.Id;
             var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
-            var runeState = new RuneState(runeId);
+            var runeState = new AllRuneState(runeId);
             state = state.SetRuneState(runeStateAddress, runeState);
 
             var action = new RuneEnhancement()

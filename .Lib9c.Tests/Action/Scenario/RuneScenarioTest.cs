@@ -59,8 +59,8 @@ namespace Lib9c.Tests.Action.Scenario
             var rune = RuneHelper.ToCurrency(runeRow);
             initialState = initialState.MintAsset(context, avatarAddress, rune * 1);
 
-            var runeAddress = RuneState.DeriveAddress(avatarAddress, runeId);
-            Assert.Null(initialState.GetLegacyState(runeAddress));
+            var allRuneState = initialState.GetRuneState(avatarAddress);
+            Assert.Null(allRuneState.GetRuneState(runeId));
 
             initialState = initialState.MintAsset(
                 new ActionContext(),
@@ -82,7 +82,8 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
             });
 
-            var runeState = Assert.IsType<RuneState>(prevState.GetRuneState(avatarAddress, runeId));
+            var allRuneState = Assert.IsType<AllRuneState>(prevState.GetRuneState(avatarAddress));
+            var runeState = allRuneState.GetRuneState(runeId);
 
             Assert.Equal(1, runeState.Level);
             Assert.Equal(runeId, runeState.RuneId);

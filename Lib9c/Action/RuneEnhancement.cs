@@ -85,7 +85,17 @@ namespace Nekoyume.Action
                     $"current TryCount : {TryCount}");
             }
 
-            var runeState = states.GetRuneState(AvatarAddress, RuneId) ?? new RuneState(RuneId);
+            var allRuneState = states.GetRuneState(AvatarAddress);
+            RuneState runeState;
+            if (allRuneState.TryGetRuneState(RuneId, out var rs))
+            {
+                runeState = rs;
+            }
+            else
+            {
+                runeState = new RuneState(RuneId);
+                allRuneState.AddRuneState(runeState);
+            }
 
             var costSheet = sheets.GetSheet<RuneCostSheet>();
             if (!costSheet.TryGetValue(runeState.RuneId, out var costRow))
@@ -138,7 +148,7 @@ namespace Nekoyume.Action
             }
 
             runeState.LevelUp(levelUpResult.LevelUpCount);
-            states = states.SetRuneState(AvatarAddress, runeState);
+            states = states.SetRuneState(AvatarAddress, allRuneState);
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
