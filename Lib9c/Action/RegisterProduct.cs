@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Battle;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
@@ -64,7 +65,17 @@ namespace Nekoyume.Action
                 nameof(RegisterProduct), "Get States And Validate", context.BlockIndex, sw.Elapsed.TotalMilliseconds);
 
             sw.Restart();
-            avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
+            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+            {
+                actionPoint = avatarState.actionPoint;
+            }
+
+            var resultActionPoint = avatarState.inventory.UseActionPoint(
+                actionPoint,
+                CostAp,
+                ChargeAp,
+                states.GetSheet<MaterialItemSheet>(),
+                context.BlockIndex);
             sw.Stop();
             Log.Debug("{Source} {Process} from #{BlockIndex}: {Elapsed}",
                 nameof(RegisterProduct), "UseAp", context.BlockIndex, sw.Elapsed.TotalMilliseconds);
@@ -102,6 +113,7 @@ namespace Nekoyume.Action
             sw.Restart();
             states = states
                 .SetAvatarState(AvatarAddress, avatarState)
+                .SetActionPoint(AvatarAddress, resultActionPoint)
                 .SetLegacyState(productsStateAddress, productsState.Serialize());
 
             sw.Stop();

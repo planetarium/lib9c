@@ -50,7 +50,8 @@ namespace Lib9c.Tests.Action.Scenario
                     rankingMapAddress
                 );
                 _initialState = _initialState.SetAvatarState(
-                    avatarAddress, avatarState, true, true, true, true);
+                    avatarAddress, avatarState, true, true, true, true)
+                    .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
             }
 
             var currency = Currency.Legacy("NCG", 2, minters: null);

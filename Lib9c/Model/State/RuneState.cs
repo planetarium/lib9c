@@ -31,9 +31,9 @@ namespace Nekoyume.Model.State
             return result;
         }
 
-        public void LevelUp()
+        public void LevelUp(int level = 1)
         {
-            Level++;
+            Level += level;
         }
     }
 }

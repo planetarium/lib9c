@@ -6,11 +6,13 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Bencodex.Types;
+using Lib9c;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
@@ -238,7 +240,9 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex}CreateAvatar Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetAgentState(signer, agentState)
-                .SetAvatarState(avatarAddress, avatarState);
+                .SetAvatarState(avatarAddress, avatarState)
+                .SetActionPoint(avatarAddress, DailyReward.ActionPointMax)
+                .SetDailyRewardReceivedBlockIndex(avatarAddress, 0L);
         }
 
         public static void AddItem(ItemSheet itemSheet, CreateAvatarItemSheet createAvatarItemSheet,
@@ -341,6 +345,53 @@ namespace Nekoyume.Action
 #endif
 
             return avatarState;
+        }
+
+#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+        private static IWorld AddRunesForTest(
+            IActionContext context,
+            Address avatarAddress,
+            IWorld states,
+            int count = int.MaxValue)
+        {
+            var runeSheet = states.GetSheet<RuneSheet>();
+            foreach (var row in runeSheet.Values)
+            {
+                var rune = RuneHelper.ToFungibleAssetValue(row, count);
+                states = states.MintAsset(context, avatarAddress, rune);
+            }
+            return states;
+        }
+
+        private static IWorld AddSoulStoneForTest(
+            IActionContext context,
+            Address avatarAddress,
+            IWorld states,
+            int count = int.MaxValue)
+        {
+            var petSheet = states.GetSheet<PetSheet>();
+            foreach (var row in petSheet.Values)
+            {
+                var soulStone = Currencies.GetSoulStone(row.SoulStoneTicker) * count;
+                states = states.MintAsset(context, avatarAddress, soulStone);
+            }
+            return states;
+        }
+
+        private static IWorld AddPetsForTest(
+            Address avatarAddress,
+            IWorld states)
+        {
+            var petSheet = states.GetSheet<PetSheet>();
+            foreach (var id in petSheet.Keys)
+            {
+                var petState = new PetState(id);
+                petState.LevelUp();
+                var petStateAddress = PetState.DeriveAddress(avatarAddress, id);
+                states = states.SetLegacyState(petStateAddress, petState.Serialize());
+            }
+
+            return states;
         }
 
         private static void AddItemsForTest(
@@ -451,5 +502,6 @@ namespace Nekoyume.Action
 
             return optionIds;
         }
+#endif
     }
 }

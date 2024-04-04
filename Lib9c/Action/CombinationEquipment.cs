@@ -359,16 +359,23 @@ namespace Nekoyume.Action
             }
 
             // Subtract Required ActionPoint
+            // 2024-03-29 기준: 레시피에 CostActionPoint가 포함된 케이스는 없으나 TableSheets 상태에 의해 동작이 변경될 수 있기에 작성해둔다.
             if (costActionPoint > 0)
             {
-                if (avatarState.actionPoint < costActionPoint)
+                if (!states.TryGetActionPoint(avatarAddress, out var actionPoint))
+                {
+                    actionPoint = avatarState.actionPoint;
+                }
+
+                if (actionPoint < costActionPoint)
                 {
                     throw new NotEnoughActionPointException(
-                        $"{addressesHex}Aborted due to insufficient action point: {avatarState.actionPoint} < {costActionPoint}"
+                        $"{addressesHex}Aborted due to insufficient action point: {actionPoint} < {costActionPoint}"
                     );
                 }
 
-                avatarState.actionPoint -= costActionPoint;
+                actionPoint -= costActionPoint;
+                states = states.SetActionPoint(avatarAddress, actionPoint);
             }
             // ~Subtract Required ActionPoint
 
