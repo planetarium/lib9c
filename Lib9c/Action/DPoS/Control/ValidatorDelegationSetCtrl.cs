@@ -1,7 +1,9 @@
 #nullable enable
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
+using Nekoyume.Action.DPoS.Util;
 
 namespace Nekoyume.Action.DPoS.Control
 {

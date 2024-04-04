@@ -9,6 +9,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action.DPoS.Exception;
 using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
+using Nekoyume.Action.DPoS.Util;
 using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Control
