@@ -8,7 +8,7 @@ using Nekoyume.Action.DPoS.Control;
 using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Util;
 
-namespace Nekoyume.Action.DPoS.Sys
+namespace Nekoyume.Action.DPoS
 {
     /// <summary>
     /// A system action for DPoS that <see cref="Redelegate"/> specified <see cref="ShareAmount"/>

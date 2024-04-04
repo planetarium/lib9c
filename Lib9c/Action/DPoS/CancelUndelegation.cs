@@ -7,48 +7,60 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action.DPoS.Control;
 using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
+using Nekoyume.Action.DPoS.Sys;
 using Nekoyume.Action.DPoS.Util;
-using Nekoyume.Module;
 
-namespace Nekoyume.Action.DPoS.Sys
+namespace Nekoyume.Action.DPoS
 {
     /// <summary>
-    /// A system action for DPoS that withdraws reward tokens from given <see cref="Validator"/>.
+    /// A system action for DPoS that cancel <see cref="Undelegate"/> specified
+    /// <see cref="Amount"/> of tokens to a given <see cref="Validator"/>.
     /// </summary>
     [ActionType(ActionTypeValue)]
-    public sealed class WithdrawDelegator : ActionBase
+    public sealed class CancelUndelegation : ActionBase
     {
-        private const string ActionTypeValue = "withdraw_delegator";
+        private const string ActionTypeValue = "cancel_undelegation";
 
         /// <summary>
-        /// Creates a new instance of <see cref="WithdrawDelegator"/> action.
+        /// Creates a new instance of <see cref="CancelUndelegation"/> action.
         /// </summary>
-        /// <param name="validator">The <see cref="Address"/> of the validator
-        /// from which to withdraw the tokens.</param>
-        public WithdrawDelegator(Address validator)
+        /// <param name="validator">The <see cref="amount"/> of the validator
+        /// to delegate tokens.</param>
+        /// <param name="amount">The amount of the asset to be delegated.</param>
+        public CancelUndelegation(Address validator, FungibleAssetValue amount)
         {
             Validator = validator;
+            Amount = amount;
         }
 
-        public WithdrawDelegator()
+        public CancelUndelegation()
         {
             // Used only for deserialization.  See also class Libplanet.Action.Sys.Registry.
         }
 
         /// <summary>
-        /// The <see cref="Address"/> of the validator to withdraw.
+        /// The <see cref="Address"/> of the validator
+        /// to cancel the <see cref="Undelegate"/> and <see cref="Delegate"/>.
         /// </summary>
         public Address Validator { get; set; }
+
+        /// <summary>
+        /// The amount of the asset to be delegated.
+        /// </summary>
+        public FungibleAssetValue Amount { get; set; }
 
         /// <inheritdoc cref="IAction.PlainValue"/>
         public override IValue PlainValue => Bencodex.Types.Dictionary.Empty
             .Add("type_id", new Text(ActionTypeValue))
-            .Add("validator", Validator.Serialize());
+            .Add("validator", Validator.Serialize())
+            .Add("amount", Amount.Serialize());
 
         /// <inheritdoc cref="IAction.LoadPlainValue(IValue)"/>
         public override void LoadPlainValue(IValue plainValue)
         {
-            Validator = plainValue.ToAddress();
+            var dict = (Bencodex.Types.Dictionary)plainValue;
+            Validator = dict["validator"].ToAddress();
+            Amount = dict["amount"].ToFungibleAssetValue();
         }
 
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
@@ -61,27 +73,12 @@ namespace Nekoyume.Action.DPoS.Sys
 
             // if (ctx.Rehearsal)
             // Rehearsal mode is not implemented
-            states = DelegateCtrl.Distribute(
+            states = UndelegateCtrl.Cancel(
                 states,
                 ctx,
-                nativeTokens,
-                Delegation.DeriveAddress(ctx.Signer, Validator));
-
-#pragma warning disable LAA1002
-            foreach (Currency nativeToken in nativeTokens)
-            {
-                FungibleAssetValue reward = states.GetBalance(
-                    AllocateReward.RewardAddress(ctx.Signer), nativeToken);
-                if (reward.Sign > 0)
-                {
-                    states = states.TransferAsset(
-                        ctx,
-                        AllocateReward.RewardAddress(ctx.Signer),
-                        ctx.Signer,
-                        reward);
-                }
-            }
-#pragma warning restore LAA1002
+                Undelegation.DeriveAddress(ctx.Signer, Validator),
+                Amount,
+                nativeTokens);
 
             return states;
         }
