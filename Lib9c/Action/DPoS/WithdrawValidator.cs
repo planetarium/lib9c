@@ -8,7 +8,7 @@ using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
 using Nekoyume.Module;
 
-namespace Nekoyume.Action.DPoS.Sys
+namespace Nekoyume.Action.DPoS
 {
     /// <summary>
     /// A system action for DPoS that withdraws commission tokens from <see cref="Validator"/>.
