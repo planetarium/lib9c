@@ -4,7 +4,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.DPoS.Misc;
 
-namespace Nekoyume.Action.DPoS
+namespace Nekoyume.Action.DPoS.Util
 {
     public static class DPoSModule
     {

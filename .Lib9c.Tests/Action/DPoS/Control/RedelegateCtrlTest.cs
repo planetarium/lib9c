@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
     using Nekoyume.Action.DPoS.Exception;
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
+    using Nekoyume.Action.DPoS.Util;
     using Nekoyume.Module;
     using Xunit;
 
