@@ -2,22 +2,20 @@ using System.Collections.Immutable;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Action.DPoS.Control;
 using Nekoyume.Action.DPoS.Misc;
-using Nekoyume.Action.DPoS.Model;
-using Nekoyume.Module;
 
-namespace Nekoyume.Action.DPoS
+namespace Nekoyume.Action.DPoS.Sys
 {
     /// <summary>
-    /// A BeginBlock action for DPoS that updates <see cref="ValidatorSet"/>.
+    /// An action for allocate reward to validators and delegators in previous block.
+    /// Should be executed at the beginning of the block.
     /// </summary>
-    public sealed class DPoSBeginBlockAction : ActionBase
+    public sealed class AllocateReward : ActionBase
     {
         /// <summary>
-        /// Creates a new instance of <see cref="DPoSBeginBlockAction"/>.
+        /// Creates a new instance of <see cref="AllocateReward"/>.
         /// </summary>
-        public DPoSBeginBlockAction()
+        public AllocateReward()
         {
         }
 
@@ -34,11 +32,9 @@ namespace Nekoyume.Action.DPoS
         public override IWorld Execute(IActionContext context)
         {
             var states = context.PreviousState;
-
-            // Allocate reward
             var nativeTokens = ImmutableHashSet.Create(
                 Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
-            states = AllocateReward.Execute(
+            states = Control.AllocateReward.Execute(
                 states,
                 context,
                 nativeTokens,
