@@ -8,6 +8,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Battle;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Market;
 using Nekoyume.Model.State;
@@ -65,7 +66,27 @@ namespace Nekoyume.Action
                     current);
             }
 
-            avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
+            if (avatarState.actionPoint < CostAp)
+            {
+                switch (ChargeAp)
+                {
+                    case true:
+                        var row = states.GetSheet<MaterialItemSheet>()
+                            .OrderedList!
+                            .First(r => r.ItemSubType == ItemSubType.ApStone);
+                        if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, context.BlockIndex))
+                        {
+                            throw new NotEnoughMaterialException("not enough ap stone.");
+                        }
+
+                        avatarState.actionPoint = states.GetGameConfigState().ActionPointMax;
+                        break;
+                    case false:
+                        throw new NotEnoughActionPointException("");
+                }
+            }
+
+            avatarState.actionPoint -= CostAp;
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
             if (states.TryGetLegacyState(productsStateAddress, out List rawProducts))

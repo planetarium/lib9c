@@ -221,14 +221,20 @@ namespace Nekoyume.Action
             // Subtract Required ActionPoint
             if (costActionPoint > 0)
             {
-                if (avatarState.actionPoint < costActionPoint)
+                if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+                {
+                    actionPoint = avatarState.actionPoint;
+                }
+
+                if (actionPoint < costActionPoint)
                 {
                     throw new NotEnoughActionPointException(
-                        $"{addressesHex}Aborted due to insufficient action point: {avatarState.actionPoint} < {costActionPoint}"
+                        $"{addressesHex}Aborted due to insufficient action point: {actionPoint} < {costActionPoint}"
                     );
                 }
 
-                avatarState.actionPoint -= costActionPoint;
+                actionPoint -= costActionPoint;
+                states = states.SetActionPoint(AvatarAddress, actionPoint);
             }
             // ~Subtract Required ActionPoint
 
