@@ -37,6 +37,133 @@ namespace Lib9c.Tests.Action
         // Cannot exceed max level
         [InlineData(299, 2, 299, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
         [InlineData(300, 1, 300, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
+        public void Execute_LegacyState(
+            int startLevel,
+            int tryCount,
+            int expectedLevel,
+            int expectedNcgCost,
+            int expectedCrystalCost,
+            int expectedRuneCost,
+            Type expectedException,
+            int seed
+        )
+        {
+            const int initialNcg = 10_000;
+            const int initialCrystal = 1_000_000;
+            const int initialRune = 1_000;
+            var s = seed;
+            // Set states
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var sheets = TableSheetsImporter.ImportSheets();
+            var tableSheets = new TableSheets(sheets);
+            var blockIndex = tableSheets.WorldBossListSheet.Values
+                .OrderBy(x => x.StartedBlockIndex)
+                .First()
+                .StartedBlockIndex;
+
+            var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
+            var rankingMapAddress = avatarAddress.Derive("ranking_map");
+            var agentState = new AgentState(agentAddress);
+            var avatarState = new AvatarState(
+                avatarAddress,
+                agentAddress,
+                0,
+                tableSheets.GetAvatarSheets(),
+                new GameConfigState(),
+                rankingMapAddress
+            );
+            agentState.avatarAddresses.Add(0, avatarAddress);
+            var context = new ActionContext();
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            foreach (var (key, value) in sheets)
+            {
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var runeListSheet = state.GetSheet<RuneListSheet>();
+            var runeId = runeListSheet.First().Value.Id;
+            var allRuneState = new AllRuneState(runeId);
+            var runeState = allRuneState.GetRuneState(runeId);
+            runeState.LevelUp(startLevel);
+            // Set Legacy Rune state
+            state = state.SetLegacyState(
+                RuneState.DeriveAddress(avatarAddress, runeId),
+                runeState.Serialize()
+            );
+
+            // Prepare materials
+            var ncgCurrency = state.GetGoldCurrency();
+            var crystalCurrency = CrystalCalculator.CRYSTAL;
+            var runeTicker = tableSheets.RuneSheet.Values.First(r => r.Id == runeId).Ticker;
+            var runeCurrency = Currency.Legacy(runeTicker, 0, minters: null);
+            var r = new TestRandom(seed: 1);
+
+            state = state.MintAsset(context, agentAddress, ncgCurrency * initialNcg);
+            state = state.MintAsset(context, agentAddress, crystalCurrency * initialCrystal);
+            state = state.MintAsset(context, avatarAddress, runeCurrency * initialRune);
+
+            // Action
+            var action = new RuneEnhancement
+            {
+                AvatarAddress = avatarState.address,
+                RuneId = runeId,
+                TryCount = tryCount,
+            };
+            var ctx = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = state,
+                RandomSeed = seed,
+                Signer = agentAddress,
+            };
+
+            if (expectedException is not null)
+            {
+                Assert.Throws(expectedException, () => { action.Execute(ctx); });
+            }
+            else
+            {
+                var nextState = action.Execute(ctx);
+                // RuneState must be migrated to AllRuneState
+                var nextAllRuneState = nextState.GetRuneState(avatarAddress);
+                var nextRuneState = nextAllRuneState.GetRuneState(runeId);
+                if (nextRuneState is null)
+                {
+                    throw new Exception();
+                }
+
+                var nextNcgBal = nextState.GetBalance(agentAddress, ncgCurrency);
+                var nextCrystalBal = nextState.GetBalance(agentAddress, crystalCurrency);
+                var nextRuneBal = nextState.GetBalance(avatarAddress, runeCurrency);
+
+                Assert.Equal((initialNcg - expectedNcgCost) * ncgCurrency, nextNcgBal);
+                Assert.Equal(
+                    (initialCrystal - expectedCrystalCost) * crystalCurrency,
+                    nextCrystalBal
+                );
+                Assert.Equal((initialRune - expectedRuneCost) * runeCurrency, nextRuneBal);
+                Assert.Equal(expectedLevel, nextRuneState.Level);
+            }
+        }
+
+        [Theory]
+        // All success
+        [InlineData(1, 1, 2, 0, 0, 1, null, 0)]
+        [InlineData(1, 2, 3, 0, 0, 2, null, 0)]
+        // Success 1 of 2
+        [InlineData(202, 2, 203, 0, 1000, 40, null, 2)]
+        // All fail
+        [InlineData(202, 2, 202, 0, 1000, 40, null, 0)]
+        // Reaching max level
+        [InlineData(299, 1, 300, 0, 500, 20, null, 1)]
+        // Cannot exceed max level
+        [InlineData(299, 2, 299, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
+        [InlineData(300, 1, 300, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
         public void Execute(
             int startLevel,
             int tryCount,
