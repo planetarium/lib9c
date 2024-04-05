@@ -32,7 +32,8 @@ namespace Nekoyume.Model.State
             Runes = new Dictionary<int, RuneState>();
             foreach (var item in serialized.OfType<List>())
             {
-                Runes.Add(item[0].ToInteger(), new RuneState(item));
+                var runeState = new RuneState(item);
+                Runes.Add(runeState.RuneId, runeState);
             }
         }
 
