@@ -15,6 +15,7 @@ using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Action
 {

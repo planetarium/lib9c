@@ -9,6 +9,7 @@ namespace Lib9c.Tests
     using Nekoyume.TableData.Garages;
     using Nekoyume.TableData.GrandFinale;
     using Nekoyume.TableData.Pet;
+    using Nekoyume.TableData.Rune;
     using Nekoyume.TableData.Stake;
     using Nekoyume.TableData.Summon;
 

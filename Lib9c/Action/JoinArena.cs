@@ -15,6 +15,7 @@ using Nekoyume.Model.EnumType;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Rune;
 using Serilog;
 
 namespace Nekoyume.Action
