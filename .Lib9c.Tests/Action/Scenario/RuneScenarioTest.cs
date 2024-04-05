@@ -82,7 +82,7 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
             });
 
-            var allRuneState = Assert.IsType<AllRuneState>(prevState.GetRuneState(avatarAddress));
+            allRuneState = Assert.IsType<AllRuneState>(prevState.GetRuneState(avatarAddress));
             var runeState = allRuneState.GetRuneState(runeId);
 
             Assert.Equal(1, runeState.Level);
