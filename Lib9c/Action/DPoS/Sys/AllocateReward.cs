@@ -34,7 +34,7 @@ namespace Nekoyume.Action.DPoS.Sys
             var states = context.PreviousState;
             var nativeTokens = ImmutableHashSet.Create(
                 Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
-            states = Control.AllocateReward.Execute(
+            states = Control.AllocateRewardCtrl.Execute(
                 states,
                 context,
                 nativeTokens,

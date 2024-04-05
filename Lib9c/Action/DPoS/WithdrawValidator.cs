@@ -50,12 +50,12 @@ namespace Nekoyume.Action.DPoS
             foreach (Currency nativeToken in nativeTokens)
             {
                 FungibleAssetValue reward = states.GetBalance(
-                    AllocateReward.RewardAddress(ctx.Signer), nativeToken);
+                    AllocateRewardCtrl.RewardAddress(ctx.Signer), nativeToken);
                 if (reward.Sign > 0)
                 {
                     states = states.TransferAsset(
                         ctx,
-                        AllocateReward.RewardAddress(ctx.Signer),
+                        AllocateRewardCtrl.RewardAddress(ctx.Signer),
                         ctx.Signer,
                         reward);
                 }
