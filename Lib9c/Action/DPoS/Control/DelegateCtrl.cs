@@ -139,7 +139,7 @@ namespace Nekoyume.Action.DPoS.Control
                     states = states.TransferAsset(
                         ctx,
                         validatorRewardAddress,
-                        AllocateReward.RewardAddress(delegation.DelegatorAddress),
+                        AllocateRewardCtrl.RewardAddress(delegation.DelegatorAddress),
                         reward);
                 }
             }
