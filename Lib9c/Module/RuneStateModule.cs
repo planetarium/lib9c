@@ -15,7 +15,8 @@ namespace Nekoyume.Module
         public static AllRuneState GetRuneState(this IWorldState worldState,
             Address avatarAddress)
         {
-            var serialized = worldState.GetResolvedState(avatarAddress, Addresses.RuneState);
+            var account = worldState.GetAccountState(Addresses.RuneState);
+            var serialized = account.GetState(avatarAddress);
             AllRuneState allRuneState;
             if (serialized is null)
             {
