@@ -214,12 +214,17 @@ namespace Nekoyume.Action.DPoS.Control
             validator.UnbondingCompletionBlockHeight = blockHeight + UnbondingSet.Period;
             if (validator.Status == BondingStatus.Bonded)
             {
-                states = states.TransferAsset(
-                    ctx,
-                    ReservedAddress.BondedPool,
-                    ReservedAddress.UnbondedPool,
-                    Asset.GovernanceFromConsensus(
-                        states.GetBalance(validator.Address, Asset.ConsensusToken)));
+                var consensusToken = states.GetBalance(validator.Address, Asset.ConsensusToken);
+                if (consensusToken.RawValue > 0)
+                {
+                    // Transfer consensus token to unbonded pool if remaining.
+                    states = states.TransferAsset(
+                        ctx,
+                        ReservedAddress.BondedPool,
+                        ReservedAddress.UnbondedPool,
+                        Asset.GovernanceFromConsensus(
+                            states.GetBalance(validator.Address, Asset.ConsensusToken)));
+                }
             }
 
             validator.Status = BondingStatus.Unbonding;
