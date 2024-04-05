@@ -81,8 +81,6 @@ namespace Nekoyume.Action.DPoS.Control
             Address delegationAddress,
             IImmutableSet<Currency> nativeTokens)
         {
-            long blockHeight = ctx.BlockIndex;
-
             // Currency check
             if (!share.Currency.Equals(Asset.Share))
             {
