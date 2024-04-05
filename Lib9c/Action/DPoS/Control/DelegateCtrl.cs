@@ -9,6 +9,7 @@ using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
 using Nekoyume.Action.DPoS.Util;
 using Nekoyume.Module;
+using Serilog;
 
 namespace Nekoyume.Action.DPoS.Control
 {
@@ -121,6 +122,12 @@ namespace Nekoyume.Action.DPoS.Control
                     nativeToken,
                     delegation.LatestDistributeHeight,
                     blockHeight);
+
+                // Skip if there is no reward to distribute.
+                if (delegationRewardSum.RawValue == 0)
+                {
+                    continue;
+                }
 
                 if (!(ValidatorCtrl.TokenPortionByShare(
                     states,
