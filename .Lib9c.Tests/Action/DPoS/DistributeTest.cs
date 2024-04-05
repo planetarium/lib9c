@@ -160,7 +160,7 @@ namespace Lib9c.Tests.Action.DPoS
                 },
                 ReservedAddress.RewardPool,
                 blockReward);
-            _states = AllocateReward.Execute(
+            _states = AllocateRewardCtrl.Execute(
                 _states,
                 new ActionContext
                 {
@@ -172,13 +172,13 @@ namespace Lib9c.Tests.Action.DPoS
                 OperatorAddresses[3]);
 
             var (baseProposerReward, _)
-                = (blockReward * AllocateReward.BaseProposerRewardNumerator)
-                .DivRem(AllocateReward.BaseProposerRewardDenominator);
+                = (blockReward * AllocateRewardCtrl.BaseProposerRewardNumerator)
+                .DivRem(AllocateRewardCtrl.BaseProposerRewardDenominator);
             var (bonusProposerReward, _)
                 = (blockReward * (205 + 307)
-                * AllocateReward.BonusProposerRewardNumerator)
+                * AllocateRewardCtrl.BonusProposerRewardNumerator)
                 .DivRem((100 + (101 + 200) * 50 - 101 - 102 + 204 + 306)
-                * AllocateReward.BonusProposerRewardDenominator);
+                * AllocateRewardCtrl.BonusProposerRewardDenominator);
             FungibleAssetValue proposerReward = baseProposerReward + bonusProposerReward;
             FungibleAssetValue validatorRewardSum = blockReward - proposerReward;
 
@@ -214,12 +214,12 @@ namespace Lib9c.Tests.Action.DPoS
             Assert.Equal(
                 proposerReward + commissionA,
                 _states.GetBalance(
-                    AllocateReward.RewardAddress(OperatorAddresses[3]), Asset.ConsensusToken));
+                    AllocateRewardCtrl.RewardAddress(OperatorAddresses[3]), Asset.ConsensusToken));
 
             Assert.Equal(
                 commissionB,
                 _states.GetBalance(
-                    AllocateReward.RewardAddress(OperatorAddresses[5]), Asset.ConsensusToken));
+                    AllocateRewardCtrl.RewardAddress(OperatorAddresses[5]), Asset.ConsensusToken));
 
             Address delegationAddressA
                 = Delegation.DeriveAddress(DelegatorAddress, validatorAddressA);
@@ -227,7 +227,7 @@ namespace Lib9c.Tests.Action.DPoS
             Assert.Equal(
                 Asset.ConsensusFromGovernance(0),
                 _states.GetBalance(
-                    AllocateReward.RewardAddress(DelegatorAddress), Asset.ConsensusToken));
+                    AllocateRewardCtrl.RewardAddress(DelegatorAddress), Asset.ConsensusToken));
 
             var (delegatorToken, _)
                 = (_states.GetBalance(
@@ -253,7 +253,7 @@ namespace Lib9c.Tests.Action.DPoS
             Assert.Equal(
                 delegatorToken,
                 _states.GetBalance(
-                    AllocateReward.RewardAddress(DelegatorAddress), Asset.ConsensusToken));
+                    AllocateRewardCtrl.RewardAddress(DelegatorAddress), Asset.ConsensusToken));
         }
     }
 }
