@@ -60,7 +60,8 @@ namespace Lib9c.Tests.Action.Scenario
             initialState = initialState.MintAsset(context, avatarAddress, rune * 1);
 
             var allRuneState = initialState.GetRuneState(avatarAddress);
-            Assert.Null(allRuneState.GetRuneState(runeId));
+            Assert.False(allRuneState.TryGetRuneState(runeId, out var rs));
+            Assert.Null(rs);
 
             initialState = initialState.MintAsset(
                 new ActionContext(),

@@ -39,7 +39,7 @@ namespace Nekoyume.Model.State
 
         public bool TryGetRuneState(int runeId, out RuneState runeState)
         {
-            runeState = GetRuneState(runeId);
+            runeState = Runes.TryGetValue(runeId, out var rs) ? rs : null;
             return runeState is not null;
         }
 
@@ -47,7 +47,7 @@ namespace Nekoyume.Model.State
         {
             return Runes.TryGetValue(runeId, out var runeState)
                 ? runeState
-                : null;
+                : throw new RuneNotFoundException($"Rune {runeId} not found in AllRuneState");
         }
 
 
