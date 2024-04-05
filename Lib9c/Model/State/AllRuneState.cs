@@ -12,7 +12,7 @@ namespace Nekoyume.Model.State
     /// </summary>
     public class AllRuneState : IState
     {
-        private Dictionary<int, RuneState> Runes { get; }
+        public Dictionary<int, RuneState> Runes { get; }
 
         public AllRuneState()
         {

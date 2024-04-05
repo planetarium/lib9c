@@ -229,6 +229,8 @@ namespace Lib9c.Tests
 
         public RuneOptionSheet RuneOptionSheet { get; private set; }
 
+        public RuneLevelBonusSheet RuneLevelBonusSheet { get; private set; }
+
         public GrandFinaleScheduleSheet GrandFinaleScheduleSheet { get; private set; }
 
         public GrandFinaleParticipantsSheet GrandFinaleParticipantsSheet { get; private set; }
