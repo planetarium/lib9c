@@ -7,6 +7,9 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Module
 {
+    /// <summary>
+    /// RuneStateModule is the module to use RuneState/AllRuneState with account.
+    /// </summary>
     public static class RuneStateModule
     {
         public static AllRuneState GetRuneState(this IWorldState worldState,
