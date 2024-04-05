@@ -397,11 +397,7 @@ namespace Nekoyume.Action
                 foreach (var (address, state) in collectionStates)
 #pragma warning restore LAA1002
                 {
-                    var modifier = modifiers[address];
-                    foreach (var collectionId in state.Ids)
-                    {
-                        modifier.AddRange(collectionSheet[collectionId].StatModifiers);
-                    }
+                    modifiers[address] = state.GetModifiers(collectionSheet);
                 }
             }
             for (var i = 0; i < ticket; i++)

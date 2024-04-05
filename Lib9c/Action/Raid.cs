@@ -217,10 +217,7 @@ namespace Nekoyume.Action
             if (collectionExist)
             {
                 var collectionSheet = sheets.GetSheet<CollectionSheet>();
-                foreach (var collectionId in collectionState.Ids)
-                {
-                    collectionModifiers.AddRange(collectionSheet[collectionId].StatModifiers);
-                }
+                collectionModifiers = collectionState.GetModifiers(collectionSheet);
             }
             // Simulate.
             var random = context.GetRandom();
