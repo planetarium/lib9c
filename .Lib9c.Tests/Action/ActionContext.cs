@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Action
 {
+    using System.Collections.Generic;
     using System.Security.Cryptography;
     using Libplanet.Action;
     using Libplanet.Action.State;
@@ -35,6 +36,8 @@ namespace Lib9c.Tests.Action
         public HashDigest<SHA256>? PreviousStateRootHash { get; set; }
 
         public bool BlockAction { get; }
+
+        public IReadOnlyList<ITransaction> Txs { get; set; }
 
         public void UseGas(long gas)
         {
