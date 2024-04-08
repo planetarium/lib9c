@@ -16,7 +16,6 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class RuneScenarioTest
     {
@@ -60,8 +59,9 @@ namespace Lib9c.Tests.Action.Scenario
             var rune = RuneHelper.ToCurrency(runeRow);
             initialState = initialState.MintAsset(context, avatarAddress, rune * 1);
 
-            var runeAddress = RuneState.DeriveAddress(avatarAddress, runeId);
-            Assert.Null(initialState.GetLegacyState(runeAddress));
+            var allRuneState = initialState.GetRuneState(avatarAddress);
+            Assert.False(allRuneState.TryGetRuneState(runeId, out var rs));
+            Assert.Null(rs);
 
             initialState = initialState.MintAsset(
                 new ActionContext(),
@@ -83,8 +83,9 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
             });
 
-            var rawRuneState = Assert.IsType<List>(prevState.GetLegacyState(runeAddress));
-            var runeState = new RuneState(rawRuneState);
+            allRuneState = Assert.IsType<AllRuneState>(prevState.GetRuneState(avatarAddress));
+            var runeState = allRuneState.GetRuneState(runeId);
+
             Assert.Equal(1, runeState.Level);
             Assert.Equal(runeId, runeState.RuneId);
 

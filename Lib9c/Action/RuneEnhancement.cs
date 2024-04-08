@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Rune;
@@ -83,10 +85,17 @@ namespace Nekoyume.Action
                     $"current TryCount : {TryCount}");
             }
 
-            var runeStateAddress = RuneState.DeriveAddress(AvatarAddress, RuneId);
-            var runeState = states.TryGetLegacyState(runeStateAddress, out List rawState)
-                ? new RuneState(rawState)
-                : new RuneState(RuneId);
+            var allRuneState = states.GetRuneState(AvatarAddress);
+            RuneState runeState;
+            if (allRuneState.TryGetRuneState(RuneId, out var rs))
+            {
+                runeState = rs;
+            }
+            else
+            {
+                runeState = new RuneState(RuneId);
+                allRuneState.AddRuneState(runeState);
+            }
 
             var costSheet = sheets.GetSheet<RuneCostSheet>();
             if (!costSheet.TryGetValue(runeState.RuneId, out var costRow))
@@ -139,7 +148,7 @@ namespace Nekoyume.Action
             }
 
             runeState.LevelUp(levelUpResult.LevelUpCount);
-            states = states.SetLegacyState(runeStateAddress, runeState.Serialize());
+            states = states.SetRuneState(AvatarAddress, allRuneState);
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
