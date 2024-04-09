@@ -42,7 +42,7 @@ namespace Nekoyume.Action.DPoS.Model
         // TODO: Better structure
         // This hard coding will cause some problems when it's modified
         // May be it would be better to be serialized
-        public static FungibleAssetValue MinSelfDelegation => Asset.ConsensusToken * 1;
+        public static FungibleAssetValue MinSelfDelegation => Asset.ConsensusToken * 100;
 
         public static BigInteger CommissionNumerator => 1;
 

@@ -103,8 +103,8 @@ namespace Nekoyume.Action.DPoS.Control
 
             if (validator.DelegatorShares.Equals(Asset.Share * 0))
             {
-                return new FungibleAssetValue(
-                    Asset.Share, consensusToken.MajorUnit, consensusToken.MinorUnit);
+                return FungibleAssetValue.FromRawValue(
+                    Asset.Share, consensusToken.RawValue);
             }
 
             if (validatorConsensusToken.RawValue == 0)
