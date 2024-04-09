@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
         }
 
         [Fact]
-        public void PromoteTest()
+        public void Promote_Test()
         {
             var validatorDelegationSet = ValidatorDelegationSetCtrl.GetValidatorDelegationSet(
                 _states,
