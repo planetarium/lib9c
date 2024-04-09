@@ -13,9 +13,9 @@ namespace Lib9c.Tests.Action.DPoS.Model
         {
             _redelegationEntry = new RedelegationEntry(
                 CreateAddress(),
-                Asset.Share * 1,
-                Asset.ConsensusToken * 1,
-                Asset.Share * 1,
+                ShareFromGovernance(1),
+                Asset.ConsensusFromGovernance(1),
+                ShareFromGovernance(1),
                 1,
                 1);
         }
@@ -26,15 +26,15 @@ namespace Lib9c.Tests.Action.DPoS.Model
             Assert.Throws<InvalidCurrencyException>(
                 () => _redelegationEntry.RedelegatingShare = Asset.GovernanceToken * 1);
             Assert.Throws<InvalidCurrencyException>(
-                () => _redelegationEntry.RedelegatingShare = Asset.ConsensusToken * 1);
+                () => _redelegationEntry.RedelegatingShare = Asset.ConsensusFromGovernance(1));
             Assert.Throws<InvalidCurrencyException>(
                 () => _redelegationEntry.UnbondingConsensusToken = Asset.GovernanceToken * 1);
             Assert.Throws<InvalidCurrencyException>(
-                () => _redelegationEntry.UnbondingConsensusToken = Asset.Share * 1);
+                () => _redelegationEntry.UnbondingConsensusToken = ShareFromGovernance(1));
             Assert.Throws<InvalidCurrencyException>(
                 () => _redelegationEntry.IssuedShare = Asset.GovernanceToken * 1);
             Assert.Throws<InvalidCurrencyException>(
-                () => _redelegationEntry.IssuedShare = Asset.ConsensusToken * 1);
+                () => _redelegationEntry.IssuedShare = Asset.ConsensusFromGovernance(1));
         }
 
         [Fact]

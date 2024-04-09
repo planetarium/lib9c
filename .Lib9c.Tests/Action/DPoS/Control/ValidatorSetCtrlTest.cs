@@ -128,10 +128,10 @@ namespace Lib9c.Tests.Action.DPoS.Control
             Assert.Equal(
                 validatorAddressA, bondedSet.Set.ToList()[1].ValidatorAddress);
             Assert.Equal(
-                Asset.Share * (5 + 1 + 300),
+                ShareFromGovernance(5 + 1 + 300),
                 _states.GetBalance(delegationAddressB, Asset.Share));
             Assert.Equal(
-                Asset.ConsensusToken * (1 + 5 + 1 + 300),
+                Asset.ConsensusFromGovernance(1 + 5 + 1 + 300),
                 _states.GetBalance(ValidatorAddresses[5], Asset.ConsensusToken));
             Assert.Equal(
                 Asset.GovernanceToken
@@ -159,10 +159,10 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 _nativeTokens);
 
             Assert.Equal(
-                Asset.Share * 0,
+                ShareFromGovernance(0),
                 _states.GetBalance(delegationAddressB, Asset.Share));
             Assert.Equal(
-                Asset.ConsensusToken * 1,
+                Asset.ConsensusFromGovernance(1),
                 _states.GetBalance(validatorAddressB, Asset.ConsensusToken));
             Assert.Equal(
                 Asset.GovernanceToken
