@@ -542,7 +542,8 @@ namespace Lib9c.Tests.Action
                     pendingActivationStates: pendingActivationStates.ToArray()
                 );
                 var tempActionEvaluator = new ActionEvaluator(
-                    policyBlockActionGetter: _ => policy.BlockAction,
+                    policyBeginBlockActionsGetter: _ => policy.BeginBlockActions,
+                    policyEndBlockActionsGetter: _ => policy.EndBlockActions,
                     stateStore: new TrieStateStore(new MemoryKeyValueStore()),
                     actionTypeLoader: new NCActionLoader());
                 genesis = BlockChain.ProposeGenesisBlock(
@@ -565,7 +566,8 @@ namespace Lib9c.Tests.Action
                 stateStore: stateStore,
                 genesisBlock: genesis,
                 actionEvaluator: new ActionEvaluator(
-                    policyBlockActionGetter: _ => policy.BlockAction,
+                    policyBeginBlockActionsGetter: _ => policy.BeginBlockActions,
+                    policyEndBlockActionsGetter: _ => policy.EndBlockActions,
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),
