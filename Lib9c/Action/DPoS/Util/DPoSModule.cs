@@ -4,7 +4,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.DPoS.Misc;
 
-namespace Nekoyume.Action.DPoS.Util
+namespace Nekoyume.Action.DPoS
 {
     public static class DPoSModule
     {
@@ -17,6 +17,13 @@ namespace Nekoyume.Action.DPoS.Util
         {
             var account = world.GetAccount(ReservedAddress.DPoSAccountAddress);
             account = account.SetState(address, value);
+            return world.SetAccount(ReservedAddress.DPoSAccountAddress, account);
+        }
+
+        public static IWorld RemoveDPoSState(this IWorld world, Address address)
+        {
+            var account = world.GetAccount(ReservedAddress.DPoSAccountAddress);
+            account = account.RemoveState(address);
             return world.SetAccount(ReservedAddress.DPoSAccountAddress, account);
         }
     }

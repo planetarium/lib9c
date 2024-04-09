@@ -6,7 +6,6 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action.DPoS.Exception;
 using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
-using Nekoyume.Action.DPoS.Util;
 using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Control
@@ -74,6 +73,20 @@ namespace Nekoyume.Action.DPoS.Control
                 states = Update(states, validatorAddress);
             }
 
+            return states;
+        }
+
+        internal static IWorld Remove(IWorld states, Address validatorAddress)
+        {
+            ValidatorPowerIndex validatorPowerIndex;
+            (states, validatorPowerIndex) = FetchValidatorPowerIndex(states);
+            var index = validatorPowerIndex.Index.RemoveWhere(
+                key => key.ValidatorAddress.Equals(validatorAddress));
+            if (index < 0)
+            {
+                throw new NullValidatorException(validatorAddress);
+            }
+            states = states.SetDPoSState(validatorPowerIndex.Address, validatorPowerIndex.Serialize());
             return states;
         }
     }

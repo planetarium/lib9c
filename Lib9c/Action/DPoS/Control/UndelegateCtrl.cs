@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Bencodex.Types;
@@ -9,7 +10,6 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action.DPoS.Exception;
 using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
-using Nekoyume.Action.DPoS.Util;
 using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Control
@@ -18,11 +18,71 @@ namespace Nekoyume.Action.DPoS.Control
     {
         internal static Undelegation? GetUndelegation(
             IWorldState state,
+            Address delegatorAddress,
+            Address validatorAddress)
+        {
+            Address undelegationAddress = Undelegation.DeriveAddress(
+                delegatorAddress, validatorAddress);
+            return GetUndelegation(state, undelegationAddress);
+        }
+
+        internal static Undelegation? GetUndelegation(
+            IWorldState state,
             Address undelegationAddress)
         {
             if (state.GetDPoSState(undelegationAddress) is { } value)
             {
                 return new Undelegation(value);
+            }
+
+            return null;
+        }
+
+        internal static Undelegation[] GetUndelegations(IWorldState worldState, Address validatorAddress)
+        {
+            var undelegationList = new List<Undelegation>();
+            var unbondingSet = UnbondingSetCtrl.GetUnbondingSet(worldState)!;
+            foreach (var item in unbondingSet.UndelegationAddressSet)
+            {
+                if (GetUndelegation(worldState, item) is not { } undelegation)
+                {
+                    throw new InvalidOperationException("undelegation is null.");
+                }
+
+                if (undelegation.ValidatorAddress.Equals(validatorAddress))
+                {
+                    undelegationList.Add(undelegation);
+                }
+            }
+
+            return undelegationList.ToArray();
+        }
+
+        internal static Undelegation[] GetUndelegationsByDelegator(IWorldState worldState, Address delegatorAddress)
+        {
+            var undelegationList = new List<Undelegation>();
+            var unbondingSet = UnbondingSetCtrl.GetUnbondingSet(worldState)!;
+            foreach (var item in unbondingSet.UndelegationAddressSet)
+            {
+                if (GetUndelegation(worldState, item) is not { } undelegation)
+                {
+                    throw new InvalidOperationException("undelegation is null.");
+                }
+
+                if (undelegation.DelegatorAddress.Equals(delegatorAddress))
+                {
+                    undelegationList.Add(undelegation);
+                }
+            }
+
+            return undelegationList.ToArray();
+        }
+
+        internal static UndelegationEntry? GetUndelegationEntry(IWorldState worldState, Address undelegationEntryAddress)
+        {
+            if (worldState.GetDPoSState(undelegationEntryAddress) is { } value)
+            {
+                return new UndelegationEntry(value);
             }
 
             return null;
