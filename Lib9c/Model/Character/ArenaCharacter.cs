@@ -5,6 +5,7 @@ using System.Linq;
 using BTAI;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
+using Nekoyume.Helper;
 using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.Buff;
 using Nekoyume.Model.Character;
@@ -159,8 +160,11 @@ namespace Nekoyume.Model
             bool runeExist = runes != null;
             if (runeExist)
             {
-                SetRuneStats(runes, runeOptionSheet);
+                var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(runes, sheets.RuneListSheet,
+                    sheets.RuneLevelBonusSheet);
+                SetRuneStats(runes, runeOptionSheet, runeLevelBonus);
             }
+
             Stats.SetCollections(collectionModifiers);
             ResetCurrentHP();
             if (runeExist)
@@ -415,9 +419,10 @@ namespace Nekoyume.Model
             }
         }
 
-        public void SetRuneStats(List<RuneState> runes, RuneOptionSheet runeOptionSheet)
+        public void SetRuneStats(AllRuneState runes, RuneOptionSheet runeOptionSheet,
+            int runeLevelBonus)
         {
-            foreach (var rune in runes)
+            foreach (var rune in runes.Runes.Values)
             {
                 if (!runeOptionSheet.TryGetValue(rune.RuneId, out var optionRow) ||
                     !optionRow.LevelOptionMap.TryGetValue(rune.Level, out var optionInfo))
@@ -427,11 +432,12 @@ namespace Nekoyume.Model
 
                 var statModifiers = new List<StatModifier>();
                 statModifiers.AddRange(
-                    optionInfo.Stats.Select(x =>
-                        new StatModifier(
-                            x.stat.StatType,
-                            x.operationType,
-                            x.stat.TotalValueAsLong)));
+                    optionInfo.Stats.Select(x => new StatModifier(
+                        x.stat.StatType,
+                        x.operationType,
+                        (long)(x.stat.TotalValue * (10000 + runeLevelBonus) / 10000m)
+                    ))
+                );
                 Stats.AddRune(statModifiers);
                 ResetCurrentHP();
             }

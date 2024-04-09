@@ -246,6 +246,10 @@ namespace Nekoyume.Action
                 runeOptions.Add(option);
             }
 
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            var runeLevelBonus =
+                RuneHelper.CalculateRuneLevelBonus(runeStates, runeListSheet, runeLevelBonusSheet);
+
             var characterSheet = sheets.GetSheet<CharacterSheet>();
             if (!characterSheet.TryGetValue(avatarState.characterId, out var characterRow))
             {
@@ -263,7 +267,7 @@ namespace Nekoyume.Action
             var cp = CPHelper.TotalCP(
                 equipmentList, costumeList,
                 runeOptions, avatarState.level,
-                characterRow, costumeStatSheet, collectionModifiers);
+                characterRow, costumeStatSheet, collectionModifiers, runeLevelBonus);
             if (cp < cpRow.RequiredCP)
             {
                 throw new NotEnoughCombatPointException(

@@ -45,13 +45,15 @@ namespace Nekoyume.Battle
             DeBuffLimitSheet = deBuffLimitSheet;
             var runeOptionSheet = simulatorSheets.RuneOptionSheet;
             var skillSheet = simulatorSheets.SkillSheet;
-            Player.ConfigureStats(costumeStatSheet, runeStates, runeOptionSheet, skillSheet,
-                collectionModifiers);
-            if (runeStates is not null)
-            {
-                // call SetRuneSkills last. because rune skills affect from total calculated stats
-                Player.SetRuneSkills(runeStates, runeOptionSheet, skillSheet);
-            }
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates, simulatorSheets.RuneListSheet, simulatorSheets.RuneLevelBonusSheet
+            );
+            Player.ConfigureStats(costumeStatSheet,
+                runeStates, runeOptionSheet, runeLevelBonus,
+                skillSheet, collectionModifiers
+            );
+            // call SetRuneSkills last. because rune skills affect from total calculated stats
+            Player.SetRuneSkills(runeStates, runeOptionSheet, skillSheet);
 
             BossId = bossId;
             _waves = new List<RaidBoss>();

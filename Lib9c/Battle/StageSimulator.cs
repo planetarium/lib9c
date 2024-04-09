@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Libplanet.Action;
+using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Item;
@@ -60,13 +61,16 @@ namespace Nekoyume.Battle
                 simulatorSheets,
                 logEvent,
                 shatterStrikeMaxDamage
-                )
+            )
         {
             DeBuffLimitSheet = deBuffLimitSheet;
             var runeOptionSheet = simulatorSheets.RuneOptionSheet;
             var skillSheet = simulatorSheets.SkillSheet;
-            Player.ConfigureStats(costumeStatSheet, runeStates, runeOptionSheet, skillSheet,
-                collectionModifiers);
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates, simulatorSheets.RuneListSheet, simulatorSheets.RuneLevelBonusSheet
+            );
+            Player.ConfigureStats(costumeStatSheet, runeStates, runeOptionSheet, runeLevelBonus,
+                skillSheet, collectionModifiers);
             if (runeStates is not null)
             {
                 // call SetRuneSkills last. because rune skills affect from total calculated stats

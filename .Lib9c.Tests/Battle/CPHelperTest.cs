@@ -54,11 +54,11 @@ namespace Lib9c.Tests
             runeOptions.Add(runeOptionInfo);
             int level = 1;    // A level for testing
             List<StatModifier> collectionStatModifiers = new List<StatModifier>(); // Populate your collectionStatModifiers
-            var result = CPHelper.TotalCP(equipments, costumes, runeOptions, level, row, costumeStatSheet, collectionStatModifiers);
+            var result = CPHelper.TotalCP(equipments, costumes, runeOptions, level, row, costumeStatSheet, collectionStatModifiers, 0);
             var characterStats = new CharacterStats(row, level);
             characterStats.SetEquipments(equipments, new EquipmentItemSetEffectSheet());
             characterStats.SetCostumeStat(costumes, costumeStatSheet);
-            characterStats.AddRuneStat(runeOptionInfo);
+            characterStats.AddRuneStat(runeOptionInfo, 0);
             foreach (StatType type in Enum.GetValues(typeof(StatType)))
             {
                 if (type == StatType.NONE)
@@ -77,7 +77,7 @@ namespace Lib9c.Tests
             }
 
             var collectionCp = CPHelper.DecimalToInt(ccp);
-            Assert.Equal(result + collectionCp, CPHelper.TotalCP(equipments, costumes, runeOptions, level, row, costumeStatSheet, collectionStatModifiers));
+            Assert.Equal(result + collectionCp, CPHelper.TotalCP(equipments, costumes, runeOptions, level, row, costumeStatSheet, collectionStatModifiers, 0));
         }
     }
 }

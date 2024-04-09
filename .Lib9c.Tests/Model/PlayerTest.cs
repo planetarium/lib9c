@@ -854,10 +854,9 @@ namespace Lib9c.Tests.Model
             var runeState = new RuneState(runeId);
             runeState.LevelUp();
             Assert.Equal(1, runeState.Level);
-
             var runeStates = new AllRuneState();
             runeStates.AddRuneState(runeState);
-            player.SetRuneStats(runeStates, _tableSheets.RuneOptionSheet);
+            player.SetRuneStats(runeStates, _tableSheets.RuneOptionSheet, 0);
             var runeOptionRow = _tableSheets.RuneOptionSheet.Values.First(r => r.RuneId == runeId);
             var runeHp = runeOptionRow.LevelOptionMap[1].Stats.Sum(r => r.stat.BaseValueAsLong);
             Assert.Equal(consumableLayerHp + runeHp, player.HP);

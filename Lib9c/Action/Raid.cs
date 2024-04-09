@@ -269,10 +269,15 @@ namespace Nekoyume.Action
             }
 
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates, sheets.GetSheet<RuneListSheet>(), sheets.GetSheet<RuneLevelBonusSheet>()
+            );
             var cp = CPHelper.TotalCP(
                 equipmentList, costumeList,
                 runeOptions, avatarState.level,
-                characterRow, costumeStatSheet, collectionModifiers);
+                characterRow, costumeStatSheet, collectionModifiers,
+                runeLevelBonus
+                );
             long score = simulator.DamageDealt;
             raiderState.Update(avatarState, cp, score, PayNcg, context.BlockIndex);
 
