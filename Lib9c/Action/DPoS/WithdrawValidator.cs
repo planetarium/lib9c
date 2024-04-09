@@ -38,6 +38,7 @@ namespace Nekoyume.Action.DPoS
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
         public override IWorld Execute(IActionContext context)
         {
+            context.UseGas(1);
             IActionContext ctx = context;
             var states = ctx.PreviousState;
             var nativeTokens = ImmutableHashSet.Create(
