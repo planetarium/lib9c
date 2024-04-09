@@ -53,6 +53,11 @@ public class RemoteAccount : IAccount
         throw new NotSupportedException();
     }
 
+    public IAccount SetValidatorSet(ValidatorSet validatorSet)
+    {
+        throw new NotSupportedException();
+    }
+
     public IAccount TransferAsset(IActionContext context, Address sender, Address recipient, FungibleAssetValue value, bool allowNegativeBalance = false)
     {
         throw new NotSupportedException();
