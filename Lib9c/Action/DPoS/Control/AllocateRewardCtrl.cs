@@ -18,7 +18,7 @@ using ValidatorSet = Nekoyume.Action.DPoS.Model.ValidatorSet;
 
 namespace Nekoyume.Action.DPoS.Control
 {
-    public static class AllocateReward
+    public static class AllocateRewardCtrl
     {
         public static BigInteger BaseProposerRewardNumerator => 1;
 

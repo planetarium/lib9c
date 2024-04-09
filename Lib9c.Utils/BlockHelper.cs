@@ -94,10 +94,12 @@ namespace Nekoyume
             {
                 actions.AddRange(actionBases);
             }
-            var blockAction = new BlockPolicySource().GetPolicy().BlockAction;
+            var beginBlockActions = new BlockPolicySource().GetPolicy().BeginBlockActions;
+            var endBlockActions = new BlockPolicySource().GetPolicy().EndBlockActions;
             var actionLoader = new NCActionLoader();
             var actionEvaluator = new ActionEvaluator(
-                _ => blockAction,
+                _ => beginBlockActions,
+                _ => endBlockActions,
                 new TrieStateStore(new MemoryKeyValueStore()),
                 actionLoader);
             return

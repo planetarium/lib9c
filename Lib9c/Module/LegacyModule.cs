@@ -103,6 +103,14 @@ namespace Nekoyume.Module
                 world.GetAccount(ReservedAddresses.LegacyAccount)
                     .SetValidator(validator));
 
+        public static IWorld SetValidatorSet(
+            this IWorld world,
+            ValidatorSet validatorSet) =>
+            world.SetAccount(
+                ReservedAddresses.LegacyAccount,
+                world.GetAccount(ReservedAddresses.LegacyAccount)
+                    .SetValidatorSet(validatorSet));
+
         // Methods from AccountExtensions
         public static IWorld MarkBalanceChanged(
             this IWorld world,
