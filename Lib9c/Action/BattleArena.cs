@@ -20,6 +20,7 @@ using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Rune;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
@@ -397,11 +398,7 @@ namespace Nekoyume.Action
                 foreach (var (address, state) in collectionStates)
 #pragma warning restore LAA1002
                 {
-                    var modifier = modifiers[address];
-                    foreach (var collectionId in state.Ids)
-                    {
-                        modifier.AddRange(collectionSheet[collectionId].StatModifiers);
-                    }
+                    modifiers[address] = state.GetModifiers(collectionSheet);
                 }
             }
             for (var i = 0; i < ticket; i++)

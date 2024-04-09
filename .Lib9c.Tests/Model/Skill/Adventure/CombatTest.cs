@@ -182,6 +182,12 @@ namespace Lib9c.Tests.Model.Skill.Adventure
         public void DispelOnDuration_Block()
         {
             var actionBuffSheet = _tableSheets.ActionBuffSheet;
+            var simulator = new TestSimulator(
+                new TestRandom(8),
+                _avatarState,
+                new List<System.Guid>(),
+                _tableSheets.GetSimulatorSheets());
+            _player.Simulator = simulator;
 
             // Use Dispel first
             var dispel = actionBuffSheet.Values.First(bf => bf.ActionBuffType == ActionBuffType.Dispel);

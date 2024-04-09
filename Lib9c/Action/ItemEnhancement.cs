@@ -107,15 +107,6 @@ namespace Nekoyume.Action
                 );
             }
 
-            // Validate AP
-            var requiredActionPoint = GetRequiredAp();
-            if (avatarState.actionPoint < requiredActionPoint)
-            {
-                throw new NotEnoughActionPointException(
-                    $"{addressesHex} Aborted due to insufficient action point: {avatarState.actionPoint} < {requiredActionPoint}"
-                );
-            }
-
             // Validate target equipment item
             if (!avatarState.inventory.TryGetNonFungibleItem(itemId,
                     out ItemUsable enhancementItem))
@@ -255,8 +246,6 @@ namespace Nekoyume.Action
 
             // Do the action
             var equipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>();
-            // Subtract required action point
-            avatarState.actionPoint -= requiredActionPoint;
 
             // Unequip items
             enhancementEquipment.Unequip();
@@ -337,7 +326,6 @@ namespace Nekoyume.Action
                 preItemUsable = preItemUsable,
                 itemUsable = enhancementEquipment,
                 materialItemIdList = uniqueMaterialIds.ToArray(),
-                actionPoint = requiredActionPoint,
                 enhancementResult = ItemEnhancement13.EnhancementResult.Success, // Result is fixed to Success
                 gold = requiredNcg,
                 CRYSTAL = 0 * CrystalCalculator.CRYSTAL,
@@ -397,11 +385,6 @@ namespace Nekoyume.Action
         public static int GetEquipmentMaxLevel(Equipment equipment, EnhancementCostSheetV3 sheet)
         {
             return sheet.OrderedList.Where(x => x.Grade == equipment.Grade).Max(x => x.Level);
-        }
-
-        public static int GetRequiredAp()
-        {
-            return GameConfig.EnhanceEquipmentCostAP;
         }
     }
 }

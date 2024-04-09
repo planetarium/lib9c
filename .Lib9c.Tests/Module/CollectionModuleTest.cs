@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Module
 
             var state = new CollectionState
             {
-                Ids = new List<int>
+                Ids = new SortedSet<int>
                 {
                     1,
                 },
@@ -47,7 +47,7 @@ namespace Lib9c.Tests.Module
 
             var state = new CollectionState
             {
-                Ids = new List<int>
+                Ids = new SortedSet<int>
                 {
                     1,
                 },

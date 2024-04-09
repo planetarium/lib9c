@@ -80,7 +80,8 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(_agentAddress, agentState)
                 .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
                 .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
-                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
+                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState))
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax);
         }
 
         [Theory]

@@ -162,7 +162,7 @@ namespace Nekoyume.Action
                 materialItemIdList = new[] { materialId }
             };
 
-            var requiredAP = ItemEnhancement.GetRequiredAp();
+            var requiredAP = GetRequiredAp();
             if (avatarState.actionPoint < requiredAP)
             {
                 throw new NotEnoughActionPointException(
