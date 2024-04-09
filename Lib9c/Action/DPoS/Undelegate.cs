@@ -31,7 +31,7 @@ namespace Nekoyume.Action.DPoS
             ShareAmount = amount;
         }
 
-        internal Undelegate()
+        public Undelegate()
         {
             // Used only for deserialization.  See also class Libplanet.Action.Sys.Registry.
         }
@@ -63,6 +63,7 @@ namespace Nekoyume.Action.DPoS
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
         public override IWorld Execute(IActionContext context)
         {
+            context.UseGas(1);
             IActionContext ctx = context;
             var states = ctx.PreviousState;
             var nativeTokens = ImmutableHashSet.Create(
