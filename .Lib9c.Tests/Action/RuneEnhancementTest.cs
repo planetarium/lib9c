@@ -633,14 +633,14 @@ namespace Lib9c.Tests.Action
         [InlineData(new[] { 4, 4 }, 2, false)]
         [InlineData(new[] { 4, 5 }, 1, false)]
         // Crete new rune
-        [InlineData(new int[] { }, 1, true)]
+        [InlineData(new int[] { }, 1, true, 100)]
         [InlineData(new int[] { }, 10, true)]
         [InlineData(new[] { 1 }, 9, true)]
         [InlineData(new[] { 9 }, 1, true)]
         [InlineData(new[] { 7 }, 3, true)]
         [InlineData(new[] { 4, 4 }, 2, true)]
         [InlineData(new[] { 4, 5 }, 1, true)]
-        public void TotalLevel(int[] prevRuneLevels, int tryCount, bool createNewRune)
+        public void RuneBonus(int[] prevRuneLevels, int tryCount, bool createNewRune, int expectedRuneLevelBonus = 1000)
         {
             // Data
             const int testRuneId = 30001;
@@ -697,6 +697,18 @@ namespace Lib9c.Tests.Action
 
             state = state.SetRuneState(avatarAddress, allRuneState);
             var runeListSheet = tableSheets.RuneListSheet;
+            var runeLevelBonusSheet = tableSheets.RuneLevelBonusSheet;
+            var prevRuneLevelBonus = prevRuneLevels.Length == 0
+                ? 0
+                : runeLevelBonusSheet.Values.First(row => row.RuneLevel == 1).Bonus;
+            Assert.Equal(
+                prevRuneLevelBonus,
+                RuneHelper.CalculateRuneLevelBonus(
+                    allRuneState,
+                    runeListSheet,
+                    runeLevelBonusSheet
+                )
+            );
 
             // RuneEnhancement
             var ncgCurrency = state.GetGoldCurrency();
@@ -722,13 +734,26 @@ namespace Lib9c.Tests.Action
             };
 
             // Check bonus
-            var expectedRuneBonus = tableSheets.RuneLevelBonusSheet.Values
-                .OrderByDescending(row => row.RuneLevel).First(
-                    row => row.RuneLevel <= allRuneState.TotalLevel() + tryCount
-                ).Bonus;
             var nextState = action.Execute(ctx);
             var nextAllRuneState = nextState.GetRuneState(avatarAddress);
-            Assert.Equal(allRuneState.TotalLevel() + tryCount, nextAllRuneState.TotalLevel());
+            var expectedBonusLevel = 0;
+            foreach (var rune in nextAllRuneState.Runes.Values)
+            {
+                var runeRow = runeListSheet.Values.FirstOrDefault(row => row.Id == rune.RuneId);
+                if (runeRow is not null)
+                {
+                    expectedBonusLevel += runeRow.BonusCoef * rune.Level;
+                }
+            }
+
+            Assert.Equal(
+                expectedRuneLevelBonus,
+                RuneHelper.CalculateRuneLevelBonus(
+                    nextAllRuneState,
+                    runeListSheet,
+                    runeLevelBonusSheet
+                )
+            );
         }
     }
 }
