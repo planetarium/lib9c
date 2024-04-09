@@ -8,10 +8,11 @@ namespace Lib9c.Tests.Action
 
         public TestRandom(int seed = default)
         {
+            Seed = seed;
             _random = new System.Random(seed);
         }
 
-        public int Seed => 0;
+        public int Seed { get; }
 
         public int Next()
         {
