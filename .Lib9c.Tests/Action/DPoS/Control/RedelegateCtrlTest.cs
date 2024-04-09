@@ -53,7 +53,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 _delegatorAddress,
-                Asset.ConsensusToken * 50);
+                Asset.ConsensusFromGovernance(50));
             Assert.Throws<InvalidCurrencyException>(
                     () => _states = RedelegateCtrl.Execute(
                         _states,
@@ -65,7 +65,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                         _delegatorAddress,
                         _srcValidatorAddress,
                         _dstValidatorAddress,
-                        Asset.ConsensusToken * 30,
+                        Asset.ConsensusFromGovernance(30),
                         _nativeTokens));
             Assert.Throws<InvalidCurrencyException>(
                     () => _states = RedelegateCtrl.Execute(
@@ -97,7 +97,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     _delegatorAddress,
                     CreateAddress(),
                     _dstValidatorAddress,
-                    Asset.Share * 10,
+                    ShareFromGovernance(10),
                     _nativeTokens));
             Assert.Throws<NullValidatorException>(
                 () => _states = RedelegateCtrl.Execute(
@@ -110,7 +110,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     _delegatorAddress,
                     _srcValidatorAddress,
                     CreateAddress(),
-                    Asset.Share * 10,
+                    ShareFromGovernance(10),
                     _nativeTokens));
         }
 
@@ -130,7 +130,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     _delegatorAddress,
                     _srcValidatorAddress,
                     _dstValidatorAddress,
-                    Asset.Share * 1,
+                    ShareFromGovernance(1),
                     _nativeTokens);
             }
 
@@ -145,7 +145,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                         _delegatorAddress,
                         _srcValidatorAddress,
                         _dstValidatorAddress,
-                        Asset.Share * 1,
+                        ShareFromGovernance(1),
                         _nativeTokens));
         }
 
@@ -164,7 +164,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                         _delegatorAddress,
                         _srcValidatorAddress,
                         _dstValidatorAddress,
-                        Asset.Share * 101,
+                        ShareFromGovernance(101),
                         _nativeTokens));
         }
 
@@ -248,22 +248,22 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 Asset.GovernanceToken * 0,
                 _states.GetBalance(_dstValidatorAddress, Asset.GovernanceToken));
             Assert.Equal(
-                Asset.ConsensusToken * 0,
+                Asset.ConsensusFromGovernance(0),
                 _states.GetBalance(_srcOperatorAddress, Asset.ConsensusToken));
             Assert.Equal(
-                Asset.ConsensusToken * 0,
+                Asset.ConsensusFromGovernance(0),
                 _states.GetBalance(_dstOperatorAddress, Asset.ConsensusToken));
             Assert.Equal(
-                Asset.ConsensusToken * 0,
+                Asset.ConsensusFromGovernance(0),
                 _states.GetBalance(_delegatorAddress, Asset.ConsensusToken));
             Assert.Equal(
-                Asset.Share * 0,
+                ShareFromGovernance(0),
                 _states.GetBalance(_srcOperatorAddress, Asset.Share));
             Assert.Equal(
-                Asset.Share * 0,
+                ShareFromGovernance(0),
                 _states.GetBalance(_dstOperatorAddress, Asset.Share));
             Assert.Equal(
-                Asset.Share * 0,
+                ShareFromGovernance(0),
                 _states.GetBalance(_delegatorAddress, Asset.Share));
             Assert.Equal(
                 Asset.GovernanceToken * (operatorMintAmount - selfDelegateAmount),
@@ -308,11 +308,11 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     RedelegateCtrl.GetRedelegation(_states, _redelegationAddress)!
                         .RedelegationEntryAddresses[0])!);
             Assert.Equal(
-                Asset.ConsensusToken * (selfDelegateAmount + delegateAmount)
+                Asset.ConsensusFromGovernance(selfDelegateAmount + delegateAmount)
                 - entry.UnbondingConsensusToken,
                 _states.GetBalance(_srcValidatorAddress, Asset.ConsensusToken));
             Assert.Equal(
-                Asset.ConsensusToken * selfDelegateAmount
+                Asset.ConsensusFromGovernance(selfDelegateAmount)
                 + entry.UnbondingConsensusToken,
                 _states.GetBalance(_dstValidatorAddress, Asset.ConsensusToken));
         }

@@ -15,7 +15,7 @@ namespace Lib9c.Tests.Action.DPoS.Model
             _validatorPower = new ValidatorPower(
                 CreateAddress(),
                 new PrivateKey().PublicKey,
-                Asset.ConsensusToken * 10);
+                Asset.ConsensusFromGovernance(10));
         }
 
         [Fact]
@@ -24,7 +24,7 @@ namespace Lib9c.Tests.Action.DPoS.Model
             Assert.Throws<InvalidCurrencyException>(
                 () => _validatorPower.ConsensusToken = Asset.GovernanceToken * 1);
             Assert.Throws<InvalidCurrencyException>(
-                () => _validatorPower.ConsensusToken = Asset.Share * 1);
+                () => _validatorPower.ConsensusToken = ShareFromGovernance(1));
         }
 
         [Fact]

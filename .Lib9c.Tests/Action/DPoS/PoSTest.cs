@@ -1,7 +1,10 @@
 namespace Lib9c.Tests.Action.DPoS
 {
+    using System.Numerics;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Types.Assets;
+    using Nekoyume.Action.DPoS.Misc;
 
     public class PoSTest
     {
@@ -15,5 +18,11 @@ namespace Lib9c.Tests.Action.DPoS
             PrivateKey privateKey = new PrivateKey();
             return privateKey.Address;
         }
+
+        protected static FungibleAssetValue ShareFromGovernance(FungibleAssetValue governanceToken)
+            => FungibleAssetValue.FromRawValue(Asset.Share, governanceToken.RawValue);
+
+        protected static FungibleAssetValue ShareFromGovernance(BigInteger amount)
+            => ShareFromGovernance(Asset.GovernanceToken * amount);
     }
 }

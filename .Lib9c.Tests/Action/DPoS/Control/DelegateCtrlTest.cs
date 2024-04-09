@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 _delegatorAddress,
-                Asset.ConsensusToken * 50);
+                Asset.ConsensusFromGovernance(50));
             Assert.Throws<InvalidCurrencyException>(
                     () => _states = DelegateCtrl.Execute(
                         _states,
@@ -53,7 +53,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                         },
                         _delegatorAddress,
                         _validatorAddress,
-                        Asset.ConsensusToken * 30,
+                        Asset.ConsensusFromGovernance(30),
                         _nativeTokens));
         }
 
@@ -86,7 +86,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 _validatorAddress,
-                Asset.ConsensusToken * 100);
+                Asset.ConsensusFromGovernance(100));
             Assert.Throws<InvalidExchangeRateException>(
                 () => _states = DelegateCtrl.Execute(
                     _states,
@@ -126,19 +126,19 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 Asset.GovernanceToken * 0,
                 _states.GetBalance(_validatorAddress, Asset.GovernanceToken));
             Assert.Equal(
-                Asset.ConsensusToken * 0,
+                Asset.ConsensusFromGovernance(0),
                 _states.GetBalance(_operatorAddress, Asset.ConsensusToken));
             Assert.Equal(
-                Asset.ConsensusToken * 0,
+                Asset.ConsensusFromGovernance(0),
                 _states.GetBalance(_delegatorAddress, Asset.ConsensusToken));
             Assert.Equal(
-                Asset.Share * 0,
+                ShareFromGovernance(0),
                 _states.GetBalance(_operatorAddress, Asset.Share));
             Assert.Equal(
-                Asset.Share * 0,
+                ShareFromGovernance(0),
                 _states.GetBalance(_delegatorAddress, Asset.Share));
             Assert.Equal(
-                Asset.ConsensusToken * (selfDelegateAmount + delegateAmount),
+                Asset.ConsensusFromGovernance(selfDelegateAmount + delegateAmount),
                 _states.GetBalance(_validatorAddress, Asset.ConsensusToken));
             Assert.Equal(
                 Asset.GovernanceToken * (operatorMintAmount - selfDelegateAmount),
