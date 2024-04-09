@@ -84,6 +84,7 @@ namespace Nekoyume.Action
                 typeof(WorldBossKillRewardSheet),
                 typeof(RuneSheet),
                 typeof(RuneListSheet),
+                typeof(RuneLevelBonusSheet),
                 typeof(DeBuffLimitSheet),
             };
             if (collectionExist)

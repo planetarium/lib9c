@@ -178,6 +178,7 @@ namespace Nekoyume.Action
                 typeof(CrystalRandomBuffSheet),
                 typeof(StakeActionPointCoefficientSheet),
                 typeof(RuneListSheet),
+                typeof(RuneLevelBonusSheet),
                 typeof(DeBuffLimitSheet),
             };
             if (collectionExist)

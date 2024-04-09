@@ -120,6 +120,7 @@ namespace Nekoyume.Action
                 typeof(StakeActionPointCoefficientSheet),
                 typeof(RuneListSheet),
                 typeof(RuneOptionSheet),
+                typeof(RuneLevelBonusSheet),
             };
             if (collectionExist)
             {

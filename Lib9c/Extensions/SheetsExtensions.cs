@@ -191,7 +191,9 @@ namespace Nekoyume.Extensions
                 sheets.GetSheet<CharacterSheet>(),
                 sheets.GetSheet<CharacterLevelSheet>(),
                 sheets.GetSheet<EquipmentItemSetEffectSheet>(),
-                sheets.GetSheet<RuneOptionSheet>()
+                sheets.GetSheet<RuneOptionSheet>(),
+                sheets.GetSheet<RuneListSheet>(),
+                sheets.GetSheet<RuneLevelBonusSheet>()
             );
         }
 
@@ -244,7 +246,9 @@ namespace Nekoyume.Extensions
                 sheets.GetSheet<StageSheet>(),
                 sheets.GetSheet<StageWaveSheet>(),
                 sheets.GetSheet<EnemySkillSheet>(),
-                sheets.GetSheet<RuneOptionSheet>()
+                sheets.GetSheet<RuneOptionSheet>(),
+                sheets.GetSheet<RuneListSheet>(),
+                sheets.GetSheet<RuneLevelBonusSheet>()
             );
         }
 
@@ -296,7 +300,9 @@ namespace Nekoyume.Extensions
                 sheets.GetSheet<CharacterLevelSheet>(),
                 sheets.GetSheet<EquipmentItemSetEffectSheet>(),
                 sheets.GetSheet<WeeklyArenaRewardSheet>(),
-                sheets.GetSheet<RuneOptionSheet>()
+                sheets.GetSheet<RuneOptionSheet>(),
+                sheets.GetSheet<RuneListSheet>(),
+                sheets.GetSheet<RuneLevelBonusSheet>()
             );
         }
 
@@ -348,7 +354,9 @@ namespace Nekoyume.Extensions
                 sheets.GetSheet<EquipmentItemSetEffectSheet>(),
                 sheets.GetSheet<CostumeStatSheet>(),
                 sheets.GetSheet<WeeklyArenaRewardSheet>(),
-                sheets.GetSheet<RuneOptionSheet>()
+                sheets.GetSheet<RuneOptionSheet>(),
+                sheets.GetSheet<RuneListSheet>(),
+                sheets.GetSheet<RuneLevelBonusSheet>()
             );
         }
 
@@ -407,7 +415,9 @@ namespace Nekoyume.Extensions
                 sheets.GetSheet<WorldBossBattleRewardSheet>(),
                 sheets.GetSheet<RuneWeightSheet>(),
                 sheets.GetSheet<RuneSheet>(),
-                sheets.GetSheet<RuneOptionSheet>()
+                sheets.GetSheet<RuneOptionSheet>(),
+                sheets.GetSheet<RuneListSheet>(),
+                sheets.GetSheet<RuneLevelBonusSheet>()
             );
         }
 

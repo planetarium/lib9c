@@ -164,6 +164,7 @@ namespace Nekoyume.Action
                 typeof(CostumeStatSheet),
                 typeof(MaterialItemSheet),
                 typeof(RuneListSheet),
+                typeof(RuneLevelBonusSheet),
                 typeof(DeBuffLimitSheet),
             };
             if (collectionExist)
