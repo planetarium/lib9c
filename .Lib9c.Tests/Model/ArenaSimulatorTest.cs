@@ -296,7 +296,7 @@ namespace Lib9c.Tests
 
             var characterRow = _tableSheets.CharacterSheet[GameConfig.DefaultAvatarCharacterId];
             var stats = characterRow.ToStats(avatarState1.level);
-            var totalAtk = 141138;
+            const int totalAtk = 141138;
             var baseAtk = stats.ATK;
             var runeOptionSheet = _tableSheets.RuneOptionSheet;
             var runeRow = runeOptionSheet[10003];
@@ -305,6 +305,9 @@ namespace Lib9c.Tests
             {
                 rune.LevelUp();
             }
+
+            const int runeBonus = 177; // Base stat 1777 * 10% for run level 89 from RuneLevelBonusSheet
+            var finalAtk = totalAtk + runeBonus;
 
             var optionInfo = runeRow.LevelOptionMap[89];
             var statModifiers = new List<StatModifier>();
@@ -332,13 +335,13 @@ namespace Lib9c.Tests
 
             var simulator = new ArenaSimulator(random);
             var myDigest = new ArenaPlayerDigest(avatarState1, arenaAvatarState1);
-            myDigest.Runes.Add(rune);
+            myDigest.Runes.AddRuneState(rune);
             var enemyDigest = new ArenaPlayerDigest(avatarState2, arenaAvatarState2);
-            enemyDigest.Runes.Add(rune);
+            enemyDigest.Runes.AddRuneState(rune);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
             var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, modifiers, modifiers, _tableSheets.DeBuffLimitSheet, true);
             var spawns = log.Events.OfType<ArenaSpawnCharacter>().ToList();
-            Assert.All(spawns, spawn => Assert.Equal(totalAtk, spawn.Character.ATK));
+            Assert.All(spawns, spawn => Assert.Equal(finalAtk, spawn.Character.ATK));
             var ticks = log.Events
                 .OfType<ArenaTickDamage>()
                 .ToList();
@@ -346,7 +349,7 @@ namespace Lib9c.Tests
             var enemyTick = ticks.First(r => r.Character.IsEnemy);
             var challengerInfo = challengerTick.SkillInfos.First();
             var enemyInfo = enemyTick.SkillInfos.First();
-            var dmg = (int)decimal.Round(totalAtk * optionInfo.SkillValue);
+            var dmg = (int)decimal.Round(finalAtk * optionInfo.SkillValue);
             Assert.Equal(dmg, challengerInfo.Effect);
             Assert.Equal(dmg, enemyInfo.Effect);
         }
