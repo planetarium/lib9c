@@ -1,9 +1,13 @@
 #nullable enable
 using System;
 using Bencodex.Types;
+using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
+using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Util;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Model
 {
@@ -41,6 +45,11 @@ namespace Nekoyume.Action.DPoS.Model
         public Address ValidatorAddress { get; }
 
         public long LatestDistributeHeight { get; set; }
+
+        public FungibleAssetValue GetShares(IWorldState worldState)
+        {
+            return worldState.GetBalance(Address, Asset.Share);
+        }
 
         public static bool operator ==(Delegation obj, Delegation other)
         {

@@ -26,10 +26,12 @@ namespace Nekoyume.Action.DPoS.Model
             Address = DeriveAddress(redelegationAddress, index);
             RedelegationAddress = redelegationAddress;
             RedelegatingShare = redelegatingShare;
+            InitialConsensusToken = unbondingConsensusToken;
             UnbondingConsensusToken = unbondingConsensusToken;
             IssuedShare = issuedShare;
             Index = index;
             CompletionBlockHeight = blockHeight + UnbondingSet.Period;
+            CreationHeight = blockHeight;
         }
 
         public RedelegationEntry(IValue serialized)
@@ -38,10 +40,12 @@ namespace Nekoyume.Action.DPoS.Model
             Address = serializedList[0].ToAddress();
             RedelegationAddress = serializedList[1].ToAddress();
             RedelegatingShare = serializedList[2].ToFungibleAssetValue();
-            UnbondingConsensusToken = serializedList[3].ToFungibleAssetValue();
-            IssuedShare = serializedList[4].ToFungibleAssetValue();
-            Index = serializedList[5].ToLong();
-            CompletionBlockHeight = serializedList[6].ToLong();
+            InitialConsensusToken = serializedList[3].ToFungibleAssetValue();
+            UnbondingConsensusToken = serializedList[4].ToFungibleAssetValue();
+            IssuedShare = serializedList[5].ToFungibleAssetValue();
+            Index = serializedList[6].ToLong();
+            CompletionBlockHeight = serializedList[7].ToLong();
+            CreationHeight = serializedList[8].ToLong();
         }
 
         public Address Address { get; set; }
@@ -61,6 +65,8 @@ namespace Nekoyume.Action.DPoS.Model
                 _redelegatingShare = value;
             }
         }
+
+        public FungibleAssetValue InitialConsensusToken { get; set; }
 
         public FungibleAssetValue UnbondingConsensusToken
         {
@@ -92,6 +98,8 @@ namespace Nekoyume.Action.DPoS.Model
 
         public long Index { get; set; }
 
+        public long CreationHeight { get; set; }
+
         public long CompletionBlockHeight { get; set; }
 
         public static bool operator ==(RedelegationEntry obj, RedelegationEntry other)
@@ -117,10 +125,12 @@ namespace Nekoyume.Action.DPoS.Model
                 .Add(Address.Serialize())
                 .Add(RedelegationAddress.Serialize())
                 .Add(RedelegatingShare.Serialize())
+                .Add(InitialConsensusToken.Serialize())
                 .Add(UnbondingConsensusToken.Serialize())
                 .Add(IssuedShare.Serialize())
                 .Add(Index.Serialize())
-                .Add(CompletionBlockHeight.Serialize());
+                .Add(CompletionBlockHeight.Serialize())
+                .Add(CreationHeight.Serialize());
         }
 
         public override bool Equals(object? obj)
@@ -134,10 +144,12 @@ namespace Nekoyume.Action.DPoS.Model
                    Address.Equals(other.Address) &&
                    RedelegationAddress.Equals(other.RedelegationAddress) &&
                    RedelegatingShare.Equals(other.RedelegatingShare) &&
+                   InitialConsensusToken.Equals(other.InitialConsensusToken) &&
                    UnbondingConsensusToken.Equals(other.UnbondingConsensusToken) &&
                    IssuedShare.Equals(other.IssuedShare) &&
                    Index == other.Index &&
-                   CompletionBlockHeight == other.CompletionBlockHeight;
+                   CompletionBlockHeight == other.CompletionBlockHeight &&
+                   CreationHeight == other.CreationHeight;
         }
 
         public override int GetHashCode()
