@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Bencodex.Types;
@@ -9,7 +10,6 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action.DPoS.Exception;
 using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
-using Nekoyume.Action.DPoS.Util;
 using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Control
@@ -23,6 +23,45 @@ namespace Nekoyume.Action.DPoS.Control
             if (states.GetDPoSState(redelegationAddress) is { } value)
             {
                 return new Redelegation(value);
+            }
+
+            return null;
+        }
+
+        internal static Redelegation? GetRedelegation(
+            IWorldState states,
+            Address delegatorAddress, Address srcValidatorAddress, Address dstValidatorAddress)
+        {
+            Address redelegationAddress = Redelegation.DeriveAddress(
+                delegatorAddress, srcValidatorAddress, dstValidatorAddress);
+            return GetRedelegation(states, redelegationAddress);
+        }
+
+        internal static Redelegation[] GetRedelegationsByDelegator(IWorldState worldState, Address delegatorAddress)
+        {
+            var redelegationList = new List<Redelegation>();
+            var unbondingSet = UnbondingSetCtrl.GetUnbondingSet(worldState)!;
+            foreach (var item in unbondingSet.RedelegationAddressSet)
+            {
+                if (GetRedelegation(worldState, item) is not { } redelegation)
+                {
+                    throw new InvalidOperationException("undelegation is null.");
+                }
+
+                if (redelegation.DelegatorAddress.Equals(delegatorAddress))
+                {
+                    redelegationList.Add(redelegation);
+                }
+            }
+
+            return redelegationList.ToArray();
+        }
+
+        internal static RedelegationEntry? GetRedelegationEntry(IWorldState worldState, Address redelegationEntryAddress)
+        {
+            if (worldState.GetDPoSState(redelegationEntryAddress) is { } value)
+            {
+                return new RedelegationEntry(value);
             }
 
             return null;
