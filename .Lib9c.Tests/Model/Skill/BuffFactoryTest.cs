@@ -44,7 +44,7 @@ namespace Lib9c.Tests.Model.Skill
                 _avatarState,
                 new List<Costume>(),
                 new List<Equipment>(),
-                new List<RuneState>()
+                new AllRuneState()
             );
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
             var challenger = new ArenaCharacter(

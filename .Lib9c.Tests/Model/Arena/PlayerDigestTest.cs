@@ -103,7 +103,8 @@ namespace Lib9c.Tests.Model.Arena
                 _avatarState,
                 _arenaAvatarState.Equipments,
                 _arenaAvatarState.Costumes,
-                new List<RuneState>());
+                new AllRuneState()
+            );
             var serialized = digest.Serialize();
             var deserialized = new ArenaPlayerDigest((List)serialized);
 

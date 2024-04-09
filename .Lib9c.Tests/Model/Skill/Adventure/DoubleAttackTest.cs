@@ -82,7 +82,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 new TestRandom(),
                 avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,

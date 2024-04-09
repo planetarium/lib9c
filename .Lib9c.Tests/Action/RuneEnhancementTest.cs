@@ -91,7 +91,7 @@ namespace Lib9c.Tests.Action
             var allRuneState = new AllRuneState(runeId);
             var runeState = allRuneState.GetRuneState(runeId);
             runeState.LevelUp(startLevel);
-            // Set Legacy Rune state
+            // Set Legacy Rune state. Do not migrate this code do new one
             state = state.SetLegacyState(
                 RuneState.DeriveAddress(avatarAddress, runeId),
                 runeState.Serialize()
@@ -131,7 +131,7 @@ namespace Lib9c.Tests.Action
             {
                 var nextState = action.Execute(ctx);
                 // RuneState must be migrated to AllRuneState
-                var nextAllRuneState = nextState.GetRuneState(avatarAddress);
+                var nextAllRuneState = nextState.GetRuneState(avatarAddress, out _);
                 var nextRuneState = nextAllRuneState.GetRuneState(runeId);
                 if (nextRuneState is null)
                 {
@@ -253,7 +253,7 @@ namespace Lib9c.Tests.Action
             else
             {
                 var nextState = action.Execute(ctx);
-                var nextAllRuneState = nextState.GetRuneState(avatarAddress);
+                var nextAllRuneState = nextState.GetRuneState(avatarAddress, out _);
                 var nextRuneState = nextAllRuneState.GetRuneState(runeId);
                 if (nextRuneState is null)
                 {
@@ -436,10 +436,9 @@ namespace Lib9c.Tests.Action
 
             var runeListSheet = state.GetSheet<RuneListSheet>();
             var runeId = runeListSheet.First().Value.Id;
-            var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var allRuneState = new AllRuneState(runeId);
             var runeState = allRuneState.GetRuneState(runeId);
-            state = state.SetRuneState(runeStateAddress, allRuneState);
+            state = state.SetRuneState(avatarAddress, allRuneState);
 
             var costSheet = state.GetSheet<RuneCostSheet>();
             if (!costSheet.TryGetValue(runeId, out var costRow))
@@ -552,9 +551,8 @@ namespace Lib9c.Tests.Action
 
             var runeListSheet = state.GetSheet<RuneListSheet>();
             var runeId = runeListSheet.First().Value.Id;
-            var runeStateAddress = RuneState.DeriveAddress(avatarState.address, runeId);
             var runeState = new AllRuneState(runeId);
-            state = state.SetRuneState(runeStateAddress, runeState);
+            state = state.SetRuneState(avatarAddress, runeState);
 
             var action = new RuneEnhancement()
             {
@@ -735,16 +733,7 @@ namespace Lib9c.Tests.Action
 
             // Check bonus
             var nextState = action.Execute(ctx);
-            var nextAllRuneState = nextState.GetRuneState(avatarAddress);
-            var expectedBonusLevel = 0;
-            foreach (var rune in nextAllRuneState.Runes.Values)
-            {
-                var runeRow = runeListSheet.Values.FirstOrDefault(row => row.Id == rune.RuneId);
-                if (runeRow is not null)
-                {
-                    expectedBonusLevel += runeRow.BonusCoef * rune.Level;
-                }
-            }
+            var nextAllRuneState = nextState.GetRuneState(avatarAddress, out _);
 
             Assert.Equal(
                 expectedRuneLevelBonus,

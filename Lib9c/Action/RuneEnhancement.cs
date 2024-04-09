@@ -85,7 +85,8 @@ namespace Nekoyume.Action
                     $"current TryCount : {TryCount}");
             }
 
-            var allRuneState = states.GetRuneState(AvatarAddress);
+            var allRuneState = states.GetRuneState(AvatarAddress, out _);
+
             RuneState runeState;
             if (allRuneState.TryGetRuneState(RuneId, out var rs))
             {

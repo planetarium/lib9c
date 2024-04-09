@@ -33,7 +33,7 @@ namespace Nekoyume.Battle
             IRandom random,
             AvatarState avatarState,
             List<Guid> foods,
-            List<RuneState> runeStates,
+            AllRuneState runeStates,
             RaidSimulatorSheets simulatorSheets,
             CostumeStatSheet costumeStatSheet,
             List<StatModifier> collectionModifiers,

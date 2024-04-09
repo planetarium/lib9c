@@ -222,17 +222,15 @@ namespace Nekoyume.Action
             itemSlotState.UpdateCostumes(costumes);
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
-            var runeStates = new List<RuneState>();
-            foreach (var address in runeInfos.Select(info => RuneState.DeriveAddress(avatarAddress, info.RuneId)))
+            var runeStates = states.GetRuneState(avatarAddress, out var migrateRequired);
+            // Passive migrate runeStates
+            if (migrateRequired)
             {
-                if (states.TryGetLegacyState(address, out List rawRuneState))
-                {
-                    runeStates.Add(new RuneState(rawRuneState));
-                }
+                states = states.SetRuneState(avatarAddress, runeStates);
             }
             var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
             var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
-            foreach (var runeState in runeStates)
+            foreach (var runeState in runeStates.Runes.Values)
             {
                 if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
                 {

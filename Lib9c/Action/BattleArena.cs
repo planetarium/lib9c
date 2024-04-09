@@ -338,13 +338,10 @@ namespace Nekoyume.Action
             myArenaAvatarState.UpdateEquipment(equipments);
             myArenaAvatarState.UpdateCostumes(costumes);
             myArenaAvatarState.LastBattleBlockIndex = context.BlockIndex;
-            var runeStates = new List<RuneState>();
-            foreach (var address in runeInfos.Select(info => RuneState.DeriveAddress(myAvatarAddress, info.RuneId)))
+            var myRuneStates = states.GetRuneState(myAvatarAddress, out var migrateRequired);
+            if (migrateRequired)
             {
-                if (states.TryGetLegacyState(address, out List rawRuneState))
-                {
-                    runeStates.Add(new RuneState(rawRuneState));
-                }
+                states = states.SetRuneState(myAvatarAddress, myRuneStates);
             }
 
             // get enemy equipped items
@@ -357,14 +354,10 @@ namespace Nekoyume.Action
                 ? new RuneSlotState(enemyRawRuneSlotState)
                 : new RuneSlotState(BattleType.Arena);
 
-            var enemyRuneStates = new List<RuneState>();
-            var enemyRuneSlotInfos = enemyRuneSlotState.GetEquippedRuneSlotInfos();
-            foreach (var address in enemyRuneSlotInfos.Select(info => RuneState.DeriveAddress(enemyAvatarAddress, info.RuneId)))
+            var enemyRuneStates = states.GetRuneState(enemyAvatarAddress, out migrateRequired);
+            if (migrateRequired)
             {
-                if (states.TryGetLegacyState(address, out List rawRuneState))
-                {
-                    enemyRuneStates.Add(new RuneState(rawRuneState));
-                }
+                states = states.SetRuneState(enemyAvatarAddress, enemyRuneStates);
             }
 
             // simulate
@@ -373,7 +366,7 @@ namespace Nekoyume.Action
                 avatarState,
                 equipments,
                 costumes,
-                runeStates);
+                myRuneStates);
             var enemyArenaPlayerDigest = new ArenaPlayerDigest(
                 enemyAvatarState,
                 enemyItemSlotState.Equipments,

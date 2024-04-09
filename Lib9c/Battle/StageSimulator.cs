@@ -36,7 +36,7 @@ namespace Nekoyume.Battle
         public StageSimulator(IRandom random,
             AvatarState avatarState,
             List<Guid> foods,
-            List<RuneState> runeStates,
+            AllRuneState runeStates,
             List<Skill> skillsOnWaveStart,
             int worldId,
             int stageId,
@@ -52,7 +52,7 @@ namespace Nekoyume.Battle
             DeBuffLimitSheet deBuffLimitSheet,
             bool logEvent = true,
             long shatterStrikeMaxDamage = 400_000
-            )
+        )
             : base(
                 random,
                 avatarState,

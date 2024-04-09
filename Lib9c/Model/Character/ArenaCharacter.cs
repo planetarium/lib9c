@@ -438,11 +438,11 @@ namespace Nekoyume.Model
         }
 
         public void SetRuneSkills(
-            List<RuneState> runes,
+            AllRuneState runes,
             RuneOptionSheet runeOptionSheet,
             SkillSheet skillSheet)
         {
-            foreach (var rune in runes)
+            foreach (var rune in runes.Runes.Values)
             {
                 if (!runeOptionSheet.TryGetValue(rune.RuneId, out var optionRow) ||
                     !optionRow.LevelOptionMap.TryGetValue(rune.Level, out var optionInfo))

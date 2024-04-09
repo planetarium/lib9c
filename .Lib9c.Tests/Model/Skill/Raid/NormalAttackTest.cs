@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Model.Skill.Raid
                 new TestRandom(seed),
                 avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
                 _tableSheets.GetRaidSimulatorSheets(),
                 _tableSheets.CostumeStatSheet,
                 new List<StatModifier>
