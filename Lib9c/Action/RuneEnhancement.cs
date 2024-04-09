@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Rune;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Action
 {
@@ -75,6 +74,7 @@ namespace Nekoyume.Action
                     typeof(RuneSheet),
                     typeof(RuneListSheet),
                     typeof(RuneCostSheet),
+                    typeof(RuneLevelBonusSheet),
                 });
 
             // Validation

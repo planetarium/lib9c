@@ -7,6 +7,7 @@ using Nekoyume.Action;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Rune;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Model.State
 {
