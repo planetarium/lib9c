@@ -1,3 +1,4 @@
+using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -36,13 +37,13 @@ namespace Nekoyume.Action.DPoS.Sys
             states = ValidatorSetCtrl.Update(states, context);
             ValidatorSet bondedSet;
             (states, bondedSet) = ValidatorSetCtrl.FetchBondedValidatorSet(states);
-            foreach (var validator in bondedSet.Set)
-            {
-                states = states.SetValidator(
-                    new Libplanet.Types.Consensus.Validator(
-                        validator.OperatorPublicKey,
-                        validator.ConsensusToken.RawValue));
-            }
+            var validatorSet = new Libplanet.Types.Consensus.ValidatorSet(
+                bondedSet.Set.Select(
+                        v => new Libplanet.Types.Consensus.Validator(
+                            v.OperatorPublicKey,
+                            v.ConsensusToken.RawValue))
+                    .ToList());
+            states = states.SetValidatorSet(validatorSet);
 
             return states;
         }

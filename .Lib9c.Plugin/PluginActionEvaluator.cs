@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Security.Cryptography;
 using Lib9c.Plugin.Shared;
 using Libplanet.Action;
@@ -5,6 +6,7 @@ using Libplanet.Common;
 using Libplanet.Extensions.ActionEvaluatorCommonComponents;
 using Libplanet.Store;
 using Nekoyume.Action;
+using Nekoyume.Action.DPoS.Sys;
 using Nekoyume.Action.Loader;
 
 
@@ -18,7 +20,8 @@ namespace Lib9c.Plugin
         {
             var stateStore = new TrieStateStore(new WrappedKeyValueStore(keyValueStore));
             _actionEvaluator = new ActionEvaluator(
-                _ => new RewardGold(),
+                _ => new IAction[] { }.ToImmutableArray(),
+                _ => new IAction[] { new RewardGold() }.ToImmutableArray(),
                 stateStore,
                 new NCActionLoader());
         }
