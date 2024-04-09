@@ -151,7 +151,7 @@ namespace Lib9c.Tests.Action.DPoS
                     OperatorPrivateKeys[5].PublicKey,
                     VoteFlag.PreCommit).Sign(OperatorPrivateKeys[5]),
             };
-            FungibleAssetValue blockReward = Asset.ConsensusToken * 50;
+            FungibleAssetValue blockReward = Asset.ConsensusFromGovernance(50);
             _states = _states.MintAsset(
                 new ActionContext
                 {
@@ -196,7 +196,7 @@ namespace Lib9c.Tests.Action.DPoS
                     .DivRem(Validator.CommissionDenominator);
 
             Assert.Equal(
-                Asset.ConsensusToken * 0,
+                Asset.ConsensusFromGovernance(0),
                 _states.GetBalance(ReservedAddress.RewardPool, Asset.ConsensusToken));
 
             Assert.Equal(
@@ -204,11 +204,11 @@ namespace Lib9c.Tests.Action.DPoS
                 _states.GetBalance(ReservedAddress.BondedPool, Asset.GovernanceToken));
 
             Assert.Equal(
-                Asset.ConsensusToken * 205,
+                Asset.ConsensusFromGovernance(205),
                 _states.GetBalance(validatorAddressA, Asset.ConsensusToken));
 
             Assert.Equal(
-                Asset.ConsensusToken * 307,
+                Asset.ConsensusFromGovernance(307),
                 _states.GetBalance(validatorAddressB, Asset.ConsensusToken));
 
             Assert.Equal(
@@ -225,7 +225,7 @@ namespace Lib9c.Tests.Action.DPoS
                 = Delegation.DeriveAddress(DelegatorAddress, validatorAddressA);
 
             Assert.Equal(
-                Asset.ConsensusToken * 0,
+                Asset.ConsensusFromGovernance(0),
                 _states.GetBalance(
                     AllocateReward.RewardAddress(DelegatorAddress), Asset.ConsensusToken));
 

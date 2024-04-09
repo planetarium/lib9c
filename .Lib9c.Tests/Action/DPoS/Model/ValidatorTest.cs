@@ -19,7 +19,7 @@ namespace Lib9c.Tests.Action.DPoS.Model
         public void InvalidShareTypeTest()
         {
             Assert.Throws<InvalidCurrencyException>(
-                () => _validator.DelegatorShares = Asset.ConsensusToken * 1);
+                () => _validator.DelegatorShares = Asset.ConsensusFromGovernance(1));
             Assert.Throws<InvalidCurrencyException>(
                 () => _validator.DelegatorShares = Asset.GovernanceToken * 1);
         }

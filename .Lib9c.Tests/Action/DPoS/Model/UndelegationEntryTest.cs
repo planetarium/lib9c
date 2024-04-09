@@ -12,7 +12,7 @@ namespace Lib9c.Tests.Action.DPoS.Model
         public UndelegationEntryTest()
         {
             _undelegationEntry = new UndelegationEntry(
-                CreateAddress(), Asset.ConsensusToken * 1, 1, 1);
+                CreateAddress(), Asset.ConsensusFromGovernance(1), 1, 1);
         }
 
         [Fact]
@@ -21,7 +21,7 @@ namespace Lib9c.Tests.Action.DPoS.Model
             Assert.Throws<InvalidCurrencyException>(
                 () => _undelegationEntry.UnbondingConsensusToken = Asset.GovernanceToken * 1);
             Assert.Throws<InvalidCurrencyException>(
-                () => _undelegationEntry.UnbondingConsensusToken = Asset.Share * 1);
+                () => _undelegationEntry.UnbondingConsensusToken = ShareFromGovernance(1));
         }
 
         [Fact]
