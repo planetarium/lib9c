@@ -25,6 +25,13 @@ namespace Nekoyume.Action.DPoS.Control
             return null;
         }
 
+        internal static Delegation? GetDelegation(IWorldState states, Address delegatorAddress, Address validatorAddress)
+        {
+            Address delegationAddress = Delegation.DeriveAddress(
+                delegatorAddress, validatorAddress);
+            return GetDelegation(states, delegationAddress);
+        }
+
         internal static (IWorld, Delegation) FetchDelegation(
             IWorld states,
             Address delegatorAddress,
