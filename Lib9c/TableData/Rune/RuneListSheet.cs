@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using static Nekoyume.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Nekoyume.TableData.Rune
 {
     public class RuneListSheet : Sheet<int, RuneListSheet.Row>
     {
@@ -12,6 +12,7 @@ namespace Nekoyume.TableData
             public int RuneType;
             public int RequiredLevel;
             public int UsePlace;
+            public int BonusCoef;
 
             public override int Key => Id;
             public override void Set(IReadOnlyList<string> fields)
@@ -21,6 +22,7 @@ namespace Nekoyume.TableData
                 RuneType = ParseInt(fields[2]);
                 RequiredLevel = ParseInt(fields[3]);
                 UsePlace = ParseInt(fields[4]);
+                BonusCoef = ParseInt(fields[5]);
             }
         }
 

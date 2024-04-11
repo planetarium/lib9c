@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.Rune;
     using Xunit;
 
     public class RuneEnhancementTest
@@ -622,6 +623,137 @@ namespace Lib9c.Tests.Action
                     RandomSeed = 0,
                     BlockIndex = blockIndex,
                 }));
+        }
+
+        [Theory]
+        // Rune upgrade
+        [InlineData(new[] { 1 }, 9, false)]
+        [InlineData(new[] { 9 }, 1, false)]
+        [InlineData(new[] { 7 }, 3, false)]
+        [InlineData(new[] { 4, 4 }, 2, false)]
+        [InlineData(new[] { 4, 5 }, 1, false)]
+        // Crete new rune
+        [InlineData(new int[] { }, 1, true, 100)]
+        [InlineData(new int[] { }, 10, true)]
+        [InlineData(new[] { 1 }, 9, true)]
+        [InlineData(new[] { 9 }, 1, true)]
+        [InlineData(new[] { 7 }, 3, true)]
+        [InlineData(new[] { 4, 4 }, 2, true)]
+        [InlineData(new[] { 4, 5 }, 1, true)]
+        public void RuneBonus(int[] prevRuneLevels, int tryCount, bool createNewRune, int expectedRuneLevelBonus = 1000)
+        {
+            // Data
+            const int testRuneId = 30001;
+            var prevRuneIds = new[] { 10001, 10002, 10003 };
+            const int initialNcg = 10_000;
+            const int initialCrystal = 1_000_000;
+            const int initialRune = 1_000;
+
+            // Set states
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var sheets = TableSheetsImporter.ImportSheets();
+            var tableSheets = new TableSheets(sheets);
+            var blockIndex = tableSheets.WorldBossListSheet.Values
+                .OrderBy(x => x.StartedBlockIndex)
+                .First()
+                .StartedBlockIndex;
+
+            var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
+            var rankingMapAddress = avatarAddress.Derive("ranking_map");
+            var agentState = new AgentState(agentAddress);
+            var avatarState = new AvatarState(
+                avatarAddress,
+                agentAddress,
+                0,
+                tableSheets.GetAvatarSheets(),
+                new GameConfigState(),
+                rankingMapAddress
+            );
+            agentState.avatarAddresses.Add(0, avatarAddress);
+            var context = new ActionContext();
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            foreach (var (key, value) in sheets)
+            {
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set prev. runes
+            var allRuneState = new AllRuneState();
+            for (var i = 0; i < prevRuneLevels.Length; i++)
+            {
+                var runeId = prevRuneIds[i];
+                if (!createNewRune && i == 0)
+                {
+                    runeId = testRuneId;
+                }
+
+                allRuneState.AddRuneState(runeId, prevRuneLevels[i]);
+            }
+
+            state = state.SetRuneState(avatarAddress, allRuneState);
+            var runeListSheet = tableSheets.RuneListSheet;
+            var runeLevelBonusSheet = tableSheets.RuneLevelBonusSheet;
+            var prevRuneLevelBonus = prevRuneLevels.Length == 0
+                ? 0
+                : runeLevelBonusSheet.Values.First(row => row.RuneLevel == 1).Bonus;
+            Assert.Equal(
+                prevRuneLevelBonus,
+                RuneHelper.CalculateRuneLevelBonus(
+                    allRuneState,
+                    runeListSheet,
+                    runeLevelBonusSheet
+                )
+            );
+
+            // RuneEnhancement
+            var ncgCurrency = state.GetGoldCurrency();
+            var crystalCurrency = CrystalCalculator.CRYSTAL;
+            var runeTicker = tableSheets.RuneSheet.Values.First(r => r.Id == testRuneId).Ticker;
+            var runeCurrency = Currency.Legacy(runeTicker, 0, minters: null);
+            state = state.MintAsset(context, agentAddress, ncgCurrency * initialNcg);
+            state = state.MintAsset(context, agentAddress, crystalCurrency * initialCrystal);
+            state = state.MintAsset(context, avatarAddress, runeCurrency * initialRune);
+
+            var action = new RuneEnhancement
+            {
+                AvatarAddress = avatarAddress,
+                RuneId = testRuneId,
+                TryCount = tryCount,
+            };
+            var ctx = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = state,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            };
+
+            // Check bonus
+            var nextState = action.Execute(ctx);
+            var nextAllRuneState = nextState.GetRuneState(avatarAddress);
+            var expectedBonusLevel = 0;
+            foreach (var rune in nextAllRuneState.Runes.Values)
+            {
+                var runeRow = runeListSheet.Values.FirstOrDefault(row => row.Id == rune.RuneId);
+                if (runeRow is not null)
+                {
+                    expectedBonusLevel += runeRow.BonusCoef * rune.Level;
+                }
+            }
+
+            Assert.Equal(
+                expectedRuneLevelBonus,
+                RuneHelper.CalculateRuneLevelBonus(
+                    nextAllRuneState,
+                    runeListSheet,
+                    runeLevelBonusSheet
+                )
+            );
         }
     }
 }

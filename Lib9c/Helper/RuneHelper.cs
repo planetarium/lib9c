@@ -6,7 +6,9 @@ using Libplanet.Action;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Battle;
+using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Helper
 {
@@ -119,10 +121,24 @@ namespace Nekoyume.Helper
             return true;
         }
 
-        public static FungibleAssetValue CalculateStakeReward(FungibleAssetValue stakeAmount, int rate)
+        public static FungibleAssetValue CalculateStakeReward(FungibleAssetValue stakeAmount,
+            int rate)
         {
             var (quantity, _) = stakeAmount.DivRem(stakeAmount.Currency * rate);
             return StakeRune * quantity;
+        }
+
+        public static int CalculateRuneLevelBonus(AllRuneState allRuneState,
+            RuneListSheet runeListSheet, RuneLevelBonusSheet runeLevelBonusSheet)
+        {
+            var bonusLevel = (from rune in allRuneState.Runes.Values
+                let runeRow = runeListSheet.Values.FirstOrDefault(row => row.Id == rune.RuneId)
+                where runeRow is not null
+                select runeRow.BonusCoef * rune.Level).Sum();
+
+            var bonusRow = runeLevelBonusSheet.Values.OrderByDescending(row => row.RuneLevel)
+                .FirstOrDefault(row => row.RuneLevel <= bonusLevel);
+            return bonusRow?.Bonus ?? 0;
         }
     }
 }
