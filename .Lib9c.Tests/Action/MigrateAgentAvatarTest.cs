@@ -101,10 +101,10 @@
                             avatarState.inventory.Serialize())
                         .SetLegacyState(
                             worldInformationAddress,
-                            avatarState.questList.Serialize())
+                            avatarState.worldInformation.Serialize())
                         .SetLegacyState(
                             questListAddress,
-                            avatarState.questList.Serialize());
+                            avatarState.questList.SerializeDictionary());
                     break;
                 default:
                     throw new ArgumentException($"Invalid legacy avatar version: {legacyAvatarVersion}");

@@ -57,6 +57,12 @@ namespace Nekoyume.Model.Quest
             _serializedItemSubType = (Integer)serialized["itemSubType"];
         }
 
+        public CombinationQuest(List serialized) : base(serialized)
+        {
+            _serializedItemType = (Integer)serialized[7];
+            _serializedItemSubType = (Integer)serialized[8];
+        }
+
         public override void Check()
         {
             if (Complete)
@@ -89,5 +95,9 @@ namespace Nekoyume.Model.Quest
             ((Dictionary) base.Serialize())
             .Add("itemType", _serializedItemType ?? (int) ItemType)
             .Add("itemSubType", _serializedItemSubType ?? (int) ItemSubType);
+
+        public override IValue SerializeList() => ((List) base.SerializeList())
+            .Add(_serializedItemType ?? (int) ItemType)
+            .Add(_serializedItemSubType ?? (int) ItemSubType);
     }
 }

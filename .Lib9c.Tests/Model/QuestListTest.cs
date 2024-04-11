@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Model
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using Bencodex.Types;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Quest;
     using Nekoyume.TableData;
@@ -206,6 +207,27 @@ namespace Lib9c.Tests.Model
                     _tableSheets.QuestRewardSheet,
                     _tableSheets.QuestItemRewardSheet,
                     _tableSheets.EquipmentItemRecipeSheet));
+        }
+
+        [Fact]
+        public void Migrate_Dictionary_To_List()
+        {
+            var questList = new QuestList(
+                _tableSheets.QuestSheet,
+                _tableSheets.QuestRewardSheet,
+                _tableSheets.QuestItemRewardSheet,
+                _tableSheets.EquipmentItemRecipeSheet,
+                _tableSheets.EquipmentItemSubRecipeSheet
+            );
+            questList.completedQuestIds.Add(2);
+            questList.completedQuestIds.Add(1);
+            var dictionary = Assert.IsType<Dictionary>(questList.SerializeDictionary());
+            var list = Assert.IsType<List>(questList.SerializeList());
+            var des = new QuestList(dictionary);
+            var migrated = new QuestList(list);
+            Assert.Equal(des.ListVersion, migrated.ListVersion);
+            Assert.Equal(des.Count(), migrated.Count());
+            Assert.Equal(des.completedQuestIds, migrated.completedQuestIds);
         }
     }
 }
