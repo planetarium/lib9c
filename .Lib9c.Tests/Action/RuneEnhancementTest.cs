@@ -690,7 +690,7 @@ namespace Lib9c.Tests.Action
             var runeLevelBonusSheet = tableSheets.RuneLevelBonusSheet;
             var prevRuneLevelBonus = prevRuneLevels.Length == 0
                 ? 0
-                : runeLevelBonusSheet.Values.First(row => row.RuneLevel == 1).Bonus;
+                : runeLevelBonusSheet.Values.First(row => row.RuneLevel == 1).Bonus * prevRuneLevels.Sum();
             Assert.Equal(
                 prevRuneLevelBonus,
                 RuneHelper.CalculateRuneLevelBonus(
