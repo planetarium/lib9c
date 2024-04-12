@@ -113,11 +113,7 @@ namespace Nekoyume.Model
                 (Costume)ItemFactory.Deserialize((Dictionary)c)).ToList();
             Equipments = ((List)serialized[8]).Select(e =>
                 (Equipment)ItemFactory.Deserialize((Dictionary)e)).ToList();
-            Runes = new AllRuneState();
-            foreach (var e in (List)serialized[9])
-            {
-                Runes.AddRuneState(new RuneState((List)e));
-            }
+            Runes = new AllRuneState((List)serialized[9]);
         }
 
         public IValue Serialize()
