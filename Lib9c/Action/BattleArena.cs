@@ -355,11 +355,7 @@ namespace Nekoyume.Action
                 ? new RuneSlotState(enemyRawRuneSlotState)
                 : new RuneSlotState(BattleType.Arena);
 
-            var enemyRuneStates = states.GetRuneState(enemyAvatarAddress, out migrateRequired);
-            if (migrateRequired)
-            {
-                states = states.SetRuneState(enemyAvatarAddress, enemyRuneStates);
-            }
+            var enemyRuneStates = states.GetRuneState(enemyAvatarAddress, out _);
 
             // simulate
             var enemyAvatarState = states.GetEnemyAvatarState(enemyAvatarAddress);
