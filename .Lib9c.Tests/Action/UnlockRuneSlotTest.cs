@@ -51,7 +51,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 default
             );
             return state.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());

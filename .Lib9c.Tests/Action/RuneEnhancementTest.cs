@@ -71,7 +71,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
@@ -198,7 +197,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
@@ -294,7 +292,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
@@ -349,7 +346,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
@@ -419,7 +415,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
@@ -536,7 +531,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);
@@ -600,7 +594,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
             state = state.SetAvatarState(avatarAddress, avatarState, true, false, false, false);
@@ -667,7 +660,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress
             );
             agentState.avatarAddresses.Add(0, avatarAddress);

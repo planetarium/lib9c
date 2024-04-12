@@ -35,7 +35,6 @@ namespace Lib9c.Tests.Model.Order
                 Addresses.Admin,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default,
                 "name"
             );
@@ -655,7 +654,6 @@ namespace Lib9c.Tests.Model.Order
                 Addresses.Admin,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default,
                 "buyer"
             );
@@ -704,7 +702,6 @@ namespace Lib9c.Tests.Model.Order
                 Addresses.Admin,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default,
                 "buyer"
             );

@@ -43,7 +43,6 @@ namespace Lib9c.Tests.Model
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
 
@@ -130,7 +129,6 @@ namespace Lib9c.Tests.Model
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
 
@@ -214,7 +212,6 @@ namespace Lib9c.Tests.Model
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
 

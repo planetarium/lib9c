@@ -31,7 +31,6 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 default);
 
             _player = new Player(
