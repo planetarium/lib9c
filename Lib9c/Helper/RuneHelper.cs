@@ -132,7 +132,7 @@ namespace Nekoyume.Helper
         public static int CalculateRuneLevelBonus(AllRuneState allRuneState,
             RuneListSheet runeListSheet, RuneLevelBonusSheet runeLevelBonusSheet)
         {
-            var bonusLevel = 0m;
+            var bonusLevel = 0;
             foreach (var rune in allRuneState.Runes.Values)
             {
                 var runeRow = runeListSheet.Values.FirstOrDefault(row => row.Id == rune.RuneId);
@@ -142,11 +142,11 @@ namespace Nekoyume.Helper
                 }
             }
 
-            bonusLevel /= 10000m;
+            bonusLevel /= 10000;
 
             var bonusRow = runeLevelBonusSheet.Values.OrderByDescending(row => row.RuneLevel)
                 .FirstOrDefault(row => row.RuneLevel <= bonusLevel);
-            return bonusRow?.Bonus * (int)bonusLevel ?? 0;
+            return bonusRow?.Bonus * bonusLevel ?? 0;
         }
     }
 }
