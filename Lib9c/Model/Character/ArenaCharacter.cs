@@ -155,14 +155,20 @@ namespace Nekoyume.Model
             _skills = GetSkills(digest.Equipments, sheets.SkillSheet);
             _attackCountMax = AttackCountHelper.GetCountMax(digest.Level);
 
-            var runes = digest.Runes;
+            var equippedRuneIds = digest.RuneSlotState.GetEquippedRuneSlotInfos().Select(
+                rs => rs.RuneId
+            ).ToList();
+            var equippedRunes = digest.Runes.Runes.Values.Where(
+                rs => equippedRuneIds.Contains(rs.RuneId)
+            ).ToList();
             var runeOptionSheet = sheets.RuneOptionSheet;
-            bool runeExist = runes != null;
+            var runeExist = equippedRunes.Any();
             if (runeExist)
             {
-                var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(runes, sheets.RuneListSheet,
+                var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(digest.Runes,
+                    sheets.RuneListSheet,
                     sheets.RuneLevelBonusSheet);
-                SetRuneStats(runes, runeOptionSheet, runeLevelBonus);
+                SetRuneStats(equippedRunes, runeOptionSheet, runeLevelBonus);
             }
 
             Stats.SetCollections(collectionModifiers);
@@ -170,7 +176,7 @@ namespace Nekoyume.Model
             if (runeExist)
             {
                 // call SetRuneSkills last. because rune skills affect from total calculated stats
-                SetRuneSkills(runes, runeOptionSheet, sheets.SkillSheet);
+                SetRuneSkills(equippedRunes, runeOptionSheet, sheets.SkillSheet);
             }
         }
 
@@ -419,10 +425,10 @@ namespace Nekoyume.Model
             }
         }
 
-        public void SetRuneStats(AllRuneState runes, RuneOptionSheet runeOptionSheet,
+        public void SetRuneStats(IEnumerable<RuneState> runes, RuneOptionSheet runeOptionSheet,
             int runeLevelBonus)
         {
-            foreach (var rune in runes.Runes.Values)
+            foreach (var rune in runes)
             {
                 if (!runeOptionSheet.TryGetValue(rune.RuneId, out var optionRow) ||
                     !optionRow.LevelOptionMap.TryGetValue(rune.Level, out var optionInfo))
@@ -444,11 +450,11 @@ namespace Nekoyume.Model
         }
 
         public void SetRuneSkills(
-            AllRuneState runes,
+            IEnumerable<RuneState> runes,
             RuneOptionSheet runeOptionSheet,
             SkillSheet skillSheet)
         {
-            foreach (var rune in runes.Runes.Values)
+            foreach (var rune in runes)
             {
                 if (!runeOptionSheet.TryGetValue(rune.RuneId, out var optionRow) ||
                     !optionRow.LevelOptionMap.TryGetValue(rune.Level, out var optionInfo))

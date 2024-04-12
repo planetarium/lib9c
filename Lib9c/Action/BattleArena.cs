@@ -339,6 +339,10 @@ namespace Nekoyume.Action
             myArenaAvatarState.UpdateEquipment(equipments);
             myArenaAvatarState.UpdateCostumes(costumes);
             myArenaAvatarState.LastBattleBlockIndex = context.BlockIndex;
+            var myRuneSlotStateAddress = RuneSlotState.DeriveAddress(myAvatarAddress, BattleType.Arena);
+            var myRuneSlotState = states.TryGetLegacyState(myRuneSlotStateAddress, out List myRawRuneSlotState)
+                ? new RuneSlotState(myRawRuneSlotState)
+                : new RuneSlotState(BattleType.Arena);
             var myRuneStates = states.GetRuneState(myAvatarAddress, out var migrateRequired);
             if (migrateRequired)
             {
@@ -363,12 +367,16 @@ namespace Nekoyume.Action
                 avatarState,
                 equipments,
                 costumes,
-                myRuneStates);
+                myRuneStates,
+                myRuneSlotState
+                );
             var enemyArenaPlayerDigest = new ArenaPlayerDigest(
                 enemyAvatarState,
                 enemyItemSlotState.Equipments,
                 enemyItemSlotState.Costumes,
-                enemyRuneStates);
+                enemyRuneStates,
+                enemyRuneSlotState
+                );
             var previousMyScore = myArenaScore.Score;
             var arenaSheets = sheets.GetArenaSimulatorSheets();
             var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();

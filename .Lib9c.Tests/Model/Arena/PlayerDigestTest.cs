@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Model.Arena
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
     using Nekoyume.Model;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
@@ -111,7 +112,8 @@ namespace Lib9c.Tests.Model.Arena
                 _avatarState,
                 _arenaAvatarState.Equipments,
                 _arenaAvatarState.Costumes,
-                runes
+                runes,
+                new RuneSlotState(BattleType.Arena)
             );
             var serialized = digest.Serialize();
             var deserialized = new ArenaPlayerDigest((List)serialized);

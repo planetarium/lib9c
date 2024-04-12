@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 
@@ -23,6 +24,7 @@ namespace Nekoyume.Model
         public readonly List<Costume> Costumes;
         public readonly List<Equipment> Equipments;
         public readonly AllRuneState Runes;
+        public readonly RuneSlotState RuneSlotState;
 
         [Obsolete("Do not use it")]
         public ArenaPlayerDigest(AvatarState avatarState, ArenaAvatarState arenaAvatarState)
@@ -38,13 +40,16 @@ namespace Nekoyume.Model
             Costumes = avatarState.GetNonFungibleItems<Costume>(arenaAvatarState.Costumes);
             Equipments = avatarState.GetNonFungibleItems<Equipment>(arenaAvatarState.Equipments);
             Runes = new AllRuneState();
+            RuneSlotState = new RuneSlotState(BattleType.Arena);
         }
 
         public ArenaPlayerDigest(
             AvatarState avatarState,
             List<Guid> equipments,
             List<Guid> costumes,
-            AllRuneState runes)
+            AllRuneState runes,
+            RuneSlotState runeSlotState
+        )
         {
             NameWithHash = avatarState.NameWithHash;
             CharacterId = avatarState.characterId;
@@ -57,11 +62,14 @@ namespace Nekoyume.Model
             Costumes = avatarState.GetNonFungibleItems<Costume>(costumes);
             Equipments = avatarState.GetNonFungibleItems<Equipment>(equipments);
             Runes = runes;
+            RuneSlotState = runeSlotState;
         }
 
         public ArenaPlayerDigest(
             AvatarState avatarState,
-            AllRuneState runes)
+            AllRuneState runes,
+            RuneSlotState runeSlotState
+        )
         {
             NameWithHash = avatarState.NameWithHash;
             CharacterId = avatarState.characterId;
@@ -80,13 +88,16 @@ namespace Nekoyume.Model
                 .ToList();
             Equipments = equipments;
             Runes = runes;
+            RuneSlotState = runeSlotState;
         }
 
         public ArenaPlayerDigest(
             AvatarState avatarState,
             List<Costume> costumes,
             List<Equipment> equipments,
-            AllRuneState runes)
+            AllRuneState runes,
+            RuneSlotState runeSlotState
+        )
         {
             NameWithHash = avatarState.NameWithHash;
             CharacterId = avatarState.characterId;
@@ -98,6 +109,7 @@ namespace Nekoyume.Model
             Costumes = costumes;
             Equipments = equipments;
             Runes = runes;
+            RuneSlotState = runeSlotState;
         }
 
         public ArenaPlayerDigest(List serialized)
@@ -114,23 +126,26 @@ namespace Nekoyume.Model
             Equipments = ((List)serialized[8]).Select(e =>
                 (Equipment)ItemFactory.Deserialize((Dictionary)e)).ToList();
             Runes = new AllRuneState((List)serialized[9]);
+            RuneSlotState = new RuneSlotState((List)serialized[10]);
         }
 
         public IValue Serialize()
         {
             return List.Empty
-                .Add(NameWithHash.Serialize())
-                .Add(CharacterId.Serialize())
-                .Add(Level.Serialize())
-                .Add(HairIndex.Serialize())
-                .Add(LensIndex.Serialize())
-                .Add(EarIndex.Serialize())
-                .Add(TailIndex.Serialize())
-                .Add(Costumes.Aggregate(List.Empty,
-                    (current, costume) => current.Add(costume.Serialize())))
-                .Add(Equipments.Aggregate(List.Empty,
-                    (current, equipment) => current.Add(equipment.Serialize())))
-                .Add(Runes.Serialize());
+                    .Add(NameWithHash.Serialize())
+                    .Add(CharacterId.Serialize())
+                    .Add(Level.Serialize())
+                    .Add(HairIndex.Serialize())
+                    .Add(LensIndex.Serialize())
+                    .Add(EarIndex.Serialize())
+                    .Add(TailIndex.Serialize())
+                    .Add(Costumes.Aggregate(List.Empty,
+                        (current, costume) => current.Add(costume.Serialize())))
+                    .Add(Equipments.Aggregate(List.Empty,
+                        (current, equipment) => current.Add(equipment.Serialize())))
+                    .Add(Runes.Serialize())
+                    .Add(RuneSlotState.Serialize())
+                ;
         }
     }
 }
