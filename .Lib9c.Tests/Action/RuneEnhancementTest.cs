@@ -631,7 +631,7 @@ namespace Lib9c.Tests.Action
         [InlineData(new[] { 7 }, 3, true)]
         [InlineData(new[] { 4, 4 }, 2, true)]
         [InlineData(new[] { 4, 5 }, 1, true)]
-        public void RuneBonus(int[] prevRuneLevels, int tryCount, bool createNewRune, int expectedRuneLevelBonus = 1000)
+        public void RuneBonus(int[] prevRuneLevels, int tryCount, bool createNewRune, int expectedRuneLevelBonus = 10 * 1000)
         {
             // Data
             const int testRuneId = 30001;

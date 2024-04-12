@@ -304,7 +304,7 @@ namespace Lib9c.Tests
                 rune.LevelUp();
             }
 
-            const int runeBonus = 177; // Base stat 1777 * 10% for run level 89 from RuneLevelBonusSheet
+            const int runeBonus = 15815; // Base stat 1777 * 10% for run level 89 (=890%) from RuneLevelBonusSheet
             var finalAtk = totalAtk + runeBonus;
 
             var optionInfo = runeRow.LevelOptionMap[89];
