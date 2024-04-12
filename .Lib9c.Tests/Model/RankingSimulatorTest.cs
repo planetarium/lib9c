@@ -41,7 +41,6 @@ namespace Lib9c.Tests.Model
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             )
             {
@@ -94,7 +93,6 @@ namespace Lib9c.Tests.Model
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
             avatarState.worldInformation.ClearStage(
@@ -140,7 +138,6 @@ namespace Lib9c.Tests.Model
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
             avatarState.worldInformation.ClearStage(
@@ -199,7 +196,6 @@ namespace Lib9c.Tests.Model
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default)
             {
                 level = level,

@@ -53,7 +53,6 @@ namespace Lib9c.DevExtensions.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(sheets[nameof(GameConfigSheet)]),
                 new PrivateKey().Address
             );
             agentState.avatarAddresses.Add(0, _avatarAddress);

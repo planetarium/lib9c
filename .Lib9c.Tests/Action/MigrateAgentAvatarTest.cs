@@ -60,7 +60,6 @@
                 agentAddress,
                 456,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 default);
 
             IWorld mock = new World(MockUtil.MockModernWorldState)

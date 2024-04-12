@@ -41,7 +41,6 @@ namespace Lib9c.Tests
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
 
@@ -50,7 +49,6 @@ namespace Lib9c.Tests
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
 

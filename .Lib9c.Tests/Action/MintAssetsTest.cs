@@ -335,7 +335,6 @@ namespace Lib9c.Tests.Action
                 address,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -361,7 +360,6 @@ namespace Lib9c.Tests.Action
                 address,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(

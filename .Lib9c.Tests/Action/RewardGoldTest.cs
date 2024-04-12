@@ -60,7 +60,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
 
@@ -69,7 +68,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
 

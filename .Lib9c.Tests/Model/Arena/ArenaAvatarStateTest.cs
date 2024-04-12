@@ -38,7 +38,6 @@ namespace Lib9c.Tests.Model.Arena
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingState.UpdateRankingMap(avatarAddress));
         }
     }

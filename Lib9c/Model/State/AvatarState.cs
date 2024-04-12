@@ -69,7 +69,6 @@ namespace Nekoyume.Model.State
             Address agentAddress,
             long blockIndex,
             AvatarSheets avatarSheets,
-            GameConfigState gameConfigState,
             Address rankingMapAddress,
             string name = null) : base(address)
         {
@@ -91,7 +90,6 @@ namespace Nekoyume.Model.State
             );
             mailBox = new MailBox();
             this.blockIndex = blockIndex;
-            actionPoint = gameConfigState.ActionPointMax;
             stageMap = new CollectionMap();
             monsterMap = new CollectionMap();
             itemMap = new CollectionMap();

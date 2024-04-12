@@ -67,7 +67,6 @@ namespace Lib9c.Tests.Action
                 SellerAgentAddress,
                 0,
                 TableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -85,7 +84,6 @@ namespace Lib9c.Tests.Action
                 _sellerAgentAddress2,
                 0,
                 TableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -101,7 +99,6 @@ namespace Lib9c.Tests.Action
                 BuyerAgentAddress,
                 0,
                 TableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
