@@ -51,7 +51,6 @@ namespace Lib9c.Tests.Action.Scenario
                 _agentAddress,
                 1,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 default
             )
             {

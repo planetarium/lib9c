@@ -46,13 +46,13 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
                     0,
                     _tableSheets.WorldSheet,
                     GameConfig.RequireClearedStageLevel.ActionsInShop),
+                actionPoint = DailyReward.ActionPointMax,
             };
             agentState.avatarAddresses[0] = AvatarAddress;
 

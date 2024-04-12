@@ -420,7 +420,6 @@ namespace Lib9c.DevExtensions.Action
                 agentAddr,
                 blockIndex,
                 sheets.GetAvatarSheets(),
-                gameConfig,
                 default,
                 Name)
             {

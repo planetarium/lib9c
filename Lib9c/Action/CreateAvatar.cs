@@ -295,13 +295,11 @@ namespace Nekoyume.Action
         {
             var state = ctx.PreviousState;
             var random = ctx.GetRandom();
-            var gameConfigState = state.GetGameConfigState();
             var avatarState = new AvatarState(
                 avatarAddress,
                 ctx.Signer,
                 ctx.BlockIndex,
                 state.GetAvatarSheets(),
-                gameConfigState,
                 rankingMapAddress,
                 name
             );

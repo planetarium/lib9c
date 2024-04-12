@@ -44,7 +44,6 @@ namespace Lib9c.DevExtensions
                 agentAddress,
                 blockIndex,
                 avatarSheets,
-                gameConfigState,
                 rankingMapAddress,
                 name != string.Empty ? name : "testId"
             )

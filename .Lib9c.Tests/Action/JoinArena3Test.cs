@@ -62,7 +62,6 @@ namespace Lib9c.Tests.Action
                 _signer,
                 0,
                 tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -82,7 +81,6 @@ namespace Lib9c.Tests.Action
                 _signer2,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(

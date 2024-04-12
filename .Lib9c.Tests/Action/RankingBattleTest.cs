@@ -121,7 +121,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(sheets[nameof(GameConfigSheet)]),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(

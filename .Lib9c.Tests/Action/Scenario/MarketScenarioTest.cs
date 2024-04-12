@@ -57,13 +57,13 @@ namespace Lib9c.Tests.Action.Scenario
                 _sellerAgentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
                     0,
                     _tableSheets.WorldSheet,
                     GameConfig.RequireClearedStageLevel.ActionsInShop),
+                actionPoint = DailyReward.ActionPointMax,
             };
             agentState.avatarAddresses[0] = _sellerAvatarAddress;
 
@@ -75,13 +75,13 @@ namespace Lib9c.Tests.Action.Scenario
                 _sellerAgentAddress2,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
                     0,
                     _tableSheets.WorldSheet,
                     GameConfig.RequireClearedStageLevel.ActionsInShop),
+                actionPoint = DailyReward.ActionPointMax,
             };
             agentState2.avatarAddresses[0] = _sellerAvatarAddress2;
 
@@ -93,13 +93,13 @@ namespace Lib9c.Tests.Action.Scenario
                 _buyerAgentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
                     0,
                     _tableSheets.WorldSheet,
                     GameConfig.RequireClearedStageLevel.ActionsInShop),
+                actionPoint = DailyReward.ActionPointMax,
             };
             agentState3.avatarAddresses[0] = _buyerAvatarAddress;
 

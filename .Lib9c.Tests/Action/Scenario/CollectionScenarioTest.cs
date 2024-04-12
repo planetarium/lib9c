@@ -46,7 +46,6 @@ namespace Lib9c.Tests.Action.Scenario
                     _agentAddress,
                     0,
                     _tableSheets.GetAvatarSheets(),
-                    gameConfigState,
                     rankingMapAddress
                 );
                 _initialState = _initialState.SetAvatarState(

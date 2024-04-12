@@ -31,7 +31,6 @@ namespace Lib9c.Tests.Model
                 agentState.address,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
             var simulator = new StageSimulator(
