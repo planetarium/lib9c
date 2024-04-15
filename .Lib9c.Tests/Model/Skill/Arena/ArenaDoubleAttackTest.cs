@@ -27,7 +27,6 @@ namespace Lib9c.Tests.Model.Skill.Arena
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
             _avatar2 = new AvatarState(
@@ -35,7 +34,6 @@ namespace Lib9c.Tests.Model.Skill.Arena
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
 

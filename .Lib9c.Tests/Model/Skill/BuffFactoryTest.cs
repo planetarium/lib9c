@@ -26,7 +26,6 @@ namespace Lib9c.Tests.Model.Skill
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 default);
         }
 

@@ -28,7 +28,6 @@ namespace Lib9c.Tests.Model.Skill.Raid
                 new PrivateKey().Address,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 new PrivateKey().Address);
             avatarState.level = 400;
 

@@ -75,7 +75,6 @@ namespace Lib9c.Tests.Model.State
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingState.UpdateRankingMap(avatarAddress));
             var itemIds = avatarState.questList.OfType<ItemTypeCollectQuest>().First().ItemIds;
             var map = new Dictionary<int, int>()
@@ -486,7 +485,6 @@ namespace Lib9c.Tests.Model.State
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingState.UpdateRankingMap(avatarAddress));
         }
     }

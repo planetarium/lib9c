@@ -43,7 +43,6 @@ namespace Lib9c.Tests.Action.Summon
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
 

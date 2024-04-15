@@ -40,7 +40,6 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 new PrivateKey().Address,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 new PrivateKey().Address);
 
             var worldRow = _tableSheets.WorldSheet.First;
@@ -106,7 +105,6 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 new PrivateKey().Address,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 new PrivateKey().Address);
 
             var worldRow = _tableSheets.WorldSheet.First;
@@ -158,7 +156,6 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 new PrivateKey().Address,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 new PrivateKey().Address);
 
             simulator = new StageSimulator(

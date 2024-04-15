@@ -55,7 +55,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 _rankingMapAddress
             )
             {
@@ -101,7 +100,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                gameConfigState,
                 _rankingMapAddress)
             {
                 worldInformation =
@@ -163,7 +161,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                gameConfigState,
                 _rankingMapAddress)
             {
                 worldInformation =
