@@ -26,9 +26,9 @@ namespace Nekoyume.Action.DPoS.Control
             BigInteger slashFactor,
             IImmutableSet<Currency> nativeTokens)
         {
-            if (slashFactor < 0)
+            if (slashFactor <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(slashFactor), "Slash factor must be greater than or equal to 0.");
+                throw new ArgumentOutOfRangeException(nameof(slashFactor), "Slash factor must be greater than 0.");
             }
 
             if (!(ValidatorCtrl.GetValidator(world, validatorAddress) is { } validator))
