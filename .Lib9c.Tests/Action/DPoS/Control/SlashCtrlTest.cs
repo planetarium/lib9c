@@ -677,8 +677,11 @@ namespace Lib9c.Tests.Action.DPoS.Control
             });
         }
 
-        [Fact]
-        public void Slash_NegativeSlashFactor_FailTest()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(int.MinValue)]
+        public void Slash_NegativeSlashFactor_FailTest(int slashFactor)
         {
             var states = _states;
             var operatorPublicKey = _operatorPublicKeys[0];
@@ -698,7 +701,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     validatorAddress: validatorAddress,
                     infractionHeight: 2,
                     power: 100,
-                    slashFactor: -1,
+                    slashFactor: slashFactor,
                     nativeTokens: NativeTokens);
             });
         }
