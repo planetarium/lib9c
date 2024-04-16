@@ -136,7 +136,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                governanceToken: governanceToken);
+                ncg: governanceToken);
 
             // Test before jailing
             var validator1 = ValidatorCtrl.GetValidator(states, validatorAddress)!;
@@ -184,7 +184,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                governanceToken: governanceToken);
+                ncg: governanceToken);
 
             // Jail
             states = ValidatorCtrl.Jail(
@@ -211,7 +211,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                governanceToken: governanceToken);
+                ncg: governanceToken);
 
             states = ValidatorCtrl.Jail(
                 states,
@@ -263,7 +263,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                governanceToken: governanceToken);
+                ncg: governanceToken);
 
             Assert.Throws<JailedValidatorException>(() =>
             {
