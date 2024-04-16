@@ -17,6 +17,9 @@ namespace Lib9c.Tests.Action.DPoS.Control
         private readonly Address _operatorAddress;
         private readonly Address _validatorAddress;
         private readonly ImmutableHashSet<Currency> _nativeTokens;
+        private readonly FungibleAssetValue _governanceToken
+            = new FungibleAssetValue(Asset.GovernanceToken, 100, 0);
+
         private IWorld _states;
 
         public ValidatorCtrlTest()
@@ -119,6 +122,155 @@ namespace Lib9c.Tests.Action.DPoS.Control
             Assert.Equal(
                 ShareFromGovernance(selfDelegateAmount),
                 ValidatorCtrl.GetValidator(_states, _validatorAddress)!.DelegatorShares);
+        }
+
+        [Fact]
+        public void JailTest()
+        {
+            var governanceToken = _governanceToken;
+            var states = _states;
+            var operatorPublicKey = _operatorPublicKey;
+            var validatorAddress = _validatorAddress;
+
+            states = Promote(
+                states: states,
+                blockIndex: 1,
+                operatorPublicKey: operatorPublicKey,
+                governanceToken: governanceToken);
+
+            // Test before jailing
+            var validator1 = ValidatorCtrl.GetValidator(states, validatorAddress)!;
+            var powerIndex1 = ValidatorPowerIndexCtrl.GetValidatorPowerIndex(states)!;
+            Assert.False(validator1.Jailed);
+            Assert.Contains(
+                powerIndex1.ValidatorAddresses,
+                address => address.Equals(validatorAddress));
+
+            // Jail
+            states = ValidatorCtrl.Jail(
+                states,
+                validatorAddress: validatorAddress);
+
+            // Test after jailing
+            var validator2 = ValidatorCtrl.GetValidator(states, validatorAddress)!;
+            var powerIndex2 = ValidatorPowerIndexCtrl.GetValidatorPowerIndex(states)!;
+
+            Assert.True(validator2.Jailed);
+            Assert.DoesNotContain(
+                powerIndex2.ValidatorAddresses,
+                address => address.Equals(validatorAddress));
+        }
+
+        [Fact]
+        public void Jail_NotPromotedValidator_FailTest()
+        {
+            Assert.Throws<NullValidatorException>(() =>
+            {
+                ValidatorCtrl.Jail(
+                    world: _states,
+                    validatorAddress: _validatorAddress);
+            });
+        }
+
+        [Fact]
+        public void Jail_JailedValidator_FailTest()
+        {
+            var governanceToken = _governanceToken;
+            var states = _states;
+            var operatorPublicKey = _operatorPublicKey;
+            var validatorAddress = _validatorAddress;
+
+            states = Promote(
+                states: states,
+                blockIndex: 1,
+                operatorPublicKey: operatorPublicKey,
+                governanceToken: governanceToken);
+
+            // Jail
+            states = ValidatorCtrl.Jail(
+                states,
+                validatorAddress: validatorAddress);
+
+            Assert.Throws<JailedValidatorException>(() =>
+            {
+                ValidatorCtrl.Jail(
+                    world: states,
+                    validatorAddress: validatorAddress);
+            });
+        }
+
+        [Fact]
+        public void UnjailTest()
+        {
+            var governanceToken = _governanceToken;
+            var states = _states;
+            var operatorPublicKey = _operatorPublicKey;
+            var validatorAddress = _validatorAddress;
+
+            states = Promote(
+                states: states,
+                blockIndex: 1,
+                operatorPublicKey: operatorPublicKey,
+                governanceToken: governanceToken);
+
+            states = ValidatorCtrl.Jail(
+                states,
+                validatorAddress: _validatorAddress);
+
+            // Test before unjailing
+            var validator1 = ValidatorCtrl.GetValidator(states, validatorAddress)!;
+            var powerIndex1 = ValidatorPowerIndexCtrl.GetValidatorPowerIndex(states)!;
+
+            Assert.True(validator1.Jailed);
+            Assert.DoesNotContain(
+                powerIndex1.ValidatorAddresses,
+                address => address.Equals(_validatorAddress));
+
+            // Unjail
+            states = ValidatorCtrl.Unjail(
+                states,
+                validatorAddress: validatorAddress);
+
+            // Test after unjailing
+            var validator2 = ValidatorCtrl.GetValidator(states, validatorAddress)!;
+            var powerIndex2 = ValidatorPowerIndexCtrl.GetValidatorPowerIndex(states)!;
+            Assert.False(validator2.Jailed);
+            Assert.Contains(
+                powerIndex2.ValidatorAddresses,
+                address => address.Equals(validatorAddress));
+        }
+
+        [Fact]
+        public void Unjail_NotPromotedValidator_FailTest()
+        {
+            Assert.Throws<NullValidatorException>(() =>
+            {
+                ValidatorCtrl.Unjail(
+                    world: _states,
+                    validatorAddress: _validatorAddress);
+            });
+        }
+
+        [Fact]
+        public void Unjail_NotJailedValidator_FailTest()
+        {
+            var governanceToken = _governanceToken;
+            var states = _states;
+            var operatorPublicKey = _operatorPublicKey;
+            var validatorAddress = _validatorAddress;
+
+            states = Promote(
+                states: states,
+                blockIndex: 1,
+                operatorPublicKey: operatorPublicKey,
+                governanceToken: governanceToken);
+
+            Assert.Throws<JailedValidatorException>(() =>
+            {
+                ValidatorCtrl.Unjail(
+                    world: states,
+                    validatorAddress: validatorAddress);
+            });
         }
     }
 }
