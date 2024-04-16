@@ -75,7 +75,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                governanceToken: governanceToken);
+                ncg: governanceToken);
 
             states = ValidatorSigningInfoCtrl.Tombstone(states, validatorAddress);
 
@@ -106,7 +106,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                governanceToken: governanceToken);
+                ncg: governanceToken);
 
             states = ValidatorSigningInfoCtrl.Tombstone(states, validatorAddress);
 
@@ -128,7 +128,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                governanceToken: governanceToken);
+                ncg: governanceToken);
 
             states = ValidatorSigningInfoCtrl.JailUntil(
                 world: states,
@@ -165,7 +165,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                governanceToken: governanceToken);
+                ncg: governanceToken);
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
@@ -185,7 +185,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                governanceToken: governanceToken);
+                ncg: governanceToken);
 
             states = ValidatorSigningInfoCtrl.JailUntil(
                 world: states,
