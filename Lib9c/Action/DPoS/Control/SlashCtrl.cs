@@ -37,7 +37,7 @@ namespace Nekoyume.Action.DPoS.Control
             }
 
             var amount = FungibleAssetValue.FromRawValue(Asset.ConsensusToken, power);
-            var (slashAmount, r) = amount.DivRem(slashFactor);
+            var (slashAmount, slashRemainder) = amount.DivRem(slashFactor);
 
             if (validator.Status == BondingStatus.Unbonded)
             {
@@ -251,8 +251,7 @@ namespace Nekoyume.Action.DPoS.Control
                     continue;
                 }
 
-                var (q, r) = entry.InitialConsensusToken.DivRem(slashFactor);
-                var slashAmount = q;
+                var (slashAmount, slashRemainder) = entry.InitialConsensusToken.DivRem(slashFactor);
                 totalSlashAmount += slashAmount;
 
                 var unbondingSlashAmount = Min(slashAmount, entry.UnbondingConsensusToken);
@@ -476,7 +475,6 @@ namespace Nekoyume.Action.DPoS.Control
 
             var tokensToBurn = Asset.GovernanceFromConsensus(amount);
             return world.TransferAsset(actionContext, ReservedAddress.BondedPool, ReservedAddress.CommunityPool, tokensToBurn);
-            // return world.BurnAsset(actionContext, ReservedAddress.BondedPool, tokensToBurn);
         }
 
         private static IWorld BurnNotBondedTokens(
@@ -491,7 +489,6 @@ namespace Nekoyume.Action.DPoS.Control
 
             var tokensToBurn = Asset.GovernanceFromConsensus(amount);
             return world.TransferAsset(actionContext, ReservedAddress.UnbondedPool, ReservedAddress.CommunityPool, tokensToBurn);
-            // return world.BurnAsset(actionContext, ReservedAddress.UnbondedPool, tokensToBurn);
         }
     }
 }
