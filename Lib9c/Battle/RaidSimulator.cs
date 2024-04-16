@@ -34,6 +34,7 @@ namespace Nekoyume.Battle
             AvatarState avatarState,
             List<Guid> foods,
             AllRuneState runeStates,
+            RuneSlotState runeSlotState,
             RaidSimulatorSheets simulatorSheets,
             CostumeStatSheet costumeStatSheet,
             List<StatModifier> collectionModifiers,
@@ -53,7 +54,15 @@ namespace Nekoyume.Battle
                 skillSheet, collectionModifiers
             );
             // call SetRuneSkills last. because rune skills affect from total calculated stats
-            Player.SetRuneSkills(runeStates, runeOptionSheet, skillSheet);
+            var equippedRune = new List<RuneState>();
+            foreach (var runeInfo in runeSlotState.GetEquippedRuneSlotInfos())
+            {
+                if (runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    equippedRune.Add(runeState);
+                }
+            }
+            Player.SetRuneSkills(equippedRune, runeOptionSheet, skillSheet);
 
             BossId = bossId;
             _waves = new List<RaidBoss>();

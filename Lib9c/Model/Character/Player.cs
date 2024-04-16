@@ -586,11 +586,11 @@ namespace Nekoyume.Model
         /// <param name="runeOptionSheet">The rune option sheet.</param>
         /// <param name="skillSheet">The skill sheet.</param>
         public void SetRuneSkills(
-            AllRuneState runes,
+            List<RuneState> runes,
             RuneOptionSheet runeOptionSheet,
             SkillSheet skillSheet)
         {
-            foreach (var rune in runes.Runes.Values)
+            foreach (var rune in runes)
             {
                 if (!runeOptionSheet.TryGetOptionInfo(rune.RuneId, rune.Level, out var optionInfo))
                 {

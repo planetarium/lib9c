@@ -38,6 +38,7 @@ namespace Nekoyume.Battle
             AvatarState avatarState,
             List<Guid> foods,
             AllRuneState runeStates,
+            RuneSlotState runeSlotState,
             List<Skill> skillsOnWaveStart,
             int worldId,
             int stageId,
@@ -71,11 +72,17 @@ namespace Nekoyume.Battle
             );
             Player.ConfigureStats(costumeStatSheet, runeStates, runeOptionSheet, runeLevelBonus,
                 skillSheet, collectionModifiers);
-            if (runeStates is not null)
+
+            // call SetRuneSkills last. because rune skills affect from total calculated stats
+            var equippedRune = new List<RuneState>();
+            foreach (var runeInfo in runeSlotState.GetEquippedRuneSlotInfos())
             {
-                // call SetRuneSkills last. because rune skills affect from total calculated stats
-                Player.SetRuneSkills(runeStates, runeOptionSheet, skillSheet);
+                if (runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    equippedRune.Add(runeState);
+                }
             }
+            Player.SetRuneSkills(equippedRune, runeOptionSheet, skillSheet);
 
             _waves = new List<Wave>();
             _waveRewards = waveRewards;
