@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Model.Skill.Raid
     using Nekoyume.Battle;
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.Buff;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -37,6 +38,7 @@ namespace Lib9c.Tests.Model.Skill.Raid
                 avatarState,
                 new List<Guid>(),
                 new AllRuneState(),
+                new RuneSlotState(BattleType.Raid),
                 _tableSheets.GetRaidSimulatorSheets(),
                 _tableSheets.CostumeStatSheet,
                 new List<StatModifier>

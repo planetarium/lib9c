@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model.Arena;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
@@ -258,6 +259,7 @@ namespace Lib9c.Tests.Action
                     avatarState,
                     action.FoodIds,
                     new AllRuneState(),
+                    new RuneSlotState(BattleType.Raid),
                     raidSimulatorSheets,
                     _tableSheets.CostumeStatSheet,
                     new List<StatModifier>(),
@@ -496,6 +498,7 @@ namespace Lib9c.Tests.Action
                 avatarState,
                 action.FoodIds,
                 new AllRuneState(),
+                new RuneSlotState(BattleType.Raid),
                 _tableSheets.GetRaidSimulatorSheets(),
                 _tableSheets.CostumeStatSheet,
                 new List<StatModifier>(),

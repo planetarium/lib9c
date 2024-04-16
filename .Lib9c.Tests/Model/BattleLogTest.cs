@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Model
     using Libplanet.Crypto;
     using Nekoyume.Battle;
     using Nekoyume.Model.BattleStatus;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Xunit;
@@ -38,6 +39,7 @@ namespace Lib9c.Tests.Model
                 avatarState,
                 new List<Guid>(),
                 new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,

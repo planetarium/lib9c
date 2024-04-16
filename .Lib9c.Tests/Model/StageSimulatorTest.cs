@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Model
     using Nekoyume.Action;
     using Nekoyume.Battle;
     using Nekoyume.Model.BattleStatus;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Quest;
     using Nekoyume.Model.Stat;
@@ -51,6 +52,7 @@ namespace Lib9c.Tests.Model
                 _avatarState,
                 new List<Guid>(),
                 new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -113,6 +115,7 @@ namespace Lib9c.Tests.Model
                 _avatarState,
                 new List<Guid>(),
                 new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 3,
@@ -166,6 +169,7 @@ namespace Lib9c.Tests.Model
                 _avatarState,
                 new List<Guid>(),
                 new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 3,
