@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using Libplanet.Types.Assets;
 
@@ -15,12 +16,30 @@ namespace Nekoyume.Action.DPoS.Misc
             Currency.Uncapped("Share", 0, minters: null);
 
         public static FungibleAssetValue ConsensusFromGovernance(FungibleAssetValue governanceToken)
-            => FungibleAssetValue.FromRawValue(ConsensusToken, governanceToken.RawValue);
+        {
+            if (!governanceToken.Currency.Equals(GovernanceToken))
+            {
+                throw new ArgumentException(
+                    message: $"'{governanceToken}' is not {nameof(GovernanceToken)}",
+                    paramName: nameof(governanceToken));
+            }
+
+            return FungibleAssetValue.FromRawValue(ConsensusToken, governanceToken.RawValue);
+        }
 
         public static FungibleAssetValue ConsensusFromGovernance(BigInteger amount)
             => ConsensusFromGovernance(GovernanceToken * amount);
 
         public static FungibleAssetValue GovernanceFromConsensus(FungibleAssetValue consensusToken)
-            => FungibleAssetValue.FromRawValue(GovernanceToken, consensusToken.RawValue);
+        {
+            if (!consensusToken.Currency.Equals(ConsensusToken))
+            {
+                throw new ArgumentException(
+                    message: $"'{consensusToken}' is not {nameof(ConsensusToken)}",
+                    paramName: nameof(consensusToken));
+            }
+
+            return FungibleAssetValue.FromRawValue(GovernanceToken, consensusToken.RawValue);
+        }
     }
 }
