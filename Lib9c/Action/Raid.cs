@@ -226,6 +226,7 @@ namespace Nekoyume.Action
                 avatarState,
                 FoodIds,
                 runeStates,
+                runeSlotState,
                 raidSimulatorSheets,
                 sheets.GetSheet<CostumeStatSheet>(),
                 collectionModifiers,

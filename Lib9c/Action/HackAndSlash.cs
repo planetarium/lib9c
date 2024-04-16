@@ -488,6 +488,7 @@ namespace Nekoyume.Action
                     avatarState,
                     i == 0 ? Foods : new List<Guid>(),
                     runeStates,
+                    runeSlotState,
                     i == 0 ? skillsOnWaveStart : new List<Skill>(),
                     WorldId,
                     StageId,

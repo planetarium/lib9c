@@ -349,6 +349,7 @@ namespace Nekoyume.Action
                 avatarState,
                 Foods,
                 runeStates,
+                runeSlotState,
                 new List<Skill>(),
                 EventDungeonId,
                 EventDungeonStageId,
