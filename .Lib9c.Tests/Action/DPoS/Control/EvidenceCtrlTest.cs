@@ -46,7 +46,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                governanceToken: governanceToken);
+                ncg: governanceToken);
             states = Update(
                 states: states,
                 blockIndex: 1);
@@ -90,7 +90,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: blockIndex,
                 operatorPublicKey: operatorPublicKey,
-                governanceToken: governanceToken);
+                ncg: governanceToken);
             states = Update(
                 states: states,
                 blockIndex: blockIndex);
