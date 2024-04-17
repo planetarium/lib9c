@@ -26,6 +26,12 @@ namespace Nekoyume.Model.Quest
             ItemIds = serialized["itemIds"].ToList(i => i.ToInteger());
         }
 
+        public ItemGradeQuest(List serialized) : base(serialized)
+        {
+            Grade = (Integer) serialized[7];
+            ItemIds = serialized[8].ToList(i => (int)(Integer)i);
+        }
+
         public override QuestType QuestType => QuestType.Obtain;
 
         public override void Check()
@@ -66,5 +72,9 @@ namespace Nekoyume.Model.Quest
             .Add("grade", Grade.Serialize())
             .Add("itemIds", new List(ItemIds.OrderBy(i => i).Select(i => i.Serialize())));
 
+        public override IValue SerializeList() =>
+            ((List)base.SerializeList())
+            .Add(Grade)
+            .Add(new List(ItemIds.OrderBy(i => i)));
     }
 }

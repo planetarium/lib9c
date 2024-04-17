@@ -67,7 +67,7 @@ namespace Nekoyume.Action
                 [(Text)LegacyWorldInformationKey] = avatarState.worldInformation.Serialize(),
                 [(Text)LegacyUpdatedAtKey] = avatarState.updatedAt.Serialize(),
                 [(Text)LegacyAgentAddressKey] = avatarState.agentAddress.Serialize(),
-                [(Text)LegacyQuestListKey] = avatarState.questList.Serialize(),
+                [(Text)LegacyQuestListKey] = avatarState.questList.SerializeDictionary(),
                 [(Text)LegacyMailBoxKey] = avatarState.mailBox.Serialize(),
                 [(Text)LegacyBlockIndexKey] = (Integer)avatarState.blockIndex,
                 [(Text)LegacyDailyRewardReceivedIndexKey] = (Integer)avatarState.dailyRewardReceivedIndex,

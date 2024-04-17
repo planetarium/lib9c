@@ -38,6 +38,11 @@ namespace Nekoyume.Model.Quest
             _serializedType = (Integer) serialized["type"];
         }
 
+        public GoldQuest(List serialized) : base(serialized)
+        {
+            _serializedType = (Integer) serialized[7];
+        }
+
         public override QuestType QuestType => QuestType.Exchange;
 
         public override void Check()
@@ -76,5 +81,9 @@ namespace Nekoyume.Model.Quest
         public override IValue Serialize() =>
             ((Dictionary) base.Serialize())
             .Add("type", _serializedType ?? (int) Type);
+
+        public override IValue SerializeList() =>
+            ((List) base.SerializeList())
+            .Add(_serializedType ?? (int) Type);
     }
 }
