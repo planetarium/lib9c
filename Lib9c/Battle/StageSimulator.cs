@@ -70,10 +70,6 @@ namespace Nekoyume.Battle
             var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
                 runeStates, simulatorSheets.RuneListSheet, simulatorSheets.RuneLevelBonusSheet
             );
-            Player.ConfigureStats(costumeStatSheet, runeStates, runeOptionSheet, runeLevelBonus,
-                skillSheet, collectionModifiers);
-
-            // call SetRuneSkills last. because rune skills affect from total calculated stats
             var equippedRune = new List<RuneState>();
             foreach (var runeInfo in runeSlotState.GetEquippedRuneSlotInfos())
             {
@@ -82,6 +78,11 @@ namespace Nekoyume.Battle
                     equippedRune.Add(runeState);
                 }
             }
+
+            Player.ConfigureStats(costumeStatSheet, equippedRune, runeOptionSheet, runeLevelBonus,
+                skillSheet, collectionModifiers);
+
+            // call SetRuneSkills last. because rune skills affect from total calculated stats
             Player.SetRuneSkills(equippedRune, runeOptionSheet, skillSheet);
 
             _waves = new List<Wave>();

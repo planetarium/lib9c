@@ -565,9 +565,9 @@ namespace Nekoyume.Model
         /// <param name="runes">The AllRuneState for the player character.</param>
         /// <param name="runeOptionSheet">The rune option sheet that contains information about rune options.</param>
         /// <param name="runeLevelBonus">The rune level bonus value from RuneLevelBonusSheet. This enhances equipped rune stats.</param>
-        public void SetRuneStats(AllRuneState runes, RuneOptionSheet runeOptionSheet, int runeLevelBonus)
+        public void SetRuneStats(List<RuneState> runes, RuneOptionSheet runeOptionSheet, int runeLevelBonus)
         {
-            foreach (var rune in runes.Runes.Values)
+            foreach (var rune in runes)
             {
                 if (!runeOptionSheet.TryGetOptionInfo(rune.RuneId, rune.Level, out var optionInfo))
                 {
@@ -635,7 +635,7 @@ namespace Nekoyume.Model
 
         public void ConfigureStats(
             CostumeStatSheet costumeStatSheet,
-            AllRuneState runeStates, RuneOptionSheet runeOptionSheet, int RuneLevelBonus,
+            List<RuneState> runeStates, RuneOptionSheet runeOptionSheet, int runeLevelBonus,
             SkillSheet skillSheet,
             List<StatModifier> collectionModifiers
         )
@@ -643,7 +643,7 @@ namespace Nekoyume.Model
             SetCostumeStat(costumeStatSheet);
             if (runeStates != null)
             {
-                SetRuneStats(runeStates, runeOptionSheet, RuneLevelBonus);
+                SetRuneStats(runeStates, runeOptionSheet, runeLevelBonus);
             }
 
             SetCollections(collectionModifiers);
