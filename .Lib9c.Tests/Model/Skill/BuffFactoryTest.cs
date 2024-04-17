@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Model.Skill
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Buff;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
@@ -43,7 +44,8 @@ namespace Lib9c.Tests.Model.Skill
                 _avatarState,
                 new List<Costume>(),
                 new List<Equipment>(),
-                new List<RuneState>()
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Arena)
             );
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
             var challenger = new ArenaCharacter(

@@ -39,7 +39,8 @@ namespace Nekoyume.Helper
         )
         {
             var row = sheet.Values.First(r => r.Rank == rank && r.BossId == bossId);
-            var rewardRow = rewardSheet.OrderedRows.First(r => r.Rank == rank && r.BossId == bossId);
+            var rewardRow =
+                rewardSheet.OrderedRows.First(r => r.Rank == rank && r.BossId == bossId);
             if (rewardRow is WorldBossKillRewardSheet.Row kr)
             {
                 kr.SetRune(random);
@@ -131,14 +132,21 @@ namespace Nekoyume.Helper
         public static int CalculateRuneLevelBonus(AllRuneState allRuneState,
             RuneListSheet runeListSheet, RuneLevelBonusSheet runeLevelBonusSheet)
         {
-            var bonusLevel = (from rune in allRuneState.Runes.Values
-                let runeRow = runeListSheet.Values.FirstOrDefault(row => row.Id == rune.RuneId)
-                where runeRow is not null
-                select runeRow.BonusCoef * rune.Level).Sum();
+            var bonusLevel = 0;
+            foreach (var rune in allRuneState.Runes.Values)
+            {
+                var runeRow = runeListSheet.Values.FirstOrDefault(row => row.Id == rune.RuneId);
+                if (runeRow is not null)
+                {
+                    bonusLevel += runeRow.BonusCoef * rune.Level;
+                }
+            }
+
+            bonusLevel /= 10000;
 
             var bonusRow = runeLevelBonusSheet.Values.OrderByDescending(row => row.RuneLevel)
                 .FirstOrDefault(row => row.RuneLevel <= bonusLevel);
-            return bonusRow?.Bonus ?? 0;
+            return bonusRow?.Bonus * bonusLevel ?? 0;
         }
     }
 }

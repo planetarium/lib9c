@@ -164,6 +164,7 @@ namespace Nekoyume.Action
                 typeof(CostumeStatSheet),
                 typeof(MaterialItemSheet),
                 typeof(RuneListSheet),
+                typeof(RuneLevelBonusSheet),
                 typeof(DeBuffLimitSheet),
             };
             if (collectionExist)
@@ -328,13 +329,10 @@ namespace Nekoyume.Action
                 EventDungeonStageId.ToEventDungeonStageNumber(),
                 PlayCount);
             var simulatorSheets = sheets.GetSimulatorSheets();
-            var runeStates = new List<RuneState>();
-            foreach (var address in RuneInfos.Select(info => RuneState.DeriveAddress(AvatarAddress, info.RuneId)))
+            var runeStates = states.GetRuneState(AvatarAddress, out var migrateRequired);
+            if (migrateRequired)
             {
-                if (states.TryGetLegacyState(address, out List rawRuneState))
-                {
-                    runeStates.Add(new RuneState(rawRuneState));
-                }
+                states = states.SetRuneState(AvatarAddress, runeStates);
             }
 
             var random = context.GetRandom();
@@ -351,6 +349,7 @@ namespace Nekoyume.Action
                 avatarState,
                 Foods,
                 runeStates,
+                runeSlotState,
                 new List<Skill>(),
                 EventDungeonId,
                 EventDungeonStageId,

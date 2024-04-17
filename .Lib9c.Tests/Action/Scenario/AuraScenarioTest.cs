@@ -242,7 +242,8 @@ namespace Lib9c.Tests.Action.Scenario
                     avatarState,
                     battle.equipments,
                     battle.costumes,
-                    new List<RuneState>()
+                    new AllRuneState(),
+                    new RuneSlotState(BattleType.Arena)
                 );
                 var enemySlotAddress =
                     ItemSlotState.DeriveAddress(enemyAvatarAddress, BattleType.Arena);
@@ -251,7 +252,8 @@ namespace Lib9c.Tests.Action.Scenario
                     enemyAvatarState,
                     enemySlotState.Equipments,
                     enemySlotState.Costumes,
-                    new List<RuneState>()
+                    new AllRuneState(),
+                    new RuneSlotState(BattleType.Arena)
                 );
                 var log = simulator.Simulate(
                     myArenaPlayerDigest,

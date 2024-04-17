@@ -550,11 +550,12 @@ namespace Lib9c.DevExtensions.Tests.Action
                 Assert.Contains(inventoryCostumes, e => e.Id == costumeId);
             }
 
+            var allRuneState = nextStates.GetRuneState(avatarAddr.Value, out _);
             foreach (var (runeId, runeLevel) in action.Runes)
             {
-                var runeList = (List)nextStates.GetLegacyState(
-                    RuneState.DeriveAddress(avatarAddr.Value, runeId))!;
-                Assert.Equal(runeLevel, runeList[1].ToInteger());
+                var runeState = allRuneState.GetRuneState(runeId);
+                Assert.NotNull(runeState);
+                Assert.Equal(runeLevel, runeState.Level);
             }
 
             var crystalRandomSkillAddr =

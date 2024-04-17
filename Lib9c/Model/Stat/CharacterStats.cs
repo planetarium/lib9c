@@ -585,15 +585,16 @@ namespace Nekoyume.Model.Stat
             SetCostume(statModifiers);
         }
 
-        public void AddRuneStat(RuneOptionSheet.Row.RuneOptionInfo optionInfo)
+        public void AddRuneStat(RuneOptionSheet.Row.RuneOptionInfo optionInfo, int runeLevelBonus)
         {
             var statModifiers = new List<StatModifier>();
             statModifiers.AddRange(
-                optionInfo.Stats.Select(x =>
-                    new StatModifier(
-                        x.stat.StatType,
-                        x.operationType,
-                        x.stat.BaseValueAsLong)));
+                optionInfo.Stats.Select(x => new StatModifier(
+                    x.stat.StatType,
+                    x.operationType,
+                    (long)(x.stat.BaseValue * (10000 + runeLevelBonus) / 10000m)
+                ))
+            );
             AddRune(statModifiers);
         }
 
@@ -601,13 +602,16 @@ namespace Nekoyume.Model.Stat
             IReadOnlyCollection<Equipment> equipments,
             IReadOnlyCollection<Costume> costumes,
             IReadOnlyCollection<RuneOptionSheet.Row.RuneOptionInfo> runeOptions,
-            CostumeStatSheet costumeStatSheet, List<StatModifier> collectionStatModifiers)
+            CostumeStatSheet costumeStatSheet,
+            List<StatModifier> collectionStatModifiers,
+            int runeLevelBonus
+        )
         {
             SetEquipments(equipments, new EquipmentItemSetEffectSheet());
             SetCostumeStat(costumes, costumeStatSheet);
             foreach (var runeOption in runeOptions)
             {
-                AddRuneStat(runeOption);
+                AddRuneStat(runeOption, runeLevelBonus);
             }
 
             SetCollections(collectionStatModifiers);

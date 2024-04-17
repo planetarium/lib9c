@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
     using Nekoyume.Battle;
     using Nekoyume.Model;
     using Nekoyume.Model.Buff;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
@@ -50,7 +51,8 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 random,
                 avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -114,7 +116,8 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 new TestRandom(seed),
                 avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -162,7 +165,8 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 new TestRandom(seed),
                 avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,

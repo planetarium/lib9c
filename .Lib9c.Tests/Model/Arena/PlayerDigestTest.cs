@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Model.Arena
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
     using Nekoyume.Model;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
@@ -95,14 +96,25 @@ namespace Lib9c.Tests.Model.Arena
             Assert.Equal(serialized, deserialized.Serialize());
         }
 
-        [Fact]
-        public void Serialize()
+        [Theory]
+        [InlineData(new int[] { })]
+        [InlineData(new[] { 10001 })]
+        [InlineData(new[] { 10001, 10002 })]
+        public void SerializeWithRune(int[] runeIds)
         {
+            var runes = new AllRuneState();
+            foreach (var runeId in runeIds)
+            {
+                runes.AddRuneState(runeId);
+            }
+
             var digest = new ArenaPlayerDigest(
                 _avatarState,
                 _arenaAvatarState.Equipments,
                 _arenaAvatarState.Costumes,
-                new List<RuneState>());
+                runes,
+                new RuneSlotState(BattleType.Arena)
+            );
             var serialized = digest.Serialize();
             var deserialized = new ArenaPlayerDigest((List)serialized);
 

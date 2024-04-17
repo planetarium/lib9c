@@ -21,6 +21,7 @@ using Nekoyume.Model.Coupons;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Rune;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
@@ -719,7 +720,9 @@ namespace Nekoyume.Module
                 GetSheet<StageSheet>(worldState),
                 GetSheet<StageWaveSheet>(worldState),
                 GetSheet<EnemySkillSheet>(worldState),
-                GetSheet<RuneOptionSheet>(worldState)
+                GetSheet<RuneOptionSheet>(worldState),
+                GetSheet<RuneListSheet>(worldState),
+                GetSheet<RuneLevelBonusSheet>(worldState)
             );
         }
 
@@ -752,7 +755,9 @@ namespace Nekoyume.Module
                 GetSheet<CharacterLevelSheet>(worldState),
                 GetSheet<EquipmentItemSetEffectSheet>(worldState),
                 GetSheet<WeeklyArenaRewardSheet>(worldState),
-                GetSheet<RuneOptionSheet>(worldState)
+                GetSheet<RuneOptionSheet>(worldState),
+                GetSheet<RuneListSheet>(worldState),
+                GetSheet<RuneLevelBonusSheet>(worldState)
             );
         }
 

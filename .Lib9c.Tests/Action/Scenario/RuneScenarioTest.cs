@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Action;
     using Nekoyume.Helper;
     using Nekoyume.Model.EnumType;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
@@ -58,7 +59,7 @@ namespace Lib9c.Tests.Action.Scenario
             var rune = RuneHelper.ToCurrency(runeRow);
             initialState = initialState.MintAsset(context, avatarAddress, rune * 1);
 
-            var allRuneState = initialState.GetRuneState(avatarAddress);
+            var allRuneState = initialState.GetRuneState(avatarAddress, out _);
             Assert.False(allRuneState.TryGetRuneState(runeId, out var rs));
             Assert.Null(rs);
 
@@ -82,7 +83,8 @@ namespace Lib9c.Tests.Action.Scenario
                 Signer = agentAddress,
             });
 
-            allRuneState = Assert.IsType<AllRuneState>(prevState.GetRuneState(avatarAddress));
+            allRuneState =
+                Assert.IsType<AllRuneState>(prevState.GetRuneState(avatarAddress, out _));
             var runeState = allRuneState.GetRuneState(runeId);
 
             Assert.Equal(1, runeState.Level);
@@ -139,6 +141,83 @@ namespace Lib9c.Tests.Action.Scenario
 
             Assert.Equal(runeId, runeSlotInfo.RuneId);
             Assert.Equal(6, runeSlotInfo.SlotIndex);
+        }
+
+        [Fact]
+        public void MigrateToRuneStateModule()
+        {
+            var agentAddress = new PrivateKey().Address;
+            var agentState = new AgentState(agentAddress);
+            var avatarAddress = new PrivateKey().Address;
+            var rankingMapAddress = avatarAddress.Derive("ranking_map");
+            var sheets = TableSheetsImporter.ImportSheets();
+            var tableSheets = new TableSheets(sheets);
+            agentState.avatarAddresses.Add(0, avatarAddress);
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var avatarState = new AvatarState(
+                avatarAddress,
+                agentAddress,
+                0,
+                tableSheets.GetAvatarSheets(),
+                rankingMapAddress
+            );
+
+            var context = new ActionContext();
+            IWorld initialState = new World(MockUtil.MockModernWorldState)
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState)
+                .SetLegacyState(
+                    Addresses.GoldCurrency,
+                    new GoldCurrencyState(Currency.Legacy("NCG", 2, minters: null)).Serialize())
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
+                .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
+            foreach (var (key, value) in sheets)
+            {
+                initialState = initialState
+                    .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var testRuneId = 30001;
+            var testRuneLevel = new Random().Next(1, 100);
+            var runeState = new RuneState(testRuneId);
+            runeState.LevelUp(testRuneLevel);
+            initialState = initialState.SetLegacyState(
+                RuneState.DeriveAddress(avatarAddress, testRuneId), runeState.Serialize()
+            );
+
+            var costumes = new List<Guid>();
+            var equipments = Doomfist.GetAllParts(tableSheets, avatarState.level);
+            foreach (var equipment in equipments)
+            {
+                var iLock = equipment.ItemSubType == ItemSubType.Weapon
+                    ? new OrderLock(Guid.NewGuid())
+                    : (ILock)null;
+                avatarState.inventory.AddItem(equipment, iLock: iLock);
+            }
+
+            var action = new HackAndSlash
+            {
+                Costumes = costumes,
+                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                WorldId = 1,
+                StageId = 1,
+                AvatarAddress = avatarAddress,
+            };
+            var state = action.Execute(new ActionContext
+            {
+                PreviousState = initialState,
+                Signer = agentAddress,
+                RandomSeed = 0,
+                BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+            });
+            var runeStates = state.GetRuneState(avatarAddress, out var migrateRequired);
+            Assert.False(migrateRequired);
+            var runeStateExist = runeStates.TryGetRuneState(testRuneId, out var nextRuneState);
+            Assert.True(runeStateExist);
+            Assert.Equal(testRuneId, nextRuneState.RuneId);
+            Assert.Equal(testRuneLevel, nextRuneState.Level);
         }
     }
 }
