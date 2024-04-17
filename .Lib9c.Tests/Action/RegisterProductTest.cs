@@ -192,6 +192,34 @@ namespace Lib9c.Tests.Action
                     },
                     Exc = typeof(InvalidCurrencyException),
                 },
+                new ValidateMember
+                {
+                    RegisterInfos = new IRegisterInfo[]
+                    {
+                        new AssetInfo
+                        {
+                            AvatarAddress = AvatarAddress,
+                            Price = 1 * Gold,
+                            Type = ProductType.FungibleAssetValue,
+                            Asset = 1 * Currencies.FreyaBlessingRune,
+                        },
+                    },
+                    Exc = typeof(InvalidCurrencyException),
+                },
+                new ValidateMember
+                {
+                    RegisterInfos = new IRegisterInfo[]
+                    {
+                        new AssetInfo
+                        {
+                            AvatarAddress = AvatarAddress,
+                            Price = 1 * Gold,
+                            Type = ProductType.FungibleAssetValue,
+                            Asset = 1 * Currencies.FreyaLiberationRune,
+                        },
+                    },
+                    Exc = typeof(InvalidCurrencyException),
+                },
             };
         }
 

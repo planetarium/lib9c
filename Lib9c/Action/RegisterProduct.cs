@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -23,6 +24,13 @@ namespace Nekoyume.Action
     [ActionType("register_product3")]
     public class RegisterProduct : GameAction
     {
+        public static readonly IReadOnlyCollection<Currency> NonTradableTickerCurrencies = new List<Currency>
+        {
+            Currencies.FreyaBlessingRune,
+            Currencies.FreyaLiberationRune,
+            Currencies.Crystal,
+        };
+
         public const int CostAp = 5;
         public const int Capacity = 100;
         public Address AvatarAddress;
