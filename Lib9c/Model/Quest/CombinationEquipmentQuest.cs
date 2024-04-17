@@ -14,7 +14,13 @@ namespace Nekoyume.Model.Quest
             {
                 if (_serializedRecipeId is { })
                 {
-                    _recipeId = _serializedRecipeId.ToInteger();
+                    _recipeId = _serializedRecipeId switch
+                    {
+                        Integer i => i,
+                        Text t => t.ToInteger(),
+                        _ => throw new ArgumentOutOfRangeException(),
+                    };
+
                     _serializedRecipeId = null;
                 }
 
@@ -27,7 +33,13 @@ namespace Nekoyume.Model.Quest
             {
                 if (_serializedStageId is { })
                 {
-                    _stageId = _serializedStageId.ToInteger();
+                    _stageId = _serializedStageId switch
+                    {
+                        Integer i => i,
+                        Text t => t.ToInteger(),
+                        _ => throw new ArgumentOutOfRangeException(),
+                    };
+
                     _serializedStageId = null;
                 }
 
@@ -50,6 +62,12 @@ namespace Nekoyume.Model.Quest
         {
             _serializedStageId = serialized["stage_id"];
             _serializedRecipeId = serialized["recipe_id"];
+        }
+
+        public CombinationEquipmentQuest(List serialized) : base(serialized)
+        {
+            _serializedStageId = serialized[7];
+            _serializedRecipeId = serialized[8];
         }
 
         //임시처리. 새 타입을 만들어서 위젯에 띄워줘야합니다.
@@ -87,6 +105,13 @@ namespace Nekoyume.Model.Quest
             return ((Dictionary) base.Serialize())
                 .Add("recipe_id", _serializedRecipeId ?? RecipeId.Serialize())
                 .Add("stage_id", _serializedStageId ?? StageId.Serialize());
+        }
+
+        public override IValue SerializeList()
+        {
+            return ((List) base.SerializeList())
+                .Add(_serializedRecipeId ?? (Integer)RecipeId)
+                .Add(_serializedStageId ?? (Integer)StageId);
         }
     }
 }

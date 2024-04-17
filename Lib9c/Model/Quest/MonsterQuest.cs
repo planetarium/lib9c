@@ -21,6 +21,11 @@ namespace Nekoyume.Model.Quest
             MonsterId = (int)((Integer)serialized["monsterId"]).Value;
         }
 
+        public MonsterQuest(List serialized) : base(serialized)
+        {
+            MonsterId = (Integer)serialized[7];
+        }
+
         public override QuestType QuestType => QuestType.Adventure;
 
         public override void Check()
@@ -54,5 +59,7 @@ namespace Nekoyume.Model.Quest
         public override IValue Serialize() =>
             ((Dictionary) base.Serialize())
             .Add("monsterId", MonsterId);
+
+        public override IValue SerializeList() => ((List) base.SerializeList()).Add(MonsterId);
     }
 }

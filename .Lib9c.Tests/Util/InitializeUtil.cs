@@ -76,7 +76,7 @@ namespace Lib9c.Tests.Util
                     avatarState.worldInformation.Serialize())
                 .SetLegacyState(
                     avatarAddr.Derive(SerializeKeys.LegacyQuestListKey),
-                    avatarState.questList.Serialize());
+                    avatarState.questList.SerializeDictionary());
 
             return (
                 tableSheets,

@@ -57,6 +57,12 @@ namespace Nekoyume.Model.Quest
             _serializedCount = (Integer) serialized["count"];
         }
 
+        public ItemEnhancementQuest(List serialized) : base(serialized)
+        {
+            _serializedGrade = (Integer) serialized[7];
+            _serializedCount = (Integer) serialized[8];
+        }
+
         public override QuestType QuestType => QuestType.Craft;
 
         public override void Check()
@@ -94,5 +100,10 @@ namespace Nekoyume.Model.Quest
             ((Dictionary) base.Serialize())
             .Add("grade", _serializedGrade ?? Grade)
             .Add("count", _serializedCount ?? Count);
+
+        public override IValue SerializeList() =>
+            ((List) base.SerializeList())
+            .Add(_serializedGrade ?? Grade)
+            .Add(_serializedCount ?? Count);
     }
 }

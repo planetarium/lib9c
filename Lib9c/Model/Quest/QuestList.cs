@@ -131,9 +131,17 @@ namespace Nekoyume.Model.Quest
             }
         }
 
+        public QuestList(List serialized)
+        {
+            _listVersion = (Integer) serialized[0];
+            _quests = serialized[1].ToList(Quest.Deserialize);
+            var list = (List)serialized[2];
+            completedQuestIds = list.Select(i => (int)(Integer)i).ToList();
+        }
+
         public object Clone()
         {
-            return new QuestList((Dictionary)Serialize());
+            return new QuestList((List)SerializeList());
         }
 
         public void UpdateList(
@@ -324,7 +332,8 @@ namespace Nekoyume.Model.Quest
             }
         }
 
-        public IValue Serialize()
+        [Obsolete("Dictionary type is obsolete.")]
+        public IValue SerializeDictionary()
         {
             if (_listVersion > 1)
             {
@@ -347,6 +356,14 @@ namespace Nekoyume.Model.Quest
                     .OrderBy(i => i)
                     .Select(i => i.Serialize()))
             });
+        }
+
+        public IValue SerializeList()
+        {
+            return List.Empty
+                .Add(_listVersion)
+                .Add(new List(_quests.OrderBy(i => i.Id).Select(q => q.SerializeList())))
+                .Add(new List(completedQuestIds.OrderBy(i => i)));
         }
 
         public void UpdateCombinationEquipmentQuest(int recipeId)
@@ -442,5 +459,7 @@ namespace Nekoyume.Model.Quest
 
             return quest;
         }
+
+        public IValue Serialize() => SerializeList();
     }
 }

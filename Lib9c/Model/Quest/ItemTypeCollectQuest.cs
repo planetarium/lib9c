@@ -27,6 +27,12 @@ namespace Nekoyume.Model.Quest
             ItemType = serialized["itemType"].ToEnum<ItemType>();
         }
 
+        public ItemTypeCollectQuest(List serialized) : base(serialized)
+        {
+            ItemIds = serialized[7].ToList(i => (int)(Integer)i);
+            ItemType = serialized[8].ToEnum<ItemType>();
+        }
+
         public void Update(ItemBase item)
         {
             if (Complete)
@@ -68,5 +74,9 @@ namespace Nekoyume.Model.Quest
             .Add("itemType", ItemType.Serialize())
             .Add("itemIds", new List(ItemIds.OrderBy(i => i).Select(i => i.Serialize())));
 
+        public override IValue SerializeList() =>
+            ((List) base.SerializeList())
+            .Add(new List(ItemIds.OrderBy(i => i)))
+            .Add(ItemType.Serialize());
     }
 }
