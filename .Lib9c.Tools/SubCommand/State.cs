@@ -115,8 +115,11 @@ namespace Lib9c.Tools.SubCommand
                 var actionLoader = TypedActionLoader.Create(
                     typeof(ActionBase).Assembly, typeof(ActionBase));
                 var actionEvaluator = new ActionEvaluator(
-                    _ => policy.BeginBlockActions,
-                    _ => policy.EndBlockActions,
+                    new PolicyActionsRegistry(
+                        _ => policy.BeginBlockActions,
+                        _ => policy.EndBlockActions,
+                        _ => policy.BeginTxActions,
+                        _ => policy.EndTxActions),
                     stateStore,
                     actionLoader);
 
