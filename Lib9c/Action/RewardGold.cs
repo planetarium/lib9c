@@ -307,12 +307,12 @@ namespace Nekoyume.Action
 
         public static IWorld TransferMead(IActionContext context, IWorld states)
         {
-            var targetAddresses = context.Txs is { } txs
-                ? txs
-                    .Where(tx => tx.MaxGasPrice is { } price && price.Currency.Equals(Currencies.Mead))
-                    .Select(tx => tx.Signer)
-                    .Distinct()
-                : throw new NullReferenceException();
+#pragma warning disable LAA1002
+            var targetAddresses = states.TotalUpdatedFungibleAssets
+#pragma warning restore LAA1002
+                .Where(pair => pair.Item2.Equals(Currencies.Mead))
+                .Select(pair => pair.Item1)
+                .Distinct();
             foreach (var address in targetAddresses)
             {
                 var contractAddress = address.GetPledgeAddress();

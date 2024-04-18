@@ -69,7 +69,8 @@ namespace Nekoyume.Module
                     context,
                     accounts[i - 1],
                     accounts[i],
-                    currency * 1);
+                    currency * 1,
+                    true);
             }
 
             return world;
