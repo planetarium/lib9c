@@ -1,3 +1,4 @@
+using System.Linq;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
@@ -59,9 +60,9 @@ namespace Nekoyume.Action
                 throw new InvalidProductTypeException($"register asset does not support {Type}");
             }
 
-            if (Asset.Currency.Equals(CrystalCalculator.CRYSTAL))
+            if (RegisterProduct.NonTradableTickerCurrencies.Contains(Asset.Currency))
             {
-                throw new InvalidCurrencyException($"{CrystalCalculator.CRYSTAL} does not allow register.");
+                throw new InvalidCurrencyException($"{Asset.Currency} does not allow register.");
             }
 
             if (Asset < Asset.Currency * 1)
