@@ -5,7 +5,6 @@ using Libplanet.Blockchain.Policies;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
 using Nekoyume.Action;
-using Nekoyume.Action.DPoS.Sys;
 
 namespace Nekoyume.Blockchain.Policy
 {
@@ -20,6 +19,12 @@ namespace Nekoyume.Blockchain.Policy
 
         public ImmutableArray<IAction> EndBlockActions { get; } =
             new IAction[] { new RewardGold() }.ToImmutableArray();
+
+        public ImmutableArray<IAction> BeginTxActions { get; } =
+            new IAction[] { }.ToImmutableArray();
+
+        public ImmutableArray<IAction> EndTxActions { get; } =
+            new IAction[] { }.ToImmutableArray();
 
         public TxPolicyViolationException ValidateNextBlockTx(
             BlockChain blockChain, Transaction transaction)

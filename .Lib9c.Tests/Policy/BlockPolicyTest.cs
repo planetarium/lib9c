@@ -67,8 +67,11 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    policyBeginBlockActionsGetter: _ => policy.BeginBlockActions,
-                    policyEndBlockActionsGetter: _ => policy.EndBlockActions,
+                    new PolicyActionsRegistry(
+                        beginBlockActionsGetter: _ => policy.BeginBlockActions,
+                        endBlockActionsGetter: _ => policy.EndBlockActions,
+                        beginTxActionsGetter: _ => policy.BeginTxActions,
+                        endTxActionsGetter: _ => policy.EndTxActions),
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),
@@ -276,8 +279,11 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    policyBeginBlockActionsGetter: _ => policy.BeginBlockActions,
-                    policyEndBlockActionsGetter: _ => policy.EndBlockActions,
+                    new PolicyActionsRegistry(
+                        beginBlockActionsGetter: _ => policy.BeginBlockActions,
+                        endBlockActionsGetter: _ => policy.EndBlockActions,
+                        beginTxActionsGetter: _ => policy.BeginTxActions,
+                        endTxActionsGetter: _ => policy.EndTxActions),
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),
@@ -331,8 +337,11 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    policyBeginBlockActionsGetter: _ => policy.BeginBlockActions,
-                    policyEndBlockActionsGetter: _ => policy.EndBlockActions,
+                    new PolicyActionsRegistry(
+                        beginBlockActionsGetter: _ => policy.BeginBlockActions,
+                        endBlockActionsGetter: _ => policy.EndBlockActions,
+                        beginTxActionsGetter: _ => policy.BeginTxActions,
+                        endTxActionsGetter: _ => policy.EndTxActions),
                     stateStore: stateStore,
                     actionTypeLoader: actionLoader
                 ),
@@ -385,8 +394,11 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    policyBeginBlockActionsGetter: _ => policy.BeginBlockActions,
-                    policyEndBlockActionsGetter: _ => policy.EndBlockActions,
+                    new PolicyActionsRegistry(
+                        beginBlockActionsGetter: _ => policy.BeginBlockActions,
+                        endBlockActionsGetter: _ => policy.EndBlockActions,
+                        beginTxActionsGetter: _ => policy.BeginTxActions,
+                        endTxActionsGetter: _ => policy.EndTxActions),
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),
@@ -431,8 +443,11 @@ namespace Lib9c.Tests
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
             var actionEvaluator = new ActionEvaluator(
-                policyBeginBlockActionsGetter: _ => policy.BeginBlockActions,
-                policyEndBlockActionsGetter: _ => policy.EndBlockActions,
+                new PolicyActionsRegistry(
+                    beginBlockActionsGetter: _ => policy.BeginBlockActions,
+                    endBlockActionsGetter: _ => policy.EndBlockActions,
+                    beginTxActionsGetter: _ => policy.BeginTxActions,
+                    endTxActionsGetter: _ => policy.EndTxActions),
                 stateStore: stateStore,
                 actionTypeLoader: new NCActionLoader()
             );
@@ -534,8 +549,11 @@ namespace Lib9c.Tests
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
             var actionEvaluator = new ActionEvaluator(
-                policyBeginBlockActionsGetter: _ => policy.BeginBlockActions,
-                policyEndBlockActionsGetter: _ => policy.EndBlockActions,
+                new PolicyActionsRegistry(
+                    beginBlockActionsGetter: _ => policy.BeginBlockActions,
+                    endBlockActionsGetter: _ => policy.EndBlockActions,
+                    beginTxActionsGetter: _ => policy.BeginTxActions,
+                    endTxActionsGetter: _ => policy.EndTxActions),
                 stateStore: stateStore,
                 actionTypeLoader: new NCActionLoader()
             );
@@ -634,6 +652,7 @@ namespace Lib9c.Tests
                         block.Hash,
                         DateTimeOffset.UtcNow,
                         privateKey.PublicKey,
+                        BigInteger.One,
                         VoteFlag.PreCommit).Sign(privateKey)))
                 : null;
         }
