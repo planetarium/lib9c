@@ -83,7 +83,9 @@ namespace Nekoyume.Action
             ValidatorSet validatorSet = previousState.GetValidatorSet();
 
             Func<ValidatorSet, Validator, Validator> func = Operator.ToFunc();
-            return previousState.SetValidator(func(validatorSet, Operand));
+            return previousState.SetValidatorSet(previousState
+                .GetValidatorSet()
+                .Update(func(validatorSet, Operand)));
         }
 
         public override IValue PlainValue =>
