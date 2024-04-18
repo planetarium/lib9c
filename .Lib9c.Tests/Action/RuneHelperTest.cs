@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using Libplanet.Types.Assets;
     using Nekoyume.Helper;
+    using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -11,21 +12,23 @@ namespace Lib9c.Tests.Action
     {
         private readonly Currency _crystalCurrency = CrystalCalculator.CRYSTAL;
 
+        private readonly TableSheets _tableSheets =
+            new TableSheets(TableSheetsImporter.ImportSheets());
+
         [Theory]
         [InlineData(typeof(WorldBossRankRewardSheet))]
         [InlineData(typeof(WorldBossKillRewardSheet))]
         public void CalculateReward(Type sheetType)
         {
-            var tableSheet = new TableSheets(TableSheetsImporter.ImportSheets());
             var random = new TestRandom();
             IWorldBossRewardSheet sheet;
             if (sheetType == typeof(WorldBossRankRewardSheet))
             {
-                sheet = tableSheet.WorldBossRankRewardSheet;
+                sheet = _tableSheets.WorldBossRankRewardSheet;
             }
             else
             {
-                sheet = tableSheet.WorldBossKillRewardSheet;
+                sheet = _tableSheets.WorldBossKillRewardSheet;
             }
 
             foreach (var rewardRow in sheet.OrderedRows)
@@ -35,9 +38,9 @@ namespace Lib9c.Tests.Action
                 var fungibleAssetValues = RuneHelper.CalculateReward(
                     rank,
                     bossId,
-                    tableSheet.RuneWeightSheet,
+                    _tableSheets.RuneWeightSheet,
                     sheet,
-                    tableSheet.RuneSheet,
+                    _tableSheets.RuneSheet,
                     random
                 );
                 var expectedRune = rewardRow.Rune;
@@ -62,6 +65,22 @@ namespace Lib9c.Tests.Action
         {
             var ncgCurrency = Currency.Legacy("NCG", 2, null);
             Assert.Equal(expected * RuneHelper.StakeRune, RuneHelper.CalculateStakeReward(amountGold * ncgCurrency, 6000));
+        }
+
+        [Theory]
+        [InlineData(0, 0)]
+        [InlineData(1, 30000)]
+        [InlineData(100, 34554)] // 1*30000 + 99*46
+        [InlineData(130200, 1043056)] // Max level
+        public void CalculateRuneLevelBonus(int runeLevel, int expectedBonus)
+        {
+            var runeStates = new AllRuneState(30001, runeLevel);
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates,
+                _tableSheets.RuneListSheet,
+                _tableSheets.RuneLevelBonusSheet
+            );
+            Assert.Equal(expectedBonus, runeLevelBonus);
         }
     }
 }
