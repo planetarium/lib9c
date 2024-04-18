@@ -2,6 +2,7 @@ namespace Lib9c.Tests.Action.DPoS
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -132,7 +133,8 @@ namespace Lib9c.Tests.Action.DPoS
                     BlockIndex = 1,
                 });
 
-            (_states, _) = ValidatorSetCtrl.FetchBondedValidatorSet(_states);
+            Nekoyume.Action.DPoS.Model.ValidatorSet validatorSet;
+            (_states, validatorSet) = ValidatorSetCtrl.FetchBondedValidatorSet(_states);
 
             List<Vote> votes = new List<Vote>()
             {
@@ -142,6 +144,11 @@ namespace Lib9c.Tests.Action.DPoS
                     default,
                     default,
                     OperatorPrivateKeys[3].PublicKey,
+#pragma warning disable SA1118
+                    validatorSet.Set
+                        .First(v => v.OperatorPublicKey.Equals(OperatorPrivateKeys[3].PublicKey))
+                        .ConsensusToken.RawValue,
+#pragma warning restore SA1118
                     VoteFlag.PreCommit).Sign(OperatorPrivateKeys[3]),
                 new VoteMetadata(
                     default,
@@ -149,6 +156,11 @@ namespace Lib9c.Tests.Action.DPoS
                     default,
                     default,
                     OperatorPrivateKeys[5].PublicKey,
+#pragma warning disable SA1118
+                    validatorSet.Set
+                        .First(v => v.OperatorPublicKey.Equals(OperatorPrivateKeys[5].PublicKey))
+                        .ConsensusToken.RawValue,
+#pragma warning restore SA1118
                     VoteFlag.PreCommit).Sign(OperatorPrivateKeys[5]),
             };
             FungibleAssetValue blockReward = Asset.ConsensusFromGovernance(50);

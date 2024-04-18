@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Numerics;
 using System.Threading;
 using Libplanet.Action;
 using Libplanet.Blockchain;
@@ -8,6 +9,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Tx;
+using Nekoyume.Module;
 using Serilog;
 
 namespace Nekoyume.Blockchain
@@ -33,20 +35,29 @@ namespace Nekoyume.Blockchain
                 block = _chain.ProposeBlock(
                     _privateKey,
                     lastCommit: lastCommit);
-                BlockCommit? commit = block.Index > 0
-                    ? new BlockCommit(
+                BlockCommit? commit = null;
+                if (block.Index > 0)
+                {
+                    var power = _chain.GetWorldState()
+                        .GetValidatorSet()
+                        .GetValidator(_privateKey.PublicKey)
+                        .Power;
+                    commit = new BlockCommit(
                         block.Index,
                         0,
                         block.Hash,
-                        ImmutableArray<Vote>.Empty
-                            .Add(new VoteMetadata(
+                        ImmutableArray<Vote>.Empty.Add(
+                            new VoteMetadata(
                                 block.Index,
                                 0,
                                 block.Hash,
                                 DateTimeOffset.UtcNow,
                                 _privateKey.PublicKey,
-                                VoteFlag.PreCommit).Sign(_privateKey)))
-                    : null;
+                                power,
+                                VoteFlag.PreCommit).Sign(_privateKey)));
+                }
+
+
                 _chain.Append(block, commit);
             }
             catch (OperationCanceledException)
