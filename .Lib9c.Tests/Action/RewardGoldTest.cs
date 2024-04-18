@@ -580,24 +580,10 @@ namespace Lib9c.Tests.Action
         [InlineData(1, 0)]
         public void TransferMead(int patronMead, int balance)
         {
-            var agentKey = new PrivateKey();
-            var agentAddress = agentKey.Address;
+            var agentAddress = new PrivateKey().Address;
             var patronAddress = new PrivateKey().Address;
             var contractAddress = agentAddress.GetPledgeAddress();
-            IActionContext context = new ActionContext()
-            {
-                Txs = ImmutableList.Create<ITransaction>(
-                    new Transaction(
-                        new UnsignedTx(
-                            new TxInvoice(
-                                null,
-                                DateTimeOffset.UtcNow,
-                                new TxActionList(new List<IValue>()),
-                                maxGasPrice: Currencies.Mead * 4,
-                                gasLimit: 4),
-                            new TxSigningMetadata(agentKey.PublicKey, 0)),
-                        agentKey)),
-            };
+            IActionContext context = new ActionContext();
             IWorld states = new World(MockUtil.MockModernWorldState)
                 .MintAsset(context, patronAddress, patronMead * Currencies.Mead)
                 .TransferAsset(context, patronAddress, agentAddress, 1 * Currencies.Mead)
