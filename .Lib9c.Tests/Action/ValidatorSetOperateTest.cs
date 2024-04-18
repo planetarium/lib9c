@@ -36,7 +36,7 @@ namespace Lib9c.Tests.Action
             {
                 _initialState = _initialState
                     .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize())
-                    .SetValidator(_validator);
+                    .SetValidatorSet(_initialState.GetValidatorSet().Update(_validator));
             }
         }
 

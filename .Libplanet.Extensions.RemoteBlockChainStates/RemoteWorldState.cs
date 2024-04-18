@@ -43,6 +43,7 @@ public class RemoteWorldState : IWorldState
 
         Trie = new HollowTrie(HashDigest<SHA256>.FromString(response.Data.StateQuery.WorldState.StateRootHash));
         Legacy = response.Data.StateQuery.WorldState.Legacy;
+        Version = response.Data.StateQuery.WorldState.Version;
     }
 
     public RemoteWorldState(Uri explorerEndpoint, HashDigest<SHA256>? offsetStateRootHash)
@@ -71,10 +72,14 @@ public class RemoteWorldState : IWorldState
 
         Trie = new HollowTrie(offsetStateRootHash);
         Legacy = response.Data.StateQuery.WorldState.Legacy;
+        Version = response.Data.StateQuery.WorldState.Version;
     }
+
     public ITrie Trie { get; }
 
     public bool Legacy { get; private set; }
+
+    public int Version { get; private set; }
 
     public IAccountState GetAccountState(Address address) =>
         new RemoteAccountState(_explorerEndpoint, address, Trie.Hash);
@@ -219,6 +224,8 @@ public class RemoteWorldState : IWorldState
         public string StateRootHash { get; set; }
 
         public bool Legacy { get; set; }
+
+        public int Version { get; set; }
     }
 
     private class GetBalanceResponseType
