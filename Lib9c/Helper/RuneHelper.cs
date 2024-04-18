@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lib9c;
@@ -142,11 +143,19 @@ namespace Nekoyume.Helper
                 }
             }
 
-            bonusLevel /= 10000;
+            var runeLevelBonus = 0;
+            var prevLevel = 0;
+            foreach (var row in runeLevelBonusSheet.Values.OrderBy(row => row.RuneLevel))
+            {
+                runeLevelBonus += (Math.Min(row.RuneLevel, bonusLevel) - prevLevel) * row.Bonus;
+                prevLevel = row.RuneLevel;
+                if (row.RuneLevel >= bonusLevel)
+                {
+                    break;
+                }
+            }
 
-            var bonusRow = runeLevelBonusSheet.Values.OrderByDescending(row => row.RuneLevel)
-                .FirstOrDefault(row => row.RuneLevel <= bonusLevel);
-            return bonusRow?.Bonus * bonusLevel ?? 0;
+            return runeLevelBonus;
         }
     }
 }
