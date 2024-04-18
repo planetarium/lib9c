@@ -20,8 +20,11 @@ namespace Lib9c.Plugin
         {
             var stateStore = new TrieStateStore(new WrappedKeyValueStore(keyValueStore));
             _actionEvaluator = new ActionEvaluator(
-                _ => new IAction[] { }.ToImmutableArray(),
-                _ => new IAction[] { new RewardGold() }.ToImmutableArray(),
+                new PolicyActionsRegistry(
+                    _ => new IAction[] { }.ToImmutableArray(),
+                    _ => new IAction[] { new RewardGold() }.ToImmutableArray(),
+                    _ => new IAction[] { }.ToImmutableArray(),
+                    _ => new IAction[] { }.ToImmutableArray()),
                 stateStore,
                 new NCActionLoader());
         }
