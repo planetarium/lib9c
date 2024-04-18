@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nekoyume.Battle;
+using Nekoyume.Model.Buff;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
@@ -104,10 +105,11 @@ namespace Nekoyume.Model.Skill
                         target.CurrentHP -= damage;
                     }
 
+                    var frostBite = target.Buffs.Values.Any(i => i is IceShield);
                     var clone = copyCharacter ? (CharacterBase) target.Clone() : null;
                     infos.Add(new BattleStatus.Skill.SkillInfo(target.Id, target.IsDead, target.Thorn, damage, isCritical,
                         SkillRow.SkillCategory, simulatorWaveTurn, SkillRow.ElementalType,
-                        SkillRow.SkillTargetType, target: clone));
+                        SkillRow.SkillTargetType, target: clone, frostBite: frostBite));
                 }
             }
 

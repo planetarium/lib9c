@@ -694,6 +694,14 @@ namespace Nekoyume.Model
                 }
             }
 
+            if (attackSkills.Exists(i => i.FrostBite))
+            {
+                var row = Simulator.StatBuffSheet[206001];
+                var frostBite = BuffFactory.GetStatBuff(row);
+                AddBuff(frostBite);
+                Simulator.Log.Add(new Tick((CharacterBase)Clone()));
+            }
+
             if (IsDead)
             {
                 Die();

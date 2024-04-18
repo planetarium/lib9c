@@ -24,6 +24,7 @@ namespace Nekoyume.Model.BattleStatus
             public readonly Guid CharacterId;
             public readonly IEnumerable<Nekoyume.Model.Buff.Buff>? DispelList;
             public readonly bool Affected;
+            public readonly bool FrostBite;
 
             public readonly Model.Buff.Buff? Buff;
 
@@ -33,7 +34,8 @@ namespace Nekoyume.Model.BattleStatus
                 SkillTargetType targetType = SkillTargetType.Enemy, Model.Buff.Buff? buff = null,
                 CharacterBase? target = null,
                 bool affected = true,
-                IEnumerable<Nekoyume.Model.Buff.Buff>? dispelList = null)
+                IEnumerable<Nekoyume.Model.Buff.Buff>? dispelList = null,
+                bool frostBite = false)
             {
                 CharacterId = characterId;
                 IsDead = isDead;
@@ -48,6 +50,7 @@ namespace Nekoyume.Model.BattleStatus
                 Target = target;
                 Affected = affected;
                 DispelList = dispelList;
+                FrostBite = frostBite;
             }
         }
 
