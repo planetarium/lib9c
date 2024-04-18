@@ -1,7 +1,6 @@
 namespace Lib9c.Tests.Action
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Security.Cryptography;
     using Libplanet.Action;
     using Libplanet.Action.State;
@@ -15,8 +14,6 @@ namespace Lib9c.Tests.Action
         private long _gasUsed;
 
         private IRandom _random = null;
-
-        private IReadOnlyList<ITransaction> _txs = null;
 
         public BlockHash? GenesisHash { get; set; }
 
@@ -40,11 +37,7 @@ namespace Lib9c.Tests.Action
 
         public bool BlockAction { get; }
 
-        public IReadOnlyList<ITransaction> Txs
-        {
-            get => _txs ?? ImmutableList<ITransaction>.Empty;
-            set => _txs = value;
-        }
+        public IReadOnlyList<ITransaction> Txs { get; set; }
 
         public void UseGas(long gas)
         {
