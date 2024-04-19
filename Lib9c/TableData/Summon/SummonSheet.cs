@@ -9,7 +9,7 @@ namespace Nekoyume.TableData.Summon
     {
         public class Row : SheetRow<int>
         {
-            public const int MaxRecipeCount = 15;
+            public const int MaxRecipeCount = 30;
             public override int Key => GroupId;
 
             public int GroupId { get; private set; }
@@ -26,10 +26,11 @@ namespace Nekoyume.TableData.Summon
 
             public int CumulativeRatio(int index)
             {
-                if (index is < 1 or > 15)
+                if (index is < 1 or > MaxRecipeCount)
                 {
                     throw new IndexOutOfRangeException(
-                        $"{index} is not valid index. Use between 1 and {MaxRecipeCount}.");
+                        $"{index} is not valid index. Use between 1 and {MaxRecipeCount}."
+                    );
                 }
 
                 var ratio = 0;
@@ -52,7 +53,7 @@ namespace Nekoyume.TableData.Summon
                 Recipes.Add((ParseInt(fields[4]), ParseInt(fields[5])));
                 Recipes.Add((ParseInt(fields[6]), ParseInt(fields[7])));
 
-                // Recipe3 ~ 15 are optional
+                // Recipe3 ~ 30 are optional
                 for (var i = 3; i <= MaxRecipeCount; i++)
                 {
                     var idx = 2 * i + 2;
