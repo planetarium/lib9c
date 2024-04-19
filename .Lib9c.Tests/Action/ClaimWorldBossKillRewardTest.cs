@@ -62,7 +62,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 rankingMapAddress);
 
             state = state

@@ -373,7 +373,12 @@ namespace Nekoyume.Module
                     $"Aborted as the questList state of the avatar ({address}) was failed to load.");
             }
 
-            return new QuestList((Dictionary)serializeQuestList);
+            return serializeQuestList switch
+            {
+                Dictionary d => new QuestList(d),
+                List l => new QuestList(l),
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         private static IWorld SetQuestList(this IWorld world, Address address, QuestList state)

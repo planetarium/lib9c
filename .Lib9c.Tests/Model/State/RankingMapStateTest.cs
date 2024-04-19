@@ -32,7 +32,6 @@ namespace Lib9c.Tests.Model.State
                     _agentAddress,
                     0,
                     _tableSheets.GetAvatarSheets(),
-                    new GameConfigState(),
                     _rankingMapAddress,
                     "test"
                 )
@@ -60,7 +59,6 @@ namespace Lib9c.Tests.Model.State
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 _rankingMapAddress,
                 "test"
             );
@@ -82,7 +80,6 @@ namespace Lib9c.Tests.Model.State
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 _rankingMapAddress,
                 "test"
             );
@@ -93,7 +90,6 @@ namespace Lib9c.Tests.Model.State
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 _rankingMapAddress,
                 "test2"
             );
@@ -119,7 +115,6 @@ namespace Lib9c.Tests.Model.State
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress,
                 "test"
             );

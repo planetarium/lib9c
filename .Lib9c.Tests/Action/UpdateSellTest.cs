@@ -66,7 +66,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(

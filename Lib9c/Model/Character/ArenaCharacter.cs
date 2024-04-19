@@ -5,6 +5,7 @@ using System.Linq;
 using BTAI;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
+using Nekoyume.Helper;
 using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.Buff;
 using Nekoyume.Model.Character;
@@ -154,19 +155,28 @@ namespace Nekoyume.Model
             _skills = GetSkills(digest.Equipments, sheets.SkillSheet);
             _attackCountMax = AttackCountHelper.GetCountMax(digest.Level);
 
-            var runes = digest.Runes;
+            var equippedRuneIds = digest.RuneSlotState.GetEquippedRuneSlotInfos().Select(
+                rs => rs.RuneId
+            ).ToList();
+            var equippedRunes = digest.Runes.Runes.Values.Where(
+                rs => equippedRuneIds.Contains(rs.RuneId)
+            ).ToList();
             var runeOptionSheet = sheets.RuneOptionSheet;
-            bool runeExist = runes != null;
+            var runeExist = equippedRunes.Any();
             if (runeExist)
             {
-                SetRuneStats(runes, runeOptionSheet);
+                var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(digest.Runes,
+                    sheets.RuneListSheet,
+                    sheets.RuneLevelBonusSheet);
+                SetRuneStats(equippedRunes, runeOptionSheet, runeLevelBonus);
             }
+
             Stats.SetCollections(collectionModifiers);
             ResetCurrentHP();
             if (runeExist)
             {
                 // call SetRuneSkills last. because rune skills affect from total calculated stats
-                SetRuneSkills(runes, runeOptionSheet, sheets.SkillSheet);
+                SetRuneSkills(equippedRunes, runeOptionSheet, sheets.SkillSheet);
             }
         }
 
@@ -415,7 +425,8 @@ namespace Nekoyume.Model
             }
         }
 
-        public void SetRuneStats(List<RuneState> runes, RuneOptionSheet runeOptionSheet)
+        public void SetRuneStats(IEnumerable<RuneState> runes, RuneOptionSheet runeOptionSheet,
+            int runeLevelBonus)
         {
             foreach (var rune in runes)
             {
@@ -427,18 +438,19 @@ namespace Nekoyume.Model
 
                 var statModifiers = new List<StatModifier>();
                 statModifiers.AddRange(
-                    optionInfo.Stats.Select(x =>
-                        new StatModifier(
-                            x.stat.StatType,
-                            x.operationType,
-                            x.stat.TotalValueAsLong)));
+                    optionInfo.Stats.Select(x => new StatModifier(
+                        x.stat.StatType,
+                        x.operationType,
+                        (long)(x.stat.TotalValue * (100000 + runeLevelBonus) / 100000m)
+                    ))
+                );
                 Stats.AddRune(statModifiers);
                 ResetCurrentHP();
             }
         }
 
         public void SetRuneSkills(
-            List<RuneState> runes,
+            IEnumerable<RuneState> runes,
             RuneOptionSheet runeOptionSheet,
             SkillSheet skillSheet)
         {

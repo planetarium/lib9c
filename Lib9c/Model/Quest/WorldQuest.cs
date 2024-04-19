@@ -7,12 +7,16 @@ namespace Nekoyume.Model.Quest
     [Serializable]
     public class WorldQuest : Quest
     {
-        public WorldQuest(WorldQuestSheet.Row data, QuestReward reward) 
+        public WorldQuest(WorldQuestSheet.Row data, QuestReward reward)
             : base(data, reward)
         {
         }
 
         public WorldQuest(Dictionary serialized) : base(serialized)
+        {
+        }
+
+        public WorldQuest(List serialized) : base(serialized)
         {
         }
 

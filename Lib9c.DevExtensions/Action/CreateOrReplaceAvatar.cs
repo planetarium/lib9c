@@ -420,7 +420,6 @@ namespace Lib9c.DevExtensions.Action
                 agentAddr,
                 blockIndex,
                 sheets.GetAvatarSheets(),
-                gameConfig,
                 default,
                 Name)
             {
@@ -572,18 +571,13 @@ namespace Lib9c.DevExtensions.Action
             // ~Set CombinationSlot.
 
             // Set Runes
+            var allRuneState = new AllRuneState();
             foreach (var (runeId, level) in Runes)
             {
-                var rune = new RuneState(runeId);
-                for (var i = 0; i < level; i++)
-                {
-                    rune.LevelUp();
-                }
-
-                states = states.SetLegacyState(
-                    RuneState.DeriveAddress(avatarAddr, runeId),
-                    rune.Serialize());
+                allRuneState.AddRuneState(new RuneState(runeId, level));
             }
+
+            states = states.SetRuneState(avatarAddr, allRuneState);
             // ~Set Runes
 
             // Set CrystalRandomBuffState

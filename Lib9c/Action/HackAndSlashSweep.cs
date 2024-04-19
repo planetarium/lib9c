@@ -120,6 +120,7 @@ namespace Nekoyume.Action
                 typeof(StakeActionPointCoefficientSheet),
                 typeof(RuneListSheet),
                 typeof(RuneOptionSheet),
+                typeof(RuneLevelBonusSheet),
             };
             if (collectionExist)
             {
@@ -222,17 +223,15 @@ namespace Nekoyume.Action
             itemSlotState.UpdateCostumes(costumes);
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
-            var runeStates = new List<RuneState>();
-            foreach (var address in runeInfos.Select(info => RuneState.DeriveAddress(avatarAddress, info.RuneId)))
+            var runeStates = states.GetRuneState(avatarAddress, out var migrateRequired);
+            // Passive migrate runeStates
+            if (migrateRequired)
             {
-                if (states.TryGetLegacyState(address, out List rawRuneState))
-                {
-                    runeStates.Add(new RuneState(rawRuneState));
-                }
+                states = states.SetRuneState(avatarAddress, runeStates);
             }
             var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
             var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
-            foreach (var runeState in runeStates)
+            foreach (var runeState in runeStates.Runes.Values)
             {
                 if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
                 {
@@ -246,6 +245,10 @@ namespace Nekoyume.Action
 
                 runeOptions.Add(option);
             }
+
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            var runeLevelBonus =
+                RuneHelper.CalculateRuneLevelBonus(runeStates, runeListSheet, runeLevelBonusSheet);
 
             var characterSheet = sheets.GetSheet<CharacterSheet>();
             if (!characterSheet.TryGetValue(avatarState.characterId, out var characterRow))
@@ -264,7 +267,7 @@ namespace Nekoyume.Action
             var cp = CPHelper.TotalCP(
                 equipmentList, costumeList,
                 runeOptions, avatarState.level,
-                characterRow, costumeStatSheet, collectionModifiers);
+                characterRow, costumeStatSheet, collectionModifiers, runeLevelBonus);
             if (cp < cpRow.RequiredCP)
             {
                 throw new NotEnoughCombatPointException(

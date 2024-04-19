@@ -84,6 +84,7 @@ namespace Nekoyume.Action
                 typeof(WorldBossKillRewardSheet),
                 typeof(RuneSheet),
                 typeof(RuneListSheet),
+                typeof(RuneLevelBonusSheet),
                 typeof(DeBuffLimitSheet),
             };
             if (collectionExist)
@@ -205,13 +206,10 @@ namespace Nekoyume.Action
                 addressesHex);
 
             var raidSimulatorSheets = sheets.GetRaidSimulatorSheets();
-            var runeStates = new List<RuneState>();
-            foreach (var address in RuneInfos.Select(info => RuneState.DeriveAddress(AvatarAddress, info.RuneId)))
+            var runeStates = states.GetRuneState(AvatarAddress, out var migrateRequired);
+            if (migrateRequired)
             {
-                if (states.TryGetLegacyState(address, out List rawRuneState))
-                {
-                    runeStates.Add(new RuneState(rawRuneState));
-                }
+                states = states.SetRuneState(AvatarAddress, runeStates);
             }
 
             var collectionModifiers = new List<StatModifier>();
@@ -228,6 +226,7 @@ namespace Nekoyume.Action
                 avatarState,
                 FoodIds,
                 runeStates,
+                runeSlotState,
                 raidSimulatorSheets,
                 sheets.GetSheet<CostumeStatSheet>(),
                 collectionModifiers,
@@ -249,7 +248,7 @@ namespace Nekoyume.Action
 
             var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
             var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
-            foreach (var runeState in runeStates)
+            foreach (var runeState in runeStates.Runes.Values)
             {
                 if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
                 {
@@ -271,10 +270,15 @@ namespace Nekoyume.Action
             }
 
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates, sheets.GetSheet<RuneListSheet>(), sheets.GetSheet<RuneLevelBonusSheet>()
+            );
             var cp = CPHelper.TotalCP(
                 equipmentList, costumeList,
                 runeOptions, avatarState.level,
-                characterRow, costumeStatSheet, collectionModifiers);
+                characterRow, costumeStatSheet, collectionModifiers,
+                runeLevelBonus
+                );
             long score = simulator.DamageDealt;
             raiderState.Update(avatarState, cp, score, PayNcg, context.BlockIndex);
 

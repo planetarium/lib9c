@@ -178,6 +178,7 @@ namespace Nekoyume.Action
                 typeof(CrystalRandomBuffSheet),
                 typeof(StakeActionPointCoefficientSheet),
                 typeof(RuneListSheet),
+                typeof(RuneLevelBonusSheet),
                 typeof(DeBuffLimitSheet),
             };
             if (collectionExist)
@@ -453,13 +454,11 @@ namespace Nekoyume.Action
             itemSlotState.UpdateCostumes(Costumes);
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
-            var runeStates = new List<RuneState>();
-            foreach (var address in RuneInfos.Select(info => RuneState.DeriveAddress(AvatarAddress, info.RuneId)))
+            var runeStates = states.GetRuneState(AvatarAddress, out var migrateRequired);
+            // Passive migrate runeStates
+            if (migrateRequired)
             {
-                if (states.TryGetLegacyState(address, out List rawRuneState))
-                {
-                    runeStates.Add(new RuneState(rawRuneState));
-                }
+                states = states.SetRuneState(AvatarAddress, runeStates);
             }
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
@@ -489,6 +488,7 @@ namespace Nekoyume.Action
                     avatarState,
                     i == 0 ? Foods : new List<Guid>(),
                     runeStates,
+                    runeSlotState,
                     i == 0 ? skillsOnWaveStart : new List<Skill>(),
                     WorldId,
                     StageId,

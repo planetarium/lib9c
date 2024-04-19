@@ -21,6 +21,11 @@ namespace Nekoyume.Model.Quest
             Event = (QuestEventType)(int)((Integer)serialized["event"]).Value;
         }
 
+        public GeneralQuest(List serialized) : base(serialized)
+        {
+            Event = (QuestEventType)(int)(Integer)serialized[7];
+        }
+
         public override QuestType QuestType
         {
             get
@@ -75,5 +80,6 @@ namespace Nekoyume.Model.Quest
             ((Dictionary) base.Serialize())
             .Add("event", (int) Event);
 
+        public override IValue SerializeList() => ((List)base.SerializeList()).Add((int)Event);
     }
 }

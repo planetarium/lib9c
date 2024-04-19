@@ -17,7 +17,10 @@ namespace Nekoyume.Battle
             IReadOnlyCollection<RuneOptionSheet.Row.RuneOptionInfo> runeOptions,
             int level,
             CharacterSheet.Row row,
-            CostumeStatSheet costumeStatSheet, List<StatModifier> collectionStatModifiers)
+            CostumeStatSheet costumeStatSheet,
+            List<StatModifier> collectionStatModifiers,
+            int runeLevelBonus
+            )
         {
             decimal levelStatsCp = GetStatsCP(row.ToStats(level), level);
             var collectionCp = 0m;
@@ -26,7 +29,7 @@ namespace Nekoyume.Battle
             {
                 // Prepare CharacterStats for calculate collection Stats
                 var characterStats = new CharacterStats(row, level);
-                characterStats.ConfigureStats(equipments, costumes, runeOptions, costumeStatSheet, collectionStatModifiers);
+                characterStats.ConfigureStats(equipments, costumes, runeOptions, costumeStatSheet, collectionStatModifiers, runeLevelBonus);
                 foreach (var (statType, value) in characterStats.CollectionStats.GetStats())
                 {
                     collectionCp += GetStatCP(statType, value);

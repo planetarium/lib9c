@@ -131,6 +131,7 @@ namespace Nekoyume.Action
                 typeof(EquipmentItemOptionSheet),
                 typeof(MaterialItemSheet),
                 typeof(RuneListSheet),
+                typeof(RuneLevelBonusSheet),
                 typeof(DeBuffLimitSheet),
             };
             if (collectionExist)
@@ -338,13 +339,14 @@ namespace Nekoyume.Action
             myArenaAvatarState.UpdateEquipment(equipments);
             myArenaAvatarState.UpdateCostumes(costumes);
             myArenaAvatarState.LastBattleBlockIndex = context.BlockIndex;
-            var runeStates = new List<RuneState>();
-            foreach (var address in runeInfos.Select(info => RuneState.DeriveAddress(myAvatarAddress, info.RuneId)))
+            var myRuneSlotStateAddress = RuneSlotState.DeriveAddress(myAvatarAddress, BattleType.Arena);
+            var myRuneSlotState = states.TryGetLegacyState(myRuneSlotStateAddress, out List myRawRuneSlotState)
+                ? new RuneSlotState(myRawRuneSlotState)
+                : new RuneSlotState(BattleType.Arena);
+            var myRuneStates = states.GetRuneState(myAvatarAddress, out var migrateRequired);
+            if (migrateRequired)
             {
-                if (states.TryGetLegacyState(address, out List rawRuneState))
-                {
-                    runeStates.Add(new RuneState(rawRuneState));
-                }
+                states = states.SetRuneState(myAvatarAddress, myRuneStates);
             }
 
             // get enemy equipped items
@@ -357,15 +359,7 @@ namespace Nekoyume.Action
                 ? new RuneSlotState(enemyRawRuneSlotState)
                 : new RuneSlotState(BattleType.Arena);
 
-            var enemyRuneStates = new List<RuneState>();
-            var enemyRuneSlotInfos = enemyRuneSlotState.GetEquippedRuneSlotInfos();
-            foreach (var address in enemyRuneSlotInfos.Select(info => RuneState.DeriveAddress(enemyAvatarAddress, info.RuneId)))
-            {
-                if (states.TryGetLegacyState(address, out List rawRuneState))
-                {
-                    enemyRuneStates.Add(new RuneState(rawRuneState));
-                }
-            }
+            var enemyRuneStates = states.GetRuneState(enemyAvatarAddress, out _);
 
             // simulate
             var enemyAvatarState = states.GetEnemyAvatarState(enemyAvatarAddress);
@@ -373,12 +367,16 @@ namespace Nekoyume.Action
                 avatarState,
                 equipments,
                 costumes,
-                runeStates);
+                myRuneStates,
+                myRuneSlotState
+                );
             var enemyArenaPlayerDigest = new ArenaPlayerDigest(
                 enemyAvatarState,
                 enemyItemSlotState.Equipments,
                 enemyItemSlotState.Costumes,
-                enemyRuneStates);
+                enemyRuneStates,
+                enemyRuneSlotState
+                );
             var previousMyScore = myArenaScore.Score;
             var arenaSheets = sheets.GetArenaSimulatorSheets();
             var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();

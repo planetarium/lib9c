@@ -164,7 +164,6 @@ namespace Lib9c.Tests.Model.State
                 default,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
             var random = new TestRandom();

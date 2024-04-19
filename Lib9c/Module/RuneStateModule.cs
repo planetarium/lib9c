@@ -3,7 +3,6 @@ using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Module
@@ -14,8 +13,9 @@ namespace Nekoyume.Module
     public static class RuneStateModule
     {
         public static AllRuneState GetRuneState(this IWorldState worldState,
-            Address avatarAddress)
+            Address avatarAddress, out bool migrateRequired)
         {
+            migrateRequired = false;
             var account = worldState.GetAccountState(Addresses.RuneState);
             var serialized = account.GetState(avatarAddress);
             AllRuneState allRuneState;
@@ -33,6 +33,8 @@ namespace Nekoyume.Module
                         allRuneState.AddRuneState(runeState);
                     }
                 }
+
+                migrateRequired = true;
             }
             else
             {

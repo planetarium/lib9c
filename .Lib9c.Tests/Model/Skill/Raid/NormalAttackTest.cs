@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Model.Skill.Raid
     using Nekoyume.Battle;
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.Buff;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -28,7 +29,6 @@ namespace Lib9c.Tests.Model.Skill.Raid
                 new PrivateKey().Address,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 new PrivateKey().Address);
             avatarState.level = 400;
 
@@ -37,7 +37,8 @@ namespace Lib9c.Tests.Model.Skill.Raid
                 new TestRandom(seed),
                 avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Raid),
                 _tableSheets.GetRaidSimulatorSheets(),
                 _tableSheets.CostumeStatSheet,
                 new List<StatModifier>

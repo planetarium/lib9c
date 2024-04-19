@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Model
     using Nekoyume.Model;
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.Buff;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Quest;
     using Nekoyume.Model.Skill;
@@ -34,7 +35,6 @@ namespace Lib9c.Tests.Model
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
         }
@@ -46,7 +46,8 @@ namespace Lib9c.Tests.Model
                 _random,
                 _avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -81,7 +82,8 @@ namespace Lib9c.Tests.Model
                 _random,
                 _avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -133,7 +135,8 @@ namespace Lib9c.Tests.Model
                 _random,
                 _avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -185,7 +188,8 @@ namespace Lib9c.Tests.Model
                 _random,
                 _avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -241,7 +245,8 @@ namespace Lib9c.Tests.Model
                 {
                     food.ItemId,
                 },
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -370,7 +375,8 @@ namespace Lib9c.Tests.Model
                 _random,
                 _avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -450,7 +456,8 @@ namespace Lib9c.Tests.Model
                 _random,
                 _avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -520,7 +527,8 @@ namespace Lib9c.Tests.Model
                 _random,
                 _avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -604,7 +612,8 @@ namespace Lib9c.Tests.Model
                 _random,
                 _avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -707,10 +716,8 @@ namespace Lib9c.Tests.Model
             var runeState = new RuneState(runeId);
             runeState.LevelUp();
             Assert.Equal(1, runeState.Level);
-            var runeStates = new List<RuneState>
-            {
-                runeState,
-            };
+            var runeStates = new AllRuneState();
+            runeStates.AddRuneState(runeState);
 
             var simulator = new StageSimulator(
                 _random,
@@ -720,6 +727,7 @@ namespace Lib9c.Tests.Model
                     food.ItemId,
                 },
                 runeStates,
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,
@@ -856,12 +864,9 @@ namespace Lib9c.Tests.Model
             var runeState = new RuneState(runeId);
             runeState.LevelUp();
             Assert.Equal(1, runeState.Level);
-
-            var runeStates = new List<RuneState>
-            {
-                runeState,
-            };
-            player.SetRuneStats(runeStates, _tableSheets.RuneOptionSheet);
+            var runeStates = new AllRuneState();
+            runeStates.AddRuneState(runeState);
+            player.SetRuneStats(runeStates.Runes.Values.ToList(), _tableSheets.RuneOptionSheet, 0);
             var runeOptionRow = _tableSheets.RuneOptionSheet.Values.First(r => r.RuneId == runeId);
             var runeHp = runeOptionRow.LevelOptionMap[1].Stats.Sum(r => r.stat.BaseValueAsLong);
             Assert.Equal(consumableLayerHp + runeHp, player.HP);

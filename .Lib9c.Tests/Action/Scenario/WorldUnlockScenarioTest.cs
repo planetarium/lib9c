@@ -42,7 +42,6 @@ namespace Lib9c.Tests.Action.Scenario
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 _rankingMapAddress
             )
             {

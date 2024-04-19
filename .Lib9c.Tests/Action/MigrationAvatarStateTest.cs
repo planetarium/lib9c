@@ -29,7 +29,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };

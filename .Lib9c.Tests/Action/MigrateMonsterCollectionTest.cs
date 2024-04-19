@@ -42,7 +42,6 @@ namespace Lib9c.Tests.Action
                 _signer,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress);
             agentState.avatarAddresses[0] = _avatarAddress;
 

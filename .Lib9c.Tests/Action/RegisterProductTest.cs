@@ -46,7 +46,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -189,6 +188,34 @@ namespace Lib9c.Tests.Action
                             Price = 1 * Gold,
                             Type = ProductType.FungibleAssetValue,
                             Asset = 1 * CrystalCalculator.CRYSTAL,
+                        },
+                    },
+                    Exc = typeof(InvalidCurrencyException),
+                },
+                new ValidateMember
+                {
+                    RegisterInfos = new IRegisterInfo[]
+                    {
+                        new AssetInfo
+                        {
+                            AvatarAddress = AvatarAddress,
+                            Price = 1 * Gold,
+                            Type = ProductType.FungibleAssetValue,
+                            Asset = 1 * Currencies.FreyaBlessingRune,
+                        },
+                    },
+                    Exc = typeof(InvalidCurrencyException),
+                },
+                new ValidateMember
+                {
+                    RegisterInfos = new IRegisterInfo[]
+                    {
+                        new AssetInfo
+                        {
+                            AvatarAddress = AvatarAddress,
+                            Price = 1 * Gold,
+                            Type = ProductType.FungibleAssetValue,
+                            Asset = 1 * Currencies.FreyaLiberationRune,
                         },
                     },
                     Exc = typeof(InvalidCurrencyException),
