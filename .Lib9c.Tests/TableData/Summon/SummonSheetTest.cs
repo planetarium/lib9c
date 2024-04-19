@@ -89,7 +89,8 @@ namespace Lib9c.Tests.TableData.Summon
             Assert.Equal(100, row.TotalRatio());
             Assert.Equal(70, row.CumulativeRatio(1));
             Assert.Equal(100, row.CumulativeRatio(2));
-            Assert.Throws<IndexOutOfRangeException>(() => row.CumulativeRatio(3));
+            // If index exceeds recipe count, just return total cumulative ratio.
+            Assert.Equal(100, row.CumulativeRatio(3));
         }
     }
 }
