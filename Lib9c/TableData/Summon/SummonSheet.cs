@@ -54,6 +54,13 @@ namespace Nekoyume.TableData.Summon
                 Recipes.Add((ParseInt(fields[6]), ParseInt(fields[7])));
 
                 // Recipe3 ~ 30 are optional
+                if (fields.Count > 2 * MaxRecipeCount + 4)
+                {
+                    throw new IndexOutOfRangeException(
+                        $"Provided recipe count {(fields.Count - 4) / 2} exceeds {MaxRecipeCount}."
+                    );
+                }
+
                 for (var i = 3; i <= MaxRecipeCount; i++)
                 {
                     var idx = 2 * i + 2;
