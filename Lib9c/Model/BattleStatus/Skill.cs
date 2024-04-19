@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using Nekoyume.Model.Buff;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Skill;
 
@@ -24,9 +25,9 @@ namespace Nekoyume.Model.BattleStatus
             public readonly Guid CharacterId;
             public readonly IEnumerable<Nekoyume.Model.Buff.Buff>? DispelList;
             public readonly bool Affected;
-            public readonly bool FrostBite;
 
             public readonly Model.Buff.Buff? Buff;
+            public readonly IceShield? IceShield;
 
             public SkillInfo(Guid characterId, bool isDead, long thorn, long effect, bool critical,
                 SkillCategory skillCategory,
@@ -35,7 +36,7 @@ namespace Nekoyume.Model.BattleStatus
                 CharacterBase? target = null,
                 bool affected = true,
                 IEnumerable<Nekoyume.Model.Buff.Buff>? dispelList = null,
-                bool frostBite = false)
+                IceShield? iceShield = null)
             {
                 CharacterId = characterId;
                 IsDead = isDead;
@@ -50,7 +51,7 @@ namespace Nekoyume.Model.BattleStatus
                 Target = target;
                 Affected = affected;
                 DispelList = dispelList;
-                FrostBite = frostBite;
+                IceShield = iceShield;
             }
         }
 

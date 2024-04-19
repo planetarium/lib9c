@@ -105,11 +105,11 @@ namespace Nekoyume.Model.Skill
                         target.CurrentHP -= damage;
                     }
 
-                    var frostBite = target.Buffs.Values.Any(i => i is IceShield);
+                    var iceShield = target.Buffs.Values.OfType<IceShield>().FirstOrDefault();
                     var clone = copyCharacter ? (CharacterBase) target.Clone() : null;
                     infos.Add(new BattleStatus.Skill.SkillInfo(target.Id, target.IsDead, target.Thorn, damage, isCritical,
                         SkillRow.SkillCategory, simulatorWaveTurn, SkillRow.ElementalType,
-                        SkillRow.SkillTargetType, target: clone, frostBite: frostBite));
+                        SkillRow.SkillTargetType, target: clone, iceShield: iceShield));
                 }
             }
 

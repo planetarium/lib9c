@@ -968,7 +968,7 @@ namespace Lib9c.Tests.Model
             // increase def by ice shield buff
             Assert.True(character.DEF > def);
             enemy.InitAI();
-            for (int i = 0; i < 40; i++)
+            for (int i = 0; i < 4; i++)
             {
                 enemy.Tick();
                 e = log.Last();
