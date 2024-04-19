@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.Skill;
 using Nekoyume.TableData;
 

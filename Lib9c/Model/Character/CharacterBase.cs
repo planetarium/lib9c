@@ -377,6 +377,11 @@ namespace Nekoyume.Model
                 case StatBuff stat:
                 {
                     var clone = (StatBuff)stat.Clone();
+                    if (Buffs.TryGetValue(stat.RowData.GroupId, out var current))
+                    {
+                        var stack = ((StatBuff) current).Stack + 1;
+                        clone.SetStack(stack);
+                    }
                     Buffs[stat.RowData.GroupId] = clone;
                     Stats.AddBuff(clone, Simulator.DeBuffLimitSheet, updateImmediate);
                     break;
@@ -696,7 +701,7 @@ namespace Nekoyume.Model
 
             if (attackSkills.Exists(i => i.FrostBite))
             {
-                var row = Simulator.StatBuffSheet[206001];
+                var row = Simulator.StatBuffSheet[801000];
                 var frostBite = BuffFactory.GetStatBuff(row);
                 AddBuff(frostBite);
                 Simulator.Log.Add(new Tick((CharacterBase)Clone()));

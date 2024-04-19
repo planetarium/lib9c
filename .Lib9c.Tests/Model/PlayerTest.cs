@@ -968,11 +968,15 @@ namespace Lib9c.Tests.Model
             // increase def by ice shield buff
             Assert.True(character.DEF > def);
             enemy.InitAI();
-            enemy.Tick();
-            e = log.Last();
-            character = e.Character;
-            // decrease spd by spd debuff
-            Assert.True(spd > character.SPD);
+            for (int i = 0; i < 40; i++)
+            {
+                enemy.Tick();
+                e = log.Last();
+                character = e.Character;
+                // decrease spd by spd debuff
+                Assert.True(spd > character.SPD);
+                spd = character.SPD;
+            }
         }
     }
 }
