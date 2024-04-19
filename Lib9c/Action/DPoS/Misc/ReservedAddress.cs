@@ -36,5 +36,8 @@ namespace Nekoyume.Action.DPoS.Misc
 
         public static readonly Address CommunityPool
             = new Address("0000000000000000000000000000000000100010");
+
+        public static readonly Address ProposerInfo
+            = new Address("0000000000000000000000000000000000100011");
     }
 }
