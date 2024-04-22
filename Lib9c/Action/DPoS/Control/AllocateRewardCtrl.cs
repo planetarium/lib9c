@@ -7,6 +7,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 using Nekoyume.Action.DPoS.Exception;
 using Nekoyume.Action.DPoS.Misc;
@@ -38,11 +39,8 @@ namespace Nekoyume.Action.DPoS.Control
             IActionContext ctx,
             IImmutableSet<Currency>? nativeTokens,
             IEnumerable<Vote>? votes,
-            Address miner)
+            ProposerInfo proposerInfo)
         {
-            ValidatorSet bondedValidatorSet;
-            (states, bondedValidatorSet) = ValidatorSetCtrl.FetchBondedValidatorSet(states);
-
             if (nativeTokens is null)
             {
                 throw new NullNativeTokensException();
@@ -50,14 +48,15 @@ namespace Nekoyume.Action.DPoS.Control
 
             foreach (Currency nativeToken in nativeTokens)
             {
-                if (votes is { } lastVotes)
+                if (votes is { } lastVotesEnumerable)
                 {
+                    var lastVotes = lastVotesEnumerable.ToArray();
                     states = DistributeProposerReward(
-                        states, ctx, nativeToken, miner, bondedValidatorSet, lastVotes);
+                        states, ctx, nativeToken, proposerInfo, lastVotes);
 
                     // TODO: Check if this is correct?
                     states = DistributeValidatorReward(
-                        states, ctx, nativeToken, bondedValidatorSet, votes);
+                        states, ctx, nativeToken, lastVotes);
                 }
 
                 FungibleAssetValue communityFund = states.GetBalance(
@@ -80,39 +79,46 @@ namespace Nekoyume.Action.DPoS.Control
             IWorld states,
             IActionContext ctx,
             Currency nativeToken,
-            Address proposer,
-            ValidatorSet bondedValidatorSet,
-            IEnumerable<Vote> votes)
+            ProposerInfo proposerInfo,
+            Vote[] lastVotes)
         {
             FungibleAssetValue blockReward = states.GetBalance(
                 ReservedAddress.RewardPool, nativeToken);
+
+            if (proposerInfo.BlockIndex != ctx.BlockIndex - 1)
+            {
+                return states;
+            }
 
             if (blockReward.Sign <= 0)
             {
                 return states;
             }
 
-            ImmutableDictionary<PublicKey, ValidatorPower> bondedValidatorDict
-                = bondedValidatorSet.Set.ToImmutableDictionary(
-                    bondedValidator => bondedValidator.OperatorPublicKey);
+            BigInteger votePowerNumerator
+                = lastVotes.Aggregate(
+                    BigInteger.Zero,
+                    (total, next)
+                        => total + (next.Flag == VoteFlag.PreCommit ? next.ValidatorPower : 0));
 
-            FungibleAssetValue votePowerNumerator
-                = votes.Aggregate(
-                    Asset.ConsensusToken * 0, (total, next)
-                    => total + bondedValidatorDict[next.ValidatorPublicKey].ConsensusToken);
-
-            FungibleAssetValue votePowerDenominator
-                = bondedValidatorSet.TotalConsensusToken;
+            BigInteger votePowerDenominator
+                = lastVotes.Aggregate(
+                    BigInteger.Zero,
+                    (total, next)
+                        => total + next.ValidatorPower);
 
             var (baseProposerReward, _)
                 = (blockReward * BaseProposerRewardNumerator).DivRem(BaseProposerRewardDenominator);
             var (bonusProposerReward, _)
-                = (blockReward * votePowerNumerator.RawValue * BonusProposerRewardNumerator)
-                .DivRem(votePowerDenominator.RawValue * BonusProposerRewardDenominator);
+                = (blockReward * votePowerNumerator * BonusProposerRewardNumerator)
+                .DivRem(votePowerDenominator * BonusProposerRewardDenominator);
             FungibleAssetValue proposerReward = baseProposerReward + bonusProposerReward;
 
             states = states.TransferAsset(
-                ctx, ReservedAddress.RewardPool, RewardAddress(proposer), proposerReward);
+                ctx,
+                ReservedAddress.RewardPool,
+                RewardAddress(proposerInfo.Proposer),
+                proposerReward);
 
             return states;
         }
@@ -121,8 +127,7 @@ namespace Nekoyume.Action.DPoS.Control
             IWorld states,
             IActionContext ctx,
             Currency nativeToken,
-            ValidatorSet bondedValidatorSet,
-            IEnumerable<Vote> votes)
+            Vote[] lastVotes)
         {
             long blockHeight = ctx.BlockIndex;
             FungibleAssetValue validatorRewardSum = states.GetBalance(
@@ -133,28 +138,24 @@ namespace Nekoyume.Action.DPoS.Control
                 return states;
             }
 
-            ImmutableDictionary<PublicKey, ValidatorPower> bondedValidatorDict
-                = bondedValidatorSet.Set.ToImmutableDictionary(
-                    bondedValidator => bondedValidator.OperatorPublicKey);
+            BigInteger powerDenominator
+                = lastVotes.Aggregate(
+                    BigInteger.Zero,
+                    (total, next)
+                        => total + next.ValidatorPower);
 
-            foreach (Vote vote in votes)
+            foreach (Vote vote in lastVotes)
             {
                 if (vote.Flag == VoteFlag.Null || vote.Flag == VoteFlag.Unknown)
                 {
                     continue;
                 }
 
-                ValidatorPower bondedValidator = bondedValidatorDict[vote.ValidatorPublicKey];
-
-                FungibleAssetValue powerNumerator
-                    = bondedValidator.ConsensusToken;
-
-                FungibleAssetValue powerDenominator
-                    = bondedValidatorSet.TotalConsensusToken;
+                BigInteger powerNumerator = vote.ValidatorPower;
 
                 var (validatorReward, _)
-                    = (validatorRewardSum * powerNumerator.RawValue)
-                    .DivRem(powerDenominator.RawValue);
+                    = (validatorRewardSum * powerNumerator)
+                    .DivRem(powerDenominator);
                 var (commission, _)
                     = (validatorReward * Validator.CommissionNumerator)
                     .DivRem(Validator.CommissionDenominator);
@@ -170,12 +171,12 @@ namespace Nekoyume.Action.DPoS.Control
                 states = states.TransferAsset(
                     ctx,
                     ReservedAddress.RewardPool,
-                    ValidatorRewards.DeriveAddress(bondedValidator.ValidatorAddress, nativeToken),
+                    ValidatorRewards.DeriveAddress(vote.ValidatorPublicKey.Address, nativeToken),
                     delegationRewardSum);
 
                 states = ValidatorRewardsCtrl.Add(
                     states,
-                    bondedValidator.ValidatorAddress,
+                    vote.ValidatorPublicKey.Address,
                     nativeToken,
                     blockHeight,
                     delegationRewardSum);
