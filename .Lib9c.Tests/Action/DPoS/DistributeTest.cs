@@ -181,7 +181,7 @@ namespace Lib9c.Tests.Action.DPoS
                 },
                 _nativeTokens,
                 votes,
-                OperatorAddresses[3]);
+                new ProposerInfo(0, OperatorAddresses[3]));
 
             var (baseProposerReward, _)
                 = (blockReward * AllocateRewardCtrl.BaseProposerRewardNumerator)

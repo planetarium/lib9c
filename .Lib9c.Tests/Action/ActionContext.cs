@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action.State;
     using Libplanet.Common;
     using Libplanet.Crypto;
+    using Libplanet.Types.Assets;
     using Libplanet.Types.Blocks;
     using Libplanet.Types.Tx;
 
@@ -37,6 +38,8 @@ namespace Lib9c.Tests.Action
         public HashDigest<SHA256>? PreviousStateRootHash { get; set; }
 
         public bool IsBlockAction { get; }
+
+        public FungibleAssetValue? MaxGasPrice { get; set; }
 
         public void UseGas(long gas)
         {
