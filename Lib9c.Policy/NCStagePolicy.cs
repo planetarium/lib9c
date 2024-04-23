@@ -102,7 +102,9 @@ namespace Nekoyume.Blockchain
             {
                 if (_accessControlService?.GetTxQuotaAsync(transaction.Signer).Result is { } acsTxQuota)
                 {
-                    Log.Debug("[NCStagePolicy-ACS] Stage {0} quota: {1}", transaction.Signer, acsTxQuota);
+                    var transactionList = _impl.Iterate(blockChain);
+                    var transactions = transactionList.ToList();
+                    Log.Debug("[NCStagePolicy-ACS] Stage {0} quota: {1} Total Tx: {2} Staged: {3}", transaction.Signer, acsTxQuota, transactions.Count, blockChain.GetStagedTransactionIds().Count);
                     _quotaPerSignerList[transaction.Signer] = acsTxQuota;
 
                     if (acsTxQuota == 0)
