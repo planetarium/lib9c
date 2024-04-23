@@ -66,8 +66,9 @@ namespace Nekoyume.Blockchain
                     // update txQuotaPerSigner if signer is in the list
                     try
                     {
-                        if (_accessControlService?.GetTxQuota(tx.Signer) is { } acsTxQuota)
+                        if (_accessControlService?.GetTxQuotaAsync(tx.Signer).Result is { } acsTxQuota)
                         {
+                            Console.WriteLine("[NCStagePolicy-ACS] Iterate {0} quota: {1}", tx.Signer, acsTxQuota);
                             txQuotaPerSigner = acsTxQuota;
                         }
                     }
@@ -97,8 +98,9 @@ namespace Nekoyume.Blockchain
         {
             try
             {
-                if (_accessControlService?.GetTxQuota(transaction.Signer) is { } acsTxQuota)
+                if (_accessControlService?.GetTxQuotaAsync(transaction.Signer).Result is { } acsTxQuota)
                 {
+                    Console.WriteLine("[NCStagePolicy-ACS] Stage {0} quota: {1}", transaction.Signer, acsTxQuota);
                     _quotaPerSignerList[transaction.Signer] = acsTxQuota;
 
                     if (acsTxQuota == 0)
