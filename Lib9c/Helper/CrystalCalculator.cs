@@ -20,6 +20,8 @@ namespace Nekoyume.Helper
         // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
         public static readonly Currency CRYSTAL = Currencies.Crystal;
 #pragma warning restore CS0618
+        public const int MaxLevelExponent = 5;
+        public const long CrystalLimit = 100_000_000L;
 
         public static FungibleAssetValue CalculateRecipeUnlockCost(IEnumerable<int> recipeIds, EquipmentItemRecipeSheet equipmentItemRecipeSheet)
         {
@@ -74,7 +76,8 @@ namespace Nekoyume.Helper
                 enhancementFailed,
                 crystalEquipmentGrindingSheet,
                 crystalMonsterCollectionMultiplierSheet,
-                monsterCollectionLevel);
+                monsterCollectionLevel
+            );
         }
 
         public static FungibleAssetValue CalculateCrystal(
@@ -85,14 +88,17 @@ namespace Nekoyume.Helper
             int stakingLevel
         )
         {
-            FungibleAssetValue crystal = 0 * CRYSTAL;
+            var crystal = 0 * CRYSTAL;
             foreach (var equipment in equipmentList)
             {
-                CrystalEquipmentGrindingSheet.Row grindingRow = crystalEquipmentGrindingSheet[equipment.Id];
-                crystal += grindingRow.CRYSTAL * CRYSTAL;
-                crystal += (BigInteger.Pow(2, equipment.level) - 1) *
-                           crystalEquipmentGrindingSheet[grindingRow.EnchantBaseId].CRYSTAL *
-                           CRYSTAL;
+                BigInteger crystalAmount = 0;
+                var grindingRow = crystalEquipmentGrindingSheet[equipment.Id];
+                crystalAmount += grindingRow.CRYSTAL;
+                crystalAmount +=
+                    (BigInteger.Pow(2, Math.Min(equipment.level, MaxLevelExponent)) - 1) *
+                    crystalEquipmentGrindingSheet[grindingRow.EnchantBaseId].CRYSTAL;
+                crystalAmount = BigInteger.Min(crystalAmount, CrystalLimit);
+                crystal += crystalAmount * CRYSTAL;
             }
 
             // Divide Reward when itemEnhancement failed.
