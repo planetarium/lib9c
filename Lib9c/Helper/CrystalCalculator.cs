@@ -91,9 +91,8 @@ namespace Nekoyume.Helper
             var crystal = 0 * CRYSTAL;
             foreach (var equipment in equipmentList)
             {
-                BigInteger crystalAmount = 0;
                 var grindingRow = crystalEquipmentGrindingSheet[equipment.Id];
-                crystalAmount += grindingRow.CRYSTAL;
+                BigInteger crystalAmount = grindingRow.CRYSTAL;
                 crystalAmount +=
                     (BigInteger.Pow(2, Math.Min(equipment.level, MaxLevelExponent)) - 1) *
                     crystalEquipmentGrindingSheet[grindingRow.EnchantBaseId].CRYSTAL;
