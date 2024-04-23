@@ -66,8 +66,8 @@ namespace Nekoyume.Model.Quest
 
         public CombinationEquipmentQuest(List serialized) : base(serialized)
         {
-            _serializedStageId = serialized[7];
-            _serializedRecipeId = serialized[8];
+            _serializedRecipeId = serialized[7];
+            _serializedStageId = serialized[8];
         }
 
         //임시처리. 새 타입을 만들어서 위젯에 띄워줘야합니다.
