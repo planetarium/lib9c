@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action.DPoS
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
+    using Libplanet.Types.Blocks;
     using Libplanet.Types.Consensus;
     using Nekoyume.Action.DPoS.Control;
     using Nekoyume.Action.DPoS.Misc;
@@ -135,34 +136,27 @@ namespace Lib9c.Tests.Action.DPoS
 
             Nekoyume.Action.DPoS.Model.ValidatorSet validatorSet;
             (_states, validatorSet) = ValidatorSetCtrl.FetchBondedValidatorSet(_states);
+            var blockHash = BlockHash.FromString(
+                "0000000000000000000000000000000000000000000000000000000000000001");
 
-            List<Vote> votes = new List<Vote>()
-            {
-                new VoteMetadata(
-                    default,
-                    default,
-                    default,
-                    default,
-                    OperatorPrivateKeys[3].PublicKey,
-#pragma warning disable SA1118
-                    validatorSet.Set
-                        .First(v => v.OperatorPublicKey.Equals(OperatorPrivateKeys[3].PublicKey))
-                        .ConsensusToken.RawValue,
-#pragma warning restore SA1118
-                    VoteFlag.PreCommit).Sign(OperatorPrivateKeys[3]),
-                new VoteMetadata(
-                    default,
-                    default,
-                    default,
-                    default,
-                    OperatorPrivateKeys[5].PublicKey,
-#pragma warning disable SA1118
-                    validatorSet.Set
-                        .First(v => v.OperatorPublicKey.Equals(OperatorPrivateKeys[5].PublicKey))
-                        .ConsensusToken.RawValue,
-#pragma warning restore SA1118
-                    VoteFlag.PreCommit).Sign(OperatorPrivateKeys[5]),
-            };
+            List<Vote> votes = validatorSet.Set.Select(
+                    validator =>
+                    {
+                        bool joined =
+                            validator.OperatorPublicKey.Equals(OperatorPrivateKeys[3].PublicKey) ||
+                            validator.OperatorPublicKey.Equals(OperatorPrivateKeys[5].PublicKey);
+                        return new VoteMetadata(
+                            default,
+                            default,
+                            blockHash,
+                            default,
+                            validator.OperatorPublicKey,
+                            validator.ConsensusToken.RawValue,
+                            joined ? VoteFlag.PreCommit : VoteFlag.Null).Sign(
+                            joined ? OperatorPrivateKeys.First(
+                                pk => pk.PublicKey.Equals(validator.OperatorPublicKey)) : null);
+                    })
+                .ToList();
             FungibleAssetValue blockReward = Asset.ConsensusFromGovernance(50);
             _states = _states.MintAsset(
                 new ActionContext
