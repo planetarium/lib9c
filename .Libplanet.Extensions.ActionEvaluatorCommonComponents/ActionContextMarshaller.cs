@@ -27,7 +27,7 @@ public static class ActionContextMarshaller
             .Add("block_protocol_version", actionContext.BlockProtocolVersion)
             .Add("previous_states", actionContext.PreviousState.ByteArray)
             .Add("random_seed", actionContext.RandomSeed)
-            .Add("block_action", actionContext.BlockAction);
+            .Add("block_action", actionContext.IsBlockAction);
 
         if (actionContext.TxId is { } txId)
         {
@@ -50,7 +50,7 @@ public static class ActionContextMarshaller
             blockProtocolVersion: (Integer)dictionary["block_protocol_version"],
             previousState: new HashDigest<SHA256>(dictionary["previous_states"]),
             randomSeed: (Integer)dictionary["random_seed"],
-            blockAction: (Boolean)dictionary["block_action"]
+            isBlockAction: (Boolean)dictionary["block_action"]
         );
     }
 

@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Action
 
         public HashDigest<SHA256>? PreviousStateRootHash { get; set; }
 
-        public bool BlockAction { get; }
+        public bool IsBlockAction { get; }
 
         public IReadOnlyList<ITransaction> Txs
         {
