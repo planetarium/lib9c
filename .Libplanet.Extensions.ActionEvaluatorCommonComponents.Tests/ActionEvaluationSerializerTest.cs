@@ -33,7 +33,7 @@ public class ActionEvaluationSerializerTest
                 blockProtocolVersion: 0,
                 previousState: prevState,
                 randomSeed: 123,
-                blockAction: true),
+                isBlockAction: true),
             outputState: outputState,
             exception: new UnexpectedlyTerminatedActionException(
                 "",
