@@ -9,6 +9,7 @@ using Libplanet.Crypto;
 using Libplanet.Common;
 using Libplanet.Types.Tx;
 using MessagePack;
+using Nekoyume.Action.DPoS;
 
 namespace Nekoyume.Action
 {
@@ -19,7 +20,7 @@ namespace Nekoyume.Action
         [Key(0)]
 
         [MessagePackFormatter(typeof(NCActionFormatter))]
-        public ActionBase? Action { get; set; }
+        public ActionBase Action { get; set; }
 
         [Key(1)]
         [MessagePackFormatter(typeof(AddressFormatter))]
@@ -55,7 +56,7 @@ namespace Nekoyume.Action
 
         [SerializationConstructor]
         public NCActionEvaluation(
-            ActionBase? action,
+            ActionBase action,
             Address signer,
             long blockIndex,
             HashDigest<SHA256> outputStates,
@@ -81,7 +82,7 @@ namespace Nekoyume.Action
         {
             return new ActionEvaluation<ActionBase>
             {
-                Action =  Action is null ? new RewardGold() : Action,
+                Action = Action,
                 Signer = Signer,
                 BlockIndex = BlockIndex,
                 OutputState = OutputState,

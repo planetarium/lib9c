@@ -36,9 +36,7 @@ namespace Lib9c.Renderers
         public void RenderAction(IValue action, ICommittedActionContext context, HashDigest<SHA256> nextState) =>
             ActionRenderSubject.OnNext(new ActionEvaluation<ActionBase>
             {
-                Action = context.IsBlockAction
-                    ? new RewardGold()
-                    : (ActionBase)_actionLoader.LoadAction(context.BlockIndex, action),
+                Action = (ActionBase)_actionLoader.LoadAction(context.BlockIndex, action),
                 Signer = context.Signer,
                 BlockIndex = context.BlockIndex,
                 TxId = context.TxId,
@@ -52,9 +50,7 @@ namespace Lib9c.Renderers
             Log.Error(exception, "{action} execution failed.", action);
             ActionRenderSubject.OnNext(new ActionEvaluation<ActionBase>
             {
-                Action = context.IsBlockAction
-                    ? new RewardGold()
-                    : (ActionBase)_actionLoader.LoadAction(context.BlockIndex, action),
+                Action = (ActionBase)_actionLoader.LoadAction(context.BlockIndex, action),
                 Signer = context.Signer,
                 BlockIndex = context.BlockIndex,
                 TxId = context.TxId,
