@@ -1,4 +1,4 @@
-namespace Lib9c.Tests.Action.DPoS
+namespace Lib9c.Tests.Action.DPoS.Control
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
