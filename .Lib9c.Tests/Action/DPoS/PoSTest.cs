@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Action.DPoS
 {
+    using System;
     using System.Collections.Immutable;
     using System.Numerics;
     using Libplanet.Action.State;
@@ -31,19 +32,23 @@ namespace Lib9c.Tests.Action.DPoS
         protected static FungibleAssetValue ShareFromGovernance(BigInteger amount)
             => ShareFromGovernance(Asset.GovernanceToken * amount);
 
-        protected static IWorld Promote(IWorld states, long blockIndex, PublicKey operatorPublicKey, FungibleAssetValue governanceToken)
+        protected static IWorld Promote(
+            IWorld states,
+            long blockIndex,
+            PublicKey operatorPublicKey,
+            FungibleAssetValue ncg)
         {
             var operatorAddress = operatorPublicKey.Address;
             states = states.MintAsset(
                 context: new ActionContext { PreviousState = states, BlockIndex = blockIndex },
                 recipient: operatorAddress,
-                value: governanceToken);
+                value: ncg);
             states = ValidatorCtrl.Create(
                 states,
                 new ActionContext { PreviousState = states, BlockIndex = blockIndex },
                 operatorAddress,
                 operatorPublicKey,
-                governanceToken,
+                ncg,
                 NativeTokens);
             return states;
         }
@@ -51,29 +56,49 @@ namespace Lib9c.Tests.Action.DPoS
         protected static IWorld Delegate(
             IWorld states,
             long blockIndex,
-            Address delegatorAddress,
             Address validatorAddress,
-            FungibleAssetValue governanceToken)
+            Address delegatorAddress,
+            FungibleAssetValue ncg)
         {
             states = states.MintAsset(
                 context: new ActionContext { PreviousState = states, BlockIndex = blockIndex },
                 recipient: delegatorAddress,
-                value: governanceToken);
+                value: ncg);
             states = DelegateCtrl.Execute(
                 states: states,
                 ctx: new ActionContext { PreviousState = states, BlockIndex = blockIndex },
                 delegatorAddress: delegatorAddress,
                 validatorAddress: validatorAddress,
-                governanceToken: governanceToken,
+                governanceToken: ncg,
                 nativeTokens: NativeTokens);
+            return states;
+        }
+
+        protected static IWorld DelegateMany(
+            IWorld states,
+            long blockIndex,
+            Address validatorAddress,
+            Address[] delegatorAddresses,
+            FungibleAssetValue[] ncgs)
+        {
+            for (var i = 0; i < delegatorAddresses.Length; i++)
+            {
+                states = Delegate(
+                    states: states,
+                    blockIndex: blockIndex,
+                    validatorAddress: validatorAddress,
+                    delegatorAddress: delegatorAddresses[i],
+                    ncg: ncgs[i]);
+            }
+
             return states;
         }
 
         protected static IWorld Undelegate(
             IWorld states,
             long blockIndex,
-            Address delegatorAddress,
             Address validatorAddress,
+            Address delegatorAddress,
             FungibleAssetValue share)
         {
             states = UndelegateCtrl.Execute(
@@ -86,12 +111,32 @@ namespace Lib9c.Tests.Action.DPoS
             return states;
         }
 
+        protected static IWorld UndelegateMany(
+            IWorld states,
+            long blockIndex,
+            Address validatorAddress,
+            Address[] delegatorAddresses,
+            FungibleAssetValue[] shares)
+        {
+            for (var i = 0; i < delegatorAddresses.Length; i++)
+            {
+                states = Undelegate(
+                    states: states,
+                    blockIndex: blockIndex,
+                    validatorAddress: validatorAddress,
+                    delegatorAddress: delegatorAddresses[i],
+                    share: shares[i]);
+            }
+
+            return states;
+        }
+
         protected static IWorld Redelegate(
             IWorld states,
             long blockIndex,
-            Address delegatorAddress,
             Address srcValidatorAddress,
             Address dstValidatorAddress,
+            Address delegatorAddress,
             FungibleAssetValue share)
         {
             states = RedelegateCtrl.Execute(
@@ -102,6 +147,28 @@ namespace Lib9c.Tests.Action.DPoS
                 dstValidatorAddress: dstValidatorAddress,
                 redelegatingShare: share,
                 nativeTokens: NativeTokens);
+            return states;
+        }
+
+        protected static IWorld RedelegateMany(
+            IWorld states,
+            long blockIndex,
+            Address srcValidatorAddress,
+            Address dstValidatorAddress,
+            Address[] delegatorAddresses,
+            FungibleAssetValue[] shares)
+        {
+            for (var i = 0; i < delegatorAddresses.Length; i++)
+            {
+                states = Redelegate(
+                    states: states,
+                    blockIndex: blockIndex,
+                    srcValidatorAddress: srcValidatorAddress,
+                    dstValidatorAddress: dstValidatorAddress,
+                    delegatorAddress: delegatorAddresses[i],
+                    share: shares[i]);
+            }
+
             return states;
         }
 
@@ -122,6 +189,21 @@ namespace Lib9c.Tests.Action.DPoS
             states = ValidatorCtrl.Jail(
                 world: states,
                 validatorAddress: validatorAddress);
+            return states;
+        }
+
+        protected static IWorld JailIf(
+            IWorld states,
+            Address validatorAddress,
+            bool condition)
+        {
+            if (condition == true)
+            {
+                states = ValidatorCtrl.Jail(
+                world: states,
+                validatorAddress: validatorAddress);
+            }
+
             return states;
         }
 
@@ -164,6 +246,22 @@ namespace Lib9c.Tests.Action.DPoS
                 world: states,
                 validatorAddress: validatorAddress);
             return states;
+        }
+
+        protected sealed class BlockIndex : IDisposable
+        {
+            private readonly long _blockIndex;
+
+            public BlockIndex(long blockIndex)
+            {
+                _blockIndex = blockIndex;
+            }
+
+            public static implicit operator long(BlockIndex blockIndex) => blockIndex._blockIndex;
+
+            public void Dispose()
+            {
+            }
         }
     }
 }
