@@ -15,6 +15,7 @@ using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Tx;
 using Nekoyume.Action;
+using Nekoyume.Action.DPoS;
 using Nekoyume.Action.Loader;
 using Nekoyume.Blockchain.Policy;
 using Nekoyume.Model.State;
@@ -38,8 +39,8 @@ namespace Nekoyume
             DateTimeOffset? timestamp = null,
             IEnumerable<ActionBase>? actionBases = null,
             Currency? goldCurrency = null,
-            ISet<Address>? assetMinters = null
-        )
+            ISet<Address>? assetMinters = null,
+            Dictionary<Address, FungibleAssetValue>? initialFavs = null)
         {
             if (!tableSheets.TryGetValue(nameof(GameConfigSheet), out var csv))
             {
@@ -74,7 +75,8 @@ namespace Nekoyume
                 pendingActivationStates: pendingActivationStates,
                 authorizedMinersState: authorizedMinersState,
                 creditsState: credits is null ? null : new CreditsState(credits),
-                assetMinters: assetMinters
+                assetMinters: assetMinters,
+                initialFavs: initialFavs
             );
             List<ActionBase> actions = new List<ActionBase>
             {
@@ -84,11 +86,8 @@ namespace Nekoyume
             {
                 new Initialize(
                     states: ImmutableDictionary.Create<Address, IValue>(),
-                    validatorSet: new ValidatorSet(
-                        initialValidators.Select(validator =>
-                            new Validator(validator.Key, validator.Value)).ToList()
-                    )
-                ),
+                    validatorSet: new ValidatorSet()),
+                new InitializeValidators(initialValidators)
             };
             if (!(actionBases is null))
             {

@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 
 namespace Nekoyume.Action
 {
@@ -57,6 +58,8 @@ namespace Nekoyume.Action
 
         public ISet<Address> AssetMinters { get; set; }
 
+        public Dictionary InitialFavs { get; set; }
+
         Dictionary IInitializeStatesV1.Ranking => Ranking;
         Dictionary IInitializeStatesV1.Shop => Shop;
         Dictionary<string, string> IInitializeStatesV1.TableSheets => TableSheets;
@@ -87,7 +90,8 @@ namespace Nekoyume.Action
             AdminState adminAddressState = null,
             AuthorizedMinersState authorizedMinersState = null,
             CreditsState creditsState = null,
-            ISet<Address> assetMinters = null)
+            ISet<Address> assetMinters = null,
+            Dictionary<Address, FungibleAssetValue> initialFavs = null)
         {
             Ranking = (Dictionary)rankingState.Serialize();
             Shop = (Dictionary)shopState.Serialize();
@@ -113,6 +117,17 @@ namespace Nekoyume.Action
             if (!(assetMinters is null))
             {
                 AssetMinters = assetMinters;
+            }
+
+            if (!(initialFavs is null))
+            {
+#pragma warning disable LAA1002
+                InitialFavs = new Dictionary(
+                    initialFavs.Select(
+                        kv => new KeyValuePair<Binary, IValue>(
+                            (Binary)kv.Key.Serialize(),
+                            kv.Value.Serialize())));
+#pragma warning restore LAA1002
             }
         }
 
@@ -192,6 +207,17 @@ namespace Nekoyume.Action
                 );
             }
 
+            if (InitialFavs is { })
+            {
+                foreach (var (address, fav) in InitialFavs)
+                {
+                    states = states.MintAsset(
+                        ctx,
+                        new Address(address),
+                        new FungibleAssetValue(fav));
+                }
+            }
+
             return states;
         }
 
@@ -235,6 +261,11 @@ namespace Nekoyume.Action
                     rv = rv.Add("asset_minters", new List(AssetMinters.Select(addr => addr.Serialize())));
                 }
 
+                if (!(InitialFavs is null))
+                {
+                    rv = rv.Add("initial_favs", InitialFavs);
+                }
+
                 return rv;
             }
         }
@@ -273,6 +304,11 @@ namespace Nekoyume.Action
             if (plainValue.TryGetValue("asset_minters", out IValue assetMinters))
             {
                 AssetMinters = ((List)assetMinters).Select(addr => addr.ToAddress()).ToHashSet();
+            }
+
+            if (plainValue.TryGetValue("initial_favs", out IValue intialFavs))
+            {
+                InitialFavs = (Dictionary)intialFavs;
             }
         }
     }

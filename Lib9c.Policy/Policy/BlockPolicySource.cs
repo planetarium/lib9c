@@ -16,6 +16,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
+using Nekoyume.Action.DPoS;
 using Nekoyume.Action.DPoS.Sys;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
@@ -131,8 +132,14 @@ namespace Nekoyume.Blockchain.Policy
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
             return new BlockPolicy(
-                new IAction[] { }.ToImmutableArray(),
-                new IAction[] { new RewardGold() }.ToImmutableArray(),
+                beginBlockActions: new IAction[] { new AllocateReward() }.ToImmutableArray(),
+                endBlockActions: new IAction[]
+                {
+                    new UpdateValidators(),
+                    new RecordProposer(),
+                }.ToImmutableArray(),
+                beginTxActions: new IAction[] { new Mortgage() }.ToImmutableArray(),
+                endTxActions: new IAction[] { new Refund(), new Reward() }.ToImmutableArray(),
                 blockInterval: BlockInterval,
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,

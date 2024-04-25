@@ -2,7 +2,9 @@ using System.Collections.Immutable;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
+using Nekoyume.Action.DPoS.Control;
 using Nekoyume.Action.DPoS.Misc;
+using Nekoyume.Action.DPoS.Model;
 
 namespace Nekoyume.Action.DPoS.Sys
 {
@@ -34,12 +36,14 @@ namespace Nekoyume.Action.DPoS.Sys
             var states = context.PreviousState;
             var nativeTokens = ImmutableHashSet.Create(
                 Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
-            states = Control.AllocateRewardCtrl.Execute(
+            var previousProposerInfo =
+                new ProposerInfo(states.GetDPoSState(ReservedAddress.ProposerInfo));
+            states = AllocateRewardCtrl.Execute(
                 states,
                 context,
                 nativeTokens,
                 context.LastCommit?.Votes,
-                context.Miner);
+                previousProposerInfo);
 
             return states;
         }
