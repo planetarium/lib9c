@@ -49,6 +49,7 @@ namespace Nekoyume
         public static readonly Address ActionPoint           = new Address("0000000000000000000000000000000000000021");
         public static readonly Address RuneState             = new Address("0000000000000000000000000000000000000022");
         public static readonly Address BountyBoard           = new Address("0000000000000000000000000000000000000023");
+        public static readonly Address AdventureBoss         = new Address("0000000000000000000000000000000000000024");
 
         public static Address GetSheetAddress<T>() where T : ISheet => GetSheetAddress(typeof(T).Name);
 
@@ -153,6 +154,6 @@ namespace Nekoyume
                 .Select(index => GetAvatarAddress(agentAddr, index))
                 .Contains(inventoryAddr);
 
-
+        public static Address AdventureSeasonAddress(long season) => AdventureBoss.Derive(season.ToString(CultureInfo.InvariantCulture));
     }
 }
