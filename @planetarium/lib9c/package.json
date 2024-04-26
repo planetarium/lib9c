@@ -1,0 +1,33 @@
+{
+  "name": "@planetarium/lib9c",
+  "version": "0.1.0",
+  "description": "",
+  "module": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "fmt": "biome check --apply src tests",
+    "fmt:ci": "biome check src tests",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "Planetarium",
+  "license": "AGPL-3.0-only",
+  "devDependencies": {
+    "@biomejs/biome": "^1.7.1",
+    "@types/uuid": "^9.0.8",
+    "execa": "^8.0.1",
+    "tsup": "^8.0.2",
+    "tsx": "^4.7.3",
+    "typescript": "^5.4.5",
+    "vitest": "^1.5.2"
+  },
+  "dependencies": {
+    "@planetarium/account": "^4.4.1",
+    "@planetarium/bencodex": "^0.2.2",
+    "@planetarium/tx": "^4.4.1",
+    "buffer": "^6.0.3",
+    "decimal.js": "^10.4.3",
+    "uuid": "^9.0.1"
+  }
+}
