@@ -2,13 +2,15 @@ import { join } from "node:path";
 import { execa } from "execa";
 import { expect, test } from "vitest";
 import type { PolymorphicAction } from "../../src/index.js";
+import {Buffer} from "buffer";
 
 export function runTests(name: string, cases: PolymorphicAction[]) {
   for (let i = 0; i < cases.length; i++) {
     test(`${name} ${i}`, async () => {
       const action = cases[i];
-
+      console.log(action)
       const bytes = action.serialize();
+      console.log(Buffer.from(bytes).toString("hex"))
 
       const { exitCode } = await execa(
         "dotnet",
