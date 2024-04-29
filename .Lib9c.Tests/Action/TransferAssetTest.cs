@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -54,7 +55,7 @@ namespace Lib9c.Tests.Action
             var contractAddress = _sender.Derive(nameof(RequestPledge));
             var patronAddress = new PrivateKey().Address;
             var prevState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10));
             var action = new TransferAsset(
@@ -77,7 +78,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InvalidTransferSignerException()
         {
             var prevState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10)
                     .SetBalance(_sender, Currencies.Mead * 1));
@@ -107,7 +108,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InvalidTransferRecipientException()
         {
             var prevState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_sender, Currencies.Mead * 1));
             // Should not allow TransferAsset with same sender and recipient.
@@ -135,7 +136,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InsufficientBalanceException()
         {
             IWorld prevState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10));
             prevState = prevState.SetAgentState(_recipient, new AgentState(_recipient));
@@ -170,7 +171,7 @@ namespace Lib9c.Tests.Action
             var currencyBySender = Currency.Legacy("NCG", 2, minter);
 #pragma warning restore CS0618
             var prevState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, currencyBySender * 1000)
                     .SetBalance(_recipient, currencyBySender * 10)
                     .SetBalance(_sender, Currencies.Mead * 1))
@@ -247,10 +248,10 @@ namespace Lib9c.Tests.Action
         {
             var crystal = CrystalCalculator.CRYSTAL;
             var prevState = new World(
-                new MockWorldState()
-                    .SetState(ReservedAddresses.LegacyAccount, _recipient.Derive(ActivationKey.DeriveKey), true.Serialize())
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, crystal * 1000)
-                    .SetBalance(_sender, Currencies.Mead * 1));
+                    .SetBalance(_sender, Currencies.Mead * 1))
+                .SetLegacyState(_recipient.Derive(ActivationKey.DeriveKey), true.Serialize());
             var action = new TransferAsset(
                 sender: _sender,
                 recipient: _recipient,
@@ -285,7 +286,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_ArgumentException()
         {
             var baseState = new World(
-                new MockWorldState()
+                MockWorldState.CreateModern()
                     .SetBalance(_sender, _currency * 1000));
             var action = new TransferAsset(
                 sender: _sender,

@@ -103,7 +103,6 @@ namespace Lib9c.Tests.Model.State
                     new PrivateKey().Address,
                     0L,
                     _tableSheets.GetAvatarSheets(),
-                    new GameConfigState(),
                     default,
                     i.ToString());
                 weeklyArenaState.Add(
@@ -137,7 +136,6 @@ namespace Lib9c.Tests.Model.State
                     new PrivateKey().Address,
                     0L,
                     _tableSheets.GetAvatarSheets(),
-                    new GameConfigState(),
                     default,
                     i.ToString());
                 weeklyArenaState.Add(
@@ -177,7 +175,6 @@ namespace Lib9c.Tests.Model.State
                     new PrivateKey().Address,
                     0L,
                     _tableSheets.GetAvatarSheets(),
-                    new GameConfigState(),
                     default,
                     i.ToString());
                 weeklyArenaState.Add(

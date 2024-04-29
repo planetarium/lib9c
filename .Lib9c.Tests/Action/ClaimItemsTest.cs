@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -36,7 +37,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
 
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
@@ -332,7 +333,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(

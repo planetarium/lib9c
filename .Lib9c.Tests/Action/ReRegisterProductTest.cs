@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Lib9c.Model.Order;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -40,7 +41,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -68,7 +69,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -83,7 +83,8 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(Addresses.Shop, shopState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
-                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
+                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState))
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax);
         }
 
         [Theory]
@@ -295,9 +296,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(productId, product.ProductId);
             Assert.Equal(productType, product.Type);
             Assert.Equal(order.Price, product.Price);
-
-            var nextAvatarState = actualState.GetAvatarState(_avatarAddress);
-            Assert.Equal(_gameConfigState.ActionPointMax - ReRegisterProduct.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - ReRegisterProduct.CostAp, actualState.GetActionPoint(_avatarAddress));
         }
 
         [Fact]

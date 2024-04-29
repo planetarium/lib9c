@@ -174,7 +174,6 @@ namespace Nekoyume.Blockchain.Policy
             {
                 if (blockChain
                     .GetWorldState()
-                    .GetAccountState(ReservedAddresses.LegacyAccount)
                     .GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
                 {
                     // Check Activation

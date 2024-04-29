@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -17,7 +18,7 @@ namespace Lib9c.Tests.Action
     using Xunit;
     using Xunit.Abstractions;
 
-    public class CancelProductRegistration0Test
+    public class CancelProductRegistrationTest
     {
         private readonly IWorld _initialState;
         private readonly Address _agentAddress;
@@ -26,14 +27,14 @@ namespace Lib9c.Tests.Action
         private readonly TableSheets _tableSheets;
         private readonly GameConfigState _gameConfigState;
 
-        public CancelProductRegistration0Test(ITestOutputHelper outputHelper)
+        public CancelProductRegistrationTest(ITestOutputHelper outputHelper)
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -59,7 +60,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -73,7 +73,8 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(GoldCurrencyState.Address, _goldCurrencyState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
-                .SetAvatarState(_avatarAddress, avatarState);
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax);
         }
 
         [Theory]
@@ -84,7 +85,7 @@ namespace Lib9c.Tests.Action
             bool invalidAgentAddress
         )
         {
-            var action = new CancelProductRegistration0
+            var action = new CancelProductRegistration
             {
                 AvatarAddress = _avatarAddress,
                 ProductInfos = new List<IProductInfo>
@@ -159,7 +160,7 @@ namespace Lib9c.Tests.Action
                     (List)nexState.GetLegacyState(ProductsState.DeriveAddress(_avatarAddress)));
             var productId = Assert.Single(productsState.ProductIds);
 
-            var action = new CancelProductRegistration0
+            var action = new CancelProductRegistration
             {
                 AvatarAddress = _avatarAddress,
                 ProductInfos = new List<IProductInfo>
@@ -196,12 +197,12 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_ArgumentOutOfRangeException()
         {
             var productInfos = new List<IProductInfo>();
-            for (int i = 0; i < CancelProductRegistration0.Capacity + 1; i++)
+            for (int i = 0; i < CancelProductRegistration.Capacity + 1; i++)
             {
                 productInfos.Add(new ItemProductInfo());
             }
 
-            var action = new CancelProductRegistration0
+            var action = new CancelProductRegistration
             {
                 AvatarAddress = _avatarAddress,
                 ProductInfos = productInfos,

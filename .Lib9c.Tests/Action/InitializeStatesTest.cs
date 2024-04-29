@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -64,7 +65,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Signer = minterKey.Address,
                 Miner = default,
-                PreviousState = new World(new MockWorldState()),
+                PreviousState = new World(MockUtil.MockModernWorldState),
             });
 
             var addresses = new List<Address>()
@@ -131,7 +132,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new World(new MockWorldState()),
+                PreviousState = new World(MockUtil.MockModernWorldState),
             });
 
             var fetchedState = new AuthorizedMinersState(
@@ -180,7 +181,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new World(new MockWorldState()),
+                PreviousState = new World(MockUtil.MockModernWorldState),
             });
 
             var fetchedState = new ActivatedAccountsState(
@@ -232,7 +233,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new World(new MockWorldState()),
+                PreviousState = new World(MockUtil.MockModernWorldState),
             });
 
             var fetchedState = new CreditsState(
@@ -278,7 +279,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new World(new MockWorldState()),
+                PreviousState = new World(MockUtil.MockModernWorldState),
             });
 
             var fetchedState = new ActivatedAccountsState(
@@ -321,7 +322,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new World(new MockWorldState()),
+                PreviousState = new World(MockUtil.MockModernWorldState),
             });
 
             Assert.Equal(0 * ncg, genesisState.GetBalance(GoldCurrencyState.Address, ncg));
@@ -362,7 +363,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
                 Miner = default,
                 Signer = minterKey.Address,
-                PreviousState = new World(new MockWorldState()),
+                PreviousState = new World(MockUtil.MockModernWorldState),
             });
 
             var assetMinters = Assert.IsType<List>(genesisState.GetLegacyState(Addresses.AssetMinters));

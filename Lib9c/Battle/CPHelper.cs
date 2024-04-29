@@ -17,7 +17,10 @@ namespace Nekoyume.Battle
             IReadOnlyCollection<RuneOptionSheet.Row.RuneOptionInfo> runeOptions,
             int level,
             CharacterSheet.Row row,
-            CostumeStatSheet costumeStatSheet, List<StatModifier> collectionStatModifiers)
+            CostumeStatSheet costumeStatSheet,
+            List<StatModifier> collectionStatModifiers,
+            int runeLevelBonus
+        )
         {
             decimal levelStatsCp = GetStatsCP(row.ToStats(level), level);
             var collectionCp = 0m;
@@ -26,7 +29,7 @@ namespace Nekoyume.Battle
             {
                 // Prepare CharacterStats for calculate collection Stats
                 var characterStats = new CharacterStats(row, level);
-                characterStats.ConfigureStats(equipments, costumes, runeOptions, costumeStatSheet, collectionStatModifiers);
+                characterStats.ConfigureStats(equipments, costumes, runeOptions, costumeStatSheet, collectionStatModifiers, runeLevelBonus);
                 foreach (var (statType, value) in characterStats.CollectionStats.GetStats())
                 {
                     collectionCp += GetStatCP(statType, value);
@@ -36,21 +39,32 @@ namespace Nekoyume.Battle
             var equipmentsCp = 0;
             var costumeCp = 0;
             var runeCp = 0;
+            var runeLevelBonusCp = 0m;
 
             foreach (var equipment in equipments)
             {
                 equipmentsCp += GetCP(equipment);
             }
+
             foreach (var costume in costumes)
             {
                 costumeCp += GetCP(costume, costumeStatSheet);
             }
+
             foreach (var runeOption in runeOptions)
             {
                 runeCp += runeOption.Cp;
+                runeLevelBonusCp += runeOption.Stats.Sum(optionInfo =>
+                    GetStatCP(
+                        optionInfo.stat.StatType,
+                        optionInfo.stat.BaseValue * runeLevelBonus / 100_000m
+                    )
+                );
             }
 
-            var totalCp = DecimalToInt(levelStatsCp + equipmentsCp + costumeCp + runeCp + collectionCp);
+            var totalCp = DecimalToInt(
+                levelStatsCp + equipmentsCp + costumeCp + runeCp + runeLevelBonusCp + collectionCp
+            );
             return totalCp;
         }
 

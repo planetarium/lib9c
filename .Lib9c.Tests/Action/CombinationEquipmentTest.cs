@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -63,7 +64,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 1,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 default
             );
 
@@ -76,9 +76,10 @@ namespace Lib9c.Tests.Action
                 _slotAddress,
                 0);
 
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(_slotAddress, combinationSlotState.Serialize())
-                .SetLegacyState(GoldCurrencyState.Address, gold.Serialize());
+                .SetLegacyState(GoldCurrencyState.Address, gold.Serialize())
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax);
 
             foreach (var (key, value) in sheets)
             {
@@ -290,6 +291,9 @@ namespace Lib9c.Tests.Action
                 Assert.NotNull(slotState.Result.itemUsable);
 
                 var equipment = (Equipment)slotState.Result.itemUsable;
+                var expectedActionPoint = DailyReward.ActionPointMax - _tableSheets
+                    .EquipmentItemRecipeSheet[recipeId]
+                    .RequiredActionPoint;
                 if (subRecipeId.HasValue)
                 {
                     Assert.True(equipment.optionCountFromCombination > 0);
@@ -301,6 +305,10 @@ namespace Lib9c.Tests.Action
                         var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
                         Assert.Equal(450 * currency, nextState.GetBalance(feeStoreAddress, currency));
                     }
+
+                    expectedActionPoint -= _tableSheets
+                        .EquipmentItemSubRecipeSheetV2[subRecipeId.Value]
+                        .RequiredActionPoint;
                 }
                 else
                 {
@@ -327,6 +335,7 @@ namespace Lib9c.Tests.Action
                 }
 
                 Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, nextState.GetBalance(Addresses.MaterialCost, CrystalCalculator.CRYSTAL));
+                Assert.Equal(expectedActionPoint, nextState.GetActionPoint(_avatarAddress));
             }
             else
             {

@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.Item;
@@ -38,15 +39,11 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 default
-            )
-            {
-                actionPoint = 0,
-            };
+            );
             agent.avatarAddresses.Add(0, _avatarAddress);
 
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize())
                 .SetAgentState(_agentAddress, agent)
                 .SetAvatarState(_avatarAddress, avatarState);
@@ -75,11 +72,10 @@ namespace Lib9c.Tests.Action
                 avatarState.inventory.AddItem(apStone);
             }
 
-            Assert.Equal(0, avatarState.actionPoint);
+            Assert.False(_initialState.TryGetActionPoint(_avatarAddress, out var actionPoint));
+            Assert.Equal(0L, actionPoint);
 
-            IWorld state;
-            state = _initialState.SetAvatarState(_avatarAddress, avatarState);
-
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
             foreach (var (key, value) in _sheets)
             {
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
@@ -97,9 +93,8 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
-            var gameConfigState = nextState.GetGameConfigState();
-            Assert.Equal(gameConfigState.ActionPointMax, nextAvatarState.actionPoint);
+            Assert.True(nextState.TryGetActionPoint(_avatarAddress, out var nextActionPoint));
+            Assert.Equal(DailyReward.ActionPointMax, nextActionPoint);
         }
 
         [Theory]
@@ -108,11 +103,11 @@ namespace Lib9c.Tests.Action
         [InlineData(true, true, false, false, typeof(NotEnoughMaterialException))]
         [InlineData(true, false, true, true, typeof(ActionPointExceededException))]
         [InlineData(true, true, true, true, typeof(ActionPointExceededException))]
-        public void Execute_Throw_Exception(bool useAvatarAddress, bool useTradable, bool enough, bool charge, Type exc)
+        public void Execute_Throw_Exception(bool useAvatarAddress, bool useTradable, bool enoughApStone, bool actionPointIsAlreadyCharged, Type exc)
         {
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
-
-            Assert.Equal(0, avatarState.actionPoint);
+            _initialState.TryGetActionPoint(_avatarAddress, out var prevActionPoint);
+            Assert.Equal(0L, prevActionPoint);
 
             var avatarAddress = useAvatarAddress ? _avatarAddress : default;
             var state = _initialState;
@@ -122,22 +117,21 @@ namespace Lib9c.Tests.Action
                 : ItemFactory.CreateMaterial(row);
             if (apStone is TradableMaterial tradableMaterial)
             {
-                if (!enough)
+                if (!enoughApStone)
                 {
                     tradableMaterial.RequiredBlockIndex = 10;
                 }
             }
 
-            if (enough)
+            if (enoughApStone)
             {
                 avatarState.inventory.AddItem(apStone);
                 state = state.SetAvatarState(_avatarAddress, avatarState);
             }
 
-            if (charge)
+            if (actionPointIsAlreadyCharged)
             {
-                avatarState.actionPoint = state.GetGameConfigState().ActionPointMax;
-                state = state.SetAvatarState(_avatarAddress, avatarState);
+                state = state.SetActionPoint(_avatarAddress, DailyReward.ActionPointMax);
             }
 
             var action = new ChargeActionPoint()

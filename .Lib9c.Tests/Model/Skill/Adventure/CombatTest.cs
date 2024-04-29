@@ -31,7 +31,6 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 default);
 
             _player = new Player(
@@ -181,11 +180,16 @@ namespace Lib9c.Tests.Model.Skill.Adventure
         [Fact]
         public void DispelOnDuration_Block()
         {
-            const int actionBuffId = 708000; // Dispel with duration
             var actionBuffSheet = _tableSheets.ActionBuffSheet;
+            var simulator = new TestSimulator(
+                new TestRandom(8),
+                _avatarState,
+                new List<System.Guid>(),
+                _tableSheets.GetSimulatorSheets());
+            _player.Simulator = simulator;
 
             // Use Dispel first
-            var dispel = actionBuffSheet.Values.First(bf => bf.Id == actionBuffId);
+            var dispel = actionBuffSheet.Values.First(bf => bf.ActionBuffType == ActionBuffType.Dispel);
             _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, dispel));
             Assert.Single(_player.Buffs);
 
@@ -216,11 +220,10 @@ namespace Lib9c.Tests.Model.Skill.Adventure
         [Fact]
         public void DispelOnDuration_Affect()
         {
-            const int actionBuffId = 708000; // Dispel with duration
             var actionBuffSheet = _tableSheets.ActionBuffSheet;
 
             // Use Dispel first
-            var dispel = actionBuffSheet.Values.First(bf => bf.Id == actionBuffId);
+            var dispel = actionBuffSheet.Values.First(bf => bf.ActionBuffType == ActionBuffType.Dispel);
             _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, dispel));
             Assert.Single(_player.Buffs);
 
@@ -251,11 +254,10 @@ namespace Lib9c.Tests.Model.Skill.Adventure
         [Fact]
         public void DispelOnDuration_Nothing()
         {
-            const int actionBuffId = 708000; // Dispel with duration
             var actionBuffSheet = _tableSheets.ActionBuffSheet;
 
             // Use Dispel first
-            var dispel = actionBuffSheet.Values.First(bf => bf.Id == actionBuffId);
+            var dispel = actionBuffSheet.Values.First(bf => bf.ActionBuffType == ActionBuffType.Dispel);
             _player.AddBuff(BuffFactory.GetActionBuff(_player.Stats, dispel));
             Assert.Single(_player.Buffs);
 

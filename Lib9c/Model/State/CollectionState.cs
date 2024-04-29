@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Bencodex;
 using Bencodex.Types;
+using Nekoyume.Model.Stat;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Model.State
 {
@@ -9,7 +11,7 @@ namespace Nekoyume.Model.State
     /// </summary>
     public class CollectionState : IBencodable
     {
-        public List<int> Ids = new();
+        public SortedSet<int> Ids = new();
 
         public CollectionState()
         {
@@ -29,5 +31,16 @@ namespace Nekoyume.Model.State
         }
 
         public IValue Bencoded => List.Empty.Add(new List(Ids));
+
+        public List<StatModifier> GetModifiers(CollectionSheet collectionSheet)
+        {
+            var collectionModifiers = new List<StatModifier>();
+            foreach (var collectionId in Ids)
+            {
+                collectionModifiers.AddRange(collectionSheet[collectionId].StatModifiers);
+            }
+
+            return collectionModifiers;
+        }
     }
 }

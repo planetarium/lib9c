@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Libplanet.Action;
+using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Item;
@@ -36,7 +37,8 @@ namespace Nekoyume.Battle
         public StageSimulator(IRandom random,
             AvatarState avatarState,
             List<Guid> foods,
-            List<RuneState> runeStates,
+            AllRuneState runeStates,
+            RuneSlotState runeSlotState,
             List<Skill> skillsOnWaveStart,
             int worldId,
             int stageId,
@@ -52,7 +54,7 @@ namespace Nekoyume.Battle
             DeBuffLimitSheet deBuffLimitSheet,
             bool logEvent = true,
             long shatterStrikeMaxDamage = 400_000
-            )
+        )
             : base(
                 random,
                 avatarState,
@@ -60,18 +62,28 @@ namespace Nekoyume.Battle
                 simulatorSheets,
                 logEvent,
                 shatterStrikeMaxDamage
-                )
+            )
         {
             DeBuffLimitSheet = deBuffLimitSheet;
             var runeOptionSheet = simulatorSheets.RuneOptionSheet;
             var skillSheet = simulatorSheets.SkillSheet;
-            Player.ConfigureStats(costumeStatSheet, runeStates, runeOptionSheet, skillSheet,
-                collectionModifiers);
-            if (runeStates is not null)
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates, simulatorSheets.RuneListSheet, simulatorSheets.RuneLevelBonusSheet
+            );
+            var equippedRune = new List<RuneState>();
+            foreach (var runeInfo in runeSlotState.GetEquippedRuneSlotInfos())
             {
-                // call SetRuneSkills last. because rune skills affect from total calculated stats
-                Player.SetRuneSkills(runeStates, runeOptionSheet, skillSheet);
+                if (runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    equippedRune.Add(runeState);
+                }
             }
+
+            Player.ConfigureStats(costumeStatSheet, equippedRune, runeOptionSheet, runeLevelBonus,
+                skillSheet, collectionModifiers);
+
+            // call SetRuneSkills last. because rune skills affect from total calculated stats
+            Player.SetRuneSkills(equippedRune, runeOptionSheet, skillSheet);
 
             _waves = new List<Wave>();
             _waveRewards = waveRewards;

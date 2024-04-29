@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -54,7 +55,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 _rankingMapAddress
             )
             {
@@ -64,7 +64,7 @@ namespace Lib9c.Tests.Action
 
             _weeklyArenaState = new WeeklyArenaState(0);
 
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, _avatarState)
@@ -100,7 +100,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                gameConfigState,
                 _rankingMapAddress)
             {
                 worldInformation =
@@ -162,7 +161,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                gameConfigState,
                 _rankingMapAddress)
             {
                 worldInformation =

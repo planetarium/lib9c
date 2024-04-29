@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -49,7 +50,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 default
             );
 
@@ -61,7 +61,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(_ncgCurrency);
 
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                     Addresses.GetSheetAddress<CrystalMonsterCollectionMultiplierSheet>(),
                     _tableSheets.CrystalMonsterCollectionMultiplierSheet.Serialize())
@@ -131,7 +131,7 @@ namespace Lib9c.Tests.Action
 
             if (avatarExist)
             {
-                _avatarState.actionPoint = ap;
+                state = state.SetActionPoint(_avatarAddress, ap);
 
                 if (equipmentExist)
                 {
@@ -228,7 +228,7 @@ namespace Lib9c.Tests.Action
 
                 Assert.Equal(asset, nextState.GetBalance(_agentAddress, _crystalCurrency));
                 Assert.False(nextAvatarState.inventory.HasNonFungibleItem(default));
-                Assert.Equal(115, nextAvatarState.actionPoint);
+                Assert.Equal(115, nextState.GetActionPoint(_avatarAddress));
 
                 var mail = nextAvatarState.mailBox.OfType<GrindingMail>().First(i => i.id.Equals(action.Id));
 

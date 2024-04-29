@@ -6,6 +6,5 @@ id,group,_name,chance,duration,target_type,buff_type,elemental_type,atk_power_ra
 704000,704000,기절,100,0,Enemy,Stun,Normal,0
 704001,704000,기절,100,0,Enemies,Stun,Normal,0
 705000,705000,흡혈,100,0,Self,Vampiric,Normal,0
-706000,706000,집중,100,20,Self,Focus,Normal,0
-707000,707000,치유,100,0,Self,Dispel,Normal,0
-708000,708000,면역(1),100,20,Self,Dispel,Normal,0
+706000,706000,집중,100,10,Self,Focus,Normal,0
+707000,707000,디버프 회피율,45,12,Self,Dispel,Normal,0

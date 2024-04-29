@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Lib9c.Tests.Extensions;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -41,7 +42,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
         }
@@ -49,7 +49,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateEmptyAddress()
         {
-            var states = new World(new MockWorldState());
+            var states = new World(MockUtil.MockModernWorldState);
 
             Assert.False(states.TryGetAvatarState(default, default, out _));
         }
@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateAddressKeyNotFoundException()
         {
-            var states = new World(new MockWorldState()).SetLegacyState(default, Dictionary.Empty);
+            var states = new World(MockUtil.MockModernWorldState).SetLegacyState(default, Dictionary.Empty);
 
             Assert.False(states.TryGetAvatarState(default, default, out _));
         }
@@ -65,7 +65,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateKeyNotFoundException()
         {
-            var states = new World(new MockWorldState())
+            var states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                 default,
                 Dictionary.Empty
@@ -78,7 +78,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateInvalidCastException()
         {
-            var states = new World(new MockWorldState()).SetLegacyState(default, default(Text));
+            var states = new World(MockUtil.MockModernWorldState).SetLegacyState(default, default(Text));
 
             Assert.False(states.TryGetAvatarState(default, default, out _));
         }
@@ -86,7 +86,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarStateInvalidAddress()
         {
-            var states = new World(new MockWorldState()).SetAvatarState(default, _avatarState);
+            var states = new World(MockUtil.MockModernWorldState).SetAvatarState(default, _avatarState);
 
             Assert.False(states.TryGetAvatarState(Addresses.GameConfig, _avatarAddress, out _));
         }
@@ -94,7 +94,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void GetAvatarStateV2()
         {
-            IWorld states = new World(new MockWorldState());
+            IWorld states = new World(MockUtil.MockModernWorldState);
             states = states
                 .SetAvatarState(_avatarAddress, _avatarState);
 
@@ -118,12 +118,12 @@ namespace Lib9c.Tests.Action
                 _ => throw new ArgumentException(),
             };
 
-            IWorld states = new World(new MockWorldState());
+            IWorld states = new World(MockUtil.MockModernWorldState);
             states = states
                 .SetAvatarState(_avatarAddress, _avatarState);
             states = states.SetAccount(
                 accountAddress,
-                states.GetAccount(accountAddress).SetNull(_avatarAddress));
+                states.GetAccount(accountAddress).RemoveState(_avatarAddress));
             var exc = Assert.Throws<FailedLoadStateException>(() => states.GetAvatarState(_avatarAddress));
             Assert.Contains(account, exc.Message);
         }
@@ -133,7 +133,7 @@ namespace Lib9c.Tests.Action
         [InlineData(false)]
         public void TryGetAvatarState(bool backward)
         {
-            IWorld states = new World(new MockWorldState());
+            IWorld states = new World(MockUtil.MockModernWorldState);
             if (backward)
             {
                 states = states
@@ -151,7 +151,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void GetStatesAsDict()
         {
-            IWorld states = new World(new MockWorldState());
+            IWorld states = new World(MockUtil.MockModernWorldState);
             var dict = new Dictionary<Address, IValue>
             {
                 { new PrivateKey().Address, Null.Value },
@@ -178,7 +178,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void GetSheets()
         {
-            IWorld states = new World(new MockWorldState());
+            IWorld states = new World(MockUtil.MockModernWorldState);
             SheetsExtensionsTest.InitSheets(
                 states,
                 out _,
@@ -205,7 +205,7 @@ namespace Lib9c.Tests.Action
         [InlineData(true)]
         public void GetCrystalCostState(bool exist)
         {
-            IWorld states = new World(new MockWorldState());
+            IWorld states = new World(MockUtil.MockModernWorldState);
             int expectedCount = exist ? 1 : 0;
             FungibleAssetValue expectedCrystal = exist
                 ? 100 * CrystalCalculator.CRYSTAL
@@ -238,7 +238,7 @@ namespace Lib9c.Tests.Action
             Address previousCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 1);
             Address beforePreviousCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 2);
             var crystalCostState = new CrystalCostState(default, 100 * CrystalCalculator.CRYSTAL);
-            IWorld state = new World(new MockWorldState())
+            IWorld state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(dailyCostAddress, crystalCostState.Serialize())
                 .SetLegacyState(weeklyCostAddress, crystalCostState.Serialize())
                 .SetLegacyState(previousCostAddress, crystalCostState.Serialize())
@@ -268,7 +268,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void GetCouponWallet()
         {
-            IWorld states = new World(new MockWorldState());
+            IWorld states = new World(MockUtil.MockModernWorldState);
             var guid1 = new Guid("6856AE42-A820-4041-92B0-5D7BAA52F2AA");
             var guid2 = new Guid("701BA698-CCB9-4FC7-B88F-7CB8C707D135");
             var guid3 = new Guid("910296E7-34E4-45D7-9B4E-778ED61F278B");

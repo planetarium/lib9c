@@ -33,7 +33,8 @@ namespace Nekoyume.Battle
             IRandom random,
             AvatarState avatarState,
             List<Guid> foods,
-            List<RuneState> runeStates,
+            AllRuneState runeStates,
+            RuneSlotState runeSlotState,
             RaidSimulatorSheets simulatorSheets,
             CostumeStatSheet costumeStatSheet,
             List<StatModifier> collectionModifiers,
@@ -45,13 +46,25 @@ namespace Nekoyume.Battle
             DeBuffLimitSheet = deBuffLimitSheet;
             var runeOptionSheet = simulatorSheets.RuneOptionSheet;
             var skillSheet = simulatorSheets.SkillSheet;
-            Player.ConfigureStats(costumeStatSheet, runeStates, runeOptionSheet, skillSheet,
-                collectionModifiers);
-            if (runeStates is not null)
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates, simulatorSheets.RuneListSheet, simulatorSheets.RuneLevelBonusSheet
+            );
+            var equippedRune = new List<RuneState>();
+            foreach (var runeInfo in runeSlotState.GetEquippedRuneSlotInfos())
             {
-                // call SetRuneSkills last. because rune skills affect from total calculated stats
-                Player.SetRuneSkills(runeStates, runeOptionSheet, skillSheet);
+                if (runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    equippedRune.Add(runeState);
+                }
             }
+
+            Player.ConfigureStats(costumeStatSheet,
+                equippedRune, runeOptionSheet, runeLevelBonus,
+                skillSheet, collectionModifiers
+            );
+
+            // call SetRuneSkills last. because rune skills affect from total calculated stats
+            Player.SetRuneSkills(equippedRune, runeOptionSheet, skillSheet);
 
             BossId = bossId;
             _waves = new List<RaidBoss>();

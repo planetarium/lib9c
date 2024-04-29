@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lib9c;
@@ -6,7 +7,9 @@ using Libplanet.Action;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Battle;
+using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Helper
 {
@@ -37,7 +40,8 @@ namespace Nekoyume.Helper
         )
         {
             var row = sheet.Values.First(r => r.Rank == rank && r.BossId == bossId);
-            var rewardRow = rewardSheet.OrderedRows.First(r => r.Rank == rank && r.BossId == bossId);
+            var rewardRow =
+                rewardSheet.OrderedRows.First(r => r.Rank == rank && r.BossId == bossId);
             if (rewardRow is WorldBossKillRewardSheet.Row kr)
             {
                 kr.SetRune(random);
@@ -46,6 +50,7 @@ namespace Nekoyume.Helper
             {
                 rr.SetRune(random);
             }
+
             var total = 0;
             var dictionary = new Dictionary<int, int>();
             while (total < rewardRow.Rune)
@@ -82,74 +87,75 @@ namespace Nekoyume.Helper
             {
                 result.Add(rewardRow.Crystal * CrystalCalculator.CRYSTAL);
             }
+
             return result;
         }
 
         public static bool TryEnhancement(
-            FungibleAssetValue ncg,
-            FungibleAssetValue crystal,
-            FungibleAssetValue rune,
-            Currency ncgCurrency,
-            Currency crystalCurrency,
-            Currency runeCurrency,
-            RuneCostSheet.RuneCostData cost,
+            int startRuneLevel,
+            RuneCostSheet.Row costRow,
             IRandom random,
-            int maxTryCount,
-            out int tryCount)
+            int tryCount,
+            out RuneEnhancement.LevelUpResult levelUpResult)
         {
-            tryCount = 0;
-            var value = cost.LevelUpSuccessRate + 1;
-            while (value > cost.LevelUpSuccessRate)
+            levelUpResult = new RuneEnhancement.LevelUpResult();
+
+            for (var i = 0; i < tryCount; i++)
             {
-                tryCount++;
-                if (tryCount > maxTryCount)
-                {
-                    tryCount = maxTryCount;
-                    return false;
-                }
-
-                if (!CheckBalance(ncg, crystal, rune, ncgCurrency, crystalCurrency, runeCurrency, cost, tryCount))
+                // No cost Found : throw exception at caller
+                if (!costRow.TryGetCost(startRuneLevel + levelUpResult.LevelUpCount + 1,
+                        out var cost))
                 {
                     return false;
                 }
 
-                value = random.Next(1, GameConfig.MaximumProbability + 1);
+                // Cost burns in every try
+                levelUpResult.NcgCost += cost.NcgQuantity;
+                levelUpResult.CrystalCost += cost.CrystalQuantity;
+                levelUpResult.RuneCost += cost.RuneStoneQuantity;
+
+                if (random.Next(0, GameConfig.MaximumProbability) < cost.LevelUpSuccessRate)
+                {
+                    levelUpResult.LevelUpCount++;
+                }
             }
 
             return true;
         }
 
-        private static bool CheckBalance(
-            FungibleAssetValue ncg,
-            FungibleAssetValue crystal,
-            FungibleAssetValue rune,
-            Currency ncgCurrency,
-            Currency crystalCurrency,
-            Currency runeCurrency,
-            RuneCostSheet.RuneCostData cost,
-            int tryCount)
-        {
-            var ncgCost = tryCount * cost.NcgQuantity * ncgCurrency;
-            var crystalCost = tryCount * cost.CrystalQuantity * crystalCurrency;
-            var runeCost = tryCount * cost.RuneStoneQuantity * runeCurrency;
-            if (ncg < ncgCost || crystal < crystalCost || rune < runeCost)
-            {
-                if (tryCount == 1)
-                {
-                    throw new NotEnoughFungibleAssetValueException($"{nameof(RuneHelper)}" +
-                        $"[ncg:{ncg} < {ncgCost}] [crystal:{crystal} < {crystalCost}] [rune:{rune} < {runeCost}]");
-                }
-
-                return false;
-            }
-
-            return true;
-        }
-
-        public static FungibleAssetValue CalculateStakeReward(FungibleAssetValue stakeAmount, int rate)
+        public static FungibleAssetValue CalculateStakeReward(FungibleAssetValue stakeAmount,
+            int rate)
         {
             var (quantity, _) = stakeAmount.DivRem(stakeAmount.Currency * rate);
             return StakeRune * quantity;
+        }
+
+        public static int CalculateRuneLevelBonus(AllRuneState allRuneState,
+            RuneListSheet runeListSheet, RuneLevelBonusSheet runeLevelBonusSheet)
+        {
+            var bonusLevel = 0;
+            foreach (var rune in allRuneState.Runes.Values)
+            {
+                var runeRow = runeListSheet.Values.FirstOrDefault(row => row.Id == rune.RuneId);
+                if (runeRow is not null)
+                {
+                    bonusLevel += runeRow.BonusCoef * rune.Level;
+                }
+            }
+
+            var runeLevelBonus = 0;
+            var prevLevel = 0;
+            foreach (var row in runeLevelBonusSheet.Values.OrderBy(row => row.RuneLevel))
+            {
+                runeLevelBonus += (Math.Min(row.RuneLevel, bonusLevel) - prevLevel) * row.Bonus;
+                prevLevel = row.RuneLevel;
+                if (row.RuneLevel >= bonusLevel)
+                {
+                    break;
+                }
+            }
+
+            return runeLevelBonus;
         }
     }
 }

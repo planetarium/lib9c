@@ -16,6 +16,7 @@ using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Rune;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
@@ -119,6 +120,7 @@ namespace Nekoyume.Action
                 typeof(StakeActionPointCoefficientSheet),
                 typeof(RuneListSheet),
                 typeof(RuneOptionSheet),
+                typeof(RuneLevelBonusSheet),
             };
             if (collectionExist)
             {
@@ -221,17 +223,24 @@ namespace Nekoyume.Action
             itemSlotState.UpdateCostumes(costumes);
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
-            var runeStates = new List<RuneState>();
-            foreach (var address in runeInfos.Select(info => RuneState.DeriveAddress(avatarAddress, info.RuneId)))
+            var runeStates = states.GetRuneState(avatarAddress, out var migrateRequired);
+            // Passive migrate runeStates
+            if (migrateRequired)
             {
-                if (states.TryGetLegacyState(address, out List rawRuneState))
+                states = states.SetRuneState(avatarAddress, runeStates);
+            }
+
+            var equippedRune = new List<RuneState>();
+            foreach (var runeInfo in runeSlotState.GetEquippedRuneSlotInfos())
+            {
+                if (runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
                 {
-                    runeStates.Add(new RuneState(rawRuneState));
+                    equippedRune.Add(runeState);
                 }
             }
             var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
             var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
-            foreach (var runeState in runeStates)
+            foreach (var runeState in equippedRune)
             {
                 if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
                 {
@@ -246,6 +255,10 @@ namespace Nekoyume.Action
                 runeOptions.Add(option);
             }
 
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            var runeLevelBonus =
+                RuneHelper.CalculateRuneLevelBonus(runeStates, runeListSheet, runeLevelBonusSheet);
+
             var characterSheet = sheets.GetSheet<CharacterSheet>();
             if (!characterSheet.TryGetValue(avatarState.characterId, out var characterRow))
             {
@@ -256,17 +269,14 @@ namespace Nekoyume.Action
             if (collectionExist)
             {
                 var collectionSheet = sheets.GetSheet<CollectionSheet>();
-                foreach (var collectionId in collectionState.Ids)
-                {
-                    collectionModifiers.AddRange(collectionSheet[collectionId].StatModifiers);
-                }
+                collectionModifiers = collectionState.GetModifiers(collectionSheet);
             }
 
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
             var cp = CPHelper.TotalCP(
                 equipmentList, costumeList,
                 runeOptions, avatarState.level,
-                characterRow, costumeStatSheet, collectionModifiers);
+                characterRow, costumeStatSheet, collectionModifiers, runeLevelBonus);
             if (cp < cpRow.RequiredCP)
             {
                 throw new NotEnoughCombatPointException(
@@ -286,16 +296,21 @@ namespace Nekoyume.Action
                 }
             }
 
-            if (actionPoint > avatarState.actionPoint)
+            if (!states.TryGetActionPoint(avatarAddress, out var hasActionPoint))
+            {
+                hasActionPoint = avatarState.actionPoint;
+            }
+
+            if (actionPoint > hasActionPoint)
             {
                 throw new NotEnoughActionPointException(
                     $"{addressesHex}Aborted due to insufficient action point: " +
-                    $"use AP({actionPoint}) > current AP({avatarState.actionPoint})"
+                    $"use AP({actionPoint}) > current AP({hasActionPoint})"
                 );
             }
 
             // burn ap
-            avatarState.actionPoint -= actionPoint;
+            states = states.SetActionPoint(avatarAddress, hasActionPoint - actionPoint);
             var costAp = sheets.GetSheet<StageSheet>()[stageId].CostAP;
             var goldCurrency = states.GetGoldCurrency();
             var stakedAmount = states.GetStakedAmount(context.Signer);

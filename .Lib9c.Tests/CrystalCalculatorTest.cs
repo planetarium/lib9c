@@ -231,6 +231,32 @@ namespace Lib9c.Tests
                     false,
                     20,
                 },
+                // Max level exponent = 5
+                // 10 + (2^20 - 1) * 10 changes to
+                // 10 + (2^5 - 1) * 10 = 320
+                new object[]
+                {
+                    new[]
+                    {
+                        (10110000, 20),
+                    },
+                    0,
+                    false,
+                    320,
+                },
+                // Max crystal = 100_000_000
+                // 10_000_000 + (2^5 - 1) * 10_000_000 = 320_000_000
+                // limit to 100_000_000
+                new object[]
+                {
+                    new[]
+                    {
+                        (10650006, 5),
+                    },
+                    0,
+                    false,
+                    100_000_000,
+                },
             };
 
             public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();

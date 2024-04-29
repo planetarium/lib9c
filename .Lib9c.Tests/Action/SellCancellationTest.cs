@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Lib9c.Model.Order;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -38,7 +39,7 @@ namespace Lib9c.Tests.Action
                 .WriteTo.TestOutput(outputHelper)
                 .CreateLogger();
 
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -64,7 +65,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -79,7 +79,8 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(_agentAddress, agentState)
                 .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
                 .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
-                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
+                .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState))
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax);
         }
 
         [Theory]
@@ -233,7 +234,7 @@ namespace Lib9c.Tests.Action
                 Signer = _agentAddress,
             });
 
-            var cancelProductRegistration = new CancelProductRegistration0
+            var cancelProductRegistration = new CancelProductRegistration
             {
                 AvatarAddress = _avatarAddress,
                 ProductInfos = new List<IProductInfo>

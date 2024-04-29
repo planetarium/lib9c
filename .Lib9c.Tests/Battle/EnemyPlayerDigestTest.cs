@@ -24,7 +24,6 @@ namespace Lib9c.Tests
                 new PrivateKey().Address,
                 1234,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 new PrivateKey().Address,
                 "test"
             );

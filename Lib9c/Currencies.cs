@@ -43,6 +43,17 @@ namespace Lib9c
             0,
             minters: null);
 
+        public static readonly Currency FreyaLiberationRune = Currency.Legacy(
+            "RUNESTONE_FREYA_LIBERATION",
+            0,
+            minters: null);
+
+        public static readonly Currency FreyaBlessingRune = Currency.Legacy(
+            "RUNESTONE_FREYA_BLESSING",
+            0,
+            minters: null);
+
+
         public static readonly Currency Mead = Currency.Legacy("Mead", 18, null);
 
         /// <summary>

@@ -23,6 +23,11 @@ namespace Nekoyume.Model.Quest
             ItemId = (int)((Integer)serialized["itemId"]).Value;
         }
 
+        public CollectQuest(List serialized) : base(serialized)
+        {
+            ItemId = (Integer) serialized[7];
+        }
+
         public override void Check()
         {
             if (Complete)
@@ -54,5 +59,7 @@ namespace Nekoyume.Model.Quest
         public override IValue Serialize() =>
             ((Dictionary) base.Serialize())
             .Add("itemId", ItemId);
+
+        public override IValue SerializeList() => ((List) base.SerializeList()).Add(ItemId);
     }
 }

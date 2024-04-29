@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action.Scenario
     using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -41,7 +42,6 @@ namespace Lib9c.Tests.Action.Scenario
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 _rankingMapAddress
             )
             {
@@ -56,11 +56,12 @@ namespace Lib9c.Tests.Action.Scenario
             var currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(currency);
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetLegacyState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, avatarState)
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax)
                 .SetLegacyState(_rankingMapAddress, new RankingMapState(_rankingMapAddress).Serialize())
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 

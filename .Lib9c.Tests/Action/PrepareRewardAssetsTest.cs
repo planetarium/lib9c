@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using System.Collections.Immutable;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -37,7 +38,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             }
 
-            IWorld state = new World(new MockWorldState())
+            IWorld state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(Addresses.Admin, adminState.Serialize());
 
             var action = new PrepareRewardAssets(poolAddress, assets);

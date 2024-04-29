@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -50,7 +51,7 @@ namespace Lib9c.Tests.Action.Scenario
             var skill = SkillFactory.Get(skillRow, 0, 100, 0, StatType.NONE);
             _aura.Skills.Add(skill);
             var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             for (int i = 0; i < addresses.Length; i++)
             {
                 var avatarAddress = addresses[i];
@@ -60,11 +61,11 @@ namespace Lib9c.Tests.Action.Scenario
                     _agentAddress,
                     0,
                     _tableSheets.GetAvatarSheets(),
-                    gameConfigState,
                     rankingMapAddress
                 );
                 avatarState.inventory.AddItem(_aura);
-                _initialState = _initialState.SetAvatarState(avatarAddress, avatarState);
+                _initialState = _initialState.SetAvatarState(avatarAddress, avatarState)
+                    .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
             }
 
             _currency = Currency.Legacy("NCG", 2, minters: null);
@@ -241,7 +242,8 @@ namespace Lib9c.Tests.Action.Scenario
                     avatarState,
                     battle.equipments,
                     battle.costumes,
-                    new List<RuneState>()
+                    new AllRuneState(),
+                    new RuneSlotState(BattleType.Arena)
                 );
                 var enemySlotAddress =
                     ItemSlotState.DeriveAddress(enemyAvatarAddress, BattleType.Arena);
@@ -250,7 +252,8 @@ namespace Lib9c.Tests.Action.Scenario
                     enemyAvatarState,
                     enemySlotState.Equipments,
                     enemySlotState.Costumes,
-                    new List<RuneState>()
+                    new AllRuneState(),
+                    new RuneSlotState(BattleType.Arena)
                 );
                 var log = simulator.Simulate(
                     myArenaPlayerDigest,

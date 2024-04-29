@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
     using Nekoyume.Battle;
     using Nekoyume.Model;
     using Nekoyume.Model.Buff;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
@@ -35,7 +36,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
             var gameConfigState =
                 new GameConfigState((Text)_tableSheets.GameConfigSheet.Serialize());
             Assert.True(
-                _tableSheets.SkillSheet.TryGetValue(700011, out var skillRow)
+                _tableSheets.SkillSheet.TryGetValue(700010, out var skillRow)
             ); // 700011 is ShatterStrike
             var shatterStrike = new ShatterStrike(skillRow, 0, 0, ratioBp, StatType.NONE);
 
@@ -44,7 +45,6 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 new PrivateKey().Address,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 new PrivateKey().Address
             );
             var worldRow = _tableSheets.WorldSheet.First;
@@ -55,7 +55,8 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 random,
                 avatarState,
                 new List<Guid>(),
-                null,
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
                 new List<Nekoyume.Model.Skill.Skill>(),
                 1,
                 1,

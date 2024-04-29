@@ -16,6 +16,7 @@ using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
+using Nekoyume.TableData.Rune;
 using Serilog;
 using static Lib9c.SerializeKeys;
 using Skill = Nekoyume.Model.Skill.Skill;
@@ -177,6 +178,7 @@ namespace Nekoyume.Action
                 typeof(CrystalRandomBuffSheet),
                 typeof(StakeActionPointCoefficientSheet),
                 typeof(RuneListSheet),
+                typeof(RuneLevelBonusSheet),
                 typeof(DeBuffLimitSheet),
             };
             if (collectionExist)
@@ -311,7 +313,7 @@ namespace Nekoyume.Action
                 }
 
                 var apStonePlayCount =
-                    ApStoneCount * (gameConfigState.ActionPointMax / minimumCostAp);
+                    ApStoneCount * (DailyReward.ActionPointMax / minimumCostAp);
                 apPlayCount = TotalPlayCount - apStonePlayCount;
                 if (apPlayCount < 0)
                 {
@@ -337,15 +339,21 @@ namespace Nekoyume.Action
                     apPlayCount * minimumCostAp);
             }
 
-            if (avatarState.actionPoint < minimumCostAp * apPlayCount)
+            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+            {
+                actionPoint = avatarState.actionPoint;
+            }
+
+            if (actionPoint < minimumCostAp * apPlayCount)
             {
                 throw new NotEnoughActionPointException(
                     $"{addressesHex}Aborted due to insufficient action point: " +
-                    $"{avatarState.actionPoint} < cost({minimumCostAp * apPlayCount}))"
+                    $"{actionPoint} < cost({minimumCostAp * apPlayCount}))"
                 );
             }
 
-            avatarState.actionPoint -= minimumCostAp * apPlayCount;
+            actionPoint -= minimumCostAp * apPlayCount;
+            states = states.SetActionPoint(AvatarAddress, actionPoint);
             avatarState.ValidateItemRequirement(
                 costumeIds.Concat(foodIds).ToList(),
                 equipmentList,
@@ -446,13 +454,11 @@ namespace Nekoyume.Action
             itemSlotState.UpdateCostumes(Costumes);
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
-            var runeStates = new List<RuneState>();
-            foreach (var address in RuneInfos.Select(info => RuneState.DeriveAddress(AvatarAddress, info.RuneId)))
+            var runeStates = states.GetRuneState(AvatarAddress, out var migrateRequired);
+            // Passive migrate runeStates
+            if (migrateRequired)
             {
-                if (states.TryGetLegacyState(address, out List rawRuneState))
-                {
-                    runeStates.Add(new RuneState(rawRuneState));
-                }
+                states = states.SetRuneState(AvatarAddress, runeStates);
             }
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
@@ -467,10 +473,7 @@ namespace Nekoyume.Action
             if (collectionExist)
             {
                 var collectionSheet = sheets.GetSheet<CollectionSheet>();
-                foreach (var collectionId in collectionState.Ids)
-                {
-                    collectionModifiers.AddRange(collectionSheet[collectionId].StatModifiers);
-                }
+                collectionModifiers = collectionState.GetModifiers(collectionSheet);
             }
 
             var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
@@ -485,6 +488,7 @@ namespace Nekoyume.Action
                     avatarState,
                     i == 0 ? Foods : new List<Guid>(),
                     runeStates,
+                    runeSlotState,
                     i == 0 ? skillsOnWaveStart : new List<Skill>(),
                     WorldId,
                     StageId,

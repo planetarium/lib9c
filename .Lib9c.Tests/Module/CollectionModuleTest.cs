@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Module
     using Lib9c.Tests.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -14,14 +15,14 @@ namespace Lib9c.Tests.Module
         [Fact]
         public void CollectionState()
         {
-            IWorld states = new World(new MockWorldState());
+            IWorld states = new World(MockUtil.MockModernWorldState);
             var address = new PrivateKey().Address;
             Assert.Throws<FailedLoadStateException>(() => states.GetCollectionState(address));
             Assert.False(states.TryGetCollectionState(address, out _));
 
             var state = new CollectionState
             {
-                Ids = new List<int>
+                Ids = new SortedSet<int>
                 {
                     1,
                 },
@@ -37,7 +38,7 @@ namespace Lib9c.Tests.Module
         [Fact]
         public void CollectionStates()
         {
-            IWorld states = new World(new MockWorldState());
+            IWorld states = new World(MockUtil.MockModernWorldState);
             var address = new PrivateKey().Address;
             var address2 = new PrivateKey().Address;
             var addresses = new[] { address, address2 };
@@ -46,7 +47,7 @@ namespace Lib9c.Tests.Module
 
             var state = new CollectionState
             {
-                Ids = new List<int>
+                Ids = new SortedSet<int>
                 {
                     1,
                 },

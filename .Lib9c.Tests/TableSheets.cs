@@ -9,6 +9,7 @@ namespace Lib9c.Tests
     using Nekoyume.TableData.Garages;
     using Nekoyume.TableData.GrandFinale;
     using Nekoyume.TableData.Pet;
+    using Nekoyume.TableData.Rune;
     using Nekoyume.TableData.Stake;
     using Nekoyume.TableData.Summon;
 
@@ -228,6 +229,8 @@ namespace Lib9c.Tests
 
         public RuneOptionSheet RuneOptionSheet { get; private set; }
 
+        public RuneLevelBonusSheet RuneLevelBonusSheet { get; private set; }
+
         public GrandFinaleScheduleSheet GrandFinaleScheduleSheet { get; private set; }
 
         public GrandFinaleParticipantsSheet GrandFinaleParticipantsSheet { get; private set; }
@@ -287,7 +290,9 @@ namespace Lib9c.Tests
                 CharacterSheet,
                 CharacterLevelSheet,
                 EquipmentItemSetEffectSheet,
-                RuneOptionSheet
+                RuneOptionSheet,
+                RuneListSheet,
+                RuneLevelBonusSheet
             );
         }
 
@@ -321,7 +326,9 @@ namespace Lib9c.Tests
                 StageSheet,
                 StageWaveSheet,
                 EnemySkillSheet,
-                RuneOptionSheet
+                RuneOptionSheet,
+                RuneListSheet,
+                RuneLevelBonusSheet
             );
         }
 
@@ -372,7 +379,9 @@ namespace Lib9c.Tests
                 CharacterLevelSheet,
                 EquipmentItemSetEffectSheet,
                 WeeklyArenaRewardSheet,
-                RuneOptionSheet
+                RuneOptionSheet,
+                RuneListSheet,
+                RuneLevelBonusSheet
             );
         }
 
@@ -407,7 +416,9 @@ namespace Lib9c.Tests
                 EquipmentItemSetEffectSheet,
                 CostumeStatSheet,
                 WeeklyArenaRewardSheet,
-                RuneOptionSheet
+                RuneOptionSheet,
+                RuneListSheet,
+                RuneLevelBonusSheet
             );
         }
 
@@ -448,7 +459,9 @@ namespace Lib9c.Tests
                 WorldBossBattleRewardSheet,
                 RuneWeightSheet,
                 RuneSheet,
-                RuneOptionSheet
+                RuneOptionSheet,
+                RuneListSheet,
+                RuneLevelBonusSheet
             );
         }
 

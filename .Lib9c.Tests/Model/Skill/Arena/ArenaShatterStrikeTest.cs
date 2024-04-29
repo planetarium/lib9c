@@ -30,7 +30,6 @@ namespace Lib9c.Tests.Model.Skill.Arena
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
             _avatar2 = new AvatarState(
@@ -38,7 +37,6 @@ namespace Lib9c.Tests.Model.Skill.Arena
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
 
@@ -81,7 +79,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
                     new List<StatModifier>()
                 );
 
-            var skillRow = _tableSheets.SkillSheet.OrderedList.First(s => s.Id == 700011);
+            var skillRow = _tableSheets.SkillSheet.OrderedList.First(s => s.Id == 700010);
             var shatterStrike = new ArenaShatterStrike(skillRow, 0, 0, ratioBp, StatType.NONE);
             var used = shatterStrike.Use(challenger, enemy, simulator.Turn, new List<Buff>());
             Assert.Single(used.SkillInfos);

@@ -69,7 +69,6 @@ namespace Nekoyume.Model.State
             Address agentAddress,
             long blockIndex,
             AvatarSheets avatarSheets,
-            GameConfigState gameConfigState,
             Address rankingMapAddress,
             string name = null) : base(address)
         {
@@ -91,7 +90,6 @@ namespace Nekoyume.Model.State
             );
             mailBox = new MailBox();
             this.blockIndex = blockIndex;
-            actionPoint = gameConfigState.ActionPointMax;
             stageMap = new CollectionMap();
             monsterMap = new CollectionMap();
             itemMap = new CollectionMap();
@@ -1244,29 +1242,6 @@ namespace Nekoyume.Model.State
             }
 
             return items;
-        }
-
-        public void UseAp(int requiredAp, bool chargeAp, MaterialItemSheet materialItemSheet, long blockIndex, GameConfigState gameConfigState)
-        {
-            if (actionPoint < requiredAp)
-            {
-                switch (chargeAp)
-                {
-                    case true:
-                        MaterialItemSheet.Row row = materialItemSheet
-                            .OrderedList!
-                            .First(r => r.ItemSubType == ItemSubType.ApStone);
-                        if (!inventory.RemoveFungibleItem(row.ItemId, blockIndex))
-                        {
-                            throw new NotEnoughMaterialException("not enough ap stone.");
-                        }
-                        actionPoint = gameConfigState.ActionPointMax;
-                        break;
-                    case false:
-                        throw new NotEnoughActionPointException("");
-                }
-            }
-            actionPoint -= requiredAp;
         }
 
         public override IValue Serialize()

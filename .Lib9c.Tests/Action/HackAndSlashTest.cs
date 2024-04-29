@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -63,7 +64,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 _rankingMapAddress
             )
             {
@@ -79,13 +79,14 @@ namespace Lib9c.Tests.Action
             var currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(currency);
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             _initialState = _initialState
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .SetLegacyState(_weeklyArenaState.address, _weeklyArenaState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, _avatarState)
-                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
+                .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax);
 
             foreach (var (key, value) in _sheets)
             {
@@ -216,7 +217,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 state.GetAvatarSheets(),
-                state.GetGameConfigState(),
                 _rankingMapAddress)
             {
                 level = 400,
@@ -411,10 +411,10 @@ namespace Lib9c.Tests.Action
             };
 
             IWorld state = empty
-                ? new World(new MockWorldState())
+                ? new World(MockUtil.MockModernWorldState)
                 : _initialState
                     .SetAvatarState(_avatarAddress, _avatarState)
-                    .SetAccount(Addresses.Inventory, new Account(new MockAccountState()));
+                    .SetAccount(Addresses.Inventory, new Account(MockUtil.MockAccountState));
 
             var exec = Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
             {
@@ -709,10 +709,7 @@ namespace Lib9c.Tests.Action
         [InlineData(120, 25)]
         public void ExecuteThrowNotEnoughActionPointException(int ap, int playCount = 1)
         {
-            var avatarState = new AvatarState(_avatarState)
-            {
-                actionPoint = ap,
-            };
+            var avatarState = new AvatarState(_avatarState);
 
             var action = new HackAndSlash
             {
@@ -727,7 +724,8 @@ namespace Lib9c.Tests.Action
             };
 
             var state = _initialState;
-            state = state.SetAvatarState(_avatarAddress, avatarState);
+            state = state.SetAvatarState(_avatarAddress, avatarState)
+                .SetActionPoint(_avatarAddress, ap);
 
             var exec = Assert.Throws<NotEnoughActionPointException>(() => action.Execute(new ActionContext
             {
@@ -808,7 +806,6 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = new AvatarState(_avatarState)
             {
-                actionPoint = 99999999,
                 level = avatarLevel,
             };
 
@@ -836,7 +833,8 @@ namespace Lib9c.Tests.Action
                         costumes.Add(((INonFungibleItem)costume).NonFungibleId);
                     }
 
-                    state = state.SetAvatarState(avatarState.address, avatarState);
+                    state = state.SetAvatarState(_avatarAddress, avatarState)
+                        .SetActionPoint(_avatarAddress, 99999999);
 
                     var action = new HackAndSlash
                     {
@@ -866,11 +864,10 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = new AvatarState(_avatarState)
             {
-                actionPoint = 99999999,
                 level = 1,
             };
 
-            var state = _initialState;
+            var state = _initialState.SetActionPoint(_avatarAddress, 99999999);
             var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
@@ -903,11 +900,10 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = new AvatarState(_avatarState)
             {
-                actionPoint = 99999999,
                 level = 1,
             };
 
-            var state = _initialState;
+            var state = _initialState.SetActionPoint(_avatarAddress, 99999999);
             var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
@@ -998,7 +994,6 @@ namespace Lib9c.Tests.Action
             Assert.True(_tableSheets.StageSheet.TryGetValue(stageId, out var stageRow));
 
             var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
-            previousAvatarState.actionPoint = 999999;
             previousAvatarState.level = 400;
             previousAvatarState.worldInformation = new WorldInformation(
                 0,
@@ -1045,7 +1040,8 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(_avatarAddress, previousAvatarState)
                 .SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
-                    Enumerable.Range(1, worldId).ToList().Select(i => i.Serialize()).Serialize());
+                    Enumerable.Range(1, worldId).ToList().Select(i => i.Serialize()).Serialize())
+                .SetActionPoint(_avatarAddress, 999999);
 
             var action = new HackAndSlash
             {
@@ -1125,7 +1121,6 @@ namespace Lib9c.Tests.Action
             const int stageId = 10;
             const int clearedStageId = 9;
             var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
-            previousAvatarState.actionPoint = 999999;
             previousAvatarState.level = clear ? 400 : 1;
             previousAvatarState.worldInformation = new WorldInformation(
                 0,
@@ -1168,7 +1163,8 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.Update(mail);
             }
 
-            var state = _initialState.SetAvatarState(_avatarAddress, previousAvatarState);
+            var state = _initialState.SetAvatarState(_avatarAddress, previousAvatarState)
+                .SetActionPoint(_avatarAddress, 999999);
 
             state = state.SetLegacyState(
                 _avatarAddress.Derive("world_ids"),
@@ -1294,7 +1290,6 @@ namespace Lib9c.Tests.Action
             const int stageId = 5;
             const int clearedStageId = 4;
             var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
-            previousAvatarState.actionPoint = 120;
             previousAvatarState.level = 400;
             previousAvatarState.worldInformation = new WorldInformation(
                 0,
@@ -1308,13 +1303,14 @@ namespace Lib9c.Tests.Action
             var context = new ActionContext();
             var state = _initialState
                 .SetAvatarState(_avatarAddress, previousAvatarState)
+                .SetActionPoint(_avatarAddress, 120)
                 .SetLegacyState(stakeStateAddress, stakeState.SerializeV2())
                 .SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(worldId.Serialize()))
                 .MintAsset(context, stakeStateAddress, requiredGold * _initialState.GetGoldCurrency());
 
-            var expectedAp = previousAvatarState.actionPoint -
+            var expectedAp = state.GetActionPoint(_avatarAddress) -
                              _tableSheets.StakeActionPointCoefficientSheet.GetActionPointByStaking(
                                  _tableSheets.StageSheet[stageId].CostAP, playCount, level);
             var action = new HackAndSlash
@@ -1338,8 +1334,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 1,
             };
             var nextState = action.Execute(ctx);
-            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
-            Assert.Equal(expectedAp, nextAvatar.actionPoint);
+            Assert.Equal(expectedAp, nextState.GetActionPoint(_avatarAddress));
         }
 
         [Theory]
@@ -1360,7 +1355,6 @@ namespace Lib9c.Tests.Action
             const int clearedStageId = 4;
             const int itemId = 303100;
             var previousAvatarState = _initialState.GetAvatarState(_avatarAddress);
-            previousAvatarState.actionPoint = expectedUsingAp;
             previousAvatarState.level = 400;
             previousAvatarState.worldInformation = new WorldInformation(
                 0,
@@ -1377,6 +1371,7 @@ namespace Lib9c.Tests.Action
             var context = new ActionContext();
             var state = _initialState
                 .SetAvatarState(_avatarAddress, previousAvatarState)
+                .SetActionPoint(_avatarAddress, expectedUsingAp)
                 .SetLegacyState(stakeStateAddress, stakeState.SerializeV2())
                 .SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
@@ -1411,7 +1406,7 @@ namespace Lib9c.Tests.Action
             var nextAvatar = nextState.GetAvatarState(_avatarAddress);
             Assert.Equal(expectedItemCount, nextAvatar.inventory.Items.First(i => i.item.Id == itemId).count);
             Assert.False(nextAvatar.inventory.HasItem(apStoneRow.Id));
-            Assert.Equal(0, nextAvatar.actionPoint);
+            Assert.Equal(0, nextState.GetActionPoint(_avatarAddress));
         }
 
         [Fact]
@@ -1419,7 +1414,6 @@ namespace Lib9c.Tests.Action
         {
             var avatarState = new AvatarState(_avatarState)
             {
-                actionPoint = 99999999,
                 level = 1,
             };
 
@@ -1427,7 +1421,8 @@ namespace Lib9c.Tests.Action
                 r.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(apStoneRow);
             avatarState.inventory.AddItem(apStone);
-            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+                .SetActionPoint(_avatarAddress, 99999);
             var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),

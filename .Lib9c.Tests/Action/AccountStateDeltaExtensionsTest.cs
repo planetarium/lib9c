@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume.Action;
     using Nekoyume.Helper;
     using Nekoyume.Model.Coupons;
@@ -34,7 +35,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 default
             );
         }
@@ -46,7 +46,7 @@ namespace Lib9c.Tests.Action
         public void SetWorldBossKillReward(int level, int expectedRune, int expectedCrystal, Type exc)
         {
             var context = new ActionContext();
-            IWorld states = new World(new MockWorldState());
+            IWorld states = new World(MockUtil.MockModernWorldState);
             var rewardInfoAddress = new PrivateKey().Address;
             var rewardRecord = new WorldBossKillRewardRecord();
             for (int i = 0; i < level; i++)
@@ -106,7 +106,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void SetCouponWallet()
         {
-            IWorld states = new World(new MockWorldState());
+            IWorld states = new World(MockUtil.MockModernWorldState);
             var guid1 = new Guid("6856AE42-A820-4041-92B0-5D7BAA52F2AA");
             var guid2 = new Guid("701BA698-CCB9-4FC7-B88F-7CB8C707D135");
             var guid3 = new Guid("910296E7-34E4-45D7-9B4E-778ED61F278B");
@@ -162,7 +162,7 @@ namespace Lib9c.Tests.Action
             var mead = Currencies.Mead;
             var price = RequestPledge.DefaultRefillMead * mead;
             ActionContext context = new ActionContext();
-            IWorld states = new World(new MockWorldState())
+            IWorld states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                     agentContractAddress,
                     List.Empty.Add(patron.Serialize()).Add(true.Serialize()))

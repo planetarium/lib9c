@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -56,13 +57,13 @@ namespace Lib9c.Tests.Action.Scenario
                 _sellerAgentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
                     0,
                     _tableSheets.WorldSheet,
                     GameConfig.RequireClearedStageLevel.ActionsInShop),
+                actionPoint = DailyReward.ActionPointMax,
             };
             agentState.avatarAddresses[0] = _sellerAvatarAddress;
 
@@ -74,13 +75,13 @@ namespace Lib9c.Tests.Action.Scenario
                 _sellerAgentAddress2,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
                     0,
                     _tableSheets.WorldSheet,
                     GameConfig.RequireClearedStageLevel.ActionsInShop),
+                actionPoint = DailyReward.ActionPointMax,
             };
             agentState2.avatarAddresses[0] = _sellerAvatarAddress2;
 
@@ -92,26 +93,28 @@ namespace Lib9c.Tests.Action.Scenario
                 _buyerAgentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
                     0,
                     _tableSheets.WorldSheet,
                     GameConfig.RequireClearedStageLevel.ActionsInShop),
+                actionPoint = DailyReward.ActionPointMax,
             };
             agentState3.avatarAddresses[0] = _buyerAvatarAddress;
 
             _currency = Currency.Legacy("NCG", 2, minters: null);
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(_currency).Serialize())
                 .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
                 .SetLegacyState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
                 .SetLegacyState(Addresses.GetSheetAddress<ArenaSheet>(), _tableSheets.ArenaSheet.Serialize())
                 .SetAgentState(_sellerAgentAddress, agentState)
                 .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState)
+                .SetActionPoint(_sellerAvatarAddress, DailyReward.ActionPointMax)
                 .SetAgentState(_sellerAgentAddress2, agentState2)
                 .SetAvatarState(_sellerAvatarAddress2, _sellerAvatarState2)
+                .SetActionPoint(_sellerAvatarAddress2, DailyReward.ActionPointMax)
                 .SetAgentState(_buyerAgentAddress, agentState3)
                 .SetAvatarState(_buyerAvatarAddress, buyerAvatarState);
         }
@@ -169,7 +172,7 @@ namespace Lib9c.Tests.Action.Scenario
             var nextState = action.Execute(ctx);
             var nextAvatarState = nextState.GetAvatarState(_sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - RegisterProduct.CostAp, nextState.GetActionPoint(_sellerAvatarAddress));
 
             var productsState =
                 new ProductsState((List)nextState.GetLegacyState(ProductsState.DeriveAddress(_sellerAvatarAddress)));
@@ -244,7 +247,7 @@ namespace Lib9c.Tests.Action.Scenario
             var nextState2 = action2.Execute(ctx);
             var nextAvatarState2 = nextState2.GetAvatarState(_sellerAvatarAddress2);
             Assert.Empty(nextAvatarState2.inventory.Items);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState2.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - RegisterProduct.CostAp, nextState2.GetActionPoint(_sellerAvatarAddress2));
 
             var productList2 =
                 new ProductsState((List)nextState2.GetLegacyState(ProductsState.DeriveAddress(_sellerAvatarAddress2)));
@@ -403,7 +406,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             var nextAvatarState = nextState.GetAvatarState(_sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - RegisterProduct.CostAp, nextState.GetActionPoint(_sellerAvatarAddress));
 
             var marketState = new MarketState(nextState.GetLegacyState(Addresses.Market));
             Assert.Contains(_sellerAvatarAddress, marketState.AvatarAddresses);
@@ -446,7 +449,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             Assert.All(new[] { nonFungibleProductId, fungibleProductId, assetProductId }, productId => Assert.NotEqual(default, productId));
-            var action2 = new CancelProductRegistration0
+            var action2 = new CancelProductRegistration
             {
                 AvatarAddress = _sellerAvatarAddress,
                 ProductInfos = new List<IProductInfo>
@@ -498,7 +501,9 @@ namespace Lib9c.Tests.Action.Scenario
                 );
             }
 
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp - CancelProductRegistration0.CostAp, latestAvatarState.actionPoint);
+            Assert.Equal(
+                DailyReward.ActionPointMax - RegisterProduct.CostAp - CancelProductRegistration.CostAp,
+                latestState.GetActionPoint(_sellerAvatarAddress));
 
             var sellProductList = new ProductsState((List)latestState.GetLegacyState(productsStateAddress));
             Assert.Empty(sellProductList.ProductIds);
@@ -575,7 +580,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             var nextAvatarState = nextState.GetAvatarState(_sellerAvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - RegisterProduct.CostAp, nextState.GetActionPoint(_sellerAvatarAddress));
 
             var marketState = new MarketState(nextState.GetLegacyState(Addresses.Market));
             Assert.Contains(_sellerAvatarAddress, marketState.AvatarAddresses);
@@ -699,7 +704,7 @@ namespace Lib9c.Tests.Action.Scenario
             var latestState = action2.Execute(ctx);
 
             var latestAvatarState = latestState.GetAvatarState(_sellerAvatarAddress);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp - ReRegisterProduct.CostAp, latestAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - RegisterProduct.CostAp - ReRegisterProduct.CostAp, latestState.GetActionPoint(_sellerAvatarAddress));
             var inventoryItem = Assert.Single(latestAvatarState.inventory.Items);
             Assert.Equal(1, inventoryItem.count);
             Assert.IsType<TradableMaterial>(inventoryItem.item);
@@ -835,7 +840,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             var nextAvatarState = nextState.GetAvatarState(_sellerAvatarAddress);
-            Assert.Equal(_gameConfigState.ActionPointMax - ReRegisterProduct.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - ReRegisterProduct.CostAp, nextState.GetActionPoint(_sellerAvatarAddress));
             Assert.Empty(nextAvatarState.inventory.Items);
 
             foreach (var shopAddress in shopAddressList)
@@ -965,7 +970,7 @@ namespace Lib9c.Tests.Action.Scenario
                 },
             };
             //Cancel
-            var cancelAction = new CancelProductRegistration0
+            var cancelAction = new CancelProductRegistration
             {
                 AvatarAddress = _sellerAvatarAddress,
                 ProductInfos = productInfos,

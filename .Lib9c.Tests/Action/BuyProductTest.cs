@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -46,7 +47,7 @@ namespace Lib9c.Tests.Action
                 .CreateLogger();
 
             var context = new ActionContext();
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -66,7 +67,6 @@ namespace Lib9c.Tests.Action
                 SellerAgentAddress,
                 0,
                 TableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -84,7 +84,6 @@ namespace Lib9c.Tests.Action
                 _sellerAgentAddress2,
                 0,
                 TableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -100,7 +99,6 @@ namespace Lib9c.Tests.Action
                 BuyerAgentAddress,
                 0,
                 TableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(

@@ -8,6 +8,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Battle;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.Market;
@@ -56,7 +57,16 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException("failed to load avatar state");
             }
 
-            avatarState.UseAp(CostAp, ChargeAp, states.GetSheet<MaterialItemSheet>(), context.BlockIndex, states.GetGameConfigState());
+            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+            {
+                actionPoint = avatarState.actionPoint;
+            }
+
+            var resultActionPoint = avatarState.inventory.UseActionPoint(actionPoint,
+                CostAp,
+                ChargeAp,
+                states.GetSheet<MaterialItemSheet>(),
+                context.BlockIndex);
             var productsStateAddress = ProductsState.DeriveAddress(AvatarAddress);
             ProductsState productsState;
             if (states.TryGetLegacyState(productsStateAddress, out List rawProductList))
@@ -117,6 +127,7 @@ namespace Nekoyume.Action
 
             states = states
                 .SetAvatarState(AvatarAddress, avatarState)
+                .SetActionPoint(AvatarAddress, resultActionPoint)
                 .SetLegacyState(productsStateAddress, productsState.Serialize());
 
             return states;

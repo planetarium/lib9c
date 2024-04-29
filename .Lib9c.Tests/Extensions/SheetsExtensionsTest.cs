@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Extensions
     using Lib9c.Tests.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Extensions;
@@ -26,7 +27,7 @@ namespace Lib9c.Tests.Extensions
 
         public SheetsExtensionsTest()
         {
-            _states = new World(new MockWorldState());
+            _states = new World(MockUtil.MockModernWorldState);
             InitSheets(
                 _states,
                 out _sheetNameAndFiles,

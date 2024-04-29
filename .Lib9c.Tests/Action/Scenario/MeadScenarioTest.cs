@@ -1,12 +1,17 @@
 namespace Lib9c.Tests.Action.Scenario
 {
     using System;
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
     using System.Reflection;
+    using Bencodex.Types;
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
+    using Libplanet.Types.Tx;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Module;
@@ -19,10 +24,25 @@ namespace Lib9c.Tests.Action.Scenario
         {
             Currency mead = Currencies.Mead;
             var patron = new PrivateKey().Address;
-            IActionContext context = new ActionContext();
-            IWorld states = new World(new MockWorldState()).MintAsset(context, patron, 10 * mead);
+            var agentKey = new PrivateKey();
+            var agentAddress = agentKey.Address;
 
-            var agentAddress = new PrivateKey().Address;
+            IActionContext context = new ActionContext()
+            {
+                Txs = ImmutableList.Create<ITransaction>(
+                    new Transaction(
+                        new UnsignedTx(
+                            new TxInvoice(
+                                null,
+                                DateTimeOffset.UtcNow,
+                                new TxActionList(new List<IValue>()),
+                                maxGasPrice: Currencies.Mead * 4,
+                                gasLimit: 4),
+                            new TxSigningMetadata(agentKey.PublicKey, 0)),
+                        agentKey)),
+            };
+            IWorld states = new World(MockUtil.MockModernWorldState).MintAsset(context, patron, 10 * mead);
+
             var requestPledge = new RequestPledge
             {
                 AgentAddress = agentAddress,
@@ -85,7 +105,7 @@ namespace Lib9c.Tests.Action.Scenario
                 var action = (IAction)Activator.CreateInstance(typeId)!;
                 var actionContext = new ActionContext
                 {
-                    PreviousState = new World(new MockWorldState()),
+                    PreviousState = new World(MockUtil.MockModernWorldState),
                 };
                 try
                 {

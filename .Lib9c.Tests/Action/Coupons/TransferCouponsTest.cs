@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action.Coupons
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume.Action;
     using Nekoyume.Action.Coupons;
     using Nekoyume.Model.Coupons;
@@ -18,7 +19,7 @@ namespace Lib9c.Tests.Action.Coupons
         [Fact]
         public void Execute()
         {
-            IWorld state = new World(new MockWorldState());
+            IWorld state = new World(MockUtil.MockModernWorldState);
             IRandom random = new TestRandom();
 
             var coupon1 = new Coupon(CouponsFixture.Guid1, CouponsFixture.RewardSet1);

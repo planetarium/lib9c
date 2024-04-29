@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Exceptions;
@@ -27,7 +28,7 @@ namespace Lib9c.Tests.Action
 
         public EventMaterialItemCraftsTest()
         {
-            _initialStates = new World(new MockWorldState());
+            _initialStates = new World(MockUtil.MockModernWorldState);
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
             {
@@ -49,7 +50,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                gameConfigState,
                 new PrivateKey().Address
             )
             {

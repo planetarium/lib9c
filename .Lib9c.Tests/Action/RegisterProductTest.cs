@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
@@ -45,7 +46,6 @@ namespace Lib9c.Tests.Action
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _gameConfigState,
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -55,12 +55,13 @@ namespace Lib9c.Tests.Action
             };
             agentState.avatarAddresses[0] = AvatarAddress;
 
-            _initialState = new World(new MockWorldState())
+            _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(Gold).Serialize())
                 .SetLegacyState(Addresses.GetSheetAddress<MaterialItemSheet>(), _tableSheets.MaterialItemSheet.Serialize())
                 .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
                 .SetAgentState(_agentAddress, agentState)
-                .SetAvatarState(AvatarAddress, _avatarState);
+                .SetAvatarState(AvatarAddress, _avatarState)
+                .SetActionPoint(AvatarAddress, DailyReward.ActionPointMax);
         }
 
         public static IEnumerable<object[]> Execute_Validate_MemberData()
@@ -191,6 +192,34 @@ namespace Lib9c.Tests.Action
                     },
                     Exc = typeof(InvalidCurrencyException),
                 },
+                new ValidateMember
+                {
+                    RegisterInfos = new IRegisterInfo[]
+                    {
+                        new AssetInfo
+                        {
+                            AvatarAddress = AvatarAddress,
+                            Price = 1 * Gold,
+                            Type = ProductType.FungibleAssetValue,
+                            Asset = 1 * Currencies.FreyaBlessingRune,
+                        },
+                    },
+                    Exc = typeof(InvalidCurrencyException),
+                },
+                new ValidateMember
+                {
+                    RegisterInfos = new IRegisterInfo[]
+                    {
+                        new AssetInfo
+                        {
+                            AvatarAddress = AvatarAddress,
+                            Price = 1 * Gold,
+                            Type = ProductType.FungibleAssetValue,
+                            Asset = 1 * Currencies.FreyaLiberationRune,
+                        },
+                    },
+                    Exc = typeof(InvalidCurrencyException),
+                },
             };
         }
 
@@ -250,7 +279,7 @@ namespace Lib9c.Tests.Action
 
             var nextAvatarState = nextState.GetAvatarState(AvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
-            Assert.Equal(_gameConfigState.ActionPointMax - RegisterProduct.CostAp, nextAvatarState.actionPoint);
+            Assert.Equal(DailyReward.ActionPointMax - RegisterProduct.CostAp, nextState.GetActionPoint(AvatarAddress));
 
             var marketState = new MarketState(nextState.GetLegacyState(Addresses.Market));
             Assert.Contains(AvatarAddress, marketState.AvatarAddresses);

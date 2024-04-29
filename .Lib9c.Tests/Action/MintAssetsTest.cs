@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action.State;
     using Libplanet.Common;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Libplanet.Types.Tx;
     using Nekoyume;
@@ -38,11 +39,9 @@ namespace Lib9c.Tests.Action
                 new PrivateKey().Address,
                 new PrivateKey().Address,
             };
-            _prevState = new World(
-                new MockWorldState()
-                    .SetState(ReservedAddresses.LegacyAccount, AdminState.Address, new AdminState(_adminAddress, 100).Serialize())
-                    .SetState(ReservedAddresses.LegacyAccount, Addresses.AssetMinters, new List(_minters.Select(m => m.Serialize())))
-            );
+            _prevState = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(AdminState.Address, new AdminState(_adminAddress, 100).Serialize())
+                .SetLegacyState(Addresses.AssetMinters, new List(_minters.Select(m => m.Serialize())));
 
             var sheets = TableSheetsImporter.ImportSheets();
             foreach (var (key, value) in sheets)
@@ -336,7 +335,6 @@ namespace Lib9c.Tests.Action
                 address,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
@@ -362,7 +360,6 @@ namespace Lib9c.Tests.Action
                 address,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                new GameConfigState(),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(

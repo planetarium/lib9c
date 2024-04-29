@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model;
@@ -29,7 +30,7 @@ namespace Lib9c.Tests.Action
 
         public RankingBattleTest(ITestOutputHelper outputHelper)
         {
-            _initialState = new World(new MockWorldState());
+            _initialState = new World(MockUtil.MockModernWorldState);
 
             var keys = new List<string>
             {
@@ -120,7 +121,6 @@ namespace Lib9c.Tests.Action
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                new GameConfigState(sheets[nameof(GameConfigSheet)]),
                 rankingMapAddress)
             {
                 worldInformation = new WorldInformation(
