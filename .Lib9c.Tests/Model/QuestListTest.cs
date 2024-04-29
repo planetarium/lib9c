@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Model
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -228,6 +229,78 @@ namespace Lib9c.Tests.Model
             Assert.Equal(des.ListVersion, migrated.ListVersion);
             Assert.Equal(des.Count(), migrated.Count());
             Assert.Equal(des.completedQuestIds, migrated.completedQuestIds);
+        }
+
+        [Fact]
+        public void DeserializeList()
+        {
+            var questList = new QuestList(
+                _tableSheets.QuestSheet,
+                _tableSheets.QuestRewardSheet,
+                _tableSheets.QuestItemRewardSheet,
+                _tableSheets.EquipmentItemRecipeSheet,
+                _tableSheets.EquipmentItemSubRecipeSheet
+            );
+            foreach (var quest in questList)
+            {
+                var serialize = (List)quest.SerializeList();
+                var deserialize = Quest.DeserializeList(serialize);
+                Assert.Equal(quest.Id, deserialize.Id);
+                Assert.Equal(quest.Goal, deserialize.Goal);
+                Assert.Equal(quest.Reward.ItemMap.OrderBy(i => i.Item1), deserialize.Reward.ItemMap.OrderBy(i => i.Item1));
+                switch (deserialize)
+                {
+                    case CollectQuest collectQuest:
+                        var cq = Assert.IsType<CollectQuest>(quest);
+                        Assert.Equal(cq.ItemId, collectQuest.ItemId);
+                        break;
+                    case CombinationEquipmentQuest combinationEquipmentQuest:
+                        var ceq = Assert.IsType<CombinationEquipmentQuest>(quest);
+                        Assert.Equal(ceq.RecipeId, combinationEquipmentQuest.RecipeId);
+                        Assert.Equal(ceq.StageId, combinationEquipmentQuest.StageId);
+                        break;
+                    case CombinationQuest combinationQuest:
+                        var c = Assert.IsType<CombinationQuest>(quest);
+                        Assert.Equal(c.ItemType, combinationQuest.ItemType);
+                        Assert.Equal(c.ItemSubType, combinationQuest.ItemSubType);
+                        break;
+                    case GeneralQuest generalQuest:
+                        var g = Assert.IsType<GeneralQuest>(quest);
+                        Assert.Equal(g.Event, generalQuest.Event);
+                        break;
+                    case GoldQuest goldQuest:
+                        var gq = Assert.IsType<GoldQuest>(quest);
+                        Assert.Equal(gq.Type, goldQuest.Type);
+                        break;
+                    case ItemEnhancementQuest itemEnhancementQuest:
+                        var i = Assert.IsType<ItemEnhancementQuest>(quest);
+                        Assert.Equal(i.Count, itemEnhancementQuest.Count);
+                        Assert.Equal(i.Grade, itemEnhancementQuest.Grade);
+                        break;
+                    case ItemGradeQuest itemGradeQuest:
+                        var ig = Assert.IsType<ItemGradeQuest>(quest);
+                        Assert.Equal(ig.Grade, itemGradeQuest.Grade);
+                        Assert.Equal(ig.ItemIds, itemGradeQuest.ItemIds);
+                        break;
+                    case ItemTypeCollectQuest itemTypeCollectQuest:
+                        var ic = Assert.IsType<ItemTypeCollectQuest>(quest);
+                        Assert.Equal(ic.ItemIds, itemTypeCollectQuest.ItemIds);
+                        Assert.Equal(ic.ItemType, itemTypeCollectQuest.ItemType);
+                        break;
+                    case MonsterQuest monsterQuest:
+                        var m = Assert.IsType<MonsterQuest>(quest);
+                        Assert.Equal(m.MonsterId, monsterQuest.MonsterId);
+                        break;
+                    case TradeQuest tradeQuest:
+                        var t = Assert.IsType<TradeQuest>(quest);
+                        Assert.Equal(t.Type, tradeQuest.Type);
+                        break;
+                    case WorldQuest _:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(quest));
+                }
+            }
         }
     }
 }
