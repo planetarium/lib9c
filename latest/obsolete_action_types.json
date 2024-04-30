@@ -1,9 +1,5 @@
 [
   {
-    "id": "activate_account",
-    "obsoleteAt": 7000000
-  },
-  {
     "id": "activate_account2",
     "obsoleteAt": 7200000
   },
@@ -24,15 +20,7 @@
     "obsoleteAt": 7000000
   },
   {
-    "id": "cancel_product_registration",
-    "obsoleteAt": 8324909
-  },
-  {
     "id": "combination_consumable5",
-    "obsoleteAt": 7000000
-  },
-  {
-    "id": "create_avatar",
     "obsoleteAt": 7000000
   },
   {
@@ -100,18 +88,6 @@
     "obsoleteAt": 8324909
   },
   {
-    "id": "runeEnhancement",
-    "obsoleteAt": 7000000
-  },
-  {
-    "id": "sell_cancellation7",
-    "obsoleteAt": 7000000
-  },
-  {
-    "id": "sell_cancellation8",
-    "obsoleteAt": 7000000
-  },
-  {
     "id": "sell_cancellation9",
     "obsoleteAt": 8324909
   },
@@ -134,14 +110,6 @@
   {
     "id": "transfer_asset",
     "obsoleteAt": 7000000
-  },
-  {
-    "id": "unlock_equipment_recipe",
-    "obsoleteAt": 7200000
-  },
-  {
-    "id": "unlock_world",
-    "obsoleteAt": 7200000
   },
   {
     "id": "update_sell5",
