@@ -173,7 +173,7 @@ namespace Nekoyume.Blockchain.Policy
             try
             {
                 if (blockChain
-                    .GetWorldState()
+                    .GetNextWorldState()!
                     .GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
                 {
                     // Check Activation
@@ -186,7 +186,7 @@ namespace Nekoyume.Blockchain.Policy
                         {
                             return transaction.Nonce == 0 &&
                                 blockChain
-                                    .GetWorldState()
+                                    .GetNextWorldState()!
                                     .GetAccountState(ReservedAddresses.LegacyAccount)
                                     .GetState(activate.PendingAddress) is Dictionary rawPending &&
                                 new PendingActivationState(rawPending).Verify(activate.Signature)
@@ -211,14 +211,14 @@ namespace Nekoyume.Blockchain.Policy
                     }
 
                     switch (blockChain
-                        .GetWorldState()
+                        .GetNextWorldState()!
                         .GetAccountState(ReservedAddresses.LegacyAccount)
                         .GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
                     {
                         case null:
                             // Fallback for pre-migration.
                             if (blockChain
-                                .GetWorldState()
+                                .GetNextWorldState()!
                                 .GetAccountState(ReservedAddresses.LegacyAccount)
                                 .GetState(ActivatedAccountsState.Address) is Dictionary asDict)
                             {

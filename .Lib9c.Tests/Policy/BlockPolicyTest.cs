@@ -5,12 +5,14 @@ namespace Lib9c.Tests
     using System.Collections.Immutable;
     using System.Linq;
     using System.Numerics;
+    using System.Security.Cryptography;
     using Bencodex.Types;
     using Lib9c.Renderers;
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
+    using Libplanet.Common;
     using Libplanet.Crypto;
     using Libplanet.Store;
     using Libplanet.Store.Trie;
@@ -395,7 +397,7 @@ namespace Lib9c.Tests
             Block block = blockChain.ProposeBlock(adminPrivateKey);
             blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
             FungibleAssetValue actualBalance = blockChain
-                .GetWorldState()
+                .GetNextWorldState()
                 .GetBalance(adminAddress, _currency);
             FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 10, 0);
             Assert.True(expectedBalance.Equals(actualBalance));
@@ -424,17 +426,18 @@ namespace Lib9c.Tests
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
+            var actionEvaluator = new ActionEvaluator(
+                policyBlockActionGetter: _ => policy.BlockAction,
+                stateStore: stateStore,
+                actionTypeLoader: new NCActionLoader()
+            );
             var blockChain = BlockChain.Create(
                 policy,
                 stagePolicy,
                 store,
                 stateStore,
                 genesis,
-                new ActionEvaluator(
-                    policyBlockActionGetter: _ => policy.BlockAction,
-                    stateStore: stateStore,
-                    actionTypeLoader: new NCActionLoader()
-                )
+                actionEvaluator
             );
 
             int nonce = 0;
@@ -465,7 +468,7 @@ namespace Lib9c.Tests
                     txHash: BlockContent.DeriveTxHash(txs),
                     lastCommit: null),
                 transactions: txs).Propose();
-            Block block1 = EvaluateAndSign(blockChain, preEvalBlock1, adminPrivateKey);
+            Block block1 = EvaluateAndSign(store, actionEvaluator, preEvalBlock1, adminPrivateKey);
             blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
@@ -479,7 +482,7 @@ namespace Lib9c.Tests
                     txHash: BlockContent.DeriveTxHash(txs),
                     lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose();
-            Block block2 = EvaluateAndSign(blockChain, preEvalBlock2, adminPrivateKey);
+            Block block2 = EvaluateAndSign(store, actionEvaluator, preEvalBlock2, adminPrivateKey);
             blockChain.Append(block2, GenerateBlockCommit(block2, adminPrivateKey));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block2.Hash));
@@ -493,7 +496,7 @@ namespace Lib9c.Tests
                     txHash: BlockContent.DeriveTxHash(txs),
                     lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose();
-            Block block3 = EvaluateAndSign(blockChain, preEvalBlock3, adminPrivateKey);
+            Block block3 = EvaluateAndSign(store, actionEvaluator, preEvalBlock3, adminPrivateKey);
             Assert.Throws<InvalidBlockTxCountException>(
                 () => blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey)));
             Assert.Equal(3, blockChain.Count);
@@ -525,17 +528,18 @@ namespace Lib9c.Tests
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
+            var actionEvaluator = new ActionEvaluator(
+                policyBlockActionGetter: _ => policy.BlockAction,
+                stateStore: stateStore,
+                actionTypeLoader: new NCActionLoader()
+            );
             var blockChain = BlockChain.Create(
                 policy,
                 stagePolicy,
                 store,
                 stateStore,
                 genesis,
-                new ActionEvaluator(
-                    policyBlockActionGetter: _ => policy.BlockAction,
-                    stateStore: stateStore,
-                    actionTypeLoader: new NCActionLoader()
-                )
+                actionEvaluator
             );
 
             int nonce = 0;
@@ -566,7 +570,7 @@ namespace Lib9c.Tests
                     txHash: BlockContent.DeriveTxHash(txs),
                     lastCommit: null),
                 transactions: txs).Propose();
-            Block block1 = EvaluateAndSign(blockChain, preEvalBlock1, adminPrivateKey);
+            Block block1 = EvaluateAndSign(store, actionEvaluator, preEvalBlock1, adminPrivateKey);
 
             // Should be fine since policy hasn't kicked in yet.
             blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
@@ -583,7 +587,7 @@ namespace Lib9c.Tests
                     txHash: BlockContent.DeriveTxHash(txs),
                     lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose();
-            Block block2 = EvaluateAndSign(blockChain, preEvalBlock2, adminPrivateKey);
+            Block block2 = EvaluateAndSign(store, actionEvaluator, preEvalBlock2, adminPrivateKey);
 
             // Subpolicy kicks in.
             Assert.Throws<InvalidBlockTxCountPerSignerException>(
@@ -604,7 +608,7 @@ namespace Lib9c.Tests
                     txHash: BlockContent.DeriveTxHash(txs),
                     lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
                 transactions: txs).Propose();
-            Block block3 = EvaluateAndSign(blockChain, preEvalBlock3, adminPrivateKey);
+            Block block3 = EvaluateAndSign(store, actionEvaluator, preEvalBlock3, adminPrivateKey);
             blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block3.Hash));
@@ -663,13 +667,29 @@ namespace Lib9c.Tests
         }
 
         private Block EvaluateAndSign(
-            BlockChain blockChain,
+            IStore store,
+            ActionEvaluator actionEvaluator,
             PreEvaluationBlock preEvaluationBlock,
             PrivateKey privateKey
         )
         {
-            var stateRootHash = blockChain.DetermineBlockStateRootHash(preEvaluationBlock, out _);
-            return preEvaluationBlock.Sign(privateKey, stateRootHash);
+            if (preEvaluationBlock.Index < 1)
+            {
+                throw new ArgumentException(
+                    $"Given {nameof(preEvaluationBlock)} must have block index " +
+                    $"higher than 0");
+            }
+
+            if (preEvaluationBlock.ProtocolVersion < BlockMetadata.StateRootHashPostponeProtocolVersion)
+            {
+                throw new ArgumentException(
+                    $"{nameof(preEvaluationBlock)} of which protocol version less than" +
+                    $"{BlockMetadata.StateRootHashPostponeProtocolVersion} is not acceptable");
+            }
+
+            var stateRootHash = store.GetNextStateRootHash((BlockHash)preEvaluationBlock.PreviousHash);
+
+            return preEvaluationBlock.Sign(privateKey, (HashDigest<SHA256>)stateRootHash);
         }
     }
 }

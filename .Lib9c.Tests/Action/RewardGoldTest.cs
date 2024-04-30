@@ -545,7 +545,6 @@ namespace Lib9c.Tests.Action
                     stateStore: new TrieStateStore(new MemoryKeyValueStore()),
                     actionTypeLoader: new NCActionLoader());
                 genesis = BlockChain.ProposeGenesisBlock(
-                    tempActionEvaluator,
                     transactions: ImmutableList<Transaction>.Empty
                         .Add(Transaction.Create(
                             0,

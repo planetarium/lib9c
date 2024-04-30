@@ -118,14 +118,16 @@ namespace Lib9c.Tools.SubCommand
                     _ => policy.BlockAction,
                     stateStore,
                     actionLoader);
-                HashDigest<SHA256> stateRootHash = block.Index < 1
-                    ? BlockChain.DetermineGenesisStateRootHash(
-                        actionEvaluator,
-                        preEvalBlock,
-                        out _)
-                    : chain.DetermineBlockStateRootHash(
-                        preEvalBlock,
-                        out _);
+
+                HashDigest<SHA256>? refSrh = block.ProtocolVersion < BlockMetadata.StateRootHashPostponeProtocolVersion
+                   ? store.GetStateRootHash(block.PreviousHash)
+                   : store.GetStateRootHash(block.Hash);
+
+                IReadOnlyList<ICommittedActionEvaluation> evals = actionEvaluator.Evaluate(block, refSrh);
+                HashDigest<SHA256> stateRootHash = evals.Count > 0
+                    ? evals[evals.Count - 1].OutputState
+                    : refSrh is { } prevSrh ? prevSrh : MerkleTrie.EmptyRootHash;
+
                 DateTimeOffset now = DateTimeOffset.Now;
                 if (invalidStateRootHashBlock is null && !stateRootHash.Equals(block.StateRootHash))
                 {
