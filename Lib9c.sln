@@ -68,7 +68,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib9c.Plugin", ".Lib9c.Plug
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib9c.Plugin.Shared", ".Lib9c.Plugin.Shared\Lib9c.Plugin.Shared.csproj", "{76F6C25E-94D2-4EA9-B88D-0249F44D1D16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libplanet.Mocks", ".Libplanet\Libplanet.Mocks\Libplanet.Mocks.csproj", "{8BC561CB-91EF-4290-893F-025E9E6A0CF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libplanet.Mocks", ".Libplanet\Libplanet.Mocks\Libplanet.Mocks.csproj", "{8BC561CB-91EF-4290-893F-025E9E6A0CF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
