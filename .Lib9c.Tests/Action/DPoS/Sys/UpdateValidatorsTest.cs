@@ -3,6 +3,7 @@
     using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume.Action.DPoS;
     using Nekoyume.Action.DPoS.Control;
@@ -18,7 +19,7 @@
         public void Execute()
         {
             // Prepare initial state.
-            IWorld initialState = new World(new MockWorldState());
+            IWorld initialState = new World(MockWorldState.CreateModern());
             const int count = 4;
             var validatorKeys = Enumerable.Range(0, count).Select(_ => new PrivateKey().PublicKey).ToArray();
             initialState = validatorKeys.Aggregate(

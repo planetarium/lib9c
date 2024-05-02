@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Numerics;
 using System.Threading;
 using Libplanet.Action;
+using Libplanet.Action.State;
 using Libplanet.Blockchain;
 using Libplanet.Crypto;
 using Libplanet.Types.Blocks;
