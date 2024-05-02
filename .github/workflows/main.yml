@@ -74,6 +74,26 @@ jobs:
       - name: build
         run: dotnet build --self-contained=false
 
+  build-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.400
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: true
+      - name: Build Lib9c.Tools
+        run: dotnet build .Lib9c.Tools/Lib9c.Tools.csproj
+      - run: pnpm -r build
+      - run: pnpm -r fmt:ci
+      - run: pnpm -r test
+
   release:
     if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
     runs-on: ubuntu-latest
