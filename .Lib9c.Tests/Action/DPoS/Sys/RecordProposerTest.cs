@@ -2,6 +2,7 @@
 {
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Nekoyume.Action.DPoS;
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
@@ -18,7 +19,7 @@
             var previousProposerInfo = new ProposerInfo(1, privateKey1.Address);
 
             // Prepare initial state.
-            IWorld initialState = new World(new MockWorldState());
+            IWorld initialState = new World(MockWorldState.CreateModern());
             initialState = initialState.SetDPoSState(
                 ReservedAddress.ProposerInfo,
                 previousProposerInfo.Bencoded);

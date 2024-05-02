@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action.DPoS
     using System.Numerics;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
+    using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume.Action.DPoS.Control;
     using Nekoyume.Action.DPoS.Misc;
@@ -17,7 +18,7 @@ namespace Lib9c.Tests.Action.DPoS
 
         protected static IWorld InitializeStates()
         {
-            return new World(new MockWorldState());
+            return new World(MockWorldState.CreateModern());
         }
 
         protected static Address CreateAddress()
