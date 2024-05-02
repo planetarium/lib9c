@@ -46,7 +46,6 @@ export class ClaimItems extends GameAction {
     if (this.memo !== null) {
       params.push(["m", this.memo]);
     }
-    console.log(params);
     return new BencodexDictionary(params);
   }
 }

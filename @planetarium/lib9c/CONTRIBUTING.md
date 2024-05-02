@@ -79,4 +79,12 @@ pnpm fmt
     ]);
   });
   ```
-- Run `pnpm test` command to check whether the action is implemented correctly. If the test is failed with `Failed to initiate an action with the stdin` message, check your action's implementation one more time.
+- Run `pnpm test` command to check whether the action is implemented correctly. If the test is failed, check your action's implementation one more time.
+
+  To enhance developer experience (DX), it captures and stores the serialized actions from the failed test case. You can then copy these arguments and execute the *Lib9c.Tools* project in your development environment to facilitate debugging.
+  ```
+  FAIL  tests/actions/claim_items.test.ts > ClaimItems > odin > valid case 1
+  AssertionError: The test case is failed to instantiate your commit.
+  You can debug by running the Lib9c.Tools project with following arguments:
+  'action analyze /var/folders/bg/bmwvb9811p7bzvwn1k1148r40000gn/T/lib9c.js-testdump-8QLZ65/data'
+  ```
