@@ -8,6 +8,7 @@ namespace Nekoyume.Model.AdventureBoss
 {
     public class Investor : IBencodable
     {
+        public const int MaxInvestmentCount = 3;
         public Address AvatarAddress;
         public FungibleAssetValue Price;
         public int Count;

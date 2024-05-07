@@ -4,6 +4,7 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.AdventureBoss
@@ -30,6 +31,11 @@ namespace Nekoyume.Model.AdventureBoss
             }
             else
             {
+                if (investor.Count == Investor.MaxInvestmentCount)
+                {
+                    throw new MaxInvestmentCountExceededException(
+                        $"Avatar {avatarAddress} already invested {investor.Count} times.");
+                }
                 investor.Price += price;
                 investor.Count++;
             }
