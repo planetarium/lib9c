@@ -5,20 +5,20 @@ using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.AdventureBoss
 {
-    public class AdventureInfo : IBencodable
+    public class ExploreInfo : IBencodable
     {
         public Address AvatarAddress;
         public int Score;
         public int Floor;
 
-        public AdventureInfo(Address avatarAddress, int score, int floor)
+        public ExploreInfo(Address avatarAddress, int score, int floor)
         {
             AvatarAddress = avatarAddress;
             Score = score;
             Floor = floor;
         }
 
-        public AdventureInfo(IValue bencoded)
+        public ExploreInfo(IValue bencoded)
         {
             var list = (List)bencoded;
             AvatarAddress = list[0].ToAddress();

@@ -5,13 +5,78 @@ using Nekoyume.Model.AdventureBoss;
 
 namespace Nekoyume.Module
 {
+    // Use `Addresses.AdventureBoss` for AccountState to store adventure boss data itself.
+    // ** Special: Use `0x0000000000000000000000000000000000000000` to get latest state
+    // `Use 0x0000000000000000000000000000000000000001`, `0x2`, `0x3`, ... for season info. This is called SeasonAddress
+
+    // Use `Addresses.BountyBoard` for AccountState to store all investment data
+    // Use `0x0000000000000000000000000000000000000001`, `0x2`, `0x3`, ... for season bounty board.
+    // Each BountyBoard has investors' data.
+
+    // Use `Addresses.AdventureBossExplore` for AccountState to store all adventurer's data
+    // Use `Address.Derive(AvatarAddress, SeasonAddress)` for individual avatar's explore info.
     public static class AdventureBossModule
     {
+        public static readonly Address LatestSeasonAddress = new Address($"{0:X40}");
+        private static Address GetSeasonAddress(long season)
+        {
+            return new Address($"{season:X40}");
+        }
+
+        /// <summary>
+        /// Get brief adventure boss season info of latest season.
+        /// This only has brief, readonly data, so we must use <see cref="SeasonInfo"/> to handle season itself.
+        /// </summary>
+        /// <returns>LatestSeason state. If no season is started, return a state with default value(0)</returns>
+        public static LatestSeason GetLatestAdventureBossSeason(this IWorldState worldState)
+        {
+            var account = worldState.GetAccountState(Addresses.AdventureBoss);
+            var latestSeason = account.GetState(LatestSeasonAddress);
+            if (latestSeason is null)
+            {
+                return new LatestSeason(season: 0, startBlockIndex: 0, endBlockIndex: 0,
+                    nextStartBlockIndex: 0);
+            }
+
+            return new LatestSeason(latestSeason);
+        }
+
+        public static IWorld SetLatestAdventureBossSeason(this IWorld world, SeasonInfo latestSeasonInfo)
+        {
+            var account = world.GetAccount(Addresses.AdventureBoss);
+            var latestSeason = new LatestSeason(
+                season: latestSeasonInfo.Season,
+                startBlockIndex: latestSeasonInfo.StartBlockIndex,
+                endBlockIndex: latestSeasonInfo.EndBlockIndex,
+                nextStartBlockIndex: latestSeasonInfo.NextStartBlockIndex
+            );
+            account = account.SetState(LatestSeasonAddress, latestSeason.Bencoded);
+            return world.SetAccount(Addresses.AdventureBoss, account);
+        }
+
+        public static SeasonInfo GetSeasonInfo(this IWorldState worldState, long season)
+        {
+            var account = worldState.GetAccountState(Addresses.AdventureBoss);
+            if (account.GetState(Addresses.AdventureBoss) is { } a)
+            {
+                return new SeasonInfo(a);
+            }
+
+            throw new FailedLoadStateException("");
+        }
+
+        public static IWorld SetSeasonInfo(this IWorld world, long season, SeasonInfo seasonInfo)
+        {
+            var seasonAddress = GetSeasonAddress(season);
+            var account = world.GetAccount(seasonAddress);
+            account = account.SetState(Addresses.AdventureBoss, seasonInfo.Bencoded);
+            return world.SetAccount(seasonAddress, account);
+        }
+
         public static BountyBoard GetBountyBoard(this IWorldState worldState, long season)
         {
-            var seasonAddress = Addresses.AdventureSeasonAddress(season);
-            IAccountState account = worldState.GetAccountState(seasonAddress);
-            if (account.GetState(Addresses.BountyBoard) is { } a)
+            var account = worldState.GetAccountState(Addresses.BountyBoard);
+            if (account.GetState(GetSeasonAddress(season)) is { } a)
             {
                 return new BountyBoard(a);
             }
@@ -21,30 +86,29 @@ namespace Nekoyume.Module
 
         public static IWorld SetBountyBoard(this IWorld world, long season, BountyBoard bountyBoard)
         {
-            var seasonAddress = Addresses.AdventureSeasonAddress(season);
-            IAccount account = world.GetAccount(seasonAddress);
-            account = account.SetState(Addresses.BountyBoard, bountyBoard.Bencoded);
-            return world.SetAccount(seasonAddress, account);
+            var account = world.GetAccount(Addresses.BountyBoard);
+            account = account.SetState(GetSeasonAddress(season), bountyBoard.Bencoded);
+            return world.SetAccount(Addresses.BountyBoard, account);
         }
 
-        public static AdventureInfo GetAdventureInfo(this IWorldState worldState, long season, Address avatarAddress)
+        public static ExploreInfo GetAdventureInfo(this IWorldState worldState, long season,
+            Address avatarAddress)
         {
-            var seasonAddress = Addresses.AdventureSeasonAddress(season);
-            IAccountState account = worldState.GetAccountState(seasonAddress);
+            var account = worldState.GetAccountState(GetSeasonAddress(season));
             if (account.GetState(avatarAddress) is { } a)
             {
-                return new AdventureInfo(a);
+                return new ExploreInfo(a);
             }
 
             throw new FailedLoadStateException("");
         }
 
-        public static IWorld SetAdventureInfo(this IWorld world, long season, AdventureInfo adventureInfo)
+        public static IWorld SetAdventureInfo(this IWorld world, long season,
+            ExploreInfo exploreInfo)
         {
-            var seasonAddress = Addresses.AdventureSeasonAddress(season);
-            IAccount account = world.GetAccount(seasonAddress);
-            account = account.SetState(adventureInfo.AvatarAddress, adventureInfo.Bencoded);
-            return world.SetAccount(seasonAddress, account);
+            var account = world.GetAccount(Addresses.AdventureBossExplore);
+            account = account.SetState(exploreInfo.AvatarAddress, exploreInfo.Bencoded);
+            return world.SetAccount(Addresses.AdventureBossExplore, account);
         }
     }
 }
