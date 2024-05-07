@@ -32,7 +32,10 @@ namespace Nekoyume.Model.AdventureBoss
         }
 
         public IValue Bencoded =>
-            List.Empty.Add(SeasonId).Add(StartBlockIndex).Add(EndBlockIndex)
-                .Add(NextStartBlockIndex);
+            List.Empty
+                .Add(SeasonId.Serialize())
+                .Add(StartBlockIndex.Serialize())
+                .Add(EndBlockIndex.Serialize())
+                .Add(NextStartBlockIndex.Serialize());
     }
 }
