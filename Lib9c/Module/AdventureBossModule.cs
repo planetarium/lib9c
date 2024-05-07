@@ -17,10 +17,11 @@ namespace Nekoyume.Module
     // Use `Address.Derive(AvatarAddress, SeasonAddress)` for individual avatar's explore info.
     public static class AdventureBossModule
     {
-        public static readonly Address LatestSeasonAddress = new Address($"{0:X40}");
-        private static Address GetSeasonAddress(long season)
+        public static readonly Address LatestSeasonAddress = new($"{0:X40}");
+
+        private static string GetSeasonAsAddressForm(long season)
         {
-            return new Address($"{season:X40}");
+            return $"{season:X40}";
         }
 
         /// <summary>
@@ -41,7 +42,8 @@ namespace Nekoyume.Module
             return new LatestSeason(latestSeason);
         }
 
-        public static IWorld SetLatestAdventureBossSeason(this IWorld world, SeasonInfo latestSeasonInfo)
+        public static IWorld SetLatestAdventureBossSeason(this IWorld world,
+            SeasonInfo latestSeasonInfo)
         {
             var account = world.GetAccount(Addresses.AdventureBoss);
             var latestSeason = new LatestSeason(
@@ -65,18 +67,18 @@ namespace Nekoyume.Module
             throw new FailedLoadStateException("");
         }
 
-        public static IWorld SetSeasonInfo(this IWorld world, long season, SeasonInfo seasonInfo)
+        public static IWorld SetSeasonInfo(this IWorld world, SeasonInfo seasonInfo)
         {
-            var seasonAddress = GetSeasonAddress(season);
-            var account = world.GetAccount(seasonAddress);
-            account = account.SetState(Addresses.AdventureBoss, seasonInfo.Bencoded);
-            return world.SetAccount(seasonAddress, account);
+            var seasonAddress = new Address(GetSeasonAsAddressForm(seasonInfo.Season));
+            var account = world.GetAccount(Addresses.AdventureBoss);
+            account = account.SetState(seasonAddress, seasonInfo.Bencoded);
+            return world.SetAccount(Addresses.AdventureBoss, account);
         }
 
         public static BountyBoard GetBountyBoard(this IWorldState worldState, long season)
         {
             var account = worldState.GetAccountState(Addresses.BountyBoard);
-            if (account.GetState(GetSeasonAddress(season)) is { } a)
+            if (account.GetState(new Address(GetSeasonAsAddressForm(season))) is { } a)
             {
                 return new BountyBoard(a);
             }
@@ -87,15 +89,18 @@ namespace Nekoyume.Module
         public static IWorld SetBountyBoard(this IWorld world, long season, BountyBoard bountyBoard)
         {
             var account = world.GetAccount(Addresses.BountyBoard);
-            account = account.SetState(GetSeasonAddress(season), bountyBoard.Bencoded);
+            account = account.SetState(
+                new Address(GetSeasonAsAddressForm(season)),
+                bountyBoard.Bencoded
+            );
             return world.SetAccount(Addresses.BountyBoard, account);
         }
 
-        public static ExploreInfo GetAdventureInfo(this IWorldState worldState, long season,
+        public static ExploreInfo GetExploreInfo(this IWorldState worldState, long season,
             Address avatarAddress)
         {
-            var account = worldState.GetAccountState(GetSeasonAddress(season));
-            if (account.GetState(avatarAddress) is { } a)
+            var account = worldState.GetAccountState(Addresses.AdventureBossExplore);
+            if (account.GetState(avatarAddress.Derive(GetSeasonAsAddressForm(season))) is { } a)
             {
                 return new ExploreInfo(a);
             }
@@ -103,11 +108,14 @@ namespace Nekoyume.Module
             throw new FailedLoadStateException("");
         }
 
-        public static IWorld SetAdventureInfo(this IWorld world, long season,
-            ExploreInfo exploreInfo)
+        public static IWorld SetExploreInfo(this IWorld world,
+            long season, ExploreInfo exploreInfo)
         {
             var account = world.GetAccount(Addresses.AdventureBossExplore);
-            account = account.SetState(exploreInfo.AvatarAddress, exploreInfo.Bencoded);
+            account = account.SetState(
+                exploreInfo.AvatarAddress.Derive(GetSeasonAsAddressForm(season)),
+                exploreInfo.Bencoded
+            );
             return world.SetAccount(Addresses.AdventureBossExplore, account);
         }
     }
