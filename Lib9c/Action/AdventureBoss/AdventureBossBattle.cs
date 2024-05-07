@@ -1,55 +1,69 @@
 using System;
 using Bencodex.Types;
-using CsvHelper;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Action.AdventureBoss
 {
     [Serializable]
     [ActionType(TypeIdentifier)]
     public class AdventureBossBattle : ActionBase
     {
         public const string TypeIdentifier = "adventure_boss_battle";
+        public int Season;
         public Address AvatarAddress;
 
         public override IValue PlainValue =>
             Dictionary.Empty
                 .Add("type_id", TypeIdentifier)
-                .Add("values", AvatarAddress.Serialize());
+                .Add("values", List.Empty
+                    .Add(Season.Serialize())
+                    .Add(AvatarAddress.Serialize())
+                );
+
         public override void LoadPlainValue(IValue plainValue)
         {
-            AvatarAddress = ((Dictionary)plainValue)["values"].ToAddress();
+            var values = (List)((Dictionary)plainValue)["values"];
+            Season = values[0].ToInteger();
+            AvatarAddress = values[1].ToAddress();
         }
 
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
+            var latestSeason = states.GetLatestAdventureBossSeason();
+            if (latestSeason.SeasonId != Season)
+            {
+                throw new InvalidAdventureBossSeasonException(
+                    $"Given season {Season} is not current season: {latestSeason.SeasonId}"
+                );
+            }
+
             var avatarState = states.GetAvatarState(AvatarAddress);
             if (avatarState.agentAddress != context.Signer)
             {
                 throw new InvalidAddressException();
             }
 
-            var season = context.BlockIndex / Wanted.SeasonInterval;
-            AdventureInfo adventureInfo;
+            ExploreInfo exploreInfo;
             try
             {
-                adventureInfo = states.GetAdventureInfo(season, AvatarAddress);
+                exploreInfo = states.GetExploreInfo(Season, AvatarAddress);
             }
             catch (FailedLoadStateException)
             {
-                adventureInfo = new AdventureInfo(AvatarAddress, 0, 0);
+                exploreInfo = new ExploreInfo(AvatarAddress, 0, 0);
             }
 
-            adventureInfo.Score += 100;
-            adventureInfo.Floor++;
-            return states.SetAdventureInfo(season, adventureInfo);
+            exploreInfo.Score += 100;
+            exploreInfo.Floor++;
+            return states.SetExploreInfo(Season, exploreInfo);
         }
     }
 }

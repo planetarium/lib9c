@@ -4,7 +4,8 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Nekoyume;
-    using Nekoyume.Action;
+    using Nekoyume.Action.AdventureBoss;
+    using Nekoyume.Model.AdventureBoss;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
@@ -45,8 +46,13 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetAvatarState(avatarAddress2, avatarState2);
 
+            var seasonInfo = new SeasonInfo(1, 0L);
+            state = state.SetSeasonInfo(seasonInfo);
+            state = state.SetLatestAdventureBossSeason(seasonInfo);
+
             var action = new AdventureBossBattle()
             {
+                Season = 1,
                 AvatarAddress = avatarAddress,
             };
             var nextState = action.Execute(new ActionContext
@@ -55,7 +61,7 @@ namespace Lib9c.Tests.Action
                 Signer = agentAddress,
                 BlockIndex = 0L,
             });
-            var adventureInfo = nextState.GetAdventureInfo(0, avatarAddress);
+            var adventureInfo = nextState.GetExploreInfo(1, avatarAddress);
             Assert.Equal(avatarAddress, adventureInfo.AvatarAddress);
             Assert.Equal(100, adventureInfo.Score);
             Assert.Equal(1, adventureInfo.Floor);
@@ -68,7 +74,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 1L,
             });
 
-            adventureInfo = nextState.GetAdventureInfo(0, avatarAddress2);
+            adventureInfo = nextState.GetExploreInfo(1, avatarAddress2);
             Assert.Equal(avatarAddress2, adventureInfo.AvatarAddress);
             Assert.Equal(100, adventureInfo.Score);
             Assert.Equal(1, adventureInfo.Floor);
@@ -81,7 +87,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 2L,
             });
 
-            adventureInfo = nextState.GetAdventureInfo(0, avatarAddress);
+            adventureInfo = nextState.GetExploreInfo(1, avatarAddress);
             Assert.Equal(avatarAddress, adventureInfo.AvatarAddress);
             Assert.Equal(200, adventureInfo.Score);
             Assert.Equal(2, adventureInfo.Floor);
