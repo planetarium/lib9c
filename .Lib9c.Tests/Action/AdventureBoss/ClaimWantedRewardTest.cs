@@ -1,4 +1,4 @@
-namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action.AdventureBoss
 {
     using System;
     using System.Linq;
@@ -48,7 +48,7 @@ namespace Lib9c.Tests.Action
             state = sheets.Aggregate(
                 state,
                 (current, kv) =>
-                    current.SetLegacyState(Addresses.GetSheetAddress(kv.Key), (Text)kv.Value));
+                    LegacyModule.SetLegacyState(current, Addresses.GetSheetAddress(kv.Key), (Text)kv.Value));
             state = state.SetSeasonInfo(new SeasonInfo(1, 0L));
 
             var action = new ClaimWantedReward

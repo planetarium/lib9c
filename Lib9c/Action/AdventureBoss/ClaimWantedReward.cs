@@ -16,6 +16,7 @@ namespace Nekoyume.Action.AdventureBoss
     {
         public const string TypeIdentifier = "claim_wanted_reward";
         public const long ClaimableDuration = 100_000L;
+
         public long Season;
         public Address AvatarAddress;
 

@@ -1,4 +1,4 @@
-namespace Lib9c.Tests.Action
+namespace Lib9c.Tests.Action.AdventureBoss
 {
     using System.Linq;
     using Libplanet.Action.State;
