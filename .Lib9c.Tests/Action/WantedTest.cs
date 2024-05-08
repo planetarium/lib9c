@@ -6,7 +6,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
-    using Nekoyume.Action;
+    using Nekoyume.Action.AdventureBoss;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;

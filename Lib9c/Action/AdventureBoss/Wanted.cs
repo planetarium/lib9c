@@ -1,24 +1,22 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 
-namespace Nekoyume.Action
+namespace Nekoyume.Action.AdventureBoss
 {
     [Serializable]
     [ActionType(TypeIdentifier)]
     public class Wanted : ActionBase
     {
         public const string TypeIdentifier = "wanted";
-        public const long SeasonInterval = 100;
+        public int Season;
         public FungibleAssetValue Bounty;
         public Address AvatarAddress;
 
@@ -26,20 +24,31 @@ namespace Nekoyume.Action
             Dictionary.Empty
                 .Add("type_id", TypeIdentifier)
                 .Add("values", List.Empty
+                    .Add(Season.Serialize())
                     .Add(Bounty.Serialize())
                     .Add(AvatarAddress.Serialize()));
 
         public override void LoadPlainValue(IValue plainValue)
         {
             var list = (List)((Dictionary)plainValue)["values"];
-            Bounty = list[0].ToFungibleAssetValue();
-            AvatarAddress = list[1].ToAddress();
+            Season = list[0].ToInteger();
+            Bounty = list[1].ToFungibleAssetValue();
+            AvatarAddress = list[2].ToAddress();
         }
 
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
             var states = context.PreviousState;
+
+            var latestSeason = states.GetLatestAdventureBossSeason();
+            if (Season != latestSeason.SeasonId)
+            {
+                throw new InvalidAdventureBossSeasonException(
+                    $"Given season {Season} is not latest season {latestSeason.SeasonId}"
+                );
+            }
+
             if (!Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress))
             {
                 throw new InvalidAddressException();
@@ -51,21 +60,20 @@ namespace Nekoyume.Action
                 throw new InvalidCurrencyException("");
             }
 
+            // TODO: Check staking level
+
             var balance = states.GetBalance(context.Signer, currency);
-            if (balance >= Bounty)
-            {
-                states = states.TransferAsset(context, context.Signer, Addresses.BountyBoard, Bounty);
-            }
-            else
+            if (balance < Bounty)
             {
                 throw new InsufficientBalanceException($"{Bounty}", context.Signer, balance);
             }
 
-            var season = context.BlockIndex / SeasonInterval;
-            BountyBoard bountyBoard = null;
+            states = states.TransferAsset(context, context.Signer, Addresses.BountyBoard, Bounty);
+
+            BountyBoard bountyBoard;
             try
             {
-                bountyBoard = states.GetBountyBoard(season);
+                bountyBoard = states.GetBountyBoard(Season);
             }
             catch (FailedLoadStateException)
             {
@@ -73,7 +81,7 @@ namespace Nekoyume.Action
             }
 
             bountyBoard.AddOrUpdate(AvatarAddress, Bounty);
-            return states.SetBountyBoard(season, bountyBoard);
+            return states.SetBountyBoard(Season, bountyBoard);
         }
     }
 }
