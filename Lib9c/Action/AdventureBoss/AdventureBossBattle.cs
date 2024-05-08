@@ -51,6 +51,8 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidAddressException();
             }
 
+            // TODO: AdventureBossSimulator with pass-through log
+
             ExploreInfo exploreInfo;
             try
             {

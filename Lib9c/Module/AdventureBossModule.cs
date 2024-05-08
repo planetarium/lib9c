@@ -6,16 +6,6 @@ using Nekoyume.Model.AdventureBoss;
 
 namespace Nekoyume.Module
 {
-    // Use `Addresses.AdventureBoss` for AccountState to store adventure boss data itself.
-    // ** Special: Use `0x0000000000000000000000000000000000000000` to get latest state
-    // `Use 0x0000000000000000000000000000000000000001`, `0x2`, `0x3`, ... for season info. This is called SeasonAddress
-
-    // Use `Addresses.BountyBoard` for AccountState to store all investment data
-    // Use `0x0000000000000000000000000000000000000001`, `0x2`, `0x3`, ... for season bounty board.
-    // Each BountyBoard has investors' data.
-
-    // Use `Addresses.AdventureBossExplore` for AccountState to store all adventurer's data
-    // Use `Address.Derive(AvatarAddress, SeasonAddress)` for individual avatar's explore info.
     public static class AdventureBossModule
     {
         public static readonly Address LatestSeasonAddress = new($"{0:X40}");
@@ -57,6 +47,9 @@ namespace Nekoyume.Module
             return world.SetAccount(Addresses.AdventureBoss, account);
         }
 
+        // Use `Addresses.AdventureBoss` for AccountState to store adventure boss data itself.
+        // ** Special: Use `0x0000000000000000000000000000000000000000` to get latest state
+        // `Use 0x0000000000000000000000000000000000000001`, `0x2`, `0x3`, ... for season info. This is called SeasonAddress
         public static SeasonInfo GetSeasonInfo(this IWorldState worldState, long season)
         {
             var account = worldState.GetAccountState(Addresses.AdventureBoss);
@@ -76,6 +69,9 @@ namespace Nekoyume.Module
             return world.SetAccount(Addresses.AdventureBoss, account);
         }
 
+        // Use `Addresses.BountyBoard` for AccountState to store all investment data
+        // Use `0x0000000000000000000000000000000000000001`, `0x2`, `0x3`, ... for season bounty board.
+        // Each BountyBoard has investors' data.
         public static BountyBoard GetBountyBoard(this IWorldState worldState, long season)
         {
             var account = worldState.GetAccountState(Addresses.BountyBoard);
@@ -97,6 +93,8 @@ namespace Nekoyume.Module
             return world.SetAccount(Addresses.BountyBoard, account);
         }
 
+        // Use `Addresses.AdventureBossExplore` for AccountState to store all adventurer's data
+        // Use `Address.Derive(AvatarAddress, SeasonAddress)` for individual avatar's explore info.
         public static ExploreInfo GetExploreInfo(this IWorldState worldState, long season,
             Address avatarAddress)
         {
