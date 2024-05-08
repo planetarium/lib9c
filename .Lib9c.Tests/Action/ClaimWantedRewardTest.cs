@@ -1,20 +1,26 @@
 namespace Lib9c.Tests.Action
 {
+    using System;
     using System.Linq;
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Nekoyume;
-    using Nekoyume.Action;
+    using Nekoyume.Action.AdventureBoss;
+    using Nekoyume.Action.Exceptions.AdventureBoss;
+    using Nekoyume.Model.AdventureBoss;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
 
     public class ClaimWantedRewardTest
     {
-        [Fact]
-        public void Execute()
+        [Theory]
+        [InlineData(10_000L, null)]
+        [InlineData(1, typeof(SeasonInProgressException))]
+        [InlineData(1_000_000L, typeof(ClaimExpiredException))]
+        public void Execute(long blockIndex, Type exc)
         {
             var agentAddress = new PrivateKey().Address;
             var avatarAddress = Addresses.GetAvatarAddress(agentAddress, 0);
@@ -39,21 +45,37 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState);
 
-            state = sheets.Aggregate(state, (current, kv) => current.SetLegacyState(Addresses.GetSheetAddress(kv.Key), (Text)kv.Value));
+            state = sheets.Aggregate(
+                state,
+                (current, kv) =>
+                    current.SetLegacyState(Addresses.GetSheetAddress(kv.Key), (Text)kv.Value));
+            state = state.SetSeasonInfo(new SeasonInfo(1, 0L));
 
-            var action = new ClaimWantedReward()
+            var action = new ClaimWantedReward
             {
+                Season = 1,
                 AvatarAddress = avatarAddress,
-                Season = 0,
             };
-            var nextState = action.Execute(new ActionContext
+
+            if (exc is null)
             {
-                PreviousState = state,
-                Signer = agentAddress,
-                BlockIndex = 0L,
-            });
-            var nextAvatarState = nextState.GetAvatarState(avatarAddress);
-            Assert.Single(nextAvatarState.inventory.Items);
+                var nextState = action.Execute(new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = agentAddress,
+                    BlockIndex = blockIndex,
+                });
+                var nextAvatarState = nextState.GetAvatarState(avatarAddress);
+                Assert.Single(nextAvatarState.inventory.Items);
+            }
+            else
+            {
+                Assert.Throws(
+                    exc,
+                    () => action.Execute(new ActionContext
+                        { PreviousState = state, Signer = agentAddress, BlockIndex = blockIndex })
+                );
+            }
         }
     }
 }

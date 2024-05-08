@@ -1,6 +1,7 @@
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Model.AdventureBoss;
 
 namespace Nekoyume.Module
@@ -59,7 +60,7 @@ namespace Nekoyume.Module
         public static SeasonInfo GetSeasonInfo(this IWorldState worldState, long season)
         {
             var account = worldState.GetAccountState(Addresses.AdventureBoss);
-            if (account.GetState(Addresses.AdventureBoss) is { } a)
+            if (account.GetState(new Address(GetSeasonAsAddressForm(season))) is { } a)
             {
                 return new SeasonInfo(a);
             }
