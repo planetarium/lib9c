@@ -67,7 +67,7 @@ namespace Lib9c.Tests.Action.Scenario
                 });
             _agentAddr = tuple.agentAddr;
             _avatarAddr = tuple.avatarAddr;
-            _initialStateWithoutStakePolicySheet = tuple.initialStatesWithAvatarStateV2;
+            _initialStateWithoutStakePolicySheet = tuple.initialStatesWithAvatarState;
             _ncg = _initialStateWithoutStakePolicySheet.GetGoldCurrency();
         }
 

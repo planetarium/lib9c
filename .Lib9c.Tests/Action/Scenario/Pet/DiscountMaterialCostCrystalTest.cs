@@ -35,7 +35,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 _tableSheets,
                 _agentAddr,
                 _avatarAddr,
-                _,
                 _initialStateV2
             ) = InitializeUtil.InitializeStates();
         }

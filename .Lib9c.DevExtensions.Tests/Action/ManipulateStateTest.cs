@@ -46,7 +46,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
         public ManipulateStateTest()
         {
-            (_tableSheets, _agentAddress, _avatarAddress, _, _initialStateV2) =
+            (_tableSheets, _agentAddress, _avatarAddress, _initialStateV2) =
                 InitializeUtil.InitializeStates(
                     adminAddr: AdminAddr,
                     isDevEx: true);
@@ -111,7 +111,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         public static IEnumerable<object[]> FetchInventory()
         {
             var random = new TestRandom();
-            var (tableSheets, _, _, _, _) = InitializeUtil.InitializeStates(isDevEx: true);
+            var (tableSheets, _, _, _) = InitializeUtil.InitializeStates(isDevEx: true);
             var equipmentList = tableSheets.EquipmentItemSheet.Values.ToList();
             var consumableList = tableSheets.ConsumableItemSheet.Values.ToList();
             var materialList = tableSheets.MaterialItemSheet.Values.ToList();
@@ -170,7 +170,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         public static IEnumerable<object[]> FetchWorldInfo()
         {
             var random = new Random();
-            var (tableSheets, _, _, _, _) = InitializeUtil.InitializeStates(isDevEx: true);
+            var (tableSheets, _, _, _) = InitializeUtil.InitializeStates(isDevEx: true);
             var worldSheet = tableSheets.WorldSheet;
             yield return new object[]
             {
@@ -195,7 +195,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         public static IEnumerable<object[]> FetchQuest()
         {
             var random = new Random();
-            var (tableSheets, _, _, _, stateV2) = InitializeUtil.InitializeStates(isDevEx: true);
+            var (tableSheets, _, _, stateV2) = InitializeUtil.InitializeStates(isDevEx: true);
             // Empty QuestList
             yield return new object[]
             {
@@ -455,7 +455,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 _initialStateV2,
                 new List<(Address, Address, IValue)>
                 {
-                    (Addresses.Avatar, _avatarAddress, MigrationAvatarState.LegacySerializeV2(newAvatarState))
+                    (Addresses.Avatar, _avatarAddress, newAvatarState.SerializeList())
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -547,7 +547,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 _initialStateV2,
                 new List<(Address, Address, IValue)>
                 {
-                    (ReservedAddresses.LegacyAccount, _avatarAddress.Derive(SerializeKeys.LegacyWorldInformationKey), targetInfo.Serialize())
+                    (Addresses.WorldInformation, _avatarAddress, targetInfo.Serialize())
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
