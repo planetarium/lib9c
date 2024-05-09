@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action.AdventureBoss;
+    using Nekoyume.Model.AdventureBoss;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
@@ -37,8 +38,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 .SetAgentState(agentAddress, agentState)
                 .MintAsset(new ActionContext(), agentAddress, 300 * ncg);
 
+            // Set avtive season
+            state = state.SetSeasonInfo(new SeasonInfo(1, 0L));
+
             var action = new Wanted
             {
+                Season = 1,
                 AvatarAddress = avatarAddress,
                 Bounty = 100 * ncg,
             };
@@ -50,7 +55,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             });
             Assert.Equal(200 * ncg, nextState.GetBalance(agentAddress, ncg));
             Assert.Equal(100 * ncg, nextState.GetBalance(Addresses.BountyBoard, ncg));
-            var bountyBoard = nextState.GetBountyBoard(0);
+            var bountyBoard = nextState.GetBountyBoard(1);
             Assert.NotNull(bountyBoard);
             var investor = Assert.Single(bountyBoard.Investors);
             Assert.Equal(avatarAddress, investor.AvatarAddress);
@@ -67,7 +72,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             Assert.Equal(100 * ncg, nextState.GetBalance(agentAddress, ncg));
             Assert.Equal(200 * ncg, nextState.GetBalance(Addresses.BountyBoard, ncg));
-            bountyBoard = nextState.GetBountyBoard(0);
+            bountyBoard = nextState.GetBountyBoard(1);
             Assert.NotNull(bountyBoard);
             Assert.Equal(2, bountyBoard.Investors.Count);
             investor = bountyBoard.Investors.First(i => i.AvatarAddress == avatarAddress2);
@@ -84,12 +89,64 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             Assert.Equal(0 * ncg, nextState.GetBalance(agentAddress, ncg));
             Assert.Equal(300 * ncg, nextState.GetBalance(Addresses.BountyBoard, ncg));
-            bountyBoard = nextState.GetBountyBoard(0);
+            bountyBoard = nextState.GetBountyBoard(1);
             Assert.NotNull(bountyBoard);
             Assert.Equal(2, bountyBoard.Investors.Count);
             investor = bountyBoard.Investors.First(i => i.AvatarAddress == avatarAddress);
             Assert.Equal(200 * ncg, investor.Price);
             Assert.Equal(2, investor.Count);
+        }
+
+        [Fact]
+        public void CreateNewSeason()
+        {
+#pragma warning disable CS0618
+            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1419
+            var ncg = Currency.Legacy("NCG", 2, null);
+#pragma warning restore CS0618
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = Addresses.GetAvatarAddress(agentAddress, 0);
+            var avatarAddress2 = Addresses.GetAvatarAddress(agentAddress, 1);
+            var agentState = new AgentState(agentAddress)
+            {
+                avatarAddresses =
+                {
+                    [0] = avatarAddress,
+                    [1] = avatarAddress2,
+                },
+            };
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+                .SetAgentState(agentAddress, agentState)
+                .MintAsset(new ActionContext(), agentAddress, 300 * ncg);
+
+            // Validate no prev. season
+            var latestSeasonInfo = state.GetLatestAdventureBossSeason();
+            Assert.Equal(0, latestSeasonInfo.SeasonId);
+            Assert.Equal(0, latestSeasonInfo.StartBlockIndex);
+            Assert.Equal(0, latestSeasonInfo.EndBlockIndex);
+            Assert.Equal(0, latestSeasonInfo.NextStartBlockIndex);
+
+            var action = new Wanted
+            {
+                Season = 1,
+                AvatarAddress = avatarAddress,
+                Bounty = 100 * ncg,
+            };
+            var nextState = action.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = agentAddress,
+                BlockIndex = 0L,
+            });
+
+            // Validate new season
+            latestSeasonInfo = nextState.GetLatestAdventureBossSeason();
+            Assert.Equal(1, latestSeasonInfo.SeasonId);
+            Assert.Equal(0L, latestSeasonInfo.StartBlockIndex);
+            Assert.Equal(SeasonInfo.BossActiveBlockInterval, latestSeasonInfo.EndBlockIndex);
+            Assert.Equal(SeasonInfo.BossActiveBlockInterval + SeasonInfo.BossInactiveBlockInterval, latestSeasonInfo.NextStartBlockIndex);
         }
     }
 }

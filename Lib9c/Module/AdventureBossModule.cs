@@ -1,7 +1,6 @@
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
-using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Model.AdventureBoss;
 
 namespace Nekoyume.Module

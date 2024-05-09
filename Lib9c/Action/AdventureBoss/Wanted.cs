@@ -42,6 +42,17 @@ namespace Nekoyume.Action.AdventureBoss
             var states = context.PreviousState;
 
             var latestSeason = states.GetLatestAdventureBossSeason();
+
+            // Create new season
+            if (latestSeason.SeasonId == 0 || latestSeason.NextStartBlockIndex <= context.BlockIndex)
+            {
+                var currentSeason = new SeasonInfo(Season, context.BlockIndex);
+                states = states.SetSeasonInfo(currentSeason);
+                states = states.SetLatestAdventureBossSeason(currentSeason);
+                latestSeason = states.GetLatestAdventureBossSeason();
+            }
+
+            // Validation
             if (Season != latestSeason.SeasonId)
             {
                 throw new InvalidAdventureBossSeasonException(
