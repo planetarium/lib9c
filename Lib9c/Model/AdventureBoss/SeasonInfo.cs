@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Libplanet.Action;
 using Libplanet.Crypto;
+using Nekoyume.Action.AdventureBoss;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.AdventureBoss
@@ -16,6 +18,14 @@ namespace Nekoyume.Model.AdventureBoss
         public readonly long StartBlockIndex;
         public readonly long EndBlockIndex;
         public readonly long NextStartBlockIndex;
+
+        public int BossId;
+        public int? FixedRewardItemId = null;
+        public int? FixedRewardFavTicker = null;
+        public int? RandomRewardItemId = null;
+        public int? RandomRewardFavTicker = null;
+        public double RaffleRewardRatio;
+
         public HashSet<Address> ExplorerList;
         public long UsedApPotion;
         public long UsedGoldenDust;
@@ -40,6 +50,42 @@ namespace Nekoyume.Model.AdventureBoss
             EndBlockIndex = serialized[2].ToInteger();
             NextStartBlockIndex = serialized[3].ToInteger();
             ExplorerList = ((List)serialized[4]).Select(e => e.ToAddress()).ToHashSet();
+        }
+
+        public void SetSeasonData(WantedReward[] wantedRewardList, IRandom random)
+        {
+            var wantedReward = wantedRewardList[random.Next(0, wantedRewardList.Length)];
+            BossId = wantedReward.BossId;
+            if (wantedReward.FixedRewardItemIdList.Length > 0)
+            {
+                FixedRewardItemId =
+                    wantedReward.FixedRewardItemIdList[
+                        random.Next(0, wantedReward.FixedRewardItemIdList.Length)
+                    ];
+            }
+            if (wantedReward.FixedRewardFavTickerList.Length > 0)
+            {
+                FixedRewardFavTicker =
+                    wantedReward.FixedRewardFavTickerList[
+                        random.Next(0, wantedReward.FixedRewardFavTickerList.Length)
+                    ];
+            }
+            if (wantedReward.RandomRewardItemIdList.Length > 0)
+            {
+                RandomRewardItemId =
+                    wantedReward.RandomRewardItemIdList[
+                        random.Next(0, wantedReward.RandomRewardItemIdList.Length)
+                    ];
+            }
+            if (wantedReward.RandomRewardFavTickerList.Length > 0)
+            {
+                RandomRewardFavTicker =
+                    wantedReward.RandomRewardFavTickerList[
+                        random.Next(0, wantedReward.RandomRewardFavTickerList.Length)
+                    ];
+            }
+
+            RaffleRewardRatio = wantedReward.RaffleRewardRatio;
         }
 
         public void AddExplorer(Address avatarAddress)

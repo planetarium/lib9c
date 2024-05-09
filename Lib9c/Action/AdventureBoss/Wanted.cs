@@ -13,6 +13,17 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Action.AdventureBoss
 {
+    // FIXME: This may temporary
+    public struct WantedReward
+    {
+        public int BossId;
+        public int[] FixedRewardItemIdList;
+        public int[] FixedRewardFavTickerList;
+        public int[] RandomRewardItemIdList;
+        public int[] RandomRewardFavTickerList;
+        public double RaffleRewardRatio;
+    }
+
     [Serializable]
     [ActionType(TypeIdentifier)]
     public class Wanted : ActionBase
@@ -24,6 +35,47 @@ namespace Nekoyume.Action.AdventureBoss
         public int Season;
         public FungibleAssetValue Bounty;
         public Address AvatarAddress;
+
+        // FIXME: This may temporary
+        public WantedReward[] WantedRewardList = new[]
+        {
+            new WantedReward
+            {
+                BossId = 900001,
+                FixedRewardItemIdList = new[] { 600201 },
+                FixedRewardFavTickerList = Array.Empty<int>(),
+                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
+                RandomRewardFavTickerList = new[] { 20001, 30001 },
+                RaffleRewardRatio = 0.05,
+            },
+            new WantedReward
+            {
+                BossId = 900002,
+                FixedRewardItemIdList = new[] { 600202 },
+                FixedRewardFavTickerList = Array.Empty<int>(),
+                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
+                RandomRewardFavTickerList = new[] { 20001, 30001 },
+                RaffleRewardRatio = 0.05,
+            },
+            new WantedReward
+            {
+                BossId = 900001,
+                FixedRewardItemIdList = Array.Empty<int>(),
+                FixedRewardFavTickerList = new[] { 20001, 30001 },
+                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
+                RandomRewardFavTickerList = new[] { 20001, 30001 },
+                RaffleRewardRatio = 0.05,
+            },
+            new WantedReward
+            {
+                BossId = 900002,
+                FixedRewardItemIdList = new[] { 600202 },
+                FixedRewardFavTickerList = Array.Empty<int>(),
+                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
+                RandomRewardFavTickerList = new[] { 20001, 30001 },
+                RaffleRewardRatio = 0.05,
+            },
+        };
 
         public override IValue PlainValue =>
             Dictionary.Empty
@@ -107,6 +159,9 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             states = states.TransferAsset(context, context.Signer, Addresses.BountyBoard, Bounty);
+
+            // Set season info: boss and reward
+            currentSeason.SetSeasonData(WantedRewardList, context.GetRandom());
 
             // Update Bounty board
             BountyBoard bountyBoard;
