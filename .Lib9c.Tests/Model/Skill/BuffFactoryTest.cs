@@ -236,8 +236,8 @@ namespace Lib9c.Tests.Model.Skill
             Assert.IsType<StatBuff>(buffs.First());
             var iceShield = Assert.IsType<IceShield>(buffs.Last());
             var frostBite = iceShield.FrostBite(_tableSheets.StatBuffSheet);
-            Assert.NotNull(frostBite.CustomField);
-            var power = -player.ATK;
+            Assert.Null(frostBite.CustomField);
+            var power = frostBite.RowData.Value;
             for (int i = 0; i < frostBite.RowData.MaxStack; i++)
             {
                 frostBite.SetStack(i);

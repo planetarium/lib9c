@@ -31,11 +31,7 @@ namespace Nekoyume.Model.Buff
         public StatBuff FrostBite(StatBuffSheet statBuffSheet)
         {
             var row = statBuffSheet[801000];
-            var frostBite = BuffFactory.GetCustomStatBuff(row, new SkillCustomField
-            {
-                BuffDuration = row.Duration,
-                BuffValue = Power
-            });
+            var frostBite = BuffFactory.GetStatBuff(row);
             return frostBite;
         }
     }
