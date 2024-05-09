@@ -10,7 +10,7 @@ namespace Nekoyume.Module
     {
         public static readonly Address LatestSeasonAddress = new($"{0:X40}");
 
-        private static string GetSeasonAsAddressForm(long season)
+        public static string GetSeasonAsAddressForm(long season)
         {
             return $"{season:X40}";
         }
