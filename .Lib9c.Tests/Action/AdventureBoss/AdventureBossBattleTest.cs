@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Action.AdventureBoss
 {
+    using System.Linq;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -66,6 +67,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(100, adventureInfo.Score);
             Assert.Equal(1, adventureInfo.Floor);
 
+            seasonInfo = nextState.GetSeasonInfo(1);
+            Assert.Single(seasonInfo.ExplorerList);
+            Assert.Equal(avatarAddress, seasonInfo.ExplorerList.First());
+
             action.AvatarAddress = avatarAddress2;
             nextState = action.Execute(new ActionContext
             {
@@ -79,6 +84,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(100, adventureInfo.Score);
             Assert.Equal(1, adventureInfo.Floor);
 
+            seasonInfo = nextState.GetSeasonInfo(1);
+            Assert.Equal(2, seasonInfo.ExplorerList.Count);
+            Assert.Contains(avatarAddress2, seasonInfo.ExplorerList);
+
             action.AvatarAddress = avatarAddress;
             nextState = action.Execute(new ActionContext
             {
@@ -91,6 +100,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(avatarAddress, adventureInfo.AvatarAddress);
             Assert.Equal(200, adventureInfo.Score);
             Assert.Equal(2, adventureInfo.Floor);
+
+            seasonInfo = nextState.GetSeasonInfo(1);
+            Assert.Equal(2, seasonInfo.ExplorerList.Count);
         }
     }
 }

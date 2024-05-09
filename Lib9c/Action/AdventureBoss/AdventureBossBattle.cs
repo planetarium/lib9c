@@ -51,6 +51,10 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidAddressException();
             }
 
+            var currentSeason = states.GetSeasonInfo(latestSeason.SeasonId);
+            currentSeason.AddExplorer(AvatarAddress);
+
+            // TODO: Add used resources to currentSeason
             // TODO: AdventureBossSimulator with pass-through log
 
             ExploreInfo exploreInfo;
@@ -65,6 +69,7 @@ namespace Nekoyume.Action.AdventureBoss
 
             exploreInfo.Score += 100;
             exploreInfo.Floor++;
+            states = states.SetSeasonInfo(currentSeason);
             return states.SetExploreInfo(Season, exploreInfo);
         }
     }

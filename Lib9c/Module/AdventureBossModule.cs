@@ -1,3 +1,4 @@
+using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
@@ -54,7 +55,7 @@ namespace Nekoyume.Module
             var account = worldState.GetAccountState(Addresses.AdventureBoss);
             if (account.GetState(new Address(GetSeasonAsAddressForm(season))) is { } a)
             {
-                return new SeasonInfo(a);
+                return new SeasonInfo((List)a);
             }
 
             throw new FailedLoadStateException("");
