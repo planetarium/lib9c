@@ -223,7 +223,7 @@ namespace Lib9c.Tests.Model.Skill
                 _tableSheets.EquipmentItemSetEffectSheet);
             var skillId = 700011;
             var skillRow = _tableSheets.SkillSheet[skillId];
-            var skill = SkillFactory.Get(skillRow, 0, 100, 0, StatType.NONE);
+            var skill = SkillFactory.Get(skillRow, 0, 100, 10000, StatType.ATK);
             var buffs = BuffFactory.GetBuffs(
                 player.Stats,
                 skill,
@@ -233,7 +233,9 @@ namespace Lib9c.Tests.Model.Skill
                 _tableSheets.ActionBuffSheet
             );
             Assert.Equal(2, buffs.Count);
-            Assert.IsType<StatBuff>(buffs.First());
+            var statBuff = Assert.IsType<StatBuff>(buffs.First());
+            Assert.NotNull(statBuff.CustomField);
+            Assert.Equal(player.ATK, statBuff.CustomField.Value.BuffValue);
             var iceShield = Assert.IsType<IceShield>(buffs.Last());
             var frostBite = iceShield.FrostBite(_tableSheets.StatBuffSheet);
             Assert.Null(frostBite.CustomField);

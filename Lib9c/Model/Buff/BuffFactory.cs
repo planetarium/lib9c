@@ -33,6 +33,8 @@ namespace Nekoyume.Model.Buff
                     return new Focus(row);
                 case ActionBuffType.Dispel:
                     return new Dispel(row);
+                case ActionBuffType.IceShield:
+                    return new IceShield(row);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
