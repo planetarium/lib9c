@@ -53,7 +53,7 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             // Validation
-            if (Season != latestSeason.SeasonId)
+            if (Season == 0 || Season != latestSeason.SeasonId)
             {
                 throw new InvalidAdventureBossSeasonException(
                     $"Given season {Season} is not latest season {latestSeason.SeasonId}"

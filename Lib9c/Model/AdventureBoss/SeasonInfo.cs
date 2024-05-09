@@ -35,13 +35,15 @@ namespace Nekoyume.Model.AdventureBoss
 
         public SeasonInfo(IValue serialized)
         {
-            StartBlockIndex = ((List)serialized)[0].ToInteger();
-            EndBlockIndex = ((List)serialized)[1].ToInteger();
-            NextStartBlockIndex = ((List)serialized)[2].ToInteger();
+            Season = ((List)serialized)[0].ToInteger();
+            StartBlockIndex = ((List)serialized)[1].ToInteger();
+            EndBlockIndex = ((List)serialized)[2].ToInteger();
+            NextStartBlockIndex = ((List)serialized)[3].ToInteger();
         }
 
         public IValue Bencoded =>
             List.Empty
+                .Add(Season.Serialize())
                 .Add(StartBlockIndex.Serialize())
                 .Add(EndBlockIndex.Serialize())
                 .Add(NextStartBlockIndex.Serialize());
