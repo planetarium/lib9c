@@ -17,101 +17,13 @@ namespace Nekoyume.Module
     public static class AvatarModule
     {
         // This method automatically determines if given IValue is a legacy avatar state or not.
-        // Returning value is a list of [ Avatar, Inventory, QuestList, WorldInformation ]
-        // if the avatar version is higher than v1, else just a list of [ Avatar ].
-        public static IValue GetFullAvatarStateRaw(this IWorldState worldState, Address address)
-        {
-            var serializedAvatarRaw = worldState.GetResolvedState(address, Addresses.Avatar);
-            IValue serializedInventoryRaw;
-            IValue serializedQuestListRaw;
-            IValue serializedWorldInformationRaw;
-
-            if (serializedAvatarRaw is Dictionary avatarDict)
-            {
-                if (avatarDict.ContainsKey(LegacyInventoryKey))
-                {
-                    return new List(serializedAvatarRaw);
-                }
-
-                serializedInventoryRaw =
-                    worldState.GetLegacyState(address.Derive(LegacyInventoryKey));
-                serializedQuestListRaw =
-                    worldState.GetLegacyState(address.Derive(LegacyQuestListKey));
-                serializedWorldInformationRaw =
-                    worldState.GetLegacyState(address.Derive(LegacyWorldInformationKey));
-            }
-            else if (serializedAvatarRaw is List avatarList)
-            {
-                serializedInventoryRaw =
-                    worldState.GetAccountState(Addresses.Inventory).GetState(address);
-                serializedQuestListRaw =
-                    worldState.GetAccountState(Addresses.QuestList).GetState(address);
-                serializedWorldInformationRaw =
-                    worldState.GetAccountState(Addresses.WorldInformation).GetState(address);
-            }
-            else
-            {
-                Log.Warning(
-                    "Avatar state ({AvatarAddress}) should be " +
-                    "Dictionary or List but: {Raw}",
-                    address.ToHex(),
-                    serializedAvatarRaw);
-                return null;
-            }
-
-            if (serializedInventoryRaw is null ||
-                serializedQuestListRaw is null ||
-                serializedWorldInformationRaw is null)
-            {
-                Log.Warning(
-                    "Given avatar state ({AvatarAddress})'s sub-states are broken.",
-                    address.ToHex());
-                return null;
-            }
-
-            return new List(
-                serializedAvatarRaw,
-                serializedInventoryRaw,
-                serializedQuestListRaw,
-                serializedWorldInformationRaw);
-        }
-
-        // This method automatically determines if given IValue is a legacy avatar state or not.
         public static AvatarState GetAvatarState(this IWorldState worldState, Address address)
         {
-            var serializedAvatarRaw = worldState.GetResolvedState(address, Addresses.Avatar);
+            var account = worldState.GetAccountState(Addresses.Avatar);
+            var serializedAvatarRaw = account.GetState(address);
 
             AvatarState avatarState = null;
-            if (serializedAvatarRaw is Dictionary avatarDict)
-            {
-                try
-                {
-                    avatarState = new AvatarState(avatarDict);
-                }
-                catch (InvalidCastException e)
-                {
-                    Log.Error(
-                        e,
-                        "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
-                        address.ToHex(),
-                        avatarDict
-                    );
-
-                    return null;
-                }
-                catch (KeyNotFoundException e)
-                {
-                    Log.Error(
-                        e,
-                        "Invalid avatar state ({AvatarAddress}): {SerializedAvatar}",
-                        address.ToHex(),
-                        avatarDict
-                    );
-
-                    return null;
-                }
-            }
-            else if (serializedAvatarRaw is List avatarList)
+            if (serializedAvatarRaw is List avatarList)
             {
                 try
                 {
@@ -144,7 +56,7 @@ namespace Nekoyume.Module
             {
                 Log.Warning(
                     "Avatar state ({AvatarAddress}) should be " +
-                    "Dictionary or List but: {Raw}",
+                    "List but: {Raw}",
                     address.ToHex(),
                     serializedAvatarRaw);
                 return null;
@@ -152,38 +64,9 @@ namespace Nekoyume.Module
 
             try
             {
-                // Version 0 contains inventory, worldInformation, questList itself.
-                if (avatarState.Version == 1)
-                {
-                    string[] keys =
-                    {
-                        LegacyInventoryKey,
-                        LegacyWorldInformationKey,
-                        LegacyQuestListKey,
-                    };
-                    var addresses = keys.Select(key => address.Derive(key)).ToArray();
-                    var serializedValues = worldState.GetLegacyStates(addresses);
-                    for (var i = 0; i < keys.Length; i++)
-                    {
-                        if (serializedValues[i] is null)
-                        {
-                            throw new FailedLoadStateException(
-                                $"failed to load {keys[i]}.");
-                        }
-                    }
-
-                    avatarState.inventory = new Inventory((List)serializedValues[0]);
-                    avatarState.worldInformation =
-                        new WorldInformation((Dictionary)serializedValues[1]);
-                    avatarState.questList = new QuestList((Dictionary)serializedValues[2]);
-                }
-
-                if (avatarState.Version >= 2)
-                {
-                    avatarState.inventory = GetInventoryV2(worldState, address);
-                    avatarState.worldInformation = GetWorldInformationV2(worldState, address);
-                    avatarState.questList = GetQuestListV2(worldState, address);
-                }
+                avatarState.inventory = GetInventoryV2(worldState, address);
+                avatarState.worldInformation = GetWorldInformationV2(worldState, address);
+                avatarState.questList = GetQuestListV2(worldState, address);
             }
             catch (KeyNotFoundException)
             {
@@ -280,22 +163,7 @@ namespace Nekoyume.Module
             return world.SetAccount(Addresses.Avatar, avatarAccount);
         }
 
-        internal static Inventory GetInventory(this IWorldState worldState, Address address)
-        {
-            var serializedInventory = worldState.GetResolvedState(
-                address,
-                Addresses.Inventory,
-                address.Derive(LegacyInventoryKey));
-            if (serializedInventory is null || serializedInventory.Equals(Null.Value))
-            {
-                throw new FailedLoadStateException(
-                    $"Aborted as the inventory state of the avatar ({address}) was failed to load.");
-            }
-
-            return new Inventory((List)serializedInventory);
-        }
-
-        private static Inventory GetInventoryV2(this IWorldState worldState, Address address)
+        internal static Inventory GetInventoryV2(this IWorldState worldState, Address address)
         {
             var serializedInventory = worldState.GetAccountState(Addresses.Inventory).GetState(address);
             if (serializedInventory is null || serializedInventory.Equals(Null.Value))
@@ -312,21 +180,6 @@ namespace Nekoyume.Module
             var inventoryAccount = world.GetAccount(Addresses.Inventory);
             inventoryAccount = inventoryAccount.SetState(address, state.Serialize());
             return world.SetAccount(Addresses.Inventory, inventoryAccount);
-        }
-
-        internal static WorldInformation GetWorldInformation(this IWorldState worldState, Address address)
-        {
-            var serializeWorldInfo = worldState.GetResolvedState(
-                address,
-                Addresses.WorldInformation,
-                address.Derive(LegacyWorldInformationKey));
-            if (serializeWorldInfo is null || serializeWorldInfo.Equals(Null.Value))
-            {
-                throw new FailedLoadStateException(
-                    $"Aborted as the worldInformation state of the avatar ({address}) was failed to load.");
-            }
-
-            return new WorldInformation((Dictionary)serializeWorldInfo);
         }
 
         internal static WorldInformation GetWorldInformationV2(this IWorldState worldState, Address address)
@@ -347,21 +200,6 @@ namespace Nekoyume.Module
             var worldInfoAccount = world.GetAccount(Addresses.WorldInformation);
             worldInfoAccount = worldInfoAccount.SetState(address, state.Serialize());
             return world.SetAccount(Addresses.WorldInformation, worldInfoAccount);
-        }
-
-        internal static QuestList GetQuestList(this IWorldState worldState, Address address)
-        {
-            var serializeQuestList = worldState.GetResolvedState(
-                address,
-                Addresses.QuestList,
-                address.Derive(LegacyQuestListKey));
-            if (serializeQuestList is null || serializeQuestList.Equals(Null.Value))
-            {
-                throw new FailedLoadStateException(
-                    $"Aborted as the questList state of the avatar ({address}) was failed to load.");
-            }
-
-            return new QuestList((Dictionary)serializeQuestList);
         }
 
         private static QuestList GetQuestListV2(this IWorldState worldState, Address address)
