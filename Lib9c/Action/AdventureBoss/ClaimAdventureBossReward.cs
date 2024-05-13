@@ -58,7 +58,7 @@ namespace Nekoyume.Action.AdventureBoss
             // TODO: Get reward from sheet or something
             var inventory = states.GetInventory(AvatarAddress);
             var materialItemSheet = states.GetSheet<MaterialItemSheet>();
-            var material = ItemFactory.CreateMaterial(materialItemSheet.Values.First());
+            var material = ItemFactory.CreateMaterial(materialItemSheet.Values.First(row => row.Id == 600202));
             inventory.AddItem(material);
             return states.SetInventory(AvatarAddress, inventory);
         }
