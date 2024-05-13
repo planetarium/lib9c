@@ -182,7 +182,9 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var avatarState = states.GetAvatarState(recipientAvatarAddress);
+            var avatarState = states.GetAvatarState(recipientAvatarAddress, getQuestList: false, getWorldInformation: false);
+            Assert.Null(avatarState.questList);
+            Assert.Null(avatarState.worldInformation);
             var mail = Assert.IsType<ClaimItemsMail>(avatarState.mailBox.Single());
             if (string.IsNullOrEmpty(memo))
             {
