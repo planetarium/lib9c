@@ -319,6 +319,31 @@ namespace Lib9c.Tests.Action.AdventureBoss
             ));
         }
 
+        [Fact]
+        public void CannotPutBounty()
+        {
+            var state = Stake(_initialState);
+            var prevSeason = new SeasonInfo(1, 0L);
+            var prevBountyBoard = new BountyBoard();
+            prevBountyBoard.AddOrUpdate(AvatarAddress, Wanted.MinBounty * NCG);
+            state = state.SetSeasonInfo(prevSeason).SetBountyBoard(1, prevBountyBoard);
+
+            var action = new Wanted
+            {
+                Season = 2,
+                AvatarAddress = AvatarAddress,
+                Bounty = Wanted.MinBounty * NCG,
+            };
+            Assert.Throws<PreviousBountyException>(() => action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = AgentAddress,
+                    BlockIndex = prevSeason.NextStartBlockIndex,
+                }
+            ));
+        }
+
         private IWorld Stake(IWorld world, int amount = 0)
         {
             foreach (var (key, value) in Sheets)

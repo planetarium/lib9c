@@ -113,11 +113,23 @@ namespace Nekoyume.Action.AdventureBoss
                     $"Given bounty {Bounty.MajorUnit}.{Bounty.MinorUnit} is not between {MinBounty} and {MaxBounty}.");
             }
 
-            if (Season == 0 || (latestSeason.SeasonId != 0 && Season != latestSeason.SeasonId))
+            if (Season <= 0 || (latestSeason.SeasonId != 0 && Season != latestSeason.SeasonId))
             {
                 throw new InvalidAdventureBossSeasonException(
-                    $"Given season {Season} is not latest season {latestSeason.SeasonId}"
+                    $"Given season {Season} is not valid season {latestSeason.SeasonId}"
                 );
+            }
+
+            // Cannot put bounty in two seasons in a row
+            if (Season > 1)
+            {
+                var prevBountyBoard = states.GetBountyBoard(Season - 1);
+                if (prevBountyBoard.Investors.Select(i => i.AvatarAddress).Contains(AvatarAddress))
+                {
+                    throw new PreviousBountyException(
+                        "You've put bounty in previous season. Cannot put bounty tow seasons in a row"
+                    );
+                }
             }
 
             if (!Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress))
