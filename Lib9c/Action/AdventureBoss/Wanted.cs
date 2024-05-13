@@ -156,7 +156,6 @@ namespace Nekoyume.Action.AdventureBoss
                 currentSeason = new SeasonInfo(Season, context.BlockIndex);
                 states = states.SetSeasonInfo(currentSeason);
                 states = states.SetLatestAdventureBossSeason(currentSeason);
-                states.GetLatestAdventureBossSeason();
             }
             else
             {
@@ -174,6 +173,7 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Set season info: boss and reward
             currentSeason.SetSeasonData(WantedRewardList, context.GetRandom());
+            states = states.SetSeasonInfo(currentSeason);
 
             // Update Bounty board
             BountyBoard bountyBoard;
