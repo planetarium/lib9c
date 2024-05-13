@@ -113,10 +113,14 @@ namespace Nekoyume.Action.AdventureBoss
                     $"Given bounty {Bounty.MajorUnit}.{Bounty.MinorUnit} is not between {MinBounty} and {MaxBounty}.");
             }
 
-            if (Season <= 0 || (latestSeason.SeasonId != 0 && Season != latestSeason.SeasonId))
+            if (Season <= 0 ||
+                Season > latestSeason.SeasonId + 1 || Season < latestSeason.SeasonId ||
+                (Season == latestSeason.SeasonId && context.BlockIndex > latestSeason.EndBlockIndex) ||
+                (Season == latestSeason.SeasonId + 1 && context.BlockIndex < latestSeason.NextStartBlockIndex)
+               )
             {
                 throw new InvalidAdventureBossSeasonException(
-                    $"Given season {Season} is not valid season {latestSeason.SeasonId}"
+                    $"Given season {Season} is not valid season."
                 );
             }
 

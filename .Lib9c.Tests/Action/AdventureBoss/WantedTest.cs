@@ -219,13 +219,24 @@ namespace Lib9c.Tests.Action.AdventureBoss
             ));
         }
 
-        [Fact]
-        public void CannotCreateSeason0()
+        [Theory]
+        [InlineData(0, 0)]
+        [InlineData(0, -1)]
+        [InlineData(1, 0)]
+        [InlineData(2, 1)]
+        public void CannotCreatePastSeason(int currentSeason, int targetSeason)
         {
             var state = Stake(_initialState);
+            if (currentSeason > 0)
+            {
+                var current = new SeasonInfo(currentSeason, 0L);
+                state = state.SetSeasonInfo(current);
+                state = state.SetLatestAdventureBossSeason(current);
+            }
+
             var action = new Wanted
             {
-                Season = 0,
+                Season = targetSeason,
                 AvatarAddress = AvatarAddress,
                 Bounty = Wanted.MinBounty * NCG,
             };
@@ -238,6 +249,35 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         BlockIndex = 0L,
                     }
                 )
+            );
+        }
+
+        [Theory]
+        [InlineData(0, 2)]
+        [InlineData(1, 3)]
+        public void CannotCreateFutureSeason(int latestSeason, int targetSeason)
+        {
+            var state = Stake(_initialState);
+            if (latestSeason > 0)
+            {
+                var latest = new SeasonInfo(latestSeason, 0L);
+                state = state.SetSeasonInfo(latest);
+                state = state.SetLatestAdventureBossSeason(latest);
+            }
+
+            var action = new Wanted
+            {
+                Season = targetSeason,
+                AvatarAddress = AvatarAddress,
+                Bounty = Wanted.MinBounty * NCG,
+            };
+            Assert.Throws<InvalidAdventureBossSeasonException>(() =>
+                action.Execute(new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = AgentAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                })
             );
         }
 
@@ -327,6 +367,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var prevBountyBoard = new BountyBoard();
             prevBountyBoard.AddOrUpdate(AvatarAddress, Wanted.MinBounty * NCG);
             state = state.SetSeasonInfo(prevSeason).SetBountyBoard(1, prevBountyBoard);
+            state = state.SetLatestAdventureBossSeason(prevSeason);
 
             var action = new Wanted
             {

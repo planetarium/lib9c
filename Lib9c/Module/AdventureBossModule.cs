@@ -80,7 +80,7 @@ namespace Nekoyume.Module
                 return new BountyBoard(a);
             }
 
-            throw new FailedLoadStateException("");
+            return new BountyBoard();
         }
 
         public static IWorld SetBountyBoard(this IWorld world, long season, BountyBoard bountyBoard)
