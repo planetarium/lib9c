@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -8,17 +9,73 @@ using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Action.AdventureBoss
 {
+    // FIXME: This may temporary
+    public struct WantedReward
+    {
+        public int BossId;
+        public int[] FixedRewardItemIdList;
+        public int[] FixedRewardFavTickerList;
+        public int[] RandomRewardItemIdList;
+        public int[] RandomRewardFavTickerList;
+        public double RaffleRewardRatio;
+    }
+
     [Serializable]
     [ActionType(TypeIdentifier)]
     public class Wanted : ActionBase
     {
         public const string TypeIdentifier = "wanted";
+        public const int RequiredStakingLevel = 5;
+        public const int MinBounty = 100;
+        public const int MaxBounty = 1000;
         public int Season;
         public FungibleAssetValue Bounty;
         public Address AvatarAddress;
+
+        // FIXME: This may temporary
+        public WantedReward[] WantedRewardList = new[]
+        {
+            new WantedReward
+            {
+                BossId = 900001,
+                FixedRewardItemIdList = new[] { 600201 },
+                FixedRewardFavTickerList = Array.Empty<int>(),
+                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
+                RandomRewardFavTickerList = new[] { 20001, 30001 },
+                RaffleRewardRatio = 0.05,
+            },
+            new WantedReward
+            {
+                BossId = 900002,
+                FixedRewardItemIdList = new[] { 600202 },
+                FixedRewardFavTickerList = Array.Empty<int>(),
+                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
+                RandomRewardFavTickerList = new[] { 20001, 30001 },
+                RaffleRewardRatio = 0.05,
+            },
+            new WantedReward
+            {
+                BossId = 900001,
+                FixedRewardItemIdList = Array.Empty<int>(),
+                FixedRewardFavTickerList = new[] { 20001, 30001 },
+                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
+                RandomRewardFavTickerList = new[] { 20001, 30001 },
+                RaffleRewardRatio = 0.05,
+            },
+            new WantedReward
+            {
+                BossId = 900002,
+                FixedRewardItemIdList = new[] { 600202 },
+                FixedRewardFavTickerList = Array.Empty<int>(),
+                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
+                RandomRewardFavTickerList = new[] { 20001, 30001 },
+                RaffleRewardRatio = 0.05,
+            },
+        };
 
         public override IValue PlainValue =>
             Dictionary.Empty
@@ -40,24 +97,39 @@ namespace Nekoyume.Action.AdventureBoss
         {
             context.UseGas(1);
             var states = context.PreviousState;
+            var currency = states.GetGoldCurrency();
 
             var latestSeason = states.GetLatestAdventureBossSeason();
 
-            // Create new season
-            if (latestSeason.SeasonId == 0 || latestSeason.NextStartBlockIndex <= context.BlockIndex)
+            // Validation
+            if (!Bounty.Currency.Equals(currency))
             {
-                var currentSeason = new SeasonInfo(Season, context.BlockIndex);
-                states = states.SetSeasonInfo(currentSeason);
-                states = states.SetLatestAdventureBossSeason(currentSeason);
-                latestSeason = states.GetLatestAdventureBossSeason();
+                throw new InvalidCurrencyException("");
             }
 
-            // Validation
-            if (Season == 0 || Season != latestSeason.SeasonId)
+            if (Bounty < MinBounty * currency || Bounty > MaxBounty * currency)
+            {
+                throw new InvalidBountyException(
+                    $"Given bounty {Bounty.MajorUnit}.{Bounty.MinorUnit} is not between {MinBounty} and {MaxBounty}.");
+            }
+
+            if (Season <= 0 || (latestSeason.SeasonId != 0 && Season != latestSeason.SeasonId))
             {
                 throw new InvalidAdventureBossSeasonException(
-                    $"Given season {Season} is not latest season {latestSeason.SeasonId}"
+                    $"Given season {Season} is not valid season {latestSeason.SeasonId}"
                 );
+            }
+
+            // Cannot put bounty in two seasons in a row
+            if (Season > 1)
+            {
+                var prevBountyBoard = states.GetBountyBoard(Season - 1);
+                if (prevBountyBoard.Investors.Select(i => i.AvatarAddress).Contains(AvatarAddress))
+                {
+                    throw new PreviousBountyException(
+                        "You've put bounty in previous season. Cannot put bounty tow seasons in a row"
+                    );
+                }
             }
 
             if (!Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress))
@@ -65,14 +137,32 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidAddressException();
             }
 
-            var currency = states.GetGoldCurrency();
-            if (!Bounty.Currency.Equals(currency))
+            var requiredStakingAmount = states.GetSheet<MonsterCollectionSheet>()
+                .OrderedList.First(row => row.Level == RequiredStakingLevel).RequiredGold;
+            var stakedAmount =
+                states.GetStakedAmount(states.GetAvatarState(AvatarAddress).agentAddress);
+            if (stakedAmount < requiredStakingAmount * currency)
             {
-                throw new InvalidCurrencyException("");
+                throw new InsufficientStakingException(
+                    $"Current staking {stakedAmount.MajorUnit} is not enough: requires {requiredStakingAmount}"
+                );
             }
 
-            // TODO: Check staking level
+            // Create new season if required
+            SeasonInfo currentSeason;
+            if (latestSeason.SeasonId == 0 ||
+                latestSeason.NextStartBlockIndex <= context.BlockIndex)
+            {
+                currentSeason = new SeasonInfo(Season, context.BlockIndex);
+                states = states.SetSeasonInfo(currentSeason);
+                states = states.SetLatestAdventureBossSeason(currentSeason);
+            }
+            else
+            {
+                currentSeason = states.GetSeasonInfo(Season);
+            }
 
+            // Check balance and use
             var balance = states.GetBalance(context.Signer, currency);
             if (balance < Bounty)
             {
@@ -81,6 +171,11 @@ namespace Nekoyume.Action.AdventureBoss
 
             states = states.TransferAsset(context, context.Signer, Addresses.BountyBoard, Bounty);
 
+            // Set season info: boss and reward
+            currentSeason.SetSeasonData(WantedRewardList, context.GetRandom());
+            states = states.SetSeasonInfo(currentSeason);
+
+            // Update Bounty board
             BountyBoard bountyBoard;
             try
             {
