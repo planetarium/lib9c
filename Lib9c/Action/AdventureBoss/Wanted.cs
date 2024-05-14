@@ -21,7 +21,6 @@ namespace Nekoyume.Action.AdventureBoss
         public int[] FixedRewardFavTickerList;
         public int[] RandomRewardItemIdList;
         public int[] RandomRewardFavTickerList;
-        public double RaffleRewardRatio;
     }
 
     [Serializable]
@@ -44,18 +43,16 @@ namespace Nekoyume.Action.AdventureBoss
                 BossId = 900001,
                 FixedRewardItemIdList = new[] { 600201 },
                 FixedRewardFavTickerList = Array.Empty<int>(),
-                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
+                RandomRewardItemIdList = Array.Empty<int>(),
                 RandomRewardFavTickerList = new[] { 20001, 30001 },
-                RaffleRewardRatio = 0.05,
             },
             new WantedReward
             {
                 BossId = 900002,
                 FixedRewardItemIdList = new[] { 600202 },
                 FixedRewardFavTickerList = Array.Empty<int>(),
-                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
+                RandomRewardItemIdList = Array.Empty<int>(),
                 RandomRewardFavTickerList = new[] { 20001, 30001 },
-                RaffleRewardRatio = 0.05,
             },
             new WantedReward
             {
@@ -63,8 +60,7 @@ namespace Nekoyume.Action.AdventureBoss
                 FixedRewardItemIdList = Array.Empty<int>(),
                 FixedRewardFavTickerList = new[] { 20001, 30001 },
                 RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
-                RandomRewardFavTickerList = new[] { 20001, 30001 },
-                RaffleRewardRatio = 0.05,
+                RandomRewardFavTickerList = Array.Empty<int>(),
             },
             new WantedReward
             {
@@ -72,8 +68,7 @@ namespace Nekoyume.Action.AdventureBoss
                 FixedRewardItemIdList = new[] { 600202 },
                 FixedRewardFavTickerList = Array.Empty<int>(),
                 RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
-                RandomRewardFavTickerList = new[] { 20001, 30001 },
-                RaffleRewardRatio = 0.05,
+                RandomRewardFavTickerList = Array.Empty<int>(),
             },
         };
 
@@ -158,12 +153,10 @@ namespace Nekoyume.Action.AdventureBoss
                 latestSeason.NextStartBlockIndex <= context.BlockIndex)
             {
                 currentSeason = new SeasonInfo(Season, context.BlockIndex);
+                // Set season info: boss and reward
+                currentSeason.SetSeasonData(WantedRewardList, context.GetRandom());
                 states = states.SetSeasonInfo(currentSeason);
                 states = states.SetLatestAdventureBossSeason(currentSeason);
-            }
-            else
-            {
-                currentSeason = states.GetSeasonInfo(Season);
             }
 
             // Check balance and use
@@ -174,10 +167,6 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             states = states.TransferAsset(context, context.Signer, Addresses.BountyBoard, Bounty);
-
-            // Set season info: boss and reward
-            currentSeason.SetSeasonData(WantedRewardList, context.GetRandom());
-            states = states.SetSeasonInfo(currentSeason);
 
             // Update Bounty board
             BountyBoard bountyBoard;
