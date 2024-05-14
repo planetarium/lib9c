@@ -68,11 +68,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var state = Stake(_initialState);
             var startBalance = state.GetBalance(AgentAddress, NCG);
 
-            // Set active season
-            var season = new SeasonInfo(1, 0L);
-            state = state.SetSeasonInfo(season);
-            state = state.SetLatestAdventureBossSeason(season);
-
+            // Create new season
             var action = new Wanted
             {
                 Season = 1,
@@ -84,25 +80,38 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 PreviousState = state,
                 Signer = AgentAddress,
                 BlockIndex = 0L,
+                RandomSeed = 0,
             });
+
+            // Test
+            var season = nextState.GetSeasonInfo(1);
+            Assert.Equal(1, season.Season);
+            Assert.Equal(900001, season.BossId);
+            Assert.Null(season.FixedRewardItemId);
+            Assert.Equal(30001, season.FixedRewardFavTicker);
+            Assert.Equal(600203, season.RandomRewardItemId);
+            Assert.Null(season.RandomRewardFavTicker);
+
+            var bountyBoard = nextState.GetBountyBoard(1);
+            var investor = Assert.Single(bountyBoard.Investors);
             Assert.Equal(
                 startBalance - Wanted.MinBounty * NCG,
                 nextState.GetBalance(AgentAddress, NCG)
             );
             Assert.Equal(Wanted.MinBounty * NCG, nextState.GetBalance(Addresses.BountyBoard, NCG));
-            var bountyBoard = nextState.GetBountyBoard(1);
             Assert.NotNull(bountyBoard);
-            var investor = Assert.Single(bountyBoard.Investors);
             Assert.Equal(AvatarAddress, investor.AvatarAddress);
             Assert.Equal(Wanted.MinBounty * NCG, investor.Price);
             Assert.Equal(1, investor.Count);
 
+            // Add new bounty
             action.AvatarAddress = AvatarAddress2;
             nextState = action.Execute(new ActionContext
             {
                 PreviousState = nextState,
                 Signer = AgentAddress,
                 BlockIndex = 1L,
+                RandomSeed = 1,
             });
 
             Assert.Equal(
@@ -113,6 +122,16 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Wanted.MinBounty * 2 * NCG,
                 nextState.GetBalance(Addresses.BountyBoard, NCG)
             );
+
+            // Test
+            season = nextState.GetSeasonInfo(1);
+            Assert.Equal(1, season.Season);
+            Assert.Equal(900001, season.BossId);
+            Assert.Null(season.FixedRewardItemId);
+            Assert.Equal(30001, season.FixedRewardFavTicker);
+            Assert.Equal(600203, season.RandomRewardItemId);
+            Assert.Null(season.RandomRewardFavTicker);
+
             bountyBoard = nextState.GetBountyBoard(1);
             Assert.NotNull(bountyBoard);
             Assert.Equal(2, bountyBoard.Investors.Count);
@@ -120,6 +139,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(Wanted.MinBounty * NCG, investor.Price);
             Assert.Equal(1, investor.Count);
 
+            // Add additional bounty
             action.AvatarAddress = AvatarAddress;
             nextState = action.Execute(new ActionContext
             {

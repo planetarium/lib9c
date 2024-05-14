@@ -13,6 +13,7 @@ namespace Nekoyume.Model.AdventureBoss
         // FIXME: Interval must be changed before release
         public const long BossActiveBlockInterval = 10_000L;
         public const long BossInactiveBlockInterval = 10_000L;
+        public const double RaffleRewardRatio = 0.05;
 
         public readonly long Season;
         public readonly long StartBlockIndex;
@@ -20,11 +21,10 @@ namespace Nekoyume.Model.AdventureBoss
         public readonly long NextStartBlockIndex;
 
         public int BossId;
-        public int? FixedRewardItemId = null;
-        public int? FixedRewardFavTicker = null;
-        public int? RandomRewardItemId = null;
-        public int? RandomRewardFavTicker = null;
-        public double RaffleRewardRatio;
+        public int? FixedRewardItemId;
+        public int? FixedRewardFavTicker;
+        public int? RandomRewardItemId;
+        public int? RandomRewardFavTicker;
 
         public HashSet<Address> ExplorerList;
         public long UsedApPotion;
@@ -49,7 +49,12 @@ namespace Nekoyume.Model.AdventureBoss
             StartBlockIndex = serialized[1].ToInteger();
             EndBlockIndex = serialized[2].ToInteger();
             NextStartBlockIndex = serialized[3].ToInteger();
-            ExplorerList = ((List)serialized[4]).Select(e => e.ToAddress()).ToHashSet();
+            BossId = serialized[4].ToInteger();
+            FixedRewardItemId = serialized[5].ToNullableInteger();
+            FixedRewardFavTicker = serialized[6].ToNullableInteger();
+            RandomRewardItemId = serialized[7].ToNullableInteger();
+            RandomRewardFavTicker = serialized[8].ToNullableInteger();
+            ExplorerList = ((List)serialized[9]).Select(e => e.ToAddress()).ToHashSet();
         }
 
         public void SetSeasonData(WantedReward[] wantedRewardList, IRandom random)
@@ -63,6 +68,7 @@ namespace Nekoyume.Model.AdventureBoss
                         random.Next(0, wantedReward.FixedRewardItemIdList.Length)
                     ];
             }
+
             if (wantedReward.FixedRewardFavTickerList.Length > 0)
             {
                 FixedRewardFavTicker =
@@ -70,6 +76,7 @@ namespace Nekoyume.Model.AdventureBoss
                         random.Next(0, wantedReward.FixedRewardFavTickerList.Length)
                     ];
             }
+
             if (wantedReward.RandomRewardItemIdList.Length > 0)
             {
                 RandomRewardItemId =
@@ -77,6 +84,7 @@ namespace Nekoyume.Model.AdventureBoss
                         random.Next(0, wantedReward.RandomRewardItemIdList.Length)
                     ];
             }
+
             if (wantedReward.RandomRewardFavTickerList.Length > 0)
             {
                 RandomRewardFavTicker =
@@ -84,8 +92,6 @@ namespace Nekoyume.Model.AdventureBoss
                         random.Next(0, wantedReward.RandomRewardFavTickerList.Length)
                     ];
             }
-
-            RaffleRewardRatio = wantedReward.RaffleRewardRatio;
         }
 
         public void AddExplorer(Address avatarAddress)
@@ -99,6 +105,9 @@ namespace Nekoyume.Model.AdventureBoss
                 .Add(StartBlockIndex.Serialize())
                 .Add(EndBlockIndex.Serialize())
                 .Add(NextStartBlockIndex.Serialize())
+                .Add(BossId.Serialize())
+                .Add(FixedRewardItemId.Serialize()).Add(FixedRewardFavTicker.Serialize())
+                .Add(RandomRewardItemId.Serialize()).Add(RandomRewardFavTicker.Serialize())
                 .Add(new List(ExplorerList.OrderBy(x => x).Select(x => x.Serialize())));
     }
 }
