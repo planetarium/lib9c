@@ -39,8 +39,8 @@ namespace Lib9c.Tests.Action.Garages
                 agentAddr: AgentAddress,
                 avatarIndex: AvatarIndex);
             _tableSheets = initializeStates.tableSheets;
-            _previousStates = initializeStates.initialStatesWithAvatarStateV2;
-            _ncg = initializeStates.initialStatesWithAvatarStateV2.GetGoldCurrency();
+            _previousStates = initializeStates.initialStatesWithAvatarState;
+            _ncg = initializeStates.initialStatesWithAvatarState.GetGoldCurrency();
         }
 
         public static IEnumerable<object[]> Get_Sample_PlainValue()
@@ -140,7 +140,7 @@ namespace Lib9c.Tests.Action.Garages
             // Test fungibleItems
             if (unloadData[0].fungibleIdAndCounts is { } fungibleIdAndCounts)
             {
-                var inventory = states.GetInventory(unloadData[0].recipientAvatarAddress);
+                var inventory = states.GetInventoryV2(unloadData[0].recipientAvatarAddress);
 
                 foreach (var (fungibleId, count) in fungibleIdAndCounts)
                 {

@@ -12,7 +12,8 @@ namespace Nekoyume.Module
     {
         public static AgentState? GetAgentState(this IWorldState worldState, Address address)
         {
-            var serializedAgent = worldState.GetResolvedState(address, Addresses.Agent);
+            var account = worldState.GetAccountState(Addresses.Agent);
+            var serializedAgent = account.GetState(address);
             if (serializedAgent is null)
             {
                 Log.Warning("No agent state ({0})", address.ToHex());
@@ -21,11 +22,7 @@ namespace Nekoyume.Module
 
             try
             {
-                if (serializedAgent is Dictionary dict)
-                {
-                    return new AgentState(dict);
-                }
-                else if (serializedAgent is List list)
+                if (serializedAgent is List list)
                 {
                     return new AgentState(list);
                 }
@@ -48,7 +45,6 @@ namespace Nekoyume.Module
 
         public static IWorld SetAgentState(this IWorld world, Address agent, AgentState state)
         {
-            // TODO: Overwrite legacy address to null state?
             var account = world.GetAccount(Addresses.Agent);
             account = account.SetState(agent, state.SerializeList());
             return world.SetAccount(Addresses.Agent, account);

@@ -64,33 +64,29 @@ namespace Lib9c.Tests.Action
         // Recipe 6 unlocks at stage 27
         // Recipe 94 unlocks at stage 90
         // Recipe 133 unlocks at stage 17
-        [InlineData(new[] { 6, 5 }, true, false, false, true, true, null)]
-        [InlineData(new[] { 6 }, true, false, false, true, true, null)]
+        [InlineData(new[] { 6, 5 }, true, false, true, true, null)]
+        [InlineData(new[] { 6 }, true, false, true, true, null)]
         // Unlock Belt without Armor unlock.
-        [InlineData(new[] { 94 }, true, false, false, true, true, null)]
+        [InlineData(new[] { 94 }, true, false, true, true, null)]
         // Unlock Weapon & Ring
-        [InlineData(new[] { 6, 133 }, true, false, false, true, true, null)]
-        // AvatarState migration.
-        [InlineData(new[] { 6 }, true, true, false, true, true, null)]
+        [InlineData(new[] { 6, 133 }, true, false, true, true, null)]
         // Invalid recipe id.
-        [InlineData(new[] { -1 }, true, false, false, false, false, typeof(InvalidRecipeIdException))]
-        [InlineData(new[] { 1 }, true, false, false, true, false, typeof(InvalidRecipeIdException))]
-        [InlineData(new int[] { }, true, false, false, false, false, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { -1 }, true, false, false, false, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { 1 }, true, false, true, false, typeof(InvalidRecipeIdException))]
+        [InlineData(new int[] { }, true, false, false, false, typeof(InvalidRecipeIdException))]
         // AvatarState is null.
-        [InlineData(new[] { 6 }, false, true, false, true, true, typeof(FailedLoadStateException))]
-        [InlineData(new[] { 6 }, false, false, false, true, true, typeof(FailedLoadStateException))]
+        [InlineData(new[] { 6 }, false, false, true, true, typeof(FailedLoadStateException))]
         // Already unlocked recipe.
-        [InlineData(new[] { 6 }, true, false, true, true, true, typeof(AlreadyRecipeUnlockedException))]
+        [InlineData(new[] { 6 }, true, true, true, true, typeof(AlreadyRecipeUnlockedException))]
         // Skip prev recipe.
-        [InlineData(new[] { 5 }, true, false, false, true, true, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { 5 }, true, false, true, true, typeof(InvalidRecipeIdException))]
         // Stage not cleared.
-        [InlineData(new[] { 6 }, true, false, false, false, true, typeof(NotEnoughClearedStageLevelException))]
+        [InlineData(new[] { 6 }, true, false, false, true, typeof(NotEnoughClearedStageLevelException))]
         // Insufficient CRYSTAL.
-        [InlineData(new[] { 6 }, true, false, false, true, false, typeof(NotEnoughFungibleAssetValueException))]
+        [InlineData(new[] { 6 }, true, false, true, false, typeof(NotEnoughFungibleAssetValueException))]
         public void Execute(
             IEnumerable<int> ids,
             bool stateExist,
-            bool migrationRequired,
             bool alreadyUnlocked,
             bool stageCleared,
             bool balanceEnough,
@@ -138,15 +134,7 @@ namespace Lib9c.Tests.Action
                     state = state.SetLegacyState(unlockedRecipeIdsAddress, serializedIds);
                 }
 
-                if (migrationRequired)
-                {
-                    state = state.SetLegacyState(
-                        _avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
-                }
-                else
-                {
-                    state = state.SetAvatarState(_avatarAddress, _avatarState);
-                }
+                state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
             var action = new UnlockEquipmentRecipe

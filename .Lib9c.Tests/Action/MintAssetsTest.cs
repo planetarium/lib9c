@@ -174,7 +174,7 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            var inventory = nextState.GetInventory(avatarAddress);
+            var inventory = nextState.GetInventoryV2(avatarAddress);
             Assert.Contains(inventory.Items, i => i.count == 42 && i.item is Material m && m.FungibleId.Equals(fungibleId));
 
             var avatarState = nextState.GetAvatarState(avatarAddress);
@@ -218,7 +218,7 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            var inventory = nextState.GetInventory(avatarAddress);
+            var inventory = nextState.GetInventoryV2(avatarAddress);
             Assert.Contains(inventory.Items, i => i.count == 42 && i.item is Material m && m.FungibleId.Equals(fungibleId));
 
             var avatarState = nextState.GetAvatarState(avatarAddress);
@@ -295,7 +295,7 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            var inventory = nextState.GetInventory(avatarAddress);
+            var inventory = nextState.GetInventoryV2(avatarAddress);
             var avatarState = nextState.GetAvatarState(avatarAddress);
             Assert.Single(avatarState.mailBox);
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(avatarState.mailBox.First());

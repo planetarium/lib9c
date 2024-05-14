@@ -128,23 +128,10 @@ namespace Lib9c.Tests.Action
             Assert.Contains(account, exc.Message);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void TryGetAvatarState(bool backward)
+        [Fact]
+        public void TryGetAvatarState()
         {
-            IWorld states = new World(MockUtil.MockModernWorldState);
-            if (backward)
-            {
-                states = states
-                    .SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(_avatarState));
-            }
-            else
-            {
-                states = states
-                    .SetAvatarState(_avatarAddress, _avatarState);
-            }
-
+            IWorld states = new World(MockUtil.MockModernWorldState).SetAvatarState(_avatarAddress, _avatarState);
             Assert.True(states.TryGetAvatarState(_agentAddress, _avatarAddress, out _));
         }
 
