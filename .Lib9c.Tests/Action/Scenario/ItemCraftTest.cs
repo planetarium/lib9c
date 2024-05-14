@@ -26,7 +26,6 @@ namespace Lib9c.Tests.Action.Scenario
     {
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IWorld _initialStatesWithAvatarStateV1;
         private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly TableSheets _tableSheets;
 
@@ -36,7 +35,6 @@ namespace Lib9c.Tests.Action.Scenario
                 _tableSheets,
                 _agentAddr,
                 _avatarAddr,
-                _initialStatesWithAvatarStateV1,
                 _initialStatesWithAvatarStateV2
             ) = InitializeUtil.InitializeStates(
                 sheetsOverride: new Dictionary<string, string>
@@ -63,8 +61,7 @@ namespace Lib9c.Tests.Action.Scenario
         public void CraftEquipmentTest(int randomSeed, int[] targetItemIdList)
         {
             // Disable all quests to prevent contamination by quest reward
-            var (stateV1, stateV2) = QuestUtil.DisableQuestList(
-                _initialStatesWithAvatarStateV1,
+            var stateV2 = QuestUtil.DisableQuestList(
                 _initialStatesWithAvatarStateV2,
                 _avatarAddr
             );
@@ -168,8 +165,7 @@ namespace Lib9c.Tests.Action.Scenario
         public void CraftConsumableTest(int randomSeed, int[] targetItemIdList)
         {
             // Disable all quests to prevent contamination by quest reward
-            var (stateV1, stateV2) = QuestUtil.DisableQuestList(
-                _initialStatesWithAvatarStateV1,
+            var stateV2 = QuestUtil.DisableQuestList(
                 _initialStatesWithAvatarStateV2,
                 _avatarAddr
             );
@@ -257,8 +253,7 @@ namespace Lib9c.Tests.Action.Scenario
         )
         {
             // Disable all quests to prevent contamination by quest reward
-            var (stateV1, stateV2) = QuestUtil.DisableQuestList(
-                _initialStatesWithAvatarStateV1,
+            var stateV2 = QuestUtil.DisableQuestList(
                 _initialStatesWithAvatarStateV2,
                 _avatarAddr
             );
@@ -340,8 +335,7 @@ namespace Lib9c.Tests.Action.Scenario
         )
         {
             // Disable all quests to prevent contamination by quest reward
-            var (stateV1, stateV2) = QuestUtil.DisableQuestList(
-                _initialStatesWithAvatarStateV1,
+            var stateV2 = QuestUtil.DisableQuestList(
                 _initialStatesWithAvatarStateV2,
                 _avatarAddr
             );

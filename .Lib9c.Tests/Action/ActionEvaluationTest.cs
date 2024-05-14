@@ -63,7 +63,6 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(InitializeStates))]
         [InlineData(typeof(ItemEnhancement))]
         [InlineData(typeof(MigrationActivatedAccountsState))]
-        [InlineData(typeof(MigrationAvatarState))]
         [InlineData(typeof(PatchTableSheet))]
         [InlineData(typeof(RankingBattle))]
         [InlineData(typeof(RapidCombination))]
@@ -198,10 +197,6 @@ namespace Lib9c.Tests.Action
                     materialIds = new List<Guid>(),
                 },
                 MigrationActivatedAccountsState _ => new MigrationActivatedAccountsState(),
-                MigrationAvatarState _ => new MigrationAvatarState
-                {
-                    avatarStates = new List<Dictionary>(),
-                },
                 PatchTableSheet _ => new PatchTableSheet
                 {
                     TableCsv = "table",

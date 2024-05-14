@@ -148,14 +148,29 @@ namespace Nekoyume.Model.Quest
             QuestSheet questSheet,
             QuestRewardSheet questRewardSheet,
             QuestItemRewardSheet questItemRewardSheet,
-            EquipmentItemRecipeSheet equipmentItemRecipeSheet)
+            EquipmentItemRecipeSheet equipmentItemRecipeSheet,
+            ICollection<int> newIds)
         {
-            UpdateListV1(
-                _listVersion + 1,
-                questSheet,
-                questRewardSheet,
-                questItemRewardSheet,
-                equipmentItemRecipeSheet);
+            foreach (var questRow in questSheet.OrderedList!)
+            {
+                if (!newIds.Contains(questRow.Id))
+                {
+                    continue;
+                }
+
+                var reward = GetQuestReward(
+                    questRow.QuestRewardId,
+                    questRewardSheet,
+                    questItemRewardSheet);
+
+                Quest quest = CreateQuest(questRow, reward, equipmentItemRecipeSheet);
+                if (quest is null)
+                {
+                    continue;
+                }
+
+                _quests.Add(quest);
+            }
         }
 
         /// <exception cref="UpdateListVersionException"></exception>
