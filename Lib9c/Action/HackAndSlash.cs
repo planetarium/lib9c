@@ -375,16 +375,20 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Get QuestSheet", blockIndex, sw.Elapsed.TotalMilliseconds);
 
-            // Update QuestList only when QuestSheet.Count is greater than QuestList.Count
+            // Update QuestList when quest not exist
             var questList = avatarState.questList;
-            if (questList.Count() < questSheet.Count)
+            var questIds = questList.Select(q => q.Id);
+            var sheetIds = questSheet.Values.Select(q => q.Id);
+            var ids = sheetIds.Except(questIds).ToList();
+            if (ids.Any())
             {
                 sw.Restart();
                 questList.UpdateList(
                     questSheet,
                     sheets.GetSheet<QuestRewardSheet>(),
                     sheets.GetSheet<QuestItemRewardSheet>(),
-                    sheets.GetSheet<EquipmentItemRecipeSheet>());
+                    sheets.GetSheet<EquipmentItemRecipeSheet>(),
+                    ids);
                 sw.Stop();
                 Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                     addressesHex, source, "Update QuestList", blockIndex, sw.Elapsed.TotalMilliseconds);
