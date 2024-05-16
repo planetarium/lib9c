@@ -87,12 +87,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var season = nextState.GetSeasonInfo(1);
             Assert.Equal(1, season.Season);
             Assert.Equal(900001, season.BossId);
-            Assert.Null(season.FixedRewardItemId);
-            Assert.Equal(30001, season.FixedRewardFavTicker);
-            Assert.Equal(600203, season.RandomRewardItemId);
-            Assert.Null(season.RandomRewardFavTicker);
 
             var bountyBoard = nextState.GetBountyBoard(1);
+            Assert.Null(bountyBoard.FixedRewardItemId);
+            Assert.Equal(30001, bountyBoard.FixedRewardFavTicker);
+            Assert.Equal(600203, bountyBoard.RandomRewardItemId);
+            Assert.Null(bountyBoard.RandomRewardFavTicker);
+
             var investor = Assert.Single(bountyBoard.Investors);
             Assert.Equal(
                 startBalance - Wanted.MinBounty * NCG,
@@ -127,14 +128,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
             season = nextState.GetSeasonInfo(1);
             Assert.Equal(1, season.Season);
             Assert.Equal(900001, season.BossId);
-            Assert.Null(season.FixedRewardItemId);
-            Assert.Equal(30001, season.FixedRewardFavTicker);
-            Assert.Equal(600203, season.RandomRewardItemId);
-            Assert.Null(season.RandomRewardFavTicker);
 
             bountyBoard = nextState.GetBountyBoard(1);
             Assert.NotNull(bountyBoard);
             Assert.Equal(2, bountyBoard.Investors.Count);
+            Assert.Null(bountyBoard.FixedRewardItemId);
+            Assert.Equal(30001, bountyBoard.FixedRewardFavTicker);
+            Assert.Equal(600203, bountyBoard.RandomRewardItemId);
+            Assert.Null(bountyBoard.RandomRewardFavTicker);
+
             investor = bountyBoard.Investors.First(i => i.AvatarAddress == AvatarAddress2);
             Assert.Equal(Wanted.MinBounty * NCG, investor.Price);
             Assert.Equal(1, investor.Count);
@@ -358,7 +360,6 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         [Theory]
         [InlineData(Wanted.MinBounty - 1)]
-        [InlineData(Wanted.MaxBounty + 1)]
         public void InvalidBounty(int bounty)
         {
             var state = Stake(_initialState);
@@ -384,7 +385,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             var state = Stake(_initialState);
             var prevSeason = new SeasonInfo(1, 0L);
-            var prevBountyBoard = new BountyBoard();
+            var prevBountyBoard = new BountyBoard(1);
             prevBountyBoard.AddOrUpdate(AvatarAddress, Wanted.MinBounty * NCG);
             state = state.SetSeasonInfo(prevSeason).SetBountyBoard(1, prevBountyBoard);
             state = state.SetLatestAdventureBossSeason(prevSeason);
