@@ -9,8 +9,8 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 103000,103000,방어 강화,20,10,Self,DEF,Percentage,25,true
 103001,103000,방어 강화,100,25,Self,DEF,Percentage,50,true
 103002,103000,방어 강화,100,10,Self,DEF,Percentage,25,true
-103003,103001,방어 강화,100,10,Self,DEF,Percentage,30,true
 103003,103000,DEF UP (Stat conversion),100,10,Self,DEF,Add,0,true
+103004,103001,방어 강화,100,10,Self,DEF,Percentage,30,true
 104000,104000,치명 증가,20,10,Self,CRI,Percentage,50,true
 104001,104000,치명 증가,100,25,Self,CRI,Percentage,75,true
 104002,104000,치명 증가,100,10,Self,CRI,Percentage,25,true

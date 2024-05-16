@@ -921,7 +921,7 @@ namespace Lib9c.Tests.Model
         public void IceShield()
         {
             // skill id for ice shield.
-            const int skillId = 700011;
+            const int skillId = 700012;
             var skill = SkillFactory.GetV1(
                 _tableSheets.SkillSheet.Values.First(r => r.Id == skillId),
                 100,
