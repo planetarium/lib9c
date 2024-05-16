@@ -152,38 +152,32 @@ namespace Nekoyume.Action.AdventureBoss
                 );
             }
 
+            BountyBoard bountyBoard;
             // Create new season if required
-            SeasonInfo currentSeason;
             if (latestSeason.SeasonId == 0 ||
                 latestSeason.NextStartBlockIndex <= context.BlockIndex)
             {
-                currentSeason = new SeasonInfo(Season, context.BlockIndex);
+                var seasonInfo = new SeasonInfo(Season, context.BlockIndex);
+                bountyBoard = new BountyBoard(Season);
+
                 // Set season info: boss and reward
-                currentSeason.SetSeasonData(WantedRewardList, context.GetRandom());
-                states = states.SetSeasonInfo(currentSeason);
-                states = states.SetLatestAdventureBossSeason(currentSeason);
+                var random = context.GetRandom();
+                var wantedReward = WantedRewardList[random.Next(0, WantedRewardList.Length)];
+                seasonInfo.BossId = wantedReward.BossId;
+                bountyBoard.SetReward(wantedReward, random);
+                states = states.SetSeasonInfo(seasonInfo);
+                states = states.SetLatestAdventureBossSeason(seasonInfo);
+                states = states.SetBountyBoard(Season, bountyBoard);
             }
 
-            // Check balance and use
-            var balance = states.GetBalance(context.Signer, currency);
-            if (balance < Bounty)
-            {
-                throw new InsufficientBalanceException($"{Bounty}", context.Signer, balance);
-            }
-
-            states = states.TransferAsset(context, context.Signer, Addresses.BountyBoard, Bounty);
-
-            // Update Bounty board
-            BountyBoard bountyBoard;
-            try
+            // Just update bounty board
+            else
             {
                 bountyBoard = states.GetBountyBoard(Season);
             }
-            catch (FailedLoadStateException)
-            {
-                bountyBoard = new BountyBoard();
-            }
 
+            // FIXME: Send bounty to seasonal board
+            states = states.TransferAsset(context, context.Signer, Addresses.BountyBoard, Bounty);
             bountyBoard.AddOrUpdate(AvatarAddress, Bounty);
             return states.SetBountyBoard(Season, bountyBoard);
         }
