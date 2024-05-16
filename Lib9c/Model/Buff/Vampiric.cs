@@ -73,6 +73,7 @@ namespace Nekoyume.Model.Buff
                     RowData.TargetType)
             };
             return new ArenaTick(
+                RowData.Id,
                 clone,
                 infos,
                 null);

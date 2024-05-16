@@ -665,6 +665,7 @@ namespace Nekoyume.Model
             };
 
             var tickDamage = new ArenaTickDamage(
+                default,
                 clone,
                 damageInfos,
                 null);

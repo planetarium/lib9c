@@ -47,17 +47,20 @@ namespace Nekoyume.Model.BattleStatus.Arena
             }
         }
 
-        public readonly IEnumerable<ArenaSkillInfo> SkillInfos;
+        public readonly int SkillId;
 
+        public readonly IEnumerable<ArenaSkillInfo> SkillInfos;
 
         public readonly IEnumerable<ArenaSkillInfo>? BuffInfos;
 
         protected ArenaSkill(
+            int skillId,
             ArenaCharacter character,
             IEnumerable<ArenaSkillInfo> skillInfos,
             IEnumerable<ArenaSkillInfo> buffInfos)
             : base(character)
         {
+            SkillId = skillId;
             SkillInfos = skillInfos;
             BuffInfos = buffInfos;
         }
