@@ -77,10 +77,10 @@ namespace Nekoyume.Module
             var account = worldState.GetAccountState(Addresses.BountyBoard);
             if (account.GetState(new Address(GetSeasonAsAddressForm(season))) is { } a)
             {
-                return new BountyBoard(a);
+                return new BountyBoard((List)a);
             }
 
-            return new BountyBoard();
+            return new BountyBoard(season);
         }
 
         public static IWorld SetBountyBoard(this IWorld world, long season, BountyBoard bountyBoard)
@@ -88,7 +88,7 @@ namespace Nekoyume.Module
             var account = world.GetAccount(Addresses.BountyBoard);
             account = account.SetState(
                 new Address(GetSeasonAsAddressForm(season)),
-                bountyBoard.Bencoded
+                bountyBoard.Bencoded()
             );
             return world.SetAccount(Addresses.BountyBoard, account);
         }

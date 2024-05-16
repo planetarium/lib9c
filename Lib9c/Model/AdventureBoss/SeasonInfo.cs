@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Libplanet.Action;
 using Libplanet.Crypto;
-using Nekoyume.Action.AdventureBoss;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.AdventureBoss
@@ -21,10 +19,7 @@ namespace Nekoyume.Model.AdventureBoss
         public readonly long NextStartBlockIndex;
 
         public int BossId;
-        public int? FixedRewardItemId;
-        public int? FixedRewardFavTicker;
-        public int? RandomRewardItemId;
-        public int? RandomRewardFavTicker;
+        public Address RaffleWinner;
 
         public HashSet<Address> ExplorerList;
         public long UsedApPotion;
@@ -50,48 +45,7 @@ namespace Nekoyume.Model.AdventureBoss
             EndBlockIndex = serialized[2].ToInteger();
             NextStartBlockIndex = serialized[3].ToInteger();
             BossId = serialized[4].ToInteger();
-            FixedRewardItemId = serialized[5].ToNullableInteger();
-            FixedRewardFavTicker = serialized[6].ToNullableInteger();
-            RandomRewardItemId = serialized[7].ToNullableInteger();
-            RandomRewardFavTicker = serialized[8].ToNullableInteger();
-            ExplorerList = ((List)serialized[9]).Select(e => e.ToAddress()).ToHashSet();
-        }
-
-        public void SetSeasonData(WantedReward[] wantedRewardList, IRandom random)
-        {
-            var wantedReward = wantedRewardList[random.Next(0, wantedRewardList.Length)];
-            BossId = wantedReward.BossId;
-            if (wantedReward.FixedRewardItemIdList.Length > 0)
-            {
-                FixedRewardItemId =
-                    wantedReward.FixedRewardItemIdList[
-                        random.Next(0, wantedReward.FixedRewardItemIdList.Length)
-                    ];
-            }
-
-            if (wantedReward.FixedRewardFavTickerList.Length > 0)
-            {
-                FixedRewardFavTicker =
-                    wantedReward.FixedRewardFavTickerList[
-                        random.Next(0, wantedReward.FixedRewardFavTickerList.Length)
-                    ];
-            }
-
-            if (wantedReward.RandomRewardItemIdList.Length > 0)
-            {
-                RandomRewardItemId =
-                    wantedReward.RandomRewardItemIdList[
-                        random.Next(0, wantedReward.RandomRewardItemIdList.Length)
-                    ];
-            }
-
-            if (wantedReward.RandomRewardFavTickerList.Length > 0)
-            {
-                RandomRewardFavTicker =
-                    wantedReward.RandomRewardFavTickerList[
-                        random.Next(0, wantedReward.RandomRewardFavTickerList.Length)
-                    ];
-            }
+            ExplorerList = ((List)serialized[5]).Select(e => e.ToAddress()).ToHashSet();
         }
 
         public void AddExplorer(Address avatarAddress)
@@ -106,8 +60,6 @@ namespace Nekoyume.Model.AdventureBoss
                 .Add(EndBlockIndex.Serialize())
                 .Add(NextStartBlockIndex.Serialize())
                 .Add(BossId.Serialize())
-                .Add(FixedRewardItemId.Serialize()).Add(FixedRewardFavTicker.Serialize())
-                .Add(RandomRewardItemId.Serialize()).Add(RandomRewardFavTicker.Serialize())
                 .Add(new List(ExplorerList.OrderBy(x => x).Select(x => x.Serialize())));
     }
 }
