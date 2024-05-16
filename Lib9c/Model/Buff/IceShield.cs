@@ -7,6 +7,7 @@ namespace Nekoyume.Model.Buff
     [Serializable]
     public class IceShield : ActionBuff
     {
+        public const int FrostBiteId = 704000;
         public IceShield(ActionBuffSheet.Row row) : base(row)
         {
         }
@@ -26,7 +27,7 @@ namespace Nekoyume.Model.Buff
 
         public StatBuff FrostBite(StatBuffSheet statBuffSheet)
         {
-            var row = statBuffSheet[801000];
+            var row = statBuffSheet[FrostBiteId];
             var frostBite = BuffFactory.GetStatBuff(row);
             return frostBite;
         }
