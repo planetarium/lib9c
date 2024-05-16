@@ -85,12 +85,12 @@ namespace Nekoyume.Model.AdventureBoss
             }
         }
 
-        public void AddOrUpdate(Address avatarAddress, FungibleAssetValue price)
+        public void AddOrUpdate(Address avatarAddress, string name, FungibleAssetValue price)
         {
             var investor = Investors.FirstOrDefault(i => i.AvatarAddress.Equals(avatarAddress));
             if (investor is null)
             {
-                Investors.Add(new Investor(avatarAddress, price));
+                Investors.Add(new Investor(avatarAddress, name, price));
             }
             else
             {

@@ -178,7 +178,8 @@ namespace Nekoyume.Action.AdventureBoss
 
             // FIXME: Send bounty to seasonal board
             states = states.TransferAsset(context, context.Signer, Addresses.BountyBoard, Bounty);
-            bountyBoard.AddOrUpdate(AvatarAddress, Bounty);
+            bountyBoard.AddOrUpdate(AvatarAddress, states.GetAvatarState(AvatarAddress).name,
+                Bounty);
             return states.SetBountyBoard(Season, bountyBoard);
         }
     }

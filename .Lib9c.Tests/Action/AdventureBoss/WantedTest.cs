@@ -33,7 +33,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address AvatarAddress = Addresses.GetAvatarAddress(AgentAddress, 0);
 
         private static readonly AvatarState AvatarState = new (
-            AvatarAddress, AgentAddress, 0L, TableSheets.GetAvatarSheets(), new PrivateKey().Address
+            AvatarAddress, AgentAddress, 0L, TableSheets.GetAvatarSheets(), new PrivateKey().Address,
+            name: "avatar1"
         );
 
         private static readonly Address
@@ -41,7 +42,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         private static readonly AvatarState AvatarState2 = new (
             AvatarAddress2, AgentAddress, 0L, TableSheets.GetAvatarSheets(),
-            new PrivateKey().Address
+            new PrivateKey().Address,
+            name: "avatar2"
         );
 
         private static readonly GoldCurrencyState GoldCurrencyState = new (NCG);
@@ -386,7 +388,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var state = Stake(_initialState);
             var prevSeason = new SeasonInfo(1, 0L);
             var prevBountyBoard = new BountyBoard(1);
-            prevBountyBoard.AddOrUpdate(AvatarAddress, Wanted.MinBounty * NCG);
+            prevBountyBoard.AddOrUpdate(AvatarAddress, AvatarState.name, Wanted.MinBounty * NCG);
             state = state.SetSeasonInfo(prevSeason).SetBountyBoard(1, prevBountyBoard);
             state = state.SetLatestAdventureBossSeason(prevSeason);
 
