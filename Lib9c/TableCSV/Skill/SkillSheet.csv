@@ -177,3 +177,4 @@ _250001,속도 증가(전체),Normal,Buff,SpeedBuff,Ally,1,1 // 미구현,
 700008,더블 어택,Normal,Attack,DoubleAttack,Enemy,2,13,TRUE
 700009,디버프 회피율,Normal,Buff,Dispel,Self,1,15,
 700010,HP 비례 데미지,Normal,Attack,ShatterStrike,Enemy,1,8,
+700011,디버프 회피율 (Rune),Normal,Buff,Dispel,Self,1,15,

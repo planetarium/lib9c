@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action.Scenario
     using System.Linq;
     using Bencodex.Types;
     using Lib9c.Tests.Fixtures.TableCSV.Item;
+    using Lib9c.Tests.Fixtures.TableCSV.Quest;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
@@ -45,6 +46,10 @@ namespace Lib9c.Tests.Action.Scenario
                     {
                         "EquipmentItemSubRecipeSheetV2",
                         EquipmentItemSubRecipeSheetFixtures.V2
+                    },
+                    {
+                        nameof(CombinationEquipmentQuestSheet),
+                        CombinationEquipmentQuestSheetFixtures.Default
                     },
                 });
         }
