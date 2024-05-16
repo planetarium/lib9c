@@ -30,7 +30,6 @@ namespace Nekoyume.Action.AdventureBoss
         public const string TypeIdentifier = "wanted";
         public const int RequiredStakingLevel = 5;
         public const int MinBounty = 100;
-        public const int MaxBounty = 1000;
         public int Season;
         public FungibleAssetValue Bounty;
         public Address AvatarAddress;
@@ -102,10 +101,16 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidCurrencyException("");
             }
 
-            if (Bounty < MinBounty * currency || Bounty > MaxBounty * currency)
+            if (Bounty < MinBounty * currency)
             {
                 throw new InvalidBountyException(
-                    $"Given bounty {Bounty.MajorUnit}.{Bounty.MinorUnit} is not between {MinBounty} and {MaxBounty}.");
+                    $"Given bounty {Bounty.MajorUnit}.{Bounty.MinorUnit} is less than {MinBounty}");
+            }
+
+            var balance = states.GetBalance(context.Signer, currency);
+            if (balance < Bounty)
+            {
+                throw new InsufficientBalanceException($"{Bounty}", context.Signer, balance);
             }
 
             if (Season <= 0 ||
