@@ -17,7 +17,6 @@ using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Summon;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {

@@ -301,7 +301,7 @@ namespace Lib9c.Tests
             var runeSlotState = new RuneSlotState(BattleType.Arena);
             runeSlotState.UpdateSlot(new List<RuneSlotInfo> { new (3, 10003) }, _tableSheets.RuneListSheet);
 
-            const int runeBonus = 15815; // Base stat 1777 * 10% for run level 89 (=890%) from RuneLevelBonusSheet
+            const int runeBonus = 896; // Base stat 1777 * 50.424% bonus from RuneLevelBonusSheet
             const int finalAtk = totalAtk + runeBonus;
 
             var optionInfo = runeRow.LevelOptionMap[89];

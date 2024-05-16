@@ -441,7 +441,7 @@ namespace Nekoyume.Model
                     optionInfo.Stats.Select(x => new StatModifier(
                         x.stat.StatType,
                         x.operationType,
-                        (long)(x.stat.TotalValue * (10000 + runeLevelBonus) / 10000m)
+                        (long)(x.stat.TotalValue * (100000 + runeLevelBonus) / 100000m)
                     ))
                 );
                 Stats.AddRune(statModifiers);

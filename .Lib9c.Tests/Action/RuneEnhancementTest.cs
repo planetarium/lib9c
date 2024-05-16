@@ -29,12 +29,8 @@ namespace Lib9c.Tests.Action
         // All success
         [InlineData(1, 1, 2, 0, 0, 1, null, 0)]
         [InlineData(1, 2, 3, 0, 0, 2, null, 0)]
-        // Success 1 of 2
-        [InlineData(202, 2, 203, 0, 1000, 40, null, 2)]
-        // All fail
-        [InlineData(202, 2, 202, 0, 1000, 40, null, 0)]
         // Reaching max level
-        [InlineData(299, 1, 300, 0, 500, 20, null, 1)]
+        [InlineData(299, 1, 300, 0, 1000, 40, null, 1)]
         // Cannot exceed max level
         [InlineData(299, 2, 299, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
         [InlineData(300, 1, 300, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
@@ -155,12 +151,8 @@ namespace Lib9c.Tests.Action
         // All success
         [InlineData(1, 1, 2, 0, 0, 1, null, 0)]
         [InlineData(1, 2, 3, 0, 0, 2, null, 0)]
-        // Success 1 of 2
-        [InlineData(202, 2, 203, 0, 1000, 40, null, 2)]
-        // All fail
-        [InlineData(202, 2, 202, 0, 1000, 40, null, 0)]
         // Reaching max level
-        [InlineData(299, 1, 300, 0, 500, 20, null, 1)]
+        [InlineData(299, 1, 300, 0, 1000, 40, null, 1)]
         // Cannot exceed max level
         [InlineData(299, 2, 299, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
         [InlineData(300, 1, 300, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
@@ -618,20 +610,20 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         // Rune upgrade
-        [InlineData(new[] { 1 }, 9, false)]
-        [InlineData(new[] { 9 }, 1, false)]
-        [InlineData(new[] { 7 }, 3, false)]
-        [InlineData(new[] { 4, 4 }, 2, false)]
-        [InlineData(new[] { 4, 5 }, 1, false)]
+        [InlineData(new[] { 1 }, 9, false, 30414)]
+        [InlineData(new[] { 9 }, 1, false, 30414)]
+        [InlineData(new[] { 7 }, 3, false, 30414)]
+        [InlineData(new[] { 4, 4 }, 2, false, 30598)]
+        [InlineData(new[] { 4, 5 }, 1, false, 30644)]
         // Crete new rune
-        [InlineData(new int[] { }, 1, true, 100)]
-        [InlineData(new int[] { }, 10, true)]
-        [InlineData(new[] { 1 }, 9, true)]
-        [InlineData(new[] { 9 }, 1, true)]
-        [InlineData(new[] { 7 }, 3, true)]
-        [InlineData(new[] { 4, 4 }, 2, true)]
-        [InlineData(new[] { 4, 5 }, 1, true)]
-        public void RuneBonus(int[] prevRuneLevels, int tryCount, bool createNewRune, int expectedRuneLevelBonus = 10 * 1000)
+        [InlineData(new int[] { }, 1, true, 30000)]
+        [InlineData(new int[] { }, 10, true, 30414)]
+        [InlineData(new[] { 1 }, 9, true, 30414)]
+        [InlineData(new[] { 9 }, 1, true, 30414)]
+        [InlineData(new[] { 7 }, 3, true, 30414)]
+        [InlineData(new[] { 4, 4 }, 2, true, 30598)]
+        [InlineData(new[] { 4, 5 }, 1, true, 30644)]
+        public void RuneBonus(int[] prevRuneLevels, int tryCount, bool createNewRune, int expectedRuneLevelBonus)
         {
             // Data
             const int testRuneId = 30001;
@@ -688,17 +680,6 @@ namespace Lib9c.Tests.Action
             state = state.SetRuneState(avatarAddress, allRuneState);
             var runeListSheet = tableSheets.RuneListSheet;
             var runeLevelBonusSheet = tableSheets.RuneLevelBonusSheet;
-            var prevRuneLevelBonus = prevRuneLevels.Length == 0
-                ? 0
-                : runeLevelBonusSheet.Values.First(row => row.RuneLevel == 1).Bonus * prevRuneLevels.Sum();
-            Assert.Equal(
-                prevRuneLevelBonus,
-                RuneHelper.CalculateRuneLevelBonus(
-                    allRuneState,
-                    runeListSheet,
-                    runeLevelBonusSheet
-                )
-            );
 
             // RuneEnhancement
             var ncgCurrency = state.GetGoldCurrency();

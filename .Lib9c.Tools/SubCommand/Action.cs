@@ -3,16 +3,20 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Nodes;
+using Bencodex;
 using Bencodex.Types;
 using Cocona;
 using Cocona.Help;
 using Libplanet.Action;
 using Nekoyume.Action;
+using Nekoyume.Action.Loader;
 
 namespace Lib9c.Tools.SubCommand
 {
     public class Action
     {
+        private static readonly Codec Codec = new();
+
         [Obsolete("This function is deprecated. Please use `NineChronicles.Headless.Executable action list` command instead.")]
         [Command(Description = "Lists all actions' type ids.")]
         public void List(
@@ -77,6 +81,75 @@ namespace Lib9c.Tools.SubCommand
                 using var stream = File.CreateText(jsonPath);
                 stream.WriteLine(jsonResult.ToString());
             }
+        }
+
+        [Command]
+        public int Analyze(
+            [Argument(
+            Description = "The file path of the action to analyze.  If " +
+                "a hyphen (-) is given it reads from the standard input (if you want to read " +
+                "just a file named \"-\", use \"./-\" instead)."
+            )]
+            string file
+        )
+        {
+            IValue rawAction;
+            string sourceName = string.Empty;
+            try
+            {
+                if (file == "-")
+                {
+                    sourceName = "stdin";
+                    using var stdin = Console.OpenStandardInput();
+                    rawAction = Codec.Decode(stdin);
+                }
+                else
+                {
+                    sourceName = $"file {file}";
+                    try
+                    {
+                        using FileStream fileStream = File.OpenRead(file);
+                        rawAction = Codec.Decode(fileStream);
+                    }
+                    catch (IOException)
+                    {
+                        throw new CommandExitedException(
+                            $"Failed to read the file {file}; it may not exist nor be readable.",
+                            -1
+                        );
+                    }
+                }
+            }
+            catch (DecodingException e)
+            {
+                throw new CommandExitedException(
+                    $"Failed to decode the {sourceName} as a Bencodex tree: {e}",
+                    -1
+                );
+            }
+
+            if (rawAction is not Bencodex.Types.Dictionary)
+            {
+                throw new CommandExitedException(
+                    $"The {sourceName} is not a Bencodex dictionary.",
+                    -1
+                );
+            }
+
+            NCActionLoader actionLoader = new NCActionLoader();
+            try
+            {
+                actionLoader.LoadAction(0, rawAction);
+            }
+            catch (InvalidActionException)
+            {
+                throw new CommandExitedException(
+                    $"Failed to initiate an action with the {sourceName}.",
+                    -1
+                );
+            }
+
+            return 0;
         }
 
         [PrimaryCommand]
