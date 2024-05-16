@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Action
 
         public long BlockIndex { get; set; }
 
-        public int BlockProtocolVersion { get; set; }
+        public int BlockProtocolVersion { get; set; } = BlockMetadata.CurrentProtocolVersion;
 
         public IWorld PreviousState { get; set; }
 
