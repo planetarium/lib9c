@@ -38,10 +38,10 @@ namespace Nekoyume.Action.AdventureBoss
             context.UseGas(1);
             var states = context.PreviousState;
             var latestSeason = states.GetLatestAdventureBossSeason();
-            if (latestSeason.SeasonId != Season)
+            if (latestSeason.Season != Season)
             {
                 throw new InvalidAdventureBossSeasonException(
-                    $"Given season {Season} is not current season: {latestSeason.SeasonId}"
+                    $"Given season {Season} is not current season: {latestSeason.Season}"
                 );
             }
 
@@ -51,8 +51,8 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidAddressException();
             }
 
-            var currentSeason = states.GetSeasonInfo(latestSeason.SeasonId);
-            currentSeason.AddExplorer(AvatarAddress);
+            var exploreBoard = states.GetExploreBoard(Season);
+            exploreBoard.AddExplorer(AvatarAddress);
 
             // TODO: Add used resources to currentSeason
             // TODO: AdventureBossSimulator with pass-through log
@@ -60,7 +60,7 @@ namespace Nekoyume.Action.AdventureBoss
             Explorer explorer;
             try
             {
-                explorer = states.GetExploreInfo(Season, AvatarAddress);
+                explorer = states.GetExplorer(Season, AvatarAddress);
             }
             catch (FailedLoadStateException)
             {
@@ -69,7 +69,7 @@ namespace Nekoyume.Action.AdventureBoss
 
             explorer.Score += 100;
             explorer.Floor++;
-            states = states.SetSeasonInfo(currentSeason);
+            states = states.SetExploreBoard(Season, exploreBoard);
             return states.SetExploreInfo(Season, explorer);
         }
     }
