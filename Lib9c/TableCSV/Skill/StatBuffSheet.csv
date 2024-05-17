@@ -124,4 +124,4 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 701000,701000,DRV (Rune),100,0,Self,DRV,Add,0,true
 702000,701000,DRR (Rune),100,0,Self,DRR,Add,0,true
 703000,703000,CDMG (Rune),100,0,Self,CDMG,Add,0,true
-704000,704000,Frostbite (Aura),100,10,Enemy,SPD,Percentage,-10,true,4
+709000,709000,Frostbite (Aura),100,10,Enemy,SPD,Percentage,-10,true,4

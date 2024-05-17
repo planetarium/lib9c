@@ -7,7 +7,7 @@ namespace Nekoyume.Model.Buff
     [Serializable]
     public class IceShield : ActionBuff
     {
-        public const int FrostBiteId = 704000;
+        public const int FrostBiteId = 709000;
         public IceShield(ActionBuffSheet.Row row) : base(row)
         {
         }
