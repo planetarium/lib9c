@@ -126,7 +126,7 @@ namespace Nekoyume.Action.AdventureBoss
                 if (prevBountyBoard.Investors.Select(i => i.AvatarAddress).Contains(AvatarAddress))
                 {
                     throw new PreviousBountyException(
-                        "You've put bounty in previous season. Cannot put bounty tow seasons in a row"
+                        "You've put bounty in previous season. Cannot put bounty two seasons in a row"
                     );
                 }
             }
