@@ -70,7 +70,7 @@ namespace Nekoyume.Action.AdventureBoss
             explorer.Score += 100;
             explorer.Floor++;
             states = states.SetExploreBoard(Season, exploreBoard);
-            return states.SetExploreInfo(Season, explorer);
+            return states.SetExplorer(Season, explorer);
         }
     }
 }

@@ -6,6 +6,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.AdventureBoss;
 using Nekoyume.Action.Exceptions.AdventureBoss;
+using Nekoyume.Helper;
 using Nekoyume.Model.State;
 using BigInteger = System.Numerics.BigInteger;
 
@@ -50,39 +51,12 @@ namespace Nekoyume.Model.AdventureBoss
             return Investors.Aggregate(totalBounty, (current, inv) => current + inv.Price);
         }
 
-        public void SetReward(WantedReward wantedReward, IRandom random)
+        public void SetReward(RewardInfo rewardInfo, IRandom random)
         {
-            if (wantedReward.FixedRewardItemIdList.Length > 0)
-            {
-                FixedRewardItemId =
-                    wantedReward.FixedRewardItemIdList[
-                        random.Next(0, wantedReward.FixedRewardItemIdList.Length)
-                    ];
-            }
-
-            if (wantedReward.FixedRewardFavTickerList.Length > 0)
-            {
-                FixedRewardFavTicker =
-                    wantedReward.FixedRewardFavTickerList[
-                        random.Next(0, wantedReward.FixedRewardFavTickerList.Length)
-                    ];
-            }
-
-            if (wantedReward.RandomRewardItemIdList.Length > 0)
-            {
-                RandomRewardItemId =
-                    wantedReward.RandomRewardItemIdList[
-                        random.Next(0, wantedReward.RandomRewardItemIdList.Length)
-                    ];
-            }
-
-            if (wantedReward.RandomRewardFavTickerList.Length > 0)
-            {
-                RandomRewardFavTicker =
-                    wantedReward.RandomRewardFavTickerList[
-                        random.Next(0, wantedReward.RandomRewardFavTickerList.Length)
-                    ];
-            }
+            (FixedRewardItemId, FixedRewardFavTicker) = AdventureBossHelper.PickReward(random,
+                rewardInfo.FixedRewardItemIdDict, rewardInfo.FixedRewardFavTickerDict);
+            (RandomRewardItemId, RandomRewardFavTicker) = AdventureBossHelper.PickReward(random,
+                rewardInfo.RandomRewardItemIdDict, rewardInfo.RandomRewardFavTickerDict);
         }
 
         public void AddOrUpdate(Address avatarAddress, string name, FungibleAssetValue price)
