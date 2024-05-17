@@ -19,13 +19,6 @@ namespace Nekoyume.Model.AdventureBoss
         public readonly long NextStartBlockIndex;
 
         public int BossId;
-        public Address RaffleWinner;
-
-        public HashSet<Address> ExplorerList;
-        public long UsedApPotion;
-        public long UsedGoldenDust;
-        public long UsedNcg;
-        public long TotalPoint;
 
         public SeasonInfo(long season, long blockIndex, IEnumerable<Address> participantList = null)
         {
@@ -33,9 +26,6 @@ namespace Nekoyume.Model.AdventureBoss
             StartBlockIndex = blockIndex;
             EndBlockIndex = StartBlockIndex + BossActiveBlockInterval;
             NextStartBlockIndex = EndBlockIndex + BossInactiveBlockInterval;
-            ExplorerList = participantList is null
-                ? new HashSet<Address>()
-                : participantList.ToHashSet();
         }
 
         public SeasonInfo(List serialized)
@@ -45,12 +35,6 @@ namespace Nekoyume.Model.AdventureBoss
             EndBlockIndex = serialized[2].ToInteger();
             NextStartBlockIndex = serialized[3].ToInteger();
             BossId = serialized[4].ToInteger();
-            ExplorerList = ((List)serialized[5]).Select(e => e.ToAddress()).ToHashSet();
-        }
-
-        public void AddExplorer(Address avatarAddress)
-        {
-            ExplorerList.Add(avatarAddress);
         }
 
         public IValue Bencoded =>
@@ -59,7 +43,6 @@ namespace Nekoyume.Model.AdventureBoss
                 .Add(StartBlockIndex.Serialize())
                 .Add(EndBlockIndex.Serialize())
                 .Add(NextStartBlockIndex.Serialize())
-                .Add(BossId.Serialize())
-                .Add(new List(ExplorerList.OrderBy(x => x).Select(x => x.Serialize())));
+                .Add(BossId.Serialize());
     }
 }

@@ -1,24 +1,28 @@
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.AdventureBoss
 {
-    public class ExploreInfo : IBencodable
+    public class Explorer : IBencodable
     {
         public Address AvatarAddress;
         public int Score;
         public int Floor;
+        public int UsedApPotion;
+        public int UsedGoldenDust;
+        public FungibleAssetValue UsedNcg;
 
-        public ExploreInfo(Address avatarAddress, int score, int floor)
+        public Explorer(Address avatarAddress, int score, int floor)
         {
             AvatarAddress = avatarAddress;
             Score = score;
             Floor = floor;
         }
 
-        public ExploreInfo(IValue bencoded)
+        public Explorer(IValue bencoded)
         {
             var list = (List)bencoded;
             AvatarAddress = list[0].ToAddress();

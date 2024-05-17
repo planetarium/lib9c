@@ -57,20 +57,20 @@ namespace Nekoyume.Action.AdventureBoss
             // TODO: Add used resources to currentSeason
             // TODO: AdventureBossSimulator with pass-through log
 
-            ExploreInfo exploreInfo;
+            Explorer explorer;
             try
             {
-                exploreInfo = states.GetExploreInfo(Season, AvatarAddress);
+                explorer = states.GetExploreInfo(Season, AvatarAddress);
             }
             catch (FailedLoadStateException)
             {
-                exploreInfo = new ExploreInfo(AvatarAddress, 0, 0);
+                explorer = new Explorer(AvatarAddress, 0, 0);
             }
 
-            exploreInfo.Score += 100;
-            exploreInfo.Floor++;
+            explorer.Score += 100;
+            explorer.Floor++;
             states = states.SetSeasonInfo(currentSeason);
-            return states.SetExploreInfo(Season, exploreInfo);
+            return states.SetExploreInfo(Season, explorer);
         }
     }
 }
