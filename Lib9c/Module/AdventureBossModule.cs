@@ -8,7 +8,7 @@ namespace Nekoyume.Module
 {
     public static class AdventureBossModule
     {
-        public static readonly Address LatestSeasonAddress = new($"{0:X40}");
+        public static readonly Address LatestSeasonAddress = new ($"{0:X40}");
 
         public static string GetSeasonAsAddressForm(long season)
         {
@@ -20,28 +20,22 @@ namespace Nekoyume.Module
         /// This only has brief, readonly data, so we must use <see cref="SeasonInfo"/> to handle season itself.
         /// </summary>
         /// <returns>LatestSeason state. If no season is started, return a state with default value(0)</returns>
-        public static LatestSeason GetLatestAdventureBossSeason(this IWorldState worldState)
+        public static SeasonInfo GetLatestAdventureBossSeason(this IWorldState worldState)
         {
             var account = worldState.GetAccountState(Addresses.AdventureBoss);
             var latestSeason = account.GetState(LatestSeasonAddress);
-            if (latestSeason is null)
-            {
-                return new LatestSeason(season: 0, startBlockIndex: 0, endBlockIndex: 0,
-                    nextStartBlockIndex: 0);
-            }
-
-            return new LatestSeason(latestSeason);
+            return latestSeason is null
+                ? new SeasonInfo(season: 0, 0)
+                : new SeasonInfo((List)latestSeason);
         }
 
         public static IWorld SetLatestAdventureBossSeason(this IWorld world,
             SeasonInfo latestSeasonInfo)
         {
             var account = world.GetAccount(Addresses.AdventureBoss);
-            var latestSeason = new LatestSeason(
+            var latestSeason = new SeasonInfo(
                 season: latestSeasonInfo.Season,
-                startBlockIndex: latestSeasonInfo.StartBlockIndex,
-                endBlockIndex: latestSeasonInfo.EndBlockIndex,
-                nextStartBlockIndex: latestSeasonInfo.NextStartBlockIndex
+                blockIndex: latestSeasonInfo.StartBlockIndex
             );
             account = account.SetState(LatestSeasonAddress, latestSeason.Bencoded);
             return world.SetAccount(Addresses.AdventureBoss, account);

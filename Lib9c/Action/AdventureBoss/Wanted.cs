@@ -114,9 +114,9 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             if (Season <= 0 ||
-                Season > latestSeason.SeasonId + 1 || Season < latestSeason.SeasonId ||
-                (Season == latestSeason.SeasonId && context.BlockIndex > latestSeason.EndBlockIndex) ||
-                (Season == latestSeason.SeasonId + 1 && context.BlockIndex < latestSeason.NextStartBlockIndex)
+                Season > latestSeason.Season + 1 || Season < latestSeason.Season ||
+                (Season == latestSeason.Season && context.BlockIndex > latestSeason.EndBlockIndex) ||
+                (Season == latestSeason.Season + 1 && context.BlockIndex < latestSeason.NextStartBlockIndex)
                )
             {
                 throw new InvalidAdventureBossSeasonException(
@@ -154,7 +154,7 @@ namespace Nekoyume.Action.AdventureBoss
 
             BountyBoard bountyBoard;
             // Create new season if required
-            if (latestSeason.SeasonId == 0 ||
+            if (latestSeason.Season == 0 ||
                 latestSeason.NextStartBlockIndex <= context.BlockIndex)
             {
                 var seasonInfo = new SeasonInfo(Season, context.BlockIndex);
