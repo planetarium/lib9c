@@ -12,6 +12,8 @@ namespace Nekoyume.Model.AdventureBoss
 {
     public class ExploreBoard
     {
+        public const double RaffleRewardRatio = 0.05;
+
         public long Season;
         public HashSet<Address> ExplorerList = new ();
 

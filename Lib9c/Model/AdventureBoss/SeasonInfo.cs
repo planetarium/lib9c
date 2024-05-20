@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Model.State;
@@ -11,7 +10,6 @@ namespace Nekoyume.Model.AdventureBoss
         // FIXME: Interval must be changed before release
         public const long BossActiveBlockInterval = 10_000L;
         public const long BossInactiveBlockInterval = 10_000L;
-        public const double RaffleRewardRatio = 0.05;
 
         public readonly long Season;
         public readonly long StartBlockIndex;
