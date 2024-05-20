@@ -38,8 +38,11 @@ namespace Nekoyume.Model.AdventureBoss
             ExplorerList = bencoded[1].ToHashSet(i => i.ToAddress());
             FixedRewardItemId = bencoded[2].ToNullableInteger();
             FixedRewardFavTicker = bencoded[3].ToNullableInteger();
-            RaffleWinner = bencoded[4].ToAddress();
-            RaffleReward = bencoded[5].ToFungibleAssetValue();
+            if (bencoded.Count > 4)
+            {
+                RaffleWinner = bencoded[4].ToAddress();
+                RaffleReward = bencoded[5].ToFungibleAssetValue();
+            }
         }
 
         public void SetReward(RewardInfo rewardInfo, IRandom random)

@@ -18,12 +18,12 @@ namespace Nekoyume.Model.AdventureBoss
 
         public int BossId;
 
-        public SeasonInfo(long season, long blockIndex, IEnumerable<Address> participantList = null)
+        public SeasonInfo(long season, long startBlockIndex, long? endBlockIndex = null, long? nextStartBlockIndex = null)
         {
             Season = season;
-            StartBlockIndex = blockIndex;
-            EndBlockIndex = StartBlockIndex + BossActiveBlockInterval;
-            NextStartBlockIndex = EndBlockIndex + BossInactiveBlockInterval;
+            StartBlockIndex = startBlockIndex;
+            EndBlockIndex = endBlockIndex ?? StartBlockIndex + BossActiveBlockInterval;
+            NextStartBlockIndex = nextStartBlockIndex ?? EndBlockIndex + BossInactiveBlockInterval;
         }
 
         public SeasonInfo(List serialized)

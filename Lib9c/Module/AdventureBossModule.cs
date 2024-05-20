@@ -22,7 +22,7 @@ namespace Nekoyume.Module
             var account = worldState.GetAccountState(Addresses.AdventureBoss);
             var latestSeason = account.GetState(LatestSeasonAddress);
             return latestSeason is null
-                ? new SeasonInfo(season: 0, 0)
+                ? new SeasonInfo(season: 0, 0, 0, 0)
                 : new SeasonInfo((List)latestSeason);
         }
 
@@ -32,7 +32,7 @@ namespace Nekoyume.Module
             var account = world.GetAccount(Addresses.AdventureBoss);
             var latestSeason = new SeasonInfo(
                 season: latestSeasonInfo.Season,
-                blockIndex: latestSeasonInfo.StartBlockIndex
+                startBlockIndex: latestSeasonInfo.StartBlockIndex
             );
             account = account.SetState(LatestSeasonAddress, latestSeason.Bencoded);
             return world.SetAccount(Addresses.AdventureBoss, account);
