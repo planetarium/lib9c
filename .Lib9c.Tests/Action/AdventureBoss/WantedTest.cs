@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Action;
     using Nekoyume.Action.AdventureBoss;
     using Nekoyume.Action.Exceptions.AdventureBoss;
+    using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -33,7 +34,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address AvatarAddress = Addresses.GetAvatarAddress(AgentAddress, 0);
 
         private static readonly AvatarState AvatarState = new (
-            AvatarAddress, AgentAddress, 0L, TableSheets.GetAvatarSheets(), new PrivateKey().Address
+            AvatarAddress, AgentAddress, 0L, TableSheets.GetAvatarSheets(),
+            new PrivateKey().Address,
+            name: "avatar1"
         );
 
         private static readonly Address
@@ -41,7 +44,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         private static readonly AvatarState AvatarState2 = new (
             AvatarAddress2, AgentAddress, 0L, TableSheets.GetAvatarSheets(),
-            new PrivateKey().Address
+            new PrivateKey().Address,
+            name: "avatar2"
         );
 
         private static readonly GoldCurrencyState GoldCurrencyState = new (NCG);
@@ -86,19 +90,25 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Test
             var season = nextState.GetSeasonInfo(1);
             Assert.Equal(1, season.Season);
-            Assert.Equal(900001, season.BossId);
-            Assert.Null(season.FixedRewardItemId);
-            Assert.Equal(30001, season.FixedRewardFavTicker);
-            Assert.Equal(600203, season.RandomRewardItemId);
-            Assert.Null(season.RandomRewardFavTicker);
+            Assert.Equal(207007, season.BossId);
 
             var bountyBoard = nextState.GetBountyBoard(1);
+            Assert.Null(bountyBoard.FixedRewardItemId);
+            Assert.Equal(30001, bountyBoard.FixedRewardFavTicker);
+            Assert.Null(bountyBoard.RandomRewardItemId);
+            Assert.Equal(20001, bountyBoard.RandomRewardFavTicker);
+
             var investor = Assert.Single(bountyBoard.Investors);
             Assert.Equal(
                 startBalance - Wanted.MinBounty * NCG,
                 nextState.GetBalance(AgentAddress, NCG)
             );
-            Assert.Equal(Wanted.MinBounty * NCG, nextState.GetBalance(Addresses.BountyBoard, NCG));
+            Assert.Equal(
+                Wanted.MinBounty * NCG,
+                nextState.GetBalance(
+                    Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(1)),
+                    NCG)
+            );
             Assert.NotNull(bountyBoard);
             Assert.Equal(AvatarAddress, investor.AvatarAddress);
             Assert.Equal(Wanted.MinBounty * NCG, investor.Price);
@@ -120,21 +130,24 @@ namespace Lib9c.Tests.Action.AdventureBoss
             );
             Assert.Equal(
                 Wanted.MinBounty * 2 * NCG,
-                nextState.GetBalance(Addresses.BountyBoard, NCG)
+                nextState.GetBalance(
+                    Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(1)),
+                    NCG)
             );
 
             // Test
             season = nextState.GetSeasonInfo(1);
             Assert.Equal(1, season.Season);
-            Assert.Equal(900001, season.BossId);
-            Assert.Null(season.FixedRewardItemId);
-            Assert.Equal(30001, season.FixedRewardFavTicker);
-            Assert.Equal(600203, season.RandomRewardItemId);
-            Assert.Null(season.RandomRewardFavTicker);
+            Assert.Equal(207007, season.BossId);
 
             bountyBoard = nextState.GetBountyBoard(1);
             Assert.NotNull(bountyBoard);
             Assert.Equal(2, bountyBoard.Investors.Count);
+            Assert.Null(bountyBoard.FixedRewardItemId);
+            Assert.Equal(30001, bountyBoard.FixedRewardFavTicker);
+            Assert.Null(bountyBoard.RandomRewardItemId);
+            Assert.Equal(20001, bountyBoard.RandomRewardFavTicker);
+
             investor = bountyBoard.Investors.First(i => i.AvatarAddress == AvatarAddress2);
             Assert.Equal(Wanted.MinBounty * NCG, investor.Price);
             Assert.Equal(1, investor.Count);
@@ -154,7 +167,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
             );
             Assert.Equal(
                 Wanted.MinBounty * 3 * NCG,
-                nextState.GetBalance(Addresses.BountyBoard, NCG)
+                nextState.GetBalance(
+                    Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(1)),
+                    NCG)
             );
             bountyBoard = nextState.GetBountyBoard(1);
             Assert.NotNull(bountyBoard);
@@ -170,7 +185,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var state = Stake(_initialState);
             // Validate no prev. season
             var latestSeasonInfo = state.GetLatestAdventureBossSeason();
-            Assert.Equal(0, latestSeasonInfo.SeasonId);
+            Assert.Equal(0, latestSeasonInfo.Season);
             Assert.Equal(0, latestSeasonInfo.StartBlockIndex);
             Assert.Equal(0, latestSeasonInfo.EndBlockIndex);
             Assert.Equal(0, latestSeasonInfo.NextStartBlockIndex);
@@ -190,7 +205,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             // Validate new season
             latestSeasonInfo = nextState.GetLatestAdventureBossSeason();
-            Assert.Equal(1, latestSeasonInfo.SeasonId);
+            Assert.Equal(1, latestSeasonInfo.Season);
             Assert.Equal(0L, latestSeasonInfo.StartBlockIndex);
             Assert.Equal(SeasonInfo.BossActiveBlockInterval, latestSeasonInfo.EndBlockIndex);
             Assert.Equal(
@@ -199,7 +214,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             );
 
             var season1 = nextState.GetSeasonInfo(1);
-            Assert.Equal(latestSeasonInfo.SeasonId, season1.Season);
+            Assert.Equal(latestSeasonInfo.Season, season1.Season);
             Assert.Equal(latestSeasonInfo.StartBlockIndex, season1.StartBlockIndex);
             Assert.Equal(latestSeasonInfo.EndBlockIndex, season1.EndBlockIndex);
             Assert.Equal(latestSeasonInfo.NextStartBlockIndex, season1.NextStartBlockIndex);
@@ -214,7 +229,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             state = state.SetSeasonInfo(seasonInfo);
             state = state.SetLatestAdventureBossSeason(seasonInfo);
             var latestSeasonInfo = state.GetLatestAdventureBossSeason();
-            Assert.Equal(1, latestSeasonInfo.SeasonId);
+            Assert.Equal(1, latestSeasonInfo.Season);
             Assert.Equal(0L, latestSeasonInfo.StartBlockIndex);
             Assert.Equal(SeasonInfo.BossActiveBlockInterval, latestSeasonInfo.EndBlockIndex);
             Assert.Equal(
@@ -358,7 +373,6 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         [Theory]
         [InlineData(Wanted.MinBounty - 1)]
-        [InlineData(Wanted.MaxBounty + 1)]
         public void InvalidBounty(int bounty)
         {
             var state = Stake(_initialState);
@@ -384,8 +398,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             var state = Stake(_initialState);
             var prevSeason = new SeasonInfo(1, 0L);
-            var prevBountyBoard = new BountyBoard();
-            prevBountyBoard.AddOrUpdate(AvatarAddress, Wanted.MinBounty * NCG);
+            var prevBountyBoard = new BountyBoard(1);
+            prevBountyBoard.AddOrUpdate(AvatarAddress, AvatarState.name, Wanted.MinBounty * NCG);
             state = state.SetSeasonInfo(prevSeason).SetBountyBoard(1, prevBountyBoard);
             state = state.SetLatestAdventureBossSeason(prevSeason);
 

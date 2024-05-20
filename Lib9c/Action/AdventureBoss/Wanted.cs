@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -6,6 +7,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions.AdventureBoss;
+using Nekoyume.Helper;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
@@ -14,13 +16,20 @@ using Nekoyume.TableData;
 namespace Nekoyume.Action.AdventureBoss
 {
     // FIXME: This may temporary
-    public struct WantedReward
+    public struct RewardInfo
+    {
+        // Dictionary of (id/ticker, ratio) pairs.
+        public Dictionary<int, int> FixedRewardItemIdDict;
+        public Dictionary<int, int> FixedRewardFavTickerDict;
+        public Dictionary<int, int> RandomRewardItemIdDict;
+        public Dictionary<int, int> RandomRewardFavTickerDict;
+    }
+
+    public struct AdventureBossReward
     {
         public int BossId;
-        public int[] FixedRewardItemIdList;
-        public int[] FixedRewardFavTickerList;
-        public int[] RandomRewardItemIdList;
-        public int[] RandomRewardFavTickerList;
+        public RewardInfo wantedReward;
+        public RewardInfo exploreReward;
     }
 
     [Serializable]
@@ -30,45 +39,132 @@ namespace Nekoyume.Action.AdventureBoss
         public const string TypeIdentifier = "wanted";
         public const int RequiredStakingLevel = 5;
         public const int MinBounty = 100;
-        public const int MaxBounty = 1000;
         public int Season;
         public FungibleAssetValue Bounty;
         public Address AvatarAddress;
 
         // FIXME: This may temporary
-        public WantedReward[] WantedRewardList = new[]
+        public AdventureBossReward[] WantedRewardList =
         {
-            new WantedReward
+            new ()
             {
-                BossId = 900001,
-                FixedRewardItemIdList = new[] { 600201 },
-                FixedRewardFavTickerList = Array.Empty<int>(),
-                RandomRewardItemIdList = Array.Empty<int>(),
-                RandomRewardFavTickerList = new[] { 20001, 30001 },
+                BossId = 206007,
+                wantedReward = new RewardInfo
+                {
+                    FixedRewardItemIdDict = new Dictionary<int, int>
+                    {
+                        { 600201, 100 }
+                    },
+                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    RandomRewardItemIdDict = new Dictionary<int, int>
+                    {
+                        { 600201, 20 }, { 600202, 20 }, { 600203, 20 }
+                    },
+                    RandomRewardFavTickerDict = new Dictionary<int, int>
+                    {
+                        { 20001, 20 }, { 30001, 20 }
+                    }
+                },
+                exploreReward = new RewardInfo
+                {
+                    FixedRewardItemIdDict = new Dictionary<int, int>
+                    {
+                        { 600202, 100 }
+                    },
+                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    RandomRewardItemIdDict = new Dictionary<int, int>(),
+                    RandomRewardFavTickerDict = new Dictionary<int, int>(),
+                }
             },
-            new WantedReward
+            new ()
             {
-                BossId = 900002,
-                FixedRewardItemIdList = new[] { 600202 },
-                FixedRewardFavTickerList = Array.Empty<int>(),
-                RandomRewardItemIdList = Array.Empty<int>(),
-                RandomRewardFavTickerList = new[] { 20001, 30001 },
+                BossId = 208007,
+                wantedReward = new RewardInfo
+                {
+                    FixedRewardItemIdDict = new Dictionary<int, int>
+                    {
+                        { 600202, 100 }
+                    },
+                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    RandomRewardItemIdDict = new Dictionary<int, int>
+                    {
+                        { 600201, 20 }, { 600202, 20 }, { 600203, 20 }
+                    },
+                    RandomRewardFavTickerDict = new Dictionary<int, int>
+                    {
+                        { 20001, 20 }, { 30001, 20 }
+                    }
+                },
+                exploreReward = new RewardInfo
+                {
+                    FixedRewardItemIdDict = new Dictionary<int, int>
+                    {
+                        { 600202, 100 }
+                    },
+                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    RandomRewardItemIdDict = new Dictionary<int, int>(),
+                    RandomRewardFavTickerDict = new Dictionary<int, int>(),
+                }
             },
-            new WantedReward
+            new ()
             {
-                BossId = 900001,
-                FixedRewardItemIdList = Array.Empty<int>(),
-                FixedRewardFavTickerList = new[] { 20001, 30001 },
-                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
-                RandomRewardFavTickerList = Array.Empty<int>(),
+                BossId = 207007,
+                wantedReward = new RewardInfo
+                {
+                    FixedRewardItemIdDict = new Dictionary<int, int>(),
+                    FixedRewardFavTickerDict = new Dictionary<int, int>
+                    {
+                        { 20001, 50 }, { 30001, 50 }
+                    },
+                    RandomRewardItemIdDict = new Dictionary<int, int>
+                    {
+                        { 600201, 20 }, { 600202, 20 }, { 600203, 20 }
+                    },
+                    RandomRewardFavTickerDict = new Dictionary<int, int>
+                    {
+                        { 20001, 20 }, { 30001, 20 }
+                    }
+                },
+                exploreReward = new RewardInfo
+                {
+                    FixedRewardItemIdDict = new Dictionary<int, int>
+                    {
+                        { 600203, 100 }
+                    },
+                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    RandomRewardItemIdDict = new Dictionary<int, int>(),
+                    RandomRewardFavTickerDict = new Dictionary<int, int>(),
+                }
             },
-            new WantedReward
+            new ()
             {
-                BossId = 900002,
-                FixedRewardItemIdList = new[] { 600202 },
-                FixedRewardFavTickerList = Array.Empty<int>(),
-                RandomRewardItemIdList = new[] { 600201, 600202, 600203 },
-                RandomRewardFavTickerList = Array.Empty<int>(),
+                BossId = 209007,
+                wantedReward = new RewardInfo
+                {
+                    FixedRewardItemIdDict = new Dictionary<int, int>
+                    {
+                        { 600203, 100 }
+                    },
+                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    RandomRewardItemIdDict = new Dictionary<int, int>
+                    {
+                        { 600201, 20 }, { 600202, 20 }, { 600203, 20 }
+                    },
+                    RandomRewardFavTickerDict = new Dictionary<int, int>
+                    {
+                        { 20001, 20 }, { 30001, 20 }
+                    }
+                },
+                exploreReward = new RewardInfo
+                {
+                    FixedRewardItemIdDict = new Dictionary<int, int>
+                    {
+                        { 600203, 100 }
+                    },
+                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    RandomRewardItemIdDict = new Dictionary<int, int>(),
+                    RandomRewardFavTickerDict = new Dictionary<int, int>(),
+                }
             },
         };
 
@@ -102,16 +198,22 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidCurrencyException("");
             }
 
-            if (Bounty < MinBounty * currency || Bounty > MaxBounty * currency)
+            if (Bounty < MinBounty * currency)
             {
                 throw new InvalidBountyException(
-                    $"Given bounty {Bounty.MajorUnit}.{Bounty.MinorUnit} is not between {MinBounty} and {MaxBounty}.");
+                    $"Given bounty {Bounty.MajorUnit}.{Bounty.MinorUnit} is less than {MinBounty}");
+            }
+
+            var balance = states.GetBalance(context.Signer, currency);
+            if (balance < Bounty)
+            {
+                throw new InsufficientBalanceException($"{Bounty}", context.Signer, balance);
             }
 
             if (Season <= 0 ||
-                Season > latestSeason.SeasonId + 1 || Season < latestSeason.SeasonId ||
-                (Season == latestSeason.SeasonId && context.BlockIndex > latestSeason.EndBlockIndex) ||
-                (Season == latestSeason.SeasonId + 1 && context.BlockIndex < latestSeason.NextStartBlockIndex)
+                Season > latestSeason.Season + 1 || Season < latestSeason.Season ||
+                (Season == latestSeason.Season && context.BlockIndex > latestSeason.EndBlockIndex) ||
+                (Season == latestSeason.Season + 1 && context.BlockIndex < latestSeason.NextStartBlockIndex)
                )
             {
                 throw new InvalidAdventureBossSeasonException(
@@ -147,39 +249,39 @@ namespace Nekoyume.Action.AdventureBoss
                 );
             }
 
+            BountyBoard bountyBoard;
             // Create new season if required
-            SeasonInfo currentSeason;
-            if (latestSeason.SeasonId == 0 ||
+            if (latestSeason.Season == 0 ||
                 latestSeason.NextStartBlockIndex <= context.BlockIndex)
             {
-                currentSeason = new SeasonInfo(Season, context.BlockIndex);
+                var seasonInfo = new SeasonInfo(Season, context.BlockIndex);
+                bountyBoard = new BountyBoard(Season);
+                var exploreBoard = new ExploreBoard(Season);
+
                 // Set season info: boss and reward
-                currentSeason.SetSeasonData(WantedRewardList, context.GetRandom());
-                states = states.SetSeasonInfo(currentSeason);
-                states = states.SetLatestAdventureBossSeason(currentSeason);
+                var random = context.GetRandom();
+                var reward = WantedRewardList[random.Next(0, WantedRewardList.Length)];
+                seasonInfo.BossId = reward.BossId;
+                bountyBoard.SetReward(reward.wantedReward, random);
+                exploreBoard.SetReward(reward.exploreReward, random);
+
+                states = states.SetSeasonInfo(seasonInfo);
+                states = states.SetLatestAdventureBossSeason(seasonInfo);
+                states = states.SetBountyBoard(Season, bountyBoard);
             }
 
-            // Check balance and use
-            var balance = states.GetBalance(context.Signer, currency);
-            if (balance < Bounty)
-            {
-                throw new InsufficientBalanceException($"{Bounty}", context.Signer, balance);
-            }
-
-            states = states.TransferAsset(context, context.Signer, Addresses.BountyBoard, Bounty);
-
-            // Update Bounty board
-            BountyBoard bountyBoard;
-            try
+            // Just update bounty board
+            else
             {
                 bountyBoard = states.GetBountyBoard(Season);
             }
-            catch (FailedLoadStateException)
-            {
-                bountyBoard = new BountyBoard();
-            }
 
-            bountyBoard.AddOrUpdate(AvatarAddress, Bounty);
+            // FIXME: Send bounty to seasonal board
+            states = states.TransferAsset(context, context.Signer,
+                Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(Season)),
+                Bounty);
+            bountyBoard.AddOrUpdate(AvatarAddress, states.GetAvatarState(AvatarAddress).name,
+                Bounty);
             return states.SetBountyBoard(Season, bountyBoard);
         }
     }

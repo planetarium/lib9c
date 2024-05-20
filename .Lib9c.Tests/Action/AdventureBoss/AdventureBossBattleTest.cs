@@ -48,8 +48,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 .SetAvatarState(avatarAddress2, avatarState2);
 
             var seasonInfo = new SeasonInfo(1, 0L);
+            var exploreBoard = new ExploreBoard(1);
             state = state.SetSeasonInfo(seasonInfo);
             state = state.SetLatestAdventureBossSeason(seasonInfo);
+            state = state.SetExploreBoard(1, exploreBoard);
 
             var action = new AdventureBossBattle()
             {
@@ -62,14 +64,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Signer = agentAddress,
                 BlockIndex = 0L,
             });
-            var adventureInfo = nextState.GetExploreInfo(1, avatarAddress);
+
+            exploreBoard = nextState.GetExploreBoard(1);
+            Assert.Single(exploreBoard.ExplorerList);
+            Assert.Equal(avatarAddress, exploreBoard.ExplorerList.First());
+
+            var adventureInfo = nextState.GetExplorer(1, avatarAddress);
             Assert.Equal(avatarAddress, adventureInfo.AvatarAddress);
             Assert.Equal(100, adventureInfo.Score);
             Assert.Equal(1, adventureInfo.Floor);
-
-            seasonInfo = nextState.GetSeasonInfo(1);
-            Assert.Single(seasonInfo.ExplorerList);
-            Assert.Equal(avatarAddress, seasonInfo.ExplorerList.First());
 
             action.AvatarAddress = avatarAddress2;
             nextState = action.Execute(new ActionContext
@@ -79,14 +82,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 BlockIndex = 1L,
             });
 
-            adventureInfo = nextState.GetExploreInfo(1, avatarAddress2);
+            exploreBoard = nextState.GetExploreBoard(1);
+            Assert.Equal(2, exploreBoard.ExplorerList.Count);
+            Assert.Contains(avatarAddress2, exploreBoard.ExplorerList);
+
+            adventureInfo = nextState.GetExplorer(1, avatarAddress2);
             Assert.Equal(avatarAddress2, adventureInfo.AvatarAddress);
             Assert.Equal(100, adventureInfo.Score);
             Assert.Equal(1, adventureInfo.Floor);
-
-            seasonInfo = nextState.GetSeasonInfo(1);
-            Assert.Equal(2, seasonInfo.ExplorerList.Count);
-            Assert.Contains(avatarAddress2, seasonInfo.ExplorerList);
 
             action.AvatarAddress = avatarAddress;
             nextState = action.Execute(new ActionContext
@@ -96,13 +99,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 BlockIndex = 2L,
             });
 
-            adventureInfo = nextState.GetExploreInfo(1, avatarAddress);
+            exploreBoard = nextState.GetExploreBoard(1);
+            Assert.Equal(2, exploreBoard.ExplorerList.Count);
+
+            adventureInfo = nextState.GetExplorer(1, avatarAddress);
             Assert.Equal(avatarAddress, adventureInfo.AvatarAddress);
             Assert.Equal(200, adventureInfo.Score);
             Assert.Equal(2, adventureInfo.Floor);
-
-            seasonInfo = nextState.GetSeasonInfo(1);
-            Assert.Equal(2, seasonInfo.ExplorerList.Count);
         }
     }
 }
