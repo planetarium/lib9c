@@ -16,6 +16,15 @@ namespace Nekoyume.Model.AdventureBoss
         public FungibleAssetValue UsedNcg;
         public bool Claimed;
 
+
+        public Explorer(Address avatarAddress)
+        {
+            AvatarAddress = avatarAddress;
+            Score = 0;
+            Floor = 0;
+            Claimed = false;
+        }
+
         public Explorer(Address avatarAddress, int score, int floor)
         {
             AvatarAddress = avatarAddress;
