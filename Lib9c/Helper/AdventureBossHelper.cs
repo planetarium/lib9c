@@ -271,7 +271,15 @@ namespace Nekoyume.Helper
                     break;
                 }
 
-                var explorer = states.GetExplorer(szn, avatarAddress);
+                var exploreBoard = states.GetExploreBoard(szn);
+
+                // Not explored
+                if (!exploreBoard.ExplorerList.Contains(avatarAddress))
+                {
+                    continue;
+                }
+
+                var explorer = states.GetExplorer(season, avatarAddress);
 
                 // If `Claimed` found, all prev. season's rewards already been claimed. Stop here.
                 if (explorer.Claimed)
@@ -279,12 +287,9 @@ namespace Nekoyume.Helper
                     break;
                 }
 
-                var bountyBoard = states.GetBountyBoard(szn);
-                var exploreBoard = states.GetExploreBoard(szn);
-
                 // Calculate reward for this season
                 reward = CalculateExploreReward(
-                    reward, bountyBoard, exploreBoard, explorer, avatarAddress
+                    reward, states.GetBountyBoard(szn), exploreBoard, explorer, avatarAddress
                 );
 
                 explorer.Claimed = true;
