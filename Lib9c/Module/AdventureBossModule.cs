@@ -30,11 +30,7 @@ namespace Nekoyume.Module
             SeasonInfo latestSeasonInfo)
         {
             var account = world.GetAccount(Addresses.AdventureBoss);
-            var latestSeason = new SeasonInfo(
-                season: latestSeasonInfo.Season,
-                startBlockIndex: latestSeasonInfo.StartBlockIndex
-            );
-            account = account.SetState(LatestSeasonAddress, latestSeason.Bencoded);
+            account = account.SetState(LatestSeasonAddress, latestSeasonInfo.Bencoded);
             return world.SetAccount(Addresses.AdventureBoss, account);
         }
 

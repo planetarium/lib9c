@@ -268,6 +268,7 @@ namespace Nekoyume.Action.AdventureBoss
                 states = states.SetSeasonInfo(seasonInfo);
                 states = states.SetLatestAdventureBossSeason(seasonInfo);
                 states = states.SetBountyBoard(Season, bountyBoard);
+                states = states.SetExploreBoard(Season, exploreBoard);
             }
 
             // Just update bounty board
