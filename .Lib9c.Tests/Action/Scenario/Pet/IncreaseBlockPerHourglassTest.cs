@@ -27,7 +27,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
         private readonly Address _recipeIdsAddr;
-        private readonly IWorld _initialStateV1;
         private readonly IWorld _initialStateV2;
         private readonly TableSheets _tableSheets;
         private readonly int _hourglassItemId;
@@ -39,7 +38,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 _tableSheets,
                 _agentAddr,
                 _avatarAddr,
-                _initialStateV1,
                 _initialStateV2
             ) = InitializeUtil.InitializeStates();
             _recipeIdsAddr = _avatarAddr.Derive("recipe_ids");
@@ -62,8 +60,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var random = new TestRandom(randomSeed);
 
             // Disable all quests to prevent contamination by quest reward
-            var (stateV1, stateV2) = QuestUtil.DisableQuestList(
-                _initialStateV1,
+            var stateV2 = QuestUtil.DisableQuestList(
                 _initialStateV2,
                 _avatarAddr
             );

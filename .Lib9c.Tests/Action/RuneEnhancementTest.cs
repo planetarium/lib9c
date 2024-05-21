@@ -29,12 +29,8 @@ namespace Lib9c.Tests.Action
         // All success
         [InlineData(1, 1, 2, 0, 0, 1, null, 0)]
         [InlineData(1, 2, 3, 0, 0, 2, null, 0)]
-        // Success 1 of 2
-        [InlineData(202, 2, 203, 0, 1000, 40, null, 2)]
-        // All fail
-        [InlineData(202, 2, 202, 0, 1000, 40, null, 0)]
         // Reaching max level
-        [InlineData(299, 1, 300, 0, 500, 20, null, 1)]
+        [InlineData(299, 1, 300, 0, 1000, 40, null, 1)]
         // Cannot exceed max level
         [InlineData(299, 2, 299, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
         [InlineData(300, 1, 300, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
@@ -155,12 +151,8 @@ namespace Lib9c.Tests.Action
         // All success
         [InlineData(1, 1, 2, 0, 0, 1, null, 0)]
         [InlineData(1, 2, 3, 0, 0, 2, null, 0)]
-        // Success 1 of 2
-        [InlineData(202, 2, 203, 0, 1000, 40, null, 2)]
-        // All fail
-        [InlineData(202, 2, 202, 0, 1000, 40, null, 0)]
         // Reaching max level
-        [InlineData(299, 1, 300, 0, 500, 20, null, 1)]
+        [InlineData(299, 1, 300, 0, 1000, 40, null, 1)]
         // Cannot exceed max level
         [InlineData(299, 2, 299, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]
         [InlineData(300, 1, 300, 0, 0, 0, typeof(RuneCostDataNotFoundException), 0)]

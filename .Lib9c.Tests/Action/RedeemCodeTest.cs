@@ -43,10 +43,8 @@ namespace Lib9c.Tests.Action
             _tableSheets = new TableSheets(_sheets);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute(bool backward)
+        [Fact]
+        public void Execute()
         {
             var privateKey = new PrivateKey();
             PublicKey publicKey = privateKey.PublicKey;
@@ -75,16 +73,8 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(_agentAddress, agentState)
                 .SetLegacyState(RedeemCodeState.Address, prevRedeemCodesState.Serialize())
                 .SetLegacyState(GoldCurrencyState.Address, goldState.Serialize())
-                .MintAsset(context, GoldCurrencyState.Address, goldState.Currency * 100000000);
-
-            if (backward)
-            {
-                initialState = initialState.SetLegacyState(_avatarAddress, MigrationAvatarState.LegacySerializeV1(avatarState));
-            }
-            else
-            {
-                initialState = initialState.SetAvatarState(_avatarAddress, avatarState);
-            }
+                .MintAsset(context, GoldCurrencyState.Address, goldState.Currency * 100000000)
+                .SetAvatarState(_avatarAddress, avatarState);
 
             foreach (var (key, value) in _sheets)
             {
