@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
@@ -6,6 +7,7 @@ using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -116,7 +118,12 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Collect wanted reward
             var currentBlockIndex = context.BlockIndex;
-            var myReward = new ClaimableReward();
+            var myReward = new ClaimableReward
+            {
+                NcgReward = null,
+                ItemReward = new Dictionary<int, int>(),
+                FavReward = new Dictionary<int, int>(),
+            };
             states = AdventureBossHelper.CollectWantedReward(
                 states, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
             );
@@ -127,7 +134,7 @@ namespace Nekoyume.Action.AdventureBoss
             );
 
             // Give rewards
-            if (myReward.NcgReward > 0 * states.GetGoldCurrency())
+            if (myReward.NcgReward is not null)
             {
                 var avatarState = states.GetAvatarState(AvatarAddress);
                 states = states.TransferAsset(context,
@@ -135,7 +142,7 @@ namespace Nekoyume.Action.AdventureBoss
                         AdventureBossHelper.GetSeasonAsAddressForm(Season)
                     ),
                     avatarState.agentAddress,
-                    myReward.NcgReward
+                    (FungibleAssetValue)myReward.NcgReward
                 );
             }
 

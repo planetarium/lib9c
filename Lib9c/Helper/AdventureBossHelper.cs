@@ -15,7 +15,7 @@ namespace Nekoyume.Helper
 {
     public struct ClaimableReward
     {
-        public FungibleAssetValue NcgReward;
+        public FungibleAssetValue? NcgReward;
         public Dictionary<int, int> ItemReward;
         public Dictionary<int, int> FavReward;
     }
@@ -119,7 +119,14 @@ namespace Nekoyume.Helper
             // Raffle
             if (bountyBoard.RaffleWinner == avatarAddress)
             {
-                reward.NcgReward += (FungibleAssetValue)bountyBoard.RaffleReward!;
+                if (reward.NcgReward is null)
+                {
+                    reward.NcgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
+                }
+                else
+                {
+                    reward.NcgReward += (FungibleAssetValue)bountyBoard.RaffleReward!;
+                }
             }
 
             // calculate total reward
