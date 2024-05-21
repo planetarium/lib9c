@@ -113,7 +113,7 @@ namespace Nekoyume.Action.AdventureBoss
             states = states.TransferAsset(context,
                 Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(Season)),
                 // FIXME: Set operational account address
-                new Address(), bountyBoard.totalBounty() * (BigInteger)0.75m
+                new Address(), (bountyBoard.totalBounty() * 75).DivRem(100, out _)
             );
 
             // Collect wanted reward

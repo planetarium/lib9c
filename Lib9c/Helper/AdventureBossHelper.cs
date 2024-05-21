@@ -9,7 +9,6 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action.AdventureBoss;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Module;
-using BigInteger = System.Numerics.BigInteger;
 
 namespace Nekoyume.Helper
 {
@@ -158,23 +157,23 @@ namespace Nekoyume.Helper
                 .Where(inv => inv.Price.RawValue == maxBounty)
                 .Select(inv => inv.AvatarAddress).ToList();
 
-            var finalPortion = myInvestment.Price.MajorUnit;
+            var finalPortion = (decimal)myInvestment.Price.MajorUnit;
             if (maxInvestors.Contains(avatarAddress))
             {
-                finalPortion = myInvestment.Price.MajorUnit *
-                               (BigInteger)(1 + 0.2m / maxInvestors.Count);
+                finalPortion = (decimal)myInvestment.Price.MajorUnit *
+                               (1 + 0.2m / maxInvestors.Count);
             }
 
             reward = AddReward(reward, bountyBoard.FixedRewardItemId is not null,
                 (int)(bountyBoard.FixedRewardItemId ?? bountyBoard.FixedRewardFavTicker)!,
-                (int)Math.Round((decimal)(totalFixedRewardAmount * finalPortion /
-                                          bountyBoard.totalBounty().MajorUnit))
+                (int)Math.Round(totalFixedRewardAmount * finalPortion /
+                                (decimal)bountyBoard.totalBounty().MajorUnit)
             );
 
             reward = AddReward(reward, bountyBoard.RandomRewardItemId is not null,
                 (int)(bountyBoard.RandomRewardItemId ?? bountyBoard.RandomRewardFavTicker)!,
-                (int)Math.Round((decimal)(totalRandomRewardAmount * finalPortion /
-                                          bountyBoard.totalBounty().MajorUnit))
+                (int)Math.Round(totalRandomRewardAmount * finalPortion /
+                                (decimal)bountyBoard.totalBounty().MajorUnit)
             );
             return reward;
         }
@@ -236,9 +235,9 @@ namespace Nekoyume.Helper
 
             // calculate ncg reward
             var gold = bountyBoard.totalBounty().Currency;
-            var totalNcgReward = bountyBoard.totalBounty() * (BigInteger)0.15m;
+            var totalNcgReward = (bountyBoard.totalBounty() * 15).DivRem(100, out _);
             var myNcgReward = totalNcgReward * myContribution;
-            if (myNcgReward >= (BigInteger)0.1m * gold)
+            if (myNcgReward >= (10 * gold).DivRem(100, out _))
             {
                 reward.NcgReward += myNcgReward;
             }
