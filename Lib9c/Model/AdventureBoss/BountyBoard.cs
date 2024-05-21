@@ -47,9 +47,13 @@ namespace Nekoyume.Model.AdventureBoss
 
         public FungibleAssetValue totalBounty()
         {
-            FungibleAssetValue totalBounty = default;
+            if (Investors.Count == 0)
+            {
+                return new FungibleAssetValue();
+            }
 
-            return Investors.Aggregate(totalBounty, (current, inv) => current + inv.Price);
+            var total = new FungibleAssetValue(Investors[0].Price.Currency);
+            return Investors.Aggregate(total, (current, inv) => current + inv.Price);
         }
 
         public void SetReward(RewardInfo rewardInfo, IRandom random)
