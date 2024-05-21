@@ -1,5 +1,6 @@
 export { ClaimStakeReward } from "./actions/claim_stake_reward.js";
 export { Stake } from "./actions/stake.js";
+export { DailyReward } from "./actions/daily_reward.js";
 export { TransferAsset } from "./actions/transfer_asset.js";
 export { TransferAssets } from "./actions/transfer_assets.js";
 export { DeliverToOtherGarages } from "./actions/deliver_to_others_garages.js";
