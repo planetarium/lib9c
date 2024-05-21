@@ -16,7 +16,7 @@ namespace Nekoyume.Model.AdventureBoss
     {
         public const decimal RaffleRewardRatio = 0.05m;
 
-        public int Season;
+        public long Season;
         public List<Investor> Investors = new ();
         public int? FixedRewardItemId;
         public int? FixedRewardFavTicker;
@@ -27,11 +27,12 @@ namespace Nekoyume.Model.AdventureBoss
 
         public BountyBoard(long season)
         {
+            Season = season;
         }
 
         public BountyBoard(List bencoded)
         {
-            Season = bencoded[0].ToInteger();
+            Season = bencoded[0].ToLong();
             Investors = bencoded[1].ToList(i => new Investor(i));
             FixedRewardItemId = bencoded[2].ToNullableInteger();
             FixedRewardFavTicker = bencoded[3].ToNullableInteger();
