@@ -93,9 +93,17 @@ namespace Nekoyume.Action.AdventureBoss
             if (exploreBoard.RaffleWinner is null)
             {
                 exploreBoard.RaffleReward = (bountyBoard.totalBounty() * 5).DivRem(100, out _);
-                exploreBoard.RaffleWinner = exploreBoard.ExplorerList.ToImmutableSortedSet()[
-                    random.Next(exploreBoard.ExplorerList.Count)
-                ];
+                if (exploreBoard.ExplorerList.Count > 0)
+                {
+                    exploreBoard.RaffleWinner = exploreBoard.ExplorerList.ToImmutableSortedSet()[
+                        random.Next(exploreBoard.ExplorerList.Count)
+                    ];
+                }
+                else
+                {
+                    exploreBoard.RaffleWinner = new Address();
+                }
+
                 states = states.SetExploreBoard(Season, exploreBoard);
             }
 
