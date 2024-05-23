@@ -299,17 +299,23 @@ namespace Nekoyume.Helper
                 }
             }
 
-            var myContribution = explorer.UsedApPotion / exploreBoard.UsedApPotion;
-
             // calculate ncg reward
             var gold = bountyBoard.totalBounty().Currency;
             var totalNcgReward = (bountyBoard.totalBounty() * 15).DivRem(100, out _);
-            var myNcgReward = totalNcgReward * myContribution;
+            var myNcgReward = (totalNcgReward * explorer.UsedApPotion)
+                .DivRem(exploreBoard.UsedApPotion, out _);
 
             // Only > 0.1 NCG will be rewarded.
             if (myNcgReward >= (10 * gold).DivRem(100, out _))
             {
-                reward.NcgReward += myNcgReward;
+                if (reward.NcgReward is null)
+                {
+                    reward.NcgReward = myNcgReward;
+                }
+                else
+                {
+                    reward.NcgReward += myNcgReward;
+                }
             }
 
             // calculate total reward
@@ -319,7 +325,8 @@ namespace Nekoyume.Helper
             var totalRewardAmount = (int)Math.Round(exploreBoard.UsedApPotion / ncgRewardRatio);
             reward = AddReward(reward, exploreBoard.FixedRewardItemId is not null,
                 (int)(exploreBoard.FixedRewardItemId ?? exploreBoard.FixedRewardFavId)!,
-                (int)Math.Floor((decimal)(totalRewardAmount * myContribution))
+                (int)Math.Floor(
+                    (decimal)totalRewardAmount * explorer.UsedApPotion / exploreBoard.UsedApPotion)
             );
             return reward;
         }
