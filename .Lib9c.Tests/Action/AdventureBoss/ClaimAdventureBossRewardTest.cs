@@ -46,10 +46,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
         };
 
         // Explorer
-        private static readonly Address ExplorerAddress = new PrivateKey().Address;
+        private static readonly Address ExplorerAddress =
+            new ("2000000000000000000000000000000000000001");
 
         private static readonly Address ExplorerAvatarAddress =
-            new ("0000000000000000000000000000000000000001");
+            Addresses.GetAvatarAddress(ExplorerAddress, 0);
 
         private static readonly AvatarState ExplorerAvatarState = new (
             ExplorerAvatarAddress, ExplorerAddress, 0L, TableSheets.GetAvatarSheets(),
@@ -65,10 +66,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
         };
 
         // Test Account
-        private static readonly Address TesterAddress = new PrivateKey().Address;
+        private static readonly Address TesterAddress =
+            new ("2000000000000000000000000000000000000002");
 
         private static readonly Address TesterAvatarAddress =
-            new ("0000000000000000000000000000000000000002");
+            Addresses.GetAvatarAddress(TesterAddress, 0);
 
         private static readonly AvatarState TesterAvatarState = new (
             TesterAvatarAddress, TesterAddress, 0L, TableSheets.GetAvatarSheets(),
