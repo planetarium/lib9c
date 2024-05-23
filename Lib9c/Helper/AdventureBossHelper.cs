@@ -134,6 +134,7 @@ namespace Nekoyume.Helper
                 (int)Math.Round(
                     (int)bountyBoard.totalBounty().MajorUnit * TotalRewardMultiplier
                 );
+            var bonusNcg = totalRewardNcg - bountyBoard.totalBounty().MajorUnit;
 
             // Calculate total amount based on NCG exchange ratio
             var totalFixedRewardNcg = (int)Math.Round(totalRewardNcg * FixedRewardRatio);
@@ -226,7 +227,14 @@ namespace Nekoyume.Helper
             // Raffle
             if (exploreBoard.RaffleWinner == avatarAddress)
             {
-                reward.NcgReward += (FungibleAssetValue)bountyBoard.RaffleReward!;
+                if (reward.NcgReward is null)
+                {
+                    reward.NcgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
+                }
+                else
+                {
+                    reward.NcgReward += (FungibleAssetValue)bountyBoard.RaffleReward!;
+                }
             }
 
             var myContribution = explorer.UsedApPotion / exploreBoard.UsedApPotion;
@@ -235,6 +243,8 @@ namespace Nekoyume.Helper
             var gold = bountyBoard.totalBounty().Currency;
             var totalNcgReward = (bountyBoard.totalBounty() * 15).DivRem(100, out _);
             var myNcgReward = totalNcgReward * myContribution;
+
+            // Only > 0.1 NCG will be rewarded.
             if (myNcgReward >= (10 * gold).DivRem(100, out _))
             {
                 reward.NcgReward += myNcgReward;
