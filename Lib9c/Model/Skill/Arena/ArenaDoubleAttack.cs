@@ -30,11 +30,11 @@ namespace Nekoyume.Model.Skill.Arena
 
             if (SkillRow.Combo)
             {
-                return new BattleStatus.Arena.ArenaDoubleAttackWithCombo(clone, damage, buff);
+                return new BattleStatus.Arena.ArenaDoubleAttackWithCombo(SkillRow.Id, clone, damage, buff);
             }
             else
             {
-                return new BattleStatus.Arena.ArenaDoubleAttack(clone, damage, buff);
+                return new BattleStatus.Arena.ArenaDoubleAttack(SkillRow.Id, clone, damage, buff);
             }
         }
     }

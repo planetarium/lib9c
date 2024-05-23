@@ -11,6 +11,8 @@ namespace Nekoyume.Model.Buff
         public StatBuffSheet.Row RowData { get; }
         public SkillCustomField? CustomField { get; }
 
+        public int Stack { get; private set; }
+
         public StatBuff(StatBuffSheet.Row row) : base(
             new BuffInfo(row.Id, row.GroupId, row.Chance, row.Duration, row.TargetType))
         {
@@ -28,6 +30,7 @@ namespace Nekoyume.Model.Buff
         {
             RowData = value.RowData;
             CustomField = value.CustomField;
+            Stack = value.Stack;
         }
 
         public StatModifier GetModifier()
@@ -39,7 +42,12 @@ namespace Nekoyume.Model.Buff
             return new StatModifier(
                 RowData.StatType,
                 RowData.OperationType,
-                value);
+                value * (Stack + 1));
+        }
+
+        public void SetStack(int stack)
+        {
+            Stack = Math.Min(stack, RowData.MaxStack);
         }
 
         public override bool IsBuff()

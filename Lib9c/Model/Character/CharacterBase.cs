@@ -377,6 +377,11 @@ namespace Nekoyume.Model
                 case StatBuff stat:
                 {
                     var clone = (StatBuff)stat.Clone();
+                    if (Buffs.TryGetValue(stat.RowData.GroupId, out var current))
+                    {
+                        var stack = ((StatBuff) current).Stack + 1;
+                        clone.SetStack(stack);
+                    }
                     Buffs[stat.RowData.GroupId] = clone;
                     Stats.AddBuff(clone, Simulator.DeBuffLimitSheet, updateImmediate);
                     break;
@@ -691,6 +696,13 @@ namespace Nekoyume.Model
                     {
                         Simulator.Log.Add(effect);
                     }
+                }
+
+                if (skillInfo.IceShield is not null)
+                {
+                    var frostBite = skillInfo.IceShield.FrostBite(Simulator.StatBuffSheet);
+                    AddBuff(frostBite);
+                    Simulator.Log.Add(new Tick(frostBite.RowData.Id, (CharacterBase)Clone(), usedSkill.SkillInfos, usedSkill.BuffInfos));
                 }
             }
 

@@ -8,10 +8,11 @@ namespace Nekoyume.Model.BattleStatus.Arena
     public class ArenaDoubleAttackWithCombo : ArenaSkill
     {
         public ArenaDoubleAttackWithCombo(
+            int skillId,
             ArenaCharacter character,
             IEnumerable<ArenaSkillInfo> skillInfos,
             IEnumerable<ArenaSkillInfo> buffInfos)
-            : base(character, skillInfos, buffInfos)
+            : base(skillId, character, skillInfos, buffInfos)
         {
         }
 

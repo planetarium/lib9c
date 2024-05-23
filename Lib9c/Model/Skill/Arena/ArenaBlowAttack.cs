@@ -27,7 +27,7 @@ namespace Nekoyume.Model.Skill.Arena
             var damage = ProcessDamage(caster, target, turn);
             var buff = ProcessBuff(caster, target, turn, buffs);
 
-            return new BattleStatus.Arena.ArenaBlowAttack(clone, damage, buff);
+            return new BattleStatus.Arena.ArenaBlowAttack(SkillRow.Id, clone, damage, buff);
         }
     }
 }

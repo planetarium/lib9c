@@ -636,6 +636,13 @@ namespace Nekoyume.Model
                     var effect = GiveThornDamage(skillInfo.Target.Thorn);
                     Simulator.Log.Add(effect);
                 }
+
+                if (skillInfo.IceShield is not null)
+                {
+                    var frostBite = skillInfo.IceShield.FrostBite(_statBuffSheet);
+                    AddBuff(frostBite);
+                    Simulator.Log.Add(new ArenaTick(frostBite.RowData.Id, (ArenaCharacter)Clone(), this.usedSkill.SkillInfos, usedSkill.BuffInfos));
+                }
             }
         }
 
@@ -658,6 +665,7 @@ namespace Nekoyume.Model
             };
 
             var tickDamage = new ArenaTickDamage(
+                default,
                 clone,
                 damageInfos,
                 null);
@@ -798,6 +806,11 @@ namespace Nekoyume.Model
                 case StatBuff stat:
                 {
                     var clone = (StatBuff)stat.Clone();
+                    if (Buffs.TryGetValue(stat.RowData.GroupId, out var current))
+                    {
+                        var stack = ((StatBuff) current).Stack + 1;
+                        clone.SetStack(stack);
+                    }
                     Buffs[stat.RowData.GroupId] = clone;
                     Stats.AddBuff(clone, Simulator.DeBuffLimitSheet, updateImmediate);
                     break;

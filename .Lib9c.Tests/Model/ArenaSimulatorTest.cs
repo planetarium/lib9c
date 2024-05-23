@@ -346,5 +346,67 @@ namespace Lib9c.Tests
             Assert.Equal(dmg, challengerInfo.Effect);
             Assert.Equal(dmg, enemyInfo.Effect);
         }
+
+        [Fact]
+        public void IceShield()
+        {
+            var random = new TestRandom();
+            var avatarState1 = _avatarState1;
+            var avatarState2 = _avatarState2;
+
+            var characterRow = _tableSheets.CharacterSheet[GameConfig.DefaultAvatarCharacterId];
+            var stats = characterRow.ToStats(avatarState1.level);
+            var baseAtk = stats.ATK;
+            var runes = new AllRuneState(0);
+            var equipmentRow =
+                _tableSheets.EquipmentItemSheet.OrderedList.First(e => e.ItemSubType == ItemSubType.Armor);
+            var equipment = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
+            // skill id for ice shield.
+            const int skillId = 700011;
+            var skill = SkillFactory.GetV1(
+                _tableSheets.SkillSheet.Values.First(r => r.Id == skillId),
+                100,
+                100
+            );
+            equipment.Skills.Add(skill);
+            avatarState1.inventory.AddItem(equipment);
+            avatarState2.inventory.AddItem(equipment);
+            var runeSlotState = new RuneSlotState(BattleType.Arena);
+            var simulator = new ArenaSimulator(random);
+            var myDigest = new ArenaPlayerDigest(avatarState1, new List<Costume>(), new List<Equipment> { equipment }, runes, runeSlotState);
+            var enemyDigest = new ArenaPlayerDigest(avatarState2, new List<Costume>(), new List<Equipment> { equipment }, runes, runeSlotState);
+            var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
+            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet, true);
+            var spawns = log.Events.OfType<ArenaSpawnCharacter>().ToList();
+            Assert.All(spawns, spawn => Assert.Equal(baseAtk, spawn.Character.ATK));
+            var ticks = log.Events
+                .OfType<ArenaTick>()
+                .GroupBy(e => e.Character)
+                .ToList();
+            var spdMap = new Dictionary<Guid, long>();
+            var challenger = spawns.First().Character;
+            var enemy = spawns.Last().Character;
+            spdMap[challenger.Id] = challenger.SPD;
+            spdMap[enemy.Id] = challenger.SPD;
+            foreach (var group in ticks)
+            {
+                var character = group.Key;
+                var frostBite = character.StatBuffs.First(b => b.IsDebuff());
+                var id = character.Id;
+                var spd = character.SPD;
+                // decrease spd by spd debuff
+                if (frostBite.Stack < 4)
+                {
+                    Assert.True(spdMap[id] > spd);
+                }
+                else
+                {
+                    // don't decrease spd when max stack
+                    Assert.Equal(spdMap[id], spd);
+                }
+
+                spdMap[id] = spd;
+            }
+        }
     }
 }
