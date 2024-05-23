@@ -54,9 +54,6 @@ namespace Nekoyume.Action.AdventureBoss
             var exploreBoard = states.GetExploreBoard(Season);
             exploreBoard.AddExplorer(AvatarAddress);
 
-            // TODO: Add used resources to currentSeason
-            // TODO: AdventureBossSimulator with pass-through log
-
             Explorer explorer;
             try
             {
@@ -67,8 +64,17 @@ namespace Nekoyume.Action.AdventureBoss
                 explorer = new Explorer(AvatarAddress, 0, 0);
             }
 
-            explorer.Score += 100;
+            // TODO: AdventureBossSimulator with pass-through log
+            var score = 100;
+
+            explorer.Score += score;
             explorer.Floor++;
+
+            // TODO: Add used resources to currentSeason
+            explorer.UsedApPotion++;
+            exploreBoard.UsedApPotion++;
+            exploreBoard.TotalPoint += score;
+
             states = states.SetExploreBoard(Season, exploreBoard);
             return states.SetExplorer(Season, explorer);
         }
