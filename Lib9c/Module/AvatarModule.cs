@@ -16,8 +16,13 @@ namespace Nekoyume.Module
 {
     public static class AvatarModule
     {
-        // This method automatically determines if given IValue is a legacy avatar state or not.
-        public static AvatarState GetAvatarState(this IWorldState worldState, Address address)
+        // TODO change flags set default false
+        public static AvatarState GetAvatarState(
+            this IWorldState worldState,
+            Address address,
+            bool getInventory = true,
+            bool getWorldInformation = true,
+            bool getQuestList = true)
         {
             var account = worldState.GetAccountState(Addresses.Avatar);
             var serializedAvatarRaw = account.GetState(address);
@@ -64,9 +69,20 @@ namespace Nekoyume.Module
 
             try
             {
-                avatarState.inventory = GetInventoryV2(worldState, address);
-                avatarState.worldInformation = GetWorldInformationV2(worldState, address);
-                avatarState.questList = GetQuestListV2(worldState, address);
+                if (getInventory)
+                {
+                    avatarState.inventory = GetInventoryV2(worldState, address);
+                }
+
+                if (getWorldInformation)
+                {
+                    avatarState.worldInformation = GetWorldInformationV2(worldState, address);
+                }
+
+                if (getQuestList)
+                {
+                    avatarState.questList = GetQuestListV2(worldState, address);
+                }
             }
             catch (KeyNotFoundException)
             {
