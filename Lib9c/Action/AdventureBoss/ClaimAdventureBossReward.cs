@@ -88,26 +88,27 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Collect wanted reward
             states = AdventureBossHelper.CollectWantedReward(
-                states, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
+                states, context, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
             );
 
             // Collect explore reward
             states = AdventureBossHelper.CollectExploreReward(
-                states, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
+                states, context, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
             );
 
             // Give rewards
-            if (myReward.NcgReward is not null)
-            {
-                var avatarState = states.GetAvatarState(AvatarAddress);
-                states = states.TransferAsset(context,
-                    Addresses.BountyBoard.Derive(
-                        AdventureBossHelper.GetSeasonAsAddressForm(Season)
-                    ),
-                    avatarState.agentAddress,
-                    (FungibleAssetValue)myReward.NcgReward
-                );
-            }
+            // NOTE: NCG must be transferred from seasonal address. To this must be done in collection stage.
+            // if (myReward.NcgReward is not null)
+            // {
+            //     var avatarState = states.GetAvatarState(AvatarAddress);
+            //     states = states.TransferAsset(context,
+            //         Addresses.BountyBoard.Derive(
+            //             AdventureBossHelper.GetSeasonAsAddressForm(Season)
+            //         ),
+            //         avatarState.agentAddress,
+            //         (FungibleAssetValue)myReward.NcgReward
+            //     );
+            // }
 
             if (myReward.ItemReward.Count > 0)
             {

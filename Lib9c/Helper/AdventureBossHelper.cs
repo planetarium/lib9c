@@ -7,6 +7,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action;
 using Nekoyume.Action.AdventureBoss;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Module;
@@ -175,12 +176,15 @@ namespace Nekoyume.Helper
         }
 
         public static ClaimableReward CalculateWantedReward(
-            ClaimableReward reward, BountyBoard bountyBoard, Address avatarAddress
+            ClaimableReward reward, BountyBoard bountyBoard, Address avatarAddress,
+            out FungibleAssetValue ncgReward
         )
         {
+            ncgReward = 0 * bountyBoard.RaffleReward!.Value.Currency;
             // Raffle
             if (bountyBoard.RaffleWinner == avatarAddress)
             {
+                ncgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
                 if (reward.NcgReward is null)
                 {
                     reward.NcgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
@@ -239,10 +243,11 @@ namespace Nekoyume.Helper
             return reward;
         }
 
-        public static IWorld CollectWantedReward(IWorld states, ClaimableReward reward,
-            long currentBlockIndex, long season, Address avatarAddress,
+        public static IWorld CollectWantedReward(IWorld states, IActionContext context,
+            ClaimableReward reward, long currentBlockIndex, long season, Address avatarAddress,
             out ClaimableReward collectedReward)
         {
+            var agentAddress= states.GetAvatarState(avatarAddress).agentAddress;
             for (var szn = season; szn > 0; szn--)
             {
                 var seasonInfo = states.GetSeasonInfo(szn);
@@ -271,9 +276,21 @@ namespace Nekoyume.Helper
                     break;
                 }
 
-
                 // Calculate reward for this season
-                reward = CalculateWantedReward(reward, bountyBoard, avatarAddress);
+                reward = CalculateWantedReward(reward, bountyBoard, avatarAddress, out var ncgReward);
+
+                // Transfer NCG reward from seasonal address
+                if (ncgReward.RawValue > 0)
+                {
+                    states = states.TransferAsset(context,
+                        Addresses.BountyBoard.Derive(
+                            AdventureBossHelper.GetSeasonAsAddressForm(szn)
+                        ),
+                        agentAddress,
+                        ncgReward
+                    );
+                }
+
                 investor.Claimed = true;
                 states = states.SetBountyBoard(szn, bountyBoard);
             }
@@ -284,18 +301,20 @@ namespace Nekoyume.Helper
 
         public static ClaimableReward CalculateExploreReward(ClaimableReward reward,
             BountyBoard bountyBoard, ExploreBoard exploreBoard,
-            Explorer explorer, Address avatarAddress)
+            Explorer explorer, Address avatarAddress, out FungibleAssetValue ncgReward)
         {
+            ncgReward = 0 * exploreBoard.RaffleReward!.Value.Currency;
             // Raffle
             if (exploreBoard.RaffleWinner == avatarAddress)
             {
+                ncgReward += (FungibleAssetValue)exploreBoard.RaffleReward;
                 if (reward.NcgReward is null)
                 {
-                    reward.NcgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
+                    reward.NcgReward = (FungibleAssetValue)exploreBoard.RaffleReward!;
                 }
                 else
                 {
-                    reward.NcgReward += (FungibleAssetValue)bountyBoard.RaffleReward!;
+                    reward.NcgReward += (FungibleAssetValue)exploreBoard.RaffleReward!;
                 }
             }
 
@@ -308,6 +327,7 @@ namespace Nekoyume.Helper
             // Only > 0.1 NCG will be rewarded.
             if (myNcgReward >= (10 * gold).DivRem(100, out _))
             {
+                ncgReward += myNcgReward;
                 if (reward.NcgReward is null)
                 {
                     reward.NcgReward = myNcgReward;
@@ -328,14 +348,15 @@ namespace Nekoyume.Helper
                 (int)Math.Floor(
                     (decimal)totalRewardAmount * explorer.UsedApPotion / exploreBoard.UsedApPotion)
             );
+
             return reward;
         }
 
-        public static IWorld CollectExploreReward(
-            IWorld states, ClaimableReward reward, long currentBlockIndex, long season,
-            Address avatarAddress,
+        public static IWorld CollectExploreReward( IWorld states, IActionContext context,
+            ClaimableReward reward, long currentBlockIndex, long season, Address avatarAddress,
             out ClaimableReward collectedReward)
         {
+            var agentAddress = states.GetAvatarState(avatarAddress).agentAddress;
             for (var szn = season; szn > 0; szn--)
             {
                 var seasonInfo = states.GetSeasonInfo(szn);
@@ -355,7 +376,7 @@ namespace Nekoyume.Helper
                     continue;
                 }
 
-                var explorer = states.GetExplorer(season, avatarAddress);
+                var explorer = states.GetExplorer(szn, avatarAddress);
 
                 // If `Claimed` found, all prev. season's rewards already been claimed. Stop here.
                 if (explorer.Claimed)
@@ -365,8 +386,21 @@ namespace Nekoyume.Helper
 
                 // Calculate reward for this season
                 reward = CalculateExploreReward(
-                    reward, states.GetBountyBoard(szn), exploreBoard, explorer, avatarAddress
+                    reward, states.GetBountyBoard(szn), exploreBoard, explorer, avatarAddress,
+                    out var ncgReward
                 );
+
+                // Transfer NCG reward from seasonal address
+                if (ncgReward.RawValue > 0)
+                {
+                    states = states.TransferAsset(context,
+                        Addresses.BountyBoard.Derive(
+                            AdventureBossHelper.GetSeasonAsAddressForm(szn)
+                        ),
+                        agentAddress,
+                        ncgReward
+                    );
+                }
 
                 explorer.Claimed = true;
                 states = states.SetExplorer(szn, explorer);
