@@ -641,7 +641,7 @@ namespace Nekoyume.Model
                 {
                     var frostBite = skillInfo.IceShield.FrostBite(_statBuffSheet);
                     AddBuff(frostBite);
-                    Simulator.Log.Add(new ArenaTick((ArenaCharacter)Clone()));
+                    Simulator.Log.Add(new ArenaTick(frostBite.RowData.Id, (ArenaCharacter)Clone(), this.usedSkill.SkillInfos, usedSkill.BuffInfos));
                 }
             }
         }
