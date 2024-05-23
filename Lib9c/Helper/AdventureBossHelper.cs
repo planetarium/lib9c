@@ -88,6 +88,11 @@ namespace Nekoyume.Helper
         private static ClaimableReward AddReward(ClaimableReward reward, bool isItem, int id,
             int amount)
         {
+            if (amount == 0)
+            {
+                return reward;
+            }
+
             if (isItem)
             {
                 if (reward.ItemReward.ContainsKey(id))
