@@ -275,6 +275,83 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
         }
 
+        public static IEnumerable<object[]> GetPrevRewardTestData()
+        {
+            yield return new object[]
+            {
+                true, false, new ClaimableReward
+                {
+                    NcgReward = 5 * NCG, // 5NCG for raffle
+                    ItemReward = new Dictionary<int, int>
+                    {
+                        { 600201, 0 },
+                        { 600202, 0 },
+                        { 600203, 0 },
+                    },
+                    FavReward = new Dictionary<int, int>
+                    {
+                        { 20001, 14 },
+                        { 30001, 34 },
+                    },
+                },
+            };
+            yield return new object[]
+            {
+                false, true, new ClaimableReward
+                {
+                    NcgReward = 20 * NCG, // 5NCG for raffle, 15NCG for 15% distribution
+                    ItemReward = new Dictionary<int, int>
+                    {
+                        { 600201, 0 },
+                        { 600202, 0 },
+                        { 600203, 13 },
+                    },
+                    FavReward = new Dictionary<int, int>
+                    {
+                        { 20001, 0 },
+                        { 30001, 0 },
+                    },
+                },
+            };
+            yield return new object[]
+            {
+                true, true, new ClaimableReward
+                {
+                    // 5NCG for wanted raffle, 5NCG for explore raffle, 15NCG for 15% distribution
+                    NcgReward = 25 * NCG,
+                    ItemReward = new Dictionary<int, int>
+                    {
+                        { 600201, 0 },
+                        { 600202, 0 },
+                        { 600203, 13 }, // Explore reward
+                    },
+                    FavReward = new Dictionary<int, int>
+                    {
+                        { 20001, 14 }, // Random wanted reward
+                        { 30001, 34 }, // Fixed wanted reward
+                    },
+                },
+            };
+            yield return new object[]
+            {
+                false, false, new ClaimableReward
+                {
+                    NcgReward = 0 * NCG,
+                    ItemReward = new Dictionary<int, int>
+                    {
+                        { 600201, 0 },
+                        { 600202, 0 },
+                        { 600203, 0 },
+                    },
+                    FavReward = new Dictionary<int, int>
+                    {
+                        { 20001, 0 },
+                        { 30001, 0 },
+                    },
+                },
+            };
+        }
+
         [Theory]
         [MemberData(nameof(GetWantedTestData))]
         public void WantedReward(
@@ -563,7 +640,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Settings
             var expectedReward = new ClaimableReward
             {
-                NcgReward = 40 * NCG,  // (5NCG for raffle, 15NCG for 15% distribution) for season 1 and 3
+                // (5NCG for raffle, 15NCG for 15% distribution) for season 1 and 3
+                NcgReward = 40 * NCG,
                 FavReward = new Dictionary<int, int>
                 {
                     { 20001, 0 },
@@ -573,7 +651,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     { 600201, 0 },
                     { 600202, 0 },
-                    { 600203, 26 },  // (100 AP / 7.5 Ratio * 100% contribution) for season 1 and 3
+                    { 600203, 26 }, // (100 AP / 7.5 Ratio * 100% contribution) for season 1 and 3
                 },
             };
             var state = _initialState;
@@ -691,24 +769,172 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Test(resultState, expectedReward);
         }
 
-        // [Theory]
-        // [InlineData()]
-        // public void AllReward()
-        // {
-        // }
-        //==================================
-        // Wanted only
-        // Explore only
-        // Wanted + Explore
-        // Prev. Wanted + current Wanted
-        // Prev. Explore + current Explore
-        // Prev. Wanted + current Explore
-        // Prev. Explore + current Wanted
-        // Prev. Wanted only
-        // Prev. Explore only
         [Fact]
-        public void Execute()
+        public void AllReward()
         {
+            const int seed = 0;
+            // Settings
+            var expectedReward = new ClaimableReward
+            {
+                NcgReward =
+                    25 * NCG, // 5NCG for wanted raffle, 5NCG for explore raffle, 15NCG for 15% distribution.
+                FavReward = new Dictionary<int, int>
+                {
+                    { 20001, 14 }, // Random wanted reward
+                    { 30001, 34 }, // Fixed wanted reward
+                },
+                ItemReward = new Dictionary<int, int>
+                {
+                    { 600201, 0 },
+                    { 600202, 0 },
+                    { 600203, 13 }, // Explore reward
+                },
+            };
+            var state = _initialState;
+            foreach (var (key, value) in Sheets)
+            {
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            state = Stake(state, TesterAddress);
+
+            // Wanted
+            state = new Wanted
+            {
+                Season = 1,
+                AvatarAddress = TesterAvatarAddress,
+                Bounty = 100 * NCG,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = TesterAddress,
+                BlockIndex = 0L,
+                RandomSeed = seed,
+            });
+
+            // Explore
+            state = new AdventureBossBattle
+            {
+                Season = 1,
+                AvatarAddress = TesterAvatarAddress,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = TesterAddress,
+                BlockIndex = 1L,
+            });
+            // Manipulate used AP Potion to calculate reward above zero
+            var board = state.GetExploreBoard(1);
+            board.UsedApPotion += 99;
+            var exp = state.GetExplorer(1, TesterAvatarAddress);
+            exp.UsedApPotion += 99;
+            state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
+
+            // Burn
+            state = state.BurnAsset(
+                new ActionContext(),
+                TesterAddress,
+                state.GetBalance(TesterAddress, NCG)
+            );
+
+            // Test
+            var resultState = new ClaimAdventureBossReward
+            {
+                Season = 1,
+                AvatarAddress = TesterAvatarAddress,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = TesterAddress,
+                BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                RandomSeed = seed,
+            });
+
+            Test(resultState, expectedReward);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetPrevRewardTestData))]
+        public void PrevReward(bool wanted, bool explore, ClaimableReward expectedReward)
+        {
+            // Settings
+            const int seed = 0;
+            var state = _initialState;
+            foreach (var (key, value) in Sheets)
+            {
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            state = Stake(state, TesterAddress);
+            state = Stake(state, WantedAddress);
+            state = Stake(state, ExplorerAddress);
+
+            // Wanted
+            state = new Wanted
+            {
+                Season = 1,
+                AvatarAddress = wanted ? TesterAvatarAddress : WantedAvatarAddress,
+                Bounty = 100 * NCG,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = wanted ? TesterAddress : WantedAddress,
+                BlockIndex = 0L,
+                RandomSeed = seed,
+            });
+
+            // Explore
+            state = new AdventureBossBattle
+            {
+                Season = 1,
+                AvatarAddress = explore ? TesterAvatarAddress : ExplorerAvatarAddress,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = explore ? TesterAddress : ExplorerAddress,
+                BlockIndex = 1L,
+            });
+            // Manipulate used AP Potion to calculate reward above zero
+            var board = state.GetExploreBoard(1);
+            board.UsedApPotion += 99;
+            var exp = state.GetExplorer(1, explore ? TesterAvatarAddress : ExplorerAvatarAddress);
+            exp.UsedApPotion += 99;
+            state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
+
+            // Next Season
+            state = new Wanted
+            {
+                Season = 2,
+                AvatarAddress = ExplorerAvatarAddress,
+                Bounty = 100 * NCG,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = ExplorerAddress,
+                BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                RandomSeed = seed + 1,
+            });
+
+            // Burn
+            state = state.BurnAsset(
+                new ActionContext(),
+                TesterAddress,
+                state.GetBalance(TesterAddress, NCG)
+            );
+
+            // Test
+            var resultState = new ClaimAdventureBossReward
+            {
+                Season = 2,
+                AvatarAddress = TesterAvatarAddress,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = TesterAddress,
+                BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                RandomSeed = seed + 2,
+            });
+            Test(resultState, expectedReward);
         }
 
         [Fact]
