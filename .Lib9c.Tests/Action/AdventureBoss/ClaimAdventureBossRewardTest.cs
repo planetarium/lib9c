@@ -49,7 +49,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address ExplorerAddress = new PrivateKey().Address;
 
         private static readonly Address ExplorerAvatarAddress =
-            Addresses.GetAvatarAddress(ExplorerAddress, 0);
+            new ("0000000000000000000000000000000000000001");
 
         private static readonly AvatarState ExplorerAvatarState = new (
             ExplorerAvatarAddress, ExplorerAddress, 0L, TableSheets.GetAvatarSheets(),
@@ -68,7 +68,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address TesterAddress = new PrivateKey().Address;
 
         private static readonly Address TesterAvatarAddress =
-            Addresses.GetAvatarAddress(TesterAddress, 0);
+            new ("0000000000000000000000000000000000000002");
 
         private static readonly AvatarState TesterAvatarState = new (
             TesterAvatarAddress, TesterAddress, 0L, TableSheets.GetAvatarSheets(),
@@ -165,6 +165,114 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
         }
 
+        public static IEnumerable<object[]> GetExploreTestData()
+        {
+            yield return new object[]
+            {
+                0, 100, 0, new ClaimableReward
+                {
+                    NcgReward = (5 + 15) * NCG, // 5NCG for raffle, 15NCG for 15% distribution
+                    ItemReward = new Dictionary<int, int>
+                    {
+                        { 600201, 0 },
+                        { 600202, 0 },
+                        { 600203, 13 }, // 100 AP / 7.5 ratio * 100% contribution
+                    },
+                    FavReward = new Dictionary<int, int>
+                    {
+                        { 20001, 0 },
+                        { 30001, 0 },
+                    },
+                },
+            };
+
+            yield return new object[]
+            {
+                0, 100, 1, new ClaimableReward
+                {
+                    NcgReward =
+                        // 5NCG for raffle, 7.5NCG for half of 15% distribution
+                        FungibleAssetValue.FromRawValue(
+                            NCG,
+                            (BigInteger)((5 + 7.5) * 100)
+                        ),
+                    ItemReward = new Dictionary<int, int>
+                    {
+                        { 600201, 0 },
+                        { 600202, 0 },
+                        { 600203, 13 }, // total 200 AP / 7.5 ratio * 50% contribution
+                    },
+                    FavReward = new Dictionary<int, int>
+                    {
+                        { 20001, 0 },
+                        { 30001, 0 },
+                    },
+                },
+            };
+
+            yield return new object[]
+            {
+                1, 100, 1, new ClaimableReward
+                {
+                    // No raffle, 7.5 NCG for half of 15% distribution
+                    NcgReward = FungibleAssetValue.FromRawValue(NCG, (BigInteger)(7.5 * 100)),
+                    ItemReward = new Dictionary<int, int>
+                    {
+                        { 600201, 0 },
+                        {
+                            600202, 66
+                        }, // 200 AP / 1.5 ratio * 50% contribution == 66.5 goes to 66 (closest even number)
+                        { 600203, 0 },
+                    },
+                    FavReward = new Dictionary<int, int>
+                    {
+                        { 20001, 0 },
+                        { 30001, 0 },
+                    },
+                },
+            };
+
+            yield return new object[]
+            {
+                0, 200, 1, new ClaimableReward
+                {
+                    // 10NCG for raffle, 15NCG for half of 15% distribution
+                    NcgReward = (10 + 15) * NCG,
+                    ItemReward = new Dictionary<int, int>
+                    {
+                        { 600201, 0 },
+                        { 600202, 0 },
+                        { 600203, 13 },
+                    },
+                    FavReward = new Dictionary<int, int>
+                    {
+                        { 20001, 0 },
+                        { 30001, 0 },
+                    },
+                },
+            };
+
+            yield return new object[]
+            {
+                1, 100, 2, new ClaimableReward
+                {
+                    // No raffle, 5 NCG for 1/3 of 15% distribution
+                    NcgReward = 5 * NCG,
+                    ItemReward = new Dictionary<int, int>
+                    {
+                        { 600201, 0 },
+                        { 600202, 66 },
+                        { 600203, 0 },
+                    },
+                    FavReward = new Dictionary<int, int>
+                    {
+                        { 20001, 0 },
+                        { 30001, 0 },
+                    },
+                },
+            };
+        }
+
         [Theory]
         [MemberData(nameof(GetWantedTestData))]
         public void WantedReward(
@@ -234,6 +342,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex + 1,
                 RandomSeed = seed,
             });
+            Assert.True(resultState.GetBountyBoard(1).Investors
+                .First(inv => inv.AvatarAddress == TesterAvatarAddress).Claimed);
 
             Test(resultState, expectedReward);
         }
@@ -324,15 +434,126 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
                 RandomSeed = seed + 3,
             });
+
+            for (var szn = 3; szn > 0; szn--)
+            {
+                var investor = resultState.GetBountyBoard(szn).Investors
+                    .FirstOrDefault(inv => inv.AvatarAddress == TesterAvatarAddress);
+                if (investor is not null)
+                {
+                    Assert.True(investor.Claimed);
+                }
+            }
+
             Test(resultState, expectedReward);
         }
 
-        // [Theory]
-        // [InlineData()]
-        // public void ExploreReward()
-        // {
-        // }
-        //
+        [Theory]
+        [MemberData(nameof(GetExploreTestData))]
+        public void ExploreReward(
+            int seed,
+            int bounty,
+            int anotherExplorerCount,
+            ClaimableReward expectedReward
+        )
+        {
+            // Settings
+            var state = _initialState;
+            foreach (var (key, value) in Sheets)
+            {
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            state = Stake(state, WantedAddress);
+
+            // Wanted
+            state = new Wanted
+            {
+                Season = 1,
+                AvatarAddress = WantedAvatarAddress,
+                Bounty = bounty * NCG,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = WantedAddress,
+                BlockIndex = 0L,
+                RandomSeed = seed,
+            });
+
+            // Explore
+            state = new AdventureBossBattle
+            {
+                Season = 1,
+                AvatarAddress = TesterAvatarAddress,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = TesterAddress,
+                BlockIndex = 1L,
+                RandomSeed = seed,
+            });
+
+            // Manipulate used AP Potion to calculate reward above zero
+            var board = state.GetExploreBoard(1);
+            board.UsedApPotion += 99;
+            var exp = state.GetExplorer(1, TesterAvatarAddress);
+            exp.UsedApPotion += 99;
+            state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
+
+            for (var i = 0; i < anotherExplorerCount; i++)
+            {
+                state = new AdventureBossBattle
+                {
+                    Season = 1,
+                    AvatarAddress = ExplorerAvatarAddress,
+                }.Execute(new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = ExplorerAddress,
+                    BlockIndex = 1L,
+                    RandomSeed = seed,
+                });
+
+                // Manipulate used AP Potion to calculate reward above zero
+                board = state.GetExploreBoard(1);
+                board.UsedApPotion += 99;
+                exp = state.GetExplorer(1, ExplorerAvatarAddress);
+                exp.UsedApPotion += 99;
+                state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
+            }
+
+            // Burn all remaining NCG to make test easier
+            state = state.BurnAsset(
+                new ActionContext
+                {
+                    RandomSeed = seed,
+                },
+                TesterAddress,
+                state.GetBalance(TesterAddress, NCG)
+            );
+
+            // Claim
+            var resultState = new ClaimAdventureBossReward
+            {
+                Season = 1,
+                AvatarAddress = TesterAvatarAddress,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = TesterAddress,
+                BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                RandomSeed = seed,
+            });
+
+            // Test
+            var exploreBoard = resultState.GetExploreBoard(1);
+            Assert.NotNull(exploreBoard.RaffleWinner);
+            Assert.Equal((int)(bounty * 0.05) * NCG, exploreBoard.RaffleReward);
+            Assert.True(resultState.GetExplorer(1, TesterAvatarAddress).Claimed);
+
+            Test(resultState, expectedReward);
+        }
+
         // [Theory]
         // [InlineData()]
         // public void AllReward()
