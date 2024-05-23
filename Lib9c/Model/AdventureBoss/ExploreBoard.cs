@@ -12,18 +12,16 @@ namespace Nekoyume.Model.AdventureBoss
 {
     public class ExploreBoard
     {
-        public const decimal RaffleRewardRatio = 0.05m;
-
         public long Season;
         public HashSet<Address> ExplorerList = new ();
 
         public long UsedApPotion;
         public long UsedGoldenDust;
-        public FungibleAssetValue UsedNcg;
+        public int UsedNcg;
         public long TotalPoint;
 
         public int? FixedRewardItemId;
-        public int? FixedRewardFavTicker;
+        public int? FixedRewardFavId;
         public Address? RaffleWinner;
         public FungibleAssetValue? RaffleReward;
 
@@ -36,19 +34,22 @@ namespace Nekoyume.Model.AdventureBoss
         {
             Season = bencoded[0].ToLong();
             ExplorerList = bencoded[1].ToHashSet(i => i.ToAddress());
-            FixedRewardItemId = bencoded[2].ToNullableInteger();
-            FixedRewardFavTicker = bencoded[3].ToNullableInteger();
-            if (bencoded.Count > 4)
+            UsedApPotion = bencoded[2].ToInteger();
+            UsedNcg = bencoded[3].ToInteger();
+            UsedGoldenDust = bencoded[4].ToInteger();
+            FixedRewardItemId = bencoded[5].ToNullableInteger();
+            FixedRewardFavId = bencoded[6].ToNullableInteger();
+            if (bencoded.Count > 7)
             {
-                RaffleWinner = bencoded[4].ToAddress();
-                RaffleReward = bencoded[5].ToFungibleAssetValue();
+                RaffleWinner = bencoded[7].ToAddress();
+                RaffleReward = bencoded[8].ToFungibleAssetValue();
             }
         }
 
         public void SetReward(RewardInfo rewardInfo, IRandom random)
         {
-            (FixedRewardItemId, FixedRewardFavTicker) = AdventureBossHelper.PickReward(random,
-                rewardInfo.FixedRewardItemIdDict, rewardInfo.FixedRewardFavTickerDict);
+            (FixedRewardItemId, FixedRewardFavId) = AdventureBossHelper.PickReward(random,
+                rewardInfo.FixedRewardItemIdDict, rewardInfo.FixedRewardFavIdDict);
         }
 
         public void AddExplorer(Address avatarAddress)
@@ -61,7 +62,8 @@ namespace Nekoyume.Model.AdventureBoss
             var bencoded = List.Empty
                 .Add(Season.Serialize())
                 .Add(new List(ExplorerList.OrderBy(e => e).Select(e => e.Serialize())))
-                .Add(FixedRewardItemId.Serialize()).Add(FixedRewardFavTicker.Serialize());
+                .Add(UsedApPotion.Serialize()).Add(UsedNcg.Serialize()).Add(UsedGoldenDust.Serialize())
+                .Add(FixedRewardItemId.Serialize()).Add(FixedRewardFavId.Serialize());
             if (RaffleWinner is not null)
             {
                 bencoded = bencoded.Add(RaffleWinner.Serialize()).Add(RaffleReward.Serialize());

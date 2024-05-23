@@ -1,7 +1,6 @@
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.AdventureBoss
@@ -13,8 +12,8 @@ namespace Nekoyume.Model.AdventureBoss
         public int Floor;
         public int UsedApPotion;
         public int UsedGoldenDust;
+        public int UsedNcg;
         public bool Claimed;
-        public FungibleAssetValue? UsedNcg;
 
 
         public Explorer(Address avatarAddress)
@@ -23,7 +22,6 @@ namespace Nekoyume.Model.AdventureBoss
             Score = 0;
             Floor = 0;
             Claimed = false;
-            UsedNcg = null;
         }
 
         public Explorer(Address avatarAddress, int score, int floor)
@@ -32,7 +30,6 @@ namespace Nekoyume.Model.AdventureBoss
             Score = score;
             Floor = floor;
             Claimed = false;
-            UsedNcg = null;
         }
 
         public Explorer(IValue bencoded)
@@ -43,30 +40,17 @@ namespace Nekoyume.Model.AdventureBoss
             Floor = list[2].ToInteger();
             UsedApPotion = list[3].ToInteger();
             UsedGoldenDust = list[4].ToInteger();
-            Claimed = list[5].ToBoolean();
-            if (list.Count > 6)
-            {
-                UsedNcg = list[6].ToFungibleAssetValue();
-            }
+            UsedNcg = list[5].ToInteger();
+            Claimed = list[6].ToBoolean();
         }
 
-        private IValue _bencoded()
-        {
-            var bencoded = List.Empty
-                .Add(AvatarAddress.Serialize())
-                .Add(Score.Serialize())
-                .Add(Floor.Serialize())
-                .Add(UsedApPotion.Serialize())
-                .Add(UsedGoldenDust.Serialize())
-                .Add(Claimed.Serialize());
-            if (UsedNcg is not null)
-            {
-                bencoded = bencoded.Add(UsedNcg.Serialize());
-            }
-
-            return bencoded;
-        }
-
-        public IValue Bencoded => _bencoded();
+        public IValue Bencoded => List.Empty
+            .Add(AvatarAddress.Serialize())
+            .Add(Score.Serialize())
+            .Add(Floor.Serialize())
+            .Add(UsedApPotion.Serialize())
+            .Add(UsedGoldenDust.Serialize())
+            .Add(UsedNcg.Serialize())
+            .Add(Claimed.Serialize());
     }
 }

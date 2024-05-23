@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Numerics;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -47,12 +48,12 @@ namespace Nekoyume.Helper
             }.ToImmutableDictionary();
 
         public static (int?, int?) PickReward(IRandom random, Dictionary<int, int> itemIdDict,
-            Dictionary<int, int> favTickerDict)
+            Dictionary<int, int> favIdDict)
         {
-            var totalProb = itemIdDict.Values.Sum() + favTickerDict.Values.Sum();
+            var totalProb = itemIdDict.Values.Sum() + favIdDict.Values.Sum();
             var target = random.Next(0, totalProb);
             int? itemId = null;
-            int? favTicker = null;
+            int? favId = null;
             foreach (var item in itemIdDict.ToImmutableSortedDictionary())
             {
                 if (target < item.Value)
@@ -66,12 +67,12 @@ namespace Nekoyume.Helper
 
             if (itemId is null)
             {
-                foreach (var item in favTickerDict.ToImmutableSortedDictionary())
+                foreach (var item in favIdDict.ToImmutableSortedDictionary())
 
                 {
                     if (target < item.Value)
                     {
-                        favTicker = item.Key;
+                        favId = item.Key;
                         break;
                     }
 
@@ -79,7 +80,7 @@ namespace Nekoyume.Helper
                 }
             }
 
-            return (itemId, favTicker);
+            return (itemId, favId);
         }
 
         private static ClaimableReward AddReward(ClaimableReward reward, bool isItem, int id,
@@ -160,20 +161,17 @@ namespace Nekoyume.Helper
             var finalPortion = (decimal)myInvestment.Price.MajorUnit;
             if (maxInvestors.Contains(avatarAddress))
             {
-                finalPortion = (decimal)myInvestment.Price.MajorUnit *
-                               (1 + 0.2m / maxInvestors.Count);
+                finalPortion += (decimal)(bonusNcg / maxInvestors.Count);
             }
 
             reward = AddReward(reward, bountyBoard.FixedRewardItemId is not null,
-                (int)(bountyBoard.FixedRewardItemId ?? bountyBoard.FixedRewardFavTicker)!,
-                (int)Math.Round(totalFixedRewardAmount * finalPortion /
-                                (decimal)bountyBoard.totalBounty().MajorUnit)
+                (int)(bountyBoard.FixedRewardItemId ?? bountyBoard.FixedRewardFavId)!,
+                (int)Math.Round(totalFixedRewardAmount * finalPortion / totalRewardNcg)
             );
 
             reward = AddReward(reward, bountyBoard.RandomRewardItemId is not null,
-                (int)(bountyBoard.RandomRewardItemId ?? bountyBoard.RandomRewardFavTicker)!,
-                (int)Math.Round(totalRandomRewardAmount * finalPortion /
-                                (decimal)bountyBoard.totalBounty().MajorUnit)
+                (int)(bountyBoard.RandomRewardItemId ?? bountyBoard.RandomRewardFavId)!,
+                (int)Math.Round(totalRandomRewardAmount * finalPortion / totalRewardNcg)
             );
             return reward;
         }
@@ -248,7 +246,7 @@ namespace Nekoyume.Helper
                 : NcgRuneRatio;
             var totalRewardAmount = (int)Math.Round(exploreBoard.UsedApPotion / ncgRewardRatio);
             reward = AddReward(reward, exploreBoard.FixedRewardItemId is not null,
-                (int)(exploreBoard.FixedRewardItemId ?? exploreBoard.FixedRewardFavTicker)!,
+                (int)(exploreBoard.FixedRewardItemId ?? exploreBoard.FixedRewardFavId)!,
                 (int)Math.Floor((decimal)(totalRewardAmount * myContribution))
             );
             return reward;
