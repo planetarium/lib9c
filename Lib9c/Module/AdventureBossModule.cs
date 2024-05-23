@@ -80,6 +80,21 @@ namespace Nekoyume.Module
             return world.SetAccount(Addresses.BountyBoard, account);
         }
 
+        public static bool TryGetExploreBoard(this IWorldState worldState, long season,
+            out ExploreBoard exploreBoard)
+        {
+            try
+            {
+                exploreBoard = GetExploreBoard(worldState, season);
+                return true;
+            }
+            catch (FailedLoadStateException)
+            {
+                exploreBoard = null;
+                return false;
+            }
+        }
+
         public static ExploreBoard GetExploreBoard(this IWorldState worldState, long season)
         {
             var account = worldState.GetAccountState(Addresses.ExploreBoard);

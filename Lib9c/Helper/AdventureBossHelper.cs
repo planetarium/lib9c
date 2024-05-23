@@ -28,6 +28,8 @@ namespace Nekoyume.Helper
             return $"{season:X40}";
         }
 
+        public const int RaffleRewardPercent = 5;
+
         public const decimal TotalRewardMultiplier = 1.2m;
         public const decimal FixedRewardRatio = 0.7m;
         public const decimal RandomRewardRatio = 1m - FixedRewardRatio;
@@ -110,6 +112,61 @@ namespace Nekoyume.Helper
             }
 
             return reward;
+        }
+
+        public static IWorld PickRaffleWinner(IWorld states, IActionContext context, long season)
+        {
+            var random = context.GetRandom();
+
+            for (var szn = season; szn > 0; szn--)
+            {
+                // Wanted raffle
+                var bountyBoard = states.GetBountyBoard(szn);
+                if (bountyBoard.RaffleWinner is not null)
+                {
+                    break;
+                }
+
+                bountyBoard.RaffleReward =
+                    (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+                var totalProb = bountyBoard.Investors.Aggregate(new BigInteger(0),
+                    (current, inv) => current + inv.Price.RawValue);
+                var target = (BigInteger)random.Next((int)totalProb);
+                foreach (var inv in bountyBoard.Investors)
+                {
+                    if (target < inv.Price.RawValue)
+                    {
+                        bountyBoard.RaffleWinner = inv.AvatarAddress;
+                        break;
+                    }
+
+                    target -= inv.Price.RawValue;
+                }
+
+                states = states.SetBountyBoard(szn, bountyBoard);
+
+                if (states.TryGetExploreBoard(szn, out var exploreBoard))
+                {
+                    exploreBoard.RaffleReward =
+                        (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+
+                    if (exploreBoard.ExplorerList.Count > 0)
+                    {
+                        exploreBoard.RaffleWinner =
+                            exploreBoard.ExplorerList.ToImmutableSortedSet()[
+                                random.Next(exploreBoard.ExplorerList.Count)
+                            ];
+                    }
+                    else
+                    {
+                        exploreBoard.RaffleWinner = new Address();
+                    }
+
+                    states = states.SetExploreBoard(szn, exploreBoard);
+                }
+            }
+
+            return states;
         }
 
         public static ClaimableReward CalculateWantedReward(

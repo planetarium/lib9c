@@ -14,8 +14,6 @@ namespace Nekoyume.Model.AdventureBoss
 {
     public class BountyBoard
     {
-        public const decimal RaffleRewardRatio = 0.05m;
-
         public long Season;
         public List<Investor> Investors = new ();
         public int? FixedRewardItemId;
