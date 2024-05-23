@@ -54,15 +54,9 @@ namespace Nekoyume.Action.AdventureBoss
             var exploreBoard = states.GetExploreBoard(Season);
             exploreBoard.AddExplorer(AvatarAddress);
 
-            Explorer explorer;
-            try
-            {
-                explorer = states.GetExplorer(Season, AvatarAddress);
-            }
-            catch (FailedLoadStateException)
-            {
-                explorer = new Explorer(AvatarAddress, 0, 0);
-            }
+            var explorer = states.TryGetExplorer(Season, AvatarAddress, out var exp)
+                ? exp
+                : new Explorer(AvatarAddress);
 
             // TODO: AdventureBossSimulator with pass-through log
             var score = 100;
