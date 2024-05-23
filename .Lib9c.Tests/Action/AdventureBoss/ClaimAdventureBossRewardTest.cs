@@ -556,6 +556,141 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Test(resultState, expectedReward);
         }
 
+        [Fact]
+        public void ExploreMultipleSeason()
+        {
+            const int seed = 0;
+            // Settings
+            var expectedReward = new ClaimableReward
+            {
+                NcgReward = 40 * NCG,  // (5NCG for raffle, 15NCG for 15% distribution) for season 1 and 3
+                FavReward = new Dictionary<int, int>
+                {
+                    { 20001, 0 },
+                    { 30001, 0 },
+                },
+                ItemReward = new Dictionary<int, int>
+                {
+                    { 600201, 0 },
+                    { 600202, 0 },
+                    { 600203, 26 },  // (100 AP / 7.5 Ratio * 100% contribution) for season 1 and 3
+                },
+            };
+            var state = _initialState;
+            foreach (var (key, value) in Sheets)
+            {
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            state = Stake(state, TesterAddress);
+            state = Stake(state, WantedAddress);
+            state = Stake(state, ExplorerAddress);
+
+            // Explore for season 1, 3
+            state = new Wanted
+            {
+                Season = 1,
+                AvatarAddress = WantedAvatarAddress,
+                Bounty = 100 * NCG,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = WantedAddress,
+                BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                RandomSeed = seed,
+            });
+            state = new AdventureBossBattle
+            {
+                Season = 1,
+                AvatarAddress = TesterAvatarAddress,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = TesterAddress,
+                BlockIndex = state.GetLatestAdventureBossSeason().StartBlockIndex + 1,
+            });
+            // Manipulate used AP Potion to calculate reward above zero
+            var board = state.GetExploreBoard(1);
+            board.UsedApPotion += 99;
+            var exp = state.GetExplorer(1, TesterAvatarAddress);
+            exp.UsedApPotion += 99;
+            state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
+
+            // No Explore
+            state = new Wanted
+            {
+                Season = 2,
+                AvatarAddress =
+                    ExplorerAvatarAddress, // To avoid wanted for two seasons in a row error
+                Bounty = 100 * NCG,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = ExplorerAddress,
+                BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                RandomSeed = seed + 1,
+            });
+
+            state = new Wanted
+            {
+                Season = 3,
+                AvatarAddress = WantedAvatarAddress,
+                Bounty = 100 * NCG,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = WantedAddress,
+                BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                RandomSeed = seed + 2,
+            });
+            state = new AdventureBossBattle
+            {
+                Season = 3,
+                AvatarAddress = TesterAvatarAddress,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = TesterAddress,
+                BlockIndex = state.GetLatestAdventureBossSeason().StartBlockIndex + 1,
+            });
+            // Manipulate used AP Potion to calculate reward above zero
+            board = state.GetExploreBoard(3);
+            board.UsedApPotion += 99;
+            exp = state.GetExplorer(3, TesterAvatarAddress);
+            exp.UsedApPotion += 99;
+            state = state.SetExploreBoard(3, board).SetExplorer(3, exp);
+
+            // Burn remaining NCG
+            state = state.BurnAsset(
+                new ActionContext(),
+                TesterAddress,
+                state.GetBalance(TesterAddress, NCG)
+            );
+
+            // Test
+            var resultState = new ClaimAdventureBossReward
+            {
+                Season = 3,
+                AvatarAddress = TesterAvatarAddress,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = TesterAddress,
+                BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                RandomSeed = seed + 3,
+            });
+
+            for (var szn = 3; szn > 0; szn--)
+            {
+                if (resultState.TryGetExplorer(szn, TesterAvatarAddress, out var explorer))
+                {
+                    Assert.True(explorer.Claimed);
+                }
+            }
+
+            Test(resultState, expectedReward);
+        }
+
         // [Theory]
         // [InlineData()]
         // public void AllReward()
