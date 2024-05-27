@@ -81,12 +81,16 @@ namespace Nekoyume.Action.AdventureBoss
             // Validation
             if (Season != latestSeason.Season)
             {
-                throw new InvalidAdventureBossSeasonException($"Given season {Season} is not current season {latestSeason.Season}");
+                throw new InvalidAdventureBossSeasonException(
+                    $"Given season {Season} is not current season {latestSeason.Season}"
+                );
             }
 
             if (context.BlockIndex > latestSeason.EndBlockIndex)
             {
-                throw new InvalidAdventureBossSeasonException($"Season {Season} Finished at block {latestSeason.EndBlockIndex}");
+                throw new InvalidAdventureBossSeasonException(
+                    $"Season {Season} Finished at block {latestSeason.EndBlockIndex}"
+                );
             }
 
             if (!states.TryGetExplorer(Season, AvatarAddress, out var explorer))
@@ -99,10 +103,18 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidOperationException("Already opened all floors");
             }
 
+            if (explorer.Floor != explorer.MaxFloor)
+            {
+                throw new InvalidOperationException(
+                    $"You have to clear floor {explorer.MaxFloor}. Current floor is {explorer.Floor}"
+                );
+            }
+
             if (!UnlockDict.ContainsKey(explorer.MaxFloor))
             {
                 throw new InvalidOperationException(
-                    $"Floor {explorer.MaxFloor} not found. Maybe already opened all floors.");
+                    $"Floor {explorer.MaxFloor} not found. Maybe already opened all floors."
+                );
             }
 
             // Check balance and unlock
