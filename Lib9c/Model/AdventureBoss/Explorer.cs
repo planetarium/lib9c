@@ -39,16 +39,18 @@ namespace Nekoyume.Model.AdventureBoss
             AvatarAddress = list[0].ToAddress();
             Score = list[1].ToInteger();
             Floor = list[2].ToInteger();
-            UsedApPotion = list[3].ToInteger();
-            UsedGoldenDust = list[4].ToInteger();
-            UsedNcg = list[5].ToInteger();
-            Claimed = list[6].ToBoolean();
+            MaxFloor = list[3].ToInteger();
+            UsedApPotion = list[4].ToInteger();
+            UsedGoldenDust = list[5].ToInteger();
+            UsedNcg = list[6].ToInteger();
+            Claimed = list[7].ToBoolean();
         }
 
         public IValue Bencoded => List.Empty
             .Add(AvatarAddress.Serialize())
             .Add(Score.Serialize())
             .Add(Floor.Serialize())
+            .Add(MaxFloor.Serialize())
             .Add(UsedApPotion.Serialize())
             .Add(UsedGoldenDust.Serialize())
             .Add(UsedNcg.Serialize())
