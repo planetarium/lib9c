@@ -10,6 +10,7 @@ namespace Nekoyume.Model.AdventureBoss
         public Address AvatarAddress;
         public int Score;
         public int Floor;
+        public int MaxFloor = 5;
         public int UsedApPotion;
         public int UsedGoldenDust;
         public int UsedNcg;
