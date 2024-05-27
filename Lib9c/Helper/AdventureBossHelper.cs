@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Numerics;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Action.AdventureBoss;
+using Nekoyume.Battle;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Module;
 
@@ -135,22 +135,17 @@ namespace Nekoyume.Helper
 
                 bountyBoard.RaffleReward =
                     (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
-                var totalProb = bountyBoard.Investors.Aggregate(new BigInteger(0),
-                    (current, inv) => current + inv.Price.RawValue);
-                var target = (BigInteger)random.Next((int)totalProb);
+
+                var selector = new WeightedSelector<Address>(context.GetRandom());
                 foreach (var inv in bountyBoard.Investors)
                 {
-                    if (target < inv.Price.RawValue)
-                    {
-                        bountyBoard.RaffleWinner = inv.AvatarAddress;
-                        break;
-                    }
-
-                    target -= inv.Price.RawValue;
+                    selector.Add(inv.AvatarAddress, (decimal)inv.Price.RawValue);
                 }
 
+                bountyBoard.RaffleWinner = selector.Select(1).First();
                 states = states.SetBountyBoard(szn, bountyBoard);
 
+                // Explore raffle
                 if (states.TryGetExploreBoard(szn, out var exploreBoard))
                 {
                     exploreBoard.RaffleReward =
