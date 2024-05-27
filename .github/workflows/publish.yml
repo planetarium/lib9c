@@ -44,24 +44,7 @@ jobs:
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   jsr:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 8
-          run_install: true
-      - run: pnpm -r build
-      - name: choose version
-        working-directory: "@planetarium/lib9c"
-        run: |
-          if [[ ! "$GITHUB_REF" =~ ^refs/tags/[0-9]+.[0-9]+.[0-9]+$ ]]; then
-            suffix="-dev+${{ github.sha }}"
-            jq ".version = .version + \"$suffix\"" jsr.json > jsr.json.tmp
-            mv jsr.json.tmp jsr.json
-          fi
-      - run: npx jsr publish --allow-dirty
-        working-directory: "@planetarium/lib9c"
+    uses: planetarium/.github/.github/workflows/publish_jsr.yaml@7da1714cbc9554aa17a19bc6477b8b067f714ea7
+    with:
+      working_directory: "@planetarium/lib9c"
+      pnpm_version: "9.1.2"
