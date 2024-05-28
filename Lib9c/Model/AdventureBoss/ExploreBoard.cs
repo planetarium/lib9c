@@ -37,12 +37,13 @@ namespace Nekoyume.Model.AdventureBoss
             UsedApPotion = bencoded[2].ToInteger();
             UsedNcg = bencoded[3].ToInteger();
             UsedGoldenDust = bencoded[4].ToInteger();
-            FixedRewardItemId = bencoded[5].ToNullableInteger();
-            FixedRewardFavId = bencoded[6].ToNullableInteger();
-            if (bencoded.Count > 7)
+            TotalPoint = bencoded[5].ToLong();
+            FixedRewardItemId = bencoded[6].ToNullableInteger();
+            FixedRewardFavId = bencoded[7].ToNullableInteger();
+            if (bencoded.Count > 8)
             {
-                RaffleWinner = bencoded[7].ToAddress();
-                RaffleReward = bencoded[8].ToFungibleAssetValue();
+                RaffleWinner = bencoded[8].ToAddress();
+                RaffleReward = bencoded[9].ToFungibleAssetValue();
             }
         }
 
@@ -63,6 +64,7 @@ namespace Nekoyume.Model.AdventureBoss
                 .Add(Season.Serialize())
                 .Add(new List(ExplorerList.OrderBy(e => e).Select(e => e.Serialize())))
                 .Add(UsedApPotion.Serialize()).Add(UsedNcg.Serialize()).Add(UsedGoldenDust.Serialize())
+                .Add(TotalPoint.Serialize())
                 .Add(FixedRewardItemId.Serialize()).Add(FixedRewardFavId.Serialize());
             if (RaffleWinner is not null)
             {
