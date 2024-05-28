@@ -1,3 +1,4 @@
+using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
@@ -12,7 +13,7 @@ namespace Nekoyume.Model.AdventureBoss
         public int Floor;
         public int UsedApPotion;
         public int UsedGoldenDust;
-        public int UsedNcg;
+        public BigInteger UsedNcg;
         public bool Claimed;
 
 
@@ -36,21 +37,21 @@ namespace Nekoyume.Model.AdventureBoss
         {
             var list = (List)bencoded;
             AvatarAddress = list[0].ToAddress();
-            Score = list[1].ToInteger();
-            Floor = list[2].ToInteger();
-            UsedApPotion = list[3].ToInteger();
-            UsedGoldenDust = list[4].ToInteger();
-            UsedNcg = list[5].ToInteger();
+            Score = (Integer)list[1];
+            Floor = (Integer)list[2];
+            UsedApPotion = (Integer)list[3];
+            UsedGoldenDust = (Integer)list[4];
+            UsedNcg = (Integer)list[5];
             Claimed = list[6].ToBoolean();
         }
 
         public IValue Bencoded => List.Empty
             .Add(AvatarAddress.Serialize())
-            .Add(Score.Serialize())
-            .Add(Floor.Serialize())
-            .Add(UsedApPotion.Serialize())
-            .Add(UsedGoldenDust.Serialize())
-            .Add(UsedNcg.Serialize())
+            .Add(Score)
+            .Add(Floor)
+            .Add(UsedApPotion)
+            .Add(UsedGoldenDust)
+            .Add(UsedNcg)
             .Add(Claimed.Serialize());
     }
 }
