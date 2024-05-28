@@ -263,7 +263,8 @@ namespace Lib9c.Tests.Action
                     raidSimulatorSheets,
                     _tableSheets.CostumeStatSheet,
                     new List<StatModifier>(),
-                    _tableSheets.DeBuffLimitSheet
+                    _tableSheets.DeBuffLimitSheet,
+                    _tableSheets.BuffLinkSheet
                     );
                 simulator.Simulate();
                 var score = simulator.DamageDealt;
@@ -502,7 +503,8 @@ namespace Lib9c.Tests.Action
                 _tableSheets.GetRaidSimulatorSheets(),
                 _tableSheets.CostumeStatSheet,
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
                 );
             simulator.Simulate();
 

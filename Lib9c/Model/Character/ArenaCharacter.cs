@@ -29,6 +29,7 @@ namespace Nekoyume.Model
         private readonly StatBuffSheet _statBuffSheet;
         private readonly SkillActionBuffSheet _skillActionBuffSheet;
         private readonly ActionBuffSheet _actionBuffSheet;
+        private readonly BuffLinkSheet _buffLinkSheet;
         private readonly ArenaSkills _skills;
 
         public readonly IArenaSimulator Simulator;
@@ -144,6 +145,7 @@ namespace Nekoyume.Model
             _statBuffSheet = sheets.StatBuffSheet;
             _skillActionBuffSheet = sheets.SkillActionBuffSheet;
             _actionBuffSheet = sheets.ActionBuffSheet;
+            _buffLinkSheet = simulator.BuffLinkSheet;
 
             Simulator = simulator;
             Stats = GetStat(
@@ -639,7 +641,7 @@ namespace Nekoyume.Model
 
                 if (skillInfo.IceShield is not null)
                 {
-                    var frostBite = skillInfo.IceShield.FrostBite(_statBuffSheet);
+                    var frostBite = skillInfo.IceShield.FrostBite(_statBuffSheet, _buffLinkSheet);
                     AddBuff(frostBite);
                     Simulator.Log.Add(new ArenaTick(frostBite.RowData.Id, (ArenaCharacter)Clone(), this.usedSkill.SkillInfos, usedSkill.BuffInfos));
                 }

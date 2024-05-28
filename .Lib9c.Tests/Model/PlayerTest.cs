@@ -63,7 +63,8 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -99,7 +100,8 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -152,7 +154,8 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
 
@@ -205,7 +208,8 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                new DeBuffLimitSheet()
+                new DeBuffLimitSheet(),
+                _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -262,7 +266,8 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                new DeBuffLimitSheet()
+                new DeBuffLimitSheet(),
+                _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -392,7 +397,8 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
             Assert.Empty(player.eventMap);
@@ -473,7 +479,8 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
@@ -544,7 +551,8 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             var skill = SkillFactory.Get(_tableSheets.SkillSheet[700004], 0, 100, 0, StatType.NONE);
             skill.CustomField = new SkillCustomField { BuffDuration = 2 };
@@ -629,7 +637,8 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
             var enemy = new Enemy(
@@ -740,7 +749,8 @@ namespace Lib9c.Tests.Model
                 new CostumeStatSheet(),
                 new List<ItemBase>(),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
             var costumeLayerAtk = player.ATK;
@@ -949,7 +959,8 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);

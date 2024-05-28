@@ -166,6 +166,7 @@ namespace Nekoyume.Action
                 typeof(RuneListSheet),
                 typeof(RuneLevelBonusSheet),
                 typeof(DeBuffLimitSheet),
+                typeof(BuffLinkSheet),
             };
             if (collectionExist)
             {
@@ -367,6 +368,7 @@ namespace Nekoyume.Action
                     PlayCount),
                 collectionModifiers,
                 deBuffLimitSheet,
+                sheets.GetSheet<BuffLinkSheet>(),
                 shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage);
             simulator.Simulate();
             sw.Stop();

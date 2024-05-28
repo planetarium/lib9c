@@ -69,6 +69,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
                 _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet,
                 copyCharacter
             );
             var player = new Player(avatarState, simulator);
@@ -133,7 +134,8 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             var player = new Player(avatarState, simulator);
 
@@ -182,7 +184,8 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             player = new Player(avatarState, simulator);
             player.AddBuff(new Focus(_tableSheets.ActionBuffSheet.OrderedList.First(s => s.ActionBuffType == ActionBuffType.Focus)));
