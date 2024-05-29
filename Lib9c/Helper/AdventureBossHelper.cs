@@ -247,7 +247,7 @@ namespace Nekoyume.Helper
             ClaimableReward reward, long currentBlockIndex, long season, Address avatarAddress,
             out ClaimableReward collectedReward)
         {
-            var agentAddress= states.GetAvatarState(avatarAddress).agentAddress;
+            var agentAddress = states.GetAvatarState(avatarAddress).agentAddress;
             for (var szn = season; szn > 0; szn--)
             {
                 var seasonInfo = states.GetSeasonInfo(szn);
@@ -277,7 +277,8 @@ namespace Nekoyume.Helper
                 }
 
                 // Calculate reward for this season
-                reward = CalculateWantedReward(reward, bountyBoard, avatarAddress, out var ncgReward);
+                reward = CalculateWantedReward(reward, bountyBoard, avatarAddress,
+                    out var ncgReward);
 
                 // Transfer NCG reward from seasonal address
                 if (ncgReward.RawValue > 0)
@@ -357,7 +358,7 @@ namespace Nekoyume.Helper
             return reward;
         }
 
-        public static IWorld CollectExploreReward( IWorld states, IActionContext context,
+        public static IWorld CollectExploreReward(IWorld states, IActionContext context,
             ClaimableReward reward, long currentBlockIndex, long season, Address avatarAddress,
             out ClaimableReward collectedReward)
         {
