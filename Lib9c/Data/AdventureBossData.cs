@@ -54,7 +54,7 @@ namespace Nekoyume.Data
         public const decimal NcgRuneRatio = 2.5m;
 
         // FIXME: This may temporary
-        public static readonly ImmutableArray<AdventureBossReward> WantedRewardList =
+        public static readonly ImmutableArray<AdventureBossReward> AdventureBossRewards =
             new AdventureBossReward[]
             {
                 new ()
