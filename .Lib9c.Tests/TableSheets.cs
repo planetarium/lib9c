@@ -253,6 +253,8 @@ namespace Lib9c.Tests
 
         public DeBuffLimitSheet DeBuffLimitSheet { get; set; }
 
+        public BuffLinkSheet BuffLinkSheet { get; set; }
+
         public void ItemSheetInitialize()
         {
             ItemSheet ??= new ItemSheet();

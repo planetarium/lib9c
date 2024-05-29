@@ -71,6 +71,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
                 _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet,
                 copyCharacter,
                 shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
             );
@@ -150,6 +151,7 @@ shatter_strike_max_damage,1";
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
                 _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet,
                 copyCharacter,
                 shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
             );

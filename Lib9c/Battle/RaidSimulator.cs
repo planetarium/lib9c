@@ -28,8 +28,7 @@ namespace Nekoyume.Battle
         private RuneSheet _runeSheet;
         private WorldBossCharacterSheet.Row _currentBossRow;
 
-        public RaidSimulator(
-            int bossId,
+        public RaidSimulator(int bossId,
             IRandom random,
             AvatarState avatarState,
             List<Guid> foods,
@@ -39,11 +38,12 @@ namespace Nekoyume.Battle
             CostumeStatSheet costumeStatSheet,
             List<StatModifier> collectionModifiers,
             DeBuffLimitSheet deBuffLimitSheet,
-            long shatterStrikeMaxDamage = 400_000
-        ) : base(random, avatarState, foods, simulatorSheets,
+            BuffLinkSheet buffLinkSheet,
+            long shatterStrikeMaxDamage = 400_000) : base(random, avatarState, foods, simulatorSheets,
             shatterStrikeMaxDamage: shatterStrikeMaxDamage)
         {
             DeBuffLimitSheet = deBuffLimitSheet;
+            BuffLinkSheet = buffLinkSheet;
             var runeOptionSheet = simulatorSheets.RuneOptionSheet;
             var skillSheet = simulatorSheets.SkillSheet;
             var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
