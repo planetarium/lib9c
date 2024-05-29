@@ -123,7 +123,7 @@ namespace Nekoyume.Action.AdventureBoss
                         random.Next(0, Data.AdventureBossData.WantedRewardList.Length)];
                 seasonInfo.BossId = reward.BossId;
                 bountyBoard.SetReward(reward.wantedReward, random);
-                exploreBoard.SetReward(reward.exploreReward, random);
+                exploreBoard.SetReward(reward.contributionReward, random);
 
                 states = states.SetSeasonInfo(seasonInfo);
                 states = states.SetLatestAdventureBossSeason(seasonInfo);

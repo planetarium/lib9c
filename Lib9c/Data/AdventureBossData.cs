@@ -23,7 +23,7 @@ namespace Nekoyume.Data
             public int Ratio;
         }
 
-        public struct ExploreData
+        public struct ExploreRewardData
         {
             public ExploreReward[] FirstReward;
             public ExploreReward[] Reward;
@@ -33,8 +33,8 @@ namespace Nekoyume.Data
         {
             public int BossId;
             public RewardInfo wantedReward;
-            public RewardInfo exploreReward;
-            public ImmutableDictionary<int, ExploreData> exploreData;
+            public RewardInfo contributionReward;
+            public ImmutableDictionary<int, ExploreRewardData> exploreReward;
         }
 
         public static readonly ImmutableDictionary<int, decimal> NcgRewardRatio =
@@ -76,7 +76,7 @@ namespace Nekoyume.Data
                             { 20001, 20 }, { 30001, 20 }
                         }
                     },
-                    exploreReward = new RewardInfo
+                    contributionReward = new RewardInfo
                     {
                         FixedRewardItemIdDict = new Dictionary<int, int>
                         {
@@ -114,7 +114,7 @@ namespace Nekoyume.Data
                             { 20001, 20 }, { 30001, 20 }
                         }
                     },
-                    exploreReward = new RewardInfo
+                    contributionReward = new RewardInfo
                     {
                         FixedRewardItemIdDict = new Dictionary<int, int>
                         {
@@ -144,7 +144,7 @@ namespace Nekoyume.Data
                             { 20001, 20 }, { 30001, 20 }
                         }
                     },
-                    exploreReward = new RewardInfo
+                    contributionReward = new RewardInfo
                     {
                         FixedRewardItemIdDict = new Dictionary<int, int>
                         {
@@ -174,7 +174,7 @@ namespace Nekoyume.Data
                             { 20001, 20 }, { 30001, 20 }
                         }
                     },
-                    exploreReward = new RewardInfo
+                    contributionReward = new RewardInfo
                     {
                         FixedRewardItemIdDict = new Dictionary<int, int>
                         {
