@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -11,12 +12,12 @@ using Nekoyume.Action;
 using Nekoyume.Action.AdventureBoss;
 using Nekoyume.Data;
 using Nekoyume.Model.AdventureBoss;
+using Nekoyume.Model.Item;
 using Nekoyume.Module;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Helper
 {
-
-
     public static class AdventureBossHelper
     {
         public static string GetSeasonAsAddressForm(long season)
@@ -262,7 +263,8 @@ namespace Nekoyume.Helper
                 }
 
                 // Calculate reward for this season
-                reward = CalculateWantedReward(reward, bountyBoard, avatarAddress, out var ncgReward);
+                reward = CalculateWantedReward(reward, bountyBoard, avatarAddress,
+                    out var ncgReward);
 
                 // Transfer NCG reward from seasonal address
                 if (ncgReward.RawValue > 0)
@@ -394,6 +396,38 @@ namespace Nekoyume.Helper
             }
 
             collectedReward = reward;
+            return states;
+        }
+
+        public static IWorld AddExploreRewards(IActionContext context, IWorld states,
+            Address avatarAddress,
+            IEnumerable<AdventureBossData.ExploreReward> rewardList)
+        {
+            foreach (var reward in rewardList)
+            {
+                switch (reward.RewardType)
+                {
+                    case "Rune":
+                        var runeSheet = states.GetSheet<RuneSheet>();
+                        var rune = Currencies.GetRune(runeSheet.OrderedList
+                            .First(r => r.Id == reward.RewardId).Ticker);
+                        states = states.MintAsset(context, avatarAddress, rune * reward.Amount);
+                        break;
+                    case "Crystal":
+                        states = states.MintAsset(context, avatarAddress,
+                            Currencies.Crystal * reward.Amount);
+                        break;
+                    case "Material":
+                        var materialSheet = states.GetSheet<MaterialItemSheet>();
+                        var inventory = states.GetInventory(avatarAddress);
+                        var material = ItemFactory.CreateMaterial(
+                            materialSheet.Values.First(row => row.Id == reward.RewardId)
+                        );
+                        inventory.AddItem(material, reward.Amount);
+                        break;
+                }
+            }
+
             return states;
         }
     }

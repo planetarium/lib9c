@@ -1,12 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
+using Nekoyume.Battle;
 using Nekoyume.Data;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.Item;
@@ -100,18 +103,31 @@ namespace Nekoyume.Action.AdventureBoss
             exploreBoard.UsedApPotion += requiredPotion;
             explorer.UsedApPotion += requiredPotion;
 
+            // Add point, reward
             var point = 0;
+            var rewardList = new List<AdventureBossData.ExploreReward>();
             var random = context.GetRandom();
+            var selector = new WeightedSelector<AdventureBossData.ExploreReward>(random);
             for (var fl = 1; fl <= explorer.Floor; fl++)
             {
                 var (min, max) = AdventureBossData.PointDict[fl];
                 point += random.Next(min, max + 1);
+
+                selector.Clear();
+                var floorReward = AdventureBossData.AdventureBossRewards
+                    .First(rw => rw.BossId == latestSeason.BossId).exploreReward[fl];
+                foreach (var reward in floorReward.Reward)
+                {
+                    selector.Add(reward, reward.Ratio);
+                }
+
+                rewardList.Add(selector.Select(1).First());
             }
 
             exploreBoard.TotalPoint += point;
             explorer.Score += point;
-
-            // TODO: Give rewards
+            states = AdventureBossHelper.AddExploreRewards(context, states, AvatarAddress,
+                rewardList);
 
             return states
                 .SetInventory(AvatarAddress, inventory)
