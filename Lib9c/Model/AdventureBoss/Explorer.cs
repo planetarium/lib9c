@@ -1,3 +1,4 @@
+using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
@@ -13,7 +14,7 @@ namespace Nekoyume.Model.AdventureBoss
         public int MaxFloor = 5;
         public int UsedApPotion;
         public int UsedGoldenDust;
-        public int UsedNcg;
+        public BigInteger UsedNcg;
         public bool Claimed;
 
 
@@ -37,23 +38,19 @@ namespace Nekoyume.Model.AdventureBoss
         {
             var list = (List)bencoded;
             AvatarAddress = list[0].ToAddress();
-            Score = list[1].ToInteger();
-            Floor = list[2].ToInteger();
-            MaxFloor = list[3].ToInteger();
-            UsedApPotion = list[4].ToInteger();
-            UsedGoldenDust = list[5].ToInteger();
-            UsedNcg = list[6].ToInteger();
+            Score = (Integer)list[1];
+            Floor = (Integer)list[2];
+            MaxFloor = (Integer)list[3];
+            UsedApPotion = (Integer)list[4];
+            UsedGoldenDust = (Integer)list[5];
+            UsedNcg = (Integer)list[6];
             Claimed = list[7].ToBoolean();
         }
 
         public IValue Bencoded => List.Empty
             .Add(AvatarAddress.Serialize())
-            .Add(Score.Serialize())
-            .Add(Floor.Serialize())
-            .Add(MaxFloor.Serialize())
-            .Add(UsedApPotion.Serialize())
-            .Add(UsedGoldenDust.Serialize())
-            .Add(UsedNcg.Serialize())
+            .Add(Score).Add(Floor).Add(MaxFloor)
+            .Add(UsedApPotion).Add(UsedGoldenDust).Add(UsedNcg)
             .Add(Claimed.Serialize());
     }
 }

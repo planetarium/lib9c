@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Numerics;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Action.AdventureBoss;
+using Nekoyume.Battle;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Module;
 
@@ -89,11 +89,6 @@ namespace Nekoyume.Helper
         private static ClaimableReward AddReward(ClaimableReward reward, bool isItem, int id,
             int amount)
         {
-            if (amount == 0)
-            {
-                return reward;
-            }
-
             if (isItem)
             {
                 if (reward.ItemReward.ContainsKey(id))
@@ -105,7 +100,7 @@ namespace Nekoyume.Helper
                     reward.ItemReward[id] = amount;
                 }
             }
-            else
+            else // FAV
             {
                 if (reward.FavReward.ContainsKey(id))
                 {
@@ -118,6 +113,42 @@ namespace Nekoyume.Helper
             }
 
             return reward;
+        }
+
+        private static BountyBoard PickWantedRaffle(BountyBoard bountyBoard, IRandom random)
+        {
+            bountyBoard.RaffleReward =
+                (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+
+            var selector = new WeightedSelector<Address>(random);
+            foreach (var inv in bountyBoard.Investors)
+            {
+                selector.Add(inv.AvatarAddress, (decimal)inv.Price.RawValue);
+            }
+
+            bountyBoard.RaffleWinner = selector.Select(1).First();
+            return bountyBoard;
+        }
+
+        private static ExploreBoard PickExploreRaffle(BountyBoard bountyBoard,
+            ExploreBoard exploreBoard, IRandom random)
+        {
+            exploreBoard.RaffleReward =
+                (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+
+            if (exploreBoard.ExplorerList.Count > 0)
+            {
+                exploreBoard.RaffleWinner =
+                    exploreBoard.ExplorerList.ToImmutableSortedSet()[
+                        random.Next(exploreBoard.ExplorerList.Count)
+                    ];
+            }
+            else
+            {
+                exploreBoard.RaffleWinner = new Address();
+            }
+
+            return exploreBoard;
         }
 
         public static IWorld PickRaffleWinner(IWorld states, IActionContext context, long season)
@@ -133,41 +164,14 @@ namespace Nekoyume.Helper
                     break;
                 }
 
-                bountyBoard.RaffleReward =
-                    (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
-                var totalProb = bountyBoard.Investors.Aggregate(new BigInteger(0),
-                    (current, inv) => current + inv.Price.RawValue);
-                var target = (BigInteger)random.Next((int)totalProb);
-                foreach (var inv in bountyBoard.Investors)
-                {
-                    if (target < inv.Price.RawValue)
-                    {
-                        bountyBoard.RaffleWinner = inv.AvatarAddress;
-                        break;
-                    }
-
-                    target -= inv.Price.RawValue;
-                }
-
+                bountyBoard = PickWantedRaffle(bountyBoard, random);
                 states = states.SetBountyBoard(szn, bountyBoard);
 
-                if (states.TryGetExploreBoard(szn, out var exploreBoard))
+                // Explore raffle
+                var exploreBoard = states.GetExploreBoard(szn);
+                if (exploreBoard.RaffleWinner is null)
                 {
-                    exploreBoard.RaffleReward =
-                        (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
-
-                    if (exploreBoard.ExplorerList.Count > 0)
-                    {
-                        exploreBoard.RaffleWinner =
-                            exploreBoard.ExplorerList.ToImmutableSortedSet()[
-                                random.Next(exploreBoard.ExplorerList.Count)
-                            ];
-                    }
-                    else
-                    {
-                        exploreBoard.RaffleWinner = new Address();
-                    }
-
+                    exploreBoard = PickExploreRaffle(bountyBoard, exploreBoard, random);
                     states = states.SetExploreBoard(szn, exploreBoard);
                 }
             }
@@ -231,15 +235,25 @@ namespace Nekoyume.Helper
                 finalPortion += (decimal)(bonusNcg / maxInvestors.Count);
             }
 
-            reward = AddReward(reward, bountyBoard.FixedRewardItemId is not null,
-                (int)(bountyBoard.FixedRewardItemId ?? bountyBoard.FixedRewardFavId)!,
-                (int)Math.Round(totalFixedRewardAmount * finalPortion / totalRewardNcg)
-            );
+            var fixedRewardAmount =
+                (int)Math.Round(totalFixedRewardAmount * finalPortion / totalRewardNcg);
 
-            reward = AddReward(reward, bountyBoard.RandomRewardItemId is not null,
-                (int)(bountyBoard.RandomRewardItemId ?? bountyBoard.RandomRewardFavId)!,
-                (int)Math.Round(totalRandomRewardAmount * finalPortion / totalRewardNcg)
-            );
+            if (fixedRewardAmount > 0)
+            {
+                reward = AddReward(reward, bountyBoard.FixedRewardItemId is not null,
+                    (int)(bountyBoard.FixedRewardItemId ?? bountyBoard.FixedRewardFavId)!,
+                    fixedRewardAmount);
+            }
+
+            var randomRewardAmount =
+                (int)Math.Round(totalRandomRewardAmount * finalPortion / totalRewardNcg);
+            if (randomRewardAmount > 0)
+            {
+                reward = AddReward(reward, bountyBoard.RandomRewardItemId is not null,
+                    (int)(bountyBoard.RandomRewardItemId ?? bountyBoard.RandomRewardFavId)!,
+                    randomRewardAmount);
+            }
+
             return reward;
         }
 
@@ -247,7 +261,7 @@ namespace Nekoyume.Helper
             ClaimableReward reward, long currentBlockIndex, long season, Address avatarAddress,
             out ClaimableReward collectedReward)
         {
-            var agentAddress= states.GetAvatarState(avatarAddress).agentAddress;
+            var agentAddress = states.GetAvatarState(avatarAddress).agentAddress;
             for (var szn = season; szn > 0; szn--)
             {
                 var seasonInfo = states.GetSeasonInfo(szn);
@@ -277,7 +291,8 @@ namespace Nekoyume.Helper
                 }
 
                 // Calculate reward for this season
-                reward = CalculateWantedReward(reward, bountyBoard, avatarAddress, out var ncgReward);
+                reward = CalculateWantedReward(reward, bountyBoard, avatarAddress,
+                    out var ncgReward);
 
                 // Transfer NCG reward from seasonal address
                 if (ncgReward.RawValue > 0)
@@ -338,21 +353,26 @@ namespace Nekoyume.Helper
                 }
             }
 
-            // calculate total reward
+            // calculate contribution reward
             var ncgRewardRatio = exploreBoard.FixedRewardItemId is not null
                 ? NcgRewardRatio[(int)exploreBoard.FixedRewardItemId]
                 : NcgRuneRatio;
             var totalRewardAmount = (int)Math.Round(exploreBoard.UsedApPotion / ncgRewardRatio);
-            reward = AddReward(reward, exploreBoard.FixedRewardItemId is not null,
-                (int)(exploreBoard.FixedRewardItemId ?? exploreBoard.FixedRewardFavId)!,
-                (int)Math.Floor(
-                    (decimal)totalRewardAmount * explorer.UsedApPotion / exploreBoard.UsedApPotion)
+            var myRewardAmount = (int)Math.Floor(
+                (decimal)totalRewardAmount * explorer.UsedApPotion / exploreBoard.UsedApPotion
             );
+            if (myRewardAmount > 0)
+            {
+                reward = AddReward(reward, exploreBoard.FixedRewardItemId is not null,
+                    (int)(exploreBoard.FixedRewardItemId ?? exploreBoard.FixedRewardFavId)!,
+                    myRewardAmount
+                );
+            }
 
             return reward;
         }
 
-        public static IWorld CollectExploreReward( IWorld states, IActionContext context,
+        public static IWorld CollectExploreReward(IWorld states, IActionContext context,
             ClaimableReward reward, long currentBlockIndex, long season, Address avatarAddress,
             out ClaimableReward collectedReward)
         {

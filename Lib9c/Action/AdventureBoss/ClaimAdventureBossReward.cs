@@ -6,7 +6,6 @@ using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -97,19 +96,7 @@ namespace Nekoyume.Action.AdventureBoss
             );
 
             // Give rewards
-            // NOTE: NCG must be transferred from seasonal address. To this must be done in collection stage.
-            // if (myReward.NcgReward is not null)
-            // {
-            //     var avatarState = states.GetAvatarState(AvatarAddress);
-            //     states = states.TransferAsset(context,
-            //         Addresses.BountyBoard.Derive(
-            //             AdventureBossHelper.GetSeasonAsAddressForm(Season)
-            //         ),
-            //         avatarState.agentAddress,
-            //         (FungibleAssetValue)myReward.NcgReward
-            //     );
-            // }
-
+            // NOTE: NCG must be transferred from seasonal address. So this must be done in collection stage.
             if (myReward.ItemReward.Count > 0)
             {
                 var materialSheet = states.GetSheet<MaterialItemSheet>();
