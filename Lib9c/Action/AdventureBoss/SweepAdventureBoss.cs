@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
+using Nekoyume.Data;
 using Nekoyume.Extensions;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.Arena;
@@ -22,32 +21,6 @@ namespace Nekoyume.Action.AdventureBoss
     public class SweepAdventureBoss : ActionBase
     {
         public const string TypeIdentifier = "sweep_adventure_boss";
-
-        // FIXME: This may temporary
-        public static readonly ImmutableDictionary<int, (int, int)> PointDict =
-            new Dictionary<int, (int, int)>
-            {
-                { 1, (100, 300) },
-                { 2, (270, 490) },
-                { 3, (440, 680) },
-                { 4, (610, 870) },
-                { 5, (780, 1060) },
-                { 6, (950, 1250) },
-                { 7, (1120, 1440) },
-                { 8, (1290, 1630) },
-                { 9, (1460, 1820) },
-                { 10, (1630, 2010) },
-                { 11, (1800, 2200) },
-                { 12, (1870, 2390) },
-                { 13, (2140, 2580) },
-                { 14, (2310, 2770) },
-                { 15, (2480, 2960) },
-                { 16, (2650, 3150) },
-                { 17, (2820, 3340) },
-                { 18, (2990, 3530) },
-                { 19, (3160, 3720) },
-                { 20, (3330, 3910) },
-            }.ToImmutableDictionary();
 
         public const int UnitApPotion = 2;
 
@@ -131,7 +104,7 @@ namespace Nekoyume.Action.AdventureBoss
             var random = context.GetRandom();
             for (var fl = 1; fl <= explorer.Floor; fl++)
             {
-                var (min, max) = PointDict[fl];
+                var (min, max) = AdventureBossData.PointDict[fl];
                 point += random.Next(min, max + 1);
             }
 

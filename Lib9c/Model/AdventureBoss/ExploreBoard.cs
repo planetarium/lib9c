@@ -4,7 +4,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.AdventureBoss;
+using Nekoyume.Data;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
 
@@ -47,7 +47,7 @@ namespace Nekoyume.Model.AdventureBoss
             }
         }
 
-        public void SetReward(RewardInfo rewardInfo, IRandom random)
+        public void SetReward(AdventureBossData.RewardInfo rewardInfo, IRandom random)
         {
             (FixedRewardItemId, FixedRewardFavId) = AdventureBossHelper.PickReward(random,
                 rewardInfo.FixedRewardItemIdDict, rewardInfo.FixedRewardFavIdDict);

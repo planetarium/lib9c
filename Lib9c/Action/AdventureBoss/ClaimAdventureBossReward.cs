@@ -6,8 +6,8 @@ using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions.AdventureBoss;
+using Nekoyume.Data;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
@@ -79,7 +79,7 @@ namespace Nekoyume.Action.AdventureBoss
             );
 
             var currentBlockIndex = context.BlockIndex;
-            var myReward = new ClaimableReward
+            var myReward = new AdventureBossData.ClaimableReward
             {
                 NcgReward = null,
                 ItemReward = new Dictionary<int, int>(),

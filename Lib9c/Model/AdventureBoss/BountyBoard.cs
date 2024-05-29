@@ -4,8 +4,8 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.AdventureBoss;
 using Nekoyume.Action.Exceptions.AdventureBoss;
+using Nekoyume.Data;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
 using BigInteger = System.Numerics.BigInteger;
@@ -54,7 +54,7 @@ namespace Nekoyume.Model.AdventureBoss
             return Investors.Aggregate(total, (current, inv) => current + inv.Price);
         }
 
-        public void SetReward(RewardInfo rewardInfo, IRandom random)
+        public void SetReward(AdventureBossData.RewardInfo rewardInfo, IRandom random)
         {
             (FixedRewardItemId, FixedRewardFavId) = AdventureBossHelper.PickReward(random,
                 rewardInfo.FixedRewardItemIdDict, rewardInfo.FixedRewardFavIdDict);
