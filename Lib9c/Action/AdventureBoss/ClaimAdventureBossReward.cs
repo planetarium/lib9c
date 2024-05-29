@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Numerics;
 using Bencodex.Types;
 using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -69,54 +67,16 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             // Pick raffle winner if not exists
-            var random = context.GetRandom();
-            var bountyBoard = states.GetBountyBoard(Season);
-            if (bountyBoard.RaffleWinner is null)
-            {
-                bountyBoard.RaffleReward = (bountyBoard.totalBounty() * 5).DivRem(100, out _);
-                var totalProb = bountyBoard.Investors.Aggregate(new BigInteger(0),
-                    (current, inv) => current + inv.Price.RawValue);
-                var target = (BigInteger)random.Next((int)totalProb);
-                foreach (var inv in bountyBoard.Investors)
-                {
-                    if (target < inv.Price.RawValue)
-                    {
-                        bountyBoard.RaffleWinner = inv.AvatarAddress;
-                        break;
-                    }
-
-                    target -= inv.Price.RawValue;
-                }
-
-                states = states.SetBountyBoard(Season, bountyBoard);
-            }
-
-            var exploreBoard = states.GetExploreBoard(Season);
-            if (exploreBoard.RaffleWinner is null)
-            {
-                exploreBoard.RaffleReward = (bountyBoard.totalBounty() * 5).DivRem(100, out _);
-                if (exploreBoard.ExplorerList.Count > 0)
-                {
-                    exploreBoard.RaffleWinner = exploreBoard.ExplorerList.ToImmutableSortedSet()[
-                        random.Next(exploreBoard.ExplorerList.Count)
-                    ];
-                }
-                else
-                {
-                    exploreBoard.RaffleWinner = new Address();
-                }
-
-                states = states.SetExploreBoard(Season, exploreBoard);
-            }
+            states = AdventureBossHelper.PickRaffleWinner(states, context, Season);
 
             // Send 75% NCG to operational account. 25% are for rewards.
+            var bountyBoard = states.GetBountyBoard(Season);
             states = states.TransferAsset(context,
                 Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(Season)),
                 // FIXME: Set operational account address
                 new Address(), (bountyBoard.totalBounty() * 75).DivRem(100, out _)
             );
 
-            // Collect wanted reward
             var currentBlockIndex = context.BlockIndex;
             var myReward = new ClaimableReward
             {
@@ -124,28 +84,19 @@ namespace Nekoyume.Action.AdventureBoss
                 ItemReward = new Dictionary<int, int>(),
                 FavReward = new Dictionary<int, int>(),
             };
+
+            // Collect wanted reward
             states = AdventureBossHelper.CollectWantedReward(
-                states, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
+                states, context, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
             );
 
             // Collect explore reward
             states = AdventureBossHelper.CollectExploreReward(
-                states, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
+                states, context, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
             );
 
             // Give rewards
-            if (myReward.NcgReward is not null)
-            {
-                var avatarState = states.GetAvatarState(AvatarAddress);
-                states = states.TransferAsset(context,
-                    Addresses.BountyBoard.Derive(
-                        AdventureBossHelper.GetSeasonAsAddressForm(Season)
-                    ),
-                    avatarState.agentAddress,
-                    (FungibleAssetValue)myReward.NcgReward
-                );
-            }
-
+            // NOTE: NCG must be transferred from seasonal address. So this must be done in collection stage.
             if (myReward.ItemReward.Count > 0)
             {
                 var materialSheet = states.GetSheet<MaterialItemSheet>();

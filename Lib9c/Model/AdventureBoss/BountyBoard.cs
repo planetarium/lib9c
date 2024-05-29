@@ -14,14 +14,12 @@ namespace Nekoyume.Model.AdventureBoss
 {
     public class BountyBoard
     {
-        public const decimal RaffleRewardRatio = 0.05m;
-
         public long Season;
         public List<Investor> Investors = new ();
         public int? FixedRewardItemId;
-        public int? FixedRewardFavTicker;
+        public int? FixedRewardFavId;
         public int? RandomRewardItemId;
-        public int? RandomRewardFavTicker;
+        public int? RandomRewardFavId;
         public Address? RaffleWinner;
         public FungibleAssetValue? RaffleReward;
 
@@ -35,9 +33,9 @@ namespace Nekoyume.Model.AdventureBoss
             Season = bencoded[0].ToLong();
             Investors = bencoded[1].ToList(i => new Investor(i));
             FixedRewardItemId = bencoded[2].ToNullableInteger();
-            FixedRewardFavTicker = bencoded[3].ToNullableInteger();
+            FixedRewardFavId = bencoded[3].ToNullableInteger();
             RandomRewardItemId = bencoded[4].ToNullableInteger();
-            RandomRewardFavTicker = bencoded[5].ToNullableInteger();
+            RandomRewardFavId = bencoded[5].ToNullableInteger();
             if (bencoded.Count > 6)
             {
                 RaffleWinner = bencoded[6].ToAddress();
@@ -58,9 +56,9 @@ namespace Nekoyume.Model.AdventureBoss
 
         public void SetReward(RewardInfo rewardInfo, IRandom random)
         {
-            (FixedRewardItemId, FixedRewardFavTicker) = AdventureBossHelper.PickReward(random,
-                rewardInfo.FixedRewardItemIdDict, rewardInfo.FixedRewardFavTickerDict);
-            (RandomRewardItemId, RandomRewardFavTicker) = AdventureBossHelper.PickReward(random,
+            (FixedRewardItemId, FixedRewardFavId) = AdventureBossHelper.PickReward(random,
+                rewardInfo.FixedRewardItemIdDict, rewardInfo.FixedRewardFavIdDict);
+            (RandomRewardItemId, RandomRewardFavId) = AdventureBossHelper.PickReward(random,
                 rewardInfo.RandomRewardItemIdDict, rewardInfo.RandomRewardFavTickerDict);
         }
 
@@ -118,9 +116,9 @@ namespace Nekoyume.Model.AdventureBoss
                 .Add(Season.Serialize())
                 .Add(new List(Investors.Select(i => i.Bencoded)).Serialize())
                 .Add(FixedRewardItemId.Serialize())
-                .Add(FixedRewardFavTicker.Serialize())
+                .Add(FixedRewardFavId.Serialize())
                 .Add(RandomRewardItemId.Serialize())
-                .Add(RandomRewardFavTicker.Serialize());
+                .Add(RandomRewardFavId.Serialize());
 
             if (RaffleWinner is not null)
             {

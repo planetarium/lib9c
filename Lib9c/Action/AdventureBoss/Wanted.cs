@@ -20,7 +20,7 @@ namespace Nekoyume.Action.AdventureBoss
     {
         // Dictionary of (id/ticker, ratio) pairs.
         public Dictionary<int, int> FixedRewardItemIdDict;
-        public Dictionary<int, int> FixedRewardFavTickerDict;
+        public Dictionary<int, int> FixedRewardFavIdDict;
         public Dictionary<int, int> RandomRewardItemIdDict;
         public Dictionary<int, int> RandomRewardFavTickerDict;
     }
@@ -39,6 +39,7 @@ namespace Nekoyume.Action.AdventureBoss
         public const string TypeIdentifier = "wanted";
         public const int RequiredStakingLevel = 5;
         public const int MinBounty = 100;
+
         public int Season;
         public FungibleAssetValue Bounty;
         public Address AvatarAddress;
@@ -55,7 +56,7 @@ namespace Nekoyume.Action.AdventureBoss
                     {
                         { 600201, 100 }
                     },
-                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    FixedRewardFavIdDict = new Dictionary<int, int>(),
                     RandomRewardItemIdDict = new Dictionary<int, int>
                     {
                         { 600201, 20 }, { 600202, 20 }, { 600203, 20 }
@@ -71,7 +72,7 @@ namespace Nekoyume.Action.AdventureBoss
                     {
                         { 600202, 100 }
                     },
-                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    FixedRewardFavIdDict = new Dictionary<int, int>(),
                     RandomRewardItemIdDict = new Dictionary<int, int>(),
                     RandomRewardFavTickerDict = new Dictionary<int, int>(),
                 }
@@ -85,7 +86,7 @@ namespace Nekoyume.Action.AdventureBoss
                     {
                         { 600202, 100 }
                     },
-                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    FixedRewardFavIdDict = new Dictionary<int, int>(),
                     RandomRewardItemIdDict = new Dictionary<int, int>
                     {
                         { 600201, 20 }, { 600202, 20 }, { 600203, 20 }
@@ -101,7 +102,7 @@ namespace Nekoyume.Action.AdventureBoss
                     {
                         { 600202, 100 }
                     },
-                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    FixedRewardFavIdDict = new Dictionary<int, int>(),
                     RandomRewardItemIdDict = new Dictionary<int, int>(),
                     RandomRewardFavTickerDict = new Dictionary<int, int>(),
                 }
@@ -112,7 +113,7 @@ namespace Nekoyume.Action.AdventureBoss
                 wantedReward = new RewardInfo
                 {
                     FixedRewardItemIdDict = new Dictionary<int, int>(),
-                    FixedRewardFavTickerDict = new Dictionary<int, int>
+                    FixedRewardFavIdDict = new Dictionary<int, int>
                     {
                         { 20001, 50 }, { 30001, 50 }
                     },
@@ -131,7 +132,7 @@ namespace Nekoyume.Action.AdventureBoss
                     {
                         { 600203, 100 }
                     },
-                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    FixedRewardFavIdDict = new Dictionary<int, int>(),
                     RandomRewardItemIdDict = new Dictionary<int, int>(),
                     RandomRewardFavTickerDict = new Dictionary<int, int>(),
                 }
@@ -145,7 +146,7 @@ namespace Nekoyume.Action.AdventureBoss
                     {
                         { 600203, 100 }
                     },
-                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    FixedRewardFavIdDict = new Dictionary<int, int>(),
                     RandomRewardItemIdDict = new Dictionary<int, int>
                     {
                         { 600201, 20 }, { 600202, 20 }, { 600203, 20 }
@@ -161,7 +162,7 @@ namespace Nekoyume.Action.AdventureBoss
                     {
                         { 600203, 100 }
                     },
-                    FixedRewardFavTickerDict = new Dictionary<int, int>(),
+                    FixedRewardFavIdDict = new Dictionary<int, int>(),
                     RandomRewardItemIdDict = new Dictionary<int, int>(),
                     RandomRewardFavTickerDict = new Dictionary<int, int>(),
                 }

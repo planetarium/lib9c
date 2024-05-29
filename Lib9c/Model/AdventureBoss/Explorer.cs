@@ -1,7 +1,7 @@
+using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.AdventureBoss
@@ -13,8 +13,8 @@ namespace Nekoyume.Model.AdventureBoss
         public int Floor;
         public int UsedApPotion;
         public int UsedGoldenDust;
+        public BigInteger UsedNcg;
         public bool Claimed;
-        public FungibleAssetValue? UsedNcg;
 
 
         public Explorer(Address avatarAddress)
@@ -23,7 +23,6 @@ namespace Nekoyume.Model.AdventureBoss
             Score = 0;
             Floor = 0;
             Claimed = false;
-            UsedNcg = null;
         }
 
         public Explorer(Address avatarAddress, int score, int floor)
@@ -32,41 +31,27 @@ namespace Nekoyume.Model.AdventureBoss
             Score = score;
             Floor = floor;
             Claimed = false;
-            UsedNcg = null;
         }
 
         public Explorer(IValue bencoded)
         {
             var list = (List)bencoded;
             AvatarAddress = list[0].ToAddress();
-            Score = list[1].ToInteger();
-            Floor = list[2].ToInteger();
-            UsedApPotion = list[3].ToInteger();
-            UsedGoldenDust = list[4].ToInteger();
-            Claimed = list[5].ToBoolean();
-            if (list.Count > 6)
-            {
-                UsedNcg = list[6].ToFungibleAssetValue();
-            }
+            Score = (Integer)list[1];
+            Floor = (Integer)list[2];
+            UsedApPotion = (Integer)list[3];
+            UsedGoldenDust = (Integer)list[4];
+            UsedNcg = (Integer)list[5];
+            Claimed = list[6].ToBoolean();
         }
 
-        private IValue _bencoded()
-        {
-            var bencoded = List.Empty
-                .Add(AvatarAddress.Serialize())
-                .Add(Score.Serialize())
-                .Add(Floor.Serialize())
-                .Add(UsedApPotion.Serialize())
-                .Add(UsedGoldenDust.Serialize())
-                .Add(Claimed.Serialize());
-            if (UsedNcg is not null)
-            {
-                bencoded = bencoded.Add(UsedNcg.Serialize());
-            }
-
-            return bencoded;
-        }
-
-        public IValue Bencoded => _bencoded();
+        public IValue Bencoded => List.Empty
+            .Add(AvatarAddress.Serialize())
+            .Add(Score)
+            .Add(Floor)
+            .Add(UsedApPotion)
+            .Add(UsedGoldenDust)
+            .Add(UsedNcg)
+            .Add(Claimed.Serialize());
     }
 }

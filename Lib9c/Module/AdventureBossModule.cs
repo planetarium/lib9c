@@ -80,6 +80,21 @@ namespace Nekoyume.Module
             return world.SetAccount(Addresses.BountyBoard, account);
         }
 
+        public static bool TryGetExploreBoard(this IWorldState worldState, long season,
+            out ExploreBoard exploreBoard)
+        {
+            try
+            {
+                exploreBoard = GetExploreBoard(worldState, season);
+                return true;
+            }
+            catch (FailedLoadStateException)
+            {
+                exploreBoard = null;
+                return false;
+            }
+        }
+
         public static ExploreBoard GetExploreBoard(this IWorldState worldState, long season)
         {
             var account = worldState.GetAccountState(Addresses.ExploreBoard);
@@ -104,6 +119,21 @@ namespace Nekoyume.Module
 
         // Use `Addresses.AdventureBossExplore` for AccountState to store all adventurer's data
         // Use `Address.Derive(AvatarAddress, SeasonAddress)` for individual avatar's explore info.
+        public static bool TryGetExplorer(this IWorldState worldState, long season,
+            Address avatarAddress, out Explorer explorer)
+        {
+            explorer = null;
+            try
+            {
+                explorer = GetExplorer(worldState, season, avatarAddress);
+                return true;
+            }
+            catch (FailedLoadStateException)
+            {
+                return false;
+            }
+        }
+
         public static Explorer GetExplorer(this IWorldState worldState, long season,
             Address avatarAddress)
         {
