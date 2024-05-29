@@ -115,6 +115,42 @@ namespace Nekoyume.Helper
             return reward;
         }
 
+        private static BountyBoard PickWantedRaffle(BountyBoard bountyBoard, IRandom random)
+        {
+            bountyBoard.RaffleReward =
+                (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+
+            var selector = new WeightedSelector<Address>(random);
+            foreach (var inv in bountyBoard.Investors)
+            {
+                selector.Add(inv.AvatarAddress, (decimal)inv.Price.RawValue);
+            }
+
+            bountyBoard.RaffleWinner = selector.Select(1).First();
+            return bountyBoard;
+        }
+
+        private static ExploreBoard PickExploreRaffle(BountyBoard bountyBoard,
+            ExploreBoard exploreBoard, IRandom random)
+        {
+            exploreBoard.RaffleReward =
+                (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+
+            if (exploreBoard.ExplorerList.Count > 0)
+            {
+                exploreBoard.RaffleWinner =
+                    exploreBoard.ExplorerList.ToImmutableSortedSet()[
+                        random.Next(exploreBoard.ExplorerList.Count)
+                    ];
+            }
+            else
+            {
+                exploreBoard.RaffleWinner = new Address();
+            }
+
+            return exploreBoard;
+        }
+
         public static IWorld PickRaffleWinner(IWorld states, IActionContext context, long season)
         {
             var random = context.GetRandom();
@@ -128,36 +164,14 @@ namespace Nekoyume.Helper
                     break;
                 }
 
-                bountyBoard.RaffleReward =
-                    (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
-
-                var selector = new WeightedSelector<Address>(context.GetRandom());
-                foreach (var inv in bountyBoard.Investors)
-                {
-                    selector.Add(inv.AvatarAddress, (decimal)inv.Price.RawValue);
-                }
-
-                bountyBoard.RaffleWinner = selector.Select(1).First();
+                bountyBoard = PickWantedRaffle(bountyBoard, random);
                 states = states.SetBountyBoard(szn, bountyBoard);
 
                 // Explore raffle
-                if (states.TryGetExploreBoard(szn, out var exploreBoard))
+                var exploreBoard = states.GetExploreBoard(szn);
+                if (exploreBoard.RaffleWinner is null)
                 {
-                    exploreBoard.RaffleReward =
-                        (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
-
-                    if (exploreBoard.ExplorerList.Count > 0)
-                    {
-                        exploreBoard.RaffleWinner =
-                            exploreBoard.ExplorerList.ToImmutableSortedSet()[
-                                random.Next(exploreBoard.ExplorerList.Count)
-                            ];
-                    }
-                    else
-                    {
-                        exploreBoard.RaffleWinner = new Address();
-                    }
-
+                    exploreBoard = PickExploreRaffle(bountyBoard, exploreBoard, random);
                     states = states.SetExploreBoard(szn, exploreBoard);
                 }
             }
