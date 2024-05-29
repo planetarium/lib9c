@@ -37,7 +37,7 @@ namespace Nekoyume.Model.AdventureBoss
             ExplorerList = bencoded[1].ToHashSet(i => i.ToAddress());
             UsedApPotion = (Integer)bencoded[2];
             UsedGoldenDust = (Integer)bencoded[3];
-            UsedNcg = (Integer)bencoded[5];
+            UsedNcg = (Integer)bencoded[4];
             if (bencoded.Count > 5)
             {
                 FixedRewardItemId = bencoded[5].ToNullableInteger();
