@@ -32,12 +32,12 @@ namespace Nekoyume.Model.AdventureBoss
 
         public ExploreBoard(List bencoded)
         {
-            Season = bencoded[0].ToLong();
+            Season = (Integer)bencoded[0];
             ExplorerList = bencoded[1].ToHashSet(i => i.ToAddress());
-            UsedApPotion = bencoded[2].ToInteger();
-            UsedNcg = bencoded[3].ToInteger();
-            UsedGoldenDust = bencoded[4].ToInteger();
-            TotalPoint = bencoded[5].ToLong();
+            UsedApPotion = (Integer)bencoded[2];
+            UsedNcg = (Integer)bencoded[3];
+            UsedGoldenDust = (Integer)bencoded[4];
+            TotalPoint = (Integer)bencoded[5];
             FixedRewardItemId = bencoded[6].ToNullableInteger();
             FixedRewardFavId = bencoded[7].ToNullableInteger();
             if (bencoded.Count > 8)
@@ -61,10 +61,9 @@ namespace Nekoyume.Model.AdventureBoss
         public IValue Bencoded()
         {
             var bencoded = List.Empty
-                .Add(Season.Serialize())
+                .Add(Season)
                 .Add(new List(ExplorerList.OrderBy(e => e).Select(e => e.Serialize())))
-                .Add(UsedApPotion.Serialize()).Add(UsedNcg.Serialize()).Add(UsedGoldenDust.Serialize())
-                .Add(TotalPoint.Serialize())
+                .Add(UsedApPotion).Add(UsedNcg).Add(UsedGoldenDust).Add(TotalPoint)
                 .Add(FixedRewardItemId.Serialize()).Add(FixedRewardFavId.Serialize());
             if (RaffleWinner is not null)
             {
