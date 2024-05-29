@@ -89,11 +89,6 @@ namespace Nekoyume.Helper
         private static ClaimableReward AddReward(ClaimableReward reward, bool isItem, int id,
             int amount)
         {
-            if (amount == 0)
-            {
-                return reward;
-            }
-
             if (isItem)
             {
                 if (reward.ItemReward.ContainsKey(id))
@@ -105,7 +100,7 @@ namespace Nekoyume.Helper
                     reward.ItemReward[id] = amount;
                 }
             }
-            else
+            else // FAV
             {
                 if (reward.FavReward.ContainsKey(id))
                 {
@@ -226,15 +221,25 @@ namespace Nekoyume.Helper
                 finalPortion += (decimal)(bonusNcg / maxInvestors.Count);
             }
 
-            reward = AddReward(reward, bountyBoard.FixedRewardItemId is not null,
-                (int)(bountyBoard.FixedRewardItemId ?? bountyBoard.FixedRewardFavId)!,
-                (int)Math.Round(totalFixedRewardAmount * finalPortion / totalRewardNcg)
-            );
+            var fixedRewardAmount =
+                (int)Math.Round(totalFixedRewardAmount * finalPortion / totalRewardNcg);
 
-            reward = AddReward(reward, bountyBoard.RandomRewardItemId is not null,
-                (int)(bountyBoard.RandomRewardItemId ?? bountyBoard.RandomRewardFavId)!,
-                (int)Math.Round(totalRandomRewardAmount * finalPortion / totalRewardNcg)
-            );
+            if (fixedRewardAmount > 0)
+            {
+                reward = AddReward(reward, bountyBoard.FixedRewardItemId is not null,
+                    (int)(bountyBoard.FixedRewardItemId ?? bountyBoard.FixedRewardFavId)!,
+                    fixedRewardAmount);
+            }
+
+            var randomRewardAmount =
+                (int)Math.Round(totalRandomRewardAmount * finalPortion / totalRewardNcg);
+            if (randomRewardAmount > 0)
+            {
+                reward = AddReward(reward, bountyBoard.RandomRewardItemId is not null,
+                    (int)(bountyBoard.RandomRewardItemId ?? bountyBoard.RandomRewardFavId)!,
+                    randomRewardAmount);
+            }
+
             return reward;
         }
 
@@ -333,16 +338,21 @@ namespace Nekoyume.Helper
                 }
             }
 
-            // calculate total reward
+            // calculate contribution reward
             var ncgRewardRatio = exploreBoard.FixedRewardItemId is not null
                 ? NcgRewardRatio[(int)exploreBoard.FixedRewardItemId]
                 : NcgRuneRatio;
             var totalRewardAmount = (int)Math.Round(exploreBoard.UsedApPotion / ncgRewardRatio);
-            reward = AddReward(reward, exploreBoard.FixedRewardItemId is not null,
-                (int)(exploreBoard.FixedRewardItemId ?? exploreBoard.FixedRewardFavId)!,
-                (int)Math.Floor(
-                    (decimal)totalRewardAmount * explorer.UsedApPotion / exploreBoard.UsedApPotion)
+            var myRewardAmount = (int)Math.Floor(
+                (decimal)totalRewardAmount * explorer.UsedApPotion / exploreBoard.UsedApPotion
             );
+            if (myRewardAmount > 0)
+            {
+                reward = AddReward(reward, exploreBoard.FixedRewardItemId is not null,
+                    (int)(exploreBoard.FixedRewardItemId ?? exploreBoard.FixedRewardFavId)!,
+                    myRewardAmount
+                );
+            }
 
             return reward;
         }
