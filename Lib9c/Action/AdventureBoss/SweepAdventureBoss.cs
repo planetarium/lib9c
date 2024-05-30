@@ -33,14 +33,14 @@ namespace Nekoyume.Action.AdventureBoss
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
             .Add("values", List.Empty
-                .Add(Season.Serialize())
+                .Add(Season)
                 .Add(AvatarAddress.Serialize())
             );
 
         public override void LoadPlainValue(IValue plainValue)
         {
             var values = (List)((Dictionary)plainValue)["values"];
-            Season = values[0].ToInteger();
+            Season = (Integer)values[0];
             AvatarAddress = values[1].ToAddress();
         }
 
