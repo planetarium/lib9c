@@ -10,8 +10,34 @@ import {
   encodeFungibleAssetValue,
 } from "@planetarium/tx";
 import type { HashDigest } from "../models/hashdigest.js";
-import { GameAction } from "./common.js";
+import { GameAction, type GameActionArgs } from "./common.js";
 
+export type DeliverToOtherGaragesArgs = {
+  /**
+   * The address of the recipient's agent.
+   */
+  recipientAgentAddress: Address;
+
+  /**
+   * The list of fungible asset values to deliver to the recipient's from signer's garages.
+   */
+  fungibleAssetValues?: FungibleAssetValue[];
+
+  /**
+   * The list of pairs where the first element is the item's id and the second element is the amount of it. These will be delivered to the recipient's from signer's garages.
+   */
+  fungibleIdAndCounts?: [HashDigest<"SHA256">, bigint][];
+
+  /**
+   * A memo to be attached to the @see DeliverToOtherGarages action. If it is not provided, it is set to `null`.
+   */
+  memo?: string;
+} & GameActionArgs;
+
+/**
+ * The `DeliverToOtherGarages` action is used to deliver fungible assets to other garages.
+ * @see LoadIntoMyGarages
+ */
 export class DeliverToOtherGarages extends GameAction {
   protected readonly type_id: string = "deliver_to_others_garages";
 
@@ -20,20 +46,18 @@ export class DeliverToOtherGarages extends GameAction {
   public readonly fungibleIdAndCounts: [HashDigest<"SHA256">, bigint][] | null;
   public readonly memo: string | null;
 
+  /**
+   * Create a new `DeliverToOtherGarages` action.
+   * @param params The arguments of the `DeliverToOtherGarages` action.
+   */
   constructor({
     recipientAgentAddress,
     fungibleAssetValues,
     fungibleIdAndCounts,
     memo,
     id,
-  }: {
-    recipientAgentAddress: Address;
-    fungibleAssetValues?: FungibleAssetValue[];
-    fungibleIdAndCounts?: [HashDigest<"SHA256">, bigint][];
-    memo?: string;
-    id?: Uint8Array;
-  }) {
-    super(id);
+  }: DeliverToOtherGaragesArgs) {
+    super({ id });
 
     this.recipientAgentAddress = recipientAgentAddress;
     this.fungibleAssetValues = fungibleAssetValues || null;

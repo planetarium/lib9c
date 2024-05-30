@@ -1,16 +1,36 @@
-export { ClaimStakeReward } from "./actions/claim_stake_reward.js";
-export { Stake } from "./actions/stake.js";
-export { DailyReward } from "./actions/daily_reward.js";
-export { TransferAsset } from "./actions/transfer_asset.js";
-export { TransferAssets } from "./actions/transfer_assets.js";
-export { DeliverToOtherGarages } from "./actions/deliver_to_others_garages.js";
-export { LoadIntoMyGarages } from "./actions/load_into_my_garages.js";
-export { ClaimItems } from "./actions/claim_items.js";
+export {
+  ClaimStakeReward,
+  type ClaimStakeRewardArgs,
+} from "./actions/claim_stake_reward.js";
+export { Stake, type StakeArgs } from "./actions/stake.js";
+export { DailyReward, type DailyRewardArgs } from "./actions/daily_reward.js";
+export {
+  TransferAsset,
+  type TransferAssetArgs,
+} from "./actions/transfer_asset.js";
+export {
+  TransferAssets,
+  type TransferAssetsArgs,
+} from "./actions/transfer_assets.js";
+export {
+  DeliverToOtherGarages,
+  type DeliverToOtherGaragesArgs,
+} from "./actions/deliver_to_others_garages.js";
+export {
+  LoadIntoMyGarages,
+  type LoadIntoMyGaragesArgs,
+} from "./actions/load_into_my_garages.js";
+export {
+  ClaimItems,
+  type ClaimItemsArgs,
+  type ClaimData,
+} from "./actions/claim_items.js";
 export {
   generateGuid,
   uuidToGuidBytes,
   GameAction,
   PolymorphicAction,
+  type GameActionArgs,
 } from "./actions/common.js";
 
 export {
@@ -21,5 +41,5 @@ export {
   GARAGE,
   fav,
 } from "./models/currencies.js";
-export { HashDigest } from "./models/hashdigest.js";
+export { HashDigest, type AlgorithmNames } from "./models/hashdigest.js";
 export { ODIN_GENESIS_HASH, HEIMDALL_GENESIS_HASH } from "./models/networks.js";
