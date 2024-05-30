@@ -82,7 +82,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                1, 100, 98, null, new[] { (600301, 10) },
+                1, 100, 98, null, new[] { (600301, 10), (600302, 0), (600303, 0), (600304, 0), },
             };
             yield return new object[]
             {
@@ -101,7 +101,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         [Theory]
         [MemberData(nameof(GetExecuteMemberData))]
-        public void Execute(int floor, int initialPotion, int expectedPotion, Type exc, (int, int)[] expectedRewards)
+        public void Execute(
+            int floor,
+            int initialPotion,
+            int expectedPotion,
+            Type exc,
+            (int, int)[] expectedRewards
+        )
         {
             // Settings
             var state = _initialState;
@@ -192,7 +198,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 inventory = state.GetInventory(TesterAvatarAddress);
                 foreach (var (id, amount) in expectedRewards)
                 {
-                    Assert.Equal(amount, inventory.Items.First(i => i.item.Id == id).count);
+                    if (amount == 0)
+                    {
+                        Assert.Null(inventory.Items.FirstOrDefault(i => i.item.Id == id));
+                    }
+                    else
+                    {
+                        Assert.Equal(amount, inventory.Items.First(i => i.item.Id == id).count);
+                    }
                 }
             }
         }
