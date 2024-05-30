@@ -115,7 +115,7 @@ namespace Nekoyume.Helper
             return reward;
         }
 
-        private static BountyBoard PickWantedRaffle(BountyBoard bountyBoard, IRandom random)
+        public static BountyBoard PickWantedRaffle(BountyBoard bountyBoard, IRandom random)
         {
             bountyBoard.RaffleReward =
                 (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
@@ -130,7 +130,7 @@ namespace Nekoyume.Helper
             return bountyBoard;
         }
 
-        private static ExploreBoard PickExploreRaffle(BountyBoard bountyBoard,
+        public static ExploreBoard PickExploreRaffle(BountyBoard bountyBoard,
             ExploreBoard exploreBoard, IRandom random)
         {
             exploreBoard.RaffleReward =
@@ -179,24 +179,45 @@ namespace Nekoyume.Helper
             return states;
         }
 
+        /// <summary>
+        /// Calculate reward for adventure boss operators.
+        /// This only calculates reward for given avatar, not actually give rewards.
+        /// </summary>
+        /// <param name="reward">Claimable reward for this avatar so far.</param>
+        /// <param name="bountyBoard">Bounty board for this season. All the reward amount is based on totalBounty on this board.</param>
+        /// <param name="avatarAddress">Target avatar address to calculate reward.</param>
+        /// <param name="isReal">Flag to calculate reward for real give or expectation.
+        /// The raffle winner is not picked till the season over, so you could get 0 with this value set to `true`.</param>
+        /// <param name="ncgReward">out value: calculated NCG reward in this function.
+        /// We must handle NCG reward separately because NCG reward must be transferred from each season's bounty address.</param>
+        /// <returns>Updated Claimable reward after calculation.</returns>
         public static ClaimableReward CalculateWantedReward(
             ClaimableReward reward, BountyBoard bountyBoard, Address avatarAddress,
-            out FungibleAssetValue ncgReward
+            bool isReal, out FungibleAssetValue ncgReward
         )
         {
-            ncgReward = 0 * bountyBoard.RaffleReward!.Value.Currency;
+            // Initialize ncgReward from bounty because its from bounty.
+            ncgReward = 0 * bountyBoard.totalBounty().Currency;
             // Raffle
-            if (bountyBoard.RaffleWinner == avatarAddress)
+            if (isReal)
             {
-                ncgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
-                if (reward.NcgReward is null)
+                if (bountyBoard.RaffleWinner == avatarAddress)
                 {
-                    reward.NcgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
+                    ncgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
                 }
-                else
-                {
-                    reward.NcgReward += (FungibleAssetValue)bountyBoard.RaffleReward!;
-                }
+            }
+            else
+            {
+                ncgReward = (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+            }
+
+            if (reward.NcgReward is null)
+            {
+                reward.NcgReward = ncgReward;
+            }
+            else
+            {
+                reward.NcgReward += ncgReward;
             }
 
             // calculate total reward
@@ -291,7 +312,7 @@ namespace Nekoyume.Helper
                 }
 
                 // Calculate reward for this season
-                reward = CalculateWantedReward(reward, bountyBoard, avatarAddress,
+                reward = CalculateWantedReward(reward, bountyBoard, avatarAddress, isReal: true,
                     out var ncgReward);
 
                 // Transfer NCG reward from seasonal address
@@ -316,25 +337,33 @@ namespace Nekoyume.Helper
 
         public static ClaimableReward CalculateExploreReward(ClaimableReward reward,
             BountyBoard bountyBoard, ExploreBoard exploreBoard,
-            Explorer explorer, Address avatarAddress, out FungibleAssetValue ncgReward)
+            Explorer explorer, Address avatarAddress, bool isReal, out FungibleAssetValue ncgReward)
         {
-            ncgReward = 0 * exploreBoard.RaffleReward!.Value.Currency;
+            var gold = bountyBoard.totalBounty().Currency;
+            ncgReward = 0 * gold;
             // Raffle
-            if (exploreBoard.RaffleWinner == avatarAddress)
+            if (isReal)
             {
-                ncgReward += (FungibleAssetValue)exploreBoard.RaffleReward;
-                if (reward.NcgReward is null)
+                if (exploreBoard.RaffleWinner == avatarAddress)
                 {
-                    reward.NcgReward = (FungibleAssetValue)exploreBoard.RaffleReward!;
+                    ncgReward = (FungibleAssetValue)exploreBoard.RaffleReward!;
                 }
-                else
-                {
-                    reward.NcgReward += (FungibleAssetValue)exploreBoard.RaffleReward!;
-                }
+            }
+            else
+            {
+                ncgReward = (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+            }
+
+            if (reward.NcgReward is null)
+            {
+                reward.NcgReward = ncgReward;
+            }
+            else
+            {
+                reward.NcgReward += ncgReward;
             }
 
             // calculate ncg reward
-            var gold = bountyBoard.totalBounty().Currency;
             var totalNcgReward = (bountyBoard.totalBounty() * 15).DivRem(100, out _);
             var myNcgReward = (totalNcgReward * explorer.UsedApPotion)
                 .DivRem(exploreBoard.UsedApPotion, out _);
@@ -407,7 +436,7 @@ namespace Nekoyume.Helper
                 // Calculate reward for this season
                 reward = CalculateExploreReward(
                     reward, states.GetBountyBoard(szn), exploreBoard, explorer, avatarAddress,
-                    out var ncgReward
+                    isReal: true, out var ncgReward
                 );
 
                 // Transfer NCG reward from seasonal address
