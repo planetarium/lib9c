@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Crypto;
@@ -17,7 +18,7 @@ namespace Nekoyume.Model.AdventureBoss
 
         public long UsedApPotion;
         public long UsedGoldenDust;
-        public int UsedNcg;
+        public BigInteger UsedNcg;
         public long TotalPoint;
 
         public int? FixedRewardItemId;
@@ -35,11 +36,15 @@ namespace Nekoyume.Model.AdventureBoss
             Season = (Integer)bencoded[0];
             ExplorerList = bencoded[1].ToHashSet(i => i.ToAddress());
             UsedApPotion = (Integer)bencoded[2];
-            UsedNcg = (Integer)bencoded[3];
-            UsedGoldenDust = (Integer)bencoded[4];
+            UsedGoldenDust = (Integer)bencoded[3];
+            UsedNcg = (Integer)bencoded[4];
             TotalPoint = (Integer)bencoded[5];
-            FixedRewardItemId = bencoded[6].ToNullableInteger();
-            FixedRewardFavId = bencoded[7].ToNullableInteger();
+            if (bencoded.Count > 6)
+            {
+                FixedRewardItemId = bencoded[6].ToNullableInteger();
+                FixedRewardFavId = bencoded[7].ToNullableInteger();
+            }
+
             if (bencoded.Count > 8)
             {
                 RaffleWinner = bencoded[8].ToAddress();
@@ -63,8 +68,15 @@ namespace Nekoyume.Model.AdventureBoss
             var bencoded = List.Empty
                 .Add(Season)
                 .Add(new List(ExplorerList.OrderBy(e => e).Select(e => e.Serialize())))
-                .Add(UsedApPotion).Add(UsedNcg).Add(UsedGoldenDust).Add(TotalPoint)
-                .Add(FixedRewardItemId.Serialize()).Add(FixedRewardFavId.Serialize());
+                .Add(UsedApPotion).Add(UsedGoldenDust).Add(UsedNcg).Add(TotalPoint);
+
+            if (FixedRewardFavId is not null || FixedRewardItemId is not null)
+            {
+                bencoded = bencoded
+                    .Add(FixedRewardItemId.Serialize())
+                    .Add(FixedRewardFavId.Serialize());
+            }
+
             if (RaffleWinner is not null)
             {
                 bencoded = bencoded.Add(RaffleWinner.Serialize()).Add(RaffleReward.Serialize());

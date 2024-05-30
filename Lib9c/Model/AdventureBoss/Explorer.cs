@@ -1,3 +1,4 @@
+using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
@@ -13,7 +14,7 @@ namespace Nekoyume.Model.AdventureBoss
         public int MaxFloor = 5;
         public int UsedApPotion;
         public int UsedGoldenDust;
-        public int UsedNcg;
+        public BigInteger UsedNcg;
         public bool Claimed;
 
 
