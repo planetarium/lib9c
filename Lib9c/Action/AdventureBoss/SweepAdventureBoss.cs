@@ -127,7 +127,7 @@ namespace Nekoyume.Action.AdventureBoss
             exploreBoard.TotalPoint += point;
             explorer.Score += point;
             states = AdventureBossHelper.AddExploreRewards(context, states, AvatarAddress,
-                rewardList);
+                inventory, rewardList);
 
             return states
                 .SetInventory(AvatarAddress, inventory)

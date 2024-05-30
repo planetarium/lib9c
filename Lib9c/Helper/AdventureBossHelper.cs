@@ -400,7 +400,7 @@ namespace Nekoyume.Helper
         }
 
         public static IWorld AddExploreRewards(IActionContext context, IWorld states,
-            Address avatarAddress,
+            Address avatarAddress, Inventory inventory,
             IEnumerable<AdventureBossData.ExploreReward> rewardList)
         {
             foreach (var reward in rewardList)
@@ -419,12 +419,13 @@ namespace Nekoyume.Helper
                         break;
                     case "Material":
                         var materialSheet = states.GetSheet<MaterialItemSheet>();
-                        var inventory = states.GetInventory(avatarAddress);
                         var material = ItemFactory.CreateMaterial(
                             materialSheet.Values.First(row => row.Id == reward.RewardId)
                         );
                         inventory.AddItem(material, reward.Amount);
                         break;
+                    default:
+                        throw new KeyNotFoundException($"{reward.RewardType} is not valid.");
                 }
             }
 

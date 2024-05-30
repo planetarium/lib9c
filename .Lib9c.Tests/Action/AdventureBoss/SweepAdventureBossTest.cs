@@ -74,13 +74,34 @@ namespace Lib9c.Tests.Action.AdventureBoss
             .SetAgentState(TesterAddress, TesterState)
             .MintAsset(new ActionContext(), WantedAddress, 1_000_000 * NCG);
 
+        public static IEnumerable<object[]> GetExecuteMemberData()
+        {
+            yield return new object[]
+            {
+                0, 100, 100, typeof(InvalidOperationException), null,
+            };
+            yield return new object[]
+            {
+                1, 100, 98, null, new[] { (600301, 10) },
+            };
+            yield return new object[]
+            {
+                1, 0, 0, typeof(NotEnoughMaterialException), null,
+            };
+            yield return new object[]
+            {
+                10, 10, 10, typeof(NotEnoughMaterialException), null,
+            };
+            yield return new object[]
+            {
+                20, 40, 0, null,
+                new[] { (600301, 900), (600302, 800), (600303, 50), (600304, 350), },
+            };
+        }
+
         [Theory]
-        [InlineData(0, 100, 100, typeof(InvalidOperationException))]
-        [InlineData(1, 100, 98, null)]
-        [InlineData(1, 0, 0, typeof(NotEnoughMaterialException))]
-        [InlineData(10, 10, 10, typeof(NotEnoughMaterialException))]
-        [InlineData(20, 40, 0, null)]
-        public void Execute(int floor, int initialPotion, int expectedPotion, Type exc)
+        [MemberData(nameof(GetExecuteMemberData))]
+        public void Execute(int floor, int initialPotion, int expectedPotion, Type exc, (int, int)[] expectedRewards)
         {
             // Settings
             var state = _initialState;
@@ -117,11 +138,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
             });
             var exp = new Explorer(TesterAvatarAddress)
             {
+                MaxFloor = 5 * Math.Max(floor / 5, 1),
                 Floor = floor,
             };
             state = state.SetExplorer(1, exp);
 
-            // Sweep
+            // Sweep and Test
             var action = new SweepAdventureBoss
             {
                 Season = 1,
@@ -163,8 +185,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Assert.True(explorer.Score > 0);
                 Assert.True(exploreBoard.TotalPoint > 0);
                 Assert.Equal(explorer.Score, exploreBoard.TotalPoint);
+                Assert.Equal(floor, explorer.Floor);
                 Assert.Equal(floor * SweepAdventureBoss.UnitApPotion, exploreBoard.UsedApPotion);
                 Assert.Equal(explorer.UsedApPotion, exploreBoard.UsedApPotion);
+
+                inventory = state.GetInventory(TesterAvatarAddress);
+                foreach (var (id, amount) in expectedRewards)
+                {
+                    Assert.Equal(amount, inventory.Items.First(i => i.item.Id == id).count);
+                }
             }
         }
 
