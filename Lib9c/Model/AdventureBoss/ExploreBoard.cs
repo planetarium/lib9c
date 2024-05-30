@@ -33,21 +33,22 @@ namespace Nekoyume.Model.AdventureBoss
 
         public ExploreBoard(List bencoded)
         {
-            Season = bencoded[0].ToLong();
+            Season = (Integer)bencoded[0];
             ExplorerList = bencoded[1].ToHashSet(i => i.ToAddress());
             UsedApPotion = (Integer)bencoded[2];
             UsedGoldenDust = (Integer)bencoded[3];
             UsedNcg = (Integer)bencoded[4];
-            if (bencoded.Count > 5)
+            TotalPoint = (Integer)bencoded[5];
+            if (bencoded.Count > 6)
             {
-                FixedRewardItemId = bencoded[5].ToNullableInteger();
-                FixedRewardFavId = bencoded[6].ToNullableInteger();
+                FixedRewardItemId = bencoded[6].ToNullableInteger();
+                FixedRewardFavId = bencoded[7].ToNullableInteger();
             }
 
-            if (bencoded.Count > 7)
+            if (bencoded.Count > 8)
             {
-                RaffleWinner = bencoded[7].ToAddress();
-                RaffleReward = bencoded[8].ToFungibleAssetValue();
+                RaffleWinner = bencoded[8].ToAddress();
+                RaffleReward = bencoded[9].ToFungibleAssetValue();
             }
         }
 
@@ -65,9 +66,9 @@ namespace Nekoyume.Model.AdventureBoss
         public IValue Bencoded()
         {
             var bencoded = List.Empty
-                .Add(Season.Serialize())
+                .Add(Season)
                 .Add(new List(ExplorerList.OrderBy(e => e).Select(e => e.Serialize())))
-                .Add(UsedApPotion).Add(UsedGoldenDust).Add(UsedNcg);
+                .Add(UsedApPotion).Add(UsedGoldenDust).Add(UsedNcg).Add(TotalPoint);
 
             if (FixedRewardFavId is not null || FixedRewardItemId is not null)
             {
