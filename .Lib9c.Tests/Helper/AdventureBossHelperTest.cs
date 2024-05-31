@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Helper
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
+    using Nekoyume.Data;
     using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
     using Xunit;
@@ -33,7 +34,7 @@ namespace Lib9c.Tests.Helper
                 bountyBoard.RaffleWinner = new PrivateKey().Address;
             }
 
-            var claimableReward = new ClaimableReward
+            var claimableReward = new AdventureBossData.ClaimableReward
             {
                 NcgReward = null,
                 ItemReward = new Dictionary<int, int>(),
@@ -76,7 +77,7 @@ namespace Lib9c.Tests.Helper
                 exploreBoard.RaffleWinner = new PrivateKey().Address;
             }
 
-            var claimableReward = new ClaimableReward
+            var claimableReward = new AdventureBossData.ClaimableReward
             {
                 NcgReward = null,
                 ItemReward = new Dictionary<int, int>(),
