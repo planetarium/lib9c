@@ -124,7 +124,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             });
 
             // Explore
-            state = new AdventureBossBattle
+            state = new ExploreAdventureBoss
             {
                 Season = 1,
                 AvatarAddress = TesterAvatarAddress,
