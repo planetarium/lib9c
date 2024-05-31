@@ -94,7 +94,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             state = Stake(state, WantedAddress);
             var materialSheet = state.GetSheet<MaterialItemSheet>();
             var goldenDust =
-                ItemFactory.CreateMaterial(materialSheet.Values.First(row => row.Id == 600202));
+                ItemFactory.CreateMaterial(materialSheet.Values.First(row => row.Id == 600201));
 
             if (!notEnough)
             {

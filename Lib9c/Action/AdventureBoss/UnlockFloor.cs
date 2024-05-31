@@ -19,7 +19,7 @@ namespace Nekoyume.Action.AdventureBoss
     {
         public const string TypeIdentifier = "unlock_floor";
         public const int TotalFloor = 20;
-        public const int GoldenDustId = 600202;
+        public const int GoldenDustId = 600201;
 
         // NOTE: This may temporary
         // Use MaxFloor as key. If not find key, this means already opened all floors.
