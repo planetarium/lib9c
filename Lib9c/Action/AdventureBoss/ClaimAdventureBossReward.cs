@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -16,6 +17,7 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Action.AdventureBoss
 {
+    [Serializable]
     [ActionType(TypeIdentifier)]
     public class ClaimAdventureBossReward : ActionBase
     {
