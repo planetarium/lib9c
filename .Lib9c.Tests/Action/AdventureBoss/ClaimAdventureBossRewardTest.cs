@@ -11,6 +11,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Action;
     using Nekoyume.Action.AdventureBoss;
     using Nekoyume.Data;
+    using Nekoyume.Model.AdventureBoss;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
@@ -559,29 +561,27 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 RandomSeed = seed,
             });
 
-            // Explore
-            state = new AdventureBossBattle
-            {
-                Season = 1,
-                AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = 1L,
-                RandomSeed = seed,
-            });
-
+            // Explore : just add data to avoid explore reward
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
-            board.UsedApPotion += 99;
-            var exp = state.GetExplorer(1, TesterAvatarAddress);
-            exp.UsedApPotion += 99;
+            var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
+                ? e
+                : new Explorer(TesterAvatarAddress);
+            board.ExplorerList.Add(TesterAvatarAddress);
+            board.UsedApPotion += 100;
+            exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
 
+            var materialSheet = state.GetSheet<MaterialItemSheet>();
+            var materialRow =
+                materialSheet.OrderedList.First(i => i.ItemSubType == ItemSubType.ApStone);
+            var potion = ItemFactory.CreateMaterial(materialRow);
             for (var i = 0; i < anotherExplorerCount; i++)
             {
-                state = new AdventureBossBattle
+                var inventory = state.GetInventory(ExplorerAvatarAddress);
+                inventory.AddItem(potion, 1);
+                state = state.SetInventory(ExplorerAvatarAddress, inventory);
+                state = new ExploreAdventureBoss
                 {
                     Season = 1,
                     AvatarAddress = ExplorerAvatarAddress,
@@ -664,7 +664,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             state = Stake(state, WantedAddress);
             state = Stake(state, ExplorerAddress);
 
-            // Explore for season 1, 3
+            // Explore for season 1, 3 : just add data to avoid explore reward
             state = new Wanted
             {
                 Season = 1,
@@ -677,21 +677,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
                 RandomSeed = seed,
             });
-            state = new AdventureBossBattle
-            {
-                Season = 1,
-                AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().StartBlockIndex + 1,
-            });
+
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
-            board.UsedApPotion += 99;
-            var exp = state.GetExplorer(1, TesterAvatarAddress);
-            exp.UsedApPotion += 99;
+            board.ExplorerList.Add(TesterAvatarAddress);
+            board.UsedApPotion += 100;
+            var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
+                ? e
+                : new Explorer(TesterAvatarAddress);
+            exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
 
             // No Explore
@@ -721,21 +715,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
                 RandomSeed = seed + 2,
             });
-            state = new AdventureBossBattle
-            {
-                Season = 3,
-                AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().StartBlockIndex + 1,
-            });
+
             // Manipulate used AP Potion to calculate reward above zero
             board = state.GetExploreBoard(3);
-            board.UsedApPotion += 99;
-            exp = state.GetExplorer(3, TesterAvatarAddress);
-            exp.UsedApPotion += 99;
+            board.ExplorerList.Add(TesterAvatarAddress);
+            board.UsedApPotion += 100;
+            exp = state.TryGetExplorer(3, TesterAvatarAddress, out e)
+                ? e
+                : new Explorer(TesterAvatarAddress);
+            exp.UsedApPotion += 100;
             state = state.SetExploreBoard(3, board).SetExplorer(3, exp);
 
             // Burn remaining NCG
@@ -812,22 +800,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 RandomSeed = seed,
             });
 
-            // Explore
-            state = new AdventureBossBattle
-            {
-                Season = 1,
-                AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = 1L,
-            });
+            // Explore : just add data to avoid explore reward
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
-            board.UsedApPotion += 99;
-            var exp = state.GetExplorer(1, TesterAvatarAddress);
-            exp.UsedApPotion += 99;
+            board.UsedApPotion += 100;
+            board.ExplorerList.Add(TesterAvatarAddress);
+            var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
+                ? e
+                : new Explorer(TesterAvatarAddress);
+            exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
 
             // Burn
@@ -887,22 +868,18 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 RandomSeed = seed,
             });
 
-            // Explore
-            state = new AdventureBossBattle
-            {
-                Season = 1,
-                AvatarAddress = explore ? TesterAvatarAddress : ExplorerAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = explore ? TesterAddress : ExplorerAddress,
-                BlockIndex = 1L,
-            });
+            // Explore : just add data to avoid explore reward
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
-            board.UsedApPotion += 99;
-            var exp = state.GetExplorer(1, explore ? TesterAvatarAddress : ExplorerAvatarAddress);
-            exp.UsedApPotion += 99;
+            board.UsedApPotion += 100;
+            board.ExplorerList.Add(explore ? TesterAvatarAddress : ExplorerAvatarAddress);
+            var exp =
+                state.TryGetExplorer(
+                    1, explore ? TesterAvatarAddress : ExplorerAvatarAddress, out var e
+                )
+                    ? e
+                    : new Explorer(explore ? TesterAvatarAddress : ExplorerAvatarAddress);
+            exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
 
             // Next Season
