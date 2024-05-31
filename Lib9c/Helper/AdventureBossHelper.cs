@@ -138,10 +138,11 @@ namespace Nekoyume.Helper
 
             if (exploreBoard.ExplorerList.Count > 0)
             {
-                exploreBoard.RaffleWinner =
-                    exploreBoard.ExplorerList.ToImmutableSortedSet()[
-                        random.Next(exploreBoard.ExplorerList.Count)
-                    ];
+                var winner = exploreBoard.ExplorerList.ToImmutableSortedSet()[
+                    random.Next(exploreBoard.ExplorerList.Count)
+                ];
+                exploreBoard.RaffleWinner = winner.Item1;
+                exploreBoard.RaffleWinnerName = winner.Item2;
             }
             else
             {
@@ -420,7 +421,10 @@ namespace Nekoyume.Helper
                 var exploreBoard = states.GetExploreBoard(szn);
 
                 // Not explored
-                if (!exploreBoard.ExplorerList.Contains(avatarAddress))
+                if (!exploreBoard.ExplorerList.OrderBy(e => e.Item1)
+                        .Select(e => e.Item1)
+                        .Contains(avatarAddress)
+                   )
                 {
                     continue;
                 }

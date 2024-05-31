@@ -627,6 +627,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Test
             var exploreBoard = resultState.GetExploreBoard(1);
             Assert.NotNull(exploreBoard.RaffleWinner);
+            Assert.NotNull(exploreBoard.RaffleWinnerName);
+            if (anotherExplorerCount == 0)
+            {
+                Assert.Equal(TesterAvatarAddress, exploreBoard.RaffleWinner);
+                Assert.Equal(TesterAvatarState.name, exploreBoard.RaffleWinnerName);
+            }
+
             Assert.Equal((int)(bounty * 0.05) * NCG, exploreBoard.RaffleReward);
             Assert.True(resultState.GetExplorer(1, TesterAvatarAddress).Claimed);
 

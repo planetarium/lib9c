@@ -67,7 +67,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             exploreBoard = nextState.GetExploreBoard(1);
             Assert.Single(exploreBoard.ExplorerList);
-            Assert.Equal(avatarAddress, exploreBoard.ExplorerList.First());
+            Assert.Equal(avatarAddress, exploreBoard.ExplorerList.First().Item1);
 
             var adventureInfo = nextState.GetExplorer(1, avatarAddress);
             Assert.Equal(avatarAddress, adventureInfo.AvatarAddress);
@@ -84,7 +84,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             exploreBoard = nextState.GetExploreBoard(1);
             Assert.Equal(2, exploreBoard.ExplorerList.Count);
-            Assert.Contains(avatarAddress2, exploreBoard.ExplorerList);
+            var exploreAddressInfo = exploreBoard.ExplorerList.OrderBy(e => e)
+                .Select(e => e.Item1);
+            Assert.Contains(avatarAddress2, exploreAddressInfo);
 
             adventureInfo = nextState.GetExplorer(1, avatarAddress2);
             Assert.Equal(avatarAddress2, adventureInfo.AvatarAddress);
