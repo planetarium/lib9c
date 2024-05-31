@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Helper
         [InlineData(false, false, 5)]
         [InlineData(true, false, 0)]
         [InlineData(true, true, 5)]
-        public void CalculateWantedReward(bool isReal, bool winner, BigInteger expectedReward)
+        public void CalculateWantedReward(bool isReal, bool winner, int expectedReward)
         {
             var bountyBoard = new BountyBoard(1);
             bountyBoard.FixedRewardFavId = 30001;
@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Helper
         [InlineData(false, false, 5 + 15)]
         [InlineData(true, false, 0 + 15)]
         [InlineData(true, true, 5 + 15)]
-        public void CalculateExploreReward(bool isReal, bool winner, BigInteger expectedNcgReward)
+        public void CalculateExploreReward(bool isReal, bool winner, int expectedNcgReward)
         {
             var bountyBoard = new BountyBoard(1);
             bountyBoard.AddOrUpdate(_avatarAddress, _name, 100 * NCG);

@@ -79,7 +79,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // No AP potion at all
             yield return new object[]
             {
-                0, 0, 0, 0, 0, null, Array.Empty<(int, int)>(),
+                0, 0, 0, 0, 0, null, new (int, int)[] { },
             };
             // Start from bottom, goes to 5
             yield return new object[]
