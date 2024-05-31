@@ -21,6 +21,7 @@ namespace Nekoyume.Model.AdventureBoss
         public int? RandomRewardItemId;
         public int? RandomRewardFavId;
         public Address? RaffleWinner;
+        public string RaffleWinnerName = "";
         public FungibleAssetValue? RaffleReward;
 
         public BountyBoard(long season)
@@ -39,7 +40,8 @@ namespace Nekoyume.Model.AdventureBoss
             if (bencoded.Count > 6)
             {
                 RaffleWinner = bencoded[6].ToAddress();
-                RaffleReward = bencoded[7].ToFungibleAssetValue();
+                RaffleWinnerName = bencoded[7].ToDotnetString();
+                RaffleReward = bencoded[8].ToFungibleAssetValue();
             }
         }
 
@@ -101,6 +103,7 @@ namespace Nekoyume.Model.AdventureBoss
                 if (target < inv.Price.RawValue)
                 {
                     RaffleWinner = inv.AvatarAddress;
+                    RaffleWinnerName = inv.Name;
                     break;
                 }
 
@@ -122,7 +125,10 @@ namespace Nekoyume.Model.AdventureBoss
 
             if (RaffleWinner is not null)
             {
-                bencoded = bencoded.Add(RaffleWinner.Serialize()).Add(RaffleReward.Serialize());
+                bencoded = bencoded
+                    .Add(RaffleWinner.Serialize())
+                    .Add((Text)RaffleWinnerName)
+                    .Add(RaffleReward.Serialize());
             }
 
             return bencoded;

@@ -421,6 +421,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex + 1,
                 RandomSeed = seed,
             });
+
+            if (!anotherWanted)
+            {
+                var bountyBoard = resultState.GetBountyBoard(1);
+                Assert.Equal(TesterAvatarAddress, bountyBoard.RaffleWinner);
+                Assert.Equal(TesterAvatarState.name, bountyBoard.RaffleWinnerName);
+            }
+
             Assert.True(resultState.GetBountyBoard(1).Investors
                 .First(inv => inv.AvatarAddress == TesterAvatarAddress).Claimed);
 

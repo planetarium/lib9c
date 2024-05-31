@@ -120,13 +120,15 @@ namespace Nekoyume.Helper
             bountyBoard.RaffleReward =
                 (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
 
-            var selector = new WeightedSelector<Address>(random);
+            var selector = new WeightedSelector<Investor>(random);
             foreach (var inv in bountyBoard.Investors)
             {
-                selector.Add(inv.AvatarAddress, (decimal)inv.Price.RawValue);
+                selector.Add(inv, (decimal)inv.Price.RawValue);
             }
 
-            bountyBoard.RaffleWinner = selector.Select(1).First();
+            var winner = selector.Select(1).First();
+            bountyBoard.RaffleWinner = winner.AvatarAddress;
+            bountyBoard.RaffleWinnerName = winner.Name;
             return bountyBoard;
         }
 
