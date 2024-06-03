@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -15,23 +14,6 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Action.AdventureBoss
 {
-    // FIXME: This may temporary
-    public struct RewardInfo
-    {
-        // Dictionary of (id/ticker, ratio) pairs.
-        public Dictionary<int, int> FixedRewardItemIdDict;
-        public Dictionary<int, int> FixedRewardFavIdDict;
-        public Dictionary<int, int> RandomRewardItemIdDict;
-        public Dictionary<int, int> RandomRewardFavTickerDict;
-    }
-
-    public struct AdventureBossReward
-    {
-        public int BossId;
-        public RewardInfo wantedReward;
-        public RewardInfo exploreReward;
-    }
-
     [Serializable]
     [ActionType(TypeIdentifier)]
     public class Wanted : ActionBase
@@ -43,131 +25,6 @@ namespace Nekoyume.Action.AdventureBoss
         public int Season;
         public FungibleAssetValue Bounty;
         public Address AvatarAddress;
-
-        // FIXME: This may temporary
-        public AdventureBossReward[] WantedRewardList =
-        {
-            new ()
-            {
-                BossId = 206007,
-                wantedReward = new RewardInfo
-                {
-                    FixedRewardItemIdDict = new Dictionary<int, int>
-                    {
-                        { 600201, 100 }
-                    },
-                    FixedRewardFavIdDict = new Dictionary<int, int>(),
-                    RandomRewardItemIdDict = new Dictionary<int, int>
-                    {
-                        { 600201, 20 }, { 600202, 20 }, { 600203, 20 }
-                    },
-                    RandomRewardFavTickerDict = new Dictionary<int, int>
-                    {
-                        { 20001, 20 }, { 30001, 20 }
-                    }
-                },
-                exploreReward = new RewardInfo
-                {
-                    FixedRewardItemIdDict = new Dictionary<int, int>
-                    {
-                        { 600202, 100 }
-                    },
-                    FixedRewardFavIdDict = new Dictionary<int, int>(),
-                    RandomRewardItemIdDict = new Dictionary<int, int>(),
-                    RandomRewardFavTickerDict = new Dictionary<int, int>(),
-                }
-            },
-            new ()
-            {
-                BossId = 208007,
-                wantedReward = new RewardInfo
-                {
-                    FixedRewardItemIdDict = new Dictionary<int, int>
-                    {
-                        { 600202, 100 }
-                    },
-                    FixedRewardFavIdDict = new Dictionary<int, int>(),
-                    RandomRewardItemIdDict = new Dictionary<int, int>
-                    {
-                        { 600201, 20 }, { 600202, 20 }, { 600203, 20 }
-                    },
-                    RandomRewardFavTickerDict = new Dictionary<int, int>
-                    {
-                        { 20001, 20 }, { 30001, 20 }
-                    }
-                },
-                exploreReward = new RewardInfo
-                {
-                    FixedRewardItemIdDict = new Dictionary<int, int>
-                    {
-                        { 600202, 100 }
-                    },
-                    FixedRewardFavIdDict = new Dictionary<int, int>(),
-                    RandomRewardItemIdDict = new Dictionary<int, int>(),
-                    RandomRewardFavTickerDict = new Dictionary<int, int>(),
-                }
-            },
-            new ()
-            {
-                BossId = 207007,
-                wantedReward = new RewardInfo
-                {
-                    FixedRewardItemIdDict = new Dictionary<int, int>(),
-                    FixedRewardFavIdDict = new Dictionary<int, int>
-                    {
-                        { 20001, 50 }, { 30001, 50 }
-                    },
-                    RandomRewardItemIdDict = new Dictionary<int, int>
-                    {
-                        { 600201, 20 }, { 600202, 20 }, { 600203, 20 }
-                    },
-                    RandomRewardFavTickerDict = new Dictionary<int, int>
-                    {
-                        { 20001, 20 }, { 30001, 20 }
-                    }
-                },
-                exploreReward = new RewardInfo
-                {
-                    FixedRewardItemIdDict = new Dictionary<int, int>
-                    {
-                        { 600203, 100 }
-                    },
-                    FixedRewardFavIdDict = new Dictionary<int, int>(),
-                    RandomRewardItemIdDict = new Dictionary<int, int>(),
-                    RandomRewardFavTickerDict = new Dictionary<int, int>(),
-                }
-            },
-            new ()
-            {
-                BossId = 209007,
-                wantedReward = new RewardInfo
-                {
-                    FixedRewardItemIdDict = new Dictionary<int, int>
-                    {
-                        { 600203, 100 }
-                    },
-                    FixedRewardFavIdDict = new Dictionary<int, int>(),
-                    RandomRewardItemIdDict = new Dictionary<int, int>
-                    {
-                        { 600201, 20 }, { 600202, 20 }, { 600203, 20 }
-                    },
-                    RandomRewardFavTickerDict = new Dictionary<int, int>
-                    {
-                        { 20001, 20 }, { 30001, 20 }
-                    }
-                },
-                exploreReward = new RewardInfo
-                {
-                    FixedRewardItemIdDict = new Dictionary<int, int>
-                    {
-                        { 600203, 100 }
-                    },
-                    FixedRewardFavIdDict = new Dictionary<int, int>(),
-                    RandomRewardItemIdDict = new Dictionary<int, int>(),
-                    RandomRewardFavTickerDict = new Dictionary<int, int>(),
-                }
-            },
-        };
 
         public override IValue PlainValue =>
             Dictionary.Empty
@@ -261,10 +118,12 @@ namespace Nekoyume.Action.AdventureBoss
 
                 // Set season info: boss and reward
                 var random = context.GetRandom();
-                var reward = WantedRewardList[random.Next(0, WantedRewardList.Length)];
+                var reward =
+                    Data.AdventureBossGameData.AdventureBossRewards[
+                        random.Next(0, Data.AdventureBossGameData.AdventureBossRewards.Length)];
                 seasonInfo.BossId = reward.BossId;
                 bountyBoard.SetReward(reward.wantedReward, random);
-                exploreBoard.SetReward(reward.exploreReward, random);
+                exploreBoard.SetReward(reward.contributionReward, random);
 
                 states = states.SetSeasonInfo(seasonInfo);
                 states = states.SetLatestAdventureBossSeason(seasonInfo);

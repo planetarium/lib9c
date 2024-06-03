@@ -26,14 +26,6 @@ namespace Nekoyume.Model.AdventureBoss
             Claimed = false;
         }
 
-        public Explorer(Address avatarAddress, int score, int floor)
-        {
-            AvatarAddress = avatarAddress;
-            Score = score;
-            Floor = floor;
-            Claimed = false;
-        }
-
         public Explorer(IValue bencoded)
         {
             var list = (List)bencoded;
