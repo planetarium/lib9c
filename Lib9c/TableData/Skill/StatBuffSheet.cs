@@ -38,6 +38,8 @@ namespace Nekoyume.TableData
             public long Value { get; private set; }
             public bool IsEnhanceable { get; private set; }
 
+            public int MaxStack { get; private set; }
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
@@ -58,6 +60,10 @@ namespace Nekoyume.TableData
                 }
 
                 IsEnhanceable = ParseBool(fields[8], true);
+                if (fields.Count > 9)
+                {
+                    MaxStack = ParseInt(fields[9], 0);
+                }
             }
         }
 

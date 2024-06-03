@@ -8,5 +8,6 @@ namespace Nekoyume.Model.Skill
         Vampiric,
         Focus,
         Dispel,  // Erase/defence debuffs on me
+        IceShield,
     }
 }

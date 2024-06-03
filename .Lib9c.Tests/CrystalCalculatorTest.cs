@@ -65,7 +65,7 @@ namespace Lib9c.Tests
 
         [Theory]
         [ClassData(typeof(CalculateCrystalData))]
-        public void CalculateCrystal((int EquipmentId, int Level)[] equipmentInfos, int stakedAmount, bool enhancementFailed, int expected)
+        public void CalculateCrystal((int EquipmentId, int Level)[] equipmentInfos, int stakedAmount, bool enhancementFailed, string expected)
         {
             var equipmentList = new List<Equipment>();
             foreach (var (equipmentId, level) in equipmentInfos)
@@ -87,7 +87,7 @@ namespace Lib9c.Tests
             );
 
             Assert.Equal(
-                expected * CrystalCalculator.CRYSTAL,
+                FungibleAssetValue.Parse(Currencies.Crystal, expected),
                 actual);
         }
 
@@ -158,10 +158,10 @@ namespace Lib9c.Tests
         {
             private readonly List<object[]> _data = new List<object[]>
             {
-                // 10 + ((2^0 - 1) * 10) = 10
+                // 1 + ((2^0 - 1) * 1) = 1
                 // enchant level 2
                 // 10 + ((2^2 - 1) * 10) = 40
-                // total 50
+                // total 41
                 new object[]
                 {
                     new[]
@@ -171,20 +171,20 @@ namespace Lib9c.Tests
                     },
                     10,
                     false,
-                    50,
+                    "41",
                 },
                 new object[]
                 {
                     // enchant failed
-                    // (10 + (2^0 -1) * 10) / 2 = 5
-                    // total 5
+                    // (1 + (2^0 -1) * 1) / 2 = 0.5
+                    // total 0.5
                     new[]
                     {
                         (10100000, 0),
                     },
                     10,
                     true,
-                    5,
+                    "0.5",
                 },
                 // enchant level 3 & failed
                 // (10 + (2^3 - 1) * 10) / 2 = 40
@@ -199,15 +199,15 @@ namespace Lib9c.Tests
                     },
                     500,
                     true,
-                    60,
+                    "60",
                 },
                 // enchant level 1
-                // 10 + (2^1 - 1) * 10 = 20
+                // 1 + (2^1 - 1) * 1 = 2
                 // enchant level 2
                 // 10 + (2^2 - 1) * 10 = 40
                 // multiply by staking level 2
-                // 60 * 0.5 = 30
-                // total 90
+                // 42 * 0.5 = 21
+                // total 63
                 new object[]
                 {
                     new[]
@@ -217,7 +217,7 @@ namespace Lib9c.Tests
                     },
                     500,
                     false,
-                    90,
+                    "63",
                 },
                 // enchant level 1
                 // 10 + (2^1 - 1) * 10 = 20
@@ -229,7 +229,33 @@ namespace Lib9c.Tests
                     },
                     0,
                     false,
-                    20,
+                    "20",
+                },
+                // Max level exponent = 5
+                // 10 + (2^20 - 1) * 10 changes to
+                // 10 + (2^5 - 1) * 10 = 320
+                new object[]
+                {
+                    new[]
+                    {
+                        (10110000, 20),
+                    },
+                    0,
+                    false,
+                    "320",
+                },
+                // Max crystal = 100_000_000
+                // 10_000_000 + (2^5 - 1) * 10_000_000 = 320_000_000
+                // limit to 100_000_000
+                new object[]
+                {
+                    new[]
+                    {
+                        (10650006, 5),
+                    },
+                    0,
+                    false,
+                    "100000000",
                 },
             };
 

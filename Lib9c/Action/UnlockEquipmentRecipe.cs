@@ -43,7 +43,7 @@ namespace Nekoyume.Action
             WorldInformation worldInformation;
             try
             {
-                worldInformation = states.GetWorldInformation(AvatarAddress);
+                worldInformation = states.GetWorldInformationV2(AvatarAddress);
             }
             catch (FailedLoadStateException)
             {

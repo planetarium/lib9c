@@ -53,6 +53,15 @@ namespace Lib9c
             0,
             minters: null);
 
+        public static readonly Currency OdinWeaknessRune = Currency.Legacy(
+            "RUNESTONE_ODIN_WEAKNESS",
+            decimalPlaces: 0,
+            minters: null);
+
+        public static readonly Currency OdinWisdomRune = Currency.Legacy(
+            "RUNESTONE_ODIN_WISDOM",
+            decimalPlaces: 0,
+            minters: null);
 
         public static readonly Currency Mead = Currency.Legacy("Mead", 18, null);
 

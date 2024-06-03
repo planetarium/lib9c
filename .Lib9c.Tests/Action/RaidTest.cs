@@ -48,7 +48,7 @@ namespace Lib9c.Tests.Action
         [InlineData(null, true, true, true, false, 0, 0L, false, false, 0, false, false, false, 5, false, 0, 10002, 1, 30001)]
         [InlineData(null, true, true, true, false, 0, 0L, false, false, 0, false, false, false, 5, true, 0, 10002, 1, 30001)]
         // Refill by interval.
-        [InlineData(null, true, true, false, true, 0, -10368, false, false, 0, false, false, false, 5, true, 0, 10002, 1, 30001)]
+        [InlineData(null, true, true, false, true, 0, -10800, false, false, 0, false, false, false, 5, true, 0, 10002, 1, 30001)]
         // Refill by NCG.
         [InlineData(null, true, true, false, true, 0, 200L, true, true, 0, false, false, false, 5, true, 0, 10002, 1, 30001)]
         [InlineData(null, true, true, false, true, 0, 200L, true, true, 1, false, false, false, 5, true, 0, 10002, 1, 30001)]
@@ -263,7 +263,8 @@ namespace Lib9c.Tests.Action
                     raidSimulatorSheets,
                     _tableSheets.CostumeStatSheet,
                     new List<StatModifier>(),
-                    _tableSheets.DeBuffLimitSheet
+                    _tableSheets.DeBuffLimitSheet,
+                    _tableSheets.BuffLinkSheet
                     );
                 simulator.Simulate();
                 var score = simulator.DamageDealt;
@@ -502,7 +503,8 @@ namespace Lib9c.Tests.Action
                 _tableSheets.GetRaidSimulatorSheets(),
                 _tableSheets.CostumeStatSheet,
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
                 );
             simulator.Simulate();
 

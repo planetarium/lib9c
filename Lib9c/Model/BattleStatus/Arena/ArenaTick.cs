@@ -8,14 +8,15 @@ namespace Nekoyume.Model.BattleStatus.Arena
     public class ArenaTick : ArenaSkill
     {
         public ArenaTick(ArenaCharacter character) : this(
+            0,
             character,
             ArraySegment<ArenaSkillInfo>.Empty,
             ArraySegment<ArenaSkillInfo>.Empty)
         {
         }
 
-        public ArenaTick(ArenaCharacter character, IEnumerable<ArenaSkillInfo> skillInfos, IEnumerable<ArenaSkillInfo> buffInfos)
-            : base(character, skillInfos, buffInfos)
+        public ArenaTick(int skillId, ArenaCharacter character, IEnumerable<ArenaSkillInfo> skillInfos, IEnumerable<ArenaSkillInfo> buffInfos)
+            : base(skillId, character, skillInfos, buffInfos)
         {
         }
 

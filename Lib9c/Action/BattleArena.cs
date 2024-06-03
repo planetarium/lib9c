@@ -133,6 +133,7 @@ namespace Nekoyume.Action
                 typeof(RuneListSheet),
                 typeof(RuneLevelBonusSheet),
                 typeof(DeBuffLimitSheet),
+                typeof(BuffLinkSheet),
             };
             if (collectionExist)
             {
@@ -399,6 +400,8 @@ namespace Nekoyume.Action
                     modifiers[address] = state.GetModifiers(collectionSheet);
                 }
             }
+
+            var buffLinkSheet = sheets.GetSheet<BuffLinkSheet>();
             for (var i = 0; i < ticket; i++)
             {
                 var simulator = new ArenaSimulator(random, HpIncreasingModifier,
@@ -410,6 +413,7 @@ namespace Nekoyume.Action
                     modifiers[myAvatarAddress],
                     modifiers[enemyAvatarAddress],
                     deBuffLimitSheet,
+                    buffLinkSheet,
                     true);
                 if (log.Result.Equals(ArenaLog.ArenaResult.Win))
                 {

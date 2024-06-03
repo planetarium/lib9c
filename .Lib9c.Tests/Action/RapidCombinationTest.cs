@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Lib9c.Tests.Fixtures.TableCSV;
     using Lib9c.Tests.Fixtures.TableCSV.Item;
+    using Lib9c.Tests.Fixtures.TableCSV.Quest;
     using Lib9c.Tests.Util;
     using Libplanet.Action;
     using Libplanet.Action.State;
@@ -53,6 +54,10 @@ namespace Lib9c.Tests.Action
                     {
                         "GameConfigSheet",
                         GameConfigSheetFixtures.Default
+                    },
+                    {
+                        nameof(CombinationEquipmentQuestSheet),
+                        CombinationEquipmentQuestSheetFixtures.Default
                     },
                 });
             _tableSheets = new TableSheets(sheets);

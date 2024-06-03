@@ -89,7 +89,6 @@ namespace Lib9c.Tools.SubCommand
                         nameof(PatchTableSheet) => new PatchTableSheet(),
                         nameof(AddRedeemCode) => new AddRedeemCode(),
                         nameof(Nekoyume.Action.MigrationActivatedAccountsState) => new MigrationActivatedAccountsState(),
-                        nameof(Nekoyume.Action.MigrationAvatarState) => new MigrationAvatarState(),
                         nameof(Nekoyume.Action.CreatePendingActivations) => new CreatePendingActivations(),
                         nameof(Nekoyume.Action.RenewAdminState) => new RenewAdminState(),
                         nameof(Nekoyume.Action.PrepareRewardAssets) => new PrepareRewardAssets(),
@@ -179,33 +178,6 @@ namespace Lib9c.Tools.SubCommand
 
             byte[] raw = _codec.Encode(bencoded);
             Console.WriteLine(ByteUtil.Hex(raw));
-        }
-
-        [Obsolete("This function is deprecated. Please use `NineChronicles.Headless.Executable tx migration-avatar-state` command instead.")]
-        [Command(Description = "Create MigrationAvatarState action and dump it.")]
-        public void MigrationAvatarState(
-        [Argument("directory-path", Description = "path of the directory contained hex-encoded avatar states.")] string directoryPath,
-        [Argument("output-path", Description = "path of the output file dumped action.")] string outputPath
-        )
-        {
-            var files = Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories);
-            var avatarStates = files.Select(a =>
-            {
-                var raw = File.ReadAllText(a);
-                return (Dictionary)_codec.Decode(ByteUtil.ParseHex(raw));
-            }).ToList();
-            var action = new MigrationAvatarState()
-            {
-                avatarStates = avatarStates
-            };
-
-            var encoded = new List(
-                (Text)nameof(Nekoyume.Action.MigrationAvatarState),
-                action.PlainValue
-            );
-
-            byte[] raw = _codec.Encode(encoded);
-            File.WriteAllText(outputPath, ByteUtil.Hex(raw));
         }
 
         [Obsolete("This function is deprecated. Please use `NineChronicles.Headless.Executable tx add-redeem-code` command instead.")]

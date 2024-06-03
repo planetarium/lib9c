@@ -142,7 +142,17 @@ namespace Lib9c.Tests.TableData
                     }
                 }
 
-                Assert.True(round.RequiredMedalCount > 0);
+                // Check ChampionShip round data
+                // Except mocaverse event season
+                if (round.ChampionshipId == 8)
+                {
+                    Assert.Equal(0, round.RequiredMedalCount);
+                }
+                else
+                {
+                    Assert.True(round.RequiredMedalCount > 0);
+                }
+
                 Assert.True(round.EntranceFee > 0L);
                 Assert.True(round.StartBlockIndex < round.EndBlockIndex);
             }
