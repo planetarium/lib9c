@@ -202,16 +202,9 @@ namespace Nekoyume.Helper
             // Initialize ncgReward from bounty because its from bounty.
             ncgReward = 0 * bountyBoard.totalBounty().Currency;
             // Raffle
-            if (isReal)
+            if (isReal && bountyBoard.RaffleWinner == avatarAddress)
             {
-                if (bountyBoard.RaffleWinner == avatarAddress)
-                {
-                    ncgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
-                }
-            }
-            else
-            {
-                ncgReward = (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+                ncgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
             }
 
             if (reward.NcgReward is null)
@@ -345,16 +338,9 @@ namespace Nekoyume.Helper
             var gold = bountyBoard.totalBounty().Currency;
             ncgReward = 0 * gold;
             // Raffle
-            if (isReal)
+            if (isReal && exploreBoard.RaffleWinner == avatarAddress)
             {
-                if (exploreBoard.RaffleWinner == avatarAddress)
-                {
-                    ncgReward = (FungibleAssetValue)exploreBoard.RaffleReward!;
-                }
-            }
-            else
-            {
-                ncgReward = (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+                ncgReward = (FungibleAssetValue)exploreBoard.RaffleReward!;
             }
 
             if (reward.NcgReward is null)
