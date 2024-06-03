@@ -64,17 +64,14 @@ namespace Nekoyume.Action.DPoS
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IActionContext ctx = context;
-            var states = ctx.PreviousState;
+            var states = context.PreviousState;
             var nativeTokens = ImmutableHashSet.Create(
                 Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
 
-            // if (ctx.Rehearsal)
-            // Rehearsal mode is not implemented
             states = UndelegateCtrl.Execute(
                 states,
-                ctx,
-                ctx.Signer,
+                context,
+                context.Signer,
                 Validator,
                 ShareAmount,
                 nativeTokens);

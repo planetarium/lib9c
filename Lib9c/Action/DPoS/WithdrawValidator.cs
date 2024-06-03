@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Bencodex.Types;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Types.Assets;
@@ -39,24 +40,21 @@ namespace Nekoyume.Action.DPoS
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IActionContext ctx = context;
-            var states = ctx.PreviousState;
+            var states = context.PreviousState;
             var nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
+                Asset.GovernanceToken, Currencies.Mead, Asset.ConsensusToken, Asset.Share);
 
-            // if (ctx.Rehearsal)
-            // Rehearsal mode is not implemented
 #pragma warning disable LAA1002
             foreach (Currency nativeToken in nativeTokens)
             {
-                FungibleAssetValue reward = states.GetBalance(
-                    AllocateRewardCtrl.RewardAddress(ctx.Signer), nativeToken);
+                var rewardAddress = AllocateRewardCtrl.RewardAddress(context.Signer);
+                FungibleAssetValue reward = states.GetBalance(rewardAddress, nativeToken);
                 if (reward.Sign > 0)
                 {
                     states = states.TransferAsset(
-                        ctx,
-                        AllocateRewardCtrl.RewardAddress(ctx.Signer),
-                        ctx.Signer,
+                        context,
+                        rewardAddress,
+                        context.Signer,
                         reward);
                 }
             }

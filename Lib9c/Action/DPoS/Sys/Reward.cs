@@ -2,7 +2,6 @@
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Action.DPoS.Misc;
-using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Sys
 {
@@ -42,10 +41,11 @@ namespace Nekoyume.Action.DPoS.Sys
                 return world;
             }
 
+            var reward = realGasPrice * context.GasUsed();
             return world.MintAsset(
                 context,
                 ReservedAddress.RewardPool,
-                realGasPrice * context.GasUsed());
+                reward);
         }
     }
 }

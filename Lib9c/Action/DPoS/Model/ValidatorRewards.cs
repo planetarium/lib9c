@@ -53,7 +53,9 @@ namespace Nekoyume.Action.DPoS.Model
 
         public static Address DeriveAddress(Address validatorAddress, Currency currency)
         {
-            return AddressHelper.Derive(AddressHelper.Derive(validatorAddress, "ValidatorRewardsAddress"), currency.Ticker);
+            return AddressHelper.Derive(
+                AddressHelper.Derive(validatorAddress, currency.Hash.ToString()),
+                "ValidatorRewardsAddress");
         }
 
         public void Add(long blockHeight, FungibleAssetValue reward)

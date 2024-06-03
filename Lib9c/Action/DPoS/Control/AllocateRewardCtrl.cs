@@ -171,12 +171,14 @@ namespace Nekoyume.Action.DPoS.Control
                 states = states.TransferAsset(
                     ctx,
                     ReservedAddress.RewardPool,
-                    ValidatorRewards.DeriveAddress(vote.ValidatorPublicKey.Address, nativeToken),
+                    ValidatorRewards.DeriveAddress(
+                        Validator.DeriveAddress(vote.ValidatorPublicKey.Address),
+                        nativeToken),
                     delegationRewardSum);
 
                 states = ValidatorRewardsCtrl.Add(
                     states,
-                    vote.ValidatorPublicKey.Address,
+                    Validator.DeriveAddress(vote.ValidatorPublicKey.Address),
                     nativeToken,
                     blockHeight,
                     delegationRewardSum);
