@@ -7,6 +7,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action.DPoS.Control;
 using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Util;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS
 {
@@ -61,9 +62,9 @@ namespace Nekoyume.Action.DPoS
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
-            var nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
+            IActionContext ctx = context;
+            var states = ctx.PreviousState;
+            var nativeTokens = states.GetNativeTokens();
             states = DelegateCtrl.Execute(
                 states,
                 context,

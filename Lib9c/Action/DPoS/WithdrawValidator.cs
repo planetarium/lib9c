@@ -40,9 +40,9 @@ namespace Nekoyume.Action.DPoS
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var states = context.PreviousState;
-            var nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Currencies.Mead, Asset.ConsensusToken, Asset.Share);
+            IActionContext ctx = context;
+            var states = ctx.PreviousState;
+            var nativeTokens = states.GetNativeTokens();
 
 #pragma warning disable LAA1002
             foreach (Currency nativeToken in nativeTokens)

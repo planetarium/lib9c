@@ -8,6 +8,7 @@ using Nekoyume.Action.DPoS.Control;
 using Nekoyume.Action.DPoS.Exception;
 using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Util;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS
 {
@@ -73,8 +74,7 @@ namespace Nekoyume.Action.DPoS
             }
 
             var states = context.PreviousState;
-            var nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
+            var nativeTokens = states.GetNativeTokens();
 
             states = ValidatorCtrl.Create(
                 states,

@@ -6,6 +6,7 @@ using Libplanet.Action.State;
 using Nekoyume.Action.DPoS.Control;
 using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Sys
 {
@@ -35,9 +36,8 @@ namespace Nekoyume.Action.DPoS.Sys
         public override IWorld Execute(IActionContext context)
         {
             var states = context.PreviousState;
-            var nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Currencies.Mead);
-;
+            var nativeTokens = states.GetNativeTokens();
+
             if (states.GetDPoSState(ReservedAddress.ProposerInfo) is { } proposerInfoState)
             {
                 states = AllocateRewardCtrl.Execute(
