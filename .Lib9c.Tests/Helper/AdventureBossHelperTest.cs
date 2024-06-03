@@ -16,7 +16,8 @@ namespace Lib9c.Tests.Helper
         private string _name = "wanted";
 
         [Theory]
-        [InlineData(false, false, 5)]
+        // Raffle reward is always 0 when isReal == false
+        [InlineData(false, false, 0)]
         [InlineData(true, false, 0)]
         [InlineData(true, true, 5)]
         public void CalculateWantedReward(bool isReal, bool winner, BigInteger expectedReward)
@@ -53,7 +54,8 @@ namespace Lib9c.Tests.Helper
         }
 
         [Theory]
-        [InlineData(false, false, 5 + 15)]
+        // Raffle reward is always 0 when isReal == false
+        [InlineData(false, false, 0 + 15)]
         [InlineData(true, false, 0 + 15)]
         [InlineData(true, true, 5 + 15)]
         public void CalculateExploreReward(bool isReal, bool winner, BigInteger expectedNcgReward)
