@@ -8,6 +8,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Docs', link: '/docs' },
+      { text: 'API Reference', link: 'https://jsr.io/@planetarium/lib9c' },
     ],
 
     socialLinks: [
@@ -47,6 +48,7 @@ export default defineConfig({
         i18nRouting: true,
         nav: [
           { text: '문서', link: '/docs.md' },
+          { text: 'API Reference', link: 'https://jsr.io/@planetarium/lib9c' },
         ],
         sidebar: [
           {
