@@ -54,7 +54,7 @@ namespace Nekoyume.Model.AdventureBoss
             return Investors.Aggregate(total, (current, inv) => current + inv.Price);
         }
 
-        public void SetReward(AdventureBossData.RewardInfo rewardInfo, IRandom random)
+        public void SetReward(AdventureBossGameData.RewardInfo rewardInfo, IRandom random)
         {
             (FixedRewardItemId, FixedRewardFavId) = AdventureBossHelper.PickReward(random,
                 rewardInfo.FixedRewardItemIdDict, rewardInfo.FixedRewardFavIdDict);

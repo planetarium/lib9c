@@ -34,7 +34,7 @@ namespace Lib9c.Tests.Helper
                 bountyBoard.RaffleWinner = new PrivateKey().Address;
             }
 
-            var claimableReward = new AdventureBossData.ClaimableReward
+            var claimableReward = new AdventureBossGameData.ClaimableReward
             {
                 NcgReward = null,
                 ItemReward = new Dictionary<int, int>(),
@@ -77,7 +77,7 @@ namespace Lib9c.Tests.Helper
                 exploreBoard.RaffleWinner = new PrivateKey().Address;
             }
 
-            var claimableReward = new AdventureBossData.ClaimableReward
+            var claimableReward = new AdventureBossGameData.ClaimableReward
             {
                 NcgReward = null,
                 ItemReward = new Dictionary<int, int>(),

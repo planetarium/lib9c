@@ -89,8 +89,8 @@ namespace Nekoyume.Action.AdventureBoss
                 materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
             var inventory = states.GetInventory(AvatarAddress);
             var random = context.GetRandom();
-            var selector = new WeightedSelector<AdventureBossData.ExploreReward>(random);
-            var rewardList = new List<AdventureBossData.ExploreReward>();
+            var selector = new WeightedSelector<AdventureBossGameData.ExploreReward>(random);
+            var rewardList = new List<AdventureBossGameData.ExploreReward>();
 
             // Claim floors from last failed
             for (var fl = explorer.Floor + 1; fl < explorer.MaxFloor + 1; fl++)
@@ -116,7 +116,7 @@ namespace Nekoyume.Action.AdventureBoss
                 if (true)
                 {
                     // Add point, reward
-                    var (minPoint, maxPoint) = AdventureBossData.PointDict[fl];
+                    var (minPoint, maxPoint) = AdventureBossGameData.PointDict[fl];
                     var point = random.Next(minPoint, maxPoint + 1);
 
                     explorer.Floor = fl;
@@ -125,7 +125,7 @@ namespace Nekoyume.Action.AdventureBoss
                     exploreBoard.TotalPoint += point;
 
                     selector.Clear();
-                    var floorReward = AdventureBossData.AdventureBossRewards
+                    var floorReward = AdventureBossGameData.AdventureBossRewards
                         .First(rw => rw.BossId == latestSeason.BossId).exploreReward[fl];
                     foreach (var reward in floorReward.FirstReward)
                     {

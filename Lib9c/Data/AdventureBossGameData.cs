@@ -4,7 +4,7 @@ using Libplanet.Types.Assets;
 
 namespace Nekoyume.Data
 {
-    public static class AdventureBossData
+    public static class AdventureBossGameData
     {
         public struct RewardInfo
         {

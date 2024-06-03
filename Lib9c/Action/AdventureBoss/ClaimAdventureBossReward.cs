@@ -81,7 +81,7 @@ namespace Nekoyume.Action.AdventureBoss
             );
 
             var currentBlockIndex = context.BlockIndex;
-            var myReward = new AdventureBossData.ClaimableReward
+            var myReward = new AdventureBossGameData.ClaimableReward
             {
                 NcgReward = null,
                 ItemReward = new Dictionary<int, int>(),

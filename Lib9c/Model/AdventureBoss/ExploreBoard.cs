@@ -52,7 +52,7 @@ namespace Nekoyume.Model.AdventureBoss
             }
         }
 
-        public void SetReward(AdventureBossData.RewardInfo rewardInfo, IRandom random)
+        public void SetReward(AdventureBossGameData.RewardInfo rewardInfo, IRandom random)
         {
             (FixedRewardItemId, FixedRewardFavId) = AdventureBossHelper.PickReward(random,
                 rewardInfo.FixedRewardItemIdDict, rewardInfo.FixedRewardFavIdDict);

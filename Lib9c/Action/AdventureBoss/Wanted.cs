@@ -119,8 +119,8 @@ namespace Nekoyume.Action.AdventureBoss
                 // Set season info: boss and reward
                 var random = context.GetRandom();
                 var reward =
-                    Data.AdventureBossData.AdventureBossRewards[
-                        random.Next(0, Data.AdventureBossData.AdventureBossRewards.Length)];
+                    Data.AdventureBossGameData.AdventureBossRewards[
+                        random.Next(0, Data.AdventureBossGameData.AdventureBossRewards.Length)];
                 seasonInfo.BossId = reward.BossId;
                 bountyBoard.SetReward(reward.wantedReward, random);
                 exploreBoard.SetReward(reward.contributionReward, random);

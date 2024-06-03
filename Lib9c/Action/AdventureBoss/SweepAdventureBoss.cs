@@ -105,16 +105,16 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Add point, reward
             var point = 0;
-            var rewardList = new List<AdventureBossData.ExploreReward>();
+            var rewardList = new List<AdventureBossGameData.ExploreReward>();
             var random = context.GetRandom();
-            var selector = new WeightedSelector<AdventureBossData.ExploreReward>(random);
+            var selector = new WeightedSelector<AdventureBossGameData.ExploreReward>(random);
             for (var fl = 1; fl <= explorer.Floor; fl++)
             {
-                var (min, max) = AdventureBossData.PointDict[fl];
+                var (min, max) = AdventureBossGameData.PointDict[fl];
                 point += random.Next(min, max + 1);
 
                 selector.Clear();
-                var floorReward = AdventureBossData.AdventureBossRewards
+                var floorReward = AdventureBossGameData.AdventureBossRewards
                     .First(rw => rw.BossId == latestSeason.BossId).exploreReward[fl];
                 foreach (var reward in floorReward.Reward)
                 {
