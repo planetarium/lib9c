@@ -8,6 +8,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Docs', link: '/docs' },
+      { text: 'API Reference', link: 'https://jsr.io/@planetarium/lib9c' },
     ],
 
     socialLinks: [
@@ -17,23 +18,23 @@ export default defineConfig({
     i18nRouting: true,
     sidebar: [
       {
-        link: '/docs',
-        items: [
-          {
-            link: '/docs',
-            text: "Introduction"
-          },
-          {
-            link: '/docs/actions',
-            text: "Actions"
-          },
-          {
-            link: '/docs/utility',
-            text: "Utility"
-          }
-        ]
+        link: '/docs/index.md',
+        text: "Introduction"
+      },
+      {
+        link: '/docs/installation.md',
+        text: "Installation"
+      },
+      {
+        link: '/docs/actions.md',
+        text: "Actions"
+      },
+      {
+        link: '/docs/utility.md',
+        text: "Utility"
       }
     ],
+    outline: 'deep'
   },
   locales: {
     root: {
@@ -46,25 +47,25 @@ export default defineConfig({
       themeConfig: {
         i18nRouting: true,
         nav: [
-          { text: '문서', link: '/ko/docs' },
+          { text: '문서', link: '/docs.md' },
+          { text: 'API Reference', link: 'https://jsr.io/@planetarium/lib9c' },
         ],
         sidebar: [
           {
-            link: '/ko/docs',
-            items: [
-              {
-                link: '/ko/docs',
-                text: "소개"
-              },
-              {
-                link: '/ko/docs/actions',
-                text: "액션"
-              },
-              {
-                link: '/ko/docs/utility',
-                text: "유틸리티"
-              }
-            ]
+            link: '/ko/docs/index.md',
+            text: "소개"
+          },
+          {
+            link: '/ko/docs/installation.md',
+            text: "설치"
+          },
+          {
+            link: '/ko/docs/actions.md',
+            text: "액션"
+          },
+          {
+            link: '/ko/docs/utility.md',
+            text: "유틸리티"
           }
         ]
       }
