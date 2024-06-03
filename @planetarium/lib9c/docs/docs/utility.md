@@ -1,4 +1,4 @@
-## Currency (通貨)
+## Currency
 
 ### NCG
 
