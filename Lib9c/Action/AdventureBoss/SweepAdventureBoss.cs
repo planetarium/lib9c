@@ -74,7 +74,7 @@ namespace Nekoyume.Action.AdventureBoss
             var exploreBoard = states.GetExploreBoard(Season);
             var explorer = states.TryGetExplorer(Season, AvatarAddress, out var exp)
                 ? exp
-                : new Explorer(AvatarAddress);
+                : new Explorer(AvatarAddress, avatarState.name);
 
             if (explorer.Floor == 0)
             {
@@ -99,7 +99,7 @@ namespace Nekoyume.Action.AdventureBoss
                 );
             }
 
-            exploreBoard.AddExplorer(AvatarAddress);
+            exploreBoard.AddExplorer(AvatarAddress, avatarState.name);
             exploreBoard.UsedApPotion += requiredPotion;
             explorer.UsedApPotion += requiredPotion;
 
