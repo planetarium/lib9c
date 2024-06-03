@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Helper
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
+    using Nekoyume.Data;
     using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
     using Xunit;
@@ -16,10 +17,11 @@ namespace Lib9c.Tests.Helper
         private string _name = "wanted";
 
         [Theory]
-        [InlineData(false, false, 5)]
+        // Raffle reward is always 0 when isReal == false
+        [InlineData(false, false, 0)]
         [InlineData(true, false, 0)]
         [InlineData(true, true, 5)]
-        public void CalculateWantedReward(bool isReal, bool winner, BigInteger expectedReward)
+        public void CalculateWantedReward(bool isReal, bool winner, int expectedReward)
         {
             var bountyBoard = new BountyBoard(1);
             bountyBoard.FixedRewardFavId = 30001;
@@ -33,7 +35,7 @@ namespace Lib9c.Tests.Helper
                 bountyBoard.RaffleWinner = new PrivateKey().Address;
             }
 
-            var claimableReward = new ClaimableReward
+            var claimableReward = new AdventureBossGameData.ClaimableReward
             {
                 NcgReward = null,
                 ItemReward = new Dictionary<int, int>(),
@@ -53,10 +55,11 @@ namespace Lib9c.Tests.Helper
         }
 
         [Theory]
-        [InlineData(false, false, 5 + 15)]
+        // Raffle reward is always 0 when isReal == false
+        [InlineData(false, false, 0 + 15)]
         [InlineData(true, false, 0 + 15)]
         [InlineData(true, true, 5 + 15)]
-        public void CalculateExploreReward(bool isReal, bool winner, BigInteger expectedNcgReward)
+        public void CalculateExploreReward(bool isReal, bool winner, int expectedNcgReward)
         {
             var bountyBoard = new BountyBoard(1);
             bountyBoard.AddOrUpdate(_avatarAddress, _name, 100 * NCG);
@@ -76,7 +79,7 @@ namespace Lib9c.Tests.Helper
                 exploreBoard.RaffleWinner = new PrivateKey().Address;
             }
 
-            var claimableReward = new ClaimableReward
+            var claimableReward = new AdventureBossGameData.ClaimableReward
             {
                 NcgReward = null,
                 ItemReward = new Dictionary<int, int>(),

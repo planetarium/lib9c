@@ -10,7 +10,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.AdventureBoss;
-    using Nekoyume.Helper;
+    using Nekoyume.Data;
+    using Nekoyume.Model.AdventureBoss;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
@@ -109,7 +111,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             yield return new object[]
             {
                 0, 100, false, null,
-                new ClaimableReward
+                new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = 5 * NCG, // 5% of 100 NCG
                     ItemReward = new Dictionary<int, int>
@@ -129,7 +131,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             yield return new object[]
             {
                 1, 100, true, 100,
-                new ClaimableReward
+                new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = 10 * NCG, // 5% of 200 NCG
                     ItemReward = new Dictionary<int, int>
@@ -149,7 +151,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             yield return new object[]
             {
                 3, 100, true, 200,
-                new ClaimableReward
+                new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = 15 * NCG, // 5% of 300 NCG
                     ItemReward = new Dictionary<int, int>
@@ -171,7 +173,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             yield return new object[]
             {
-                0, 100, 0, new ClaimableReward
+                0, 100, 0, new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = (5 + 15) * NCG, // 5NCG for raffle, 15NCG for 15% distribution
                     ItemReward = new Dictionary<int, int>
@@ -190,7 +192,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                0, 100, 1, new ClaimableReward
+                0, 100, 1, new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward =
                         // 5NCG for raffle, 7.5NCG for half of 15% distribution
@@ -214,7 +216,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                1, 100, 1, new ClaimableReward
+                1, 100, 1, new AdventureBossGameData.ClaimableReward
                 {
                     // No raffle, 7.5 NCG for half of 15% distribution
                     NcgReward = FungibleAssetValue.FromRawValue(NCG, (BigInteger)(7.5 * 100)),
@@ -236,7 +238,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                0, 200, 1, new ClaimableReward
+                0, 200, 1, new AdventureBossGameData.ClaimableReward
                 {
                     // 10NCG for raffle, 15NCG for half of 15% distribution
                     NcgReward = (10 + 15) * NCG,
@@ -256,7 +258,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                1, 100, 2, new ClaimableReward
+                1, 100, 2, new AdventureBossGameData.ClaimableReward
                 {
                     // No raffle, 5 NCG for 1/3 of 15% distribution
                     NcgReward = 5 * NCG,
@@ -279,7 +281,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             yield return new object[]
             {
-                true, false, new ClaimableReward
+                true, false, new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = 5 * NCG, // 5NCG for raffle
                     ItemReward = new Dictionary<int, int>
@@ -297,7 +299,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                false, true, new ClaimableReward
+                false, true, new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = 20 * NCG, // 5NCG for raffle, 15NCG for 15% distribution
                     ItemReward = new Dictionary<int, int>
@@ -315,7 +317,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                true, true, new ClaimableReward
+                true, true, new AdventureBossGameData.ClaimableReward
                 {
                     // 5NCG for wanted raffle, 5NCG for explore raffle, 15NCG for 15% distribution
                     NcgReward = 25 * NCG,
@@ -334,7 +336,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                false, false, new ClaimableReward
+                false, false, new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = 0 * NCG,
                     ItemReward = new Dictionary<int, int>
@@ -359,7 +361,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             int bounty,
             bool anotherWanted,
             int anotherBounty,
-            ClaimableReward expectedReward
+            AdventureBossGameData.ClaimableReward expectedReward
         )
         {
             // Settings
@@ -440,7 +442,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             const int seed = 0;
             // Settings
-            var expectedReward = new ClaimableReward
+            var expectedReward = new AdventureBossGameData.ClaimableReward
             {
                 NcgReward = 10 * NCG,
                 FavReward = new Dictionary<int, int>
@@ -541,7 +543,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             int seed,
             int bounty,
             int anotherExplorerCount,
-            ClaimableReward expectedReward
+            AdventureBossGameData.ClaimableReward expectedReward
         )
         {
             // Settings
@@ -567,29 +569,27 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 RandomSeed = seed,
             });
 
-            // Explore
-            state = new AdventureBossBattle
-            {
-                Season = 1,
-                AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = 1L,
-                RandomSeed = seed,
-            });
-
+            // Explore : just add data to avoid explore reward
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
-            board.UsedApPotion += 99;
-            var exp = state.GetExplorer(1, TesterAvatarAddress);
-            exp.UsedApPotion += 99;
+            var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
+                ? e
+                : new Explorer(TesterAvatarAddress);
+            board.ExplorerList.Add(TesterAvatarAddress);
+            board.UsedApPotion += 100;
+            exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
 
+            var materialSheet = state.GetSheet<MaterialItemSheet>();
+            var materialRow =
+                materialSheet.OrderedList.First(i => i.ItemSubType == ItemSubType.ApStone);
+            var potion = ItemFactory.CreateMaterial(materialRow);
             for (var i = 0; i < anotherExplorerCount; i++)
             {
-                state = new AdventureBossBattle
+                var inventory = state.GetInventory(ExplorerAvatarAddress);
+                inventory.AddItem(potion, 1);
+                state = state.SetInventory(ExplorerAvatarAddress, inventory);
+                state = new ExploreAdventureBoss
                 {
                     Season = 1,
                     AvatarAddress = ExplorerAvatarAddress,
@@ -653,7 +653,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             const int seed = 0;
             // Settings
-            var expectedReward = new ClaimableReward
+            var expectedReward = new AdventureBossGameData.ClaimableReward
             {
                 // (5NCG for raffle, 15NCG for 15% distribution) for season 1 and 3
                 NcgReward = 40 * NCG,
@@ -679,7 +679,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             state = Stake(state, WantedAddress);
             state = Stake(state, ExplorerAddress);
 
-            // Explore for season 1, 3
+            // Explore for season 1, 3 : just add data to avoid explore reward
             state = new Wanted
             {
                 Season = 1,
@@ -692,21 +692,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
                 RandomSeed = seed,
             });
-            state = new AdventureBossBattle
-            {
-                Season = 1,
-                AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().StartBlockIndex + 1,
-            });
+
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
-            board.UsedApPotion += 99;
-            var exp = state.GetExplorer(1, TesterAvatarAddress);
-            exp.UsedApPotion += 99;
+            board.ExplorerList.Add(TesterAvatarAddress);
+            board.UsedApPotion += 100;
+            var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
+                ? e
+                : new Explorer(TesterAvatarAddress);
+            exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
 
             // No Explore
@@ -736,21 +730,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
                 RandomSeed = seed + 2,
             });
-            state = new AdventureBossBattle
-            {
-                Season = 3,
-                AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().StartBlockIndex + 1,
-            });
+
             // Manipulate used AP Potion to calculate reward above zero
             board = state.GetExploreBoard(3);
-            board.UsedApPotion += 99;
-            exp = state.GetExplorer(3, TesterAvatarAddress);
-            exp.UsedApPotion += 99;
+            board.ExplorerList.Add(TesterAvatarAddress);
+            board.UsedApPotion += 100;
+            exp = state.TryGetExplorer(3, TesterAvatarAddress, out e)
+                ? e
+                : new Explorer(TesterAvatarAddress);
+            exp.UsedApPotion += 100;
             state = state.SetExploreBoard(3, board).SetExplorer(3, exp);
 
             // Burn remaining NCG
@@ -789,7 +777,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             const int seed = 0;
             // Settings
-            var expectedReward = new ClaimableReward
+            var expectedReward = new AdventureBossGameData.ClaimableReward
             {
                 NcgReward =
                     25 * NCG, // 5NCG for wanted raffle, 5NCG for explore raffle, 15NCG for 15% distribution.
@@ -827,22 +815,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 RandomSeed = seed,
             });
 
-            // Explore
-            state = new AdventureBossBattle
-            {
-                Season = 1,
-                AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = 1L,
-            });
+            // Explore : just add data to avoid explore reward
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
-            board.UsedApPotion += 99;
-            var exp = state.GetExplorer(1, TesterAvatarAddress);
-            exp.UsedApPotion += 99;
+            board.UsedApPotion += 100;
+            board.ExplorerList.Add(TesterAvatarAddress);
+            var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
+                ? e
+                : new Explorer(TesterAvatarAddress);
+            exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
 
             // Burn
@@ -870,7 +851,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         [Theory]
         [MemberData(nameof(GetPrevRewardTestData))]
-        public void PrevReward(bool wanted, bool explore, ClaimableReward expectedReward)
+        public void PrevReward(
+            bool wanted,
+            bool explore,
+            AdventureBossGameData.ClaimableReward expectedReward
+        )
         {
             // Settings
             const int seed = 0;
@@ -898,22 +883,18 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 RandomSeed = seed,
             });
 
-            // Explore
-            state = new AdventureBossBattle
-            {
-                Season = 1,
-                AvatarAddress = explore ? TesterAvatarAddress : ExplorerAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = explore ? TesterAddress : ExplorerAddress,
-                BlockIndex = 1L,
-            });
+            // Explore : just add data to avoid explore reward
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
-            board.UsedApPotion += 99;
-            var exp = state.GetExplorer(1, explore ? TesterAvatarAddress : ExplorerAvatarAddress);
-            exp.UsedApPotion += 99;
+            board.UsedApPotion += 100;
+            board.ExplorerList.Add(explore ? TesterAvatarAddress : ExplorerAvatarAddress);
+            var exp =
+                state.TryGetExplorer(
+                    1, explore ? TesterAvatarAddress : ExplorerAvatarAddress, out var e
+                )
+                    ? e
+                    : new Explorer(explore ? TesterAvatarAddress : ExplorerAvatarAddress);
+            exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
 
             // Next Season
@@ -970,7 +951,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             return state;
         }
 
-        private void Test(IWorld world, ClaimableReward expectedReward)
+        private void Test(IWorld world, AdventureBossGameData.ClaimableReward expectedReward)
         {
             Assert.Equal(expectedReward.NcgReward, world.GetBalance(TesterAddress, NCG));
             foreach (var fav in expectedReward.FavReward)

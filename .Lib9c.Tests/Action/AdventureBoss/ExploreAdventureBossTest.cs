@@ -11,13 +11,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.AdventureBoss;
+    using Nekoyume.Extensions;
+    using Nekoyume.Model.AdventureBoss;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
-    public class UnlockFloorTest
+    public class ExploreAdventureBossTest
     {
         private static readonly Dictionary<string, string> Sheets =
             TableSheetsImporter.ImportSheets();
@@ -72,17 +74,52 @@ namespace Lib9c.Tests.Action.AdventureBoss
             .SetAgentState(TesterAddress, TesterState)
             .MintAsset(new ActionContext(), WantedAddress, 1_000_000 * NCG);
 
+        public static IEnumerable<object[]> GetExecuteMemberData()
+        {
+            // No AP potion at all
+            yield return new object[]
+            {
+                0, 0, 0, 0, 0, null, new (int, int)[] { },
+            };
+            // Start from bottom, goes to 5
+            yield return new object[]
+            {
+                0, 5, 5, 10, 5, null, new[] { (600301, 90), (600302, 60), (600303, 0), (600304, 0) },
+            };
+            // Start from bottom, goes to 3 because of potion
+            yield return new object[]
+            {
+                0, 5, 3, 3, 0, null, new[] { (600301, 40), (600302, 20), (600303, 0), (600304, 0) },
+            };
+            // Start from 3, goes to 5 because of locked floor
+            yield return new object[]
+            {
+                2, 5, 5, 5, 2, null, new[] { (600301, 80), (600302, 40), (600303, 0), (600304, 0) },
+            };
+            // Start from 6, goes to 10
+            yield return new object[]
+            {
+                5, 10, 10, 10, 5, null,
+                new[] { (600301, 240), (600302, 160), (600303, 0), (600304, 0) },
+            };
+            // Start from 20, cannot enter
+            yield return new object[]
+            {
+                20, 20, 20, 10, 10, typeof(InvalidOperationException), null,
+            };
+        }
+
         [Theory]
-        // Success
-        [InlineData(false, false, 5, 10, null)]
-        [InlineData(true, false, 5, 10, null)]
-        // Max floor
-        [InlineData(false, false, 20, 20, typeof(InvalidOperationException))]
-        [InlineData(true, false, 20, 20, typeof(InvalidOperationException))]
-        // Not enough resources
-        [InlineData(false, true, 5, 5, typeof(NotEnoughMaterialException))]
-        [InlineData(true, true, 5, 5, typeof(InsufficientBalanceException))]
-        public void Execute(bool useNcg, bool notEnough, int startFloor, int expectedFloor, Type exc)
+        [MemberData(nameof(GetExecuteMemberData))]
+        public void Execute(
+            int floor,
+            int maxFloor,
+            int expectedFloor,
+            int initialPotion,
+            int expectedPotion,
+            Type exc,
+            (int, int)[] expectedRewards
+        )
         {
             // Settings
             var state = _initialState;
@@ -92,25 +129,23 @@ namespace Lib9c.Tests.Action.AdventureBoss
             }
 
             state = Stake(state, WantedAddress);
-            var materialSheet = state.GetSheet<MaterialItemSheet>();
-            var goldenDust =
-                ItemFactory.CreateMaterial(materialSheet.Values.First(row => row.Id == 600201));
-
-            if (!notEnough)
+            var sheets = state.GetSheets(sheetTypes: new[]
             {
-                if (useNcg)
-                {
-                    state = state.MintAsset(new ActionContext(), TesterAddress, 5 * NCG);
-                }
-                else
-                {
-                    var inventory = state.GetInventory(TesterAvatarAddress);
-                    inventory.AddItem(goldenDust, 5);
-                    state = state.SetInventory(TesterAvatarAddress, inventory);
-                }
+                typeof(MaterialItemSheet),
+            });
+            var materialSheet = sheets.GetSheet<MaterialItemSheet>();
+            var materialRow =
+                materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
+            var apPotion = ItemFactory.CreateMaterial(materialRow);
+
+            if (initialPotion > 0)
+            {
+                var inventory = state.GetInventory(TesterAvatarAddress);
+                inventory.AddItem(apPotion, initialPotion);
+                state = state.SetInventory(TesterAvatarAddress, inventory);
             }
 
-            // Open Season
+            // Open season
             state = new Wanted
             {
                 Season = 1,
@@ -122,61 +157,68 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Signer = WantedAddress,
                 BlockIndex = 0L,
             });
+            var exp = new Explorer(TesterAvatarAddress)
+            {
+                MaxFloor = maxFloor,
+                Floor = floor,
+            };
+            state = state.SetExplorer(1, exp);
 
-            // Explore
-            state = new ExploreAdventureBoss
+            // Explore and Test
+            var action = new ExploreAdventureBoss
             {
                 Season = 1,
                 AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = 1L,
-            });
-            // Make all floors cleared
-            var explorer = state.GetExplorer(1, TesterAvatarAddress);
-            explorer.MaxFloor = startFloor;
-            explorer.Floor = explorer.MaxFloor;
-            state = state.SetExplorer(1, explorer);
-
-            // Unlock
-            var action = new UnlockFloor
-            {
-                Season = 1,
-                AvatarAddress = TesterAvatarAddress,
-                UseNcg = useNcg,
             };
 
             if (exc is not null)
             {
-                Assert.Throws(
-                    exc,
-                    () => action.Execute(new ActionContext
+                Assert.Throws(exc, () => action.Execute(new ActionContext
                     {
                         PreviousState = state,
                         Signer = TesterAddress,
-                        BlockIndex = 2L,
-                    })
-                );
+                        BlockIndex = 1L,
+                    }
+                ));
             }
             else
             {
-                var resultState = action.Execute(new ActionContext
+                state = action.Execute(new ActionContext
                 {
                     PreviousState = state,
                     Signer = TesterAddress,
-                    BlockIndex = 2L,
+                    BlockIndex = 1L,
                 });
 
-                Assert.Equal(0 * NCG, resultState.GetBalance(TesterAddress, NCG));
-                if (!useNcg)
+                var potion = state.GetInventory(TesterAvatarAddress).Items
+                    .FirstOrDefault(i => i.item.ItemSubType == ItemSubType.ApStone);
+                if (expectedPotion == 0)
                 {
-                    var inventory = resultState.GetInventory(TesterAvatarAddress);
-                    Assert.Null(inventory.Items.FirstOrDefault(i => i.item.Id == 600202));
+                    Assert.Null(potion);
+                }
+                else
+                {
+                    Assert.Equal(expectedPotion, potion!.count);
                 }
 
-                Assert.Equal(expectedFloor, resultState.GetExplorer(1, TesterAvatarAddress).MaxFloor);
+                var exploreBoard = state.GetExploreBoard(1);
+                var explorer = state.GetExplorer(1, TesterAvatarAddress);
+
+                Assert.Equal(initialPotion - expectedPotion, exploreBoard.UsedApPotion);
+                Assert.Equal(expectedFloor, explorer.Floor);
+
+                var inventory = state.GetInventory(TesterAvatarAddress);
+                foreach (var (id, amount) in expectedRewards)
+                {
+                    if (amount == 0)
+                    {
+                        Assert.Null(inventory.Items.FirstOrDefault(i => i.item.Id == id));
+                    }
+                    else
+                    {
+                        Assert.Equal(amount, inventory.Items.First(i => i.item.Id == id).count);
+                    }
+                }
             }
         }
 

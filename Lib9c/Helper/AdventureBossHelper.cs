@@ -2,26 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Nekoyume.Action;
+using Nekoyume.Module;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
 using Nekoyume.Action.AdventureBoss;
+using Nekoyume.Data;
 using Nekoyume.Battle;
 using Nekoyume.Model.AdventureBoss;
-using Nekoyume.Module;
+using Nekoyume.Model.Item;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Helper
 {
-    public struct ClaimableReward
-    {
-        public FungibleAssetValue? NcgReward;
-        public Dictionary<int, int> ItemReward;
-        public Dictionary<int, int> FavReward;
-    }
-
-
     public static class AdventureBossHelper
     {
         public static string GetSeasonAsAddressForm(long season)
@@ -34,21 +30,6 @@ namespace Nekoyume.Helper
         public const decimal TotalRewardMultiplier = 1.2m;
         public const decimal FixedRewardRatio = 0.7m;
         public const decimal RandomRewardRatio = 1m - FixedRewardRatio;
-        public const decimal NcgRuneRatio = 2.5m;
-
-        public static readonly ImmutableDictionary<int, decimal> NcgRewardRatio =
-            new Dictionary<int, decimal>
-            {
-                { 600201, 0.5m }, // Golden Dust : 0.5
-                { 600202, 1.5m }, // Ruby Dust : 1.5
-                { 600203, 7.5m }, // Diamond Dust : 7.5
-                { 600301, 0.1m }, // Normal Hammer : 0.1
-                { 600302, 0.5m }, // Rare Hammer : 0.5
-                { 600303, 1m }, // Epic Hammer : 1
-                { 600304, 4m }, // Unique Hammer : 4
-                { 600305, 15m }, // Legendary Hammer : 15
-                // { 600306, 60m }, // Divinity Hammer : 60
-            }.ToImmutableDictionary();
 
         public static (int?, int?) PickReward(IRandom random, Dictionary<int, int> itemIdDict,
             Dictionary<int, int> favIdDict)
@@ -86,7 +67,8 @@ namespace Nekoyume.Helper
             return (itemId, favId);
         }
 
-        private static ClaimableReward AddReward(ClaimableReward reward, bool isItem, int id,
+        private static AdventureBossGameData.ClaimableReward AddReward(
+            AdventureBossGameData.ClaimableReward reward, bool isItem, int id,
             int amount)
         {
             if (isItem)
@@ -115,10 +97,14 @@ namespace Nekoyume.Helper
             return reward;
         }
 
+        public static FungibleAssetValue CalculateRaffleReward(BountyBoard bountyBoard)
+        {
+            return (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+        }
+
         public static BountyBoard PickWantedRaffle(BountyBoard bountyBoard, IRandom random)
         {
-            bountyBoard.RaffleReward =
-                (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+            bountyBoard.RaffleReward = CalculateRaffleReward(bountyBoard);
 
             var selector = new WeightedSelector<Investor>(random);
             foreach (var inv in bountyBoard.Investors)
@@ -135,8 +121,7 @@ namespace Nekoyume.Helper
         public static ExploreBoard PickExploreRaffle(BountyBoard bountyBoard,
             ExploreBoard exploreBoard, IRandom random)
         {
-            exploreBoard.RaffleReward =
-                (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+            exploreBoard.RaffleReward = CalculateRaffleReward(bountyBoard);
 
             if (exploreBoard.ExplorerList.Count > 0)
             {
@@ -194,24 +179,18 @@ namespace Nekoyume.Helper
         /// <param name="ncgReward">out value: calculated NCG reward in this function.
         /// We must handle NCG reward separately because NCG reward must be transferred from each season's bounty address.</param>
         /// <returns>Updated Claimable reward after calculation.</returns>
-        public static ClaimableReward CalculateWantedReward(
-            ClaimableReward reward, BountyBoard bountyBoard, Address avatarAddress,
+        public static AdventureBossGameData.ClaimableReward CalculateWantedReward(
+            AdventureBossGameData.ClaimableReward reward, BountyBoard bountyBoard,
+            Address avatarAddress,
             bool isReal, out FungibleAssetValue ncgReward
         )
         {
             // Initialize ncgReward from bounty because its from bounty.
             ncgReward = 0 * bountyBoard.totalBounty().Currency;
             // Raffle
-            if (isReal)
+            if (isReal && bountyBoard.RaffleWinner == avatarAddress)
             {
-                if (bountyBoard.RaffleWinner == avatarAddress)
-                {
-                    ncgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
-                }
-            }
-            else
-            {
-                ncgReward = (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+                ncgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
             }
 
             if (reward.NcgReward is null)
@@ -234,15 +213,17 @@ namespace Nekoyume.Helper
             var totalFixedRewardNcg = (int)Math.Round(totalRewardNcg * FixedRewardRatio);
             var totalFixedRewardAmount = (int)Math.Round(
                 bountyBoard.FixedRewardItemId is not null
-                    ? totalFixedRewardNcg / NcgRewardRatio[(int)bountyBoard.FixedRewardItemId]
-                    : totalFixedRewardNcg / NcgRuneRatio
+                    ? totalFixedRewardNcg /
+                      AdventureBossGameData.NcgRewardRatio[(int)bountyBoard.FixedRewardItemId]
+                    : totalFixedRewardNcg / AdventureBossGameData.NcgRuneRatio
             );
 
             var totalRandomRewardNcg = (int)Math.Round(totalRewardNcg * RandomRewardRatio);
             var totalRandomRewardAmount = (int)Math.Round(
                 bountyBoard.RandomRewardItemId is not null
-                    ? totalRandomRewardNcg / NcgRewardRatio[(int)bountyBoard.RandomRewardItemId]
-                    : totalRandomRewardNcg / NcgRuneRatio
+                    ? totalRandomRewardNcg /
+                      AdventureBossGameData.NcgRewardRatio[(int)bountyBoard.RandomRewardItemId]
+                    : totalRandomRewardNcg / AdventureBossGameData.NcgRuneRatio
             );
 
             // Calculate my reward
@@ -282,8 +263,9 @@ namespace Nekoyume.Helper
         }
 
         public static IWorld CollectWantedReward(IWorld states, IActionContext context,
-            ClaimableReward reward, long currentBlockIndex, long season, Address avatarAddress,
-            out ClaimableReward collectedReward)
+            AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
+            Address avatarAddress,
+            out AdventureBossGameData.ClaimableReward collectedReward)
         {
             var agentAddress = states.GetAvatarState(avatarAddress).agentAddress;
             for (var szn = season; szn > 0; szn--)
@@ -338,23 +320,17 @@ namespace Nekoyume.Helper
             return states;
         }
 
-        public static ClaimableReward CalculateExploreReward(ClaimableReward reward,
+        public static AdventureBossGameData.ClaimableReward CalculateExploreReward(
+            AdventureBossGameData.ClaimableReward reward,
             BountyBoard bountyBoard, ExploreBoard exploreBoard,
             Explorer explorer, Address avatarAddress, bool isReal, out FungibleAssetValue ncgReward)
         {
             var gold = bountyBoard.totalBounty().Currency;
             ncgReward = 0 * gold;
             // Raffle
-            if (isReal)
+            if (isReal && exploreBoard.RaffleWinner == avatarAddress)
             {
-                if (exploreBoard.RaffleWinner == avatarAddress)
-                {
-                    ncgReward = (FungibleAssetValue)exploreBoard.RaffleReward!;
-                }
-            }
-            else
-            {
-                ncgReward = (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+                ncgReward = (FungibleAssetValue)exploreBoard.RaffleReward!;
             }
 
             if (reward.NcgReward is null)
@@ -387,8 +363,8 @@ namespace Nekoyume.Helper
 
             // calculate contribution reward
             var ncgRewardRatio = exploreBoard.FixedRewardItemId is not null
-                ? NcgRewardRatio[(int)exploreBoard.FixedRewardItemId]
-                : NcgRuneRatio;
+                ? AdventureBossGameData.NcgRewardRatio[(int)exploreBoard.FixedRewardItemId]
+                : AdventureBossGameData.NcgRuneRatio;
             var totalRewardAmount = (int)Math.Round(exploreBoard.UsedApPotion / ncgRewardRatio);
             var myRewardAmount = (int)Math.Floor(
                 (decimal)totalRewardAmount * explorer.UsedApPotion / exploreBoard.UsedApPotion
@@ -405,8 +381,9 @@ namespace Nekoyume.Helper
         }
 
         public static IWorld CollectExploreReward(IWorld states, IActionContext context,
-            ClaimableReward reward, long currentBlockIndex, long season, Address avatarAddress,
-            out ClaimableReward collectedReward)
+            AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
+            Address avatarAddress,
+            out AdventureBossGameData.ClaimableReward collectedReward)
         {
             var agentAddress = states.GetAvatarState(avatarAddress).agentAddress;
             for (var szn = season; szn > 0; szn--)
@@ -462,6 +439,39 @@ namespace Nekoyume.Helper
             }
 
             collectedReward = reward;
+            return states;
+        }
+
+        public static IWorld AddExploreRewards(IActionContext context, IWorld states,
+            Address avatarAddress, Inventory inventory,
+            IEnumerable<AdventureBossGameData.ExploreReward> rewardList)
+        {
+            foreach (var reward in rewardList)
+            {
+                switch (reward.RewardType)
+                {
+                    case "Rune":
+                        var runeSheet = states.GetSheet<RuneSheet>();
+                        var rune = Currencies.GetRune(runeSheet.OrderedList
+                            .First(r => r.Id == reward.RewardId).Ticker);
+                        states = states.MintAsset(context, avatarAddress, rune * reward.Amount);
+                        break;
+                    case "Crystal":
+                        states = states.MintAsset(context, avatarAddress,
+                            Currencies.Crystal * reward.Amount);
+                        break;
+                    case "Material":
+                        var materialSheet = states.GetSheet<MaterialItemSheet>();
+                        var material = ItemFactory.CreateMaterial(
+                            materialSheet.Values.First(row => row.Id == reward.RewardId)
+                        );
+                        inventory.AddItem(material, reward.Amount);
+                        break;
+                    default:
+                        throw new KeyNotFoundException($"{reward.RewardType} is not valid.");
+                }
+            }
+
             return states;
         }
     }

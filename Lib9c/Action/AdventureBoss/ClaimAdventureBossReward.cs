@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -7,6 +8,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
+using Nekoyume.Data;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
@@ -15,6 +17,7 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Action.AdventureBoss
 {
+    [Serializable]
     [ActionType(TypeIdentifier)]
     public class ClaimAdventureBossReward : ActionBase
     {
@@ -78,7 +81,7 @@ namespace Nekoyume.Action.AdventureBoss
             );
 
             var currentBlockIndex = context.BlockIndex;
-            var myReward = new ClaimableReward
+            var myReward = new AdventureBossGameData.ClaimableReward
             {
                 NcgReward = null,
                 ItemReward = new Dictionary<int, int>(),
