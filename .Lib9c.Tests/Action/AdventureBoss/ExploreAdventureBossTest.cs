@@ -140,7 +140,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             if (initialPotion > 0)
             {
-                var inventory = state.GetInventory(TesterAvatarAddress);
+                var inventory = state.GetInventoryV2(TesterAvatarAddress);
                 inventory.AddItem(apPotion, initialPotion);
                 state = state.SetInventory(TesterAvatarAddress, inventory);
             }
@@ -190,7 +190,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     BlockIndex = 1L,
                 });
 
-                var potion = state.GetInventory(TesterAvatarAddress).Items
+                var potion = state.GetInventoryV2(TesterAvatarAddress).Items
                     .FirstOrDefault(i => i.item.ItemSubType == ItemSubType.ApStone);
                 if (expectedPotion == 0)
                 {
@@ -207,7 +207,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Assert.Equal(initialPotion - expectedPotion, exploreBoard.UsedApPotion);
                 Assert.Equal(expectedFloor, explorer.Floor);
 
-                var inventory = state.GetInventory(TesterAvatarAddress);
+                var inventory = state.GetInventoryV2(TesterAvatarAddress);
                 foreach (var (id, amount) in expectedRewards)
                 {
                     if (amount == 0)

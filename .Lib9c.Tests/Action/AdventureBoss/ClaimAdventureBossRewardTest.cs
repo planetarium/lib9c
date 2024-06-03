@@ -586,7 +586,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var potion = ItemFactory.CreateMaterial(materialRow);
             for (var i = 0; i < anotherExplorerCount; i++)
             {
-                var inventory = state.GetInventory(ExplorerAvatarAddress);
+                var inventory = state.GetInventoryV2(ExplorerAvatarAddress);
                 inventory.AddItem(potion, 1);
                 state = state.SetInventory(ExplorerAvatarAddress, inventory);
                 state = new ExploreAdventureBoss
@@ -968,7 +968,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 );
             }
 
-            var inventory = world.GetInventory(TesterAvatarAddress);
+            var inventory = world.GetInventoryV2(TesterAvatarAddress);
             foreach (var item in expectedReward.ItemReward)
             {
                 var itemState = inventory.Items.FirstOrDefault(i => i.item.Id == item.Key);

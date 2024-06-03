@@ -104,7 +104,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 }
                 else
                 {
-                    var inventory = state.GetInventory(TesterAvatarAddress);
+                    var inventory = state.GetInventoryV2(TesterAvatarAddress);
                     inventory.AddItem(goldenDust, 5);
                     state = state.SetInventory(TesterAvatarAddress, inventory);
                 }
@@ -172,7 +172,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Assert.Equal(0 * NCG, resultState.GetBalance(TesterAddress, NCG));
                 if (!useNcg)
                 {
-                    var inventory = resultState.GetInventory(TesterAvatarAddress);
+                    var inventory = resultState.GetInventoryV2(TesterAvatarAddress);
                     Assert.Null(inventory.Items.FirstOrDefault(i => i.item.Id == 600202));
                 }
 
