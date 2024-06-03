@@ -115,10 +115,14 @@ namespace Nekoyume.Helper
             return reward;
         }
 
+        public static FungibleAssetValue CalculateRaffleReward(BountyBoard bountyBoard)
+        {
+            return (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+        }
+
         public static BountyBoard PickWantedRaffle(BountyBoard bountyBoard, IRandom random)
         {
-            bountyBoard.RaffleReward =
-                (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+            bountyBoard.RaffleReward = CalculateRaffleReward(bountyBoard);
 
             var selector = new WeightedSelector<Address>(random);
             foreach (var inv in bountyBoard.Investors)
@@ -133,8 +137,7 @@ namespace Nekoyume.Helper
         public static ExploreBoard PickExploreRaffle(BountyBoard bountyBoard,
             ExploreBoard exploreBoard, IRandom random)
         {
-            exploreBoard.RaffleReward =
-                (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
+            exploreBoard.RaffleReward = CalculateRaffleReward(bountyBoard);
 
             if (exploreBoard.ExplorerList.Count > 0)
             {
