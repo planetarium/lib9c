@@ -17,18 +17,18 @@ export default defineConfig({
     i18nRouting: true,
     sidebar: [
       {
-        link: '/ko/docs',
+        link: '/docs',
         items: [
           {
-            link: '/ko/docs',
+            link: '/docs',
             text: "Introduction"
           },
           {
-            link: '/ko/docs/actions',
+            link: '/docs/actions',
             text: "Actions"
           },
           {
-            link: '/ko/docs/utility',
+            link: '/docs/utility',
             text: "Utility"
           }
         ]
