@@ -13,15 +13,15 @@ namespace Nekoyume.Model.AdventureBoss
         public string Name;
         public FungibleAssetValue Price;
         public int Count;
-        public bool Claimed = false;
+        public bool Claimed;
 
         public Investor(IValue value)
         {
             List bencoded = (List)value;
             AvatarAddress = bencoded[0].ToAddress();
-            Name = bencoded[1].ToString();
+            Name = bencoded[1].ToDotnetString();
             Price = bencoded[2].ToFungibleAssetValue();
-            Count = bencoded[3].ToInteger();
+            Count = (Integer)bencoded[3];
             Claimed = bencoded[4].ToBoolean();
         }
 
@@ -36,9 +36,9 @@ namespace Nekoyume.Model.AdventureBoss
 
         public IValue Bencoded => List.Empty
             .Add(AvatarAddress.Serialize())
-            .Add(Name.Serialize())
+            .Add((Text)Name)
             .Add(Price.Serialize())
-            .Add(Count.Serialize())
+            .Add(Count)
             .Add(Claimed.Serialize());
     }
 }

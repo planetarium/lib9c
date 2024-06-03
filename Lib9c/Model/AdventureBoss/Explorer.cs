@@ -9,6 +9,7 @@ namespace Nekoyume.Model.AdventureBoss
     public class Explorer : IBencodable
     {
         public Address AvatarAddress;
+        public string Name;
         public int Score;
         public int Floor;
         public int MaxFloor = 5;
@@ -18,9 +19,10 @@ namespace Nekoyume.Model.AdventureBoss
         public bool Claimed;
 
 
-        public Explorer(Address avatarAddress)
+        public Explorer(Address avatarAddress, string name)
         {
             AvatarAddress = avatarAddress;
+            Name = name;
             Score = 0;
             Floor = 0;
             Claimed = false;
@@ -30,17 +32,18 @@ namespace Nekoyume.Model.AdventureBoss
         {
             var list = (List)bencoded;
             AvatarAddress = list[0].ToAddress();
-            Score = (Integer)list[1];
-            Floor = (Integer)list[2];
-            MaxFloor = (Integer)list[3];
-            UsedApPotion = (Integer)list[4];
-            UsedGoldenDust = (Integer)list[5];
-            UsedNcg = (Integer)list[6];
-            Claimed = list[7].ToBoolean();
+            Name = list[1].ToDotnetString();
+            Score = (Integer)list[2];
+            Floor = (Integer)list[3];
+            MaxFloor = (Integer)list[4];
+            UsedApPotion = (Integer)list[5];
+            UsedGoldenDust = (Integer)list[6];
+            UsedNcg = (Integer)list[7];
+            Claimed = list[8].ToBoolean();
         }
 
         public IValue Bencoded => List.Empty
-            .Add(AvatarAddress.Serialize())
+            .Add(AvatarAddress.Serialize()).Add((Text)Name)
             .Add(Score).Add(Floor).Add(MaxFloor)
             .Add(UsedApPotion).Add(UsedGoldenDust).Add(UsedNcg)
             .Add(Claimed.Serialize());

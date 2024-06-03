@@ -72,8 +72,8 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             var exploreBoard = states.GetExploreBoard(Season);
-            var explorer = states.TryGetExplorer(Season, AvatarAddress, out var exp) ? exp : new Explorer(AvatarAddress);
-            exploreBoard.AddExplorer(AvatarAddress);
+            var explorer = states.TryGetExplorer(Season, AvatarAddress, out var exp) ? exp : new Explorer(AvatarAddress, avatarState.name);
+            exploreBoard.AddExplorer(AvatarAddress, avatarState.name);
 
             if (explorer.Floor == UnlockFloor.TotalFloor)
             {

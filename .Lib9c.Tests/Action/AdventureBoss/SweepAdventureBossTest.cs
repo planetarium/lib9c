@@ -142,7 +142,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Signer = WantedAddress,
                 BlockIndex = 0L,
             });
-            var exp = new Explorer(TesterAvatarAddress)
+            var exp = new Explorer(TesterAvatarAddress, TesterAvatarState.name)
             {
                 MaxFloor = 5 * Math.Max(floor / 5, 1),
                 Floor = floor,

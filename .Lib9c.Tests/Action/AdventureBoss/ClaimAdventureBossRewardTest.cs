@@ -423,6 +423,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex + 1,
                 RandomSeed = seed,
             });
+
+            if (!anotherWanted)
+            {
+                var bountyBoard = resultState.GetBountyBoard(1);
+                Assert.Equal(TesterAvatarAddress, bountyBoard.RaffleWinner);
+                Assert.Equal(TesterAvatarState.name, bountyBoard.RaffleWinnerName);
+            }
+
             Assert.True(resultState.GetBountyBoard(1).Investors
                 .First(inv => inv.AvatarAddress == TesterAvatarAddress).Claimed);
 
@@ -566,8 +574,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var board = state.GetExploreBoard(1);
             var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
                 ? e
-                : new Explorer(TesterAvatarAddress);
-            board.ExplorerList.Add(TesterAvatarAddress);
+                : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
+            board.ExplorerList.Add((TesterAvatarAddress, TesterAvatarState.name));
             board.UsedApPotion += 100;
             exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
@@ -627,6 +635,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Test
             var exploreBoard = resultState.GetExploreBoard(1);
             Assert.NotNull(exploreBoard.RaffleWinner);
+            Assert.NotNull(exploreBoard.RaffleWinnerName);
+            if (anotherExplorerCount == 0)
+            {
+                Assert.Equal(TesterAvatarAddress, exploreBoard.RaffleWinner);
+                Assert.Equal(TesterAvatarState.name, exploreBoard.RaffleWinnerName);
+            }
+
             Assert.Equal((int)(bounty * 0.05) * NCG, exploreBoard.RaffleReward);
             Assert.True(resultState.GetExplorer(1, TesterAvatarAddress).Claimed);
 
@@ -680,11 +695,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
-            board.ExplorerList.Add(TesterAvatarAddress);
+            board.ExplorerList.Add((TesterAvatarAddress, TesterAvatarState.name));
             board.UsedApPotion += 100;
             var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
                 ? e
-                : new Explorer(TesterAvatarAddress);
+                : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
             exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
 
@@ -718,11 +733,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             // Manipulate used AP Potion to calculate reward above zero
             board = state.GetExploreBoard(3);
-            board.ExplorerList.Add(TesterAvatarAddress);
+            board.ExplorerList.Add((TesterAvatarAddress, TesterAvatarState.name));
             board.UsedApPotion += 100;
             exp = state.TryGetExplorer(3, TesterAvatarAddress, out e)
                 ? e
-                : new Explorer(TesterAvatarAddress);
+                : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
             exp.UsedApPotion += 100;
             state = state.SetExploreBoard(3, board).SetExplorer(3, exp);
 
@@ -804,10 +819,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
             board.UsedApPotion += 100;
-            board.ExplorerList.Add(TesterAvatarAddress);
+            board.ExplorerList.Add((TesterAvatarAddress, TesterAvatarState.name));
             var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
                 ? e
-                : new Explorer(TesterAvatarAddress);
+                : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
             exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
 
@@ -872,13 +887,18 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
             board.UsedApPotion += 100;
-            board.ExplorerList.Add(explore ? TesterAvatarAddress : ExplorerAvatarAddress);
+            board.ExplorerList.Add(explore
+                ? (TesterAvatarAddress, TesterAvatarState.name)
+                : (ExplorerAvatarAddress, ExplorerAvatarState.name));
             var exp =
                 state.TryGetExplorer(
                     1, explore ? TesterAvatarAddress : ExplorerAvatarAddress, out var e
                 )
                     ? e
-                    : new Explorer(explore ? TesterAvatarAddress : ExplorerAvatarAddress);
+                    : new Explorer(
+                        explore ? TesterAvatarAddress : ExplorerAvatarAddress,
+                        explore ? TesterAvatarState.name : ExplorerAvatarState.name
+                    );
             exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
 
