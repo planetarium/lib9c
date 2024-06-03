@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Immutable;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.DPoS.Control;
-using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Util;
 
 namespace Nekoyume.Action.DPoS
@@ -57,14 +55,13 @@ namespace Nekoyume.Action.DPoS
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IActionContext ctx = context;
-            var validatorAddress = Model.Validator.DeriveAddress(ctx.Signer);
+            var validatorAddress = Model.Validator.DeriveAddress(context.Signer);
             if (!Validator.Equals(validatorAddress))
             {
                 throw new InvalidOperationException("Signer is not the validator.");
             }
 
-            var states = ctx.PreviousState;
+            var states = context.PreviousState;
             states = ValidatorCtrl.Unjail(
                 states,
                 validatorAddress: Validator);

@@ -27,8 +27,7 @@ namespace Nekoyume.Action.DPoS.Control
             Address validatorAddress,
             Currency currency)
         {
-            Address validatorRewardsAddress
-                = ValidatorRewards.DeriveAddress(validatorAddress, currency);
+            Address validatorRewardsAddress = ValidatorRewards.DeriveAddress(validatorAddress, currency);
             ValidatorRewards validatorRewards;
             if (states.GetDPoSState(validatorRewardsAddress) is { } value)
             {
@@ -53,7 +52,7 @@ namespace Nekoyume.Action.DPoS.Control
             ValidatorRewards validatorRewards;
             (_, validatorRewards) = FetchValidatorRewards(states, validatorAddress, currency);
             return validatorRewards.Rewards.Where(
-                kv => minBlockHeight <= kv.Key && kv.Key < maxBlockHeight)
+                kv => minBlockHeight < kv.Key && kv.Key <= maxBlockHeight)
                 .ToImmutableSortedDictionary();
         }
 

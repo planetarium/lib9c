@@ -67,20 +67,19 @@ namespace Nekoyume.Action.DPoS
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IActionContext ctx = context;
-            if (!ctx.Signer.Equals(Validator.Address))
+            if (!context.Signer.Equals(Validator.Address))
             {
-                throw new PublicKeyAddressMatchingException(ctx.Signer, Validator);
+                throw new PublicKeyAddressMatchingException(context.Signer, Validator);
             }
 
-            var states = ctx.PreviousState;
+            var states = context.PreviousState;
             var nativeTokens = ImmutableHashSet.Create(
                 Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
 
             states = ValidatorCtrl.Create(
                 states,
-                ctx,
-                ctx.Signer,
+                context,
+                context.Signer,
                 Validator,
                 Amount,
                 nativeTokens);
