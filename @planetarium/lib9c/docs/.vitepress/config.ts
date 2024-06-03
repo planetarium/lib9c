@@ -21,6 +21,10 @@ export default defineConfig({
         text: "Introduction"
       },
       {
+        link: '/docs/installation.md',
+        text: "Installation"
+      },
+      {
         link: '/docs/actions.md',
         text: "Actions"
       },
@@ -48,6 +52,10 @@ export default defineConfig({
           {
             link: '/ko/docs/index.md',
             text: "소개"
+          },
+          {
+            link: '/ko/docs/installation.md',
+            text: "설치"
           },
           {
             link: '/ko/docs/actions.md',
