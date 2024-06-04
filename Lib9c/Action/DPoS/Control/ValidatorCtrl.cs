@@ -61,12 +61,12 @@ namespace Nekoyume.Action.DPoS.Control
             FungibleAssetValue governanceToken,
             IImmutableSet<Currency> nativeTokens)
         {
-            if (!governanceToken.Currency.Equals(Asset.GovernanceToken))
+            if (!governanceToken.Currency.Equals(states.GetGoldCurrency()))
             {
-                throw new Exception.InvalidCurrencyException(Asset.GovernanceToken, governanceToken.Currency);
+                throw new Exception.InvalidCurrencyException(states.GetGoldCurrency(), governanceToken.Currency);
             }
 
-            FungibleAssetValue consensusToken = Asset.ConsensusFromGovernance(governanceToken);
+            FungibleAssetValue consensusToken = Asset.ConvertTokens(governanceToken, Asset.ConsensusToken);
             if (consensusToken < Validator.MinSelfDelegation)
             {
                 throw new InsufficientFungibleAssetValueException(
@@ -206,8 +206,9 @@ namespace Nekoyume.Action.DPoS.Control
                     ctx,
                     ReservedAddress.UnbondedPool,
                     ReservedAddress.BondedPool,
-                    Asset.GovernanceFromConsensus(
-                        states.GetBalance(validator.Address, Asset.ConsensusToken)));
+                    Asset.ConvertTokens(
+                        states.GetBalance(validator.Address, Asset.ConsensusToken),
+                        states.GetGoldCurrency()));
             }
 
             validator.Status = BondingStatus.Bonded;

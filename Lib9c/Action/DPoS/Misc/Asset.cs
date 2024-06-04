@@ -47,5 +47,17 @@ namespace Nekoyume.Action.DPoS.Misc
 
             return FungibleAssetValue.FromRawValue(GovernanceToken, consensusToken.RawValue);
         }
+
+        public static FungibleAssetValue ConvertTokens(FungibleAssetValue sourceTokens, Currency targetToken)
+        {
+            if (sourceTokens.Currency.Equals(targetToken))
+            {
+                throw new ArgumentException(
+                    $"Target currency {targetToken} cannot be the same as the source asset's currency {sourceTokens.Currency}.",
+                    nameof(targetToken));
+            }
+
+            return FungibleAssetValue.FromRawValue(targetToken, sourceTokens.RawValue);
+        }
     }
 }

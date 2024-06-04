@@ -6,6 +6,7 @@ using Libplanet.Action.State;
 using Nekoyume.Action.DPoS.Control;
 using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
+using Nekoyume.Model.State;
 using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Sys
