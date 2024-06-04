@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
     using Nekoyume.Action.DPoS.Util;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
 
@@ -229,6 +230,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
             int redelegateAmount)
         {
             Initialize(operatorMintAmount, delegatorMintAmount, selfDelegateAmount, delegateAmount);
+            var governanceToken = _states.GetGoldCurrency();
             _states = RedelegateCtrl.Execute(
                 _states,
                 new ActionContext
@@ -242,11 +244,11 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 Asset.Share * redelegateAmount,
                 _nativeTokens);
             Assert.Equal(
-                Asset.GovernanceToken * 0,
-                _states.GetBalance(_srcValidatorAddress, Asset.GovernanceToken));
+                governanceToken * 0,
+                _states.GetBalance(_srcValidatorAddress, governanceToken));
             Assert.Equal(
-                Asset.GovernanceToken * 0,
-                _states.GetBalance(_dstValidatorAddress, Asset.GovernanceToken));
+                governanceToken * 0,
+                _states.GetBalance(_dstValidatorAddress, governanceToken));
             Assert.Equal(
                 Asset.ConsensusFromGovernance(0),
                 _states.GetBalance(_srcOperatorAddress, Asset.ConsensusToken));
@@ -266,17 +268,17 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 ShareFromGovernance(0),
                 _states.GetBalance(_delegatorAddress, Asset.Share));
             Assert.Equal(
-                Asset.GovernanceToken * (operatorMintAmount - selfDelegateAmount),
-                _states.GetBalance(_srcOperatorAddress, Asset.GovernanceToken));
+                governanceToken * (operatorMintAmount - selfDelegateAmount),
+                _states.GetBalance(_srcOperatorAddress, governanceToken));
             Assert.Equal(
-                Asset.GovernanceToken * (operatorMintAmount - selfDelegateAmount),
-                _states.GetBalance(_dstOperatorAddress, Asset.GovernanceToken));
+                governanceToken * (operatorMintAmount - selfDelegateAmount),
+                _states.GetBalance(_dstOperatorAddress, governanceToken));
             Assert.Equal(
-                Asset.GovernanceToken * (delegatorMintAmount - delegateAmount),
-                _states.GetBalance(_delegatorAddress, Asset.GovernanceToken));
+                governanceToken * (delegatorMintAmount - delegateAmount),
+                _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
-                Asset.GovernanceToken * (2 * selfDelegateAmount + delegateAmount),
-                _states.GetBalance(ReservedAddress.UnbondedPool, Asset.GovernanceToken));
+                governanceToken * (2 * selfDelegateAmount + delegateAmount),
+                _states.GetBalance(ReservedAddress.UnbondedPool, governanceToken));
             var balanceA = _states.GetBalance(
                 Delegation.DeriveAddress(
                     _srcOperatorAddress,
@@ -323,31 +325,25 @@ namespace Lib9c.Tests.Action.DPoS.Control
             int selfDelegateAmount,
             int delegateAmount)
         {
-            _states = InitializeStates();
-            _states = _states.MintAsset(
-                new ActionContext
-                {
-                    PreviousState = _states,
-                    BlockIndex = 1,
-                },
+            _states = new World(InitialStateHelper
+                .EmptyWorldState
+                .WithGoldCurrencyState());
+            var governanceToken = _states.GetGoldCurrency();
+            _states = _states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 _srcOperatorAddress,
-                Asset.GovernanceToken * operatorMintAmount);
-            _states = _states.MintAsset(
-                new ActionContext
-                {
-                    PreviousState = _states,
-                    BlockIndex = 1,
-                },
+                governanceToken * operatorMintAmount);
+            _states = _states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 _dstOperatorAddress,
-                Asset.GovernanceToken * operatorMintAmount);
-            _states = _states.MintAsset(
-                new ActionContext
-                {
-                    PreviousState = _states,
-                    BlockIndex = 1,
-                },
+                governanceToken * operatorMintAmount);
+            _states = _states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 _delegatorAddress,
-                Asset.GovernanceToken * delegatorMintAmount);
+                governanceToken * delegatorMintAmount);
             _states = ValidatorCtrl.Create(
                 _states,
                 new ActionContext
@@ -357,7 +353,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 },
                 _srcOperatorAddress,
                 _srcOperatorPublicKey,
-                Asset.GovernanceToken * selfDelegateAmount,
+                governanceToken * selfDelegateAmount,
                 _nativeTokens);
             _states = ValidatorCtrl.Create(
                 _states,
@@ -368,7 +364,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 },
                 _dstOperatorAddress,
                 _dstOperatorPublicKey,
-                Asset.GovernanceToken * selfDelegateAmount,
+                governanceToken * selfDelegateAmount,
                 _nativeTokens);
             _states = DelegateCtrl.Execute(
                 _states,
@@ -379,7 +375,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 },
                 _delegatorAddress,
                 _srcValidatorAddress,
-                Asset.GovernanceToken * delegateAmount,
+                governanceToken * delegateAmount,
                 _nativeTokens);
         }
     }

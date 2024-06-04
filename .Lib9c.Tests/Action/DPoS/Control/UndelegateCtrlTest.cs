@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
     using Nekoyume.Action.DPoS.Exception;
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
 
@@ -151,6 +152,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
             int undelegateAmount)
         {
             Initialize(operatorMintAmount, delegatorMintAmount, selfDelegateAmount, delegateAmount);
+            var governanceToken = _states.GetGoldCurrency();
             _states = UndelegateCtrl.Execute(
                 _states,
                 new ActionContext
@@ -166,11 +168,11 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 UndelegateCtrl.GetUndelegation(_states, _undelegationAddress)!
                 .UndelegationEntryAddresses);
             Assert.Equal(
-                Asset.GovernanceToken * (delegatorMintAmount - delegateAmount),
-                _states.GetBalance(_delegatorAddress, Asset.GovernanceToken));
+                governanceToken * (delegatorMintAmount - delegateAmount),
+                _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
-                Asset.GovernanceToken * (selfDelegateAmount + delegateAmount),
-                _states.GetBalance(ReservedAddress.UnbondedPool, Asset.GovernanceToken));
+                governanceToken * (selfDelegateAmount + delegateAmount),
+                _states.GetBalance(ReservedAddress.UnbondedPool, governanceToken));
             _states = UndelegateCtrl.Complete(
                 _states,
                 new ActionContext
@@ -182,11 +184,11 @@ namespace Lib9c.Tests.Action.DPoS.Control
             Assert.Single(UndelegateCtrl.GetUndelegation(_states, _undelegationAddress)!
                 .UndelegationEntryAddresses);
             Assert.Equal(
-                Asset.GovernanceToken * (delegatorMintAmount - delegateAmount),
-                _states.GetBalance(_delegatorAddress, Asset.GovernanceToken));
+                governanceToken * (delegatorMintAmount - delegateAmount),
+                _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
-                Asset.GovernanceToken * (selfDelegateAmount + delegateAmount),
-                _states.GetBalance(ReservedAddress.UnbondedPool, Asset.GovernanceToken));
+                governanceToken * (selfDelegateAmount + delegateAmount),
+                _states.GetBalance(ReservedAddress.UnbondedPool, governanceToken));
             _states = UndelegateCtrl.Complete(
                 _states,
                 new ActionContext
@@ -198,11 +200,11 @@ namespace Lib9c.Tests.Action.DPoS.Control
             Assert.Empty(UndelegateCtrl.GetUndelegation(_states, _undelegationAddress)!
                 .UndelegationEntryAddresses);
             Assert.Equal(
-                Asset.GovernanceToken * (delegatorMintAmount - delegateAmount + undelegateAmount),
-                _states.GetBalance(_delegatorAddress, Asset.GovernanceToken));
+                governanceToken * (delegatorMintAmount - delegateAmount + undelegateAmount),
+                _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
-                Asset.GovernanceToken * (selfDelegateAmount + delegateAmount - undelegateAmount),
-                _states.GetBalance(ReservedAddress.UnbondedPool, Asset.GovernanceToken));
+                governanceToken * (selfDelegateAmount + delegateAmount - undelegateAmount),
+                _states.GetBalance(ReservedAddress.UnbondedPool, governanceToken));
         }
 
         [Theory]
@@ -217,6 +219,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
             int cancelAmount)
         {
             Initialize(operatorMintAmount, delegatorMintAmount, selfDelegateAmount, delegateAmount);
+            var governanceToken = _states.GetGoldCurrency();
             _states = UndelegateCtrl.Execute(
                 _states,
                 new ActionContext
@@ -229,8 +232,8 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 ShareFromGovernance(undelegateAmount),
                 _nativeTokens);
             Assert.Equal(
-                Asset.GovernanceToken * (delegatorMintAmount - delegateAmount),
-                _states.GetBalance(_delegatorAddress, Asset.GovernanceToken));
+                governanceToken * (delegatorMintAmount - delegateAmount),
+                _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
                 Asset.ConsensusFromGovernance(selfDelegateAmount + delegateAmount - undelegateAmount),
                 _states.GetBalance(_validatorAddress, Asset.ConsensusToken));
@@ -245,8 +248,8 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 Asset.ConsensusFromGovernance(cancelAmount),
                 _nativeTokens);
             Assert.Equal(
-                Asset.GovernanceToken * (delegatorMintAmount - delegateAmount),
-                _states.GetBalance(_delegatorAddress, Asset.GovernanceToken));
+                governanceToken * (delegatorMintAmount - delegateAmount),
+                _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
                 Asset.ConsensusFromGovernance(
                     selfDelegateAmount + delegateAmount - undelegateAmount + cancelAmount),
@@ -260,8 +263,8 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 },
                 _undelegationAddress);
             Assert.Equal(
-                Asset.GovernanceToken * (delegatorMintAmount - delegateAmount),
-                _states.GetBalance(_delegatorAddress, Asset.GovernanceToken));
+                governanceToken * (delegatorMintAmount - delegateAmount),
+                _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
                 Asset.ConsensusFromGovernance(
                     selfDelegateAmount + delegateAmount - undelegateAmount + cancelAmount),
@@ -275,9 +278,8 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 },
                 _undelegationAddress);
             Assert.Equal(
-                Asset.GovernanceToken
-                * (delegatorMintAmount - delegateAmount + undelegateAmount - cancelAmount),
-                _states.GetBalance(_delegatorAddress, Asset.GovernanceToken));
+                governanceToken * (delegatorMintAmount - delegateAmount + undelegateAmount - cancelAmount),
+                _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
                 Asset.ConsensusFromGovernance(
                     selfDelegateAmount + delegateAmount - undelegateAmount + cancelAmount),
@@ -295,6 +297,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
             int undelegateAmount)
         {
             Initialize(operatorMintAmount, delegatorMintAmount, selfDelegateAmount, delegateAmount);
+            var governanceToken = _states.GetGoldCurrency();
             _states = UndelegateCtrl.Execute(
                 _states,
                 new ActionContext
@@ -307,8 +310,8 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 ShareFromGovernance(undelegateAmount),
                 _nativeTokens);
             Assert.Equal(
-                Asset.GovernanceToken * 0,
-                _states.GetBalance(_validatorAddress, Asset.GovernanceToken));
+                governanceToken * 0,
+                _states.GetBalance(_validatorAddress, governanceToken));
             Assert.Equal(
                 Asset.ConsensusFromGovernance(0),
                 _states.GetBalance(_operatorAddress, Asset.ConsensusToken));
@@ -322,14 +325,14 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 ShareFromGovernance(0),
                 _states.GetBalance(_delegatorAddress, Asset.Share));
             Assert.Equal(
-                Asset.GovernanceToken * (operatorMintAmount - selfDelegateAmount),
-                _states.GetBalance(_operatorAddress, Asset.GovernanceToken));
+                governanceToken * (operatorMintAmount - selfDelegateAmount),
+                _states.GetBalance(_operatorAddress, governanceToken));
             Assert.Equal(
-                Asset.GovernanceToken * (delegatorMintAmount - delegateAmount),
-                _states.GetBalance(_delegatorAddress, Asset.GovernanceToken));
+                governanceToken * (delegatorMintAmount - delegateAmount),
+                _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
-                Asset.GovernanceToken * (selfDelegateAmount + delegateAmount),
-                _states.GetBalance(ReservedAddress.UnbondedPool, Asset.GovernanceToken));
+                governanceToken * (selfDelegateAmount + delegateAmount),
+                _states.GetBalance(ReservedAddress.UnbondedPool, governanceToken));
             var balanceA = _states.GetBalance(
                 Delegation.DeriveAddress(
                     _operatorAddress,
@@ -354,23 +357,20 @@ namespace Lib9c.Tests.Action.DPoS.Control
             int selfDelegateAmount,
             int delegateAmount)
         {
-            _states = InitializeStates();
-            _states = _states.MintAsset(
-                new ActionContext
-                {
-                    PreviousState = _states,
-                    BlockIndex = 1,
-                },
+            _states = new World(InitialStateHelper
+                .EmptyWorldState
+                .WithGoldCurrencyState());
+            var governanceToken = _states.GetGoldCurrency();
+            _states = _states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 _operatorAddress,
-                Asset.GovernanceToken * operatorMintAmount);
-            _states = _states.MintAsset(
-                new ActionContext
-                {
-                    PreviousState = _states,
-                    BlockIndex = 1,
-                },
+                governanceToken * operatorMintAmount);
+            _states = _states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 _delegatorAddress,
-                Asset.GovernanceToken * delegatorMintAmount);
+                governanceToken * delegatorMintAmount);
             _states = ValidatorCtrl.Create(
                 _states,
                 new ActionContext
@@ -380,7 +380,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 },
                 _operatorAddress,
                 _operatorPublicKey,
-                Asset.GovernanceToken * selfDelegateAmount,
+                governanceToken * selfDelegateAmount,
                 _nativeTokens);
             _states = DelegateCtrl.Execute(
                 _states,
@@ -391,7 +391,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 },
                 _delegatorAddress,
                 _validatorAddress,
-                Asset.GovernanceToken * delegateAmount,
+                governanceToken * delegateAmount,
                 _nativeTokens);
         }
     }
