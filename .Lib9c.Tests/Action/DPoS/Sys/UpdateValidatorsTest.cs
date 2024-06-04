@@ -10,6 +10,7 @@
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
     using Nekoyume.Action.DPoS.Sys;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
 
@@ -19,19 +20,24 @@
         public void Execute()
         {
             // Prepare initial state.
-            IWorld initialState = new World(MockWorldState.CreateModern());
+            IWorld initialState = new World(
+                InitialStateHelper
+                    .EmptyWorldState
+                    .WithGoldCurrencyState());
+            var governanceToken = initialState.GetGoldCurrency();
             const int count = 4;
             var validatorKeys = Enumerable.Range(0, count).Select(_ => new PrivateKey().PublicKey).ToArray();
             initialState = validatorKeys.Aggregate(
                 initialState,
-                (current, key) => current.MintAsset(
+                (current, key) => current.TransferAsset(
                     new ActionContext(),
+                    GoldCurrencyState.Address,
                     key.Address,
-                    new FungibleAssetValue(Asset.GovernanceToken, 1, 0)));
+                    new FungibleAssetValue(governanceToken, 1, 0)));
             foreach (var key in validatorKeys)
             {
-                Assert.Equal(1, initialState.GetBalance(key.Address, Asset.GovernanceToken).MajorUnit);
-                Assert.Equal(0, initialState.GetBalance(key.Address, Asset.GovernanceToken).MinorUnit);
+                Assert.Equal(1, initialState.GetBalance(key.Address, governanceToken).MajorUnit);
+                Assert.Equal(0, initialState.GetBalance(key.Address, governanceToken).MinorUnit);
             }
 
             // Stake 1 for each validator.
@@ -39,7 +45,7 @@
             {
                 initialState = new PromoteValidator(
                     key,
-                    new FungibleAssetValue(Asset.GovernanceToken, 1, 0)).Execute(
+                    new FungibleAssetValue(governanceToken, 1, 0)).Execute(
                         new ActionContext
                         {
                             PreviousState = initialState,
