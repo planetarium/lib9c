@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: 문서
-      link: /docs
+      link: /ko/docs/index.md
 
 features:
   - title: 타입스크립트
