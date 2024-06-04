@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Libplanet.Action;
-using Nekoyume.Battle.AdventureBoss;
 using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus;
@@ -12,11 +11,9 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Model.Buff;
-using Nekoyume.Model.Character;
 using Nekoyume.TableData;
 using Nekoyume.TableData.AdventureBoss;
 using Priority_Queue;
-using Serilog.Events;
 using NormalAttack = Nekoyume.Model.BattleStatus.NormalAttack;
 using Skill = Nekoyume.Model.Skill.Skill;
 
@@ -26,7 +23,6 @@ namespace Nekoyume.Battle.AdventureBoss
     {
         private readonly List<Wave> _waves;
         private readonly List<ItemBase> _waveRewards;
-        private readonly List<Skill> _skillsOnWaveStart;
 
         public CollectionMap ItemMap { get; private set; } = new ();
         public EnemySkillSheet EnemySkillSheet { get; }
@@ -45,7 +41,6 @@ namespace Nekoyume.Battle.AdventureBoss
             List<Guid> foods,
             AllRuneState runeStates,
             RuneSlotState runeSlotState,
-            List<Skill> skillsOnWaveStart,
             FloorSheet.Row floorRow,
             FloorWaveSheet.Row floorWaveRow,
             SimulatorSheets simulatorSheets,
@@ -93,7 +88,6 @@ namespace Nekoyume.Battle.AdventureBoss
             FloorId = floorId;
             EnemySkillSheet = enemySkillSheet;
             TurnLimit = floorRow.TurnLimit;
-            _skillsOnWaveStart = skillsOnWaveStart;
 
             SetWave(floorRow, floorWaveRow);
         }
@@ -140,24 +134,6 @@ namespace Nekoyume.Battle.AdventureBoss
                 WaveNumber = wv + 1;
                 WaveTurn = 1;
                 _waves[wv].Spawn(this);
-
-                foreach (var skill in _skillsOnWaveStart)
-                {
-                    var buffs = BuffFactory.GetBuffs(
-                        Player.Stats,
-                        skill,
-                        SkillBuffSheet,
-                        StatBuffSheet,
-                        SkillActionBuffSheet,
-                        ActionBuffSheet
-                    );
-
-                    var usedSkill = skill.Use(Player, 0, buffs, LogEvent);
-                    if (LogEvent)
-                    {
-                        Log.Add(usedSkill);
-                    }
-                }
 
                 while (true)
                 {

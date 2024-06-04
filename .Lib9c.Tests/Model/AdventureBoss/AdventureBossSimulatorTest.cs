@@ -54,7 +54,6 @@ namespace Lib9c.Tests.Model.AdventureBoss
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
                 _tableSheets.FloorSheet[1],
                 _tableSheets.FloorWaveSheet[1],
                 _tableSheets.GetSimulatorSheets(),
