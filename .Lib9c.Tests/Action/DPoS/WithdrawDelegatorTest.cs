@@ -23,7 +23,7 @@
             var address = validatorPrivateKey.Address;
             var validatorAddress =
                 Nekoyume.Action.DPoS.Model.Validator.DeriveAddress(address);
-            IWorld states = new World(InitialStateHelper.EmptyWorldState.WithGoldCurrencyState());
+            IWorld states = InitialState;
             var governanceToken = states.GetGoldCurrency();
             var rewardAddress =
                 Nekoyume.Action.DPoS.Model.ValidatorRewards.DeriveAddress(

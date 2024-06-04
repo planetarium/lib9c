@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 _delegatorAddress, _srcValidatorAddress, _dstValidatorAddress);
             _nativeTokens = ImmutableHashSet.Create(
                 Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
-            _states = InitializeStates();
+            _states = InitialState;
         }
 
         [Fact]
@@ -325,9 +325,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
             int selfDelegateAmount,
             int delegateAmount)
         {
-            _states = new World(InitialStateHelper
-                .EmptyWorldState
-                .WithGoldCurrencyState());
             var governanceToken = _states.GetGoldCurrency();
             _states = _states.TransferAsset(
                 new ActionContext(),

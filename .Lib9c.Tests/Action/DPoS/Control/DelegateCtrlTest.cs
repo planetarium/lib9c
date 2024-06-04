@@ -29,7 +29,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
             _validatorAddress = Validator.DeriveAddress(_operatorAddress);
             _nativeTokens = ImmutableHashSet.Create(
                 Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
-            _states = InitializeStates();
+            _states = InitialState;
         }
 
         [Fact]
@@ -167,9 +167,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
         private void Initialize(
             int operatorMintAmount, int delegatorMintAmount, int selfDelegateAmount)
         {
-            _states = new World(InitialStateHelper
-                .EmptyWorldState
-                .WithGoldCurrencyState());
             var governanceToken = _states.GetGoldCurrency();
             _states = _states.TransferAsset(
                 new ActionContext(),

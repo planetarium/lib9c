@@ -20,10 +20,7 @@
         public void Execute()
         {
             // Prepare initial state.
-            IWorld initialState = new World(
-                InitialStateHelper
-                    .EmptyWorldState
-                    .WithGoldCurrencyState());
+            IWorld initialState = InitialState;
             var governanceToken = initialState.GetGoldCurrency();
             const int count = 4;
             var validatorKeys = Enumerable.Range(0, count).Select(_ => new PrivateKey().PublicKey).ToArray();

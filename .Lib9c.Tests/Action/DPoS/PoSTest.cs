@@ -9,12 +9,31 @@ namespace Lib9c.Tests.Action.DPoS
     using Libplanet.Types.Assets;
     using Nekoyume.Action.DPoS.Control;
     using Nekoyume.Action.DPoS.Misc;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
 
     public class PoSTest
     {
-        protected static readonly ImmutableHashSet<Currency> NativeTokens = ImmutableHashSet.Create(
-            Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
+        static PoSTest()
+        {
+            InitialState = new World(InitialStateHelper.EmptyWorldState.WithGoldCurrencyState());
+            NativeTokens = ImmutableHashSet.Create(
+                InitialState.GetGoldCurrency(),
+                Asset.ConsensusToken,
+                Asset.Share);
+        }
+
+        /// <summary>
+        /// An empty <see cref="IWorld"/> with its gold currency state set and its initial supply
+        /// given to <see cref="GoldCurrencyState.Address"/>.
+        /// </summary>
+        /// <remarks>
+        /// The <see cref="Currency"/> used for the gold currency state has a single randomized
+        /// minter for each test.
+        /// </remarks>
+        protected static IWorld InitialState { get; }
+
+        protected static ImmutableHashSet<Currency> NativeTokens { get; }
 
         protected static IWorld InitializeStates()
         {
