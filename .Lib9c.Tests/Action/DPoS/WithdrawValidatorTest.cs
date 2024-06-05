@@ -10,6 +10,7 @@
     using Nekoyume.Action.DPoS;
     using Nekoyume.Action.DPoS.Control;
     using Nekoyume.Action.DPoS.Sys;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
 
@@ -24,8 +25,9 @@
             var states = InitialState;
             var governanceToken = states.GetGoldCurrency();
             var amount = governanceToken * 100;
-            states = states.MintAsset(
-                new ActionContext { PreviousState = states },
+            states = states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 address,
                 amount);
             states = new PromoteValidator(validatorPrivateKey.PublicKey, amount: amount).Execute(

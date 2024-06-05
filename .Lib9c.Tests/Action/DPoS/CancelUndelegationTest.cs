@@ -8,6 +8,8 @@
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
     using Nekoyume.Action.DPoS.Sys;
+    using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class CancelUndelegationTest : PoSTest
@@ -21,22 +23,25 @@
             var validatorAddress =
                 Nekoyume.Action.DPoS.Model.Validator.DeriveAddress(validatorOperatorAddress);
             var delegatorAddress = delegatorPrivateKey.Address;
-            var states = InitializeStates();
+            var states = InitialState;
+            var governanceToken = states.GetGoldCurrency();
 
             // Prepare initial governance token for the delegator and validator
-            states = states.MintAsset(
-                new ActionContext { PreviousState = states },
+            states = states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 validatorOperatorAddress,
-                Asset.GovernanceToken * 100);
-            states = states.MintAsset(
-                new ActionContext { PreviousState = states },
+                governanceToken * 100);
+            states = states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 delegatorAddress,
-                Asset.GovernanceToken * 50);
+                governanceToken * 50);
 
             // Promote the validator
             states = new PromoteValidator(
                 validatorPrivateKey.PublicKey,
-                amount: Asset.GovernanceToken * 100)
+                amount: governanceToken * 100)
                     .Execute(
                         new ActionContext
                             { PreviousState = states, Signer = validatorOperatorAddress });
@@ -45,7 +50,7 @@
                 new ActionContext { PreviousState = states, Miner = validatorOperatorAddress });
 
             // Delegate the delegator
-            states = new Nekoyume.Action.DPoS.Delegate(validatorAddress, Asset.GovernanceToken * 50).Execute(
+            states = new Nekoyume.Action.DPoS.Delegate(validatorAddress, governanceToken * 50).Execute(
                 new ActionContext { PreviousState = states, Signer = delegatorAddress });
             states = new UpdateValidators().Execute(new ActionContext { PreviousState = states });
 
@@ -82,22 +87,25 @@
             var validatorAddress =
                 Nekoyume.Action.DPoS.Model.Validator.DeriveAddress(validatorOperatorAddress);
             var delegatorAddress = delegatorPrivateKey.Address;
-            var states = InitializeStates();
+            var states = InitialState;
+            var governanceToken = states.GetGoldCurrency();
 
             // Prepare initial governance token for the delegator and validator
-            states = states.MintAsset(
-                new ActionContext { PreviousState = states },
+            states = states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 validatorOperatorAddress,
-                Asset.GovernanceToken * 100);
-            states = states.MintAsset(
-                new ActionContext { PreviousState = states },
+                governanceToken * 100);
+            states = states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 delegatorAddress,
-                Asset.GovernanceToken * 50);
+                governanceToken * 50);
 
             // Promote the validator
             states = new PromoteValidator(
                 validatorPrivateKey.PublicKey,
-                amount: Asset.GovernanceToken * 100)
+                amount: governanceToken * 100)
                     .Execute(
                         new ActionContext
                             { PreviousState = states, Signer = validatorOperatorAddress });
@@ -106,7 +114,7 @@
                 new ActionContext { PreviousState = states, Miner = validatorOperatorAddress });
 
             // Delegate the delegator
-            states = new Nekoyume.Action.DPoS.Delegate(validatorAddress, Asset.GovernanceToken * 50).Execute(
+            states = new Nekoyume.Action.DPoS.Delegate(validatorAddress, governanceToken * 50).Execute(
                 new ActionContext { PreviousState = states, Signer = delegatorAddress });
             states = new UpdateValidators().Execute(new ActionContext { PreviousState = states });
 

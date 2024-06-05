@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
     using Nekoyume.Action.DPoS.Control;
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
 
@@ -32,23 +33,19 @@ namespace Lib9c.Tests.Action.DPoS.Control
             List<Address> operatorAddresses = operatorPublicKeys.Select(
                 pubKey => pubKey.Address).ToList();
 
-            _nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
-
-            _states = InitializeStates();
+            _states = InitialState;
+            var governanceToken = _states.GetGoldCurrency();
+            _nativeTokens = NativeTokens;
             ValidatorAddresses = new List<Address>();
 
             var pairs = operatorAddresses.Zip(operatorPublicKeys, (addr, key) => (addr, key));
             foreach (var (addr, key) in pairs)
             {
-                _states = _states.MintAsset(
-                    new ActionContext
-                    {
-                        PreviousState = _states,
-                        BlockIndex = 1,
-                    },
+                _states = _states.TransferAsset(
+                    new ActionContext(),
+                    GoldCurrencyState.Address,
                     addr,
-                    Asset.GovernanceToken * 100);
+                    governanceToken * 100);
                 _states = ValidatorCtrl.Create(
                     _states,
                     new ActionContext
@@ -58,7 +55,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     },
                     addr,
                     key,
-                    Asset.GovernanceToken * 10,
+                    governanceToken * 10,
                     _nativeTokens);
                 ValidatorAddresses.Add(Validator.DeriveAddress(addr));
             }
