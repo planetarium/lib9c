@@ -16,11 +16,6 @@ namespace Nekoyume.Action.DPoS.Sys
     public sealed class AllocateReward : ActionBase
     {
         /// <summary>
-        /// Amount of GovernanceToken to be minted as a block reward.
-        /// </summary>
-        public const int BlockReward = 5;
-
-        /// <summary>
         /// Creates a new instance of <see cref="AllocateReward"/>.
         /// </summary>
         public AllocateReward()
@@ -42,12 +37,7 @@ namespace Nekoyume.Action.DPoS.Sys
             var states = context.PreviousState;
             var nativeTokens = ImmutableHashSet.Create(
                 Asset.GovernanceToken, Currencies.Mead);
-
-            // 5 GovernanceToken is minted to RewardPool.
-            states = states.MintAsset(
-                context,
-                ReservedAddress.RewardPool,
-                BlockReward * Asset.GovernanceToken);
+;
             if (states.GetDPoSState(ReservedAddress.ProposerInfo) is { } proposerInfoState)
             {
                 states = AllocateRewardCtrl.Execute(

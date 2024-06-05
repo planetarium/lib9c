@@ -8,6 +8,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -286,10 +287,7 @@ namespace Nekoyume.Action
             // 마이닝 보상
             // https://www.notion.so/planetarium/Mining-Reward-b7024ef463c24ebca40a2623027d497d
             Currency currency = states.GetGoldCurrency();
-            FungibleAssetValue defaultMiningReward = currency * 10;
-            var countOfHalfLife = (int)Math.Pow(2, Convert.ToInt64((ctx.BlockIndex - 1) / 12614400));
-            FungibleAssetValue miningReward =
-                defaultMiningReward.DivRem(countOfHalfLife, out FungibleAssetValue _);
+            FungibleAssetValue miningReward = currency * 5;
 
             var balance = states.GetBalance(GoldCurrencyState.Address, currency);
             if (miningReward >= FungibleAssetValue.Parse(currency, "1.25") && balance >= miningReward)
@@ -297,7 +295,7 @@ namespace Nekoyume.Action
                 states = states.TransferAsset(
                     ctx,
                     GoldCurrencyState.Address,
-                    ctx.Miner,
+                    ReservedAddress.RewardPool,
                     miningReward
                 );
             }
