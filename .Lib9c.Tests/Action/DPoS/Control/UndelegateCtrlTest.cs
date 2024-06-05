@@ -29,9 +29,8 @@ namespace Lib9c.Tests.Action.DPoS.Control
             _delegatorAddress = CreateAddress();
             _validatorAddress = Validator.DeriveAddress(_operatorAddress);
             _undelegationAddress = Undelegation.DeriveAddress(_delegatorAddress, _validatorAddress);
-            _nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
             _states = InitialState;
+            _nativeTokens = NativeTokens;
         }
 
         [Fact]
@@ -45,7 +44,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 _delegatorAddress,
-                Asset.ConsensusFromGovernance(50));
+                Asset.ConsensusFromGovernance(GovernanceToken * 50));
             Assert.Throws<InvalidCurrencyException>(
                 () => _states = UndelegateCtrl.Execute(
                     _states,
@@ -56,7 +55,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     },
                     _delegatorAddress,
                     _validatorAddress,
-                    Asset.ConsensusFromGovernance(30),
+                    Asset.ConsensusFromGovernance(GovernanceToken * 30),
                     _nativeTokens));
             Assert.Throws<InvalidCurrencyException>(
                 () => _states = UndelegateCtrl.Execute(
@@ -68,7 +67,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     },
                     _delegatorAddress,
                     _validatorAddress,
-                    Asset.GovernanceToken * 30,
+                    GovernanceToken * 30,
                     _nativeTokens));
         }
 
@@ -235,7 +234,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 governanceToken * (delegatorMintAmount - delegateAmount),
                 _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
-                Asset.ConsensusFromGovernance(selfDelegateAmount + delegateAmount - undelegateAmount),
+                Asset.ConsensusFromGovernance(GovernanceToken * (selfDelegateAmount + delegateAmount - undelegateAmount)),
                 _states.GetBalance(_validatorAddress, Asset.ConsensusToken));
             _states = UndelegateCtrl.Cancel(
                 _states,
@@ -245,14 +244,14 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 2,
                 },
                 _undelegationAddress,
-                Asset.ConsensusFromGovernance(cancelAmount),
+                Asset.ConsensusFromGovernance(GovernanceToken * cancelAmount),
                 _nativeTokens);
             Assert.Equal(
                 governanceToken * (delegatorMintAmount - delegateAmount),
                 _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
                 Asset.ConsensusFromGovernance(
-                    selfDelegateAmount + delegateAmount - undelegateAmount + cancelAmount),
+                    GovernanceToken * (selfDelegateAmount + delegateAmount - undelegateAmount + cancelAmount)),
                 _states.GetBalance(_validatorAddress, Asset.ConsensusToken));
             _states = UndelegateCtrl.Complete(
                 _states,
@@ -267,7 +266,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
                 Asset.ConsensusFromGovernance(
-                    selfDelegateAmount + delegateAmount - undelegateAmount + cancelAmount),
+                    GovernanceToken * (selfDelegateAmount + delegateAmount - undelegateAmount + cancelAmount)),
                 _states.GetBalance(_validatorAddress, Asset.ConsensusToken));
             _states = UndelegateCtrl.Complete(
                 _states,
@@ -282,7 +281,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 _states.GetBalance(_delegatorAddress, governanceToken));
             Assert.Equal(
                 Asset.ConsensusFromGovernance(
-                    selfDelegateAmount + delegateAmount - undelegateAmount + cancelAmount),
+                    GovernanceToken * (selfDelegateAmount + delegateAmount - undelegateAmount + cancelAmount)),
                 _states.GetBalance(_validatorAddress, Asset.ConsensusToken));
         }
 
@@ -313,10 +312,10 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 governanceToken * 0,
                 _states.GetBalance(_validatorAddress, governanceToken));
             Assert.Equal(
-                Asset.ConsensusFromGovernance(0),
+                Asset.ConsensusFromGovernance(GovernanceToken * 0),
                 _states.GetBalance(_operatorAddress, Asset.ConsensusToken));
             Assert.Equal(
-                Asset.ConsensusFromGovernance(0),
+                Asset.ConsensusFromGovernance(GovernanceToken * 0),
                 _states.GetBalance(_delegatorAddress, Asset.ConsensusToken));
             Assert.Equal(
                 ShareFromGovernance(0),
@@ -347,7 +346,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 ValidatorCtrl.GetValidator(_states, _validatorAddress)!.DelegatorShares,
                 balanceA + balanceB);
             Assert.Equal(
-                Asset.ConsensusFromGovernance(selfDelegateAmount + delegateAmount - undelegateAmount),
+                Asset.ConsensusFromGovernance(GovernanceToken * (selfDelegateAmount + delegateAmount - undelegateAmount)),
                 _states.GetBalance(_validatorAddress, Asset.ConsensusToken));
         }
 

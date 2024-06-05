@@ -129,7 +129,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 ShareFromGovernance(5 + 1 + 300),
                 _states.GetBalance(delegationAddressB, Asset.Share));
             Assert.Equal(
-                Asset.ConsensusFromGovernance(1 + 5 + 1 + 300),
+                Asset.ConsensusFromGovernance(GovernanceToken * (1 + 5 + 1 + 300)),
                 _states.GetBalance(ValidatorAddresses[5], Asset.ConsensusToken));
             Assert.Equal(
                 governanceToken
@@ -160,7 +160,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 ShareFromGovernance(0),
                 _states.GetBalance(delegationAddressB, Asset.Share));
             Assert.Equal(
-                Asset.ConsensusFromGovernance(1),
+                Asset.ConsensusFromGovernance(GovernanceToken * 1),
                 _states.GetBalance(validatorAddressB, Asset.ConsensusToken));
             Assert.Equal(
                 governanceToken * (100 + (101 + 200) * 50 - 101 - 102 + 204 + 306 - 306),

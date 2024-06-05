@@ -27,9 +27,8 @@ namespace Lib9c.Tests.Action.DPoS.Control
             _operatorAddress = _operatorPublicKey.Address;
             _delegatorAddress = CreateAddress();
             _validatorAddress = Validator.DeriveAddress(_operatorAddress);
-            _nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
             _states = InitialState;
+            _nativeTokens = NativeTokens;
         }
 
         [Fact]
@@ -43,7 +42,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 _delegatorAddress,
-                Asset.ConsensusFromGovernance(50));
+                Asset.ConvertTokens(GovernanceToken * 50, Asset.ConsensusToken));
             Assert.Throws<InvalidCurrencyException>(
                     () => _states = DelegateCtrl.Execute(
                         _states,
@@ -54,7 +53,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                         },
                         _delegatorAddress,
                         _validatorAddress,
-                        Asset.ConsensusFromGovernance(30),
+                        Asset.ConvertTokens(GovernanceToken * 30, Asset.ConsensusToken),
                         _nativeTokens));
         }
 
@@ -89,7 +88,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 _validatorAddress,
-                Asset.ConsensusFromGovernance(100));
+                Asset.ConvertTokens(GovernanceToken * 100, Asset.ConsensusToken));
             Assert.Throws<InvalidExchangeRateException>(
                 () => _states = DelegateCtrl.Execute(
                     _states,

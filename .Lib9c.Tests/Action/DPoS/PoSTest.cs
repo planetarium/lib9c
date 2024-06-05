@@ -62,7 +62,7 @@ namespace Lib9c.Tests.Action.DPoS
             => FungibleAssetValue.FromRawValue(Asset.Share, governanceToken.RawValue);
 
         protected static FungibleAssetValue ShareFromGovernance(BigInteger amount)
-            => ShareFromGovernance(Asset.GovernanceToken * amount);
+            => ShareFromGovernance(GovernanceToken * amount);
 
         protected static IWorld Promote(
             IWorld states,

@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 _operatorAddress,
-                Asset.ConsensusFromGovernance(50));
+                Asset.ConsensusFromGovernance(GovernanceToken * 50));
             Assert.Throws<InvalidCurrencyException>(
                 () => _states = ValidatorCtrl.Create(
                     _states,
@@ -52,7 +52,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     },
                     _operatorAddress,
                     _operatorPublicKey,
-                    Asset.ConsensusFromGovernance(30),
+                    Asset.ConsensusFromGovernance(GovernanceToken * 30),
                     _nativeTokens));
         }
 
@@ -104,7 +104,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 governanceToken * selfDelegateAmount,
                 _nativeTokens);
             Assert.Equal(
-                Asset.ConsensusFromGovernance(selfDelegateAmount),
+                Asset.ConsensusFromGovernance(GovernanceToken * selfDelegateAmount),
                 _states.GetBalance(_validatorAddress, Asset.ConsensusToken));
             Assert.Equal(
                 governanceToken * (mintAmount - selfDelegateAmount),

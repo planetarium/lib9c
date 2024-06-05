@@ -15,14 +15,14 @@ namespace Lib9c.Tests.Action.DPoS.Model
             _validatorPower = new ValidatorPower(
                 CreateAddress(),
                 new PrivateKey().PublicKey,
-                Asset.ConsensusFromGovernance(10));
+                Asset.ConsensusFromGovernance(GovernanceToken * 10));
         }
 
         [Fact]
         public void InvalidUnbondingConsensusToken()
         {
             Assert.Throws<InvalidCurrencyException>(
-                () => _validatorPower.ConsensusToken = Asset.GovernanceToken * 1);
+                () => _validatorPower.ConsensusToken = GovernanceToken * 1);
             Assert.Throws<InvalidCurrencyException>(
                 () => _validatorPower.ConsensusToken = ShareFromGovernance(1));
         }
