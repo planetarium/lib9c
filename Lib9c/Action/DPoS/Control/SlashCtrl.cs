@@ -473,7 +473,8 @@ namespace Nekoyume.Action.DPoS.Control
                 throw new Exception.InvalidCurrencyException(Asset.ConsensusToken, amount.Currency);
             }
 
-            var tokensToBurn = Asset.GovernanceFromConsensus(amount);
+            var governanceToken = world.GetGoldCurrency();
+            var tokensToBurn = Asset.ConvertTokens(amount, governanceToken);
             return world.TransferAsset(actionContext, ReservedAddress.BondedPool, ReservedAddress.CommunityPool, tokensToBurn);
         }
 
@@ -487,7 +488,8 @@ namespace Nekoyume.Action.DPoS.Control
                 throw new Exception.InvalidCurrencyException(Asset.ConsensusToken, amount.Currency);
             }
 
-            var tokensToBurn = Asset.GovernanceFromConsensus(amount);
+            var governanceToken = world.GetGoldCurrency();
+            var tokensToBurn = Asset.ConvertTokens(amount, governanceToken);
             return world.TransferAsset(actionContext, ReservedAddress.UnbondedPool, ReservedAddress.CommunityPool, tokensToBurn);
         }
     }

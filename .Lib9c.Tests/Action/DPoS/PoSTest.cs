@@ -17,8 +17,9 @@ namespace Lib9c.Tests.Action.DPoS
         static PoSTest()
         {
             InitialState = new World(InitialStateHelper.EmptyWorldState.WithGoldCurrencyState());
+            GovernanceToken = InitialState.GetGoldCurrency();
             NativeTokens = ImmutableHashSet.Create(
-                InitialState.GetGoldCurrency(),
+                GovernanceToken,
                 Asset.ConsensusToken,
                 Asset.Share);
         }
@@ -38,6 +39,13 @@ namespace Lib9c.Tests.Action.DPoS
         /// a randomized NCG type <see cref="Currency"/> set for <see cref="InitialState"/>.
         /// </summary>
         protected static ImmutableHashSet<Currency> NativeTokens { get; }
+
+        /// <summary>
+        /// The <see cref="Currency"/> used for governance.  This is consistent with
+        /// the <see cref="Currency"/> of the gold currency state set for
+        /// <see cref="InitialState"/>.
+        /// </summary>
+        protected static Currency GovernanceToken { get; }
 
         protected static IWorld InitializeStates()
         {
