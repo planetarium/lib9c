@@ -9,8 +9,8 @@
     using Libplanet.Types.Consensus;
     using Nekoyume.Action.DPoS;
     using Nekoyume.Action.DPoS.Control;
-    using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Sys;
+    using Nekoyume.Module;
     using Xunit;
 
     public class WithdrawValidatorTest : PoSTest
@@ -21,8 +21,9 @@
             var validatorPrivateKey = new PrivateKey();
             var address = validatorPrivateKey.Address;
             var rewardAddress = AllocateRewardCtrl.RewardAddress(address);
-            var states = InitializeStates();
-            var amount = Asset.GovernanceToken * 100;
+            var states = InitialState;
+            var governanceToken = states.GetGoldCurrency();
+            var amount = governanceToken * 100;
             states = states.MintAsset(
                 new ActionContext { PreviousState = states },
                 address,
@@ -68,18 +69,18 @@
                 });
             Assert.Equal(
                 0,
-                states.GetBalance(address, Asset.GovernanceToken).RawValue);
+                states.GetBalance(address, governanceToken).RawValue);
             Assert.Equal(
                 72,
-                states.GetBalance(rewardAddress, Asset.GovernanceToken).RawValue);
+                states.GetBalance(rewardAddress, governanceToken).RawValue);
             states = new WithdrawValidator().Execute(
                 new ActionContext { PreviousState = states, Signer = address });
             Assert.Equal(
                 72,
-                states.GetBalance(address, Asset.GovernanceToken).RawValue);
+                states.GetBalance(address, governanceToken).RawValue);
             Assert.Equal(
                 0,
-                states.GetBalance(rewardAddress, Asset.GovernanceToken).RawValue);
+                states.GetBalance(rewardAddress, governanceToken).RawValue);
         }
     }
 }

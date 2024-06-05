@@ -5,8 +5,8 @@ namespace Lib9c.Tests.Action.DPoS.Control
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume.Action.DPoS.Control;
-    using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
 
@@ -24,19 +24,20 @@ namespace Lib9c.Tests.Action.DPoS.Control
             _operatorPublicKey = new PrivateKey().PublicKey;
             _operatorAddress = _operatorPublicKey.Address;
             _validatorAddress = Validator.DeriveAddress(_operatorAddress);
-            _nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
-            _states = InitializeStates();
-            _states = _states.MintAsset(
-                context: new ActionContext { PreviousState = _states, },
+            _states = InitialState;
+            var governanceToken = _states.GetGoldCurrency();
+            _nativeTokens = NativeTokens;
+            _states = _states.TransferAsset(
+                context: new ActionContext(),
+                sender: GoldCurrencyState.Address,
                 recipient: _operatorAddress,
-                value: Asset.GovernanceToken * 100000);
+                value: governanceToken * 100000);
             _states = ValidatorCtrl.Create(
                 states: _states,
                 ctx: new ActionContext { PreviousState = _states, },
                 operatorAddress: _operatorAddress,
                 operatorPublicKey: _operatorPublicKey,
-                Asset.GovernanceToken * 10,
+                governanceToken * 10,
                 nativeTokens: _nativeTokens
             );
         }

@@ -63,8 +63,9 @@ namespace Lib9c.Tests.Action.DPoS
             FungibleAssetValue ncg)
         {
             var operatorAddress = operatorPublicKey.Address;
-            states = states.MintAsset(
-                context: new ActionContext { PreviousState = states, BlockIndex = blockIndex },
+            states = states.TransferAsset(
+                context: new ActionContext(),
+                sender: GoldCurrencyState.Address,
                 recipient: operatorAddress,
                 value: ncg);
             states = ValidatorCtrl.Create(
@@ -84,8 +85,9 @@ namespace Lib9c.Tests.Action.DPoS
             Address delegatorAddress,
             FungibleAssetValue ncg)
         {
-            states = states.MintAsset(
-                context: new ActionContext { PreviousState = states, BlockIndex = blockIndex },
+            states = states.TransferAsset(
+                context: new ActionContext(),
+                sender: GoldCurrencyState.Address,
                 recipient: delegatorAddress,
                 value: ncg);
             states = DelegateCtrl.Execute(
