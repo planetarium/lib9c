@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Immutable;
 using System.Numerics;
+using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
 namespace Nekoyume.Action.DPoS.Misc
@@ -7,7 +9,11 @@ namespace Nekoyume.Action.DPoS.Misc
     public struct Asset
     {
         public static readonly Currency GovernanceToken =
-            Currency.Legacy("NCG", 2, null);
+            Currency.Legacy(
+                "NCG",
+                2,
+                new[] { new Address("47d082a115c63e7b58b1532d20e631538eafadde") }
+                    .ToImmutableHashSet());
 
         public static readonly Currency ConsensusToken =
             Currency.Uncapped("ConsensusToken", 0, minters: null);
