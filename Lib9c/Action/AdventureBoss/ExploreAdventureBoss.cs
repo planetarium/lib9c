@@ -184,6 +184,10 @@ namespace Nekoyume.Action.AdventureBoss
                     $"{addressesHex}Aborted as the game config state was failed to load.");
             }
 
+            AdventureBossSimulator simulator = null;
+            var firstFloor = explorer.Floor + 1;
+            var lastFloor = firstFloor;
+
             // Claim floors from last failed
             for (var fl = explorer.Floor + 1; fl < explorer.MaxFloor + 1; fl++)
             {
@@ -206,7 +210,7 @@ namespace Nekoyume.Action.AdventureBoss
                 exploreBoard.UsedApPotion += UnitApPotion;
                 explorer.UsedApPotion += UnitApPotion;
 
-                var simulator = new AdventureBossSimulator(
+                simulator = new AdventureBossSimulator(
                     bossId: latestSeason.BossId,
                     floorId: fl,
                     random,
@@ -227,6 +231,7 @@ namespace Nekoyume.Action.AdventureBoss
                 );
 
                 simulator.Simulate();
+                lastFloor = fl;
 
                 // Get Reward if cleared
                 if (simulator.Log.IsClear)
@@ -263,6 +268,11 @@ namespace Nekoyume.Action.AdventureBoss
                 {
                     break;
                 }
+            }
+
+            if (simulator is not null && lastFloor > firstFloor)
+            {
+                simulator.AddBreakthrough(firstFloor, lastFloor, floorWaveSheet);
             }
 
             states = AdventureBossHelper.AddExploreRewards(context, states, AvatarAddress,

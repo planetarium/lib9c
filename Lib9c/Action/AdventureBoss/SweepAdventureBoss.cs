@@ -7,6 +7,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Battle;
+using Nekoyume.Battle.AdventureBoss;
 using Nekoyume.Data;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -16,6 +17,8 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.TableData.AdventureBoss;
+using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Action.AdventureBoss
 {
@@ -83,9 +86,14 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Use AP Potions
             var requiredPotion = explorer.Floor * UnitApPotion;
-            var sheets = states.GetSheets(sheetTypes: new[]
+            var sheets = states.GetSheets(
+                containSimulatorSheets: true,
+                sheetTypes: new[]
             {
                 typeof(MaterialItemSheet),
+                typeof(RuneListSheet),
+                typeof(RuneLevelBonusSheet),
+                typeof(FloorWaveSheet),
             });
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var material =
@@ -102,6 +110,12 @@ namespace Nekoyume.Action.AdventureBoss
             exploreBoard.AddExplorer(AvatarAddress, avatarState.name);
             exploreBoard.UsedApPotion += requiredPotion;
             explorer.UsedApPotion += requiredPotion;
+
+            var simulator = new AdventureBossSimulator(
+                latestSeason.BossId, explorer.Floor, context.GetRandom(),
+                avatarState, sheets.GetSimulatorSheets(), logEvent: false
+            );
+            simulator.AddBreakthrough(1, explorer.Floor, sheets.GetSheet<FloorWaveSheet>());
 
             // Add point, reward
             var point = 0;
