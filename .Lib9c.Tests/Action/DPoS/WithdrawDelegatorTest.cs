@@ -43,6 +43,12 @@
                 .GetValidatorsPower(
                     new[] { validatorPrivateKey.PublicKey }.ToList());
             Assert.Equal(10000, power);
+
+            // Mint and allocate rewards
+            states = states.MintAsset(
+                new ActionContext { PreviousState = states },
+                ReservedAddress.RewardPool,
+                Asset.GovernanceToken * 5);
             states = new AllocateReward().Execute(
                 new ActionContext
                 {
@@ -74,7 +80,7 @@
                 new ActionContext
                     { PreviousState = states, BlockIndex = 2, Signer = address });
             Assert.Equal(
-                AllocateReward.BlockReward * Asset.GovernanceToken,
+                5 * Asset.GovernanceToken,
                 states.GetBalance(address, Asset.GovernanceToken));
             Assert.Equal(
                 0,

@@ -77,6 +77,12 @@
             var bytes = new byte[32];
             new Random().NextBytes(bytes);
             var blockHash = new BlockHash(bytes);
+
+            // Mint and allocate rewards
+            states = states.MintAsset(
+                new ActionContext { PreviousState = states },
+                ReservedAddress.RewardPool,
+                Asset.GovernanceToken * 5);
             states = new AllocateReward().Execute(
                 new ActionContext
                 {
@@ -199,6 +205,12 @@
             var bytes = new byte[32];
             new Random().NextBytes(bytes);
             var blockHash = new BlockHash(bytes);
+
+            // Mint and allocate rewards
+            states = states.MintAsset(
+                new ActionContext { PreviousState = states },
+                ReservedAddress.RewardPool,
+                Asset.GovernanceToken * 5);
             states = new AllocateReward().Execute(
                 new ActionContext
                 {

@@ -23,6 +23,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Tx;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.Loader;
     using Nekoyume.Battle;
     using Nekoyume.Blockchain;
@@ -467,28 +468,14 @@ namespace Lib9c.Tests.Action
             {
                 ctx.BlockIndex = blockIndex;
                 IWorld delta = action.MinerReward(ctx, _baseState);
-                Assert.Equal(FungibleAssetValue.Parse(currency, expected), delta.GetBalance(miner, currency));
+                Assert.Equal(
+                    FungibleAssetValue.Parse(currency, expected),
+                    delta.GetBalance(
+                        ReservedAddress.RewardPool,
+                        currency));
             }
 
-            // Before halving (10 / 2^0 = 10)
-            AssertMinerReward(0, "10");
-            AssertMinerReward(1, "10");
-            AssertMinerReward(12614400, "10");
-
-            // First halving (10 / 2^1 = 5)
-            AssertMinerReward(12614401, "5");
-            AssertMinerReward(25228800, "5");
-
-            // Second halving (10 / 2^2 = 2.5)
-            AssertMinerReward(25228801, "2.5");
-            AssertMinerReward(37843200, "2.5");
-
-            // Third halving (10 / 2^3 = 1.25)
-            AssertMinerReward(37843201, "1.25");
-            AssertMinerReward(50457600, "1.25");
-
-            // Rewardless era
-            AssertMinerReward(50457601, "0");
+            AssertMinerReward(0, "5");
         }
 
         [Theory]
@@ -540,14 +527,6 @@ namespace Lib9c.Tests.Action
                     tableSheets: TableSheetsImporter.ImportSheets(),
                     pendingActivationStates: pendingActivationStates.ToArray()
                 );
-                var tempActionEvaluator = new ActionEvaluator(
-                    new PolicyActionsRegistry(
-                        beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                        endBlockActionsGetter: _ => policy.EndBlockActions,
-                        beginTxActionsGetter: _ => policy.BeginTxActions,
-                        endTxActionsGetter: _ => policy.EndTxActions),
-                    stateStore: new TrieStateStore(new MemoryKeyValueStore()),
-                    actionTypeLoader: new NCActionLoader());
                 genesis = BlockChain.ProposeGenesisBlock(
                     transactions: ImmutableList<Transaction>.Empty
                         .Add(Transaction.Create(
@@ -568,10 +547,10 @@ namespace Lib9c.Tests.Action
                 genesisBlock: genesis,
                 actionEvaluator: new ActionEvaluator(
                     new PolicyActionsRegistry(
-                        beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                        endBlockActionsGetter: _ => policy.EndBlockActions,
-                        beginTxActionsGetter: _ => policy.BeginTxActions,
-                        endTxActionsGetter: _ => policy.EndTxActions),
+                        beginBlockActionsGetter: _ => Array.Empty<IAction>().ToImmutableArray(),
+                        endBlockActionsGetter: _ => new IAction[] { new RewardGold() }.ToImmutableArray(),
+                        beginTxActionsGetter: _ => Array.Empty<IAction>().ToImmutableArray(),
+                        endTxActionsGetter: _ => Array.Empty<IAction>().ToImmutableArray()),
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),

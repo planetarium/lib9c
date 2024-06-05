@@ -87,6 +87,12 @@
                     new[] { validator2PrivateKey.PublicKey }.ToList());
             Assert.Equal((100 + 50) * 100, power1);
             Assert.Equal(100 * 100, power2);
+
+            // Mint and allocate rewards
+            states = states.MintAsset(
+                new ActionContext { PreviousState = states },
+                ReservedAddress.RewardPool,
+                Asset.GovernanceToken * 5);
             states = new AllocateReward().Execute(
                 new ActionContext
                 {
@@ -155,6 +161,12 @@
                     new[] { validator2PrivateKey.PublicKey }.ToList());
             Assert.Equal((100 + 20) * 100, power1);
             Assert.Equal((100 + 30) * 100, power2);
+
+            // Mint and allocate rewards
+            states = states.MintAsset(
+                new ActionContext { PreviousState = states },
+                ReservedAddress.RewardPool,
+                Asset.GovernanceToken * 5);
             states = new AllocateReward().Execute(
                 new ActionContext
                 {
