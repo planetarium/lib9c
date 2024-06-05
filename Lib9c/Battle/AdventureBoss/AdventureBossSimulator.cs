@@ -37,6 +37,22 @@ namespace Nekoyume.Battle.AdventureBoss
             int floorId,
             IRandom random,
             AvatarState avatarState,
+            SimulatorSheets simulatorSheets,
+            bool logEvent = true,
+            long shatterStrikeMaxDamage = 400_000
+            ) : base(
+                random, avatarState, new List<Guid>(), simulatorSheets, logEvent, shatterStrikeMaxDamage
+            )
+        {
+            BossId = bossId;
+            FloorId = floorId;
+        }
+
+        public AdventureBossSimulator(
+            int bossId,
+            int floorId,
+            IRandom random,
+            AvatarState avatarState,
             List<Guid> foods,
             AllRuneState runeStates,
             RuneSlotState runeSlotState,
