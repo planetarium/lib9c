@@ -7,15 +7,14 @@ using Libplanet.Action;
 using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus;
+using Nekoyume.Model.BattleStatus.AdventureBoss;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
-using Nekoyume.Model.Buff;
 using Nekoyume.TableData;
 using Nekoyume.TableData.AdventureBoss;
 using Priority_Queue;
 using NormalAttack = Nekoyume.Model.BattleStatus.NormalAttack;
-using Skill = Nekoyume.Model.Skill.Skill;
 
 namespace Nekoyume.Battle.AdventureBoss
 {
@@ -205,6 +204,21 @@ namespace Nekoyume.Battle.AdventureBoss
 
             Log.result = Result;
             return Player;
+        }
+
+        public void AddBreakthrough(int firstFloor, int lastFloor, FloorWaveSheet floorWaveSheet)
+        {
+            if (Log.events.Count == 0)
+            {
+                Log.events.Add(new SpawnPlayer((CharacterBase)Player.Clone()));
+            }
+
+            // Add event in reversed order to keep insert position
+            for (var fl = lastFloor; fl >= firstFloor; fl--)
+            {
+                var floorWave = floorWaveSheet[fl].Waves[0];
+                Log.events.Insert(1, new Breakthrough(Player, fl, floorWave.Monsters));
+            }
         }
 
         private void SetWave(FloorSheet.Row floorRow, FloorWaveSheet.Row floorWaveRow)

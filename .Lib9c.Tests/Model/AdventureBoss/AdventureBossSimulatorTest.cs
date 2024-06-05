@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
     using Nekoyume.Battle.AdventureBoss;
     using Nekoyume.Data;
     using Nekoyume.Model.BattleStatus;
+    using Nekoyume.Model.BattleStatus.AdventureBoss;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Stat;
@@ -37,7 +38,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
         }
 
         [Fact]
-        public void Simulate()
+        public AdventureBossSimulator Simulate()
         {
             var adventureBossData = AdventureBossGameData.AdventureBossRewards.First();
             var row = _tableSheets.CostumeStatSheet.Values.First(r => r.StatType == StatType.ATK);
@@ -85,6 +86,71 @@ namespace Lib9c.Tests.Model.AdventureBoss
                     .Where(type => type != typeof(GetReward) && type != typeof(DropBox));
             Assert.Equal(typeof(WaveTurnEnd), filtered.Last());
             Assert.Equal(1, simulator.Log.OfType<WaveTurnEnd>().First().TurnNumber);
+
+            return simulator;
+        }
+
+        [Theory]
+        [InlineData(true, 1, 1)]
+        [InlineData(true, 1, 5)]
+        [InlineData(true, 1, 3)]
+        [InlineData(false, 1, 1)]
+        [InlineData(false, 1, 5)]
+        [InlineData(false, 1, 3)]
+        public void AddBreakthrough(bool simulate, int firstFloor, int lastFloor)
+        {
+            AdventureBossSimulator simulator;
+            if (simulate)
+            {
+                simulator = Simulate();
+            }
+            else
+            {
+                var adventureBossData = AdventureBossGameData.AdventureBossRewards.First();
+                var row = _tableSheets.CostumeStatSheet.Values.First(
+                    r => r.StatType == StatType.ATK);
+                var costume =
+                    (Costume)ItemFactory.CreateItem(_tableSheets.ItemSheet[row.CostumeId], _random);
+                costume.equipped = true;
+                _avatarState.inventory.AddItem(costume);
+
+                simulator = new AdventureBossSimulator(
+                    adventureBossData.BossId,
+                    adventureBossData.exploreReward.Keys.First(), // 1
+                    _random,
+                    _avatarState,
+                    new List<Guid>(),
+                    new AllRuneState(),
+                    new RuneSlotState(BattleType.Adventure),
+                    _tableSheets.FloorSheet[1],
+                    _tableSheets.FloorWaveSheet[1],
+                    _tableSheets.GetSimulatorSheets(),
+                    _tableSheets.EnemySkillSheet,
+                    _tableSheets.CostumeStatSheet,
+                    AdventureBossSimulator.GetWaveRewards(
+                        _random,
+                        _tableSheets.FloorSheet[1],
+                        _tableSheets.MaterialItemSheet
+                    ),
+                    new List<StatModifier>
+                    {
+                        new (StatType.ATK, StatModifier.OperationType.Add, 100),
+                    },
+                    _tableSheets.DeBuffLimitSheet
+                );
+            }
+
+            simulator.AddBreakthrough(firstFloor, lastFloor, _tableSheets.FloorWaveSheet);
+
+            Assert.Equal(typeof(SpawnPlayer), simulator.Log.events.First().GetType());
+            if (!simulate)
+            {
+                // +2: 1 for last floor, 1 for SpawnPlayer
+                Assert.Equal(lastFloor - firstFloor + 2, simulator.Log.events.Count);
+            }
+
+            var filtered = simulator.Log.events.OfType<Breakthrough>();
+            Assert.Equal(lastFloor - firstFloor + 1, filtered.Count());
         }
     }
 }
