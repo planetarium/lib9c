@@ -33,6 +33,10 @@ namespace Lib9c.Tests.Action.DPoS
         /// </remarks>
         protected static IWorld InitialState { get; }
 
+        /// <summary>
+        /// The set of native tokens including the hard coded ones in <see cref="Asset"/> and
+        /// a randomized NCG type <see cref="Currency"/> set for <see cref="InitialState"/>.
+        /// </summary>
         protected static ImmutableHashSet<Currency> NativeTokens { get; }
 
         protected static IWorld InitializeStates()

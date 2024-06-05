@@ -234,12 +234,14 @@ namespace Nekoyume.Action.DPoS.Control
                 if (consensusToken.RawValue > 0)
                 {
                     // Transfer consensus token to unbonded pool if remaining.
+                    var governanceToken = states.GetGoldCurrency();
                     states = states.TransferAsset(
                         ctx,
                         ReservedAddress.BondedPool,
                         ReservedAddress.UnbondedPool,
-                        Asset.GovernanceFromConsensus(
-                            states.GetBalance(validator.Address, Asset.ConsensusToken)));
+                        Asset.ConvertTokens(
+                            states.GetBalance(validator.Address, Asset.ConsensusToken),
+                            governanceToken));
                 }
             }
 
