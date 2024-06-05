@@ -36,7 +36,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
         [Fact]
         public void Execute_Test()
         {
-            var governanceToken = _governanceTokens;
+            var governanceTokens = _governanceTokens;
             var states = _states;
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
@@ -45,7 +45,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken);
+                ncg: governanceTokens);
             states = Update(
                 states: states,
                 blockIndex: 1);
@@ -79,7 +79,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
         [Fact]
         public void Execute_MaxAge_Test()
         {
-            var governanceToken = _governanceTokens;
+            var governanceTokens = _governanceTokens;
             var states = _states;
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
@@ -89,7 +89,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: blockIndex,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken);
+                ncg: governanceTokens);
             states = Update(
                 states: states,
                 blockIndex: blockIndex);

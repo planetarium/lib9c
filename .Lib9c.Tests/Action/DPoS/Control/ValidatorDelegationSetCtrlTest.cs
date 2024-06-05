@@ -25,19 +25,18 @@ namespace Lib9c.Tests.Action.DPoS.Control
             _operatorAddress = _operatorPublicKey.Address;
             _validatorAddress = Validator.DeriveAddress(_operatorAddress);
             _states = InitialState;
-            var governanceToken = _states.GetGoldCurrency();
             _nativeTokens = NativeTokens;
             _states = _states.TransferAsset(
                 context: new ActionContext(),
                 sender: GoldCurrencyState.Address,
                 recipient: _operatorAddress,
-                value: governanceToken * 100000);
+                value: GovernanceToken * 100000);
             _states = ValidatorCtrl.Create(
                 states: _states,
                 ctx: new ActionContext { PreviousState = _states, },
                 operatorAddress: _operatorAddress,
                 operatorPublicKey: _operatorPublicKey,
-                governanceToken * 10,
+                GovernanceToken * 10,
                 nativeTokens: _nativeTokens
             );
         }

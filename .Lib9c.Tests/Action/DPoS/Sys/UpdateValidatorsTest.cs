@@ -21,7 +21,6 @@
         {
             // Prepare initial state.
             IWorld initialState = InitialState;
-            var governanceToken = initialState.GetGoldCurrency();
             const int count = 4;
             var validatorKeys = Enumerable.Range(0, count).Select(_ => new PrivateKey().PublicKey).ToArray();
             initialState = validatorKeys.Aggregate(
@@ -30,11 +29,11 @@
                     new ActionContext(),
                     GoldCurrencyState.Address,
                     key.Address,
-                    new FungibleAssetValue(governanceToken, 1, 0)));
+                    new FungibleAssetValue(GovernanceToken, 1, 0)));
             foreach (var key in validatorKeys)
             {
-                Assert.Equal(1, initialState.GetBalance(key.Address, governanceToken).MajorUnit);
-                Assert.Equal(0, initialState.GetBalance(key.Address, governanceToken).MinorUnit);
+                Assert.Equal(1, initialState.GetBalance(key.Address, GovernanceToken).MajorUnit);
+                Assert.Equal(0, initialState.GetBalance(key.Address, GovernanceToken).MinorUnit);
             }
 
             // Stake 1 for each validator.
@@ -42,7 +41,7 @@
             {
                 initialState = new PromoteValidator(
                     key,
-                    new FungibleAssetValue(governanceToken, 1, 0)).Execute(
+                    new FungibleAssetValue(GovernanceToken, 1, 0)).Execute(
                         new ActionContext
                         {
                             PreviousState = initialState,

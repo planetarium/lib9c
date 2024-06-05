@@ -23,8 +23,7 @@
             var address = validatorPrivateKey.Address;
             var rewardAddress = AllocateRewardCtrl.RewardAddress(address);
             var states = InitialState;
-            var governanceToken = states.GetGoldCurrency();
-            var amount = governanceToken * 100;
+            var amount = GovernanceToken * 100;
             states = states.TransferAsset(
                 new ActionContext(),
                 GoldCurrencyState.Address,
@@ -71,18 +70,18 @@
                 });
             Assert.Equal(
                 0,
-                states.GetBalance(address, governanceToken).RawValue);
+                states.GetBalance(address, GovernanceToken).RawValue);
             Assert.Equal(
                 72,
-                states.GetBalance(rewardAddress, governanceToken).RawValue);
+                states.GetBalance(rewardAddress, GovernanceToken).RawValue);
             states = new WithdrawValidator().Execute(
                 new ActionContext { PreviousState = states, Signer = address });
             Assert.Equal(
                 72,
-                states.GetBalance(address, governanceToken).RawValue);
+                states.GetBalance(address, GovernanceToken).RawValue);
             Assert.Equal(
                 0,
-                states.GetBalance(rewardAddress, governanceToken).RawValue);
+                states.GetBalance(rewardAddress, GovernanceToken).RawValue);
         }
     }
 }

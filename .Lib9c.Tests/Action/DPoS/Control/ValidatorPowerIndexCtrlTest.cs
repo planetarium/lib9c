@@ -34,7 +34,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 pubKey => pubKey.Address).ToList();
 
             _states = InitialState;
-            var governanceToken = _states.GetGoldCurrency();
             _nativeTokens = NativeTokens;
             ValidatorAddresses = new List<Address>();
 
@@ -45,7 +44,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     new ActionContext(),
                     GoldCurrencyState.Address,
                     addr,
-                    governanceToken * 100);
+                    GovernanceToken * 100);
                 _states = ValidatorCtrl.Create(
                     _states,
                     new ActionContext
@@ -55,7 +54,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     },
                     addr,
                     key,
-                    governanceToken * 10,
+                    GovernanceToken * 10,
                     _nativeTokens);
                 ValidatorAddresses.Add(Validator.DeriveAddress(addr));
             }

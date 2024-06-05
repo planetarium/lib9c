@@ -26,7 +26,6 @@ namespace Lib9c.Tests.Action.DPoS
         {
             _states = InitialState;
             _nativeTokens = NativeTokens;
-            var governanceToken = _states.GetGoldCurrency();
             OperatorPrivateKeys = new List<PrivateKey>();
             OperatorPublicKeys = new List<PublicKey>();
             OperatorAddresses = new List<Address>();
@@ -36,7 +35,7 @@ namespace Lib9c.Tests.Action.DPoS
                 new ActionContext(),
                 GoldCurrencyState.Address,
                 DelegatorAddress,
-                governanceToken * 100000);
+                GovernanceToken * 100000);
             for (int i = 0; i < 200; i++)
             {
                 PrivateKey operatorPrivateKey = new PrivateKey();
@@ -46,7 +45,7 @@ namespace Lib9c.Tests.Action.DPoS
                     new ActionContext(),
                     GoldCurrencyState.Address,
                     operatorAddress,
-                    governanceToken * 1000);
+                    GovernanceToken * 1000);
 
                 OperatorPrivateKeys.Add(operatorPrivateKey);
                 OperatorPublicKeys.Add(operatorPublicKey);
@@ -60,7 +59,7 @@ namespace Lib9c.Tests.Action.DPoS
                     },
                     operatorAddress,
                     operatorPublicKey,
-                    governanceToken * 1,
+                    GovernanceToken * 1,
                     _nativeTokens);
                 ValidatorAddresses.Add(Validator.DeriveAddress(operatorAddress));
             }
@@ -79,7 +78,6 @@ namespace Lib9c.Tests.Action.DPoS
         [Fact]
         public void ValidatorSetTest()
         {
-            var governanceToken = _states.GetGoldCurrency();
             for (int i = 0; i < 200; i++)
             {
                 _states = DelegateCtrl.Execute(
@@ -91,7 +89,7 @@ namespace Lib9c.Tests.Action.DPoS
                     },
                     DelegatorAddress,
                     ValidatorAddresses[i],
-                    governanceToken * (i + 1),
+                    GovernanceToken * (i + 1),
                     _nativeTokens);
             }
 

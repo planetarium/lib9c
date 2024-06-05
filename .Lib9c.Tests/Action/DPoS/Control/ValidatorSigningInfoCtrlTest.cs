@@ -66,7 +66,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
         public void Tombstone_Test()
         {
             var states = _states;
-            var governanceToken = states.GetGoldCurrency();
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
 
@@ -74,7 +73,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken * 100);
+                ncg: GovernanceToken * 100);
 
             states = ValidatorSigningInfoCtrl.Tombstone(states, validatorAddress);
 
@@ -97,7 +96,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
         public void Tombstone_TombstonedValidator_FailTest()
         {
             var states = _states;
-            var governanceToken = states.GetGoldCurrency();
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
 
@@ -105,7 +103,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken * 100);
+                ncg: GovernanceToken * 100);
 
             states = ValidatorSigningInfoCtrl.Tombstone(states, validatorAddress);
 
@@ -119,7 +117,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
         public void JailUtil_Test()
         {
             var states = _states;
-            var governanceToken = states.GetGoldCurrency();
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
 
@@ -127,7 +124,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken * 100);
+                ncg: GovernanceToken * 100);
 
             states = ValidatorSigningInfoCtrl.JailUntil(
                 world: states,
@@ -156,7 +153,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
         public void JailUtil_NegativeBlockHeight_FailTest()
         {
             var states = _states;
-            var governanceToken = states.GetGoldCurrency();
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
 
@@ -164,7 +160,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken * 100);
+                ncg: GovernanceToken * 100);
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
@@ -176,7 +172,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
         public void JailUtil_MultipleInvocation_Test()
         {
             var states = _states;
-            var governanceToken = states.GetGoldCurrency();
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
 
@@ -184,7 +179,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken * 100);
+                ncg: GovernanceToken * 100);
 
             states = ValidatorSigningInfoCtrl.JailUntil(
                 world: states,

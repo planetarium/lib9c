@@ -24,12 +24,11 @@
             var validatorAddress =
                 Nekoyume.Action.DPoS.Model.Validator.DeriveAddress(address);
             IWorld states = InitialState;
-            var governanceToken = states.GetGoldCurrency();
             var rewardAddress =
                 Nekoyume.Action.DPoS.Model.ValidatorRewards.DeriveAddress(
                     validatorAddress,
-                    governanceToken);
-            var amount = governanceToken * 100;
+                    GovernanceToken);
+            var amount = GovernanceToken * 100;
             states = states.TransferAsset(
                 new ActionContext(),
                 GoldCurrencyState.Address,
@@ -76,19 +75,19 @@
                 });
             Assert.Equal(
                 0,
-                states.GetBalance(address, governanceToken).RawValue);
+                states.GetBalance(address, GovernanceToken).RawValue);
             Assert.Equal(
                 428,
-                states.GetBalance(rewardAddress, governanceToken).RawValue);
+                states.GetBalance(rewardAddress, GovernanceToken).RawValue);
             states = new WithdrawDelegator(validatorAddress).Execute(
                 new ActionContext
                     { PreviousState = states, BlockIndex = 2, Signer = address });
             Assert.Equal(
-                5 * governanceToken,
-                states.GetBalance(address, governanceToken));
+                5 * GovernanceToken,
+                states.GetBalance(address, GovernanceToken));
             Assert.Equal(
                 0,
-                states.GetBalance(rewardAddress, governanceToken).RawValue);
+                states.GetBalance(rewardAddress, GovernanceToken).RawValue);
         }
     }
 }
