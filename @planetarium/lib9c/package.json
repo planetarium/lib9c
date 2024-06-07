@@ -8,7 +8,10 @@
     "build": "tsup",
     "fmt": "biome check --apply src tests",
     "fmt:ci": "biome check src tests",
-    "test": "vitest"
+    "test": "vitest",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "keywords": [],
   "author": "Planetarium",
@@ -21,6 +24,7 @@
     "tsup": "^8.0.2",
     "tsx": "^4.7.3",
     "typescript": "^5.4.5",
+    "vitepress": "^1.2.2",
     "vitest": "^1.5.2"
   },
   "dependencies": {

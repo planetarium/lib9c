@@ -2,6 +2,9 @@ import { Buffer } from "buffer";
 import type { Currency, FungibleAssetValue } from "@planetarium/tx";
 import { Decimal } from "decimal.js";
 
+/**
+ * The main currency of the Nine Chronicles. It should be used in the Odin mainnet network.
+ */
 export const NCG: Currency = {
   ticker: "NCG",
   decimalPlaces: 2,
@@ -23,6 +26,9 @@ export const MINTERLESS_NCG: Currency = {
   totalSupplyTrackable: false,
 };
 
+/**
+ * MEAD is the currency used for transaction fee in the Nine Chronicles.
+ */
 export const MEAD: Currency = {
   ticker: "Mead",
   decimalPlaces: 18,
@@ -31,6 +37,9 @@ export const MEAD: Currency = {
   totalSupplyTrackable: false,
 };
 
+/**
+ * CRYSTAL is the currency used for crafting and upgrading items in the Nine Chronicles.
+ */
 export const CRYSTAL: Currency = {
   ticker: "CRYSTAL",
   decimalPlaces: 18,
@@ -39,6 +48,10 @@ export const CRYSTAL: Currency = {
   totalSupplyTrackable: false,
 };
 
+/**
+ * GARAGE is the currency used to make items or fungible asset values able to transfer to others.
+ * See [NCIP-16](https://github.com/planetarium/NCIPs/blob/main/NCIP/ncip-16.md)
+ */
 export const GARAGE: Currency = {
   ticker: "GARAGE",
   decimalPlaces: 18,
@@ -47,6 +60,24 @@ export const GARAGE: Currency = {
   totalSupplyTrackable: false,
 };
 
+/**
+ * Creates a new `FungibleAssetValue` with the given `currency` and `number-like` values. If the `number-like` value is a `string`, it is parsed and multiplied by 10 times `currency.decimalPlaces` to return the FungibleAssetValue. The same is true if it is a `number`. However, in the case of `number`, beware of the possibility of an incorrect decimal value. The same is true for `bigint`, but due to the nature of the `bigint` type, decimals are not allowed.
+ * @param currency The currency of the value.
+ * @param numberLike The amount of the given currency.
+ * @returns
+ * @example To create a FungibleAssetValue for 1 NCG:
+ * ```typescript
+ * fav(NCG, 1); // With number
+ * fav(NCG, "1"); // With string
+ * fav(NCG, 1n); // With bigint
+ * ```
+ * @example To create a FungibleAssetValue for 1.23 NCG:
+ * ```typescript
+ * fav(NCG, 1.23); // With number
+ * fav(NCG, "1.23"); // With string
+ * // With bigint, it cannot be created because bigint doesn't represents decimal values.
+ * ```
+ */
 export function fav(
   currency: Currency,
   numberLike: string | number | bigint,
