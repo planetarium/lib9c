@@ -52,7 +52,6 @@ load_into_my_garages
 migrate_agent_avatar
 migrate_monster_collection
 migration_activated_accounts_state
-migration_avatar_state
 mint_assets
 op_validator_set
 patch_table_sheet
