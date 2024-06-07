@@ -1,3 +1,5 @@
+using Serilog;
+
 namespace Nekoyume.Blockchain
 {
     using System;
@@ -66,14 +68,14 @@ namespace Nekoyume.Blockchain
                     // update txQuotaPerSigner if signer is in the list
                     try
                     {
-                        if (_accessControlService?.GetTxQuota(tx.Signer) is { } acsTxQuota)
+                        if (_accessControlService?.GetTxQuotaAsync(tx.Signer).Result is { } acsTxQuota)
                         {
                             txQuotaPerSigner = acsTxQuota;
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("[NCStagePolicy-ACS] {0} {1}", ex.Message, ex.StackTrace);
+                        Log.Error("[NCStagePolicy-ACS] {0} {1}", ex.Message, ex.StackTrace);
                         txQuotaPerSigner = _quotaPerSigner;
                     }
 
@@ -97,7 +99,7 @@ namespace Nekoyume.Blockchain
         {
             try
             {
-                if (_accessControlService?.GetTxQuota(transaction.Signer) is { } acsTxQuota)
+                if (_accessControlService?.GetTxQuotaAsync(transaction.Signer).Result is { } acsTxQuota)
                 {
                     _quotaPerSignerList[transaction.Signer] = acsTxQuota;
 
@@ -129,7 +131,7 @@ namespace Nekoyume.Blockchain
             }
             catch (Exception ex)
             {
-                Console.WriteLine("[NCStagePolicy-ACS] {0} {1}", ex.Message, ex.StackTrace);
+                Log.Error("[NCStagePolicy-ACS] {0} {1}", ex.Message, ex.StackTrace);
                 return _impl.Stage(blockChain, transaction);
             }
         }

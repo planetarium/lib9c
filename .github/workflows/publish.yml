@@ -5,12 +5,14 @@ on:
     branches:
       - development
       - main
+    tags:
+      - "*.*.*"
 
 jobs:
   nuget:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
     - uses: actions/setup-dotnet@v3
@@ -41,3 +43,8 @@ jobs:
         fi
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+  jsr:
+    uses: planetarium/.github/.github/workflows/publish_jsr.yaml@7da1714cbc9554aa17a19bc6477b8b067f714ea7
+    with:
+      working_directory: "@planetarium/lib9c"
+      pnpm_version: "9.1.2"

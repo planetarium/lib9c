@@ -29,6 +29,8 @@ namespace Nekoyume.Action
             Currencies.FreyaBlessingRune,
             Currencies.FreyaLiberationRune,
             Currencies.Crystal,
+            Currencies.OdinWeaknessRune,
+            Currencies.OdinWisdomRune,
         };
 
         public const int CostAp = 5;

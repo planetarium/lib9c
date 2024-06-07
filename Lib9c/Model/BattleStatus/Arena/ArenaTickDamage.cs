@@ -7,8 +7,8 @@ namespace Nekoyume.Model.BattleStatus.Arena
     [Serializable]
     public class ArenaTickDamage : ArenaSkill
     {
-        public ArenaTickDamage(ArenaCharacter character, IEnumerable<ArenaSkillInfo> skillInfos, IEnumerable<ArenaSkillInfo> buffInfos)
-            : base(character, skillInfos, buffInfos)
+        public ArenaTickDamage(int skillId, ArenaCharacter character, IEnumerable<ArenaSkillInfo> skillInfos, IEnumerable<ArenaSkillInfo> buffInfos)
+            : base(skillId, character, skillInfos, buffInfos)
         {
         }
 

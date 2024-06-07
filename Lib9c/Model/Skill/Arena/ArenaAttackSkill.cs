@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
+using Nekoyume.Model.Buff;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
@@ -75,6 +77,7 @@ namespace Nekoyume.Model.Skill.Arena
                     isCritical |= SkillRow.SkillCategory == SkillCategory.DoubleAttack;
                 }
 
+                var iceShield = target.Buffs.Values.OfType<IceShield>().FirstOrDefault();
                 infos.Add(new BattleStatus.Arena.ArenaSkill.ArenaSkillInfo(
                     (ArenaCharacter)target.Clone(),
                     damage,
@@ -82,7 +85,8 @@ namespace Nekoyume.Model.Skill.Arena
                     SkillRow.SkillCategory,
                     simulatorWaveTurn,
                     elementalType,
-                    SkillRow.SkillTargetType));
+                    SkillRow.SkillTargetType,
+                    iceShield: iceShield));
             }
 
             return infos;

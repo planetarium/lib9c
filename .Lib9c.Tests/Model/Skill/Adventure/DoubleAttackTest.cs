@@ -100,6 +100,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
                 _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet,
                 copyCharacter
             );
             var player = new Player(avatarState, simulator)

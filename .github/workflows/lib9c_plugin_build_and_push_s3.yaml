@@ -15,7 +15,7 @@ jobs:
     name: Publish Lib9c.Plugin (${{ matrix.runtime }})
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - uses: actions/setup-dotnet@v3

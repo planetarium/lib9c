@@ -84,10 +84,8 @@ namespace Lib9c.Tests.Model
             Assert.Equal(expectedItemIds, list.OfType<ItemTypeCollectQuest>().First().ItemIds);
         }
 
-        [Theory]
-        [InlineData(1)]
-        [InlineData(99)]
-        public void UpdateList(int questCountToAdd)
+        [Fact]
+        public void UpdateList()
         {
             var questList = new QuestList(
                 _tableSheets.QuestSheet,
@@ -100,28 +98,44 @@ namespace Lib9c.Tests.Model
             Assert.Equal(1, questList.ListVersion);
             Assert.Equal(_tableSheets.QuestSheet.Count, questList.Count());
 
-            var questSheet = _tableSheets.QuestSheet;
-            Assert.NotNull(questSheet.First);
+            var previousQuestCount = questList.Count();
+            var questSheet = new QuestSheet();
             var patchedSheet = new WorldQuestSheet();
             var patchedSheetCsvSb = new StringBuilder().AppendLine("id,goal,quest_reward_id");
-            for (var i = questCountToAdd; i > 0; i--)
+            var ids = new List<int>();
+            var ceqCsv = @"id,goal,quest_reward_id,recipe_id
+1100001,1,101,1";
+            var ceqSheet = new CombinationEquipmentQuestSheet();
+            ceqSheet.Set(ceqCsv);
+            for (var i = 3; i > 0; i--)
             {
-                patchedSheetCsvSb.AppendLine($"{990000 + i - 1},10,{questSheet.First.QuestRewardId}");
+                var questId = 990000 + i - 1;
+                ids.Add(questId);
+                patchedSheetCsvSb.AppendLine($"{questId},10,{_tableSheets.QuestSheet.First!.QuestRewardId}");
             }
 
             patchedSheet.Set(patchedSheetCsvSb.ToString());
-            Assert.Equal(questCountToAdd, patchedSheet.Count);
-            var previousQuestSheetCount = questSheet.Count;
-            questSheet.Set(patchedSheet);
-            Assert.Equal(previousQuestSheetCount + questCountToAdd, questSheet.Count);
+            questSheet.Set(patchedSheet, false);
+            questSheet.Set(_tableSheets.CollectQuestSheet, false);
+            questSheet.Set(_tableSheets.CombinationQuestSheet, false);
+            questSheet.Set(_tableSheets.TradeQuestSheet, false);
+            questSheet.Set(_tableSheets.MonsterQuestSheet, false);
+            questSheet.Set(_tableSheets.ItemEnhancementQuestSheet, false);
+            questSheet.Set(_tableSheets.GeneralQuestSheet, false);
+            questSheet.Set(_tableSheets.ItemGradeQuestSheet, false);
+            questSheet.Set(_tableSheets.ItemTypeCollectQuestSheet, false);
+            questSheet.Set(_tableSheets.GoldQuestSheet, false);
+            questSheet.Set(ceqSheet);
+            Assert.True(previousQuestCount > questSheet.Count);
 
             questList.UpdateList(
                 questSheet,
                 _tableSheets.QuestRewardSheet,
                 _tableSheets.QuestItemRewardSheet,
-                _tableSheets.EquipmentItemRecipeSheet);
-            Assert.Equal(2, questList.ListVersion);
-            Assert.Equal(questSheet.Count, questList.Count());
+                _tableSheets.EquipmentItemRecipeSheet,
+                ids);
+            Assert.Equal(1, questList.ListVersion);
+            Assert.Equal(previousQuestCount + ids.Count, questList.Count());
         }
 
         [Theory]

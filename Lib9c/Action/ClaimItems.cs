@@ -99,7 +99,7 @@ namespace Nekoyume.Action
 
             foreach (var (avatarAddress, fungibleAssetValues) in ClaimData)
             {
-                var avatarState = states.GetAvatarState(avatarAddress)
+                var avatarState = states.GetAvatarState(avatarAddress, getQuestList: false, getWorldInformation: false)
                             ?? throw new FailedLoadStateException(
                                 ActionTypeText,
                                 GetSignerAndOtherAddressesHex(context, avatarAddress),
@@ -160,7 +160,7 @@ namespace Nekoyume.Action
                 mailBox.Add(mail);
                 mailBox.CleanUp();
                 avatarState.mailBox = mailBox;
-                states = states.SetAvatarState(avatarAddress, avatarState);
+                states = states.SetAvatarState(avatarAddress, avatarState, setWorldInformation: false, setQuestList: false);
             }
 
             return states;

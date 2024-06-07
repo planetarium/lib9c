@@ -12,5 +12,6 @@ namespace Nekoyume.Arena
         public int Turn { get; }
         public long ShatterStrikeMaxDamage { get; }
         public DeBuffLimitSheet DeBuffLimitSheet { get; }
+        BuffLinkSheet BuffLinkSheet { get; set; }
     }
 }
