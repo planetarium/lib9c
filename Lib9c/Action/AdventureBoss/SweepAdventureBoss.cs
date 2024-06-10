@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -24,7 +25,7 @@ namespace Nekoyume.Action.AdventureBoss
 {
     [Serializable]
     [ActionType(TypeIdentifier)]
-    public class SweepAdventureBoss : ActionBase
+    public class SweepAdventureBoss : GameAction
     {
         public const string TypeIdentifier = "sweep_adventure_boss";
 
@@ -33,18 +34,18 @@ namespace Nekoyume.Action.AdventureBoss
         public int Season;
         public Address AvatarAddress;
 
-        public override IValue PlainValue => Dictionary.Empty
-            .Add("type_id", TypeIdentifier)
-            .Add("values", List.Empty
-                .Add(Season)
-                .Add(AvatarAddress.Serialize())
-            );
+        protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
+            new Dictionary<string, IValue>
+            {
+                ["season"] = (Integer)Season,
+                ["avatarAddress"] = AvatarAddress.Serialize(),
+            }.ToImmutableDictionary();
 
-        public override void LoadPlainValue(IValue plainValue)
+        protected override void LoadPlainValueInternal(
+            IImmutableDictionary<string, IValue> plainValue)
         {
-            var values = (List)((Dictionary)plainValue)["values"];
-            Season = (Integer)values[0];
-            AvatarAddress = values[1].ToAddress();
+            Season = (Integer)plainValue["season"];
+            AvatarAddress = plainValue["avatarAddress"].ToAddress();
         }
 
         public override IWorld Execute(IActionContext context)
@@ -89,12 +90,12 @@ namespace Nekoyume.Action.AdventureBoss
             var sheets = states.GetSheets(
                 containSimulatorSheets: true,
                 sheetTypes: new[]
-            {
-                typeof(MaterialItemSheet),
-                typeof(RuneListSheet),
-                typeof(RuneLevelBonusSheet),
-                typeof(FloorWaveSheet),
-            });
+                {
+                    typeof(MaterialItemSheet),
+                    typeof(RuneListSheet),
+                    typeof(RuneLevelBonusSheet),
+                    typeof(FloorWaveSheet),
+                });
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var material =
                 materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
