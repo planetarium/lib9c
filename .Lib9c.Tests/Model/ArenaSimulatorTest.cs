@@ -78,7 +78,8 @@ namespace Lib9c.Tests
                     new (StatType.DEF, StatModifier.OperationType.Add, 1),
                     new (StatType.HP, StatModifier.OperationType.Add, 100),
                 },
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
             CharacterSheet.Row row =
                 _tableSheets.CharacterSheet[GameConfig.DefaultAvatarCharacterId];
@@ -133,7 +134,7 @@ namespace Lib9c.Tests
             var myDigest = new ArenaPlayerDigest(_avatarState1, _arenaAvatarState1);
             var enemyDigest = new ArenaPlayerDigest(_avatarState2, _arenaAvatarState2);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
-            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet);
+            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet, _tableSheets.BuffLinkSheet);
             var expectedHpModifier = modifier ?? 2;
 
             Assert.Equal(_random, simulator.Random);
@@ -178,7 +179,7 @@ namespace Lib9c.Tests
             var myDigest = new ArenaPlayerDigest(_avatarState1, arenaAvatarState1);
             var enemyDigest = new ArenaPlayerDigest(_avatarState2, arenaAvatarState2);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
-            var unskilledLog = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet);
+            var unskilledLog = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet, _tableSheets.BuffLinkSheet);
             // foreach (var log in unskilledLog)
             // {
             //     _testOutputHelper.WriteLine($"{log.Character.Id} :: {log}");
@@ -231,7 +232,7 @@ namespace Lib9c.Tests
             myDigest = new ArenaPlayerDigest(_avatarState1, arenaAvatarState1);
             enemyDigest = new ArenaPlayerDigest(_avatarState2, arenaAvatarState2);
             arenaSheets = _tableSheets.GetArenaSimulatorSheets();
-            var skilledLog = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet);
+            var skilledLog = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet, _tableSheets.BuffLinkSheet);
             // foreach (var log in skilledLog)
             // {
             //     _testOutputHelper.WriteLine($"{log.Character.Id} :: {log}");
@@ -273,7 +274,7 @@ namespace Lib9c.Tests
             var myDigest = new ArenaPlayerDigest(avatarState1, arenaAvatarState1);
             var enemyDigest = new ArenaPlayerDigest(avatarState2, arenaAvatarState2);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
-            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet, true);
+            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet, _tableSheets.BuffLinkSheet, true);
             var ticks = log.Events
                 .OfType<ArenaTickDamage>()
                 .ToList();
@@ -332,7 +333,7 @@ namespace Lib9c.Tests
             var myDigest = new ArenaPlayerDigest(avatarState1, runes, runeSlotState);
             var enemyDigest = new ArenaPlayerDigest(avatarState2, runes, runeSlotState);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
-            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, modifiers, modifiers, _tableSheets.DeBuffLimitSheet, true);
+            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, modifiers, modifiers, _tableSheets.DeBuffLimitSheet, _tableSheets.BuffLinkSheet, true);
             var spawns = log.Events.OfType<ArenaSpawnCharacter>().ToList();
             Assert.All(spawns, spawn => Assert.Equal(finalAtk, spawn.Character.ATK));
             var ticks = log.Events
@@ -376,7 +377,7 @@ namespace Lib9c.Tests
             var myDigest = new ArenaPlayerDigest(avatarState1, new List<Costume>(), new List<Equipment> { equipment }, runes, runeSlotState);
             var enemyDigest = new ArenaPlayerDigest(avatarState2, new List<Costume>(), new List<Equipment> { equipment }, runes, runeSlotState);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
-            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet, true);
+            var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet, _tableSheets.BuffLinkSheet, true);
             var spawns = log.Events.OfType<ArenaSpawnCharacter>().ToList();
             Assert.All(spawns, spawn => Assert.Equal(baseAtk, spawn.Character.ATK));
             var ticks = log.Events

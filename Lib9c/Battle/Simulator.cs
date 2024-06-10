@@ -29,6 +29,7 @@ namespace Nekoyume.Battle
         public readonly CharacterLevelSheet CharacterLevelSheet;
         public readonly EquipmentItemSetEffectSheet EquipmentItemSetEffectSheet;
         public DeBuffLimitSheet DeBuffLimitSheet { get; protected set; }
+        public BuffLinkSheet BuffLinkSheet { get; set; }
 
         public long ShatterStrikeMaxDamage { get; private set; }
 

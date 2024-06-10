@@ -24,6 +24,7 @@ namespace Nekoyume.Arena
 
         public long ShatterStrikeMaxDamage { get; private set; }
         public DeBuffLimitSheet DeBuffLimitSheet { get; private set; }
+        public BuffLinkSheet BuffLinkSheet { get; set; }
 
         public ArenaSimulator(IRandom random,
             int hpModifier = 2,
@@ -43,10 +44,12 @@ namespace Nekoyume.Arena
             List<StatModifier> challengerCollectionModifiers,
             List<StatModifier> enemyCollectionModifiers,
             DeBuffLimitSheet deBuffLimitSheet,
+            BuffLinkSheet buffLinkSheet,
             bool setExtraValueBuffBeforeGetBuffs = false)
         {
             Log = new ArenaLog();
             DeBuffLimitSheet = deBuffLimitSheet;
+            BuffLinkSheet = buffLinkSheet;
             var players = SpawnPlayers(this, challenger, enemy, sheets, Log, challengerCollectionModifiers, enemyCollectionModifiers, setExtraValueBuffBeforeGetBuffs);
             Turn = 1;
 
