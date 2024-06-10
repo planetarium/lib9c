@@ -50,7 +50,6 @@ namespace Lib9c.Tests.Action.Garages
                 _tableSheets,
                 _,
                 _avatarAddress,
-                _,
                 _initialStatesWithAvatarStateV2
             ) = InitializeUtil.InitializeStates(
                 agentAddr: AgentAddr,

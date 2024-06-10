@@ -27,7 +27,7 @@ namespace Nekoyume.Model.Skill.Arena
             var heal = ProcessHeal(caster, turn);
             var buff = ProcessBuff(caster, target, turn, buffs);
 
-            return new BattleStatus.Arena.ArenaHeal(clone, heal, buff);
+            return new BattleStatus.Arena.ArenaHeal(SkillRow.Id, clone, heal, buff);
         }
 
         private IEnumerable<BattleStatus.Arena.ArenaSkill.ArenaSkillInfo> ProcessHeal(

@@ -27,14 +27,13 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IWorld _initialStateV1;
         private readonly IWorld _initialStateV2;
         private readonly Address _recipeAddr;
         private int? _petId;
 
         public ReduceRequiredBlockTest()
         {
-            (_tableSheets, _agentAddr, _avatarAddr, _initialStateV1, _initialStateV2)
+            (_tableSheets, _agentAddr, _avatarAddr, _initialStateV2)
                 = InitializeUtil.InitializeStates();
             _recipeAddr = _avatarAddr.Derive("recipe_ids");
         }

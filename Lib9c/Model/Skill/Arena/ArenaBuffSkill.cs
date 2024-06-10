@@ -26,7 +26,7 @@ namespace Nekoyume.Model.Skill.Arena
             var clone = (ArenaCharacter)caster.Clone();
             var buff = ProcessBuff(caster, target, turn, buffs);
 
-            return new BattleStatus.Arena.ArenaBuff(clone, buff);
+            return new BattleStatus.Arena.ArenaBuff(SkillRow.Id, clone, buff);
         }
     }
 }

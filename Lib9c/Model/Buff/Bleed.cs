@@ -70,6 +70,7 @@ namespace Nekoyume.Model.Buff
             };
 
             return new ArenaTickDamage(
+                RowData.Id,
                 clone,
                 damageInfos,
                 null);

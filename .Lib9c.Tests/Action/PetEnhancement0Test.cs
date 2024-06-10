@@ -20,7 +20,6 @@ namespace Lib9c.Tests.Action
     {
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
-        private readonly IWorld _initialStatesWithAvatarStateV1;
         private readonly IWorld _initialStatesWithAvatarStateV2;
         private readonly int _targetPetId;
         private readonly long _firstRoundStartBlockIndex;
@@ -32,7 +31,6 @@ namespace Lib9c.Tests.Action
                 tableSheets,
                 _agentAddr,
                 _avatarAddr,
-                _initialStatesWithAvatarStateV1,
                 _initialStatesWithAvatarStateV2
             ) = InitializeUtil.InitializeStates();
             _targetPetId = tableSheets.PetSheet.First!.Id;
@@ -52,14 +50,6 @@ namespace Lib9c.Tests.Action
             int targetPetLevel)
         {
             Execute(
-                _initialStatesWithAvatarStateV1,
-                _firstRoundStartBlockIndex,
-                _agentAddr,
-                _avatarAddr,
-                _targetPetId,
-                currentPetLevel,
-                targetPetLevel);
-            Execute(
                 _initialStatesWithAvatarStateV2,
                 _firstRoundStartBlockIndex,
                 _agentAddr,
@@ -75,15 +65,6 @@ namespace Lib9c.Tests.Action
             var invalidAgentAddr = new PrivateKey().Address;
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    invalidAgentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    1));
-            Assert.Throws<InvalidActionFieldException>(() =>
-                Execute(
                     _initialStatesWithAvatarStateV2,
                     _firstRoundStartBlockIndex,
                     invalidAgentAddr,
@@ -97,15 +78,6 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InvalidActionFieldException_AvatarAddress()
         {
             var invalidAvatarAddr = new PrivateKey().Address;
-            Assert.Throws<InvalidActionFieldException>(() =>
-                Execute(
-                    _initialStatesWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    invalidAvatarAddr,
-                    _targetPetId,
-                    0,
-                    1));
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
                     _initialStatesWithAvatarStateV2,
@@ -128,15 +100,6 @@ namespace Lib9c.Tests.Action
         {
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    currentPetLevel,
-                    targetPetLevel));
-            Assert.Throws<InvalidActionFieldException>(() =>
-                Execute(
                     _initialStatesWithAvatarStateV2,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
@@ -152,16 +115,6 @@ namespace Lib9c.Tests.Action
             // PetSheet
             Assert.Throws<SheetRowNotFoundException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    1,
-                    removePetRow: true));
-            Assert.Throws<SheetRowNotFoundException>(() =>
-                Execute(
                     _initialStatesWithAvatarStateV2,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
@@ -172,16 +125,6 @@ namespace Lib9c.Tests.Action
                     removePetRow: true));
 
             // PetCostSheet
-            Assert.Throws<SheetRowNotFoundException>(() =>
-                Execute(
-                    _initialStatesWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    1,
-                    removePetCostRow: true));
             Assert.Throws<SheetRowNotFoundException>(() =>
                 Execute(
                     _initialStatesWithAvatarStateV2,
@@ -201,16 +144,6 @@ namespace Lib9c.Tests.Action
 
             Assert.Throws<PetCostNotFoundException>(() =>
                 Execute(
-                    _initialStatesWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    targetPetLevel,
-                    removePetCostRowWithTargetPetLevel: true));
-            Assert.Throws<PetCostNotFoundException>(() =>
-                Execute(
                     _initialStatesWithAvatarStateV2,
                     _firstRoundStartBlockIndex,
                     _agentAddr,
@@ -224,15 +157,6 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_RoundNotFoundException()
         {
-            Assert.Throws<RoundNotFoundException>(() =>
-                Execute(
-                    _initialStatesWithAvatarStateV1,
-                    _firstRoundStartBlockIndex - 1,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    1));
             Assert.Throws<RoundNotFoundException>(() =>
                 Execute(
                     _initialStatesWithAvatarStateV2,
@@ -250,16 +174,6 @@ namespace Lib9c.Tests.Action
             int currentPetLevel,
             int targetPetLevel)
         {
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
-                Execute(
-                    _initialStatesWithAvatarStateV1,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    currentPetLevel,
-                    targetPetLevel,
-                    mintAssets: false));
             Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
                 Execute(
                     _initialStatesWithAvatarStateV2,

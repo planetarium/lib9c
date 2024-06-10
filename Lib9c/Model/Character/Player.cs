@@ -726,7 +726,7 @@ namespace Nekoyume.Model
             Simulator.WaveTurn++;
             if (Simulator.LogEvent)
             {
-                Simulator.Log.Add(new WaveTurnEnd(this, Simulator.TurnNumber, Simulator.WaveTurn));
+                Simulator.Log.Add(new WaveTurnEnd((CharacterBase)Clone(), Simulator.TurnNumber, Simulator.WaveTurn));
             }
         }
     }

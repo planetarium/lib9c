@@ -90,7 +90,7 @@ namespace Nekoyume.Action.AdventureBoss
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var material =
                 materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
-            var inventory = states.GetInventory(AvatarAddress);
+            var inventory = states.GetInventoryV2(AvatarAddress);
             if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
                     requiredPotion))
             {

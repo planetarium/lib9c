@@ -103,7 +103,7 @@ namespace Nekoyume.Action.AdventureBoss
             if (myReward.ItemReward.Count > 0)
             {
                 var materialSheet = states.GetSheet<MaterialItemSheet>();
-                var inventory = states.GetInventory(AvatarAddress);
+                var inventory = states.GetInventoryV2(AvatarAddress);
                 foreach (var reward in myReward.ItemReward.ToImmutableSortedDictionary())
                 {
                     var material =

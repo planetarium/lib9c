@@ -147,7 +147,7 @@ namespace Nekoyume.Action.AdventureBoss
                 var materialSheet = sheets.GetSheet<MaterialItemSheet>();
                 var material = materialSheet.OrderedList.First(m => m.Id == GoldenDustId);
 
-                var inventory = states.GetInventory(AvatarAddress);
+                var inventory = states.GetInventoryV2(AvatarAddress);
                 if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
                         price["GoldenDust"]))
                 {
