@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -7,6 +8,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Battle;
+using Nekoyume.Battle.AdventureBoss;
 using Nekoyume.Data;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -16,12 +18,14 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.TableData.AdventureBoss;
+using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Action.AdventureBoss
 {
     [Serializable]
     [ActionType(TypeIdentifier)]
-    public class SweepAdventureBoss : ActionBase
+    public class SweepAdventureBoss : GameAction
     {
         public const string TypeIdentifier = "sweep_adventure_boss";
 
@@ -30,18 +34,18 @@ namespace Nekoyume.Action.AdventureBoss
         public int Season;
         public Address AvatarAddress;
 
-        public override IValue PlainValue => Dictionary.Empty
-            .Add("type_id", TypeIdentifier)
-            .Add("values", List.Empty
-                .Add(Season)
-                .Add(AvatarAddress.Serialize())
-            );
+        protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
+            new Dictionary<string, IValue>
+            {
+                ["season"] = (Integer)Season,
+                ["avatarAddress"] = AvatarAddress.Serialize(),
+            }.ToImmutableDictionary();
 
-        public override void LoadPlainValue(IValue plainValue)
+        protected override void LoadPlainValueInternal(
+            IImmutableDictionary<string, IValue> plainValue)
         {
-            var values = (List)((Dictionary)plainValue)["values"];
-            Season = (Integer)values[0];
-            AvatarAddress = values[1].ToAddress();
+            Season = (Integer)plainValue["season"];
+            AvatarAddress = plainValue["avatarAddress"].ToAddress();
         }
 
         public override IWorld Execute(IActionContext context)
@@ -83,10 +87,15 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Use AP Potions
             var requiredPotion = explorer.Floor * UnitApPotion;
-            var sheets = states.GetSheets(sheetTypes: new[]
-            {
-                typeof(MaterialItemSheet),
-            });
+            var sheets = states.GetSheets(
+                containSimulatorSheets: true,
+                sheetTypes: new[]
+                {
+                    typeof(MaterialItemSheet),
+                    typeof(RuneListSheet),
+                    typeof(RuneLevelBonusSheet),
+                    typeof(FloorWaveSheet),
+                });
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var material =
                 materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
@@ -102,6 +111,12 @@ namespace Nekoyume.Action.AdventureBoss
             exploreBoard.AddExplorer(AvatarAddress, avatarState.name);
             exploreBoard.UsedApPotion += requiredPotion;
             explorer.UsedApPotion += requiredPotion;
+
+            var simulator = new AdventureBossSimulator(
+                latestSeason.BossId, explorer.Floor, context.GetRandom(),
+                avatarState, sheets.GetSimulatorSheets(), logEvent: false
+            );
+            simulator.AddBreakthrough(1, explorer.Floor, sheets.GetSheet<FloorWaveSheet>());
 
             // Add point, reward
             var point = 0;

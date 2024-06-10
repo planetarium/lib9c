@@ -86,6 +86,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             // Settings
             var state = _initialState;
+            var gameConfigState = new GameConfigState(Sheets[nameof(GameConfigSheet)]);
+            state = state.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
             foreach (var (key, value) in Sheets)
             {
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());

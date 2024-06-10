@@ -84,23 +84,24 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Start from bottom, goes to 5
             yield return new object[]
             {
-                0, 5, 5, 10, 5, null, new[] { (600301, 90), (600302, 60), (600303, 0), (600304, 0) },
+                0, 5, 5, 10, 5, null,
+                new[] { (600301, 70), (600302, 0), (600303, 10), (600304, 70) },
             };
             // Start from bottom, goes to 3 because of potion
             yield return new object[]
             {
-                0, 5, 3, 3, 0, null, new[] { (600301, 40), (600302, 20), (600303, 0), (600304, 0) },
+                0, 5, 3, 3, 0, null, new[] { (600301, 30), (600302, 0), (600303, 10), (600304, 20) },
             };
             // Start from 3, goes to 5 because of locked floor
             yield return new object[]
             {
-                2, 5, 5, 5, 2, null, new[] { (600301, 80), (600302, 40), (600303, 0), (600304, 0) },
+                2, 5, 5, 5, 2, null, new[] { (600301, 90), (600302, 30), (600303, 0), (600304, 0) },
             };
             // Start from 6, goes to 10
             yield return new object[]
             {
                 5, 10, 10, 10, 5, null,
-                new[] { (600301, 240), (600302, 160), (600303, 0), (600304, 0) },
+                new[] { (600301, 70), (600302, 330), (600303, 0), (600304, 0) },
             };
             // Start from 20, cannot enter
             yield return new object[]
@@ -123,6 +124,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             // Settings
             var state = _initialState;
+            var gameConfigState = new GameConfigState(Sheets[nameof(GameConfigSheet)]);
+            state = state.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
             foreach (var (key, value) in Sheets)
             {
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
