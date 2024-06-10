@@ -1,4 +1,4 @@
-id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is_enhanceable
+id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is_enhanceable,max_stack
 101000,101000,체력 강화,20,10,Self,HP,Percentage,50,true
 101001,101000,체력 강화,100,25,Self,HP,Percentage,50,true
 102000,102000,공격 강화,20,10,Self,ATK,Percentage,25,true
@@ -10,6 +10,7 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 103001,103000,방어 강화,100,25,Self,DEF,Percentage,50,true
 103002,103000,방어 강화,100,10,Self,DEF,Percentage,25,true
 103003,103000,DEF UP (Stat conversion),100,10,Self,DEF,Add,0,true
+103004,103001,방어 강화,100,10,Self,DEF,Percentage,30,true
 104000,104000,치명 증가,20,10,Self,CRI,Percentage,50,true
 104001,104000,치명 증가,100,25,Self,CRI,Percentage,75,true
 104002,104000,치명 증가,100,10,Self,CRI,Percentage,25,true
@@ -123,3 +124,6 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 701000,701000,DRV (Rune),100,0,Self,DRV,Add,0,true
 702000,701000,DRR (Rune),100,0,Self,DRR,Add,0,true
 703000,703000,CDMG (Rune),100,0,Self,CDMG,Add,0,true
+709000,709000,Frostbite (Aura),100,10,Enemy,SPD,Percentage,-10,true,4
+709001,709000,Frostbite (Aura),100,10,Enemy,SPD,Percentage,-20,true,4
+709002,709000,Frostbite (Aura),100,10,Enemy,SPD,Percentage,-30,true,4

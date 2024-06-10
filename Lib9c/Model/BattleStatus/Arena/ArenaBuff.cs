@@ -7,8 +7,8 @@ namespace Nekoyume.Model.BattleStatus.Arena
     [Serializable]
     public class ArenaBuff : ArenaSkill
     {
-        public ArenaBuff(ArenaCharacter character, IEnumerable<ArenaSkillInfo> skillInfos)
-            : base(character, skillInfos, null)
+        public ArenaBuff(int skillId, ArenaCharacter character, IEnumerable<ArenaSkillInfo> skillInfos)
+            : base(skillId, character, skillInfos, null)
         {
         }
 

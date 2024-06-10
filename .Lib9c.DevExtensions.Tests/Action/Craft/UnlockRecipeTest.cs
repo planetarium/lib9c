@@ -25,7 +25,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
 
         public UnlockRecipeTest()
         {
-            (_tableSheets, _agentAddress, _avatarAddress, _, _initialStateV2) =
+            (_tableSheets, _agentAddress, _avatarAddress, _initialStateV2) =
                 InitializeUtil.InitializeStates(isDevEx: true);
             _recipeAddress = _avatarAddress.Derive("recipe_ids");
         }

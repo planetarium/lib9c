@@ -140,7 +140,7 @@ namespace Nekoyume.Action.AdventureBoss
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var material =
                 materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
-            var inventory = states.GetInventory(AvatarAddress);
+            var inventory = states.GetInventoryV2(AvatarAddress);
             var random = context.GetRandom();
             var selector = new WeightedSelector<AdventureBossGameData.ExploreReward>(random);
             var rewardList = new List<AdventureBossGameData.ExploreReward>();

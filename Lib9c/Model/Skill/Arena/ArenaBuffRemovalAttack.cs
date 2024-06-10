@@ -28,7 +28,7 @@ namespace Nekoyume.Model.Skill.Arena
             var buff = ProcessBuff(caster, target, turn, buffs);
             target.RemoveRecentStatBuff();
 
-            return new BattleStatus.Arena.ArenaBuffRemovalAttack(clone, damage, buff);
+            return new BattleStatus.Arena.ArenaBuffRemovalAttack(SkillRow.Id, clone, damage, buff);
         }
     }
 }

@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using Nekoyume.Model.Buff;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Skill;
 
@@ -23,12 +24,14 @@ namespace Nekoyume.Model.BattleStatus.Arena
             public readonly IEnumerable<Model.Buff.Buff>? DispelList;
 
             public readonly Model.Buff.Buff? Buff;
+            public readonly IceShield? IceShield;
 
             public ArenaSkillInfo(ArenaCharacter character, long effect, bool critical, SkillCategory skillCategory,
                 int turn, ElementalType elementalType = ElementalType.Normal,
                 SkillTargetType targetType = SkillTargetType.Enemy, Model.Buff.Buff? buff = null,
                 bool affected = true,
-                IEnumerable<Model.Buff.Buff>? dispelList = null)
+                IEnumerable<Model.Buff.Buff>? dispelList = null,
+                IceShield? iceShield = null)
             {
                 Target = character;
                 Effect = effect;
@@ -40,20 +43,24 @@ namespace Nekoyume.Model.BattleStatus.Arena
                 Turn = turn;
                 Affected = affected;
                 DispelList = dispelList;
+                IceShield = iceShield;
             }
         }
 
-        public readonly IEnumerable<ArenaSkillInfo> SkillInfos;
+        public readonly int SkillId;
 
+        public readonly IEnumerable<ArenaSkillInfo> SkillInfos;
 
         public readonly IEnumerable<ArenaSkillInfo>? BuffInfos;
 
         protected ArenaSkill(
+            int skillId,
             ArenaCharacter character,
             IEnumerable<ArenaSkillInfo> skillInfos,
             IEnumerable<ArenaSkillInfo> buffInfos)
             : base(character)
         {
+            SkillId = skillId;
             SkillInfos = skillInfos;
             BuffInfos = buffInfos;
         }

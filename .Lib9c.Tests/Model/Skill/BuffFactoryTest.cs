@@ -212,5 +212,42 @@ namespace Lib9c.Tests.Model.Skill
             Assert.True(buff.IsBuff());
             Assert.False(buff.IsDebuff());
         }
+
+        [Fact]
+        public void IceShield()
+        {
+            var player = new Player(
+                level: 1,
+                _tableSheets.CharacterSheet,
+                _tableSheets.CharacterLevelSheet,
+                _tableSheets.EquipmentItemSetEffectSheet);
+            // IceShield id
+            const int skillId = 700012;
+            var skillRow = _tableSheets.SkillSheet[skillId];
+            var skill = SkillFactory.Get(skillRow, 0, 100, 10000, StatType.ATK);
+            var buffs = BuffFactory.GetBuffs(
+                player.Stats,
+                skill,
+                _tableSheets.SkillBuffSheet,
+                _tableSheets.StatBuffSheet,
+                _tableSheets.SkillActionBuffSheet,
+                _tableSheets.ActionBuffSheet
+            );
+            Assert.Equal(2, buffs.Count);
+            var statBuff = Assert.IsType<StatBuff>(buffs.First());
+            Assert.NotNull(statBuff.CustomField);
+            Assert.Equal(player.ATK + statBuff.RowData.Value, statBuff.CustomField.Value.BuffValue);
+            var iceShield = Assert.IsType<IceShield>(buffs.Last());
+            var frostBite = iceShield.FrostBite(_tableSheets.StatBuffSheet, _tableSheets.BuffLinkSheet);
+            Assert.Null(frostBite.CustomField);
+            var power = frostBite.RowData.Value;
+            for (int i = 0; i < frostBite.RowData.MaxStack; i++)
+            {
+                frostBite.SetStack(i);
+                var modifier = frostBite.GetModifier();
+                Assert.True(modifier.Value < 0);
+                Assert.Equal(power * (1 + frostBite.Stack), modifier.Value);
+            }
+        }
     }
 }

@@ -254,6 +254,8 @@ namespace Lib9c.Tests
 
         public DeBuffLimitSheet DeBuffLimitSheet { get; set; }
 
+        public BuffLinkSheet BuffLinkSheet { get; set; }
+
         // Adventure Boss
         public FloorSheet FloorSheet { get; private set; }
 

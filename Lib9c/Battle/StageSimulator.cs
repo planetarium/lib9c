@@ -52,6 +52,7 @@ namespace Nekoyume.Battle
             List<ItemBase> waveRewards,
             List<StatModifier> collectionModifiers,
             DeBuffLimitSheet deBuffLimitSheet,
+            BuffLinkSheet buffLinkSheet,
             bool logEvent = true,
             long shatterStrikeMaxDamage = 400_000
         )
@@ -65,6 +66,7 @@ namespace Nekoyume.Battle
             )
         {
             DeBuffLimitSheet = deBuffLimitSheet;
+            BuffLinkSheet = buffLinkSheet;
             var runeOptionSheet = simulatorSheets.RuneOptionSheet;
             var skillSheet = simulatorSheets.SkillSheet;
             var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
