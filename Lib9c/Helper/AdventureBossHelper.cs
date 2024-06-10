@@ -102,22 +102,6 @@ namespace Nekoyume.Helper
             return (bountyBoard.totalBounty() * RaffleRewardPercent).DivRem(100, out _);
         }
 
-        public static BountyBoard PickWantedRaffle(BountyBoard bountyBoard, IRandom random)
-        {
-            bountyBoard.RaffleReward = CalculateRaffleReward(bountyBoard);
-
-            var selector = new WeightedSelector<Investor>(random);
-            foreach (var inv in bountyBoard.Investors)
-            {
-                selector.Add(inv, (decimal)inv.Price.RawValue);
-            }
-
-            var winner = selector.Select(1).First();
-            bountyBoard.RaffleWinner = winner.AvatarAddress;
-            bountyBoard.RaffleWinnerName = winner.Name;
-            return bountyBoard;
-        }
-
         public static ExploreBoard PickExploreRaffle(BountyBoard bountyBoard,
             ExploreBoard exploreBoard, IRandom random)
         {
@@ -145,17 +129,8 @@ namespace Nekoyume.Helper
 
             for (var szn = season; szn > 0; szn--)
             {
-                // Wanted raffle
-                var bountyBoard = states.GetBountyBoard(szn);
-                if (bountyBoard.RaffleWinner is not null)
-                {
-                    break;
-                }
-
-                bountyBoard = PickWantedRaffle(bountyBoard, random);
-                states = states.SetBountyBoard(szn, bountyBoard);
-
                 // Explore raffle
+                var bountyBoard = states.GetBountyBoard(szn);
                 var exploreBoard = states.GetExploreBoard(szn);
                 if (exploreBoard.RaffleWinner is null)
                 {
@@ -188,11 +163,6 @@ namespace Nekoyume.Helper
             // Initialize ncgReward from bounty because its from bounty.
             ncgReward = 0 * bountyBoard.totalBounty().Currency;
             // Raffle
-            if (isReal && bountyBoard.RaffleWinner == avatarAddress)
-            {
-                ncgReward = (FungibleAssetValue)bountyBoard.RaffleReward!;
-            }
-
             if (reward.NcgReward is null)
             {
                 reward.NcgReward = ncgReward;

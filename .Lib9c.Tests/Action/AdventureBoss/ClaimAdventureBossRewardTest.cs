@@ -113,7 +113,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 0, 100, false, null,
                 new AdventureBossGameData.ClaimableReward
                 {
-                    NcgReward = 5 * NCG, // 5% of 100 NCG
+                    NcgReward = 0 * NCG, // No Wanted Raffle
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
@@ -133,7 +133,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 1, 100, true, 100,
                 new AdventureBossGameData.ClaimableReward
                 {
-                    NcgReward = 10 * NCG, // 5% of 200 NCG
+                    NcgReward = 0 * NCG, // No Wanted Raffle
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 168 }, // (200*1.2) * 0.7 / 0.5 * (120/240)
@@ -153,7 +153,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 3, 100, true, 200,
                 new AdventureBossGameData.ClaimableReward
                 {
-                    NcgReward = 15 * NCG, // 5% of 300 NCG
+                    NcgReward = 0 * NCG, // No Wanted Raffle
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
@@ -283,7 +283,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 true, false, new AdventureBossGameData.ClaimableReward
                 {
-                    NcgReward = 5 * NCG, // 5NCG for raffle
+                    NcgReward = 0 * NCG, // No NCG Reward
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
@@ -301,7 +301,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 false, true, new AdventureBossGameData.ClaimableReward
                 {
-                    NcgReward = 20 * NCG, // 5NCG for raffle, 15NCG for 15% distribution
+                    NcgReward = 20 * NCG, // 5NCG for explore raffle, 15NCG for 15% distribution
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
@@ -319,8 +319,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 true, true, new AdventureBossGameData.ClaimableReward
                 {
-                    // 5NCG for wanted raffle, 5NCG for explore raffle, 15NCG for 15% distribution
-                    NcgReward = 25 * NCG,
+                    // 5NCG for explore raffle, 15NCG for 15% distribution
+                    NcgReward = 20 * NCG,
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
@@ -424,13 +424,6 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 RandomSeed = seed,
             });
 
-            if (!anotherWanted)
-            {
-                var bountyBoard = resultState.GetBountyBoard(1);
-                Assert.Equal(TesterAvatarAddress, bountyBoard.RaffleWinner);
-                Assert.Equal(TesterAvatarState.name, bountyBoard.RaffleWinnerName);
-            }
-
             Assert.True(resultState.GetBountyBoard(1).Investors
                 .First(inv => inv.AvatarAddress == TesterAvatarAddress).Claimed);
 
@@ -444,7 +437,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Settings
             var expectedReward = new AdventureBossGameData.ClaimableReward
             {
-                NcgReward = 10 * NCG,
+                NcgReward = 0 * NCG, // No Raffle Reward
                 FavReward = new Dictionary<int, int>
                 {
                     { 20001, 14 },
@@ -781,8 +774,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Settings
             var expectedReward = new AdventureBossGameData.ClaimableReward
             {
-                NcgReward =
-                    25 * NCG, // 5NCG for wanted raffle, 5NCG for explore raffle, 15NCG for 15% distribution.
+                // 5NCG for explore raffle, 15NCG for 15% distribution.
+                NcgReward = 20 * NCG,
                 FavReward = new Dictionary<int, int>
                 {
                     { 20001, 14 }, // Random wanted reward
