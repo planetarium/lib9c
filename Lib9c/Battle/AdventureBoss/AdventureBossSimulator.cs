@@ -114,8 +114,8 @@ namespace Nekoyume.Battle.AdventureBoss
             int playCount = 1)
         {
             var maxCountForItemDrop = random.Next(
-                floorRow.DropItemMin,
-                floorRow.DropItemMax + 1);
+                floorRow.MinDropItem,
+                floorRow.MaxDropItem + 1);
             var waveRewards = new List<ItemBase>();
             for (var i = 0; i < playCount; i++)
             {
