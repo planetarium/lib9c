@@ -141,480 +141,525 @@ namespace Nekoyume.Action
                     $"Total play count : {TotalPlayCount}");
             }
 
-            states.ValidateWorldId(AvatarAddress, WorldId);
-
-            var sw = new Stopwatch();
-            sw.Start();
-            if (!states.TryGetAvatarState(signer, AvatarAddress, out AvatarState avatarState))
+            var labels = Pyroscope.LabelSet.Empty.BuildUpon()
+                .Add("hostname", "NineChronicles")
+                .Add("name", "HackAndSlash")
+                .Build();
+            Pyroscope.LabelsWrapper.Do(labels, () =>
             {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
-            }
+                states.ValidateWorldId(AvatarAddress, WorldId);
 
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Get AvatarState", blockIndex, sw.Elapsed.TotalMilliseconds);
+                var sw = new Stopwatch();
+                sw.Start();
+                if (!states.TryGetAvatarState(signer, AvatarAddress, out AvatarState avatarState))
+                {
+                    throw new FailedLoadStateException(
+                        $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+                }
 
-            sw.Restart();
-            var collectionExist = states.TryGetCollectionState(AvatarAddress, out var collectionState) && collectionState.Ids.Any();
-            var sheetTypes = new List<Type>
-            {
-                typeof(WorldSheet),
-                typeof(StageSheet),
-                typeof(StageWaveSheet),
-                typeof(EnemySkillSheet),
-                typeof(CostumeStatSheet),
-                typeof(SkillSheet),
-                typeof(QuestRewardSheet),
-                typeof(QuestItemRewardSheet),
-                typeof(EquipmentItemRecipeSheet),
-                typeof(WorldUnlockSheet),
-                typeof(MaterialItemSheet),
-                typeof(ItemRequirementSheet),
-                typeof(EquipmentItemRecipeSheet),
-                typeof(EquipmentItemSubRecipeSheetV2),
-                typeof(EquipmentItemOptionSheet),
-                typeof(CrystalStageBuffGachaSheet),
-                typeof(CrystalRandomBuffSheet),
-                typeof(StakeActionPointCoefficientSheet),
-                typeof(RuneListSheet),
-                typeof(RuneLevelBonusSheet),
-                typeof(DeBuffLimitSheet),
-                typeof(BuffLinkSheet),
-            };
-            if (collectionExist)
-            {
-                sheetTypes.Add(typeof(CollectionSheet));
-            }
-            var sheets = states.GetSheets(
+                sw.Stop();
+                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                    addressesHex, source, "Get AvatarState", blockIndex,
+                    sw.Elapsed.TotalMilliseconds);
+
+                sw.Restart();
+                var collectionExist =
+                    states.TryGetCollectionState(AvatarAddress, out var collectionState) &&
+                    collectionState.Ids.Any();
+                var sheetTypes = new List<Type>
+                {
+                    typeof(WorldSheet),
+                    typeof(StageSheet),
+                    typeof(StageWaveSheet),
+                    typeof(EnemySkillSheet),
+                    typeof(CostumeStatSheet),
+                    typeof(SkillSheet),
+                    typeof(QuestRewardSheet),
+                    typeof(QuestItemRewardSheet),
+                    typeof(EquipmentItemRecipeSheet),
+                    typeof(WorldUnlockSheet),
+                    typeof(MaterialItemSheet),
+                    typeof(ItemRequirementSheet),
+                    typeof(EquipmentItemRecipeSheet),
+                    typeof(EquipmentItemSubRecipeSheetV2),
+                    typeof(EquipmentItemOptionSheet),
+                    typeof(CrystalStageBuffGachaSheet),
+                    typeof(CrystalRandomBuffSheet),
+                    typeof(StakeActionPointCoefficientSheet),
+                    typeof(RuneListSheet),
+                    typeof(RuneLevelBonusSheet),
+                    typeof(DeBuffLimitSheet),
+                    typeof(BuffLinkSheet),
+                };
+                if (collectionExist)
+                {
+                    sheetTypes.Add(typeof(CollectionSheet));
+                }
+
+                var sheets = states.GetSheets(
                     containQuestSheet: true,
                     containSimulatorSheets: true,
                     sheetTypes: sheetTypes);
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Get Sheets", blockIndex, sw.Elapsed.TotalMilliseconds);
+                sw.Stop();
+                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                    addressesHex, source, "Get Sheets", blockIndex, sw.Elapsed.TotalMilliseconds);
 
-            sw.Restart();
-            var stakingLevel = 0;
-            StakeActionPointCoefficientSheet actionPointCoefficientSheet = null;
-
-            var goldCurrency = states.GetGoldCurrency();
-            var stakedAmount = states.GetStakedAmount(signer);
-            if (stakedAmount > goldCurrency * 0 &&
-                sheets.TryGetSheet(out actionPointCoefficientSheet))
-            {
-                stakingLevel = actionPointCoefficientSheet.FindLevelByStakedAmount(signer, stakedAmount);
-            }
-
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Check StateState", blockIndex, sw.Elapsed.TotalMilliseconds);
-
-            var worldSheet = sheets.GetSheet<WorldSheet>();
-            if (!worldSheet.TryGetValue(WorldId, out var worldRow, false))
-            {
-                throw new SheetRowNotFoundException(addressesHex, nameof(WorldSheet), WorldId);
-            }
-
-            if (StageId < worldRow.StageBegin ||
-                StageId > worldRow.StageEnd)
-            {
-                throw new SheetRowColumnException(
-                    $"{addressesHex}{WorldId} world is not contains {worldRow.Id} stage: " +
-                    $"{worldRow.StageBegin}-{worldRow.StageEnd}");
-            }
-
-            sw.Restart();
-            if (!sheets.GetSheet<StageSheet>().TryGetValue(StageId, out var stageRow))
-            {
-                throw new SheetRowNotFoundException(addressesHex, nameof(StageSheet), StageId);
-            }
-
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Get StageSheet", blockIndex, sw.Elapsed.TotalMilliseconds);
-
-            sw.Restart();
-            var worldInformation = avatarState.worldInformation;
-            if (!worldInformation.TryGetWorld(WorldId, out var world))
-            {
-                // NOTE: Add new World from WorldSheet
-                worldInformation.AddAndUnlockNewWorld(worldRow, blockIndex, worldSheet);
-                worldInformation.TryGetWorld(WorldId, out world);
-            }
-
-            if (!world.IsUnlocked)
-            {
-                throw new InvalidWorldException($"{addressesHex}{WorldId} is locked.");
-            }
-
-            if (world.StageBegin != worldRow.StageBegin ||
-                world.StageEnd != worldRow.StageEnd)
-            {
-                worldInformation.UpdateWorld(worldRow);
-            }
-
-            if (!world.IsStageCleared && StageId != world.StageBegin)
-            {
-                throw new InvalidStageException(
-                    $"{addressesHex}Aborted as the stage ({WorldId}/{StageId - 1}) is not cleared; " +
-                    $"clear the stage ({world.Id}/{world.StageBegin}) first"
-                );
-            }
-
-            if (world.IsStageCleared && StageId - 1 > world.StageClearedId)
-            {
-                throw new InvalidStageException(
-                    $"{addressesHex}Aborted as the stage ({WorldId}/{StageId - 1}) is not cleared; " +
-                    $"cleared stage is ({world.Id}/{world.StageClearedId}), so you can play stage " +
-                    $"({world.Id}/{world.StageClearedId + 1})"
-                );
-            }
-
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Validate World", blockIndex, sw.Elapsed.TotalMilliseconds);
-
-            sw.Restart();
-            var gameConfigState = states.GetGameConfigState();
-            if (gameConfigState is null)
-            {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the game config state was failed to load.");
-            }
-
-            var equipmentList = avatarState.ValidateEquipmentsV3(
-                Equipments, blockIndex, gameConfigState);
-            var foodIds = avatarState.ValidateConsumableV2(Foods, blockIndex, gameConfigState);
-            var costumeIds = avatarState.ValidateCostumeV2(Costumes, gameConfigState);
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Validate Items", blockIndex, sw.Elapsed.TotalMilliseconds);
-            sw.Restart();
-            var materialItemSheet = sheets.GetSheet<MaterialItemSheet>();
-            var apPlayCount = TotalPlayCount;
-            var minimumCostAp = stageRow.CostAP;
-            if (actionPointCoefficientSheet != null && stakingLevel > 0)
-            {
-                minimumCostAp = actionPointCoefficientSheet.GetActionPointByStaking(
-                    minimumCostAp,
-                    1,
-                    stakingLevel);
-            }
-
-            if (ApStoneCount > 0)
-            {
-                // use apStone
-                var row = materialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.ApStone);
-                if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, blockIndex,
-                        count: ApStoneCount))
-                {
-                    throw new NotEnoughMaterialException(
-                        $"{addressesHex}Aborted as the player has no enough material ({row.Id})");
-                }
-
-                var apStonePlayCount =
-                    ApStoneCount * (DailyReward.ActionPointMax / minimumCostAp);
-                apPlayCount = TotalPlayCount - apStonePlayCount;
-                if (apPlayCount < 0)
-                {
-                    throw new InvalidRepeatPlayException(
-                        $"{addressesHex}Invalid TotalPlayCount({TotalPlayCount}) and ApStoneCount({ApStoneCount}). " +
-                        $"TotalPlayCount must be at least calculated apStonePlayCount({apStonePlayCount}). " +
-                        $"Calculated ap play count: {apPlayCount}");
-                }
-
-                Log.Verbose(
-                    "{AddressesHex} {Source} TotalPlayCount: {TotalPlayCount}, " +
-                    "ApStoneCount: {ApStoneCount}, PlayCount by Ap stone: {ApStonePlayCount}, " +
-                    "Ap cost per 1 play: {MinimumCostAp}, " +
-                    "BlockIndex: {BlockIndex}, " +
-                    "PlayCount by action point: {ApPlayCount}, Used AP: {UsedAp}",
-                    addressesHex,
-                    source,
-                    TotalPlayCount,
-                    ApStoneCount,
-                    apStonePlayCount,
-                    minimumCostAp,
-                    apPlayCount,
-                    apPlayCount * minimumCostAp);
-            }
-
-            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
-            {
-                actionPoint = avatarState.actionPoint;
-            }
-
-            if (actionPoint < minimumCostAp * apPlayCount)
-            {
-                throw new NotEnoughActionPointException(
-                    $"{addressesHex}Aborted due to insufficient action point: " +
-                    $"{actionPoint} < cost({minimumCostAp * apPlayCount}))"
-                );
-            }
-
-            actionPoint -= minimumCostAp * apPlayCount;
-            states = states.SetActionPoint(AvatarAddress, actionPoint);
-            avatarState.ValidateItemRequirement(
-                costumeIds.Concat(foodIds).ToList(),
-                equipmentList,
-                sheets.GetSheet<ItemRequirementSheet>(),
-                sheets.GetSheet<EquipmentItemRecipeSheet>(),
-                sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
-                sheets.GetSheet<EquipmentItemOptionSheet>(),
-                addressesHex);
-
-            var items = Equipments.Concat(Costumes);
-            avatarState.EquipItems(items);
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Unequip items", blockIndex, sw.Elapsed.TotalMilliseconds);
-
-            sw.Restart();
-            var questSheet = sheets.GetQuestSheet();
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Get QuestSheet", blockIndex, sw.Elapsed.TotalMilliseconds);
-
-            // Update QuestList when quest not exist
-            var questList = avatarState.questList;
-            var questIds = questList.Select(q => q.Id);
-            var sheetIds = questSheet.Values.Select(q => q.Id);
-            var ids = sheetIds.Except(questIds).ToList();
-            if (ids.Any())
-            {
                 sw.Restart();
-                questList.UpdateList(
-                    questSheet,
-                    sheets.GetSheet<QuestRewardSheet>(),
-                    sheets.GetSheet<QuestItemRewardSheet>(),
+                var stakingLevel = 0;
+                StakeActionPointCoefficientSheet actionPointCoefficientSheet = null;
+
+                var goldCurrency = states.GetGoldCurrency();
+                var stakedAmount = states.GetStakedAmount(signer);
+                if (stakedAmount > goldCurrency * 0 &&
+                    sheets.TryGetSheet(out actionPointCoefficientSheet))
+                {
+                    stakingLevel =
+                        actionPointCoefficientSheet.FindLevelByStakedAmount(signer, stakedAmount);
+                }
+
+                sw.Stop();
+                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                    addressesHex, source, "Check StateState", blockIndex,
+                    sw.Elapsed.TotalMilliseconds);
+
+                var worldSheet = sheets.GetSheet<WorldSheet>();
+                if (!worldSheet.TryGetValue(WorldId, out var worldRow, false))
+                {
+                    throw new SheetRowNotFoundException(addressesHex, nameof(WorldSheet), WorldId);
+                }
+
+                if (StageId < worldRow.StageBegin ||
+                    StageId > worldRow.StageEnd)
+                {
+                    throw new SheetRowColumnException(
+                        $"{addressesHex}{WorldId} world is not contains {worldRow.Id} stage: " +
+                        $"{worldRow.StageBegin}-{worldRow.StageEnd}");
+                }
+
+                sw.Restart();
+                if (!sheets.GetSheet<StageSheet>().TryGetValue(StageId, out var stageRow))
+                {
+                    throw new SheetRowNotFoundException(addressesHex, nameof(StageSheet), StageId);
+                }
+
+                sw.Stop();
+                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                    addressesHex, source, "Get StageSheet", blockIndex,
+                    sw.Elapsed.TotalMilliseconds);
+
+                sw.Restart();
+                var worldInformation = avatarState.worldInformation;
+                if (!worldInformation.TryGetWorld(WorldId, out var world))
+                {
+                    // NOTE: Add new World from WorldSheet
+                    worldInformation.AddAndUnlockNewWorld(worldRow, blockIndex, worldSheet);
+                    worldInformation.TryGetWorld(WorldId, out world);
+                }
+
+                if (!world.IsUnlocked)
+                {
+                    throw new InvalidWorldException($"{addressesHex}{WorldId} is locked.");
+                }
+
+                if (world.StageBegin != worldRow.StageBegin ||
+                    world.StageEnd != worldRow.StageEnd)
+                {
+                    worldInformation.UpdateWorld(worldRow);
+                }
+
+                if (!world.IsStageCleared && StageId != world.StageBegin)
+                {
+                    throw new InvalidStageException(
+                        $"{addressesHex}Aborted as the stage ({WorldId}/{StageId - 1}) is not cleared; " +
+                        $"clear the stage ({world.Id}/{world.StageBegin}) first"
+                    );
+                }
+
+                if (world.IsStageCleared && StageId - 1 > world.StageClearedId)
+                {
+                    throw new InvalidStageException(
+                        $"{addressesHex}Aborted as the stage ({WorldId}/{StageId - 1}) is not cleared; " +
+                        $"cleared stage is ({world.Id}/{world.StageClearedId}), so you can play stage " +
+                        $"({world.Id}/{world.StageClearedId + 1})"
+                    );
+                }
+
+                sw.Stop();
+                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                    addressesHex, source, "Validate World", blockIndex,
+                    sw.Elapsed.TotalMilliseconds);
+
+                sw.Restart();
+                var gameConfigState = states.GetGameConfigState();
+                if (gameConfigState is null)
+                {
+                    throw new FailedLoadStateException(
+                        $"{addressesHex}Aborted as the game config state was failed to load.");
+                }
+
+                var equipmentList = avatarState.ValidateEquipmentsV3(
+                    Equipments, blockIndex, gameConfigState);
+                var foodIds = avatarState.ValidateConsumableV2(Foods, blockIndex, gameConfigState);
+                var costumeIds = avatarState.ValidateCostumeV2(Costumes, gameConfigState);
+                sw.Stop();
+                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                    addressesHex, source, "Validate Items", blockIndex,
+                    sw.Elapsed.TotalMilliseconds);
+                sw.Restart();
+                var materialItemSheet = sheets.GetSheet<MaterialItemSheet>();
+                var apPlayCount = TotalPlayCount;
+                var minimumCostAp = stageRow.CostAP;
+                if (actionPointCoefficientSheet != null && stakingLevel > 0)
+                {
+                    minimumCostAp = actionPointCoefficientSheet.GetActionPointByStaking(
+                        minimumCostAp,
+                        1,
+                        stakingLevel);
+                }
+
+                if (ApStoneCount > 0)
+                {
+                    // use apStone
+                    var row = materialItemSheet.Values.First(r =>
+                        r.ItemSubType == ItemSubType.ApStone);
+                    if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, blockIndex,
+                            count: ApStoneCount))
+                    {
+                        throw new NotEnoughMaterialException(
+                            $"{addressesHex}Aborted as the player has no enough material ({row.Id})");
+                    }
+
+                    var apStonePlayCount =
+                        ApStoneCount * (DailyReward.ActionPointMax / minimumCostAp);
+                    apPlayCount = TotalPlayCount - apStonePlayCount;
+                    if (apPlayCount < 0)
+                    {
+                        throw new InvalidRepeatPlayException(
+                            $"{addressesHex}Invalid TotalPlayCount({TotalPlayCount}) and ApStoneCount({ApStoneCount}). " +
+                            $"TotalPlayCount must be at least calculated apStonePlayCount({apStonePlayCount}). " +
+                            $"Calculated ap play count: {apPlayCount}");
+                    }
+
+                    Log.Verbose(
+                        "{AddressesHex} {Source} TotalPlayCount: {TotalPlayCount}, " +
+                        "ApStoneCount: {ApStoneCount}, PlayCount by Ap stone: {ApStonePlayCount}, " +
+                        "Ap cost per 1 play: {MinimumCostAp}, " +
+                        "BlockIndex: {BlockIndex}, " +
+                        "PlayCount by action point: {ApPlayCount}, Used AP: {UsedAp}",
+                        addressesHex,
+                        source,
+                        TotalPlayCount,
+                        ApStoneCount,
+                        apStonePlayCount,
+                        minimumCostAp,
+                        apPlayCount,
+                        apPlayCount * minimumCostAp);
+                }
+
+                if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+                {
+                    actionPoint = avatarState.actionPoint;
+                }
+
+                if (actionPoint < minimumCostAp * apPlayCount)
+                {
+                    throw new NotEnoughActionPointException(
+                        $"{addressesHex}Aborted due to insufficient action point: " +
+                        $"{actionPoint} < cost({minimumCostAp * apPlayCount}))"
+                    );
+                }
+
+                actionPoint -= minimumCostAp * apPlayCount;
+                states = states.SetActionPoint(AvatarAddress, actionPoint);
+                avatarState.ValidateItemRequirement(
+                    costumeIds.Concat(foodIds).ToList(),
+                    equipmentList,
+                    sheets.GetSheet<ItemRequirementSheet>(),
                     sheets.GetSheet<EquipmentItemRecipeSheet>(),
-                    ids);
+                    sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
+                    sheets.GetSheet<EquipmentItemOptionSheet>(),
+                    addressesHex);
+
+                var items = Equipments.Concat(Costumes);
+                avatarState.EquipItems(items);
                 sw.Stop();
                 Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                    addressesHex, source, "Update QuestList", blockIndex, sw.Elapsed.TotalMilliseconds);
-            }
+                    addressesHex, source, "Unequip items", blockIndex,
+                    sw.Elapsed.TotalMilliseconds);
 
-            sw.Restart();
+                sw.Restart();
+                var questSheet = sheets.GetQuestSheet();
+                sw.Stop();
+                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                    addressesHex, source, "Get QuestSheet", blockIndex,
+                    sw.Elapsed.TotalMilliseconds);
 
-            var skillStateAddress = Addresses.GetSkillStateAddressFromAvatarAddress(AvatarAddress);
-            var isNotClearedStage = !avatarState.worldInformation.IsStageCleared(StageId);
-            var skillsOnWaveStart = new List<Skill>();
-            CrystalRandomSkillState skillState = null;
-            if (isNotClearedStage)
-            {
-                // If state exists, get CrystalRandomSkillState. If not, create new state.
-                skillState = states.TryGetLegacyState<List>(skillStateAddress, out var serialized)
-                    ? new CrystalRandomSkillState(skillStateAddress, serialized)
-                    : new CrystalRandomSkillState(skillStateAddress, StageId);
-
-                if (skillState.SkillIds.Any())
+                // Update QuestList when quest not exist
+                var questList = avatarState.questList;
+                var questIds = questList.Select(q => q.Id);
+                var sheetIds = questSheet.Values.Select(q => q.Id);
+                var ids = sheetIds.Except(questIds).ToList();
+                if (ids.Any())
                 {
-                    var crystalRandomBuffSheet = sheets.GetSheet<CrystalRandomBuffSheet>();
-                    var skillSheet = sheets.GetSheet<SkillSheet>();
-                    int selectedId;
-                    if (StageBuffId.HasValue && skillState.SkillIds.Contains(StageBuffId.Value))
-                    {
-                        selectedId = StageBuffId.Value;
-                    }
-                    else
-                    {
-                        selectedId = skillState.GetHighestRankSkill(crystalRandomBuffSheet);
-                    }
-
-                    var skill = CrystalRandomSkillState.GetSkill(
-                        selectedId,
-                        crystalRandomBuffSheet,
-                        skillSheet);
-                    skillsOnWaveStart.Add(skill);
+                    sw.Restart();
+                    questList.UpdateList(
+                        questSheet,
+                        sheets.GetSheet<QuestRewardSheet>(),
+                        sheets.GetSheet<QuestItemRewardSheet>(),
+                        sheets.GetSheet<EquipmentItemRecipeSheet>(),
+                        ids);
+                    sw.Stop();
+                    Log.Verbose(
+                        "{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                        addressesHex, source, "Update QuestList", blockIndex,
+                        sw.Elapsed.TotalMilliseconds);
                 }
-            }
-
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Get skillState", blockIndex, sw.Elapsed.TotalMilliseconds);
-
-            sw.Restart();
-            var worldUnlockSheet = sheets.GetSheet<WorldUnlockSheet>();
-            var crystalStageBuffSheet = sheets.GetSheet<CrystalStageBuffGachaSheet>();
-            sw.Restart();
-            // if PlayCount > 1, it is Multi-HAS.
-            var simulatorSheets = sheets.GetSimulatorSheets();
-
-            // update rune slot
-            var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var runeSlotState = states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
-                ? new RuneSlotState(rawRuneSlotState)
-                : new RuneSlotState(BattleType.Adventure);
-            var runeListSheet = sheets.GetSheet<RuneListSheet>();
-            runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
-            states = states.SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize());
-
-            // update item slot
-            var itemSlotStateAddress = ItemSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var itemSlotState = states.TryGetLegacyState(itemSlotStateAddress, out List rawItemSlotState)
-                ? new ItemSlotState(rawItemSlotState)
-                : new ItemSlotState(BattleType.Adventure);
-            itemSlotState.UpdateEquipment(Equipments);
-            itemSlotState.UpdateCostumes(Costumes);
-            states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
-
-            var runeStates = states.GetRuneState(AvatarAddress, out var migrateRequired);
-            // Passive migrate runeStates
-            if (migrateRequired)
-            {
-                states = states.SetRuneState(AvatarAddress, runeStates);
-            }
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Update slotState", blockIndex, sw.Elapsed.TotalMilliseconds);
-
-            var stageWaveRow =  sheets.GetSheet<StageWaveSheet>()[StageId];
-            var enemySkillSheet = sheets.GetSheet<EnemySkillSheet>();
-            var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
-            var stageCleared = !isNotClearedStage;
-            var starCount = 0;
-            var collectionModifiers = new List<StatModifier>();
-            if (collectionExist)
-            {
-                var collectionSheet = sheets.GetSheet<CollectionSheet>();
-                collectionModifiers = collectionState.GetModifiers(collectionSheet);
-            }
-
-            var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
-            var buffLinkSheet = sheets.GetSheet<BuffLinkSheet>();
-            for (var i = 0; i < TotalPlayCount; i++)
-            {
-                var rewards = StageSimulator.GetWaveRewards(random, stageRow, materialItemSheet);
-                sw.Restart();
-                // First simulating will use Foods and Random Skills.
-                // Remainder simulating will not use Foods.
-                var simulator = new StageSimulator(
-                    random,
-                    avatarState,
-                    i == 0 ? Foods : new List<Guid>(),
-                    runeStates,
-                    runeSlotState,
-                    i == 0 ? skillsOnWaveStart : new List<Skill>(),
-                    WorldId,
-                    StageId,
-                    stageRow,
-                    stageWaveRow,
-                    stageCleared,
-                    StageRewardExpHelper.GetExp(avatarState.level, StageId),
-                    simulatorSheets,
-                    enemySkillSheet,
-                    costumeStatSheet,
-                    rewards,
-                    collectionModifiers,
-                    deBuffLimitSheet,
-                    buffLinkSheet,
-                    false,
-                    gameConfigState.ShatterStrikeMaxDamage);
-                sw.Stop();
-                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                    addressesHex, source, "Initialize Simulator", blockIndex, sw.Elapsed.TotalMilliseconds);
 
                 sw.Restart();
-                simulator.Simulate();
-                sw.Stop();
-                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                    addressesHex, source, "Simulator.Simulate()", blockIndex, sw.Elapsed.TotalMilliseconds);
 
-                sw.Restart();
-                if (simulator.Log.IsClear)
+                var skillStateAddress =
+                    Addresses.GetSkillStateAddressFromAvatarAddress(AvatarAddress);
+                var isNotClearedStage = !avatarState.worldInformation.IsStageCleared(StageId);
+                var skillsOnWaveStart = new List<Skill>();
+                CrystalRandomSkillState skillState = null;
+                if (isNotClearedStage)
                 {
-                    avatarState.worldInformation.ClearStage(
+                    // If state exists, get CrystalRandomSkillState. If not, create new state.
+                    skillState =
+                        states.TryGetLegacyState<List>(skillStateAddress, out var serialized)
+                            ? new CrystalRandomSkillState(skillStateAddress, serialized)
+                            : new CrystalRandomSkillState(skillStateAddress, StageId);
+
+                    if (skillState.SkillIds.Any())
+                    {
+                        var crystalRandomBuffSheet = sheets.GetSheet<CrystalRandomBuffSheet>();
+                        var skillSheet = sheets.GetSheet<SkillSheet>();
+                        int selectedId;
+                        if (StageBuffId.HasValue && skillState.SkillIds.Contains(StageBuffId.Value))
+                        {
+                            selectedId = StageBuffId.Value;
+                        }
+                        else
+                        {
+                            selectedId = skillState.GetHighestRankSkill(crystalRandomBuffSheet);
+                        }
+
+                        var skill = CrystalRandomSkillState.GetSkill(
+                            selectedId,
+                            crystalRandomBuffSheet,
+                            skillSheet);
+                        skillsOnWaveStart.Add(skill);
+                    }
+                }
+
+                sw.Stop();
+                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                    addressesHex, source, "Get skillState", blockIndex,
+                    sw.Elapsed.TotalMilliseconds);
+
+                sw.Restart();
+                var worldUnlockSheet = sheets.GetSheet<WorldUnlockSheet>();
+                var crystalStageBuffSheet = sheets.GetSheet<CrystalStageBuffGachaSheet>();
+                sw.Restart();
+                // if PlayCount > 1, it is Multi-HAS.
+                var simulatorSheets = sheets.GetSimulatorSheets();
+
+                // update rune slot
+                var runeSlotStateAddress =
+                    RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
+                var runeSlotState =
+                    states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
+                        ? new RuneSlotState(rawRuneSlotState)
+                        : new RuneSlotState(BattleType.Adventure);
+                var runeListSheet = sheets.GetSheet<RuneListSheet>();
+                runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
+                states = states.SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize());
+
+                // update item slot
+                var itemSlotStateAddress =
+                    ItemSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
+                var itemSlotState =
+                    states.TryGetLegacyState(itemSlotStateAddress, out List rawItemSlotState)
+                        ? new ItemSlotState(rawItemSlotState)
+                        : new ItemSlotState(BattleType.Adventure);
+                itemSlotState.UpdateEquipment(Equipments);
+                itemSlotState.UpdateCostumes(Costumes);
+                states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
+
+                var runeStates = states.GetRuneState(AvatarAddress, out var migrateRequired);
+                // Passive migrate runeStates
+                if (migrateRequired)
+                {
+                    states = states.SetRuneState(AvatarAddress, runeStates);
+                }
+
+                sw.Stop();
+                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                    addressesHex, source, "Update slotState", blockIndex,
+                    sw.Elapsed.TotalMilliseconds);
+
+                var stageWaveRow = sheets.GetSheet<StageWaveSheet>()[StageId];
+                var enemySkillSheet = sheets.GetSheet<EnemySkillSheet>();
+                var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+                var stageCleared = !isNotClearedStage;
+                var starCount = 0;
+                var collectionModifiers = new List<StatModifier>();
+                if (collectionExist)
+                {
+                    var collectionSheet = sheets.GetSheet<CollectionSheet>();
+                    collectionModifiers = collectionState.GetModifiers(collectionSheet);
+                }
+
+                var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
+                var buffLinkSheet = sheets.GetSheet<BuffLinkSheet>();
+                for (var i = 0; i < TotalPlayCount; i++)
+                {
+                    var rewards =
+                        StageSimulator.GetWaveRewards(random, stageRow, materialItemSheet);
+                    sw.Restart();
+                    // First simulating will use Foods and Random Skills.
+                    // Remainder simulating will not use Foods.
+                    var simulator = new StageSimulator(
+                        random,
+                        avatarState,
+                        i == 0 ? Foods : new List<Guid>(),
+                        runeStates,
+                        runeSlotState,
+                        i == 0 ? skillsOnWaveStart : new List<Skill>(),
                         WorldId,
                         StageId,
-                        blockIndex,
-                        worldSheet,
-                        worldUnlockSheet
-                    );
-                    stageCleared = true;
+                        stageRow,
+                        stageWaveRow,
+                        stageCleared,
+                        StageRewardExpHelper.GetExp(avatarState.level, StageId),
+                        simulatorSheets,
+                        enemySkillSheet,
+                        costumeStatSheet,
+                        rewards,
+                        collectionModifiers,
+                        deBuffLimitSheet,
+                        buffLinkSheet,
+                        false,
+                        gameConfigState.ShatterStrikeMaxDamage);
                     sw.Stop();
-                    Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                        addressesHex, source, "ClearStage", blockIndex, sw.Elapsed.TotalMilliseconds);
-                }
+                    Log.Verbose(
+                        "{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                        addressesHex, source, "Initialize Simulator", blockIndex,
+                        sw.Elapsed.TotalMilliseconds);
 
-                sw.Restart();
+                    sw.Restart();
+                    simulator.Simulate();
+                    sw.Stop();
+                    Log.Verbose(
+                        "{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                        addressesHex, source, "Simulator.Simulate()", blockIndex,
+                        sw.Elapsed.TotalMilliseconds);
 
-                // This conditional logic is same as written in the
-                // MimisbrunnrBattle("mimisbrunnr_battle10") action.
-                if (blockIndex < ActionObsoleteConfig.V100310ExecutedBlockIndex)
-                {
-                    var player = simulator.Player;
-                    foreach (var key in player.monsterMapForBeforeV100310.Keys)
+                    sw.Restart();
+                    if (simulator.Log.IsClear)
                     {
-                        player.monsterMap.Add(key, player.monsterMapForBeforeV100310[key]);
+                        avatarState.worldInformation.ClearStage(
+                            WorldId,
+                            StageId,
+                            blockIndex,
+                            worldSheet,
+                            worldUnlockSheet
+                        );
+                        stageCleared = true;
+                        sw.Stop();
+                        Log.Verbose(
+                            "{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                            addressesHex, source, "ClearStage", blockIndex,
+                            sw.Elapsed.TotalMilliseconds);
                     }
 
-                    player.monsterMapForBeforeV100310.Clear();
+                    sw.Restart();
 
-                    foreach (var key in player.eventMapForBeforeV100310.Keys)
+                    // This conditional logic is same as written in the
+                    // MimisbrunnrBattle("mimisbrunnr_battle10") action.
+                    if (blockIndex < ActionObsoleteConfig.V100310ExecutedBlockIndex)
                     {
-                        player.eventMap.Add(key, player.eventMapForBeforeV100310[key]);
+                        var player = simulator.Player;
+                        foreach (var key in player.monsterMapForBeforeV100310.Keys)
+                        {
+                            player.monsterMap.Add(key, player.monsterMapForBeforeV100310[key]);
+                        }
+
+                        player.monsterMapForBeforeV100310.Clear();
+
+                        foreach (var key in player.eventMapForBeforeV100310.Keys)
+                        {
+                            player.eventMap.Add(key, player.eventMapForBeforeV100310[key]);
+                        }
+
+                        player.eventMapForBeforeV100310.Clear();
                     }
 
-                    player.eventMapForBeforeV100310.Clear();
-                }
+                    starCount += simulator.Log.clearedWaveNumber;
+                    avatarState.Update(simulator);
 
-                starCount += simulator.Log.clearedWaveNumber;
-                avatarState.Update(simulator);
+                    sw.Stop();
+                    Log.Verbose(
+                        "{AddressesHex} {Source} {Process} by simulator({AvatarAddress}); " +
+                        "blockIndex: {BlockIndex} " +
+                        "worldId: {WorldId}, stageId: {StageId}, result: {Result}, " +
+                        "clearWave: {ClearWave}, totalWave: {TotalWave}",
+                        addressesHex,
+                        source,
+                        "Update avatar",
+                        AvatarAddress,
+                        WorldId,
+                        StageId,
+                        simulator.Log.result,
+                        simulator.Log.clearedWaveNumber,
+                        simulator.Log.waveCount
+                    );
+                }
 
                 sw.Stop();
-                Log.Verbose(
-                    "{AddressesHex} {Source} {Process} by simulator({AvatarAddress}); " +
-                    "blockIndex: {BlockIndex} " +
-                    "worldId: {WorldId}, stageId: {StageId}, result: {Result}, " +
-                    "clearWave: {ClearWave}, totalWave: {TotalWave}",
-                    addressesHex,
-                    source,
-                    "Update avatar",
-                    AvatarAddress,
-                    WorldId,
-                    StageId,
-                    simulator.Log.result,
-                    simulator.Log.clearedWaveNumber,
-                    simulator.Log.waveCount
-                );
-            }
-            sw.Stop();
-            Log.Debug("{AddressesHex} {Source} {Process} from #{BlockIndex}: {Elapsed}, Count: {PlayCount}",
-                addressesHex, source, "loop Simulate", blockIndex, sw.Elapsed.TotalMilliseconds, TotalPlayCount);
+                Log.Debug(
+                    "{AddressesHex} {Source} {Process} from #{BlockIndex}: {Elapsed}, Count: {PlayCount}",
+                    addressesHex, source, "loop Simulate", blockIndex, sw.Elapsed.TotalMilliseconds,
+                    TotalPlayCount);
 
-            // Update CrystalRandomSkillState.Stars by clearedWaveNumber. (add)
-            skillState?.Update(starCount, crystalStageBuffSheet);
-            sw.Restart();
-            avatarState.UpdateQuestRewards(materialItemSheet);
-            avatarState.updatedAt = blockIndex;
-            avatarState.mailBox.CleanUp();
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Update AvatarState", blockIndex, sw.Elapsed.TotalMilliseconds);
+                // Update CrystalRandomSkillState.Stars by clearedWaveNumber. (add)
+                skillState?.Update(starCount, crystalStageBuffSheet);
+                sw.Restart();
+                avatarState.UpdateQuestRewards(materialItemSheet);
+                avatarState.updatedAt = blockIndex;
+                avatarState.mailBox.CleanUp();
+                sw.Stop();
+                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                    addressesHex, source, "Update AvatarState", blockIndex,
+                    sw.Elapsed.TotalMilliseconds);
 
-            sw.Restart();
-            if (isNotClearedStage)
-            {
-                avatarState.worldInformation.TryGetLastClearedStageId(out var lastClearedStageId);
-                if (lastClearedStageId >= StageId)
+                sw.Restart();
+                if (isNotClearedStage)
                 {
-                    // Make new CrystalRandomSkillState by next stage Id.
-                    skillState = new CrystalRandomSkillState(skillStateAddress, StageId + 1);
+                    avatarState.worldInformation.TryGetLastClearedStageId(
+                        out var lastClearedStageId);
+                    if (lastClearedStageId >= StageId)
+                    {
+                        // Make new CrystalRandomSkillState by next stage Id.
+                        skillState = new CrystalRandomSkillState(skillStateAddress, StageId + 1);
+                    }
+
+                    skillState.Update(new List<int>());
+                    states = states.SetLegacyState(skillStateAddress, skillState.Serialize());
                 }
 
-                skillState.Update(new List<int>());
-                states = states.SetLegacyState(skillStateAddress, skillState.Serialize());
-            }
+                states = states.SetAvatarState(AvatarAddress, avatarState);
 
-            states = states.SetAvatarState(AvatarAddress, avatarState);
+                sw.Stop();
+                Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
+                    addressesHex, source, "Set States", blockIndex, sw.Elapsed.TotalMilliseconds);
 
-            sw.Stop();
-            Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
-                addressesHex, source, "Set States", blockIndex, sw.Elapsed.TotalMilliseconds);
-
-            var totalElapsed = DateTimeOffset.UtcNow - started;
-            Log.Verbose("{AddressesHex} {Source} HAS {Process}: {Elapsed}, blockIndex: {BlockIndex}", addressesHex, source, "Total Executed Time", totalElapsed.TotalMilliseconds, blockIndex);
+                var totalElapsed = DateTimeOffset.UtcNow - started;
+                Log.Verbose(
+                    "{AddressesHex} {Source} HAS {Process}: {Elapsed}, blockIndex: {BlockIndex}",
+                    addressesHex, source, "Total Executed Time", totalElapsed.TotalMilliseconds,
+                    blockIndex);
+            });
             return states;
         }
 
