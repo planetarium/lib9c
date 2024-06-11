@@ -257,9 +257,9 @@ namespace Lib9c.Tests
         public BuffLinkSheet BuffLinkSheet { get; set; }
 
         // Adventure Boss
-        public FloorSheet FloorSheet { get; private set; }
+        public AdventureBossFloorSheet AdventureBossFloorSheet { get; private set; }
 
-        public FloorWaveSheet FloorWaveSheet { get; private set; }
+        public AdventureBossFloorWaveSheet AdventureBossFloorWaveSheet { get; private set; }
         /* Adventure Boss */
 
         public void ItemSheetInitialize()

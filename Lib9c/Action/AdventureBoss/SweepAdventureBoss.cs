@@ -94,7 +94,7 @@ namespace Nekoyume.Action.AdventureBoss
                     typeof(MaterialItemSheet),
                     typeof(RuneListSheet),
                     typeof(RuneLevelBonusSheet),
-                    typeof(FloorWaveSheet),
+                    typeof(AdventureBossFloorWaveSheet),
                 });
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var material =
@@ -116,7 +116,7 @@ namespace Nekoyume.Action.AdventureBoss
                 latestSeason.BossId, explorer.Floor, context.GetRandom(),
                 avatarState, sheets.GetSimulatorSheets(), logEvent: false
             );
-            simulator.AddBreakthrough(1, explorer.Floor, sheets.GetSheet<FloorWaveSheet>());
+            simulator.AddBreakthrough(1, explorer.Floor, sheets.GetSheet<AdventureBossFloorWaveSheet>());
 
             // Add point, reward
             var point = 0;

@@ -55,14 +55,14 @@ namespace Lib9c.Tests.Model.AdventureBoss
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                _tableSheets.FloorSheet[1],
-                _tableSheets.FloorWaveSheet[1],
+                _tableSheets.AdventureBossFloorSheet[1],
+                _tableSheets.AdventureBossFloorWaveSheet[1],
                 _tableSheets.GetSimulatorSheets(),
                 _tableSheets.EnemySkillSheet,
                 _tableSheets.CostumeStatSheet,
                 AdventureBossSimulator.GetWaveRewards(
                     _random,
-                    _tableSheets.FloorSheet[1],
+                    _tableSheets.AdventureBossFloorSheet[1],
                     _tableSheets.MaterialItemSheet
                 ),
                 new List<StatModifier>
@@ -122,14 +122,14 @@ namespace Lib9c.Tests.Model.AdventureBoss
                     new List<Guid>(),
                     new AllRuneState(),
                     new RuneSlotState(BattleType.Adventure),
-                    _tableSheets.FloorSheet[1],
-                    _tableSheets.FloorWaveSheet[1],
+                    _tableSheets.AdventureBossFloorSheet[1],
+                    _tableSheets.AdventureBossFloorWaveSheet[1],
                     _tableSheets.GetSimulatorSheets(),
                     _tableSheets.EnemySkillSheet,
                     _tableSheets.CostumeStatSheet,
                     AdventureBossSimulator.GetWaveRewards(
                         _random,
-                        _tableSheets.FloorSheet[1],
+                        _tableSheets.AdventureBossFloorSheet[1],
                         _tableSheets.MaterialItemSheet
                     ),
                     new List<StatModifier>
@@ -140,7 +140,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
                 );
             }
 
-            simulator.AddBreakthrough(firstFloor, lastFloor, _tableSheets.FloorWaveSheet);
+            simulator.AddBreakthrough(firstFloor, lastFloor, _tableSheets.AdventureBossFloorWaveSheet);
 
             Assert.Equal(typeof(SpawnPlayer), simulator.Log.events.First().GetType());
             if (!simulate)

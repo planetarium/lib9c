@@ -10,10 +10,10 @@ namespace Nekoyume.Model.BattleStatus.AdventureBoss
     public class Breakthrough : EventBase
     {
         public readonly int Floor;
-        public readonly List<FloorWaveSheet.MonsterData> Monsters;
+        public readonly List<AdventureBossFloorWaveSheet.MonsterData> Monsters;
 
         public Breakthrough(CharacterBase character, int floor,
-            List<FloorWaveSheet.MonsterData> monsters
+            List<AdventureBossFloorWaveSheet.MonsterData> monsters
             ) : base(character)
         {
             Floor = floor;

@@ -124,8 +124,8 @@ namespace Nekoyume.Action.AdventureBoss
                 containSimulatorSheets:true,
                 sheetTypes: new[]
             {
-                typeof(FloorSheet),
-                typeof(FloorWaveSheet),
+                typeof(AdventureBossFloorSheet),
+                typeof(AdventureBossFloorWaveSheet),
                 typeof(CollectionSheet),
                 typeof(EnemySkillSheet),
                 typeof(CostumeStatSheet),
@@ -170,8 +170,8 @@ namespace Nekoyume.Action.AdventureBoss
                 collectionModifiers = collectionState.GetModifiers(collectionSheet);
             }
 
-            var floorSheet = sheets.GetSheet<FloorSheet>();
-            var floorWaveSheet = sheets.GetSheet<FloorWaveSheet>();
+            var floorSheet = sheets.GetSheet<AdventureBossFloorSheet>();
+            var floorWaveSheet = sheets.GetSheet<AdventureBossFloorWaveSheet>();
             var simulatorSheets = sheets.GetSimulatorSheets();
             var enemySkillSheet = sheets.GetSheet<EnemySkillSheet>();
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();

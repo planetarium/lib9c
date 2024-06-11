@@ -6,22 +6,24 @@ using static Nekoyume.TableData.TableExtensions;
 namespace Nekoyume.TableData.AdventureBoss
 {
     [Serializable]
-    public class FloorSheet : Sheet<int, FloorSheet.Row>
+    public class AdventureBossFloorSheet : Sheet<int, AdventureBossFloorSheet.Row>
     {
         [Serializable]
         public class RewardData
         {
+            public string Type { get; }
             public int ItemId { get; }
-            public decimal Ratio { get; }
+            public int Ratio { get; }
             public int Min { get; }
             public int Max { get; }
 
-            public RewardData(int itemId, decimal ratio, int min, int max)
+            public RewardData(string type, int itemId, int min, int max, int ratio)
             {
+                Type = type;
                 ItemId = itemId;
-                Ratio = ratio;
                 Min = min;
                 Max = max;
+                Ratio = ratio;
             }
         }
 
@@ -38,8 +40,8 @@ namespace Nekoyume.TableData.AdventureBoss
             public string BGM { get; private set; }
             public List<RewardData> Rewards { get; private set; }
 
-            public int DropItemMin { get; private set; }
-            public int DropItemMax { get; private set; }
+            public int MinDropItem { get; private set; }
+            public int MaxDropItem { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
@@ -86,26 +88,27 @@ namespace Nekoyume.TableData.AdventureBoss
                     ? DefaultBGM
                     : fields[9];
                 Rewards = new List<RewardData>();
-                for (var i = 0; i < 10; i++)
+                for (var i = 0; i < 3; i++)
                 {
-                    var offset = i * 4;
-                    if (!TryParseInt(fields[10 + offset], out var itemId))
+                    var offset = i * 5;
+                    if (!TryParseInt(fields[11 + offset], out var itemId))
                         continue;
 
                     Rewards.Add(new RewardData(
+                        fields[10 + offset],
                         itemId,
-                        TryParseDecimal(fields[11 + offset], out var ratio) ? ratio : 0m,
                         TryParseInt(fields[12 + offset], out var min) ? min : 0,
-                        TryParseInt(fields[13 + offset], out var max) ? max : 0
+                        TryParseInt(fields[13 + offset], out var max) ? max : 0,
+                        TryParseInt(fields[14 + offset], out var ratio) ? ratio : 0
                     ));
                 }
 
-                DropItemMin = TryParseInt(fields[50], out var dropMin) ? dropMin : 0;
-                DropItemMax = TryParseInt(fields[51], out var dropMax) ? dropMax : 0;
+                MinDropItem = TryParseInt(fields[27], out var minDrop) ? minDrop : 0;
+                MaxDropItem = TryParseInt(fields[28], out var maxDrop) ? maxDrop : 0;
             }
         }
 
-        public FloorSheet() : base(nameof(FloorSheet))
+        public AdventureBossFloorSheet() : base(nameof(AdventureBossFloorSheet))
         {
         }
     }

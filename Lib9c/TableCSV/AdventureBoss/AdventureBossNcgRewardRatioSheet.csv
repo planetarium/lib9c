@@ -1,0 +1,10 @@
+id,item_id,_item_name,ratio
+1,600201,Golden Dust,0.5
+2,600202,Ruby Dust,1.5
+3,600203,Diamond Dust,7.5
+4,600301,Normal Hammer,0.1
+5,600302,Rare Hammer,0.5
+6,600303,Epic Hammer,1
+7,600304,Unique Hammer,4
+8,600305,Legendary Hammer,15
+_9,600306,Divinity Hammer,60

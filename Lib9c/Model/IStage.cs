@@ -37,7 +37,7 @@ namespace Nekoyume.Model
         IEnumerator CoCustomEvent(CharacterBase character, EventBase eventBase);
 
         #region AdvetureBoss
-        IEnumerator CoBreakthrough(CharacterBase character, int floor, List<FloorWaveSheet.MonsterData> monsters);
+        IEnumerator CoBreakthrough(CharacterBase character, int floor, List<AdventureBossFloorWaveSheet.MonsterData> monsters);
         #endregion
     }
 }
