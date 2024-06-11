@@ -151,6 +151,13 @@ namespace Lib9c.Tests.Model.AdventureBoss
 
             var filtered = simulator.Log.events.OfType<Breakthrough>();
             Assert.Equal(lastFloor - firstFloor + 1, filtered.Count());
+
+            if (simulate)
+            {
+                var anotherActions = simulator.Log.events.Where(e =>
+                    e.GetType() != typeof(Breakthrough) && e.GetType() != typeof(SpawnPlayer));
+                Assert.NotEmpty(anotherActions);
+            }
         }
     }
 }
