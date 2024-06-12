@@ -56,7 +56,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly AvatarState TesterAvatarState = new (
             TesterAvatarAddress, TesterAddress, 0L, TableSheets.GetAvatarSheets(),
             new PrivateKey().Address, name: "Tester"
-        );
+        ) { level = 500 };
 
         private static readonly AgentState TesterState = new (TesterAddress)
         {
@@ -74,6 +74,18 @@ namespace Lib9c.Tests.Action.AdventureBoss
             .SetAgentState(TesterAddress, TesterState)
             .MintAsset(new ActionContext(), WantedAddress, 1_000_000 * NCG);
 
+        public ExploreAdventureBossTest()
+        {
+            var collectionSheet = TableSheets.CollectionSheet;
+            var collectionState = new CollectionState();
+            foreach (var row in collectionSheet.Values)
+            {
+                collectionState.Ids.Add(row.Id);
+            }
+
+            _initialState = _initialState.SetCollectionState(TesterAvatarAddress, collectionState);
+        }
+
         public static IEnumerable<object[]> GetExecuteMemberData()
         {
             // No AP potion at all
@@ -85,23 +97,23 @@ namespace Lib9c.Tests.Action.AdventureBoss
             yield return new object[]
             {
                 0, 5, 5, 10, 5, null,
-                new[] { (600301, 70), (600302, 0), (600303, 0), (600304, 80) },
+                new[] { (600301, 90), (600302, 0), (600303, 30), (600304, 30) },
             };
             // Start from bottom, goes to 3 because of potion
             yield return new object[]
             {
-                0, 5, 3, 3, 0, null, new[] { (600301, 30), (600302, 0), (600303, 0), (600304, 30) },
+                0, 5, 3, 3, 0, null, new[] { (600301, 0), (600302, 0), (600303, 30), (600304, 30) },
             };
             // Start from 3, goes to 5 because of locked floor
             yield return new object[]
             {
-                2, 5, 5, 5, 2, null, new[] { (600301, 90), (600302, 30), (600303, 0), (600304, 0) },
+                2, 5, 5, 5, 2, null, new[] { (600301, 40), (600302, 80), (600303, 0), (600304, 0) },
             };
             // Start from 6, goes to 10
             yield return new object[]
             {
                 5, 10, 10, 10, 5, null,
-                new[] { (600301, 70), (600302, 330), (600303, 0), (600304, 0) },
+                new[] { (600301, 170), (600302, 230), (600303, 0), (600304, 0) },
             };
             // Start from 20, cannot enter
             yield return new object[]
