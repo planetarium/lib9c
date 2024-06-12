@@ -38,6 +38,7 @@ namespace Nekoyume.Model
 
         #region AdvetureBoss
         IEnumerator CoBreakthrough(CharacterBase character, int floor, List<FloorWaveSheet.MonsterData> monsters);
+        IEnumerator CoStageBuff(CharacterBase affected,  int skillId, IEnumerable<BattleStatus.Skill.SkillInfo> skillInfos, IEnumerable<BattleStatus.Skill.SkillInfo> buffInfos);
         #endregion
     }
 }
