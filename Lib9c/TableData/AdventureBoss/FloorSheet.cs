@@ -32,6 +32,8 @@ namespace Nekoyume.TableData.AdventureBoss
 
             public override int Key => Id;
             public int Id { get; private set; }
+            public int AdventureBossId { get; private set; }
+            public int Floor { get; private set; }
             public int TurnLimit { get; private set; }
             public List<StatModifier> EnemyInitialStatModifiers { get; private set; }
             public string Background { get; private set; }
@@ -45,12 +47,13 @@ namespace Nekoyume.TableData.AdventureBoss
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = TryParseInt(fields[0], out var id) ? id : 0;
-                TurnLimit = TryParseInt(fields[1], out var turnLimit) ? turnLimit : 0;
+                AdventureBossId = TryParseInt(fields[1], out var bossId) ? bossId : 0;
+                Floor = TryParseInt(fields[2], out var floor) ? floor : 0;
+                TurnLimit = TryParseInt(fields[3], out var turnLimit) ? turnLimit : 0;
                 EnemyInitialStatModifiers = new List<StatModifier>();
                 for (var i = 0; i < 6; i++)
                 {
-                    if (!TryParseInt(fields[2 + i], out var option) ||
-                        option == 0)
+                    if (!TryParseInt(fields[4 + i], out var option) || option == 0)
                         continue;
 
                     switch (i)
@@ -82,29 +85,29 @@ namespace Nekoyume.TableData.AdventureBoss
                     }
                 }
 
-                Background = fields[8];
-                BGM = string.IsNullOrEmpty(fields[9])
+                Background = fields[10];
+                BGM = string.IsNullOrEmpty(fields[11])
                     ? DefaultBGM
-                    : fields[9];
+                    : fields[11];
                 Rewards = new List<RewardData>();
-                for (var i = 0; i < 10; i++)
+                for (var i = 0; i < 3; i++)
                 {
-                    var offset = i * 4;
-                    if (!TryParseInt(fields[10 + offset], out var itemId))
+                    var offset = i * 5;
+                    if (!TryParseInt(fields[13 + offset], out var itemId))
                         continue;
 
                     Rewards.Add(new RewardData(
                         itemId,
-                        TryParseDecimal(fields[11 + offset], out var ratio) ? ratio : 0m,
-                        TryParseInt(fields[12 + offset], out var min) ? min : 0,
-                        TryParseInt(fields[13 + offset], out var max) ? max : 0
+                        TryParseDecimal(fields[16 + offset], out var ratio) ? ratio : 0m,
+                        TryParseInt(fields[14 + offset], out var min) ? min : 0,
+                        TryParseInt(fields[15 + offset], out var max) ? max : 0
                     ));
                 }
 
-                DropItemMin = TryParseInt(fields[50], out var dropMin) ? dropMin : 0;
-                DropItemMax = TryParseInt(fields[51], out var dropMax) ? dropMax : 0;
+                DropItemMin = TryParseInt(fields[27], out var dropMin) ? dropMin : 0;
+                DropItemMax = TryParseInt(fields[28], out var dropMax) ? dropMax : 0;
 
-                StageBuffSkillId = TryParseInt(fields[52], out var skillId) ? skillId : 0;
+                StageBuffSkillId = TryParseInt(fields[29], out var skillId) ? skillId : 0;
             }
         }
 
