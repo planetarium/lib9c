@@ -29,6 +29,11 @@ id,_name,item_sub_type,grade,elemental_type
 302025,동글이 잎사귀,FoodMaterial,3,Normal
 302026,얼어붙은 열매,FoodMaterial,4,Normal
 302027,서리 결정,FoodMaterial,5,Normal
+302028,빨간 열매,FoodMaterial,2,Normal
+302029,거친 나무 조각,FoodMaterial,3,Normal
+302030,어둠 물고기,FoodMaterial,3,Normal
+302031,영혼수,FoodMaterial,4,Normal
+302032,붉은 파우더,FoodMaterial,5,Normal
 800101,조개껍질,FoodMaterial,2,Normal
 800102,선글라스,FoodMaterial,3,Normal
 800103,아이스크림,FoodMaterial,4,Normal
@@ -47,26 +52,31 @@ id,_name,item_sub_type,grade,elemental_type
 303002,단단한 검,EquipmentMaterial,3,Normal
 303003,영험한 기운의 검,EquipmentMaterial,4,Normal
 303004,전설의 검,EquipmentMaterial,5,Normal
+303005,신성한 검,EquipmentMaterial,6,Normal
 303100,낡은 옷,EquipmentMaterial,1,Normal
 303101,버려진 옷,EquipmentMaterial,2,Normal
 303102,단단한 옷,EquipmentMaterial,3,Normal
 303103,영험한 기운의 갑옷,EquipmentMaterial,4,Normal
 303104,전설의 옷,EquipmentMaterial,5,Normal
+303105,신성한 옷,EquipmentMaterial,6,Normal
 303200,낡은 끈,EquipmentMaterial,1,Normal
 303201,버려진 허리띠,EquipmentMaterial,2,Normal
 303202,단단한 벨트,EquipmentMaterial,3,Normal
 303203,영험한 기운의 벨트,EquipmentMaterial,4,Normal
 303204,전설의 벨트,EquipmentMaterial,5,Normal
+303205,신성한 벨트,EquipmentMaterial,6,Normal
 303300,낡은 목걸이,EquipmentMaterial,1,Normal
 303301,버려진 목걸이,EquipmentMaterial,2,Normal
 303302,단단한 목걸이,EquipmentMaterial,3,Normal
 303303,영험한 기운의 목걸이,EquipmentMaterial,4,Normal
 303304,전설의 목걸이,EquipmentMaterial,5,Normal
+303305,신성한 목걸이,EquipmentMaterial,6,Normal
 303400,낡은 반지,EquipmentMaterial,1,Normal
 303401,버려진 반지,EquipmentMaterial,2,Normal
 303402,단단한 반지,EquipmentMaterial,3,Normal
 303403,영험한 기운의 반지,EquipmentMaterial,4,Normal
 303404,전설의 반지,EquipmentMaterial,5,Normal
+303405,신성한 반지,EquipmentMaterial,6,Normal
 304000,불의 정수,MonsterPart,1,Fire
 304001,대지의 정수,MonsterPart,1,Land
 304002,물의 정수,MonsterPart,1,Water
@@ -161,6 +171,21 @@ id,_name,item_sub_type,grade,elemental_type
 306082,뽀족한 칼날 가면,MonsterPart,4,Water
 306083,랜턴 파편,MonsterPart,4,Water
 306084,어둠의 정수 파편,MonsterPart,4,Water
+306085,Mucus Crystal (Small),MonsterPart,5,Normal
+306086,Flame Mucus Crystal (Small),MonsterPart,5,Fire
+306087,Water Mucus Crystal (Small),MonsterPart,5,Water
+306088,Earth Mucus Crystal (Small),MonsterPart,5,Land
+306089,Wind Mucus Crystal (Small),MonsterPart,5,Wind
+306090,Scarecrow Hat,MonsterPart,4,Water
+306091,Broom Shard,MonsterPart,4,Water
+306092,Crimson Crystal,MonsterPart,4,Water
+306093,Thorny Arm Shield,MonsterPart,4,Water
+306094,Frozen Helmet,MonsterPart,4,Water
+306095,Tough Strap Belt,MonsterPart,4,Water
+306096,Mace Shard,MonsterPart,4,Water
+306097,Rough Tail Bundle,MonsterPart,4,Water
+306098,Jewel-Encrusted Tiara,MonsterPart,4,Water
+306099,Gruesome Gloves,MonsterPart,4,Water
 400000,모래시계,Hourglass,4,Normal
 500000,AP 스톤,ApStone,4,Normal
 600101,Special Crystal Piece,EquipmentMaterial,1,Normal
