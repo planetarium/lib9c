@@ -86,6 +86,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
                     .Where(type => type != typeof(GetReward) && type != typeof(DropBox));
             Assert.Equal(typeof(WaveTurnEnd), filtered.Last());
             Assert.Equal(1, simulator.Log.OfType<WaveTurnEnd>().First().TurnNumber);
+            Assert.NotEmpty(simulator.Log.OfType<StageBuff>());
 
             return simulator;
         }
@@ -157,6 +158,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
                 var anotherActions = simulator.Log.events.Where(e =>
                     e.GetType() != typeof(Breakthrough) && e.GetType() != typeof(SpawnPlayer));
                 Assert.NotEmpty(anotherActions);
+                Assert.NotEmpty(simulator.Log.OfType<StageBuff>());
             }
         }
     }
