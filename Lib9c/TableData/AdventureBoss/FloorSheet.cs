@@ -40,6 +40,7 @@ namespace Nekoyume.TableData.AdventureBoss
 
             public int DropItemMin { get; private set; }
             public int DropItemMax { get; private set; }
+            public int StageBuffSkillId { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
@@ -102,6 +103,8 @@ namespace Nekoyume.TableData.AdventureBoss
 
                 DropItemMin = TryParseInt(fields[50], out var dropMin) ? dropMin : 0;
                 DropItemMax = TryParseInt(fields[51], out var dropMax) ? dropMax : 0;
+
+                StageBuffSkillId = TryParseInt(fields[52], out var skillId) ? skillId : 0;
             }
         }
 
