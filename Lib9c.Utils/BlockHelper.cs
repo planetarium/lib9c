@@ -102,14 +102,13 @@ namespace Nekoyume
                 actionLoader);
             return
                 BlockChain.ProposeGenesisBlock(
-                    actionEvaluator,
+                    privateKey: privateKey,
                     transactions: ImmutableList<Transaction>.Empty
                         .Add(Transaction.Create(
                             0, privateKey, null, actions.ToPlainValues()))
                         .AddRange(systemActions.Select((sa, index) =>
                             Transaction.Create(
                                 index + 1, privateKey, null, new [] { sa.PlainValue }))),
-                    privateKey: privateKey,
                     timestamp: timestamp);
         }
     }
