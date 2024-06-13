@@ -9,7 +9,6 @@ using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Battle;
 using Nekoyume.Battle.AdventureBoss;
-using Nekoyume.Data;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.AdventureBoss;
@@ -116,33 +115,44 @@ namespace Nekoyume.Action.AdventureBoss
                 latestSeason.BossId, explorer.Floor, context.GetRandom(),
                 avatarState, sheets.GetSimulatorSheets(), logEvent: false
             );
-            simulator.AddBreakthrough(1, explorer.Floor, sheets.GetSheet<AdventureBossFloorWaveSheet>());
+            simulator.AddBreakthrough(1, explorer.Floor,
+                sheets.GetSheet<AdventureBossFloorWaveSheet>());
 
             // Add point, reward
             var point = 0;
-            var rewardList = new List<AdventureBossGameData.ExploreReward>();
+            var rewardList = new List<AdventureBossSheet.RewardAmountData>();
             var random = context.GetRandom();
-            var selector = new WeightedSelector<AdventureBossGameData.ExploreReward>(random);
+            var selector = new WeightedSelector<AdventureBossFloorSheet.RewardData>(random);
+            var bossId = states.GetSheet<AdventureBossSheet>().Values
+                .First(row => row.BossId == latestSeason.BossId).Id;
+            var floorPointSheet = states.GetSheet<AdventureBossFloorPointSheet>();
+            var floorSheet = states.GetSheet<AdventureBossFloorSheet>();
             for (var fl = 1; fl <= explorer.Floor; fl++)
             {
-                var (min, max) = AdventureBossGameData.PointDict[fl];
-                point += random.Next(min, max + 1);
+                var pointRow = floorPointSheet[fl];
+                point += random.Next(pointRow.MinPoint, pointRow.MaxPoint + 1);
 
                 selector.Clear();
-                var floorReward = AdventureBossGameData.AdventureBossRewards
-                    .First(rw => rw.BossId == latestSeason.BossId).exploreReward[fl];
-                foreach (var reward in floorReward.Reward)
+                var floorReward = floorSheet.Values.Where(row => row.AdventureBossId == bossId)
+                    .First(row => row.Floor == fl);
+                foreach (var reward in floorReward.Rewards)
                 {
                     selector.Add(reward, reward.Ratio);
                 }
 
-                rewardList.Add(selector.Select(1).First());
+                var selected = selector.Select(1).First();
+                rewardList.Add(new AdventureBossSheet.RewardAmountData(
+                    selected.ItemType,
+                    selected.ItemId,
+                    random.Next(selected.Min, selected.Max + 1)
+                ));
             }
 
             exploreBoard.TotalPoint += point;
             explorer.Score += point;
-            states = AdventureBossHelper.AddExploreRewards(context, states, AvatarAddress,
-                inventory, rewardList);
+            states = AdventureBossHelper.AddExploreRewards(
+                context, states, AvatarAddress, inventory, rewardList
+            );
 
             return states
                 .SetInventory(AvatarAddress, inventory)
