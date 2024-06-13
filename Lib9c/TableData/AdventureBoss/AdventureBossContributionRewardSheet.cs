@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using static Nekoyume.TableData.TableExtensions;
+using RewardData = Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardRatioData;
 
 namespace Nekoyume.TableData.AdventureBoss
 {
@@ -9,24 +10,9 @@ namespace Nekoyume.TableData.AdventureBoss
         AdventureBossContributionRewardSheet : Sheet<int, AdventureBossContributionRewardSheet.Row>
     {
         [Serializable]
-        public class RewardData
-        {
-            public string ItemType { get; }
-            public int ItemId { get; }
-            public int Ratio { get; }
-
-            public RewardData(string itemType, int itemId, int ratio)
-            {
-                ItemType = itemType;
-                ItemId = itemId;
-                Ratio = ratio;
-            }
-        }
-
-        [Serializable]
         public class Row : SheetRow<int>
         {
-            public override int Key { get; }
+            public override int Key => Id;
             public int Id;
             public int AdventureBossId;
             public List<RewardData> Rewards;
@@ -48,7 +34,7 @@ namespace Nekoyume.TableData.AdventureBoss
             }
         }
 
-        public AdventureBossContributionRewardSheet(string name) : base(name)
+        public AdventureBossContributionRewardSheet() : base(nameof(AdventureBossContributionRewardSheet))
         {
         }
     }
