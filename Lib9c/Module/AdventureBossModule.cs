@@ -75,7 +75,7 @@ namespace Nekoyume.Module
             var account = world.GetAccount(Addresses.BountyBoard);
             account = account.SetState(
                 new Address(AdventureBossHelper.GetSeasonAsAddressForm(season)),
-                bountyBoard.Bencoded()
+                bountyBoard.Bencoded
             );
             return world.SetAccount(Addresses.BountyBoard, account);
         }

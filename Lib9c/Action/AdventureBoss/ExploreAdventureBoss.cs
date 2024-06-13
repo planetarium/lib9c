@@ -281,7 +281,7 @@ namespace Nekoyume.Action.AdventureBoss
                 }
             }
 
-            if (simulator is not null && lastFloor > firstFloor)
+            if (simulator is not null && simulator.LogEvent && lastFloor > firstFloor)
             {
                 simulator.AddBreakthrough(firstFloor, lastFloor, floorWaveSheet);
             }

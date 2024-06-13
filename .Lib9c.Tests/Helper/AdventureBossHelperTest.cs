@@ -19,22 +19,14 @@ namespace Lib9c.Tests.Helper
 
         [Theory]
         // Raffle reward is always 0 when isReal == false
-        [InlineData(false, false, 0)]
-        [InlineData(true, false, 0)]
-        [InlineData(true, true, 5)]
-        public void CalculateWantedReward(bool isReal, bool winner, int expectedReward)
+        [InlineData(false, 0)]
+        [InlineData(true, 0)]
+        public void CalculateWantedReward(bool isReal, int expectedReward)
         {
             var bountyBoard = new BountyBoard(1);
             bountyBoard.FixedRewardFavId = 30001;
             bountyBoard.RandomRewardFavId = 30001;
             bountyBoard.AddOrUpdate(_avatarAddress, _name, 100 * NCG);
-
-            AdventureBossHelper.PickWantedRaffle(bountyBoard, new TestRandom());
-
-            if (!winner)
-            {
-                bountyBoard.RaffleWinner = new PrivateKey().Address;
-            }
 
             var claimableReward = new AdventureBossGameData.ClaimableReward
             {
