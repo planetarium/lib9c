@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Helper
     public class AdventureBossHelperTest
     {
         private static readonly Currency NCG = Currency.Legacy("NCG", 2, null);
+        private readonly TableSheets _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
         private Address _avatarAddress = new PrivateKey().Address;
         private string _name = "wanted";
 
@@ -46,6 +47,7 @@ namespace Lib9c.Tests.Helper
                 claimableReward,
                 bountyBoard,
                 _avatarAddress,
+                _tableSheets.AdventureBossNcgRewardRatioSheet,
                 isReal,
                 out var ncgReward
             );
@@ -92,6 +94,7 @@ namespace Lib9c.Tests.Helper
                 exploreBoard,
                 explorer,
                 _avatarAddress,
+                _tableSheets.AdventureBossNcgRewardRatioSheet,
                 isReal,
                 out var ncgReward
             );

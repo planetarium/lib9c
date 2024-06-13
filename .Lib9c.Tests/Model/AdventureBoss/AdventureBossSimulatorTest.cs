@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
         [Fact]
         public AdventureBossSimulator Simulate()
         {
-            var adventureBossData = AdventureBossGameData.AdventureBossRewards.First();
+            var adventureBossData = _tableSheets.AdventureBossSheet.Values.First();
             var row = _tableSheets.CostumeStatSheet.Values.First(r => r.StatType == StatType.ATK);
             var costume =
                 (Costume)ItemFactory.CreateItem(_tableSheets.ItemSheet[row.CostumeId], _random);
@@ -49,7 +49,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
 
             var simulator = new AdventureBossSimulator(
                 adventureBossData.BossId,
-                adventureBossData.exploreReward.Keys.First(), // 1
+                1,
                 _random,
                 _avatarState,
                 new List<Guid>(),
@@ -106,7 +106,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
             }
             else
             {
-                var adventureBossData = AdventureBossGameData.AdventureBossRewards.First();
+                var adventureBossData = _tableSheets.AdventureBossSheet.Values.First();
                 var row = _tableSheets.CostumeStatSheet.Values.First(
                     r => r.StatType == StatType.ATK);
                 var costume =
@@ -116,7 +116,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
 
                 simulator = new AdventureBossSimulator(
                     adventureBossData.BossId,
-                    adventureBossData.exploreReward.Keys.First(), // 1
+                    1,
                     _random,
                     _avatarState,
                     new List<Guid>(),

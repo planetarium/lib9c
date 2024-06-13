@@ -257,9 +257,18 @@ namespace Lib9c.Tests
         public BuffLinkSheet BuffLinkSheet { get; set; }
 
         // Adventure Boss
+        public AdventureBossSheet AdventureBossSheet { get; private set; }
+
         public AdventureBossFloorSheet AdventureBossFloorSheet { get; private set; }
 
         public AdventureBossFloorWaveSheet AdventureBossFloorWaveSheet { get; private set; }
+
+        public AdventureBossNcgRewardRatioSheet AdventureBossNcgRewardRatioSheet
+        {
+            get;
+            private set;
+        }
+
         /* Adventure Boss */
 
         public void ItemSheetInitialize()

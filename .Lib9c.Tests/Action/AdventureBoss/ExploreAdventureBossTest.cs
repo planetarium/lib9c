@@ -74,6 +74,19 @@ namespace Lib9c.Tests.Action.AdventureBoss
             .SetAgentState(TesterAddress, TesterState)
             .MintAsset(new ActionContext(), WantedAddress, 1_000_000 * NCG);
 
+        public ExploreAdventureBossTest()
+        {
+            var collectionSheet = TableSheets.CollectionSheet;
+            var collectionState = new CollectionState();
+            foreach (var row in collectionSheet.Values)
+            {
+                collectionState.Ids.Add(row.Id);
+            }
+
+            _initialState = _initialState.SetCollectionState(TesterAvatarAddress, collectionState);
+        }
+
+        // Member Data
         public static IEnumerable<object[]> GetExecuteMemberData()
         {
             // No AP potion at all
@@ -85,23 +98,47 @@ namespace Lib9c.Tests.Action.AdventureBoss
             yield return new object[]
             {
                 0, 5, 5, 10, 5, null,
-                new[] { (600301, 70), (600302, 0), (600303, 10), (600304, 70) },
+                new[]
+                {
+                    (600301, 51), // 50 first Reward + 1 floor reward
+                    (600302, 66), // 50 first reward + 11 floor reward
+                    (600303, 7),  // 7 floor reward
+                    (600304, 0),
+                },
             };
             // Start from bottom, goes to 3 because of potion
             yield return new object[]
             {
-                0, 5, 3, 3, 0, null, new[] { (600301, 30), (600302, 0), (600303, 10), (600304, 20) },
+                0, 5, 3, 3, 0, null, new[]
+                {
+                    (600301, 31), // 30 first reward + 1 floor reward
+                    (600302, 35), // 30 first reward + 5 floor reward
+                    (600303, 7),  // 7 floor reward
+                    (600304, 0),
+                },
             };
             // Start from 3, goes to 5 because of locked floor
             yield return new object[]
             {
-                2, 5, 5, 5, 2, null, new[] { (600301, 90), (600302, 30), (600303, 0), (600304, 0) },
+                2, 5, 5, 5, 2, null, new[]
+                {
+                    (600301, 31), // 30 first reward + 1 floor reward
+                    (600302, 35), // 30 first reward + 5 floor reward
+                    (600303, 7),  // 7 floor reward
+                    (600304, 0),
+                },
             };
             // Start from 6, goes to 10
             yield return new object[]
             {
                 5, 10, 10, 10, 5, null,
-                new[] { (600301, 70), (600302, 330), (600303, 0), (600304, 0) },
+                new[]
+                {
+                    (600301, 52), // 50 first reward + 2 floor reward
+                    (600302, 57), // 50 first reward + 7 floor reward
+                    (600303, 7),  // 7 floor reward
+                    (600304, 0),
+                },
             };
             // Start from 20, cannot enter
             yield return new object[]
@@ -160,6 +197,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 PreviousState = state,
                 Signer = WantedAddress,
                 BlockIndex = 0L,
+                RandomSeed = 1,
             });
             var exp = new Explorer(TesterAvatarAddress, TesterAvatarState.name)
             {
