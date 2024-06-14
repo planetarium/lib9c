@@ -99,13 +99,21 @@ namespace Nekoyume.Action.DPoS.Control
                 = lastVotes.Aggregate(
                     BigInteger.Zero,
                     (total, next)
-                        => total + (next.Flag == VoteFlag.PreCommit ? next.ValidatorPower : 0));
+                        => total +
+                           (next.Flag == VoteFlag.PreCommit
+                               ? next.ValidatorPower ?? BigInteger.Zero
+                               : 0));
 
             BigInteger votePowerDenominator
                 = lastVotes.Aggregate(
                     BigInteger.Zero,
                     (total, next)
-                        => total + next.ValidatorPower);
+                        => total + (next.ValidatorPower ?? BigInteger.Zero));
+
+            if (votePowerDenominator == BigInteger.Zero)
+            {
+                return states;
+            }
 
             var (baseProposerReward, _)
                 = (blockReward * BaseProposerRewardNumerator).DivRem(BaseProposerRewardDenominator);
@@ -142,7 +150,11 @@ namespace Nekoyume.Action.DPoS.Control
                 = lastVotes.Aggregate(
                     BigInteger.Zero,
                     (total, next)
-                        => total + next.ValidatorPower);
+                        => total + (next.ValidatorPower ?? BigInteger.Zero));
+            if (powerDenominator == BigInteger.Zero)
+            {
+                return states;
+            }
 
             foreach (Vote vote in lastVotes)
             {
@@ -151,7 +163,7 @@ namespace Nekoyume.Action.DPoS.Control
                     continue;
                 }
 
-                BigInteger powerNumerator = vote.ValidatorPower;
+                BigInteger powerNumerator = vote.ValidatorPower ?? BigInteger.Zero;
 
                 var (validatorReward, _)
                     = (validatorRewardSum * powerNumerator)
