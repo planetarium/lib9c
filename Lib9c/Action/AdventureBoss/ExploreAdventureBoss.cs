@@ -121,22 +121,22 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             var sheets = states.GetSheets(
-                containSimulatorSheets:true,
+                containSimulatorSheets: true,
                 sheetTypes: new[]
-            {
-                typeof(FloorSheet),
-                typeof(FloorWaveSheet),
-                typeof(CollectionSheet),
-                typeof(EnemySkillSheet),
-                typeof(CostumeStatSheet),
-                typeof(DeBuffLimitSheet),
-                typeof(ItemRequirementSheet),
-                typeof(EquipmentItemRecipeSheet),
-                typeof(EquipmentItemSubRecipeSheetV2),
-                typeof(EquipmentItemOptionSheet),
-                typeof(RuneListSheet),
-                typeof(RuneLevelBonusSheet),
-            });
+                {
+                    typeof(FloorSheet),
+                    typeof(FloorWaveSheet),
+                    typeof(CollectionSheet),
+                    typeof(EnemySkillSheet),
+                    typeof(CostumeStatSheet),
+                    typeof(DeBuffLimitSheet),
+                    typeof(ItemRequirementSheet),
+                    typeof(EquipmentItemRecipeSheet),
+                    typeof(EquipmentItemSubRecipeSheetV2),
+                    typeof(EquipmentItemOptionSheet),
+                    typeof(RuneListSheet),
+                    typeof(RuneLevelBonusSheet),
+                });
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var material =
                 materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
@@ -144,6 +144,50 @@ namespace Nekoyume.Action.AdventureBoss
             var random = context.GetRandom();
             var selector = new WeightedSelector<AdventureBossGameData.ExploreReward>(random);
             var rewardList = new List<AdventureBossGameData.ExploreReward>();
+
+            // Validate
+            var gameConfigState = states.GetGameConfigState();
+            if (gameConfigState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the game config state was failed to load.");
+            }
+
+            var equipmentList =
+                avatarState.ValidateEquipmentsV3(Equipments, context.BlockIndex, gameConfigState);
+            var costumeIds = avatarState.ValidateCostumeV2(Costumes, gameConfigState);
+            var items = Equipments.Concat(Costumes);
+            avatarState.EquipItems(items);
+            avatarState.ValidateItemRequirement(
+                costumeIds,
+                equipmentList,
+                sheets.GetSheet<ItemRequirementSheet>(),
+                sheets.GetSheet<EquipmentItemRecipeSheet>(),
+                sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
+                sheets.GetSheet<EquipmentItemOptionSheet>(),
+                addressesHex);
+
+            // update rune slot
+            var runeSlotStateAddress =
+                RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
+            var runeSlotState =
+                states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
+                    ? new RuneSlotState(rawRuneSlotState)
+                    : new RuneSlotState(BattleType.Adventure);
+            var runeListSheet = sheets.GetSheet<RuneListSheet>();
+            runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
+            states = states.SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize());
+
+            // update item slot
+            var itemSlotStateAddress =
+                ItemSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
+            var itemSlotState =
+                states.TryGetLegacyState(itemSlotStateAddress, out List rawItemSlotState)
+                    ? new ItemSlotState(rawItemSlotState)
+                    : new ItemSlotState(BattleType.Adventure);
+            itemSlotState.UpdateEquipment(Equipments);
+            itemSlotState.UpdateCostumes(Costumes);
+            states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
             // Get data for simulator
             var startFloor = explorer.Floor + 1;
@@ -154,12 +198,6 @@ namespace Nekoyume.Action.AdventureBoss
                 states = states.SetRuneState(AvatarAddress, runeStates);
             }
 
-            var runeSlotStateAddress =
-                RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
-            var runeSlotState =
-                states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
-                    ? new RuneSlotState(rawRuneSlotState)
-                    : new RuneSlotState(BattleType.Adventure);
             var collectionExist =
                 states.TryGetCollectionState(AvatarAddress, out var collectionState) &&
                 collectionState.Ids.Any();
@@ -177,7 +215,6 @@ namespace Nekoyume.Action.AdventureBoss
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
             var materialItemSheet = sheets.GetSheet<MaterialItemSheet>();
             var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
-            var gameConfigState = states.GetGameConfigState();
             if (gameConfigState is null)
             {
                 throw new FailedLoadStateException(
