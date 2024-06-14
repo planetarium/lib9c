@@ -105,7 +105,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             yield return new object[]
             {
                 0, 5, 3, 3, 0, null,
-                new[] { (600301, 30), (600302, 0), (600303, 10), (600304, 20) },
+                new[] { (600301, 0), (600302, 0), (600303, 30), (600304, 30) },
             };
             // Start from 3, goes to 5 because of locked floor
             yield return new object[]
