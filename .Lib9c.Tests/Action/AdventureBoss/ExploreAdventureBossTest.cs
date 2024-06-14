@@ -58,7 +58,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly AvatarState TesterAvatarState = new (
             TesterAvatarAddress, TesterAddress, 0L, TableSheets.GetAvatarSheets(),
             new PrivateKey().Address, name: "Tester"
-        );
+        ) { level = 500 };
 
         private static readonly AgentState TesterState = new (TesterAddress)
         {
@@ -104,7 +104,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     (600301, 51), // 50 first Reward + 1 floor reward
                     (600302, 66), // 50 first reward + 11 floor reward
-                    (600303, 7),  // 7 floor reward
+                    (600303, 7), // 7 floor reward
                     (600304, 0),
                 },
             };
@@ -115,7 +115,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     (600301, 31), // 30 first reward + 1 floor reward
                     (600302, 35), // 30 first reward + 5 floor reward
-                    (600303, 7),  // 7 floor reward
+                    (600303, 7), // 7 floor reward
                     (600304, 0),
                 },
             };
@@ -126,7 +126,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     (600301, 31), // 30 first reward + 1 floor reward
                     (600302, 35), // 30 first reward + 5 floor reward
-                    (600303, 7),  // 7 floor reward
+                    (600303, 7), // 7 floor reward
                     (600304, 0),
                 },
             };
@@ -138,7 +138,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     (600301, 52), // 50 first reward + 2 floor reward
                     (600302, 57), // 50 first reward + 7 floor reward
-                    (600303, 7),  // 7 floor reward
+                    (600303, 7), // 7 floor reward
                     (600304, 0),
                 },
             };

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Nekoyume.TableData;
 using Nekoyume.TableData.AdventureBoss;
 
 namespace Nekoyume.Model.BattleStatus.AdventureBoss

@@ -8,7 +8,9 @@ using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.BattleStatus.AdventureBoss;
+using Nekoyume.Model.Buff;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -30,6 +32,7 @@ namespace Nekoyume.Battle.AdventureBoss
         public int StageId => FloorId;
         public int FloorId { get; }
         private int TurnLimit { get; }
+        private int StageBuffSkillId { get; }
         public override IEnumerable<ItemBase> Reward => _waveRewards;
 
         public AdventureBossSimulator(
@@ -40,9 +43,9 @@ namespace Nekoyume.Battle.AdventureBoss
             SimulatorSheets simulatorSheets,
             bool logEvent = true,
             long shatterStrikeMaxDamage = 400_000
-            ) : base(
-                random, avatarState, new List<Guid>(), simulatorSheets, logEvent, shatterStrikeMaxDamage
-            )
+        ) : base(
+            random, avatarState, new List<Guid>(), simulatorSheets, logEvent, shatterStrikeMaxDamage
+        )
         {
             BossId = bossId;
             FloorId = floorId;
@@ -103,6 +106,7 @@ namespace Nekoyume.Battle.AdventureBoss
             FloorId = floorId;
             EnemySkillSheet = enemySkillSheet;
             TurnLimit = floorRow.TurnLimit;
+            StageBuffSkillId = floorRow.StageBuffSkillId;
 
             SetWave(floorRow, floorWaveRow);
         }
@@ -149,6 +153,26 @@ namespace Nekoyume.Battle.AdventureBoss
                 WaveNumber = wv + 1;
                 WaveTurn = 1;
                 _waves[wv].Spawn(this);
+
+                if (StageBuffSkillId != 0)
+                {
+                    var skillRow = SkillSheet.OrderedList.First(row => row.Id == StageBuffSkillId);
+                    var skill = SkillFactory.Get(skillRow, default, 100, default, StatType.NONE);
+                    var buffs = BuffFactory.GetBuffs(
+                        Player.Stats,
+                        skill,
+                        SkillBuffSheet,
+                        StatBuffSheet,
+                        SkillActionBuffSheet,
+                        ActionBuffSheet
+                    );
+                    var stageBuff = skill.Use(Player, 0, buffs, LogEvent);
+                    if (LogEvent)
+                    {
+                        Log.Add(new StageBuff(stageBuff.SkillId, stageBuff.Character,
+                            stageBuff.SkillInfos, stageBuff.BuffInfos));
+                    }
+                }
 
                 while (true)
                 {

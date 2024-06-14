@@ -55,8 +55,7 @@ namespace Nekoyume.TableData.AdventureBoss
                 EnemyInitialStatModifiers = new List<StatModifier>();
                 for (var i = 0; i < 6; i++)
                 {
-                    if (!TryParseInt(fields[4 + i], out var option) ||
-                        option == 0)
+                    if (!TryParseInt(fields[4 + i], out var option) || option == 0)
                         continue;
 
                     switch (i)
