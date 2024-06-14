@@ -24,7 +24,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Dictionary<string, string> Sheets =
             TableSheetsImporter.ImportSheets();
 
-        private static readonly TableSheets TableSheets = new TableSheets(Sheets);
+        private static readonly TableSheets TableSheets = new (Sheets);
 #pragma warning disable CS0618
         // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1419
         private static readonly Currency NCG = Currency.Legacy("NCG", 2, null);
@@ -110,6 +110,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             // Settings
             var state = _initialState;
+            var gameConfigState = new GameConfigState(Sheets[nameof(GameConfigSheet)]);
+            state = state.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
             foreach (var (key, value) in Sheets)
             {
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
@@ -154,6 +156,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 Season = 1,
                 AvatarAddress = TesterAvatarAddress,
+                Costumes = new List<Guid>(),
+                Equipments = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
             };
 
             if (exc is not null)

@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
+    using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -13,6 +14,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Action.AdventureBoss;
     using Nekoyume.Extensions;
     using Nekoyume.Model.AdventureBoss;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -207,10 +209,29 @@ namespace Lib9c.Tests.Action.AdventureBoss
             state = state.SetExplorer(1, exp);
 
             // Explore and Test
+            var itemSlotStateAddress =
+                ItemSlotState.DeriveAddress(TesterAvatarAddress, BattleType.Adventure);
+            var itemSlotState =
+                state.TryGetLegacyState(itemSlotStateAddress, out List rawItemSlotState)
+                    ? new ItemSlotState(rawItemSlotState)
+                    : new ItemSlotState(BattleType.Adventure);
+            Assert.True(itemSlotState.Equipments.Count == 0);
+
+            var previousAvatarState = _initialState.GetAvatarState(TesterAvatarAddress);
+            var equipments = Doomfist.GetAllParts(TableSheets, previousAvatarState.level);
+            foreach (var equipment in equipments)
+            {
+                previousAvatarState.inventory.AddItem(equipment);
+            }
+
             var action = new ExploreAdventureBoss
             {
                 Season = 1,
                 AvatarAddress = TesterAvatarAddress,
+                Costumes = new List<Guid>(),
+                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
             };
 
             if (exc is not null)
@@ -261,6 +282,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         Assert.Equal(amount, inventory.Items.First(i => i.item.Id == id).count);
                     }
                 }
+
+                itemSlotState =
+                    state.TryGetLegacyState(itemSlotStateAddress, out rawItemSlotState)
+                        ? new ItemSlotState(rawItemSlotState)
+                        : new ItemSlotState(BattleType.Adventure);
+                Assert.True(itemSlotState.Equipments.Count > 0);
             }
         }
 

@@ -13,6 +13,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.Arena;
+using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
@@ -32,12 +33,20 @@ namespace Nekoyume.Action.AdventureBoss
 
         public int Season;
         public Address AvatarAddress;
+        public List<Guid> Costumes;
+        public List<Guid> Equipments;
+        public List<RuneSlotInfo> RuneInfos;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
             {
                 ["season"] = (Integer)Season,
                 ["avatarAddress"] = AvatarAddress.Serialize(),
+                ["costumes"] = new List(Costumes.OrderBy(i => i).Select(e => e.Serialize())),
+                ["equipments"] =
+                    new List(Equipments.OrderBy(i => i).Select(e => e.Serialize())),
+                ["r"] = RuneInfos.OrderBy(x => x.SlotIndex).Select(x => x.Serialize())
+                    .Serialize(),
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(
@@ -45,11 +54,15 @@ namespace Nekoyume.Action.AdventureBoss
         {
             Season = (Integer)plainValue["season"];
             AvatarAddress = plainValue["avatarAddress"].ToAddress();
+            Costumes = ((List)plainValue["costumes"]).Select(e => e.ToGuid()).ToList();
+            Equipments = ((List)plainValue["equipments"]).Select(e => e.ToGuid()).ToList();
+            RuneInfos = plainValue["r"].ToList(x => new RuneSlotInfo((List)x));
         }
 
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
+            var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var states = context.PreviousState;
 
             // Validation
@@ -90,6 +103,10 @@ namespace Nekoyume.Action.AdventureBoss
                 containSimulatorSheets: true,
                 sheetTypes: new[]
                 {
+                    typeof(ItemRequirementSheet),
+                    typeof(EquipmentItemRecipeSheet),
+                    typeof(EquipmentItemSubRecipeSheetV2),
+                    typeof(EquipmentItemOptionSheet),
                     typeof(MaterialItemSheet),
                     typeof(RuneListSheet),
                     typeof(RuneLevelBonusSheet),
@@ -99,13 +116,56 @@ namespace Nekoyume.Action.AdventureBoss
             var material =
                 materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
             var inventory = states.GetInventoryV2(AvatarAddress);
-            if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
-                    requiredPotion))
+            if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex, requiredPotion))
             {
                 throw new NotEnoughMaterialException(
                     $"{requiredPotion} AP potions needed. You only have {inventory.Items.First(item => item.item.ItemSubType == ItemSubType.ApStone).count}"
                 );
             }
+
+            // Validate
+            var gameConfigState = states.GetGameConfigState();
+            if (gameConfigState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the game config state was failed to load.");
+            }
+
+            var equipmentList =
+                avatarState.ValidateEquipmentsV3(Equipments, context.BlockIndex, gameConfigState);
+            var costumeIds = avatarState.ValidateCostumeV2(Costumes, gameConfigState);
+            var items = Equipments.Concat(Costumes);
+            avatarState.EquipItems(items);
+            avatarState.ValidateItemRequirement(
+                costumeIds,
+                equipmentList,
+                sheets.GetSheet<ItemRequirementSheet>(),
+                sheets.GetSheet<EquipmentItemRecipeSheet>(),
+                sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
+                sheets.GetSheet<EquipmentItemOptionSheet>(),
+                addressesHex);
+
+            // update rune slot
+            var runeSlotStateAddress =
+                RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
+            var runeSlotState =
+                states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
+                    ? new RuneSlotState(rawRuneSlotState)
+                    : new RuneSlotState(BattleType.Adventure);
+            var runeListSheet = sheets.GetSheet<RuneListSheet>();
+            runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
+            states = states.SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize());
+
+            // update item slot
+            var itemSlotStateAddress =
+                ItemSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
+            var itemSlotState =
+                states.TryGetLegacyState(itemSlotStateAddress, out List rawItemSlotState)
+                    ? new ItemSlotState(rawItemSlotState)
+                    : new ItemSlotState(BattleType.Adventure);
+            itemSlotState.UpdateEquipment(Equipments);
+            itemSlotState.UpdateCostumes(Costumes);
+            states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
             exploreBoard.AddExplorer(AvatarAddress, avatarState.name);
             exploreBoard.UsedApPotion += requiredPotion;

@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Action.AdventureBoss
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
@@ -570,6 +571,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     Season = 1,
                     AvatarAddress = ExplorerAvatarAddress,
+                    Costumes = new List<Guid>(),
+                    Equipments = new List<Guid>(),
+                    Foods = new List<Guid>(),
+                    RuneInfos = new List<RuneSlotInfo>(),
                 }.Execute(new ActionContext
                 {
                     PreviousState = state,
