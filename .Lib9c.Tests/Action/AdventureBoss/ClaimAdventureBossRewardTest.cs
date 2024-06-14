@@ -111,20 +111,20 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                0, 100, false, null,
+                1, 100, false, null,
                 new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = 0 * NCG, // No Wanted Raffle
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 0 },
+                        { 600201, 240 },
                         { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 14 },
-                        { 30001, 34 },
+                        { 20001, 0 },
+                        { 30001, 0 },
                     },
                 },
             };
@@ -137,9 +137,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 0 * NCG, // No Wanted Raffle
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 168 }, // (200*1.2) * 0.7 / 0.5 * (120/240)
+                        {
+                            600201, 240
+                        }, // (200*1.2) * 0.7 / 0.5 * (120/240) + (200*1.2) * 0.3 / 0.5 * (120/240)
                         { 600202, 0 },
-                        { 600203, 5 }, // (200*1.2) * 0.3 / 7.5 * (120/240)
+                        { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
@@ -151,20 +153,22 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                3, 100, true, 200,
+                1, 100, true, 200,
                 new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = 0 * NCG, // No Wanted Raffle
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 0 },
-                        { 600202, 47 }, // (300*1.2) * 0.7 / 1.5 * (100/360)
+                        {
+                            600201, 200
+                        }, // (300*1.2) * 0.7 / 0.5 * (100/360) + (300*1.2) * 0.2 / 0.5 * (100/360)
+                        { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
                         { 20001, 0 },
-                        { 30001, 12 }, // (300*1.2) * 0.3 / 2.5 * (100/360)
+                        { 30001, 0 },
                     },
                 },
             };
@@ -174,38 +178,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             yield return new object[]
             {
-                0, 100, 0, new AdventureBossGameData.ClaimableReward
+                1, 100, 0, new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = (5 + 15) * NCG, // 5NCG for raffle, 15NCG for 15% distribution
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
-                        { 600202, 0 },
-                        { 600203, 13 }, // 100 AP / 7.5 ratio * 100% contribution
-                    },
-                    FavReward = new Dictionary<int, int>
-                    {
-                        { 20001, 0 },
-                        { 30001, 0 },
-                    },
-                },
-            };
-
-            yield return new object[]
-            {
-                0, 100, 1, new AdventureBossGameData.ClaimableReward
-                {
-                    NcgReward =
-                        // 5NCG for raffle, 7.5NCG for half of 15% distribution
-                        FungibleAssetValue.FromRawValue(
-                            NCG,
-                            (BigInteger)((5 + 7.5) * 100)
-                        ),
-                    ItemReward = new Dictionary<int, int>
-                    {
-                        { 600201, 0 },
-                        { 600202, 0 },
-                        { 600203, 13 }, // total 200 AP / 7.5 ratio * 50% contribution
+                        { 600202, 67 },
+                        { 600203, 0 }, // 100 AP / 7.5 ratio * 100% contribution
                     },
                     FavReward = new Dictionary<int, int>
                     {
@@ -219,14 +199,16 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 1, 100, 1, new AdventureBossGameData.ClaimableReward
                 {
-                    // No raffle, 7.5 NCG for half of 15% distribution
-                    NcgReward = FungibleAssetValue.FromRawValue(NCG, (BigInteger)(7.5 * 100)),
+                    NcgReward =
+                        // 7.5NCG for half of 15% distribution
+                        FungibleAssetValue.FromRawValue(
+                            NCG,
+                            (BigInteger)(7.5 * 100)
+                        ),
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
-                        {
-                            600202, 66
-                        }, // 200 AP / 1.5 ratio * 50% contribution == 66.5 goes to 66 (closest even number)
+                        { 600202, 66 }, // total 200 AP / 1.5 ratio * 50% contribution
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -239,15 +221,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                0, 200, 1, new AdventureBossGameData.ClaimableReward
+                1, 200, 1, new AdventureBossGameData.ClaimableReward
                 {
-                    // 10NCG for raffle, 15NCG for half of 15% distribution
-                    NcgReward = (10 + 15) * NCG,
+                    // 15NCG for half of 15% distribution
+                    NcgReward = 15 * NCG,
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
-                        { 600202, 0 },
-                        { 600203, 13 },
+                        { 600202, 66 }, // Total 200 AP / 1.5 Ratio * 50% Contribution
+                        { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
@@ -287,14 +269,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 0 * NCG, // No NCG Reward
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 0 },
+                        { 600201, 240 },
                         { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 14 },
-                        { 30001, 34 },
+                        { 20001, 0 },
+                        { 30001, 0 },
                     },
                 },
             };
@@ -306,8 +288,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
-                        { 600202, 0 },
-                        { 600203, 13 },
+                        { 600202, 67 },
+                        { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
@@ -324,14 +306,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 20 * NCG,
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 0 },
-                        { 600202, 0 },
-                        { 600203, 13 }, // Explore reward
+                        { 600201, 240 },
+                        { 600202, 67 },
+                        { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 14 }, // Random wanted reward
-                        { 30001, 34 }, // Fixed wanted reward
+                        { 20001, 0 },
+                        { 30001, 0 },
                     },
                 },
             };
@@ -434,21 +416,21 @@ namespace Lib9c.Tests.Action.AdventureBoss
         [Fact]
         public void WantedMultipleSeason()
         {
-            const int seed = 0;
+            const int seed = 1;
             // Settings
             var expectedReward = new AdventureBossGameData.ClaimableReward
             {
                 NcgReward = 0 * NCG, // No Raffle Reward
                 FavReward = new Dictionary<int, int>
                 {
-                    { 20001, 14 },
-                    { 30001, 34 },
+                    { 20001, 0 },
+                    { 30001, 0 },
                 },
                 ItemReward = new Dictionary<int, int>
                 {
-                    { 600201, 72 },
+                    { 600201, 480 },
                     { 600202, 0 },
-                    { 600203, 11 },
+                    { 600203, 0 },
                 },
             };
             var state = _initialState;
@@ -483,7 +465,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 PreviousState = state,
                 Signer = WantedAddress,
                 BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed + 1,
+                RandomSeed = seed,
             });
             state = new Wanted
             {
@@ -495,7 +477,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 PreviousState = state,
                 Signer = TesterAddress,
                 BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed + 2,
+                RandomSeed = seed,
             });
 
             // Burn remaining NCG
@@ -651,7 +633,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         [Fact]
         public void ExploreMultipleSeason()
         {
-            const int seed = 0;
+            const int seed = 1;
             // Settings
             var expectedReward = new AdventureBossGameData.ClaimableReward
             {
@@ -665,8 +647,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 ItemReward = new Dictionary<int, int>
                 {
                     { 600201, 0 },
-                    { 600202, 0 },
-                    { 600203, 26 }, // (100 AP / 7.5 Ratio * 100% contribution) for season 1 and 3
+                    { 600202, 134 }, // (100 AP / 1.5 Ratio * 100% contribution) for season 1 and 3
+                    { 600203, 0 },
                 },
             };
             var state = _initialState;
@@ -715,7 +697,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 PreviousState = state,
                 Signer = ExplorerAddress,
                 BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed + 1,
+                RandomSeed = seed,
             });
 
             state = new Wanted
@@ -728,7 +710,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 PreviousState = state,
                 Signer = WantedAddress,
                 BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed + 2,
+                RandomSeed = seed,
             });
 
             // Manipulate used AP Potion to calculate reward above zero
@@ -775,7 +757,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         [Fact]
         public void AllReward()
         {
-            const int seed = 0;
+            const int seed = 1;
             // Settings
             var expectedReward = new AdventureBossGameData.ClaimableReward
             {
@@ -783,14 +765,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 20 * NCG,
                 FavReward = new Dictionary<int, int>
                 {
-                    { 20001, 14 }, // Random wanted reward
-                    { 30001, 34 }, // Fixed wanted reward
+                    { 20001, 0 },
+                    { 30001, 0 },
                 },
                 ItemReward = new Dictionary<int, int>
                 {
-                    { 600201, 0 },
-                    { 600202, 0 },
-                    { 600203, 13 }, // Explore reward
+                    { 600201, 240 },
+                    { 600202, 67 },
+                    { 600203, 0 },
                 },
             };
             var state = _initialState;
@@ -858,7 +840,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         )
         {
             // Settings
-            const int seed = 0;
+            const int seed = 1;
             var state = _initialState;
             foreach (var (key, value) in Sheets)
             {
@@ -913,7 +895,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 PreviousState = state,
                 Signer = ExplorerAddress,
                 BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed + 1,
+                RandomSeed = seed,
             });
 
             // Burn

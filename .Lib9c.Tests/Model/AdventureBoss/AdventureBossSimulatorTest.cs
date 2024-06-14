@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
         [Fact]
         public AdventureBossSimulator Simulate()
         {
-            var adventureBossData = AdventureBossGameData.AdventureBossRewards.First();
+            var adventureBossData = _tableSheets.AdventureBossSheet.Values.First();
             var row = _tableSheets.CostumeStatSheet.Values.First(r => r.StatType == StatType.ATK);
             var costume =
                 (Costume)ItemFactory.CreateItem(_tableSheets.ItemSheet[row.CostumeId], _random);
@@ -49,20 +49,20 @@ namespace Lib9c.Tests.Model.AdventureBoss
 
             var simulator = new AdventureBossSimulator(
                 adventureBossData.BossId,
-                adventureBossData.exploreReward.Keys.First(), // 1
+                1,
                 _random,
                 _avatarState,
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                _tableSheets.FloorSheet[1],
-                _tableSheets.FloorWaveSheet[1],
+                _tableSheets.AdventureBossFloorSheet[1],
+                _tableSheets.AdventureBossFloorWaveSheet[1],
                 _tableSheets.GetSimulatorSheets(),
                 _tableSheets.EnemySkillSheet,
                 _tableSheets.CostumeStatSheet,
                 AdventureBossSimulator.GetWaveRewards(
                     _random,
-                    _tableSheets.FloorSheet[1],
+                    _tableSheets.AdventureBossFloorSheet[1],
                     _tableSheets.MaterialItemSheet
                 ),
                 new List<StatModifier>
@@ -107,7 +107,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
             }
             else
             {
-                var adventureBossData = AdventureBossGameData.AdventureBossRewards.First();
+                var adventureBossData = _tableSheets.AdventureBossSheet.Values.First();
                 var row = _tableSheets.CostumeStatSheet.Values.First(
                     r => r.StatType == StatType.ATK);
                 var costume =
@@ -117,20 +117,20 @@ namespace Lib9c.Tests.Model.AdventureBoss
 
                 simulator = new AdventureBossSimulator(
                     adventureBossData.BossId,
-                    adventureBossData.exploreReward.Keys.First(), // 1
+                    1,
                     _random,
                     _avatarState,
                     new List<Guid>(),
                     new AllRuneState(),
                     new RuneSlotState(BattleType.Adventure),
-                    _tableSheets.FloorSheet[1],
-                    _tableSheets.FloorWaveSheet[1],
+                    _tableSheets.AdventureBossFloorSheet[1],
+                    _tableSheets.AdventureBossFloorWaveSheet[1],
                     _tableSheets.GetSimulatorSheets(),
                     _tableSheets.EnemySkillSheet,
                     _tableSheets.CostumeStatSheet,
                     AdventureBossSimulator.GetWaveRewards(
                         _random,
-                        _tableSheets.FloorSheet[1],
+                        _tableSheets.AdventureBossFloorSheet[1],
                         _tableSheets.MaterialItemSheet
                     ),
                     new List<StatModifier>
@@ -141,7 +141,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
                 );
             }
 
-            simulator.AddBreakthrough(firstFloor, lastFloor, _tableSheets.FloorWaveSheet);
+            simulator.AddBreakthrough(firstFloor, lastFloor, _tableSheets.AdventureBossFloorWaveSheet);
 
             Assert.Equal(typeof(SpawnPlayer), simulator.Log.events.First().GetType());
             if (!simulate)

@@ -59,8 +59,8 @@ namespace Nekoyume.Battle.AdventureBoss
             List<Guid> foods,
             AllRuneState runeStates,
             RuneSlotState runeSlotState,
-            FloorSheet.Row floorRow,
-            FloorWaveSheet.Row floorWaveRow,
+            AdventureBossFloorSheet.Row floorRow,
+            AdventureBossFloorWaveSheet.Row floorWaveRow,
             SimulatorSheets simulatorSheets,
             EnemySkillSheet enemySkillSheet,
             CostumeStatSheet costumeStatSheet,
@@ -113,13 +113,13 @@ namespace Nekoyume.Battle.AdventureBoss
 
         public static List<ItemBase> GetWaveRewards(
             IRandom random,
-            FloorSheet.Row floorRow,
+            AdventureBossFloorSheet.Row floorRow,
             MaterialItemSheet materialItemSheet,
             int playCount = 1)
         {
             var maxCountForItemDrop = random.Next(
-                floorRow.DropItemMin,
-                floorRow.DropItemMax + 1);
+                floorRow.MinDropItem,
+                floorRow.MaxDropItem + 1);
             var waveRewards = new List<ItemBase>();
             for (var i = 0; i < playCount; i++)
             {
@@ -246,7 +246,7 @@ namespace Nekoyume.Battle.AdventureBoss
             return Player;
         }
 
-        public void AddBreakthrough(int firstFloor, int lastFloor, FloorWaveSheet floorWaveSheet)
+        public void AddBreakthrough(int firstFloor, int lastFloor, AdventureBossFloorWaveSheet adventureBossFloorWaveSheet)
         {
             if (Log.events.Count == 0)
             {
@@ -256,12 +256,12 @@ namespace Nekoyume.Battle.AdventureBoss
             // Add event in reversed order to keep insert position
             for (var fl = lastFloor; fl >= firstFloor; fl--)
             {
-                var floorWave = floorWaveSheet[fl].Waves[0];
+                var floorWave = adventureBossFloorWaveSheet[fl].Waves[0];
                 Log.events.Insert(1, new Breakthrough(Player, fl, floorWave.Monsters));
             }
         }
 
-        private void SetWave(FloorSheet.Row floorRow, FloorWaveSheet.Row floorWaveRow)
+        private void SetWave(AdventureBossFloorSheet.Row floorRow, AdventureBossFloorWaveSheet.Row floorWaveRow)
         {
             var enemyStatModifiers = floorRow.EnemyInitialStatModifiers;
             var waves = floorWaveRow.Waves;
@@ -274,7 +274,7 @@ namespace Nekoyume.Battle.AdventureBoss
         }
 
         private Wave SpawnWave(
-            FloorWaveSheet.WaveData waveData,
+            AdventureBossFloorWaveSheet.WaveData waveData,
             IReadOnlyList<StatModifier> initialStatModifiers)
         {
             var wave = new Wave();
@@ -297,11 +297,11 @@ namespace Nekoyume.Battle.AdventureBoss
             return wave;
         }
 
-        public static WeightedSelector<FloorSheet.RewardData> SetItemSelector(
-            FloorSheet.Row floorRow, IRandom random
+        public static WeightedSelector<AdventureBossFloorSheet.RewardData> SetItemSelector(
+            AdventureBossFloorSheet.Row floorRow, IRandom random
         )
         {
-            var itemSelector = new WeightedSelector<FloorSheet.RewardData>(random);
+            var itemSelector = new WeightedSelector<AdventureBossFloorSheet.RewardData>(random);
             foreach (var r in floorRow.Rewards)
             {
                 itemSelector.Add(r, r.Ratio);
@@ -311,7 +311,7 @@ namespace Nekoyume.Battle.AdventureBoss
         }
 
         public static List<ItemBase> SetReward(
-            WeightedSelector<FloorSheet.RewardData> itemSelector,
+            WeightedSelector<AdventureBossFloorSheet.RewardData> itemSelector,
             int maxCount,
             IRandom random,
             MaterialItemSheet materialItemSheet

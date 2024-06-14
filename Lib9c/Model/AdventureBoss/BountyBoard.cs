@@ -5,9 +5,10 @@ using Libplanet.Action;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions.AdventureBoss;
-using Nekoyume.Data;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
+using Nekoyume.TableData.AdventureBoss;
+using RewardData = Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardRatioData;
 
 namespace Nekoyume.Model.AdventureBoss
 {
@@ -46,12 +47,14 @@ namespace Nekoyume.Model.AdventureBoss
             return Investors.Aggregate(total, (current, inv) => current + inv.Price);
         }
 
-        public void SetReward(AdventureBossGameData.RewardInfo rewardInfo, IRandom random)
+        public void SetReward(AdventureBossWantedRewardSheet.Row rewardInfo, IRandom random)
         {
-            (FixedRewardItemId, FixedRewardFavId) = AdventureBossHelper.PickReward(random,
-                rewardInfo.FixedRewardItemIdDict, rewardInfo.FixedRewardFavIdDict);
-            (RandomRewardItemId, RandomRewardFavId) = AdventureBossHelper.PickReward(random,
-                rewardInfo.RandomRewardItemIdDict, rewardInfo.RandomRewardFavTickerDict);
+            (FixedRewardItemId, FixedRewardFavId) = AdventureBossHelper.PickReward(
+                random, rewardInfo.FixedRewards
+            );
+            (RandomRewardItemId, RandomRewardFavId) = AdventureBossHelper.PickReward(
+                random, rewardInfo.RandomRewards
+            );
         }
 
         public void AddOrUpdate(Address avatarAddress, string name, FungibleAssetValue price)

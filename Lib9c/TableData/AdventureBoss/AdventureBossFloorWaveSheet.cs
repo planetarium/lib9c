@@ -6,7 +6,7 @@ using static Nekoyume.TableData.TableExtensions;
 namespace Nekoyume.TableData.AdventureBoss
 {
     [Serializable]
-    public class FloorWaveSheet : Sheet<int, FloorWaveSheet.Row>
+    public class AdventureBossFloorWaveSheet : Sheet<int, AdventureBossFloorWaveSheet.Row>
     {
         [Serializable]
         public class WaveData
@@ -95,7 +95,7 @@ namespace Nekoyume.TableData.AdventureBoss
             }
         }
 
-        public FloorWaveSheet() : base(nameof(FloorWaveSheet))
+        public AdventureBossFloorWaveSheet() : base(nameof(AdventureBossFloorWaveSheet))
         {
         }
     }

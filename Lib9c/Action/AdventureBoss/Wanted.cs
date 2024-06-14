@@ -11,6 +11,7 @@ using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.TableData.AdventureBoss;
 
 namespace Nekoyume.Action.AdventureBoss
 {
@@ -70,8 +71,10 @@ namespace Nekoyume.Action.AdventureBoss
 
             if (Season <= 0 ||
                 Season > latestSeason.Season + 1 || Season < latestSeason.Season ||
-                (Season == latestSeason.Season && context.BlockIndex > latestSeason.EndBlockIndex) ||
-                (Season == latestSeason.Season + 1 && context.BlockIndex < latestSeason.NextStartBlockIndex)
+                (Season == latestSeason.Season &&
+                 context.BlockIndex > latestSeason.EndBlockIndex) ||
+                (Season == latestSeason.Season + 1 &&
+                 context.BlockIndex < latestSeason.NextStartBlockIndex)
                )
             {
                 throw new InvalidAdventureBossSeasonException(
@@ -118,12 +121,19 @@ namespace Nekoyume.Action.AdventureBoss
 
                 // Set season info: boss and reward
                 var random = context.GetRandom();
-                var reward =
-                    Data.AdventureBossGameData.AdventureBossRewards[
-                        random.Next(0, Data.AdventureBossGameData.AdventureBossRewards.Length)];
-                seasonInfo.BossId = reward.BossId;
-                bountyBoard.SetReward(reward.wantedReward, random);
-                exploreBoard.SetReward(reward.contributionReward, random);
+                var adventureBossSheet = states.GetSheet<AdventureBossSheet>();
+                var boss = adventureBossSheet.OrderedList[
+                    random.Next(0, adventureBossSheet.Values.Count)
+                ];
+                seasonInfo.BossId = boss.BossId;
+
+                var wantedReward = states.GetSheet<AdventureBossWantedRewardSheet>()
+                    .OrderedList.First(row => row.AdventureBossId == boss.Id);
+                bountyBoard.SetReward(wantedReward, random);
+
+                var contribReward = states.GetSheet<AdventureBossContributionRewardSheet>()
+                    .OrderedList.First(row => row.AdventureBossId == boss.Id);
+                exploreBoard.SetReward(contribReward, random);
 
                 states = states.SetSeasonInfo(seasonInfo);
                 states = states.SetLatestAdventureBossSeason(seasonInfo);

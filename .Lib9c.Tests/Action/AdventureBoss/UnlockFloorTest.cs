@@ -123,6 +123,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 PreviousState = state,
                 Signer = WantedAddress,
                 BlockIndex = 0L,
+                RandomSeed = 1,
             });
 
             // Explore

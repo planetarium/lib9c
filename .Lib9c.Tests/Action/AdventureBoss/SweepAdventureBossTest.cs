@@ -82,7 +82,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                1, 100, 98, null, new[] { (600301, 10), (600302, 0), (600303, 0), (600304, 0), },
+                1, 100, 98, null, new[] { (600301, 8), (600302, 0), (600303, 0), (600304, 0), },
             };
             yield return new object[]
             {
@@ -94,8 +94,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                20, 40, 0, null,
-                new[] { (600301, 900), (600302, 800), (600303, 50), (600304, 350), },
+                20, 40, 0, null, new[] { (600301, 67), (600302, 67), (600303, 0), (600304, 0), },
             };
         }
 
@@ -143,6 +142,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 PreviousState = state,
                 Signer = WantedAddress,
                 BlockIndex = 0L,
+                RandomSeed = 1,
             });
             var exp = new Explorer(TesterAvatarAddress, TesterAvatarState.name)
             {

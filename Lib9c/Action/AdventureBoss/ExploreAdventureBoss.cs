@@ -124,8 +124,8 @@ namespace Nekoyume.Action.AdventureBoss
                 containSimulatorSheets: true,
                 sheetTypes: new[]
                 {
-                    typeof(FloorSheet),
-                    typeof(FloorWaveSheet),
+                    typeof(AdventureBossFloorSheet),
+                    typeof(AdventureBossFloorWaveSheet),
                     typeof(CollectionSheet),
                     typeof(EnemySkillSheet),
                     typeof(CostumeStatSheet),
@@ -142,8 +142,8 @@ namespace Nekoyume.Action.AdventureBoss
                 materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
             var inventory = states.GetInventoryV2(AvatarAddress);
             var random = context.GetRandom();
-            var selector = new WeightedSelector<AdventureBossGameData.ExploreReward>(random);
-            var rewardList = new List<AdventureBossGameData.ExploreReward>();
+            var selector = new WeightedSelector<AdventureBossFloorSheet.RewardData>(random);
+            var rewardList = new List<AdventureBossSheet.RewardAmountData>();
 
             // Validate
             var gameConfigState = states.GetGameConfigState();
@@ -208,8 +208,8 @@ namespace Nekoyume.Action.AdventureBoss
                 collectionModifiers = collectionState.GetModifiers(collectionSheet);
             }
 
-            var floorSheet = sheets.GetSheet<FloorSheet>();
-            var floorWaveSheet = sheets.GetSheet<FloorWaveSheet>();
+            var floorSheet = sheets.GetSheet<AdventureBossFloorSheet>();
+            var floorWaveSheet = sheets.GetSheet<AdventureBossFloorWaveSheet>();
             var simulatorSheets = sheets.GetSimulatorSheets();
             var enemySkillSheet = sheets.GetSheet<EnemySkillSheet>();
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
@@ -220,6 +220,13 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the game config state was failed to load.");
             }
+
+            var bossId = states.GetSheet<AdventureBossSheet>().Values
+                .First(row => row.BossId == latestSeason.BossId).Id;
+            var floorRows = states.GetSheet<AdventureBossFloorSheet>().Values
+                .Where(row => row.AdventureBossId == bossId);
+            var firstRewardSheet = states.GetSheet<AdventureBossFloorFirstRewardSheet>();
+            var pointSheet = states.GetSheet<AdventureBossFloorPointSheet>();
 
             AdventureBossSimulator simulator = null;
             var firstFloor = explorer.Floor + 1;
@@ -274,32 +281,36 @@ namespace Nekoyume.Action.AdventureBoss
                 if (simulator.Log.IsClear)
                 {
                     // Add point, reward
-                    var (minPoint, maxPoint) = AdventureBossGameData.PointDict[fl];
-                    var point = random.Next(minPoint, maxPoint + 1);
+                    var pointRow = pointSheet[fl];
+                    var point = random.Next(pointRow.MinPoint, pointRow.MaxPoint + 1);
 
                     explorer.Floor = fl;
                     explorer.Score += point;
 
                     exploreBoard.TotalPoint += point;
 
+                    var stageId = floorRows.First(row => row.Floor == fl).Id;
+                    var firstReward = firstRewardSheet[stageId];
+                    foreach (var reward in firstReward.Rewards)
+                    {
+                        rewardList.Add(new AdventureBossSheet.RewardAmountData(
+                            reward.ItemType, reward.ItemId, reward.Amount
+                        ));
+                    }
+
                     selector.Clear();
-                    var floorReward = AdventureBossGameData.AdventureBossRewards
-                        .First(rw => rw.BossId == latestSeason.BossId).exploreReward[fl];
-                    foreach (var reward in floorReward.FirstReward)
+                    var floorReward = floorRows.First(row => row.Floor == fl);
+                    foreach (var reward in floorReward.Rewards)
                     {
                         selector.Add(reward, reward.Ratio);
                     }
 
-                    // Explore clear is always first because we explore from last failed floor.
-                    rewardList.Add(selector.Select(1).First());
-
-                    selector.Clear();
-                    foreach (var reward in floorReward.Reward)
-                    {
-                        selector.Add(reward, reward.Ratio);
-                    }
-
-                    rewardList.Add(selector.Select(1).First());
+                    var selected = selector.Select(1).First();
+                    rewardList.Add(new AdventureBossSheet.RewardAmountData(
+                        selected.ItemType,
+                        selected.ItemId,
+                        random.Next(selected.Min, selected.Max + 1))
+                    );
                 }
                 else
                 {
@@ -312,8 +323,9 @@ namespace Nekoyume.Action.AdventureBoss
                 simulator.AddBreakthrough(firstFloor, lastFloor, floorWaveSheet);
             }
 
-            states = AdventureBossHelper.AddExploreRewards(context, states, AvatarAddress,
-                inventory, rewardList);
+            states = AdventureBossHelper.AddExploreRewards(
+                context, states, AvatarAddress, inventory, rewardList
+            );
 
             return states
                 .SetInventory(AvatarAddress, inventory)
