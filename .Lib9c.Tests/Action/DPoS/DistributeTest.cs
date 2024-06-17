@@ -105,7 +105,7 @@ namespace Lib9c.Tests.Action.DPoS
                 },
                 DelegatorAddress,
                 validatorAddressA,
-                governanceToken * 200,
+                GovernanceToken * 200,
                 _nativeTokens);
 
             _states = DelegateCtrl.Execute(
@@ -117,7 +117,7 @@ namespace Lib9c.Tests.Action.DPoS
                 },
                 DelegatorAddress,
                 validatorAddressB,
-                governanceToken * 300,
+                GovernanceToken * 300,
                 _nativeTokens);
 
             _states = ValidatorSetCtrl.Update(
@@ -200,8 +200,8 @@ namespace Lib9c.Tests.Action.DPoS
                 _states.GetBalance(ReservedAddress.RewardPool, Asset.ConsensusToken));
 
             Assert.Equal(
-                governanceToken * (100 + (101 + 200) * 50 - 101 - 102 + 204 + 306),
-                _states.GetBalance(ReservedAddress.BondedPool, governanceToken));
+                GovernanceToken * (100 + (101 + 200) * 50 - 101 - 102 + 204 + 306),
+                _states.GetBalance(ReservedAddress.BondedPool, GovernanceToken));
 
             Assert.Equal(
                 Asset.ConsensusFromGovernance(GovernanceToken * 205),

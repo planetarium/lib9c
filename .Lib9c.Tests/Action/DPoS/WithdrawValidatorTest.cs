@@ -9,6 +9,7 @@
     using Libplanet.Types.Consensus;
     using Nekoyume.Action.DPoS;
     using Nekoyume.Action.DPoS.Control;
+    using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Sys;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -46,7 +47,7 @@
             states = states.MintAsset(
                 new ActionContext { PreviousState = states },
                 ReservedAddress.RewardPool,
-                Asset.GovernanceToken * 5);
+                GovernanceToken * 5);
             states = new AllocateReward().Execute(
                 new ActionContext
                 {

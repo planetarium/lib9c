@@ -51,7 +51,7 @@
             states = states.MintAsset(
                 new ActionContext { PreviousState = states },
                 ReservedAddress.RewardPool,
-                Asset.GovernanceToken * 5);
+                GovernanceToken * 5);
             states = new AllocateReward().Execute(
                 new ActionContext
                 {
