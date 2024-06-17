@@ -20,7 +20,6 @@ namespace Nekoyume.Action.AdventureBoss
     public class Wanted : ActionBase
     {
         public const string TypeIdentifier = "wanted";
-        public const int RequiredStakingLevel = 5;
         public const int MinBounty = 100;
 
         public int Season;
@@ -99,6 +98,8 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidAddressException();
             }
 
+            var RequiredStakingLevel =
+                states.GetGameConfigState().AdventureBossWantedRequiredStakingLevel;
             var requiredStakingAmount = states.GetSheet<MonsterCollectionSheet>()
                 .OrderedList.First(row => row.Level == RequiredStakingLevel).RequiredGold;
             var stakedAmount =

@@ -55,6 +55,16 @@ namespace Nekoyume.Model.State
         public int RequireCharacterLevel_ConsumableSlot5 { get; private set; }
         public long ShatterStrikeMaxDamage { get; private set; }
 
+        #region AdventureBoss
+
+        public int AdventureBossWantedRequiredStakingLevel { get; private set; }
+        public decimal AdventureBossNcgRuneRatio { get; private set; }
+        public long AdventureBossActiveInterval { get; private set; }
+        public long AdventureBossInactiveInterval { get; private set; }
+        public long AdventureBossClaimInterval { get; private set; }
+
+        #endregion
+
         public GameConfigState() : base(Address)
         {
         }
@@ -254,6 +264,39 @@ namespace Nekoyume.Model.State
             {
                 ShatterStrikeMaxDamage = ssmd.ToLong();
             }
+
+            #region AdventureBoss
+
+            if (serialized.TryGetValue((Text)"adventure_boss_wanted_required_staking_level",
+                    out var advReqStaking))
+            {
+                AdventureBossWantedRequiredStakingLevel = (Integer)advReqStaking;
+            }
+
+            if (serialized.TryGetValue((Text)"adventure_boss_ncg_rune_ratio", out var advNRR))
+            {
+                AdventureBossNcgRuneRatio = advNRR.ToDecimal();
+            }
+
+            if (serialized.TryGetValue((Text)"adventure_boss_active_interval",
+                    out var advActiveInterval))
+            {
+                AdventureBossActiveInterval = advActiveInterval.ToLong();
+            }
+
+            if (serialized.TryGetValue((Text)"adventure_boss_inactive_interval",
+                    out var advInactiveInterval))
+            {
+                AdventureBossInactiveInterval = advInactiveInterval.ToLong();
+            }
+
+            if (serialized.TryGetValue((Text)"adventure_boss_claim_interval",
+                    out var advClaimInterval))
+            {
+                AdventureBossClaimInterval = advClaimInterval.ToLong();
+            }
+
+            #endregion
         }
 
         public GameConfigState(string csv) : base(Address)
@@ -497,6 +540,40 @@ namespace Nekoyume.Model.State
                 );
             }
 
+            #region AdventureBoss
+
+            if (AdventureBossWantedRequiredStakingLevel > 0)
+            {
+                values.Add((Text)"adventure_boss_wanted_required_staking_level",
+                    (Integer)AdventureBossWantedRequiredStakingLevel);
+            }
+
+            if (AdventureBossNcgRuneRatio > 0)
+            {
+                values.Add((Text)"adventure_boss_ncg_rune_ratio",
+                    AdventureBossNcgRuneRatio.Serialize());
+            }
+
+            if (AdventureBossActiveInterval > 0)
+            {
+                values.Add((Text)"adventure_boss_active_interval",
+                    AdventureBossActiveInterval.Serialize());
+            }
+
+            if (AdventureBossInactiveInterval > 0)
+            {
+                values.Add((Text)"adventure_boss_inactive_interval",
+                    AdventureBossInactiveInterval.Serialize());
+            }
+
+            if (AdventureBossClaimInterval > 0)
+            {
+                values.Add((Text)"adventure_boss_claim_interval",
+                    AdventureBossClaimInterval.Serialize());
+            }
+
+            #endregion
+
 #pragma warning disable LAA1002
             return new Dictionary(values.Union((Dictionary) base.Serialize()));
 #pragma warning restore LAA1002
@@ -662,6 +739,26 @@ namespace Nekoyume.Model.State
                 case "shatter_strike_max_damage":
                     ShatterStrikeMaxDamage = TableExtensions.ParseLong(row.Value);
                     break;
+
+                #region AdventureBoss
+
+                case "adventure_boss_wanted_required_staking_level":
+                    AdventureBossWantedRequiredStakingLevel = TableExtensions.ParseInt(row.Value);
+                    break;
+                case "adventure_boss_ncg_rune_ratio":
+                    AdventureBossNcgRuneRatio = TableExtensions.ParseDecimal(row.Value);
+                    break;
+                case "adventure_boss_active_interval":
+                    AdventureBossActiveInterval = TableExtensions.ParseLong(row.Value);
+                    break;
+                case "adventure_boss_inactive_interval":
+                    AdventureBossInactiveInterval = TableExtensions.ParseLong(row.Value);
+                    break;
+                case "adventure_boss_claim_interval":
+                    AdventureBossClaimInterval = TableExtensions.ParseLong(row.Value);
+                    break;
+
+                #endregion
             }
         }
     }
