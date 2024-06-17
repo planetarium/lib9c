@@ -96,8 +96,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var bountyBoard = nextState.GetBountyBoard(1);
             Assert.Equal(600201, bountyBoard.FixedRewardItemId);
             Assert.Null(bountyBoard.FixedRewardFavId);
-            Assert.Equal(600201, bountyBoard.RandomRewardItemId);
-            Assert.Null(bountyBoard.RandomRewardFavId);
+            Assert.Null(bountyBoard.RandomRewardItemId);
+            Assert.Equal(30001, bountyBoard.RandomRewardFavId);
 
             var investor = Assert.Single(bountyBoard.Investors);
             Assert.Equal(
@@ -146,8 +146,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(2, bountyBoard.Investors.Count);
             Assert.Equal(600201, bountyBoard.FixedRewardItemId);
             Assert.Null(bountyBoard.FixedRewardFavId);
-            Assert.Equal(600201, bountyBoard.RandomRewardItemId);
-            Assert.Null(bountyBoard.RandomRewardFavId);
+            Assert.Null(bountyBoard.RandomRewardItemId);
+            Assert.Equal(30001, bountyBoard.RandomRewardFavId);
 
             investor = bountyBoard.Investors.First(i => i.AvatarAddress == AvatarAddress2);
             Assert.Equal(Wanted.MinBounty * NCG, investor.Price);
