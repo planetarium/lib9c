@@ -183,6 +183,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         public void CreateNewSeason()
         {
             var state = Stake(_initialState);
+            var gameConfig = state.GetGameConfigState();
             // Validate no prev. season
             var latestSeasonInfo = state.GetLatestAdventureBossSeason();
             Assert.Equal(0, latestSeasonInfo.Season);
@@ -208,9 +209,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
             latestSeasonInfo = nextState.GetLatestAdventureBossSeason();
             Assert.Equal(1, latestSeasonInfo.Season);
             Assert.Equal(0L, latestSeasonInfo.StartBlockIndex);
-            Assert.Equal(SeasonInfo.BossActiveBlockInterval, latestSeasonInfo.EndBlockIndex);
+            Assert.Equal(gameConfig.AdventureBossActiveInterval, latestSeasonInfo.EndBlockIndex);
             Assert.Equal(
-                SeasonInfo.BossActiveBlockInterval + SeasonInfo.BossInactiveBlockInterval,
+                gameConfig.AdventureBossActiveInterval + gameConfig.AdventureBossInactiveInterval,
                 latestSeasonInfo.NextStartBlockIndex
             );
 
@@ -225,16 +226,22 @@ namespace Lib9c.Tests.Action.AdventureBoss
         public void SeasonAlreadyInProgress()
         {
             var state = Stake(_initialState);
+            var gameConfig = state.GetGameConfigState();
             // Set active season
-            var seasonInfo = new SeasonInfo(1, 0L);
+            var seasonInfo = new SeasonInfo(
+                1,
+                0L,
+                gameConfig.AdventureBossActiveInterval,
+                gameConfig.AdventureBossInactiveInterval
+            );
             state = state.SetSeasonInfo(seasonInfo);
             state = state.SetLatestAdventureBossSeason(seasonInfo);
             var latestSeasonInfo = state.GetLatestAdventureBossSeason();
             Assert.Equal(1, latestSeasonInfo.Season);
             Assert.Equal(0L, latestSeasonInfo.StartBlockIndex);
-            Assert.Equal(SeasonInfo.BossActiveBlockInterval, latestSeasonInfo.EndBlockIndex);
+            Assert.Equal(gameConfig.AdventureBossActiveInterval, latestSeasonInfo.EndBlockIndex);
             Assert.Equal(
-                SeasonInfo.BossActiveBlockInterval + SeasonInfo.BossInactiveBlockInterval,
+                gameConfig.AdventureBossActiveInterval + gameConfig.AdventureBossInactiveInterval,
                 latestSeasonInfo.NextStartBlockIndex
             );
 
@@ -263,9 +270,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
         public void CannotCreatePastSeason(int currentSeason, int targetSeason)
         {
             var state = Stake(_initialState);
+            var gameConfig = state.GetGameConfigState();
             if (currentSeason > 0)
             {
-                var current = new SeasonInfo(currentSeason, 0L);
+                var current = new SeasonInfo(
+                    currentSeason,
+                    0L,
+                    gameConfig.AdventureBossActiveInterval,
+                    gameConfig.AdventureBossInactiveInterval
+                );
                 state = state.SetSeasonInfo(current);
                 state = state.SetLatestAdventureBossSeason(current);
             }
@@ -294,9 +307,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
         public void CannotCreateFutureSeason(int latestSeason, int targetSeason)
         {
             var state = Stake(_initialState);
+            var gameConfig = state.GetGameConfigState();
             if (latestSeason > 0)
             {
-                var latest = new SeasonInfo(latestSeason, 0L);
+                var latest = new SeasonInfo(
+                    latestSeason,
+                    0L,
+                    gameConfig.AdventureBossActiveInterval,
+                    gameConfig.AdventureBossInactiveInterval
+                );
                 state = state.SetSeasonInfo(latest);
                 state = state.SetLatestAdventureBossSeason(latest);
             }
@@ -321,8 +340,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
         public void InsufficientStaking()
         {
             var state = Stake(_initialState, 100);
+            var gameConfig = state.GetGameConfigState();
             // Set active season
-            var seasonInfo = new SeasonInfo(1, 0L);
+            var seasonInfo = new SeasonInfo(
+                1,
+                0L,
+                gameConfig.AdventureBossActiveInterval,
+                gameConfig.AdventureBossInactiveInterval
+            );
             state = state.SetSeasonInfo(seasonInfo);
             state = state.SetLatestAdventureBossSeason(seasonInfo);
 
@@ -398,7 +423,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
         public void CannotPutBounty()
         {
             var state = Stake(_initialState);
-            var prevSeason = new SeasonInfo(1, 0L);
+            var gameConfig = state.GetGameConfigState();
+            var prevSeason = new SeasonInfo(
+                1,
+                0L,
+                gameConfig.AdventureBossActiveInterval,
+                gameConfig.AdventureBossInactiveInterval
+            );
             var prevBountyBoard = new BountyBoard(1);
             prevBountyBoard.AddOrUpdate(AvatarAddress, AvatarState.name, Wanted.MinBounty * NCG);
             state = state.SetSeasonInfo(prevSeason).SetBountyBoard(1, prevBountyBoard);
@@ -430,8 +461,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             if (amount == 0)
             {
                 var stakeSheet = world.GetSheet<MonsterCollectionSheet>();
-                amount = stakeSheet.OrderedList.First(
-                    row => row.Level == Wanted.RequiredStakingLevel
+                amount = stakeSheet.OrderedList.First(row =>
+                    row.Level == world.GetGameConfigState().AdventureBossWantedRequiredStakingLevel
                 ).RequiredGold;
             }
 
