@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Helper
         {
             var ncgRuneRatio =
                 TableExtensions.ParseDecimal(_tableSheets
-                    .GameConfigSheet["AdventureBossNcgRuneRatio"].Value);
+                    .GameConfigSheet["adventure_boss_ncg_rune_ratio"].Value);
             var bountyBoard = new BountyBoard(1);
             bountyBoard.FixedRewardFavId = 30001;
             bountyBoard.RandomRewardFavId = 30001;
@@ -61,7 +61,7 @@ namespace Lib9c.Tests.Helper
         {
             var ncgRuneRatio =
                 TableExtensions.ParseDecimal(_tableSheets
-                    .GameConfigSheet["AdventureBossNcgRuneRatio"].Value);
+                    .GameConfigSheet["adventure_boss_ncg_rune_ratio"].Value);
             var bountyBoard = new BountyBoard(1);
             bountyBoard.AddOrUpdate(_avatarAddress, _name, 100 * NCG);
 

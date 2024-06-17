@@ -68,6 +68,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         private readonly IWorld _initialState = new World(MockUtil.MockModernWorldState)
             .SetLegacyState(Addresses.GoldCurrency, new GoldCurrencyState(NCG).Serialize())
+            .SetLegacyState(GameConfigState.Address, new GameConfigState(Sheets["GameConfigSheet"]).Serialize())
             .SetAvatarState(WantedAvatarAddress, WantedAvatarState)
             .SetAgentState(WantedAddress, WantedState)
             .SetAvatarState(TesterAvatarAddress, TesterAvatarState)
