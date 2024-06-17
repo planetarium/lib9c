@@ -73,8 +73,9 @@
             Assert.Equal((100 + 50) * 100, power);
 
             // Mint and allocate rewards
-            states = states.MintAsset(
-                new ActionContext { PreviousState = states },
+            states = states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 ReservedAddress.RewardPool,
                 GovernanceToken * 5);
             states = new AllocateReward().Execute(
