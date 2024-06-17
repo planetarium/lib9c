@@ -116,7 +116,10 @@ namespace Nekoyume.Action.AdventureBoss
             if (latestSeason.Season == 0 ||
                 latestSeason.NextStartBlockIndex <= context.BlockIndex)
             {
-                var seasonInfo = new SeasonInfo(Season, context.BlockIndex);
+                var gameConfig = states.GetGameConfigState();
+                var seasonInfo = new SeasonInfo(Season, context.BlockIndex,
+                    gameConfig.AdventureBossActiveInterval,
+                    gameConfig.AdventureBossInactiveInterval);
                 bountyBoard = new BountyBoard(Season);
                 var exploreBoard = new ExploreBoard(Season);
 
