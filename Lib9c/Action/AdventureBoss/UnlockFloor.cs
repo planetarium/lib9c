@@ -132,8 +132,7 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Check balance and unlock
             var price = UnlockDict[explorer.MaxFloor];
-            var agentAddress = states.GetAvatarState(AvatarAddress).agentAddress;
-            var balance = states.GetBalance(agentAddress, currency);
+            var balance = states.GetBalance(context.Signer, currency);
             var exploreBoard = states.GetExploreBoard(Season);
             if (UseNcg)
             {
@@ -141,14 +140,14 @@ namespace Nekoyume.Action.AdventureBoss
                 {
                     throw new InsufficientBalanceException(
                         $"{balance} is less than {price["NCG"] * currency}",
-                        agentAddress, balance
+                        context.Signer, balance
                     );
                 }
 
                 explorer.UsedNcg += price["NCG"];
                 exploreBoard.UsedNcg += price["NCG"];
                 // FIXME: Send unlock NCG to operational address
-                states = states.TransferAsset(context, agentAddress, new Address(),
+                states = states.TransferAsset(context, context.Signer, new Address(),
                     price["NCG"] * currency);
             }
             else // Use GoldenDust

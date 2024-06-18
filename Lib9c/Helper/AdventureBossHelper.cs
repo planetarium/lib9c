@@ -227,10 +227,9 @@ namespace Nekoyume.Helper
 
         public static IWorld CollectWantedReward(IWorld states, IActionContext context,
             AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
-            Address avatarAddress,
+            Address agentAddress, Address avatarAddress,
             out AdventureBossGameData.ClaimableReward collectedReward)
         {
-            var agentAddress = states.GetAvatarState(avatarAddress).agentAddress;
             for (var szn = season; szn > 0; szn--)
             {
                 var seasonInfo = states.GetSeasonInfo(szn);
@@ -349,10 +348,9 @@ namespace Nekoyume.Helper
 
         public static IWorld CollectExploreReward(IWorld states, IActionContext context,
             AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
-            Address avatarAddress,
+            Address agentAddress, Address avatarAddress,
             out AdventureBossGameData.ClaimableReward collectedReward)
         {
-            var agentAddress = states.GetAvatarState(avatarAddress).agentAddress;
             for (var szn = season; szn > 0; szn--)
             {
                 var seasonInfo = states.GetSeasonInfo(szn);

@@ -103,12 +103,12 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Collect wanted reward
             states = AdventureBossHelper.CollectWantedReward(
-                states, context, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
+                states, context, myReward, currentBlockIndex, Season, context.Signer, AvatarAddress, out myReward
             );
 
             // Collect explore reward
             states = AdventureBossHelper.CollectExploreReward(
-                states, context, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
+                states, context, myReward, currentBlockIndex, Season, context.Signer, AvatarAddress, out myReward
             );
 
             // Give rewards
