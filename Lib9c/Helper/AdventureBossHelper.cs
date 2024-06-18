@@ -232,7 +232,7 @@ namespace Nekoyume.Helper
 
         public static IWorld CollectWantedReward(IWorld states, IActionContext context,
             AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
-            Address avatarAddress,
+            Address avatarAddress, long claimableDuration,
             out AdventureBossGameData.ClaimableReward collectedReward)
         {
             var agentAddress = states.GetAvatarState(avatarAddress).agentAddress;
@@ -241,8 +241,7 @@ namespace Nekoyume.Helper
                 var seasonInfo = states.GetSeasonInfo(szn);
 
                 // Stop when met claim expired season
-                if (seasonInfo.EndBlockIndex + ClaimAdventureBossReward.ClaimableDuration <
-                    currentBlockIndex)
+                if (seasonInfo.EndBlockIndex + claimableDuration < currentBlockIndex)
                 {
                     break;
                 }
@@ -372,7 +371,7 @@ namespace Nekoyume.Helper
 
         public static IWorld CollectExploreReward(IWorld states, IActionContext context,
             AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
-            Address avatarAddress,
+            Address avatarAddress, long claimableDuration,
             out AdventureBossGameData.ClaimableReward collectedReward)
         {
             var agentAddress = states.GetAvatarState(avatarAddress).agentAddress;
@@ -381,8 +380,7 @@ namespace Nekoyume.Helper
                 var seasonInfo = states.GetSeasonInfo(szn);
 
                 // Stop when met claim expired season
-                if (seasonInfo.EndBlockIndex + ClaimAdventureBossReward.ClaimableDuration <
-                    currentBlockIndex)
+                if (seasonInfo.EndBlockIndex + claimableDuration < currentBlockIndex)
                 {
                     break;
                 }
