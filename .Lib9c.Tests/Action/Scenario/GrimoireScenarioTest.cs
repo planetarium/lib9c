@@ -23,17 +23,17 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.TableData;
     using Xunit;
 
-    public class CharmScenarioTest
+    public class GrimoireScenarioTest
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
         private readonly Address _enemyAvatarAddress;
         private readonly IWorld _initialState;
-        private readonly Charm _charm;
+        private readonly Grimoire _grimoire;
         private readonly TableSheets _tableSheets;
         private readonly Currency _currency;
 
-        public CharmScenarioTest()
+        public GrimoireScenarioTest()
         {
             _agentAddress = new PrivateKey().Address;
             var agentState = new AgentState(_agentAddress);
@@ -43,13 +43,13 @@ namespace Lib9c.Tests.Action.Scenario
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
-            var charmRow =
-                _tableSheets.EquipmentItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Charm);
-            _charm = (Charm)ItemFactory.CreateItemUsable(charmRow, Guid.NewGuid(), 0L);
-            _charm.StatsMap.AddStatAdditionalValue(StatType.CRI, 1);
+            var grimoireRow =
+                _tableSheets.EquipmentItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Grimoire);
+            _grimoire = (Grimoire)ItemFactory.CreateItemUsable(grimoireRow, Guid.NewGuid(), 0L);
+            _grimoire.StatsMap.AddStatAdditionalValue(StatType.CRI, 1);
             var skillRow = _tableSheets.SkillSheet[210011];
             var skill = SkillFactory.Get(skillRow, 0, 100, 0, StatType.NONE);
-            _charm.Skills.Add(skill);
+            _grimoire.Skills.Add(skill);
             var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
             _initialState = new World(MockUtil.MockModernWorldState);
             for (int i = 0; i < addresses.Length; i++)
@@ -63,7 +63,7 @@ namespace Lib9c.Tests.Action.Scenario
                     _tableSheets.GetAvatarSheets(),
                     rankingMapAddress
                 );
-                avatarState.inventory.AddItem(_charm);
+                avatarState.inventory.AddItem(_grimoire);
                 _initialState = _initialState.SetAvatarState(avatarAddress, avatarState)
                     .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
             }
@@ -95,8 +95,8 @@ namespace Lib9c.Tests.Action.Scenario
                 AvatarAddress = _avatarAddress,
                 Equipments = new List<Guid>
                 {
-                    _charm.ItemId,
-                    _charm.ItemId,
+                    _grimoire.ItemId,
+                    _grimoire.ItemId,
                 },
                 Costumes = new List<Guid>(),
                 Foods = new List<Guid>(),
@@ -114,10 +114,10 @@ namespace Lib9c.Tests.Action.Scenario
 
             has.Equipments = new List<Guid>
             {
-                _charm.ItemId,
+                _grimoire.ItemId,
             };
 
-            // equip charm because charmIgnoreSheet is empty
+            // equip grimoire because grimoireIgnoreSheet is empty
             var nextState = has.Execute(new ActionContext
             {
                 BlockIndex = 3,
@@ -148,7 +148,7 @@ namespace Lib9c.Tests.Action.Scenario
                 AvatarAddress = _avatarAddress,
                 EquipmentIds = new List<Guid>
                 {
-                    _charm.ItemId,
+                    _grimoire.ItemId,
                 },
                 CostumeIds = new List<Guid>(),
                 FoodIds = new List<Guid>(),
@@ -191,7 +191,7 @@ namespace Lib9c.Tests.Action.Scenario
                     costumes = new List<Guid>(),
                     equipments = new List<Guid>
                     {
-                        _charm.ItemId,
+                        _grimoire.ItemId,
                     },
                     runeInfos = new List<RuneSlotInfo>(),
                 };
@@ -223,7 +223,7 @@ namespace Lib9c.Tests.Action.Scenario
                     costumes = new List<Guid>(),
                     equipments = new List<Guid>
                     {
-                        _charm.ItemId,
+                        _grimoire.ItemId,
                     },
                     runeInfos = new List<RuneSlotInfo>(),
                 };
@@ -281,14 +281,14 @@ namespace Lib9c.Tests.Action.Scenario
         public void Grinding()
         {
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
-            Assert.True(avatarState.inventory.TryGetNonFungibleItem(_charm.ItemId, out _));
+            Assert.True(avatarState.inventory.TryGetNonFungibleItem(_grimoire.ItemId, out _));
 
             var grinding = new Grinding
             {
                 AvatarAddress = _avatarAddress,
                 EquipmentIds = new List<Guid>
                 {
-                    _charm.ItemId,
+                    _grimoire.ItemId,
                 },
             };
             var nextState = grinding.Execute(new ActionContext
@@ -299,7 +299,7 @@ namespace Lib9c.Tests.Action.Scenario
             });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
-            Assert.False(nextAvatarState.inventory.TryGetNonFungibleItem(_charm.ItemId, out _));
+            Assert.False(nextAvatarState.inventory.TryGetNonFungibleItem(_grimoire.ItemId, out _));
             var previousCrystal = _initialState.GetBalance(_agentAddress, Currencies.Crystal);
             Assert.True(nextState.GetBalance(_agentAddress, Currencies.Crystal) > previousCrystal);
         }
@@ -308,10 +308,10 @@ namespace Lib9c.Tests.Action.Scenario
         public void Market()
         {
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
-            avatarState.inventory.TryGetNonFungibleItem(_charm.ItemId, out Charm charm);
-            Assert.NotNull(charm);
-            Assert.IsAssignableFrom<Equipment>(charm);
-            Assert.Null(charm as ITradableItem);
+            avatarState.inventory.TryGetNonFungibleItem(_grimoire.ItemId, out Grimoire grimoire);
+            Assert.NotNull(grimoire);
+            Assert.IsAssignableFrom<Equipment>(grimoire);
+            Assert.Null(grimoire as ITradableItem);
             for (int i = 0; i < GameConfig.RequireClearedStageLevel.ActionsInShop; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
@@ -328,14 +328,14 @@ namespace Lib9c.Tests.Action.Scenario
                     {
                         AvatarAddress = _avatarAddress,
                         Price = 1 * _currency,
-                        TradableId = _charm.ItemId,
+                        TradableId = _grimoire.ItemId,
                         ItemCount = 1,
                         Type = ProductType.NonFungible,
                     },
                 },
                 ChargeAp = false,
             };
-            // Because Charm is not ITradableItem.
+            // Because Grimoire is not ITradableItem.
             Assert.Throws<ItemDoesNotExistException>(() => register.Execute(new ActionContext
             {
                 Signer = _agentAddress,
@@ -347,15 +347,15 @@ namespace Lib9c.Tests.Action.Scenario
         private void Assert_Player(AvatarState avatarState, IWorld state, Address avatarAddress, Address itemSlotStateAddress)
         {
             var nextAvatarState = state.GetAvatarState(avatarAddress);
-            var equippedItem = Assert.IsType<Charm>(nextAvatarState.inventory.Equipments.First());
+            var equippedItem = Assert.IsType<Grimoire>(nextAvatarState.inventory.Equipments.First());
             Assert.True(equippedItem.equipped);
             Assert_ItemSlot(state, itemSlotStateAddress);
             var player = new Player(avatarState, _tableSheets.GetSimulatorSheets());
             var equippedPlayer = new Player(nextAvatarState, _tableSheets.GetSimulatorSheets());
             int diffLevel = equippedPlayer.Level - player.Level;
             var row = _tableSheets.CharacterSheet[player.CharacterId];
-            Assert.Null(player.charm);
-            Assert.NotNull(equippedPlayer.charm);
+            Assert.Null(player.Grimoire);
+            Assert.NotNull(equippedPlayer.Grimoire);
             Assert.Equal(player.HIT + 310 + (int)(row.LvHIT * diffLevel), equippedPlayer.HIT);
             Assert.Equal(player.CRI + 1, equippedPlayer.CRI);
         }
@@ -363,7 +363,7 @@ namespace Lib9c.Tests.Action.Scenario
         private void Assert_Equipments(IEnumerable<Guid> equipments)
         {
             var equipmentId = Assert.Single(equipments);
-            Assert.Equal(_charm.ItemId, equipmentId);
+            Assert.Equal(_grimoire.ItemId, equipmentId);
         }
 
         private ItemSlotState Assert_ItemSlot(IWorld state, Address itemSlotStateAddress)
