@@ -190,7 +190,6 @@ namespace Nekoyume.Action.AdventureBoss
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
             // Get data for simulator
-            var startFloor = explorer.Floor + 1;
             var runeStates = states.GetRuneState(AvatarAddress, out var migrateRequired);
             // Passive migrate runeStates
             if (migrateRequired)
@@ -259,7 +258,7 @@ namespace Nekoyume.Action.AdventureBoss
                     floorId: fl,
                     random,
                     avatarState,
-                    fl == startFloor ? Foods : new List<Guid>(),
+                    fl == firstFloor ? Foods : new List<Guid>(),
                     runeStates,
                     runeSlotState,
                     floorRow,
