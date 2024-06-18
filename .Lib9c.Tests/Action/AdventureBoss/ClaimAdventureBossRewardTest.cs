@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Action;
     using Nekoyume.Action.AdventureBoss;
     using Nekoyume.Data;
+    using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
@@ -193,6 +194,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                0 * NCG, // Only one explorer and gets all rewards. Nothing left.
             };
 
             yield return new object[]
@@ -217,6 +219,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                // 7.5NCG for half of 15% contribution, 5NCG for 5% raffle
+                FungibleAssetValue.FromRawValue(NCG, 1250),
             };
 
             yield return new object[]
@@ -237,6 +241,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                25 * NCG, // 15NCG for half of distribution, 10NCG for 5% raffle
             };
 
             yield return new object[]
@@ -257,6 +262,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                15 * NCG, // 10NCG for 2/3 of 15% distribution, 5NCG for raffle
             };
         }
 
@@ -519,7 +525,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             int seed,
             int bounty,
             int anotherExplorerCount,
-            AdventureBossGameData.ClaimableReward expectedReward
+            AdventureBossGameData.ClaimableReward expectedReward,
+            FungibleAssetValue expectedRemainingNcg
         )
         {
             // Settings
@@ -624,8 +631,35 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Assert.Equal(TesterAvatarState.name, exploreBoard.RaffleWinnerName);
             }
 
+            var seasonBountyBoardAddress =
+                Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(1));
             Assert.Equal((int)(bounty * 0.05) * NCG, exploreBoard.RaffleReward);
+            Assert.Equal(
+                expectedRemainingNcg,
+                resultState.GetBalance(seasonBountyBoardAddress, NCG)
+            );
             Assert.True(resultState.GetExplorer(1, TesterAvatarAddress).Claimed);
+
+            if (anotherExplorerCount > 0)
+            {
+                // Claim another rewards
+                resultState = new ClaimAdventureBossReward
+                {
+                    Season = 1,
+                    AvatarAddress = ExplorerAvatarAddress,
+                }.Execute(new ActionContext
+                {
+                    PreviousState = resultState,
+                    Signer = ExplorerAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex + 1,
+                    RandomSeed = seed,
+                });
+
+                Assert.Equal(
+                    0 * NCG,
+                    resultState.GetBalance(seasonBountyBoardAddress, NCG)
+                );
+            }
 
             Test(resultState, expectedReward);
         }
