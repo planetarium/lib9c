@@ -560,6 +560,12 @@ namespace Nekoyume.Model.State
                     AdventureBossNcgRuneRatio.Serialize());
             }
 
+            if (AdventureBossNcgApRatio > 0)
+            {
+                values.Add((Text)"adventure_boss_ncg_ap_ratio",
+                    AdventureBossNcgApRatio.Serialize());
+            }
+
             if (AdventureBossActiveInterval > 0)
             {
                 values.Add((Text)"adventure_boss_active_interval",
@@ -753,6 +759,9 @@ namespace Nekoyume.Model.State
                     break;
                 case "adventure_boss_ncg_rune_ratio":
                     AdventureBossNcgRuneRatio = TableExtensions.ParseDecimal(row.Value);
+                    break;
+                case "adventure_boss_ncg_ap_ratio":
+                    AdventureBossNcgApRatio = TableExtensions.ParseDecimal(row.Value);
                     break;
                 case "adventure_boss_active_interval":
                     AdventureBossActiveInterval = TableExtensions.ParseLong(row.Value);
