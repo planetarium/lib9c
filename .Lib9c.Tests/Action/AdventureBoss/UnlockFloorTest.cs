@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Dictionary<string, string> Sheets =
             TableSheetsImporter.ImportSheets();
 
-        private static readonly TableSheets TableSheets = new TableSheets(Sheets);
+        private static readonly TableSheets TableSheets = new (Sheets);
 #pragma warning disable CS0618
         // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1419
         private static readonly Currency NCG = Currency.Legacy("NCG", 2, null);
@@ -66,6 +66,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         private readonly IWorld _initialState = new World(MockUtil.MockModernWorldState)
             .SetLegacyState(Addresses.GoldCurrency, new GoldCurrencyState(NCG).Serialize())
+            .SetLegacyState(
+                GameConfigState.Address,
+                new GameConfigState(Sheets["GameConfigSheet"]).Serialize()
+            )
             .SetAvatarState(WantedAvatarAddress, WantedAvatarState)
             .SetAgentState(WantedAddress, WantedState)
             .SetAvatarState(TesterAvatarAddress, TesterAvatarState)
@@ -141,6 +145,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Signer = TesterAddress,
                 BlockIndex = 1L,
             });
+
             // Make all floors cleared
             var explorer = state.GetExplorer(1, TesterAvatarAddress);
             explorer.MaxFloor = startFloor;
@@ -183,7 +188,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     Assert.Null(inventory.Items.FirstOrDefault(i => i.item.Id == 600202));
                 }
 
-                Assert.Equal(expectedFloor, resultState.GetExplorer(1, TesterAvatarAddress).MaxFloor);
+                Assert.Equal(
+                    expectedFloor,
+                    resultState.GetExplorer(1, TesterAvatarAddress).MaxFloor
+                );
             }
         }
 

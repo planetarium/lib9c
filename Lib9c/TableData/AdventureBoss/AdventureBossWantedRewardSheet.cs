@@ -15,33 +15,32 @@ namespace Nekoyume.TableData.AdventureBoss
 
             public int Id;
             public int AdventureBossId;
-            public List<RewardData> FixedRewards;
+            public RewardData FixedReward;
             public List<RewardData> RandomRewards;
 
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = TryParseInt(fields[0], out var id) ? id : 0;
                 AdventureBossId = TryParseInt(fields[1], out var bossId) ? bossId : 0;
-                FixedRewards = new List<RewardData>();
-                for (var i = 0; i < 2; i++)
-                {
-                    var offset = 3 * i;
-                    FixedRewards.Add(new RewardData(
-                        fields[2 + offset],
-                        TryParseInt(fields[3 + offset], out var itemId) ? itemId : 0,
-                        TryParseInt(fields[4 + offset], out var ratio) ? ratio : 0
-                    ));
-                }
+                FixedReward = new RewardData(
+                    fields[2],
+                    TryParseInt(fields[3], out var fixedId) ? fixedId : 0,
+                    0 // Fixed reward does not have candidates.
+                );
 
                 RandomRewards = new List<RewardData>();
-                for (var i = 0; i < 2; i++)
+                var offset = 0;
+                while (fields.Count >= 6 + offset)
                 {
-                    var offset = 3 * i;
-                    RandomRewards.Add(new RewardData(
-                        fields[8 + offset],
-                        TryParseInt(fields[9 + offset], out var itemId) ? itemId : 0,
-                        TryParseInt(fields[10 + offset], out var ratio) ? ratio : 0
-                    ));
+                    var itemType = fields[4 + offset];
+                    var itemId = TryParseInt(fields[5 + offset], out var iid) ? iid : 0;
+                    var ratio = TryParseInt(fields[6 + offset], out var rt) ? rt : 0;
+                    if (itemType != "" && itemId != 0 && ratio != 0)
+                    {
+                        RandomRewards.Add(new RewardData(itemType, itemId, ratio));
+                    }
+
+                    offset += 3;
                 }
             }
         }

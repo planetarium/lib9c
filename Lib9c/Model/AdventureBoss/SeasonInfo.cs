@@ -1,16 +1,10 @@
-using System.Collections.Generic;
 using Bencodex.Types;
-using Libplanet.Crypto;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.AdventureBoss
 {
     public class SeasonInfo
     {
-        // FIXME: Interval must be changed before release
-        public const long BossActiveBlockInterval = 10_000L;
-        public const long BossInactiveBlockInterval = 10_000L;
-
         public readonly long Season;
         public readonly long StartBlockIndex;
         public readonly long EndBlockIndex;
@@ -18,12 +12,12 @@ namespace Nekoyume.Model.AdventureBoss
 
         public int BossId;
 
-        public SeasonInfo(long season, long startBlockIndex, long? endBlockIndex = null, long? nextStartBlockIndex = null)
+        public SeasonInfo(long season, long startBlockIndex, long activeInterval, long inactiveInterval, long? endBlockIndex = null, long? nextStartBlockIndex = null)
         {
             Season = season;
             StartBlockIndex = startBlockIndex;
-            EndBlockIndex = endBlockIndex ?? StartBlockIndex + BossActiveBlockInterval;
-            NextStartBlockIndex = nextStartBlockIndex ?? EndBlockIndex + BossInactiveBlockInterval;
+            EndBlockIndex = endBlockIndex ?? StartBlockIndex + activeInterval;
+            NextStartBlockIndex = nextStartBlockIndex ?? EndBlockIndex + inactiveInterval;
         }
 
         public SeasonInfo(List serialized)

@@ -5,9 +5,6 @@ namespace Nekoyume.Data
 {
     public static class AdventureBossGameData
     {
-        public const decimal NcgRuneRatio = 2.5m;
-
-
         public struct ClaimableReward
         {
             public FungibleAssetValue? NcgReward;

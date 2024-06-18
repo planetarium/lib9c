@@ -236,13 +236,14 @@ namespace Nekoyume.Action.AdventureBoss
             for (var fl = explorer.Floor + 1; fl < explorer.MaxFloor + 1; fl++)
             {
                 // Get Data for simulator
-                if (!floorSheet.TryGetValue(fl, out var floorRow))
+                var floorRow = floorRows.First(row => row.Floor == fl);
+                if (!floorSheet.TryGetValue(fl, out var flRow))
                 {
                     throw new SheetRowNotFoundException(addressesHex, nameof(floorSheet), fl);
                 }
 
                 var rewards =
-                    AdventureBossSimulator.GetWaveRewards(random, floorRow, materialItemSheet);
+                    AdventureBossSimulator.GetWaveRewards(random, flRow, materialItemSheet);
 
                 // Use AP Potion
                 if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
@@ -281,7 +282,7 @@ namespace Nekoyume.Action.AdventureBoss
                 if (simulator.Log.IsClear)
                 {
                     // Add point, reward
-                    var pointRow = pointSheet[fl];
+                    var pointRow = pointSheet[floorRow.Id];
                     var point = random.Next(pointRow.MinPoint, pointRow.MaxPoint + 1);
 
                     explorer.Floor = fl;
@@ -289,8 +290,7 @@ namespace Nekoyume.Action.AdventureBoss
 
                     exploreBoard.TotalPoint += point;
 
-                    var stageId = floorRows.First(row => row.Floor == fl).Id;
-                    var firstReward = firstRewardSheet[stageId];
+                    var firstReward = firstRewardSheet[floorRow.Id];
                     foreach (var reward in firstReward.Rewards)
                     {
                         rewardList.Add(new AdventureBossSheet.RewardAmountData(
@@ -299,8 +299,7 @@ namespace Nekoyume.Action.AdventureBoss
                     }
 
                     selector.Clear();
-                    var floorReward = floorRows.First(row => row.Floor == fl);
-                    foreach (var reward in floorReward.Rewards)
+                    foreach (var reward in floorRow.Rewards)
                     {
                         selector.Add(reward, reward.Ratio);
                     }

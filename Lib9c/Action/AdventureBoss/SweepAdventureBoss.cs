@@ -189,13 +189,13 @@ namespace Nekoyume.Action.AdventureBoss
             var floorSheet = states.GetSheet<AdventureBossFloorSheet>();
             for (var fl = 1; fl <= explorer.Floor; fl++)
             {
-                var pointRow = floorPointSheet[fl];
+                var floorRow = floorSheet.Values.Where(row => row.AdventureBossId == bossId)
+                    .First(row => row.Floor == fl);
+                var pointRow = floorPointSheet[floorRow.Id];
                 point += random.Next(pointRow.MinPoint, pointRow.MaxPoint + 1);
 
                 selector.Clear();
-                var floorReward = floorSheet.Values.Where(row => row.AdventureBossId == bossId)
-                    .First(row => row.Floor == fl);
-                foreach (var reward in floorReward.Rewards)
+                foreach (var reward in floorRow.Rewards)
                 {
                     selector.Add(reward, reward.Ratio);
                 }
