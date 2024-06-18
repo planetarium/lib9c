@@ -115,6 +115,11 @@ namespace Nekoyume.Action.AdventureBoss
                 : new Explorer(AvatarAddress, avatarState.name);
             exploreBoard.AddExplorer(AvatarAddress, avatarState.name);
 
+            if (explorer.Floor == explorer.MaxFloor)
+            {
+                throw new InvalidOperationException("Reached to locked floor. Unlock floor first.");
+            }
+
             if (explorer.Floor == UnlockFloor.TotalFloor)
             {
                 throw new InvalidOperationException("Already cleared all floors");
