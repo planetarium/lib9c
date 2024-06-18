@@ -245,7 +245,8 @@ namespace Nekoyume.Module
             ImmutableHashSet.Create<Currency>(
                 GetGoldCurrency(worldState),
                 Asset.ConsensusToken,
-                Asset.Share);
+                Asset.Share,
+                Currencies.Mead);
 
         public static WeeklyArenaState GetWeeklyArenaState(this IWorldState worldState, Address address)
         {
