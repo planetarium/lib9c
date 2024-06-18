@@ -58,7 +58,8 @@ namespace Nekoyume.Model.State
         #region AdventureBoss
 
         public int AdventureBossWantedRequiredStakingLevel { get; private set; }
-        public decimal AdventureBossNcgRuneRatio { get; private set; }
+        public decimal AdventureBossNcgRuneRatio { get; private set; } // X NCG for 1 rune
+        public decimal AdventureBossNcgApRatio { get; private set; } // X NCG for 1 AP potion
         public long AdventureBossActiveInterval { get; private set; }
         public long AdventureBossInactiveInterval { get; private set; }
         public long AdventureBossClaimInterval { get; private set; }
@@ -276,6 +277,11 @@ namespace Nekoyume.Model.State
             if (serialized.TryGetValue((Text)"adventure_boss_ncg_rune_ratio", out var advNRR))
             {
                 AdventureBossNcgRuneRatio = advNRR.ToDecimal();
+            }
+
+            if (serialized.TryGetValue((Text)"adventure_boss_ncg_ap_ratio", out var advNAR))
+            {
+                AdventureBossNcgApRatio = advNAR.ToDecimal();
             }
 
             if (serialized.TryGetValue((Text)"adventure_boss_active_interval",
