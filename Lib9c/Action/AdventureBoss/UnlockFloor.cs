@@ -18,6 +18,7 @@ namespace Nekoyume.Action.AdventureBoss
     public class UnlockFloor : ActionBase
     {
         public const string TypeIdentifier = "unlock_floor";
+        public const int OpeningFloor = 5;
         public const int TotalFloor = 20;
         public const int GoldenDustId = 600201;
 
@@ -160,7 +161,7 @@ namespace Nekoyume.Action.AdventureBoss
                 states = states.SetInventory(AvatarAddress, inventory);
             }
 
-            explorer.MaxFloor += 5;
+            explorer.MaxFloor += OpeningFloor;
 
             return states
                 .SetExploreBoard(Season, exploreBoard)
