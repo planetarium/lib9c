@@ -67,14 +67,20 @@ namespace Lib9c.Tests.Helper
             bountyBoard.AddOrUpdate(_avatarAddress, _name, 100 * NCG);
 
             var exploreBoard = new ExploreBoard(1);
+            var explorerList = new ExplorerList(1);
             var explorer = new Explorer(_avatarAddress, _name);
-            exploreBoard.ExplorerList.Add((_avatarAddress, _name));
+            explorerList.Explorers.Add((_avatarAddress, _name));
             exploreBoard.FixedRewardFavId = 20001;
             exploreBoard.UsedApPotion = 100;
 
             explorer.UsedApPotion = 100;
 
-            AdventureBossHelper.PickExploreRaffle(bountyBoard, exploreBoard, new TestRandom());
+            AdventureBossHelper.PickExploreRaffle(
+                bountyBoard,
+                exploreBoard,
+                explorerList,
+                new TestRandom()
+            );
 
             if (!winner)
             {

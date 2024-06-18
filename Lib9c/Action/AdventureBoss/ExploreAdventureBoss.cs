@@ -109,10 +109,19 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             var exploreBoard = states.GetExploreBoard(Season);
-            var explorer = states.TryGetExplorer(Season, AvatarAddress, out var exp)
-                ? exp
-                : new Explorer(AvatarAddress, avatarState.name);
-            exploreBoard.AddExplorer(AvatarAddress, avatarState.name);
+            Explorer explorer;
+            if (states.TryGetExplorer(Season, AvatarAddress, out var exp))
+            {
+                explorer = exp;
+            }
+            else
+            {
+                explorer = new Explorer(AvatarAddress, avatarState.name);
+                var explorerList = states.GetExplorerList(Season);
+                explorerList.AddExplorer(AvatarAddress, avatarState.name);
+                exploreBoard.ExplorerCount = explorerList.Explorers.Count;
+                states = states.SetExplorerList(Season, explorerList);
+            }
 
             if (explorer.Floor == UnlockFloor.TotalFloor)
             {

@@ -53,6 +53,7 @@ namespace Nekoyume
         public static readonly Address AdventureBoss         = new Address("0000000000000000000000000000000000000100");
         public static readonly Address BountyBoard           = new Address("0000000000000000000000000000000000000101");
         public static readonly Address ExploreBoard          = new Address("0000000000000000000000000000000000000102");
+        public static readonly Address ExplorerList          = new Address("0000000000000000000000000000000000000103");
 
         public static Address GetSheetAddress<T>() where T : ISheet => GetSheetAddress(typeof(T).Name);
 
