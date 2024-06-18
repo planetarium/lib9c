@@ -122,6 +122,7 @@ namespace Nekoyume.Action.AdventureBoss
                     gameConfig.AdventureBossInactiveInterval);
                 bountyBoard = new BountyBoard(Season);
                 var exploreBoard = new ExploreBoard(Season);
+                var explorerList = new ExplorerList(Season);
 
                 // Set season info: boss and reward
                 var random = context.GetRandom();
@@ -139,10 +140,11 @@ namespace Nekoyume.Action.AdventureBoss
                     .OrderedList.First(row => row.AdventureBossId == boss.Id);
                 exploreBoard.SetReward(contribReward, random);
 
-                states = states.SetSeasonInfo(seasonInfo);
-                states = states.SetLatestAdventureBossSeason(seasonInfo);
-                states = states.SetBountyBoard(Season, bountyBoard);
-                states = states.SetExploreBoard(Season, exploreBoard);
+                states = states.SetSeasonInfo(seasonInfo)
+                    .SetLatestAdventureBossSeason(seasonInfo)
+                    .SetBountyBoard(Season, bountyBoard)
+                    .SetExploreBoard(Season, exploreBoard)
+                    .SetExplorerList(Season, explorerList);
             }
 
             // Just update bounty board
