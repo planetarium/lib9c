@@ -29,8 +29,6 @@ namespace Nekoyume.Action.AdventureBoss
     {
         public const string TypeIdentifier = "sweep_adventure_boss";
 
-        public const int UnitApPotion = 2;
-
         public int Season;
         public Address AvatarAddress;
         public List<Guid> Costumes;
@@ -98,7 +96,9 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             // Use AP Potions
-            var requiredPotion = explorer.Floor * UnitApPotion;
+            var unitSweepAp = states.GetSheet<AdventureBossSheet>().OrderedList
+                .First(row => row.BossId == latestSeason.BossId).SweepAp;
+            var requiredPotion = explorer.Floor * unitSweepAp;
             var sheets = states.GetSheets(
                 containSimulatorSheets: true,
                 sheetTypes: new[]

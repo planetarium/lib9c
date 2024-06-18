@@ -17,6 +17,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.AdventureBoss;
     using Xunit;
 
     public class SweepAdventureBossTest
@@ -68,7 +69,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         private readonly IWorld _initialState = new World(MockUtil.MockModernWorldState)
             .SetLegacyState(Addresses.GoldCurrency, new GoldCurrencyState(NCG).Serialize())
-            .SetLegacyState(GameConfigState.Address, new GameConfigState(Sheets["GameConfigSheet"]).Serialize())
+            .SetLegacyState(
+                GameConfigState.Address,
+                new GameConfigState(Sheets["GameConfigSheet"]).Serialize()
+            )
             .SetAvatarState(WantedAvatarAddress, WantedAvatarState)
             .SetAgentState(WantedAddress, WantedState)
             .SetAvatarState(TesterAvatarAddress, TesterAvatarState)
@@ -192,13 +196,16 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     Assert.Equal(expectedPotion, potion!.count);
                 }
 
+                var unitSweepAp = state.GetSheet<AdventureBossSheet>().OrderedList
+                    .First(row => row.BossId == state.GetLatestAdventureBossSeason().BossId)
+                    .SweepAp;
                 var exploreBoard = state.GetExploreBoard(1);
                 var explorer = state.GetExplorer(1, TesterAvatarAddress);
                 Assert.True(explorer.Score > 0);
                 Assert.True(exploreBoard.TotalPoint > 0);
                 Assert.Equal(explorer.Score, exploreBoard.TotalPoint);
                 Assert.Equal(floor, explorer.Floor);
-                Assert.Equal(floor * SweepAdventureBoss.UnitApPotion, exploreBoard.UsedApPotion);
+                Assert.Equal(floor * unitSweepAp, exploreBoard.UsedApPotion);
                 Assert.Equal(explorer.UsedApPotion, exploreBoard.UsedApPotion);
 
                 inventory = state.GetInventoryV2(TesterAvatarAddress);

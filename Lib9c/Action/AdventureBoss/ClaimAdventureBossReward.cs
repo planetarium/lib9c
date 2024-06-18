@@ -22,7 +22,6 @@ namespace Nekoyume.Action.AdventureBoss
     public class ClaimAdventureBossReward : ActionBase
     {
         public const string TypeIdentifier = "claim_adventure_boss_reward";
-        public const long ClaimableDuration = 100_000L;
 
         public long Season;
         public Address AvatarAddress;
@@ -47,6 +46,7 @@ namespace Nekoyume.Action.AdventureBoss
             var states = context.PreviousState;
 
             // Validation
+            var gameConfig = states.GetGameConfigState();
             var latestSeason = states.GetLatestAdventureBossSeason();
             if (Season > latestSeason.Season)
             {
@@ -62,10 +62,11 @@ namespace Nekoyume.Action.AdventureBoss
                 );
             }
 
-            if (seasonInfo.EndBlockIndex + ClaimableDuration < context.BlockIndex)
+            if (seasonInfo.EndBlockIndex + gameConfig.AdventureBossClaimInterval <
+                context.BlockIndex)
             {
                 throw new ClaimExpiredException(
-                    $"Claim expired at block {seasonInfo.EndBlockIndex + ClaimableDuration}: current block index is {context.BlockIndex}"
+                    $"Claim expired at block {seasonInfo.EndBlockIndex + gameConfig.AdventureBossClaimInterval}: current block index is {context.BlockIndex}"
                 );
             }
 
@@ -90,12 +91,14 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Collect wanted reward
             states = AdventureBossHelper.CollectWantedReward(
-                states, context, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
+                states, context, myReward, currentBlockIndex, Season, AvatarAddress,
+                gameConfig.AdventureBossClaimInterval, out myReward
             );
 
             // Collect explore reward
             states = AdventureBossHelper.CollectExploreReward(
-                states, context, myReward, currentBlockIndex, Season, AvatarAddress, out myReward
+                states, context, myReward, currentBlockIndex, Season, AvatarAddress,
+                gameConfig.AdventureBossClaimInterval, out myReward
             );
 
             // Give rewards
