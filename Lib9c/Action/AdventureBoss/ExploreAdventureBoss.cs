@@ -9,6 +9,8 @@ using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Battle;
 using Nekoyume.Battle.AdventureBoss;
+using Nekoyume.Data;
+using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.AdventureBoss;
@@ -102,11 +104,10 @@ namespace Nekoyume.Action.AdventureBoss
                 );
             }
 
-            var avatarState = states.GetAvatarState(AvatarAddress, getQuestList: false,
-                getWorldInformation: false);
-            if (avatarState.agentAddress != context.Signer)
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
-                throw new InvalidAddressException();
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
             var exploreBoard = states.GetExploreBoard(Season);

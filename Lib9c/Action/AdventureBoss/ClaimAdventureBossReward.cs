@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Data;
+using Nekoyume.Exceptions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
@@ -47,6 +48,18 @@ namespace Nekoyume.Action.AdventureBoss
             var states = context.PreviousState;
 
             // Validation
+            var addresses = GetSignerAndOtherAddressesHex(context, AvatarAddress);
+            // NOTE: The `AvatarAddress` must contained in `Signer`'s `AgentState.avatarAddresses`.
+            if (!Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress))
+            {
+                throw new InvalidActionFieldException(
+                    TypeIdentifier,
+                    addresses,
+                    nameof(AvatarAddress),
+                    $"Signer({context.Signer}) is not contained in" +
+                    $" AvatarAddress({AvatarAddress}).");
+            }
+
             var latestSeason = states.GetLatestAdventureBossSeason();
             if (Season > latestSeason.Season)
             {
