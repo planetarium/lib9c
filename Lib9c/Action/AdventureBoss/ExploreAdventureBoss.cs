@@ -223,7 +223,7 @@ namespace Nekoyume.Action.AdventureBoss
             var bossId = states.GetSheet<AdventureBossSheet>().Values
                 .First(row => row.BossId == latestSeason.BossId).Id;
             var floorRows = states.GetSheet<AdventureBossFloorSheet>().Values
-                .Where(row => row.AdventureBossId == bossId);
+                .Where(row => row.AdventureBossId == bossId).ToList();
             var firstRewardSheet = states.GetSheet<AdventureBossFloorFirstRewardSheet>();
             var pointSheet = states.GetSheet<AdventureBossFloorPointSheet>();
 
