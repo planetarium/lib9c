@@ -167,7 +167,6 @@ namespace Nekoyume.Action.AdventureBoss
             itemSlotState.UpdateCostumes(Costumes);
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
-            exploreBoard.AddExplorer(AvatarAddress, avatarState.name);
             exploreBoard.UsedApPotion += requiredPotion;
             explorer.UsedApPotion += requiredPotion;
 

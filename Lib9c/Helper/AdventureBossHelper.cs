@@ -102,14 +102,14 @@ namespace Nekoyume.Helper
         }
 
         public static ExploreBoard PickExploreRaffle(BountyBoard bountyBoard,
-            ExploreBoard exploreBoard, IRandom random)
+            ExploreBoard exploreBoard, ExplorerList explorerList, IRandom random)
         {
             exploreBoard.RaffleReward = CalculateRaffleReward(bountyBoard);
 
-            if (exploreBoard.ExplorerList.Count > 0)
+            if (explorerList.Explorers.Count > 0)
             {
-                var winner = exploreBoard.ExplorerList.ToImmutableSortedSet()[
-                    random.Next(exploreBoard.ExplorerList.Count)
+                var winner = explorerList.Explorers.ToImmutableSortedSet()[
+                    random.Next(explorerList.Explorers.Count)
                 ];
                 exploreBoard.RaffleWinner = winner.Item1;
                 exploreBoard.RaffleWinnerName = winner.Item2;
@@ -131,9 +131,10 @@ namespace Nekoyume.Helper
                 // Explore raffle
                 var bountyBoard = states.GetBountyBoard(szn);
                 var exploreBoard = states.GetExploreBoard(szn);
+                var explorerList = states.GetExplorerList(szn);
                 if (exploreBoard.RaffleWinner is null)
                 {
-                    exploreBoard = PickExploreRaffle(bountyBoard, exploreBoard, random);
+                    exploreBoard = PickExploreRaffle(bountyBoard, exploreBoard, explorerList, random);
                     states = states.SetExploreBoard(szn, exploreBoard);
                 }
             }
@@ -388,9 +389,10 @@ namespace Nekoyume.Helper
                 }
 
                 var exploreBoard = states.GetExploreBoard(szn);
+                var explorerList = states.GetExplorerList(szn);
 
                 // Not explored
-                if (!exploreBoard.ExplorerList.OrderBy(e => e.Item1)
+                if (!explorerList.Explorers.OrderBy(e => e.Item1)
                         .Select(e => e.Item1)
                         .Contains(avatarAddress)
                    )
