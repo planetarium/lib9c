@@ -39,6 +39,7 @@ character_consumable_slot_4,200
 character_consumable_slot_5,350
 shatter_strike_max_damage,1000000
 adventure_boss_wanted_required_staking_level,3
+adventure_boss_min_bounty,100
 adventure_boss_ncg_rune_ratio,2.5
 adventure_boss_ncg_ap_ratio,1.0
 adventure_boss_active_interval,10000

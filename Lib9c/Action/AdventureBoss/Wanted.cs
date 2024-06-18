@@ -20,7 +20,6 @@ namespace Nekoyume.Action.AdventureBoss
     public class Wanted : ActionBase
     {
         public const string TypeIdentifier = "wanted";
-        public const int MinBounty = 100;
 
         public int Season;
         public FungibleAssetValue Bounty;
@@ -47,7 +46,7 @@ namespace Nekoyume.Action.AdventureBoss
             context.UseGas(1);
             var states = context.PreviousState;
             var currency = states.GetGoldCurrency();
-
+            var gameConfig = states.GetGameConfigState();
             var latestSeason = states.GetLatestAdventureBossSeason();
 
             // Validation
@@ -56,10 +55,10 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidCurrencyException("");
             }
 
-            if (Bounty < MinBounty * currency)
+            if (Bounty < gameConfig.AdventureBossMinBounty * currency)
             {
                 throw new InvalidBountyException(
-                    $"Given bounty {Bounty.MajorUnit}.{Bounty.MinorUnit} is less than {MinBounty}");
+                    $"Given bounty {Bounty.MajorUnit}.{Bounty.MinorUnit} is less than {gameConfig.AdventureBossMinBounty}");
             }
 
             var balance = states.GetBalance(context.Signer, currency);
@@ -116,7 +115,6 @@ namespace Nekoyume.Action.AdventureBoss
             if (latestSeason.Season == 0 ||
                 latestSeason.NextStartBlockIndex <= context.BlockIndex)
             {
-                var gameConfig = states.GetGameConfigState();
                 var seasonInfo = new SeasonInfo(Season, context.BlockIndex,
                     gameConfig.AdventureBossActiveInterval,
                     gameConfig.AdventureBossInactiveInterval);
