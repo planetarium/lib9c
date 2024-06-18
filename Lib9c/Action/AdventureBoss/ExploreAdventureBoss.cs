@@ -30,7 +30,6 @@ namespace Nekoyume.Action.AdventureBoss
     public class ExploreAdventureBoss : GameAction
     {
         public const string TypeIdentifier = "explore_adventure_boss";
-        public const int UnitApPotion = 1;
 
         public int Season;
         public Address AvatarAddress;
@@ -124,6 +123,7 @@ namespace Nekoyume.Action.AdventureBoss
                 containSimulatorSheets: true,
                 sheetTypes: new[]
                 {
+                    typeof(AdventureBossSheet),
                     typeof(AdventureBossFloorSheet),
                     typeof(AdventureBossFloorWaveSheet),
                     typeof(CollectionSheet),
@@ -233,6 +233,8 @@ namespace Nekoyume.Action.AdventureBoss
             var lastFloor = firstFloor;
 
             // Claim floors from last failed
+            var exploreAp = sheets.GetSheet<AdventureBossSheet>().OrderedList
+                .First(row => row.BossId == latestSeason.BossId).ExploreAp;
             for (var fl = explorer.Floor + 1; fl < explorer.MaxFloor + 1; fl++)
             {
                 // Get Data for simulator
@@ -247,13 +249,13 @@ namespace Nekoyume.Action.AdventureBoss
 
                 // Use AP Potion
                 if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
-                        UnitApPotion))
+                        exploreAp))
                 {
                     break;
                 }
 
-                exploreBoard.UsedApPotion += UnitApPotion;
-                explorer.UsedApPotion += UnitApPotion;
+                exploreBoard.UsedApPotion += exploreAp;
+                explorer.UsedApPotion += exploreAp;
 
                 simulator = new AdventureBossSimulator(
                     bossId: latestSeason.BossId,

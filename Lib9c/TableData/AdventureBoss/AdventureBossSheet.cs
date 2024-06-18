@@ -41,15 +41,18 @@ namespace Nekoyume.TableData.AdventureBoss
         public class Row : SheetRow<int>
         {
             public override int Key => Id;
+            public int Id { get; private set; }
+            public int BossId { get; private set; }
+            public int ExploreAp { get; private set; }
+            public int SweepAp { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = TryParseInt(fields[0], out var id) ? id : 0;
                 BossId = TryParseInt(fields[1], out var bossId) ? bossId : 0;
+                ExploreAp = TryParseInt(fields[2], out var exploreAp) ? exploreAp : 0;
+                SweepAp = TryParseInt(fields[3], out var sweepAp) ? sweepAp : 0;
             }
-
-            public int Id { get; private set; }
-            public int BossId { get; private set; }
         }
 
         public AdventureBossSheet() : base(nameof(AdventureBossSheet))
