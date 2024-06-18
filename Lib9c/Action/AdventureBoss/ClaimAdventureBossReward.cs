@@ -85,12 +85,12 @@ namespace Nekoyume.Action.AdventureBoss
             // Pick raffle winner if not exists
             states = AdventureBossHelper.PickRaffleWinner(states, context, Season);
 
-            // Send 75% NCG to operational account. 25% are for rewards.
+            // Send 80% NCG to operational account. 20% are for rewards.
             var bountyBoard = states.GetBountyBoard(Season);
             states = states.TransferAsset(context,
                 Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(Season)),
                 // FIXME: Set operational account address
-                new Address(), (bountyBoard.totalBounty() * 75).DivRem(100, out _)
+                new Address(), (bountyBoard.totalBounty() * 80).DivRem(100, out _)
             );
 
             var currentBlockIndex = context.BlockIndex;
