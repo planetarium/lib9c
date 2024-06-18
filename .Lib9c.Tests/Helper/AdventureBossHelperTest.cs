@@ -19,9 +19,8 @@ namespace Lib9c.Tests.Helper
 
         [Theory]
         // Raffle reward is always 0 when isReal == false
-        [InlineData(false, 0)]
-        [InlineData(true, 0)]
-        public void CalculateWantedReward(bool isReal, int expectedReward)
+        [InlineData(0)]
+        public void CalculateWantedReward(int expectedReward)
         {
             var ncgRuneRatio =
                 TableExtensions.ParseDecimal(_tableSheets
@@ -44,7 +43,6 @@ namespace Lib9c.Tests.Helper
                 _avatarAddress,
                 _tableSheets.AdventureBossNcgRewardRatioSheet,
                 ncgRuneRatio,
-                isReal,
                 out var ncgReward
             );
 

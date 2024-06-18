@@ -143,13 +143,13 @@ namespace Nekoyume.Helper
 
         /// <summary>
         /// Calculate reward for adventure boss operators.
-        /// This only calculates reward for given avatar, not actually give rewards.
+        /// This method only calculates reward for given avatar, not actually give rewards.
         /// </summary>
         /// <param name="reward">Claimable reward for this avatar so far.</param>
         /// <param name="bountyBoard">Bounty board for this season. All the reward amount is based on totalBounty on this board.</param>
         /// <param name="avatarAddress">Target avatar address to calculate reward.</param>
-        /// <param name="isReal">Flag to calculate reward for real give or expectation.
-        /// The raffle winner is not picked till the season over, so you could get 0 with this value set to `true`.</param>
+        /// <param name="sheet">NCG to reward exchange ratio sheet. Calculate total reward amount based on this sheet.</param>
+        /// <param name="ncgRuneRatio">If a reward is rune, use this fixed ratio, not in sheet.</param>
         /// <param name="ncgReward">out value: calculated NCG reward in this function.
         /// We must handle NCG reward separately because NCG reward must be transferred from each season's bounty address.</param>
         /// <returns>Updated Claimable reward after calculation.</returns>
@@ -157,7 +157,7 @@ namespace Nekoyume.Helper
             AdventureBossGameData.ClaimableReward reward, BountyBoard bountyBoard,
             Address avatarAddress, AdventureBossNcgRewardRatioSheet sheet,
             decimal ncgRuneRatio,
-            bool isReal, out FungibleAssetValue ncgReward
+            out FungibleAssetValue ncgReward
         )
         {
             // Initialize ncgReward from bounty because its from bounty.
@@ -268,7 +268,6 @@ namespace Nekoyume.Helper
                 reward = CalculateWantedReward(reward, bountyBoard, avatarAddress,
                     states.GetSheet<AdventureBossNcgRewardRatioSheet>(),
                     states.GetGameConfigState().AdventureBossNcgRuneRatio,
-                    isReal: true,
                     out var ncgReward
                 );
 
