@@ -70,7 +70,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         private readonly IWorld _initialState = new World(MockUtil.MockModernWorldState)
             .SetLegacyState(Addresses.GoldCurrency, new GoldCurrencyState(NCG).Serialize())
-            .SetLegacyState(GameConfigState.Address, new GameConfigState(Sheets["GameConfigSheet"]).Serialize())
+            .SetLegacyState(
+                GameConfigState.Address,
+                new GameConfigState(Sheets["GameConfigSheet"]).Serialize()
+            )
             .SetAvatarState(WantedAvatarAddress, WantedAvatarState)
             .SetAgentState(WantedAddress, WantedState)
             .SetAvatarState(TesterAvatarAddress, TesterAvatarState)
@@ -194,7 +197,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 Season = 1,
                 AvatarAddress = WantedAvatarAddress,
-                Bounty = Wanted.MinBounty * NCG,
+                Bounty = gameConfigState.AdventureBossMinBounty * NCG,
             }.Execute(new ActionContext
             {
                 PreviousState = state,

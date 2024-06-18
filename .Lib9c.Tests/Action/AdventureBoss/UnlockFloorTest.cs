@@ -121,7 +121,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 Season = 1,
                 AvatarAddress = WantedAvatarAddress,
-                Bounty = Wanted.MinBounty * NCG,
+                Bounty = gameConfigState.AdventureBossMinBounty * NCG,
             }.Execute(new ActionContext
             {
                 PreviousState = state,

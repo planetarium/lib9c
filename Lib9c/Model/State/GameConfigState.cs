@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.TableData;
@@ -58,6 +59,7 @@ namespace Nekoyume.Model.State
         #region AdventureBoss
 
         public int AdventureBossWantedRequiredStakingLevel { get; private set; }
+        public BigInteger AdventureBossMinBounty { get; private set; }
         public decimal AdventureBossNcgRuneRatio { get; private set; } // X NCG for 1 rune
         public decimal AdventureBossNcgApRatio { get; private set; } // X NCG for 1 AP potion
         public long AdventureBossActiveInterval { get; private set; }
@@ -272,6 +274,11 @@ namespace Nekoyume.Model.State
                     out var advReqStaking))
             {
                 AdventureBossWantedRequiredStakingLevel = (Integer)advReqStaking;
+            }
+
+            if (serialized.TryGetValue((Text)"adventure_boss_min_bounty", out var minBounty))
+            {
+                AdventureBossMinBounty = (Integer)minBounty;
             }
 
             if (serialized.TryGetValue((Text)"adventure_boss_ncg_rune_ratio", out var advNRR))
@@ -554,6 +561,11 @@ namespace Nekoyume.Model.State
                     (Integer)AdventureBossWantedRequiredStakingLevel);
             }
 
+            if (AdventureBossMinBounty > 0)
+            {
+                values.Add((Text)"adventure_boss_min_bounty", (Integer)AdventureBossMinBounty);
+            }
+
             if (AdventureBossNcgRuneRatio > 0)
             {
                 values.Add((Text)"adventure_boss_ncg_rune_ratio",
@@ -756,6 +768,9 @@ namespace Nekoyume.Model.State
 
                 case "adventure_boss_wanted_required_staking_level":
                     AdventureBossWantedRequiredStakingLevel = TableExtensions.ParseInt(row.Value);
+                    break;
+                case "adventure_boss_min_bounty":
+                    AdventureBossMinBounty = TableExtensions.ParseInt(row.Value);
                     break;
                 case "adventure_boss_ncg_rune_ratio":
                     AdventureBossNcgRuneRatio = TableExtensions.ParseDecimal(row.Value);

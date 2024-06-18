@@ -60,7 +60,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
         };
 
         private readonly IWorld _initialState = new World(MockUtil.MockModernWorldState)
-            .SetLegacyState(GameConfigState.Address, new GameConfigState(Sheets["GameConfigSheet"]).Serialize())
+            .SetLegacyState(
+                GameConfigState.Address,
+                new GameConfigState(Sheets["GameConfigSheet"]).Serialize()
+            )
             .SetAvatarState(AvatarAddress, AvatarState)
             .SetAvatarState(AvatarAddress2, AvatarState2)
             .SetLegacyState(Addresses.GoldCurrency, GoldCurrencyState.Serialize())
@@ -72,13 +75,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             var state = Stake(_initialState);
             var startBalance = state.GetBalance(AgentAddress, NCG);
+            var minBounty = state.GetGameConfigState().AdventureBossMinBounty;
 
             // Create new season
             var action = new Wanted
             {
                 Season = 1,
                 AvatarAddress = AvatarAddress,
-                Bounty = Wanted.MinBounty * NCG,
+                Bounty = minBounty * NCG,
             };
             var nextState = action.Execute(new ActionContext
             {
@@ -101,18 +105,18 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             var investor = Assert.Single(bountyBoard.Investors);
             Assert.Equal(
-                startBalance - Wanted.MinBounty * NCG,
+                startBalance - minBounty * NCG,
                 nextState.GetBalance(AgentAddress, NCG)
             );
             Assert.Equal(
-                Wanted.MinBounty * NCG,
+                minBounty * NCG,
                 nextState.GetBalance(
                     Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(1)),
                     NCG)
             );
             Assert.NotNull(bountyBoard);
             Assert.Equal(AvatarAddress, investor.AvatarAddress);
-            Assert.Equal(Wanted.MinBounty * NCG, investor.Price);
+            Assert.Equal(minBounty * NCG, investor.Price);
             Assert.Equal(1, investor.Count);
 
             // Add new bounty
@@ -126,11 +130,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
             });
 
             Assert.Equal(
-                startBalance - Wanted.MinBounty * 2 * NCG,
+                startBalance - minBounty * 2 * NCG,
                 nextState.GetBalance(AgentAddress, NCG)
             );
             Assert.Equal(
-                Wanted.MinBounty * 2 * NCG,
+                minBounty * 2 * NCG,
                 nextState.GetBalance(
                     Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(1)),
                     NCG)
@@ -150,7 +154,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(30001, bountyBoard.RandomRewardFavId);
 
             investor = bountyBoard.Investors.First(i => i.AvatarAddress == AvatarAddress2);
-            Assert.Equal(Wanted.MinBounty * NCG, investor.Price);
+            Assert.Equal(minBounty * NCG, investor.Price);
             Assert.Equal(1, investor.Count);
 
             // Add additional bounty
@@ -163,11 +167,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
             });
 
             Assert.Equal(
-                startBalance - Wanted.MinBounty * 3 * NCG,
+                startBalance - minBounty * 3 * NCG,
                 nextState.GetBalance(AgentAddress, NCG)
             );
             Assert.Equal(
-                Wanted.MinBounty * 3 * NCG,
+                minBounty * 3 * NCG,
                 nextState.GetBalance(
                     Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(1)),
                     NCG)
@@ -176,7 +180,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.NotNull(bountyBoard);
             Assert.Equal(2, bountyBoard.Investors.Count);
             investor = bountyBoard.Investors.First(i => i.AvatarAddress == AvatarAddress);
-            Assert.Equal(Wanted.MinBounty * 2 * NCG, investor.Price);
+            Assert.Equal(minBounty * 2 * NCG, investor.Price);
             Assert.Equal(2, investor.Count);
         }
 
@@ -196,7 +200,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 Season = 1,
                 AvatarAddress = AvatarAddress,
-                Bounty = Wanted.MinBounty * NCG,
+                Bounty = gameConfig.AdventureBossMinBounty * NCG,
             };
             var nextState = action.Execute(new ActionContext
             {
@@ -251,7 +255,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 Season = 2,
                 AvatarAddress = AvatarAddress,
-                Bounty = Wanted.MinBounty * NCG,
+                Bounty = gameConfig.AdventureBossMinBounty * NCG,
             };
             Assert.Throws<InvalidAdventureBossSeasonException>(() => action.Execute(
                 new ActionContext
@@ -288,7 +292,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 Season = targetSeason,
                 AvatarAddress = AvatarAddress,
-                Bounty = Wanted.MinBounty * NCG,
+                Bounty = gameConfig.AdventureBossMinBounty * NCG,
             };
 
             Assert.Throws<InvalidAdventureBossSeasonException>(() =>
@@ -325,7 +329,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 Season = targetSeason,
                 AvatarAddress = AvatarAddress,
-                Bounty = Wanted.MinBounty * NCG,
+                Bounty = gameConfig.AdventureBossMinBounty * NCG,
             };
             Assert.Throws<InvalidAdventureBossSeasonException>(() =>
                 action.Execute(new ActionContext
@@ -357,7 +361,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 Season = 1,
                 AvatarAddress = AvatarAddress,
-                Bounty = Wanted.MinBounty * NCG,
+                Bounty = gameConfig.AdventureBossMinBounty * NCG,
             };
             Assert.Throws<InsufficientStakingException>(() => action.Execute(
                 new ActionContext
@@ -373,6 +377,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         public void InsufficientBalance()
         {
             var state = Stake(_initialState);
+            var minBounty = state.GetGameConfigState().AdventureBossMinBounty;
 
             // Burn all balance to test
             state = state.BurnAsset(
@@ -386,7 +391,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 Season = 1,
                 AvatarAddress = AvatarAddress,
-                Bounty = Wanted.MinBounty * NCG,
+                Bounty = minBounty * NCG,
             };
             Assert.Throws<InsufficientBalanceException>(() => action.Execute(
                 new ActionContext
@@ -398,11 +403,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
             ));
         }
 
-        [Theory]
-        [InlineData(Wanted.MinBounty - 1)]
-        public void InvalidBounty(int bounty)
+        [Fact]
+        public void InvalidBounty()
         {
             var state = Stake(_initialState);
+            var bounty = state.GetGameConfigState().AdventureBossMinBounty - 1;
             // Try to create new season
             var action = new Wanted
             {
@@ -432,7 +437,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 gameConfig.AdventureBossInactiveInterval
             );
             var prevBountyBoard = new BountyBoard(1);
-            prevBountyBoard.AddOrUpdate(AvatarAddress, AvatarState.name, Wanted.MinBounty * NCG);
+            prevBountyBoard.AddOrUpdate(
+                AvatarAddress,
+                AvatarState.name,
+                gameConfig.AdventureBossMinBounty * NCG
+            );
             state = state.SetSeasonInfo(prevSeason).SetBountyBoard(1, prevBountyBoard);
             state = state.SetLatestAdventureBossSeason(prevSeason);
 
@@ -440,7 +449,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 Season = 2,
                 AvatarAddress = AvatarAddress,
-                Bounty = Wanted.MinBounty * NCG,
+                Bounty = gameConfig.AdventureBossMinBounty * NCG,
             };
             Assert.Throws<PreviousBountyException>(() => action.Execute(
                 new ActionContext
