@@ -59,6 +59,9 @@ namespace Lib9c.Tests.Helper
         [InlineData(true, true, 5 + 15)]
         public void CalculateExploreReward(bool isReal, bool winner, int expectedNcgReward)
         {
+            var ncgApRatio =
+                TableExtensions.ParseDecimal(_tableSheets
+                    .GameConfigSheet["adventure_boss_ncg_ap_ratio"].Value);
             var ncgRuneRatio =
                 TableExtensions.ParseDecimal(_tableSheets
                     .GameConfigSheet["adventure_boss_ncg_rune_ratio"].Value);
@@ -94,6 +97,7 @@ namespace Lib9c.Tests.Helper
                 explorer,
                 _avatarAddress,
                 _tableSheets.AdventureBossNcgRewardRatioSheet,
+                ncgApRatio,
                 ncgRuneRatio,
                 isReal,
                 out var ncgReward
