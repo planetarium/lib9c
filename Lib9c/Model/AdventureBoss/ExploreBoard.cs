@@ -14,7 +14,7 @@ namespace Nekoyume.Model.AdventureBoss
     public class ExploreBoard
     {
         public long Season;
-        public HashSet<(Address, string)> ExplorerList = new ();
+        public int ExplorerCount;
 
         public long UsedApPotion;
         public long UsedGoldenDust;
@@ -35,9 +35,7 @@ namespace Nekoyume.Model.AdventureBoss
         public ExploreBoard(List bencoded)
         {
             Season = (Integer)bencoded[0];
-            ExplorerList = bencoded[1].ToHashSet(
-                i => (((List)i)[0].ToAddress(), ((List)i)[1].ToDotnetString())
-            );
+            ExplorerCount = (Integer)bencoded[1];
             UsedApPotion = (Integer)bencoded[2];
             UsedGoldenDust = (Integer)bencoded[3];
             UsedNcg = (Integer)bencoded[4];
@@ -62,18 +60,11 @@ namespace Nekoyume.Model.AdventureBoss
                 AdventureBossHelper.PickReward(random, rewardInfo.Rewards);
         }
 
-        public void AddExplorer(Address avatarAddress, string name)
-        {
-            ExplorerList.Add((avatarAddress, name));
-        }
 
         public IValue Bencoded()
         {
             var bencoded = List.Empty
-                .Add(Season)
-                .Add(new List(ExplorerList.OrderBy(e => e)
-                    .Select(e => new List(e.Item1.Serialize(), (Text)e.Item2)))
-                )
+                .Add(Season).Add(ExplorerCount)
                 .Add(UsedApPotion).Add(UsedGoldenDust).Add(UsedNcg).Add(TotalPoint);
 
             if (FixedRewardFavId is not null || FixedRewardItemId is not null)
