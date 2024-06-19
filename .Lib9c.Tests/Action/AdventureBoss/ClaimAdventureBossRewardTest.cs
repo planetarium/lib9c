@@ -128,8 +128,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 0 },
-                        { 30001, 14 },
+                        { 20001, 14 },
+                        { 30001, 0 },
                     },
                 },
             };
@@ -150,8 +150,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 0 },
-                        { 30001, 14 }, // (200*1.2) * 0.3 / 2.5 * (120/240)
+                        { 20001, 14 }, // (200*1.2) * 0.3 / 2.5 * (120/240)
+                        { 30001, 0 },
                     },
                 },
             };
@@ -172,8 +172,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 0 },
-                        { 30001, 12 }, // (300*1.2) * 0.3 / 2.5 * (100/360)
+                        { 20001, 12 }, // (300*1.2) * 0.3 / 2.5 * (100/360)
+                        { 30001, 0 },
                     },
                 },
             };
@@ -285,8 +285,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 0 },
-                        { 30001, 14 },
+                        { 20001, 14 },
+                        { 30001, 0 },
                     },
                 },
             };
@@ -322,8 +322,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 0 },
-                        { 30001, 14 },
+                        { 20001, 14 },
+                        { 30001, 0 },
                     },
                 },
             };
@@ -433,8 +433,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 0 * NCG, // No Raffle Reward
                 FavReward = new Dictionary<int, int>
                 {
-                    { 20001, 0 },
-                    { 30001, 28 },
+                    { 20001, 28 },
+                    { 30001, 0 },
                 },
                 ItemReward = new Dictionary<int, int>
                 {
@@ -811,8 +811,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 20 * NCG,
                 FavReward = new Dictionary<int, int>
                 {
-                    { 20001, 0 },
-                    { 30001, 14 },
+                    { 20001, 14 },
+                    { 30001, 0 },
                 },
                 ItemReward = new Dictionary<int, int>
                 {

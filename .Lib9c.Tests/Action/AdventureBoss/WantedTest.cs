@@ -101,7 +101,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(600201, bountyBoard.FixedRewardItemId);
             Assert.Null(bountyBoard.FixedRewardFavId);
             Assert.Null(bountyBoard.RandomRewardItemId);
-            Assert.Equal(30001, bountyBoard.RandomRewardFavId);
+            Assert.Equal(20001, bountyBoard.RandomRewardFavId);
 
             var investor = Assert.Single(bountyBoard.Investors);
             Assert.Equal(
@@ -151,7 +151,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(600201, bountyBoard.FixedRewardItemId);
             Assert.Null(bountyBoard.FixedRewardFavId);
             Assert.Null(bountyBoard.RandomRewardItemId);
-            Assert.Equal(30001, bountyBoard.RandomRewardFavId);
+            Assert.Equal(20001, bountyBoard.RandomRewardFavId);
 
             investor = bountyBoard.Investors.First(i => i.AvatarAddress == AvatarAddress2);
             Assert.Equal(minBounty * NCG, investor.Price);
