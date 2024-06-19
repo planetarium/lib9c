@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -11,6 +10,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.TableData.AdventureBoss;
 
 namespace Nekoyume.Action.AdventureBoss
 {
@@ -22,34 +22,6 @@ namespace Nekoyume.Action.AdventureBoss
         public const int OpeningFloor = 5;
         public const int TotalFloor = 20;
         public const int GoldenDustId = 600201;
-
-        // NOTE: This may temporary
-        // Use MaxFloor as key. If not find key, this means already opened all floors.
-        public readonly Dictionary<int, Dictionary<string, int>> UnlockDict =
-            new ()
-            {
-                {
-                    5, new Dictionary<string, int>
-                    {
-                        { "NCG", 5 },
-                        { "GoldenDust", 5 },
-                    }
-                },
-                {
-                    10, new Dictionary<string, int>
-                    {
-                        { "NCG", 10 },
-                        { "GoldenDust", 10 },
-                    }
-                },
-                {
-                    15, new Dictionary<string, int>
-                    {
-                        { "NCG", 15 },
-                        { "GoldenDust", 15 },
-                    }
-                },
-            };
 
         public int Season;
         public Address AvatarAddress;
@@ -123,52 +95,66 @@ namespace Nekoyume.Action.AdventureBoss
                 );
             }
 
-            if (!UnlockDict.ContainsKey(explorer.MaxFloor))
+            var sheets = states.GetSheets(new[]
+            {
+                typeof(MaterialItemSheet),
+                typeof(AdventureBossSheet),
+                typeof(AdventureBossFloorSheet),
+                typeof(AdventureBossUnlockFloorCostSheet),
+            });
+
+            var floorSheet = sheets.GetSheet<AdventureBossFloorSheet>();
+            var costSheet = sheets.GetSheet<AdventureBossUnlockFloorCostSheet>();
+            var adventureBossId = sheets.GetSheet<AdventureBossSheet>().OrderedList.First(
+                row => row.BossId == latestSeason.BossId
+            ).Id;
+            var floorId = floorSheet.OrderedList.First(row =>
+                row.AdventureBossId == adventureBossId && row.Floor == explorer.MaxFloor + 1
+            ).Id;
+
+            if (!costSheet.ContainsKey(floorId))
             {
                 throw new InvalidOperationException(
-                    $"Floor {explorer.MaxFloor} not found. Maybe already opened all floors."
+                    $"Floor {explorer.MaxFloor + 1} not found. Maybe already opened all floors."
                 );
             }
 
             // Check balance and unlock
-            var price = UnlockDict[explorer.MaxFloor];
-            var balance = states.GetBalance(context.Signer, currency);
+            var price = costSheet[floorId];
+            var agentAddress = states.GetAvatarState(AvatarAddress).agentAddress;
+            var balance = states.GetBalance(agentAddress, currency);
             var exploreBoard = states.GetExploreBoard(Season);
             if (UseNcg)
             {
-                if (balance < price["NCG"] * currency)
+                if (balance < price.NcgPrice * currency)
                 {
                     throw new InsufficientBalanceException(
-                        $"{balance} is less than {price["NCG"] * currency}",
-                        context.Signer, balance
+                        $"{balance} is less than {price.NcgPrice * currency}",
+                        agentAddress, balance
                     );
                 }
 
-                explorer.UsedNcg += price["NCG"];
-                exploreBoard.UsedNcg += price["NCG"];
+                explorer.UsedNcg += price.NcgPrice;
+                exploreBoard.UsedNcg += price.NcgPrice;
                 // FIXME: Send unlock NCG to operational address
-                states = states.TransferAsset(context, context.Signer, new Address(),
-                    price["NCG"] * currency);
+                states = states.TransferAsset(context, agentAddress, new Address(),
+                    price.NcgPrice * currency);
             }
             else // Use GoldenDust
             {
-                var sheets = states.GetSheets(sheetTypes: new[]
-                {
-                    typeof(MaterialItemSheet),
-                });
                 var materialSheet = sheets.GetSheet<MaterialItemSheet>();
                 var material = materialSheet.OrderedList.First(m => m.Id == GoldenDustId);
 
                 var inventory = states.GetInventoryV2(AvatarAddress);
                 if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
-                        price["GoldenDust"]))
+                        price.GoldenDustPrice))
                 {
                     throw new NotEnoughMaterialException(
-                        $"Not enough golden dust to open new floor: needs {price["GoldenDust"]}");
+                        $"Not enough golden dust to open new floor: needs {price.GoldenDustPrice}");
                 }
 
-                explorer.UsedGoldenDust += price["GoldenDust"];
-                exploreBoard.UsedGoldenDust += price["GoldenDust"];
+                explorer.UsedGoldenDust += price.GoldenDustPrice;
+                exploreBoard.UsedGoldenDust += price.GoldenDustPrice;
                 states = states.SetInventory(AvatarAddress, inventory);
             }
 

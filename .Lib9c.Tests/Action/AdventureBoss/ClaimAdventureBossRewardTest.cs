@@ -91,6 +91,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         private readonly IWorld _initialState = new World(MockUtil.MockModernWorldState)
             .SetLegacyState(Addresses.GoldCurrency, new GoldCurrencyState(NCG).Serialize())
+            .SetLegacyState(
+                GameConfigState.Address,
+                new GameConfigState(Sheets["GameConfigSheet"]).Serialize()
+            )
             .SetAvatarState(WantedAvatarAddress, WantedAvatarState)
             .SetAgentState(WantedAddress, WantedState)
             .SetAvatarState(ExplorerAvatarAddress, ExplorerAvatarState)
@@ -118,14 +122,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 0 * NCG, // No Wanted Raffle
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 240 },
+                        { 600201, 168 },
                         { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
                         { 20001, 0 },
-                        { 30001, 0 },
+                        { 30001, 14 },
                     },
                 },
             };
@@ -139,15 +143,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     ItemReward = new Dictionary<int, int>
                     {
                         {
-                            600201, 240
-                        }, // (200*1.2) * 0.7 / 0.5 * (120/240) + (200*1.2) * 0.3 / 0.5 * (120/240)
+                            600201, 168
+                        }, // (200*1.2) * 0.7 / 0.5 * (120/240)
                         { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
                         { 20001, 0 },
-                        { 30001, 0 },
+                        { 30001, 14 }, // (200*1.2) * 0.3 / 2.5 * (120/240)
                     },
                 },
             };
@@ -161,15 +165,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     ItemReward = new Dictionary<int, int>
                     {
                         {
-                            600201, 200
-                        }, // (300*1.2) * 0.7 / 0.5 * (100/360) + (300*1.2) * 0.2 / 0.5 * (100/360)
+                            600201, 140
+                        }, // (300*1.2) * 0.7 / 0.5 * (100/360)
                         { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
                         { 20001, 0 },
-                        { 30001, 0 },
+                        { 30001, 12 }, // (300*1.2) * 0.3 / 2.5 * (100/360)
                     },
                 },
             };
@@ -185,8 +189,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
-                        { 600202, 67 },
-                        { 600203, 0 }, // 100 AP / 7.5 ratio * 100% contribution
+                        { 600202, 67 }, // 100AP / 1.5 ratio * 100% contribution
+                        { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
@@ -275,14 +279,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 0 * NCG, // No NCG Reward
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 240 },
+                        { 600201, 168 },
                         { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
                         { 20001, 0 },
-                        { 30001, 0 },
+                        { 30001, 14 },
                     },
                 },
             };
@@ -312,14 +316,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 20 * NCG,
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 240 },
+                        { 600201, 168 },
                         { 600202, 67 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
                         { 20001, 0 },
-                        { 30001, 0 },
+                        { 30001, 14 },
                     },
                 },
             };
@@ -430,11 +434,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 FavReward = new Dictionary<int, int>
                 {
                     { 20001, 0 },
-                    { 30001, 0 },
+                    { 30001, 28 },
                 },
                 ItemReward = new Dictionary<int, int>
                 {
-                    { 600201, 480 },
+                    { 600201, 336 },
                     { 600202, 0 },
                     { 600203, 0 },
                 },
@@ -557,13 +561,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Explore : just add data to avoid explore reward
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
+            var lst = state.GetExplorerList(1);
             var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
                 ? e
                 : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
-            board.ExplorerList.Add((TesterAvatarAddress, TesterAvatarState.name));
+            lst.Explorers.Add((TesterAvatarAddress, TesterAvatarState.name));
             board.UsedApPotion += 100;
+            board.ExplorerCount += 1;
             exp.UsedApPotion += 100;
-            state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
+            state = state.SetExploreBoard(1, board).SetExplorerList(1, lst).SetExplorer(1, exp);
 
             var materialSheet = state.GetSheet<MaterialItemSheet>();
             var materialRow =
@@ -593,9 +599,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 // Manipulate used AP Potion to calculate reward above zero
                 board = state.GetExploreBoard(1);
                 board.UsedApPotion += 99;
+                lst = state.GetExplorerList(1);
+                lst.AddExplorer(ExplorerAvatarAddress, ExplorerAvatarState.name);
                 exp = state.GetExplorer(1, ExplorerAvatarAddress);
                 exp.UsedApPotion += 99;
-                state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
+                state = state.SetExploreBoard(1, board).SetExplorerList(1, lst).SetExplorer(1, exp);
             }
 
             // Burn all remaining NCG to make test easier
@@ -633,6 +641,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             var seasonBountyBoardAddress =
                 Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(1));
+            var explorerList = resultState.GetExplorerList(1);
+            Assert.Equal(anotherExplorerCount == 0 ? 1 : 2, explorerList.Explorers.Count);
+            Assert.Equal(exploreBoard.ExplorerCount, explorerList.Explorers.Count);
             Assert.Equal((int)(bounty * 0.05) * NCG, exploreBoard.RaffleReward);
             Assert.Equal(
                 expectedRemainingNcg,
@@ -711,13 +722,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
-            board.ExplorerList.Add((TesterAvatarAddress, TesterAvatarState.name));
+            var lst = state.GetExplorerList(1);
+            lst.Explorers.Add((TesterAvatarAddress, TesterAvatarState.name));
             board.UsedApPotion += 100;
             var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
                 ? e
                 : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
             exp.UsedApPotion += 100;
-            state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
+            state = state.SetExploreBoard(1, board).SetExplorerList(1, lst).SetExplorer(1, exp);
 
             // No Explore
             state = new Wanted
@@ -749,13 +761,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             // Manipulate used AP Potion to calculate reward above zero
             board = state.GetExploreBoard(3);
-            board.ExplorerList.Add((TesterAvatarAddress, TesterAvatarState.name));
+            lst.Explorers.Add((TesterAvatarAddress, TesterAvatarState.name));
             board.UsedApPotion += 100;
             exp = state.TryGetExplorer(3, TesterAvatarAddress, out e)
                 ? e
                 : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
             exp.UsedApPotion += 100;
-            state = state.SetExploreBoard(3, board).SetExplorer(3, exp);
+            state = state.SetExploreBoard(3, board).SetExplorerList(3, lst).SetExplorer(3, exp);
 
             // Burn remaining NCG
             state = state.BurnAsset(
@@ -800,11 +812,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 FavReward = new Dictionary<int, int>
                 {
                     { 20001, 0 },
-                    { 30001, 0 },
+                    { 30001, 14 },
                 },
                 ItemReward = new Dictionary<int, int>
                 {
-                    { 600201, 240 },
+                    { 600201, 168 },
                     { 600202, 67 },
                     { 600203, 0 },
                 },
@@ -834,13 +846,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Explore : just add data to avoid explore reward
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
+            var lst = state.GetExplorerList(1);
             board.UsedApPotion += 100;
-            board.ExplorerList.Add((TesterAvatarAddress, TesterAvatarState.name));
+            lst.Explorers.Add((TesterAvatarAddress, TesterAvatarState.name));
             var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
                 ? e
                 : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
             exp.UsedApPotion += 100;
-            state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
+            state = state.SetExploreBoard(1, board).SetExplorerList(1, lst).SetExplorer(1, exp);
 
             // Burn
             state = state.BurnAsset(
@@ -902,8 +915,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Explore : just add data to avoid explore reward
             // Manipulate used AP Potion to calculate reward above zero
             var board = state.GetExploreBoard(1);
+            var lst = state.GetExplorerList(1);
             board.UsedApPotion += 100;
-            board.ExplorerList.Add(explore
+            lst.Explorers.Add(explore
                 ? (TesterAvatarAddress, TesterAvatarState.name)
                 : (ExplorerAvatarAddress, ExplorerAvatarState.name));
             var exp =
@@ -916,7 +930,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         explore ? TesterAvatarState.name : ExplorerAvatarState.name
                     );
             exp.UsedApPotion += 100;
-            state = state.SetExploreBoard(1, board).SetExplorer(1, exp);
+            state = state.SetExploreBoard(1, board).SetExplorerList(1, lst).SetExplorerList(1, lst)
+                .SetExplorer(1, exp);
 
             // Next Season
             state = new Wanted

@@ -117,6 +117,29 @@ namespace Nekoyume.Module
             return world.SetAccount(Addresses.ExploreBoard, account);
         }
 
+        public static ExplorerList GetExplorerList(this IWorldState worldState, long season)
+        {
+            var account = worldState.GetAccountState(Addresses.ExplorerList);
+            if (account.GetState(new Address(AdventureBossHelper.GetSeasonAsAddressForm(season))) is { } a)
+            {
+                return new ExplorerList((List)a);
+            }
+
+            throw new FailedLoadStateException("");
+        }
+
+        public static IWorld SetExplorerList(this IWorld world, long season,
+            ExplorerList explorerList)
+        {
+            var account = world.GetAccount(Addresses.ExplorerList);
+            account = account.SetState(
+                new Address(AdventureBossHelper.GetSeasonAsAddressForm(season)),
+                explorerList.Bencoded
+            );
+            return world.SetAccount(Addresses.ExplorerList, account);
+
+        }
+
         // Use `Addresses.AdventureBossExplore` for AccountState to store all adventurer's data
         // Use `Address.Derive(AvatarAddress, SeasonAddress)` for individual avatar's explore info.
         public static bool TryGetExplorer(this IWorldState worldState, long season,

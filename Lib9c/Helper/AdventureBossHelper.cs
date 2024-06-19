@@ -9,7 +9,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.AdventureBoss;
 using Nekoyume.Battle;
 using Nekoyume.Data;
 using Nekoyume.Exceptions;
@@ -98,14 +97,14 @@ namespace Nekoyume.Helper
         }
 
         public static ExploreBoard PickExploreRaffle(BountyBoard bountyBoard,
-            ExploreBoard exploreBoard, IRandom random)
+            ExploreBoard exploreBoard, ExplorerList explorerList, IRandom random)
         {
             exploreBoard.RaffleReward = CalculateRaffleReward(bountyBoard);
 
-            if (exploreBoard.ExplorerList.Count > 0)
+            if (explorerList.Explorers.Count > 0)
             {
-                var winner = exploreBoard.ExplorerList.ToImmutableSortedSet()[
-                    random.Next(exploreBoard.ExplorerList.Count)
+                var winner = explorerList.Explorers.ToImmutableSortedSet()[
+                    random.Next(explorerList.Explorers.Count)
                 ];
                 exploreBoard.RaffleWinner = winner.Item1;
                 exploreBoard.RaffleWinnerName = winner.Item2;
@@ -127,9 +126,11 @@ namespace Nekoyume.Helper
                 // Explore raffle
                 var bountyBoard = states.GetBountyBoard(szn);
                 var exploreBoard = states.GetExploreBoard(szn);
+                var explorerList = states.GetExplorerList(szn);
                 if (exploreBoard.RaffleWinner is null)
                 {
-                    exploreBoard = PickExploreRaffle(bountyBoard, exploreBoard, random);
+                    exploreBoard =
+                        PickExploreRaffle(bountyBoard, exploreBoard, explorerList, random);
                     states = states.SetExploreBoard(szn, exploreBoard);
                 }
             }
@@ -139,20 +140,21 @@ namespace Nekoyume.Helper
 
         /// <summary>
         /// Calculate reward for adventure boss operators.
-        /// This only calculates reward for given avatar, not actually give rewards.
+        /// This method only calculates reward for given avatar, not actually give rewards.
         /// </summary>
         /// <param name="reward">Claimable reward for this avatar so far.</param>
         /// <param name="bountyBoard">Bounty board for this season. All the reward amount is based on totalBounty on this board.</param>
         /// <param name="avatarAddress">Target avatar address to calculate reward.</param>
-        /// <param name="isReal">Flag to calculate reward for real give or expectation.
-        /// The raffle winner is not picked till the season over, so you could get 0 with this value set to `true`.</param>
+        /// <param name="sheet">NCG to reward exchange ratio sheet. Calculate total reward amount based on this sheet.</param>
+        /// <param name="ncgRuneRatio">If a reward is rune, use this fixed ratio, not in sheet.</param>
         /// <param name="ncgReward">out value: calculated NCG reward in this function.
         /// We must handle NCG reward separately because NCG reward must be transferred from each season's bounty address.</param>
         /// <returns>Updated Claimable reward after calculation.</returns>
         public static AdventureBossGameData.ClaimableReward CalculateWantedReward(
             AdventureBossGameData.ClaimableReward reward, BountyBoard bountyBoard,
             Address avatarAddress, AdventureBossNcgRewardRatioSheet sheet,
-            bool isReal, out FungibleAssetValue ncgReward
+            decimal ncgRuneRatio,
+            out FungibleAssetValue ncgReward
         )
         {
             // Initialize ncgReward from bounty because its from bounty.
@@ -179,14 +181,14 @@ namespace Nekoyume.Helper
             var totalFixedRewardAmount = (int)Math.Round(
                 bountyBoard.FixedRewardItemId is not null
                     ? totalFixedRewardNcg / sheet[(int)bountyBoard.FixedRewardItemId].Ratio
-                    : totalFixedRewardNcg / AdventureBossGameData.NcgRuneRatio
+                    : totalFixedRewardNcg / ncgRuneRatio
             );
 
             var totalRandomRewardNcg = (int)Math.Round(totalRewardNcg * RandomRewardRatio);
             var totalRandomRewardAmount = (int)Math.Round(
                 bountyBoard.RandomRewardItemId is not null
                     ? totalRandomRewardNcg / sheet[(int)bountyBoard.RandomRewardItemId].Ratio
-                    : totalRandomRewardNcg / AdventureBossGameData.NcgRuneRatio
+                    : totalRandomRewardNcg / ncgRuneRatio
             );
 
             // Calculate my reward
@@ -227,7 +229,7 @@ namespace Nekoyume.Helper
 
         public static IWorld CollectWantedReward(IWorld states, IActionContext context,
             AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
-            Address agentAddress, Address avatarAddress,
+            Address agentAddress, Address avatarAddress, long claimableDuration,
             out AdventureBossGameData.ClaimableReward collectedReward)
         {
             for (var szn = season; szn > 0; szn--)
@@ -235,8 +237,7 @@ namespace Nekoyume.Helper
                 var seasonInfo = states.GetSeasonInfo(szn);
 
                 // Stop when met claim expired season
-                if (seasonInfo.EndBlockIndex + ClaimAdventureBossReward.ClaimableDuration <
-                    currentBlockIndex)
+                if (seasonInfo.EndBlockIndex + claimableDuration < currentBlockIndex)
                 {
                     break;
                 }
@@ -260,7 +261,8 @@ namespace Nekoyume.Helper
 
                 // Calculate reward for this season
                 reward = CalculateWantedReward(reward, bountyBoard, avatarAddress,
-                    states.GetSheet<AdventureBossNcgRewardRatioSheet>(), isReal: true,
+                    states.GetSheet<AdventureBossNcgRewardRatioSheet>(),
+                    states.GetGameConfigState().AdventureBossNcgRuneRatio,
                     out var ncgReward
                 );
 
@@ -284,11 +286,28 @@ namespace Nekoyume.Helper
             return states;
         }
 
+        /// <summary>
+        /// Calculate reward for adventure boss explorers.
+        /// This method only calculates reward for given avatar, not actually give rewards.
+        /// </summary>
+        /// <param name="reward">Claimable reward for this avatar so far.</param>
+        /// <param name="bountyBoard">Bounty board for this season. NCG reward is based on totalBounty on this board.</param>
+        /// <param name="exploreBoard">Explore board for this season. Total reward amount is base on usedApPotion on this board.</param>
+        /// <param name="explorer">Target explorer to calculate reward</param>
+        /// <param name="avatarAddress">Target avatar address to calculate reward.</param>
+        /// <param name="sheet">NCG to reward exchange ratio sheet. Calculate total reward amount based on this sheet.</param>
+        /// <param name="ncgApRatio">Exchange ratio between used AP potion to NCG. Used to set total reward amount.</param>
+        /// <param name="ncgRuneRatio">If a reward is rune, use this fixed ratio, not in sheet.</param>
+        /// <param name="isReal"></param>
+        /// <param name="ncgReward">out value: calculated NCG reward in this function.
+        /// We must handle NCG reward separately because NCG reward must be transferred from each season's bounty address.</param>
+        /// <returns>Updated Claimable reward after calculation.</returns>
         public static AdventureBossGameData.ClaimableReward CalculateExploreReward(
             AdventureBossGameData.ClaimableReward reward,
             BountyBoard bountyBoard, ExploreBoard exploreBoard,
             Explorer explorer, Address avatarAddress,
             AdventureBossNcgRewardRatioSheet sheet,
+            decimal ncgApRatio, decimal ncgRuneRatio,
             bool isReal, out FungibleAssetValue ncgReward)
         {
             var gold = bountyBoard.totalBounty().Currency;
@@ -330,8 +349,9 @@ namespace Nekoyume.Helper
             // calculate contribution reward
             var ncgRewardRatio = exploreBoard.FixedRewardItemId is not null
                 ? sheet[(int)exploreBoard.FixedRewardItemId].Ratio
-                : AdventureBossGameData.NcgRuneRatio;
-            var totalRewardAmount = (int)Math.Round(exploreBoard.UsedApPotion / ncgRewardRatio);
+                : ncgRuneRatio;
+            var totalRewardAmount =
+                (int)Math.Round(exploreBoard.UsedApPotion * ncgApRatio / ncgRewardRatio);
             var myRewardAmount = (int)Math.Floor(
                 (decimal)totalRewardAmount * explorer.UsedApPotion / exploreBoard.UsedApPotion
             );
@@ -348,7 +368,7 @@ namespace Nekoyume.Helper
 
         public static IWorld CollectExploreReward(IWorld states, IActionContext context,
             AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
-            Address agentAddress, Address avatarAddress,
+            Address agentAddress, Address avatarAddress, long claimableDuration,
             out AdventureBossGameData.ClaimableReward collectedReward)
         {
             for (var szn = season; szn > 0; szn--)
@@ -356,16 +376,16 @@ namespace Nekoyume.Helper
                 var seasonInfo = states.GetSeasonInfo(szn);
 
                 // Stop when met claim expired season
-                if (seasonInfo.EndBlockIndex + ClaimAdventureBossReward.ClaimableDuration <
-                    currentBlockIndex)
+                if (seasonInfo.EndBlockIndex + claimableDuration < currentBlockIndex)
                 {
                     break;
                 }
 
                 var exploreBoard = states.GetExploreBoard(szn);
+                var explorerList = states.GetExplorerList(szn);
 
                 // Not explored
-                if (!exploreBoard.ExplorerList.OrderBy(e => e.Item1)
+                if (!explorerList.Explorers.OrderBy(e => e.Item1)
                         .Select(e => e.Item1)
                         .Contains(avatarAddress)
                    )
@@ -382,9 +402,11 @@ namespace Nekoyume.Helper
                 }
 
                 // Calculate reward for this season
+                var gameConfig = states.GetGameConfigState();
                 reward = CalculateExploreReward(
                     reward, states.GetBountyBoard(szn), exploreBoard, explorer, avatarAddress,
                     states.GetSheet<AdventureBossNcgRewardRatioSheet>(),
+                    gameConfig.AdventureBossNcgApRatio, gameConfig.AdventureBossNcgRuneRatio,
                     isReal: true, out var ncgReward
                 );
 

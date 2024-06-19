@@ -20,8 +20,6 @@ namespace Nekoyume.Action.AdventureBoss
     public class Wanted : ActionBase
     {
         public const string TypeIdentifier = "wanted";
-        public const int RequiredStakingLevel = 5;
-        public const int MinBounty = 100;
 
         public int Season;
         public FungibleAssetValue Bounty;
@@ -48,7 +46,7 @@ namespace Nekoyume.Action.AdventureBoss
             context.UseGas(1);
             var states = context.PreviousState;
             var currency = states.GetGoldCurrency();
-
+            var gameConfig = states.GetGameConfigState();
             var latestSeason = states.GetLatestAdventureBossSeason();
 
             // Validation
@@ -57,10 +55,10 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidCurrencyException("");
             }
 
-            if (Bounty < MinBounty * currency)
+            if (Bounty < gameConfig.AdventureBossMinBounty * currency)
             {
                 throw new InvalidBountyException(
-                    $"Given bounty {Bounty.MajorUnit}.{Bounty.MinorUnit} is less than {MinBounty}");
+                    $"Given bounty {Bounty.MajorUnit}.{Bounty.MinorUnit} is less than {gameConfig.AdventureBossMinBounty}");
             }
 
             var balance = states.GetBalance(context.Signer, currency);
@@ -99,6 +97,8 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidAddressException();
             }
 
+            var RequiredStakingLevel =
+                states.GetGameConfigState().AdventureBossWantedRequiredStakingLevel;
             var requiredStakingAmount = states.GetSheet<MonsterCollectionSheet>()
                 .OrderedList.First(row => row.Level == RequiredStakingLevel).RequiredGold;
             var stakedAmount =
@@ -115,9 +115,12 @@ namespace Nekoyume.Action.AdventureBoss
             if (latestSeason.Season == 0 ||
                 latestSeason.NextStartBlockIndex <= context.BlockIndex)
             {
-                var seasonInfo = new SeasonInfo(Season, context.BlockIndex);
+                var seasonInfo = new SeasonInfo(Season, context.BlockIndex,
+                    gameConfig.AdventureBossActiveInterval,
+                    gameConfig.AdventureBossInactiveInterval);
                 bountyBoard = new BountyBoard(Season);
                 var exploreBoard = new ExploreBoard(Season);
+                var explorerList = new ExplorerList(Season);
 
                 // Set season info: boss and reward
                 var random = context.GetRandom();
@@ -135,10 +138,11 @@ namespace Nekoyume.Action.AdventureBoss
                     .OrderedList.First(row => row.AdventureBossId == boss.Id);
                 exploreBoard.SetReward(contribReward, random);
 
-                states = states.SetSeasonInfo(seasonInfo);
-                states = states.SetLatestAdventureBossSeason(seasonInfo);
-                states = states.SetBountyBoard(Season, bountyBoard);
-                states = states.SetExploreBoard(Season, exploreBoard);
+                states = states.SetSeasonInfo(seasonInfo)
+                    .SetLatestAdventureBossSeason(seasonInfo)
+                    .SetBountyBoard(Season, bountyBoard)
+                    .SetExploreBoard(Season, exploreBoard)
+                    .SetExplorerList(Season, explorerList);
             }
 
             // Just update bounty board

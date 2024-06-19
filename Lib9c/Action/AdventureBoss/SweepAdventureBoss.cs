@@ -30,8 +30,6 @@ namespace Nekoyume.Action.AdventureBoss
     {
         public const string TypeIdentifier = "sweep_adventure_boss";
 
-        public const int UnitApPotion = 2;
-
         public int Season;
         public Address AvatarAddress;
         public List<Guid> Costumes;
@@ -111,7 +109,9 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             // Use AP Potions
-            var requiredPotion = explorer.Floor * UnitApPotion;
+            var unitSweepAp = states.GetSheet<AdventureBossSheet>().OrderedList
+                .First(row => row.BossId == latestSeason.BossId).SweepAp;
+            var requiredPotion = explorer.Floor * unitSweepAp;
             var sheets = states.GetSheets(
                 containSimulatorSheets: true,
                 sheetTypes: new[]
@@ -180,7 +180,6 @@ namespace Nekoyume.Action.AdventureBoss
             itemSlotState.UpdateCostumes(Costumes);
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
-            exploreBoard.AddExplorer(AvatarAddress, avatarState.name);
             exploreBoard.UsedApPotion += requiredPotion;
             explorer.UsedApPotion += requiredPotion;
 
@@ -202,13 +201,13 @@ namespace Nekoyume.Action.AdventureBoss
             var floorSheet = states.GetSheet<AdventureBossFloorSheet>();
             for (var fl = 1; fl <= explorer.Floor; fl++)
             {
-                var pointRow = floorPointSheet[fl];
+                var floorRow = floorSheet.Values.Where(row => row.AdventureBossId == bossId)
+                    .First(row => row.Floor == fl);
+                var pointRow = floorPointSheet[floorRow.Id];
                 point += random.Next(pointRow.MinPoint, pointRow.MaxPoint + 1);
 
                 selector.Clear();
-                var floorReward = floorSheet.Values.Where(row => row.AdventureBossId == bossId)
-                    .First(row => row.Floor == fl);
-                foreach (var reward in floorReward.Rewards)
+                foreach (var reward in floorRow.Rewards)
                 {
                     selector.Add(reward, reward.Ratio);
                 }

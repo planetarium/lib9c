@@ -49,9 +49,13 @@ namespace Nekoyume.Model.AdventureBoss
 
         public void SetReward(AdventureBossWantedRewardSheet.Row rewardInfo, IRandom random)
         {
-            (FixedRewardItemId, FixedRewardFavId) = AdventureBossHelper.PickReward(
-                random, rewardInfo.FixedRewards
-            );
+            FixedRewardItemId = rewardInfo.FixedReward.ItemType == "Material"
+                ? rewardInfo.FixedReward.ItemId
+                : null;
+            FixedRewardFavId = rewardInfo.FixedReward.ItemType == "Rune"
+                ? rewardInfo.FixedReward.ItemId
+                : null;
+
             (RandomRewardItemId, RandomRewardFavId) = AdventureBossHelper.PickReward(
                 random, rewardInfo.RandomRewards
             );

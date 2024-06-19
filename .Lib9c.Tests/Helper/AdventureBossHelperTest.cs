@@ -1,28 +1,30 @@
 namespace Lib9c.Tests.Helper
 {
     using System.Collections.Generic;
-    using System.Numerics;
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume.Data;
     using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
+    using Nekoyume.TableData;
     using Xunit;
 
     public class AdventureBossHelperTest
     {
         private static readonly Currency NCG = Currency.Legacy("NCG", 2, null);
-        private readonly TableSheets _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
+        private readonly TableSheets _tableSheets = new (TableSheetsImporter.ImportSheets());
         private Address _avatarAddress = new PrivateKey().Address;
         private string _name = "wanted";
 
         [Theory]
         // Raffle reward is always 0 when isReal == false
-        [InlineData(false, 0)]
-        [InlineData(true, 0)]
-        public void CalculateWantedReward(bool isReal, int expectedReward)
+        [InlineData(0)]
+        public void CalculateWantedReward(int expectedReward)
         {
+            var ncgRuneRatio =
+                TableExtensions.ParseDecimal(_tableSheets
+                    .GameConfigSheet["adventure_boss_ncg_rune_ratio"].Value);
             var bountyBoard = new BountyBoard(1);
             bountyBoard.FixedRewardFavId = 30001;
             bountyBoard.RandomRewardFavId = 30001;
@@ -40,7 +42,7 @@ namespace Lib9c.Tests.Helper
                 bountyBoard,
                 _avatarAddress,
                 _tableSheets.AdventureBossNcgRewardRatioSheet,
-                isReal,
+                ncgRuneRatio,
                 out var ncgReward
             );
 
@@ -55,18 +57,30 @@ namespace Lib9c.Tests.Helper
         [InlineData(true, true, 5 + 15)]
         public void CalculateExploreReward(bool isReal, bool winner, int expectedNcgReward)
         {
+            var ncgApRatio =
+                TableExtensions.ParseDecimal(_tableSheets
+                    .GameConfigSheet["adventure_boss_ncg_ap_ratio"].Value);
+            var ncgRuneRatio =
+                TableExtensions.ParseDecimal(_tableSheets
+                    .GameConfigSheet["adventure_boss_ncg_rune_ratio"].Value);
             var bountyBoard = new BountyBoard(1);
             bountyBoard.AddOrUpdate(_avatarAddress, _name, 100 * NCG);
 
             var exploreBoard = new ExploreBoard(1);
+            var explorerList = new ExplorerList(1);
             var explorer = new Explorer(_avatarAddress, _name);
-            exploreBoard.ExplorerList.Add((_avatarAddress, _name));
+            explorerList.Explorers.Add((_avatarAddress, _name));
             exploreBoard.FixedRewardFavId = 20001;
             exploreBoard.UsedApPotion = 100;
 
             explorer.UsedApPotion = 100;
 
-            AdventureBossHelper.PickExploreRaffle(bountyBoard, exploreBoard, new TestRandom());
+            AdventureBossHelper.PickExploreRaffle(
+                bountyBoard,
+                exploreBoard,
+                explorerList,
+                new TestRandom()
+            );
 
             if (!winner)
             {
@@ -87,6 +101,8 @@ namespace Lib9c.Tests.Helper
                 explorer,
                 _avatarAddress,
                 _tableSheets.AdventureBossNcgRewardRatioSheet,
+                ncgApRatio,
+                ncgRuneRatio,
                 isReal,
                 out var ncgReward
             );
