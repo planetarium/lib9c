@@ -72,8 +72,10 @@ namespace Lib9c.Tests.Helper
             explorerList.Explorers.Add((_avatarAddress, _name));
             exploreBoard.FixedRewardFavId = 20001;
             exploreBoard.UsedApPotion = 100;
+            exploreBoard.TotalPoint = 100;
 
             explorer.UsedApPotion = 100;
+            explorer.Score = 100;
 
             AdventureBossHelper.PickExploreRaffle(
                 bountyBoard,
