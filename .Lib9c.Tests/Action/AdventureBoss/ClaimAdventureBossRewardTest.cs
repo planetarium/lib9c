@@ -552,15 +552,17 @@ namespace Lib9c.Tests.Action.AdventureBoss
             });
 
             // Explore : just add data to avoid explore reward
-            // Manipulate used AP Potion to calculate reward above zero
+            // Manipulate point to calculate reward above zero
             var board = state.GetExploreBoard(1);
             var lst = state.GetExplorerList(1);
             var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
                 ? e
                 : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
             lst.Explorers.Add((TesterAvatarAddress, TesterAvatarState.name));
+            board.TotalPoint += 100;
             board.UsedApPotion += 100;
             board.ExplorerCount += 1;
+            exp.Score += 100;
             exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorerList(1, lst).SetExplorer(1, exp);
 
@@ -589,13 +591,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     RandomSeed = seed,
                 });
 
-                // Manipulate used AP Potion to calculate reward above zero
                 board = state.GetExploreBoard(1);
                 board.UsedApPotion += 99;
+                board.TotalPoint += 100;
                 lst = state.GetExplorerList(1);
                 lst.AddExplorer(ExplorerAvatarAddress, ExplorerAvatarState.name);
                 exp = state.GetExplorer(1, ExplorerAvatarAddress);
                 exp.UsedApPotion += 99;
+                exp.Score += 100;
                 state = state.SetExploreBoard(1, board).SetExplorerList(1, lst).SetExplorer(1, exp);
             }
 
@@ -686,14 +689,16 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 RandomSeed = seed,
             });
 
-            // Manipulate used AP Potion to calculate reward above zero
+            // Manipulate point to calculate reward above zero
             var board = state.GetExploreBoard(1);
             var lst = state.GetExplorerList(1);
             lst.Explorers.Add((TesterAvatarAddress, TesterAvatarState.name));
+            board.TotalPoint += 100;
             board.UsedApPotion += 100;
             var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
                 ? e
                 : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
+            exp.Score += 100;
             exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorerList(1, lst).SetExplorer(1, exp);
 
@@ -725,13 +730,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 RandomSeed = seed,
             });
 
-            // Manipulate used AP Potion to calculate reward above zero
+            // Manipulate point to calculate reward above zero
             board = state.GetExploreBoard(3);
             lst.Explorers.Add((TesterAvatarAddress, TesterAvatarState.name));
+            board.TotalPoint += 100;
             board.UsedApPotion += 100;
             exp = state.TryGetExplorer(3, TesterAvatarAddress, out e)
                 ? e
                 : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
+            exp.Score += 100;
             exp.UsedApPotion += 100;
             state = state.SetExploreBoard(3, board).SetExplorerList(3, lst).SetExplorer(3, exp);
 
@@ -810,14 +817,16 @@ namespace Lib9c.Tests.Action.AdventureBoss
             });
 
             // Explore : just add data to avoid explore reward
-            // Manipulate used AP Potion to calculate reward above zero
+            // Manipulate point to calculate reward above zero
             var board = state.GetExploreBoard(1);
             var lst = state.GetExplorerList(1);
+            board.TotalPoint += 100;
             board.UsedApPotion += 100;
             lst.Explorers.Add((TesterAvatarAddress, TesterAvatarState.name));
             var exp = state.TryGetExplorer(1, TesterAvatarAddress, out var e)
                 ? e
                 : new Explorer(TesterAvatarAddress, TesterAvatarState.name);
+            exp.Score += 100;
             exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorerList(1, lst).SetExplorer(1, exp);
 
@@ -879,9 +888,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
             });
 
             // Explore : just add data to avoid explore reward
-            // Manipulate used AP Potion to calculate reward above zero
+            // Manipulate point to calculate reward above zero
             var board = state.GetExploreBoard(1);
             var lst = state.GetExplorerList(1);
+            board.TotalPoint += 100;
             board.UsedApPotion += 100;
             lst.Explorers.Add(explore
                 ? (TesterAvatarAddress, TesterAvatarState.name)
@@ -895,6 +905,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         explore ? TesterAvatarAddress : ExplorerAvatarAddress,
                         explore ? TesterAvatarState.name : ExplorerAvatarState.name
                     );
+            exp.Score += 100;
             exp.UsedApPotion += 100;
             state = state.SetExploreBoard(1, board).SetExplorerList(1, lst).SetExplorerList(1, lst)
                 .SetExplorer(1, exp);

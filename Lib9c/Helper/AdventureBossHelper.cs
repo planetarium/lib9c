@@ -9,7 +9,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.AdventureBoss;
 using Nekoyume.Data;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.AdventureBoss;
@@ -134,7 +133,8 @@ namespace Nekoyume.Helper
                 var explorerList = states.GetExplorerList(szn);
                 if (exploreBoard.RaffleWinner is null)
                 {
-                    exploreBoard = PickExploreRaffle(bountyBoard, exploreBoard, explorerList, random);
+                    exploreBoard =
+                        PickExploreRaffle(bountyBoard, exploreBoard, explorerList, random);
                     states = states.SetExploreBoard(szn, exploreBoard);
                 }
             }
@@ -334,8 +334,8 @@ namespace Nekoyume.Helper
 
             // calculate ncg reward
             var totalNcgReward = (bountyBoard.totalBounty() * 15).DivRem(100, out _);
-            var myNcgReward = (totalNcgReward * explorer.UsedApPotion)
-                .DivRem(exploreBoard.UsedApPotion, out _);
+            var myNcgReward = (totalNcgReward * explorer.Score)
+                .DivRem(exploreBoard.TotalPoint, out _);
 
             // Only > 0.1 NCG will be rewarded.
             if (myNcgReward >= (10 * gold).DivRem(100, out _))
@@ -355,9 +355,10 @@ namespace Nekoyume.Helper
             var ncgRewardRatio = exploreBoard.FixedRewardItemId is not null
                 ? sheet[(int)exploreBoard.FixedRewardItemId].Ratio
                 : ncgRuneRatio;
-            var totalRewardAmount = (int)Math.Round(exploreBoard.UsedApPotion * ncgApRatio / ncgRewardRatio);
+            var totalRewardAmount =
+                (int)Math.Round(exploreBoard.UsedApPotion * ncgApRatio / ncgRewardRatio);
             var myRewardAmount = (int)Math.Floor(
-                (decimal)totalRewardAmount * explorer.UsedApPotion / exploreBoard.UsedApPotion
+                (decimal)totalRewardAmount * explorer.Score / exploreBoard.TotalPoint
             );
             if (myRewardAmount > 0)
             {
