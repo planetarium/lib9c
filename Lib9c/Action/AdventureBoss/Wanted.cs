@@ -6,12 +6,14 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions.AdventureBoss;
+using Nekoyume.Exceptions;
 using Nekoyume.Helper;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.AdventureBoss;
+using Nekoyume.TableData.Stake;
 
 namespace Nekoyume.Action.AdventureBoss
 {
@@ -97,10 +99,19 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidAddressException();
             }
 
-            var RequiredStakingLevel =
+            var requiredStakingLevel =
                 states.GetGameConfigState().AdventureBossWantedRequiredStakingLevel;
-            var requiredStakingAmount = states.GetSheet<MonsterCollectionSheet>()
-                .OrderedList.First(row => row.Level == RequiredStakingLevel).RequiredGold;
+            var currentStakeRegularRewardSheetAddr = Addresses.GetSheetAddress(
+                states.GetSheet<StakePolicySheet>().StakeRegularRewardSheetValue);
+            if (!states.TryGetSheet<StakeRegularRewardSheet>(
+                    currentStakeRegularRewardSheetAddr,
+                    out var stakeRegularRewardSheet))
+            {
+                throw new StateNullException(ReservedAddresses.LegacyAccount,
+                    currentStakeRegularRewardSheetAddr);
+            }
+
+            var requiredStakingAmount = stakeRegularRewardSheet[requiredStakingLevel].RequiredGold;
             var stakedAmount =
                 states.GetStakedAmount(states.GetAvatarState(AvatarAddress).agentAddress);
             if (stakedAmount < requiredStakingAmount * currency)
