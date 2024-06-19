@@ -341,10 +341,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
             );
         }
 
-        [Fact]
-        public void InsufficientStaking()
+        [Theory]
+        [InlineData(50, true)] // Min. staking amount
+        [InlineData(4999, true)] // Staking 3 level -1
+        [InlineData(5000, false)]
+        public void InsufficientStaking(int staking, bool err)
         {
-            var state = Stake(_initialState, 100);
+            var state = Stake(_initialState, staking);
             var gameConfig = state.GetGameConfigState();
             // Set active season
             var seasonInfo = new SeasonInfo(
@@ -363,14 +366,27 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 AvatarAddress = AvatarAddress,
                 Bounty = gameConfig.AdventureBossMinBounty * NCG,
             };
-            Assert.Throws<InsufficientStakingException>(() => action.Execute(
-                new ActionContext
+
+            if (err)
+            {
+                Assert.Throws<InsufficientStakingException>(() => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = AgentAddress,
+                        BlockIndex = 100L,
+                    }
+                ));
+            }
+            else
+            {
+                action.Execute(new ActionContext
                 {
                     PreviousState = state,
                     Signer = AgentAddress,
                     BlockIndex = 100L,
-                }
-            ));
+                });
+            }
         }
 
         [Fact]
