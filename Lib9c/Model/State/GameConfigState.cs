@@ -48,7 +48,7 @@ namespace Nekoyume.Model.State
         public int RequireCharacterLevel_EquipmentSlotRing1 { get; private set; }
         public int RequireCharacterLevel_EquipmentSlotRing2 { get; private set; }
         public int RequireCharacterLevel_EquipmentSlotAura { get; private set; }
-        public int RequireCharacterLevel_EquipmentSlotCharm { get; private set; }
+        public int RequireCharacterLevel_EquipmentSlotGrimoire { get; private set; }
         public int RequireCharacterLevel_ConsumableSlot1 { get; private set; }
         public int RequireCharacterLevel_ConsumableSlot2 { get; private set; }
         public int RequireCharacterLevel_ConsumableSlot3 { get; private set; }
@@ -223,10 +223,10 @@ namespace Nekoyume.Model.State
             {
                 RequireCharacterLevel_EquipmentSlotAura = characterEquipmentSlotAura.ToInteger();
             }
-            if (serialized.TryGetValue((Text)"character_equipment_slot_charm",
-                    out var characterEquipmentSlotCharm))
+            if (serialized.TryGetValue((Text)"character_equipment_slot_grimoire",
+                    out var characterEquipmentSlotGrimoire))
             {
-                RequireCharacterLevel_EquipmentSlotCharm = characterEquipmentSlotCharm.ToInteger();
+                RequireCharacterLevel_EquipmentSlotGrimoire = characterEquipmentSlotGrimoire.ToInteger();
             }
 
             if (serialized.TryGetValue((Text)"character_consumable_slot_1",
@@ -489,11 +489,11 @@ namespace Nekoyume.Model.State
                     RequireCharacterLevel_EquipmentSlotAura.Serialize());
             }
 
-            if (RequireCharacterLevel_EquipmentSlotCharm > 0)
+            if (RequireCharacterLevel_EquipmentSlotGrimoire > 0)
             {
                 values.Add(
-                    (Text)"character_equipment_slot_charm",
-                    RequireCharacterLevel_EquipmentSlotCharm.Serialize());
+                    (Text)"character_equipment_slot_grimoire",
+                    RequireCharacterLevel_EquipmentSlotGrimoire.Serialize());
             }
 
             if (RequireCharacterLevel_ConsumableSlot1 > 0)
@@ -736,8 +736,8 @@ namespace Nekoyume.Model.State
                     RequireCharacterLevel_EquipmentSlotAura =
                         TableExtensions.ParseInt(row.Value);
                     break;
-                case "character_equipment_slot_charm":
-                    RequireCharacterLevel_EquipmentSlotCharm =
+                case "character_equipment_slot_grimoire":
+                    RequireCharacterLevel_EquipmentSlotGrimoire =
                         TableExtensions.ParseInt(row.Value);
                     break;
                 case "character_consumable_slot_1":
