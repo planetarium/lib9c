@@ -82,18 +82,6 @@ namespace Nekoyume.Action.AdventureBoss
                 );
             }
 
-            // Cannot put bounty in two seasons in a row
-            if (Season > 1)
-            {
-                var prevBountyBoard = states.GetBountyBoard(Season - 1);
-                if (prevBountyBoard.Investors.Select(i => i.AvatarAddress).Contains(AvatarAddress))
-                {
-                    throw new PreviousBountyException(
-                        "You've put bounty in previous season. Cannot put bounty two seasons in a row"
-                    );
-                }
-            }
-
             if (!Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress))
             {
                 throw new InvalidAddressException();
