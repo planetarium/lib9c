@@ -39,10 +39,10 @@ namespace Nekoyume.Action.AdventureBoss
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
             {
-                ["season"] = (Integer)Season,
-                ["avatarAddress"] = AvatarAddress.Serialize(),
-                ["costumes"] = new List(Costumes.OrderBy(i => i).Select(e => e.Serialize())),
-                ["equipments"] =
+                ["s"] = (Integer)Season,
+                ["a"] = AvatarAddress.Serialize(),
+                ["c"] = new List(Costumes.OrderBy(i => i).Select(e => e.Serialize())),
+                ["e"] =
                     new List(Equipments.OrderBy(i => i).Select(e => e.Serialize())),
                 ["r"] = RuneInfos.OrderBy(x => x.SlotIndex).Select(x => x.Serialize())
                     .Serialize(),
@@ -51,10 +51,10 @@ namespace Nekoyume.Action.AdventureBoss
         protected override void LoadPlainValueInternal(
             IImmutableDictionary<string, IValue> plainValue)
         {
-            Season = (Integer)plainValue["season"];
-            AvatarAddress = plainValue["avatarAddress"].ToAddress();
-            Costumes = ((List)plainValue["costumes"]).Select(e => e.ToGuid()).ToList();
-            Equipments = ((List)plainValue["equipments"]).Select(e => e.ToGuid()).ToList();
+            Season = (Integer)plainValue["s"];
+            AvatarAddress = plainValue["a"].ToAddress();
+            Costumes = ((List)plainValue["c"]).Select(e => e.ToGuid()).ToList();
+            Equipments = ((List)plainValue["e"]).Select(e => e.ToGuid()).ToList();
             RuneInfos = plainValue["r"].ToList(x => new RuneSlotInfo((List)x));
         }
 

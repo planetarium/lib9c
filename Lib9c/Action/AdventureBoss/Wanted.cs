@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -19,7 +21,7 @@ namespace Nekoyume.Action.AdventureBoss
 {
     [Serializable]
     [ActionType(TypeIdentifier)]
-    public class Wanted : ActionBase
+    public class Wanted : GameAction
     {
         public const string TypeIdentifier = "wanted";
 
@@ -27,20 +29,21 @@ namespace Nekoyume.Action.AdventureBoss
         public FungibleAssetValue Bounty;
         public Address AvatarAddress;
 
-        public override IValue PlainValue =>
-            Dictionary.Empty
-                .Add("type_id", TypeIdentifier)
-                .Add("values", List.Empty
-                    .Add(Season.Serialize())
-                    .Add(Bounty.Serialize())
-                    .Add(AvatarAddress.Serialize()));
+        protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
+            new Dictionary<string, IValue>
+            {
+                ["s"] = (Integer)Season,
+                ["b"] = Bounty.Serialize(),
+                ["a"] = AvatarAddress.Serialize()
+            }.ToImmutableDictionary();
 
-        public override void LoadPlainValue(IValue plainValue)
+        protected override void LoadPlainValueInternal(
+            IImmutableDictionary<string, IValue> plainValue
+        )
         {
-            var list = (List)((Dictionary)plainValue)["values"];
-            Season = list[0].ToInteger();
-            Bounty = list[1].ToFungibleAssetValue();
-            AvatarAddress = list[2].ToAddress();
+            Season = (Integer)plainValue["s"];
+            Bounty = plainValue["b"].ToFungibleAssetValue();
+            AvatarAddress = plainValue["a"].ToAddress();
         }
 
         public override IWorld Execute(IActionContext context)
