@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Action;
     using Nekoyume.Action.AdventureBoss;
     using Nekoyume.Data;
+    using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
@@ -127,8 +128,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 0 },
-                        { 30001, 14 },
+                        { 20001, 14 },
+                        { 30001, 0 },
                     },
                 },
             };
@@ -149,8 +150,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 0 },
-                        { 30001, 14 }, // (200*1.2) * 0.3 / 2.5 * (120/240)
+                        { 20001, 14 }, // (200*1.2) * 0.3 / 2.5 * (120/240)
+                        { 30001, 0 },
                     },
                 },
             };
@@ -171,8 +172,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 0 },
-                        { 30001, 12 }, // (300*1.2) * 0.3 / 2.5 * (100/360)
+                        { 20001, 12 }, // (300*1.2) * 0.3 / 2.5 * (100/360)
+                        { 30001, 0 },
                     },
                 },
             };
@@ -197,6 +198,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                0 * NCG, // Only one explorer and gets all rewards. Nothing left.
             };
 
             yield return new object[]
@@ -221,6 +223,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                // 7.5NCG for half of 15% contribution, 5NCG for 5% raffle
+                FungibleAssetValue.FromRawValue(NCG, 1250),
             };
 
             yield return new object[]
@@ -241,6 +245,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                25 * NCG, // 15NCG for half of distribution, 10NCG for 5% raffle
             };
 
             yield return new object[]
@@ -261,6 +266,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                15 * NCG, // 10NCG for 2/3 of 15% distribution, 5NCG for raffle
             };
         }
 
@@ -279,8 +285,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 0 },
-                        { 30001, 14 },
+                        { 20001, 14 },
+                        { 30001, 0 },
                     },
                 },
             };
@@ -316,8 +322,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 0 },
-                        { 30001, 14 },
+                        { 20001, 14 },
+                        { 30001, 0 },
                     },
                 },
             };
@@ -427,8 +433,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 0 * NCG, // No Raffle Reward
                 FavReward = new Dictionary<int, int>
                 {
-                    { 20001, 0 },
-                    { 30001, 28 },
+                    { 20001, 28 },
+                    { 30001, 0 },
                 },
                 ItemReward = new Dictionary<int, int>
                 {
@@ -523,7 +529,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             int seed,
             int bounty,
             int anotherExplorerCount,
-            AdventureBossGameData.ClaimableReward expectedReward
+            AdventureBossGameData.ClaimableReward expectedReward,
+            FungibleAssetValue expectedRemainingNcg
         )
         {
             // Settings
@@ -635,11 +642,38 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Assert.Equal(TesterAvatarState.name, exploreBoard.RaffleWinnerName);
             }
 
+            var seasonBountyBoardAddress =
+                Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(1));
             var explorerList = resultState.GetExplorerList(1);
             Assert.Equal(anotherExplorerCount == 0 ? 1 : 2, explorerList.Explorers.Count);
             Assert.Equal(exploreBoard.ExplorerCount, explorerList.Explorers.Count);
             Assert.Equal((int)(bounty * 0.05) * NCG, exploreBoard.RaffleReward);
+            Assert.Equal(
+                expectedRemainingNcg,
+                resultState.GetBalance(seasonBountyBoardAddress, NCG)
+            );
             Assert.True(resultState.GetExplorer(1, TesterAvatarAddress).Claimed);
+
+            if (anotherExplorerCount > 0)
+            {
+                // Claim another rewards
+                resultState = new ClaimAdventureBossReward
+                {
+                    Season = 1,
+                    AvatarAddress = ExplorerAvatarAddress,
+                }.Execute(new ActionContext
+                {
+                    PreviousState = resultState,
+                    Signer = ExplorerAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex + 1,
+                    RandomSeed = seed,
+                });
+
+                Assert.Equal(
+                    0 * NCG,
+                    resultState.GetBalance(seasonBountyBoardAddress, NCG)
+                );
+            }
 
             Test(resultState, expectedReward);
         }
@@ -784,8 +818,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 20 * NCG,
                 FavReward = new Dictionary<int, int>
                 {
-                    { 20001, 0 },
-                    { 30001, 14 },
+                    { 20001, 14 },
+                    { 30001, 0 },
                 },
                 ItemReward = new Dictionary<int, int>
                 {

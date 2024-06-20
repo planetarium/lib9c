@@ -11,11 +11,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Action;
     using Nekoyume.Action.AdventureBoss;
     using Nekoyume.Action.Exceptions.AdventureBoss;
+    using Nekoyume.Exceptions;
     using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.Stake;
     using Xunit;
 
     public class WantedTest
@@ -101,7 +103,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(600201, bountyBoard.FixedRewardItemId);
             Assert.Null(bountyBoard.FixedRewardFavId);
             Assert.Null(bountyBoard.RandomRewardItemId);
-            Assert.Equal(30001, bountyBoard.RandomRewardFavId);
+            Assert.Equal(20001, bountyBoard.RandomRewardFavId);
 
             var investor = Assert.Single(bountyBoard.Investors);
             Assert.Equal(
@@ -151,7 +153,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(600201, bountyBoard.FixedRewardItemId);
             Assert.Null(bountyBoard.FixedRewardFavId);
             Assert.Null(bountyBoard.RandomRewardItemId);
-            Assert.Equal(30001, bountyBoard.RandomRewardFavId);
+            Assert.Equal(20001, bountyBoard.RandomRewardFavId);
 
             investor = bountyBoard.Investors.First(i => i.AvatarAddress == AvatarAddress2);
             Assert.Equal(minBounty * NCG, investor.Price);
@@ -442,42 +444,70 @@ namespace Lib9c.Tests.Action.AdventureBoss
         }
 
         [Fact]
-        public void CannotPutBounty()
+        public void WantedForMultipleSeasons()
         {
             var state = Stake(_initialState);
             var gameConfig = state.GetGameConfigState();
-            var prevSeason = new SeasonInfo(
-                1,
-                0L,
-                gameConfig.AdventureBossActiveInterval,
-                gameConfig.AdventureBossInactiveInterval
-            );
-            var prevBountyBoard = new BountyBoard(1);
-            prevBountyBoard.AddOrUpdate(
-                AvatarAddress,
-                AvatarState.name,
-                gameConfig.AdventureBossMinBounty * NCG
-            );
-            state = state.SetSeasonInfo(prevSeason).SetBountyBoard(1, prevBountyBoard);
-            state = state.SetLatestAdventureBossSeason(prevSeason);
 
-            var action = new Wanted
+            state = new Wanted
+            {
+                Season = 1,
+                AvatarAddress = AvatarAddress,
+                Bounty = gameConfig.AdventureBossMinBounty * NCG,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = AgentAddress,
+                BlockIndex = 0L,
+            });
+
+            var prevSeason = state.GetSeasonInfo(1);
+            state = new Wanted
             {
                 Season = 2,
                 AvatarAddress = AvatarAddress,
                 Bounty = gameConfig.AdventureBossMinBounty * NCG,
-            };
-            Assert.Throws<PreviousBountyException>(() => action.Execute(
-                new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = AgentAddress,
-                    BlockIndex = prevSeason.NextStartBlockIndex,
-                }
-            ));
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = AgentAddress,
+                BlockIndex = prevSeason.NextStartBlockIndex,
+            });
+
+            var requiredStakingLevel =
+                state.GetGameConfigState().AdventureBossWantedRequiredStakingLevel;
+            var currentStakeRegularRewardSheetAddr = Addresses.GetSheetAddress(
+                state.GetSheet<StakePolicySheet>().StakeRegularRewardSheetValue);
+            if (!state.TryGetSheet<StakeRegularRewardSheet>(
+                    currentStakeRegularRewardSheetAddr,
+                    out var stakeRegularRewardSheet))
+            {
+                throw new StateNullException(
+                    ReservedAddresses.LegacyAccount,
+                    currentStakeRegularRewardSheetAddr
+                );
+            }
+
+            var stakeAmount = stakeRegularRewardSheet[requiredStakingLevel].RequiredGold;
+
+            for (var szn = 1; szn <= 2; szn++)
+            {
+                var bountyBoard = state.GetBountyBoard(szn);
+
+                Assert.Equal(gameConfig.AdventureBossMinBounty * NCG, bountyBoard.totalBounty());
+                Assert.Contains(
+                    AvatarAddress,
+                    bountyBoard.Investors.Select(inv => inv.AvatarAddress)
+                );
+            }
+
+            Assert.Equal(
+                (InitialBalance - stakeAmount - 2 * gameConfig.AdventureBossMinBounty) * NCG,
+                state.GetBalance(AgentAddress, NCG)
+            );
         }
 
-        private IWorld Stake(IWorld world, int amount = 0)
+        private IWorld Stake(IWorld world, long amount = 0)
         {
             foreach (var (key, value) in Sheets)
             {
@@ -486,10 +516,21 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             if (amount == 0)
             {
-                var stakeSheet = world.GetSheet<MonsterCollectionSheet>();
-                amount = stakeSheet.OrderedList.First(row =>
-                    row.Level == world.GetGameConfigState().AdventureBossWantedRequiredStakingLevel
-                ).RequiredGold;
+                var requiredStakingLevel =
+                    world.GetGameConfigState().AdventureBossWantedRequiredStakingLevel;
+                var currentStakeRegularRewardSheetAddr = Addresses.GetSheetAddress(
+                    world.GetSheet<StakePolicySheet>().StakeRegularRewardSheetValue);
+                if (!world.TryGetSheet<StakeRegularRewardSheet>(
+                        currentStakeRegularRewardSheetAddr,
+                        out var stakeRegularRewardSheet))
+                {
+                    throw new StateNullException(
+                        ReservedAddresses.LegacyAccount,
+                        currentStakeRegularRewardSheetAddr
+                    );
+                }
+
+                amount = stakeRegularRewardSheet[requiredStakingLevel].RequiredGold;
             }
 
             var action = new Stake(new BigInteger(amount));

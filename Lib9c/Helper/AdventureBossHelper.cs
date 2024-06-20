@@ -9,6 +9,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Battle;
 using Nekoyume.Data;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.AdventureBoss;
@@ -36,30 +37,25 @@ namespace Nekoyume.Helper
             IEnumerable<AdventureBossSheet.RewardRatioData> rewardData
         )
         {
-            var totalProb = rewardData.Select(r => r.Ratio).Sum();
-            var target = random.Next(0, totalProb);
-            int? itemId = null;
-            int? favId = null;
+            var selector = new WeightedSelector<AdventureBossSheet.RewardRatioData>(random);
             foreach (var item in rewardData)
             {
-                if (target < item.Ratio)
-                {
-                    switch (item.ItemType)
-                    {
-                        case "Material":
-                            itemId = item.ItemId;
-                            break;
-                        case "Rune":
-                            favId = item.ItemId;
-                            break;
-                        default:
-                            throw new ItemNotFoundException();
-                    }
+                selector.Add(item, item.Ratio);
+            }
 
+            int? itemId = null;
+            int? favId = null;
+            var selected = selector.Select(1).First();
+            switch (selected.ItemType)
+            {
+                case "Material":
+                    itemId = selected.ItemId;
                     break;
-                }
-
-                target -= item.Ratio;
+                case "Rune":
+                    favId = selected.ItemId;
+                    break;
+                default:
+                    throw new ItemNotFoundException();
             }
 
             return (itemId, favId);
@@ -233,10 +229,9 @@ namespace Nekoyume.Helper
 
         public static IWorld CollectWantedReward(IWorld states, IActionContext context,
             AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
-            Address avatarAddress, long claimableDuration,
+            Address agentAddress, Address avatarAddress, long claimableDuration,
             out AdventureBossGameData.ClaimableReward collectedReward)
         {
-            var agentAddress = states.GetAvatarState(avatarAddress).agentAddress;
             for (var szn = season; szn > 0; szn--)
             {
                 var seasonInfo = states.GetSeasonInfo(szn);
@@ -373,10 +368,9 @@ namespace Nekoyume.Helper
 
         public static IWorld CollectExploreReward(IWorld states, IActionContext context,
             AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
-            Address avatarAddress, long claimableDuration,
+            Address agentAddress, Address avatarAddress, long claimableDuration,
             out AdventureBossGameData.ClaimableReward collectedReward)
         {
-            var agentAddress = states.GetAvatarState(avatarAddress).agentAddress;
             for (var szn = season; szn > 0; szn--)
             {
                 var seasonInfo = states.GetSeasonInfo(szn);

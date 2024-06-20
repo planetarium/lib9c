@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Data;
+using Nekoyume.Exceptions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
@@ -47,6 +48,18 @@ namespace Nekoyume.Action.AdventureBoss
             var states = context.PreviousState;
 
             // Validation
+            var addresses = GetSignerAndOtherAddressesHex(context, AvatarAddress);
+            // NOTE: The `AvatarAddress` must contained in `Signer`'s `AgentState.avatarAddresses`.
+            if (!Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress))
+            {
+                throw new InvalidActionFieldException(
+                    TypeIdentifier,
+                    addresses,
+                    nameof(AvatarAddress),
+                    $"Signer({context.Signer}) is not contained in" +
+                    $" AvatarAddress({AvatarAddress}).");
+            }
+
             var gameConfig = states.GetGameConfigState();
             var latestSeason = states.GetLatestAdventureBossSeason();
             if (Season > latestSeason.Season)
@@ -74,13 +87,20 @@ namespace Nekoyume.Action.AdventureBoss
             // Pick raffle winner if not exists
             states = AdventureBossHelper.PickRaffleWinner(states, context, Season);
 
-            // Send 75% NCG to operational account. 25% are for rewards.
+            // Send 80% NCG to operational account. 20% are for rewards.
+            var seasonBountyBoardAddress =
+                Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(Season));
             var bountyBoard = states.GetBountyBoard(Season);
-            states = states.TransferAsset(context,
-                Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(Season)),
-                // FIXME: Set operational account address
-                new Address(), (bountyBoard.totalBounty() * 75).DivRem(100, out _)
-            );
+            if (bountyBoard.totalBounty() ==
+                states.GetBalance(seasonBountyBoardAddress, bountyBoard.totalBounty().Currency)
+               )
+            {
+                states = states.TransferAsset(context, seasonBountyBoardAddress,
+                    // FIXME: Set operational account address
+                    new Address(),
+                    (bountyBoard.totalBounty() * 80).DivRem(100, out _)
+                );
+            }
 
             var currentBlockIndex = context.BlockIndex;
             var myReward = new AdventureBossGameData.ClaimableReward
@@ -92,13 +112,13 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Collect wanted reward
             states = AdventureBossHelper.CollectWantedReward(
-                states, context, myReward, currentBlockIndex, Season, AvatarAddress,
+                states, context, myReward, currentBlockIndex, Season, context.Signer, AvatarAddress,
                 gameConfig.AdventureBossClaimInterval, out myReward
             );
 
             // Collect explore reward
             states = AdventureBossHelper.CollectExploreReward(
-                states, context, myReward, currentBlockIndex, Season, AvatarAddress,
+                states, context, myReward, currentBlockIndex, Season, context.Signer, AvatarAddress,
                 gameConfig.AdventureBossClaimInterval, out myReward
             );
 

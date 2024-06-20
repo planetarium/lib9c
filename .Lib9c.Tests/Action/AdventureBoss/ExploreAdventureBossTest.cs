@@ -98,7 +98,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // No AP potion at all
             yield return new object[]
             {
-                0, 0, 0, 0, 0, null, new (int, int)[] { },
+                0, 5, 0, 0, 0, null, new (int, int)[] { },
             };
             // Start from bottom, goes to 5
             yield return new object[]
@@ -106,9 +106,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 0, 5, 5, 10, 5, null,
                 new[]
                 {
-                    (600301, 76), // 50 first Reward + 26 floor reward
+                    (600301, 85), // 50 first Reward + 35 floor reward
                     (600302, 50), // 50 first reward
-                    (600303, 0),
+                    (600303, 3), // 3 floor reward
                     (600304, 0),
                 },
             };
@@ -117,9 +117,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 0, 5, 3, 3, 0, null, new[]
                 {
-                    (600301, 47), // 30 first reward + 17 floor reward
+                    (600301, 53), // 30 first reward + 23 floor reward
                     (600302, 30), // 30 first reward
-                    (600303, 0),
+                    (600303, 3),  // 3 floor reward
                     (600304, 0),
                 },
             };
@@ -128,9 +128,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 2, 5, 5, 5, 2, null, new[]
                 {
-                    (600301, 40), // 30 first reward + 10 floor reward
+                    (600301, 46), // 30 first reward + 16 floor reward
                     (600302, 39), // 30 first reward + 9 floor reward
-                    (600303, 0),
+                    (600303, 3), // 3 floor reward
                     (600304, 0),
                 },
             };
@@ -140,9 +140,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 5, 10, 10, 10, 5, null,
                 new[]
                 {
-                    (600301, 72), // 50 first reward + 22 floor reward
+                    (600301, 81), // 50 first reward + 31 floor reward
                     (600302, 50), // 50 first reward
-                    (600303, 0),
+                    (600303, 3), // 3 floor reward
                     (600304, 0),
                 },
             };
