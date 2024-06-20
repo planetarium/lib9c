@@ -10,6 +10,7 @@ using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Battle;
 using Nekoyume.Battle.AdventureBoss;
 using Nekoyume.Data;
+using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.AdventureBoss;
@@ -102,10 +103,10 @@ namespace Nekoyume.Action.AdventureBoss
                 );
             }
 
-            var avatarState = states.GetAvatarState(AvatarAddress);
-            if (avatarState.agentAddress != context.Signer)
+            if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
             {
-                throw new InvalidAddressException();
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
             var exploreBoard = states.GetExploreBoard(Season);
@@ -121,6 +122,11 @@ namespace Nekoyume.Action.AdventureBoss
                 explorerList.AddExplorer(AvatarAddress, avatarState.name);
                 exploreBoard.ExplorerCount = explorerList.Explorers.Count;
                 states = states.SetExplorerList(Season, explorerList);
+            }
+
+            if (explorer.Floor == explorer.MaxFloor)
+            {
+                throw new InvalidOperationException("Reached to locked floor. Unlock floor first.");
             }
 
             if (explorer.Floor == UnlockFloor.TotalFloor)
@@ -149,7 +155,6 @@ namespace Nekoyume.Action.AdventureBoss
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var material =
                 materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
-            var inventory = states.GetInventoryV2(AvatarAddress);
             var random = context.GetRandom();
             var selector = new WeightedSelector<AdventureBossFloorSheet.RewardData>(random);
             var rewardList = new List<AdventureBossSheet.RewardAmountData>();
@@ -199,7 +204,6 @@ namespace Nekoyume.Action.AdventureBoss
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
             // Get data for simulator
-            var startFloor = explorer.Floor + 1;
             var runeStates = states.GetRuneState(AvatarAddress, out var migrateRequired);
             // Passive migrate runeStates
             if (migrateRequired)
@@ -233,7 +237,7 @@ namespace Nekoyume.Action.AdventureBoss
             var bossId = states.GetSheet<AdventureBossSheet>().Values
                 .First(row => row.BossId == latestSeason.BossId).Id;
             var floorRows = states.GetSheet<AdventureBossFloorSheet>().Values
-                .Where(row => row.AdventureBossId == bossId);
+                .Where(row => row.AdventureBossId == bossId).ToList();
             var firstRewardSheet = states.GetSheet<AdventureBossFloorFirstRewardSheet>();
             var pointSheet = states.GetSheet<AdventureBossFloorPointSheet>();
 
@@ -257,7 +261,7 @@ namespace Nekoyume.Action.AdventureBoss
                     AdventureBossSimulator.GetWaveRewards(random, flRow, materialItemSheet);
 
                 // Use AP Potion
-                if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
+                if (!avatarState.inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
                         exploreAp))
                 {
                     break;
@@ -271,7 +275,7 @@ namespace Nekoyume.Action.AdventureBoss
                     floorId: fl,
                     random,
                     avatarState,
-                    fl == startFloor ? Foods : new List<Guid>(),
+                    fl == firstFloor ? Foods : new List<Guid>(),
                     runeStates,
                     runeSlotState,
                     floorRow,
@@ -334,11 +338,11 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             states = AdventureBossHelper.AddExploreRewards(
-                context, states, AvatarAddress, inventory, rewardList
+                context, states, AvatarAddress, avatarState.inventory, rewardList
             );
 
             return states
-                .SetInventory(AvatarAddress, inventory)
+                .SetInventory(AvatarAddress, avatarState.inventory)
                 .SetExploreBoard(Season, exploreBoard)
                 .SetExplorer(Season, explorer);
         }
