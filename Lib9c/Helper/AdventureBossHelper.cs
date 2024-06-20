@@ -329,8 +329,8 @@ namespace Nekoyume.Helper
 
             // calculate ncg reward
             var totalNcgReward = (bountyBoard.totalBounty() * 15).DivRem(100, out _);
-            var myNcgReward = (totalNcgReward * explorer.UsedApPotion)
-                .DivRem(exploreBoard.UsedApPotion, out _);
+            var myNcgReward = (totalNcgReward * explorer.Score)
+                .DivRem(exploreBoard.TotalPoint, out _);
 
             // Only > 0.1 NCG will be rewarded.
             if (myNcgReward >= (10 * gold).DivRem(100, out _))
@@ -353,7 +353,7 @@ namespace Nekoyume.Helper
             var totalRewardAmount =
                 (int)Math.Round(exploreBoard.UsedApPotion * ncgApRatio / ncgRewardRatio);
             var myRewardAmount = (int)Math.Floor(
-                (decimal)totalRewardAmount * explorer.UsedApPotion / exploreBoard.UsedApPotion
+                (decimal)totalRewardAmount * explorer.Score / exploreBoard.TotalPoint
             );
             if (myRewardAmount > 0)
             {
