@@ -9,7 +9,6 @@ using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Battle;
 using Nekoyume.Battle.AdventureBoss;
-using Nekoyume.Data;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.AdventureBoss;

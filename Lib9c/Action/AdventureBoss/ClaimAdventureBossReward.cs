@@ -19,25 +19,26 @@ namespace Nekoyume.Action.AdventureBoss
 {
     [Serializable]
     [ActionType(TypeIdentifier)]
-    public class ClaimAdventureBossReward : ActionBase
+    public class ClaimAdventureBossReward : GameAction
     {
         public const string TypeIdentifier = "claim_adventure_boss_reward";
 
         public long Season;
         public Address AvatarAddress;
 
-        public override IValue PlainValue => Dictionary.Empty
-            .Add("type_id", TypeIdentifier)
-            .Add("values", List.Empty
-                .Add(Season.Serialize())
-                .Add(AvatarAddress.Serialize())
-            );
+        protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
+            new Dictionary<string, IValue>
+            {
+                ["s"] = (Integer)Season,
+                ["a"] = AvatarAddress.Serialize(),
+            }.ToImmutableDictionary();
 
-        public override void LoadPlainValue(IValue plainValue)
+        protected override void LoadPlainValueInternal(
+            IImmutableDictionary<string, IValue> plainValue
+        )
         {
-            var values = (List)((Dictionary)plainValue)["values"];
-            Season = values[0].ToInteger();
-            AvatarAddress = values[1].ToAddress();
+            Season = (Integer)plainValue["s"];
+            AvatarAddress = plainValue["a"].ToAddress();
         }
 
         public override IWorld Execute(IActionContext context)

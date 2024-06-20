@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -15,7 +17,7 @@ namespace Nekoyume.Action.AdventureBoss
 {
     [Serializable]
     [ActionType(TypeIdentifier)]
-    public class UnlockFloor : ActionBase
+    public class UnlockFloor : GameAction
     {
         public const string TypeIdentifier = "unlock_floor";
         public const int TotalFloor = 20;
@@ -25,21 +27,20 @@ namespace Nekoyume.Action.AdventureBoss
         public Address AvatarAddress;
         public bool UseNcg;
 
-        public override IValue PlainValue => Dictionary.Empty
-            .Add("type_id", TypeIdentifier)
-            .Add("values",
-                List.Empty
-                    .Add(Season.Serialize())
-                    .Add(AvatarAddress.Serialize())
-                    .Add(UseNcg.Serialize())
-            );
+        protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
+            new Dictionary<string, IValue>
+            {
+                ["s"] = (Integer)Season,
+                ["a"] = AvatarAddress.Serialize(),
+                ["u"] = UseNcg.Serialize(),
+            }.ToImmutableDictionary();
 
-        public override void LoadPlainValue(IValue plainValue)
+        protected override void LoadPlainValueInternal(
+            IImmutableDictionary<string, IValue> plainValue)
         {
-            var list = (List)((Dictionary)plainValue)["values"];
-            Season = list[0].ToInteger();
-            AvatarAddress = list[1].ToAddress();
-            UseNcg = list[2].ToBoolean();
+            Season = (Integer)plainValue["s"];
+            AvatarAddress = plainValue["a"].ToAddress();
+            UseNcg = plainValue["u"].ToBoolean();
         }
 
         public override IWorld Execute(IActionContext context)
