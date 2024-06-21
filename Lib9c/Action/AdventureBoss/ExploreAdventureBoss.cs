@@ -279,7 +279,7 @@ namespace Nekoyume.Action.AdventureBoss
                     runeStates,
                     runeSlotState,
                     floorRow,
-                    floorWaveSheet[fl],
+                    floorWaveSheet[floorRow.Id],
                     simulatorSheets,
                     enemySkillSheet,
                     costumeStatSheet,

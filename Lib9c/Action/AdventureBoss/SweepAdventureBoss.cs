@@ -183,8 +183,13 @@ namespace Nekoyume.Action.AdventureBoss
             exploreBoard.UsedApPotion += requiredPotion;
             explorer.UsedApPotion += requiredPotion;
 
+            var adventureBossId = states.GetSheet<AdventureBossSheet>().OrderedList
+                .First(row => row.BossId == latestSeason.BossId).Id;
+            var floorId = states.GetSheet<AdventureBossFloorSheet>().OrderedList.First(row =>
+                row.AdventureBossId == adventureBossId && row.Floor == explorer.Floor).Id;
+
             var simulator = new AdventureBossSimulator(
-                latestSeason.BossId, explorer.Floor, context.GetRandom(),
+                latestSeason.BossId, floorId, context.GetRandom(),
                 avatarState, sheets.GetSimulatorSheets(), logEvent: false
             );
             simulator.AddBreakthrough(1, explorer.Floor,
