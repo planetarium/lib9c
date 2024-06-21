@@ -20,8 +20,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
         private readonly Address _operatorAddress;
         private readonly Address _delegatorAddress;
         private readonly Address _validatorAddress;
-        private readonly FungibleAssetValue _governanceToken
-            = new FungibleAssetValue(Asset.GovernanceToken, 100, 0);
+        private readonly FungibleAssetValue _governanceTokens = GovernanceToken * 100;
 
         private IWorld _states;
 
@@ -31,13 +30,13 @@ namespace Lib9c.Tests.Action.DPoS.Control
             _operatorAddress = _operatorPublicKey.Address;
             _delegatorAddress = CreateAddress();
             _validatorAddress = Validator.DeriveAddress(_operatorAddress);
-            _states = InitializeStates();
+            _states = InitialState;
         }
 
         [Fact]
         public void Execute_Test()
         {
-            var governanceToken = _governanceToken;
+            var governanceTokens = _governanceTokens;
             var states = _states;
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
@@ -46,7 +45,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken);
+                ncg: governanceTokens);
             states = Update(
                 states: states,
                 blockIndex: 1);
@@ -80,7 +79,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
         [Fact]
         public void Execute_MaxAge_Test()
         {
-            var governanceToken = _governanceToken;
+            var governanceTokens = _governanceTokens;
             var states = _states;
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
@@ -90,7 +89,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: blockIndex,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken);
+                ncg: governanceTokens);
             states = Update(
                 states: states,
                 blockIndex: blockIndex);

@@ -169,28 +169,29 @@ namespace Nekoyume.Action.DPoS.Control
                 throw new NullValidatorException(dstValidatorAddress);
             }
 
+            var governanceToken = states.GetGoldCurrency();
             states = (srcValidator.Status, dstValidator.Status) switch
             {
                 (BondingStatus.Bonded, BondingStatus.Unbonding) => states.TransferAsset(
                     ctx,
                     ReservedAddress.BondedPool,
                     ReservedAddress.UnbondedPool,
-                    Asset.GovernanceFromConsensus(unbondingConsensusToken)),
+                    Asset.ConvertTokens(unbondingConsensusToken, governanceToken)),
                 (BondingStatus.Bonded, BondingStatus.Unbonded) => states.TransferAsset(
                     ctx,
                     ReservedAddress.BondedPool,
                     ReservedAddress.UnbondedPool,
-                    Asset.GovernanceFromConsensus(unbondingConsensusToken)),
+                    Asset.ConvertTokens(unbondingConsensusToken, governanceToken)),
                 (BondingStatus.Unbonding, BondingStatus.Bonded) => states.TransferAsset(
                     ctx,
                     ReservedAddress.UnbondedPool,
                     ReservedAddress.BondedPool,
-                    Asset.GovernanceFromConsensus(unbondingConsensusToken)),
+                    Asset.ConvertTokens(unbondingConsensusToken, governanceToken)),
                 (BondingStatus.Unbonded, BondingStatus.Bonded) => states.TransferAsset(
                     ctx,
                     ReservedAddress.UnbondedPool,
                     ReservedAddress.BondedPool,
-                    Asset.GovernanceFromConsensus(unbondingConsensusToken)),
+                    Asset.ConvertTokens(unbondingConsensusToken, governanceToken)),
                 _ => states,
             };
 

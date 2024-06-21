@@ -13,11 +13,9 @@ namespace Lib9c.Tests.Action.DPoS.Control
 
     public abstract class SlashCtrlTestBase : PoSTest
     {
-        public static readonly FungibleAssetValue ZeroNCG
-            = new FungibleAssetValue(Asset.GovernanceToken, 0, 0);
+        public static readonly FungibleAssetValue ZeroNCG = GovernanceToken * 0;
 
-        public static readonly FungibleAssetValue ZeroPower
-            = new FungibleAssetValue(Asset.ConsensusToken, 0, 0);
+        public static readonly FungibleAssetValue ZeroPower = Asset.ConsensusToken * 0;
 
         protected static FungibleAssetValue SlashPower(
             FungibleAssetValue value,
@@ -39,10 +37,10 @@ namespace Lib9c.Tests.Action.DPoS.Control
             BigInteger factor,
             params FungibleAssetValue[] assetsToSlashFirst)
         {
-            if (!value.Currency.Equals(Asset.GovernanceToken))
+            if (!value.Currency.Equals(GovernanceToken))
             {
                 throw new ArgumentException(
-                    message: $"'{value.Currency}' is different from '{Asset.GovernanceToken}'.",
+                    message: $"'{value.Currency}' is different from '{GovernanceToken}'.",
                     paramName: nameof(value));
             }
 
@@ -59,7 +57,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
             => Sum(values, Asset.ConsensusToken);
 
         protected static FungibleAssetValue SumNCG(IEnumerable<FungibleAssetValue> values)
-            => Sum(values, Asset.GovernanceToken);
+            => Sum(values, GovernanceToken);
 
         protected static FungibleAssetValue GetPower(IWorldState worldState, Address validatorAddress)
         {
@@ -72,7 +70,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
         {
             return worldState.GetBalance(
                 address: address,
-                currency: Asset.GovernanceToken);
+                currency: GovernanceToken);
         }
 
         protected static FungibleAssetValue GetShare(IWorldState worldState, Address validatorAddress)
@@ -103,7 +101,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
         protected static FungibleAssetValue NextNCG()
         {
             return new FungibleAssetValue(
-                currency: Asset.GovernanceToken,
+                currency: GovernanceToken,
                 majorUnit: Random.Shared.Next(1, 100),
                 minorUnit: Random.Shared.Next(0, 100));
         }
@@ -116,7 +114,11 @@ namespace Lib9c.Tests.Action.DPoS.Control
         }
 
         protected static FungibleAssetValue PowerFromNCG(FungibleAssetValue value)
-            => Asset.ConsensusFromGovernance(value);
+            => value.Currency.Equals(GovernanceToken)
+                ? Asset.ConvertTokens(value, Asset.ConsensusToken)
+                : throw new ArgumentException(
+                    $"Expected a currency {GovernanceToken} but got {value.Currency}",
+                    nameof(value));
 
         protected static FungibleAssetValue[] PowerFromNCG(FungibleAssetValue[] values)
             => values.Select(PowerFromNCG).ToArray();

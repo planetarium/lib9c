@@ -15,6 +15,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using LruCacheNet;
 using Nekoyume.Action;
+using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.Coupons;
@@ -239,6 +240,13 @@ namespace Nekoyume.Module
                 "Check the genesis block."
             );
         }
+
+        public static ImmutableHashSet<Currency> GetNativeTokens(this IWorldState worldState) =>
+            ImmutableHashSet.Create<Currency>(
+                GetGoldCurrency(worldState),
+                Asset.ConsensusToken,
+                Asset.Share,
+                Currencies.Mead);
 
         public static WeeklyArenaState GetWeeklyArenaState(this IWorldState worldState, Address address)
         {

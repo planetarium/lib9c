@@ -160,11 +160,12 @@ namespace Nekoyume.Action.DPoS.Control
             // Governance token pool transfer
             if (validator.Status == BondingStatus.Bonded)
             {
+                var governanceToken = states.GetGoldCurrency();
                 states = states.TransferAsset(
                         ctx,
                         ReservedAddress.BondedPool,
                         ReservedAddress.UnbondedPool,
-                        Asset.GovernanceFromConsensus(unbondingConsensusToken));
+                        Asset.ConvertTokens(unbondingConsensusToken, governanceToken));
             }
 
             // Entry register
@@ -287,11 +288,12 @@ namespace Nekoyume.Action.DPoS.Control
 
             if (validator.Status == BondingStatus.Bonded)
             {
+                var governanceToken = states.GetGoldCurrency();
                 states = states.TransferAsset(
                     ctx,
                     ReservedAddress.UnbondedPool,
                     ReservedAddress.BondedPool,
-                    Asset.GovernanceFromConsensus(cancelledConsensusToken));
+                    Asset.ConvertTokens(cancelledConsensusToken, governanceToken));
             }
 
             undelegationEntryIndices.ForEach(
@@ -346,11 +348,12 @@ namespace Nekoyume.Action.DPoS.Control
                 if (undelegationEntry.IsMatured(blockHeight))
                 {
                     // Pay back governance token to delegator
+                    var governanceToken = states.GetGoldCurrency();
                     states = states.TransferAsset(
                         ctx,
                         ReservedAddress.UnbondedPool,
                         undelegation.DelegatorAddress,
-                        Asset.GovernanceFromConsensus(undelegationEntry.UnbondingConsensusToken));
+                        Asset.ConvertTokens(undelegationEntry.UnbondingConsensusToken, governanceToken));
 
                     // Remove entry
                     completedIndices.Add(undelegationEntry.Index);

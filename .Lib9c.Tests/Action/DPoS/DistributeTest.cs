@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action.DPoS
     using Nekoyume.Action.DPoS.Control;
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
     using Validator = Nekoyume.Action.DPoS.Model.Validator;
@@ -23,35 +24,28 @@ namespace Lib9c.Tests.Action.DPoS
         public DistributeTest()
             : base()
         {
-            _nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
-            _states = InitializeStates();
+            _states = InitialState;
+            _nativeTokens = NativeTokens;
             OperatorPrivateKeys = new List<PrivateKey>();
             OperatorPublicKeys = new List<PublicKey>();
             OperatorAddresses = new List<Address>();
             ValidatorAddresses = new List<Address>();
             DelegatorAddress = CreateAddress();
-            _states = _states.MintAsset(
-                new ActionContext
-                {
-                    PreviousState = _states,
-                    BlockIndex = 1,
-                },
+            _states = _states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 DelegatorAddress,
-                Asset.GovernanceToken * 100000);
+                GovernanceToken * 100000);
             for (int i = 0; i < 200; i++)
             {
                 PrivateKey operatorPrivateKey = new PrivateKey();
                 PublicKey operatorPublicKey = operatorPrivateKey.PublicKey;
                 Address operatorAddress = operatorPublicKey.Address;
-                _states = _states.MintAsset(
-                    new ActionContext
-                    {
-                        PreviousState = _states,
-                        BlockIndex = 1,
-                    },
+                _states = _states.TransferAsset(
+                    new ActionContext(),
+                    GoldCurrencyState.Address,
                     operatorAddress,
-                    Asset.GovernanceToken * 1000);
+                    GovernanceToken * 1000);
 
                 OperatorPrivateKeys.Add(operatorPrivateKey);
                 OperatorPublicKeys.Add(operatorPublicKey);
@@ -65,7 +59,7 @@ namespace Lib9c.Tests.Action.DPoS
                     },
                     operatorAddress,
                     operatorPublicKey,
-                    Asset.GovernanceToken * 1,
+                    GovernanceToken * 1,
                     _nativeTokens);
                 ValidatorAddresses.Add(Validator.DeriveAddress(operatorAddress));
             }
@@ -95,7 +89,7 @@ namespace Lib9c.Tests.Action.DPoS
                     },
                     DelegatorAddress,
                     ValidatorAddresses[i],
-                    Asset.GovernanceToken * (i + 1),
+                    GovernanceToken * (i + 1),
                     _nativeTokens);
             }
 
@@ -111,7 +105,7 @@ namespace Lib9c.Tests.Action.DPoS
                 },
                 DelegatorAddress,
                 validatorAddressA,
-                Asset.GovernanceToken * 200,
+                GovernanceToken * 200,
                 _nativeTokens);
 
             _states = DelegateCtrl.Execute(
@@ -123,7 +117,7 @@ namespace Lib9c.Tests.Action.DPoS
                 },
                 DelegatorAddress,
                 validatorAddressB,
-                Asset.GovernanceToken * 300,
+                GovernanceToken * 300,
                 _nativeTokens);
 
             _states = ValidatorSetCtrl.Update(
@@ -157,7 +151,7 @@ namespace Lib9c.Tests.Action.DPoS
                                 pk => pk.PublicKey.Equals(validator.OperatorPublicKey)) : null);
                     })
                 .ToList();
-            FungibleAssetValue blockReward = Asset.ConsensusFromGovernance(50);
+            FungibleAssetValue blockReward = Asset.ConsensusFromGovernance(GovernanceToken * 50);
             _states = _states.MintAsset(
                 new ActionContext
                 {
@@ -202,19 +196,19 @@ namespace Lib9c.Tests.Action.DPoS
                     .DivRem(Validator.CommissionDenominator);
 
             Assert.Equal(
-                Asset.ConsensusFromGovernance(0),
+                Asset.ConsensusFromGovernance(GovernanceToken * 0),
                 _states.GetBalance(ReservedAddress.RewardPool, Asset.ConsensusToken));
 
             Assert.Equal(
-                Asset.GovernanceToken * (100 + (101 + 200) * 50 - 101 - 102 + 204 + 306),
-                _states.GetBalance(ReservedAddress.BondedPool, Asset.GovernanceToken));
+                GovernanceToken * (100 + (101 + 200) * 50 - 101 - 102 + 204 + 306),
+                _states.GetBalance(ReservedAddress.BondedPool, GovernanceToken));
 
             Assert.Equal(
-                Asset.ConsensusFromGovernance(205),
+                Asset.ConsensusFromGovernance(GovernanceToken * 205),
                 _states.GetBalance(validatorAddressA, Asset.ConsensusToken));
 
             Assert.Equal(
-                Asset.ConsensusFromGovernance(307),
+                Asset.ConsensusFromGovernance(GovernanceToken * 307),
                 _states.GetBalance(validatorAddressB, Asset.ConsensusToken));
 
             Assert.Equal(
@@ -231,7 +225,7 @@ namespace Lib9c.Tests.Action.DPoS
                 = Delegation.DeriveAddress(DelegatorAddress, validatorAddressA);
 
             Assert.Equal(
-                Asset.ConsensusFromGovernance(0),
+                Asset.ConsensusFromGovernance(GovernanceToken * 0),
                 _states.GetBalance(
                     AllocateRewardCtrl.RewardAddress(DelegatorAddress), Asset.ConsensusToken));
 

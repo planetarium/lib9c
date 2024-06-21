@@ -11,6 +11,8 @@
     using Nekoyume.Action.DPoS.Control;
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Sys;
+    using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class WithdrawValidatorTest : PoSTest
@@ -21,10 +23,11 @@
             var validatorPrivateKey = new PrivateKey();
             var address = validatorPrivateKey.Address;
             var rewardAddress = AllocateRewardCtrl.RewardAddress(address);
-            var states = InitializeStates();
-            var amount = Asset.GovernanceToken * 100;
-            states = states.MintAsset(
-                new ActionContext { PreviousState = states },
+            var states = InitialState;
+            var amount = GovernanceToken * 100;
+            states = states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 address,
                 amount);
             states = new PromoteValidator(validatorPrivateKey.PublicKey, amount: amount).Execute(
@@ -41,10 +44,11 @@
             Assert.Equal(10000, power);
 
             // Mint and allocate rewards
-            states = states.MintAsset(
-                new ActionContext { PreviousState = states },
+            states = states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 ReservedAddress.RewardPool,
-                Asset.GovernanceToken * 5);
+                GovernanceToken * 5);
             states = new AllocateReward().Execute(
                 new ActionContext
                 {
@@ -68,18 +72,18 @@
                 });
             Assert.Equal(
                 0,
-                states.GetBalance(address, Asset.GovernanceToken).RawValue);
+                states.GetBalance(address, GovernanceToken).RawValue);
             Assert.Equal(
                 72,
-                states.GetBalance(rewardAddress, Asset.GovernanceToken).RawValue);
+                states.GetBalance(rewardAddress, GovernanceToken).RawValue);
             states = new WithdrawValidator().Execute(
                 new ActionContext { PreviousState = states, Signer = address });
             Assert.Equal(
                 72,
-                states.GetBalance(address, Asset.GovernanceToken).RawValue);
+                states.GetBalance(address, GovernanceToken).RawValue);
             Assert.Equal(
                 0,
-                states.GetBalance(rewardAddress, Asset.GovernanceToken).RawValue);
+                states.GetBalance(rewardAddress, GovernanceToken).RawValue);
         }
     }
 }

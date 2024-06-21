@@ -12,6 +12,8 @@
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
     using Nekoyume.Action.DPoS.Sys;
+    using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Xunit;
 
     public class DelegateTest : PoSTest
@@ -25,22 +27,24 @@
             var validatorAddress =
                 Nekoyume.Action.DPoS.Model.Validator.DeriveAddress(validatorOperatorAddress);
             var delegatorAddress = delegatorPrivateKey.Address;
-            var states = InitializeStates();
+            var states = InitialState;
 
             // Prepare initial governance token for the delegator and validator
-            states = states.MintAsset(
-                new ActionContext { PreviousState = states },
+            states = states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 validatorOperatorAddress,
-                Asset.GovernanceToken * 100);
-            states = states.MintAsset(
-                new ActionContext { PreviousState = states },
+                GovernanceToken * 100);
+            states = states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 delegatorAddress,
-                Asset.GovernanceToken * 50);
+                GovernanceToken * 50);
 
             // Promote the delegator
             states = new PromoteValidator(
                 validatorPrivateKey.PublicKey,
-                amount: Asset.GovernanceToken * 100)
+                amount: GovernanceToken * 100)
                     .Execute(
                         new ActionContext
                             { PreviousState = states, Signer = validatorOperatorAddress });
@@ -49,7 +53,7 @@
                 new ActionContext { PreviousState = states, Miner = validatorOperatorAddress });
 
             // Delegate the validator
-            states = new Nekoyume.Action.DPoS.Delegate(validatorAddress, Asset.GovernanceToken * 50).Execute(
+            states = new Nekoyume.Action.DPoS.Delegate(validatorAddress, GovernanceToken * 50).Execute(
                 new ActionContext { PreviousState = states, Signer = delegatorAddress });
             states = new UpdateValidators().Execute(new ActionContext { PreviousState = states });
 
@@ -69,10 +73,11 @@
             Assert.Equal((100 + 50) * 100, power);
 
             // Mint and allocate rewards
-            states = states.MintAsset(
-                new ActionContext { PreviousState = states },
+            states = states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 ReservedAddress.RewardPool,
-                Asset.GovernanceToken * 5);
+                GovernanceToken * 5);
             states = new AllocateReward().Execute(
                 new ActionContext
                 {
@@ -97,10 +102,10 @@
 
             var validatorOperatorReward = states.GetBalance(
                     AllocateRewardCtrl.RewardAddress(validatorOperatorAddress),
-                    Asset.GovernanceToken).RawValue;
+                    GovernanceToken).RawValue;
             var validatorReward = states.GetBalance(
-                    ValidatorRewards.DeriveAddress(validatorAddress, Asset.GovernanceToken),
-                    Asset.GovernanceToken).RawValue;
+                    ValidatorRewards.DeriveAddress(validatorAddress, GovernanceToken),
+                    GovernanceToken).RawValue;
             Assert.Equal(72, validatorOperatorReward);
             Assert.Equal(428, validatorReward);
 
@@ -109,13 +114,13 @@
                     { PreviousState = states, BlockIndex = 1, Signer = delegatorAddress });
             Assert.Equal(
                 142,
-                states.GetBalance(delegatorAddress, Asset.GovernanceToken).RawValue);
+                states.GetBalance(delegatorAddress, GovernanceToken).RawValue);
             Assert.Equal(
                 0,
-                states.GetBalance(validatorOperatorAddress, Asset.GovernanceToken).RawValue);
+                states.GetBalance(validatorOperatorAddress, GovernanceToken).RawValue);
             validatorReward = states.GetBalance(
-                ValidatorRewards.DeriveAddress(validatorAddress, Asset.GovernanceToken),
-                Asset.GovernanceToken).RawValue;
+                ValidatorRewards.DeriveAddress(validatorAddress, GovernanceToken),
+                GovernanceToken).RawValue;
             Assert.Equal(286, validatorReward);
         }
     }

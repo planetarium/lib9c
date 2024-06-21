@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
     using Nekoyume.Action.DPoS.Control;
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
 
@@ -32,23 +33,18 @@ namespace Lib9c.Tests.Action.DPoS.Control
             List<Address> operatorAddresses = operatorPublicKeys.Select(
                 pubKey => pubKey.Address).ToList();
 
-            _nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
-
-            _states = InitializeStates();
+            _states = InitialState;
+            _nativeTokens = NativeTokens;
             ValidatorAddresses = new List<Address>();
 
             var pairs = operatorAddresses.Zip(operatorPublicKeys, (addr, key) => (addr, key));
             foreach (var (addr, key) in pairs)
             {
-                _states = _states.MintAsset(
-                    new ActionContext
-                    {
-                        PreviousState = _states,
-                        BlockIndex = 1,
-                    },
+                _states = _states.TransferAsset(
+                    new ActionContext(),
+                    GoldCurrencyState.Address,
                     addr,
-                    Asset.GovernanceToken * 100);
+                    GovernanceToken * 100);
                 _states = ValidatorCtrl.Create(
                     _states,
                     new ActionContext
@@ -58,7 +54,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     },
                     addr,
                     key,
-                    Asset.GovernanceToken * 10,
+                    GovernanceToken * 10,
                     _nativeTokens);
                 ValidatorAddresses.Add(Validator.DeriveAddress(addr));
             }
@@ -76,7 +72,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 ValidatorAddresses[0],
-                Asset.ConsensusFromGovernance(10));
+                Asset.ConsensusFromGovernance(GovernanceToken * 10));
             _states = _states.MintAsset(
                 new ActionContext
                 {
@@ -84,7 +80,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 ValidatorAddresses[1],
-                Asset.ConsensusFromGovernance(30));
+                Asset.ConsensusFromGovernance(GovernanceToken * 30));
             _states = _states.MintAsset(
                 new ActionContext
                 {
@@ -92,7 +88,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 ValidatorAddresses[2],
-                Asset.ConsensusFromGovernance(50));
+                Asset.ConsensusFromGovernance(GovernanceToken * 50));
             _states = _states.MintAsset(
                 new ActionContext
                 {
@@ -100,7 +96,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 ValidatorAddresses[3],
-                Asset.ConsensusFromGovernance(40));
+                Asset.ConsensusFromGovernance(GovernanceToken * 40));
             _states = _states.MintAsset(
                 new ActionContext
                 {
@@ -108,7 +104,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 ValidatorAddresses[4],
-                Asset.ConsensusFromGovernance(20));
+                Asset.ConsensusFromGovernance(GovernanceToken * 20));
             _states = ValidatorPowerIndexCtrl.Update(_states, ValidatorAddresses);
             ValidatorPowerIndex validatorPowerIndex;
             (_states, validatorPowerIndex)
@@ -116,15 +112,15 @@ namespace Lib9c.Tests.Action.DPoS.Control
             List<ValidatorPower> index = validatorPowerIndex.Index.ToList();
             Assert.Equal(5, index.Count);
             Assert.Equal(ValidatorAddresses[2], index[0].ValidatorAddress);
-            Assert.Equal(Asset.ConsensusFromGovernance(60), index[0].ConsensusToken);
+            Assert.Equal(Asset.ConsensusFromGovernance(GovernanceToken * 60), index[0].ConsensusToken);
             Assert.Equal(ValidatorAddresses[3], index[1].ValidatorAddress);
-            Assert.Equal(Asset.ConsensusFromGovernance(50), index[1].ConsensusToken);
+            Assert.Equal(Asset.ConsensusFromGovernance(GovernanceToken * 50), index[1].ConsensusToken);
             Assert.Equal(ValidatorAddresses[1], index[2].ValidatorAddress);
-            Assert.Equal(Asset.ConsensusFromGovernance(40), index[2].ConsensusToken);
+            Assert.Equal(Asset.ConsensusFromGovernance(GovernanceToken * 40), index[2].ConsensusToken);
             Assert.Equal(ValidatorAddresses[4], index[3].ValidatorAddress);
-            Assert.Equal(Asset.ConsensusFromGovernance(30), index[3].ConsensusToken);
+            Assert.Equal(Asset.ConsensusFromGovernance(GovernanceToken * 30), index[3].ConsensusToken);
             Assert.Equal(ValidatorAddresses[0], index[4].ValidatorAddress);
-            Assert.Equal(Asset.ConsensusFromGovernance(20), index[4].ConsensusToken);
+            Assert.Equal(Asset.ConsensusFromGovernance(GovernanceToken * 20), index[4].ConsensusToken);
         }
 
         [Fact]
@@ -138,7 +134,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 ValidatorAddresses[0],
-                Asset.ConsensusFromGovernance(10));
+                Asset.ConsensusFromGovernance(GovernanceToken * 10));
             _states = _states.MintAsset(
                 new ActionContext
                 {
@@ -146,7 +142,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 ValidatorAddresses[1],
-                Asset.ConsensusFromGovernance(10));
+                Asset.ConsensusFromGovernance(GovernanceToken * 10));
             _states = _states.MintAsset(
                 new ActionContext
                 {
@@ -154,7 +150,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 ValidatorAddresses[2],
-                Asset.ConsensusFromGovernance(10));
+                Asset.ConsensusFromGovernance(GovernanceToken * 10));
             _states = _states.MintAsset(
                 new ActionContext
                 {
@@ -162,7 +158,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 ValidatorAddresses[3],
-                Asset.ConsensusFromGovernance(10));
+                Asset.ConsensusFromGovernance(GovernanceToken * 10));
             _states = _states.MintAsset(
                 new ActionContext
                 {
@@ -170,7 +166,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 ValidatorAddresses[4],
-                Asset.ConsensusFromGovernance(10));
+                Asset.ConsensusFromGovernance(GovernanceToken * 10));
             _states = ValidatorPowerIndexCtrl.Update(_states, ValidatorAddresses);
             ValidatorPowerIndex validatorPowerIndex;
             (_states, validatorPowerIndex)

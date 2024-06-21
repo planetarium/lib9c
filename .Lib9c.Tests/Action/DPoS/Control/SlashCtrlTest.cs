@@ -20,8 +20,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
         private readonly Address[] _operatorAddresses;
         private readonly Address[] _delegatorAddresses;
         private readonly Address[] _validatorAddresses;
-        private readonly FungibleAssetValue _defaultNCG
-            = new FungibleAssetValue(Asset.GovernanceToken, 1, 0);
+        private readonly FungibleAssetValue _defaultNCG = GovernanceToken * 1;
 
         private IWorld _states;
 
@@ -37,7 +36,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
             _validatorAddresses = _operatorAddresses
                 .Select(item => Validator.DeriveAddress(item))
                 .ToArray();
-            _states = InitializeStates();
+            _states = InitialState;
         }
 
         [Theory]
@@ -691,7 +690,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: new FungibleAssetValue(Asset.GovernanceToken, 100, 0));
+                ncg: GovernanceToken * 100);
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
@@ -710,7 +709,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
         public void Slash_FutureBlockHeight_FailTest()
         {
             var validatorNCG = _defaultNCG;
-            var consensusToken = Asset.ConsensusFromGovernance(validatorNCG);
+            var consensusToken = Asset.ConvertTokens(validatorNCG, Asset.ConsensusToken);
 
             var operatorPublicKey = _operatorPublicKeys[0];
             var validatorAddress = _validatorAddresses[0];
@@ -884,7 +883,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 blockIndex: 2,
                 validatorAddress: validatorAddress,
                 infractionHeight: 1,
-                power: Asset.ConsensusFromGovernance(validatorNCG).RawValue,
+                power: Asset.ConvertTokens(validatorNCG, Asset.ConsensusToken).RawValue,
                 slashFactor: 2);
             states = Jail(
                 states: states,

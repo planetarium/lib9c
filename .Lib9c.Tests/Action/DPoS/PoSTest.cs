@@ -9,12 +9,43 @@ namespace Lib9c.Tests.Action.DPoS
     using Libplanet.Types.Assets;
     using Nekoyume.Action.DPoS.Control;
     using Nekoyume.Action.DPoS.Misc;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
 
     public class PoSTest
     {
-        protected static readonly ImmutableHashSet<Currency> NativeTokens = ImmutableHashSet.Create(
-            Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
+        static PoSTest()
+        {
+            InitialState = new World(InitialStateHelper.EmptyWorldState.WithGoldCurrencyState());
+            GovernanceToken = InitialState.GetGoldCurrency();
+            NativeTokens = ImmutableHashSet.Create(
+                GovernanceToken,
+                Asset.ConsensusToken,
+                Asset.Share);
+        }
+
+        /// <summary>
+        /// An empty <see cref="IWorld"/> with its gold currency state set and its initial supply
+        /// given to <see cref="GoldCurrencyState.Address"/>.
+        /// </summary>
+        /// <remarks>
+        /// The <see cref="Currency"/> used for the gold currency state has a single randomized
+        /// minter for each test.
+        /// </remarks>
+        protected static IWorld InitialState { get; }
+
+        /// <summary>
+        /// The set of native tokens including the hard coded ones in <see cref="Asset"/> and
+        /// a randomized NCG type <see cref="Currency"/> set for <see cref="InitialState"/>.
+        /// </summary>
+        protected static ImmutableHashSet<Currency> NativeTokens { get; }
+
+        /// <summary>
+        /// The <see cref="Currency"/> used for governance.  This is consistent with
+        /// the <see cref="Currency"/> of the gold currency state set for
+        /// <see cref="InitialState"/>.
+        /// </summary>
+        protected static Currency GovernanceToken { get; }
 
         protected static IWorld InitializeStates()
         {
@@ -31,7 +62,7 @@ namespace Lib9c.Tests.Action.DPoS
             => FungibleAssetValue.FromRawValue(Asset.Share, governanceToken.RawValue);
 
         protected static FungibleAssetValue ShareFromGovernance(BigInteger amount)
-            => ShareFromGovernance(Asset.GovernanceToken * amount);
+            => ShareFromGovernance(GovernanceToken * amount);
 
         protected static IWorld Promote(
             IWorld states,
@@ -40,8 +71,9 @@ namespace Lib9c.Tests.Action.DPoS
             FungibleAssetValue ncg)
         {
             var operatorAddress = operatorPublicKey.Address;
-            states = states.MintAsset(
-                context: new ActionContext { PreviousState = states, BlockIndex = blockIndex },
+            states = states.TransferAsset(
+                context: new ActionContext(),
+                sender: GoldCurrencyState.Address,
                 recipient: operatorAddress,
                 value: ncg);
             states = ValidatorCtrl.Create(
@@ -61,8 +93,9 @@ namespace Lib9c.Tests.Action.DPoS
             Address delegatorAddress,
             FungibleAssetValue ncg)
         {
-            states = states.MintAsset(
-                context: new ActionContext { PreviousState = states, BlockIndex = blockIndex },
+            states = states.TransferAsset(
+                context: new ActionContext(),
+                sender: GoldCurrencyState.Address,
                 recipient: delegatorAddress,
                 value: ncg);
             states = DelegateCtrl.Execute(

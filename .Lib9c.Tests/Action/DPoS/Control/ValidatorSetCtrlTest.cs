@@ -9,41 +9,37 @@ namespace Lib9c.Tests.Action.DPoS.Control
     using Nekoyume.Action.DPoS.Control;
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
 
     public class ValidatorSetCtrlTest : PoSTest
     {
-        private ImmutableHashSet<Currency> _nativeTokens;
+        private readonly ImmutableHashSet<Currency> _nativeTokens;
         private IWorld _states;
 
         public ValidatorSetCtrlTest()
             : base()
         {
-            _nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
-            _states = InitializeStates();
+            _states = InitialState;
+            _nativeTokens = NativeTokens;
             OperatorAddresses = new List<Address>();
             ValidatorAddresses = new List<Address>();
             DelegatorAddress = CreateAddress();
-            _states = _states.MintAsset(
-                new ActionContext
-                {
-                    PreviousState = _states,
-                },
+            _states = _states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 DelegatorAddress,
-                Asset.GovernanceToken * 100000);
+                GovernanceToken * 100000);
             for (int i = 0; i < 200; i++)
             {
                 PublicKey operatorPublicKey = new PrivateKey().PublicKey;
                 Address operatorAddress = operatorPublicKey.Address;
-                _states = _states.MintAsset(
-                    new ActionContext
-                    {
-                        PreviousState = _states,
-                    },
+                _states = _states.TransferAsset(
+                    new ActionContext(),
+                    GoldCurrencyState.Address,
                     operatorAddress,
-                    Asset.GovernanceToken * 1000);
+                    GovernanceToken * 1000);
                 OperatorAddresses.Add(operatorAddress);
                 _states = ValidatorCtrl.Create(
                     _states,
@@ -54,7 +50,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     },
                     operatorAddress,
                     operatorPublicKey,
-                    Asset.GovernanceToken * 1,
+                    GovernanceToken * 1,
                     _nativeTokens);
                 ValidatorAddresses.Add(Validator.DeriveAddress(operatorAddress));
             }
@@ -80,7 +76,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     },
                     DelegatorAddress,
                     ValidatorAddresses[i],
-                    Asset.GovernanceToken * (i + 1),
+                    GovernanceToken * (i + 1),
                     _nativeTokens);
             }
 
@@ -98,7 +94,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 },
                 DelegatorAddress,
                 validatorAddressA,
-                Asset.GovernanceToken * 200,
+                GovernanceToken * 200,
                 _nativeTokens);
 
             _states = DelegateCtrl.Execute(
@@ -110,7 +106,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 },
                 DelegatorAddress,
                 validatorAddressB,
-                Asset.GovernanceToken * 300,
+                GovernanceToken * 300,
                 _nativeTokens);
 
             _states = ValidatorSetCtrl.Update(
@@ -131,20 +127,20 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 ShareFromGovernance(5 + 1 + 300),
                 _states.GetBalance(delegationAddressB, Asset.Share));
             Assert.Equal(
-                Asset.ConsensusFromGovernance(1 + 5 + 1 + 300),
+                Asset.ConsensusFromGovernance(GovernanceToken * (1 + 5 + 1 + 300)),
                 _states.GetBalance(ValidatorAddresses[5], Asset.ConsensusToken));
             Assert.Equal(
-                Asset.GovernanceToken
+                GovernanceToken
                 * (100 + (101 + 200) * 50 - 101 - 102 + 204 + 306),
-                _states.GetBalance(ReservedAddress.BondedPool, Asset.GovernanceToken));
+                _states.GetBalance(ReservedAddress.BondedPool, GovernanceToken));
             Assert.Equal(
-                Asset.GovernanceToken
+                GovernanceToken
                 * (100 + (1 + 100) * 50 - 4 - 6 + 101 + 102),
-                _states.GetBalance(ReservedAddress.UnbondedPool, Asset.GovernanceToken));
+                _states.GetBalance(ReservedAddress.UnbondedPool, GovernanceToken));
             Assert.Equal(
-                Asset.GovernanceToken
+                GovernanceToken
                 * (100000 - (1 + 200) * 100 - 200 - 300),
-                _states.GetBalance(DelegatorAddress, Asset.GovernanceToken));
+                _states.GetBalance(DelegatorAddress, GovernanceToken));
 
             _states = UndelegateCtrl.Execute(
                 _states,
@@ -162,20 +158,17 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 ShareFromGovernance(0),
                 _states.GetBalance(delegationAddressB, Asset.Share));
             Assert.Equal(
-                Asset.ConsensusFromGovernance(1),
+                Asset.ConsensusFromGovernance(GovernanceToken * 1),
                 _states.GetBalance(validatorAddressB, Asset.ConsensusToken));
             Assert.Equal(
-                Asset.GovernanceToken
-                * (100 + (101 + 200) * 50 - 101 - 102 + 204 + 306 - 306),
-                _states.GetBalance(ReservedAddress.BondedPool, Asset.GovernanceToken));
+                GovernanceToken * (100 + (101 + 200) * 50 - 101 - 102 + 204 + 306 - 306),
+                _states.GetBalance(ReservedAddress.BondedPool, GovernanceToken));
             Assert.Equal(
-                Asset.GovernanceToken
-                * (100 + (1 + 100) * 50 - 4 - 6 + 101 + 102 + 306),
-                _states.GetBalance(ReservedAddress.UnbondedPool, Asset.GovernanceToken));
+                GovernanceToken * (100 + (1 + 100) * 50 - 4 - 6 + 101 + 102 + 306),
+                _states.GetBalance(ReservedAddress.UnbondedPool, GovernanceToken));
             Assert.Equal(
-                Asset.GovernanceToken
-                * (100000 - (1 + 200) * 100 - 200 - 300),
-                _states.GetBalance(DelegatorAddress, Asset.GovernanceToken));
+                GovernanceToken * (100000 - (1 + 200) * 100 - 200 - 300),
+                _states.GetBalance(DelegatorAddress, GovernanceToken));
 
             _states = ValidatorSetCtrl.Update(
                 _states,
@@ -188,17 +181,14 @@ namespace Lib9c.Tests.Action.DPoS.Control
             Assert.Equal(
                 validatorAddressA, bondedSet.Set.ToList()[0].ValidatorAddress);
             Assert.Equal(
-                Asset.GovernanceToken
-                * (100 + (101 + 200) * 50 - 101 - 102 + 204 + 306 - 306 + 102),
-                _states.GetBalance(ReservedAddress.BondedPool, Asset.GovernanceToken));
+                GovernanceToken * (100 + (101 + 200) * 50 - 101 - 102 + 204 + 306 - 306 + 102),
+                _states.GetBalance(ReservedAddress.BondedPool, GovernanceToken));
             Assert.Equal(
-                Asset.GovernanceToken
-                * (100 + (1 + 100) * 50 - 4 - 6 + 101 + 102 + 306 - 102),
-                _states.GetBalance(ReservedAddress.UnbondedPool, Asset.GovernanceToken));
+                GovernanceToken * (100 + (1 + 100) * 50 - 4 - 6 + 101 + 102 + 306 - 102),
+                _states.GetBalance(ReservedAddress.UnbondedPool, GovernanceToken));
             Assert.Equal(
-                Asset.GovernanceToken
-                * (100000 - (1 + 200) * 100 - 200 - 300),
-                _states.GetBalance(DelegatorAddress, Asset.GovernanceToken));
+                GovernanceToken * (100000 - (1 + 200) * 100 - 200 - 300),
+                _states.GetBalance(DelegatorAddress, GovernanceToken));
 
             _states = ValidatorSetCtrl.Update(
                 _states,
@@ -209,13 +199,11 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 });
 
             Assert.Equal(
-                Asset.GovernanceToken
-                * (100 + (1 + 100) * 50 - 4 - 6 + 101 + 102 + 306 - 102 - 306),
-                _states.GetBalance(ReservedAddress.UnbondedPool, Asset.GovernanceToken));
+                GovernanceToken * (100 + (1 + 100) * 50 - 4 - 6 + 101 + 102 + 306 - 102 - 306),
+                _states.GetBalance(ReservedAddress.UnbondedPool, GovernanceToken));
             Assert.Equal(
-                Asset.GovernanceToken
-                * (100000 - (1 + 200) * 100 - 200 - 300 + 306),
-                _states.GetBalance(DelegatorAddress, Asset.GovernanceToken));
+                GovernanceToken * (100000 - (1 + 200) * 100 - 200 - 300 + 306),
+                _states.GetBalance(DelegatorAddress, GovernanceToken));
         }
     }
 }

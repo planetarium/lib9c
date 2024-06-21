@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
     using Nekoyume.Action.DPoS.Exception;
     using Nekoyume.Action.DPoS.Misc;
     using Nekoyume.Action.DPoS.Model;
+    using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
 
@@ -17,8 +18,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
         private readonly Address _operatorAddress;
         private readonly Address _validatorAddress;
         private readonly ImmutableHashSet<Currency> _nativeTokens;
-        private readonly FungibleAssetValue _governanceToken
-            = new FungibleAssetValue(Asset.GovernanceToken, 100, 0);
 
         private IWorld _states;
 
@@ -28,9 +27,8 @@ namespace Lib9c.Tests.Action.DPoS.Control
             _operatorPublicKey = new PrivateKey().PublicKey;
             _operatorAddress = _operatorPublicKey.Address;
             _validatorAddress = Validator.DeriveAddress(_operatorAddress);
-            _nativeTokens = ImmutableHashSet.Create(
-                Asset.GovernanceToken, Asset.ConsensusToken, Asset.Share);
-            _states = InitializeStates();
+            _states = InitialState;
+            _nativeTokens = NativeTokens;
         }
 
         [Fact]
@@ -43,7 +41,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     BlockIndex = 1,
                 },
                 _operatorAddress,
-                Asset.ConsensusFromGovernance(50));
+                Asset.ConsensusFromGovernance(GovernanceToken * 50));
             Assert.Throws<InvalidCurrencyException>(
                 () => _states = ValidatorCtrl.Create(
                     _states,
@@ -54,7 +52,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     },
                     _operatorAddress,
                     _operatorPublicKey,
-                    Asset.ConsensusFromGovernance(30),
+                    Asset.ConsensusFromGovernance(GovernanceToken * 30),
                     _nativeTokens));
         }
 
@@ -63,14 +61,11 @@ namespace Lib9c.Tests.Action.DPoS.Control
         [InlineData(500, 1000)]
         public void InvalidSelfDelegateTest(int mintAmount, int selfDelegateAmount)
         {
-            _states = _states.MintAsset(
-                new ActionContext
-                {
-                    PreviousState = _states,
-                    BlockIndex = 1,
-                },
+            _states = _states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 _operatorAddress,
-                Asset.GovernanceToken * mintAmount);
+                GovernanceToken * mintAmount);
             Assert.Throws<InsufficientFungibleAssetValueException>(
                 () => _states = ValidatorCtrl.Create(
                     _states,
@@ -81,7 +76,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                     },
                     _operatorAddress,
                     _operatorPublicKey,
-                    Asset.GovernanceToken * selfDelegateAmount,
+                    GovernanceToken * selfDelegateAmount,
                     _nativeTokens));
         }
 
@@ -90,14 +85,11 @@ namespace Lib9c.Tests.Action.DPoS.Control
         [InlineData(500, 100)]
         public void BalanceTest(int mintAmount, int selfDelegateAmount)
         {
-            _states = _states.MintAsset(
-                new ActionContext
-                {
-                    PreviousState = _states,
-                    BlockIndex = 1,
-                },
+            _states = _states.TransferAsset(
+                new ActionContext(),
+                GoldCurrencyState.Address,
                 _operatorAddress,
-                Asset.GovernanceToken * mintAmount);
+                GovernanceToken * mintAmount);
             _states = ValidatorCtrl.Create(
                 _states,
                 new ActionContext
@@ -107,14 +99,14 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 },
                 _operatorAddress,
                 _operatorPublicKey,
-                Asset.GovernanceToken * selfDelegateAmount,
+                GovernanceToken * selfDelegateAmount,
                 _nativeTokens);
             Assert.Equal(
-                Asset.ConsensusFromGovernance(selfDelegateAmount),
+                Asset.ConsensusFromGovernance(PoSTest.GovernanceToken * selfDelegateAmount),
                 _states.GetBalance(_validatorAddress, Asset.ConsensusToken));
             Assert.Equal(
-                Asset.GovernanceToken * (mintAmount - selfDelegateAmount),
-                _states.GetBalance(_operatorAddress, Asset.GovernanceToken));
+                GovernanceToken * (mintAmount - selfDelegateAmount),
+                _states.GetBalance(_operatorAddress, GovernanceToken));
             Assert.Equal(
                 ShareFromGovernance(selfDelegateAmount),
                 _states.GetBalance(
@@ -127,7 +119,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
         [Fact]
         public void JailTest()
         {
-            var governanceToken = _governanceToken;
             var states = _states;
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
@@ -136,7 +127,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken);
+                ncg: GovernanceToken * 100);
 
             // Test before jailing
             var validator1 = ValidatorCtrl.GetValidator(states, validatorAddress)!;
@@ -175,7 +166,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
         [Fact]
         public void Jail_JailedValidator_FailTest()
         {
-            var governanceToken = _governanceToken;
             var states = _states;
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
@@ -184,7 +174,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken);
+                ncg: GovernanceToken * 100);
 
             // Jail
             states = ValidatorCtrl.Jail(
@@ -202,7 +192,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
         [Fact]
         public void UnjailTest()
         {
-            var governanceToken = _governanceToken;
             var states = _states;
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
@@ -211,7 +200,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken);
+                ncg: GovernanceToken * 100);
 
             states = ValidatorCtrl.Jail(
                 states,
@@ -254,7 +243,6 @@ namespace Lib9c.Tests.Action.DPoS.Control
         [Fact]
         public void Unjail_NotJailedValidator_FailTest()
         {
-            var governanceToken = _governanceToken;
             var states = _states;
             var operatorPublicKey = _operatorPublicKey;
             var validatorAddress = _validatorAddress;
@@ -263,7 +251,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
                 states: states,
                 blockIndex: 1,
                 operatorPublicKey: operatorPublicKey,
-                ncg: governanceToken);
+                ncg: GovernanceToken * 100);
 
             Assert.Throws<JailedValidatorException>(() =>
             {

@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action.DPoS.Control
             _validatorAddresses = _operatorAddresses
                 .Select(item => Validator.DeriveAddress(item))
                 .ToArray();
-            _states = InitializeStates();
+            _states = InitialState;
         }
 
         [Theory]
