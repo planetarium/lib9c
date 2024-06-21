@@ -50,7 +50,7 @@
     <ProjectReference Include="..\Lib9c\Lib9c.csproj" />
     <ProjectReference Include="..\Lib9c.Utils\Lib9c.Utils.csproj" />
     <ProjectReference Include="..\Lib9c.MessagePack\Lib9c.MessagePack.csproj" />
-    <ProjectReference Include="..\.Libplanet\Libplanet.Mocks\Libplanet.Mocks.csproj" />
+    <ProjectReference Include="..\.Libplanet\test\Libplanet.Mocks\Libplanet.Mocks.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(Configuration)' != 'DevEx' ">

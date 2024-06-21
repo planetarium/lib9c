@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\.Libplanet\Libplanet\Libplanet.csproj" />
+    <ProjectReference Include="..\.Libplanet\src\Libplanet\Libplanet.csproj" />
   </ItemGroup>
 
 </Project>
