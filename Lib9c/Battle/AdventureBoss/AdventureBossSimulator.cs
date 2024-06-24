@@ -246,7 +246,8 @@ namespace Nekoyume.Battle.AdventureBoss
             return Player;
         }
 
-        public void AddBreakthrough(int firstFloor, int lastFloor, AdventureBossFloorWaveSheet adventureBossFloorWaveSheet)
+        public void AddBreakthrough(int firstFloorId, int lastFloorId,
+            AdventureBossFloorWaveSheet adventureBossFloorWaveSheet)
         {
             if (Log.events.Count == 0)
             {
@@ -254,14 +255,15 @@ namespace Nekoyume.Battle.AdventureBoss
             }
 
             // Add event in reversed order to keep insert position
-            for (var fl = lastFloor; fl >= firstFloor; fl--)
+            for (var floorId = lastFloorId; floorId >= firstFloorId; floorId--)
             {
-                var floorWave = adventureBossFloorWaveSheet[fl].Waves[0];
-                Log.events.Insert(1, new Breakthrough(Player, fl, floorWave.Monsters));
+                var floorWave = adventureBossFloorWaveSheet[floorId].Waves[0];
+                Log.events.Insert(1, new Breakthrough(Player, floorId, floorWave.Monsters));
             }
         }
 
-        private void SetWave(AdventureBossFloorSheet.Row floorRow, AdventureBossFloorWaveSheet.Row floorWaveRow)
+        private void SetWave(AdventureBossFloorSheet.Row floorRow,
+            AdventureBossFloorWaveSheet.Row floorWaveRow)
         {
             var enemyStatModifiers = floorRow.EnemyInitialStatModifiers;
             var waves = floorWaveRow.Waves;

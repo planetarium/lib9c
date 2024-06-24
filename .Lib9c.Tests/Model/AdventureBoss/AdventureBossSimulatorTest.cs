@@ -98,7 +98,8 @@ namespace Lib9c.Tests.Model.AdventureBoss
         [InlineData(false, 1, 1)]
         [InlineData(false, 1, 5)]
         [InlineData(false, 1, 3)]
-        public void AddBreakthrough(bool simulate, int firstFloor, int lastFloor)
+        [InlineData(false, 21, 23)] // For Boss ID 2
+        public void AddBreakthrough(bool simulate, int firstFloorId, int lastFloorId)
         {
             AdventureBossSimulator simulator;
             if (simulate)
@@ -123,8 +124,8 @@ namespace Lib9c.Tests.Model.AdventureBoss
                     new List<Guid>(),
                     new AllRuneState(),
                     new RuneSlotState(BattleType.Adventure),
-                    _tableSheets.AdventureBossFloorSheet[1],
-                    _tableSheets.AdventureBossFloorWaveSheet[1],
+                    _tableSheets.AdventureBossFloorSheet[lastFloorId],
+                    _tableSheets.AdventureBossFloorWaveSheet[lastFloorId],
                     _tableSheets.GetSimulatorSheets(),
                     _tableSheets.EnemySkillSheet,
                     _tableSheets.CostumeStatSheet,
@@ -141,17 +142,17 @@ namespace Lib9c.Tests.Model.AdventureBoss
                 );
             }
 
-            simulator.AddBreakthrough(firstFloor, lastFloor, _tableSheets.AdventureBossFloorWaveSheet);
+            simulator.AddBreakthrough(firstFloorId, lastFloorId, _tableSheets.AdventureBossFloorWaveSheet);
 
             Assert.Equal(typeof(SpawnPlayer), simulator.Log.events.First().GetType());
             if (!simulate)
             {
                 // +2: 1 for last floor, 1 for SpawnPlayer
-                Assert.Equal(lastFloor - firstFloor + 2, simulator.Log.events.Count);
+                Assert.Equal(lastFloorId - firstFloorId + 2, simulator.Log.events.Count);
             }
 
             var filtered = simulator.Log.events.OfType<Breakthrough>();
-            Assert.Equal(lastFloor - firstFloor + 1, filtered.Count());
+            Assert.Equal(lastFloorId - firstFloorId + 1, filtered.Count());
 
             if (simulate)
             {
