@@ -1,6 +1,7 @@
 namespace Lib9c.Tests.Helper
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -16,6 +17,30 @@ namespace Lib9c.Tests.Helper
         private readonly TableSheets _tableSheets = new (TableSheetsImporter.ImportSheets());
         private Address _avatarAddress = new PrivateKey().Address;
         private string _name = "wanted";
+
+        [Theory]
+        [InlineData(1, "0000000000000000000000000000000000000001", true)]
+        [InlineData(10, "000000000000000000000000000000000000000a", true)]
+        [InlineData(15, "000000000000000000000000000000000000000f", true)]
+        [InlineData(16, "0000000000000000000000000000000000000010", true)]
+        [InlineData(17, "0000000000000000000000000000000000000011", true)]
+        [InlineData(10, "000000000000000000000000000000000000000A", false)]
+        [InlineData(15, "000000000000000000000000000000000000000F", false)]
+        public void SeasonToAddressForm(int season, string expected, bool success)
+        {
+            if (success)
+            {
+                Assert.Equal(expected, AdventureBossHelper.GetSeasonAsAddressForm(season));
+            }
+            else
+            {
+                Assert.NotEqual(expected, AdventureBossHelper.GetSeasonAsAddressForm(season));
+                Assert.Equal(
+                    expected.ToLower(CultureInfo.InvariantCulture),
+                    AdventureBossHelper.GetSeasonAsAddressForm(season)
+                );
+            }
+        }
 
         [Theory]
         // Raffle reward is always 0 when isReal == false
