@@ -50,7 +50,9 @@ namespace Lib9c.Tests.TableData.Summon
         [InlineData(2)]
         [InlineData(15)]
         [InlineData(30)]
-        [InlineData(31, typeof(IndexOutOfRangeException))]
+        [InlineData(31)] // Former recipe limit: 30
+        [InlineData(100)]
+        [InlineData(101, typeof(IndexOutOfRangeException))]
         public void RecipeLimit(int recipeCount, Type exc = null)
         {
             var sbHeader = new StringBuilder();
