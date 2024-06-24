@@ -23,7 +23,7 @@ namespace Nekoyume.Helper
     {
         public static string GetSeasonAsAddressForm(long season)
         {
-            return $"{season:X40}";
+            return $"{season:D40}";
         }
 
         public const int RaffleRewardPercent = 5;

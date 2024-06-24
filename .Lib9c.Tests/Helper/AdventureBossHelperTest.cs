@@ -18,6 +18,16 @@ namespace Lib9c.Tests.Helper
         private string _name = "wanted";
 
         [Theory]
+        [InlineData(1, "0000000000000000000000000000000000000001")]
+        [InlineData(10, "0000000000000000000000000000000000000010")]
+        [InlineData(16, "0000000000000000000000000000000000000016")]
+        [InlineData(100, "0000000000000000000000000000000000000100")]
+        public void SeasonToAddressForm(int season, string expectedAddr)
+        {
+            Assert.Equal(expectedAddr, AdventureBossHelper.GetSeasonAsAddressForm(season));
+        }
+
+        [Theory]
         // Raffle reward is always 0 when isReal == false
         [InlineData(0)]
         public void CalculateWantedReward(int expectedReward)
