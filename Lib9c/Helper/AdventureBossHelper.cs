@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using Nekoyume.Action;
 using Nekoyume.Module;
@@ -23,7 +24,7 @@ namespace Nekoyume.Helper
     {
         public static string GetSeasonAsAddressForm(long season)
         {
-            return $"{season:X40}";
+            return $"{season:X40}".ToLower(CultureInfo.InvariantCulture);
         }
 
         public const int RaffleRewardPercent = 5;
