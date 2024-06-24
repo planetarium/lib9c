@@ -242,8 +242,8 @@ namespace Nekoyume.Action.AdventureBoss
             var pointSheet = states.GetSheet<AdventureBossFloorPointSheet>();
 
             AdventureBossSimulator simulator = null;
-            var firstFloor = explorer.Floor + 1;
-            var lastFloor = firstFloor;
+            var firstFloorId = 0;
+            var lastFloorId = 0;
 
             // Claim floors from last failed
             var exploreAp = sheets.GetSheet<AdventureBossSheet>().OrderedList
@@ -255,6 +255,12 @@ namespace Nekoyume.Action.AdventureBoss
                 if (!floorSheet.TryGetValue(fl, out var flRow))
                 {
                     throw new SheetRowNotFoundException(addressesHex, nameof(floorSheet), fl);
+                }
+
+                if (firstFloorId == 0)
+                {
+                    firstFloorId = floorRow.Id;
+                    lastFloorId = firstFloorId;
                 }
 
                 var rewards =
@@ -275,7 +281,7 @@ namespace Nekoyume.Action.AdventureBoss
                     floorId: fl,
                     random,
                     avatarState,
-                    fl == firstFloor ? Foods : new List<Guid>(),
+                    fl == firstFloorId ? Foods : new List<Guid>(),
                     runeStates,
                     runeSlotState,
                     floorRow,
@@ -291,7 +297,7 @@ namespace Nekoyume.Action.AdventureBoss
                 );
 
                 simulator.Simulate();
-                lastFloor = fl;
+                lastFloorId = floorRow.Id;
 
                 // Get Reward if cleared
                 if (simulator.Log.IsClear)
@@ -332,9 +338,9 @@ namespace Nekoyume.Action.AdventureBoss
                 }
             }
 
-            if (simulator is not null && simulator.LogEvent && lastFloor > firstFloor)
+            if (simulator is not null && simulator.LogEvent && lastFloorId > firstFloorId)
             {
-                simulator.AddBreakthrough(firstFloor, lastFloor, floorWaveSheet);
+                simulator.AddBreakthrough(firstFloorId, lastFloorId, floorWaveSheet);
             }
 
             states = AdventureBossHelper.AddExploreRewards(
