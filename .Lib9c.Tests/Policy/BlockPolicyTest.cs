@@ -687,7 +687,8 @@ namespace Lib9c.Tests
                     $"{BlockMetadata.SlothProtocolVersion} is not acceptable");
             }
 
-            var stateRootHash = store.GetNextStateRootHash((BlockHash)preEvaluationBlock.PreviousHash);
+            var block = store.GetBlock((BlockHash)preEvaluationBlock.PreviousHash);
+            var stateRootHash = block.StateRootHash;
 
             return preEvaluationBlock.Sign(privateKey, (HashDigest<SHA256>)stateRootHash);
         }
