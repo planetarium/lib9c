@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
-using Nekoyume.Action;
 using Nekoyume.Module;
 using Lib9c;
 using Libplanet.Action;
@@ -15,6 +14,7 @@ using Nekoyume.Data;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Nekoyume.TableData.AdventureBoss;
 
@@ -118,27 +118,6 @@ namespace Nekoyume.Helper
             return exploreBoard;
         }
 
-        public static IWorld PickRaffleWinner(IWorld states, IActionContext context, long season)
-        {
-            var random = context.GetRandom();
-
-            for (var szn = season; szn > 0; szn--)
-            {
-                // Explore raffle
-                var bountyBoard = states.GetBountyBoard(szn);
-                var exploreBoard = states.GetExploreBoard(szn);
-                var explorerList = states.GetExplorerList(szn);
-                if (exploreBoard.RaffleWinner is null)
-                {
-                    exploreBoard =
-                        PickExploreRaffle(bountyBoard, exploreBoard, explorerList, random);
-                    states = states.SetExploreBoard(szn, exploreBoard);
-                }
-            }
-
-            return states;
-        }
-
         /// <summary>
         /// Calculate reward for adventure boss operators.
         /// This method only calculates reward for given avatar, not actually give rewards.
@@ -228,63 +207,36 @@ namespace Nekoyume.Helper
             return reward;
         }
 
-        public static IWorld CollectWantedReward(IWorld states, IActionContext context,
-            AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
-            Address agentAddress, Address avatarAddress, long claimableDuration,
-            out AdventureBossGameData.ClaimableReward collectedReward)
+        public static bool CollectWantedReward(
+            AdventureBossGameData.ClaimableReward reward,
+            GameConfigState gameConfig, AdventureBossNcgRewardRatioSheet ncgRewardRatioSheet,
+            SeasonInfo seasonInfo, BountyBoard bountyBoard, Investor investor,
+            long currentBlockIndex, Address avatarAddress,
+            ref AdventureBossGameData.ClaimableReward updatedReward
+        )
         {
-            for (var szn = season; szn > 0; szn--)
+            // Stop when met claim expired season
+            if (seasonInfo.EndBlockIndex + gameConfig.AdventureBossClaimInterval <
+                currentBlockIndex)
             {
-                var seasonInfo = states.GetSeasonInfo(szn);
-
-                // Stop when met claim expired season
-                if (seasonInfo.EndBlockIndex + claimableDuration < currentBlockIndex)
-                {
-                    break;
-                }
-
-                var bountyBoard = states.GetBountyBoard(szn);
-                var investor = bountyBoard.Investors.FirstOrDefault(
-                    inv => inv.AvatarAddress == avatarAddress
-                );
-
-                // Not invested in this season
-                if (investor is null)
-                {
-                    continue;
-                }
-
-                // If `Claimed` found, all prev. season's rewards already been claimed. Stop here.
-                if (investor.Claimed)
-                {
-                    break;
-                }
-
-                // Calculate reward for this season
-                reward = CalculateWantedReward(reward, bountyBoard, avatarAddress,
-                    states.GetSheet<AdventureBossNcgRewardRatioSheet>(),
-                    states.GetGameConfigState().AdventureBossNcgRuneRatio,
-                    out var ncgReward
-                );
-
-                // Transfer NCG reward from seasonal address
-                if (ncgReward.RawValue > 0)
-                {
-                    states = states.TransferAsset(context,
-                        Addresses.BountyBoard.Derive(
-                            AdventureBossHelper.GetSeasonAsAddressForm(szn)
-                        ),
-                        agentAddress,
-                        ncgReward
-                    );
-                }
-
-                investor.Claimed = true;
-                states = states.SetBountyBoard(szn, bountyBoard);
+                return false;
             }
 
-            collectedReward = reward;
-            return states;
+            // If `Claimed` found, all prev. season's rewards already been claimed. Stop here.
+            if (investor.Claimed)
+            {
+                return false;
+            }
+
+            // Calculate reward for this season
+            reward = CalculateWantedReward(reward, bountyBoard, avatarAddress,
+                ncgRewardRatioSheet,
+                gameConfig.AdventureBossNcgRuneRatio,
+                out var ncgReward
+            );
+
+            updatedReward = reward;
+            return true;
         }
 
         /// <summary>
@@ -313,6 +265,7 @@ namespace Nekoyume.Helper
         {
             var gold = bountyBoard.totalBounty().Currency;
             ncgReward = 0 * gold;
+
             // Raffle
             if (isReal && exploreBoard.RaffleWinner == avatarAddress)
             {
@@ -367,68 +320,42 @@ namespace Nekoyume.Helper
             return reward;
         }
 
-        public static IWorld CollectExploreReward(IWorld states, IActionContext context,
-            AdventureBossGameData.ClaimableReward reward, long currentBlockIndex, long season,
-            Address agentAddress, Address avatarAddress, long claimableDuration,
-            out AdventureBossGameData.ClaimableReward collectedReward)
+        public static bool CollectExploreReward(
+            AdventureBossGameData.ClaimableReward reward,
+            GameConfigState gameConfig, AdventureBossNcgRewardRatioSheet ncgRewardRatioSheet,
+            SeasonInfo seasonInfo, BountyBoard bountyBoard, ExploreBoard exploreBoard,
+            Explorer explorer,
+            long currentBlockIndex, Address avatarAddress,
+            ref AdventureBossGameData.ClaimableReward updatedReward,
+            out FungibleAssetValue ncgReward
+        )
         {
-            for (var szn = season; szn > 0; szn--)
+            updatedReward = reward;
+            ncgReward = 0 * bountyBoard.totalBounty().Currency;
+
+            // Stop when met claim expired season
+            if (seasonInfo.EndBlockIndex + gameConfig.AdventureBossClaimInterval <
+                currentBlockIndex)
             {
-                var seasonInfo = states.GetSeasonInfo(szn);
-
-                // Stop when met claim expired season
-                if (seasonInfo.EndBlockIndex + claimableDuration < currentBlockIndex)
-                {
-                    break;
-                }
-
-                var exploreBoard = states.GetExploreBoard(szn);
-                var explorerList = states.GetExplorerList(szn);
-
-                // Not explored
-                if (!explorerList.Explorers.OrderBy(e => e.Item1)
-                        .Select(e => e.Item1)
-                        .Contains(avatarAddress)
-                   )
-                {
-                    continue;
-                }
-
-                var explorer = states.GetExplorer(szn, avatarAddress);
-
-                // If `Claimed` found, all prev. season's rewards already been claimed. Stop here.
-                if (explorer.Claimed)
-                {
-                    break;
-                }
-
-                // Calculate reward for this season
-                var gameConfig = states.GetGameConfigState();
-                reward = CalculateExploreReward(
-                    reward, states.GetBountyBoard(szn), exploreBoard, explorer, avatarAddress,
-                    states.GetSheet<AdventureBossNcgRewardRatioSheet>(),
-                    gameConfig.AdventureBossNcgApRatio, gameConfig.AdventureBossNcgRuneRatio,
-                    isReal: true, out var ncgReward
-                );
-
-                // Transfer NCG reward from seasonal address
-                if (ncgReward.RawValue > 0)
-                {
-                    states = states.TransferAsset(context,
-                        Addresses.BountyBoard.Derive(
-                            AdventureBossHelper.GetSeasonAsAddressForm(szn)
-                        ),
-                        agentAddress,
-                        ncgReward
-                    );
-                }
-
-                explorer.Claimed = true;
-                states = states.SetExplorer(szn, explorer);
+                return false;
             }
 
-            collectedReward = reward;
-            return states;
+            // If `Claimed` found, all prev. season's rewards already been claimed. Stop here.
+            if (explorer.Claimed)
+            {
+                return false;
+            }
+
+            // Calculate reward for this season
+            reward = CalculateExploreReward(
+                reward, bountyBoard, exploreBoard, explorer, avatarAddress,
+                ncgRewardRatioSheet,
+                gameConfig.AdventureBossNcgApRatio, gameConfig.AdventureBossNcgRuneRatio,
+                isReal: true, out ncgReward
+            );
+
+            updatedReward = reward;
+            return true;
         }
 
         public static IWorld AddExploreRewards(IActionContext context, IWorld states,

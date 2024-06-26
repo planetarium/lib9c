@@ -289,6 +289,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                null,
             };
             yield return new object[]
             {
@@ -307,6 +308,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                null,
             };
             yield return new object[]
             {
@@ -326,6 +328,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                null,
             };
             yield return new object[]
             {
@@ -344,6 +347,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
+                typeof(InvalidOperationException),
             };
         }
 
@@ -407,7 +411,6 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Test
             var resultState = new ClaimAdventureBossReward
             {
-                Season = 1,
                 AvatarAddress = TesterAvatarAddress,
             }.Execute(new ActionContext
             {
@@ -500,7 +503,6 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Test
             var resultState = new ClaimAdventureBossReward
             {
-                Season = 3,
                 AvatarAddress = TesterAvatarAddress,
             }.Execute(new ActionContext
             {
@@ -622,7 +624,6 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Claim
             var resultState = new ClaimAdventureBossReward
             {
-                Season = 1,
                 AvatarAddress = TesterAvatarAddress,
             }.Execute(new ActionContext
             {
@@ -659,7 +660,6 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 // Claim another rewards
                 resultState = new ClaimAdventureBossReward
                 {
-                    Season = 1,
                     AvatarAddress = ExplorerAvatarAddress,
                 }.Execute(new ActionContext
                 {
@@ -786,7 +786,6 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Test
             var resultState = new ClaimAdventureBossReward
             {
-                Season = 3,
                 AvatarAddress = TesterAvatarAddress,
             }.Execute(new ActionContext
             {
@@ -874,7 +873,6 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Test
             var resultState = new ClaimAdventureBossReward
             {
-                Season = 1,
                 AvatarAddress = TesterAvatarAddress,
             }.Execute(new ActionContext
             {
@@ -892,7 +890,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
         public void PrevReward(
             bool wanted,
             bool explore,
-            AdventureBossGameData.ClaimableReward expectedReward
+            AdventureBossGameData.ClaimableReward expectedReward,
+            Type exc
         )
         {
             // Settings
@@ -966,18 +965,31 @@ namespace Lib9c.Tests.Action.AdventureBoss
             );
 
             // Test
-            var resultState = new ClaimAdventureBossReward
+            var action = new ClaimAdventureBossReward
             {
-                Season = 2,
                 AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
+            };
+            if (exc is null)
             {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
-                RandomSeed = seed + 2,
-            });
-            Test(resultState, expectedReward);
+                var resultState = action.Execute(new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                    RandomSeed = seed + 2,
+                });
+                Test(resultState, expectedReward);
+            }
+            else
+            {
+                Assert.Throws(exc, () => action.Execute(new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                    RandomSeed = seed + 2,
+                }));
+            }
         }
 
         [Fact]

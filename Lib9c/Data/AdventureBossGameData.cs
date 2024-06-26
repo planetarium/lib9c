@@ -10,6 +10,12 @@ namespace Nekoyume.Data
             public FungibleAssetValue? NcgReward;
             public Dictionary<int, int> ItemReward;
             public Dictionary<int, int> FavReward;
+
+            public bool IsEmpty()
+            {
+                return (NcgReward is null || ((FungibleAssetValue)NcgReward).RawValue == 0) &&
+                       ItemReward.Count == 0 && FavReward.Count == 0;
+            }
         }
     }
 }
