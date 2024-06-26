@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Item;
-using Nekoyume.TableData;
 using Nekoyume.TableData.AdventureBoss;
 
 namespace Nekoyume.Model
@@ -37,7 +36,7 @@ namespace Nekoyume.Model
         IEnumerator CoCustomEvent(CharacterBase character, EventBase eventBase);
 
         #region AdvetureBoss
-        IEnumerator CoBreakthrough(CharacterBase character, int floor, List<AdventureBossFloorWaveSheet.MonsterData> monsters);
+        IEnumerator CoBreakthrough(CharacterBase character, int floorId, List<AdventureBossFloorWaveSheet.MonsterData> monsters);
         IEnumerator CoStageBuff(CharacterBase affected,  int skillId, IEnumerable<BattleStatus.Skill.SkillInfo> skillInfos, IEnumerable<BattleStatus.Skill.SkillInfo> buffInfos);
         #endregion
     }

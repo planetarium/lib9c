@@ -186,7 +186,7 @@ namespace Nekoyume.Action.AdventureBoss
             var adventureBossId = states.GetSheet<AdventureBossSheet>().OrderedList
                 .First(row => row.BossId == latestSeason.BossId).Id;
             var floorRows = states.GetSheet<AdventureBossFloorSheet>().OrderedList
-                .Where(row => row.AdventureBossId == adventureBossId);
+                .Where(row => row.AdventureBossId == adventureBossId).ToList();
             var firstFloorId = floorRows.First(r => r.Floor == 1).Id;
             var floorId = floorRows.First(r => r.Floor == explorer.Floor).Id;
 
@@ -194,8 +194,13 @@ namespace Nekoyume.Action.AdventureBoss
                 latestSeason.BossId, floorId, context.GetRandom(),
                 avatarState, sheets.GetSimulatorSheets(), logEvent: false
             );
-            simulator.AddBreakthrough(firstFloorId, floorId,
-                sheets.GetSheet<AdventureBossFloorWaveSheet>());
+            var floorIdList = new List<int>();
+            for (var fl = 1; fl <= explorer.MaxFloor; fl++)
+            {
+                floorIdList.Add(floorRows.First(row => row.Floor == fl).Id);
+            }
+
+            simulator.AddBreakthrough(floorIdList, sheets.GetSheet<AdventureBossFloorWaveSheet>());
 
             // Add point, reward
             var point = 0;

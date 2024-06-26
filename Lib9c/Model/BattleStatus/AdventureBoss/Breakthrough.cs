@@ -8,20 +8,20 @@ namespace Nekoyume.Model.BattleStatus.AdventureBoss
     [Serializable]
     public class Breakthrough : EventBase
     {
-        public readonly int Floor;
+        public readonly int FloorId;
         public readonly List<AdventureBossFloorWaveSheet.MonsterData> Monsters;
 
-        public Breakthrough(CharacterBase character, int floor,
+        public Breakthrough(CharacterBase character, int floorId,
             List<AdventureBossFloorWaveSheet.MonsterData> monsters
             ) : base(character)
         {
-            Floor = floor;
+            FloorId = floorId;
             Monsters = monsters;
         }
 
         public override IEnumerator CoExecute(IStage stage)
         {
-            yield return stage.CoBreakthrough((Player)Character, Floor, Monsters);
+            yield return stage.CoBreakthrough((Player)Character, FloorId, Monsters);
         }
     }
 }

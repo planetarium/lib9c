@@ -9,8 +9,6 @@ using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
 using Nekoyume.Battle;
 using Nekoyume.Battle.AdventureBoss;
-using Nekoyume.Data;
-using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.AdventureBoss;
@@ -243,7 +241,7 @@ namespace Nekoyume.Action.AdventureBoss
 
             AdventureBossSimulator simulator = null;
             var firstFloorId = 0;
-            var lastFloorId = 0;
+            var floorIdList = new List<int>();
 
             // Claim floors from last failed
             var exploreAp = sheets.GetSheet<AdventureBossSheet>().OrderedList
@@ -260,7 +258,6 @@ namespace Nekoyume.Action.AdventureBoss
                 if (firstFloorId == 0)
                 {
                     firstFloorId = floorRow.Id;
-                    lastFloorId = firstFloorId;
                 }
 
                 var rewards =
@@ -278,10 +275,10 @@ namespace Nekoyume.Action.AdventureBoss
 
                 simulator = new AdventureBossSimulator(
                     bossId: latestSeason.BossId,
-                    floorId: fl,
+                    floorId: floorRow.Id,
                     random,
                     avatarState,
-                    fl == firstFloorId ? Foods : new List<Guid>(),
+                    floorRow.Id == firstFloorId ? Foods : new List<Guid>(),
                     runeStates,
                     runeSlotState,
                     floorRow,
@@ -297,7 +294,6 @@ namespace Nekoyume.Action.AdventureBoss
                 );
 
                 simulator.Simulate();
-                lastFloorId = floorRow.Id;
 
                 // Get Reward if cleared
                 if (simulator.Log.IsClear)
@@ -331,6 +327,12 @@ namespace Nekoyume.Action.AdventureBoss
                         selected.ItemId,
                         random.Next(selected.Min, selected.Max + 1))
                     );
+
+                    // Add floorId for breakthrough
+                    if (fl < explorer.MaxFloor + 1)
+                    {
+                        floorIdList.Add(floorRow.Id);
+                    }
                 }
                 else
                 {
@@ -338,9 +340,9 @@ namespace Nekoyume.Action.AdventureBoss
                 }
             }
 
-            if (simulator is not null && simulator.LogEvent && lastFloorId > firstFloorId)
+            if (simulator is not null && simulator.LogEvent && floorIdList.Count > 0)
             {
-                simulator.AddBreakthrough(firstFloorId, lastFloorId, floorWaveSheet);
+                simulator.AddBreakthrough(floorIdList, floorWaveSheet);
             }
 
             states = AdventureBossHelper.AddExploreRewards(

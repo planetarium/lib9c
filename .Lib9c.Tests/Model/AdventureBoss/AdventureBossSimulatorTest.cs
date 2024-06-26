@@ -6,7 +6,6 @@ namespace Lib9c.Tests.Model.AdventureBoss
     using Lib9c.Tests.Action;
     using Libplanet.Action;
     using Nekoyume.Battle.AdventureBoss;
-    using Nekoyume.Data;
     using Nekoyume.Model.BattleStatus;
     using Nekoyume.Model.BattleStatus.AdventureBoss;
     using Nekoyume.Model.EnumType;
@@ -92,22 +91,31 @@ namespace Lib9c.Tests.Model.AdventureBoss
         }
 
         [Theory]
-        [InlineData(true, 1, 1)]
-        [InlineData(true, 1, 5)]
-        [InlineData(true, 1, 3)]
-        [InlineData(false, 1, 1)]
-        [InlineData(false, 1, 5)]
-        [InlineData(false, 1, 3)]
-        [InlineData(false, 21, 23)] // For Boss ID 2
-        public void AddBreakthrough(bool simulate, int firstFloorId, int lastFloorId)
+        [InlineData(true, 1, 1, 1)]
+        [InlineData(true, 1, 1, 5)]
+        [InlineData(true, 1, 1, 3)]
+        [InlineData(false, 1, 1, 1)]
+        [InlineData(false, 1, 1, 5)]
+        [InlineData(false, 1, 1, 3)]
+        [InlineData(true, 2, 1, 1)]
+        [InlineData(true, 2, 1, 5)]
+        [InlineData(true, 2, 1, 3)]
+        [InlineData(false, 2, 1, 1)]
+        [InlineData(false, 2, 1, 5)]
+        [InlineData(false, 2, 1, 3)]
+        public void AddBreakthrough(bool simulate, int bossId, int fristFloor, int lastFloor)
         {
             AdventureBossSimulator simulator;
+            var floorRows = _tableSheets.AdventureBossFloorSheet.Values
+                .Where(row => row.AdventureBossId == bossId).ToList();
+
             if (simulate)
             {
                 simulator = Simulate();
             }
             else
             {
+                var floorId = floorRows.First(row => row.Floor == lastFloor).Id;
                 var adventureBossData = _tableSheets.AdventureBossSheet.Values.First();
                 var row = _tableSheets.CostumeStatSheet.Values.First(
                     r => r.StatType == StatType.ATK);
@@ -118,20 +126,20 @@ namespace Lib9c.Tests.Model.AdventureBoss
 
                 simulator = new AdventureBossSimulator(
                     adventureBossData.BossId,
-                    1,
+                    floorId,
                     _random,
                     _avatarState,
                     new List<Guid>(),
                     new AllRuneState(),
                     new RuneSlotState(BattleType.Adventure),
-                    _tableSheets.AdventureBossFloorSheet[lastFloorId],
-                    _tableSheets.AdventureBossFloorWaveSheet[lastFloorId],
+                    _tableSheets.AdventureBossFloorSheet[floorId],
+                    _tableSheets.AdventureBossFloorWaveSheet[floorId],
                     _tableSheets.GetSimulatorSheets(),
                     _tableSheets.EnemySkillSheet,
                     _tableSheets.CostumeStatSheet,
                     AdventureBossSimulator.GetWaveRewards(
                         _random,
-                        _tableSheets.AdventureBossFloorSheet[1],
+                        _tableSheets.AdventureBossFloorSheet[floorId],
                         _tableSheets.MaterialItemSheet
                     ),
                     new List<StatModifier>
@@ -142,17 +150,23 @@ namespace Lib9c.Tests.Model.AdventureBoss
                 );
             }
 
-            simulator.AddBreakthrough(firstFloorId, lastFloorId, _tableSheets.AdventureBossFloorWaveSheet);
+            var floorIdList = new List<int>();
+            for (var fl = fristFloor; fl <= lastFloor; fl++)
+            {
+                floorIdList.Add(floorRows.First(row => row.Floor == fl).Id);
+            }
+
+            simulator.AddBreakthrough(floorIdList, _tableSheets.AdventureBossFloorWaveSheet);
 
             Assert.Equal(typeof(SpawnPlayer), simulator.Log.events.First().GetType());
             if (!simulate)
             {
                 // +2: 1 for last floor, 1 for SpawnPlayer
-                Assert.Equal(lastFloorId - firstFloorId + 2, simulator.Log.events.Count);
+                Assert.Equal(lastFloor - fristFloor + 2, simulator.Log.events.Count);
             }
 
             var filtered = simulator.Log.events.OfType<Breakthrough>();
-            Assert.Equal(lastFloorId - firstFloorId + 1, filtered.Count());
+            Assert.Equal(lastFloor - fristFloor + 1, filtered.Count());
 
             if (simulate)
             {
