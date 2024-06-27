@@ -121,7 +121,7 @@ namespace Lib9c.Benchmarks
                     block.Transactions.Count()
                 );
 
-                chain.DetermineBlockStateRootHash(block, out IReadOnlyList<ICommittedActionEvaluation> blockEvals);
+                chain.DetermineNextBlockStateRootHash(block, out IReadOnlyList<ICommittedActionEvaluation> blockEvals);
                 txs += block.Transactions.LongCount();
                 actions += block.Transactions.Sum(tx =>
                     tx.Actions is { } customActions ? customActions.LongCount() : 0);
