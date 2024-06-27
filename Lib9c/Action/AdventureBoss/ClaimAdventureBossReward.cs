@@ -103,9 +103,9 @@ namespace Nekoyume.Action.AdventureBoss
                 }
 
                 // Send 80% NCG to operational account. 20% are for rewards.
-                var seasonBountyBoardAddress =
-                    Addresses.BountyBoard.Derive(
-                        AdventureBossHelper.GetSeasonAsAddressForm(szn));
+                var seasonBountyBoardAddress = Addresses.BountyBoard.Derive(
+                    AdventureBossHelper.GetSeasonAsAddressForm(szn)
+                );
                 if (bountyBoard.totalBounty() ==
                     states.GetBalance(seasonBountyBoardAddress, bountyBoard.totalBounty().Currency)
                    )
@@ -150,12 +150,8 @@ namespace Nekoyume.Action.AdventureBoss
 
                 if (ncgReward > 0 * ncg)
                 {
-                    states = states.TransferAsset(context,
-                        Addresses.BountyBoard.Derive(
-                            AdventureBossHelper.GetSeasonAsAddressForm(szn)
-                        ),
-                        context.Signer,
-                        ncgReward);
+                    states = states.TransferAsset(context, seasonBountyBoardAddress,
+                        context.Signer, ncgReward);
                 }
 
                 if (!continueInv && !continueExp)
