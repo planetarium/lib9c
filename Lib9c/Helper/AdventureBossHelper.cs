@@ -336,7 +336,6 @@ namespace Nekoyume.Helper
             out FungibleAssetValue ncgReward
         )
         {
-            updatedReward = reward;
             ncgReward = 0 * bountyBoard.totalBounty().Currency;
 
             // Stop when met claim expired season
