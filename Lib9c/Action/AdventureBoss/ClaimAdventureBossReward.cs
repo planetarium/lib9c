@@ -112,7 +112,7 @@ namespace Nekoyume.Action.AdventureBoss
                 {
                     states = states.TransferAsset(context, seasonBountyBoardAddress,
                         // FIXME: Set operational account address
-                        new Address(),
+                        AdventureBossGameData.AdventureBossOperationalAddress,
                         (bountyBoard.totalBounty() * 80).DivRem(100, out _)
                     );
                 }

@@ -1,10 +1,14 @@
 using System.Collections.Generic;
+using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
 namespace Nekoyume.Data
 {
     public static class AdventureBossGameData
     {
+        public static readonly Address AdventureBossOperationalAddress =
+            new ("0x6923bb64139d23C677D858CcA7e1e2a31457bB8D");
+
         public struct ClaimableReward
         {
             public FungibleAssetValue? NcgReward;

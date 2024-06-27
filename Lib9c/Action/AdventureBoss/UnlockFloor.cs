@@ -7,6 +7,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
+using Nekoyume.Data;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.State;
@@ -137,8 +138,8 @@ namespace Nekoyume.Action.AdventureBoss
 
                 explorer.UsedNcg += price.NcgPrice;
                 exploreBoard.UsedNcg += price.NcgPrice;
-                // FIXME: Send unlock NCG to operational address
-                states = states.TransferAsset(context, agentAddress, new Address(),
+                states = states.TransferAsset(context, agentAddress,
+                    AdventureBossGameData.AdventureBossOperationalAddress,
                     price.NcgPrice * currency);
             }
             else // Use GoldenDust
