@@ -187,7 +187,6 @@ namespace Nekoyume.Action.AdventureBoss
                 .First(row => row.BossId == latestSeason.BossId).Id;
             var floorRows = states.GetSheet<AdventureBossFloorSheet>().OrderedList
                 .Where(row => row.AdventureBossId == adventureBossId).ToList();
-            var firstFloorId = floorRows.First(r => r.Floor == 1).Id;
             var floorId = floorRows.First(r => r.Floor == explorer.Floor).Id;
 
             var simulator = new AdventureBossSimulator(
