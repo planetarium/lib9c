@@ -7,6 +7,7 @@ using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Exceptions;
 using Nekoyume.Data;
 using Nekoyume.Exceptions;
 using Nekoyume.Helper;
@@ -164,7 +165,7 @@ namespace Nekoyume.Action.AdventureBoss
 
             if (myReward.IsEmpty())
             {
-                throw new InvalidOperationException($"{AvatarAddress} has no reward to receive");
+                throw new EmptyRewardException($"{AvatarAddress} has no reward to receive.");
             }
 
             // Give rewards

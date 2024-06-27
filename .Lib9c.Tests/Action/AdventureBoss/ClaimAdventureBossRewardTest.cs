@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.AdventureBoss;
+    using Nekoyume.Action.Exceptions;
     using Nekoyume.Data;
     using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
@@ -347,7 +348,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
-                typeof(InvalidOperationException),
+                typeof(EmptyRewardException),
             };
         }
 
