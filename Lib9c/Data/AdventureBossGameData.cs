@@ -13,7 +13,7 @@ namespace Nekoyume.Data
 
             public bool IsEmpty()
             {
-                return (NcgReward is null || ((FungibleAssetValue)NcgReward).RawValue == 0) &&
+                return (NcgReward is null || ((FungibleAssetValue)NcgReward).RawValue <= 0) &&
                        ItemReward.Count == 0 && FavReward.Count == 0;
             }
         }

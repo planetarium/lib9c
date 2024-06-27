@@ -44,6 +44,7 @@ namespace Nekoyume.Action.AdventureBoss
         {
             context.UseGas(1);
             var states = context.PreviousState;
+            var ncg = states.GetGoldCurrency();
 
             // Validation
             var addresses = GetSignerAndOtherAddressesHex(context, AvatarAddress);
@@ -147,7 +148,7 @@ namespace Nekoyume.Action.AdventureBoss
                     states = states.SetExplorer(szn, explorer);
                 }
 
-                if (ncgReward.RawValue > 0)
+                if (ncgReward > 0 * ncg)
                 {
                     states = states.TransferAsset(context,
                         Addresses.BountyBoard.Derive(
