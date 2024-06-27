@@ -306,9 +306,15 @@ namespace Nekoyume.Helper
                 : ncgRuneRatio;
             var totalRewardAmount =
                 (int)Math.Round(exploreBoard.UsedApPotion * ncgApRatio / ncgRewardRatio);
-            var myRewardAmount = (int)Math.Floor(
-                (decimal)totalRewardAmount * explorer.Score / exploreBoard.TotalPoint
-            );
+
+            var myRewardAmount = 0;
+            if (exploreBoard.TotalPoint > 0)
+            {
+                myRewardAmount = (int)Math.Floor(
+                    (decimal)totalRewardAmount * explorer.Score / exploreBoard.TotalPoint
+                );
+            }
+
             if (myRewardAmount > 0)
             {
                 reward = AddReward(reward, exploreBoard.FixedRewardItemId is not null,
