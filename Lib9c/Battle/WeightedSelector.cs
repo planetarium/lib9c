@@ -31,6 +31,11 @@ namespace Nekoyume.Battle
             _items = new List<Item>();
         }
 
+        public void Clear()
+        {
+            _items.Clear();
+        }
+
         public void Add(T item, decimal weight)
         {
             if (weight > 0)

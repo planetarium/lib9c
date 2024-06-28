@@ -45,6 +45,9 @@ namespace Nekoyume.Model.Item
 
         // Aura
         Aura = 19,
+
+        // Grimoire
+        Grimoire = 20,
     }
 
     public class ItemTypeComparer : IEqualityComparer<ItemType>
