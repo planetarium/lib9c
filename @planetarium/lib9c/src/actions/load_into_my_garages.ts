@@ -10,8 +10,37 @@ import {
   encodeFungibleAssetValue,
 } from "@planetarium/tx";
 import type { HashDigest } from "../models/hashdigest.js";
-import { GameAction } from "./common.js";
+import { GameAction, type GameActionArgs } from "./common.js";
 
+/**
+ * The arguments of the `LoadIntoMyGarages` action.
+ */
+export type LoadIntoMyGaragesArgs = {
+  /**
+   * The address of the avatar to load the items.
+   */
+  avatarAddress?: Address;
+
+  /**
+   * The list of pairs where the first element is 'fungible id', the item's hash and the second element is the amount to load into garages.
+   */
+  fungibleIdAndCounts?: [HashDigest<"SHA256">, bigint][];
+
+  /**
+   * The list of pairs where the first element is the address to load into garages from and the second element is the how many fungible asset value to load into garages from the specified address.
+   */
+  fungibleAssetValues?: [Address, FungibleAssetValue][];
+
+  /**
+   * The memo of the action. If it is not provided, it is set to `null`.
+   */
+  memo?: string;
+} & GameActionArgs;
+
+/**
+ * The `LoadIntoMyGarages` action is used to load the fungible assets and items into the signer's garages.
+ * @see DeliverToOtherGarages
+ */
 export class LoadIntoMyGarages extends GameAction {
   protected readonly type_id: string = "load_into_my_garages";
 
@@ -20,20 +49,31 @@ export class LoadIntoMyGarages extends GameAction {
   public readonly fungibleIdAndCounts: [HashDigest<"SHA256">, bigint][] | null;
   public readonly memo: string | null;
 
+  /**
+   * Create a new `LoadIntoMyGarages` action.
+   * @param params The arguments of the `LoadIntoMyGarages` action.
+   * @example To load NCG into the signer's garages:
+   * ```typescript
+   * new LoadIntoMyGarages({
+   *   fungibleAssetValues: [[agentAddress, fav(NCG, 2)]],
+   * })
+   * ```
+   * @example To load items into the signer's garages:
+   * ```typescript
+   * new LoadIntoMyGarages({
+   *   avatarAddress,
+   *   fungibleIdAndCounts: [[fungibleIdA, 1n]],
+   * })
+   * ```
+   */
   constructor({
     avatarAddress,
     fungibleAssetValues,
     fungibleIdAndCounts,
     memo,
     id,
-  }: {
-    avatarAddress?: Address;
-    fungibleIdAndCounts?: [HashDigest<"SHA256">, bigint][];
-    fungibleAssetValues?: [Address, FungibleAssetValue][];
-    memo?: string;
-    id?: Uint8Array;
-  }) {
-    super(id);
+  }: LoadIntoMyGaragesArgs) {
+    super({ id });
 
     this.avatarAddress = avatarAddress || null;
     this.fungibleAssetValues = fungibleAssetValues || null;

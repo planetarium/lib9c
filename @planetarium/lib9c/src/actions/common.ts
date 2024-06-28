@@ -52,10 +52,21 @@ export abstract class PolymorphicAction {
   protected abstract plain_value(): Value;
 }
 
+/**
+ * The arguments for the `GameAction` constructor.
+ */
+export type GameActionArgs = {
+  /**
+   * The unique identifier of the action.
+   * If it is not provided, a new GUID will be generated.
+   */
+  id?: Uint8Array;
+};
+
 export abstract class GameAction extends PolymorphicAction {
   id: Uint8Array;
 
-  constructor(id: Uint8Array | undefined) {
+  constructor({ id }: GameActionArgs) {
     super();
 
     if (id !== undefined && id.length !== 16) {
