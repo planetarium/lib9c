@@ -24,7 +24,7 @@ namespace Nekoyume.Helper
     {
         public static string GetSeasonAsAddressForm(long season)
         {
-            return $"{season:X40}".ToLower(CultureInfo.InvariantCulture);
+            return $"{season:D40}";
         }
 
         public const int RaffleRewardPercent = 5;
