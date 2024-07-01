@@ -154,6 +154,11 @@ namespace Nekoyume.Blockchain.Policy
             IActionLoader actionLoader,
             Transaction transaction)
         {
+            IWorldState latestState =
+                blockChain.Tip.ProtocolVersion < BlockMetadata.SlothProtocolVersion
+                ? blockChain.GetWorldState()
+                : blockChain.GetNextWorldState()!;
+
             // Avoid NRE when genesis block appended
             long index = blockChain.Count > 0 ? blockChain.Tip.Index + 1: 0;
 
@@ -173,8 +178,7 @@ namespace Nekoyume.Blockchain.Policy
 
             try
             {
-                if (blockChain
-                    .GetNextWorldState()!
+                if (latestState
                     .GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
                 {
                     // Check Activation
@@ -186,8 +190,7 @@ namespace Nekoyume.Blockchain.Policy
                             action is IActivateAccount activate)
                         {
                             return transaction.Nonce == 0 &&
-                                blockChain
-                                    .GetNextWorldState()!
+                                latestState
                                     .GetAccountState(ReservedAddresses.LegacyAccount)
                                     .GetState(activate.PendingAddress) is Dictionary rawPending &&
                                 new PendingActivationState(rawPending).Verify(activate.Signature)
@@ -211,15 +214,13 @@ namespace Nekoyume.Blockchain.Policy
                         return null;
                     }
 
-                    switch (blockChain
-                        .GetNextWorldState()!
+                    switch (latestState
                         .GetAccountState(ReservedAddresses.LegacyAccount)
                         .GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
                     {
                         case null:
                             // Fallback for pre-migration.
-                            if (blockChain
-                                .GetNextWorldState()!
+                            if (latestState
                                 .GetAccountState(ReservedAddresses.LegacyAccount)
                                 .GetState(ActivatedAccountsState.Address) is Dictionary asDict)
                             {
