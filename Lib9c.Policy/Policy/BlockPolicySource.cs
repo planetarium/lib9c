@@ -177,11 +177,7 @@ namespace Nekoyume.Blockchain.Policy
                     .GetWorldState()
                     .GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
                 {
-                    // Check admin
-                    if (IsAdminTransaction(blockChain, transaction))
-                    {
-                        return null;
-                    }           
+                    return null;
                 }
 
                 if (!(transaction.MaxGasPrice is { } gasPrice && transaction.GasLimit is { } gasLimit))
