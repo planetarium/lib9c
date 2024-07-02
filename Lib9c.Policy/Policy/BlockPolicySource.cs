@@ -173,15 +173,13 @@ namespace Nekoyume.Blockchain.Policy
 
             try
             {
+                // This block is used to bypass transactions before mead has been created.
+                // It's no longer required for future transactions, so better to be removed later.
                 if (blockChain
                     .GetWorldState()
                     .GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
                 {
-                    // Check admin
-                    if (IsAdminTransaction(blockChain, transaction))
-                    {
-                        return null;
-                    }           
+                    return null;
                 }
 
                 if (!(transaction.MaxGasPrice is { } gasPrice && transaction.GasLimit is { } gasLimit))
