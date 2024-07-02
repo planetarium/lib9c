@@ -100,7 +100,9 @@ namespace Lib9c.Tests
                     0,
                     newActivatedPrivateKey,
                     genesis.Hash,
-                    Array.Empty<IValue>()
+                    Array.Empty<IValue>(),
+                    gasLimit: 1,
+                    maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
                 );
 
             // Test success because the key is activated.
@@ -120,14 +122,18 @@ namespace Lib9c.Tests
                     0,
                     newActivatedPrivateKey,
                     genesis.Hash,
-                    singleAction.ToPlainValues()
+                    singleAction.ToPlainValues(),
+                    gasLimit: 1,
+                    maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
                 );
             Transaction txWithManyActions =
                 Transaction.Create(
                     0,
                     newActivatedPrivateKey,
                     genesis.Hash,
-                    manyActions.ToPlainValues()
+                    manyActions.ToPlainValues(),
+                    gasLimit: 1,
+                    maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
                 );
 
             // Transaction with more than two actions is rejected.
@@ -450,7 +456,9 @@ namespace Lib9c.Tests
                         nonce++,
                         adminPrivateKey,
                         genesis.Hash,
-                        Array.Empty<IValue>()
+                        Array.Empty<IValue>(),
+                        gasLimit: 1,
+                        maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
                     ));
                 }
 
@@ -552,7 +560,9 @@ namespace Lib9c.Tests
                         nonce++,
                         adminPrivateKey,
                         genesis.Hash,
-                        Array.Empty<IValue>()
+                        Array.Empty<IValue>(),
+                        gasLimit: 1,
+                        maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
                     ));
                 }
 
