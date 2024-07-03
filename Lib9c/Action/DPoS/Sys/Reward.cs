@@ -2,6 +2,7 @@
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Action.DPoS.Misc;
+using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Sys
 {
@@ -31,19 +32,15 @@ namespace Nekoyume.Action.DPoS.Sys
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
-            if (context.MaxGasPrice is not { Sign: > 0 } realGasPrice)
+            var gasPriceUsed = world.GasPriceUsed();
+            if (gasPriceUsed is not { } reward)
             {
                 return world;
             }
 
-            if (context.GasUsed() <= 0)
-            {
-                return world;
-            }
-
-            var reward = realGasPrice * context.GasUsed();
-            return world.MintAsset(
+            return world.TransferAsset(
                 context,
+                Addresses.MeadPool,
                 ReservedAddress.RewardPool,
                 reward);
         }

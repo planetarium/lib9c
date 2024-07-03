@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Bencodex.Types;
+﻿using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Module;
@@ -32,20 +31,14 @@ namespace Nekoyume.Action.DPoS.Sys
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
-            if (context.MaxGasPrice is not { Sign: > 0 } realGasPrice)
-            {
-                return world;
-            }
+            var remainder = world.RemainingGas();
+            world = world.CleanUpGasInfo();
 
-            if (context.GasLimit() - context.GasUsed() <= 0)
-            {
-                return world;
-            }
-
-            return world.MintAsset(
+            return world.TransferAsset(
                 context,
+                Addresses.MeadPool,
                 context.Signer,
-                (context.GasLimit() - context.GasUsed()) * realGasPrice);
+                remainder);
         }
     }
 }

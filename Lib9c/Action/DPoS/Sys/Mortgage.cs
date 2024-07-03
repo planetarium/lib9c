@@ -1,8 +1,10 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Linq;
 using Bencodex.Types;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Libplanet.Types.Assets;
+using Nekoyume.Exceptions;
 using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Sys
@@ -33,25 +35,45 @@ namespace Nekoyume.Action.DPoS.Sys
         public override IWorld Execute(IActionContext context)
         {
             var state = context.PreviousState;
-            if (context.MaxGasPrice is not { } realGasPrice)
+            if (!(context.TxId is { } txId &&
+                  context.Txs.Any(tx => tx.Id.Equals(txId))))
             {
                 return state;
             }
 
-            var balance = state.GetBalance(context.Signer, realGasPrice.Currency);
-            if (balance < realGasPrice * context.GasLimit())
+            var tx = context.Txs.First(tx => tx.Id.Equals(context.TxId));
+            switch ((tx.MaxGasPrice, tx.GasLimit))
             {
-                var msg =
-                    $"The account {context.Signer}'s balance of {realGasPrice.Currency} is " +
-                    "insufficient to pay gas fee: " +
-                    $"{balance} < {realGasPrice * context.GasLimit()}.";
-                throw new InsufficientBalanceException(msg, context.Signer, balance);
-            }
+                case (null, null):
+                    return state.SetTxGasInfo(null, null);
+                case (not null, null): case (null, not null):
+                    throw new ArgumentException("Pairity of null-ness of price and gas limit must match.");
+                case ({ Sign: > 0 } realGasPrice, { } gasLimit):
+                    if (gasLimit < 0)
+                    {
+                        throw new GasLimitNegativeException();
+                    }
+                    state = state.SetTxGasInfo(realGasPrice, gasLimit);
 
-            return state.BurnAsset(
-                context,
-                context.Signer,
-                realGasPrice * context.GasLimit());
+                    var balance = state.GetBalance(context.Signer, Currencies.Mead);
+                    if (balance < realGasPrice * gasLimit)
+                    {
+                        var msg =
+                            $"The account {context.Signer}'s balance of {realGasPrice.Currency} is " +
+                            "insufficient to pay gas fee: " +
+                            $"{balance} < {realGasPrice * gasLimit}.";
+                        throw new InsufficientBalanceException(msg, context.Signer, balance);
+                    }
+
+                    return state.TransferAsset(
+                        context,
+                        context.Signer,
+                        Addresses.MeadPool,
+                        realGasPrice * gasLimit);
+                default:
+                    // Gas price is negative.
+                    throw new ArgumentException("Sign of gas price must be positive.");
+            }
         }
     }
 }
