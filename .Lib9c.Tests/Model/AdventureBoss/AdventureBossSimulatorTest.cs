@@ -68,7 +68,8 @@ namespace Lib9c.Tests.Model.AdventureBoss
                 {
                     new (StatType.ATK, StatModifier.OperationType.Add, 100),
                 },
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
 
             var player = simulator.Player;
@@ -146,7 +147,8 @@ namespace Lib9c.Tests.Model.AdventureBoss
                     {
                         new (StatType.ATK, StatModifier.OperationType.Add, 100),
                     },
-                    _tableSheets.DeBuffLimitSheet
+                    _tableSheets.DeBuffLimitSheet,
+                    _tableSheets.BuffLinkSheet
                 );
             }
 
