@@ -17,3 +17,8 @@ id,_name,grade,rune_type,required_level,use_place,bonus_coef
 10028,Quick Rune (WorldBoss),4,1,1,4,10
 10029,Freya Purity Rune,6,2,1,7,30
 10030,Freya Blessing Rune,6,1,1,7,30
+10031,Odin Weakness Rune,6,2,1,7,30
+10032,Odin Wisdom Rune,6,1,1,7,30
+10033,HIT Rune,5,1,1,7,10
+10034,SPD Rune,5,1,1,7,10
+10035,CRI Rune,5,1,1,7,10
