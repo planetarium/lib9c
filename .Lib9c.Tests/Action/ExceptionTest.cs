@@ -8,6 +8,8 @@ namespace Lib9c.Tests.Action
     using MessagePack;
     using MessagePack.Resolvers;
     using Nekoyume.Action;
+    using Nekoyume.Action.Exceptions;
+    using Nekoyume.Action.Exceptions.AdventureBoss;
     using Nekoyume.Exceptions;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -73,6 +75,15 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(ItemNotFoundException))]
         [InlineData(typeof(NotEnoughItemException))]
         [InlineData(typeof(StateNullException))]
+        [InlineData(typeof(AlreadyClaimedException))]
+        [InlineData(typeof(ClaimExpiredException))]
+        [InlineData(typeof(InsufficientStakingException))]
+        [InlineData(typeof(InvalidAdventureBossSeasonException))]
+        [InlineData(typeof(InvalidBountyException))]
+        [InlineData(typeof(MaxInvestmentCountExceededException))]
+        [InlineData(typeof(PreviousBountyException))]
+        [InlineData(typeof(SeasonInProgressException))]
+        [InlineData(typeof(EmptyRewardException))]
         public void Exception_Serializable(Type excType)
         {
             if (Activator.CreateInstance(excType, "for testing") is Exception exc)
