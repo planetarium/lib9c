@@ -1,8 +1,7 @@
-﻿using System.Collections.Immutable;
-using Bencodex.Types;
+﻿using Bencodex.Types;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Sys
 {
@@ -37,15 +36,14 @@ namespace Nekoyume.Action.DPoS.Sys
                 return world;
             }
 
-            if (context.GasLimit() - context.GasUsed() <= 0)
-            {
-                return world;
-            }
+            // Need to check if this matches GasTracer.GasAvailable?
+            var remaining = world.GetBalance(Addresses.MeadPool, realGasPrice.Currency);
 
-            return world.MintAsset(
+            return world.TransferAsset(
                 context,
+                Addresses.MeadPool,
                 context.Signer,
-                (context.GasLimit() - context.GasUsed()) * realGasPrice);
+                remaining);
         }
     }
 }

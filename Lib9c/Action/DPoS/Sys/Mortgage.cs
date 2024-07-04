@@ -1,9 +1,7 @@
-﻿using System.Collections.Immutable;
-using Bencodex.Types;
+﻿using Bencodex.Types;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Libplanet.Types.Assets;
-using Nekoyume.Module;
 
 namespace Nekoyume.Action.DPoS.Sys
 {
@@ -33,25 +31,27 @@ namespace Nekoyume.Action.DPoS.Sys
         public override IWorld Execute(IActionContext context)
         {
             var state = context.PreviousState;
-            if (context.MaxGasPrice is not { } realGasPrice)
+            if (context.MaxGasPrice is not { Sign: > 0 } realGasPrice)
             {
                 return state;
             }
 
             var balance = state.GetBalance(context.Signer, realGasPrice.Currency);
-            if (balance < realGasPrice * context.GasLimit())
+            var gasLimit = GasTracer.GasAvailable;
+            if (balance < realGasPrice * gasLimit)
             {
                 var msg =
                     $"The account {context.Signer}'s balance of {realGasPrice.Currency} is " +
                     "insufficient to pay gas fee: " +
-                    $"{balance} < {realGasPrice * context.GasLimit()}.";
+                    $"{balance} < {realGasPrice * gasLimit}.";
                 throw new InsufficientBalanceException(msg, context.Signer, balance);
             }
 
-            return state.BurnAsset(
+            return state.TransferAsset(
                 context,
                 context.Signer,
-                realGasPrice * context.GasLimit());
+                Addresses.MeadPool,
+                realGasPrice * gasLimit);
         }
     }
 }
