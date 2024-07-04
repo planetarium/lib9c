@@ -70,7 +70,7 @@ namespace Lib9c.DevExtensions.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var sellData = TestbedHelper.LoadData<TestbedSell>("TestbedSell");
             var random = context.GetRandom();
             var addedItemInfos = sellData.Items

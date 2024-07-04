@@ -40,7 +40,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             IWorld state = context.PreviousState;
             var address = Address.Derive(ActivationKey.DeriveKey);
 

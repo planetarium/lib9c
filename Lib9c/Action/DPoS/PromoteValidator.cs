@@ -67,7 +67,7 @@ namespace Nekoyume.Action.DPoS
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             if (!context.Signer.Equals(Validator.Address))
             {
                 throw new PublicKeyAddressMatchingException(context.Signer, Validator);
