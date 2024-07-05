@@ -173,7 +173,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 12 }, // (300*1.2) * 0.3 / 2.5 * (100/360)
+                        { 20001, 11 }, // (300*1.2) * 0.3 / 2.5 * (100/360)
                         { 30001, 0 },
                     },
                 },
@@ -190,7 +190,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
-                        { 600202, 67 }, // 100AP / 1.5 ratio * 100% contribution
+                        { 600202, 66 }, // 100AP / 1.5 ratio * 100% contribution
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -300,7 +300,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
-                        { 600202, 67 },
+                        { 600202, 66 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -320,7 +320,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 168 },
-                        { 600202, 67 },
+                        { 600202, 66 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -696,7 +696,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 ItemReward = new Dictionary<int, int>
                 {
                     { 600201, 0 },
-                    { 600202, 134 }, // (100 AP / 1.5 Ratio * 100% contribution) for season 1 and 3
+                    { 600202, 132 }, // (100 AP / 1.5 Ratio * 100% contribution) for season 1 and 3
                     { 600203, 0 },
                 },
             };
@@ -824,7 +824,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 ItemReward = new Dictionary<int, int>
                 {
                     { 600201, 168 },
-                    { 600202, 67 },
+                    { 600202, 66 },
                     { 600203, 0 },
                 },
             };
