@@ -7,11 +7,13 @@ using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions;
 using Nekoyume.Data;
 using Nekoyume.Exceptions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -100,6 +102,27 @@ namespace Nekoyume.Action.AdventureBoss
                         AdventureBossHelper.PickExploreRaffle(bountyBoard, exploreBoard,
                             explorerList, random);
                     states = states.SetExploreBoard(szn, exploreBoard);
+
+                    // Send mail to winner
+                    if (exploreBoard.RaffleWinner is not null)
+                    {
+                        var avatarState = states.GetAvatarState((Address)exploreBoard.RaffleWinner,
+                            getInventory: false, getWorldInformation: false, getQuestList: false);
+                        if (avatarState is not null)
+                        {
+                            avatarState.Update(new AdventureBossRaffleWinnerMail
+                            (
+                                context.BlockIndex,
+                                random.GenerateRandomGuid(),
+                                context.BlockIndex,
+                                szn,
+                                (FungibleAssetValue)exploreBoard.RaffleReward
+                            ));
+                            states = states.SetAvatarState((Address)exploreBoard.RaffleWinner,
+                                avatarState, setInventory: false, setQuestList: false,
+                                setWorldInformation: false);
+                        }
+                    }
                 }
 
                 // Send 80% NCG to operational account. 20% are for rewards.
