@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
@@ -184,7 +185,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             yield return new object[]
             {
-                1, 100, 0, new AdventureBossGameData.ClaimableReward
+                1, 100, 0, true, new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = (5 + 15) * NCG, // 5NCG for raffle, 15NCG for 15% distribution
                     ItemReward = new Dictionary<int, int>
@@ -204,7 +205,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                1, 100, 1, new AdventureBossGameData.ClaimableReward
+                1, 100, 1, false, new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward =
                         // 7.5NCG for half of 15% distribution
@@ -230,7 +231,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                1, 200, 1, new AdventureBossGameData.ClaimableReward
+                1, 200, 1, false, new AdventureBossGameData.ClaimableReward
                 {
                     // 15NCG for half of 15% distribution
                     NcgReward = 15 * NCG,
@@ -251,7 +252,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                1, 100, 2, new AdventureBossGameData.ClaimableReward
+                1, 100, 2, false, new AdventureBossGameData.ClaimableReward
                 {
                     // No raffle, 5 NCG for 1/3 of 15% distribution
                     NcgReward = 5 * NCG,
@@ -532,6 +533,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             int seed,
             int bounty,
             int anotherExplorerCount,
+            bool raffleWinner,
             AdventureBossGameData.ClaimableReward expectedReward,
             FungibleAssetValue expectedRemainingNcg
         )
@@ -674,6 +676,17 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     0 * NCG,
                     resultState.GetBalance(seasonBountyBoardAddress, NCG)
                 );
+            }
+
+            if (raffleWinner)
+            {
+                var avatarState = resultState.GetAvatarState(
+                    TesterAvatarAddress,
+                    getInventory: true,
+                    getWorldInformation: false,
+                    getQuestList: false
+                );
+                Assert.IsType<AdventureBossRaffleWinnerMail>(avatarState.mailBox.First());
             }
 
             Test(resultState, expectedReward);
