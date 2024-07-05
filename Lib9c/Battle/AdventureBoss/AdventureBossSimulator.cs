@@ -205,17 +205,6 @@ namespace Nekoyume.Battle.AdventureBoss
                     {
                         Result = BattleLog.Result.Win;
                         Log.clearedWaveNumber = WaveNumber;
-
-                        // Adventure boss has only one wave. Drop item box and clear.
-                        ItemMap = Player.GetRewards(_waveRewards);
-                        if (LogEvent)
-                        {
-                            var dropBox = new DropBox(null, _waveRewards);
-                            Log.Add(dropBox);
-                            var getReward = new GetReward(null, _waveRewards);
-                            Log.Add(getReward);
-                        }
-
                         Log.newlyCleared = true;
                         break;
                     }

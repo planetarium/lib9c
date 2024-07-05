@@ -79,7 +79,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
 
             simulator.Simulate();
 
-            Assert.True(simulator.Log.OfType<DropBox>().Any());
+            Assert.False(simulator.Log.OfType<DropBox>().Any());
             var filtered =
                 simulator.Log
                     .Select(e => e.GetType())
