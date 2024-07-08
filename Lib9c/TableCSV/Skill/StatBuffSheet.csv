@@ -6,11 +6,19 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 102002,102000,공격 강화,100,10,Self,ATK,Percentage,25,true,
 102003,102000,ATK UP (Stat conversion),100,10,Self,ATK,Add,0,true,
 102004,102004,Double edged sword (ATK),100,20,Self,ATK,Percentage,30,true,
+102005,102005,ATK UP (AdventureBoss Stage Buff),100,150,Enemies,ATK,Percentage,50,true,
+102006,102005,ATK UP (AdventureBoss Stage Buff),100,150,Enemies,ATK,Percentage,100,true,
+102007,102005,ATK UP (AdventureBoss Stage Buff),100,150,Enemies,ATK,Percentage,200,true,
+102008,102005,ATK UP (AdventureBoss Stage Buff),100,150,Enemies,ATK,Percentage,400,true,
 103000,103000,방어 강화,20,10,Self,DEF,Percentage,25,true,
 103001,103000,방어 강화,100,25,Self,DEF,Percentage,50,true,
 103002,103000,방어 강화,100,10,Self,DEF,Percentage,25,true,
 103003,103000,DEF UP (Stat conversion),100,10,Self,DEF,Add,0,true,
 103004,103001,DEF UP (Stat conversion),100,10,Self,DEF,Percentage,0,true,
+103005,103005,DEF UP (AdventureBoss Stage Buff),100,150,Self,DEF,Percentage,50,true,
+103006,103005,DEF UP (AdventureBoss Stage Buff),100,150,Self,DEF,Percentage,75,true,
+103007,103005,DEF UP (AdventureBoss Stage Buff),100,150,Self,DEF,Percentage,100,true,
+103008,103005,DEF UP (AdventureBoss Stage Buff),100,150,Self,DEF,Percentage,200,true,
 104000,104000,치명 증가,20,10,Self,CRI,Percentage,50,true,
 104001,104000,치명 증가,100,25,Self,CRI,Percentage,75,true,
 104002,104000,치명 증가,100,10,Self,CRI,Percentage,25,true,
@@ -25,6 +33,8 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 106001,106000,속도 증가,100,25,Self,SPD,Percentage,75,true,
 106002,106000,속도 증가,100,10,Self,SPD,Percentage,25,true,
 106003,106000,SPD UP (Stat conversion),100,10,Self,SPD,Add,0,true,
+106004,106004,SPD UP (AdventureBoss Stage Buff),100,150,Self,SPD,Percentage,50,true,
+106005,106004,SPD UP (AdventureBoss Stage Buff),100,150,Enemies,SPD,Percentage,50,true,
 107000,107000,Armor Penetration (Stat conversion),100,10,Self,ArmorPenetration,Add,0,true,
 108000,108000,Thorn (Stat conversion),100,10,Self,Thorn,Add,0,true,
 202000,202000,공격 약화,20,10,Enemy,ATK,Percentage,-25,true,
@@ -127,6 +137,6 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 701000,701000,DRV (Rune),100,0,Self,DRV,Add,0,true,
 702000,701000,DRR (Rune),100,0,Self,DRR,Add,0,true,
 703000,703000,CDMG (Rune),100,0,Self,CDMG,Add,0,true,
-709000,709000,Frostbite 1 (Aura),100,10,Enemy,SPD,Percentage,-1,true,4
-709001,709000,Frostbite 2 (Aura),100,10,Enemy,SPD,Percentage,-3,true,4
-709002,709000,Frostbite 3 (Aura),100,10,Enemy,SPD,Percentage,-10,true,4
+709000,709000,Frostbite 1 (Aura),100,5,Enemy,SPD,Percentage,-3,true,5
+709001,709000,Frostbite 2 (Aura),100,5,Enemy,SPD,Percentage,-7,true,5
+709002,709000,Frostbite 3 (Aura),100,5,Enemy,SPD,Percentage,-10,true,5

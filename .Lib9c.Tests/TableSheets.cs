@@ -4,6 +4,7 @@ namespace Lib9c.Tests
     using System.Collections.Generic;
     using System.Text;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.AdventureBoss;
     using Nekoyume.TableData.Crystal;
     using Nekoyume.TableData.Event;
     using Nekoyume.TableData.Garages;
@@ -254,6 +255,21 @@ namespace Lib9c.Tests
         public DeBuffLimitSheet DeBuffLimitSheet { get; set; }
 
         public BuffLinkSheet BuffLinkSheet { get; set; }
+
+        // Adventure Boss
+        public AdventureBossSheet AdventureBossSheet { get; private set; }
+
+        public AdventureBossFloorSheet AdventureBossFloorSheet { get; private set; }
+
+        public AdventureBossFloorWaveSheet AdventureBossFloorWaveSheet { get; private set; }
+
+        public AdventureBossNcgRewardRatioSheet AdventureBossNcgRewardRatioSheet
+        {
+            get;
+            private set;
+        }
+
+        /* Adventure Boss */
 
         public void ItemSheetInitialize()
         {

@@ -211,3 +211,4 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10640004,Ymir Aura,Aura,4,Normal,0,ATK,10,0,10620001,6000
 10650007,Ymir Aura,Aura,5,Normal,0,ATK,10,0,10620001,60000
 10660000,Ymir Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
+10710000,Nimble Grimoire,Grimoire,1,Normal,0,HIT,310,0,10610000,2
