@@ -106,9 +106,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 0, 5, 5, 10, 5, null,
                 new[]
                 {
-                    (600301, 76), // 50 first Reward + 26 floor reward
+                    (600301, 69), // 50 first Reward + 19 floor reward
                     (600302, 50), // 50 first reward
-                    (600303, 0),
+                    (600303, 7),  // 7 floor reward
                     (600304, 0),
                 },
             };
@@ -128,8 +128,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 2, 5, 5, 5, 2, null, new[]
                 {
-                    (600301, 40), // 30 first reward + 10 floor reward
-                    (600302, 39), // 30 first reward + 9 floor reward
+                    (600301, 47), // 30 first reward + 17 floor reward
+                    (600302, 30), // 30 first reward
                     (600303, 0),
                     (600304, 0),
                 },
@@ -140,7 +140,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 5, 10, 10, 10, 5, null,
                 new[]
                 {
-                    (600301, 72), // 50 first reward + 22 floor reward
+                    (600301, 76), // 50 first reward + 26 floor reward
                     (600302, 50), // 50 first reward
                     (600303, 0),
                     (600304, 0),
