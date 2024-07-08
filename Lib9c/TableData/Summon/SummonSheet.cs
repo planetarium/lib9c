@@ -9,7 +9,7 @@ namespace Nekoyume.TableData.Summon
     {
         public class Row : SheetRow<int>
         {
-            public const int MaxRecipeCount = 30;
+            public const int MaxRecipeCount = 100;
             public override int Key => GroupId;
 
             public int GroupId { get; private set; }

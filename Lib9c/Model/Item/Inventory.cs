@@ -7,10 +7,7 @@ using Lib9c.Model.Order;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Nekoyume.Action;
-using Nekoyume.Battle;
-using Nekoyume.Extensions;
 using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using Serilog;
 
 namespace Nekoyume.Model.Item
@@ -955,59 +952,6 @@ namespace Nekoyume.Model.Item
         }
 
         #endregion
-
-        public bool HasNotification(
-            int level,
-            long blockIndex,
-            ItemRequirementSheet requirementSheet,
-            EquipmentItemRecipeSheet recipeSheet,
-            EquipmentItemSubRecipeSheetV2 subRecipeSheet,
-            EquipmentItemOptionSheet itemOptionSheet)
-        {
-            var availableSlots = UnlockHelper.GetAvailableEquipmentSlots(level);
-
-            foreach (var (type, slotCount) in availableSlots)
-            {
-                var equipments = Equipments
-                    .Where(e =>
-                        e.ItemSubType == type &&
-                        e.RequiredBlockIndex <= blockIndex)
-                    .ToList();
-                var current = equipments.Where(e => e.equipped).ToList();
-                // When an equipment slot is empty.
-                if (current.Count < Math.Min(equipments.Count, slotCount))
-                {
-                    return true;
-                }
-
-                // When any other equipments are stronger than current one.
-                foreach (var equipment in equipments)
-                {
-                    if (equipment.equipped)
-                    {
-                        continue;
-                    }
-
-                    var cp = CPHelper.GetCP(equipment);
-                    foreach (var i in current)
-                    {
-                        var requirementLevel = i.GetRequirementLevel(
-                            requirementSheet,
-                            recipeSheet,
-                            subRecipeSheet,
-                            itemOptionSheet);
-
-
-                        if (level >= requirementLevel && CPHelper.GetCP(i) < cp)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
 
         public ITradableItem SellItem(Guid tradableId, long blockIndex, int count)
         {

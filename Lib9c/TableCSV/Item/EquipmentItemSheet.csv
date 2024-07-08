@@ -208,3 +208,4 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10552001,Surt's Ring,Ring,6,Water,0,DEF,6963,0,10552001,12000000
 10553001,Surt's Ring,Ring,6,Land,0,DEF,9748,0,10553001,12000000
 10554001,Surt's Ring,Ring,6,Wind,0,DEF,9748,0,10554001,12000000
+10710000,Nimble Grimoire,Grimoire,1,Normal,0,HIT,310,0,10610000,2
