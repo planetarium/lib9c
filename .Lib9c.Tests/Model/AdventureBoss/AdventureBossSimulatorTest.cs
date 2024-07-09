@@ -68,7 +68,8 @@ namespace Lib9c.Tests.Model.AdventureBoss
                 {
                     new (StatType.ATK, StatModifier.OperationType.Add, 100),
                 },
-                _tableSheets.DeBuffLimitSheet
+                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLinkSheet
             );
 
             var player = simulator.Player;
@@ -78,7 +79,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
 
             simulator.Simulate();
 
-            Assert.True(simulator.Log.OfType<DropBox>().Any());
+            Assert.False(simulator.Log.OfType<DropBox>().Any());
             var filtered =
                 simulator.Log
                     .Select(e => e.GetType())
@@ -146,7 +147,8 @@ namespace Lib9c.Tests.Model.AdventureBoss
                     {
                         new (StatType.ATK, StatModifier.OperationType.Add, 100),
                     },
-                    _tableSheets.DeBuffLimitSheet
+                    _tableSheets.DeBuffLimitSheet,
+                    _tableSheets.BuffLinkSheet
                 );
             }
 

@@ -173,70 +173,13 @@ namespace Nekoyume.Blockchain.Policy
 
             try
             {
+                // This block is used to bypass transactions before mead has been created.
+                // It's no longer required for future transactions, so better to be removed later.
                 if (blockChain
-                    .GetNextWorldState()!
+                    .GetWorldState()
                     .GetBalance(MeadConfig.PatronAddress, Currencies.Mead) < 1 * Currencies.Mead)
                 {
-                    // Check Activation
-                    try
-                    {
-                        if (transaction.Actions is { } rawActions &&
-                            rawActions.Count == 1 &&
-                            actionLoader.LoadAction(index, rawActions.First()) is ActionBase action &&
-                            action is IActivateAccount activate)
-                        {
-                            return transaction.Nonce == 0 &&
-                                blockChain
-                                    .GetNextWorldState()!
-                                    .GetAccountState(ReservedAddresses.LegacyAccount)
-                                    .GetState(activate.PendingAddress) is Dictionary rawPending &&
-                                new PendingActivationState(rawPending).Verify(activate.Signature)
-                                    ? null
-                                    : new TxPolicyViolationException(
-                                        $"Transaction {transaction.Id} has an invalid activate action.",
-                                        transaction.Id);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        return new TxPolicyViolationException(
-                            $"Transaction {transaction.Id} has an invalid action.",
-                            transaction.Id,
-                            e);
-                    }
-
-                    // Check admin
-                    if (IsAdminTransaction(blockChain, transaction))
-                    {
-                        return null;
-                    }
-
-                    switch (blockChain
-                        .GetNextWorldState()!
-                        .GetAccountState(ReservedAddresses.LegacyAccount)
-                        .GetState(transaction.Signer.Derive(ActivationKey.DeriveKey)))
-                    {
-                        case null:
-                            // Fallback for pre-migration.
-                            if (blockChain
-                                .GetNextWorldState()!
-                                .GetAccountState(ReservedAddresses.LegacyAccount)
-                                .GetState(ActivatedAccountsState.Address) is Dictionary asDict)
-                            {
-                                IImmutableSet<Address> activatedAccounts =
-                                    new ActivatedAccountsState(asDict).Accounts;
-                                return !activatedAccounts.Any() ||
-                                    activatedAccounts.Contains(transaction.Signer)
-                                        ? null
-                                        : new TxPolicyViolationException(
-                                            $"Transaction {transaction.Id} is by a signer " +
-                                            $"without account activation: {transaction.Signer}",
-                                            transaction.Id);
-                            }
-                            return null;
-                        case Bencodex.Types.Boolean _:
-                            return null;
-                    }
+                    return null;
                 }
 
                 if (!(transaction.MaxGasPrice is { } gasPrice && transaction.GasLimit is { } gasLimit))
