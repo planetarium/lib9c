@@ -362,5 +362,34 @@ namespace Lib9c.Tests.Action
             Assert.Equal(preItemUsable.ItemId, resultEquipment.ItemId);
             Assert.Equal(expectedCost, slotResult.gold);
         }
+
+        [Fact]
+        public void LoadPlainValue()
+        {
+            var materialId = Guid.NewGuid();
+            var avatarAddress = new PrivateKey().Address;
+            var action = new ItemEnhancement
+            {
+                slotIndex = 1,
+                materialIds = new List<Guid>
+                {
+                    materialId,
+                },
+                avatarAddress = avatarAddress,
+                hammers = new Dictionary<int, int>
+                {
+                    [1] = 100,
+                },
+            };
+            var plainValue = action.PlainValue;
+            var newAction = new ItemEnhancement();
+            newAction.LoadPlainValue(plainValue);
+            Assert.Equal(action.Id, newAction.Id);
+            Assert.Equal(action.avatarAddress, newAction.avatarAddress);
+            Assert.Equal(action.slotIndex, newAction.slotIndex);
+            var guid = Assert.Single(newAction.materialIds);
+            Assert.Equal(materialId, guid);
+            Assert.Equal(100, newAction.hammers[1]);
+        }
     }
 }

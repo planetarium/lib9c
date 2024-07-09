@@ -27,7 +27,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("item_enhancement14")]
-    public class ItemEnhancement : GameAction, IItemEnhancementV4
+    public class ItemEnhancement : GameAction, IItemEnhancementV5
     {
         public const int MaterialCountLimit = 50;
 
@@ -35,11 +35,13 @@ namespace Nekoyume.Action
         public List<Guid> materialIds;
         public Address avatarAddress;
         public int slotIndex;
+        public Dictionary<int, int> hammers;
 
-        Guid IItemEnhancementV4.ItemId => itemId;
-        List<Guid> IItemEnhancementV4.MaterialIds => materialIds;
-        Address IItemEnhancementV4.AvatarAddress => avatarAddress;
-        int IItemEnhancementV4.SlotIndex => slotIndex;
+        Guid IItemEnhancementV5.ItemId => itemId;
+        List<Guid> IItemEnhancementV5.MaterialIds => materialIds;
+        Address IItemEnhancementV5.AvatarAddress => avatarAddress;
+        int IItemEnhancementV5.SlotIndex => slotIndex;
+        Dictionary<int, int> IItemEnhancementV5.Hammers => hammers;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {
@@ -53,6 +55,7 @@ namespace Nekoyume.Action
                     ),
                     ["avatarAddress"] = avatarAddress.Serialize(),
                     ["slotIndex"] = slotIndex.Serialize(),
+                    ["hammers"] = new List(hammers.OrderBy(kv => kv.Key).Select(kv => List.Empty.Add(kv.Key).Add(kv.Value))),
                 };
 
                 return dict.ToImmutableDictionary();
@@ -67,6 +70,14 @@ namespace Nekoyume.Action
             if (plainValue.TryGetValue((Text)"slotIndex", out var value))
             {
                 slotIndex = value.ToInteger();
+            }
+
+            hammers = new Dictionary<int, int>();
+            var serializedList = (List) plainValue["hammers"];
+            foreach (var iValue in serializedList)
+            {
+                var innerList = (List)iValue;
+                hammers.Add((Integer)innerList[0], (Integer)innerList[1]);
             }
         }
 
