@@ -219,7 +219,7 @@ namespace Nekoyume.Action
             {
                 if (HammerBannedTypes.Contains(enhancementEquipment.ItemSubType))
                 {
-                    throw new InvalidItemCountException();
+                    throw new InvalidItemTypeException($"target equipment({enhancementEquipment.ItemSubType}) does not allow use hammer");
                 }
 
                 int hammerCount = 0;
@@ -229,7 +229,7 @@ namespace Nekoyume.Action
                 {
                     if (!HammerIds.Contains(kv.Key))
                     {
-                        throw new InvalidItemCountException();
+                        throw new InvalidItemCountException("target material is not hammer");
                     }
 
                     hammerCount += kv.Value;
@@ -237,7 +237,7 @@ namespace Nekoyume.Action
 
                 if (hammerCount <= 0)
                 {
-                    throw new InvalidItemCountException();
+                    throw new InvalidItemCountException("hammer must be greater than 0");
                 }
             }
 
@@ -326,6 +326,12 @@ namespace Nekoyume.Action
                 {
                     var exp = Equipment.GetHammerExp(hammerId, enhancementCostSheet);
                     hammerExp += exp * hammerCount;
+                }
+                else
+                {
+                    throw new NotEnoughMaterialException(
+                        $"{addressesHex} Aborted as the signer does not have a necessary material ({hammerId})."
+                    );
                 }
             }
             enhancementEquipment.Exp += hammerExp;
