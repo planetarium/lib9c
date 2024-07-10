@@ -97,11 +97,14 @@ namespace Nekoyume.Action
             }
 
             hammers = new Dictionary<int, int>();
-            var serializedList = (List) plainValue["hammers"];
-            foreach (var iValue in serializedList)
+            if (plainValue.TryGetValue((Text)"hammers", out var serializedHammers))
             {
-                var innerList = (List)iValue;
-                hammers.Add((Integer)innerList[0], (Integer)innerList[1]);
+                var serializedList = (List) serializedHammers;
+                foreach (var iValue in serializedList)
+                {
+                    var innerList = (List)iValue;
+                    hammers.Add((Integer)innerList[0], (Integer)innerList[1]);
+                }
             }
         }
 
