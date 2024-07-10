@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Action
                 {
                     {
                         "EnhancementCostSheetV3",
-                        EnhancementCostSheetFixtures.V3
+                        EnhancementCostSheetFixtures.V4
                     },
                 });
             _tableSheets = new TableSheets(sheets);
@@ -413,15 +413,7 @@ namespace Lib9c.Tests.Action
 
             _avatarState.inventory.AddItem(equipment, count: 1);
 
-            // Set sheets for without fixture
-            var sheets = TableSheetsImporter.ImportSheets();
-            var costSheet = new EnhancementCostSheetV3();
-            var csv = sheets[nameof(EnhancementCostSheetV3)];
-            costSheet.Set(csv);
-            _initialState = _initialState.SetLegacyState(
-                Addresses.GetSheetAddress<EnhancementCostSheetV3>(), csv.Serialize());
-
-            var startRow = costSheet.OrderedList.FirstOrDefault(r =>
+            var startRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(r =>
                 r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
                 r.Level == startLevel);
             var expectedExpIncrement = 0L;
@@ -440,8 +432,7 @@ namespace Lib9c.Tests.Action
             _avatarState.inventory.AddItem(
                 ItemFactory.CreateMaterial(_tableSheets.MaterialItemSheet[hammerId]), 3);
 
-            expectedExpIncrement +=
-                Equipment.GetHammerExp(hammerId, costSheet) * 3;
+            var hammerExp = Equipment.GetHammerExp(hammerId, _tableSheets.EnhancementCostSheetV3) * 3;
 
             var result = new CombinationConsumable5.ResultModel()
             {
@@ -504,14 +495,14 @@ namespace Lib9c.Tests.Action
             var resultEquipment = (Equipment)slotResult.itemUsable;
             var level = resultEquipment.level;
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
-            var expectedTargetRow = costSheet.OrderedList.FirstOrDefault(
+            var expectedTargetRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(
                 r => r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
                      r.Level == level);
             var expectedCost = (expectedTargetRow?.Cost ?? 0) - (startRow?.Cost ?? 0);
             var expectedBlockIndex =
                 (expectedTargetRow?.RequiredBlockIndex ?? 0) - (startRow?.RequiredBlockIndex ?? 0);
             Assert.Equal(default, resultEquipment.ItemId);
-            Assert.Equal(startExp + expectedExpIncrement, resultEquipment.Exp);
+            Assert.Equal(startExp + expectedExpIncrement + hammerExp, resultEquipment.Exp);
             Assert.Equal(
                 (3_000_000 - expectedCost) * _currency,
                 nextState.GetBalance(_agentAddress, _currency)
@@ -536,7 +527,7 @@ namespace Lib9c.Tests.Action
 
                 for (var i = startLevel + 1; i <= level; i++)
                 {
-                    var currentRow = costSheet.OrderedList
+                    var currentRow = _tableSheets.EnhancementCostSheetV3.OrderedList
                         .First(x =>
                             x.Grade == 1 && x.ItemSubType == equipment.ItemSubType && x.Level == i);
 

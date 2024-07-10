@@ -72,8 +72,15 @@ namespace Nekoyume.Action
                     ),
                     ["avatarAddress"] = avatarAddress.Serialize(),
                     ["slotIndex"] = slotIndex.Serialize(),
-                    ["hammers"] = new List(hammers.OrderBy(kv => kv.Key).Select(kv => List.Empty.Add(kv.Key).Add(kv.Value))),
                 };
+
+#pragma warning disable LAA1002
+                if (hammers.Any())
+#pragma warning restore LAA1002
+                {
+                    dict["hammers"] = new List(hammers.OrderBy(kv => kv.Key)
+                        .Select(kv => List.Empty.Add(kv.Key).Add(kv.Value)));
+                }
 
                 return dict.ToImmutableDictionary();
             }
@@ -238,7 +245,7 @@ namespace Nekoyume.Action
 
                 if (hammerCount <= 0)
                 {
-                    throw new InvalidItemCountException("hammer must be greater than 0");
+                    throw new InvalidItemCountException("material or hammer must be greater than 0");
                 }
             }
 
@@ -315,6 +322,7 @@ namespace Nekoyume.Action
             enhancementEquipment.Exp = enhancementEquipment.GetRealExp(equipmentItemSheet,
                 enhancementCostSheet);
 
+            // Calculate material exp
             enhancementEquipment.Exp +=
                 materialEquipments.Aggregate(0L,
                     (total, m) => total + m.GetRealExp(equipmentItemSheet, enhancementCostSheet));
@@ -330,9 +338,7 @@ namespace Nekoyume.Action
                 }
                 else
                 {
-                    throw new NotEnoughMaterialException(
-                        $"{addressesHex} Aborted as the signer does not have a necessary material ({hammerId})."
-                    );
+                    throw new NotEnoughMaterialException($"not enough hammer material({hammerId})");
                 }
             }
             enhancementEquipment.Exp += hammerExp;
