@@ -402,7 +402,6 @@ namespace Nekoyume.Action
                 enhancementResult = ItemEnhancement13.EnhancementResult.Success, // Result is fixed to Success
                 gold = requiredNcg,
                 CRYSTAL = 0 * CrystalCalculator.CRYSTAL,
-                Hammers = hammers,
             };
 
             var mail = new ItemEnhanceMail(

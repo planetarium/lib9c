@@ -63,7 +63,6 @@ namespace Nekoyume.Action
             public EnhancementResult enhancementResult;
             public ItemUsable preItemUsable;
             public FungibleAssetValue CRYSTAL;
-            public Dictionary<int, int> Hammers = new();
 
             public ResultModel()
             {
@@ -81,16 +80,6 @@ namespace Nekoyume.Action
                     ? (ItemUsable)ItemFactory.Deserialize((Dictionary)serialized["preItemUsable"])
                     : null;
                 CRYSTAL = serialized["c"].ToFungibleAssetValue();
-                Hammers = new Dictionary<int, int>();
-                if (serialized.ContainsKey("hammers"))
-                {
-                    var serializedList = (List) serialized["hammers"];
-                    foreach (var iValue in serializedList)
-                    {
-                        var innerList = (List)iValue;
-                        Hammers.Add((Integer)innerList[0], (Integer)innerList[1]);
-                    }
-                }
             }
 
             public override IValue Serialize()
@@ -108,10 +97,6 @@ namespace Nekoyume.Action
                     [(Text) "c"] = CRYSTAL.Serialize()
                 };
 #pragma warning disable LAA1002
-                if (Hammers.Any())
-                {
-                    values[(Text)"hammers"] = new List(Hammers.OrderBy(kv => kv.Key).Select(kv => List.Empty.Add(kv.Key).Add(kv.Value)));
-                }
                 return new Dictionary(values.Union((Dictionary) base.Serialize()));
             }
 #pragma warning restore LAA1002

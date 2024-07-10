@@ -510,7 +510,6 @@ namespace Lib9c.Tests.Action
             var expectedCost = (expectedTargetRow?.Cost ?? 0) - (startRow?.Cost ?? 0);
             var expectedBlockIndex =
                 (expectedTargetRow?.RequiredBlockIndex ?? 0) - (startRow?.RequiredBlockIndex ?? 0);
-            Assert.True(slotResult.Hammers.Any());
             Assert.Equal(default, resultEquipment.ItemId);
             Assert.Equal(startExp + expectedExpIncrement, resultEquipment.Exp);
             Assert.Equal(
