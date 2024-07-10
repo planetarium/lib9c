@@ -68,5 +68,23 @@ namespace Lib9c.Tests.Model.Item
             equipment.LevelUpV1();
             Assert.Equal(2m, equipment.StatsMap.ATK);
         }
+
+        [Fact]
+        public void GetHammerExp()
+        {
+            var costSheet = new EnhancementCostSheetV3();
+            costSheet.Set(@"600301,EquipmentMaterial,1,0,0,100,0,0,0,0,0,0,0,0,0
+600302,EquipmentMaterial,2,0,0,200,0,0,0,0,0,0,0,0,0
+600303,EquipmentMaterial,3,0,0,300,0,0,0,0,0,0,0,0,0
+600304,EquipmentMaterial,4,0,0,400,0,0,0,0,0,0,0,0,0
+600305,EquipmentMaterial,5,0,0,500,0,0,0,0,0,0,0,0,0
+");
+            foreach (var costRow in costSheet.Values)
+            {
+                var id = costRow.Id;
+                Assert.True(costRow.Exp > 0L);
+                Assert.Equal(costRow.Exp, Equipment.GetHammerExp(id, costSheet));
+            }
+        }
     }
 }

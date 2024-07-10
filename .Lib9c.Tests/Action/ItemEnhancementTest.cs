@@ -18,6 +18,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Nekoyume.TableData;
     using Xunit;
 
     public class ItemEnhancementTest
@@ -39,7 +40,7 @@ namespace Lib9c.Tests.Action
                 {
                     {
                         "EnhancementCostSheetV3",
-                        EnhancementCostSheetFixtures.V3
+                        EnhancementCostSheetFixtures.V4
                     },
                 });
             _tableSheets = new TableSheets(sheets);
@@ -328,6 +329,195 @@ namespace Lib9c.Tests.Action
             var stateDict = (Dictionary)nextState.GetLegacyState(slotAddress);
             var slot = new CombinationSlotState(stateDict);
             var slotResult = (ItemEnhancement13.ResultModel)slot.Result;
+            if (startLevel != level)
+            {
+                var baseMinAtk = (decimal)preItemUsable.StatsMap.BaseATK;
+                var baseMaxAtk = (decimal)preItemUsable.StatsMap.BaseATK;
+                var extraMinAtk = (decimal)preItemUsable.StatsMap.AdditionalATK;
+                var extraMaxAtk = (decimal)preItemUsable.StatsMap.AdditionalATK;
+
+                for (var i = startLevel + 1; i <= level; i++)
+                {
+                    var currentRow = _tableSheets.EnhancementCostSheetV3.OrderedList
+                        .First(x =>
+                            x.Grade == 1 && x.ItemSubType == equipment.ItemSubType && x.Level == i);
+
+                    baseMinAtk *= currentRow.BaseStatGrowthMin.NormalizeFromTenThousandths() + 1;
+                    baseMaxAtk *= currentRow.BaseStatGrowthMax.NormalizeFromTenThousandths() + 1;
+                    extraMinAtk *= currentRow.ExtraStatGrowthMin.NormalizeFromTenThousandths() + 1;
+                    extraMaxAtk *= currentRow.ExtraStatGrowthMax.NormalizeFromTenThousandths() + 1;
+                }
+
+                Assert.InRange(
+                    resultEquipment.StatsMap.ATK,
+                    baseMinAtk + extraMinAtk,
+                    baseMaxAtk + extraMaxAtk + 1
+                );
+            }
+
+            Assert.Equal(
+                expectedBlockIndex + 1, // +1 for execution
+                resultEquipment.RequiredBlockIndex
+            );
+            Assert.Equal(preItemUsable.ItemId, slotResult.preItemUsable.ItemId);
+            Assert.Equal(preItemUsable.ItemId, resultEquipment.ItemId);
+            Assert.Equal(expectedCost, slotResult.gold);
+        }
+
+        [Fact]
+        public void LoadPlainValue()
+        {
+            var materialId = Guid.NewGuid();
+            var avatarAddress = new PrivateKey().Address;
+            var action = new ItemEnhancement
+            {
+                slotIndex = 1,
+                materialIds = new List<Guid>
+                {
+                    materialId,
+                },
+                avatarAddress = avatarAddress,
+                hammers = new Dictionary<int, int>
+                {
+                    [1] = 100,
+                },
+            };
+            var plainValue = action.PlainValue;
+            var newAction = new ItemEnhancement();
+            newAction.LoadPlainValue(plainValue);
+            Assert.Equal(action.Id, newAction.Id);
+            Assert.Equal(action.avatarAddress, newAction.avatarAddress);
+            Assert.Equal(action.slotIndex, newAction.slotIndex);
+            var guid = Assert.Single(newAction.materialIds);
+            Assert.Equal(materialId, guid);
+            Assert.Equal(100, newAction.hammers[1]);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Execute_With_Hammer(bool oldStart)
+        {
+            var row = _tableSheets.EquipmentItemSheet.Values.First(r => r.Id == 10110000);
+            int startLevel = 0;
+            int materialCount = 1;
+            var equipment = (Equipment)ItemFactory.CreateItemUsable(row, default, 0, startLevel);
+            equipment.Exp = (long)row.Exp!;
+            var hammerId = ItemEnhancement.HammerIds.First();
+
+            var startExp = equipment.Exp;
+            if (oldStart)
+            {
+                equipment.Exp = 0L;
+            }
+
+            _avatarState.inventory.AddItem(equipment, count: 1);
+
+            var startRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(r =>
+                r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
+                r.Level == startLevel);
+            var expectedExpIncrement = 0L;
+            var materialIds = new List<Guid>();
+            for (var i = 0; i < materialCount; i++)
+            {
+                var materialId = Guid.NewGuid();
+                materialIds.Add(materialId);
+                var material =
+                    (Equipment)ItemFactory.CreateItemUsable(row, materialId, 0, 0);
+                material.Exp = (long)row.Exp!;
+                expectedExpIncrement += material.Exp;
+                _avatarState.inventory.AddItem(material, count: 1);
+            }
+
+            _avatarState.inventory.AddItem(
+                ItemFactory.CreateMaterial(_tableSheets.MaterialItemSheet[hammerId]), 3);
+
+            var hammerExp = Equipment.GetHammerExp(hammerId, _tableSheets.EnhancementCostSheetV3) * 3;
+
+            var result = new CombinationConsumable5.ResultModel()
+            {
+                id = default,
+                gold = 0,
+                actionPoint = 0,
+                recipeId = 1,
+                materials = new Dictionary<Material, int>(),
+                itemUsable = equipment,
+            };
+            var preItemUsable = new Equipment((Dictionary)equipment.Serialize());
+
+            for (var i = 0; i < 100; i++)
+            {
+                var mail = new CombinationMail(result, i, default, 0);
+                _avatarState.Update(mail);
+            }
+
+            _avatarState.worldInformation.ClearStage(
+                1,
+                1,
+                1,
+                _tableSheets.WorldSheet,
+                _tableSheets.WorldUnlockSheet
+            );
+
+            var slotAddress =
+                _avatarAddress.Derive(string.Format(
+                    CultureInfo.InvariantCulture,
+                    CombinationSlotState.DeriveFormat,
+                    0
+                ));
+
+            Assert.Equal(startLevel, equipment.level);
+
+            _initialState = _initialState.SetAvatarState(_avatarAddress, _avatarState);
+
+            var action = new ItemEnhancement
+            {
+                itemId = default,
+                materialIds = materialIds,
+                avatarAddress = _avatarAddress,
+                slotIndex = 0,
+                hammers = new Dictionary<int, int>
+                {
+                    [hammerId] = 3,
+                },
+            };
+
+            var nextState = action.Execute(new ActionContext()
+            {
+                PreviousState = _initialState,
+                Signer = _agentAddress,
+                BlockIndex = 1,
+                RandomSeed = 0,
+            });
+
+            var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+            var slotResult = (ItemEnhancement13.ResultModel)slotState.Result;
+            var resultEquipment = (Equipment)slotResult.itemUsable;
+            var level = resultEquipment.level;
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            var expectedTargetRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(
+                r => r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
+                     r.Level == level);
+            var expectedCost = (expectedTargetRow?.Cost ?? 0) - (startRow?.Cost ?? 0);
+            var expectedBlockIndex =
+                (expectedTargetRow?.RequiredBlockIndex ?? 0) - (startRow?.RequiredBlockIndex ?? 0);
+            Assert.Equal(default, resultEquipment.ItemId);
+            Assert.Equal(startExp + expectedExpIncrement + hammerExp, resultEquipment.Exp);
+            Assert.Equal(
+                (3_000_000 - expectedCost) * _currency,
+                nextState.GetBalance(_agentAddress, _currency)
+            );
+
+            var arenaSheet = _tableSheets.ArenaSheet;
+            var arenaData = arenaSheet.GetRoundByBlockIndex(1);
+            var feeStoreAddress =
+                Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            Assert.Equal(
+                expectedCost * _currency,
+                nextState.GetBalance(feeStoreAddress, _currency)
+            );
+            Assert.Equal(30, nextAvatarState.mailBox.Count);
+
             if (startLevel != level)
             {
                 var baseMinAtk = (decimal)preItemUsable.StatsMap.BaseATK;
