@@ -42,6 +42,7 @@ namespace Nekoyume.Action
         public Address AvatarAddress;
         public int TotalPlayCount = 1;
         public int ApStoneCount = 0;
+        private readonly ActivitySource ActivitySource = new ActivitySource("Lib9c.Action.HackAndSlash");
 
         IEnumerable<Guid> IHackAndSlashV10.Costumes => Costumes;
         IEnumerable<Guid> IHackAndSlashV10.Equipments => Equipments;
@@ -117,6 +118,7 @@ namespace Nekoyume.Action
             var addressesHex = $"[{signer.ToHex()}, {AvatarAddress.ToHex()}]";
             var started = DateTimeOffset.UtcNow;
             const string source = "HackAndSlash";
+            using var activity = ActivitySource.StartActivity("HackAndSlash");
             Log.Verbose("{AddressesHex} {Source} from #{BlockIndex} exec started",
                 addressesHex, source, blockIndex);
 
@@ -145,17 +147,26 @@ namespace Nekoyume.Action
 
             var sw = new Stopwatch();
             sw.Start();
+            using var avatarStateActivity = ActivitySource.StartActivity(
+                "GetAvatarState",
+                ActivityKind.Internal,
+                activity.Id);
             if (!states.TryGetAvatarState(signer, AvatarAddress, out AvatarState avatarState))
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
+            avatarStateActivity?.Dispose();
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Get AvatarState", blockIndex, sw.Elapsed.TotalMilliseconds);
 
             sw.Restart();
+            using var sheetActivity = ActivitySource.StartActivity(
+                "GetSheets",
+                ActivityKind.Internal,
+                activity.Id);
             var collectionExist = states.TryGetCollectionState(AvatarAddress, out var collectionState) && collectionState.Ids.Any();
             var sheetTypes = new List<Type>
             {
@@ -190,6 +201,8 @@ namespace Nekoyume.Action
                     containQuestSheet: true,
                     containSimulatorSheets: true,
                     sheetTypes: sheetTypes);
+
+            sheetActivity?.Dispose();
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Get Sheets", blockIndex, sw.Elapsed.TotalMilliseconds);
@@ -609,6 +622,7 @@ namespace Nekoyume.Action
 
             states = states.SetAvatarState(AvatarAddress, avatarState);
 
+            activity.Dispose();
             sw.Stop();
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Set States", blockIndex, sw.Elapsed.TotalMilliseconds);
