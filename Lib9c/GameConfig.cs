@@ -12,12 +12,7 @@ namespace Nekoyume
 #endif
 
         public const int SlotCount = 3;
-        public const float WaitSeconds = 180f;
         public const string AvatarNickNamePattern = @"^[0-9a-zA-Z]{2,20}$";
-        public const string DiscordLink = "https://discord.gg/NqshYve";
-
-        public const string BlockExplorerLinkFormat =
-            "http://explorer.libplanet.io/9c-beta/account/?{0}";
 
         public const float PlayerSpeechBreakTime = 2f;
         public const int MimisbrunnrWorldId = 10001;
@@ -34,15 +29,12 @@ namespace Nekoyume
         public const int DefaultAvatarArmorId = 10200000;
 
         //TODO 안쓰는 프리팹과 함께 삭제해야함
-        public const int CombineEquipmentCostAP = 5;
-        public const int CombineEquipmentCostNCG = 10;
         public const int EnhanceEquipmentCostAP = 0;
 
         public const int RankingRewardFirst = 50;
         public const int RankingRewardSecond = 30;
         public const int RankingRewardThird = 10;
 
-        public const int ArenaActivationCostNCG = 100;
         public const int ArenaScoreDefault = 1000;
         public const int ArenaChallengeCountMax = 5;
         public const int MaximumProbability = 10000;
