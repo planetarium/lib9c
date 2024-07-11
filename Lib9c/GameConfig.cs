@@ -4,10 +4,11 @@ namespace Nekoyume
 {
     public static class GameConfig
     {
+        // ReSharper disable once ConvertToConstant.Global
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
-        public const bool IsEditor = true;
+        public static readonly bool IsEditor = true;
 #else
-        public const bool IsEditor = false;
+        public static readonly bool IsEditor = false;
 #endif
 
         public const int SlotCount = 3;
