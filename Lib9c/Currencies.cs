@@ -65,6 +65,9 @@ namespace Lib9c
 
         public static readonly Currency Mead = Currency.Legacy("Mead", 18, null);
 
+        // FIXME: Replace 'OWNER' with other name or Replace with other currency (e.g., NCG).
+        public static readonly Currency ConsensusPower = Currency.Uncapped("OWNER", 18, null);
+
         /// <summary>
         /// Covers the reward.CurrencyTicker is following cases:
         ///     - Currencies.Crystal.Ticker
