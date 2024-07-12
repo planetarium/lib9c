@@ -39,6 +39,11 @@ namespace Nekoyume.Action.DPoS.Sys
             // Need to check if this matches GasTracer.GasAvailable?
             var remaining = world.GetBalance(Addresses.MeadPool, realGasPrice.Currency);
 
+            if (remaining.Sign <= 0)
+            {
+                return world;
+            }
+
             return world.TransferAsset(
                 context,
                 Addresses.MeadPool,
