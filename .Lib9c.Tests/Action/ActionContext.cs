@@ -13,8 +13,6 @@ namespace Lib9c.Tests.Action
 
     public class ActionContext : IActionContext
     {
-        private long _gasUsed;
-
         private IRandom _random = null;
 
         private IReadOnlyList<ITransaction> _txs = null;
@@ -51,16 +49,7 @@ namespace Lib9c.Tests.Action
             set => _txs = value;
         }
 
-        public void UseGas(long gas)
-        {
-            _gasUsed += gas;
-        }
-
         public IRandom GetRandom() => _random ?? new TestRandom(RandomSeed);
-
-        public long GasUsed() => _gasUsed;
-
-        public long GasLimit() => 0;
 
         // FIXME: Temporary measure to allow inheriting already mutated IRandom.
         public void SetRandom(IRandom random)

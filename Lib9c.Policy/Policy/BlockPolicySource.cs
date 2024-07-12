@@ -147,7 +147,7 @@ namespace Nekoyume.Blockchain.Policy
                     }
                     .ToImmutableArray(),
                 new IAction[] { new Mortgage() }.ToImmutableArray(),
-                new IAction[] { new Refund(), new Reward() }.ToImmutableArray(),
+                new IAction[] { new Reward(), new Refund() }.ToImmutableArray(),
                 blockInterval: BlockInterval,
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,

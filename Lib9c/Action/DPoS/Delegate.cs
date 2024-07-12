@@ -26,7 +26,7 @@ namespace Nekoyume.Action.DPoS
         /// <param name="validator">The <see cref="Address"/> of the validator
         /// to delegate tokens.</param>
         /// <param name="amount">The amount of the asset to be delegated.</param>
-        public Delegate(Address validator, FungibleAssetValue amount)
+        public Delegate(Address validator, long amount)
         {
             Validator = validator;
             Amount = amount;
@@ -42,35 +42,36 @@ namespace Nekoyume.Action.DPoS
         /// </summary>
         public Address Validator { get; set; }
 
-        public FungibleAssetValue Amount { get; set; }
+        public long Amount { get; set; }
 
         /// <inheritdoc cref="IAction.PlainValue"/>
         public override IValue PlainValue => Bencodex.Types.Dictionary.Empty
             .Add("type_id", new Text(ActionTypeValue))
             .Add("validator", Validator.Serialize())
-            .Add("amount", Amount.Serialize());
+            .Add("amount", Amount);
 
         /// <inheritdoc cref="IAction.LoadPlainValue(IValue)"/>
         public override void LoadPlainValue(IValue plainValue)
         {
             var dict = (Bencodex.Types.Dictionary)plainValue;
             Validator = dict["validator"].ToAddress();
-            Amount = dict["amount"].ToFungibleAssetValue();
+            Amount = (Integer)dict["amount"];
         }
 
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             IActionContext ctx = context;
             var states = ctx.PreviousState;
+            var governanceToken = states.GetGoldCurrency();
             var nativeTokens = states.GetNativeTokens();
             states = DelegateCtrl.Execute(
                 states,
                 context,
                 context.Signer,
                 Validator,
-                Amount,
+                governanceToken * Amount,
                 nativeTokens);
 
             return states;

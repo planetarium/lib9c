@@ -36,14 +36,15 @@ namespace Nekoyume.Action.DPoS.Sys
                 return world;
             }
 
-            if (context.GasUsed() <= 0)
+            if (GasTracer.GasUsed <= 0)
             {
                 return world;
             }
 
-            var reward = realGasPrice * context.GasUsed();
-            return world.MintAsset(
+            var reward = realGasPrice * GasTracer.GasUsed;
+            return world.TransferAsset(
                 context,
+                Addresses.MeadPool,
                 ReservedAddress.RewardPool,
                 reward);
         }

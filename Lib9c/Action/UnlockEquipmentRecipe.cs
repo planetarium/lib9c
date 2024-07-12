@@ -29,7 +29,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
             var unlockedRecipeIdsAddress = AvatarAddress.Derive("recipe_ids");
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);

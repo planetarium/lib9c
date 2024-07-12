@@ -54,7 +54,7 @@ namespace Nekoyume.Action.DPoS
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var validatorAddress = Model.Validator.DeriveAddress(context.Signer);
             if (!Validator.Equals(validatorAddress))
             {

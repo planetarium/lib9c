@@ -69,7 +69,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -85,7 +85,7 @@ namespace Nekoyume.Action
             {
                 throw new FailedLoadStateException($"[{nameof(JoinArena)}] Aborted as the avatar state of the signer was failed to load.");
             }
-            
+
             if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(
                     out var world))
             {

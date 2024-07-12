@@ -365,7 +365,7 @@ namespace Lib9c.DevExtensions.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var random = context.GetRandom();
             return Execute(
                 context.PreviousState,

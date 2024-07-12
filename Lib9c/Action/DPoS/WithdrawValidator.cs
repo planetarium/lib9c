@@ -1,11 +1,8 @@
-using System.Collections.Immutable;
 using Bencodex.Types;
-using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.DPoS.Control;
-using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
 using Nekoyume.Module;
 
@@ -39,7 +36,7 @@ namespace Nekoyume.Action.DPoS
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             IActionContext ctx = context;
             var states = ctx.PreviousState;
             var nativeTokens = states.GetNativeTokens();

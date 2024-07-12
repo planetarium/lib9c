@@ -46,7 +46,7 @@ namespace Nekoyume.Action
         public override IWorld Execute(IActionContext context)
         {
             CheckObsolete(ObsoleteBlockIndex, context);
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             IWorld states = context.PreviousState;
 
             // Restrict staking if there is a monster collection until now.
