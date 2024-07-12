@@ -27,19 +27,38 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("item_enhancement14")]
-    public class ItemEnhancement : GameAction, IItemEnhancementV4
+    public class ItemEnhancement : GameAction, IItemEnhancementV5
     {
         public const int MaterialCountLimit = 50;
+
+        public static readonly IReadOnlyCollection<ItemSubType> HammerBannedTypes =
+            new List<ItemSubType>
+            {
+                ItemSubType.Aura,
+                ItemSubType.Grimoire,
+            };
+
+        public static readonly IReadOnlyCollection<int> HammerIds = new List<int>
+        {
+            600301,
+            600302,
+            600303,
+            600304,
+            600305,
+            600306,
+        };
 
         public Guid itemId;
         public List<Guid> materialIds;
         public Address avatarAddress;
         public int slotIndex;
+        public Dictionary<int, int> hammers = new();
 
-        Guid IItemEnhancementV4.ItemId => itemId;
-        List<Guid> IItemEnhancementV4.MaterialIds => materialIds;
-        Address IItemEnhancementV4.AvatarAddress => avatarAddress;
-        int IItemEnhancementV4.SlotIndex => slotIndex;
+        Guid IItemEnhancementV5.ItemId => itemId;
+        List<Guid> IItemEnhancementV5.MaterialIds => materialIds;
+        Address IItemEnhancementV5.AvatarAddress => avatarAddress;
+        int IItemEnhancementV5.SlotIndex => slotIndex;
+        Dictionary<int, int> IItemEnhancementV5.Hammers => hammers;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {
@@ -55,6 +74,14 @@ namespace Nekoyume.Action
                     ["slotIndex"] = slotIndex.Serialize(),
                 };
 
+#pragma warning disable LAA1002
+                if (hammers.Any())
+#pragma warning restore LAA1002
+                {
+                    dict["hammers"] = new List(hammers.OrderBy(kv => kv.Key)
+                        .Select(kv => List.Empty.Add(kv.Key).Add(kv.Value)));
+                }
+
                 return dict.ToImmutableDictionary();
             }
         }
@@ -67,6 +94,17 @@ namespace Nekoyume.Action
             if (plainValue.TryGetValue((Text)"slotIndex", out var value))
             {
                 slotIndex = value.ToInteger();
+            }
+
+            hammers = new Dictionary<int, int>();
+            if (plainValue.TryGetValue((Text)"hammers", out var serializedHammers))
+            {
+                var serializedList = (List) serializedHammers;
+                foreach (var iValue in serializedList)
+                {
+                    var innerList = (List)iValue;
+                    hammers.Add((Integer)innerList[0], (Integer)innerList[1]);
+                }
             }
         }
 
@@ -188,7 +226,33 @@ namespace Nekoyume.Action
 
             // Validate enhancement materials
             var uniqueMaterialIds = materialIds.Distinct().ToList();
-            if (!uniqueMaterialIds.Any() || uniqueMaterialIds.Count > MaterialCountLimit)
+            if (!uniqueMaterialIds.Any())
+            {
+                if (HammerBannedTypes.Contains(enhancementEquipment.ItemSubType))
+                {
+                    throw new InvalidItemTypeException($"target equipment({enhancementEquipment.ItemSubType}) does not allow use hammer");
+                }
+
+                int hammerCount = 0;
+#pragma warning disable LAA1002
+                foreach (var kv in hammers)
+#pragma warning restore LAA1002
+                {
+                    if (!HammerIds.Contains(kv.Key))
+                    {
+                        throw new InvalidItemCountException("target material is not hammer");
+                    }
+
+                    hammerCount += kv.Value;
+                }
+
+                if (hammerCount <= 0)
+                {
+                    throw new InvalidItemCountException("material or hammer must be greater than 0");
+                }
+            }
+
+            if (uniqueMaterialIds.Count > MaterialCountLimit)
             {
                 throw new InvalidItemCountException();
             }
@@ -261,9 +325,27 @@ namespace Nekoyume.Action
             enhancementEquipment.Exp = enhancementEquipment.GetRealExp(equipmentItemSheet,
                 enhancementCostSheet);
 
+            // Calculate material exp
             enhancementEquipment.Exp +=
                 materialEquipments.Aggregate(0L,
                     (total, m) => total + m.GetRealExp(equipmentItemSheet, enhancementCostSheet));
+
+            // Calculate hammer exp
+            var hammerExp = 0L;
+            foreach (var (hammerId, hammerCount) in hammers.OrderBy(kv => kv.Key))
+            {
+                if (avatarState.inventory.RemoveMaterial(hammerId, context.BlockIndex, hammerCount))
+                {
+                    var exp = Equipment.GetHammerExp(hammerId, enhancementCostSheet);
+                    hammerExp += exp * hammerCount;
+                }
+                else
+                {
+                    throw new NotEnoughMaterialException($"not enough hammer material({hammerId})");
+                }
+            }
+            enhancementEquipment.Exp += hammerExp;
+
             var row = enhancementCostSheet
                 .OrderByDescending(r => r.Value.Exp)
                 .FirstOrDefault(row =>
