@@ -1,12 +1,9 @@
-using System.Collections.Immutable;
 using Bencodex.Types;
-using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.DPoS.Control;
-using Nekoyume.Action.DPoS.Misc;
 using Nekoyume.Action.DPoS.Model;
 using Nekoyume.Action.DPoS.Util;
 using Nekoyume.Module;
@@ -49,7 +46,8 @@ namespace Nekoyume.Action.DPoS
         /// <inheritdoc cref="IAction.LoadPlainValue(IValue)"/>
         public override void LoadPlainValue(IValue plainValue)
         {
-            Validator = plainValue.ToAddress();
+            var dict = (Bencodex.Types.Dictionary)plainValue;
+            Validator = dict["validator"].ToAddress();
         }
 
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>

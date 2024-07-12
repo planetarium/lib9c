@@ -25,8 +25,9 @@ namespace Nekoyume.Action.DPoS
         /// </summary>
         /// <param name="validator">The <see cref="PublicKey"/> of the target
         /// to promote validator.</param>
-        /// <param name="amount">The amount of the asset to be initialize delegation.</param>
-        public PromoteValidator(PublicKey validator, FungibleAssetValue amount)
+        /// <param name="amount">
+        /// The amount of the governance token to initialize delegation.</param>
+        public PromoteValidator(PublicKey validator, long amount)
         {
             Validator = validator;
             Amount = amount;
@@ -48,20 +49,20 @@ namespace Nekoyume.Action.DPoS
         /// <summary>
         /// The amount of the asset to be initially delegated.
         /// </summary>
-        public FungibleAssetValue Amount { get; set; }
+        public long Amount { get; set; }
 
         /// <inheritdoc cref="IAction.PlainValue"/>
         public override IValue PlainValue => Bencodex.Types.Dictionary.Empty
             .Add("type_id", new Text(ActionTypeValue))
             .Add("validator", Validator.Serialize())
-            .Add("amount", Amount.Serialize());
+            .Add("amount", Amount);
 
         /// <inheritdoc cref="IAction.LoadPlainValue(IValue)"/>
         public override void LoadPlainValue(IValue plainValue)
         {
             var dict = (Bencodex.Types.Dictionary)plainValue;
             Validator = dict["validator"].ToPublicKey();
-            Amount = dict["amount"].ToFungibleAssetValue();
+            Amount = (Integer)dict["amount"];
         }
 
         /// <inheritdoc cref="IAction.Execute(IActionContext)"/>
@@ -74,6 +75,7 @@ namespace Nekoyume.Action.DPoS
             }
 
             var states = context.PreviousState;
+            var governanceToken = states.GetGoldCurrency();
             var nativeTokens = states.GetNativeTokens();
 
             states = ValidatorCtrl.Create(
@@ -81,7 +83,7 @@ namespace Nekoyume.Action.DPoS
                 context,
                 context.Signer,
                 Validator,
-                Amount,
+                governanceToken * Amount,
                 nativeTokens);
 
             return states;
