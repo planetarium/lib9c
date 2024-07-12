@@ -22,6 +22,9 @@ namespace Lib9c.Tests
     using Libplanet.Types.Tx;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.DPoS.Control;
+    using Nekoyume.Action.DPoS.Model;
+    using Nekoyume.Action.DPoS.Sys;
     using Nekoyume.Action.Loader;
     using Nekoyume.Blockchain.Policy;
     using Nekoyume.Model;
@@ -60,6 +63,7 @@ namespace Lib9c.Tests
             );
             using var store = new DefaultStore(null);
             using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
+            // Exclude UpdateValidators action to keep validator set just for testing
             var blockChain = BlockChain.Create(
                 policy,
                 stagePolicy,
@@ -69,7 +73,9 @@ namespace Lib9c.Tests
                 new ActionEvaluator(
                     new PolicyActionsRegistry(
                         beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                        endBlockActionsGetter: _ => policy.EndBlockActions,
+                        endBlockActionsGetter: _ =>
+                            policy.EndBlockActions.Where(action => action is not UpdateValidators)
+                                .ToImmutableArray(),
                         beginTxActionsGetter: _ => policy.BeginTxActions,
                         endTxActionsGetter: _ => policy.EndTxActions),
                     stateStore: stateStore,
@@ -387,6 +393,7 @@ namespace Lib9c.Tests
 
             using var store = new DefaultStore(null);
             using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
+            // Exclude UpdateValidators action to keep validator set just for testing
             var blockChain = BlockChain.Create(
                 policy,
                 stagePolicy,
@@ -396,7 +403,9 @@ namespace Lib9c.Tests
                 new ActionEvaluator(
                     new PolicyActionsRegistry(
                         beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                        endBlockActionsGetter: _ => policy.EndBlockActions,
+                        endBlockActionsGetter: _ =>
+                            policy.EndBlockActions.Where(action => action is not UpdateValidators)
+                                .ToImmutableArray(),
                         beginTxActionsGetter: _ => policy.BeginTxActions,
                         endTxActionsGetter: _ => policy.EndTxActions),
                     stateStore: stateStore,
@@ -411,12 +420,26 @@ namespace Lib9c.Tests
             );
 
             Block block = blockChain.ProposeBlock(adminPrivateKey);
+            BlockCommit blockCommit = GenerateBlockCommit(block, adminPrivateKey);
+            blockChain.Append(block, blockCommit);
+
+            // Append an empty block since the block reward allocation
+            // is done at the beginning of the next block.
+            block = blockChain.ProposeBlock(adminPrivateKey, lastCommit: blockCommit);
             blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
-            FungibleAssetValue actualBalance = blockChain
+            FungibleAssetValue rewardBalance = blockChain
                 .GetNextWorldState()
-                .GetBalance(adminAddress, _currency);
-            FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 10, 0);
-            Assert.True(expectedBalance.Equals(actualBalance));
+                .GetBalance(AllocateRewardCtrl.RewardAddress(adminAddress), _currency);
+            FungibleAssetValue validatorRewardBalance = blockChain
+                .GetNextWorldState()
+                .GetBalance(
+                    ValidatorRewards.DeriveAddress(
+                        Nekoyume.Action.DPoS.Model.Validator.DeriveAddress(adminAddress),
+                        _currency), _currency);
+            FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 5, 0);
+
+            // Sum of validation reward and delegation reward is equal to single RewardGold reward.
+            Assert.Equal(expectedBalance, rewardBalance + validatorRewardBalance);
         }
 
         [Fact]
@@ -442,10 +465,13 @@ namespace Lib9c.Tests
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
+            // Exclude UpdateValidators action to keep validator set just for testing
             var actionEvaluator = new ActionEvaluator(
                 new PolicyActionsRegistry(
                     beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                    endBlockActionsGetter: _ => policy.EndBlockActions,
+                    endBlockActionsGetter: _ =>
+                        policy.EndBlockActions.Where(action => action is not UpdateValidators)
+                            .ToImmutableArray(),
                     beginTxActionsGetter: _ => policy.BeginTxActions,
                     endTxActionsGetter: _ => policy.EndTxActions),
                 stateStore: stateStore,
@@ -548,10 +574,13 @@ namespace Lib9c.Tests
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
+            // Exclude UpdateValidators action to keep validator set just for testing
             var actionEvaluator = new ActionEvaluator(
                 new PolicyActionsRegistry(
                     beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                    endBlockActionsGetter: _ => policy.EndBlockActions,
+                    endBlockActionsGetter: _ =>
+                        policy.EndBlockActions.Where(action => action is not UpdateValidators)
+                            .ToImmutableArray(),
                     beginTxActionsGetter: _ => policy.BeginTxActions,
                     endTxActionsGetter: _ => policy.EndTxActions),
                 stateStore: stateStore,

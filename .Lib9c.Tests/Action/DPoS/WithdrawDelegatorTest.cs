@@ -28,12 +28,12 @@
                 Nekoyume.Action.DPoS.Model.ValidatorRewards.DeriveAddress(
                     validatorAddress,
                     GovernanceToken);
-            var amount = GovernanceToken * 100;
+            var amount = 100;
             states = states.TransferAsset(
                 new ActionContext(),
                 GoldCurrencyState.Address,
                 address,
-                amount);
+                GovernanceToken * amount);
             states = new PromoteValidator(validatorPrivateKey.PublicKey, amount: amount).Execute(
                 new ActionContext { PreviousState = states, Signer = address });
             states = new UpdateValidators().Execute(new ActionContext { PreviousState = states });

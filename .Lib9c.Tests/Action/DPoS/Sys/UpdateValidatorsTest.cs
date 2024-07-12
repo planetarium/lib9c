@@ -39,9 +39,7 @@
             // Stake 1 for each validator.
             foreach (var key in validatorKeys)
             {
-                initialState = new PromoteValidator(
-                    key,
-                    new FungibleAssetValue(GovernanceToken, 1, 0)).Execute(
+                initialState = new PromoteValidator(key, 1).Execute(
                         new ActionContext
                         {
                             PreviousState = initialState,

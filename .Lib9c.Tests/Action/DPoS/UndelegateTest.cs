@@ -44,7 +44,7 @@
             // Promote the validator
             states = new PromoteValidator(
                 validatorPrivateKey.PublicKey,
-                amount: GovernanceToken * 100)
+                amount: 100)
                     .Execute(
                         new ActionContext
                             { PreviousState = states, Signer = validatorOperatorAddress });
@@ -53,7 +53,7 @@
                 new ActionContext { PreviousState = states, Miner = validatorOperatorAddress });
 
             // Delegate the delegator
-            states = new Nekoyume.Action.DPoS.Delegate(validatorAddress, GovernanceToken * 50).Execute(
+            states = new Nekoyume.Action.DPoS.Delegate(validatorAddress, 50).Execute(
                 new ActionContext { PreviousState = states, Signer = delegatorAddress });
             states = new UpdateValidators().Execute(new ActionContext { PreviousState = states });
 
@@ -175,7 +175,7 @@
             // Promote the validator
             states = new PromoteValidator(
                     validatorPrivateKey.PublicKey,
-                    amount: GovernanceToken * 100)
+                    amount: 100)
                 .Execute(
                     new ActionContext
                         { PreviousState = states, Signer = validatorOperatorAddress });
@@ -184,7 +184,7 @@
                 new ActionContext { PreviousState = states, Miner = validatorOperatorAddress });
 
             // Delegate the delegator
-            states = new Nekoyume.Action.DPoS.Delegate(validatorAddress, GovernanceToken * 50).Execute(
+            states = new Nekoyume.Action.DPoS.Delegate(validatorAddress, 50).Execute(
                 new ActionContext { PreviousState = states, Signer = delegatorAddress });
             states = new UpdateValidators().Execute(new ActionContext { PreviousState = states });
 

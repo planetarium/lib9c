@@ -13,7 +13,6 @@
     using Nekoyume.Action.DPoS.Model;
     using Nekoyume.Action.DPoS.Sys;
     using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class RedelegateTest : PoSTest
@@ -53,13 +52,13 @@
             // Promote the delegator
             states = new PromoteValidator(
                     validator1PrivateKey.PublicKey,
-                    amount: GovernanceToken * 100)
+                    amount: 100)
                 .Execute(
                     new ActionContext
                         { PreviousState = states, Signer = validator1OperatorAddress });
             states = new PromoteValidator(
                     validator2PrivateKey.PublicKey,
-                    amount: GovernanceToken * 100)
+                    amount: 100)
                 .Execute(
                     new ActionContext
                         { PreviousState = states, Signer = validator2OperatorAddress });
@@ -68,7 +67,7 @@
                 new ActionContext { PreviousState = states, Miner = validator1OperatorAddress });
 
             // Delegate the validator 1
-            states = new Nekoyume.Action.DPoS.Delegate(validator1Address, GovernanceToken * 50).Execute(
+            states = new Nekoyume.Action.DPoS.Delegate(validator1Address, 50).Execute(
                 new ActionContext { PreviousState = states, Signer = delegatorAddress });
             states = new UpdateValidators().Execute(new ActionContext { PreviousState = states });
 
