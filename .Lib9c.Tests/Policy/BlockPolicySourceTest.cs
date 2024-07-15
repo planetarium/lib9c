@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Policy
 {
+    using System;
     using Bencodex.Types;
     using Libplanet.Action;
     using Libplanet.Action.Loader;
@@ -26,23 +27,27 @@ namespace Lib9c.Tests.Policy
         [Fact]
         public void IsObsolete()
         {
-            var transferAsset0 = new TransferAsset0(default, default, Currencies.Crystal * 0);
+            var buy = new Buy
+            {
+                buyerAvatarAddress = new PrivateKey().Address,
+                purchaseInfos = Array.Empty<PurchaseInfo>(),
+            };
             var odinTx = Transaction.Create(
                 0,
                 new PrivateKey(),
                 OdinGenesisHash,
-                new[] { transferAsset0.PlainValue }
+                new[] { buy.PlainValue }
             );
             var heimdallTx = Transaction.Create(
                 0,
                 new PrivateKey(),
                 HeimdallGenesisHash,
-                new[] { transferAsset0.PlainValue }
+                new[] { buy.PlainValue }
             );
             var ncActionLoader = new NCActionLoader();
 
             Assert.False(BlockPolicySource.IsObsolete(odinTx, ncActionLoader, 1));
-            Assert.True(BlockPolicySource.IsObsolete(odinTx, ncActionLoader, 7_000_700));
+            Assert.True(BlockPolicySource.IsObsolete(odinTx, ncActionLoader, 8_324_911));
             Assert.True(BlockPolicySource.IsObsolete(heimdallTx, ncActionLoader, 1));
 
             var odinTx2 = Transaction.Create(
