@@ -83,7 +83,7 @@ namespace Lib9c.Tests.Model.Item
             {
                 var id = costRow.Id;
                 Assert.True(costRow.Exp > 0L);
-                Assert.Equal(costRow.Exp, Equipment.GetHammerExp(id, costSheet));
+                Assert.Equal(costRow.Exp, costSheet.GetHammerExp(id));
             }
         }
     }

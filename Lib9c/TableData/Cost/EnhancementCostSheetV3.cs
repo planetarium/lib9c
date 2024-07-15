@@ -38,5 +38,10 @@ namespace Nekoyume.TableData
         public EnhancementCostSheetV3() : base(nameof(EnhancementCostSheetV2))
         {
         }
+
+        public long GetHammerExp(int hammerId)
+        {
+            return this[hammerId].Exp;
+        }
     }
 }
