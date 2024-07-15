@@ -52,8 +52,6 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(TransferAsset))]
         [InlineData(typeof(CreateAvatar))]
         [InlineData(typeof(HackAndSlash))]
-        [InlineData(typeof(ActivateAccount))]
-        [InlineData(typeof(AddActivatedAccount))]
         [InlineData(typeof(AddRedeemCode))]
         [InlineData(typeof(Buy))]
         [InlineData(typeof(ChargeActionPoint))]
@@ -157,8 +155,6 @@ namespace Lib9c.Tests.Action
                     StageId = 0,
                     AvatarAddress = new PrivateKey().Address,
                 },
-                ActivateAccount _ => new ActivateAccount(new PrivateKey().Address, new byte[] { 0x0 }),
-                AddActivatedAccount _ => new AddActivatedAccount(),
                 AddRedeemCode _ => new AddRedeemCode
                 {
                     redeemCsv = "csv",
