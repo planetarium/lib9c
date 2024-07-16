@@ -222,11 +222,6 @@ namespace Nekoyume.Model.Item
                 r.Level == level).Exp;
         }
 
-        public static long GetHammerExp(int hammerId, EnhancementCostSheetV3 costSheet)
-        {
-            return costSheet[hammerId].Exp;
-        }
-
         public List<object> GetOptions()
         {
             var options = new List<object>();
