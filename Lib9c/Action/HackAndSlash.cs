@@ -118,7 +118,7 @@ namespace Nekoyume.Action
             var addressesHex = $"[{signer.ToHex()}, {AvatarAddress.ToHex()}]";
             var started = DateTimeOffset.UtcNow;
             const string source = "HackAndSlash";
-            using var activity = _activitySource.StartActivity("HackAndSlash");
+            var activity = _activitySource.StartActivity("HackAndSlash");
             Log.Verbose("{AddressesHex} {Source} from #{BlockIndex} exec started",
                 addressesHex, source, blockIndex);
 
@@ -147,7 +147,7 @@ namespace Nekoyume.Action
 
             var sw = new Stopwatch();
             sw.Start();
-            using var avatarStateActivity = _activitySource.StartActivity(
+            var avatarStateActivity = _activitySource.StartActivity(
                 "GetAvatarState",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -163,7 +163,7 @@ namespace Nekoyume.Action
                 addressesHex, source, "Get AvatarState", blockIndex, sw.Elapsed.TotalMilliseconds);
 
             sw.Restart();
-            using var sheetActivity = _activitySource.StartActivity(
+            var sheetActivity = _activitySource.StartActivity(
                 "GetSheets",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -609,12 +609,12 @@ namespace Nekoyume.Action
                     );
                     stageCleared = true;
 
-                    clearStageActivity?.Dispose();
                     sw.Stop();
                     Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                         addressesHex, source, "ClearStage", blockIndex, sw.Elapsed.TotalMilliseconds);
                 }
 
+                clearStageActivity?.Dispose();
                 sw.Restart();
 
                 // This conditional logic is same as written in the
