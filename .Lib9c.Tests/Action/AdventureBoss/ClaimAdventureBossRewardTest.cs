@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
@@ -173,7 +174,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 12 }, // (300*1.2) * 0.3 / 2.5 * (100/360)
+                        { 20001, 11 }, // (300*1.2) * 0.3 / 2.5 * (100/360)
                         { 30001, 0 },
                     },
                 },
@@ -184,13 +185,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             yield return new object[]
             {
-                1, 100, 0, new AdventureBossGameData.ClaimableReward
+                1, 100, 0, true, new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward = (5 + 15) * NCG, // 5NCG for raffle, 15NCG for 15% distribution
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
-                        { 600202, 67 }, // 100AP / 1.5 ratio * 100% contribution
+                        { 600202, 66 }, // 100AP / 1.5 ratio * 100% contribution
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -204,7 +205,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                1, 100, 1, new AdventureBossGameData.ClaimableReward
+                1, 100, 1, false, new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward =
                         // 7.5NCG for half of 15% distribution
@@ -230,7 +231,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                1, 200, 1, new AdventureBossGameData.ClaimableReward
+                1, 200, 1, false, new AdventureBossGameData.ClaimableReward
                 {
                     // 15NCG for half of 15% distribution
                     NcgReward = 15 * NCG,
@@ -251,7 +252,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             yield return new object[]
             {
-                1, 100, 2, new AdventureBossGameData.ClaimableReward
+                1, 100, 2, false, new AdventureBossGameData.ClaimableReward
                 {
                     // No raffle, 5 NCG for 1/3 of 15% distribution
                     NcgReward = 5 * NCG,
@@ -300,7 +301,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 0 },
-                        { 600202, 67 },
+                        { 600202, 66 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -320,7 +321,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 168 },
-                        { 600202, 67 },
+                        { 600202, 66 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -532,6 +533,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             int seed,
             int bounty,
             int anotherExplorerCount,
+            bool raffleWinner,
             AdventureBossGameData.ClaimableReward expectedReward,
             FungibleAssetValue expectedRemainingNcg
         )
@@ -676,6 +678,17 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 );
             }
 
+            if (raffleWinner)
+            {
+                var avatarState = resultState.GetAvatarState(
+                    TesterAvatarAddress,
+                    getInventory: true,
+                    getWorldInformation: false,
+                    getQuestList: false
+                );
+                Assert.IsType<AdventureBossRaffleWinnerMail>(avatarState.mailBox.First());
+            }
+
             Test(resultState, expectedReward);
         }
 
@@ -696,7 +709,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 ItemReward = new Dictionary<int, int>
                 {
                     { 600201, 0 },
-                    { 600202, 134 }, // (100 AP / 1.5 Ratio * 100% contribution) for season 1 and 3
+                    { 600202, 132 }, // (100 AP / 1.5 Ratio * 100% contribution) for season 1 and 3
                     { 600203, 0 },
                 },
             };
@@ -824,7 +837,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 ItemReward = new Dictionary<int, int>
                 {
                     { 600201, 168 },
-                    { 600202, 67 },
+                    { 600202, 66 },
                     { 600203, 0 },
                 },
             };

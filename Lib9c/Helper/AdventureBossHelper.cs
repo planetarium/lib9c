@@ -151,21 +151,21 @@ namespace Nekoyume.Helper
 
             // calculate total reward
             var totalRewardNcg =
-                (int)Math.Round(
+                (int)Math.Floor(
                     (int)bountyBoard.totalBounty().MajorUnit * TotalRewardMultiplier
                 );
             var bonusNcg = totalRewardNcg - bountyBoard.totalBounty().MajorUnit;
 
             // Calculate total amount based on NCG exchange ratio
-            var totalFixedRewardNcg = (int)Math.Round(totalRewardNcg * FixedRewardRatio);
-            var totalFixedRewardAmount = (int)Math.Round(
+            var totalFixedRewardNcg = (int)Math.Floor(totalRewardNcg * FixedRewardRatio);
+            var totalFixedRewardAmount = (int)Math.Floor(
                 bountyBoard.FixedRewardItemId is not null
                     ? totalFixedRewardNcg / sheet[(int)bountyBoard.FixedRewardItemId].Ratio
                     : totalFixedRewardNcg / ncgRuneRatio
             );
 
-            var totalRandomRewardNcg = (int)Math.Round(totalRewardNcg * RandomRewardRatio);
-            var totalRandomRewardAmount = (int)Math.Round(
+            var totalRandomRewardNcg = (int)Math.Floor(totalRewardNcg * RandomRewardRatio);
+            var totalRandomRewardAmount = (int)Math.Floor(
                 bountyBoard.RandomRewardItemId is not null
                     ? totalRandomRewardNcg / sheet[(int)bountyBoard.RandomRewardItemId].Ratio
                     : totalRandomRewardNcg / ncgRuneRatio
@@ -186,7 +186,7 @@ namespace Nekoyume.Helper
             }
 
             var fixedRewardAmount =
-                (int)Math.Round(totalFixedRewardAmount * finalPortion / totalRewardNcg);
+                (int)Math.Floor(totalFixedRewardAmount * finalPortion / totalRewardNcg);
 
             if (fixedRewardAmount > 0)
             {
@@ -196,7 +196,7 @@ namespace Nekoyume.Helper
             }
 
             var randomRewardAmount =
-                (int)Math.Round(totalRandomRewardAmount * finalPortion / totalRewardNcg);
+                (int)Math.Floor(totalRandomRewardAmount * finalPortion / totalRewardNcg);
             if (randomRewardAmount > 0)
             {
                 reward = AddReward(reward, bountyBoard.RandomRewardItemId is not null,
@@ -305,7 +305,7 @@ namespace Nekoyume.Helper
                 ? sheet[(int)exploreBoard.FixedRewardItemId].Ratio
                 : ncgRuneRatio;
             var totalRewardAmount =
-                (int)Math.Round(exploreBoard.UsedApPotion * ncgApRatio / ncgRewardRatio);
+                (int)Math.Floor(exploreBoard.UsedApPotion * ncgApRatio / ncgRewardRatio);
 
             var myRewardAmount = 0;
             if (exploreBoard.TotalPoint > 0)

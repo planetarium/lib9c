@@ -9,6 +9,6 @@ id,group,_name,chance,duration,target_type,buff_type,elemental_type,atk_power_ra
 706000,706000,집중,100,10,Self,Focus,Normal,0
 707000,707000,디버프 회피율,45,12,Self,Dispel,Normal,0
 707001,707001,디버프 회피율 (Rune),55,0,Self,Dispel,Normal,0
-708000,708000,얼음 방패,100,10,Self,IceShield,Normal,0
-708001,708000,얼음 방패,100,10,Self,IceShield,Normal,0
-708002,708000,얼음 방패,100,10,Self,IceShield,Normal,0
+708000,708000,얼음 방패 (유니크 아우라),100,10,Self,IceShield,Normal,0
+708001,708000,얼음 방패 (레전더리 아우라),100,10,Self,IceShield,Normal,0
+708002,708000,얼음 방패 (신성 아우라),100,10,Self,IceShield,Normal,0

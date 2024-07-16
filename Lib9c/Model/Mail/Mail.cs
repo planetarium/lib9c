@@ -16,6 +16,7 @@ namespace Nekoyume.Model.Mail
         Grinding,
         Summon,
     }
+
     [Serializable]
     public abstract class Mail : IState
     {
@@ -41,6 +42,7 @@ namespace Nekoyume.Model.Mail
                 [nameof(UnloadFromMyGaragesRecipientMail)] = d =>
                     new UnloadFromMyGaragesRecipientMail(d),
                 [nameof(ClaimItemsMail)] = d => new ClaimItemsMail(d),
+                [nameof(AdventureBossRaffleWinnerMail)] = d => new AdventureBossRaffleWinnerMail(d),
             };
 
         public Guid id;
