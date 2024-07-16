@@ -336,7 +336,7 @@ namespace Nekoyume.Action
             {
                 if (avatarState.inventory.RemoveMaterial(hammerId, context.BlockIndex, hammerCount))
                 {
-                    var exp = Equipment.GetHammerExp(hammerId, enhancementCostSheet);
+                    var exp = enhancementCostSheet.GetHammerExp(hammerId);
                     hammerExp += exp * hammerCount;
                 }
                 else

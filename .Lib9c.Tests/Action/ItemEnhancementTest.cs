@@ -432,7 +432,7 @@ namespace Lib9c.Tests.Action
             _avatarState.inventory.AddItem(
                 ItemFactory.CreateMaterial(_tableSheets.MaterialItemSheet[hammerId]), 3);
 
-            var hammerExp = Equipment.GetHammerExp(hammerId, _tableSheets.EnhancementCostSheetV3) * 3;
+            var hammerExp = _tableSheets.EnhancementCostSheetV3.GetHammerExp(hammerId) * 3;
 
             var result = new CombinationConsumable5.ResultModel()
             {
