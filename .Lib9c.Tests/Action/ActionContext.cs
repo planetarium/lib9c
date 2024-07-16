@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Common;
     using Libplanet.Crypto;
     using Libplanet.Types.Blocks;
+    using Libplanet.Types.Evidence;
     using Libplanet.Types.Tx;
 
     public class ActionContext : IActionContext
@@ -17,6 +18,8 @@ namespace Lib9c.Tests.Action
         private IRandom _random = null;
 
         private IReadOnlyList<ITransaction> _txs = null;
+
+        private IReadOnlyList<EvidenceBase> _evs = null;
 
         public BlockHash? GenesisHash { get; set; }
 
@@ -44,6 +47,12 @@ namespace Lib9c.Tests.Action
         {
             get => _txs ?? ImmutableList<ITransaction>.Empty;
             set => _txs = value;
+        }
+
+        public IReadOnlyList<EvidenceBase> Evidence
+        {
+            get => _evs ?? ImmutableList<EvidenceBase>.Empty;
+            set => _evs = value;
         }
 
         public void UseGas(long gas)
