@@ -268,7 +268,7 @@ namespace Lib9c.Tests.Action.Scenario
                 foreach (var spawn in log.OfType<ArenaSpawnCharacter>())
                 {
                     ArenaCharacter character = spawn.Character;
-                    Assert.Equal(400, character.HIT);
+                    Assert.Equal(30, character.ATK);
                     Assert.Equal(11, character.CRI);
                 }
 
@@ -356,7 +356,7 @@ namespace Lib9c.Tests.Action.Scenario
             var row = _tableSheets.CharacterSheet[player.CharacterId];
             Assert.Null(player.Grimoire);
             Assert.NotNull(equippedPlayer.Grimoire);
-            Assert.Equal(player.HIT + 310 + (int)(row.LvHIT * diffLevel), equippedPlayer.HIT);
+            Assert.Equal(player.ATK + 10 + (int)(row.LvATK * diffLevel), equippedPlayer.ATK);
             Assert.Equal(player.CRI + 1, equippedPlayer.CRI);
         }
 
