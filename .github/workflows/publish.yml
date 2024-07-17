@@ -47,4 +47,4 @@ jobs:
     uses: planetarium/.github/.github/workflows/publish_jsr.yaml@7da1714cbc9554aa17a19bc6477b8b067f714ea7
     with:
       working_directory: "@planetarium/lib9c"
-      pnpm_version: "9.1.2"
+      pnpm_version: "9"

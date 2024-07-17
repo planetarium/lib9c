@@ -86,7 +86,7 @@ jobs:
           dotnet-version: 6.0.400
       - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
           run_install: true
       - name: Build Lib9c.Tools
         run: dotnet build .Lib9c.Tools/Lib9c.Tools.csproj
