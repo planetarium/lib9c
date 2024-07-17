@@ -1,0 +1,4 @@
+_min_proficiency,proficiency,min_substat,max_substat,required_level,cost_multiplier,additional_gold,additional_material_id,additional_material_amount
+0,50,1,1000,1,1,,,
+51,200,1,10000,50,1.5,10,,,
+201,500,12000,12000,200,2,,600202,100
