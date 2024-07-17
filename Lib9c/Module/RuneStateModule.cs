@@ -32,20 +32,56 @@ namespace Nekoyume.Module
                 "[DataProvider] AvatarInfo RuneStateModule2 Address: {0} Time Taken: {1} ms.",
                 avatarAddress,
                 (subEnd - subStart).Milliseconds);
-            subStart = DateTimeOffset.UtcNow;
             AllRuneState allRuneState;
+            var subStart1 = DateTimeOffset.UtcNow;
             if (serialized is null)
             {
                 // Get legacy rune states
+                subStart = DateTimeOffset.UtcNow;
                 var runeListSheet = worldState.GetSheet<RuneListSheet>();
+                subEnd = DateTimeOffset.UtcNow;
+                Log.Debug(
+                    "[DataProvider] AvatarInfo RuneStateModule3 Address: {0} Time Taken: {1} ms.",
+                    avatarAddress,
+                    (subEnd - subStart).Milliseconds);
+                subStart = DateTimeOffset.UtcNow;
                 allRuneState = new AllRuneState();
+                subEnd = DateTimeOffset.UtcNow;
+                Log.Debug(
+                    "[DataProvider] AvatarInfo RuneStateModule4 Address: {0} Time Taken: {1} ms.",
+                    avatarAddress,
+                    (subEnd - subStart).Milliseconds);
                 foreach (var rune in runeListSheet.Values)
                 {
+                    subStart = DateTimeOffset.UtcNow;
                     var runeAddress = RuneState.DeriveAddress(avatarAddress, rune.Id);
+                    subEnd = DateTimeOffset.UtcNow;
+                    Log.Debug(
+                        "[DataProvider] AvatarInfo RuneStateModule5 Address: {0} Time Taken: {1} ms.",
+                        avatarAddress,
+                        (subEnd - subStart).Milliseconds);
+                    subStart = DateTimeOffset.UtcNow;
                     if (worldState.TryGetLegacyState(runeAddress, out List rawState))
                     {
+                        subEnd = DateTimeOffset.UtcNow;
+                        Log.Debug(
+                            "[DataProvider] AvatarInfo RuneStateModule6 Address: {0} Time Taken: {1} ms.",
+                            avatarAddress,
+                            (subEnd - subStart).Milliseconds);
+                        subStart = DateTimeOffset.UtcNow;
                         var runeState = new RuneState(rawState);
+                        subEnd = DateTimeOffset.UtcNow;
+                        Log.Debug(
+                            "[DataProvider] AvatarInfo RuneStateModule7 Address: {0} Time Taken: {1} ms.",
+                            avatarAddress,
+                            (subEnd - subStart).Milliseconds);
+                        subStart = DateTimeOffset.UtcNow;
                         allRuneState.AddRuneState(runeState);
+                        subEnd = DateTimeOffset.UtcNow;
+                        Log.Debug(
+                            "[DataProvider] AvatarInfo RuneStateModule 8Address: {0} Time Taken: {1} ms.",
+                            avatarAddress,
+                            (subEnd - subStart).Milliseconds);
                     }
                 }
 
@@ -53,12 +89,18 @@ namespace Nekoyume.Module
             }
             else
             {
+                subStart = DateTimeOffset.UtcNow;
                 allRuneState = new AllRuneState((List)serialized);
+                subEnd = DateTimeOffset.UtcNow;
+                Log.Debug(
+                    "[DataProvider] AvatarInfo RuneStateModule9 Address: {0} Time Taken: {1} ms.",
+                    avatarAddress,
+                    (subEnd - subStart).Milliseconds);
             }
 
-            subEnd = DateTimeOffset.UtcNow;
+            var subEnd1 = DateTimeOffset.UtcNow;
             Log.Debug(
-                "[DataProvider] AvatarInfo RuneStateModule3 Address: {0} Time Taken: {1} ms.",
+                "[DataProvider] AvatarInfo RuneStateModule10 Address: {0} Time Taken: {1} ms.",
                 avatarAddress,
                 (subEnd - subStart).Milliseconds);
             return allRuneState;
