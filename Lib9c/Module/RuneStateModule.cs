@@ -1,9 +1,11 @@
 #nullable enable
+using System;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.State;
 using Nekoyume.TableData.Rune;
+using Serilog;
 
 namespace Nekoyume.Module
 {
@@ -16,8 +18,21 @@ namespace Nekoyume.Module
             Address avatarAddress, out bool migrateRequired)
         {
             migrateRequired = false;
+            var subStart = DateTimeOffset.UtcNow;
             var account = worldState.GetAccountState(Addresses.RuneState);
+            var subEnd = DateTimeOffset.UtcNow;
+            Log.Debug(
+                "[DataProvider] AvatarInfo RuneStateModule1 Address: {0} Time Taken: {1} ms.",
+                avatarAddress,
+                (subEnd - subStart).Milliseconds);
+            subStart = DateTimeOffset.UtcNow;
             var serialized = account.GetState(avatarAddress);
+            subEnd = DateTimeOffset.UtcNow;
+            Log.Debug(
+                "[DataProvider] AvatarInfo RuneStateModule2 Address: {0} Time Taken: {1} ms.",
+                avatarAddress,
+                (subEnd - subStart).Milliseconds);
+            subStart = DateTimeOffset.UtcNow;
             AllRuneState allRuneState;
             if (serialized is null)
             {
@@ -41,6 +56,11 @@ namespace Nekoyume.Module
                 allRuneState = new AllRuneState((List)serialized);
             }
 
+            subEnd = DateTimeOffset.UtcNow;
+            Log.Debug(
+                "[DataProvider] AvatarInfo RuneStateModule3 Address: {0} Time Taken: {1} ms.",
+                avatarAddress,
+                (subEnd - subStart).Milliseconds);
             return allRuneState;
         }
 
