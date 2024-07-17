@@ -44,4 +44,7 @@ export {
 export { HashDigest, type AlgorithmNames } from "./models/hashdigest.js";
 export { ODIN_GENESIS_HASH, HEIMDALL_GENESIS_HASH } from "./models/networks.js";
 
-export { CreateAvatar, type CreateAvatarArgs } from "./actions/create_avatar.js";
+export {
+  CreateAvatar,
+  type CreateAvatarArgs,
+} from "./actions/create_avatar.js";
