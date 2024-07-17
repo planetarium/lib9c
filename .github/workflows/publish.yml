@@ -44,7 +44,7 @@ jobs:
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   jsr:
-    uses: planetarium/.github/.github/workflows/publish_jsr.yaml@34a5632831962232ffed9d4f4a5fc3de77ef5231
+    uses: planetarium/.github/.github/workflows/publish_jsr.yaml@bfb34283b538003768d19bff9ea05bcbd709d643
     with:
       workspace_directory: "@planetarium"
       working_directory: "@planetarium/lib9c"
