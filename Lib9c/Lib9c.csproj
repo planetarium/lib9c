@@ -23,13 +23,14 @@
     <PackageReference Include="DecimalMath.DecimalEx" Version="1.0.2" />
     <PackageReference Include="OptimizedPriorityQueue" Version="4.2.0" />
     <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="8.38.0.46746">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.Reactive" Version="4.3.2" />
     <PackageReference Include="CsvHelper" Version="15.0.5" />
+    <!-- Include System.Diagnostics.DiagnosticSource only if targeting netstandard2.1 -->
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
     <!-- Include Pyroscope only if not targeting netstandard2.1 -->
     <PackageReference Include="Pyroscope" Version="0.8.14" Condition="'$(TargetFramework)' != 'netstandard2.1'" />
   </ItemGroup>
