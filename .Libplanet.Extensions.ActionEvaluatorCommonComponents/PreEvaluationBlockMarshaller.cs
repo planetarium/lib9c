@@ -24,7 +24,8 @@ public static class PreEvaluationBlockMarshaller
     {
         return new PreEvaluationBlock(
             BlockMarshaler.UnmarshalPreEvaluationBlockHeader((Dictionary)dictionary[HeaderKey]),
-            BlockMarshaler.UnmarshalBlockTransactions(dictionary));
+            BlockMarshaler.UnmarshalBlockTransactions(dictionary),
+            BlockMarshaler.UnmarshalBlockEvidence(dictionary));
     }
 
     public static byte[] Serialize(this IPreEvaluationBlock block)
