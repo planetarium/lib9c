@@ -45,6 +45,7 @@ namespace Lib9c
         public const string RequiredCharacterLevelKey = "rc";
         public const string MadeWithMimisbrunnrRecipeKey = "mwmr";
         public const string EquipmentExpKey = "eq_exp";
+        public const string EquipmentIconIdKey = "icon_id";
 
         // Stat
         public const string StatTypeKey = "stt";
