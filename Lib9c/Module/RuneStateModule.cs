@@ -100,16 +100,16 @@ namespace Nekoyume.Module
                 allRuneState = new AllRuneState((List)serialized);
                 subEnd = DateTimeOffset.UtcNow;
                 Log.Debug(
-                    "[DataProvider] AvatarInfo RuneStateModule9 Address: {0} Time Taken: {1} ms.",
+                    "[DataProvider] AvatarInfo RuneStateModule10 Address: {0} Time Taken: {1} ms.",
                     avatarAddress,
                     (subEnd - subStart).Milliseconds);
             }
 
             var subEnd1 = DateTimeOffset.UtcNow;
             Log.Debug(
-                "[DataProvider] AvatarInfo RuneStateModule10 Address: {0} Time Taken: {1} ms.",
+                "[DataProvider] AvatarInfo RuneStateModule11 Address: {0} Time Taken: {1} ms.",
                 avatarAddress,
-                (subEnd - subStart).Milliseconds);
+                (subEnd1 - subStart1).Milliseconds);
             return allRuneState;
         }
 
