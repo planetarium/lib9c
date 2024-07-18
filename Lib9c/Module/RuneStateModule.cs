@@ -52,16 +52,16 @@ namespace Nekoyume.Module
                     avatarAddress,
                     (subEnd - subStart).Milliseconds);
                 var subSubStart = DateTimeOffset.UtcNow;
+                subStart = DateTimeOffset.UtcNow;
                 foreach (var rune in runeListSheet.Values)
                 {
-                    subStart = DateTimeOffset.UtcNow;
                     var runeAddress = RuneState.DeriveAddress(avatarAddress, rune.Id);
                     subEnd = DateTimeOffset.UtcNow;
                     Log.Debug(
                         "[DataProvider] AvatarInfo RuneStateModule5 Address: {0} Time Taken: {1} ms.",
                         avatarAddress,
                         (subEnd - subStart).Milliseconds);
-                    subStart = DateTimeOffset.UtcNow;
+                    var subSubSubStart = DateTimeOffset.UtcNow;
                     if (worldState.TryGetLegacyState(runeAddress, out List rawState))
                     {
                         subEnd = DateTimeOffset.UtcNow;
@@ -69,14 +69,12 @@ namespace Nekoyume.Module
                             "[DataProvider] AvatarInfo RuneStateModule6 Address: {0} Time Taken: {1} ms.",
                             avatarAddress,
                             (subEnd - subStart).Milliseconds);
-                        subStart = DateTimeOffset.UtcNow;
                         var runeState = new RuneState(rawState);
                         subEnd = DateTimeOffset.UtcNow;
                         Log.Debug(
                             "[DataProvider] AvatarInfo RuneStateModule7 Address: {0} Time Taken: {1} ms.",
                             avatarAddress,
                             (subEnd - subStart).Milliseconds);
-                        subStart = DateTimeOffset.UtcNow;
                         allRuneState.AddRuneState(runeState);
                         subEnd = DateTimeOffset.UtcNow;
                         Log.Debug(
@@ -84,6 +82,12 @@ namespace Nekoyume.Module
                             avatarAddress,
                             (subEnd - subStart).Milliseconds);
                     }
+
+                    var subSubSubEnd = DateTimeOffset.UtcNow;
+                    Log.Debug(
+                        "[DataProvider] AvatarInfo RuneStateModule GetLegacyState Address: {0} Time Taken: {1} ms.",
+                        avatarAddress,
+                        (subSubSubEnd - subSubSubStart).Milliseconds);
                 }
 
                 var subSubEnd = DateTimeOffset.UtcNow;
