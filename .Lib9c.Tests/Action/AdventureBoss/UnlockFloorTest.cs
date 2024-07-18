@@ -15,6 +15,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.AdventureBoss;
     using Xunit;
 
     public class UnlockFloorTest
@@ -86,7 +87,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
         // Not enough resources
         [InlineData(false, true, 5, 5, typeof(NotEnoughMaterialException))]
         [InlineData(true, true, 5, 5, typeof(InsufficientBalanceException))]
-        public void Execute(bool useNcg, bool notEnough, int startFloor, int expectedFloor, Type exc)
+        public void Execute(
+            bool useNcg, bool notEnough, int startFloor, int expectedFloor, Type exc
+        )
         {
             // Settings
             var state = _initialState;
@@ -104,14 +107,20 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             if (!notEnough)
             {
+                var unlockRow = state.GetSheet<AdventureBossUnlockFloorCostSheet>().Values
+                    .First(row => row.FloorId == 6);
                 if (useNcg)
                 {
-                    state = state.MintAsset(new ActionContext(), TesterAddress, 5 * NCG);
+                    state = state.MintAsset(
+                        new ActionContext(),
+                        TesterAddress,
+                        unlockRow.NcgPrice * NCG
+                    );
                 }
                 else
                 {
                     var inventory = state.GetInventoryV2(TesterAvatarAddress);
-                    inventory.AddItem(goldenDust, 5);
+                    inventory.AddItem(goldenDust, unlockRow.GoldenDustPrice);
                     state = state.SetInventory(TesterAvatarAddress, inventory);
                 }
             }

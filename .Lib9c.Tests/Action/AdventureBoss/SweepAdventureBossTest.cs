@@ -87,7 +87,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                1, 100, 98, null, new[] { (600301, 8), (600302, 0), (600303, 0), (600304, 0), },
+                1, 100, 99, null, new[] { (600301, 3), (600302, 0), (600303, 0), (600304, 0), },
             };
             yield return new object[]
             {
@@ -95,11 +95,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                10, 10, 10, typeof(NotEnoughMaterialException), null,
+                10, 1, 1, typeof(NotEnoughMaterialException), null,
             };
             yield return new object[]
             {
-                20, 40, 0, null, new[] { (600301, 67), (600302, 67), (600303, 0), (600304, 0), },
+                20, 20, 0, null, new[] { (600301, 9), (600302, 10), (600303, 8), (600304, 8), },
             };
         }
 
