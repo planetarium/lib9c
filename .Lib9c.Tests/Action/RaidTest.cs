@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Arena;
     using Nekoyume.Battle;
     using Nekoyume.Extensions;
     using Nekoyume.Helper;
@@ -359,6 +360,10 @@ namespace Lib9c.Tests.Action
                 {
                     Assert.Equal(0 * _goldCurrency, nextState.GetBalance(_agentAddress, _goldCurrency));
                     Assert.Equal(purchaseCount + 1, nextState.GetRaiderState(raiderAddress).PurchaseCount);
+                    var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(ctx.BlockIndex);
+                    var feeAddress =
+                        ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+                    Assert.True(nextState.GetBalance(feeAddress, _goldCurrency) > 0 * _goldCurrency);
                 }
 
                 Assert.True(nextState.TryGetLegacyState(worldBossKillRewardRecordAddress, out List rawRewardInfo));
