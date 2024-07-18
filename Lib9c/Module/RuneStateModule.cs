@@ -51,6 +51,7 @@ namespace Nekoyume.Module
                     "[DataProvider] AvatarInfo RuneStateModule4 Address: {0} Time Taken: {1} ms.",
                     avatarAddress,
                     (subEnd - subStart).Milliseconds);
+                var subSubStart = DateTimeOffset.UtcNow;
                 foreach (var rune in runeListSheet.Values)
                 {
                     subStart = DateTimeOffset.UtcNow;
@@ -79,11 +80,17 @@ namespace Nekoyume.Module
                         allRuneState.AddRuneState(runeState);
                         subEnd = DateTimeOffset.UtcNow;
                         Log.Debug(
-                            "[DataProvider] AvatarInfo RuneStateModule 8Address: {0} Time Taken: {1} ms.",
+                            "[DataProvider] AvatarInfo RuneStateModule8 Address: {0} Time Taken: {1} ms.",
                             avatarAddress,
                             (subEnd - subStart).Milliseconds);
                     }
                 }
+
+                var subSubEnd = DateTimeOffset.UtcNow;
+                Log.Debug(
+                    "[DataProvider] AvatarInfo RuneStateModule9 Address: {0} Time Taken: {1} ms.",
+                    avatarAddress,
+                    (subSubEnd - subSubStart).Milliseconds);
 
                 migrateRequired = true;
             }
