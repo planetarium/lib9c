@@ -9,6 +9,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Rune;
@@ -79,7 +80,7 @@ namespace Nekoyume.Action
             var gameConfigState = states.GetGameConfigState();
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             int cost;
             Currency currency;
             switch (slot.RuneSlotType)

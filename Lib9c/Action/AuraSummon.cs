@@ -9,6 +9,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions;
+using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
@@ -226,7 +227,7 @@ namespace Nekoyume.Action
                 var arenaSheet = states.GetSheet<ArenaSheet>();
                 var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
                 var feeStoreAddress =
-                    Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+                    ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
 
                 states = states.TransferAsset(
                     context,

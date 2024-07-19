@@ -10,6 +10,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -250,7 +251,7 @@ namespace Nekoyume.Action
                 // Transfer tax.
                 var arenaSheet = states.GetSheet<ArenaSheet>();
                 var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+                var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
                 states = states.TransferAsset(
                     context,
                     context.Signer,
