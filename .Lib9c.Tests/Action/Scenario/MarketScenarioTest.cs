@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Arena;
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
@@ -307,7 +308,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             var buyerAvatarState = latestState.GetAvatarState(_buyerAvatarAddress);
             var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(3L);
-            var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             var totalTax = 0 * _currency;
             foreach (var group in action3.ProductInfos.GroupBy(p => p.AgentAddress))
             {
@@ -1083,7 +1084,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             var buyerAvatarState = tradedState.GetAvatarState(_buyerAvatarAddress);
             var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(3L);
-            var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             var totalTax = 0 * _currency;
             foreach (var group in buyAction.ProductInfos.GroupBy(p => p.AgentAddress))
             {

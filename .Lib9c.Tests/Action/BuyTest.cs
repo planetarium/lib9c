@@ -15,6 +15,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
@@ -442,7 +443,7 @@ namespace Lib9c.Tests.Action
 
                 var arenaSheet = _tableSheets.ArenaSheet;
                 var arenaData = arenaSheet.GetRoundByBlockIndex(100);
-                var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+                var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
                 var goldCurrencyGold = nextState.GetBalance(feeStoreAddress, goldCurrencyState);
                 Assert.Equal(totalTax, goldCurrencyGold);
                 var buyerGold = nextState.GetBalance(_buyerAgentAddress, goldCurrencyState);
@@ -947,7 +948,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(prevBuyerGold - totalPrice, buyerGold);
             var arenaSheet = _tableSheets.ArenaSheet;
             var arenaData = arenaSheet.GetRoundByBlockIndex(100);
-            var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             var goldCurrencyGold = nextState.GetBalance(feeStoreAddress, goldCurrencyState);
             Assert.Equal(totalTax, goldCurrencyGold);
 

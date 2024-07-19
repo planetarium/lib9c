@@ -125,12 +125,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 168 },
-                        { 600202, 0 },
+                        { 600202, 18 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 14 },
+                        { 20001, 0 },
                         { 30001, 0 },
                     },
                 },
@@ -147,12 +147,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         {
                             600201, 168
                         }, // (200*1.2) * 0.7 / 0.5 * (120/240)
-                        { 600202, 0 },
+                        { 600202, 18 }, // (200*1.2) * 0.3 / 2 * (120/240)
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 14 }, // (200*1.2) * 0.3 / 2.5 * (120/240)
+                        { 20001, 0 },
                         { 30001, 0 },
                     },
                 },
@@ -169,12 +169,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         {
                             600201, 140
                         }, // (300*1.2) * 0.7 / 0.5 * (100/360)
-                        { 600202, 0 },
+                        { 600202, 15 },  // (300*1.2) * 0.3 / 2 * (100/360)
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 11 }, // (300*1.2) * 0.3 / 2.5 * (100/360)
+                        { 20001, 0 },
                         { 30001, 0 },
                     },
                 },
@@ -190,8 +190,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = (5 + 15) * NCG, // 5NCG for raffle, 15NCG for 15% distribution
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 0 },
-                        { 600202, 66 }, // 100AP / 1.5 ratio * 100% contribution
+                        { 600201, 80 }, // 100AP * 0.4 Exchange / 0.5 ratio * 100% contribution
+                        { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -215,8 +215,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         ),
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 0 },
-                        { 600202, 66 }, // total 200 AP / 1.5 ratio * 50% contribution
+                        {
+                            600201, 79
+                        }, // total 200 AP * 0.4 Exchange / 0.5 ratio * 50% contribution
+                        { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -237,8 +239,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 15 * NCG,
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 0 },
-                        { 600202, 66 }, // Total 200 AP / 1.5 Ratio * 50% Contribution
+                        {
+                            600201, 79
+                        }, // Total 200 AP * 0.4 Exchange / 1.5 Ratio * 50% Contribution
+                        { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -258,8 +262,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 5 * NCG,
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 0 },
-                        { 600202, 66 },
+                        { 600201, 80 },
+                        { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -282,12 +286,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 168 },
-                        { 600202, 0 },
+                        { 600202, 18 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 14 },
+                        { 20001, 0 },
                         { 30001, 0 },
                     },
                 },
@@ -300,8 +304,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 20 * NCG, // 5NCG for explore raffle, 15NCG for 15% distribution
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 0 },
-                        { 600202, 66 },
+                        { 600201, 80 },
+                        { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -320,13 +324,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 20 * NCG,
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 168 },
-                        { 600202, 66 },
+                        { 600201, 248 },
+                        { 600202, 18 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
                     {
-                        { 20001, 14 },
+                        { 20001, 0 },
                         { 30001, 0 },
                     },
                 },
@@ -438,13 +442,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 0 * NCG, // No Raffle Reward
                 FavReward = new Dictionary<int, int>
                 {
-                    { 20001, 28 },
+                    { 20001, 0 },
                     { 30001, 0 },
                 },
                 ItemReward = new Dictionary<int, int>
                 {
                     { 600201, 336 },
-                    { 600202, 0 },
+                    { 600202, 36 },
                     { 600203, 0 },
                 },
             };
@@ -708,8 +712,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 },
                 ItemReward = new Dictionary<int, int>
                 {
-                    { 600201, 0 },
-                    { 600202, 132 }, // (100 AP / 1.5 Ratio * 100% contribution) for season 1 and 3
+                    {
+                        600201, 160
+                    }, // (100 AP * 0.4 Exchange / 0.5 Ratio * 100% contribution) for season 1 and 3
+                    { 600202, 0 },
                     { 600203, 0 },
                 },
             };
@@ -831,13 +837,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 20 * NCG,
                 FavReward = new Dictionary<int, int>
                 {
-                    { 20001, 14 },
+                    { 20001, 0 },
                     { 30001, 0 },
                 },
                 ItemReward = new Dictionary<int, int>
                 {
-                    { 600201, 168 },
-                    { 600202, 66 },
+                    { 600201, 248 },
+                    { 600202, 18 },
                     { 600203, 0 },
                 },
             };

@@ -143,8 +143,9 @@ namespace Lib9c.Tests.TableData
                 }
 
                 // Check ChampionShip round data
-                // Except mocaverse event season
-                if (round.ChampionshipId == 8)
+                // Except mocaverse event season 8
+                // Except ygg event season 9
+                if (round.ChampionshipId == 8 || round.ChampionshipId == 9)
                 {
                     Assert.Equal(0, round.RequiredMedalCount);
                 }

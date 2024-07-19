@@ -102,7 +102,7 @@ namespace Lib9c.Tools.SubCommand
                 Block block =
                     store.GetBlock(blockHash);
                 var preEvalBlock = new PreEvaluationBlock(
-                    block, block.Transactions
+                    block, block.Transactions, block.Evidence
                 );
                 stderr.WriteLine(
                     "[{0}/{1}] Executing block #{2} {3}...",
