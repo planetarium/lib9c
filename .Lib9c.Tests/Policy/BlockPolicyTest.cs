@@ -86,7 +86,7 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    policyBlockActionGetter: _ => policy.BlockAction,
+                    policy.PolicyActionsRegistry,
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),
@@ -177,7 +177,7 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    policyBlockActionGetter: _ => policy.BlockAction,
+                    policy.PolicyActionsRegistry,
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),
@@ -231,7 +231,7 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    policyBlockActionGetter: _ => policy.BlockAction,
+                    policy.PolicyActionsRegistry,
                     stateStore: stateStore,
                     actionTypeLoader: actionLoader
                 ),
@@ -284,7 +284,7 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    policyBlockActionGetter: _ => policy.BlockAction,
+                    policy.PolicyActionsRegistry,
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),
@@ -329,7 +329,7 @@ namespace Lib9c.Tests
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
             var actionEvaluator = new ActionEvaluator(
-                policyBlockActionGetter: _ => policy.BlockAction,
+                policy.PolicyActionsRegistry,
                 stateStore: stateStore,
                 actionTypeLoader: new NCActionLoader()
             );
@@ -443,7 +443,7 @@ namespace Lib9c.Tests
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
             var actionEvaluator = new ActionEvaluator(
-                policyBlockActionGetter: _ => policy.BlockAction,
+                policy.PolicyActionsRegistry,
                 stateStore: stateStore,
                 actionTypeLoader: new NCActionLoader()
             );
