@@ -24,9 +24,7 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
             public int SpdRatio { get; private set; }
             public int DrvRatio { get; private set; }
             public int DrrRatio { get; private set; }
-
             public int CdmgRatio { get; private set; }
-
             // Armor Penetration, Not Action Point
             public int ApRatio { get; private set; }
             public int ThornRatio { get; private set; }
@@ -49,7 +47,7 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
             }
         }
 
-        public CustomEquipmentCraftOptionSheet(string name) : base(name)
+        public CustomEquipmentCraftOptionSheet() : base(nameof(CustomEquipmentCraftOptionSheet))
         {
         }
     }

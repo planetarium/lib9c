@@ -13,9 +13,8 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
         [Serializable]
         public class Row : SheetRow<int>
         {
-            public override int Key => Id;
+            public override int Key => Proficiency;
 
-            public int Id { get; private set; }
             public int Proficiency { get; private set; }
             public decimal CostMultiplier { get; private set; }
             public int MinCp { get; private set; }
@@ -29,17 +28,16 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
 
             public override void Set(IReadOnlyList<string> fields)
             {
-                Id = ParseInt(fields[0]);
-                Proficiency = ParseInt(fields[1]);
-                CostMultiplier = ParseDecimal(fields[2]);
-                MinCp = ParseInt(fields[3]);
-                MaxCp = ParseInt(fields[4]);
-                EquipmentRequiredLevel = ParseInt(fields[5]);
-                WeaponItemId = ParseInt(fields[6]);
-                ArmorItemId = ParseInt(fields[7]);
-                BeltItemId = ParseInt(fields[8]);
-                NecklaceItemId = ParseInt(fields[9]);
-                RingItemId = ParseInt(fields[10]);
+                Proficiency = ParseInt(fields[0]);
+                CostMultiplier = ParseDecimal(fields[1]);
+                MinCp = ParseInt(fields[2]);
+                MaxCp = ParseInt(fields[3]);
+                EquipmentRequiredLevel = ParseInt(fields[4]);
+                WeaponItemId = ParseInt(fields[5]);
+                ArmorItemId = ParseInt(fields[6]);
+                BeltItemId = ParseInt(fields[7]);
+                NecklaceItemId = ParseInt(fields[8]);
+                RingItemId = ParseInt(fields[9]);
             }
 
             public int GetItemId(ItemSubType itemSubType)
