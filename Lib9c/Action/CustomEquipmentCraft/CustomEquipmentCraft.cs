@@ -124,7 +124,9 @@ namespace Nekoyume.Action.CustomEquipmentCraft
 
             // Remove cost
             // Add proficiency
-            avatarState.Proficiency++;
+            var proficiency = states.GetProficiency(AvatarAddress);
+            proficiency++;
+            states = states.SetProficiency(AvatarAddress, proficiency);
             // Create equipment
             // Set required level
             // Set base stat

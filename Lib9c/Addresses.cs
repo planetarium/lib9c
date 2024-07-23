@@ -49,6 +49,9 @@ namespace Nekoyume
         public static readonly Address ActionPoint           = new Address("0000000000000000000000000000000000000021");
         public static readonly Address RuneState             = new Address("0000000000000000000000000000000000000022");
 
+        // Custom Equipment Craft
+        public static readonly Address Proficiency           = new ("0000000000000000000000000000000000000023");
+
         // Adventure Boss
         public static readonly Address AdventureBoss         = new Address("0000000000000000000000000000000000000100");
         public static readonly Address BountyBoard           = new Address("0000000000000000000000000000000000000101");
