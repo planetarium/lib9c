@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Numerics;
+using System.ComponentModel;
+using Nekoyume.Model.Item;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData.CustomEquipmentCraft
@@ -39,6 +40,20 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
                 BeltItemId = ParseInt(fields[8]);
                 NecklaceItemId = ParseInt(fields[9]);
                 RingItemId = ParseInt(fields[10]);
+            }
+
+            public int GetItemId(ItemSubType itemSubType)
+            {
+                return itemSubType switch
+                {
+                    ItemSubType.Weapon => WeaponItemId,
+                    ItemSubType.Armor => ArmorItemId,
+                    ItemSubType.Belt => BeltItemId,
+                    ItemSubType.Necklace => NecklaceItemId,
+                    ItemSubType.Ring => RingItemId,
+                    _ => throw new InvalidEnumArgumentException(
+                        $"{itemSubType} it not valid ItemSubType.")
+                };
             }
         }
 

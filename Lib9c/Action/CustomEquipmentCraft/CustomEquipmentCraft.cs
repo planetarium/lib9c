@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -91,9 +92,10 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 typeof(EquipmentItemSheet),
                 typeof(MaterialItemSheet),
                 typeof(CustomEquipmentCraftRecipeSheet),
-                typeof(CustomEquipmentCraftSkillSheet),
-                typeof(CustomEquipmentCraftSubStatSheet),
+                typeof(CustomEquipmentCraftCostSheet),
                 typeof(CustomEquipmentCraftProficiencySheet),
+                typeof(CustomEquipmentCraftIconSheet),
+                typeof(CustomEquipmentCraftOptionSheet),
                 typeof(SkillSheet),
             });
 
@@ -108,14 +110,19 @@ namespace Nekoyume.Action.CustomEquipmentCraft
             }
             // ~Validate RecipeId
 
+            var proficiency = states.GetProficiency(AvatarAddress);
             // Validate Recipe ResultEquipmentId
+            var equipmentItemId = sheets.GetSheet<CustomEquipmentCraftProficiencySheet>()
+                .OrderedList.First(row => row.Proficiency >= proficiency)
+                .GetItemId(recipeRow.ItemSubType);
             var equipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>();
-            if (!equipmentItemSheet.TryGetValue(recipeRow.ResultEquipmentId, out var equipmentRow))
+            if (!equipmentItemSheet.TryGetValue(equipmentItemId, out var equipmentRow))
             {
                 throw new SheetRowNotFoundException(
                     addressesHex,
                     nameof(equipmentItemSheet),
-                    recipeRow.ResultEquipmentId);
+                    equipmentItemId
+                );
             }
             // ~Validate Recipe ResultEquipmentId
 
@@ -124,9 +131,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
 
             // Remove cost
             // Add proficiency
-            var proficiency = states.GetProficiency(AvatarAddress);
-            proficiency++;
-            states = states.SetProficiency(AvatarAddress, proficiency);
+            states = states.SetProficiency(AvatarAddress, proficiency + 1);
             // Create equipment
             // Set required level
             // Set base stat
