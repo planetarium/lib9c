@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Stat;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData.CustomEquipmentCraft
@@ -15,24 +16,21 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
             public override int Key => Id;
             public int Id { get; private set; }
             public ItemSubType ItemSubType { get; private set; }
-            public int ResultEquipmentId { get; private set; }
             public int DrawingAmount { get; private set; }
             public int DrawingToolAmount { get; private set; }
             public long RequiredBlock { get; private set; }
-            public List<int> IconList { get; private set; }
-            public List<int> SkillList { get; private set; }
-            public List<int> SubStatList { get; private set; }
+            public StatType FixedStatType { get; private set; }
+            public int FixedStatAmount { get; private set; }
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
                 ItemSubType = (ItemSubType)Enum.Parse(typeof(ItemSubType), fields[1]);
-                ResultEquipmentId = ParseInt(fields[2]);
-                DrawingAmount = ParseInt(fields[3]);
-                DrawingToolAmount = ParseInt(fields[4]);
-                RequiredBlock = ParseLong(fields[5]);
-                IconList = fields[6].Split("|").Select(i => ParseInt(i)).ToList();
-                SkillList = fields[7].Split("|").Select(i => ParseInt(i)).ToList();
-                SubStatList = fields[8].Split("|").Select(i => ParseInt(i)).ToList();
+                DrawingAmount = ParseInt(fields[2]);
+                DrawingToolAmount = ParseInt(fields[3]);
+                RequiredBlock = ParseLong(fields[4]);
+                FixedStatType = (StatType)Enum.Parse(typeof(StatType), fields[5]);
+                FixedStatAmount = ParseInt(fields[6]);
             }
         }
 

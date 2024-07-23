@@ -12,30 +12,33 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
         [Serializable]
         public class Row : SheetRow<int>
         {
-            public override int Key => Proficiency;
+            public override int Key => Id;
 
+            public int Id { get; private set; }
             public int Proficiency { get; private set; }
-            public int MinSubStat { get; private set; }
-            public int MaxSubStat { get; private set; }
-            public int RequiredLevel { get; private set; }
             public decimal CostMultiplier { get; private set; }
-            public BigInteger AdditionalGold { get; private set; }
-            public int AdditionalMaterialId { get; private set; }
-            public int AdditionalMaterialAmount { get; private set; }
+            public int MinCp { get; private set; }
+            public int MaxCp { get; private set; }
+            public int EquipmentRequiredLevel { get; private set; }
+            public int WeaponItemId { get; private set; }
+            public int ArmorItemId { get; private set; }
+            public int BeltItemId { get; private set; }
+            public int NecklaceItemId { get; private set; }
+            public int RingItemId { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
-                Proficiency = ParseInt(fields[0]);
-                MinSubStat = ParseInt(fields[1]);
-                MaxSubStat = ParseInt(fields[2]);
-                RequiredLevel = ParseInt(fields[3]);
-                CostMultiplier = ParseDecimal(fields[4]);
-                AdditionalGold = TryParseInt(fields[5], out var addGold) ? addGold : 0;
-                AdditionalMaterialId =
-                    TryParseInt(fields[6], out var addMaterialId) ? addMaterialId : 0;
-                AdditionalMaterialAmount = TryParseInt(fields[7], out var addMaterialAmt)
-                    ? addMaterialAmt
-                    : 0;
+                Id = ParseInt(fields[0]);
+                Proficiency = ParseInt(fields[1]);
+                CostMultiplier = ParseDecimal(fields[2]);
+                MinCp = ParseInt(fields[3]);
+                MaxCp = ParseInt(fields[4]);
+                EquipmentRequiredLevel = ParseInt(fields[5]);
+                WeaponItemId = ParseInt(fields[6]);
+                ArmorItemId = ParseInt(fields[7]);
+                BeltItemId = ParseInt(fields[8]);
+                NecklaceItemId = ParseInt(fields[9]);
+                RingItemId = ParseInt(fields[10]);
             }
         }
 
