@@ -68,6 +68,10 @@ namespace Nekoyume.Model.State
 
         #endregion
 
+        #region CustomCraft
+        public decimal CustomEquipmentCraftIconCostMultiplier { get; private set; }
+        #endregion
+
         public GameConfigState() : base(Address)
         {
         }
@@ -309,6 +313,15 @@ namespace Nekoyume.Model.State
                 AdventureBossClaimInterval = advClaimInterval.ToLong();
             }
 
+            #endregion
+
+            #region CustomCraft
+
+            if (serialized.TryGetValue((Text)"custom_equipment_craft_icon_cost_multiplier",
+                    out var cecIconCostMul))
+            {
+                CustomEquipmentCraftIconCostMultiplier = cecIconCostMul.ToDecimal();
+            }
             #endregion
         }
 
@@ -596,6 +609,12 @@ namespace Nekoyume.Model.State
                     AdventureBossClaimInterval.Serialize());
             }
 
+            if (CustomEquipmentCraftIconCostMultiplier > 0)
+            {
+                values.Add((Text)"custom_equipment_craft_icon_cost_multiplier",
+                    CustomEquipmentCraftIconCostMultiplier.Serialize());
+            }
+
             #endregion
 
 #pragma warning disable LAA1002
@@ -786,6 +805,10 @@ namespace Nekoyume.Model.State
                     break;
                 case "adventure_boss_claim_interval":
                     AdventureBossClaimInterval = TableExtensions.ParseLong(row.Value);
+                    break;
+                case "custom_equipment_craft_icon_cost_multiplier":
+                    CustomEquipmentCraftIconCostMultiplier =
+                        TableExtensions.ParseDecimal(row.Value);
                     break;
 
                 #endregion
