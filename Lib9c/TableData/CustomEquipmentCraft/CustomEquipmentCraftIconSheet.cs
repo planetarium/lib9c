@@ -7,13 +7,14 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
 {
     [Serializable]
     public class
-        CustomEquipmentCraftIconSheet : Sheet<ItemSubType, CustomEquipmentCraftIconSheet.Row>
+        CustomEquipmentCraftIconSheet : Sheet<int, CustomEquipmentCraftIconSheet.Row>
     {
         [Serializable]
-        public class Row : SheetRow<ItemSubType>
+        public class Row : SheetRow<int>
         {
-            public override ItemSubType Key => ItemSubType;
+            public override int Key => Id;
 
+            public int Id { get; private set; }
             public ItemSubType ItemSubType { get; private set; }
             public int IconId { get; private set; }
             public int RequiredProficiency { get; private set; }
@@ -22,12 +23,13 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
 
             public override void Set(IReadOnlyList<string> fields)
             {
-                ItemSubType = (ItemSubType)Enum.Parse(typeof(ItemSubType), fields[0]);
-                IconId = ParseInt(fields[1]);
-                RequiredProficiency = ParseInt(fields[2]);
+                Id = ParseInt(fields[0]);
+                ItemSubType = (ItemSubType)Enum.Parse(typeof(ItemSubType), fields[1]);
+                IconId = ParseInt(fields[2]);
+                RequiredProficiency = ParseInt(fields[3]);
                 // Default setting for icon is random only
-                RandomOnly = ParseBool(fields[3], true);
-                Ratio = ParseInt(fields[4]);
+                RandomOnly = ParseBool(fields[4], true);
+                Ratio = ParseInt(fields[5]);
             }
         }
 
