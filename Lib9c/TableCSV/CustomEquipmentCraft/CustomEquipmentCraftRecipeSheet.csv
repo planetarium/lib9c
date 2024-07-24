@@ -1,6 +1,6 @@
-id,item_sub_type,drawing_amount,drawing_tool_amount,required_block,fixed_stat_type,fixed_stat_amount
-1,Weapon,1,1,1,ATK,100
-2,Armor,1,1,1,DEF,100
-3,Belt,1,1,1,SPD,100
-4,Necklace,1,1,1,HP,100
-5,Ring,1,1,1,HP,100
+id,item_sub_type,drawing_amount,drawing_tool_amount,required_block
+1,Weapon,1,1,1
+2,Armor,1,1,1
+3,Belt,1,1,1
+4,Necklace,1,1,1
+5,Ring,1,1,1

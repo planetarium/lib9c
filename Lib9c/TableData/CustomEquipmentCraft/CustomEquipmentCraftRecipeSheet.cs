@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData.CustomEquipmentCraft
@@ -19,8 +17,6 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
             public int DrawingAmount { get; private set; }
             public int DrawingToolAmount { get; private set; }
             public long RequiredBlock { get; private set; }
-            public StatType FixedStatType { get; private set; }
-            public int FixedStatAmount { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
@@ -29,8 +25,6 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
                 DrawingAmount = ParseInt(fields[2]);
                 DrawingToolAmount = ParseInt(fields[3]);
                 RequiredBlock = ParseLong(fields[4]);
-                FixedStatType = (StatType)Enum.Parse(typeof(StatType), fields[5]);
-                FixedStatAmount = ParseInt(fields[6]);
             }
         }
 
