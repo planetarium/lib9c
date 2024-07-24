@@ -109,7 +109,6 @@ namespace Lib9c
         public const string NameKey = "n";
         public const string CharacterIdKey = "ci";
         public const string ExpKey = "exp";
-        public const string ProficiencyKey = "prf";
         public const string UpdatedAtKey = "ua";
         public const string AgentAddressKey = "aga";
         public const string MailBoxKey = "mb";

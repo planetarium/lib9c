@@ -48,7 +48,6 @@ namespace Nekoyume.Model.State
         public int ear;
         public int tail;
         public List<Address> combinationSlotAddresses;
-        public int Proficiency;
 
         public string NameWithHash { get; private set; }
 
@@ -78,7 +77,6 @@ namespace Nekoyume.Model.State
             characterId = GameConfig.DefaultAvatarCharacterId;
             level = 1;
             exp = 0;
-            Proficiency = 0;
             inventory = new Inventory();
             worldInformation = new WorldInformation(blockIndex, avatarSheets.WorldSheet, GameConfig.IsEditor, name);
             updatedAt = blockIndex;
@@ -136,7 +134,6 @@ namespace Nekoyume.Model.State
             characterId = avatarState.characterId;
             level = avatarState.level;
             exp = avatarState.exp;
-            Proficiency = avatarState.Proficiency;
             inventory = avatarState.inventory;
             worldInformation = avatarState.worldInformation;
             updatedAt = avatarState.updatedAt;
@@ -168,7 +165,6 @@ namespace Nekoyume.Model.State
             string characterIdKey = CharacterIdKey;
             string levelKey = LevelKey;
             string expKey = ExpKey;
-            string proficiencyKey = ProficiencyKey;
             string inventoryKey = LegacyInventoryKey;
             string worldInformationKey = LegacyWorldInformationKey;
             string updatedAtKey = UpdatedAtKey;
@@ -250,15 +246,6 @@ namespace Nekoyume.Model.State
                 questList = new QuestList((Dictionary)serialized[questListKey]);
             }
 
-            if (serialized.ContainsKey(proficiencyKey))
-            {
-                Proficiency = (Integer)serialized[proficiencyKey];
-            }
-            else
-            {
-                Proficiency = 0;
-            }
-
             PostConstructor();
         }
 
@@ -285,14 +272,6 @@ namespace Nekoyume.Model.State
             tail = (int)((Integer)serialized[19]).Value;
             combinationSlotAddresses = serialized[20].ToList(StateExtensions.ToAddress);
             RankingMapAddress = serialized[21].ToAddress();
-            if (serialized.Count > 22)
-            {
-                Proficiency = (Integer)serialized[22];
-            }
-            else
-            {
-                Proficiency = 0;
-            }
 
             PostConstructor();
         }
@@ -1308,8 +1287,7 @@ namespace Nekoyume.Model.State
                     .OrderBy(i => i)
                     .Select(i => i.Serialize())
                     .Serialize(),
-                RankingMapAddress.Serialize(),
-                (Integer)Proficiency
+                RankingMapAddress.Serialize()
             );
         }
     }
