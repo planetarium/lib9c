@@ -6,8 +6,8 @@ using Libplanet.Common;
 using Libplanet.Extensions.ActionEvaluatorCommonComponents;
 using Libplanet.Store;
 using Nekoyume.Action;
+using Nekoyume.Action.DPoS.Sys;
 using Nekoyume.Action.Loader;
-
 
 namespace Lib9c.Plugin
 {
@@ -20,10 +20,15 @@ namespace Lib9c.Plugin
             var stateStore = new TrieStateStore(new WrappedKeyValueStore(keyValueStore));
             _actionEvaluator = new ActionEvaluator(
                 new PolicyActionsRegistry(
-                    new IAction[] { }.ToImmutableArray(),
-                    new IAction[] { new RewardGold() }.ToImmutableArray(),
-                    new IAction[] { }.ToImmutableArray(),
-                    new IAction[] { }.ToImmutableArray()),
+                    new IAction[] { new AllocateReward() }.ToImmutableArray(),
+                    new IAction[]
+                        {
+                            new RecordProposer(),
+                            new RewardGold()
+                        }
+                        .ToImmutableArray(),
+                    new IAction[] { new Mortgage() }.ToImmutableArray(),
+                    new IAction[] { new Reward(), new Refund() }.ToImmutableArray()),
                 stateStore,
                 new NCActionLoader());
         }
