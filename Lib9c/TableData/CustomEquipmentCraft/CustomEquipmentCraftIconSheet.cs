@@ -17,7 +17,7 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
             public int Id { get; private set; }
             public ItemSubType ItemSubType { get; private set; }
             public int IconId { get; private set; }
-            public int RequiredProficiency { get; private set; }
+            public int RequiredRelationship { get; private set; }
             public bool RandomOnly { get; private set; }
             public int Ratio { get; private set; }
 
@@ -26,7 +26,7 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
                 Id = ParseInt(fields[0]);
                 ItemSubType = (ItemSubType)Enum.Parse(typeof(ItemSubType), fields[1]);
                 IconId = ParseInt(fields[2]);
-                RequiredProficiency = ParseInt(fields[3]);
+                RequiredRelationship = ParseInt(fields[3]);
                 // Default setting for icon is random only
                 RandomOnly = ParseBool(fields[4], true);
                 Ratio = ParseInt(fields[5]);

@@ -1,4 +1,4 @@
-id,item_sub_type,icon_id,required_proficiency,random_only,ratio
+id,item_sub_type,icon_id,required_relationship,random_only,ratio
 1,Weapon,11000001,0,false,90
 2,Weapon,11000002,0,true,10
 3,Armor,21000002,0,false,100

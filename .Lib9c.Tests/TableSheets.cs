@@ -275,7 +275,7 @@ namespace Lib9c.Tests
         // Custom Craft
         public CustomEquipmentCraftRecipeSheet CustomEquipmentCraftRecipeSheet { get; private set; }
 
-        public CustomEquipmentCraftProficiencySheet CustomEquipmentCraftProficiencySheet
+        public CustomEquipmentCraftRelationshipSheet CustomEquipmentCraftRelationshipSheet
         {
             get;
             private set;

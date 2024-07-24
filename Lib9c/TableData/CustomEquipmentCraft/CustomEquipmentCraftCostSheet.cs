@@ -17,16 +17,16 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
                 public int Amount;
             }
 
-            public override int Key => Proficiency;
+            public override int Key => Relationship;
 
-            public int Proficiency { get; private set; }
+            public int Relationship { get; private set; }
 
             public BigInteger GoldAmount { get; private set; }
             public List<MaterialCost> MaterialCosts { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
-                Proficiency = ParseInt(fields[0]);
+                Relationship = ParseInt(fields[0]);
                 GoldAmount = BigInteger.TryParse(fields[1], out var ga) ? ga : 0;
                 MaterialCosts = new List<MaterialCost>();
 
