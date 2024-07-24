@@ -19,7 +19,6 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
             public decimal CostMultiplier { get; private set; }
             public int MinCp { get; private set; }
             public int MaxCp { get; private set; }
-            public int EquipmentRequiredLevel { get; private set; }
             public int WeaponItemId { get; private set; }
             public int ArmorItemId { get; private set; }
             public int BeltItemId { get; private set; }
@@ -32,12 +31,11 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
                 CostMultiplier = ParseDecimal(fields[1]);
                 MinCp = ParseInt(fields[2]);
                 MaxCp = ParseInt(fields[3]);
-                EquipmentRequiredLevel = ParseInt(fields[4]);
-                WeaponItemId = ParseInt(fields[5]);
-                ArmorItemId = ParseInt(fields[6]);
-                BeltItemId = ParseInt(fields[7]);
-                NecklaceItemId = ParseInt(fields[8]);
-                RingItemId = ParseInt(fields[9]);
+                WeaponItemId = ParseInt(fields[4]);
+                ArmorItemId = ParseInt(fields[5]);
+                BeltItemId = ParseInt(fields[6]);
+                NecklaceItemId = ParseInt(fields[7]);
+                RingItemId = ParseInt(fields[8]);
             }
 
             public int GetItemId(ItemSubType itemSubType)
