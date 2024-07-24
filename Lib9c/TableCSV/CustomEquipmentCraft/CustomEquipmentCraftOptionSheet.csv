@@ -1,0 +1,4 @@
+id,item_sub_type,hp_ratio,atk_ratio,def_ratio,cri_ratio,hit_ratio,spd_ratio,drv_ratio,drr_ratio,cdmg_ratio,ap_ratio,thorn_ratio
+1,Weapon,0,100,,,,,,,,,
+2,Weapon,0,50,,50,,,,,,,
+3,Weapon,,,100,,,,,,,,
