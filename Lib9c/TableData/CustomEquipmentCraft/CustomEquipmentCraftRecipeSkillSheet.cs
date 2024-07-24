@@ -1,0 +1,36 @@
+using System;
+using System.Collections.Generic;
+using Nekoyume.Model.Item;
+using static Nekoyume.TableData.TableExtensions;
+
+namespace Nekoyume.TableData.CustomEquipmentCraft
+{
+    [Serializable]
+    public class
+        CustomEquipmentCraftRecipeSkillSheet : Sheet<int, CustomEquipmentCraftRecipeSkillSheet.Row>
+    {
+        [Serializable]
+        public class Row : SheetRow<int>
+        {
+            public override int Key => Id;
+
+            public int Id { get; private set; }
+            public ItemSubType ItemSubType { get; private set; }
+            public int SkillId { get; private set; }
+            public int Ratio { get; private set; }
+
+            public override void Set(IReadOnlyList<string> fields)
+            {
+                Id = ParseInt(fields[0]);
+                ItemSubType = (ItemSubType)Enum.Parse(typeof(ItemSubType), fields[1]);
+                SkillId = ParseInt(fields[2]);
+                Ratio = ParseInt(fields[3]);
+            }
+        }
+
+        public CustomEquipmentCraftRecipeSkillSheet()
+            : base(nameof(CustomEquipmentCraftRecipeSkillSheet))
+        {
+        }
+    }
+}

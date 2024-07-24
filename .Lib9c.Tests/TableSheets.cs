@@ -286,6 +286,13 @@ namespace Lib9c.Tests
         public CustomEquipmentCraftIconSheet CustomEquipmentCraftIconSheet { get; private set; }
 
         public CustomEquipmentCraftOptionSheet CustomEquipmentCraftOptionSheet { get; private set; }
+
+        public CustomEquipmentCraftRecipeSkillSheet CustomEquipmentCraftRecipeSkillSheet
+        {
+            get;
+            private set;
+        }
+
         /* Custom Craft */
 
         public void ItemSheetInitialize()
