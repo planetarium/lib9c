@@ -136,16 +136,6 @@ namespace Lib9c.Tests.Action
 
         private static void AssertException(Type type, Exception exc)
         {
-            var formatter = new BinaryFormatter();
-            using (var ms = new MemoryStream())
-            {
-                formatter.Serialize(ms, exc);
-                ms.Seek(0, SeekOrigin.Begin);
-                var deserialized = formatter.Deserialize(ms);
-                Exception exception = (Exception)Convert.ChangeType(deserialized, type);
-                Assert.Equal(exc.Message, exception.Message);
-            }
-
             var b = MessagePackSerializer.Serialize(exc);
             var des = MessagePackSerializer.Deserialize<Exception>(b);
             Assert.Equal(exc.Message, des.Message);

@@ -1,7 +1,11 @@
 using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Bencodex.Types;
 using MessagePack;
 using MessagePack.Formatters;
 
@@ -19,15 +23,16 @@ namespace Lib9c.Formatters
                 writer.WriteNil();
                 return;
             }
-            var formatter = new BinaryFormatter();
-            using (var stream = new MemoryStream())
+
+            string typeName = value.GetType().AssemblyQualifiedName!;
+            var msg = value.Message;
+            var dict = new Dictionary<string, string>
             {
-#pragma warning disable SYSLIB0011
-                formatter.Serialize(stream, value);
-#pragma warning restore SYSLIB0011
-                var bytes = stream.ToArray();
-                writer.Write(bytes);
-            }
+                ["type"] = typeName,
+                ["msg"] = msg,
+            };
+            var bytes =  JsonSerializer.Serialize(dict);
+            writer.Write(bytes);
         }
 
         public T? Deserialize(ref MessagePackReader reader,
@@ -39,15 +44,10 @@ namespace Lib9c.Formatters
             }
 
             options.Security.DepthStep(ref reader);
-            var formatter = new BinaryFormatter();
-            byte[] bytes = reader.ReadBytes()?.ToArray()
-                ?? throw new MessagePackSerializationException();
-            using (var stream = new MemoryStream(bytes))
-            {
-#pragma warning disable SYSLIB0011
-                return (T)formatter.Deserialize(stream);
-#pragma warning restore SYSLIB0011
-            }
+            var a = reader.ReadString();
+            var des = JsonSerializer.Deserialize<Dictionary<string, string>>(a);
+            var exc = Activator.CreateInstance(Type.GetType(des!["type"])!, des["msg"])!;
+            return (T)exc;
         }
     }
 }
