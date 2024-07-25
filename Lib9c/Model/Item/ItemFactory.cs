@@ -1,9 +1,16 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
+using Nekoyume.Action.Exceptions.CustomEquipmentCraft;
+using Nekoyume.Battle;
+using Nekoyume.Exceptions;
+using Nekoyume.Model.Skill;
+using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
 using Nekoyume.Model.State;
+using Nekoyume.TableData.CustomEquipmentCraft;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Model.Item
@@ -122,6 +129,146 @@ namespace Nekoyume.Model.Item
             {
                 equipment.LevelUp(random, row, isGreatSuccess);
             }
+
+            return equipment;
+        }
+
+        public static int SelectIconId(
+            int iconId, bool isRandom, int relationship,
+            CustomEquipmentCraftIconSheet iconSheet, IRandom random
+        )
+        {
+            // Validate and select Icon ID
+            int selectedIconId;
+
+            if (isRandom)
+            {
+                // Random icon
+                var iconSelector = new WeightedSelector<CustomEquipmentCraftIconSheet.Row>(random);
+                var iconRows = iconSheet.Values
+                    .Where(row => row.RequiredRelationship <= relationship);
+                foreach (var row in iconRows)
+                {
+                    iconSelector.Add(row, row.Ratio);
+                }
+
+                selectedIconId = iconSelector.Select(1).First().IconId;
+            }
+            else
+            {
+                // Selected icon
+                var iconRow = iconSheet.Values.FirstOrDefault(row => row.IconId == iconId);
+                if (iconRow is null)
+                {
+                    throw new InvalidActionFieldException($"Icon ID {iconId} is not valid.");
+                }
+
+                if (iconRow.RequiredRelationship > relationship)
+                {
+                    throw new NotEnoughRelationshipException(
+                        $"Relationship {relationship} is less than required relationship {iconRow.RequiredRelationship} to use icon {iconId}"
+                    );
+                }
+
+                if (iconRow.RandomOnly)
+                {
+                    throw new RandomOnlyIconException(iconRow.IconId);
+                }
+
+                selectedIconId = iconId;
+            }
+
+            return selectedIconId;
+        }
+
+        public static CustomEquipmentCraftOptionSheet.Row SelectOption(
+            ItemSubType itemSubType,
+            CustomEquipmentCraftOptionSheet optionSheet,
+            IRandom random
+        )
+        {
+            var optionSelector = new WeightedSelector<CustomEquipmentCraftOptionSheet.Row>(random);
+            foreach (var opt in optionSheet.Values
+                         .Where(row => row.ItemSubType == itemSubType))
+            {
+                optionSelector.Add(opt, opt.Ratio);
+            }
+
+            return optionSelector.Select(1).First();
+        }
+
+        public static Skill.Skill SelectSkill(
+            ItemSubType itemSubType,
+            CustomEquipmentCraftRecipeSkillSheet recipeSkillSheet,
+            EquipmentItemOptionSheet itemOptionSheet,
+            SkillSheet skillSheet,
+            IRandom random
+        )
+        {
+            var skillSelector =
+                new WeightedSelector<CustomEquipmentCraftRecipeSkillSheet.Row>(random);
+            foreach (var sr in recipeSkillSheet.Values
+                         .Where(row => row.ItemSubType == itemSubType))
+            {
+                skillSelector.Add(sr, sr.Ratio);
+            }
+
+            var skillId = skillSelector.Select(1).First().SkillId;
+            var skillOptionRow = itemOptionSheet.Values.First(row => row.Id == skillId);
+            var skillRow = skillSheet.Values.First(row => row.Id == skillOptionRow.SkillId);
+
+            var hasStatDamageRatio = skillOptionRow.StatDamageRatioMin != default &&
+                                     skillOptionRow.StatDamageRatioMax != default;
+            var statDamageRatio = hasStatDamageRatio
+                ? random.Next(skillOptionRow.StatDamageRatioMin,
+                    skillOptionRow.StatDamageRatioMax + 1)
+                : default;
+            var refStatType = hasStatDamageRatio
+                ? skillOptionRow.ReferencedStatType
+                : StatType.NONE;
+
+            return SkillFactory.Get(
+                skillRow,
+                random.Next(skillOptionRow.SkillDamageMin, skillOptionRow.SkillDamageMax + 1),
+                random.Next(skillOptionRow.SkillChanceMin, skillOptionRow.SkillChanceMax + 1),
+                statDamageRatio,
+                refStatType
+            );
+        }
+
+        public static Equipment CreateCustomEquipment(
+            IRandom random,
+            int iconId,
+            EquipmentItemSheet.Row equipmentRow,
+            long endBlockIndex,
+            int avatarLevel,
+            CustomEquipmentCraftRelationshipSheet.Row relationshipRow,
+            CustomEquipmentCraftOptionSheet.Row optionRow,
+            Skill.Skill skill
+        )
+        {
+            var guid = random.GenerateRandomGuid();
+            var equipment = (Equipment)CreateItemUsable(equipmentRow, guid, endBlockIndex);
+
+            equipment.IconId = iconId;
+
+            // Set Substats
+            var totalCp = (decimal)random.Next(
+                relationshipRow.MinCp,
+                relationshipRow.MaxCp + 1
+            );
+
+            foreach (var option in optionRow.SubStatData)
+            {
+                equipment.StatsMap.AddStatAdditionalValue(option.StatType,
+                    CPHelper.ConvertCpToStat(option.StatType,
+                        totalCp * option.Ratio / optionRow.TotalOptionRatio,
+                        avatarLevel)
+                );
+            }
+
+            // Set skill
+            equipment.Skills.Add(skill);
 
             return equipment;
         }
