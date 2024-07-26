@@ -107,6 +107,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 typeof(CustomEquipmentCraftRelationshipSheet),
                 typeof(CustomEquipmentCraftIconSheet),
                 typeof(CustomEquipmentCraftOptionSheet),
+                typeof(CustomEquipmentCraftRecipeSkillSheet),
                 typeof(SkillSheet),
             });
 
