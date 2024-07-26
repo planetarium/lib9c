@@ -7,9 +7,15 @@ using static Nekoyume.TableData.TableExtensions;
 namespace Nekoyume.TableData.CustomEquipmentCraft
 {
     [Serializable]
-    public class
-        CustomEquipmentCraftOptionSheet : Sheet<int, CustomEquipmentCraftOptionSheet.Row>
+    public class CustomEquipmentCraftOptionSheet
+        : Sheet<int, CustomEquipmentCraftOptionSheet.Row>
     {
+        public struct SubStat
+        {
+            public StatType StatType;
+            public int Ratio;
+        }
+
         [Serializable]
         public class Row : SheetRow<int>
         {
@@ -20,11 +26,6 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
                 StatType.Thorn,
             };
 
-            public struct SubStat
-            {
-                public StatType StatType;
-                public int Ratio;
-            }
 
             public override int Key => Id;
 

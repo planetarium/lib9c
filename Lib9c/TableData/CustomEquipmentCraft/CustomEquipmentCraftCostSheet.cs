@@ -8,15 +8,15 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
     [Serializable]
     public class CustomEquipmentCraftCostSheet : Sheet<int, CustomEquipmentCraftCostSheet.Row>
     {
+        public struct MaterialCost
+        {
+            public int ItemId;
+            public int Amount;
+        }
+
         [Serializable]
         public class Row : SheetRow<int>
         {
-            public struct MaterialCost
-            {
-                public int ItemId;
-                public int Amount;
-            }
-
             public override int Key => Relationship;
 
             public int Relationship { get; private set; }
