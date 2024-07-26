@@ -19,7 +19,7 @@ namespace Lib9c.Tests.TableData.CustomEquipmentCraft
 
             var row = sheet.Values.First();
             Assert.Equal(ItemSubType.Weapon, row.ItemSubType);
-            Assert.Equal(10101010, row.SkillId);
+            Assert.Equal(10101010, row.ItemOptionId);
             Assert.Equal(50, row.Ratio);
         }
     }

@@ -16,14 +16,14 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
 
             public int Id { get; private set; }
             public ItemSubType ItemSubType { get; private set; }
-            public int SkillId { get; private set; }
+            public int ItemOptionId { get; private set; }
             public int Ratio { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
                 ItemSubType = (ItemSubType)Enum.Parse(typeof(ItemSubType), fields[1]);
-                SkillId = ParseInt(fields[2]);
+                ItemOptionId = ParseInt(fields[2]);
                 Ratio = ParseInt(fields[3]);
             }
         }

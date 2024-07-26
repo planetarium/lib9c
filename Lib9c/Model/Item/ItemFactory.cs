@@ -213,8 +213,8 @@ namespace Nekoyume.Model.Item
                 skillSelector.Add(sr, sr.Ratio);
             }
 
-            var skillId = skillSelector.Select(1).First().SkillId;
-            var skillOptionRow = itemOptionSheet.Values.First(row => row.Id == skillId);
+            var itemOptionId = skillSelector.Select(1).First().ItemOptionId;
+            var skillOptionRow = itemOptionSheet.Values.First(row => row.Id == itemOptionId);
             var skillRow = skillSheet.Values.First(row => row.Id == skillOptionRow.SkillId);
 
             var hasStatDamageRatio = skillOptionRow.StatDamageRatioMin != default &&
