@@ -206,7 +206,9 @@ namespace Nekoyume.Action.CustomEquipmentCraft
 
             // Select data to create equipment
             var random = context.GetRandom();
-            var endBlockIndex = context.BlockIndex + recipeRow.RequiredBlock;
+            var endBlockIndex = context.BlockIndex +
+                                (long)Math.Floor(recipeRow.RequiredBlock *
+                                                 relationshipRow.RequiredBlockMultiplier);
 
             var iconId = ItemFactory.SelectIconId(
                 IconId, IconId == RandomIconId, relationship,
@@ -268,6 +270,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
 
             // Add Relationship
             return states
+                    .SetLegacyState(slotAddress, slotState.Serialize())
                     .SetAvatarState(AvatarAddress, avatarState)
                     .SetRelationship(AvatarAddress, relationship + 1)
                 ;

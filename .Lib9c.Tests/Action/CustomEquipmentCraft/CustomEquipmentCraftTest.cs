@@ -92,29 +92,31 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
         [Theory]
         // Success
         // First Craft
-        [InlineData(1, 10100000, true, 0, false, null)]
+        [InlineData(1, 10100000, true, 0, false, 10, null)]
         // Random Icon
-        [InlineData(1, 0, true, 0, false, null)]
+        [InlineData(1, 0, true, 0, false, 10, null)]
         // Move to next relationship group
-        [InlineData(1, 10100000, true, 10, false, null)]
-        [InlineData(1, 10100000, true, 100, false, null)]
-        [InlineData(1, 10100000, true, 1000, false, null)]
+        [InlineData(1, 10100000, true, 10, false, 10, null)]
+        [InlineData(1, 10100000, true, 100, false, 12, null)]
+        [InlineData(1, 10100000, true, 1000, false, 15, null)]
         // Failure
         // Not enough materials
-        [InlineData(1, 10100000, false, 0, false, typeof(NotEnoughItemException))]
+        [InlineData(1, 10100000, false, 0, false, 0, typeof(NotEnoughItemException))]
         // Slot already occupied
-        [InlineData(1, 10100000, true, 0, true, typeof(CombinationSlotUnlockException))]
+        [InlineData(1, 10100000, true, 0, true, 0, typeof(CombinationSlotUnlockException))]
         // Not enough relationship for icon
-        [InlineData(1, 10110000, true, 0, false, typeof(NotEnoughRelationshipException))]
+        [InlineData(1, 10110000, true, 0, false, 0, typeof(NotEnoughRelationshipException))]
         public void Execute(
             int recipeId,
             int iconId,
             bool enoughMaterials,
             int initialRelationship,
             bool slotOccupied,
+            long additionalBlock,
             Type exc
         )
         {
+            const long currentBlockIndex = 2L;
             var context = new ActionContext();
             var state = _initialState;
 
@@ -198,7 +200,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 Assert.Throws(exc, () => action.Execute(new ActionContext
                 {
                     PreviousState = state,
-                    BlockIndex = 2L,
+                    BlockIndex = currentBlockIndex,
                     Signer = _agentAddress,
                     RandomSeed = _random.Seed,
                 }));
@@ -208,7 +210,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 var resultState = action.Execute(new ActionContext
                 {
                     PreviousState = state,
-                    BlockIndex = 2L,
+                    BlockIndex = currentBlockIndex,
                     Signer = _agentAddress,
                     RandomSeed = _random.Seed,
                 });
@@ -225,6 +227,9 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 }
 
                 Assert.Equal(initialRelationship + 1, resultState.GetRelationship(_avatarAddress));
+
+                var slotState = resultState.GetCombinationSlotState(_avatarAddress, 0);
+                Assert.Equal(currentBlockIndex + additionalBlock, slotState.UnlockBlockIndex);
             }
         }
     }
