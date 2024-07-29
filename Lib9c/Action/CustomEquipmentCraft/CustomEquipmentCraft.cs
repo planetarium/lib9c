@@ -109,6 +109,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 typeof(CustomEquipmentCraftOptionSheet),
                 typeof(CustomEquipmentCraftRecipeSkillSheet),
                 typeof(SkillSheet),
+                typeof(ArenaSheet),
             });
 
             // Validate RecipeId
