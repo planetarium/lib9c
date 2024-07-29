@@ -8,7 +8,8 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
 {
     [Serializable]
     public class
-        CustomEquipmentCraftRelationshipSheet : Sheet<int, CustomEquipmentCraftRelationshipSheet.Row>
+        CustomEquipmentCraftRelationshipSheet
+        : Sheet<int, CustomEquipmentCraftRelationshipSheet.Row>
     {
         [Serializable]
         public class Row : SheetRow<int>
@@ -17,6 +18,7 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
 
             public int Relationship { get; private set; }
             public decimal CostMultiplier { get; private set; }
+            public decimal RequiredBlockMultiplier { get; private set; }
             public int MinCp { get; private set; }
             public int MaxCp { get; private set; }
             public int WeaponItemId { get; private set; }
@@ -29,13 +31,14 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
             {
                 Relationship = ParseInt(fields[0]);
                 CostMultiplier = ParseDecimal(fields[1]);
-                MinCp = ParseInt(fields[2]);
-                MaxCp = ParseInt(fields[3]);
-                WeaponItemId = ParseInt(fields[4]);
-                ArmorItemId = ParseInt(fields[5]);
-                BeltItemId = ParseInt(fields[6]);
-                NecklaceItemId = ParseInt(fields[7]);
-                RingItemId = ParseInt(fields[8]);
+                RequiredBlockMultiplier = ParseDecimal(fields[2]);
+                MinCp = ParseInt(fields[3]);
+                MaxCp = ParseInt(fields[4]);
+                WeaponItemId = ParseInt(fields[5]);
+                ArmorItemId = ParseInt(fields[6]);
+                BeltItemId = ParseInt(fields[7]);
+                NecklaceItemId = ParseInt(fields[8]);
+                RingItemId = ParseInt(fields[9]);
             }
 
             public int GetItemId(ItemSubType itemSubType)

@@ -11,8 +11,8 @@ namespace Lib9c.Tests.TableData.CustomEquipmentCraft
         public void Set()
         {
             var sheetData =
-                @"relationship,cost_multiplier,min_cp,max_cp,weapon_item_id,armor_item_id,belt_item_id,necklace_item_id,ring_item_id
-100,1,100,1000,90000001,91000001,92000001,93000001,94000001";
+                @"relationship,cost_multiplier,required_block_multiplier,min_cp,max_cp,weapon_item_id,armor_item_id,belt_item_id,necklace_item_id,ring_item_id
+100,1,1,100,1000,90000001,91000001,92000001,93000001,94000001";
             var sheet = new CustomEquipmentCraftRelationshipSheet();
             sheet.Set(sheetData);
 
@@ -22,6 +22,7 @@ namespace Lib9c.Tests.TableData.CustomEquipmentCraft
 
             Assert.Equal(100, row.Relationship);
             Assert.Equal(1, row.CostMultiplier);
+            Assert.Equal(1, row.RequiredBlockMultiplier);
             Assert.Equal(100, row.MinCp);
             Assert.Equal(1000, row.MaxCp);
             Assert.Equal(90000001, row.WeaponItemId);
