@@ -7,6 +7,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Rune;
@@ -154,7 +155,7 @@ namespace Nekoyume.Action
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
             var feeStoreAddress =
-                Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+                ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
 
             // Burn costs
             if (levelUpResult.NcgCost > 0)

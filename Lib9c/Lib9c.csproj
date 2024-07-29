@@ -9,7 +9,7 @@
     <IntermediateOutputPath>.obj</IntermediateOutputPath>
     <RootNamespace>Nekoyume</RootNamespace>
     <LangVersion>9</LangVersion>
-    <VersionPrefix>1.12.0</VersionPrefix>
+    <VersionPrefix>1.15.0</VersionPrefix>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
@@ -29,14 +29,18 @@
     </PackageReference>
     <PackageReference Include="System.Reactive" Version="4.3.2" />
     <PackageReference Include="CsvHelper" Version="15.0.5" />
+    <!-- Include System.Diagnostics.DiagnosticSource only if targeting netstandard2.1 -->
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
+    <!-- Include Pyroscope only if not targeting netstandard2.1 -->
+    <PackageReference Include="Pyroscope" Version="0.8.14" Condition="'$(TargetFramework)' != 'netstandard2.1'" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\.Libplanet\Libplanet\Libplanet.csproj">
+    <ProjectReference Include="..\.Libplanet\src\Libplanet\Libplanet.csproj">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
     </ProjectReference>
-    <ProjectReference Include="..\.Libplanet\Libplanet.Analyzers\Libplanet.Analyzers.csproj">
+    <ProjectReference Include="..\.Libplanet\tools\Libplanet.Analyzers\Libplanet.Analyzers.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <OutputItemType>Analyzer</OutputItemType>
       <!-- https://github.com/dotnet/roslyn/issues/18093#issuecomment-405702631 -->

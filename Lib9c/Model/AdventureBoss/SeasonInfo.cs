@@ -22,10 +22,10 @@ namespace Nekoyume.Model.AdventureBoss
 
         public SeasonInfo(List serialized)
         {
-            Season = serialized[0].ToInteger();
-            StartBlockIndex = serialized[1].ToInteger();
-            EndBlockIndex = serialized[2].ToInteger();
-            NextStartBlockIndex = serialized[3].ToInteger();
+            Season = serialized[0].ToLong();
+            StartBlockIndex = serialized[1].ToLong();
+            EndBlockIndex = serialized[2].ToLong();
+            NextStartBlockIndex = serialized[3].ToLong();
             BossId = serialized[4].ToInteger();
         }
 

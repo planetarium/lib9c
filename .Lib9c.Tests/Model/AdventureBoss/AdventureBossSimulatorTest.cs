@@ -46,6 +46,13 @@ namespace Lib9c.Tests.Model.AdventureBoss
             costume.equipped = true;
             _avatarState.inventory.AddItem(costume);
 
+            var collectionSheet = _tableSheets.CollectionSheet;
+            var statModifiers = new List<StatModifier>();
+            foreach (var r in collectionSheet.Values)
+            {
+                statModifiers.AddRange(collectionSheet[r.Id].StatModifiers);
+            }
+
             var simulator = new AdventureBossSimulator(
                 adventureBossData.BossId,
                 1,
@@ -64,18 +71,13 @@ namespace Lib9c.Tests.Model.AdventureBoss
                     _tableSheets.AdventureBossFloorSheet[1],
                     _tableSheets.MaterialItemSheet
                 ),
-                new List<StatModifier>
-                {
-                    new (StatType.ATK, StatModifier.OperationType.Add, 100),
-                },
+                statModifiers,
                 _tableSheets.DeBuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
 
             var player = simulator.Player;
             Assert.Equal(row.Stat, player.Stats.CostumeStats.ATK);
-            Assert.Equal(100, player.Stats.CollectionStats.ATK);
-            Assert.Equal(100 + row.Stat + player.Stats.BaseStats.ATK, player.Stats.ATK);
 
             simulator.Simulate();
 
@@ -104,7 +106,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
         [InlineData(false, 2, 1, 1)]
         [InlineData(false, 2, 1, 5)]
         [InlineData(false, 2, 1, 3)]
-        public void AddBreakthrough(bool simulate, int bossId, int fristFloor, int lastFloor)
+        public void AddBreakthrough(bool simulate, int bossId, int firstFloor, int lastFloor)
         {
             AdventureBossSimulator simulator;
             var floorRows = _tableSheets.AdventureBossFloorSheet.Values
@@ -153,7 +155,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
             }
 
             var floorIdList = new List<int>();
-            for (var fl = fristFloor; fl <= lastFloor; fl++)
+            for (var fl = firstFloor; fl <= lastFloor; fl++)
             {
                 floorIdList.Add(floorRows.First(row => row.Floor == fl).Id);
             }
@@ -164,11 +166,11 @@ namespace Lib9c.Tests.Model.AdventureBoss
             if (!simulate)
             {
                 // +2: 1 for last floor, 1 for SpawnPlayer
-                Assert.Equal(lastFloor - fristFloor + 2, simulator.Log.events.Count);
+                Assert.Equal(lastFloor - firstFloor + 2, simulator.Log.events.Count);
             }
 
             var filtered = simulator.Log.events.OfType<Breakthrough>();
-            Assert.Equal(lastFloor - fristFloor + 1, filtered.Count());
+            Assert.Equal(lastFloor - firstFloor + 1, filtered.Count());
 
             if (simulate)
             {

@@ -45,6 +45,7 @@ namespace Nekoyume.Blockchain
                                 block.Hash,
                                 DateTimeOffset.UtcNow,
                                 _privateKey.PublicKey,
+                                null,
                                 VoteFlag.PreCommit).Sign(_privateKey)))
                     : null;
                 _chain.Append(block, commit);

@@ -36,5 +36,7 @@ namespace Nekoyume.Blockchain.Policy
         public int GetMaxTransactionsPerSignerPerBlock(long index) => int.MaxValue;
 
         public int GetMinBlockProtocolVersion(long index) => 0;
+
+        public long GetMaxEvidencePendingDuration(long index) => 10L;
     }
 }

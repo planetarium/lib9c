@@ -11,6 +11,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -82,20 +83,23 @@ namespace Nekoyume.Action
                 CRYSTAL = serialized["c"].ToFungibleAssetValue();
             }
 
-            public override IValue Serialize() =>
-#pragma warning disable LAA1002
-                new Dictionary(new Dictionary<IKey, IValue>
+            public override IValue Serialize()
+            {
+                var values = new Dictionary<IKey, IValue>
                 {
-                    [(Text)"id"] = id.Serialize(),
-                    [(Text)"materialItemIdList"] = materialItemIdList
+                    [(Text) "id"] = id.Serialize(),
+                    [(Text) "materialItemIdList"] = materialItemIdList
                         .OrderBy(i => i)
                         .Select(g => g.Serialize()).Serialize(),
-                    [(Text)"gold"] = gold.Serialize(),
-                    [(Text)"actionPoint"] = actionPoint.Serialize(),
-                    [(Text)"enhancementResult"] = enhancementResult.Serialize(),
-                    [(Text)"preItemUsable"] = preItemUsable.Serialize(),
-                    [(Text)"c"] = CRYSTAL.Serialize(),
-                }.Union((Dictionary)base.Serialize()));
+                    [(Text) "gold"] = gold.Serialize(),
+                    [(Text) "actionPoint"] = actionPoint.Serialize(),
+                    [(Text) "enhancementResult"] = enhancementResult.Serialize(),
+                    [(Text) "preItemUsable"] = preItemUsable.Serialize(),
+                    [(Text) "c"] = CRYSTAL.Serialize()
+                };
+#pragma warning disable LAA1002
+                return new Dictionary(values.Union((Dictionary) base.Serialize()));
+            }
 #pragma warning restore LAA1002
         }
 
@@ -364,7 +368,7 @@ namespace Nekoyume.Action
                 var arenaSheet = states.GetSheet<ArenaSheet>();
                 var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
                 var feeStoreAddress =
-                    Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+                    ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
                 states = states.TransferAsset(ctx, ctx.Signer, feeStoreAddress,
                     states.GetGoldCurrency() * requiredNcg);
             }

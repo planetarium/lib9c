@@ -98,58 +98,79 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // No AP potion at all
             yield return new object[]
             {
-                0, 5, 0, 0, 0, null, new (int, int)[] { },
+                0, 5, 0, 0, 0, null, new (int, int)[] { }, new (int, int)[] { },
             };
             // Start from bottom, goes to 5
             yield return new object[]
             {
-                0, 5, 5, 10, 5, null,
+                0, 5, 5, 20, 10, null, // 2 potions per floor
                 new[]
                 {
-                    (600301, 76), // 50 first Reward + 26 floor reward
-                    (600302, 50), // 50 first reward
-                    (600303, 0),
+                    (600301, 10), // 10 floor reward
+                    (600302, 30), // 10+5+5+5+5 first reward
+                    (600303, 4), // 2+2 first reward
                     (600304, 0),
+                },
+                new[]
+                {
+                    (10033, 5), // 5 first reward
+                    (10034, 8), // 5 first reward + 3 floor reward
                 },
             };
             // Start from bottom, goes to 3 because of potion
             yield return new object[]
             {
-                0, 5, 3, 3, 0, null, new[]
+                0, 5, 3, 6, 0, null, new[]
                 {
-                    (600301, 47), // 30 first reward + 17 floor reward
-                    (600302, 30), // 30 first reward
-                    (600303, 0),
+                    (600301, 7), // 7 floor reward
+                    (600302, 20), // 10+5+5 first reward
+                    (600303, 4), // 2+2 first reward
                     (600304, 0),
+                },
+                new[]
+                {
+                    (10033, 0),
+                    (10034, 0),
                 },
             };
             // Start from 3, goes to 5 because of locked floor
             yield return new object[]
             {
-                2, 5, 5, 5, 2, null, new[]
+                2, 5, 5, 10, 4, null, new[]
                 {
-                    (600301, 40), // 30 first reward + 10 floor reward
-                    (600302, 39), // 30 first reward + 9 floor reward
-                    (600303, 0),
+                    (600301, 4), // 4 floor reward
+                    (600302, 15), // 5+5+5 first reward
+                    (600303, 2), // 2 first reward
                     (600304, 0),
                 },
-            };
-            // Start from 6, goes to 10
-            yield return new object[]
-            {
-                5, 10, 10, 10, 5, null,
                 new[]
                 {
-                    (600301, 72), // 50 first reward + 22 floor reward
-                    (600302, 50), // 50 first reward
-                    (600303, 0),
+                    (10033, 8), // 5 first reward + 3 floor reward
+                    (10034, 5), // 5 first reward
+                },
+            };
+            // Start from 6, goes to 9
+            yield return new object[]
+            {
+                5, 10, 9, 20, 10, null,
+                new[]
+                {
+                    (600203, 5), // 5 first reward
+                    (600301, 0),
+                    (600302, 5), // 5 floor reward
+                    (600303, 15), // 5+5+5 first reward
                     (600304, 0),
+                },
+                new[]
+                {
+                    (10033, 8), // 5 first reward + 3 floor reward
+                    (10034, 3), // 3 floor reward
                 },
             };
             // Start from 20, cannot enter
             yield return new object[]
             {
-                20, 20, 20, 10, 10, typeof(InvalidOperationException), null,
+                20, 20, 20, 10, 10, typeof(InvalidOperationException), null, null,
             };
         }
 
@@ -162,7 +183,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             int initialPotion,
             int expectedPotion,
             Type exc,
-            (int, int)[] expectedRewards
+            (int, int)[] expectedItemRewards,
+            (int, int)[] expectedFavRewards
         )
         {
             // Settings
@@ -179,6 +201,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var sheets = state.GetSheets(sheetTypes: new[]
             {
                 typeof(MaterialItemSheet),
+                typeof(RuneSheet),
             });
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var materialRow =
@@ -275,7 +298,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Assert.Equal(expectedFloor, explorer.Floor);
 
                 var inventory = state.GetInventoryV2(TesterAvatarAddress);
-                foreach (var (id, amount) in expectedRewards)
+                foreach (var (id, amount) in expectedItemRewards)
                 {
                     if (amount == 0)
                     {
@@ -285,6 +308,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     {
                         Assert.Equal(amount, inventory.Items.First(i => i.item.Id == id).count);
                     }
+                }
+
+                var runeSheet = sheets.GetSheet<RuneSheet>();
+                foreach (var (id, amount) in expectedFavRewards)
+                {
+                    var ticker = runeSheet.Values.First(rune => rune.Id == id).Ticker;
+                    var currency = Currencies.GetRune(ticker);
+                    Assert.Equal(amount, state.GetBalance(TesterAvatarAddress, currency).RawValue);
                 }
 
                 itemSlotState =

@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Arena;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -126,7 +127,7 @@ namespace Nekoyume.Action
 
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress = Addresses.GetBlacksmithFeeAddress(
+            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(
                 arenaData.ChampionshipId,
                 arenaData.Round);
             if (ncgQuantity > 0)
