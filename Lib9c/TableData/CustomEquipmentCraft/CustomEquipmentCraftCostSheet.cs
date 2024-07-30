@@ -8,25 +8,25 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
     [Serializable]
     public class CustomEquipmentCraftCostSheet : Sheet<int, CustomEquipmentCraftCostSheet.Row>
     {
+        public struct MaterialCost
+        {
+            public int ItemId;
+            public int Amount;
+        }
+
         [Serializable]
         public class Row : SheetRow<int>
         {
-            public struct MaterialCost
-            {
-                public int ItemId;
-                public int Amount;
-            }
+            public override int Key => Relationship;
 
-            public override int Key => Proficiency;
-
-            public int Proficiency { get; private set; }
+            public int Relationship { get; private set; }
 
             public BigInteger GoldAmount { get; private set; }
             public List<MaterialCost> MaterialCosts { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
-                Proficiency = ParseInt(fields[0]);
+                Relationship = ParseInt(fields[0]);
                 GoldAmount = BigInteger.TryParse(fields[1], out var ga) ? ga : 0;
                 MaterialCosts = new List<MaterialCost>();
 

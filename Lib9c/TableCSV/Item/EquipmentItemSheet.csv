@@ -212,3 +212,9 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10650007,Ymir Aura,Aura,5,Normal,0,ATK,10,0,10620001,60000
 10660000,Ymir Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
 10710000,Nimble Grimoire,Grimoire,1,Normal,0,HIT,310,0,10610000,2
+90000001,Custom Sword,Weapon,6,Normal,1,ATK,11,2,10110000,5
+90000002,Custom Sword2,Weapon,6,Normal,1,ATK,1111,2,10110000,5
+90000003,Custom Sword3,Weapon,6,Normal,1,ATK,111111,2,10110000,5
+91000001,Custom Clothes,Armor,6,Normal,1,HP,180,2,Character/Player/10210000,5
+91000002,Custom Clothes2,Armor,6,Normal,1,HP,18180,2,Character/Player/10210000,5
+91000003,Custom Clothes3,Armor,6,Normal,1,HP,1818180,2,Character/Player/10210000,5

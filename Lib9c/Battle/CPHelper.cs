@@ -226,6 +226,40 @@ namespace Nekoyume.Battle
         public static decimal GetCPOfThorn(decimal value) =>
             value * 1m;
 
+        // NOTE: If a stat type is added or Cp calculation logic is changed, You must change this function too.
+        public static decimal ConvertCpToStat(StatType statType, decimal cp, int characterLevel)
+        {
+            switch (statType)
+            {
+                case StatType.HP:
+                    return cp / 0.7m;
+                case StatType.ATK:
+                    return cp / 10.5m;
+                case StatType.DEF:
+                    return cp / 10.5m;
+                case StatType.CRI:
+                    return cp / characterLevel / 20m;
+                case StatType.HIT:
+                    return cp / 2.3m;
+                case StatType.SPD:
+                    return cp / 3m;
+                case StatType.DRV:
+                    return cp / 10.5m;
+                case StatType.DRR:
+                    return cp / characterLevel / 20m;
+                case StatType.CDMG:
+                    return cp / characterLevel / 3m;
+                case StatType.ArmorPenetration:
+                    return cp / 5m;
+                case StatType.Thorn:
+                    return cp / 1m;
+                case StatType.NONE:
+                default:
+                    // throw new ArgumentOutOfRangeException(nameof(statType), statType, null);
+                    return 0m;
+            }
+        }
+
         public static decimal GetSkillsMultiplier(int skillsCount)
         {
             switch (skillsCount)

@@ -6,20 +6,26 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Arena;
+using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Item;
+using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.CustomEquipmentCraft;
-using Serilog;
 
 namespace Nekoyume.Action.CustomEquipmentCraft
 {
     [Serializable]
-    [ActionType(ActionTypeIdentifier)]
+    [ActionType(TypeIdentifier)]
     public class CustomEquipmentCraft : ActionBase
     {
-        public const string ActionTypeIdentifier = "custom_equipment_craft";
+        public const string TypeIdentifier = "custom_equipment_craft";
+        public const int DrawingItemId = 600401;
+        public const int DrawingToolItemId = 600402;
+        public const int RandomIconId = 0;
 
         public Address AvatarAddress;
         public int RecipeId;
@@ -28,10 +34,12 @@ namespace Nekoyume.Action.CustomEquipmentCraft
 
         public override IValue PlainValue =>
             Dictionary.Empty
-                .Add("type_id", ActionTypeIdentifier)
+                .Add("type_id", TypeIdentifier)
                 .Add("values", List.Empty
                     .Add(AvatarAddress.Serialize())
-                    .Add(RecipeId).Add(SlotIndex).Add(IconId)
+                    .Add(RecipeId)
+                    .Add(SlotIndex)
+                    .Add(IconId)
                 );
 
         public override void LoadPlainValue(IValue plainValue)
@@ -56,14 +64,16 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 )
             );
 
+            // Validate Address
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
-            var started = DateTimeOffset.UtcNow;
-            Log.Debug("{AddressesHex}CustomEquipmentCraft exec started", addressesHex);
-            var agentState = states.GetAgentState(context.Signer);
-            if (agentState is null)
+            if (!Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress))
             {
-                throw new FailedLoadStateException(
-                    $"[{addressesHex}] Aborted as the agent state of the signer was failed to load.");
+                throw new InvalidActionFieldException(
+                    TypeIdentifier,
+                    GetSignerAndOtherAddressesHex(context, AvatarAddress),
+                    nameof(AvatarAddress),
+                    $"Signer({context.Signer}) is not contained in" +
+                    $" AvatarAddress({AvatarAddress}).");
             }
 
             if (!states.TryGetAvatarState(context.Signer, AvatarAddress, out var avatarState))
@@ -90,13 +100,16 @@ namespace Nekoyume.Action.CustomEquipmentCraft
             Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new[]
             {
                 typeof(EquipmentItemSheet),
+                typeof(EquipmentItemOptionSheet),
                 typeof(MaterialItemSheet),
                 typeof(CustomEquipmentCraftRecipeSheet),
                 typeof(CustomEquipmentCraftCostSheet),
-                typeof(CustomEquipmentCraftProficiencySheet),
+                typeof(CustomEquipmentCraftRelationshipSheet),
                 typeof(CustomEquipmentCraftIconSheet),
                 typeof(CustomEquipmentCraftOptionSheet),
+                typeof(CustomEquipmentCraftRecipeSkillSheet),
                 typeof(SkillSheet),
+                typeof(ArenaSheet),
             });
 
             // Validate RecipeId
@@ -110,11 +123,11 @@ namespace Nekoyume.Action.CustomEquipmentCraft
             }
             // ~Validate RecipeId
 
-            var proficiency = states.GetProficiency(AvatarAddress);
+            var relationship = states.GetRelationship(AvatarAddress);
             // Validate Recipe ResultEquipmentId
-            var equipmentItemId = sheets.GetSheet<CustomEquipmentCraftProficiencySheet>()
-                .OrderedList.First(row => row.Proficiency >= proficiency)
-                .GetItemId(recipeRow.ItemSubType);
+            var relationshipRow = sheets.GetSheet<CustomEquipmentCraftRelationshipSheet>()
+                .OrderedList.First(row => row.Relationship >= relationship);
+            var equipmentItemId = relationshipRow.GetItemId(recipeRow.ItemSubType);
             var equipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>();
             if (!equipmentItemSheet.TryGetValue(equipmentItemId, out var equipmentRow))
             {
@@ -126,22 +139,141 @@ namespace Nekoyume.Action.CustomEquipmentCraft
             }
             // ~Validate Recipe ResultEquipmentId
 
-            // Validate Materials
-            // Should finalize cost using sheet, additional cost and proficiency
+            // Modify cost to get real cost
+            var requiredFungibleItems = new Dictionary<int, int>();
+            var drawingCost =
+                (int)Math.Floor(recipeRow.DrawingAmount * relationshipRow.CostMultiplier);
+            var drawingToolCost =
+                recipeRow.DrawingToolAmount * relationshipRow.CostMultiplier;
+            if (IconId != 0)
+            {
+                var gameConfig = states.GetGameConfigState();
+                drawingToolCost =
+                    Math.Floor(drawingToolCost * gameConfig.CustomEquipmentCraftIconCostMultiplier);
+            }
 
             // Remove cost
-            // Add proficiency
-            states = states.SetProficiency(AvatarAddress, proficiency + 1);
-            // Create equipment
-            // Set required level
-            // Set base stat
-            // Set substats
-            // Set skill
+            if (!avatarState.inventory.RemoveMaterial(DrawingItemId, context.BlockIndex,
+                    drawingCost))
+            {
+                throw new NotEnoughItemException(
+                    $"Insufficient material {DrawingItemId}: {drawingCost} needed"
+                );
+            }
+
+            requiredFungibleItems[DrawingItemId] = drawingCost;
+
+            if (!avatarState.inventory.RemoveMaterial(DrawingToolItemId, context.BlockIndex,
+                    (int)drawingToolCost))
+            {
+                throw new NotEnoughItemException(
+                    $"Insufficient material {DrawingItemId}: {drawingToolCost} needed"
+                );
+            }
+
+            requiredFungibleItems[DrawingToolItemId] = (int)drawingToolCost;
+
+            // Remove additional cost if exists
+            var ncgCost = 0L;
+            var additionalCostRow = sheets.GetSheet<CustomEquipmentCraftCostSheet>().OrderedList
+                .FirstOrDefault(row => row.Relationship == relationship);
+            if (additionalCostRow is not null)
+            {
+                if (additionalCostRow.GoldAmount > 0)
+                {
+                    ncgCost = (long)additionalCostRow.GoldAmount;
+                    var arenaData = sheets.GetSheet<ArenaSheet>()
+                        .GetRoundByBlockIndex(context.BlockIndex);
+                    states = states.TransferAsset(context, context.Signer,
+                        ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round),
+                        additionalCostRow.GoldAmount * states.GetGoldCurrency());
+                }
+
+                foreach (var materialCost in additionalCostRow.MaterialCosts)
+                {
+                    if (!avatarState.inventory.RemoveMaterial(materialCost.ItemId,
+                            context.BlockIndex,
+                            materialCost.Amount))
+                    {
+                        throw new NotEnoughItemException(
+                            $"Insufficient material {materialCost.ItemId}: {materialCost.Amount} needed"
+                        );
+                    }
+
+                    requiredFungibleItems[materialCost.ItemId] = materialCost.Amount;
+                }
+            }
+
+            // Select data to create equipment
+            var random = context.GetRandom();
+            var endBlockIndex = context.BlockIndex +
+                                (long)Math.Floor(recipeRow.RequiredBlock *
+                                                 relationshipRow.RequiredBlockMultiplier);
+
+            var iconId = ItemFactory.SelectIconId(
+                IconId, IconId == RandomIconId, relationship,
+                sheets.GetSheet<CustomEquipmentCraftIconSheet>(), random
+            );
+            var optionRow = ItemFactory.SelectOption(
+                recipeRow.ItemSubType, sheets.GetSheet<CustomEquipmentCraftOptionSheet>(), random
+            );
+            var skill = ItemFactory.SelectSkill(
+                recipeRow.ItemSubType,
+                sheets.GetSheet<CustomEquipmentCraftRecipeSkillSheet>(),
+                sheets.GetSheet<EquipmentItemOptionSheet>(),
+                sheets.GetSheet<SkillSheet>(),
+                random
+            );
+
+            // Create equipment with ItemFactory
+            var equipment = ItemFactory.CreateCustomEquipment(
+                random,
+                iconId,
+                equipmentRow,
+                endBlockIndex,
+                avatarState.level,
+                relationshipRow,
+                optionRow,
+                skill
+            );
+
+            // Add equipment
+            avatarState.inventory.AddItem(equipment);
+            avatarState.blockIndex = context.BlockIndex;
+            avatarState.updatedAt = context.BlockIndex;
 
             // Update slot
-            // Create mail
+            var materialItemSheet = sheets.GetSheet<MaterialItemSheet>();
+            var mailId = random.GenerateRandomGuid();
+            var attachmentResult = new CombinationConsumable5.ResultModel
+            {
+                id = mailId,
+                actionPoint = 0,
+                gold = ncgCost,
+                materials = requiredFungibleItems.ToDictionary(
+                    e => ItemFactory.CreateMaterial(materialItemSheet, e.Key),
+                    e => e.Value),
+                itemUsable = equipment,
+                recipeId = RecipeId,
+                subRecipeId = 0 // This it not required
+            };
+            slotState.Update(attachmentResult, context.BlockIndex, endBlockIndex);
 
-            return states.SetAvatarState(AvatarAddress, avatarState);
+            // Create mail
+            var mail = new CombinationMail(
+                attachmentResult,
+                context.BlockIndex,
+                mailId,
+                endBlockIndex);
+            avatarState.Update(mail);
+
+
+            // Add Relationship
+            return states
+                    .SetLegacyState(slotAddress, slotState.Serialize())
+                    .SetAvatarState(AvatarAddress, avatarState)
+                    .SetRelationship(AvatarAddress, relationship + 1)
+                ;
         }
     }
 }
