@@ -14,6 +14,7 @@
     using Libplanet.Store.Trie;
     using Libplanet.Types.Assets;
     using Libplanet.Types.Blocks;
+    using Libplanet.Types.Evidence;
     using Libplanet.Types.Tx;
     using Nekoyume.Action;
     using Nekoyume.Action.DPoS.Misc;
@@ -78,10 +79,11 @@
             worldTrie = stateStore.Commit(worldTrie);
             // Create a policy without RewardGold action.
             var policy = new BlockPolicy(
-                new IAction[] { new AllocateReward() }.ToImmutableArray(),
-                new IAction[] { new RecordProposer() }.ToImmutableArray(),
-                new IAction[] { new Mortgage() }.ToImmutableArray(),
-                new IAction[] { new Reward(), new Refund() }.ToImmutableArray());
+                new PolicyActionsRegistry(
+                    new IAction[] { new AllocateReward() }.ToImmutableArray(),
+                    new IAction[] { new RecordProposer() }.ToImmutableArray(),
+                    new IAction[] { new Mortgage() }.ToImmutableArray(),
+                    new IAction[] { new Reward(), new Refund() }.ToImmutableArray()));
             var preEval = new BlockContent(
                 new BlockMetadata(
                     protocolVersion: BlockMetadata.CurrentProtocolVersion,
@@ -91,16 +93,14 @@
                     publicKey: _genesisProposer.PublicKey,
                     previousHash: null,
                     txHash: null,
-                    lastCommit: null),
-                transactions: Enumerable.Empty<Transaction>()).Propose();
+                    lastCommit: null,
+                    evidenceHash: null),
+                transactions: Enumerable.Empty<Transaction>(),
+                evidence: Array.Empty<EvidenceBase>()).Propose();
             var genesisBlock = preEval.Sign(_genesisProposer, worldTrie.Hash);
             var blockChainStates = new BlockChainStates(_store, stateStore);
             _actionEvaluator = new ActionEvaluator(
-                new PolicyActionsRegistry(
-                    _ => policy.BeginBlockActions,
-                    _ => policy.EndBlockActions,
-                    _ => policy.BeginTxActions,
-                    _ => policy.EndTxActions),
+                policyActionsRegistry: policy.PolicyActionsRegistry,
                 stateStore: stateStore,
                 actionTypeLoader: new NCActionLoader());
             _chain = BlockChain.Create(
@@ -142,7 +142,7 @@
             Assert.Single(block.Transactions);
 
             var evaluations = _actionEvaluator.Evaluate(
-                block, _store.GetNextStateRootHash((BlockHash)block.PreviousHash));
+                block, _store.GetStateRootHash((BlockHash)block.PreviousHash));
 
             // 5 policy actions + 1 CreateAvatar action
             Assert.Equal(6, evaluations.Count);

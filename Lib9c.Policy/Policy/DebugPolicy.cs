@@ -14,18 +14,6 @@ namespace Nekoyume.Blockchain.Policy
         {
         }
 
-        public ImmutableArray<IAction> BeginBlockActions { get; } =
-            new IAction[] { }.ToImmutableArray();
-
-        public ImmutableArray<IAction> EndBlockActions { get; } =
-            new IAction[] { new RewardGold() }.ToImmutableArray();
-
-        public ImmutableArray<IAction> BeginTxActions { get; } =
-            new IAction[] { }.ToImmutableArray();
-
-        public ImmutableArray<IAction> EndTxActions { get; } =
-            new IAction[] { }.ToImmutableArray();
-
         public TxPolicyViolationException ValidateNextBlockTx(
             BlockChain blockChain, Transaction transaction)
         {
@@ -38,6 +26,8 @@ namespace Nekoyume.Blockchain.Policy
             return null;
         }
 
+        public PolicyActionsRegistry PolicyActionsRegistry => new PolicyActionsRegistry();
+
         public long GetMaxTransactionsBytes(long index) => long.MaxValue;
 
         public int GetMinTransactionsPerBlock(long index) => 0;
@@ -45,6 +35,10 @@ namespace Nekoyume.Blockchain.Policy
         public int GetMaxTransactionsPerBlock(long index) => int.MaxValue;
 
         public int GetMaxTransactionsPerSignerPerBlock(long index) => int.MaxValue;
+        public long GetMaxEvidencePendingDuration(long index)
+        {
+            throw new System.NotImplementedException();
+        }
 
         public int GetMinBlockProtocolVersion(long index) => 0;
     }

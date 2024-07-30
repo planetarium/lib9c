@@ -102,8 +102,9 @@ namespace Lib9c.Tools.SubCommand
                 Block block =
                     store.GetBlock(blockHash);
                 var preEvalBlock = new PreEvaluationBlock(
-                    block, block.Transactions
-                );
+                    block,
+                    block.Transactions,
+                    block.Evidence);
                 stderr.WriteLine(
                     "[{0}/{1}] Executing block #{2} {3}...",
                     block.Index - bottom.Index + 1L,
@@ -115,11 +116,7 @@ namespace Lib9c.Tools.SubCommand
                 var actionLoader = TypedActionLoader.Create(
                     typeof(ActionBase).Assembly, typeof(ActionBase));
                 var actionEvaluator = new ActionEvaluator(
-                    new PolicyActionsRegistry(
-                        _ => policy.BeginBlockActions,
-                        _ => policy.EndBlockActions,
-                        _ => policy.BeginTxActions,
-                        _ => policy.EndTxActions),
+                    policy.PolicyActionsRegistry,
                     stateStore,
                     actionLoader);
 
