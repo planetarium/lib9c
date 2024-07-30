@@ -81,11 +81,7 @@ namespace Lib9c.Benchmarks
             IKeyValueStore stateKeyValueStore = new RocksDBKeyValueStore(Path.Combine(storePath, "states"));
             var stateStore = new TrieStateStore(stateKeyValueStore);
             var actionEvaluator = new ActionEvaluator(
-                new PolicyActionsRegistry(
-                    _ => policy.BeginBlockActions,
-                    _ => policy.EndBlockActions,
-                    _ => policy.BeginTxActions,
-                    _ => policy.EndTxActions),
+                policy.PolicyActionsRegistry,
                 stateStore,
                 new NCActionLoader());
             var chain = new BlockChain(

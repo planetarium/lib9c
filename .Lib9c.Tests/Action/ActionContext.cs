@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Libplanet.Types.Blocks;
+    using Libplanet.Types.Evidence;
     using Libplanet.Types.Tx;
 
     public class ActionContext : IActionContext
@@ -39,9 +40,11 @@ namespace Lib9c.Tests.Action
 
         public HashDigest<SHA256>? PreviousStateRootHash { get; set; }
 
-        public bool IsBlockAction { get; }
+        public bool IsPolicyAction { get; set; }
 
         public FungibleAssetValue? MaxGasPrice { get; set; }
+
+        public IReadOnlyList<EvidenceBase> Evidence { get; set; }
 
         public IReadOnlyList<ITransaction> Txs
         {

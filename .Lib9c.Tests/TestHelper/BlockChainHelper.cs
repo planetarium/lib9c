@@ -48,11 +48,7 @@ namespace Lib9c.Tests.TestHelper
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    new PolicyActionsRegistry(
-                        beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                        endBlockActionsGetter: _ => policy.EndBlockActions,
-                        beginTxActionsGetter: _ => policy.BeginTxActions,
-                        endTxActionsGetter: _ => policy.EndTxActions),
+                    policy.PolicyActionsRegistry,
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),

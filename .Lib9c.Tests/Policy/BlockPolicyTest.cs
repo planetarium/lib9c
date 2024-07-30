@@ -19,6 +19,7 @@ namespace Lib9c.Tests
     using Libplanet.Types.Assets;
     using Libplanet.Types.Blocks;
     using Libplanet.Types.Consensus;
+    using Libplanet.Types.Evidence;
     using Libplanet.Types.Tx;
     using Nekoyume;
     using Nekoyume.Action;
@@ -72,12 +73,12 @@ namespace Lib9c.Tests
                 genesis,
                 new ActionEvaluator(
                     new PolicyActionsRegistry(
-                        beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                        endBlockActionsGetter: _ =>
-                            policy.EndBlockActions.Where(action => action is not UpdateValidators)
-                                .ToImmutableArray(),
-                        beginTxActionsGetter: _ => policy.BeginTxActions,
-                        endTxActionsGetter: _ => policy.EndTxActions),
+                        beginBlockActions: policy.PolicyActionsRegistry.BeginBlockActions,
+                        endBlockActions: policy.PolicyActionsRegistry.EndBlockActions
+                            .Where(action => action is not UpdateValidators)
+                            .ToImmutableArray(),
+                        beginTxActions: policy.PolicyActionsRegistry.BeginTxActions,
+                        endTxActions: policy.PolicyActionsRegistry.EndTxActions),
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),
@@ -285,11 +286,7 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    new PolicyActionsRegistry(
-                        beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                        endBlockActionsGetter: _ => policy.EndBlockActions,
-                        beginTxActionsGetter: _ => policy.BeginTxActions,
-                        endTxActionsGetter: _ => policy.EndTxActions),
+                    policy.PolicyActionsRegistry,
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),
@@ -343,11 +340,7 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    new PolicyActionsRegistry(
-                        beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                        endBlockActionsGetter: _ => policy.EndBlockActions,
-                        beginTxActionsGetter: _ => policy.BeginTxActions,
-                        endTxActionsGetter: _ => policy.EndTxActions),
+                    policy.PolicyActionsRegistry,
                     stateStore: stateStore,
                     actionTypeLoader: actionLoader
                 ),
@@ -402,12 +395,12 @@ namespace Lib9c.Tests
                 genesis,
                 new ActionEvaluator(
                     new PolicyActionsRegistry(
-                        beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                        endBlockActionsGetter: _ =>
-                            policy.EndBlockActions.Where(action => action is not UpdateValidators)
-                                .ToImmutableArray(),
-                        beginTxActionsGetter: _ => policy.BeginTxActions,
-                        endTxActionsGetter: _ => policy.EndTxActions),
+                        beginBlockActions: policy.PolicyActionsRegistry.BeginBlockActions,
+                        endBlockActions: policy.PolicyActionsRegistry.EndBlockActions
+                            .Where(action => action is not UpdateValidators)
+                            .ToImmutableArray(),
+                        beginTxActions: policy.PolicyActionsRegistry.BeginTxActions,
+                        endTxActions: policy.PolicyActionsRegistry.EndTxActions),
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),
@@ -468,12 +461,12 @@ namespace Lib9c.Tests
             // Exclude UpdateValidators action to keep validator set just for testing
             var actionEvaluator = new ActionEvaluator(
                 new PolicyActionsRegistry(
-                    beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                    endBlockActionsGetter: _ =>
-                        policy.EndBlockActions.Where(action => action is not UpdateValidators)
-                            .ToImmutableArray(),
-                    beginTxActionsGetter: _ => policy.BeginTxActions,
-                    endTxActionsGetter: _ => policy.EndTxActions),
+                    beginBlockActions: policy.PolicyActionsRegistry.BeginBlockActions,
+                    endBlockActions: policy.PolicyActionsRegistry.EndBlockActions
+                        .Where(action => action is not UpdateValidators)
+                        .ToImmutableArray(),
+                    beginTxActions: policy.PolicyActionsRegistry.BeginTxActions,
+                    endTxActions: policy.PolicyActionsRegistry.EndTxActions),
                 stateStore: stateStore,
                 actionTypeLoader: new NCActionLoader()
             );
@@ -512,9 +505,11 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: null),
-                transactions: txs).Propose();
-            Block block1 = EvaluateAndSign(store, actionEvaluator, preEvalBlock1, adminPrivateKey);
+                    lastCommit: null,
+                    evidenceHash: null),
+                transactions: txs,
+                evidence: Array.Empty<EvidenceBase>()).Propose();
+            Block block1 = EvaluateAndSign(store, preEvalBlock1, adminPrivateKey);
             blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
@@ -526,9 +521,11 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
-                transactions: txs).Propose();
-            Block block2 = EvaluateAndSign(store, actionEvaluator, preEvalBlock2, adminPrivateKey);
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                    evidenceHash: null),
+                transactions: txs,
+                evidence: Array.Empty<EvidenceBase>()).Propose();
+            Block block2 = EvaluateAndSign(store, preEvalBlock2, adminPrivateKey);
             blockChain.Append(block2, GenerateBlockCommit(block2, adminPrivateKey));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block2.Hash));
@@ -540,9 +537,11 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
-                transactions: txs).Propose();
-            Block block3 = EvaluateAndSign(store, actionEvaluator, preEvalBlock3, adminPrivateKey);
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                    evidenceHash: null),
+                transactions: txs,
+                evidence: Array.Empty<EvidenceBase>()).Propose();
+            Block block3 = EvaluateAndSign(store, preEvalBlock3, adminPrivateKey);
             Assert.Throws<InvalidBlockTxCountException>(
                 () => blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey)));
             Assert.Equal(3, blockChain.Count);
@@ -577,12 +576,12 @@ namespace Lib9c.Tests
             // Exclude UpdateValidators action to keep validator set just for testing
             var actionEvaluator = new ActionEvaluator(
                 new PolicyActionsRegistry(
-                    beginBlockActionsGetter: _ => policy.BeginBlockActions,
-                    endBlockActionsGetter: _ =>
-                        policy.EndBlockActions.Where(action => action is not UpdateValidators)
-                            .ToImmutableArray(),
-                    beginTxActionsGetter: _ => policy.BeginTxActions,
-                    endTxActionsGetter: _ => policy.EndTxActions),
+                    beginBlockActions: policy.PolicyActionsRegistry.BeginBlockActions,
+                    endBlockActions: policy.PolicyActionsRegistry.EndBlockActions
+                        .Where(action => action is not UpdateValidators)
+                        .ToImmutableArray(),
+                    beginTxActions: policy.PolicyActionsRegistry.BeginTxActions,
+                    endTxActions: policy.PolicyActionsRegistry.EndTxActions),
                 stateStore: stateStore,
                 actionTypeLoader: new NCActionLoader()
             );
@@ -621,9 +620,11 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: null),
-                transactions: txs).Propose();
-            Block block1 = EvaluateAndSign(store, actionEvaluator, preEvalBlock1, adminPrivateKey);
+                    lastCommit: null,
+                    evidenceHash: null),
+                transactions: txs,
+                evidence: Array.Empty<EvidenceBase>()).Propose();
+            Block block1 = EvaluateAndSign(store, preEvalBlock1, adminPrivateKey);
 
             // Should be fine since policy hasn't kicked in yet.
             blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
@@ -638,9 +639,11 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
-                transactions: txs).Propose();
-            Block block2 = EvaluateAndSign(store, actionEvaluator, preEvalBlock2, adminPrivateKey);
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                    evidenceHash: null),
+                transactions: txs,
+                evidence: Array.Empty<EvidenceBase>()).Propose();
+            Block block2 = EvaluateAndSign(store, preEvalBlock2, adminPrivateKey);
 
             // Subpolicy kicks in.
             Assert.Throws<InvalidBlockTxCountPerSignerException>(
@@ -659,9 +662,11 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey)),
-                transactions: txs).Propose();
-            Block block3 = EvaluateAndSign(store, actionEvaluator, preEvalBlock3, adminPrivateKey);
+                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                    evidenceHash: null),
+                transactions: txs,
+                evidence: Array.Empty<EvidenceBase>()).Propose();
+            Block block3 = EvaluateAndSign(store, preEvalBlock3, adminPrivateKey);
             blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block3.Hash));
@@ -722,7 +727,6 @@ namespace Lib9c.Tests
 
         private Block EvaluateAndSign(
             IStore store,
-            ActionEvaluator actionEvaluator,
             PreEvaluationBlock preEvaluationBlock,
             PrivateKey privateKey
         )
@@ -741,7 +745,7 @@ namespace Lib9c.Tests
                     $"{BlockMetadata.SlothProtocolVersion} is not acceptable");
             }
 
-            var stateRootHash = store.GetNextStateRootHash((BlockHash)preEvaluationBlock.PreviousHash);
+            var stateRootHash = store.GetStateRootHash((BlockHash)preEvaluationBlock.PreviousHash);
 
             return preEvaluationBlock.Sign(privateKey, (HashDigest<SHA256>)stateRootHash);
         }

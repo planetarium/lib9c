@@ -11,8 +11,7 @@ namespace Nekoyume.Blockchain.Policy
     public class NCBlockPolicy : BlockPolicy
     {
         public NCBlockPolicy(
-            ImmutableArray<IAction> beginBlockActions,
-            ImmutableArray<IAction> endBlockActions,
+            PolicyActionsRegistry? policyActionsRegistry,
             TimeSpan blockInterval,
             Func<BlockChain, Transaction, TxPolicyViolationException>?
                 validateNextBlockTx = null,
@@ -23,8 +22,7 @@ namespace Nekoyume.Blockchain.Policy
             Func<long, int>? getMaxTransactionsPerBlock = null,
             Func<long, int>? getMaxTransactionsPerSignerPerBlock = null)
             : base(
-                beginBlockActions: beginBlockActions,
-                endBlockActions: endBlockActions,
+                policyActionsRegistry: policyActionsRegistry,
                 blockInterval: blockInterval,
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,

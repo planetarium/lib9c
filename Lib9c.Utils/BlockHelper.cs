@@ -94,19 +94,6 @@ namespace Nekoyume
             {
                 actions.AddRange(actionBases);
             }
-            var beginBlockActions = new BlockPolicySource().GetPolicy().BeginBlockActions;
-            var endBlockActions = new BlockPolicySource().GetPolicy().EndBlockActions;
-            var beginTxActions = new BlockPolicySource().GetPolicy().BeginTxActions;
-            var endTxActions = new BlockPolicySource().GetPolicy().EndTxActions;
-            var actionLoader = new NCActionLoader();
-            var actionEvaluator = new ActionEvaluator(
-                new PolicyActionsRegistry(
-                    _ => beginBlockActions,
-                    _ => endBlockActions,
-                    _ => beginTxActions,
-                    _ => endTxActions),
-                new TrieStateStore(new MemoryKeyValueStore()),
-                actionLoader);
             return
                 BlockChain.ProposeGenesisBlock(
                     privateKey: privateKey,
