@@ -11,6 +11,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -367,7 +368,7 @@ namespace Nekoyume.Action
                 var arenaSheet = states.GetSheet<ArenaSheet>();
                 var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
                 var feeStoreAddress =
-                    Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+                    ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
                 states = states.TransferAsset(ctx, ctx.Signer, feeStoreAddress,
                     states.GetGoldCurrency() * requiredNcg);
             }

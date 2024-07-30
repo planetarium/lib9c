@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Globalization;
 using System.Linq;
 using Nekoyume.Module;
 using Lib9c;
@@ -283,8 +282,9 @@ namespace Nekoyume.Helper
 
             // calculate ncg reward
             var totalNcgReward = (bountyBoard.totalBounty() * 15).DivRem(100, out _);
-            var myNcgReward = (totalNcgReward * explorer.Score)
-                .DivRem(exploreBoard.TotalPoint, out _);
+            var myNcgReward = exploreBoard.TotalPoint == 0
+                ? 0 * totalNcgReward.Currency
+                : (totalNcgReward * explorer.Score).DivRem(exploreBoard.TotalPoint, out _);
 
             // Only > 0.1 NCG will be rewarded.
             if (myNcgReward >= (10 * gold).DivRem(100, out _))

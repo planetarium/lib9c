@@ -67,7 +67,8 @@ jobs:
         run: |
           set -e
 
-          sed -i -E 's|<TargetFramework>.*</TargetFramework>|<TargetFramework>netstandard2.1</TargetFramework>|' Lib9c*/*.csproj Libplanet*/*.csproj
+          sed -i -E 's|<TargetFramework>.*</TargetFramework>|<TargetFramework>netstandard2.1</TargetFramework>|' Lib9c*/*.csproj
+          sed -i -E 's|(<TargetFramework.+>).*(</TargetFramework>)|\1netstandard2.1\2|' .Libplanet/Directory.Build.props
           sed -i -E 's|<ImplicitUsings>.*</ImplicitUsings>|<ImplicitUsings>disable</ImplicitUsings>|' Lib9c*/*.csproj Libplanet*/*.csproj
           sed -i -E 's|\[MaybeNullWhen\(false\)] out TValue value|out TValue value|' Lib9c/TableData/Sheet.cs
           sed -i -E 's|public bool TryGetValue\(TKey key, out TValue value, bool throwException\)|public bool TryGetValue\(TKey key, out TValue? value, bool throwException\)|' Lib9c/TableData/Sheet.cs
@@ -84,15 +85,20 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.400
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
         with:
-          version: 8
-          run_install: true
+          version: 9
+          run_install: |
+            recursive: true
+            cwd: "@planetarium"
       - name: Build Lib9c.Tools
         run: dotnet build .Lib9c.Tools/Lib9c.Tools.csproj
       - run: pnpm -r build
+        working-directory: "@planetarium/lib9c"
       - run: pnpm -r fmt:ci
+        working-directory: "@planetarium/lib9c"
       - run: pnpm -r test
+        working-directory: "@planetarium/lib9c"
 
   release:
     if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')

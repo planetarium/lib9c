@@ -9,6 +9,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
@@ -170,7 +171,7 @@ namespace Nekoyume.Action
             // Transfer tax.
             var arenaSheet = states.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             var tax = product.Price.DivRem(100, out _) * Action.Buy.TaxRate;
             var taxedPrice = product.Price - tax;
 
@@ -301,7 +302,7 @@ namespace Nekoyume.Action
             // Transfer tax.
             var arenaSheet = states.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress = Addresses.GetShopFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             states = states.TransferAsset(
                 context,
                 context.Signer,

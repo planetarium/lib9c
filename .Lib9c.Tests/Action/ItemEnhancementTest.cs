@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Arena;
     using Nekoyume.Extensions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
@@ -319,7 +320,7 @@ namespace Lib9c.Tests.Action
             var arenaSheet = _tableSheets.ArenaSheet;
             var arenaData = arenaSheet.GetRoundByBlockIndex(1);
             var feeStoreAddress =
-                Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+                ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             Assert.Equal(
                 expectedCost * _currency,
                 nextState.GetBalance(feeStoreAddress, _currency)
@@ -511,7 +512,7 @@ namespace Lib9c.Tests.Action
             var arenaSheet = _tableSheets.ArenaSheet;
             var arenaData = arenaSheet.GetRoundByBlockIndex(1);
             var feeStoreAddress =
-                Addresses.GetBlacksmithFeeAddress(arenaData.ChampionshipId, arenaData.Round);
+                ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             Assert.Equal(
                 expectedCost * _currency,
                 nextState.GetBalance(feeStoreAddress, _currency)
