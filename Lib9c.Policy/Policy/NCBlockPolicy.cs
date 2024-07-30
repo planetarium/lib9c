@@ -4,13 +4,15 @@ using Libplanet.Blockchain.Policies;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
 using System;
+using System.Collections.Immutable;
 
 namespace Nekoyume.Blockchain.Policy
 {
     public class NCBlockPolicy : BlockPolicy
     {
         public NCBlockPolicy(
-            IAction blockAction,
+            ImmutableArray<IAction> beginBlockActions,
+            ImmutableArray<IAction> endBlockActions,
             TimeSpan blockInterval,
             Func<BlockChain, Transaction, TxPolicyViolationException>?
                 validateNextBlockTx = null,
@@ -21,7 +23,11 @@ namespace Nekoyume.Blockchain.Policy
             Func<long, int>? getMaxTransactionsPerBlock = null,
             Func<long, int>? getMaxTransactionsPerSignerPerBlock = null)
             : base(
-                blockAction: blockAction,
+                policyActionsRegistry: new PolicyActionsRegistry(
+                    beginBlockActions: beginBlockActions,
+                    endBlockActions: endBlockActions,
+                    beginTxActions: ImmutableArray<IAction>.Empty,
+                    endTxActions: ImmutableArray<IAction>.Empty),
                 blockInterval: blockInterval,
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,

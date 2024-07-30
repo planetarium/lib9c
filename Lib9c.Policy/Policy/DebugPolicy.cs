@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Libplanet.Action;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
@@ -13,7 +14,7 @@ namespace Nekoyume.Blockchain.Policy
         {
         }
 
-        public IAction BlockAction { get; } = new RewardGold();
+        public PolicyActionsRegistry PolicyActionsRegistry { get; } = new PolicyActionsRegistry();
 
         public TxPolicyViolationException ValidateNextBlockTx(
             BlockChain blockChain, Transaction transaction)
