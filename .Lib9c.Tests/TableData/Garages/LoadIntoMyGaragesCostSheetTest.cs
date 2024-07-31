@@ -243,5 +243,23 @@ namespace Lib9c.Tests.TableData.Garages
                 "1234567890123456789012345678901234567890123456789012345678901234");
             Assert.False(_sheet.HasCost(fungibleId));
         }
+
+        [Fact]
+        public void GetGarageCostPerUnit_ItemId()
+        {
+            foreach (var row in _sheet.Values.Where(i => i.FungibleId is not null))
+            {
+                Assert.Equal(_sheet.GetGarageCostPerUnit((HashDigest<SHA256>)row.FungibleId!), _sheet.GetGarageCostPerUnit(row.ItemId));
+            }
+        }
+
+        [Fact]
+        public void GetGarageCost_ItemId()
+        {
+            foreach (var row in _sheet.Values.Where(i => i.FungibleId is not null))
+            {
+                Assert.Equal(_sheet.GetGarageCost((HashDigest<SHA256>)row.FungibleId!, 3), _sheet.GetGarageCost(row.ItemId, 3));
+            }
+        }
     }
 }

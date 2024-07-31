@@ -55,6 +55,12 @@ namespace Nekoyume.TableData.Garages
             return row.GarageCostPerUnit;
         }
 
+        public decimal GetGarageCostPerUnit(int itemId)
+        {
+            var row = OrderedList!.First(r => r.ItemId == itemId);
+            return row.GarageCostPerUnit;
+        }
+
         public FungibleAssetValue GetGarageCost(FungibleAssetValue fav)
         {
             var unitCost = GetGarageCostPerUnit(fav.Currency.Ticker);
@@ -87,6 +93,27 @@ namespace Nekoyume.TableData.Garages
                 (unitCost * count).ToString(CultureInfo.InvariantCulture));
         }
 
+        public FungibleAssetValue GetGarageCost(int itemId, int count)
+        {
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count),
+                    count,
+                    "count must be positive.");
+            }
+
+            if (count == 0)
+            {
+                return new FungibleAssetValue(Currencies.Garage);
+            }
+
+            var unitCost = GetGarageCostPerUnit(itemId);
+            return FungibleAssetValue.Parse(
+                Currencies.Garage,
+                (unitCost * count).ToString(CultureInfo.InvariantCulture));
+        }
+
         public FungibleAssetValue GetGarageCost(
             IEnumerable<FungibleAssetValue> fungibleAssetValues,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
@@ -111,6 +138,23 @@ namespace Nekoyume.TableData.Garages
             return cost;
         }
 
+        public FungibleAssetValue GetGarageCost(
+            IEnumerable<FungibleAssetValue> fungibleAssetValues,
+            IEnumerable<(int itemId, int count)> itemIdAndCounts)
+        {
+            var cost = new FungibleAssetValue(Currencies.Garage);
+            foreach (var fav in fungibleAssetValues)
+            {
+                cost += GetGarageCost(fav);
+            }
+
+            foreach (var (itemId, count) in itemIdAndCounts)
+            {
+                cost += GetGarageCost(itemId, count);
+            }
+
+            return cost;
+        }
         public bool HasCost(string currencyTicker)
         {
             return OrderedList!.Any(r => r.CurrencyTicker == currencyTicker);
