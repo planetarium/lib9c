@@ -995,6 +995,30 @@
             Assert.False(inventory.TryGetNonFungibleItem(equipment.NonFungibleId, out Equipment _, 1L));
         }
 
+        [Fact]
+        public void RemoteTradableMaterial()
+        {
+            var item = (TradableMaterial)GetFirstTradableMaterial();
+            item.RequiredBlockIndex = 100L;
+            var inventory = new Inventory();
+            Assert.Empty(inventory.Items);
+
+            for (var i = 0; i < 3; i++)
+            {
+                inventory.AddItem(item);
+            }
+
+            // RequiredBlockIndex
+            Assert.False(inventory.RemoveTradableMaterial(item.Id, 1L));
+            // NotEnoughItemCount
+            Assert.False(inventory.RemoveTradableMaterial(item.Id, 200L, 4));
+            Assert.True(inventory.RemoveTradableMaterial(item.Id, 200L, 3));
+
+            inventory.AddItem(item, 1, new OrderLock(Guid.NewGuid()));
+            // InventorySlot is lock
+            Assert.False(inventory.RemoveTradableMaterial(item.Id, 200L));
+        }
+
         private static Consumable GetFirstConsumable()
         {
             var row = TableSheets.ConsumableItemSheet.First;

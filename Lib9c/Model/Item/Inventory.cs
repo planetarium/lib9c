@@ -652,6 +652,33 @@ namespace Nekoyume.Model.Item
             return true;
         }
 
+        public bool RemoveTradableMaterial(int materialId, long blockIndex, int count = 1)
+        {
+            var target = _items
+                .Where(i =>
+                    !i.Locked &&
+                    i.item is TradableMaterial tradableMaterial &&
+                    tradableMaterial.Id == materialId &&
+                    tradableMaterial.RequiredBlockIndex <= blockIndex
+                )
+                .OrderBy(i => ((ITradableItem)i.item).RequiredBlockIndex)
+                .ThenBy(i => i.count)
+                .FirstOrDefault();
+            if (target is null ||
+                target.count < count)
+            {
+                return false;
+            }
+
+            target.count -= count;
+            if (target.count == 0)
+            {
+                _items.Remove(target);
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Remove tradable item from inventory.
         /// Use the requiredBlockIndex when you want to remove the item that
