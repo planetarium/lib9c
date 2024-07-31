@@ -20,6 +20,7 @@ namespace Nekoyume.TableData.Garages
 
             public int Id { get; private set; }
 
+            public int ItemId { get; private set; }
             public string CurrencyTicker { get; private set; }
 
             public HashDigest<SHA256>? FungibleId { get; private set; }
@@ -29,11 +30,12 @@ namespace Nekoyume.TableData.Garages
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
-                CurrencyTicker = fields[1];
-                FungibleId = string.IsNullOrEmpty(fields[2])
+                ItemId = TryParseInt(fields[1], out var result) ? result : 0;
+                CurrencyTicker = fields[2];
+                FungibleId = string.IsNullOrEmpty(fields[3])
                     ? (HashDigest<SHA256>?)null
-                    : HashDigest<SHA256>.FromString(fields[2]);
-                GarageCostPerUnit = ParseDecimal(fields[3]);
+                    : HashDigest<SHA256>.FromString(fields[3]);
+                GarageCostPerUnit = ParseDecimal(fields[4]);
             }
         }
 
