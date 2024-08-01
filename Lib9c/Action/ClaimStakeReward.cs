@@ -9,6 +9,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Garages;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -142,10 +143,7 @@ namespace Nekoyume.Action
             foreach (var fav in favResult)
             {
                 var rewardCurrency = fav.Currency;
-                var recipient = Currencies.IsRuneTicker(rewardCurrency.Ticker) ||
-                                Currencies.IsSoulstoneTicker(rewardCurrency.Ticker)
-                    ? AvatarAddress
-                    : context.Signer;
+                var recipient = GarageUtils.PickRecipient(context.Signer, AvatarAddress, rewardCurrency);
                 states = states.MintAsset(context, recipient, fav);
             }
 

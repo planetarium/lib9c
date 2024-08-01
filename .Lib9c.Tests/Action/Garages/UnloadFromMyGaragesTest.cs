@@ -325,13 +325,8 @@ namespace Lib9c.Tests.Action.Garages
                 .Where(fav => fav.Sign > 0)
                 .Select(fav =>
                 {
-                    if (Currencies.IsRuneTicker(fav.Currency.Ticker) ||
-                        Currencies.IsSoulstoneTicker(fav.Currency.Ticker))
-                    {
-                        return (avatarAddr, fav);
-                    }
-
-                    return (agentAddr, fav);
+                    var recipient = GarageUtils.PickRecipient(agentAddr, avatarAddr, fav.Currency);
+                    return (recipient, fav);
                 })
                 .ToArray();
         }
