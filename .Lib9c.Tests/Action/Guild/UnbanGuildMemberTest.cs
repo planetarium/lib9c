@@ -37,7 +37,6 @@ namespace Lib9c.Tests.Action.Guild
 
             IWorld world = new World(MockWorldState.CreateModern());
             world = world.MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMemberAddress)
                 .JoinGuild(guildAddress, targetGuildMemberAddress);
 
@@ -67,8 +66,7 @@ namespace Lib9c.Tests.Action.Guild
 
             IWorld world = new World(MockWorldState.CreateModern());
             world = world.MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress)
-                .Ban(guildAddress, targetGuildMemberAddress);
+                .Ban(guildAddress, guildMasterAddress, targetGuildMemberAddress);
 
             Assert.True(world.IsBanned(guildAddress, targetGuildMemberAddress));
             Assert.Null(world.GetJoinedGuild(targetGuildMemberAddress));

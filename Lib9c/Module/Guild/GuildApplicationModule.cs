@@ -40,16 +40,27 @@ namespace Nekoyume.Module.Guild
         }
 
         public static IWorld ApplyGuild(
-            this IWorld world, AgentAddress agentAddress, GuildAddress guildAddress)
+            this IWorld world, AgentAddress signer, GuildAddress guildAddress)
         {
-            if (world.GetJoinedGuild(agentAddress) is not null)
+            if (world.GetJoinedGuild(signer) is not null)
             {
-                throw new InvalidOperationException("Already joined a guild.");
+                throw new InvalidOperationException("The signer is already joined in a guild.");
+            }
+
+            // NOTE: Check there is such guild.
+            if (!world.TryGetGuild(guildAddress, out _))
+            {
+                throw new InvalidOperationException("The guild does not exist.");
+            }
+
+            if (world.IsBanned(guildAddress, signer))
+            {
+                throw new InvalidOperationException("The signer is banned from the guild.");
             }
 
             return world.MutateAccount(Addresses.GuildApplication,
                 account =>
-                    account.SetState(agentAddress, new GuildApplication(guildAddress).Bencoded));
+                    account.SetState(signer, new GuildApplication(guildAddress).Bencoded));
         }
 
         public static IWorld CancelGuildApplication(
@@ -64,9 +75,9 @@ namespace Nekoyume.Module.Guild
         }
 
         public static IWorld AcceptGuildApplication(
-            this IWorld world, AgentAddress guildMasterAddress, AgentAddress agentAddress)
+            this IWorld world, AgentAddress signer, AgentAddress target)
         {
-            if (!world.TryGetGuildApplication(agentAddress, out var guildApplication))
+            if (!world.TryGetGuildApplication(target, out var guildApplication))
             {
                 throw new InvalidOperationException("It may not apply any guild.");
             }
@@ -77,21 +88,21 @@ namespace Nekoyume.Module.Guild
                     "There is no such guild now. It may be removed. Please cancel and apply another guild.");
             }
 
-            if (guildMasterAddress != guild.GuildMasterAddress)
+            if (signer != guild.GuildMasterAddress)
             {
                 throw new InvalidOperationException("It may not be a guild master.");
             }
 
-            return world.RemoveGuildApplication(agentAddress)
-                .JoinGuild(guildApplication.GuildAddress, agentAddress);
+            return world.RemoveGuildApplication(target)
+                .JoinGuild(guildApplication.GuildAddress, target);
         }
 
 #pragma warning disable S4144
         public static IWorld RejectGuildApplication(
 #pragma warning restore S4144
-            this IWorld world, AgentAddress guildMasterAddress, AgentAddress agentAddress)
+            this IWorld world, AgentAddress signer, AgentAddress target)
         {
-            if (!world.TryGetGuildApplication(agentAddress, out var guildApplication))
+            if (!world.TryGetGuildApplication(target, out var guildApplication))
             {
                 throw new InvalidOperationException("It may not apply any guild.");
             }
@@ -102,12 +113,12 @@ namespace Nekoyume.Module.Guild
                     "There is no such guild now. It may be removed. Please cancel and apply another guild.");
             }
 
-            if (guildMasterAddress != guild.GuildMasterAddress)
+            if (signer != guild.GuildMasterAddress)
             {
                 throw new InvalidOperationException("It may not be a guild master.");
             }
 
-            return world.RemoveGuildApplication(agentAddress);
+            return world.RemoveGuildApplication(target);
         }
 
         private static IWorld RemoveGuildApplication(this IWorld world, AgentAddress agentAddress)

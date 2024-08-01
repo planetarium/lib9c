@@ -31,24 +31,14 @@ namespace Nekoyume.Action.Guild
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
+
             var world = context.PreviousState;
             var random = context.GetRandom();
 
             var guildAddress = new GuildAddress(random.GenerateAddress());
             var signer = context.GetAgentAddress();
 
-            if (world.GetJoinedGuild(signer) is not null)
-            {
-                throw new InvalidOperationException("The signer already has a guild.");
-            }
-
-            if (world.TryGetGuild(guildAddress, out _))
-            {
-                throw new InvalidOperationException("Duplicated guild address. Please retry.");
-            }
-
-            return world.MakeGuild(guildAddress, signer)
-                .JoinGuild(guildAddress, signer);
+            return world.MakeGuild(guildAddress, signer);
         }
     }
 }

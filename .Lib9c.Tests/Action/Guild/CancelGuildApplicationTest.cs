@@ -29,8 +29,12 @@ namespace Lib9c.Tests.Action.Guild
         {
             var privateKey = new PrivateKey();
             var signer = new AgentAddress(privateKey.Address);
+            var guildMasterAddress = AddressUtil.CreateAgentAddress();
+            var guildAddress = AddressUtil.CreateGuildAddress();
+
             var action = new CancelGuildApplication();
-            IWorld world = new World(MockUtil.MockModernWorldState);
+            IWorld world = new World(MockUtil.MockModernWorldState)
+                .MakeGuild(guildAddress, guildMasterAddress);
             Assert.Throws<InvalidOperationException>(
                 () => action.Execute(new ActionContext
                 {
@@ -38,7 +42,6 @@ namespace Lib9c.Tests.Action.Guild
                     Signer = signer,
                 }));
 
-            var guildAddress = AddressUtil.CreateGuildAddress();
             var otherAddress = AddressUtil.CreateAgentAddress();
             world = world.ApplyGuild(otherAddress, guildAddress);
 

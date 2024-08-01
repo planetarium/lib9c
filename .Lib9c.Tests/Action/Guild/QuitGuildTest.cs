@@ -31,8 +31,7 @@ namespace Lib9c.Tests.Action.Guild
 
             var action = new QuitGuild();
             IWorld world = new World(MockUtil.MockModernWorldState)
-                .MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress);
+                .MakeGuild(guildAddress, guildMasterAddress);
 
             // This case should fail because guild master cannot quit the guild.
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext

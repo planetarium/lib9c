@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Bencodex.Types;
 using Libplanet.Action.State;
@@ -36,17 +37,50 @@ namespace Nekoyume.Module.Guild
             }
         }
 
-        public static IWorld MakeGuild(this IWorld world, GuildAddress guildAddress, AgentAddress guildMasterAddress)
+        public static IWorld MakeGuild(this IWorld world, GuildAddress guildAddress, AgentAddress signer)
         {
+            if (world.GetJoinedGuild(signer) is not null)
+            {
+                throw new InvalidOperationException("The signer already has a guild.");
+            }
+
+            if (world.TryGetGuild(guildAddress, out _))
+            {
+                throw new InvalidOperationException("Duplicated guild address. Please retry.");
+            }
+
             return world.MutateAccount(Addresses.Guild,
                 account =>
                     account.SetState(guildAddress,
-                        new Model.Guild.Guild(guildMasterAddress).Bencoded));
+                        new Model.Guild.Guild(signer).Bencoded))
+                .JoinGuild(guildAddress, signer);
         }
 
-        public static IWorld RemoveGuild(this IWorld world, GuildAddress guildAddress)
+        public static IWorld RemoveGuild(this IWorld world, AgentAddress signer)
         {
-            return world.MutateAccount(Addresses.Guild, account => account.RemoveState(guildAddress))
+            if (world.GetJoinedGuild(signer) is not { } guildAddress)
+            {
+                throw new InvalidOperationException("The signer does not join any guild.");
+            }
+
+            if (!world.TryGetGuild(guildAddress, out var guild))
+            {
+                throw new InvalidOperationException("There is no such guild.");
+            }
+
+            if (guild.GuildMasterAddress != signer)
+            {
+                throw new InvalidOperationException("The signer is not a guild master.");
+            }
+
+            if (world.GetGuildMemberCount(guildAddress) > 1)
+            {
+                throw new InvalidOperationException("There are remained participants in the guild.");
+            }
+
+            return world
+                .RawLeaveGuild(signer)
+                .MutateAccount(Addresses.Guild, account => account.RemoveState(guildAddress))
                 .RemoveBanList(guildAddress);
         }
     }

@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Action.Guild
             IWorld world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMasterAddress);
-            IWorld bannedWorld = world.Ban(guildAddress, agentAddress);
+            IWorld bannedWorld = world.Ban(guildAddress, guildMasterAddress, agentAddress);
 
             // This case should fail because the agent is banned by the guild.
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext

@@ -46,24 +46,9 @@ namespace Nekoyume.Action.Guild
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
+
             var world = context.PreviousState;
             var signer = context.GetAgentAddress();
-
-            if (world.GetJoinedGuild(signer) is not null)
-            {
-                throw new InvalidOperationException("The signer is already joined in a guild.");
-            }
-
-            // NOTE: Check there is such guild.
-            if (!world.TryGetGuild(GuildAddress, out _))
-            {
-                throw new InvalidOperationException("The guild does not exist.");
-            }
-
-            if (world.IsBanned(GuildAddress, signer))
-            {
-                throw new InvalidOperationException("The signer is banned from the guild.");
-            }
 
             // TODO: Do something related with ConsensusPower delegation.
 

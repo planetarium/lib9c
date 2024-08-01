@@ -23,24 +23,46 @@ namespace Nekoyume.Module.Guild
         public static IWorld JoinGuild(
             this IWorld world,
             GuildAddress guildAddress,
-            AgentAddress agentAddress)
+            AgentAddress target)
         {
             var guildParticipant = new Model.Guild.GuildParticipant(guildAddress);
             return world.MutateAccount(Addresses.GuildParticipant,
-                    account => account.SetState(agentAddress, guildParticipant.Bencoded))
+                    account => account.SetState(target, guildParticipant.Bencoded))
                 .IncreaseGuildMemberCount(guildAddress);
         }
 
         public static IWorld LeaveGuild(
             this IWorld world,
-            AgentAddress agentAddress)
+            AgentAddress target)
         {
-            if (!world.TryGetGuildParticipant(agentAddress, out var guildParticipant))
+            if (world.GetJoinedGuild(target) is not { } guildAddress)
+            {
+                throw new InvalidOperationException("The signer does not join any guild.");
+            }
+
+            if (!world.TryGetGuild(guildAddress, out var guild))
+            {
+                throw new InvalidOperationException(
+                    "There is no such guild.");
+            }
+
+            if (guild.GuildMasterAddress == target)
+            {
+                throw new InvalidOperationException(
+                    "The signer is a guild master. Guild master cannot quit the guild.");
+            }
+
+            return RawLeaveGuild(world, target);
+        }
+
+        public static IWorld RawLeaveGuild(this IWorld world, AgentAddress target)
+        {
+            if (!world.TryGetGuildParticipant(target, out var guildParticipant))
             {
                 throw new InvalidOperationException("It may not join any guild.");
             }
 
-            return world.RemoveGuildParticipant(agentAddress)
+            return world.RemoveGuildParticipant(target)
                 .DecreaseGuildMemberCount(guildParticipant.GuildAddress);
         }
 

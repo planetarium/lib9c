@@ -37,10 +37,8 @@ namespace Lib9c.Tests.Action.Guild
 
             IWorld world = new World(MockWorldState.CreateModern());
             world = world.MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMemberAddress);
             world = world.MakeGuild(otherGuildAddress, otherGuildMasterAddress)
-                .JoinGuild(otherGuildAddress, otherGuildMasterAddress)
                 .JoinGuild(otherGuildAddress, otherGuildMemberAddress);
 
             // Guild
@@ -130,7 +128,6 @@ namespace Lib9c.Tests.Action.Guild
 
             IWorld world = new World(MockWorldState.CreateModern());
             world = world.MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMemberAddress)
                 .JoinGuild(guildAddress, targetGuildMemberAddress);
 
@@ -170,7 +167,6 @@ namespace Lib9c.Tests.Action.Guild
 
             IWorld world = new World(MockWorldState.CreateModern());
             world = world.MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, targetGuildMemberAddress);
 
             // Other tries to ban GuildMember.
@@ -199,7 +195,6 @@ namespace Lib9c.Tests.Action.Guild
 
             IWorld world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress)
                 .ApplyGuild(agentAddress, guildAddress);
             Assert.True(world.TryGetGuildApplication(agentAddress, out _));
 

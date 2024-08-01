@@ -2,6 +2,7 @@ using System;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Store.Trie;
+using Nekoyume.Extensions;
 using Nekoyume.TypedAddress;
 using Boolean = Bencodex.Types.Boolean;
 
@@ -27,20 +28,55 @@ namespace Nekoyume.Module.Guild
             return false;
         }
 
-        public static IWorld Ban(this IWorld world, GuildAddress guildAddress, Address agentAddress)
+        public static IWorld Ban(this IWorld world, GuildAddress guildAddress, AgentAddress signer, AgentAddress target)
         {
-            var accountAddress = Addresses.GetGuildBanAccountAddress(guildAddress);
-            var account = world.GetAccount(accountAddress);
-            account = account.SetState(agentAddress, (Boolean)true);
-            return world.SetAccount(accountAddress, account);
+            if (!world.TryGetGuild(guildAddress, out var guild))
+            {
+                throw new InvalidOperationException("There is no such guild.");
+            }
+
+            if (guild.GuildMasterAddress != signer)
+            {
+                throw new InvalidOperationException("The signer is not a guild master.");
+            }
+
+            if (guild.GuildMasterAddress == target)
+            {
+                throw new InvalidOperationException("The guild master cannot be banned.");
+            }
+
+            if (world.TryGetGuildApplication(target, out var guildApplication) && guildApplication.GuildAddress == guildAddress)
+            {
+                world = world.RejectGuildApplication(signer, target);
+            }
+
+            if (world.GetJoinedGuild(target) == guildAddress)
+            {
+                world = world.LeaveGuild(target);
+            }
+
+            return world.MutateAccount(Addresses.GetGuildBanAccountAddress(guildAddress), account => account.SetState(target, (Boolean)true));
         }
 
-        public static IWorld Unban(this IWorld world, GuildAddress guildAddress, Address agentAddress)
+        public static IWorld Unban(this IWorld world, GuildAddress guildAddress, AgentAddress signer, Address target)
         {
-            var accountAddress = Addresses.GetGuildBanAccountAddress(guildAddress);
-            var account = world.GetAccount(accountAddress);
-            account = account.RemoveState(agentAddress);
-            return world.SetAccount(accountAddress, account);
+            if (!world.TryGetGuild(guildAddress, out var guild))
+            {
+                throw new InvalidOperationException("There is no such guild.");
+            }
+
+            if (guild.GuildMasterAddress != signer)
+            {
+                throw new InvalidOperationException("The signer is not a guild master.");
+            }
+
+            if (!world.IsBanned(guildAddress, target))
+            {
+                throw new InvalidOperationException("The target is not banned.");
+            }
+
+            return world.MutateAccount(Addresses.GetGuildBanAccountAddress(guildAddress),
+                account => account.RemoveState(target));
         }
 
         public static IWorld RemoveBanList(this IWorld world, GuildAddress guildAddress) =>

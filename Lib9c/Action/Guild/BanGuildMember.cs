@@ -45,9 +45,8 @@ namespace Nekoyume.Action.Guild
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            var world = context.PreviousState;
 
-            // NOTE: GuildMaster address and GuildAddress are the same with signer address.
+            var world = context.PreviousState;
             var signer = context.GetAgentAddress();
 
             if (world.GetJoinedGuild(signer) is not { } guildAddress)
@@ -55,32 +54,7 @@ namespace Nekoyume.Action.Guild
                 throw new InvalidOperationException("The signer does not have a guild.");
             }
 
-            if (!world.TryGetGuild(guildAddress, out var guild))
-            {
-                throw new InvalidOperationException("There is no such guild.");
-            }
-
-            if (guild.GuildMasterAddress != signer)
-            {
-                throw new InvalidOperationException("The signer is not a guild master.");
-            }
-
-            if (guild.GuildMasterAddress == Target)
-            {
-                throw new InvalidOperationException("The guild master cannot be banned.");
-            }
-
-            if (world.TryGetGuildApplication(Target, out var guildApplication) && guildApplication.GuildAddress == guildAddress)
-            {
-                world = world.RejectGuildApplication(signer, Target);
-            }
-
-            if (world.GetJoinedGuild(Target) == guildAddress)
-            {
-                world = world.LeaveGuild(Target);
-            }
-
-            world = world.Ban(guildAddress, Target);
+            world = world.Ban(guildAddress, signer, Target);
 
             return world;
         }

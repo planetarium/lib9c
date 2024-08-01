@@ -32,8 +32,7 @@ namespace Lib9c.Tests.Action.Guild
             var guildAddress = AddressUtil.CreateGuildAddress();
 
             IWorld world = new World(MockWorldState.CreateModern());
-            world = world.MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMemberAddress);
+            world = world.MakeGuild(guildAddress, guildMasterAddress);
 
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
@@ -51,8 +50,7 @@ namespace Lib9c.Tests.Action.Guild
             var guildAddress = AddressUtil.CreateGuildAddress();
 
             IWorld world = new World(MockWorldState.CreateModern());
-            world = world.MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress);
+            world = world.MakeGuild(guildAddress, guildMasterAddress);
 
             var changedWorld = action.Execute(new ActionContext
             {
@@ -74,8 +72,7 @@ namespace Lib9c.Tests.Action.Guild
             var guildAddress = AddressUtil.CreateGuildAddress();
 
             IWorld world = new World(MockWorldState.CreateModern());
-            world = world.MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress);
+            world = world.MakeGuild(guildAddress, guildMasterAddress);
 
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
@@ -95,8 +92,7 @@ namespace Lib9c.Tests.Action.Guild
 
             IWorld world = new World(MockWorldState.CreateModern());
             world = world.MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress)
-                .Ban(guildAddress, bannedAddress);
+                .Ban(guildAddress, guildMasterAddress, bannedAddress);
 
             Assert.True(world.IsBanned(guildAddress, bannedAddress));
 
