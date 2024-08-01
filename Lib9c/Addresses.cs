@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Model.Guild;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
@@ -54,6 +55,47 @@ namespace Nekoyume
         public static readonly Address BountyBoard           = new Address("0000000000000000000000000000000000000101");
         public static readonly Address ExploreBoard          = new Address("0000000000000000000000000000000000000102");
         public static readonly Address ExplorerList          = new Address("0000000000000000000000000000000000000103");
+
+        #region Guild
+
+        /// <summary>
+        /// An address of an account having <see cref="Nekoyume.Model.Guild.Guild"/>.
+        /// </summary>
+        public static readonly Address Guild =
+            new Address("0000000000000000000000000000000000000200");
+
+        /// <summary>
+        /// An address of an account having <see cref="Bencodex.Types.Integer"/> which means the number of the guild.
+        /// </summary>
+        public static readonly Address GuildMemberCounter =
+            new Address("0000000000000000000000000000000000000201");
+
+        /// <summary>
+        /// An address of an account having <see cref="Nekoyume.Model.Guild.GuildApplication"/>.
+        /// </summary>
+        public static readonly Address GuildApplication =
+            new Address("0000000000000000000000000000000000000202");
+
+        /// <summary>
+        /// An address of an account having <see cref="Nekoyume.Model.Guild.GuildParticipant"/>
+        /// </summary>
+        public static readonly Address GuildParticipant =
+            new Address("0000000000000000000000000000000000000203");
+
+        /// <summary>
+        /// Build an <see cref="Address"/> of an <see cref="Libplanet.Action.State.Account"/>,
+        /// represented as `agentAddress` ↔ <see cref="Bencodex.Types.Boolean"/>, indicates whether
+        /// the `agentAddress` is banned.
+        /// </summary>
+        /// <param name="guildAddress">The guild address.</param>
+        /// <returns>An account address.</returns>
+        public static Address GetGuildBanAccountAddress(Address guildAddress) =>
+            guildAddress.Derive("guild.banned");
+
+        public static readonly Address EmptyAccountAddress =
+            new Address("ffffffffffffffffffffffffffffffffffffffff");
+
+        #endregion
 
         public static Address GetSheetAddress<T>() where T : ISheet => GetSheetAddress(typeof(T).Name);
 
