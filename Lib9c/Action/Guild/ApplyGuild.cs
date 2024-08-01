@@ -55,7 +55,10 @@ namespace Nekoyume.Action.Guild
             }
 
             // NOTE: Check there is such guild.
-            _ = world.GetGuild(GuildAddress);
+            if (!world.TryGetGuild(GuildAddress, out _))
+            {
+                throw new InvalidOperationException("The guild does not exist.");
+            }
 
             if (world.IsBanned(GuildAddress, signer))
             {
