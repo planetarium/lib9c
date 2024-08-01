@@ -134,7 +134,7 @@ namespace Nekoyume.Model.Item
         }
 
         public static int SelectIconId(
-            int iconId, bool isRandom, int relationship,
+            int iconId, bool isRandom, EquipmentItemSheet.Row equipmentRow, int relationship,
             CustomEquipmentCraftIconSheet iconSheet, IRandom random
         )
         {
@@ -146,7 +146,10 @@ namespace Nekoyume.Model.Item
                 // Random icon
                 var iconSelector = new WeightedSelector<CustomEquipmentCraftIconSheet.Row>(random);
                 var iconRows = iconSheet.Values
-                    .Where(row => row.RequiredRelationship <= relationship);
+                    .Where(row =>
+                        row.RequiredRelationship <= relationship &&
+                        row.ItemSubType == equipmentRow.ItemSubType
+                    );
                 foreach (var row in iconRows)
                 {
                     iconSelector.Add(row, row.Ratio);

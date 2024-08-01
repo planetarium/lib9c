@@ -211,7 +211,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                                                  relationshipRow.RequiredBlockMultiplier);
 
             var iconId = ItemFactory.SelectIconId(
-                IconId, IconId == RandomIconId, relationship,
+                IconId, IconId == RandomIconId, equipmentRow, relationship,
                 sheets.GetSheet<CustomEquipmentCraftIconSheet>(), random
             );
             var optionRow = ItemFactory.SelectOption(
