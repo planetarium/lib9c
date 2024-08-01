@@ -19,6 +19,7 @@ namespace Lib9c.Tests.Action
         private readonly IWorld _prevState;
         private readonly Address _signer;
         private readonly Address _avatarAddress;
+        private readonly Currency _runeCurrency = Currencies.GetRune("RUNE_GOLDENLEAF");
 
         public IssueTokenTest()
         {
@@ -33,7 +34,9 @@ namespace Lib9c.Tests.Action
 
             _prevState = new World(
                 MockWorldState.CreateModern()
-                    .SetBalance(_signer, Currencies.Crystal * 1000));
+                    .SetBalance(_signer, Currencies.Crystal * 1000)
+                    .SetBalance(_avatarAddress, _runeCurrency * 1000)
+            );
 
             var materialIds = tableSheets.LoadIntoMyGaragesCostSheet.OrderedList!
                 .Where(r => r.ItemId > 0)
@@ -89,7 +92,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void Execute_With_FungibleAssetValue()
+        public void Execute_With_FungibleAssetValues()
         {
             var action = new IssueToken
             {
@@ -97,10 +100,11 @@ namespace Lib9c.Tests.Action
                 FungibleAssetValues = new List<FungibleAssetValue>
                 {
                     Currencies.Crystal * 42,
+                    _runeCurrency * 42,
                 },
                 Items = new List<(int id, int count)>(),
             };
-            var prevState = _prevState.MintAsset(new ActionContext(), _signer, FungibleAssetValue.Parse(Currencies.Garage, "0.0000042"));
+            var prevState = _prevState.MintAsset(new ActionContext(), _signer, FungibleAssetValue.Parse(Currencies.Garage, "4.2000042"));
 
             IWorld nextState = action.Execute(
                 new ActionContext()
@@ -112,6 +116,7 @@ namespace Lib9c.Tests.Action
             );
 
             var wrappedCrystal = Currencies.GetWrappedCurrency(Currencies.Crystal);
+            var wrappedRune = Currencies.GetWrappedCurrency(_runeCurrency);
 
             Assert.Equal(0 * Currencies.Garage, nextState.GetBalance(_signer, Currencies.Garage));
             Assert.Equal(wrappedCrystal * 42, nextState.GetBalance(_signer, wrappedCrystal));
@@ -120,6 +125,14 @@ namespace Lib9c.Tests.Action
                 nextState.GetBalance(
                     _signer,
                     Currencies.Crystal
+                )
+            );
+            Assert.Equal(wrappedRune * 42, nextState.GetBalance(_signer, wrappedRune));
+            Assert.Equal(
+                _runeCurrency * (1000 - 42),
+                nextState.GetBalance(
+                    _avatarAddress,
+                    _runeCurrency
                 )
             );
         }

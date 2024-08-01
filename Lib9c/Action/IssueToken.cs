@@ -6,6 +6,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Garages;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
@@ -63,9 +64,11 @@ namespace Nekoyume.Action
             );
             foreach (var fungibleAssetValue in FungibleAssetValues)
             {
-                var wrappedCurrency = Currencies.GetWrappedCurrency(fungibleAssetValue.Currency);
+                var currency = fungibleAssetValue.Currency;
+                var wrappedCurrency = Currencies.GetWrappedCurrency(currency);
+                var recipient = GarageUtils.PickRecipient(context.Signer, AvatarAddress, currency);
                 state = state
-                    .BurnAsset(context, context.Signer, fungibleAssetValue)
+                    .BurnAsset(context, recipient, fungibleAssetValue)
                     .MintAsset(
                         context,
                         context.Signer,
