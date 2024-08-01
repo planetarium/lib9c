@@ -70,17 +70,17 @@ namespace Nekoyume.Action.Guild
                 throw new InvalidOperationException("The guild master cannot be banned.");
             }
 
-            world = world.Ban(guildAddress, Target);
+            if (world.TryGetGuildApplication(Target, out var guildApplication) && guildApplication.GuildAddress == guildAddress)
+            {
+                world = world.RejectGuildApplication(signer, Target);
+            }
 
             if (world.GetJoinedGuild(Target) == guildAddress)
             {
                 world = world.LeaveGuild(Target);
             }
 
-            if (world.TryGetGuildApplication(Target, out var guildApplication) && guildApplication.GuildAddress == guildAddress)
-            {
-                world = world.RejectGuildApplication(signer, Target);
-            }
+            world = world.Ban(guildAddress, Target);
 
             return world;
         }
