@@ -11,6 +11,7 @@ namespace Nekoyume.Action.Guild.Migration
     /// An action to migrate the pledge to the guild.
     /// But it is only for accounts contracted pledge with Planetarium (<see cref="MeadConfig.PatronAddress"/>).
     /// </summary>
+    [ActionType(TypeIdentifier)]
     public class MigratePledgeToGuild : ActionBase
     {
         public const string TypeIdentifier = "migrate_pledge_to_guild";
