@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Action.Guild.Migration
 {
+    using System;
     using Bencodex.Types;
     using Lib9c.Tests.Action;
     using Lib9c.Tests.Util;
@@ -74,22 +75,18 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var action = new MigratePledgeToGuild(target);
 
             // Migrate by other.
-            IWorld newWorld = action.Execute(new ActionContext
+            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
                 PreviousState = world,
                 Signer = caller,
-            });
-
-            Assert.Null(newWorld.GetJoinedGuild(target));
+            }));
 
             // Migrate by itself.
-            newWorld = action.Execute(new ActionContext
+            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
                 PreviousState = world,
-                Signer = caller,
-            });
-
-            Assert.Null(newWorld.GetJoinedGuild(target));
+                Signer = target,
+            }));
         }
 
         [Fact]
@@ -108,22 +105,18 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var action = new MigratePledgeToGuild(target);
 
             // Migrate by other.
-            IWorld newWorld = action.Execute(new ActionContext
+            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
                 PreviousState = world,
                 Signer = caller,
-            });
-
-            Assert.Null(newWorld.GetJoinedGuild(target));
+            }));
 
             // Migrate by itself.
-            newWorld = action.Execute(new ActionContext
+            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
                 PreviousState = world,
                 Signer = target,
-            });
-
-            Assert.Null(newWorld.GetJoinedGuild(target));
+            }));
         }
     }
 }

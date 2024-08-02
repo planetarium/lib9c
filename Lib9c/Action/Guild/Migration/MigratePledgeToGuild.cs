@@ -53,7 +53,13 @@ namespace Nekoyume.Action.Guild.Migration
 
             var world = context.PreviousState;
 
-            return GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, Target);
+            var (resultWorld, shouldFail) = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, Target);
+            if (shouldFail)
+            {
+                throw new InvalidOperationException("Migration failed.");
+            }
+
+            return resultWorld;
         }
     }
 }

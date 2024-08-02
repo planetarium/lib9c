@@ -32,7 +32,8 @@ namespace Lib9c.Tests.Action.Guild.Migration
                     RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(target));
-            world = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
+            (world, var shouldFail) = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
+            Assert.False(shouldFail);
 
             var joinedGuildAddress = Assert.IsType<GuildAddress>(world.GetJoinedGuild(target));
             Assert.True(world.TryGetGuild(joinedGuildAddress, out var guild));
@@ -50,8 +51,9 @@ namespace Lib9c.Tests.Action.Guild.Migration
                 .JoinGuild(guildAddress, guildMasterAddress);
 
             Assert.Null(world.GetJoinedGuild(target));
-            world = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
+            (world, var shouldFail) = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
 
+            Assert.True(shouldFail);
             Assert.Null(world.GetJoinedGuild(target));
         }
 
@@ -67,7 +69,8 @@ namespace Lib9c.Tests.Action.Guild.Migration
                     RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(target));
-            world = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
+            (world, var shouldFail) = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
+            Assert.True(shouldFail);
 
             Assert.Null(world.GetJoinedGuild(target));
         }

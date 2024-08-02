@@ -19,7 +19,7 @@ namespace Nekoyume.Action.Guild.Migration.Controls
         /// <param name="world"></param>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static IWorld MigratePlanetariumPledgeToGuild(IWorld world, AgentAddress target)
+        public static (IWorld World, bool ShouldFail) MigratePlanetariumPledgeToGuild(IWorld world, AgentAddress target)
         {
             var logger = Log.ForContext(typeof(GuildMigrationCtrl));
 
@@ -27,7 +27,7 @@ namespace Nekoyume.Action.Guild.Migration.Controls
             if (world.GetJoinedGuild(planetariumPatronAddress) is not { } planetariumGuildAddress)
             {
                 logger.Warning("Planetarium seems not to make guild yet. Skip auto joining.");
-                return world;
+                return (world, true);
             }
 
             if (!world.TryGetGuild(planetariumGuildAddress, out var planetariumGuild))
@@ -36,7 +36,7 @@ namespace Nekoyume.Action.Guild.Migration.Controls
                     "Planetarium address seems to join guild but it failed to fetch " +
                     "the guild. It seems a bug situation. It skips auto joining but " +
                     "you must investigate this issue.");
-                return world;
+                return (world, true);
             }
 
             if (planetariumGuild.GuildMasterAddress != planetariumPatronAddress)
@@ -45,7 +45,7 @@ namespace Nekoyume.Action.Guild.Migration.Controls
                     "Planetarium address seems to join guild but it is the owner of the guild." +
                     "It seems a bug situation. It skips auto joining but " +
                     "you must investigate this issue.");
-                return world;
+                return (world, true);
             }
 
             if (world.GetJoinedGuild(target) is { } joinedGuildAddress)
@@ -55,7 +55,7 @@ namespace Nekoyume.Action.Guild.Migration.Controls
                         "{Signer} is already joined to {Guild}. Skip auto joining.",
                         target,
                         joinedGuildAddress);
-                return world;
+                return (world, true);
             }
 
             var pledgeAddress = target.GetPledgeAddress();
@@ -66,10 +66,10 @@ namespace Nekoyume.Action.Guild.Migration.Controls
             // [2] = Mead amount to refill.
             if (!world.TryGetLegacyState(pledgeAddress, out List list) || list.Count < 3 || list[0].ToAddress() != MeadConfig.PatronAddress)
             {
-                return world;
+                return (world, true);
             }
 
-            return world.JoinGuild(planetariumGuildAddress, target);
+            return (world.JoinGuild(planetariumGuildAddress, target), false);
         }
     }
 }

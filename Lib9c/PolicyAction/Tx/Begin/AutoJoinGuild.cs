@@ -36,7 +36,8 @@ namespace Nekoyume.PolicyAction.Tx.Begin
             var world = context.PreviousState;
             var signer = context.GetAgentAddress();
 
-            return GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, signer);
+            var (resultWorld, _) = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, signer);
+            return resultWorld;
         }
     }
 }
