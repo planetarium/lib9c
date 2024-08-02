@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
     using Nekoyume.Action;
     using Nekoyume.Action.Exceptions.CustomEquipmentCraft;
     using Nekoyume.Exceptions;
+    using Nekoyume.Model.Elemental;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -92,26 +93,54 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
         [Theory]
         // Success
         // First Craft
-        [InlineData(1, 10100000, true, 0, false, 10, null)]
+        [InlineData(1, 10100000, true, 0, false, ElementalType.Wind, 10, null)]
         // Random Icon
-        [InlineData(1, 0, true, 0, false, 10, null)]
+        [InlineData(1, 0, true, 0, false, ElementalType.Wind, 10, null)]
         // Move to next relationship group
-        [InlineData(1, 10100000, true, 10, false, 10, null)]
-        [InlineData(1, 10100000, true, 100, false, 12, null)]
-        [InlineData(1, 10100000, true, 1000, false, 15, null)]
+        [InlineData(1, 10100000, true, 10, false, ElementalType.Wind, 10, null)]
+        [InlineData(1, 10100000, true, 100, false, ElementalType.Wind, 12, null)]
+        [InlineData(1, 10100000, true, 1000, false, ElementalType.Wind, 15, null)]
         // Failure
         // Not enough materials
-        [InlineData(1, 10100000, false, 0, false, 0, typeof(NotEnoughItemException))]
+        [InlineData(
+            1,
+            10100000,
+            false,
+            0,
+            false,
+            ElementalType.Normal,
+            0,
+            typeof(NotEnoughItemException)
+        )]
         // Slot already occupied
-        [InlineData(1, 10100000, true, 0, true, 0, typeof(CombinationSlotUnlockException))]
+        [InlineData(
+            1,
+            10100000,
+            true,
+            0,
+            true,
+            ElementalType.Normal,
+            0,
+            typeof(CombinationSlotUnlockException)
+        )]
         // Not enough relationship for icon
-        [InlineData(1, 10110000, true, 0, false, 0, typeof(NotEnoughRelationshipException))]
+        [InlineData(
+            1,
+            10110000,
+            true,
+            0,
+            false,
+            ElementalType.Normal,
+            0,
+            typeof(NotEnoughRelationshipException)
+        )]
         public void Execute(
             int recipeId,
             int iconId,
             bool enoughMaterials,
             int initialRelationship,
             bool slotOccupied,
+            ElementalType expectedElementalType,
             long additionalBlock,
             Type exc
         )
@@ -230,6 +259,22 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
                 var slotState = resultState.GetCombinationSlotState(_avatarAddress, 0);
                 Assert.Equal(currentBlockIndex + additionalBlock, slotState.UnlockBlockIndex);
+
+                var equipment = inventory.Equipments.First();
+                if (iconId != 0)
+                {
+                    Assert.Equal(iconId, equipment.IconId);
+                }
+
+                var itemSubType = _tableSheets.CustomEquipmentCraftRecipeSheet.Values
+                    .First(row => row.Id == recipeId).ItemSubType;
+                var expectedEquipmentId =
+                    _tableSheets.CustomEquipmentCraftRelationshipSheet.OrderedList
+                        .First(row => row.Relationship >= initialRelationship)
+                        .GetItemId(itemSubType);
+                Assert.Equal(expectedEquipmentId, equipment.Id);
+
+                Assert.Equal(expectedElementalType, equipment.ElementalType);
             }
         }
     }

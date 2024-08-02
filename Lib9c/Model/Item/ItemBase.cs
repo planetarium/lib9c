@@ -92,6 +92,8 @@ namespace Nekoyume.Model.Item
 
                 return _elementalType;
             }
+
+            set => _elementalType = value;
         }
 
         protected ItemBase(ItemSheet.Row data)

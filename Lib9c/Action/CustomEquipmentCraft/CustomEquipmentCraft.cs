@@ -7,11 +7,14 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Arena;
+using Nekoyume.Battle;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
+using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
+using Nekoyume.Model.Skill;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -169,38 +172,53 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 }
             }
 
-            // Select data to create equipment
             var random = context.GetRandom();
             var endBlockIndex = context.BlockIndex + (long)Math.Floor(
                 recipeRow.RequiredBlock * relationshipRow.RequiredBlockMultiplier / 10000m
             );
 
-            var iconId = ItemFactory.SelectIconId(
+            // Create equipment with ItemFactory
+            var guid = random.GenerateRandomGuid();
+            var equipment =
+                (Equipment)ItemFactory.CreateItemUsable(equipmentRow, guid, endBlockIndex);
+
+            // Set Icon
+            equipment.IconId = ItemFactory.SelectIconId(
                 IconId, IconId == RandomIconId, equipmentRow, relationship,
                 sheets.GetSheet<CustomEquipmentCraftIconSheet>(), random
             );
+
+            // Set Elemental Type
+            var elementalList = Enum.GetValues<ElementalType>();
+            equipment.ElementalType = elementalList[random.Next(0, elementalList.Length)];
+
+            // Set Substats
             var optionRow = ItemFactory.SelectOption(
                 recipeRow.ItemSubType, sheets.GetSheet<CustomEquipmentCraftOptionSheet>(), random
             );
-            var skill = ItemFactory.SelectSkill(
+            var totalCp = (decimal)random.Next(
+                relationshipRow.MinCp,
+                relationshipRow.MaxCp + 1
+            );
+
+            foreach (var option in optionRow.SubStatData)
+            {
+                equipment.StatsMap.AddStatAdditionalValue(option.StatType,
+                    CPHelper.ConvertCpToStat(option.StatType,
+                        totalCp * option.Ratio / optionRow.TotalOptionRatio,
+                        avatarState.level)
+                );
+            }
+
+            // Set skill
+            var skill = SkillFactory.SelectSkill(
                 recipeRow.ItemSubType,
                 sheets.GetSheet<CustomEquipmentCraftRecipeSkillSheet>(),
                 sheets.GetSheet<EquipmentItemOptionSheet>(),
                 sheets.GetSheet<SkillSheet>(),
                 random
             );
-
-            // Create equipment with ItemFactory
-            var equipment = ItemFactory.CreateCustomEquipment(
-                random,
-                iconId,
-                equipmentRow,
-                endBlockIndex,
-                avatarState.level,
-                relationshipRow,
-                optionRow,
-                skill
-            );
+            equipment.Skills.Add(skill);
 
             // Add equipment
             avatarState.inventory.AddItem(equipment);
