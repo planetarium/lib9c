@@ -213,8 +213,8 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 );
 
                 // Set Elemental Type
-                var elementalList = Enum.GetValues<ElementalType>();
-                equipment.ElementalType = elementalList[random.Next(0, elementalList.Length)];
+                var elementalList = (ElementalType[])Enum.GetValues(typeof(ElementalType));
+                equipment.ElementalType = elementalList[random.Next(elementalList.Length)];
 
                 // Set Substats
                 var optionRow = ItemFactory.SelectOption(
