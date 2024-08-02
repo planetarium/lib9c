@@ -48,6 +48,10 @@ namespace Nekoyume.Model.Item
 
         // Grimoire
         Grimoire = 20,
+
+        // Custom Craft
+        Drawing = 21,
+        DrawingTool = 22,
     }
 
     public class ItemTypeComparer : IEqualityComparer<ItemType>
