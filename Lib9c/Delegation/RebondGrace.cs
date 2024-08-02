@@ -9,10 +9,18 @@ using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
-    public class RebondGrace : IBencodable
+    public sealed class RebondGrace : IBencodable, IEquatable<RebondGrace>
     {
         public RebondGrace(Address address, int maxEntries)
         {
+            if (maxEntries < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxEntries),
+                    maxEntries,
+                    "The max entries must be greater than or equal to zero.");
+            }
+
             Address = address;
             MaxEntries = maxEntries;
             Entries = ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>>.Empty;
@@ -25,6 +33,14 @@ namespace Nekoyume.Delegation
 
         public RebondGrace(Address address, int maxEntries, List bencoded)
         {
+            if (maxEntries < 0)
+            { 
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxEntries),
+                    maxEntries,
+                    "The max entries must be greater than or equal to zero.");
+            }
+
             Address = address;
             MaxEntries = maxEntries;
             Entries = bencoded
@@ -56,6 +72,8 @@ namespace Nekoyume.Delegation
 
         public ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> Entries { get; private set; }
 
+        public ImmutableArray<RebondGraceEntry> FlattenedEntries
+            => Entries.Values.SelectMany(e => e).ToImmutableArray();
 
         public IValue Bencoded
             => new List(
@@ -64,11 +82,16 @@ namespace Nekoyume.Delegation
                         (Integer)sortedDict.Key,
                         new List(sortedDict.Value.Select(e => e.Bencoded)))));
 
-        public void Grace(Address rebondeeAddress, FungibleAssetValue initialGraceFAV, long creationHeight, long expireHeight)
-            => AddEntry(new RebondGraceEntry(rebondeeAddress, initialGraceFAV, creationHeight, expireHeight));
-
         public void Release(long height)
         {
+            if (height <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(height),
+                    height,
+                    "The height must be greater than zero.");
+            }
+
             foreach (var (expireHeight, entries) in Entries)
             {
                 if (expireHeight <= height)
@@ -80,6 +103,33 @@ namespace Nekoyume.Delegation
                     break;
                 }
             }
+        }
+
+        [Obsolete("This method is not implemented yet.")]
+        public void Slash()
+            => throw new NotImplementedException();
+
+        public override bool Equals(object obj)
+            => obj is RebondGrace other && Equals(other);
+
+        public bool Equals(RebondGrace other)
+            => ReferenceEquals(this, other)
+            || (Address.Equals(other.Address)
+            && MaxEntries == other.MaxEntries
+            && FlattenedEntries.SequenceEqual(other.FlattenedEntries));
+
+        public override int GetHashCode()
+            => Address.GetHashCode();
+
+        internal void Grace(
+            Address rebondeeAddress, FungibleAssetValue initialGraceFAV, long creationHeight, long expireHeight)
+        {
+            if (expireHeight == creationHeight)
+            {
+                return;
+            }
+
+            AddEntry(new RebondGraceEntry(rebondeeAddress, initialGraceFAV, creationHeight, expireHeight));
         }
 
         private void AddEntry(RebondGraceEntry entry)
@@ -99,7 +149,7 @@ namespace Nekoyume.Delegation
             }
         }
 
-        public class RebondGraceEntry : IBencodable
+        public class RebondGraceEntry : IBencodable, IEquatable<RebondGraceEntry>
         {
             public RebondGraceEntry(
                 Address rebondeeAddress,
@@ -136,6 +186,46 @@ namespace Nekoyume.Delegation
                 long creationHeight,
                 long expireHeight)
             {
+                if (initialGraceFAV.Sign <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(initialGraceFAV),
+                        initialGraceFAV,
+                        "The initial grace FAV must be greater than zero.");
+                }
+
+                if (graceFAV.Sign <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(graceFAV),
+                        graceFAV,
+                        "The grace FAV must be greater than zero.");
+                }
+
+                if (graceFAV >= initialGraceFAV)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(graceFAV),
+                        graceFAV,
+                        "The grace FAV must be less than the initial grace FAV.");
+                }
+
+                if (creationHeight < 0)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(creationHeight),
+                        creationHeight,
+                        "The creation height must be greater than or equal to zero.");
+                }
+
+                if (expireHeight <= creationHeight)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(expireHeight),
+                        expireHeight,
+                        "The expire height must be greater than the creation height.");
+                }
+
                 RebondeeAddress = rebondeeAddress;
                 InitialGraceFAV = initialGraceFAV;
                 GraceFAV = graceFAV;
@@ -159,6 +249,14 @@ namespace Nekoyume.Delegation
                 .Add(GraceFAV.Serialize())
                 .Add(CreationHeight)
                 .Add(ExpireHeight);
+
+            public bool Equals(RebondGraceEntry other)
+                => ReferenceEquals(this, other)
+                || (RebondeeAddress.Equals(other.RebondeeAddress)
+                && InitialGraceFAV.Equals(other.InitialGraceFAV)
+                && GraceFAV.Equals(other.GraceFAV)
+                && CreationHeight == other.CreationHeight
+                && ExpireHeight == other.ExpireHeight);
         }
     }
 }

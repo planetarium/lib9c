@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Numerics;
 using Bencodex;
@@ -6,7 +7,7 @@ using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
-    public interface IDelegator : IBencodable
+    public interface IDelegator : IBencodable, IEquatable<IDelegator>
     {
         Address Address { get; }
 

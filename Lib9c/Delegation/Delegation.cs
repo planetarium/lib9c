@@ -5,7 +5,7 @@ using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
-    public class Delegation
+    public sealed class Delegation
     {
         public Delegation(
             Bond bond = null,
@@ -33,9 +33,16 @@ namespace Nekoyume.Delegation
 
         public void AddBond(FungibleAssetValue fav, BigInteger share)
         {
-            if (fav.Sign != 1)
+            if (fav.Sign <= 0)
             {
-                throw new InvalidOperationException("Cannot bond negative FAV.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(fav), fav, "Fungible asset value must be positive.");
+            }
+
+            if (share.Sign <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(share), share, "Share must be positive.");
             }
 
             Bond.AddShare(share);
@@ -44,23 +51,45 @@ namespace Nekoyume.Delegation
 
         public void CancelBond(FungibleAssetValue fav, BigInteger share)
         {
-            if (share.Sign != 1)
+            if (fav.Sign <= 0)
             {
-                throw new InvalidOperationException("Cannot unbond negative FAV.");
+                throw new ArgumentOutOfRangeException(
+                nameof(fav), fav, "Fungible asset value must be positive.");
             }
 
-            if (Bond.Share < share)
+            if (share.Sign <= 0)
             {
-                throw new InvalidOperationException("Cannot unbond more than bonded.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(share), share, "Share must be positive.");
             }
 
             Bond.SubtractShare(share);
             IncompleteUnbond = fav;
         }
 
-        public void DoUnbondLockIn(FungibleAssetValue fav, long height, long completionHeight)
+        public void DoUnbondLockIn(FungibleAssetValue fav, long height, long expireHeight)
         {
-            UnbondLockIn.LockIn(fav, height, completionHeight);
+            if (fav.Sign <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(fav), fav, "Fungible asset value must be positive.");
+            }
+
+            if (height < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(height), height, "Height must be greater than or equal to zero.");
+            }
+
+            if (expireHeight < height)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(expireHeight),
+                    expireHeight,
+                    "Expire height must be greater than or equal to the height.");
+            }
+
+            UnbondLockIn.LockIn(fav, height, expireHeight);
             if (!UnbondingSet.UnbondLockIns.Contains(UnbondLockIn.Address))
             {
                 UnbondingSet.AddUnbondLockIn(UnbondLockIn.Address);
@@ -69,6 +98,18 @@ namespace Nekoyume.Delegation
 
         public void CancelUnbondLockIn(FungibleAssetValue fav, long height)
         {
+            if (fav.Sign <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(fav), fav, "Fungible asset value must be positive.");
+            }
+
+            if (height < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(height), height, "Height must be greater than or equal to zero.");
+            }
+
             UnbondLockIn.Cancel(fav, height);
             if (UnbondLockIn.IsEmpty)
             {
@@ -76,13 +117,33 @@ namespace Nekoyume.Delegation
             }
         }
 
-        public void DoRebondGrace(Address rebondeeAddress, FungibleAssetValue fav, long height, long completionHeight)
+        public void DoRebondGrace(Address rebondeeAddress, FungibleAssetValue fav, long height, long expireHeight)
         {
-            RebondGrace.Grace(rebondeeAddress, fav, height, completionHeight);
+            if (fav.Sign <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(fav), fav, "Fungible asset value must be positive.");
+            }
+
+            if (height < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(height), height, "Height must be greater than or equal to zero.");
+            }
+
+            RebondGrace.Grace(rebondeeAddress, fav, height, expireHeight);
             if (!UnbondingSet.RebondGraces.Contains(RebondGrace.Address))
             {
                 UnbondingSet.AddRebondGrace(RebondGrace.Address);
-            }        
+            }
+
+            if (expireHeight < height)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(expireHeight),
+                    expireHeight,
+                    "Expire height must be greater than or equal to the height.");
+            }
         }
 
         public void Complete()

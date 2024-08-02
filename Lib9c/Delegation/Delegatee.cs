@@ -48,6 +48,27 @@ namespace Nekoyume.Delegation
             FungibleAssetValue totalDelegated,
             BigInteger totalShares)
         {
+            if (!totalDelegated.Currency.Equals(Currency))
+            {
+                throw new InvalidOperationException("Invalid currency.");
+            }
+
+            if (totalDelegated.Sign < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(totalDelegated),
+                    totalDelegated,
+                    "Total delegated must be non-negative.");
+            }
+
+            if (totalShares.Sign < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(totalShares),
+                    totalShares,
+                    "Total shares must be non-negative.");
+            }
+
             Address = address;
             Delegators = delegators.ToImmutableSortedSet();
             TotalDelegated = totalDelegated;
@@ -58,11 +79,11 @@ namespace Nekoyume.Delegation
 
         public abstract Currency Currency { get; }
 
+        public abstract Address PoolAddress { get; }
+
         public abstract long UnbondingPeriod { get; }
 
         public abstract byte[] DelegateeId { get; }
-
-        public abstract Address PoolAddress { get; }
 
         public Address RewardPoolAddress => DeriveAddress(RewardPoolId);
 
@@ -87,42 +108,13 @@ namespace Nekoyume.Delegation
                 ? TotalDelegated
                 : (TotalDelegated * share).DivRem(TotalShares, out _);
 
-        public void Bond(IDelegator delegator, FungibleAssetValue fav, Delegation delegation)
+        void IDelegatee.Bond(IDelegator delegator, FungibleAssetValue fav, Delegation delegation)
             => Bond((T)delegator, fav, delegation);
 
-        public void Unbond(IDelegator delegator, BigInteger share, Delegation delegation)
+        void IDelegatee.Unbond(IDelegator delegator, BigInteger share, Delegation delegation)
             => Unbond((T)delegator, share, delegation);
 
-        public void Distribute()
-        {
-            // TODO: Implement this
-        }
-
-        public Address BondAddress(Address delegatorAddress)
-            => DeriveAddress(BondId, delegatorAddress);
-
-        public Address UnbondLockInAddress(Address delegatorAddress)
-            => DeriveAddress(UnbondLockInId, delegatorAddress);
-
-        public Address RebondGraceAddress(Address delegatorAddress)
-            => DeriveAddress(RebondGraceId, delegatorAddress);
-
-        protected Address DeriveAddress(byte[] typeId, Address address)
-            => DeriveAddress(typeId, address.ByteArray);
-
-        protected Address DeriveAddress(byte[] typeId, IEnumerable<byte> bytes = null)
-        {
-            byte[] hashed;
-            using (var hmac = new HMACSHA1(DelegateeId.Concat(typeId).ToArray()))
-            {
-                hashed = hmac.ComputeHash(
-                    Address.ByteArray.Concat(bytes ?? Array.Empty<byte>()).ToArray());
-            }
-
-            return new Address(hashed);
-        }
-
-        private void Bond(T delegator, FungibleAssetValue fav, Delegation delegation)
+        public void Bond(T delegator, FungibleAssetValue fav, Delegation delegation)
         {
             if (!fav.Currency.Equals(Currency))
             {
@@ -137,7 +129,7 @@ namespace Nekoyume.Delegation
             Distribute();
         }
 
-        private void Unbond(T delegator, BigInteger share, Delegation delegation)
+        public void Unbond(T delegator, BigInteger share, Delegation delegation)
         {
             if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
             {
@@ -154,6 +146,55 @@ namespace Nekoyume.Delegation
             TotalShares -= share;
             TotalDelegated -= fav;
             Distribute();
+        }
+
+        public void Distribute()
+        {
+            // TODO: Implement this
+        }
+
+        public Address BondAddress(Address delegatorAddress)
+            => DeriveAddress(BondId, delegatorAddress);
+
+        public Address UnbondLockInAddress(Address delegatorAddress)
+            => DeriveAddress(UnbondLockInId, delegatorAddress);
+
+        public Address RebondGraceAddress(Address delegatorAddress)
+            => DeriveAddress(RebondGraceId, delegatorAddress);
+
+        public override bool Equals(object obj)
+            => obj is IDelegatee other && Equals(other);
+
+        public bool Equals(IDelegatee other)
+            => ReferenceEquals(this, other)
+            || (other is Delegatee<T, TSelf> delegatee
+            && (GetType() != delegatee.GetType())
+            && Address.Equals(delegatee.Address)
+            && Currency.Equals(delegatee.Currency)
+            && PoolAddress.Equals(delegatee.PoolAddress)
+            && UnbondingPeriod == delegatee.UnbondingPeriod
+            && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
+            && Delegators.SequenceEqual(delegatee.Delegators)
+            && TotalDelegated.Equals(delegatee.TotalDelegated)
+            && TotalShares.Equals(delegatee.TotalShares)
+            && DelegateeId.SequenceEqual(delegatee.DelegateeId));
+
+        public override int GetHashCode()
+            => Address.GetHashCode();
+
+        protected Address DeriveAddress(byte[] typeId, Address address)
+            => DeriveAddress(typeId, address.ByteArray);
+
+        protected Address DeriveAddress(byte[] typeId, IEnumerable<byte> bytes = null)
+        {
+            byte[] hashed;
+            using (var hmac = new HMACSHA1(DelegateeId.Concat(typeId).ToArray()))
+            {
+                hashed = hmac.ComputeHash(
+                    Address.ByteArray.Concat(bytes ?? Array.Empty<byte>()).ToArray());
+            }
+
+            return new Address(hashed);
         }
     }
 }
