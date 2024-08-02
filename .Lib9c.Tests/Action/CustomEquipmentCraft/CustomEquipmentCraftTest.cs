@@ -135,16 +135,16 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 var drawing = ItemFactory.CreateMaterial(drawingRow);
                 _avatarState.inventory.AddItem(
                     drawing,
-                    (int)Math.Floor(recipeRow.DrawingAmount * relationshipRow.CostMultiplier)
+                    (int)Math.Floor(recipeRow.DrawingAmount * relationshipRow.CostMultiplier / 10000m)
                 );
 
                 var drawingToolRow = materialSheet[DrawingToolItemId];
                 var drawingTool = ItemFactory.CreateMaterial(drawingToolRow);
                 var drawingToolAmount =
-                    recipeRow.DrawingToolAmount * relationshipRow.CostMultiplier;
+                    (decimal)recipeRow.DrawingToolAmount * relationshipRow.CostMultiplier;
                 if (iconId != 0)
                 {
-                    drawingToolAmount *= gameConfig.CustomEquipmentCraftIconCostMultiplier;
+                    drawingToolAmount *= gameConfig.CustomEquipmentCraftIconCostMultiplier / 10000m;
                 }
 
                 _avatarState.inventory.AddItem(drawingTool, (int)Math.Floor(drawingToolAmount));

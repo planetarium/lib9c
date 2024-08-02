@@ -9,6 +9,7 @@ using Libplanet.Crypto;
 using Nekoyume.Arena;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -139,76 +140,40 @@ namespace Nekoyume.Action.CustomEquipmentCraft
             }
             // ~Validate Recipe ResultEquipmentId
 
-            // Modify cost to get real cost
-            var requiredFungibleItems = new Dictionary<int, int>();
-            var drawingCost =
-                (int)Math.Floor(recipeRow.DrawingAmount * relationshipRow.CostMultiplier);
-            var drawingToolCost =
-                recipeRow.DrawingToolAmount * relationshipRow.CostMultiplier;
-            if (IconId != 0)
+            // Calculate and remove total cost
+            var (ncgCost, materialCosts) = CustomCraftHelper.CalculateCraftCost(
+                IconId,
+                sheets.GetSheet<MaterialItemSheet>(),
+                recipeRow,
+                relationshipRow,
+                sheets.GetSheet<CustomEquipmentCraftCostSheet>().Values
+                    .FirstOrDefault(r => r.Relationship == relationship),
+                states.GetGameConfigState().CustomEquipmentCraftIconCostMultiplier
+            );
+            if (ncgCost > 0)
             {
-                var gameConfig = states.GetGameConfigState();
-                drawingToolCost =
-                    Math.Floor(drawingToolCost * gameConfig.CustomEquipmentCraftIconCostMultiplier);
+                var arenaData = sheets.GetSheet<ArenaSheet>()
+                    .GetRoundByBlockIndex(context.BlockIndex);
+                states = states.TransferAsset(context, context.Signer,
+                    ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round),
+                    ncgCost * states.GetGoldCurrency());
             }
 
-            // Remove cost
-            if (!avatarState.inventory.RemoveMaterial(DrawingItemId, context.BlockIndex,
-                    drawingCost))
+            foreach (var (itemId, amount) in materialCosts)
             {
-                throw new NotEnoughItemException(
-                    $"Insufficient material {DrawingItemId}: {drawingCost} needed"
-                );
-            }
-
-            requiredFungibleItems[DrawingItemId] = drawingCost;
-
-            if (!avatarState.inventory.RemoveMaterial(DrawingToolItemId, context.BlockIndex,
-                    (int)drawingToolCost))
-            {
-                throw new NotEnoughItemException(
-                    $"Insufficient material {DrawingItemId}: {drawingToolCost} needed"
-                );
-            }
-
-            requiredFungibleItems[DrawingToolItemId] = (int)drawingToolCost;
-
-            // Remove additional cost if exists
-            var ncgCost = 0L;
-            var additionalCostRow = sheets.GetSheet<CustomEquipmentCraftCostSheet>().OrderedList
-                .FirstOrDefault(row => row.Relationship == relationship);
-            if (additionalCostRow is not null)
-            {
-                if (additionalCostRow.GoldAmount > 0)
+                if (!avatarState.inventory.RemoveMaterial(itemId, context.BlockIndex, amount))
                 {
-                    ncgCost = (long)additionalCostRow.GoldAmount;
-                    var arenaData = sheets.GetSheet<ArenaSheet>()
-                        .GetRoundByBlockIndex(context.BlockIndex);
-                    states = states.TransferAsset(context, context.Signer,
-                        ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round),
-                        additionalCostRow.GoldAmount * states.GetGoldCurrency());
-                }
-
-                foreach (var materialCost in additionalCostRow.MaterialCosts)
-                {
-                    if (!avatarState.inventory.RemoveMaterial(materialCost.ItemId,
-                            context.BlockIndex,
-                            materialCost.Amount))
-                    {
-                        throw new NotEnoughItemException(
-                            $"Insufficient material {materialCost.ItemId}: {materialCost.Amount} needed"
-                        );
-                    }
-
-                    requiredFungibleItems[materialCost.ItemId] = materialCost.Amount;
+                    throw new NotEnoughItemException(
+                        $"Insufficient material {itemId}: {amount} needed"
+                    );
                 }
             }
 
             // Select data to create equipment
             var random = context.GetRandom();
-            var endBlockIndex = context.BlockIndex +
-                                (long)Math.Floor(recipeRow.RequiredBlock *
-                                                 relationshipRow.RequiredBlockMultiplier);
+            var endBlockIndex = context.BlockIndex + (long)Math.Floor(
+                recipeRow.RequiredBlock * relationshipRow.RequiredBlockMultiplier / 10000m
+            );
 
             var iconId = ItemFactory.SelectIconId(
                 IconId, IconId == RandomIconId, equipmentRow, relationship,
@@ -250,7 +215,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 id = mailId,
                 actionPoint = 0,
                 gold = ncgCost,
-                materials = requiredFungibleItems.ToDictionary(
+                materials = materialCosts.ToDictionary(
                     e => ItemFactory.CreateMaterial(materialItemSheet, e.Key),
                     e => e.Value),
                 itemUsable = equipment,
