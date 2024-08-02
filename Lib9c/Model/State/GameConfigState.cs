@@ -69,7 +69,7 @@ namespace Nekoyume.Model.State
         #endregion
 
         #region CustomCraft
-        public decimal CustomEquipmentCraftIconCostMultiplier { get; private set; }
+        public long CustomEquipmentCraftIconCostMultiplier { get; private set; }
         #endregion
 
         public GameConfigState() : base(Address)
@@ -320,7 +320,7 @@ namespace Nekoyume.Model.State
             if (serialized.TryGetValue((Text)"custom_equipment_craft_icon_cost_multiplier",
                     out var cecIconCostMul))
             {
-                CustomEquipmentCraftIconCostMultiplier = cecIconCostMul.ToDecimal();
+                CustomEquipmentCraftIconCostMultiplier = cecIconCostMul.ToLong();
             }
             #endregion
         }
@@ -808,7 +808,7 @@ namespace Nekoyume.Model.State
                     break;
                 case "custom_equipment_craft_icon_cost_multiplier":
                     CustomEquipmentCraftIconCostMultiplier =
-                        TableExtensions.ParseDecimal(row.Value);
+                        TableExtensions.ParseLong(row.Value);
                     break;
 
                 #endregion
