@@ -25,9 +25,9 @@ namespace Nekoyume.Delegation
 
         BigInteger TotalShares { get; }
 
-        void Bond(IDelegator delegator, FungibleAssetValue fav, Delegation delegation);
+        Delegation Bond(IDelegator delegator, FungibleAssetValue fav, Delegation delegation);
 
-        void Unbond(IDelegator delegator, BigInteger share, Delegation delegation);
+        Delegation Unbond(IDelegator delegator, BigInteger share, Delegation delegation);
 
         void Distribute();
 

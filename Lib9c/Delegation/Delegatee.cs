@@ -108,13 +108,13 @@ namespace Nekoyume.Delegation
                 ? TotalDelegated
                 : (TotalDelegated * share).DivRem(TotalShares, out _);
 
-        void IDelegatee.Bond(IDelegator delegator, FungibleAssetValue fav, Delegation delegation)
+        Delegation IDelegatee.Bond(IDelegator delegator, FungibleAssetValue fav, Delegation delegation)
             => Bond((T)delegator, fav, delegation);
 
-        void IDelegatee.Unbond(IDelegator delegator, BigInteger share, Delegation delegation)
+        Delegation IDelegatee.Unbond(IDelegator delegator, BigInteger share, Delegation delegation)
             => Unbond((T)delegator, share, delegation);
 
-        public void Bond(T delegator, FungibleAssetValue fav, Delegation delegation)
+        public Delegation Bond(T delegator, FungibleAssetValue fav, Delegation delegation)
         {
             if (!fav.Currency.Equals(Currency))
             {
@@ -127,9 +127,11 @@ namespace Nekoyume.Delegation
             TotalShares += share;
             TotalDelegated += fav;
             Distribute();
+
+            return delegation;
         }
 
-        public void Unbond(T delegator, BigInteger share, Delegation delegation)
+        public Delegation Unbond(T delegator, BigInteger share, Delegation delegation)
         {
             if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
             {
@@ -146,6 +148,8 @@ namespace Nekoyume.Delegation
             TotalShares -= share;
             TotalDelegated -= fav;
             Distribute();
+
+            return delegation;
         }
 
         public void Distribute()

@@ -11,19 +11,14 @@ namespace Nekoyume.Delegation
 {
     public sealed class UnbondLockIn : IBencodable, IEquatable<UnbondLockIn>
     {
-        public UnbondLockIn(Address address, int maxEntries)
-        {
-            if (maxEntries < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(maxEntries),
-                    maxEntries,
-                    "The max entries must be greater than or equal to zero.");
-            }
+        private FungibleAssetValue? _releasedFAV;
 
-            Address = address;
-            MaxEntries = maxEntries;
-            Entries = ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>>.Empty;
+        public UnbondLockIn(Address address, int maxEntries)
+            : this(
+                  address,
+                  maxEntries,
+                  ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>>.Empty)
+        {
         }
 
         public UnbondLockIn(Address address, int maxEntries, IValue bencoded)
@@ -32,25 +27,17 @@ namespace Nekoyume.Delegation
         }
 
         public UnbondLockIn(Address address, int maxEntries, List bencoded)
+            : this(
+                  address,
+                  maxEntries,
+                  bencoded.Select(kv => kv is List list
+                      ? new KeyValuePair<long, ImmutableList<UnbondLockInEntry>>(
+                          (Integer)list[0],
+                          ((List)list[1]).Select(e => new UnbondLockInEntry(e)).ToImmutableList())
+                      : throw new InvalidCastException(
+                          $"Unable to cast object of type '{kv.GetType()}' to type '{typeof(List)}'."))
+                  .ToImmutableSortedDictionary())
         {
-            if (maxEntries < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(maxEntries),
-                    maxEntries,
-                    "The max entries must be greater than or equal to zero.");
-            }
-
-            Address = address;
-            MaxEntries = maxEntries;
-            Entries = bencoded
-                .Select(kv => kv is List list
-                    ? new KeyValuePair<long, ImmutableList<UnbondLockInEntry>>(
-                        (Integer)list[0],
-                        ((List)list[1]).Select(e => new UnbondLockInEntry(e)).ToImmutableList())
-                    : throw new InvalidCastException(
-                        $"Unable to cast object of type '{kv.GetType()}' to type '{typeof(List)}'."))
-                .ToImmutableSortedDictionary();
         }
 
         public UnbondLockIn(Address address, int maxEntries, IEnumerable<UnbondLockInEntry> entries)
@@ -62,6 +49,26 @@ namespace Nekoyume.Delegation
             }
         }
 
+        private UnbondLockIn(
+            Address address,
+            int maxEntries,
+            ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>> entries,
+            FungibleAssetValue? releasedFAV = null)
+        {
+            if (maxEntries < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxEntries),
+                    maxEntries,
+                    "The max entries must be greater than or equal to zero.");
+            }
+
+            Address = address;
+            MaxEntries = maxEntries;
+            Entries = entries;
+            _releasedFAV = releasedFAV;
+        }
+
         public Address Address { get; }
 
         public int MaxEntries { get; }
@@ -70,7 +77,7 @@ namespace Nekoyume.Delegation
 
         public bool IsEmpty => Entries.IsEmpty;
 
-        public ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>> Entries { get; private set; }
+        public ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>> Entries { get; }
 
         public ImmutableArray<UnbondLockInEntry> FlattenedEntries
             => Entries.Values.SelectMany(e => e).ToImmutableArray();
@@ -82,7 +89,7 @@ namespace Nekoyume.Delegation
                         (Integer)sortedDict.Key,
                         new List(sortedDict.Value.Select(e => e.Bencoded)))));
 
-        public FungibleAssetValue? Release(long height)
+        public UnbondLockIn Release(long height)
         {
             if (height <= 0)
             {
@@ -92,18 +99,19 @@ namespace Nekoyume.Delegation
                     "The height must be greater than zero.");
             }
 
-            FungibleAssetValue? releaseFAV = null;
-            foreach (var (expireHeight, entries) in Entries)
+            var updatedEntries = Entries;
+            FungibleAssetValue? releasedFAV = null;
+            foreach (var (expireHeight, entries) in updatedEntries)
             {
                 if (expireHeight <= height)
                 {
                     FungibleAssetValue entriesFAV = entries
                         .Select(e => e.LockInFAV)
                         .Aggregate((accum, next) => accum + next);
-                    releaseFAV = releaseFAV is null
+                    releasedFAV = _releasedFAV is null
                         ? entriesFAV
-                        : releaseFAV + entriesFAV;
-                    Entries = Entries.Remove(expireHeight);
+                        : _releasedFAV + entriesFAV;
+                    updatedEntries = updatedEntries.Remove(expireHeight);
                 }
                 else
                 {
@@ -111,12 +119,19 @@ namespace Nekoyume.Delegation
                 }
             }
 
-            return releaseFAV;
+            return UpdateEntries(updatedEntries, releasedFAV);
         }
 
         [Obsolete("This method is not implemented yet.")]
-        public void Slash()
+        public UnbondLockIn Slash()
             => throw new NotImplementedException();
+
+        public FungibleAssetValue? FlushReleasedFAV()
+        {
+            var releasedFAV = _releasedFAV;
+            _releasedFAV = null;
+            return releasedFAV;
+        }
 
         public override bool Equals(object obj)
             => obj is UnbondLockIn other && Equals(other);
@@ -130,17 +145,17 @@ namespace Nekoyume.Delegation
         public override int GetHashCode()
             => Address.GetHashCode();
 
-        internal void LockIn(FungibleAssetValue lockInFAV, long creationHeight, long expireHeight)
+        internal UnbondLockIn LockIn(FungibleAssetValue lockInFAV, long creationHeight, long expireHeight)
         {
             if (expireHeight == creationHeight)
             {
-                return;
+                return this;
             }
 
-            AddEntry(new UnbondLockInEntry(lockInFAV, creationHeight, expireHeight));
+            return AddEntry(new UnbondLockInEntry(lockInFAV, creationHeight, expireHeight));
         }
 
-        internal void Cancel(FungibleAssetValue cancellingFAV, long height)
+        internal UnbondLockIn Cancel(FungibleAssetValue cancellingFAV, long height)
         {
             if (cancellingFAV.Sign <= 0)
             {
@@ -163,7 +178,8 @@ namespace Nekoyume.Delegation
                 throw new InvalidOperationException("Cannot cancel more than locked-in FAV.");
             }
 
-            foreach (var (expireHeight, entries) in Entries.Reverse())
+            var updatedEntries = Entries;
+            foreach (var (expireHeight, entries) in updatedEntries.Reverse())
             {
                 if (expireHeight <= height)
                 {
@@ -172,43 +188,50 @@ namespace Nekoyume.Delegation
 
                 foreach (var entry in entries.Select((value, index) => (value, index)).Reverse())
                 {
-                    if (cancellingFAV.RawValue < 0)
+                    if (cancellingFAV.Sign == 0)
                     {
-                        throw new InvalidOperationException("Insufficient undelegation to cancel");
+                        break;
                     }
 
-                    if (entry.value.LockInFAV < cancellingFAV)
+                    if (entry.value.LockInFAV <= cancellingFAV)
                     {
-                        cancellingFAV -= entry.value.LockInFAV;
-                        Entries = Entries.SetItem(
+                        cancellingFAV -= entry.value.LockInFAV; ;
+                        updatedEntries = updatedEntries.SetItem(
                             expireHeight,
-                            Entries[expireHeight].RemoveAt(entry.index));
+                            updatedEntries[expireHeight].RemoveAt(entry.index));
                     }
                     else
                     {
-                        entry.value.Cancel(cancellingFAV);
-                        Entries = Entries.SetItem(
+                        var cancelledEntry = entry.value.Cancel(cancellingFAV);
+                        cancellingFAV -= entry.value.LockInFAV; ;
+                        updatedEntries = updatedEntries.SetItem(
                             expireHeight,
-                            Entries[expireHeight].SetItem(entry.index, entry.value));
-                        break;
+                            updatedEntries[expireHeight].SetItem(entry.index, cancelledEntry));
                     }
                 }
 
-                if (Entries[expireHeight].IsEmpty)
+                if (updatedEntries[expireHeight].IsEmpty)
                 {
-                    Entries = Entries.Remove(expireHeight);
+                    updatedEntries = updatedEntries.Remove(expireHeight);
                 }
             }
+
+            return UpdateEntries(updatedEntries);
         }
 
-        private FungibleAssetValue Cancellable(long height)
-            => - Entries
+        internal FungibleAssetValue Cancellable(long height)
+            => Entries
                 .Where(kv => kv.Key > height)
                 .SelectMany(kv => kv.Value)
                 .Select(e => e.LockInFAV)
                 .Aggregate((accum, next) => accum + next);
 
-        private void AddEntry(UnbondLockInEntry entry)
+        private UnbondLockIn UpdateEntries(
+            ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>> entries,
+            FungibleAssetValue? releasedFAV=null)
+            => new UnbondLockIn(Address, MaxEntries, entries, releasedFAV);
+
+        private UnbondLockIn AddEntry(UnbondLockInEntry entry)
         {
             if (IsFull)
             {
@@ -217,11 +240,11 @@ namespace Nekoyume.Delegation
 
             if (Entries.TryGetValue(entry.ExpireHeight, out var entries))
             {
-                Entries = Entries.SetItem(entry.ExpireHeight, entries.Add(entry));
+                return UpdateEntries(Entries.SetItem(entry.ExpireHeight, entries.Add(entry)));
             }
             else
             {
-                Entries = Entries.Add(entry.ExpireHeight, ImmutableList<UnbondLockInEntry>.Empty.Add(entry));
+                return UpdateEntries(Entries.Add(entry.ExpireHeight, ImmutableList<UnbondLockInEntry>.Empty.Add(entry)));
             }
         }
 
@@ -271,12 +294,12 @@ namespace Nekoyume.Delegation
                         "The lock-in FAV must be greater than zero.");
                 }
 
-                if (lockInFAV >= initialLockInFAV)
+                if (lockInFAV > initialLockInFAV)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(lockInFAV),
                         lockInFAV,
-                        "The lock-in FAV must be less than the initial lock-in FAV.");
+                        "The lock-in FAV must be less than or equal to the initial lock-in FAV.");
                 }
 
                 if (creationHeight < 0)
@@ -301,9 +324,9 @@ namespace Nekoyume.Delegation
                 ExpireHeight = expireHeight;
             }
 
-            public FungibleAssetValue InitialLockInFAV { get; private set; }
+            public FungibleAssetValue InitialLockInFAV { get; }
 
-            public FungibleAssetValue LockInFAV { get; private set; }
+            public FungibleAssetValue LockInFAV { get; }
 
             public long CreationHeight { get; }
 
@@ -322,7 +345,11 @@ namespace Nekoyume.Delegation
                 && CreationHeight == other.CreationHeight
                 && ExpireHeight == other.ExpireHeight);
 
-            internal void Cancel(FungibleAssetValue cancellingFAV)
+            [Obsolete("This method is not implemented yet.")]
+            public UnbondLockInEntry Slash()
+                => throw new NotImplementedException();
+
+            internal UnbondLockInEntry Cancel(FungibleAssetValue cancellingFAV)
             {
                 if (cancellingFAV.Sign <= 0)
                 {
@@ -337,8 +364,11 @@ namespace Nekoyume.Delegation
                     throw new InvalidOperationException("Cannot cancel more than locked-in FAV.");
                 }
 
-                InitialLockInFAV -= cancellingFAV;
-                LockInFAV -= cancellingFAV;
+                return new UnbondLockInEntry(
+                    InitialLockInFAV - cancellingFAV,
+                    LockInFAV - cancellingFAV,
+                    CreationHeight,
+                    ExpireHeight);
             }
         }
     }
