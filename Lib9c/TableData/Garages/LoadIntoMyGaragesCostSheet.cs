@@ -30,12 +30,19 @@ namespace Nekoyume.TableData.Garages
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
-                ItemId = TryParseInt(fields[1], out var result) ? result : 0;
-                CurrencyTicker = fields[2];
-                FungibleId = string.IsNullOrEmpty(fields[3])
+                CurrencyTicker = fields[1];
+                FungibleId = string.IsNullOrEmpty(fields[2])
                     ? (HashDigest<SHA256>?)null
-                    : HashDigest<SHA256>.FromString(fields[3]);
-                GarageCostPerUnit = ParseDecimal(fields[4]);
+                    : HashDigest<SHA256>.FromString(fields[2]);
+                GarageCostPerUnit = ParseDecimal(fields[3]);
+                ItemId = 0;
+                if (fields.Count > 4)
+                {
+                    if (TryParseInt(fields[4], out var itemId))
+                    {
+                        ItemId = itemId;
+                    }
+                }
             }
         }
 
