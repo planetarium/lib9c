@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Delegation
     using System.Numerics;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
+    using Nekoyume.Delegation;
     using Xunit;
 
     public class DelegateeTest
@@ -112,7 +113,7 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void CannotBondInvalidDelegator()
         {
-            var testDelegatee = _fixture.TestDelegatee1;
+            IDelegatee testDelegatee = _fixture.TestDelegatee1;
             var testDelegator = _fixture.TestDelegator1;
             var dummyDelegator = _fixture.DummyDelegator1;
             var delegation = _fixture.Delegation1To1;
@@ -214,8 +215,10 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void CannotUnbondInvalidDelegator()
         {
+            IDelegatee delegatee = _fixture.TestDelegatee1;
             Assert.Throws<InvalidCastException>(
-                () => _fixture.TestDelegatee1.Unbond(_fixture.DummyDelegator1, BigInteger.One, _fixture.Delegation1To1));
+                () => delegatee.Unbond(
+                    _fixture.DummyDelegator1, BigInteger.One, _fixture.Delegation1To1));
         }
 
         [Fact]
