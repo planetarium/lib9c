@@ -7,16 +7,20 @@ namespace Nekoyume.Delegation
 {
     public sealed class Delegation
     {
+        private FungibleAssetValue? _netBondedFAV;
+
         public Delegation(
-            Bond bond = null,
-            UnbondLockIn unbondLockIn = null,
-            RebondGrace rebondGrace = null,
-            UnbondingSet unbondingSet = null)
+            Bond bond,
+            UnbondLockIn unbondLockIn,
+            RebondGrace rebondGrace,
+            UnbondingSet unbondingSet,
+            FungibleAssetValue? netBondedFAV = null)
         {
             Bond = bond;
             UnbondLockIn = unbondLockIn;
             RebondGrace = rebondGrace;
             UnbondingSet = unbondingSet;
+            _netBondedFAV = netBondedFAV;
         }
 
         public Bond Bond { get; }
@@ -27,11 +31,7 @@ namespace Nekoyume.Delegation
 
         public UnbondingSet UnbondingSet { get; }
 
-        public FungibleAssetValue? IncompleteBond { get; private set; }
-
-        public FungibleAssetValue? IncompleteUnbond { get; private set; }
-
-        public void AddBond(FungibleAssetValue fav, BigInteger share)
+        public Delegation AddBond(FungibleAssetValue fav, BigInteger share)
         {
             if (fav.Sign <= 0)
             {
@@ -45,11 +45,15 @@ namespace Nekoyume.Delegation
                     nameof(share), share, "Share must be positive.");
             }
 
-            Bond.AddShare(share);
-            IncompleteBond = fav;
+            return new Delegation(
+                Bond.AddShare(share),
+                UnbondLockIn,
+                RebondGrace,
+                UnbondingSet,
+                _netBondedFAV is null ? fav : _netBondedFAV + fav);
         }
 
-        public void CancelBond(FungibleAssetValue fav, BigInteger share)
+        public Delegation CancelBond(FungibleAssetValue fav, BigInteger share)
         {
             if (fav.Sign <= 0)
             {
@@ -63,11 +67,15 @@ namespace Nekoyume.Delegation
                     nameof(share), share, "Share must be positive.");
             }
 
-            Bond.SubtractShare(share);
-            IncompleteUnbond = fav;
+            return new Delegation(
+                Bond.SubtractShare(share),
+                UnbondLockIn,
+                RebondGrace,
+                UnbondingSet,
+                _netBondedFAV is null ? fav : _netBondedFAV - fav);
         }
 
-        public void DoUnbondLockIn(FungibleAssetValue fav, long height, long expireHeight)
+        public Delegation DoUnbondLockIn(FungibleAssetValue fav, long height, long expireHeight)
         {
             if (fav.Sign <= 0)
             {
@@ -89,14 +97,15 @@ namespace Nekoyume.Delegation
                     "Expire height must be greater than or equal to the height.");
             }
 
-            UnbondLockIn.LockIn(fav, height, expireHeight);
-            if (!UnbondingSet.UnbondLockIns.Contains(UnbondLockIn.Address))
-            {
-                UnbondingSet.AddUnbondLockIn(UnbondLockIn.Address);
-            }
+            return new Delegation(
+                Bond,
+                UnbondLockIn.LockIn(fav, height, expireHeight),
+                RebondGrace,
+                UnbondingSet.AddUnbondLockIn(UnbondLockIn.Address),
+                _netBondedFAV);
         }
 
-        public void CancelUnbondLockIn(FungibleAssetValue fav, long height)
+        public Delegation CancelUnbondLockIn(FungibleAssetValue fav, long height)
         {
             if (fav.Sign <= 0)
             {
@@ -110,14 +119,23 @@ namespace Nekoyume.Delegation
                     nameof(height), height, "Height must be greater than or equal to zero.");
             }
 
-            UnbondLockIn.Cancel(fav, height);
-            if (UnbondLockIn.IsEmpty)
+            var updatedUnbondLockIn = UnbondLockIn.Cancel(fav, height);
+            var updatedUnbondingSet = UnbondingSet;
+
+            if (updatedUnbondLockIn.IsEmpty)
             {
-                UnbondingSet.RemoveUnbondLockIn(UnbondLockIn.Address);
+                updatedUnbondingSet = UnbondingSet.RemoveUnbondLockIn(UnbondLockIn.Address);
             }
+
+            return new Delegation(
+                Bond,
+                updatedUnbondLockIn,
+                RebondGrace,
+                updatedUnbondingSet,
+                _netBondedFAV);
         }
 
-        public void DoRebondGrace(Address rebondeeAddress, FungibleAssetValue fav, long height, long expireHeight)
+        public Delegation DoRebondGrace(Address rebondeeAddress, FungibleAssetValue fav, long height, long expireHeight)
         {
             if (fav.Sign <= 0)
             {
@@ -129,12 +147,6 @@ namespace Nekoyume.Delegation
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(height), height, "Height must be greater than or equal to zero.");
-            }
-
-            RebondGrace.Grace(rebondeeAddress, fav, height, expireHeight);
-            if (!UnbondingSet.RebondGraces.Contains(RebondGrace.Address))
-            {
-                UnbondingSet.AddRebondGrace(RebondGrace.Address);
             }
 
             if (expireHeight < height)
@@ -144,12 +156,23 @@ namespace Nekoyume.Delegation
                     expireHeight,
                     "Expire height must be greater than or equal to the height.");
             }
+
+            return new Delegation(
+                Bond,
+                UnbondLockIn,
+                RebondGrace.Grace(rebondeeAddress, fav, height, expireHeight),
+                UnbondingSet.AddRebondGrace(RebondGrace.Address),
+                _netBondedFAV);
         }
 
-        public void Complete()
+        public FungibleAssetValue? FlushReleasedFAV()
+            => UnbondLockIn.FlushReleasedFAV();
+
+        public FungibleAssetValue? FlushNetBondedFAV()
         {
-            IncompleteBond = null;
-            IncompleteUnbond = null;
+            var netBondedFAV = _netBondedFAV;
+            _netBondedFAV = null;
+            return netBondedFAV;
         }
     }
 }

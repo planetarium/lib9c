@@ -46,14 +46,13 @@ namespace Nekoyume.Delegation
 
         public Address Address { get; }
 
-        public BigInteger Share { get; private set; }
+        public BigInteger Share { get; }
 
-        public long LastDistributeHeight { get; private set; }
+        public long LastDistributeHeight { get; }
 
         public IValue Bencoded => List.Empty
             .Add(Share)
             .Add(LastDistributeHeight);
-
 
         public override bool Equals(object obj)
             => obj is Bond other && Equals(other);
@@ -67,7 +66,7 @@ namespace Nekoyume.Delegation
         public override int GetHashCode()
             => Address.GetHashCode();
 
-        internal void AddShare(BigInteger share)
+        internal Bond AddShare(BigInteger share)
         {
             if (share.Sign <= 0)
             {
@@ -75,10 +74,10 @@ namespace Nekoyume.Delegation
                     nameof(share), share, "share must be positive.");
             }
 
-            Share += share;
+            return new Bond(Address, Share + share, LastDistributeHeight);
         }
 
-        internal void SubtractShare(BigInteger share)
+        internal Bond SubtractShare(BigInteger share)
         {
             if (share > Share)
             {
@@ -86,10 +85,10 @@ namespace Nekoyume.Delegation
                     nameof(share), share, "share must be less than or equal to the current share.");
             }
 
-            Share -= share;
+            return new Bond(Address, Share - share, LastDistributeHeight);
         }
 
-        internal void UpdateLastDistributeHeight(long height)
+        internal Bond UpdateLastDistributeHeight(long height)
         {
             if (height <= LastDistributeHeight)
             {
@@ -99,7 +98,7 @@ namespace Nekoyume.Delegation
                     "height must be greater than the last distribute height.");
             }
 
-            LastDistributeHeight = height;
+            return new Bond(Address, Share, height);
         }
     }
 }

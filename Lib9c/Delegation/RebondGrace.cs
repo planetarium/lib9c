@@ -12,18 +12,11 @@ namespace Nekoyume.Delegation
     public sealed class RebondGrace : IBencodable, IEquatable<RebondGrace>
     {
         public RebondGrace(Address address, int maxEntries)
+            : this(
+                  address,
+                  maxEntries,
+                  ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>>.Empty)
         {
-            if (maxEntries < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(maxEntries),
-                    maxEntries,
-                    "The max entries must be greater than or equal to zero.");
-            }
-
-            Address = address;
-            MaxEntries = maxEntries;
-            Entries = ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>>.Empty;
         }
 
         public RebondGrace(Address address, int maxEntries, IValue bencoded)
@@ -32,25 +25,17 @@ namespace Nekoyume.Delegation
         }
 
         public RebondGrace(Address address, int maxEntries, List bencoded)
+            : this(
+                  address,
+                  maxEntries,
+                  bencoded.Select(kv => kv is List list
+                      ? new KeyValuePair<long, ImmutableList<RebondGraceEntry>>(
+                          (Integer)list[0],
+                          ((List)list[1]).Select(e => new RebondGraceEntry(e)).ToImmutableList())
+                      : throw new InvalidCastException(
+                          $"Unable to cast object of type '{kv.GetType()}' to type '{typeof(List)}'."))
+                  .ToImmutableSortedDictionary())
         {
-            if (maxEntries < 0)
-            { 
-                throw new ArgumentOutOfRangeException(
-                    nameof(maxEntries),
-                    maxEntries,
-                    "The max entries must be greater than or equal to zero.");
-            }
-
-            Address = address;
-            MaxEntries = maxEntries;
-            Entries = bencoded
-                .Select(kv => kv is List list
-                    ? new KeyValuePair<long, ImmutableList<RebondGraceEntry>>(
-                        (Integer)list[0],
-                        ((List)list[1]).Select(e => new RebondGraceEntry(e)).ToImmutableList())
-                    : throw new InvalidCastException(
-                        $"Unable to cast object of type '{kv.GetType()}' to type '{typeof(List)}'."))
-                .ToImmutableSortedDictionary();
         }
 
         public RebondGrace(Address address, int maxEntries, IEnumerable<RebondGraceEntry> entries)
@@ -62,6 +47,24 @@ namespace Nekoyume.Delegation
             }
         }
 
+        private RebondGrace(
+            Address address,
+            int maxEntries,
+            ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> entries)
+        {
+            if (maxEntries < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxEntries),
+                    maxEntries,
+                    "The max entries must be greater than or equal to zero.");
+            }
+
+            Address = address;
+            MaxEntries = maxEntries;
+            Entries = entries;
+        }
+
         public Address Address { get; }
 
         public int MaxEntries { get; }
@@ -70,7 +73,7 @@ namespace Nekoyume.Delegation
 
         public bool IsEmpty => Entries.IsEmpty;
 
-        public ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> Entries { get; private set; }
+        public ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> Entries { get; }
 
         public ImmutableArray<RebondGraceEntry> FlattenedEntries
             => Entries.Values.SelectMany(e => e).ToImmutableArray();
@@ -82,7 +85,7 @@ namespace Nekoyume.Delegation
                         (Integer)sortedDict.Key,
                         new List(sortedDict.Value.Select(e => e.Bencoded)))));
 
-        public void Release(long height)
+        public RebondGrace Release(long height)
         {
             if (height <= 0)
             {
@@ -92,21 +95,24 @@ namespace Nekoyume.Delegation
                     "The height must be greater than zero.");
             }
 
-            foreach (var (expireHeight, entries) in Entries)
+            var updatedEntries = Entries;
+            foreach (var (expireHeight, entries) in updatedEntries)
             {
                 if (expireHeight <= height)
                 {
-                    Entries = Entries.Remove(expireHeight);
+                    updatedEntries = updatedEntries.Remove(expireHeight);
                 }
                 else
                 {
                     break;
                 }
             }
+
+            return UpdateEntries(updatedEntries);
         }
 
         [Obsolete("This method is not implemented yet.")]
-        public void Slash()
+        public RebondGrace Slash()
             => throw new NotImplementedException();
 
         public override bool Equals(object obj)
@@ -121,18 +127,18 @@ namespace Nekoyume.Delegation
         public override int GetHashCode()
             => Address.GetHashCode();
 
-        internal void Grace(
+        internal RebondGrace Grace(
             Address rebondeeAddress, FungibleAssetValue initialGraceFAV, long creationHeight, long expireHeight)
         {
             if (expireHeight == creationHeight)
             {
-                return;
+                return this;
             }
 
-            AddEntry(new RebondGraceEntry(rebondeeAddress, initialGraceFAV, creationHeight, expireHeight));
+            return AddEntry(new RebondGraceEntry(rebondeeAddress, initialGraceFAV, creationHeight, expireHeight));
         }
 
-        private void AddEntry(RebondGraceEntry entry)
+        private RebondGrace AddEntry(RebondGraceEntry entry)
         {
             if (IsFull)
             {
@@ -141,27 +147,27 @@ namespace Nekoyume.Delegation
 
             if (Entries.TryGetValue(entry.ExpireHeight, out var entries))
             {
-                Entries = Entries.SetItem(entry.ExpireHeight, entries.Add(entry));
+                return UpdateEntries(Entries.SetItem(entry.ExpireHeight, entries.Add(entry)));
             }
             else
             {
-                Entries = Entries.Add(entry.ExpireHeight, ImmutableList<RebondGraceEntry>.Empty.Add(entry));
+                return UpdateEntries(Entries.Add(entry.ExpireHeight, ImmutableList<RebondGraceEntry>.Empty.Add(entry)));
             }
         }
+
+        private RebondGrace UpdateEntries(
+            ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> entries)
+            => new RebondGrace(Address, MaxEntries, entries);
 
         public class RebondGraceEntry : IBencodable, IEquatable<RebondGraceEntry>
         {
             public RebondGraceEntry(
                 Address rebondeeAddress,
-                FungibleAssetValue initialGraceFAV,
+                FungibleAssetValue graceFAV,
                 long creationHeight,
                 long expireHeight)
+                : this(rebondeeAddress, graceFAV, graceFAV, creationHeight, expireHeight)
             {
-                RebondeeAddress = rebondeeAddress;
-                InitialGraceFAV = initialGraceFAV;
-                GraceFAV = initialGraceFAV;
-                CreationHeight = creationHeight;
-                ExpireHeight = expireHeight;
             }
 
             public RebondGraceEntry(IValue bencoded)
@@ -202,12 +208,12 @@ namespace Nekoyume.Delegation
                         "The grace FAV must be greater than zero.");
                 }
 
-                if (graceFAV >= initialGraceFAV)
+                if (graceFAV > initialGraceFAV)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(graceFAV),
                         graceFAV,
-                        "The grace FAV must be less than the initial grace FAV.");
+                        "The grace FAV must be less than or equal to the initial grace FAV.");
                 }
 
                 if (creationHeight < 0)
@@ -237,7 +243,7 @@ namespace Nekoyume.Delegation
 
             public FungibleAssetValue InitialGraceFAV { get; }
 
-            public FungibleAssetValue GraceFAV { get; private set; }
+            public FungibleAssetValue GraceFAV { get; }
 
             public long CreationHeight { get; }
 
@@ -257,6 +263,10 @@ namespace Nekoyume.Delegation
                 && GraceFAV.Equals(other.GraceFAV)
                 && CreationHeight == other.CreationHeight
                 && ExpireHeight == other.ExpireHeight);
+
+            [Obsolete("This method is not implemented yet.")]
+            public RebondGraceEntry Slash()
+                => throw new NotImplementedException();
         }
     }
 }

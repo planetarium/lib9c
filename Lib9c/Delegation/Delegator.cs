@@ -91,19 +91,22 @@ namespace Nekoyume.Delegation
 
             delegatee.Unbond((TSelf)this, share, delegation);
 
-            if (!(delegation.IncompleteUnbond is FungibleAssetValue unbondToLockIn))
+            if (!(delegation.FlushNetBondedFAV() is FungibleAssetValue netBondedFAV))
             {
-                throw new NullReferenceException("Bonding FAV is null.");
+                throw new NullReferenceException("Net bonded FAV is null.");
             }
 
-            delegation.DoUnbondLockIn(unbondToLockIn, height, height + delegatee.UnbondingPeriod);
+            if (netBondedFAV.Sign >= 0)
+            {
+                throw new InvalidOperationException("Net bonded FAV must be negative.");
+            }
+
+            delegation.DoUnbondLockIn(-netBondedFAV, height, height + delegatee.UnbondingPeriod);
 
             if (delegation.Bond.Share.IsZero)
             {
                 Delegatees = Delegatees.Remove(delegatee.Address);
             }
-
-            delegation.Complete();
         }
 
         public void Redelegate(
@@ -128,14 +131,19 @@ namespace Nekoyume.Delegation
 
             srcDelegatee.Unbond((TSelf)this, share, srcDelegation);
 
-            if (!(srcDelegation.IncompleteUnbond is FungibleAssetValue unbondToGrace))
+            if (!(srcDelegation.FlushNetBondedFAV() is FungibleAssetValue netBondedFAV))
             {
-                throw new NullReferenceException("Bonding FAV is null.");
+                throw new NullReferenceException("Net bonded FAV is null.");
             }
 
-            dstDelegatee.Bond((TSelf)this, unbondToGrace, dstDelegation);
+            if (netBondedFAV.Sign >= 0)
+            {
+                throw new InvalidOperationException("Net bonded FAV must be negative.");
+            }
 
-            srcDelegation.DoRebondGrace(dstDelegatee.Address, unbondToGrace, height, height + srcDelegatee.UnbondingPeriod);
+            dstDelegatee.Bond((TSelf)this, -netBondedFAV, dstDelegation);
+
+            srcDelegation.DoRebondGrace(dstDelegatee.Address, -netBondedFAV, height, height + srcDelegatee.UnbondingPeriod);
 
             if (srcDelegation.Bond.Share.IsZero)
             {
@@ -143,8 +151,6 @@ namespace Nekoyume.Delegation
             }
 
             Delegatees = Delegatees.Add(dstDelegatee.Address);
-
-            srcDelegation.Complete();
         }
 
         public void Claim(IDelegatee delegatee)

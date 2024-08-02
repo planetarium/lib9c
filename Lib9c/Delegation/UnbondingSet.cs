@@ -33,33 +33,25 @@ namespace Nekoyume.Delegation
         }
 
 
-        public ImmutableSortedSet<Address> UnbondLockIns { get; private set; }
+        public ImmutableSortedSet<Address> UnbondLockIns { get; }
 
-        public ImmutableSortedSet<Address> RebondGraces { get; private set; }
-
-        public void AddUnbondLockIn(Address address)
-        {
-            UnbondLockIns = UnbondLockIns.Add(address);
-        }
-
-        public void RemoveUnbondLockIn(Address address)
-        {
-            UnbondLockIns = UnbondLockIns.Remove(address);
-        }
-
-        public void AddRebondGrace(Address address)
-        {
-            RebondGraces = RebondGraces.Add(address);
-        }
-
-        public void RemoveRebondGrace(Address address)
-        {
-            RebondGraces = RebondGraces.Remove(address);
-        }
+        public ImmutableSortedSet<Address> RebondGraces { get; }
 
         public IValue Bencoded
             => List.Empty
                 .Add(new List(UnbondLockIns.Select(a => a.Bencoded)))
                 .Add(new List(RebondGraces.Select(a => a.Bencoded)));
+
+        public UnbondingSet AddUnbondLockIn(Address address)
+            => new UnbondingSet(UnbondLockIns.Add(address), RebondGraces);
+
+        public UnbondingSet RemoveUnbondLockIn(Address address)
+            => new UnbondingSet(UnbondLockIns.Remove(address), RebondGraces);
+
+        public UnbondingSet AddRebondGrace(Address address)
+            => new UnbondingSet(UnbondLockIns, RebondGraces.Add(address));
+
+        public UnbondingSet RemoveRebondGrace(Address address)
+            => new UnbondingSet(UnbondLockIns, RebondGraces.Remove(address));
     }
 }
