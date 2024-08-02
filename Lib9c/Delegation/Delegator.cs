@@ -36,13 +36,13 @@ namespace Nekoyume.Delegation
         public IValue Bencoded
             => new List(Delegatees.Select(a => a.Bencoded));
 
-        public void Delegate(IDelegatee delegatee, FungibleAssetValue fav, Delegation delegation)
+        void IDelegator.Delegate(IDelegatee delegatee, FungibleAssetValue fav, Delegation delegation)
             => Delegate((T)delegatee, fav, delegation);
 
-        public void Undelegate(IDelegatee delegatee, BigInteger share, long height, Delegation delegation)
+        void IDelegator.Undelegate(IDelegatee delegatee, BigInteger share, long height, Delegation delegation)
             => Undelegate((T)delegatee, share, height, delegation);
 
-        public void Redelegate(
+        void IDelegator.Redelegate(
             IDelegatee srcDelegatee,
             IDelegatee dstDelegatee,
             BigInteger share,
@@ -51,32 +51,45 @@ namespace Nekoyume.Delegation
             Delegation dstDelegation)
             => Redelegate((T)srcDelegatee, (T)dstDelegatee, share, height, srcDelegation, dstDelegation);
 
-        public void Claim(IDelegatee delegatee)
-        {
-            // TODO: Implement this
-        }
-
-        private void Delegate(
+        public void Delegate(
             T delegatee,
             FungibleAssetValue fav,
             Delegation delegation)
         {
+            if (fav.Sign <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(fav), fav, "Fungible asset value must be positive.");
+            }
+
             delegatee.Bond((TSelf)this, fav, delegation);
             Delegatees = Delegatees.Add(delegatee.Address);
         }
 
-        private void Undelegate(
+        public void Undelegate(
             T delegatee,
             BigInteger share,
             long height,
             Delegation delegation)
         {
+            if (share.Sign <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(share), share, "Share must be positive.");
+            }
+
+            if (height <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(height), height, "Height must be positive.");
+            }
+
             if (delegation.UnbondLockIn.IsFull)
             {
                 throw new InvalidOperationException("Undelegation is full.");
             }
 
-            delegatee.Unbond(this, share, delegation);
+            delegatee.Unbond((TSelf)this, share, delegation);
 
             if (!(delegation.IncompleteUnbond is FungibleAssetValue unbondToLockIn))
             {
@@ -93,7 +106,7 @@ namespace Nekoyume.Delegation
             delegation.Complete();
         }
 
-        private void Redelegate(
+        public void Redelegate(
             T srcDelegatee,
             T dstDelegatee,
             BigInteger share,
@@ -101,14 +114,26 @@ namespace Nekoyume.Delegation
             Delegation srcDelegation,
             Delegation dstDelegation)
         {
-            srcDelegatee.Unbond(this, share, srcDelegation);
+            if (share.Sign <= 0)
+            {
+                    throw new ArgumentOutOfRangeException(
+                    nameof(share), share, "Share must be positive.");
+            }
+
+            if (height <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(height), height, "Height must be positive.");
+            }
+
+            srcDelegatee.Unbond((TSelf)this, share, srcDelegation);
 
             if (!(srcDelegation.IncompleteUnbond is FungibleAssetValue unbondToGrace))
             {
                 throw new NullReferenceException("Bonding FAV is null.");
             }
 
-            dstDelegatee.Bond(this, unbondToGrace, dstDelegation);
+            dstDelegatee.Bond((TSelf)this, unbondToGrace, dstDelegation);
 
             srcDelegation.DoRebondGrace(dstDelegatee.Address, unbondToGrace, height, height + srcDelegatee.UnbondingPeriod);
 
@@ -121,5 +146,23 @@ namespace Nekoyume.Delegation
 
             srcDelegation.Complete();
         }
+
+        public void Claim(IDelegatee delegatee)
+        {
+            // TODO: Implement this
+        }
+
+        public override bool Equals(object obj)
+            => obj is IDelegator other && Equals(other);
+
+        public bool Equals(IDelegator other)
+            => ReferenceEquals(this, other)
+            || (other is Delegator<T, TSelf> delegator
+            && GetType() != delegator.GetType()
+            && Address.Equals(delegator.Address)
+            && Delegatees.SequenceEqual(delegator.Delegatees));
+
+        public override int GetHashCode()
+            => Address.GetHashCode();
     }
 }

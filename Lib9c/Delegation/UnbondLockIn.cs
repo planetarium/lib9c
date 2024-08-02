@@ -9,10 +9,18 @@ using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
-    public class UnbondLockIn : IBencodable
+    public sealed class UnbondLockIn : IBencodable, IEquatable<UnbondLockIn>
     {
         public UnbondLockIn(Address address, int maxEntries)
         {
+            if (maxEntries < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxEntries),
+                    maxEntries,
+                    "The max entries must be greater than or equal to zero.");
+            }
+
             Address = address;
             MaxEntries = maxEntries;
             Entries = ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>>.Empty;
@@ -25,6 +33,14 @@ namespace Nekoyume.Delegation
 
         public UnbondLockIn(Address address, int maxEntries, List bencoded)
         {
+            if (maxEntries < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxEntries),
+                    maxEntries,
+                    "The max entries must be greater than or equal to zero.");
+            }
+
             Address = address;
             MaxEntries = maxEntries;
             Entries = bencoded
@@ -56,6 +72,9 @@ namespace Nekoyume.Delegation
 
         public ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>> Entries { get; private set; }
 
+        public ImmutableArray<UnbondLockInEntry> FlattenedEntries
+            => Entries.Values.SelectMany(e => e).ToImmutableArray();
+
         public IValue Bencoded
             => new List(
                 Entries.Select(
@@ -63,11 +82,82 @@ namespace Nekoyume.Delegation
                         (Integer)sortedDict.Key,
                         new List(sortedDict.Value.Select(e => e.Bencoded)))));
 
-        public void LockIn(FungibleAssetValue lockInFAV, long creationHeight, long expireHeight)
-            => AddEntry(new UnbondLockInEntry(lockInFAV, creationHeight, expireHeight));
-
-        public void Cancel(FungibleAssetValue cancellingFAV, long height)
+        public FungibleAssetValue? Release(long height)
         {
+            if (height <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(height),
+                    height,
+                    "The height must be greater than zero.");
+            }
+
+            FungibleAssetValue? releaseFAV = null;
+            foreach (var (expireHeight, entries) in Entries)
+            {
+                if (expireHeight <= height)
+                {
+                    FungibleAssetValue entriesFAV = entries
+                        .Select(e => e.LockInFAV)
+                        .Aggregate((accum, next) => accum + next);
+                    releaseFAV = releaseFAV is null
+                        ? entriesFAV
+                        : releaseFAV + entriesFAV;
+                    Entries = Entries.Remove(expireHeight);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return releaseFAV;
+        }
+
+        [Obsolete("This method is not implemented yet.")]
+        public void Slash()
+            => throw new NotImplementedException();
+
+        public override bool Equals(object obj)
+            => obj is UnbondLockIn other && Equals(other);
+
+        public bool Equals(UnbondLockIn other)
+            => ReferenceEquals(this, other)
+            || (Address.Equals(other.Address)
+            && MaxEntries == other.MaxEntries
+            && FlattenedEntries.SequenceEqual(other.FlattenedEntries));
+
+        public override int GetHashCode()
+            => Address.GetHashCode();
+
+        internal void LockIn(FungibleAssetValue lockInFAV, long creationHeight, long expireHeight)
+        {
+            if (expireHeight == creationHeight)
+            {
+                return;
+            }
+
+            AddEntry(new UnbondLockInEntry(lockInFAV, creationHeight, expireHeight));
+        }
+
+        internal void Cancel(FungibleAssetValue cancellingFAV, long height)
+        {
+            if (cancellingFAV.Sign <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(cancellingFAV),
+                    cancellingFAV,
+                    "The cancelling FAV must be greater than zero.");
+            }
+
+            if (height <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(height),
+                    height,
+                    "The height must be greater than zero.");
+            }
+
             if (Cancellable(height) < cancellingFAV)
             {
                 throw new InvalidOperationException("Cannot cancel more than locked-in FAV.");
@@ -111,30 +201,6 @@ namespace Nekoyume.Delegation
             }
         }
 
-        public FungibleAssetValue? Release(long height)
-        {
-            FungibleAssetValue? releaseFAV = null;
-            foreach (var (expireHeight, entries) in Entries)
-            {
-                if (expireHeight <= height)
-                {
-                    FungibleAssetValue entriesFAV = entries
-                        .Select(e => e.LockInFAV)
-                        .Aggregate((accum, next) => accum + next);
-                    releaseFAV = releaseFAV is null
-                        ? entriesFAV
-                        : releaseFAV + entriesFAV;
-                    Entries = Entries.Remove(expireHeight);
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            return releaseFAV;
-        }
-
         private FungibleAssetValue Cancellable(long height)
             => - Entries
                 .Where(kv => kv.Key > height)
@@ -159,7 +225,7 @@ namespace Nekoyume.Delegation
             }
         }
 
-        public class UnbondLockInEntry : IBencodable
+        public class UnbondLockInEntry : IBencodable, IEquatable<UnbondLockInEntry>
         {
             public UnbondLockInEntry(
                 FungibleAssetValue lockInFAV,
@@ -189,6 +255,46 @@ namespace Nekoyume.Delegation
                 long creationHeight,
                 long expireHeight)
             {
+                if (initialLockInFAV.Sign <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(initialLockInFAV),
+                        initialLockInFAV,
+                        "The initial lock-in FAV must be greater than zero.");
+                }
+
+                if (lockInFAV.Sign <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(lockInFAV),
+                        lockInFAV,
+                        "The lock-in FAV must be greater than zero.");
+                }
+
+                if (lockInFAV >= initialLockInFAV)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(lockInFAV),
+                        lockInFAV,
+                        "The lock-in FAV must be less than the initial lock-in FAV.");
+                }
+
+                if (creationHeight < 0)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(creationHeight),
+                        creationHeight,
+                        "The creation height must be greater than or equal to zero.");
+                }
+
+                if (expireHeight <= creationHeight)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(expireHeight),
+                        expireHeight,
+                        "The expire height must be greater than the creation height.");
+                }
+
                 InitialLockInFAV = initialLockInFAV;
                 LockInFAV = lockInFAV;
                 CreationHeight = creationHeight;
@@ -209,8 +315,23 @@ namespace Nekoyume.Delegation
                 .Add(CreationHeight)
                 .Add(ExpireHeight);
 
-            public void Cancel(FungibleAssetValue cancellingFAV)
+            public bool Equals(UnbondLockInEntry other)
+                => ReferenceEquals(this, other)
+                || (InitialLockInFAV.Equals(other.InitialLockInFAV)
+                && LockInFAV.Equals(other.LockInFAV)
+                && CreationHeight == other.CreationHeight
+                && ExpireHeight == other.ExpireHeight);
+
+            internal void Cancel(FungibleAssetValue cancellingFAV)
             {
+                if (cancellingFAV.Sign <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(cancellingFAV),
+                        cancellingFAV,
+                        "The cancelling FAV must be greater than zero.");
+                }
+
                 if (LockInFAV <= cancellingFAV)
                 {
                     throw new InvalidOperationException("Cannot cancel more than locked-in FAV.");

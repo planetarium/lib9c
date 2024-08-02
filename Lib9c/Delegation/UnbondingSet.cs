@@ -1,11 +1,12 @@
 using System.Collections.Immutable;
 using System.Linq;
+using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 
 namespace Nekoyume.Delegation
 {
-    public class UnbondingSet
+    public sealed class UnbondingSet : IBencodable
     {
         public UnbondingSet()
         {
