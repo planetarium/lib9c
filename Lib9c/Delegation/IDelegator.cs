@@ -13,24 +13,28 @@ namespace Nekoyume.Delegation
 
         ImmutableSortedSet<Address> Delegatees { get; }
 
-        void Delegate(
+        IDelegateResult Delegate(
             IDelegatee delegatee,
             FungibleAssetValue fav,
-            Delegation delegation);
+            Bond bond);
 
-        void Undelegate(
+        IUndelegateResult Undelegate(
             IDelegatee delegatee,
             BigInteger share,
             long height,
-            Delegation delegation);
+            Bond bond,
+            UnbondLockIn unbondLockIn,
+            UnbondingSet unbondingSet);
 
-        void Redelegate(
+        IRedelegateResult Redelegate(
             IDelegatee srcDelegatee,
             IDelegatee dstDelegatee,
             BigInteger share,
             long height,
-            Delegation srcDelegation,
-            Delegation dstDelegation);
+            Bond srcBond,
+            Bond dstBond,
+            RebondGrace srcRebondGrace,
+            UnbondingSet unbondingSet);
 
         void Claim(IDelegatee delegatee);
     }

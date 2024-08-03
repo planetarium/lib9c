@@ -28,7 +28,9 @@ namespace Nekoyume.Delegation
             if (share.Sign < 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(share), share, "Share must be non-negative.");
+                    nameof(share),
+                    share,
+                    "Share must be non-negative.");
             }
 
             if (lastDistributeHeight < 0)
@@ -71,7 +73,9 @@ namespace Nekoyume.Delegation
             if (share.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(share), share, "share must be positive.");
+                    nameof(share),
+                    share,
+                    "share must be positive.");
             }
 
             return new Bond(Address, Share + share, LastDistributeHeight);
@@ -82,7 +86,9 @@ namespace Nekoyume.Delegation
             if (share > Share)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(share), share, "share must be less than or equal to the current share.");
+                    nameof(share),
+                    share,
+                    "share must be less than or equal to the current share.");
             }
 
             return new Bond(Address, Share - share, LastDistributeHeight);

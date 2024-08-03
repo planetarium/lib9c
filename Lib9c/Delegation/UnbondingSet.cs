@@ -26,7 +26,8 @@ namespace Nekoyume.Delegation
         {
         }
 
-        private UnbondingSet(ImmutableSortedSet<Address> unbondLockIns, ImmutableSortedSet<Address> rebondGraces)
+        private UnbondingSet(
+            ImmutableSortedSet<Address> unbondLockIns, ImmutableSortedSet<Address> rebondGraces)
         {
             UnbondLockIns = unbondLockIns;
             RebondGraces = rebondGraces;

@@ -128,14 +128,19 @@ namespace Nekoyume.Delegation
             => Address.GetHashCode();
 
         internal RebondGrace Grace(
-            Address rebondeeAddress, FungibleAssetValue initialGraceFAV, long creationHeight, long expireHeight)
+            Address rebondeeAddress,
+            FungibleAssetValue initialGraceFAV,
+            long creationHeight,
+            long expireHeight)
         {
             if (expireHeight == creationHeight)
             {
                 return this;
             }
 
-            return AddEntry(new RebondGraceEntry(rebondeeAddress, initialGraceFAV, creationHeight, expireHeight));
+            return AddEntry(
+                new RebondGraceEntry(
+                    rebondeeAddress, initialGraceFAV, creationHeight, expireHeight));
         }
 
         private RebondGrace AddEntry(RebondGraceEntry entry)
@@ -151,7 +156,9 @@ namespace Nekoyume.Delegation
             }
             else
             {
-                return UpdateEntries(Entries.Add(entry.ExpireHeight, ImmutableList<RebondGraceEntry>.Empty.Add(entry)));
+                return UpdateEntries(
+                    Entries.Add(
+                        entry.ExpireHeight, ImmutableList<RebondGraceEntry>.Empty.Add(entry)));
             }
         }
 

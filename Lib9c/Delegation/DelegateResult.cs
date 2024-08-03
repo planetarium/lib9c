@@ -2,10 +2,11 @@ using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
-    public class DelegateResult
+    public class DelegateResult<T> : IDelegateResult
+        where T : IDelegatee
     {
         public DelegateResult(
-            IDelegatee delegatee,
+            T delegatee,
             Bond bond,
             FungibleAssetValue delegatedFAV)
         {
@@ -14,10 +15,12 @@ namespace Nekoyume.Delegation
             DelegatedFAV = delegatedFAV;
         }
 
-        IDelegatee Delegatee { get; }
+        IDelegatee IDelegateResult.Delegatee => Delegatee;
 
-        Bond Bond { get; }
+        public T Delegatee { get; }
 
-        FungibleAssetValue DelegatedFAV { get; }
+        public Bond Bond { get; }
+
+        public FungibleAssetValue DelegatedFAV { get; }
     }
 }

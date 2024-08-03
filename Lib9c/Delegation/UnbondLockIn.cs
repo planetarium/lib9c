@@ -35,12 +35,14 @@ namespace Nekoyume.Delegation
                           (Integer)list[0],
                           ((List)list[1]).Select(e => new UnbondLockInEntry(e)).ToImmutableList())
                       : throw new InvalidCastException(
-                          $"Unable to cast object of type '{kv.GetType()}' to type '{typeof(List)}'."))
+                          $"Unable to cast object of type '{kv.GetType()}' " +
+                          $"to type '{typeof(List)}'."))
                   .ToImmutableSortedDictionary())
         {
         }
 
-        public UnbondLockIn(Address address, int maxEntries, IEnumerable<UnbondLockInEntry> entries)
+        public UnbondLockIn(
+            Address address, int maxEntries, IEnumerable<UnbondLockInEntry> entries)
             : this(address, maxEntries)
         {
             foreach (var entry in entries)
@@ -145,7 +147,8 @@ namespace Nekoyume.Delegation
         public override int GetHashCode()
             => Address.GetHashCode();
 
-        internal UnbondLockIn LockIn(FungibleAssetValue lockInFAV, long creationHeight, long expireHeight)
+        internal UnbondLockIn LockIn(
+            FungibleAssetValue lockInFAV, long creationHeight, long expireHeight)
         {
             if (expireHeight == creationHeight)
             {
@@ -244,7 +247,9 @@ namespace Nekoyume.Delegation
             }
             else
             {
-                return UpdateEntries(Entries.Add(entry.ExpireHeight, ImmutableList<UnbondLockInEntry>.Empty.Add(entry)));
+                return UpdateEntries(
+                    Entries.Add(
+                        entry.ExpireHeight, ImmutableList<UnbondLockInEntry>.Empty.Add(entry)));
             }
         }
 
