@@ -33,8 +33,8 @@ namespace Lib9c.Tests.Delegation
             var address = new Address("0xe8327129891e1A0B2E3F0bfa295777912295942a");
             var delegatee = _fixture.TestDelegatee1;
             var delegator = _fixture.TestDelegator1;
-            var delegation = _fixture.Delegation1To1;
-            delegatee.Bond(delegator, delegatee.Currency * 10, delegation);
+            var bond = _fixture.Bond1To1;
+            delegatee.Bond(delegator, delegatee.Currency * 10, bond);
 
             var delegateeRecon = new TestDelegatee(address, delegatee.Bencoded);
             Assert.Equal(address, delegateeRecon.Address);
@@ -56,8 +56,8 @@ namespace Lib9c.Tests.Delegation
             var testDelegatee = _fixture.TestDelegatee1;
             var testDelegator1 = _fixture.TestDelegator1;
             var testDelegator2 = _fixture.TestDelegator2;
-            var delegation1To1 = _fixture.Delegation1To1;
-            var delegation2To1 = _fixture.Delegation2To1;
+            var bond1To1 = _fixture.Bond1To1;
+            var bond2To1 = _fixture.Bond2To1;
 
             var share1 = BigInteger.Zero;
             var share2 = BigInteger.Zero;
@@ -70,44 +70,39 @@ namespace Lib9c.Tests.Delegation
             totalShare += share;
             totalBonding += bonding;
 
-            testDelegatee.Bond(testDelegator1, bonding, delegation1To1);
+            var bondResult = testDelegatee.Bond(testDelegator1, bonding, bond1To1);
+            bond1To1 = bondResult.Bond;
             Assert.Equal(testDelegator1.Address, Assert.Single(testDelegatee.Delegators));
-            Assert.Equal(bonding, delegation1To1.IncompleteBond);
-            Assert.Null(delegation1To1.IncompleteUnbond);
-            Assert.Equal(share1, delegation1To1.Bond.Share);
+            Assert.Equal(share, bondResult.BondedShare);
+            Assert.Equal(share1, bondResult.Bond.Share);
             Assert.Equal(totalShare, testDelegatee.TotalShares);
             Assert.Equal(totalBonding, testDelegatee.TotalDelegated);
-            delegation1To1.Complete();
 
             bonding = testDelegatee.Currency * 20;
             share = testDelegatee.ShareToBond(bonding);
             share1 += share;
             totalShare += share;
             totalBonding += bonding;
-            testDelegatee.Bond(testDelegator1, bonding, delegation1To1);
+            bondResult = testDelegatee.Bond(testDelegator1, bonding, bond1To1);
             Assert.Equal(testDelegator1.Address, Assert.Single(testDelegatee.Delegators));
-            Assert.Equal(bonding, delegation1To1.IncompleteBond);
-            Assert.Null(delegation1To1.IncompleteUnbond);
-            Assert.Equal(share1, delegation1To1.Bond.Share);
+            Assert.Equal(share, bondResult.BondedShare);
+            Assert.Equal(share1, bondResult.Bond.Share);
             Assert.Equal(totalShare, testDelegatee.TotalShares);
             Assert.Equal(totalBonding, testDelegatee.TotalDelegated);
-            delegation1To1.Complete();
 
             bonding = testDelegatee.Currency * 30;
             share = testDelegatee.ShareToBond(bonding);
             share2 += share;
             totalShare += share;
             totalBonding += bonding;
-            testDelegatee.Bond(testDelegator2, bonding, delegation2To1);
+            bondResult = testDelegatee.Bond(testDelegator2, bonding, bond2To1);
             Assert.Equal(2, testDelegatee.Delegators.Count);
             Assert.Contains(testDelegator1.Address, testDelegatee.Delegators);
             Assert.Contains(testDelegator2.Address, testDelegatee.Delegators);
-            Assert.Equal(bonding, delegation2To1.IncompleteBond);
-            Assert.Null(delegation2To1.IncompleteUnbond);
-            Assert.Equal(share2, delegation2To1.Bond.Share);
+            Assert.Equal(share, bondResult.BondedShare);
+            Assert.Equal(share2, bondResult.Bond.Share);
             Assert.Equal(totalShare, testDelegatee.TotalShares);
             Assert.Equal(totalBonding, testDelegatee.TotalDelegated);
-            delegation2To1.Complete();
         }
 
         [Fact]
@@ -116,11 +111,11 @@ namespace Lib9c.Tests.Delegation
             IDelegatee testDelegatee = _fixture.TestDelegatee1;
             var testDelegator = _fixture.TestDelegator1;
             var dummyDelegator = _fixture.DummyDelegator1;
-            var delegation = _fixture.Delegation1To1;
+            var bond = _fixture.Bond1To1;
 
             Assert.Throws<InvalidCastException>(
                 () => testDelegatee.Bond(
-                    dummyDelegator, testDelegatee.Currency * 10, delegation));
+                    dummyDelegator, testDelegatee.Currency * 10, bond));
         }
 
         [Fact]
@@ -129,12 +124,12 @@ namespace Lib9c.Tests.Delegation
             var testDelegatee = _fixture.TestDelegatee1;
             var testDelegator = _fixture.TestDelegator1;
             var dummyDelegator = _fixture.DummyDelegator1;
-            var delegation = _fixture.Delegation1To1;
+            var bond = _fixture.Bond1To1;
             var invalidCurrency = Currency.Uncapped("invalid", 3, null);
 
             Assert.Throws<InvalidOperationException>(
                 () => testDelegatee.Bond(
-                    testDelegator, invalidCurrency * 10, delegation));
+                    testDelegator, invalidCurrency * 10, bond));
         }
 
         [Fact]
@@ -143,8 +138,8 @@ namespace Lib9c.Tests.Delegation
             var testDelegatee = _fixture.TestDelegatee1;
             var testDelegator1 = _fixture.TestDelegator1;
             var testDelegator2 = _fixture.TestDelegator2;
-            var delegation1To1 = _fixture.Delegation1To1;
-            var delegation2To1 = _fixture.Delegation2To1;
+            var bond1To1 = _fixture.Bond1To1;
+            var bond2To1 = _fixture.Bond2To1;
 
             var share1 = BigInteger.Zero;
             var share2 = BigInteger.Zero;
@@ -156,60 +151,53 @@ namespace Lib9c.Tests.Delegation
             share1 += share;
             totalShares += share;
             totalDelegated += bonding;
-            testDelegatee.Bond(testDelegator1, bonding, delegation1To1);
-            delegation1To1.Complete();
+            bond1To1 = testDelegatee.Bond(testDelegator1, bonding, bond1To1).Bond;
 
             bonding = testDelegatee.Currency * 50;
             share = testDelegatee.ShareToBond(bonding);
             share2 += share;
             totalShares += share;
             totalDelegated += bonding;
-            testDelegatee.Bond(testDelegator2, bonding, delegation2To1);
-            delegation2To1.Complete();
+            bond2To1 = testDelegatee.Bond(testDelegator2, bonding, bond2To1).Bond;
 
             var unbonding = share1 / 2;
             share1 -= unbonding;
             totalShares -= unbonding;
             var unbondingFAV = testDelegatee.FAVToUnbond(unbonding);
             totalDelegated -= unbondingFAV;
-            testDelegatee.Unbond(testDelegator1, unbonding, delegation1To1);
+            var unbondResult = testDelegatee.Unbond(testDelegator1, unbonding, bond1To1);
+            bond1To1 = unbondResult.Bond;
             Assert.Equal(2, testDelegatee.Delegators.Count);
             Assert.Contains(testDelegator1.Address, testDelegatee.Delegators);
             Assert.Contains(testDelegator2.Address, testDelegatee.Delegators);
-            Assert.Equal(unbondingFAV, delegation1To1.IncompleteUnbond);
-            Assert.Null(delegation1To1.IncompleteBond);
-            Assert.Equal(share1, delegation1To1.Bond.Share);
+            Assert.Equal(unbondingFAV, unbondResult.UnbondedFAV);
+            Assert.Equal(share1, unbondResult.Bond.Share);
             Assert.Equal(totalShares, testDelegatee.TotalShares);
             Assert.Equal(totalDelegated, testDelegatee.TotalDelegated);
-            delegation1To1.Complete();
 
             unbonding = share2 / 2;
             share2 -= unbonding;
             totalShares -= unbonding;
             unbondingFAV = testDelegatee.FAVToUnbond(unbonding);
             totalDelegated -= unbondingFAV;
-            testDelegatee.Unbond(testDelegator2, unbonding, delegation2To1);
+            unbondResult = testDelegatee.Unbond(testDelegator2, unbonding, bond2To1);
             Assert.Equal(2, testDelegatee.Delegators.Count);
             Assert.Contains(testDelegator1.Address, testDelegatee.Delegators);
             Assert.Contains(testDelegator2.Address, testDelegatee.Delegators);
-            Assert.Equal(unbondingFAV, delegation2To1.IncompleteUnbond);
-            Assert.Null(delegation2To1.IncompleteBond);
-            Assert.Equal(share2, delegation2To1.Bond.Share);
+            Assert.Equal(unbondingFAV, unbondResult.UnbondedFAV);
+            Assert.Equal(share2, unbondResult.Bond.Share);
             Assert.Equal(totalShares, testDelegatee.TotalShares);
             Assert.Equal(totalDelegated, testDelegatee.TotalDelegated);
-            delegation1To1.Complete();
 
             totalShares -= share1;
             unbondingFAV = testDelegatee.FAVToUnbond(share1);
             totalDelegated -= unbondingFAV;
-            testDelegatee.Unbond(testDelegator1, share1, delegation1To1);
+            unbondResult = testDelegatee.Unbond(testDelegator1, share1, bond1To1);
             Assert.Equal(testDelegator2.Address, Assert.Single(testDelegatee.Delegators));
-            Assert.Equal(unbondingFAV, delegation1To1.IncompleteUnbond);
-            Assert.Null(delegation1To1.IncompleteBond);
-            Assert.Equal(BigInteger.Zero, delegation1To1.Bond.Share);
+            Assert.Equal(unbondingFAV, unbondResult.UnbondedFAV);
+            Assert.Equal(BigInteger.Zero, unbondResult.Bond.Share);
             Assert.Equal(totalShares, testDelegatee.TotalShares);
             Assert.Equal(totalDelegated, testDelegatee.TotalDelegated);
-            delegation1To1.Complete();
         }
 
         [Fact]
@@ -218,7 +206,7 @@ namespace Lib9c.Tests.Delegation
             IDelegatee delegatee = _fixture.TestDelegatee1;
             Assert.Throws<InvalidCastException>(
                 () => delegatee.Unbond(
-                    _fixture.DummyDelegator1, BigInteger.One, _fixture.Delegation1To1));
+                    _fixture.DummyDelegator1, BigInteger.One, _fixture.Bond1To1));
         }
 
         [Fact]

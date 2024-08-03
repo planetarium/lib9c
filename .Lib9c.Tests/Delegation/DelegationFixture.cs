@@ -27,9 +27,6 @@ namespace Lib9c.Tests.Delegation
             Rebond2To1 = new RebondGrace(TestDelegatee1.BondAddress(TestDelegator2.Address), 10);
             Rebond1To2 = new RebondGrace(TestDelegatee2.BondAddress(TestDelegator1.Address), 10);
             UnbondingSet = new UnbondingSet();
-            Delegation1To1 = new Delegation(Bond1To1, Unbond1To1, Rebond1To1, UnbondingSet);
-            Delegation2To1 = new Delegation(Bond2To1, Unbond2To1, Rebond2To1, UnbondingSet);
-            Delegation1To2 = new Delegation(Bond1To2, Unbond1To2, Rebond1To2, UnbondingSet);
         }
 
         public TestDelegator TestDelegator1 { get; }
@@ -63,11 +60,5 @@ namespace Lib9c.Tests.Delegation
         public RebondGrace Rebond1To2 { get; }
 
         public UnbondingSet UnbondingSet { get; }
-
-        public Delegation Delegation1To1 { get; }
-
-        public Delegation Delegation2To1 { get; }
-
-        public Delegation Delegation1To2 { get; }
     }
 }
