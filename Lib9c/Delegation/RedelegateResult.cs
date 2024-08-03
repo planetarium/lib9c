@@ -1,29 +1,38 @@
 namespace Nekoyume.Delegation
 {
-    public class RedelegateResult
+    public class RedelegateResult<T> : IRedelegateResult
+        where T : IDelegatee
     {
         public RedelegateResult(
-            IDelegatee srcDelegatee,
-            IDelegatee dstDelegatee,
+            T srcDelegatee,
+            T dstDelegatee,
             Bond srcBond,
             Bond dstBond,
-            RebondGrace rebondGrace)
+            RebondGrace rebondGrace,
+            UnbondingSet unbondingSet)
         {
             SrcDelegatee = srcDelegatee;
             DstDelegatee = dstDelegatee;
             SrcBond = srcBond;
             DstBond = dstBond;
             RebondGrace = rebondGrace;
+            UnbondingSet = unbondingSet;
         }
 
-        public IDelegatee SrcDelegatee { get; }
+        IDelegatee IRedelegateResult.SrcDelegatee => SrcDelegatee;
 
-        public IDelegatee DstDelegatee { get; }
+        IDelegatee IRedelegateResult.DstDelegatee => DstDelegatee;
+
+        public T SrcDelegatee { get; }
+
+        public T DstDelegatee { get; }
 
         public Bond SrcBond { get; }
 
         public Bond DstBond { get; }
 
         public RebondGrace RebondGrace { get; }
+
+        public UnbondingSet UnbondingSet { get; }
     }
 }

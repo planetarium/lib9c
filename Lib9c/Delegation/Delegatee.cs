@@ -108,39 +108,43 @@ namespace Nekoyume.Delegation
                 ? TotalDelegated
                 : (TotalDelegated * share).DivRem(TotalShares, out _);
 
-        Delegation IDelegatee.Bond(IDelegator delegator, FungibleAssetValue fav, Delegation delegation)
-            => Bond((T)delegator, fav, delegation);
+        BondResult IDelegatee.Bond(
+            IDelegator delegator, FungibleAssetValue fav, Bond bond)
+            => Bond((T)delegator, fav, bond);
 
-        Delegation IDelegatee.Unbond(IDelegator delegator, BigInteger share, Delegation delegation)
-            => Unbond((T)delegator, share, delegation);
+        UnbondResult IDelegatee.Unbond(
+            IDelegator delegator, BigInteger share, Bond bond)
+            => Unbond((T)delegator, share, bond);
 
-        public Delegation Bond(T delegator, FungibleAssetValue fav, Delegation delegation)
+        public BondResult Bond(T delegator, FungibleAssetValue fav, Bond bond)
         {
             if (!fav.Currency.Equals(Currency))
             {
-                throw new InvalidOperationException("Cannot bond with invalid currency.");
+                throw new InvalidOperationException(
+                    "Cannot bond with invalid currency.");
             }
 
             BigInteger share = ShareToBond(fav);
-            delegation.AddBond(fav, share);
+            bond = bond.AddShare(share);
             Delegators = Delegators.Add(delegator.Address);
             TotalShares += share;
             TotalDelegated += fav;
             Distribute();
 
-            return delegation;
+            return new BondResult(bond, share);
         }
 
-        public Delegation Unbond(T delegator, BigInteger share, Delegation delegation)
+        public UnbondResult Unbond(T delegator, BigInteger share, Bond bond)
         {
             if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
             {
-                throw new InvalidOperationException("Cannot unbond without bonding.");
+                throw new InvalidOperationException(
+                    "Cannot unbond without bonding.");
             }
 
             FungibleAssetValue fav = FAVToUnbond(share);
-            delegation.CancelBond(fav, share);
-            if (delegation.Bond.Share.IsZero)
+            bond = bond.SubtractShare(share);
+            if (bond.Share.IsZero)
             {
                 Delegators = Delegators.Remove(delegator.Address);
             }
@@ -149,7 +153,7 @@ namespace Nekoyume.Delegation
             TotalDelegated -= fav;
             Distribute();
 
-            return delegation;
+            return new UnbondResult(bond, fav);
         }
 
         public void Distribute()
