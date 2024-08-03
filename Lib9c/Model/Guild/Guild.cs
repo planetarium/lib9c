@@ -1,13 +1,16 @@
 using System;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Action;
+using Nekoyume.Delegation;
 using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Model.Guild
 {
-    public class Guild : IEquatable<Guild>, IBencodable
+    public class Guild : Delegatee<GuildParticipant, Guild>, IEquatable<Guild>, IBencodable
     {
         private const string StateTypeName = "guild";
         private const long StateVersion = 1;
@@ -15,12 +18,16 @@ namespace Nekoyume.Model.Guild
         public readonly AgentAddress GuildMasterAddress;
 
         public Guild(AgentAddress guildMasterAddress)
+            : base(guildMasterAddress)
         {
             GuildMasterAddress = guildMasterAddress;
         }
 
-        public Guild(List list) : this(new AgentAddress(list[2]))
+        public Guild(List list)
+            : base(new Address(list[2]), list[3])
         {
+            GuildMasterAddress = new AgentAddress(list[2]);
+
             if (list[0] is not Text text || text != StateTypeName || list[1] is not Integer integer)
             {
                 throw new InvalidCastException();
@@ -30,12 +37,22 @@ namespace Nekoyume.Model.Guild
             {
                 throw new FailedLoadStateException("Un-deserializable state.");
             }
+
         }
 
-        public List Bencoded => List.Empty
+        public override Currency Currency => Currencies.GuildGold;
+
+        public override Address PoolAddress => DeriveAddress(PoolId);
+
+        public override long UnbondingPeriod => 75600L;
+
+        public override byte[] DelegateeId => new byte[] { 0x047 }; // `G`
+
+        public new List Bencoded => List.Empty
             .Add(StateTypeName)
             .Add(StateVersion)
-            .Add(GuildMasterAddress.Bencoded);
+            .Add(GuildMasterAddress.Bencoded)
+            .Add(base.Bencoded);
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -43,7 +60,8 @@ namespace Nekoyume.Model.Guild
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return GuildMasterAddress.Equals(other.GuildMasterAddress);
+            return GuildMasterAddress.Equals(other.GuildMasterAddress)
+                && base.Equals(other);
         }
 
         public override bool Equals(object obj)
