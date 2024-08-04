@@ -48,6 +48,10 @@ namespace Nekoyume.Model.Guild
 
         public override byte[] DelegateeId => new byte[] { 0x047 }; // `G`
 
+        public override int MaxUnbondLockInEntries => 10;
+
+        public override int MaxRebondGraceEntries => 10;
+
         public new List Bencoded => List.Empty
             .Add(StateTypeName)
             .Add(StateVersion)
