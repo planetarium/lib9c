@@ -1,3 +1,4 @@
+#nullable enable
 using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation

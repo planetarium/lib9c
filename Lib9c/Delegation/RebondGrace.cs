@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -78,12 +79,14 @@ namespace Nekoyume.Delegation
         public ImmutableArray<RebondGraceEntry> FlattenedEntries
             => Entries.Values.SelectMany(e => e).ToImmutableArray();
 
-        public IValue Bencoded
+        public List Bencoded
             => new List(
                 Entries.Select(
                     sortedDict => new List(
                         (Integer)sortedDict.Key,
                         new List(sortedDict.Value.Select(e => e.Bencoded)))));
+
+        IValue IBencodable.Bencoded => Bencoded;
 
         public RebondGrace Release(long height)
         {
@@ -115,14 +118,15 @@ namespace Nekoyume.Delegation
         public RebondGrace Slash()
             => throw new NotImplementedException();
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is RebondGrace other && Equals(other);
 
-        public bool Equals(RebondGrace other)
+        public bool Equals(RebondGrace? other)
             => ReferenceEquals(this, other)
-            || (Address.Equals(other.Address)
-            && MaxEntries == other.MaxEntries
-            && FlattenedEntries.SequenceEqual(other.FlattenedEntries));
+            || (other is RebondGrace rebondGrace
+            && Address.Equals(rebondGrace.Address)
+            && MaxEntries == rebondGrace.MaxEntries
+            && FlattenedEntries.SequenceEqual(rebondGrace.FlattenedEntries));
 
         public override int GetHashCode()
             => Address.GetHashCode();
@@ -168,6 +172,8 @@ namespace Nekoyume.Delegation
 
         public class RebondGraceEntry : IBencodable, IEquatable<RebondGraceEntry>
         {
+            private int? _cachedHashCode;
+
             public RebondGraceEntry(
                 Address rebondeeAddress,
                 FungibleAssetValue graceFAV,
@@ -256,20 +262,44 @@ namespace Nekoyume.Delegation
 
             public long ExpireHeight { get; }
 
-            public IValue Bencoded => List.Empty
+            public List Bencoded => List.Empty
                 .Add(RebondeeAddress.Bencoded)
                 .Add(InitialGraceFAV.Serialize())
                 .Add(GraceFAV.Serialize())
                 .Add(CreationHeight)
                 .Add(ExpireHeight);
 
-            public bool Equals(RebondGraceEntry other)
+            IValue IBencodable.Bencoded => Bencoded;
+
+            public override bool Equals(object? obj)
+                => obj is RebondGraceEntry other && Equals(other);
+
+            public bool Equals(RebondGraceEntry? other)
                 => ReferenceEquals(this, other)
-                || (RebondeeAddress.Equals(other.RebondeeAddress)
-                && InitialGraceFAV.Equals(other.InitialGraceFAV)
-                && GraceFAV.Equals(other.GraceFAV)
-                && CreationHeight == other.CreationHeight
-                && ExpireHeight == other.ExpireHeight);
+                || (other is RebondGraceEntry rebondGraceEntry
+                && RebondeeAddress.Equals(rebondGraceEntry.RebondeeAddress)
+                && InitialGraceFAV.Equals(rebondGraceEntry.InitialGraceFAV)
+                && GraceFAV.Equals(rebondGraceEntry.GraceFAV)
+                && CreationHeight == rebondGraceEntry.CreationHeight
+                && ExpireHeight == rebondGraceEntry.ExpireHeight);
+
+            public override int GetHashCode()
+            {
+                if (_cachedHashCode is int cached)
+                {
+                    return cached;
+                }
+
+                int hash = HashCode.Combine(
+                    RebondeeAddress,
+                    InitialGraceFAV,
+                    GraceFAV,
+                    CreationHeight,
+                    ExpireHeight);
+
+                _cachedHashCode = hash;
+                return hash;
+            }
 
             [Obsolete("This method is not implemented yet.")]
             public RebondGraceEntry Slash()

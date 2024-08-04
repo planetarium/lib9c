@@ -1,7 +1,9 @@
+#nullable enable
 using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
+using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
@@ -33,8 +35,10 @@ namespace Nekoyume.Delegation
 
         public ImmutableSortedSet<Address> Delegatees { get; private set; }
 
-        public IValue Bencoded
+        public List Bencoded
             => new List(Delegatees.Select(a => a.Bencoded));
+
+        IValue IBencodable.Bencoded => Bencoded;
 
         IDelegateResult IDelegator.Delegate(
             IDelegatee delegatee,
@@ -229,10 +233,10 @@ namespace Nekoyume.Delegation
             // TODO: Implement this
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is IDelegator other && Equals(other);
 
-        public bool Equals(IDelegator other)
+        public bool Equals(IDelegator? other)
             => ReferenceEquals(this, other)
             || (other is Delegator<T, TSelf> delegator
             && GetType() != delegator.GetType()

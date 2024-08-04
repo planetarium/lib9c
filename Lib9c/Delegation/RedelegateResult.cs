@@ -1,3 +1,4 @@
+#nullable enable
 namespace Nekoyume.Delegation
 {
     public class RedelegateResult<T> : IRedelegateResult
@@ -19,13 +20,13 @@ namespace Nekoyume.Delegation
             UnbondingSet = unbondingSet;
         }
 
-        IDelegatee IRedelegateResult.SrcDelegatee => SrcDelegatee;
-
-        IDelegatee IRedelegateResult.DstDelegatee => DstDelegatee;
-
         public T SrcDelegatee { get; }
 
+        IDelegatee IRedelegateResult.SrcDelegatee => SrcDelegatee;
+
         public T DstDelegatee { get; }
+
+        IDelegatee IRedelegateResult.DstDelegatee => DstDelegatee;
 
         public Bond SrcBond { get; }
 

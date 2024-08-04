@@ -17,4 +17,8 @@ public sealed class DummyDelegatee : Delegatee<DummyDelegator, DummyDelegatee>
     public override long UnbondingPeriod => 3;
 
     public override byte[] DelegateeId => new byte[] { 0x02 };
+
+    public override int MaxUnbondLockInEntries => 5;
+
+    public override int MaxRebondGraceEntries => 5;
 }
