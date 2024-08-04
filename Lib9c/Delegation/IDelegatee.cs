@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Immutable;
 using System.Numerics;
@@ -16,6 +17,10 @@ namespace Nekoyume.Delegation
         Address PoolAddress { get; }
 
         long UnbondingPeriod { get; }
+
+        int MaxUnbondLockInEntries { get; }
+
+        int MaxRebondGraceEntries { get; }
 
         Address RewardPoolAddress { get; }
 

@@ -1,9 +1,11 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
+using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
@@ -85,6 +87,10 @@ namespace Nekoyume.Delegation
 
         public abstract byte[] DelegateeId { get; }
 
+        public abstract int MaxUnbondLockInEntries { get; }
+
+        public abstract int MaxRebondGraceEntries { get; }
+
         public Address RewardPoolAddress => DeriveAddress(RewardPoolId);
 
         public ImmutableSortedSet<Address> Delegators { get; private set; }
@@ -93,10 +99,12 @@ namespace Nekoyume.Delegation
 
         public BigInteger TotalShares { get; private set; }
 
-        public IValue Bencoded => List.Empty
+        public List Bencoded => List.Empty
             .Add(new List(Delegators.Select(delegator => delegator.Bencoded)))
             .Add(TotalDelegated.Serialize())
             .Add(TotalShares);
+
+        IValue IBencodable.Bencoded => Bencoded;
 
         public BigInteger ShareToBond(FungibleAssetValue fav)
             => TotalShares.IsZero
@@ -170,10 +178,10 @@ namespace Nekoyume.Delegation
         public Address RebondGraceAddress(Address delegatorAddress)
             => DeriveAddress(RebondGraceId, delegatorAddress);
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is IDelegatee other && Equals(other);
 
-        public bool Equals(IDelegatee other)
+        public bool Equals(IDelegatee? other)
             => ReferenceEquals(this, other)
             || (other is Delegatee<T, TSelf> delegatee
             && (GetType() != delegatee.GetType())
@@ -193,7 +201,7 @@ namespace Nekoyume.Delegation
         protected Address DeriveAddress(byte[] typeId, Address address)
             => DeriveAddress(typeId, address.ByteArray);
 
-        protected Address DeriveAddress(byte[] typeId, IEnumerable<byte> bytes = null)
+        protected Address DeriveAddress(byte[] typeId, IEnumerable<byte>? bytes = null)
         {
             byte[] hashed;
             using (var hmac = new HMACSHA1(DelegateeId.Concat(typeId).ToArray()))

@@ -1,3 +1,4 @@
+#nullable enable
 using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
@@ -15,9 +16,9 @@ namespace Nekoyume.Delegation
             DelegatedFAV = delegatedFAV;
         }
 
-        IDelegatee IDelegateResult.Delegatee => Delegatee;
-
         public T Delegatee { get; }
+
+        IDelegatee IDelegateResult.Delegatee => Delegatee;
 
         public Bond Bond { get; }
 

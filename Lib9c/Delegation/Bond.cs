@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Numerics;
 using Bencodex;
@@ -52,18 +53,21 @@ namespace Nekoyume.Delegation
 
         public long LastDistributeHeight { get; }
 
-        public IValue Bencoded => List.Empty
+        public List Bencoded => List.Empty
             .Add(Share)
             .Add(LastDistributeHeight);
 
-        public override bool Equals(object obj)
+        IValue IBencodable.Bencoded => Bencoded;
+
+        public override bool Equals(object? obj)
             => obj is Bond other && Equals(other);
 
-        public bool Equals(Bond other)
+        public bool Equals(Bond? other)
             => ReferenceEquals(this, other)
-            || (Address.Equals(other.Address)
-            && Share.Equals(other.Share)
-            && LastDistributeHeight.Equals(other.LastDistributeHeight));
+            || (other is Bond bond
+            && Address.Equals(bond.Address)
+            && Share.Equals(bond.Share)
+            && LastDistributeHeight.Equals(bond.LastDistributeHeight));
 
         public override int GetHashCode()
             => Address.GetHashCode();

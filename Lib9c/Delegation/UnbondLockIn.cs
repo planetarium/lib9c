@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -84,12 +85,14 @@ namespace Nekoyume.Delegation
         public ImmutableArray<UnbondLockInEntry> FlattenedEntries
             => Entries.Values.SelectMany(e => e).ToImmutableArray();
 
-        public IValue Bencoded
+        public List Bencoded
             => new List(
                 Entries.Select(
                     sortedDict => new List(
                         (Integer)sortedDict.Key,
                         new List(sortedDict.Value.Select(e => e.Bencoded)))));
+
+        IValue IBencodable.Bencoded => Bencoded;
 
         public UnbondLockIn Release(long height)
         {
@@ -135,14 +138,15 @@ namespace Nekoyume.Delegation
             return releasedFAV;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is UnbondLockIn other && Equals(other);
 
-        public bool Equals(UnbondLockIn other)
+        public bool Equals(UnbondLockIn? other)
             => ReferenceEquals(this, other)
-            || (Address.Equals(other.Address)
-            && MaxEntries == other.MaxEntries
-            && FlattenedEntries.SequenceEqual(other.FlattenedEntries));
+            || (other is UnbondLockIn unbondLockIn
+            && Address.Equals(unbondLockIn.Address)
+            && MaxEntries == unbondLockIn.MaxEntries
+            && FlattenedEntries.SequenceEqual(unbondLockIn.FlattenedEntries));
 
         public override int GetHashCode()
             => Address.GetHashCode();
@@ -255,6 +259,8 @@ namespace Nekoyume.Delegation
 
         public class UnbondLockInEntry : IBencodable, IEquatable<UnbondLockInEntry>
         {
+            private int? _cachedHashCode;
+
             public UnbondLockInEntry(
                 FungibleAssetValue lockInFAV,
                 long creationHeight,
@@ -337,18 +343,41 @@ namespace Nekoyume.Delegation
 
             public long ExpireHeight { get; }
 
-            public IValue Bencoded => List.Empty
+            public List Bencoded => List.Empty
                 .Add(InitialLockInFAV.Serialize())
                 .Add(LockInFAV.Serialize())
                 .Add(CreationHeight)
                 .Add(ExpireHeight);
 
-            public bool Equals(UnbondLockInEntry other)
+            IValue IBencodable.Bencoded => Bencoded;
+
+            public override bool Equals(object? obj)
+                => obj is UnbondLockInEntry other && Equals(other);
+
+            public bool Equals(UnbondLockInEntry? other)
                 => ReferenceEquals(this, other)
-                || (InitialLockInFAV.Equals(other.InitialLockInFAV)
-                && LockInFAV.Equals(other.LockInFAV)
-                && CreationHeight == other.CreationHeight
-                && ExpireHeight == other.ExpireHeight);
+                || (other is UnbondLockInEntry unbondLockInEntry
+                && InitialLockInFAV.Equals(unbondLockInEntry.InitialLockInFAV)
+                && LockInFAV.Equals(unbondLockInEntry.LockInFAV)
+                && CreationHeight == unbondLockInEntry.CreationHeight
+                && ExpireHeight == unbondLockInEntry.ExpireHeight);
+
+            public override int GetHashCode()
+            {
+                if (_cachedHashCode is int cached)
+                {
+                    return cached;
+                }
+
+                int hash = HashCode.Combine(
+                    InitialLockInFAV,
+                    LockInFAV,
+                    CreationHeight,
+                    ExpireHeight);
+
+                _cachedHashCode = hash;
+                return hash;
+            }
 
             [Obsolete("This method is not implemented yet.")]
             public UnbondLockInEntry Slash()

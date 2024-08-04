@@ -24,5 +24,9 @@ namespace Lib9c.Tests.Delegation
         public override Address PoolAddress => DeriveAddress(PoolId);
 
         public override byte[] DelegateeId => new byte[] { 0x01 };
+
+        public override int MaxUnbondLockInEntries => 5;
+
+        public override int MaxRebondGraceEntries => 5;
     }
 }

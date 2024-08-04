@@ -1,3 +1,4 @@
+#nullable enable
 namespace Nekoyume.Delegation
 {
     public interface IRedelegateResult

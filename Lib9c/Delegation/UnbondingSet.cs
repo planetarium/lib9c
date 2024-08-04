@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex;
@@ -27,21 +28,28 @@ namespace Nekoyume.Delegation
         }
 
         private UnbondingSet(
-            ImmutableSortedSet<Address> unbondLockIns, ImmutableSortedSet<Address> rebondGraces)
+            ImmutableSortedSet<Address> unbondLockIns,
+            ImmutableSortedSet<Address> rebondGraces)
         {
             UnbondLockIns = unbondLockIns;
             RebondGraces = rebondGraces;
         }
 
+        public static Address Address => new Address(
+            ImmutableArray.Create<byte>(
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00));
 
         public ImmutableSortedSet<Address> UnbondLockIns { get; }
 
         public ImmutableSortedSet<Address> RebondGraces { get; }
 
-        public IValue Bencoded
+        public List Bencoded
             => List.Empty
                 .Add(new List(UnbondLockIns.Select(a => a.Bencoded)))
                 .Add(new List(RebondGraces.Select(a => a.Bencoded)));
+
+        IValue IBencodable.Bencoded => Bencoded;
 
         public UnbondingSet AddUnbondLockIn(Address address)
             => new UnbondingSet(UnbondLockIns.Add(address), RebondGraces);
