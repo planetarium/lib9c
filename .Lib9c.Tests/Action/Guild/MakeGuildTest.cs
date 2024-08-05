@@ -7,7 +7,6 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action.Guild;
-    using Nekoyume.Action.Loader;
     using Nekoyume.Module.Guild;
     using Nekoyume.TypedAddress;
     using Xunit;
@@ -35,9 +34,8 @@ namespace Lib9c.Tests.Action.Guild
             var action = new MakeGuild();
             var plainValue = action.PlainValue;
 
-            var actionLoader = new NCActionLoader();
-            var loadedRaw = actionLoader.LoadAction(0, plainValue);
-            Assert.IsType<MakeGuild>(loadedRaw);
+            var deserialized = new MakeGuild();
+            deserialized.LoadPlainValue(plainValue);
         }
 
         [Theory]
