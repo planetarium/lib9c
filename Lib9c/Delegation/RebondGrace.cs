@@ -12,6 +12,9 @@ namespace Nekoyume.Delegation
 {
     public sealed class RebondGrace : IBencodable, IEquatable<RebondGrace>
     {
+        private static readonly IComparer<RebondGraceEntry> _entryComparer
+            = new RebondGraceEntryComparer();
+
         public RebondGrace(Address address, int maxEntries)
             : this(
                   address,
@@ -69,6 +72,8 @@ namespace Nekoyume.Delegation
         public Address Address { get; }
 
         public int MaxEntries { get; }
+
+        public long lowestExpireHeight => Entries.First().Key;
 
         public bool IsFull => Entries.Values.Sum(e => e.Count) >= MaxEntries;
 
@@ -156,7 +161,11 @@ namespace Nekoyume.Delegation
 
             if (Entries.TryGetValue(entry.ExpireHeight, out var entries))
             {
-                return UpdateEntries(Entries.SetItem(entry.ExpireHeight, entries.Add(entry)));
+                int index = entries.BinarySearch(entry, _entryComparer);
+                return UpdateEntries(
+                    Entries.SetItem(
+                        entry.ExpireHeight,
+                        entries.Insert(index < 0 ? ~index : index, entry)));
             }
             else
             {
@@ -304,6 +313,53 @@ namespace Nekoyume.Delegation
             [Obsolete("This method is not implemented yet.")]
             public RebondGraceEntry Slash()
                 => throw new NotImplementedException();
+        }
+
+        public class RebondGraceEntryComparer : IComparer<RebondGraceEntry>
+        {
+            public int Compare(RebondGraceEntry? x, RebondGraceEntry? y)
+            {
+                if (ReferenceEquals(x, y))
+                {
+                    return 0;
+                }
+
+                if (x is null)
+                {
+                    return -1;
+                }
+
+                if (y is null)
+                {
+                    return 1;
+                }
+
+                int comparison = x.ExpireHeight.CompareTo(y.ExpireHeight);
+                if (comparison != 0)
+                {
+                    return comparison;
+                }
+
+                comparison = x.CreationHeight.CompareTo(y.CreationHeight);
+                if (comparison != 0)
+                {
+                    return comparison;
+                }
+
+                comparison = -x.InitialGraceFAV.CompareTo(y.InitialGraceFAV);
+                if (comparison != 0)
+                {
+                    return comparison;
+                }
+
+                comparison = -x.GraceFAV.CompareTo(y.GraceFAV);
+                if (comparison != 0)
+                {
+                    return comparison;
+                }
+
+                return x.RebondeeAddress.CompareTo(y.RebondeeAddress);
+            }
         }
     }
 }
