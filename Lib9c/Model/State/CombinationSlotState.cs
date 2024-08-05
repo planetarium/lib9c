@@ -17,7 +17,6 @@ namespace Nekoyume.Model.State
         private const string PetIdKey = "petId";
         private const string IndexKey = "index";
         
-        
         public const string DeriveFormat = "combination-slot-{0}";
         public long UnlockBlockIndex { get; private set; }
         public long StartBlockIndex { get; private set; }
@@ -28,6 +27,7 @@ namespace Nekoyume.Model.State
         /// It is a CombinationSlot index. start from 0.
         /// </summary>
         public int Index { get; private set; }
+        // TODO: Add IsUnlocked property
 
         public static Address DeriveAddress(Address address, int slotIndex) =>
             address.Derive(string.Format(
