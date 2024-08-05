@@ -48,7 +48,7 @@ namespace Lib9c.Tests.TestHelper
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    policyBlockActionGetter: _ => policy.BlockAction,
+                    policy.PolicyActionsRegistry,
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),

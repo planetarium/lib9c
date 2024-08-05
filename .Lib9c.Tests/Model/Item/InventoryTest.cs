@@ -995,6 +995,35 @@
             Assert.False(inventory.TryGetNonFungibleItem(equipment.NonFungibleId, out Equipment _, 1L));
         }
 
+        [Fact]
+        public void RemoveTradableMaterial()
+        {
+            var item = (TradableMaterial)GetFirstTradableMaterial();
+            item.RequiredBlockIndex = 100L;
+            var item2 = (TradableMaterial)GetFirstTradableMaterial();
+            item2.RequiredBlockIndex = 50L;
+            var inventory = new Inventory();
+            Assert.Empty(inventory.Items);
+
+            for (var i = 0; i < 3; i++)
+            {
+                inventory.AddItem(item);
+            }
+
+            inventory.AddItem(item2);
+            Assert.Equal(2, inventory.Items.Count);
+
+            // RequiredBlockIndex
+            Assert.False(inventory.RemoveTradableMaterial(item.Id, 1L));
+            // NotEnoughItemCount
+            Assert.False(inventory.RemoveTradableMaterial(item.Id, 200L, 5));
+            Assert.True(inventory.RemoveTradableMaterial(item.Id, 200L, 4));
+
+            inventory.AddItem(item, 1, new OrderLock(Guid.NewGuid()));
+            // InventorySlot is lock
+            Assert.False(inventory.RemoveTradableMaterial(item.Id, 200L));
+        }
+
         private static Consumable GetFirstConsumable()
         {
             var row = TableSheets.ConsumableItemSheet.First;
