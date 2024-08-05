@@ -52,17 +52,20 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress);
+            if (!FungibleAssetValues.Any() && !Items.Any())
+            {
+                throw new InvalidActionFieldException("either FungibleAssetValues or Items must be set.");
+            }
+
             var state = context.PreviousState;
-            var sheet = state.GetSheet<LoadIntoMyGaragesCostSheet>();
-            var garageCost = sheet.GetGarageCost(FungibleAssetValues, Items);
-            state = state.TransferAsset(
-                context,
-                context.Signer,
-                Addresses.GarageWallet,
-                garageCost
-            );
             foreach (var fungibleAssetValue in FungibleAssetValues)
             {
+                if (fungibleAssetValue.Sign < 0)
+                {
+                    throw new InvalidActionFieldException(
+                        "FungibleAssetValue.Sign must be greater than 0.");
+                }
+
                 var currency = fungibleAssetValue.Currency;
                 if (currency.Minters is not null)
                 {
@@ -84,6 +87,11 @@ namespace Nekoyume.Action
                 var inventory = state.GetInventoryV2(AvatarAddress);
                 foreach (var (id, count) in Items)
                 {
+                    if (count < 0)
+                    {
+                        throw new InvalidActionFieldException("item count must be greater than 0.");
+                    }
+
                     if (!inventory.RemoveTradableMaterial(id, context.BlockIndex, count))
                     {
                         throw new NotEnoughItemException($"not enough tradable material({id})");
@@ -95,7 +103,14 @@ namespace Nekoyume.Action
                 state = state.SetInventory(AvatarAddress, inventory);
             }
 
-            return state;
+            var sheet = state.GetSheet<LoadIntoMyGaragesCostSheet>();
+            var garageCost = sheet.GetGarageCost(FungibleAssetValues, Items);
+            return state.TransferAsset(
+                context,
+                context.Signer,
+                Addresses.GarageWallet,
+                garageCost
+            );
         }
     }
 }
