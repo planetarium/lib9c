@@ -144,8 +144,7 @@ namespace Lib9c.DevExtensions.Action
             foreach (var address in avatarState.combinationSlotAddresses)
             {
                 var slotState =
-                    new CombinationSlotState(address,
-                        0);
+                    new CombinationSlotState(address);
                 states = states.SetLegacyState(address, slotState.Serialize());
             }
 

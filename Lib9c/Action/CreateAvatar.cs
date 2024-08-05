@@ -142,7 +142,7 @@ namespace Nekoyume.Action
 
             foreach (var address in avatarState.combinationSlotAddresses)
             {
-                var slotState = new CombinationSlotState(address, 0);
+                var slotState = new CombinationSlotState(address);
                 states = states.SetLegacyState(address, slotState.Serialize());
             }
 

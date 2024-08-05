@@ -13,12 +13,12 @@ namespace Nekoyume.Model.State
     {
         public const string DeriveFormat = "combination-slot-{0}";
         public long UnlockBlockIndex { get; private set; }
-        [Obsolete("Not used anymore since v200092")]
-        public int UnlockStage { get; private set; }
         public long StartBlockIndex { get; private set; }
         public AttachmentActionResult Result { get; private set; }
         public int? PetId { get; private set; }
         public long RequiredBlockIndex => UnlockBlockIndex - StartBlockIndex;
+        
+        public int Index { get; private set; }
 
         public static Address DeriveAddress(Address address, int slotIndex) =>
             address.Derive(string.Format(
@@ -26,15 +26,13 @@ namespace Nekoyume.Model.State
                 DeriveFormat,
                 slotIndex));
 
-        public CombinationSlotState(Address address, int unlockStage) : base(address)
+        public CombinationSlotState(Address address) : base(address)
         {
-            UnlockStage = unlockStage;
         }
 
         public CombinationSlotState(Dictionary serialized) : base(serialized)
         {
             UnlockBlockIndex = serialized["unlockBlockIndex"].ToLong();
-            UnlockStage = serialized["unlockStage"].ToInteger();
             if (serialized.TryGetValue((Text) "result", out var result))
             {
                 Result = AttachmentActionResult.Deserialize((Dictionary) result);
@@ -60,7 +58,6 @@ namespace Nekoyume.Model.State
             }
 
             return avatarState.worldInformation != null &&
-                   avatarState.worldInformation.IsStageCleared(UnlockStage) &&
                    blockIndex >= UnlockBlockIndex;
         }
 
@@ -113,7 +110,6 @@ namespace Nekoyume.Model.State
             var values = new Dictionary<IKey, IValue>
             {
                 [(Text) "unlockBlockIndex"] = UnlockBlockIndex.Serialize(),
-                [(Text) "unlockStage"] = UnlockStage.Serialize(),
                 [(Text) "startBlockIndex"] = StartBlockIndex.Serialize(),
             };
 
