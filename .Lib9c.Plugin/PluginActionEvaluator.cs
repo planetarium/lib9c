@@ -7,6 +7,7 @@ using Libplanet.Extensions.ActionEvaluatorCommonComponents;
 using Libplanet.Store;
 using Nekoyume.Action;
 using Nekoyume.Action.Loader;
+using Nekoyume.PolicyAction.Tx.Begin;
 
 
 namespace Lib9c.Plugin
@@ -22,7 +23,7 @@ namespace Lib9c.Plugin
                 new PolicyActionsRegistry(
                     beginBlockActions: ImmutableArray<IAction>.Empty,
                     endBlockActions: new IAction[] { new RewardGold() }.ToImmutableArray(),
-                    beginTxActions: ImmutableArray<IAction>.Empty,
+                    beginTxActions: new IAction[] { new AutoJoinGuild() }.ToImmutableArray(),
                     endTxActions: ImmutableArray<IAction>.Empty),
                 stateStore,
                 new NCActionLoader());
