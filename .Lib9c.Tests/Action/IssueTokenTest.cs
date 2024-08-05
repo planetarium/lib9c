@@ -167,5 +167,38 @@ namespace Lib9c.Tests.Action
             Assert.True(inventory.TryGetItem(500000, out var item));
             Assert.Equal(1000 - 42, item.count);
         }
+
+        [Fact]
+        public void Execute_Throw_InvalidCurrencyException()
+        {
+            var currencyWithMinter = Currency.Legacy("RUNESTONE_CRI", 0, _signer);
+            var action = new IssueToken
+            {
+                AvatarAddress = _avatarAddress,
+                FungibleAssetValues = new List<FungibleAssetValue>
+                {
+                    _runeCurrency * 42,
+                    currencyWithMinter * 42,
+                },
+                Items = new List<(int id, int count)>(),
+            };
+
+            var actionContext = new ActionContext
+            {
+                Signer = _signer,
+            };
+            var prevState = _prevState
+                .MintAsset(actionContext, _signer, FungibleAssetValue.Parse(Currencies.Garage, "4.2000042"))
+                .MintAsset(actionContext, _signer, currencyWithMinter * 1000);
+
+            Assert.Throws<InvalidCurrencyException>(() => action.Execute(
+                new ActionContext()
+                {
+                    PreviousState = prevState,
+                    Signer = _signer,
+                    BlockIndex = 42,
+                }
+            ));
+        }
     }
 }

@@ -6,7 +6,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Garages;
 using Nekoyume.Exceptions;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
@@ -65,6 +64,10 @@ namespace Nekoyume.Action
             foreach (var fungibleAssetValue in FungibleAssetValues)
             {
                 var currency = fungibleAssetValue.Currency;
+                if (currency.Minters is not null)
+                {
+                    throw new InvalidCurrencyException("only minterless currency is allowed.");
+                }
                 var wrappedCurrency = Currencies.GetWrappedCurrency(currency);
                 var address = Currencies.PickAddress(currency, context.Signer, AvatarAddress);
                 state = state
