@@ -12,6 +12,9 @@ namespace Nekoyume.Delegation
 {
     public sealed class UnbondLockIn : IBencodable, IEquatable<UnbondLockIn>
     {
+        private static readonly IComparer<UnbondLockInEntry> _entryComparer
+            = new UnbondLockInEntryComparer();
+
         private FungibleAssetValue? _releasedFAV;
 
         public UnbondLockIn(Address address, int maxEntries)
@@ -75,6 +78,8 @@ namespace Nekoyume.Delegation
         public Address Address { get; }
 
         public int MaxEntries { get; }
+
+        public long lowestExpireHeight => Entries.First().Key;
 
         public bool IsFull => Entries.Values.Sum(e => e.Count) >= MaxEntries;
 
@@ -202,7 +207,7 @@ namespace Nekoyume.Delegation
 
                     if (entry.value.LockInFAV <= cancellingFAV)
                     {
-                        cancellingFAV -= entry.value.LockInFAV; ;
+                        cancellingFAV -= entry.value.LockInFAV;
                         updatedEntries = updatedEntries.SetItem(
                             expireHeight,
                             updatedEntries[expireHeight].RemoveAt(entry.index));
@@ -210,7 +215,7 @@ namespace Nekoyume.Delegation
                     else
                     {
                         var cancelledEntry = entry.value.Cancel(cancellingFAV);
-                        cancellingFAV -= entry.value.LockInFAV; ;
+                        cancellingFAV -= entry.value.LockInFAV;
                         updatedEntries = updatedEntries.SetItem(
                             expireHeight,
                             updatedEntries[expireHeight].SetItem(entry.index, cancelledEntry));
@@ -247,7 +252,11 @@ namespace Nekoyume.Delegation
 
             if (Entries.TryGetValue(entry.ExpireHeight, out var entries))
             {
-                return UpdateEntries(Entries.SetItem(entry.ExpireHeight, entries.Add(entry)));
+                int index = entries.BinarySearch(entry, _entryComparer);
+                return UpdateEntries(
+                    Entries.SetItem(
+                        entry.ExpireHeight,
+                        entries.Insert(index < 0 ? ~index : index, entry)));
             }
             else
             {
@@ -403,6 +412,47 @@ namespace Nekoyume.Delegation
                     LockInFAV - cancellingFAV,
                     CreationHeight,
                     ExpireHeight);
+            }
+        }
+
+        public class UnbondLockInEntryComparer : IComparer<UnbondLockInEntry>
+        {
+            public int Compare(UnbondLockInEntry? x, UnbondLockInEntry? y)
+            {
+                if (ReferenceEquals(x, y))
+                {
+                    return 0;
+                }
+        
+                if (x is null)
+                {
+                    return -1;
+                }
+        
+                if (y is null)
+                {
+                    return 1;
+                }
+        
+                int comparison = x.ExpireHeight.CompareTo(y.ExpireHeight);
+                if (comparison != 0)
+                {
+                    return comparison;
+                }
+
+                comparison = x.CreationHeight.CompareTo(y.CreationHeight);
+                if (comparison != 0)
+                {
+                    return comparison;
+                }
+
+                comparison = -x.InitialLockInFAV.CompareTo(y.InitialLockInFAV);
+                if (comparison != 0)
+                {
+                    return comparison;
+                }
+
+                return -x.LockInFAV.CompareTo(y.LockInFAV);
             }
         }
     }
