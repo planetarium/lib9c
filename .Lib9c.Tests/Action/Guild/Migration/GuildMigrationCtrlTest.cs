@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
     using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Guild.Migration;
     using Nekoyume.Action.Guild.Migration.Controls;
     using Nekoyume.Extensions;
     using Nekoyume.Model.State;
@@ -32,8 +33,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
                     RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(target));
-            (world, var shouldFail) = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
-            Assert.False(shouldFail);
+            world = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
 
             var joinedGuildAddress = Assert.IsType<GuildAddress>(world.GetJoinedGuild(target));
             Assert.True(world.TryGetGuild(joinedGuildAddress, out var guild));
@@ -51,10 +51,8 @@ namespace Lib9c.Tests.Action.Guild.Migration
                 .JoinGuild(guildAddress, guildMasterAddress);
 
             Assert.Null(world.GetJoinedGuild(target));
-            (world, var shouldFail) = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
-
-            Assert.True(shouldFail);
-            Assert.Null(world.GetJoinedGuild(target));
+            Assert.Throws<GuildMigrationFailedException>(() =>
+                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
         }
 
         [Fact]
@@ -69,10 +67,8 @@ namespace Lib9c.Tests.Action.Guild.Migration
                     RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(target));
-            (world, var shouldFail) = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
-            Assert.True(shouldFail);
-
-            Assert.Null(world.GetJoinedGuild(target));
+            Assert.Throws<GuildMigrationFailedException>(() =>
+                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
         }
     }
 }

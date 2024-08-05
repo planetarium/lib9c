@@ -75,14 +75,14 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var action = new MigratePledgeToGuild(target);
 
             // Migrate by other.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
+            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
             {
                 PreviousState = world,
                 Signer = caller,
             }));
 
             // Migrate by itself.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
+            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
             {
                 PreviousState = world,
                 Signer = target,
@@ -105,14 +105,14 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var action = new MigratePledgeToGuild(target);
 
             // Migrate by other.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
+            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
             {
                 PreviousState = world,
                 Signer = caller,
             }));
 
             // Migrate by itself.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
+            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
             {
                 PreviousState = world,
                 Signer = target,

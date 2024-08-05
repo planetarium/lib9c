@@ -3,12 +3,9 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Action;
+using Nekoyume.Action.Guild.Migration;
 using Nekoyume.Action.Guild.Migration.Controls;
 using Nekoyume.Extensions;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.Module.Guild;
-using Nekoyume.TypedAddress;
 using Serilog;
 
 namespace Nekoyume.PolicyAction.Tx.Begin
@@ -36,8 +33,26 @@ namespace Nekoyume.PolicyAction.Tx.Begin
             var world = context.PreviousState;
             var signer = context.GetAgentAddress();
 
-            var (resultWorld, _) = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, signer);
-            return resultWorld;
+            try
+            {
+                return GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, signer);
+            }
+            catch (GuildMigrationFailedException guildMigrationFailedException)
+            {
+                Log.ForContext<AutoJoinGuild>()
+                    .Debug(
+                        "Migration from pledge to guild failed but it just skips. {Message}",
+                        guildMigrationFailedException.Message);
+            }
+            catch (Exception e)
+            {
+                Log.ForContext<AutoJoinGuild>()
+                    .Error(
+                        "Unexpected exception but it skips. You should debug this situation. {Message}",
+                        e.Message);
+            }
+
+            return world;
         }
     }
 }
