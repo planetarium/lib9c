@@ -140,9 +140,10 @@ namespace Nekoyume.Action
 
             avatarState.Customize(hair, lens, ear, tail);
 
-            foreach (var address in avatarState.combinationSlotAddresses)
+            for (var i = 0; i < avatarState.combinationSlotAddresses.Count; i++)
             {
-                var slotState = new CombinationSlotState(address);
+                var address = avatarState.combinationSlotAddresses[i];
+                var slotState = new CombinationSlotState(address, i);
                 states = states.SetLegacyState(address, slotState.Serialize());
             }
 

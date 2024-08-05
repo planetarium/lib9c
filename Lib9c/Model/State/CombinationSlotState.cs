@@ -11,13 +11,22 @@ namespace Nekoyume.Model.State
 {
     public class CombinationSlotState : State
     {
+        private const string UnlockBlockIndexKey = "unlockBlockIndex";
+        private const string StartBlockIndexKey = "startBlockIndex";
+        private const string ResultKey = "result";
+        private const string PetIdKey = "petId";
+        private const string IndexKey = "index";
+        
+        
         public const string DeriveFormat = "combination-slot-{0}";
         public long UnlockBlockIndex { get; private set; }
         public long StartBlockIndex { get; private set; }
         public AttachmentActionResult Result { get; private set; }
         public int? PetId { get; private set; }
         public long RequiredBlockIndex => UnlockBlockIndex - StartBlockIndex;
-        
+        /// <summary>
+        /// It is a CombinationSlot index. start from 0.
+        /// </summary>
         public int Index { get; private set; }
 
         public static Address DeriveAddress(Address address, int slotIndex) =>
@@ -26,24 +35,27 @@ namespace Nekoyume.Model.State
                 DeriveFormat,
                 slotIndex));
 
-        public CombinationSlotState(Address address) : base(address)
+        public CombinationSlotState(Address address, int index = 0) : base(address)
         {
+            UnlockBlockIndex = 0;
+            Index = index;
         }
 
         public CombinationSlotState(Dictionary serialized) : base(serialized)
         {
-            UnlockBlockIndex = serialized["unlockBlockIndex"].ToLong();
-            if (serialized.TryGetValue((Text) "result", out var result))
+            UnlockBlockIndex = serialized[UnlockBlockIndexKey].ToLong();
+            Index = serialized[IndexKey].ToInteger();
+            if (serialized.TryGetValue((Text)ResultKey, out var result))
             {
                 Result = AttachmentActionResult.Deserialize((Dictionary) result);
             }
 
-            if (serialized.TryGetValue((Text) "startBlockIndex", out var value))
+            if (serialized.TryGetValue((Text)StartBlockIndexKey, out var value))
             {
                 StartBlockIndex = value.ToLong();
             }
 
-            if (serialized.TryGetValue((Text) "petId", out var petId))
+            if (serialized.TryGetValue((Text)PetIdKey, out var petId))
             {
                 PetId = petId.ToNullableInteger();
             }
@@ -109,19 +121,21 @@ namespace Nekoyume.Model.State
         {
             var values = new Dictionary<IKey, IValue>
             {
-                [(Text) "unlockBlockIndex"] = UnlockBlockIndex.Serialize(),
-                [(Text) "startBlockIndex"] = StartBlockIndex.Serialize(),
+                [(Text)UnlockBlockIndexKey] = UnlockBlockIndex.Serialize(),
+                [(Text)StartBlockIndexKey] = StartBlockIndex.Serialize(),
+                [(Text)IndexKey] = Index.Serialize(),
             };
 
-            if (!(Result is null))
+            if (Result is not null)
             {
-                values.Add((Text)"result", Result.Serialize());
+                values.Add((Text)ResultKey, Result.Serialize());
             }
 
-            if (!(PetId is null))
+            if (PetId is not null)
             {
-                values.Add((Text)"petId", PetId.Serialize());
+                values.Add((Text)PetIdKey, PetId.Serialize());
             }
+            
 #pragma warning disable LAA1002
             return new Dictionary(values.Union((Dictionary) base.Serialize()));
 #pragma warning restore LAA1002

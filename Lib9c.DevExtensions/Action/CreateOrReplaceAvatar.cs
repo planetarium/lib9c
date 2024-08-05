@@ -563,7 +563,7 @@ namespace Lib9c.DevExtensions.Action
             for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
             {
                 var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddr, i);
-                var slot = new CombinationSlotState(slotAddr);
+                var slot = new CombinationSlotState(slotAddr, i);
                 states = states.SetLegacyState(slotAddr, slot.Serialize());
             }
             // ~Set CombinationSlot.
