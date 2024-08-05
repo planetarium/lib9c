@@ -175,7 +175,7 @@ namespace Lib9c.Tests.Action.Garages
                 .Where(fav => fav.Sign > 0)
                 .Select(fav =>
                 {
-                    var recipient = GarageUtils.PickRecipient(agentAddr, avatarAddr, fav.Currency);
+                    var recipient = Currencies.PickAddress(fav.Currency, agentAddr, avatarAddr);
                     return (recipient, fav);
                 })
                 .ToArray();

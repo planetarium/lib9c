@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using Bencodex.Types;
-using Lib9c;
 using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
@@ -233,22 +232,6 @@ namespace Nekoyume.Action.Garages
             }
 
             return garage;
-        }
-
-        /// <summary>
-        /// pick recipient address by currency ticker
-        /// </summary>
-        /// <param name="agentAddress"><see cref="Address"/></param>
-        /// <param name="avatarAddress"><see cref="Address"/></param>
-        /// <param name="currency"><see cref="Currency"/></param>
-        /// <returns>avatarAddress when ticker is rune or soulstone else agentAddress</returns>
-        public static Address PickRecipient(Address agentAddress, Address avatarAddress,
-            Currency currency)
-        {
-            var ticker = currency.Ticker;
-            return Currencies.IsRuneTicker(ticker) || Currencies.IsSoulstoneTicker(ticker)
-                ? avatarAddress
-                : agentAddress;
         }
     }
 }

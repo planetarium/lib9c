@@ -207,11 +207,11 @@ namespace Lib9c.Tests
         {
             var agentAddress = new PrivateKey().Address;
             var avatarAddress = new PrivateKey().Address;
-            Assert.Equal(agentAddress, Currencies.SelectRecipientAddress(Currencies.Crystal, agentAddress, avatarAddress));
-            Assert.Equal(agentAddress, Currencies.SelectRecipientAddress(Currencies.Garage, agentAddress, avatarAddress));
-            Assert.Equal(agentAddress, Currencies.SelectRecipientAddress(Currencies.Mead, agentAddress, avatarAddress));
-            Assert.Equal(agentAddress, Currencies.SelectRecipientAddress(Currency.Legacy("NCG", decimalPlaces: 2, minter: new PrivateKey().Address), agentAddress, avatarAddress));
-            Assert.Equal(avatarAddress, Currencies.SelectRecipientAddress(Currencies.DailyRewardRune, agentAddress, avatarAddress));
+            Assert.Equal(agentAddress, Currencies.PickAddress(Currencies.Crystal, agentAddress, avatarAddress));
+            Assert.Equal(agentAddress, Currencies.PickAddress(Currencies.Garage, agentAddress, avatarAddress));
+            Assert.Equal(agentAddress, Currencies.PickAddress(Currencies.Mead, agentAddress, avatarAddress));
+            Assert.Equal(agentAddress, Currencies.PickAddress(Currency.Legacy("NCG", decimalPlaces: 2, minter: new PrivateKey().Address), agentAddress, avatarAddress));
+            Assert.Equal(avatarAddress, Currencies.PickAddress(Currencies.DailyRewardRune, agentAddress, avatarAddress));
         }
     }
 }

@@ -414,7 +414,7 @@ namespace Lib9c.Tests.Action.Garages
                 {
                     // CRYSTAL's minorUnit is not actually used in network, avoid cost calculate exception in test.
                     var value = 1 * fav.Currency;
-                    var recipient = GarageUtils.PickRecipient(agentAddr, avatarAddr, fav.Currency);
+                    var recipient = Currencies.PickAddress(fav.Currency, agentAddr, avatarAddr);
                     return (recipient, value);
                 })
                 .ToArray();

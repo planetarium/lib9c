@@ -66,9 +66,9 @@ namespace Nekoyume.Action
             {
                 var currency = fungibleAssetValue.Currency;
                 var wrappedCurrency = Currencies.GetWrappedCurrency(currency);
-                var recipient = GarageUtils.PickRecipient(context.Signer, AvatarAddress, currency);
+                var address = Currencies.PickAddress(currency, context.Signer, AvatarAddress);
                 state = state
-                    .BurnAsset(context, recipient, fungibleAssetValue)
+                    .BurnAsset(context, address, fungibleAssetValue)
                     .MintAsset(
                         context,
                         context.Signer,

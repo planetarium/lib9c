@@ -157,7 +157,14 @@ namespace Lib9c
                     .Select(GetSoulStone)
                     .OrderBy(soulStone => soulStone.Hash.GetHashCode());
 
-        public static Address SelectRecipientAddress(Currency currency, Address agentAddress,
+        /// <summary>
+        /// pick address by currency ticker
+        /// </summary>
+        /// <param name="currency"><see cref="Currency"/></param>
+        /// <param name="agentAddress"><see cref="Address"/></param>
+        /// <param name="avatarAddress"><see cref="Address"/></param>
+        /// <returns>agentAddress when ticker is NCG or Crystal or Garage or Mead else avatarAddress</returns>
+        public static Address PickAddress(Currency currency, Address agentAddress,
             Address avatarAddress)
         {
             var agentCurrencies = new[]

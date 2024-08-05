@@ -143,7 +143,7 @@ namespace Nekoyume.Action
             foreach (var fav in favResult)
             {
                 var rewardCurrency = fav.Currency;
-                var recipient = GarageUtils.PickRecipient(context.Signer, AvatarAddress, rewardCurrency);
+                var recipient = Currencies.PickAddress(rewardCurrency, context.Signer, AvatarAddress);
                 states = states.MintAsset(context, recipient, fav);
             }
 
