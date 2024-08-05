@@ -6,7 +6,6 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Nekoyume.Action.Guild;
-    using Nekoyume.Action.Loader;
     using Nekoyume.Module.Guild;
     using Xunit;
 
@@ -19,10 +18,9 @@ namespace Lib9c.Tests.Action.Guild
             var action = new UnbanGuildMember(guildMemberAddress);
             var plainValue = action.PlainValue;
 
-            var actionLoader = new NCActionLoader();
-            var loadedRaw = actionLoader.LoadAction(0, plainValue);
-            var loadedAction = Assert.IsType<UnbanGuildMember>(loadedRaw);
-            Assert.Equal(guildMemberAddress, loadedAction.Target);
+            var deserialized = new UnbanGuildMember();
+            deserialized.LoadPlainValue(plainValue);
+            Assert.Equal(guildMemberAddress, deserialized.Target);
         }
 
         [Fact]

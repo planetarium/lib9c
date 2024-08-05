@@ -5,7 +5,6 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Action.State;
     using Libplanet.Mocks;
     using Nekoyume.Action.Guild;
-    using Nekoyume.Action.Loader;
     using Nekoyume.Module.Guild;
     using Xunit;
 
@@ -18,10 +17,9 @@ namespace Lib9c.Tests.Action.Guild
             var action = new AcceptGuildApplication(agentAddress);
             var plainValue = action.PlainValue;
 
-            var actionLoader = new NCActionLoader();
-            var loadedRaw = actionLoader.LoadAction(0, plainValue);
-            var loadedAction = Assert.IsType<AcceptGuildApplication>(loadedRaw);
-            Assert.Equal(agentAddress, loadedAction.Target);
+            var deserialized = new AcceptGuildApplication();
+            deserialized.LoadPlainValue(plainValue);
+            Assert.Equal(agentAddress, deserialized.Target);
         }
 
         [Fact]

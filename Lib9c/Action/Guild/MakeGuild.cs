@@ -35,6 +35,13 @@ namespace Nekoyume.Action.Guild
             var world = context.PreviousState;
             var random = context.GetRandom();
 
+            // TODO: Remove this check when to deliver features to users.
+            if (context.Signer != MeadConfig.PatronAddress)
+            {
+                throw new InvalidOperationException(
+                    $"This action is not allowed for {context.Signer}.");
+            }
+
             var guildAddress = new GuildAddress(random.GenerateAddress());
             var signer = context.GetAgentAddress();
 
