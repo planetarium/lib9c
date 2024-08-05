@@ -188,7 +188,7 @@ namespace Lib9c.Tests.Action
                 Signer = _signer,
             };
             var prevState = _prevState
-                .MintAsset(actionContext, _signer, FungibleAssetValue.Parse(Currencies.Garage, "4.2000042"))
+                .MintAsset(actionContext, _signer, Currencies.Garage * 1000)
                 .MintAsset(actionContext, _signer, currencyWithMinter * 1000);
 
             Assert.Throws<InvalidCurrencyException>(() => action.Execute(
