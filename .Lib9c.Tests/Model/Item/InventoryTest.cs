@@ -1000,6 +1000,8 @@
         {
             var item = (TradableMaterial)GetFirstTradableMaterial();
             item.RequiredBlockIndex = 100L;
+            var item2 = (TradableMaterial)GetFirstTradableMaterial();
+            item2.RequiredBlockIndex = 50L;
             var inventory = new Inventory();
             Assert.Empty(inventory.Items);
 
@@ -1008,11 +1010,14 @@
                 inventory.AddItem(item);
             }
 
+            inventory.AddItem(item2);
+            Assert.Equal(2, inventory.Items.Count);
+
             // RequiredBlockIndex
             Assert.False(inventory.RemoveTradableMaterial(item.Id, 1L));
             // NotEnoughItemCount
-            Assert.False(inventory.RemoveTradableMaterial(item.Id, 200L, 4));
-            Assert.True(inventory.RemoveTradableMaterial(item.Id, 200L, 3));
+            Assert.False(inventory.RemoveTradableMaterial(item.Id, 200L, 5));
+            Assert.True(inventory.RemoveTradableMaterial(item.Id, 200L, 4));
 
             inventory.AddItem(item, 1, new OrderLock(Guid.NewGuid()));
             // InventorySlot is lock

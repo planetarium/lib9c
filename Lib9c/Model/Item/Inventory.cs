@@ -654,7 +654,11 @@ namespace Nekoyume.Model.Item
 
         public bool RemoveTradableMaterial(int materialId, long blockIndex, int count = 1)
         {
-            var target = _items
+            if (count <= 0)
+            {
+                throw new InvalidItemCountException("cout must be greater than 0");
+            }
+            var items = _items
                 .Where(i =>
                     !i.Locked &&
                     i.item is TradableMaterial tradableMaterial &&
@@ -663,17 +667,24 @@ namespace Nekoyume.Model.Item
                 )
                 .OrderBy(i => ((ITradableItem)i.item).RequiredBlockIndex)
                 .ThenBy(i => i.count)
-                .FirstOrDefault();
-            if (target is null ||
-                target.count < count)
+                .ToList();
+
+            if (items.Sum(i => i.count) < count)
             {
                 return false;
             }
 
-            target.count -= count;
-            if (target.count == 0)
+            foreach (var item in items)
             {
-                _items.Remove(target);
+                if (item.count > count)
+                {
+                    item.count -= count;
+                    break;
+                }
+
+                count -= item.count;
+                item.count = 0;
+                _items.Remove(item);
             }
 
             return true;
