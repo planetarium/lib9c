@@ -560,6 +560,7 @@ namespace Lib9c.DevExtensions.Action
             states = states.SetAvatarState(avatarAddr, avatar);
 
             // Set CombinationSlot.
+            // TODO: Need Migration TO AllCombinationSlotState
             for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
             {
                 var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddr, i);

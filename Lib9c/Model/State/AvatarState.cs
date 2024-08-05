@@ -23,7 +23,7 @@ namespace Nekoyume.Model.State
     [Serializable]
     public class AvatarState : State, ICloneable
     {
-        public const int CombinationSlotCapacity = 4;
+        public const int CombinationSlotCapacity = 8;
         public const int CurrentVersion = 2;
         public string name;
         public int characterId;
@@ -100,6 +100,7 @@ namespace Nekoyume.Model.State
                 new KeyValuePair<int, int>((int) createEvent, 1),
                 new KeyValuePair<int, int>((int) levelEvent, level),
             };
+            
             combinationSlotAddresses = new List<Address>(CombinationSlotCapacity);
             for (var i = 0; i < CombinationSlotCapacity; i++)
             {
