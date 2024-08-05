@@ -996,7 +996,7 @@
         }
 
         [Fact]
-        public void RemoteTradableMaterial()
+        public void RemoveTradableMaterial()
         {
             var item = (TradableMaterial)GetFirstTradableMaterial();
             item.RequiredBlockIndex = 100L;
