@@ -48,3 +48,7 @@ export {
   CreateAvatar,
   type CreateAvatarArgs,
 } from "./actions/create_avatar.js";
+export {
+  ApprovePledge,
+  type ApprovePledgeArgs,
+} from "./actions/approve_pledge.js";
