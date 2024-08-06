@@ -29,6 +29,12 @@ namespace Nekoyume.Model.State
         public int Index { get; private set; }
         // TODO: Add IsUnlocked property
 
+        /// <summary>
+        /// Is only used for migration legacy state.
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="slotIndex"></param>
+        /// <returns></returns>
         public static Address DeriveAddress(Address address, int slotIndex) =>
             address.Derive(string.Format(
                 CultureInfo.InvariantCulture,
@@ -80,6 +86,7 @@ namespace Nekoyume.Model.State
 
         public bool ValidateV2(AvatarState avatarState, long blockIndex)
         {
+            // TODO: Lock상태인지 확인하는 로직 추가
             if (avatarState is null)
             {
                 return false;

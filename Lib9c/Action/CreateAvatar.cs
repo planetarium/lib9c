@@ -139,6 +139,8 @@ namespace Nekoyume.Action
             if (tail < 0) tail = 0;
 
             avatarState.Customize(hair, lens, ear, tail);
+            
+            // TODO: Apply AllCombinationSlotState
             for (var i = 0; i < avatarState.combinationSlotAddresses.Count; i++)
             {
                 var address = avatarState.combinationSlotAddresses[i];

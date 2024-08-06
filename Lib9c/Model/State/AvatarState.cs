@@ -103,6 +103,7 @@ namespace Nekoyume.Model.State
                 new KeyValuePair<int, int>((int) levelEvent, level),
             };
             
+            // TODO: Remove this code after the migration.
             combinationSlotAddresses = new List<Address>(CombinationSlotCapacity);
             for (var i = 0; i < CombinationSlotCapacity; i++)
             {
