@@ -560,6 +560,7 @@ namespace Lib9c.DevExtensions.Action
             states = states.SetAvatarState(avatarAddr, avatar);
 
             // Set CombinationSlot.
+            var allCombinationSlotState = new AllCombinationSlotState();
             // TODO: Need Migration TO AllCombinationSlotState
             for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
             {
@@ -567,6 +568,8 @@ namespace Lib9c.DevExtensions.Action
                 var slot = new CombinationSlotState(slotAddr, i);
                 states = states.SetLegacyState(slotAddr, slot.Serialize());
             }
+
+            states = states.SetCombinationSlotState(avatarAddr, allCombinationSlotState);
             // ~Set CombinationSlot.
 
             // Set Runes
