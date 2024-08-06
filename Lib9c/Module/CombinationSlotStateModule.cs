@@ -25,15 +25,7 @@ namespace Nekoyume.Module
             AllCombinationSlotState allCombinationSlotState;
             if (serialized is null)
             {
-                // Get legacy combination slot states
-                // 만약 AllCombinationSlotState가 없다면, 슬롯 확장 업데이트 전 4개의 슬롯을 가져와서 채워넣는다.
-                allCombinationSlotState = new AllCombinationSlotState();
-                for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
-                {
-                    var combinationAddress = CombinationSlotState.DeriveAddress(avatarAddress, i);
-                    allCombinationSlotState.AddRuneState(new CombinationSlotState(combinationAddress, i));
-                }
-
+                allCombinationSlotState = AllCombinationSlotState.MigrationLegacyCombinationSlotState(avatarAddress);
                 migrateRequired = true;
             }
             else
