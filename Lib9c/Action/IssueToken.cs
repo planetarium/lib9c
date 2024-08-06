@@ -19,7 +19,7 @@ namespace Nekoyume.Action
         public const string TypeIdentifier = "issue_token";
         public Address AvatarAddress;
         public List<FungibleAssetValue> FungibleAssetValues;
-        public List<(int id, int count)> Items;
+        public List<(int id, int count, bool tradable)> Items;
 
         public IssueToken()
         {
@@ -31,7 +31,7 @@ namespace Nekoyume.Action
                 "values", Dictionary.Empty
                     .Add("a", AvatarAddress.Serialize())
                     .Add("f", new List(FungibleAssetValues.Select(f => f.Serialize())))
-                    .Add("i", new List(Items.Select(i => List.Empty.Add(i.id).Add(i.count))))
+                    .Add("i", new List(Items.Select(i => List.Empty.Add(i.id).Add(i.count).Add(i.tradable.Serialize()))))
             );
 
         public override void LoadPlainValue(IValue plainValue)
@@ -39,12 +39,12 @@ namespace Nekoyume.Action
             var dict = (Dictionary)((Dictionary)plainValue)["values"];
             AvatarAddress = dict["a"].ToAddress();
             FungibleAssetValues = ((List)dict["f"]).ToList(f => f.ToFungibleAssetValue());
-            Items = new List<(int id, int count)>();
+            Items = new List<(int id, int count, bool tradable)>();
             var list = (List)dict["i"];
             foreach (var value in list)
             {
                 var innerList = (List)value;
-                Items.Add(((Integer)innerList[0], (Integer)innerList[1]));
+                Items.Add(((Integer)innerList[0], (Integer)innerList[1], innerList[2].ToBoolean()));
             }
         }
 
@@ -85,19 +85,29 @@ namespace Nekoyume.Action
             if (Items.Any())
             {
                 var inventory = state.GetInventoryV2(AvatarAddress);
-                foreach (var (id, count) in Items)
+                foreach (var (id, count, tradable) in Items)
                 {
                     if (count < 0)
                     {
                         throw new InvalidActionFieldException("item count must be greater than 0.");
                     }
 
-                    if (!inventory.RemoveTradableMaterial(id, context.BlockIndex, count))
+                    if (tradable)
                     {
-                        throw new NotEnoughItemException($"not enough tradable material({id})");
+                        if (!inventory.RemoveTradableMaterial(id, context.BlockIndex, count))
+                        {
+                            throw new NotEnoughItemException($"not enough tradable material({id})");
+                        }
+                    }
+                    else
+                    {
+                        if (!inventory.RemoveNonTradableMaterial(id, count))
+                        {
+                            throw new NotEnoughItemException($"not enough non-tradable material({id})");
+                        }
                     }
 
-                    var wrappedCurrency = Currencies.GetItemCurrency(id, true);
+                    var wrappedCurrency = Currencies.GetItemCurrency(id, tradable);
                     state = state.MintAsset(context, context.Signer, count * wrappedCurrency);
                 }
                 state = state.SetInventory(AvatarAddress, inventory);

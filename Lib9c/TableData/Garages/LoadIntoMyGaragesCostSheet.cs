@@ -147,7 +147,7 @@ namespace Nekoyume.TableData.Garages
 
         public FungibleAssetValue GetGarageCost(
             IEnumerable<FungibleAssetValue> fungibleAssetValues,
-            IEnumerable<(int itemId, int count)> itemIdAndCounts)
+            IEnumerable<(int itemId, int count, bool tradable)> itemIdAndCounts)
         {
             var cost = new FungibleAssetValue(Currencies.Garage);
             foreach (var fav in fungibleAssetValues)
@@ -155,7 +155,7 @@ namespace Nekoyume.TableData.Garages
                 cost += GetGarageCost(fav);
             }
 
-            foreach (var (itemId, count) in itemIdAndCounts)
+            foreach (var (itemId, count, _) in itemIdAndCounts)
             {
                 cost += GetGarageCost(itemId, count);
             }
