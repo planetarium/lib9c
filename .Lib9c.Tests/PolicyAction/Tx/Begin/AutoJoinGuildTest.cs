@@ -8,6 +8,7 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
     using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Guild;
     using Nekoyume.Extensions;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -31,7 +32,7 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
         [Fact]
         public void Execute_When_WithPledgeContract()
         {
-            var guildMasterAddress = new AgentAddress(MeadConfig.PatronAddress);
+            var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
             var guildAddress = AddressUtil.CreateGuildAddress();
             var agentAddress = AddressUtil.CreateAgentAddress();
             var pledgeAddress = agentAddress.GetPledgeAddress();
@@ -54,13 +55,13 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
 
             var joinedGuildAddress = Assert.IsType<GuildAddress>(world.GetJoinedGuild(agentAddress));
             Assert.True(world.TryGetGuild(joinedGuildAddress, out var guild));
-            Assert.Equal(MeadConfig.PatronAddress, guild.GuildMasterAddress);
+            Assert.Equal(GuildConfig.PlanetariumGuildOwner, guild.GuildMasterAddress);
         }
 
         [Fact]
         public void Execute_When_WithoutPledgeContract()
         {
-            var guildMasterAddress = new AgentAddress(MeadConfig.PatronAddress);
+            var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
             var guildAddress = AddressUtil.CreateGuildAddress();
             var agentAddress = AddressUtil.CreateAgentAddress();
             var world = new World(MockUtil.MockModernWorldState)

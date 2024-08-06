@@ -23,7 +23,7 @@ namespace Lib9c.Tests.Action.Guild
             },
             new object[]
             {
-                new AgentAddress(MeadConfig.PatronAddress),
+                GuildConfig.PlanetariumGuildOwner,
                 false,
             },
         };

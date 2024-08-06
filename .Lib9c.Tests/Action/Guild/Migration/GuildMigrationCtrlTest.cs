@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
     using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Guild;
     using Nekoyume.Action.Guild.Migration;
     using Nekoyume.Action.Guild.Migration.Controls;
     using Nekoyume.Extensions;
@@ -20,7 +21,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
         [Fact]
         public void MigratePlanetariumPledgeToGuild_When_WithPledgeContract()
         {
-            var guildMasterAddress = new AgentAddress(MeadConfig.PatronAddress);
+            var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
             var guildAddress = AddressUtil.CreateGuildAddress();
             var target = AddressUtil.CreateAgentAddress();
             var pledgeAddress = target.GetPledgeAddress();
@@ -37,13 +38,13 @@ namespace Lib9c.Tests.Action.Guild.Migration
 
             var joinedGuildAddress = Assert.IsType<GuildAddress>(world.GetJoinedGuild(target));
             Assert.True(world.TryGetGuild(joinedGuildAddress, out var guild));
-            Assert.Equal(MeadConfig.PatronAddress, guild.GuildMasterAddress);
+            Assert.Equal(GuildConfig.PlanetariumGuildOwner, guild.GuildMasterAddress);
         }
 
         [Fact]
         public void MigratePlanetariumPledgeToGuild_When_WithoutPledgeContract()
         {
-            var guildMasterAddress = new AgentAddress(MeadConfig.PatronAddress);
+            var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
             var guildAddress = AddressUtil.CreateGuildAddress();
             var target = AddressUtil.CreateAgentAddress();
             var world = new World(MockUtil.MockModernWorldState)

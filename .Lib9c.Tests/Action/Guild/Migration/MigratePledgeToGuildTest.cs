@@ -8,7 +8,9 @@ namespace Lib9c.Tests.Action.Guild.Migration
     using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Guild;
     using Nekoyume.Action.Guild.Migration;
+    using Nekoyume.Action.Loader;
     using Nekoyume.Extensions;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -19,9 +21,23 @@ namespace Lib9c.Tests.Action.Guild.Migration
     public class MigratePledgeToGuildTest
     {
         [Fact]
+        public void Serialization()
+        {
+            var agentAddress = AddressUtil.CreateAgentAddress();
+            var action = new MigratePledgeToGuild(agentAddress);
+            var plainValue = action.PlainValue;
+
+            var actionLoader = new NCActionLoader();
+            var deserialized =
+                Assert.IsType<MigratePledgeToGuild>(actionLoader.LoadAction(0, plainValue));
+
+            Assert.Equal(agentAddress, deserialized.Target);
+        }
+
+        [Fact]
         public void Execute_When_WithPledgeContract()
         {
-            var guildMasterAddress = new AgentAddress(MeadConfig.PatronAddress);
+            var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
             var guildAddress = AddressUtil.CreateGuildAddress();
             var target = AddressUtil.CreateAgentAddress();
             var caller = AddressUtil.CreateAgentAddress();
@@ -46,7 +62,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
 
             var joinedGuildAddress = Assert.IsType<GuildAddress>(newWorld.GetJoinedGuild(target));
             Assert.True(newWorld.TryGetGuild(joinedGuildAddress, out var guild));
-            Assert.Equal(MeadConfig.PatronAddress, guild.GuildMasterAddress);
+            Assert.Equal(GuildConfig.PlanetariumGuildOwner, guild.GuildMasterAddress);
 
             // Migrate by itself.
             newWorld = action.Execute(new ActionContext
@@ -57,13 +73,13 @@ namespace Lib9c.Tests.Action.Guild.Migration
 
             joinedGuildAddress = Assert.IsType<GuildAddress>(newWorld.GetJoinedGuild(target));
             Assert.True(newWorld.TryGetGuild(joinedGuildAddress, out guild));
-            Assert.Equal(MeadConfig.PatronAddress, guild.GuildMasterAddress);
+            Assert.Equal(GuildConfig.PlanetariumGuildOwner, guild.GuildMasterAddress);
         }
 
         [Fact]
         public void Execute_When_WithoutPledgeContract()
         {
-            var guildMasterAddress = new AgentAddress(MeadConfig.PatronAddress);
+            var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
             var guildAddress = AddressUtil.CreateGuildAddress();
             var target = AddressUtil.CreateAgentAddress();
             var caller = AddressUtil.CreateAgentAddress();

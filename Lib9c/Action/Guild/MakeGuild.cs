@@ -36,7 +36,7 @@ namespace Nekoyume.Action.Guild
             var random = context.GetRandom();
 
             // TODO: Remove this check when to deliver features to users.
-            if (context.Signer != MeadConfig.PatronAddress)
+            if (context.Signer != GuildConfig.PlanetariumGuildOwner)
             {
                 throw new InvalidOperationException(
                     $"This action is not allowed for {context.Signer}.");
