@@ -42,13 +42,14 @@ namespace Lib9c.Tests.Action
                 .Where(r => r.ItemId > 0)
                 .Take(3)
                 .Select(r => r.ItemId);
-            IEnumerable<TradableMaterial> materials = tableSheets.MaterialItemSheet.OrderedList!
-                .Where(r => materialIds.Contains(r.Id))
-                .Select(ItemFactory.CreateTradableMaterial);
             var inventory = new Inventory();
-            foreach (TradableMaterial material in materials)
+            foreach (var row in tableSheets.MaterialItemSheet.OrderedList!
+                         .Where(r => materialIds.Contains(r.Id)))
             {
-                inventory.AddItem(material, 1000);
+                var material = ItemFactory.CreateMaterial(row);
+                var tradableMaterial = ItemFactory.CreateTradableMaterial(row);
+                inventory.AddItem(material, 500);
+                inventory.AddItem(tradableMaterial, 500);
             }
 
             _prevState = _prevState.SetInventory(_avatarAddress, inventory);
@@ -69,10 +70,10 @@ namespace Lib9c.Tests.Action
                 {
                     Currencies.Crystal * 1000,
                 },
-                Items = new List<(int id, int count)>
+                Items = new List<(int id, int count, bool tradable)>
                 {
-                    (1, 2),
-                    (3, 2),
+                    (1, 2, false),
+                    (3, 2, true),
                 },
             };
 
@@ -86,9 +87,11 @@ namespace Lib9c.Tests.Action
             var first = action2.Items.First();
             Assert.Equal(1, first.id);
             Assert.Equal(2, first.count);
+            Assert.False(first.tradable);
             var last = action2.Items.Last();
             Assert.Equal(3, last.id);
             Assert.Equal(2, last.count);
+            Assert.True(last.tradable);
         }
 
         [Fact]
@@ -102,7 +105,7 @@ namespace Lib9c.Tests.Action
                     Currencies.Crystal * 42,
                     _runeCurrency * 42,
                 },
-                Items = new List<(int id, int count)>(),
+                Items = new List<(int id, int count, bool tradable)>(),
             };
             var prevState = _prevState.MintAsset(new ActionContext(), _signer, FungibleAssetValue.Parse(Currencies.Garage, "4.2000042"));
 
@@ -143,13 +146,14 @@ namespace Lib9c.Tests.Action
             var action = new IssueToken
             {
                 AvatarAddress = _avatarAddress,
-                Items = new List<(int id, int count)>
+                Items = new List<(int id, int count, bool tradable)>
                 {
-                    (500000, 42),
+                    (500000, 42, true),
+                    (500000, 42, false),
                 },
                 FungibleAssetValues = new List<FungibleAssetValue>(),
             };
-            var prevState = _prevState.MintAsset(new ActionContext(), _signer, FungibleAssetValue.Parse(Currencies.Garage, "0.42"));
+            var prevState = _prevState.MintAsset(new ActionContext(), _signer, FungibleAssetValue.Parse(Currencies.Garage, "0.84"));
 
             var nextState = action.Execute(
                 new ActionContext()
@@ -161,11 +165,16 @@ namespace Lib9c.Tests.Action
             );
 
             Assert.Equal(0 * Currencies.Garage, nextState.GetBalance(_signer, Currencies.Garage));
-            Currency itemCurrency = Currency.Legacy("Item_T_500000", 0, null);
-            Assert.Equal(itemCurrency * 42, nextState.GetBalance(_signer, itemCurrency));
+            Currency nonTradableItemCurrency = Currency.Legacy("Item_NT_500000", 0, null);
+            Currency tradableItemCurrency = Currency.Legacy("Item_T_500000", 0, null);
+            Assert.Equal(nonTradableItemCurrency * 42, nextState.GetBalance(_signer, nonTradableItemCurrency));
+            Assert.Equal(tradableItemCurrency * 42, nextState.GetBalance(_signer, tradableItemCurrency));
             var inventory = nextState.GetInventoryV2(_avatarAddress);
-            Assert.True(inventory.TryGetItem(500000, out var item));
-            Assert.Equal(1000 - 42, item.count);
+            const int expectedCount = 1000 - 42 * 2;
+            Assert.True(inventory.HasItem(500000, expectedCount));
+            var items = inventory.Items.Where(i => i.item.Id == 500000).ToList();
+            Assert.Equal(2, items.Count);
+            Assert.Equal(expectedCount, items.Sum(i => i.count));
         }
 
         [Fact]
@@ -180,7 +189,7 @@ namespace Lib9c.Tests.Action
                     _runeCurrency * 42,
                     currencyWithMinter * 42,
                 },
-                Items = new List<(int id, int count)>(),
+                Items = new List<(int id, int count, bool tradable)>(),
             };
 
             var actionContext = new ActionContext
