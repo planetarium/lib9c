@@ -357,6 +357,7 @@ namespace Lib9c.Tests.Action
             var row = materialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.ApStone);
             Assert.False(nextAvatarState.inventory.HasItem(row.Id));
 
+            // Todo : Check the material rewards
             return nextState;
         }
     }
