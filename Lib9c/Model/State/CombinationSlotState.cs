@@ -44,7 +44,12 @@ namespace Nekoyume.Model.State
         public CombinationSlotState(Dictionary serialized) : base(serialized)
         {
             UnlockBlockIndex = serialized[UnlockBlockIndexKey].ToLong();
-            Index = serialized[IndexKey].ToInteger();
+            
+            if (serialized.TryGetValue((Text)IndexKey, out var index))
+            {
+                Index = index.ToInteger();
+            }
+            
             if (serialized.TryGetValue((Text)ResultKey, out var result))
             {
                 Result = AttachmentActionResult.Deserialize((Dictionary) result);
