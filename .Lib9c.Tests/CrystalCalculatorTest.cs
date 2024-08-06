@@ -92,6 +92,38 @@ namespace Lib9c.Tests
         }
 
         [Theory]
+        [ClassData(typeof(CalculateMaterialRewardData))]
+        public void CalculateMaterialReward(int[] equipmentIds, Dictionary<int, int> expected)
+        {
+            var equipmentList = new List<Equipment>();
+            foreach (var equipmentId in equipmentIds)
+            {
+                var row = _tableSheets.EquipmentItemSheet[equipmentId];
+                var equipment = ItemFactory.CreateItemUsable(row, default, 0);
+                equipmentList.Add((Equipment)equipment);
+            }
+
+            var actual = CrystalCalculator.CalculateMaterialReward(
+                equipmentList,
+                _tableSheets.CrystalEquipmentGrindingSheet,
+                _tableSheets.MaterialItemSheet
+            );
+
+            Assert.Equal(expected.Count, actual.Count);
+            foreach (var (material, count) in actual)
+            {
+                if (expected.TryGetValue(material.Id, out var actualCount))
+                {
+                    Assert.Equal(count, actualCount);
+                }
+                else
+                {
+                    Assert.True(false, "Key missing in result");
+                }
+            }
+        }
+
+        [Theory]
         [InlineData(200, 100, 200, true, true)]
         [InlineData(900, 1000, 90, true, true)]
         // Minimum
@@ -257,6 +289,18 @@ namespace Lib9c.Tests
                     false,
                     "100000000",
                 },
+            };
+
+            public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
+        }
+
+        // Todo : Fill more test cases
+        private class CalculateMaterialRewardData : IEnumerable<object[]>
+        {
+            private readonly List<object[]> _data = new List<object[]>
+            {
             };
 
             public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
