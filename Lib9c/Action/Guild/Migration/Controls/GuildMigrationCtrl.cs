@@ -14,7 +14,7 @@ namespace Nekoyume.Action.Guild.Migration.Controls
     {
         /// <summary>
         /// Migrate the pledge to the guild if the <paramref name="target"/> has contracted pledge
-        /// with Planetarium (<see cref="MeadConfig.PatronAddress"/>).
+        /// with Planetarium (<see cref="GuildConfig.PlanetariumGuildOwner"/>).
         /// </summary>
         /// <param name="world"></param>
         /// <param name="target"></param>
@@ -22,8 +22,8 @@ namespace Nekoyume.Action.Guild.Migration.Controls
         /// <exception cref="GuildMigrationFailedException">Migration to guild from pledge failed.</exception>
         public static IWorld MigratePlanetariumPledgeToGuild(IWorld world, AgentAddress target)
         {
-            var planetariumPatronAddress = new AgentAddress(MeadConfig.PatronAddress);
-            if (world.GetJoinedGuild(planetariumPatronAddress) is not { } planetariumGuildAddress)
+            if (world.GetJoinedGuild(GuildConfig.PlanetariumGuildOwner) is not
+                { } planetariumGuildAddress)
             {
                 throw new GuildMigrationFailedException("Planetarium guild is not found.");
             }
@@ -33,7 +33,7 @@ namespace Nekoyume.Action.Guild.Migration.Controls
                 throw new GuildMigrationFailedException("Planetarium guild is not found.");
             }
 
-            if (planetariumGuild.GuildMasterAddress != planetariumPatronAddress)
+            if (planetariumGuild.GuildMasterAddress != GuildConfig.PlanetariumGuildOwner)
             {
                 throw new GuildMigrationFailedException("Unexpected guild master.");
             }

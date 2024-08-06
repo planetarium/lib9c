@@ -32,7 +32,8 @@ namespace Nekoyume.Action.Guild.Migration
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
-            .Add("values", Dictionary.Empty);
+            .Add("values", Dictionary.Empty
+                .Add(TargetKey, Target.Bencoded));
 
         public override void LoadPlainValue(IValue plainValue)
         {
