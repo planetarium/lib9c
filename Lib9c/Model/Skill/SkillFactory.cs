@@ -4,6 +4,11 @@ using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using System;
+using System.Linq;
+using Libplanet.Action;
+using Nekoyume.Battle;
+using Nekoyume.Model.Item;
+using Nekoyume.TableData.CustomEquipmentCraft;
 
 namespace Nekoyume.Model.Skill
 {
@@ -133,6 +138,45 @@ namespace Nekoyume.Model.Skill
                 serialized["chance"].ToInteger(),
                 ratio,
                 statType
+            );
+        }
+
+        public static Skill SelectSkill(
+            ItemSubType itemSubType,
+            CustomEquipmentCraftRecipeSkillSheet recipeSkillSheet,
+            EquipmentItemOptionSheet itemOptionSheet,
+            SkillSheet skillSheet,
+            IRandom random
+        )
+        {
+            var skillSelector =
+                new WeightedSelector<CustomEquipmentCraftRecipeSkillSheet.Row>(random);
+            foreach (var sr in recipeSkillSheet.Values
+                         .Where(row => row.ItemSubType == itemSubType))
+            {
+                skillSelector.Add(sr, sr.Ratio);
+            }
+
+            var itemOptionId = skillSelector.Select(1).First().ItemOptionId;
+            var skillOptionRow = itemOptionSheet.Values.First(row => row.Id == itemOptionId);
+            var skillRow = skillSheet.Values.First(row => row.Id == skillOptionRow.SkillId);
+
+            var hasStatDamageRatio = skillOptionRow.StatDamageRatioMin != default &&
+                                     skillOptionRow.StatDamageRatioMax != default;
+            var statDamageRatio = hasStatDamageRatio
+                ? random.Next(skillOptionRow.StatDamageRatioMin,
+                    skillOptionRow.StatDamageRatioMax + 1)
+                : default;
+            var refStatType = hasStatDamageRatio
+                ? skillOptionRow.ReferencedStatType
+                : StatType.NONE;
+
+            return SkillFactory.Get(
+                skillRow,
+                random.Next(skillOptionRow.SkillDamageMin, skillOptionRow.SkillDamageMax + 1),
+                random.Next(skillOptionRow.SkillChanceMin, skillOptionRow.SkillChanceMax + 1),
+                statDamageRatio,
+                refStatType
             );
         }
     }

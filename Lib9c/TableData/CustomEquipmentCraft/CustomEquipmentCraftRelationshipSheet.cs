@@ -17,8 +17,8 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
             public override int Key => Relationship;
 
             public int Relationship { get; private set; }
-            public decimal CostMultiplier { get; private set; }
-            public decimal RequiredBlockMultiplier { get; private set; }
+            public long CostMultiplier { get; private set; }
+            public long RequiredBlockMultiplier { get; private set; }
             public int MinCp { get; private set; }
             public int MaxCp { get; private set; }
             public int WeaponItemId { get; private set; }
@@ -30,8 +30,8 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
             public override void Set(IReadOnlyList<string> fields)
             {
                 Relationship = ParseInt(fields[0]);
-                CostMultiplier = ParseDecimal(fields[1]);
-                RequiredBlockMultiplier = ParseDecimal(fields[2]);
+                CostMultiplier = ParseLong(fields[1]);
+                RequiredBlockMultiplier = ParseLong(fields[2]);
                 MinCp = ParseInt(fields[3]);
                 MaxCp = ParseInt(fields[4]);
                 WeaponItemId = ParseInt(fields[5]);

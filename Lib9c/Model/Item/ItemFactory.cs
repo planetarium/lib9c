@@ -134,7 +134,7 @@ namespace Nekoyume.Model.Item
         }
 
         public static int SelectIconId(
-            int iconId, bool isRandom, int relationship,
+            int iconId, bool isRandom, EquipmentItemSheet.Row equipmentRow, int relationship,
             CustomEquipmentCraftIconSheet iconSheet, IRandom random
         )
         {
@@ -146,7 +146,10 @@ namespace Nekoyume.Model.Item
                 // Random icon
                 var iconSelector = new WeightedSelector<CustomEquipmentCraftIconSheet.Row>(random);
                 var iconRows = iconSheet.Values
-                    .Where(row => row.RequiredRelationship <= relationship);
+                    .Where(row =>
+                        row.RequiredRelationship <= relationship &&
+                        row.ItemSubType == equipmentRow.ItemSubType
+                    );
                 foreach (var row in iconRows)
                 {
                     iconSelector.Add(row, row.Ratio);
@@ -195,82 +198,6 @@ namespace Nekoyume.Model.Item
             }
 
             return optionSelector.Select(1).First();
-        }
-
-        public static Skill.Skill SelectSkill(
-            ItemSubType itemSubType,
-            CustomEquipmentCraftRecipeSkillSheet recipeSkillSheet,
-            EquipmentItemOptionSheet itemOptionSheet,
-            SkillSheet skillSheet,
-            IRandom random
-        )
-        {
-            var skillSelector =
-                new WeightedSelector<CustomEquipmentCraftRecipeSkillSheet.Row>(random);
-            foreach (var sr in recipeSkillSheet.Values
-                         .Where(row => row.ItemSubType == itemSubType))
-            {
-                skillSelector.Add(sr, sr.Ratio);
-            }
-
-            var itemOptionId = skillSelector.Select(1).First().ItemOptionId;
-            var skillOptionRow = itemOptionSheet.Values.First(row => row.Id == itemOptionId);
-            var skillRow = skillSheet.Values.First(row => row.Id == skillOptionRow.SkillId);
-
-            var hasStatDamageRatio = skillOptionRow.StatDamageRatioMin != default &&
-                                     skillOptionRow.StatDamageRatioMax != default;
-            var statDamageRatio = hasStatDamageRatio
-                ? random.Next(skillOptionRow.StatDamageRatioMin,
-                    skillOptionRow.StatDamageRatioMax + 1)
-                : default;
-            var refStatType = hasStatDamageRatio
-                ? skillOptionRow.ReferencedStatType
-                : StatType.NONE;
-
-            return SkillFactory.Get(
-                skillRow,
-                random.Next(skillOptionRow.SkillDamageMin, skillOptionRow.SkillDamageMax + 1),
-                random.Next(skillOptionRow.SkillChanceMin, skillOptionRow.SkillChanceMax + 1),
-                statDamageRatio,
-                refStatType
-            );
-        }
-
-        public static Equipment CreateCustomEquipment(
-            IRandom random,
-            int iconId,
-            EquipmentItemSheet.Row equipmentRow,
-            long endBlockIndex,
-            int avatarLevel,
-            CustomEquipmentCraftRelationshipSheet.Row relationshipRow,
-            CustomEquipmentCraftOptionSheet.Row optionRow,
-            Skill.Skill skill
-        )
-        {
-            var guid = random.GenerateRandomGuid();
-            var equipment = (Equipment)CreateItemUsable(equipmentRow, guid, endBlockIndex);
-
-            equipment.IconId = iconId;
-
-            // Set Substats
-            var totalCp = (decimal)random.Next(
-                relationshipRow.MinCp,
-                relationshipRow.MaxCp + 1
-            );
-
-            foreach (var option in optionRow.SubStatData)
-            {
-                equipment.StatsMap.AddStatAdditionalValue(option.StatType,
-                    CPHelper.ConvertCpToStat(option.StatType,
-                        totalCp * option.Ratio / optionRow.TotalOptionRatio,
-                        avatarLevel)
-                );
-            }
-
-            // Set skill
-            equipment.Skills.Add(skill);
-
-            return equipment;
         }
 
         public static ItemBase Deserialize(Dictionary serialized)

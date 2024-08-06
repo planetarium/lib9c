@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace Lib9c.Tests.Action.CustomEquipmentCraft
 {
     using System;
@@ -12,8 +14,11 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.CustomEquipmentCraft;
+    using Nekoyume.Action.Exceptions;
     using Nekoyume.Action.Exceptions.CustomEquipmentCraft;
     using Nekoyume.Exceptions;
+    using Nekoyume.Model.Elemental;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -26,7 +31,6 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly Address _slotAddress;
         private readonly IRandom _random;
         private readonly TableSheets _tableSheets;
         private readonly IWorld _initialState;
@@ -39,11 +43,6 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             _avatarAddress = _agentAddress.Derive(string.Format(
                 CultureInfo.InvariantCulture,
                 CreateAvatar.DeriveFormat,
-                0
-            ));
-            _slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
                 0
             ));
             var sheets = TableSheetsImporter.ImportSheets();
@@ -64,20 +63,28 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var gold = new GoldCurrencyState(Currency.Legacy("NCG", 2, null));
 #pragma warning restore CS0618
-            var combinationSlotState = new CombinationSlotState(
-                _slotAddress,
-                0);
 
             _initialState = new World(MockUtil.MockModernWorldState)
                     .SetLegacyState(GoldCurrencyState.Address, gold.Serialize())
                     .SetActionPoint(_avatarAddress, DailyReward.ActionPointMax)
-                    .SetLegacyState(_slotAddress, combinationSlotState.Serialize())
                     .SetAgentState(_agentAddress, _agentState)
                     .SetLegacyState(
                         GameConfigState.Address,
                         new GameConfigState(sheets["GameConfigSheet"]).Serialize()
                     )
                 ;
+
+            for (var i = 0; i < 4; i++)
+            {
+                var slotAddress = _avatarAddress.Derive(string.Format(
+                    CultureInfo.InvariantCulture,
+                    CombinationSlotState.DeriveFormat,
+                    i
+                ));
+                var combinationSlotState = new CombinationSlotState(slotAddress, 0);
+                _initialState = _initialState
+                    .SetLegacyState(slotAddress, combinationSlotState.Serialize());
+            }
 
             foreach (var (key, value) in sheets)
             {
@@ -89,29 +96,137 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             }
         }
 
+        public static IEnumerable<object?[]> GetTestData_Success()
+        {
+            // First Craft
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                },
+                true, 0, false, ElementalType.Wind, 10, null,
+            };
+
+            // Random Icon
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 0, },
+                },
+                true, 0, false, ElementalType.Wind, 10, null,
+            };
+
+            // Move to next relationship
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                },
+                true, 10, false, ElementalType.Wind, 10, null,
+            };
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                },
+                true, 100, false, ElementalType.Wind, 12, null,
+            };
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                },
+                true, 1000, false, ElementalType.Wind, 15, null,
+            };
+
+            // Multiple slots
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                    new () { RecipeId = 1, SlotIndex = 1, IconId = 10100001, },
+                },
+                true, 0, false, ElementalType.Wind, 10, null,
+            };
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                    new () { RecipeId = 1, SlotIndex = 2, IconId = 10100001, },
+                },
+                true, 0, false, ElementalType.Wind, 10, null,
+            };
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                    new () { RecipeId = 1, SlotIndex = 1, IconId = 10100001, },
+                    new () { RecipeId = 1, SlotIndex = 2, IconId = 10100002, },
+                    new () { RecipeId = 1, SlotIndex = 3, IconId = 10100003, },
+                },
+                true, 0, false, ElementalType.Wind, 10, null,
+            };
+        }
+
+        public static IEnumerable<object?[]> GetTestData_Failure()
+        {
+            // Not enough materials
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                },
+                false, 0, false, ElementalType.Wind, 0, typeof(NotEnoughItemException),
+            };
+
+            // Slot already occupied
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                },
+                true, 0, true, ElementalType.Wind, 0, typeof(CombinationSlotUnlockException),
+            };
+            // Not enough relationship for icon
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10110000, },
+                },
+                true, 0, false, ElementalType.Wind, 0, typeof(NotEnoughRelationshipException),
+            };
+            // Duplicated slot
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100001, },
+                },
+                false, 0, false, ElementalType.Wind, 0, typeof(DuplicatedCraftSlotIndexException),
+            };
+        }
+
         [Theory]
-        // Success
-        // First Craft
-        [InlineData(1, 10100000, true, 0, false, 10, null)]
-        // Random Icon
-        [InlineData(1, 0, true, 0, false, 10, null)]
-        // Move to next relationship group
-        [InlineData(1, 10100000, true, 10, false, 10, null)]
-        [InlineData(1, 10100000, true, 100, false, 12, null)]
-        [InlineData(1, 10100000, true, 1000, false, 15, null)]
-        // Failure
-        // Not enough materials
-        [InlineData(1, 10100000, false, 0, false, 0, typeof(NotEnoughItemException))]
-        // Slot already occupied
-        [InlineData(1, 10100000, true, 0, true, 0, typeof(CombinationSlotUnlockException))]
-        // Not enough relationship for icon
-        [InlineData(1, 10110000, true, 0, false, 0, typeof(NotEnoughRelationshipException))]
+        [MemberData(nameof(GetTestData_Success))]
+        [MemberData(nameof(GetTestData_Failure))]
         public void Execute(
-            int recipeId,
-            int iconId,
+            List<CustomCraftData> craftList,
             bool enoughMaterials,
             int initialRelationship,
             bool slotOccupied,
+            ElementalType expectedElementalType,
             long additionalBlock,
             Type exc
         )
@@ -127,47 +242,53 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             if (enoughMaterials)
             {
                 var relationshipSheet = _tableSheets.CustomEquipmentCraftRelationshipSheet;
-                var relationshipRow = relationshipSheet.OrderedList
+                var relationshipRow = relationshipSheet.OrderedList!
                     .First(row => row.Relationship >= initialRelationship);
                 var materialSheet = _tableSheets.MaterialItemSheet;
-                var recipeRow = _tableSheets.CustomEquipmentCraftRecipeSheet[recipeId];
-                var drawingRow = materialSheet[DrawingItemId];
-                var drawing = ItemFactory.CreateMaterial(drawingRow);
-                _avatarState.inventory.AddItem(
-                    drawing,
-                    (int)Math.Floor(recipeRow.DrawingAmount * relationshipRow.CostMultiplier)
-                );
 
-                var drawingToolRow = materialSheet[DrawingToolItemId];
-                var drawingTool = ItemFactory.CreateMaterial(drawingToolRow);
-                var drawingToolAmount =
-                    recipeRow.DrawingToolAmount * relationshipRow.CostMultiplier;
-                if (iconId != 0)
+                foreach (var craftData in craftList)
                 {
-                    drawingToolAmount *= gameConfig.CustomEquipmentCraftIconCostMultiplier;
-                }
+                    var recipeRow =
+                        _tableSheets.CustomEquipmentCraftRecipeSheet[craftData.RecipeId];
+                    var drawingRow = materialSheet[DrawingItemId];
+                    var drawing = ItemFactory.CreateMaterial(drawingRow);
+                    _avatarState.inventory.AddItem(
+                        drawing,
+                        (int)Math.Floor(recipeRow.DrawingAmount * relationshipRow.CostMultiplier / 10000m)
+                    );
 
-                _avatarState.inventory.AddItem(drawingTool, (int)Math.Floor(drawingToolAmount));
-
-                var costRow = _tableSheets.CustomEquipmentCraftCostSheet.Values
-                    .FirstOrDefault(row => row.Relationship == initialRelationship);
-                if (costRow is not null)
-                {
-                    if (costRow.GoldAmount > 0)
+                    var drawingToolRow = materialSheet[DrawingToolItemId];
+                    var drawingTool = ItemFactory.CreateMaterial(drawingToolRow);
+                    var drawingToolAmount =
+                        (decimal)recipeRow.DrawingToolAmount * relationshipRow.CostMultiplier;
+                    if (craftData.IconId != 0)
                     {
-                        state = state.MintAsset(
-                            context, _agentAddress, state.GetGoldCurrency() * costRow.GoldAmount
-                        );
+                        drawingToolAmount *=
+                            gameConfig.CustomEquipmentCraftIconCostMultiplier / 10000m;
                     }
 
-                    foreach (var cost in costRow.MaterialCosts)
+                    _avatarState.inventory.AddItem(drawingTool, (int)Math.Floor(drawingToolAmount));
+
+                    var costRow = _tableSheets.CustomEquipmentCraftCostSheet.Values
+                        .FirstOrDefault(row => row.Relationship == initialRelationship);
+                    if (costRow is not null)
                     {
-                        var row = materialSheet[cost.ItemId];
-                        _avatarState.inventory.AddItem(
-                            ItemFactory.CreateMaterial(row),
-                            cost.Amount
-                        );
-                        materialList.Add(cost.ItemId);
+                        if (costRow.GoldAmount > 0)
+                        {
+                            state = state.MintAsset(
+                                context, _agentAddress, state.GetGoldCurrency() * costRow.GoldAmount
+                            );
+                        }
+
+                        foreach (var cost in costRow.MaterialCosts)
+                        {
+                            var row = materialSheet[cost.ItemId];
+                            _avatarState.inventory.AddItem(
+                                ItemFactory.CreateMaterial(row),
+                                cost.Amount
+                            );
+                            materialList.Add(cost.ItemId);
+                        }
                     }
                 }
             }
@@ -177,10 +298,15 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             if (slotOccupied)
             {
                 // Lock slot.
+                var slotAddress = _avatarAddress.Derive(string.Format(
+                    CultureInfo.InvariantCulture,
+                    CombinationSlotState.DeriveFormat,
+                    0
+                ));
                 state = state.SetLegacyState(
-                    _slotAddress,
+                    slotAddress,
                     new CombinationSlotState(
-                            ((Dictionary)new CombinationSlotState(_slotAddress, 0).Serialize())
+                            ((Dictionary)new CombinationSlotState(slotAddress, 0).Serialize())
                             .SetItem("unlockBlockIndex", 10.Serialize()
                             )
                         )
@@ -191,10 +317,9 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             var action = new Nekoyume.Action.CustomEquipmentCraft.CustomEquipmentCraft
             {
                 AvatarAddress = _avatarAddress,
-                RecipeId = recipeId,
-                IconId = iconId,
-                SlotIndex = 0,
+                CraftList = craftList,
             };
+
             if (exc is not null)
             {
                 Assert.Throws(exc, () => action.Execute(new ActionContext
@@ -226,10 +351,38 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     Assert.Null(inventory.Items.FirstOrDefault(i => i.item.Id == material));
                 }
 
-                Assert.Equal(initialRelationship + 1, resultState.GetRelationship(_avatarAddress));
+                Assert.Equal(
+                    initialRelationship + craftList.Count,
+                    resultState.GetRelationship(_avatarAddress)
+                );
+                Assert.Equal(craftList.Count, inventory.Equipments.Count());
 
-                var slotState = resultState.GetCombinationSlotState(_avatarAddress, 0);
-                Assert.Equal(currentBlockIndex + additionalBlock, slotState.UnlockBlockIndex);
+                var iconIdList = inventory.Equipments.Select(e => e.IconId).ToList();
+                foreach (var craftData in craftList)
+                {
+                    var slotState = resultState.GetCombinationSlotState(_avatarAddress, 0);
+                    Assert.Equal(currentBlockIndex + additionalBlock, slotState.UnlockBlockIndex);
+
+                    var itemSubType = _tableSheets.CustomEquipmentCraftRecipeSheet.Values
+                        .First(row => row.Id == craftData.RecipeId).ItemSubType;
+                    var expectedEquipmentId =
+                        _tableSheets.CustomEquipmentCraftRelationshipSheet.OrderedList!
+                            .First(row => row.Relationship >= initialRelationship)
+                            .GetItemId(itemSubType);
+                    var equipment = inventory.Equipments.First(e => e.Id == expectedEquipmentId);
+
+                    if (craftData.IconId != 0)
+                    {
+                        Assert.Contains(craftData.IconId, iconIdList);
+                    }
+
+                    Assert.Equal(expectedEquipmentId, equipment.Id);
+
+                    if (craftData.SlotIndex == 0)
+                    {
+                        Assert.Equal(expectedElementalType, equipment.ElementalType);
+                    }
+                }
             }
         }
     }
