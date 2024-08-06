@@ -20,23 +20,19 @@ namespace Nekoyume.Module
             Address avatarAddress, out bool migrateRequired)
         {
             migrateRequired = false;
-            var account = worldState.GetAccountState(Addresses.RuneState);
+            var account = worldState.GetAccountState(Addresses.CombinationState);
             var serialized = account.GetState(avatarAddress);
             AllCombinationSlotState allCombinationSlotState;
             if (serialized is null)
             {
-                // Get legacy rune states
-                // var runeListSheet = worldState.GetSheet<RuneListSheet>();
-                // allRuneState = new AllRuneState();
-                // foreach (var rune in runeListSheet.Values)
-                // {
-                //     var runeAddress = RuneState.DeriveAddress(avatarAddress, rune.Id);
-                //     if (worldState.TryGetLegacyState(runeAddress, out List rawState))
-                //     {
-                //         var runeState = new RuneState(rawState);
-                //         allRuneState.AddRuneState(runeState);
-                //     }
-                // }
+                // Get legacy combination slot states
+                // 만약 AllCombinationSlotState가 없다면, 슬롯 확장 업데이트 전 4개의 슬롯을 가져와서 채워넣는다.
+                allCombinationSlotState = new AllCombinationSlotState();
+                for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
+                {
+                    var combinationAddress = CombinationSlotState.DeriveAddress(avatarAddress, i);
+                    allCombinationSlotState.AddRuneState(new CombinationSlotState(combinationAddress, i));
+                }
 
                 migrateRequired = true;
             }
@@ -45,7 +41,15 @@ namespace Nekoyume.Module
                 allCombinationSlotState = new AllCombinationSlotState((List)serialized);
             }
 
-            return null;
+            return allCombinationSlotState;
+        }
+
+        public static IWorld SetCombinationSlotState(this IWorld world, Address avatarAddress,
+            AllCombinationSlotState combinationSlotState)
+        {
+            var account = world.GetAccount(Addresses.CombinationState);
+            account = account.SetState(avatarAddress, combinationSlotState.Serialize());
+            return world.SetAccount(Addresses.CombinationState, account);
         }
     }
 }
