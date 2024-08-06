@@ -9,16 +9,19 @@ namespace Nekoyume.Model.Mail
     {
         public readonly int ItemCount;
         public FungibleAssetValue Asset;
-        public GrindingMail(long blockIndex, Guid id, long requiredBlockIndex, int itemCount, FungibleAssetValue asset) : base(blockIndex, id, requiredBlockIndex)
+        public readonly int RewardMaterialCount;
+        public GrindingMail(long blockIndex, Guid id, long requiredBlockIndex, int itemCount, FungibleAssetValue asset, int rewardMaterialCount) : base(blockIndex, id, requiredBlockIndex)
         {
             ItemCount = itemCount;
             Asset = asset;
+            RewardMaterialCount = rewardMaterialCount;
         }
 
         public GrindingMail(Dictionary serialized) : base(serialized)
         {
             ItemCount = serialized["ic"].ToInteger();
             Asset = serialized["a"].ToFungibleAssetValue();
+            RewardMaterialCount = serialized["rmc"].ToInteger();
         }
 
         public override void Read(IMail mail)
@@ -29,8 +32,10 @@ namespace Nekoyume.Model.Mail
         public override MailType MailType => MailType.Grinding;
 
         protected override string TypeId => nameof(GrindingMail);
+
         public override IValue Serialize() => ((Dictionary)base.Serialize())
             .Add("ic", ItemCount.Serialize())
-            .Add("a", Asset.Serialize());
+            .Add("a", Asset.Serialize())
+            .Add("rmc", RewardMaterialCount.Serialize());
     }
 }
