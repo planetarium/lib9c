@@ -56,3 +56,4 @@ export {
   MigratePledgeToGuild,
   type MigratePledgeToGuildArgs,
 } from "./actions/migrate_pledge_to_guild.js";
+export { MakeGuild } from "./actions/make_guild.js";
