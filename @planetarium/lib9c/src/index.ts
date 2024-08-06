@@ -52,3 +52,7 @@ export {
   ApprovePledge,
   type ApprovePledgeArgs,
 } from "./actions/approve_pledge.js";
+export {
+  MigratePledgeToGuild,
+  type MigratePledgeToGuildArgs,
+} from "./actions/migrate_pledge_to_guild.js";
