@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Security.Cryptography;
 using Lib9c.Plugin.Shared;
 using Libplanet.Action;
@@ -18,7 +19,11 @@ namespace Lib9c.Plugin
         {
             var stateStore = new TrieStateStore(new WrappedKeyValueStore(keyValueStore));
             _actionEvaluator = new ActionEvaluator(
-                _ => new RewardGold(),
+                new PolicyActionsRegistry(
+                    beginBlockActions: ImmutableArray<IAction>.Empty,
+                    endBlockActions: new IAction[] { new RewardGold() }.ToImmutableArray(),
+                    beginTxActions: ImmutableArray<IAction>.Empty,
+                    endTxActions: ImmutableArray<IAction>.Empty),
                 stateStore,
                 new NCActionLoader());
         }
