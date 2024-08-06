@@ -139,6 +139,19 @@ namespace Nekoyume.Action
                 sheets.GetSheet<StakeRegularRewardSheet>()
             );
 
+            var materials = CrystalCalculator.CalculateMaterialReward(
+                equipmentList,
+                sheets.GetSheet<CrystalEquipmentGrindingSheet>(),
+                sheets.GetSheet<MaterialItemSheet>()
+            );
+
+#pragma warning disable LAA1002
+            foreach (var pair in materials)
+#pragma warning restore LAA1002
+            {
+                avatarState.inventory.AddItem(pair.Key, pair.Value);
+            }
+
             var mail = new GrindingMail(
                 ctx.BlockIndex,
                 Id,
