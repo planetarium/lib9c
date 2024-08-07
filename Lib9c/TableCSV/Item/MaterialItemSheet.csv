@@ -45,6 +45,10 @@ id,_name,item_sub_type,grade,elemental_type
 800109,Fluffy_Marshmallow,FoodMaterial,4,Normal
 800110,모카 펄,FoodMaterial,3,Normal
 800111,무지개 시럽,FoodMaterial,4,Normal
+800112,그린 오렌지,FoodMaterial,2,Normal
+800113,레드 오렌지,FoodMaterial,3,Normal
+800114,맛있는 오렌지,FoodMaterial,4,Normal
+800115,오렌지 메달,NormalMaterial,5,Normal
 800201,Silver Dust,FoodMaterial,4,Normal
 800202,Golden Meat,FoodMaterial,4,Normal
 303000,녹슨 칼,EquipmentMaterial,1,Normal
@@ -195,12 +199,14 @@ id,_name,item_sub_type,grade,elemental_type
 600201,Golden Dust,EquipmentMaterial,4,Normal
 600202,Ruby Dust,EquipmentMaterial,4,Normal
 600203,Emerald Dust,EquipmentMaterial,4,Normal
-600301,망치 커먼,EquipmentMaterial,1,Normal
+600301,망치 노멀,EquipmentMaterial,1,Normal
 600302,망치 레어,EquipmentMaterial,2,Normal
 600303,망치 에픽,EquipmentMaterial,3,Normal
 600304,망치 유니크,EquipmentMaterial,4,Normal
 600305,망치 레전더리,EquipmentMaterial,5,Normal
 600306,망치 신성,EquipmentMaterial,6,Normal
+600401,도면,EquipmentMaterial,6,Normal
+600402,제도 도구,EquipmentMaterial,6,Normal
 700000,아레나 시즌0 메달,NormalMaterial,5,Normal
 700001,아레나 시즌1 메달,NormalMaterial,5,Normal
 700002,아레나 시즌2 메달,NormalMaterial,5,Normal
