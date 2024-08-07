@@ -6,7 +6,6 @@ using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.State;
-using UnityEngine;
 
 namespace Nekoyume.Module
 {

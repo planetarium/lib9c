@@ -6,7 +6,6 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Module.CombinationSlot;
-using UnityEngine;
 
 namespace Nekoyume.Model.State
 {
