@@ -61,7 +61,7 @@ namespace Nekoyume.Model.State
 
             if (serialized.TryGetValue((Text)IndexKey, out var index))
             {
-                Index = (Integer)index;
+                Index = index.ToInteger();
             }
 
             if (serialized.TryGetValue((Text)ResultKey, out var result))
