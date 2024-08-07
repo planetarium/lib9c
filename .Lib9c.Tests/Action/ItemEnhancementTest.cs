@@ -71,17 +71,16 @@ namespace Lib9c.Tests.Action
             _currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
             var gold = new GoldCurrencyState(_currency);
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0
-            ));
+
+            var allSlotState = new AllCombinationSlotState();
+            var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
+            allSlotState.AddCombinationSlotState(addr);
 
             var context = new ActionContext();
             _initialState = _initialState
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, _avatarState)
-                .SetLegacyState(slotAddress, new CombinationSlotState(slotAddress, 0).Serialize())
+                .SetCombinationSlotState(_avatarAddress, allSlotState)
                 .SetLegacyState(GoldCurrencyState.Address, gold.Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, gold.Currency * 100_000_000_000)
                 .TransferAsset(
@@ -273,13 +272,6 @@ namespace Lib9c.Tests.Action
                 _tableSheets.WorldUnlockSheet
             );
 
-            var slotAddress =
-                _avatarAddress.Derive(string.Format(
-                    CultureInfo.InvariantCulture,
-                    CombinationSlotState.DeriveFormat,
-                    0
-                ));
-
             Assert.Equal(startLevel, equipment.level);
 
             _initialState = _initialState.SetAvatarState(_avatarAddress, _avatarState);
@@ -300,7 +292,9 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+            var allSlotState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
+            var slotState = allSlotState.GetCombinationSlotState(0);
+
             var resultEquipment = (Equipment)slotState.Result.itemUsable;
             var level = resultEquipment.level;
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
@@ -327,9 +321,7 @@ namespace Lib9c.Tests.Action
             );
             Assert.Equal(30, nextAvatarState.mailBox.Count);
 
-            var stateDict = (Dictionary)nextState.GetLegacyState(slotAddress);
-            var slot = new CombinationSlotState(stateDict);
-            var slotResult = (ItemEnhancement13.ResultModel)slot.Result;
+            var slotResult = (ItemEnhancement13.ResultModel)slotState.Result;
             if (startLevel != level)
             {
                 var baseMinAtk = (decimal)preItemUsable.StatsMap.BaseATK;
@@ -460,13 +452,6 @@ namespace Lib9c.Tests.Action
                 _tableSheets.WorldUnlockSheet
             );
 
-            var slotAddress =
-                _avatarAddress.Derive(string.Format(
-                    CultureInfo.InvariantCulture,
-                    CombinationSlotState.DeriveFormat,
-                    0
-                ));
-
             Assert.Equal(startLevel, equipment.level);
 
             _initialState = _initialState.SetAvatarState(_avatarAddress, _avatarState);
@@ -491,7 +476,8 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+            var allSlotState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
+            var slotState = allSlotState.GetCombinationSlotState(0);
             var slotResult = (ItemEnhancement13.ResultModel)slotState.Result;
             var resultEquipment = (Equipment)slotResult.itemUsable;
             var level = resultEquipment.level;

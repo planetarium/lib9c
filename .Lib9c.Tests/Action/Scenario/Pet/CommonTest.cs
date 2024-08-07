@@ -65,8 +65,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             );
 
             // Prepare Slots
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 0);
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 1);
+            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
 
             stateV2 = CraftUtil.AddMaterialsToInventory(
                 stateV2,

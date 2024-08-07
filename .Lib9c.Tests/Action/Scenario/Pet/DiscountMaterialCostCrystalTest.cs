@@ -100,7 +100,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             }
 
             // Prepare
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 0);
+            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
             stateV2 = CurrencyUtil.AddCurrency(context, stateV2, _agentAddr, crystal, expectedCrystal);
             stateV2 = CraftUtil.UnlockStage(
                 stateV2,

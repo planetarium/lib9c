@@ -133,11 +133,13 @@ namespace Lib9c.Tests.Action
                 CultureInfo.InvariantCulture,
                 CombinationSlotState.DeriveFormat,
                 0));
-            var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
+            var allSlotState = new AllCombinationSlotState();
+            allSlotState.AddCombinationSlotState(slotAddress);
+            var slotState = allSlotState.GetCombinationSlotState(0);
             slotState.Update(result, 0, requiredBlockIndex);
 
             var tempState = _initialState
-                .SetLegacyState(slotAddress, slotState.Serialize())
+                .SetCombinationSlotState(_avatarAddress, allSlotState)
                 .SetAvatarState(_avatarAddress, avatarState);
 
             var action = new RapidCombination
@@ -219,16 +221,15 @@ namespace Lib9c.Tests.Action
                 itemType = ItemType.Equipment,
             };
 
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
-            var slotState = new CombinationSlotState(slotAddress, avatarClearedStage);
+            var allSlotState = new AllCombinationSlotState();
+            var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
+            allSlotState.AddCombinationSlotState(addr);
+            var slotState = allSlotState.GetCombinationSlotState(0);
             slotState.Update(result, 0, 0);
 
             var tempState = _initialState
                 .SetAvatarState(_avatarAddress, avatarState)
-                .SetLegacyState(slotAddress, slotState.Serialize());
+                .SetCombinationSlotState(_avatarAddress, allSlotState);
 
             var action = new RapidCombination
             {
@@ -295,16 +296,15 @@ namespace Lib9c.Tests.Action
             result.id = mail.id;
             avatarState.Update2(mail);
 
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
-            var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
+            var allSlotState = new AllCombinationSlotState();
+            var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
+            allSlotState.AddCombinationSlotState(addr);
+            var slotState = allSlotState.GetCombinationSlotState(0);
             slotState.Update(result, 0, 0);
 
             var tempState = _initialState
                 .SetAvatarState(_avatarAddress, avatarState)
-                .SetLegacyState(slotAddress, slotState.Serialize());
+                .SetCombinationSlotState(_avatarAddress, allSlotState);
 
             var action = new RapidCombination
             {
@@ -424,16 +424,15 @@ namespace Lib9c.Tests.Action
             result.id = mail.id;
             avatarState.Update(mail);
 
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
-            var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
+            var allSlotState = new AllCombinationSlotState();
+            var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
+            allSlotState.AddCombinationSlotState(addr);
+            var slotState = allSlotState.GetCombinationSlotState(0);
             slotState.Update(result, 0, 0);
 
             var tempState = _initialState
                 .SetAvatarState(_avatarAddress, avatarState)
-                .SetLegacyState(slotAddress, slotState.Serialize());
+                .SetCombinationSlotState(_avatarAddress, allSlotState);
 
             var action = new RapidCombination
             {
@@ -593,14 +592,14 @@ namespace Lib9c.Tests.Action
                 // avatarState.Update(mail);
             }
 
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
-            var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
+            var allSlotState = new AllCombinationSlotState();
+            var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
+            allSlotState.AddCombinationSlotState(addr);
+            var slotState = allSlotState.GetCombinationSlotState(0);
             slotState.Update(resultModel, 0, requiredBlockIndex);
 
-            var tempState = _initialState.SetLegacyState(slotAddress, slotState.Serialize())
+            var tempState = _initialState
+                .SetCombinationSlotState(_avatarAddress, allSlotState)
                 .SetAvatarState(_avatarAddress, avatarState);
 
             var action = new RapidCombination

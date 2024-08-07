@@ -144,9 +144,20 @@ namespace Nekoyume.Action
                 EventConsumableItemRecipeId,
                 ActionTypeText,
                 addressesHex);
+            
+            var allSlotState = states.GetCombinationSlotState(AvatarAddress, out var migrateRequired);
+            if (migrateRequired)
+            {
+                states = states.SetCombinationSlotState(AvatarAddress, allSlotState);
+            }
+            
+            if (allSlotState is null)
+            {
+                throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
+            }
 
-            var slotState = states.GetCombinationSlotState(AvatarAddress, SlotIndex);
-            if (slotState is null)
+            // Validate SlotIndex
+            if (!allSlotState.TryGetCombinationSlotState(SlotIndex, out var slotState) || slotState is null)
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the slot state is failed to load: # {SlotIndex}");
@@ -157,6 +168,7 @@ namespace Nekoyume.Action
                 throw new CombinationSlotUnlockException(
                     $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {SlotIndex}");
             }
+            // ~Validate SlotIndex
 
             sw.Stop();
             Log.Verbose(
@@ -261,6 +273,7 @@ namespace Nekoyume.Action
                 recipeId = EventConsumableItemRecipeId,
             };
             slotState.Update(attachmentResult, context.BlockIndex, endBlockIndex);
+            allSlotState.SetCombinationSlotState(slotState);
             // ~Update Slot
 
             // Create Mail
@@ -274,9 +287,7 @@ namespace Nekoyume.Action
 
             states = states
                 .SetAvatarState(AvatarAddress, avatarState)
-                .SetLegacyState(
-                    CombinationSlotState.DeriveAddress(AvatarAddress, SlotIndex),
-                    slotState.Serialize());
+                .SetCombinationSlotState(AvatarAddress, allSlotState);
 
             sw.Stop();
             Log.Verbose(

@@ -15,14 +15,14 @@ namespace Nekoyume.Model.State
     /// Use this with <see cref="Nekoyume.Module.CombinationSlotStateModule"/>.
     /// </summary>
     public class AllCombinationSlotState : IState, IEnumerable<CombinationSlotState>
-    {        
+    {
         public Dictionary<int, CombinationSlotState> CombinationSlots { get; }
-        
+
         public AllCombinationSlotState()
         {
             CombinationSlots = new Dictionary<int, CombinationSlotState>();
         }
-        
+
         public AllCombinationSlotState(List serialized)
         {
             CombinationSlots = new Dictionary<int, CombinationSlotState>();
@@ -75,11 +75,11 @@ namespace Nekoyume.Model.State
 
             CombinationSlots[combinationSlotState.Index] = combinationSlotState;
         }
-        
+
         public IValue Serialize()
         {
             return CombinationSlots.OrderBy(r => r.Key).
-                Aggregate(List.Empty, (current, combinationSlot) => current.Add(combinationSlot.Value.Serialize()));            
+                Aggregate(List.Empty, (current, combinationSlot) => current.Add(combinationSlot.Value.Serialize()));
         }
 
 #region IEnumerable
@@ -93,7 +93,7 @@ namespace Nekoyume.Model.State
             return GetEnumerator();
         }
 #endregion IEnumerable
-        
+
         /// <summary>
         /// 만약 AllCombinationSlotState가 없다면, 슬롯 확장 업데이트 전 4개의 슬롯을 가져와서 채워넣는다.
         /// </summary>
