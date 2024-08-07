@@ -68,17 +68,12 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var allSlotState = states.GetCombinationSlotState(avatarAddress, out var migrateRequired);
-            if (migrateRequired)
-            {
-                states = states.SetCombinationSlotState(avatarAddress, allSlotState);
-            }
-            
+            var allSlotState = states.GetCombinationSlotState(avatarAddress, out _);
             if (allSlotState is null)
             {
                 throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
             }
-            
+
             // Validate SlotIndex
             if (!allSlotState.TryGetCombinationSlotState(slotIndex, out var slotState) || slotState is null)
             {
@@ -224,7 +219,7 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Combination Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            
+
             return states
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetCombinationSlotState(avatarAddress, allSlotState);

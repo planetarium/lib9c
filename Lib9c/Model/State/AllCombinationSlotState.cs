@@ -33,10 +33,10 @@ namespace Nekoyume.Model.State
             }
         }
 
-        public bool TryGetCombinationSlotState(int slotStateIndex, out CombinationSlotState? runeState)
+        public bool TryGetCombinationSlotState(int slotStateIndex, out CombinationSlotState? combinationSlotState)
         {
-            runeState = CombinationSlots.TryGetValue(slotStateIndex, out var rs) ? rs : null;
-            return runeState is not null;
+            combinationSlotState = CombinationSlots.TryGetValue(slotStateIndex, out var rs) ? rs : null;
+            return combinationSlotState is not null;
         }
 
         public CombinationSlotState GetCombinationSlotState(int slotStateIndex)
@@ -78,14 +78,14 @@ namespace Nekoyume.Model.State
 
         public IValue Serialize()
         {
-            return CombinationSlots.OrderBy(r => r.Key).
+            return CombinationSlots.OrderBy(kvp => kvp.Key).
                 Aggregate(List.Empty, (current, combinationSlot) => current.Add(combinationSlot.Value.Serialize()));
         }
 
 #region IEnumerable
         public IEnumerator<CombinationSlotState> GetEnumerator()
         {
-            return CombinationSlots.Values.GetEnumerator();
+            return CombinationSlots.Values.OrderBy(value => value.Index).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

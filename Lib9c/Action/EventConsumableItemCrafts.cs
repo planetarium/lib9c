@@ -144,13 +144,8 @@ namespace Nekoyume.Action
                 EventConsumableItemRecipeId,
                 ActionTypeText,
                 addressesHex);
-            
-            var allSlotState = states.GetCombinationSlotState(AvatarAddress, out var migrateRequired);
-            if (migrateRequired)
-            {
-                states = states.SetCombinationSlotState(AvatarAddress, allSlotState);
-            }
-            
+
+            var allSlotState = states.GetCombinationSlotState(AvatarAddress, out _);
             if (allSlotState is null)
             {
                 throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");

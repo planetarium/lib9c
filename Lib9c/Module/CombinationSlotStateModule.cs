@@ -19,7 +19,7 @@ namespace Nekoyume.Module
             Address avatarAddress, out bool migrateRequired)
         {
             migrateRequired = false;
-            var account = worldState.GetAccountState(Addresses.CombinationState);
+            var account = worldState.GetAccountState(Addresses.CombinationSlot);
             var serialized = account.GetState(avatarAddress);
             AllCombinationSlotState allCombinationSlotState;
             if (serialized is null)
@@ -38,9 +38,9 @@ namespace Nekoyume.Module
         public static IWorld SetCombinationSlotState(this IWorld world, Address avatarAddress,
             AllCombinationSlotState combinationSlotState)
         {
-            var account = world.GetAccount(Addresses.CombinationState);
+            var account = world.GetAccount(Addresses.CombinationSlot);
             account = account.SetState(avatarAddress, combinationSlotState.Serialize());
-            return world.SetAccount(Addresses.CombinationState, account);
+            return world.SetAccount(Addresses.CombinationSlot, account);
         }
     }
 }

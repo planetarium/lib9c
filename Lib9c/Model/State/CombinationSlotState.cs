@@ -16,7 +16,7 @@ namespace Nekoyume.Model.State
         private const string ResultKey = "result";
         private const string PetIdKey = "petId";
         private const string IndexKey = "index";
-        
+
         public const string DeriveFormat = "combination-slot-{0}";
         public long UnlockBlockIndex { get; private set; }
         public long StartBlockIndex { get; private set; }
@@ -43,6 +43,14 @@ namespace Nekoyume.Model.State
 
         public CombinationSlotState(Address address, int index = 0) : base(address)
         {
+            if (index < 0 || index >= AvatarState.CombinationSlotCapacity)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(index),
+                    index,
+                    "The index of the combination slot must be between 0 and CombinationSlotCapacity.");
+            }
+
             UnlockBlockIndex = 0;
             Index = index;
         }
@@ -50,12 +58,12 @@ namespace Nekoyume.Model.State
         public CombinationSlotState(Dictionary serialized) : base(serialized)
         {
             UnlockBlockIndex = serialized[UnlockBlockIndexKey].ToLong();
-            
+
             if (serialized.TryGetValue((Text)IndexKey, out var index))
             {
-                Index = index.ToInteger();
+                Index = (Integer)index;
             }
-            
+
             if (serialized.TryGetValue((Text)ResultKey, out var result))
             {
                 Result = AttachmentActionResult.Deserialize((Dictionary) result);
@@ -147,7 +155,7 @@ namespace Nekoyume.Model.State
             {
                 values.Add((Text)PetIdKey, PetId.Serialize());
             }
-            
+
 #pragma warning disable LAA1002
             return new Dictionary(values.Union((Dictionary) base.Serialize()));
 #pragma warning restore LAA1002
