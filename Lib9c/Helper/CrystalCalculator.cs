@@ -112,27 +112,6 @@ namespace Nekoyume.Helper
             return crystal + extra;
         }
 
-        public static Dictionary<Material, int> CalculateMaterialReward(
-            IEnumerable<Equipment> equipmentList,
-            CrystalEquipmentGrindingSheet crystalEquipmentGrindingSheet,
-            MaterialItemSheet materialItemSheet)
-        {
-            var reward = new Dictionary<Material, int>();
-            foreach (var equipment in equipmentList)
-            {
-                var grindingRow = crystalEquipmentGrindingSheet[equipment.Id];
-                foreach (var (itemId, count) in grindingRow.RewardMaterials)
-                {
-                    var materialRow = materialItemSheet[itemId];
-                    var item = ItemFactory.CreateMaterial(materialRow);
-                    reward.TryAdd(item, 0);
-                    reward[item] += count;
-                }
-            }
-
-            return reward;
-        }
-
         public static FungibleAssetValue CalculateMaterialCost(
             int materialId,
             int materialCount,

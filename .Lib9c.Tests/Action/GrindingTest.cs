@@ -1,6 +1,7 @@
 namespace Lib9c.Tests.Action
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using Libplanet.Action;
@@ -308,6 +309,38 @@ namespace Lib9c.Tests.Action
                 Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, _tableSheets.MaterialItemSheet));
         }
 
+        [Theory]
+        [ClassData(typeof(CalculateMaterialRewardData))]
+        public void CalculateMaterialReward(int[] equipmentIds, Dictionary<int, int> expected)
+        {
+            var equipmentList = new List<Equipment>();
+            foreach (var equipmentId in equipmentIds)
+            {
+                var row = _tableSheets.EquipmentItemSheet[equipmentId];
+                var equipment = ItemFactory.CreateItemUsable(row, default, 0);
+                equipmentList.Add((Equipment)equipment);
+            }
+
+            var actual = Grinding.CalculateMaterialReward(
+                equipmentList,
+                _tableSheets.CrystalEquipmentGrindingSheet,
+                _tableSheets.MaterialItemSheet
+            );
+
+            Assert.Equal(expected.Count, actual.Count);
+            foreach (var (material, count) in actual)
+            {
+                if (expected.TryGetValue(material.Id, out var actualCount))
+                {
+                    Assert.Equal(count, actualCount);
+                }
+                else
+                {
+                    Assert.True(false, "Key missing in result");
+                }
+            }
+        }
+
         private static IWorld Execute(
             IWorld prevStates,
             Address agentAddress,
@@ -359,6 +392,18 @@ namespace Lib9c.Tests.Action
 
             // Todo : Check the material rewards
             return nextState;
+        }
+
+        // Todo : Fill more test cases
+        private class CalculateMaterialRewardData : IEnumerable<object[]>
+        {
+            private readonly List<object[]> _data = new List<object[]>
+            {
+            };
+
+            public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
         }
     }
 }

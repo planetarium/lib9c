@@ -139,7 +139,7 @@ namespace Nekoyume.Action
                 sheets.GetSheet<StakeRegularRewardSheet>()
             );
 
-            var materials = CrystalCalculator.CalculateMaterialReward(
+            var materials = CalculateMaterialReward(
                 equipmentList,
                 sheets.GetSheet<CrystalEquipmentGrindingSheet>(),
                 sheets.GetSheet<MaterialItemSheet>()
@@ -182,6 +182,27 @@ namespace Nekoyume.Action
             AvatarAddress = plainValue["a"].ToAddress();
             EquipmentIds = plainValue["e"].ToList(StateExtensions.ToGuid);
             ChargeAp = plainValue["c"].ToBoolean();
+        }
+
+        public static Dictionary<Material, int> CalculateMaterialReward(
+            IEnumerable<Equipment> equipmentList,
+            CrystalEquipmentGrindingSheet crystalEquipmentGrindingSheet,
+            MaterialItemSheet materialItemSheet)
+        {
+            var reward = new Dictionary<Material, int>();
+            foreach (var equipment in equipmentList)
+            {
+                var grindingRow = crystalEquipmentGrindingSheet[equipment.Id];
+                foreach (var (itemId, count) in grindingRow.RewardMaterials)
+                {
+                    var materialRow = materialItemSheet[itemId];
+                    var item = ItemFactory.CreateMaterial(materialRow);
+                    reward.TryAdd(item, 0);
+                    reward[item] += count;
+                }
+            }
+
+            return reward;
         }
     }
 }
