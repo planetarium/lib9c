@@ -60,11 +60,6 @@ namespace Nekoyume.Model.State
             info.AddValue("serialized", new Codec().Encode(Serialize()));
         }
 
-        public bool Verify(ActivateAccount action)
-        {
-            return Verify(action.Signature);
-        }
-
         public bool Verify(byte[] signature)
         {
             return PublicKey.Verify(Nonce, signature);
