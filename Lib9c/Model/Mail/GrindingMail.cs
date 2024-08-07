@@ -22,7 +22,7 @@ namespace Nekoyume.Model.Mail
             ItemCount = serialized["ic"].ToInteger();
             Asset = serialized["a"].ToFungibleAssetValue();
             RewardMaterialCount = serialized.TryGetValue((Text)"rmc", out var value)
-                ? value.ToInteger()
+                ? (Integer)value
                 : 0;
         }
 
@@ -38,6 +38,6 @@ namespace Nekoyume.Model.Mail
         public override IValue Serialize() => ((Dictionary)base.Serialize())
             .Add("ic", ItemCount.Serialize())
             .Add("a", Asset.Serialize())
-            .Add("rmc", RewardMaterialCount.Serialize());
+            .Add("rmc", RewardMaterialCount);
     }
 }
