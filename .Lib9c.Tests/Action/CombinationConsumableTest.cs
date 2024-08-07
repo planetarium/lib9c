@@ -111,8 +111,8 @@ namespace Lib9c.Tests.Action
                 RandomSeed = _random.Seed,
             });
 
-            var allRuneState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
-            var slotState = allRuneState.GetCombinationSlotState(0);
+            var allCombinationSlotState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
+            var slotState = allCombinationSlotState.GetCombinationSlotState(0);
             Assert.NotNull(slotState.Result);
             Assert.NotNull(slotState.Result.itemUsable);
 
