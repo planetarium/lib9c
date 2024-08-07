@@ -45,30 +45,31 @@ namespace Nekoyume.Module.Delegation
                 Addresses.UnbondingSet,
                 account => account.SetState(UnbondingSet.Address, unbondingSet.Bencoded));
 
-        public static IWorld ReleaseUnbondigSet(this IWorld world, IActionContext context, UnbondingSet unbondingSet)
+        public static IWorld Release(this IWorld world, IActionContext context)
         {
-            var releasedUnbondings = unbondingSet.ReleaseUnbondings(
-                context.BlockIndex,
-                (address, type) => world.GetAccount(AccountAddress(type)).GetState(address)
-                    ?? throw new FailedLoadStateException(
-                        $"Tried to release unbonding on {address}, but unbonding does not exist."));
-
-            foreach (var unbonding in releasedUnbondings)
+            var unbondingSet = world.GetUnbondingSet();
+            var releaseds = world.ReleaseUnbondings(context, unbondingSet);
+            foreach (var released in releaseds)
             {
-                world = unbonding switch
+                world = released switch
                 {
                     UnbondLockIn unbondLockIn => world.SetUnbondLockIn(unbondLockIn),
                     RebondGrace rebondGrace => world.SetRebondGrace(rebondGrace),
                     _ => throw new ArgumentException("Invalid unbonding type.")
                 };
 
-                unbondingSet = unbondingSet.SetUnbonding(unbonding);
+                unbondingSet = unbondingSet.SetUnbonding(released);
             }
 
-            world = SetUnbondingSet(world, unbondingSet);
-
-            return world;
+            return world.SetUnbondingSet(unbondingSet);
         }
+
+        public static IUnbonding[] ReleaseUnbondings(this IWorld world, IActionContext context, UnbondingSet unbondingSet)
+            => unbondingSet.ReleaseUnbondings(
+                context.BlockIndex,
+                (address, type) => world.GetAccount(AccountAddress(type)).GetState(address)
+                    ?? throw new FailedLoadStateException(
+                        $"Tried to release unbonding on {address}, but unbonding does not exist."));
 
         private static Address AccountAddress(Type type) => type switch
         {

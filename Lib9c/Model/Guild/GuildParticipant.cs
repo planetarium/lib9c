@@ -15,14 +15,14 @@ namespace Nekoyume.Model.Guild
 
         public readonly GuildAddress GuildAddress;
 
-        public GuildParticipant(GuildAddress guildAddress)
-            : base(guildAddress)
+        public GuildParticipant(AgentAddress agentAddress, GuildAddress guildAddress)
+            : base(agentAddress)
         {
             GuildAddress = guildAddress;
         }
 
-        public GuildParticipant(List list)
-            : base(new Address(list[2]), list[3])
+        public GuildParticipant(AgentAddress agentAddress, List list)
+            : base(agentAddress, list[3])
         {
             GuildAddress = new GuildAddress(list[2]);
 
@@ -63,7 +63,7 @@ namespace Nekoyume.Model.Guild
 
         public override int GetHashCode()
         {
-            return GuildAddress.GetHashCode();
+            return Address.GetHashCode();
         }
     }
 }
