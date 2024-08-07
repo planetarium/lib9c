@@ -1,0 +1,6 @@
+id,item_sub_type,drawing_amount,drawing_tool_amount,required_block
+1,Weapon,1,1,10
+2,Armor,1,1,10
+3,Belt,1,1,10
+4,Necklace,1,1,10
+5,Ring,1,1,10

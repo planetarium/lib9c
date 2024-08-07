@@ -253,8 +253,7 @@ namespace Nekoyume.Model.State
             PostConstructor();
         }
 
-        public AvatarState(List serialized)
-            : base(serialized[0])
+        public AvatarState(List serialized) : base(serialized[0])
         {
             Version = (int)((Integer)serialized[1]).Value;
             name = serialized[2].ToDotnetString();
@@ -1292,7 +1291,8 @@ namespace Nekoyume.Model.State
                     .OrderBy(i => i)
                     .Select(i => i.Serialize())
                     .Serialize(),
-                RankingMapAddress.Serialize());
+                RankingMapAddress.Serialize()
+            );
         }
     }
 }

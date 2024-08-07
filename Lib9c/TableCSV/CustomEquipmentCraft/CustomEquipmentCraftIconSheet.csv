@@ -1,0 +1,7 @@
+id,item_sub_type,icon_id,required_relationship,random_only,ratio
+1,Weapon,10100000,0,false,90
+2,Weapon,10100001,0,false,90
+3,Weapon,10100002,0,false,90
+4,Weapon,10100003,0,false,90
+5,Weapon,10110000,10,true,10
+6,Armor,10200000,0,false,100
