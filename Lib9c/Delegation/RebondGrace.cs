@@ -10,7 +10,7 @@ using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
-    public sealed class RebondGrace : IBencodable, IEquatable<RebondGrace>
+    public sealed class RebondGrace : IUnbonding, IBencodable, IEquatable<RebondGrace>
     {
         private static readonly IComparer<RebondGraceEntry> _entryComparer
             = new RebondGraceEntryComparer();
@@ -73,12 +73,13 @@ namespace Nekoyume.Delegation
 
         public int MaxEntries { get; }
 
-        public long lowestExpireHeight => Entries.First().Key;
+        public long LowestExpireHeight => Entries.First().Key;
 
         public bool IsFull => Entries.Values.Sum(e => e.Count) >= MaxEntries;
 
         public bool IsEmpty => Entries.IsEmpty;
 
+        // TODO: Use better custom collection type
         public ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> Entries { get; }
 
         public ImmutableArray<RebondGraceEntry> FlattenedEntries
@@ -119,9 +120,13 @@ namespace Nekoyume.Delegation
             return UpdateEntries(updatedEntries);
         }
 
+        IUnbonding IUnbonding.Release(long height) => Release(height);
+
         [Obsolete("This method is not implemented yet.")]
         public RebondGrace Slash()
             => throw new NotImplementedException();
+
+        IUnbonding IUnbonding.Slash() => Slash();
 
         public override bool Equals(object? obj)
             => obj is RebondGrace other && Equals(other);
@@ -167,19 +172,17 @@ namespace Nekoyume.Delegation
                         entry.ExpireHeight,
                         entries.Insert(index < 0 ? ~index : index, entry)));
             }
-            else
-            {
-                return UpdateEntries(
-                    Entries.Add(
-                        entry.ExpireHeight, ImmutableList<RebondGraceEntry>.Empty.Add(entry)));
-            }
+
+            return UpdateEntries(
+                Entries.Add(
+                    entry.ExpireHeight, ImmutableList<RebondGraceEntry>.Empty.Add(entry)));
         }
 
         private RebondGrace UpdateEntries(
             ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> entries)
             => new RebondGrace(Address, MaxEntries, entries);
 
-        public class RebondGraceEntry : IBencodable, IEquatable<RebondGraceEntry>
+        public class RebondGraceEntry : IUnbondingEntry, IBencodable, IEquatable<RebondGraceEntry>
         {
             private int? _cachedHashCode;
 
