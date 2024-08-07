@@ -1,6 +1,10 @@
 #nullable enable
+using System;
 using Bencodex.Types;
+using Libplanet.Action;
 using Libplanet.Action.State;
+using Libplanet.Crypto;
+using Nekoyume.Action;
 using Nekoyume.Delegation;
 using Nekoyume.Extensions;
 
@@ -40,5 +44,37 @@ namespace Nekoyume.Module.Delegation
             => world.MutateAccount(
                 Addresses.UnbondingSet,
                 account => account.SetState(UnbondingSet.Address, unbondingSet.Bencoded));
+
+        public static IWorld ReleaseUnbondigSet(this IWorld world, IActionContext context, UnbondingSet unbondingSet)
+        {
+            var releasedUnbondings = unbondingSet.ReleaseUnbondings(
+                context.BlockIndex,
+                (address, type) => world.GetAccount(AccountAddress(type)).GetState(address)
+                    ?? throw new FailedLoadStateException(
+                        $"Tried to release unbonding on {address}, but unbonding does not exist."));
+
+            foreach (var unbonding in releasedUnbondings)
+            {
+                world = unbonding switch
+                {
+                    UnbondLockIn unbondLockIn => world.SetUnbondLockIn(unbondLockIn),
+                    RebondGrace rebondGrace => world.SetRebondGrace(rebondGrace),
+                    _ => throw new ArgumentException("Invalid unbonding type.")
+                };
+
+                unbondingSet = unbondingSet.SetUnbonding(unbonding);
+            }
+
+            world = SetUnbondingSet(world, unbondingSet);
+
+            return world;
+        }
+
+        private static Address AccountAddress(Type type) => type switch
+        {
+            var t when t == typeof(UnbondLockIn) => Addresses.UnbondLockIn,
+            var t when t == typeof(RebondGrace) => Addresses.RebondGrace,
+            _ => throw new ArgumentException("Invalid unbonding type.")
+        };
     }
 }

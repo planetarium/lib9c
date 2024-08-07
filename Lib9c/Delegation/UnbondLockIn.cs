@@ -10,7 +10,7 @@ using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
-    public sealed class UnbondLockIn : IBencodable, IEquatable<UnbondLockIn>
+    public sealed class UnbondLockIn : IUnbonding, IBencodable, IEquatable<UnbondLockIn>
     {
         private static readonly IComparer<UnbondLockInEntry> _entryComparer
             = new UnbondLockInEntryComparer();
@@ -79,12 +79,13 @@ namespace Nekoyume.Delegation
 
         public int MaxEntries { get; }
 
-        public long lowestExpireHeight => Entries.First().Key;
+        public long LowestExpireHeight => Entries.First().Key;
 
         public bool IsFull => Entries.Values.Sum(e => e.Count) >= MaxEntries;
 
         public bool IsEmpty => Entries.IsEmpty;
 
+        // TODO: Use better custom collection type
         public ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>> Entries { get; }
 
         public ImmutableArray<UnbondLockInEntry> FlattenedEntries
@@ -132,9 +133,13 @@ namespace Nekoyume.Delegation
             return UpdateEntries(updatedEntries, releasedFAV);
         }
 
+        IUnbonding IUnbonding.Release(long height) => Release(height);
+
         [Obsolete("This method is not implemented yet.")]
         public UnbondLockIn Slash()
             => throw new NotImplementedException();
+
+        IUnbonding IUnbonding.Slash() => Slash();
 
         public FungibleAssetValue? FlushReleasedFAV()
         {
@@ -258,15 +263,13 @@ namespace Nekoyume.Delegation
                         entry.ExpireHeight,
                         entries.Insert(index < 0 ? ~index : index, entry)));
             }
-            else
-            {
-                return UpdateEntries(
-                    Entries.Add(
-                        entry.ExpireHeight, ImmutableList<UnbondLockInEntry>.Empty.Add(entry)));
-            }
+
+            return UpdateEntries(
+                Entries.Add(
+                    entry.ExpireHeight, ImmutableList<UnbondLockInEntry>.Empty.Add(entry)));
         }
 
-        public class UnbondLockInEntry : IBencodable, IEquatable<UnbondLockInEntry>
+        public class UnbondLockInEntry : IUnbondingEntry, IBencodable, IEquatable<UnbondLockInEntry>
         {
             private int? _cachedHashCode;
 
