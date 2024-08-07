@@ -193,12 +193,12 @@ namespace Nekoyume.Action
             foreach (var equipment in equipmentList)
             {
                 var grindingRow = crystalEquipmentGrindingSheet[equipment.Id];
-                foreach (var (itemId, count) in grindingRow.RewardMaterials)
+                foreach (var (materialId, count) in grindingRow.RewardMaterials)
                 {
-                    var materialRow = materialItemSheet[itemId];
-                    var item = ItemFactory.CreateMaterial(materialRow);
-                    reward.TryAdd(item, 0);
-                    reward[item] += count;
+                    var materialRow = materialItemSheet[materialId];
+                    var material = ItemFactory.CreateMaterial(materialRow);
+                    reward.TryAdd(material, 0);
+                    reward[material] += count;
                 }
             }
 
