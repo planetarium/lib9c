@@ -83,5 +83,10 @@ namespace Nekoyume.Module.Guild
                 .MutateAccount(Addresses.Guild, account => account.RemoveState(guildAddress))
                 .RemoveBanList(guildAddress);
         }
+
+        public static IWorld SetGuild(this IWorld world, Model.Guild.Guild guild)
+            => world.MutateAccount(
+                Addresses.Guild,
+                account => account.SetState(guild.Address, guild.Bencoded));
     }
 }
