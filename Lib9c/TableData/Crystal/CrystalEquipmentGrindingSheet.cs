@@ -18,15 +18,19 @@ namespace Nekoyume.TableData.Crystal
                 ItemId = ParseInt(fields[0]);
                 EnchantBaseId = ParseInt(fields[1]);
                 CRYSTAL = ParseInt(fields[2]);
-                for (int i = 0; i < 2; i++)
-                {
-                    var offset = i * 2;
-                    if (!TryParseInt(fields[3 + offset], out var materialId) || materialId == 0)
-                    {
-                        continue;
-                    }
 
-                    RewardMaterials.Add((materialId, ParseInt(fields[4 + offset])));
+                if (fields.Count > 3)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        var offset = i * 2;
+                        if (!TryParseInt(fields[3 + offset], out var materialId) || materialId == 0)
+                        {
+                            continue;
+                        }
+
+                        RewardMaterials.Add((materialId, ParseInt(fields[4 + offset])));
+                    }
                 }
             }
         }

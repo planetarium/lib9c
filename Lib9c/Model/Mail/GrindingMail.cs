@@ -21,7 +21,9 @@ namespace Nekoyume.Model.Mail
         {
             ItemCount = serialized["ic"].ToInteger();
             Asset = serialized["a"].ToFungibleAssetValue();
-            RewardMaterialCount = serialized["rmc"].ToInteger();
+            RewardMaterialCount = serialized.TryGetValue((Text)"rmc", out var value)
+                ? value.ToInteger()
+                : 0;
         }
 
         public override void Read(IMail mail)
