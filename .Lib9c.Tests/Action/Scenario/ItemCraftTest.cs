@@ -228,7 +228,14 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = 0L,
                     RandomSeed = randomSeed,
                 });
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+
+                var allSlotState = stateV2.GetCombinationSlotState(_avatarAddr, out var migrateRequired);
+                if (migrateRequired)
+                {
+                    stateV2 = stateV2.SetCombinationSlotState(_avatarAddr, allSlotState);
+                }
+
+                var slotState = allSlotState.GetCombinationSlotState(i);
                 // TEST: requiredBlockIndex
                 // TODO: Check reduced required block when pet comens in
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);

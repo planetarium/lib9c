@@ -42,8 +42,6 @@ namespace Lib9c.Tests.Action
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses[0] = _avatarAddress;
 
-            var gameConfigState = new GameConfigState();
-
             var avatarState = new AvatarState(
                 _avatarAddress,
                 _agentAddress,
@@ -51,6 +49,9 @@ namespace Lib9c.Tests.Action
                 _tableSheets.GetAvatarSheets(),
                 default
             );
+
+            var allSlotState = new AllCombinationSlotState();
+            allSlotState.AddCombinationSlotState(slotAddress);
 
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
@@ -60,11 +61,7 @@ namespace Lib9c.Tests.Action
             _initialState = new World(MockUtil.MockModernWorldState)
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, avatarState)
-                .SetLegacyState(
-                    slotAddress,
-                    new CombinationSlotState(
-                        slotAddress,
-                        GameConfig.RequireClearedStageLevel.CombinationConsumableAction).Serialize())
+                .SetCombinationSlotState(_avatarAddress, allSlotState)
                 .SetLegacyState(GameConfigState.Address, gold.Serialize());
 
             foreach (var (key, value) in sheets)
@@ -114,7 +111,8 @@ namespace Lib9c.Tests.Action
                 RandomSeed = _random.Seed,
             });
 
-            var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+            var allRuneState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
+            var slotState = allRuneState.GetCombinationSlotState(0);
             Assert.NotNull(slotState.Result);
             Assert.NotNull(slotState.Result.itemUsable);
 
