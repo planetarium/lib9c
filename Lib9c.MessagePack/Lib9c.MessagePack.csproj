@@ -8,6 +8,7 @@
     <Platforms>AnyCPU</Platforms>
     <OutputPath>.bin</OutputPath>
     <IntermediateOutputPath>.obj</IntermediateOutputPath>
+    <VersionPrefix>1.16.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>

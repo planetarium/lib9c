@@ -934,9 +934,9 @@ id,item_sub_type,grade,level,cost,exp,required_block,base_stat_growth_min,base_s
 933,Grimoire,6,19,0,2394755055,1,1200,1300,1200,1300,1500,1600,200,200
 934,Grimoire,6,20,0,3593354622,1,1200,1300,1200,1300,1500,1600,200,200
 935,Grimoire,6,21,0,5391253972,1,1200,1300,1200,1300,1500,1600,200,200
-600301,EquipmentMaterial,1,0,0,10,0,0,0,0,0,0,0,0,0
-600302,EquipmentMaterial,2,0,0,200,0,0,0,0,0,0,0,0,0
-600303,EquipmentMaterial,3,0,0,4000,0,0,0,0,0,0,0,0,0
-600304,EquipmentMaterial,4,0,0,150000,0,0,0,0,0,0,0,0,0
+600301,EquipmentMaterial,1,0,0,2000,0,0,0,0,0,0,0,0,0
+600302,EquipmentMaterial,2,0,0,40000,0,0,0,0,0,0,0,0,0
+600303,EquipmentMaterial,3,0,0,200000,0,0,0,0,0,0,0,0,0
+600304,EquipmentMaterial,4,0,0,800000,0,0,0,0,0,0,0,0,0
 600305,EquipmentMaterial,5,0,0,2000000,0,0,0,0,0,0,0,0,0
-600306,EquipmentMaterial,6,0,0,7500000,0,0,0,0,0,0,0,0,0
+600306,EquipmentMaterial,6,0,0,5000000,0,0,0,0,0,0,0,0,0
