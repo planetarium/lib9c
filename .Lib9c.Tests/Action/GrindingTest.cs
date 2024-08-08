@@ -79,25 +79,31 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(0, false, 10, 2)]
-        [InlineData(0, true, 10, 2)]
-        [InlineData(2, false, 40, 2)]
-        public void Execute_Success(int itemLevel, bool equipped, int totalAsset, int totalRewardCount)
+        [InlineData(0, 1, false, 10, 2)]
+        [InlineData(0, 1, true, 10, 2)]
+        [InlineData(2, 1, false, 40, 2)]
+        [InlineData(0, 2, false, 20, 4)]
+        [InlineData(2, 2, false, 80, 4)]
+        // Check Material Reward is always same about item level
+        public void Execute_Success(int itemLevel, int equipmentCount, bool equipped, int totalAsset, int totalRewardCount)
         {
             var state = _initialState
                 .SetAgentState(_agentAddress, _agentState)
                 .SetActionPoint(_avatarAddress, 120);
 
             var itemRow = _tableSheets.EquipmentItemSheet.Values.First(r => r.Grade == 1);
-            var equipment = (Equipment)ItemFactory.CreateItemUsable(itemRow, default, 1, itemLevel);
-            equipment.equipped = equipped;
-            _avatarState.inventory.AddItem(equipment);
+            for (int i = 0; i < equipmentCount; i++)
+            {
+                var equipment = (Equipment)ItemFactory.CreateItemUsable(itemRow, default, 1, itemLevel);
+                equipment.equipped = equipped;
+                _avatarState.inventory.AddItem(equipment);
+            }
 
             state = state.SetAvatarState(_avatarAddress, _avatarState);
 
             Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
 
-            Execute(state, _agentAddress, _avatarAddress, 1, false, _random, totalAsset, totalRewardCount, _tableSheets.MaterialItemSheet);
+            Execute(state, _agentAddress, _avatarAddress, equipmentCount, false, _random, totalAsset, totalRewardCount, _tableSheets.MaterialItemSheet);
         }
 
         [Theory]
@@ -107,6 +113,7 @@ namespace Lib9c.Tests.Action
         // Multiply by legacy MonsterCollectionState.
         [InlineData(2, true, 0, 40, 2)]
         [InlineData(0, true, 2, 15, 2)]
+        // Check Material Reward is always same about Staking level
         public void Execute_Success_With_StakeState(
             int itemLevel,
             bool monsterCollect,
