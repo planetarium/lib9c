@@ -141,7 +141,7 @@ namespace Nekoyume.Blockchain.Policy
                 policyActionsRegistry: new PolicyActionsRegistry(
                     beginBlockActions: ImmutableArray<IAction>.Empty,
                     endBlockActions: new IAction[] { new RewardGold() }.ToImmutableArray(),
-                    beginTxActions: new IAction[] { new AutoJoinGuild() }.ToImmutableArray(),
+                    beginTxActions: ImmutableArray<IAction>.Empty,
                     endTxActions: ImmutableArray<IAction>.Empty),
                 blockInterval: BlockInterval,
                 validateNextBlockTx: validateNextBlockTx,
