@@ -158,7 +158,7 @@ namespace Nekoyume.Action
                 ctx.BlockIndex,
                 EquipmentIds.Count,
                 crystal,
-                materials.Count
+                materials.Values.Sum()
             );
             avatarState.Update(mail);
 

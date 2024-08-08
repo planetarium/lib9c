@@ -79,10 +79,10 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(0, false, 10)]
-        [InlineData(0, true, 10)]
-        [InlineData(2, false, 40)]
-        public void Execute_Success(int itemLevel, bool equipped, int totalAsset)
+        [InlineData(0, false, 10, 2)]
+        [InlineData(0, true, 10, 2)]
+        [InlineData(2, false, 40, 2)]
+        public void Execute_Success(int itemLevel, bool equipped, int totalAsset, int totalRewardCount)
         {
             var state = _initialState
                 .SetAgentState(_agentAddress, _agentState)
@@ -97,21 +97,22 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
 
-            Execute(state, _agentAddress, _avatarAddress, 1, false, _random, totalAsset, _tableSheets.MaterialItemSheet);
+            Execute(state, _agentAddress, _avatarAddress, 1, false, _random, totalAsset, totalRewardCount, _tableSheets.MaterialItemSheet);
         }
 
         [Theory]
         // Multiply by StakeState.
-        [InlineData(2, false, 0, 40)]
-        [InlineData(0, false, 2, 15)]
+        [InlineData(2, false, 0, 40, 2)]
+        [InlineData(0, false, 2, 15, 2)]
         // Multiply by legacy MonsterCollectionState.
-        [InlineData(2, true, 0, 40)]
-        [InlineData(0, true, 2, 15)]
+        [InlineData(2, true, 0, 40, 2)]
+        [InlineData(0, true, 2, 15, 2)]
         public void Execute_Success_With_StakeState(
             int itemLevel,
             bool monsterCollect,
             int monsterCollectLevel,
-            int totalAsset)
+            int totalAsset,
+            int totalRewardCount)
         {
             var context = new ActionContext();
             var state = _initialState
@@ -160,21 +161,22 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            Execute(state, _agentAddress, _avatarAddress, 1, false, _random, totalAsset, _tableSheets.MaterialItemSheet);
+            Execute(state, _agentAddress, _avatarAddress, 1, false, _random, totalAsset, totalRewardCount, _tableSheets.MaterialItemSheet);
         }
 
         [Theory]
         // Required more ActionPoint.
-        [InlineData(0, false, false, 0, typeof(NotEnoughActionPointException))]
+        [InlineData(0, false, false, 0, 2, typeof(NotEnoughActionPointException))]
         // Failed Charge AP.
-        [InlineData(0, true, false, 0, typeof(NotEnoughMaterialException))]
+        [InlineData(0, true, false, 0, 2, typeof(NotEnoughMaterialException))]
         // Charge AP.
-        [InlineData(0, true, true, 10, null)]
+        [InlineData(0, true, true, 10, 2, null)]
         public void Execute_With_ActionPoint(
             int ap,
             bool chargeAp,
             bool apStoneExist,
             int totalAsset,
+            int totalRewardCount,
             Type exc
         )
         {
@@ -201,12 +203,12 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                Execute(state, _agentAddress, _avatarAddress, 1, chargeAp, _random, totalAsset, _tableSheets.MaterialItemSheet);
+                Execute(state, _agentAddress, _avatarAddress, 1, chargeAp, _random, totalAsset, totalRewardCount, _tableSheets.MaterialItemSheet);
             }
             else
             {
                 Assert.Throws(exc, () =>
-                    Execute(state, _agentAddress, _avatarAddress, 1, chargeAp, _random, totalAsset, _tableSheets.MaterialItemSheet));
+                    Execute(state, _agentAddress, _avatarAddress, 1, chargeAp, _random, totalAsset, totalRewardCount, _tableSheets.MaterialItemSheet));
             }
         }
 
@@ -230,7 +232,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
 
             Assert.Throws<InvalidItemCountException>(() =>
-                Execute(state, _agentAddress, _avatarAddress, equipmentCount, false, _random, 200, _tableSheets.MaterialItemSheet));
+                Execute(state, _agentAddress, _avatarAddress, equipmentCount, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
         }
 
         [Theory]
@@ -258,7 +260,7 @@ namespace Lib9c.Tests.Action
             }
 
             Assert.Throws<FailedLoadStateException>(() =>
-                Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, _tableSheets.MaterialItemSheet));
+                Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
         }
 
         [Theory]
@@ -291,7 +293,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
 
             Assert.Throws(exc, () =>
-                Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, _tableSheets.MaterialItemSheet));
+                Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
         }
 
         [Theory]
@@ -334,6 +336,7 @@ namespace Lib9c.Tests.Action
             bool chargeAp,
             IRandom random,
             int totalAsset,
+            int rewardMaterialCount,
             MaterialItemSheet materialItemSheet)
         {
             var equipmentIds = new List<Guid>();
@@ -369,13 +372,13 @@ namespace Lib9c.Tests.Action
 
             var mail = nextAvatarState.mailBox.OfType<GrindingMail>().First(i => i.id.Equals(action.Id));
 
-            Assert.Equal(1, mail.ItemCount);
+            Assert.Equal(equipmentCount, mail.ItemCount);
             Assert.Equal(asset, mail.Asset);
+            Assert.Equal(rewardMaterialCount, mail.RewardMaterialCount);
 
             var row = materialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.ApStone);
             Assert.False(nextAvatarState.inventory.HasItem(row.Id));
 
-            // Todo : Check the material rewards
             return nextState;
         }
 
