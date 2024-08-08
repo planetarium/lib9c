@@ -8,7 +8,8 @@ using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Action.Guild
 {
-    [ActionType(TypeIdentifier)]
+    // TODO(GUILD-FEATURE): Enable again when Guild features are enabled.
+    // [ActionType(TypeIdentifier)]
     public class ApplyGuild : ActionBase
     {
         public const string TypeIdentifier = "apply_guild";

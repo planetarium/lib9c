@@ -13,3 +13,7 @@ export const fungibleIdA = HashDigest.fromHex(
   "SHA256",
   "1a755098a2bc0659a063107df62e2ff9b3cdaba34d96b79519f504b996f53820",
 );
+
+export const patronAddress = Address.fromHex(
+  "0xc64c7cBf29BF062acC26024D5b9D1648E8f8D2e1",
+);
