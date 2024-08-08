@@ -394,6 +394,39 @@ namespace Lib9c.Tests.Action
         {
             private readonly List<object[]> _data = new List<object[]>
             {
+                new object[]
+                {
+                    new[] { 10110000, 10120000, 10140000 },
+                    new Dictionary<int, int>
+                    {
+                        { 306040, 2 },
+                        { 306045, 2 },
+                        { 306070, 5 },
+                    },
+                },
+                new object[]
+                {
+                    new[] { 10110000, 10111000, 10112000, 10113000 },
+                    new Dictionary<int, int>
+                    {
+                        { 306040, 8 },
+                    },
+                },
+                new object[]
+                {
+                    new[] { 10750008, 10760000, 20160000, 20160003 },
+                    new Dictionary<int, int>
+                    {
+                        { 306085, 15 },
+                        { 600401, 35 },
+                        { 600402, 21 },
+                    },
+                },
+                new object[]
+                {
+                    new[] { 10100000 },
+                    new Dictionary<int, int>(),
+                },
             };
 
             public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
