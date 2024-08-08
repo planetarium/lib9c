@@ -33,9 +33,27 @@ namespace Nekoyume.Model.State
             }
         }
 
+        public void UnlockSlot(Address avatarAddress, int index)
+        {
+            var targetSlot = TryGetCombinationSlotState(index, out var combinationSlotState)
+                ? combinationSlotState
+                : null;
+
+            if (targetSlot is null)
+            {
+                var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddress, index);
+                var newCombinationSlot = new CombinationSlotState(slotAddr, index);
+                newCombinationSlot.Unlock();
+                AddCombinationSlotState(newCombinationSlot);
+                return;
+            }
+            
+            targetSlot.Unlock();
+        }
+
         public bool TryGetCombinationSlotState(int slotStateIndex, out CombinationSlotState? combinationSlotState)
         {
-            combinationSlotState = CombinationSlots.TryGetValue(slotStateIndex, out var rs) ? rs : null;
+            combinationSlotState = CombinationSlots.TryGetValue(slotStateIndex, out var combinationSlot) ? combinationSlot : null;
             return combinationSlotState is not null;
         }
 

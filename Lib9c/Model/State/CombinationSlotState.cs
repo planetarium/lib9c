@@ -16,6 +16,7 @@ namespace Nekoyume.Model.State
         private const string ResultKey = "result";
         private const string PetIdKey = "petId";
         private const string IndexKey = "index";
+        private const string IsUnlockedKey = "isUnlocked";
 
         public const string DeriveFormat = "combination-slot-{0}";
         public long UnlockBlockIndex { get; private set; }
@@ -27,7 +28,7 @@ namespace Nekoyume.Model.State
         /// It is a CombinationSlot index. start from 0.
         /// </summary>
         public int Index { get; private set; }
-        // TODO: Add IsUnlocked property
+        public bool IsUnlocked { get; private set; }
 
         /// <summary>
         /// Is only used for migration legacy state.
@@ -53,6 +54,7 @@ namespace Nekoyume.Model.State
 
             UnlockBlockIndex = 0;
             Index = index;
+            IsUnlocked = AvatarState.DefaultCombinationSlotCount > index;
         }
 
         public CombinationSlotState(Dictionary serialized) : base(serialized)
@@ -77,6 +79,11 @@ namespace Nekoyume.Model.State
             if (serialized.TryGetValue((Text)PetIdKey, out var petId))
             {
                 PetId = petId.ToNullableInteger();
+            }
+            
+            if (serialized.TryGetValue((Text)IsUnlockedKey, out var isUnlocked))
+            {
+                IsUnlocked = isUnlocked.ToBoolean();
             }
         }
 
@@ -141,6 +148,17 @@ namespace Nekoyume.Model.State
             };
             Result = result;
         }
+        
+        public bool Unlock()
+        {
+            if (IsUnlocked)
+            {
+                return false;
+            }
+
+            IsUnlocked = true;
+            return true;
+        }
 
         public override IValue Serialize()
         {
@@ -149,6 +167,7 @@ namespace Nekoyume.Model.State
                 [(Text)UnlockBlockIndexKey] = UnlockBlockIndex.Serialize(),
                 [(Text)StartBlockIndexKey] = StartBlockIndex.Serialize(),
                 [(Text)IndexKey] = Index.Serialize(),
+                [(Text)IsUnlockedKey] = IsUnlocked.Serialize(),
             };
 
             if (Result is not null)
