@@ -43,7 +43,7 @@ namespace Nekoyume.Model.State
 
         public CombinationSlotState(Address address, int index = 0) : base(address)
         {
-            if (index < 0 || index >= AvatarState.CombinationSlotCapacity)
+            if (!ValidateSlotIndex(index))
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(index),
@@ -78,6 +78,11 @@ namespace Nekoyume.Model.State
             {
                 PetId = petId.ToNullableInteger();
             }
+        }
+
+        public static bool ValidateSlotIndex(int index)
+        {
+            return index >= 0 && index < AvatarState.CombinationSlotCapacity;
         }
 
         [Obsolete("Use ValidateV2")]
