@@ -103,7 +103,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
                 true, 0, false, ElementalType.Wind, 10, null,
             };
@@ -123,7 +123,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
                 true, 10, false, ElementalType.Wind, 10, null,
             };
@@ -131,7 +131,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
                 true, 100, false, ElementalType.Wind, 12, null,
             };
@@ -139,7 +139,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
                 true, 1000, false, ElementalType.Wind, 15, null,
             };
@@ -149,8 +149,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
-                    new () { RecipeId = 1, SlotIndex = 1, IconId = 10100001, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
+                    new () { RecipeId = 1, SlotIndex = 1, IconId = 10112000, },
                 },
                 true, 0, false, ElementalType.Wind, 10, null,
             };
@@ -158,8 +158,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
-                    new () { RecipeId = 1, SlotIndex = 2, IconId = 10100001, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
+                    new () { RecipeId = 1, SlotIndex = 2, IconId = 10112000, },
                 },
                 true, 0, false, ElementalType.Wind, 10, null,
             };
@@ -167,10 +167,10 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
-                    new () { RecipeId = 1, SlotIndex = 1, IconId = 10100001, },
-                    new () { RecipeId = 1, SlotIndex = 2, IconId = 10100002, },
-                    new () { RecipeId = 1, SlotIndex = 3, IconId = 10100003, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
+                    new () { RecipeId = 1, SlotIndex = 1, IconId = 10112000, },
+                    new () { RecipeId = 1, SlotIndex = 2, IconId = 10113000, },
+                    new () { RecipeId = 1, SlotIndex = 3, IconId = 0, },
                 },
                 true, 0, false, ElementalType.Wind, 10, null,
             };
@@ -183,7 +183,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
                 false, 0, false, ElementalType.Wind, 0, typeof(NotEnoughItemException),
             };
@@ -193,7 +193,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
                 true, 0, true, ElementalType.Wind, 0, typeof(CombinationSlotUnlockException),
             };
@@ -202,7 +202,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10110000, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10131001, },
                 },
                 true, 0, false, ElementalType.Wind, 0, typeof(NotEnoughRelationshipException),
             };
@@ -211,8 +211,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100000, },
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10100001, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10112000, },
                 },
                 false, 0, false, ElementalType.Wind, 0, typeof(DuplicatedCraftSlotIndexException),
             };
