@@ -21,16 +21,17 @@ namespace Nekoyume.Action.DPoS.Model
 
         public ValidatorRewards(IValue serialized)
         {
-            var dict = (Dictionary)serialized;
-            Address = dict["addr"].ToAddress();
-            ValidatorAddress = dict["val_addr"].ToAddress();
-            Currency = dict["currency"].ToCurrency();
+            var list = (List)serialized;
+            Address = list[0].ToAddress();
+            ValidatorAddress = list[1].ToAddress();
+            Currency = list[2].ToCurrency();
             _rewards = new SortedList<long, FungibleAssetValue>();
-            foreach (
-                KeyValuePair<IKey, IValue> kv
-                in (Dictionary)dict["rewards"])
+            var rewardsList = (List)list[3];
+            int rewardsLength = rewardsList[0].ToInteger();
+            for (var i = 1; i <= rewardsLength; i++)
             {
-                _rewards.Add(kv.Key.ToLong(), kv.Value.ToFungibleAssetValue());
+                var reward = new Reward(rewardsList[i]);
+                _rewards.Add(reward.Index, reward.Fav);
             }
         }
 
@@ -70,20 +71,41 @@ namespace Nekoyume.Action.DPoS.Model
 
         public IValue Serialize()
         {
-            Dictionary serializedRewards = Dictionary.Empty;
+            List serializedRewards = List.Empty.Add(Rewards.Count.Serialize());
             foreach (
-                KeyValuePair<long, FungibleAssetValue> rewards in Rewards)
+                KeyValuePair<long, FungibleAssetValue> reward in Rewards)
             {
                 serializedRewards
-                    = (Dictionary)serializedRewards
-                    .Add((IKey)rewards.Key.Serialize(), rewards.Value.Serialize());
+                    = serializedRewards.Add(new Reward(reward.Key, reward.Value).Serialize());
             }
 
-            return Dictionary.Empty
-                .Add("addr", Address.Serialize())
-                .Add("val_addr", ValidatorAddress.Serialize())
-                .Add("currency", Currency.Serialize())
-                .Add("rewards", serializedRewards);
+            return List.Empty
+                .Add(Address.Serialize())
+                .Add(ValidatorAddress.Serialize())
+                .Add(Currency.Serialize())
+                .Add(serializedRewards);
         }
+    }
+
+    internal class Reward
+    {
+        public long Index { get; }
+
+        public FungibleAssetValue Fav { get; }
+
+        public Reward(IValue serialized)
+        {
+            var list = (List)serialized;
+            Index = list[0].ToLong();
+            Fav = list[1].ToFungibleAssetValue();
+        }
+
+        public Reward(long index, FungibleAssetValue fav)
+        {
+            Index = index;
+            Fav = fav;
+        }
+
+        public IValue Serialize() => List.Empty.Add(Index.Serialize()).Add(Fav.Serialize());
     }
 }
