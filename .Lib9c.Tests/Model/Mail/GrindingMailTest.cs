@@ -16,7 +16,7 @@ namespace Lib9c.Tests.Model.Mail
         [Fact]
         public void Serialize()
         {
-            var mail = new GrindingMail(1, Guid.NewGuid(), 2, 3, _currency * 1000);
+            var mail = new GrindingMail(1, Guid.NewGuid(), 2, 3, _currency * 1000, 4);
             var serialized = (Dictionary)mail.Serialize();
             var deserialized = (GrindingMail)Mail.Deserialize(serialized);
 
@@ -24,6 +24,7 @@ namespace Lib9c.Tests.Model.Mail
             Assert.Equal(2, deserialized.requiredBlockIndex);
             Assert.Equal(3, deserialized.ItemCount);
             Assert.Equal(_currency * 1000, deserialized.Asset);
+            Assert.Equal(4, deserialized.RewardMaterialCount);
         }
     }
 }
