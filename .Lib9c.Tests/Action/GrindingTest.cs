@@ -229,21 +229,6 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
 
-            // MonsterCollectionState;
-            var monsterCollectLevel = 0;
-            var requiredGold = _tableSheets.StakeRegularRewardSheet.OrderedRows
-                .FirstOrDefault(r => r.Level == monsterCollectLevel)?.RequiredGold ?? 0;
-            var mcAddress = MonsterCollectionState.DeriveAddress(_agentAddress, 0);
-            state = state.SetLegacyState(
-                mcAddress,
-                new MonsterCollectionState(mcAddress, monsterCollectLevel, 1).Serialize()
-            );
-
-            if (requiredGold > 0)
-            {
-                state = state.MintAsset(context, mcAddress, requiredGold * _ncgCurrency);
-            }
-
             Assert.Throws<InvalidItemCountException>(() =>
                 Execute(state, _agentAddress, _avatarAddress, equipmentCount, false, _random, 200, _tableSheets.MaterialItemSheet));
         }
