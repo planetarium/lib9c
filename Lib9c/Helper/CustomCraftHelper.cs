@@ -31,7 +31,7 @@ namespace Nekoyume.Helper
             itemCosts[drawingItemId] =
                 (int)Math.Floor(recipeRow.DrawingAmount * relationshipRow.CostMultiplier / 10000m);
             var drawingToolCost =
-                (decimal)recipeRow.DrawingToolAmount * relationshipRow.CostMultiplier;
+                (decimal)recipeRow.DrawingToolAmount * relationshipRow.CostMultiplier / 10000m;
             if (iconId != 0)
             {
                 drawingToolCost = drawingToolCost * iconCostMultiplier / 10000m;
