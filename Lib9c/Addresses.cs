@@ -97,6 +97,34 @@ namespace Nekoyume
 
         #endregion
 
+        #region Delegation
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.UnbondingSet"/>.
+        /// </summary>
+        public static readonly Address UnbondingSet
+            = new Address("0000000000000000000000000000000000000300");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.Bond"/>.
+        /// </summary>
+        public static readonly Address Bond
+            = new Address("0000000000000000000000000000000000000301");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.UnbondLockIn"/>.
+        /// </summary>
+        public static readonly Address UnbondLockIn
+            = new Address("0000000000000000000000000000000000000302");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.RebondGrace"/>.
+        /// </summary>
+        public static readonly Address RebondGrace
+            = new Address("0000000000000000000000000000000000000303");
+
+        #endregion
+
         public static Address GetSheetAddress<T>() where T : ISheet => GetSheetAddress(typeof(T).Name);
 
         public static Address GetSheetAddress(string sheetName) => TableSheet.Derive(sheetName);

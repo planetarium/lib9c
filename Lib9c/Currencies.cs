@@ -65,6 +65,9 @@ namespace Lib9c
 
         public static readonly Currency Mead = Currency.Legacy("Mead", 18, null);
 
+        public static readonly Currency GuildGold = Currency.Uncapped(
+            "GUILD_GOLD", 18, null);
+
         /// <summary>
         /// Covers the reward.CurrencyTicker is following cases:
         ///     - Currencies.Crystal.Ticker
