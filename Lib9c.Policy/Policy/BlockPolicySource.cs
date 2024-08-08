@@ -16,6 +16,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
+using Nekoyume.PolicyAction.Tx.Begin;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
@@ -137,7 +138,11 @@ namespace Nekoyume.Blockchain.Policy
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
             return new BlockPolicy(
-                new RewardGold(),
+                policyActionsRegistry: new PolicyActionsRegistry(
+                    beginBlockActions: ImmutableArray<IAction>.Empty,
+                    endBlockActions: new IAction[] { new RewardGold() }.ToImmutableArray(),
+                    beginTxActions: ImmutableArray<IAction>.Empty,
+                    endTxActions: ImmutableArray<IAction>.Empty),
                 blockInterval: BlockInterval,
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,

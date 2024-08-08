@@ -442,7 +442,33 @@ namespace Nekoyume.Model.Item
         }
 
         /// <summary>
-        /// Remove a material from the inventory.
+        /// Checks if the given item is non-tradable material and can be removed from the inventory.
+        /// </summary>
+        /// <param name="item">The item to check for removal.</param>
+        /// <param name="id">The ID of the material to remove.</param>
+        /// <returns>Returns a boolean indicating whether the item is removable.</returns>
+        public static bool IsMaterialRemovable(Item item, int id)
+        {
+            if (item.Locked)
+            {
+                return false;
+            }
+
+            if (item.item is Material material && material.Id == id)
+            {
+                if (material is TradableMaterial)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Remove a material from the inventory. contains tradable materials.
         /// </summary>
         /// <param name="id">The ID of the material item to remove.</param>
         /// <param name="blockIndex">The block index.</param>
@@ -647,6 +673,97 @@ namespace Nekoyume.Model.Item
             if (target.count == 0)
             {
                 _items.Remove(target);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Remove a tradable material from the inventory.
+        /// </summary>
+        /// <param name="materialId">The ID of the material item to remove.</param>
+        /// <param name="blockIndex">The block index.</param>
+        /// <param name="count">The number of materials to remove. Default value is 1.</param>
+        /// <returns>True if the material is successfully removed, false otherwise.</returns>
+        public bool RemoveTradableMaterial(int materialId, long blockIndex, int count = 1)
+        {
+            if (count <= 0)
+            {
+                throw new InvalidItemCountException("cout must be greater than 0");
+            }
+            var items = _items
+                .Where(i =>
+                    !i.Locked &&
+                    i.item is TradableMaterial tradableMaterial &&
+                    tradableMaterial.Id == materialId &&
+                    tradableMaterial.RequiredBlockIndex <= blockIndex
+                )
+                .OrderBy(i => ((ITradableItem)i.item).RequiredBlockIndex)
+                .ThenBy(i => i.count)
+                .ToList();
+
+            if (items.Sum(i => i.count) < count)
+            {
+                return false;
+            }
+
+            foreach (var item in items)
+            {
+                if (item.count > count)
+                {
+                    item.count -= count;
+                    break;
+                }
+
+                count -= item.count;
+                item.count = 0;
+                _items.Remove(item);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Remove a non-tradable material from the inventory.
+        /// </summary>
+        /// <param name="id">The ID of the material item to remove.</param>
+        /// <param name="count">The number of materials to remove. Default value is 1.</param>
+        /// <returns>True if the material is successfully removed, false otherwise.</returns>
+        public bool RemoveNonTradableMaterial(int id, int count = 1)
+        {
+            if (count <= 0)
+            {
+                return false;
+            }
+
+            List<Item> targetItems = _items.Where(item => IsMaterialRemovable(item, id)).ToList();
+
+            targetItems = targetItems
+                .OrderBy(e => e.count)
+                .ToList();
+
+            if (!targetItems.Any())
+            {
+                return false;
+            }
+
+            var totalCount = targetItems.Sum(e => e.count);
+            if (totalCount < count)
+            {
+                return false;
+            }
+
+            foreach (var item in targetItems)
+            {
+                if (item.count > count)
+                {
+                    item.count -= count;
+                    break;
+                }
+
+                count -= item.count;
+                item.count = 0;
+                _items.Remove(item);
             }
 
             return true;
