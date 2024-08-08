@@ -49,7 +49,9 @@ namespace Nekoyume.Action.Guild.Migration.Controls
             // [0] = PatronAddress
             // [1] = IsApproved
             // [2] = Mead amount to refill.
-            if (!world.TryGetLegacyState(pledgeAddress, out List list) || list.Count < 3 || list[0].ToAddress() != MeadConfig.PatronAddress)
+            if (!world.TryGetLegacyState(pledgeAddress, out List list) || list.Count < 3 ||
+                list[0] is not Binary || list[0].ToAddress() != MeadConfig.PatronAddress ||
+                list[1] is not Boolean approved || !approved)
             {
                 throw new GuildMigrationFailedException("Unexpected pledge structure.");
             }

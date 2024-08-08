@@ -77,6 +77,40 @@ namespace Lib9c.Tests.Action.Guild.Migration
         }
 
         [Fact]
+        public void Execute_When_WithUnapprovedPledgeContract()
+        {
+            var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
+            var guildAddress = AddressUtil.CreateGuildAddress();
+            var target = AddressUtil.CreateAgentAddress();
+            var pledgeAddress = target.GetPledgeAddress();
+            var caller = AddressUtil.CreateAgentAddress();
+            var world = new World(MockUtil.MockModernWorldState)
+                .MakeGuild(guildAddress, guildMasterAddress)
+                .JoinGuild(guildAddress, guildMasterAddress)
+                .SetLegacyState(pledgeAddress, new List(
+                    MeadConfig.PatronAddress.Serialize(),
+                    false.Serialize(),
+                    RequestPledge.DefaultRefillMead.Serialize()));
+
+            Assert.Null(world.GetJoinedGuild(target));
+            var action = new MigratePledgeToGuild(target);
+
+            // Migrate by other.
+            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
+            {
+                PreviousState = world,
+                Signer = caller,
+            }));
+
+            // Migrate by itself.
+            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
+            {
+                PreviousState = world,
+                Signer = target,
+            }));
+        }
+
+        [Fact]
         public void Execute_When_WithoutPledgeContract()
         {
             var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;

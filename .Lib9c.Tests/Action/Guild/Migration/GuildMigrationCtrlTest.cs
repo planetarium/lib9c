@@ -19,6 +19,26 @@ namespace Lib9c.Tests.Action.Guild.Migration
     public class GuildMigrationCtrlTest
     {
         [Fact]
+        public void MigratePlanetariumPledgeToGuild_When_WithUnapprovedPledgeContract()
+        {
+            var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
+            var guildAddress = AddressUtil.CreateGuildAddress();
+            var target = AddressUtil.CreateAgentAddress();
+            var pledgeAddress = target.GetPledgeAddress();
+            var world = new World(MockUtil.MockModernWorldState)
+                .MakeGuild(guildAddress, guildMasterAddress)
+                .JoinGuild(guildAddress, guildMasterAddress)
+                .SetLegacyState(pledgeAddress, new List(
+                    MeadConfig.PatronAddress.Serialize(),
+                    false.Serialize(),  // Unapproved
+                    RequestPledge.DefaultRefillMead.Serialize()));
+
+            Assert.Null(world.GetJoinedGuild(target));
+            Assert.Throws<GuildMigrationFailedException>(() =>
+                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
+        }
+
+        [Fact]
         public void MigratePlanetariumPledgeToGuild_When_WithPledgeContract()
         {
             var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
