@@ -47,7 +47,7 @@ namespace Nekoyume.Action
                     typeof(ArenaSheet),
                 });
 
-            if (CombinationSlotState.ValidateSlotIndex(SlotIndex))
+            if (!CombinationSlotState.ValidateSlotIndex(SlotIndex))
             {
                 throw new InvalidSlotIndexException($"[{nameof(UnlockRuneSlot)}] Index : {SlotIndex}");
             }
