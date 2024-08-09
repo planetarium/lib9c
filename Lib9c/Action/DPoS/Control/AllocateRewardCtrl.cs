@@ -188,11 +188,8 @@ namespace Nekoyume.Action.DPoS.Control
                         nativeToken),
                     delegationRewardSum);
 
-                states = ValidatorRewardsCtrl.Add(
-                    states,
+                states = states.AddRewardToWipRecord(
                     Validator.DeriveAddress(vote.ValidatorPublicKey.Address),
-                    nativeToken,
-                    blockHeight,
                     delegationRewardSum);
             }
 
