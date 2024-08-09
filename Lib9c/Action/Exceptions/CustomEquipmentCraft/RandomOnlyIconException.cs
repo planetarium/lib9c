@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Nekoyume.Action.Exceptions.CustomEquipmentCraft
 {
@@ -10,6 +11,11 @@ namespace Nekoyume.Action.Exceptions.CustomEquipmentCraft
 
         public RandomOnlyIconException(int iconId)
             : base($"{iconId} only can be made with random selection.")
+        {
+        }
+
+        protected RandomOnlyIconException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }
