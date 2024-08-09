@@ -10,5 +10,7 @@ namespace Nekoyume.Delegation
         UnbondLockIn UnbondLockIn { get; }
 
         UnbondingSet UnbondingSet { get; }
+
+        LumpSumRewardsRecord LumpSumRewardsRecord { get; }
     }
 }

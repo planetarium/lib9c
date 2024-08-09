@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Numerics;
 using Bencodex;
@@ -13,6 +14,8 @@ namespace Nekoyume.Delegation
         Address Address { get; }
 
         Currency Currency { get; }
+
+        Currency RewardCurrency { get; }
 
         Address PoolAddress { get; }
 
@@ -30,16 +33,21 @@ namespace Nekoyume.Delegation
 
         BigInteger TotalShares { get; }
 
-        BondResult Bond(IDelegator delegator, FungibleAssetValue fav, Bond bond);
+        BondResult Bond(IDelegator delegator, FungibleAssetValue fav, long height, Bond bond);
 
-        UnbondResult Unbond(IDelegator delegator, BigInteger share, Bond bond);
+        UnbondResult Unbond(IDelegator delegator, BigInteger share, long height, Bond bond);
 
-        void Distribute();
+        RewardResult Reward(
+            BigInteger share,
+            long height,
+            IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords);
 
         Address BondAddress(Address delegatorAddress);
 
         Address UnbondLockInAddress(Address delegatorAddress);
 
         Address RebondGraceAddress(Address delegatorAddress);
+
+        Address LumpSumRewardsRecordAddress(long? height = null);
     }
 }

@@ -123,6 +123,12 @@ namespace Nekoyume
         public static readonly Address RebondGrace
             = new Address("0000000000000000000000000000000000000303");
 
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.LumpSumRewardsRecord"/>.
+        /// </summary>
+        public static readonly Address LumpSumRewardsRecord
+            = new Address("0000000000000000000000000000000000000304");
+
         #endregion
 
         public static Address GetSheetAddress<T>() where T : ISheet => GetSheetAddress(typeof(T).Name);

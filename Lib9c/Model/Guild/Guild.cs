@@ -17,16 +17,18 @@ namespace Nekoyume.Model.Guild
 
         public readonly AgentAddress GuildMasterAddress;
 
-        public Guild(AgentAddress guildMasterAddress)
+        public Guild(AgentAddress guildMasterAddress, Currency rewardCurrency)
             : base(guildMasterAddress)
         {
             GuildMasterAddress = guildMasterAddress;
+            RewardCurrency = rewardCurrency;
         }
 
-        public Guild(List list)
+        public Guild(List list, Currency rewardCurrency)
             : base(new Address(list[2]), list[3])
         {
             GuildMasterAddress = new AgentAddress(list[2]);
+            RewardCurrency = rewardCurrency;
 
             if (list[0] is not Text text || text != StateTypeName || list[1] is not Integer integer)
             {
@@ -41,6 +43,8 @@ namespace Nekoyume.Model.Guild
         }
 
         public override Currency Currency => Currencies.GuildGold;
+
+        public override Currency RewardCurrency { get; }
 
         public override Address PoolAddress => DeriveAddress(PoolId);
 

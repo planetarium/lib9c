@@ -14,5 +14,9 @@ namespace Nekoyume.Delegation
         RebondGrace RebondGrace { get; }
 
         UnbondingSet UnbondingSet { get; }
+
+        LumpSumRewardsRecord SrcLumpSumRewardsRecord { get; }
+
+        LumpSumRewardsRecord DstLumpSumRewardsRecord { get; }
     }
 }

@@ -9,11 +9,13 @@ namespace Nekoyume.Delegation
         public DelegateResult(
             T delegatee,
             Bond bond,
-            FungibleAssetValue delegatedFAV)
+            FungibleAssetValue delegatedFAV,
+            LumpSumRewardsRecord lumpSumRewardsRecord)
         {
             Delegatee = delegatee;
             Bond = bond;
             DelegatedFAV = delegatedFAV;
+            LumpSumRewardsRecord = lumpSumRewardsRecord;
         }
 
         public T Delegatee { get; }
@@ -23,5 +25,7 @@ namespace Nekoyume.Delegation
         public Bond Bond { get; }
 
         public FungibleAssetValue DelegatedFAV { get; }
+
+        public LumpSumRewardsRecord LumpSumRewardsRecord { get; }
     }
 }

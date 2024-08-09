@@ -8,12 +8,14 @@ namespace Nekoyume.Delegation
             T delegatee,
             Bond bond,
             UnbondLockIn unbondLockIn,
-            UnbondingSet unbondingSet)
+            UnbondingSet unbondingSet,
+            LumpSumRewardsRecord lumpSumRewardsRecord)
         {
             Delegatee = delegatee;
             Bond = bond;
             UnbondLockIn = unbondLockIn;
             UnbondingSet = unbondingSet;
+            LumpSumRewardsRecord = lumpSumRewardsRecord;
         }
 
         public T Delegatee { get; }
@@ -25,5 +27,7 @@ namespace Nekoyume.Delegation
         public UnbondLockIn UnbondLockIn { get; }
 
         public UnbondingSet UnbondingSet { get; }
+
+        public LumpSumRewardsRecord LumpSumRewardsRecord { get; }
     }
 }
