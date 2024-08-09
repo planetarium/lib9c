@@ -135,6 +135,8 @@ namespace Nekoyume.Module.Guild
             GuildAddress guildAddress,
             FungibleAssetValue fav)
         {
+            world = world.ClaimReward(context, guildAddress);
+
             var agentAddress = new AgentAddress(context.Signer);
             var guildParticipant = world.TryGetGuildParticipant(agentAddress, out var p)
                 ? p
@@ -143,7 +145,7 @@ namespace Nekoyume.Module.Guild
                 ? g
                 : throw new InvalidOperationException("The guild does not exist.");
             var bond = world.GetBond(guild, agentAddress);
-            var result = guildParticipant.Delegate(guild, fav, bond);
+            var result = guildParticipant.Delegate(guild, fav, context.BlockIndex, bond);
 
             return world
                 .SetBond(result.Bond)
@@ -158,6 +160,8 @@ namespace Nekoyume.Module.Guild
             GuildAddress guildAddress,
             BigInteger share)
         {
+            world = world.ClaimReward(context, guildAddress);
+
             var agentAddress = new AgentAddress(context.Signer);
             var guildParticipant = world.TryGetGuildParticipant(agentAddress, out var p)
                 ? p
@@ -177,6 +181,32 @@ namespace Nekoyume.Module.Guild
                 .SetGuildParticipant(guildParticipant)
                 .SetUnbondLockIn(result.UnbondLockIn)
                 .SetUnbondingSet(result.UnbondingSet);
+        }
+
+        private static IWorld ClaimReward(
+            this IWorld world,
+            IActionContext context,
+            GuildAddress guildAddress)
+        {
+            var agentAddress = new AgentAddress(context.Signer);
+            var guildParticipant = world.TryGetGuildParticipant(agentAddress, out var p)
+                ? p
+                : new GuildParticipant(agentAddress, guildAddress);
+            var guild = world.TryGetGuild(guildAddress, out var g)
+                ? g
+                : throw new InvalidOperationException("The guild does not exist.");
+            var bond = world.GetBond(guild, agentAddress);
+            var rewardRecords = world.GetLumpSumRewardsRecords(
+                guild, context.BlockIndex, guildParticipant.LastClaimRewardHeight);
+
+            var claimRewardResult = guildParticipant.ClaimReward(
+                guild, rewardRecords, bond, context.BlockIndex);
+
+            return world
+                .SetLumpSumRewardsRecord(claimRewardResult.LumpSumRewardsRecord)
+                .SetGuild(claimRewardResult.Delegatee)
+                .SetGuildParticipant(guildParticipant)
+                .TransferAsset(context, guild.RewardPoolAddress, agentAddress, claimRewardResult.Reward);
         }
 
         private static IWorld SetGuildParticipant(

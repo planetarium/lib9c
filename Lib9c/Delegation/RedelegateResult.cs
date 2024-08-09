@@ -10,7 +10,9 @@ namespace Nekoyume.Delegation
             Bond srcBond,
             Bond dstBond,
             RebondGrace rebondGrace,
-            UnbondingSet unbondingSet)
+            UnbondingSet unbondingSet,
+            LumpSumRewardsRecord srcLumpSumRewardsRecord,
+            LumpSumRewardsRecord dstLumpSumRewardsRecord)
         {
             SrcDelegatee = srcDelegatee;
             DstDelegatee = dstDelegatee;
@@ -18,6 +20,8 @@ namespace Nekoyume.Delegation
             DstBond = dstBond;
             RebondGrace = rebondGrace;
             UnbondingSet = unbondingSet;
+            SrcLumpSumRewardsRecord = srcLumpSumRewardsRecord;
+            DstLumpSumRewardsRecord = dstLumpSumRewardsRecord;
         }
 
         public T SrcDelegatee { get; }
@@ -35,5 +39,9 @@ namespace Nekoyume.Delegation
         public RebondGrace RebondGrace { get; }
 
         public UnbondingSet UnbondingSet { get; }
+
+        public LumpSumRewardsRecord SrcLumpSumRewardsRecord { get; }
+
+        public LumpSumRewardsRecord DstLumpSumRewardsRecord { get; }
     }
 }

@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Numerics;
 using Bencodex;
@@ -17,6 +18,7 @@ namespace Nekoyume.Delegation
         IDelegateResult Delegate(
             IDelegatee delegatee,
             FungibleAssetValue fav,
+            long height,
             Bond bond);
 
         IUndelegateResult Undelegate(
@@ -37,6 +39,10 @@ namespace Nekoyume.Delegation
             RebondGrace srcRebondGrace,
             UnbondingSet unbondingSet);
 
-        void Claim(IDelegatee delegatee);
+        IClaimRewardResult ClaimReward(
+            IDelegatee delegatee,
+            IEnumerable<LumpSumRewardsRecord> lumpSumRewardRecords,
+            Bond bond,
+            long height);
     }
 }

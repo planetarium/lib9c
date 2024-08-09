@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
@@ -15,9 +16,8 @@ namespace Nekoyume.Delegation
         where TSelf : Delegator<T, TSelf>
     {
         public Delegator(Address address)
+            : this(address, ImmutableSortedSet<Address>.Empty, 0L)
         {
-            Address = address;
-            Delegatees = ImmutableSortedSet<Address>.Empty;
         }
 
         public Delegator(Address address, IValue bencoded)
@@ -25,26 +25,41 @@ namespace Nekoyume.Delegation
         {
         }
 
-        private Delegator(Address address, List bencoded)
+        public Delegator(Address address, List bencoded)
+            : this(
+                address,
+                ((List)bencoded[0]).Select(item => new Address(item)).ToImmutableSortedSet(),
+                (Integer)bencoded[1])
+        {
+        }
+
+        private Delegator(
+            Address address, ImmutableSortedSet<Address> delegatees, long lastClaimRewardHeight)
         {
             Address = address;
-            Delegatees = bencoded.Select(item => new Address(item)).ToImmutableSortedSet();
+            Delegatees = delegatees;
+            LastClaimRewardHeight = lastClaimRewardHeight;
         }
 
         public Address Address { get; }
 
         public ImmutableSortedSet<Address> Delegatees { get; private set; }
 
+        public long LastClaimRewardHeight { get; private set; }
+
         public List Bencoded
-            => new List(Delegatees.Select(a => a.Bencoded));
+            => List.Empty
+                .Add(new List(Delegatees.Select(a => a.Bencoded)))
+                .Add(LastClaimRewardHeight);
 
         IValue IBencodable.Bencoded => Bencoded;
 
         IDelegateResult IDelegator.Delegate(
             IDelegatee delegatee,
             FungibleAssetValue fav,
+            long height,
             Bond bond)
-            => Delegate((T)delegatee, fav, bond);
+            => Delegate((T)delegatee, fav, height, bond);
 
         IUndelegateResult IDelegator.Undelegate(
             IDelegatee delegatee,
@@ -80,9 +95,21 @@ namespace Nekoyume.Delegation
                 srcRebondGrace,
                 unbondingSet);
 
+        IClaimRewardResult IDelegator.ClaimReward(
+            IDelegatee delegatee,
+            IEnumerable<LumpSumRewardsRecord> lumpSumRewardRecords,
+            Bond bond,
+            long height)
+            => ClaimReward(
+                (T)delegatee,
+                lumpSumRewardRecords,
+                bond,
+                height);
+
         public DelegateResult<T> Delegate(
             T delegatee,
             FungibleAssetValue fav,
+            long height,
             Bond bond)
         {
             if (fav.Sign <= 0)
@@ -91,10 +118,14 @@ namespace Nekoyume.Delegation
                     nameof(fav), fav, "Fungible asset value must be positive.");
             }
 
-            BondResult bondResult = delegatee.Bond((TSelf)this, fav, bond);
+            BondResult bondResult = delegatee.Bond((TSelf)this, fav, height, bond);
             Delegatees = Delegatees.Add(delegatee.Address);
 
-            return new DelegateResult<T>(delegatee, bondResult.Bond, fav);
+            return new DelegateResult<T>(
+                delegatee,
+                bondResult.Bond,
+                fav,
+                bondResult.LumpSumRewardsRecord);
         }
 
         public UndelegateResult<T> Undelegate(
@@ -122,7 +153,7 @@ namespace Nekoyume.Delegation
                 throw new InvalidOperationException("Undelegation is full.");
             }
 
-            UnbondResult unbondResult = delegatee.Unbond((TSelf)this, share, bond);
+            UnbondResult unbondResult = delegatee.Unbond((TSelf)this, share, height, bond);
             unbondLockIn = unbondLockIn.LockIn(
                 unbondResult.UnbondedFAV, height, height + delegatee.UnbondingPeriod);
 
@@ -131,13 +162,14 @@ namespace Nekoyume.Delegation
                 Delegatees = Delegatees.Remove(delegatee.Address);
             }
 
-            unbondingSet = unbondingSet.AddUnbondLockIn(unbondLockIn.Address);
+            unbondingSet = unbondingSet.SetUnbonding(unbondLockIn);
 
             return new UndelegateResult<T>(
                 delegatee,
                 unbondResult.Bond,
                 unbondLockIn,
-                unbondingSet);
+                unbondingSet,
+                unbondResult.LumpSumRewardsRecord);
         }
 
         public RedelegateResult<T> Redelegate(
@@ -163,9 +195,9 @@ namespace Nekoyume.Delegation
             }
 
             UnbondResult srcUnbondResult = srcDelegatee.Unbond(
-                (TSelf)this, share, srcBond);
+                (TSelf)this, share, height, srcBond);
             BondResult dstBondResult = dstDelegatee.Bond(
-                (TSelf)this, srcUnbondResult.UnbondedFAV, dstBond);
+                (TSelf)this, srcUnbondResult.UnbondedFAV, height, dstBond);
             srcRebondGrace = srcRebondGrace.Grace(
                 dstDelegatee.Address,
                 srcUnbondResult.UnbondedFAV,
@@ -178,7 +210,7 @@ namespace Nekoyume.Delegation
             }
 
             Delegatees = Delegatees.Add(dstDelegatee.Address);
-            unbondingSet.AddRebondGrace(srcRebondGrace.Address);
+            unbondingSet.SetUnbonding(srcRebondGrace);
 
             return new RedelegateResult<T>(
                 srcDelegatee,
@@ -186,7 +218,9 @@ namespace Nekoyume.Delegation
                 srcUnbondResult.Bond,
                 dstBondResult.Bond,
                 srcRebondGrace,
-                unbondingSet);
+                unbondingSet,
+                srcUnbondResult.LumpSumRewardsRecord,
+                dstBondResult.LumpSumRewardsRecord);
         }
 
         public UndelegateResult<T> CancelUndelegate(
@@ -214,23 +248,36 @@ namespace Nekoyume.Delegation
                 throw new InvalidOperationException("Undelegation is full.");
             }
 
-            BondResult bondResult = delegatee.Bond((TSelf)this, fav, bond);
+            BondResult bondResult = delegatee.Bond((TSelf)this, fav, height, bond);
             unbondLockIn = unbondLockIn.Cancel(fav, height);
             Delegatees = Delegatees.Add(delegatee.Address);
             unbondingSet = unbondLockIn.IsEmpty
-                ? unbondingSet.RemoveUnbondLockIn(unbondLockIn.Address)
+                ? unbondingSet.RemoveUnbonding(unbondLockIn.Address)
                 : unbondingSet;
 
             return new UndelegateResult<T>(
                 delegatee,
                 bondResult.Bond,
                 unbondLockIn,
-                unbondingSet);
+                unbondingSet,
+                bondResult.LumpSumRewardsRecord);
         }
 
-        public void Claim(IDelegatee delegatee)
+        public ClaimRewardResult<T> ClaimReward(
+            T delegatee,
+            IEnumerable<LumpSumRewardsRecord> lumpSumRewardRecords,
+            Bond bond,
+            long height)
         {
-            // TODO: Implement this
+            RewardResult rewardResult = delegatee.Reward(
+                bond.Share,
+                height,
+                lumpSumRewardRecords);
+            LastClaimRewardHeight = height;
+            return new ClaimRewardResult<T>(
+                delegatee,
+                rewardResult.Reward,
+                rewardResult.LumpSumRewardsRecord);
         }
 
         public override bool Equals(object? obj)

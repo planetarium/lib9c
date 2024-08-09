@@ -16,7 +16,7 @@ namespace Nekoyume.Module.Guild
             var value = worldState.GetAccountState(Addresses.Guild).GetState(guildAddress);
             if (value is List list)
             {
-                return new Model.Guild.Guild(list);
+                return new Model.Guild.Guild(list, worldState.GetGoldCurrency());
             }
 
             throw new FailedLoadStateException("There is no such guild.");
@@ -52,7 +52,7 @@ namespace Nekoyume.Module.Guild
             return world.MutateAccount(Addresses.Guild,
                 account =>
                     account.SetState(guildAddress,
-                        new Model.Guild.Guild(signer).Bencoded))
+                        new Model.Guild.Guild(signer, world.GetGoldCurrency()).Bencoded))
                 .JoinGuild(guildAddress, signer);
         }
 

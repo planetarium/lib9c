@@ -12,6 +12,8 @@ public sealed class DummyDelegatee : Delegatee<DummyDelegator, DummyDelegatee>
 
     public override Currency Currency => DelegationFixture.TestCurrency;
 
+    public override Currency RewardCurrency => DelegationFixture.TestCurrency;
+
     public override Address PoolAddress => DelegationFixture.FixedPoolAddress;
 
     public override long UnbondingPeriod => 3;

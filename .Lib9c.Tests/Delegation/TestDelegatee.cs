@@ -19,6 +19,8 @@ namespace Lib9c.Tests.Delegation
 
         public override Currency Currency => DelegationFixture.TestCurrency;
 
+        public override Currency RewardCurrency => DelegationFixture.TestCurrency;
+
         public override long UnbondingPeriod => 3;
 
         public override Address PoolAddress => DeriveAddress(PoolId);
