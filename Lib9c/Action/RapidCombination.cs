@@ -37,13 +37,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var slotAddress = avatarAddress.Derive(
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    CombinationSlotState.DeriveFormat,
-                    slotIndex
-                )
-            );
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}RapidCombination exec started", addressesHex);
@@ -62,11 +55,24 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var slotState = states.GetCombinationSlotState(avatarAddress, slotIndex);
-            if (slotState?.Result is null)
+            var allSlotState = states.GetCombinationSlotState(avatarAddress, out _);
+            if (allSlotState is null)
             {
+                throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
+            }
+            
+            // Validate SlotIndex
+            if (!allSlotState.TryGetCombinationSlotState(slotIndex, out var slotState) || slotState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the slot state is failed to load: # {slotIndex}");
+            }
+
+            if (slotState.Result is null)
+            {                
                 throw new CombinationSlotResultNullException($"{addressesHex}CombinationSlot Result is null. ({avatarAddress}), ({slotIndex})");
             }
+            // ~Validate SlotIndex
 
             var diff = slotState.Result.itemUsable.RequiredBlockIndex - context.BlockIndex;
             if (diff <= 0)
@@ -141,6 +147,7 @@ namespace Nekoyume.Action
             }
 
             slotState.UpdateV2(context.BlockIndex, hourGlass, costHourglassCount);
+            allSlotState.SetCombinationSlotState(slotState);
             avatarState.UpdateFromRapidCombinationV2(
                 (RapidCombination5.ResultModel)slotState.Result,
                 context.BlockIndex);
@@ -157,7 +164,7 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex}RapidCombination Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetAvatarState(avatarAddress, avatarState)
-                .SetLegacyState(slotAddress, slotState.Serialize());
+                .SetCombinationSlotState(avatarAddress, allSlotState);
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>

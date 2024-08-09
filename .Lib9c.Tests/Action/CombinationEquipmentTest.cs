@@ -195,13 +195,14 @@ namespace Lib9c.Tests.Action
 
                     if (!slotUnlock)
                     {
-                        // Lock slot.
-                        state = state.SetLegacyState(
-                            _slotAddress,
-                            new CombinationSlotState(
-                                ((Dictionary)new CombinationSlotState(_slotAddress, 0).Serialize())
-                                    .SetItem("unlockBlockIndex", (blockIndex + 1).Serialize()))
-                                .Serialize());
+                        var allSlotState = new AllCombinationSlotState();
+                        var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
+                        allSlotState.AddCombinationSlotState(addr);
+                        var slotState = allSlotState.GetCombinationSlotState(0);
+                        slotState.Update(null, 0, blockIndex + 1);
+
+                        state = state
+                            .SetCombinationSlotState(_avatarAddress, allSlotState);
                     }
                 }
             }
@@ -275,7 +276,8 @@ namespace Lib9c.Tests.Action
                 var currency = nextState.GetGoldCurrency();
                 Assert.Equal(0 * currency, nextState.GetBalance(_agentAddress, currency));
 
-                var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+                var allSlotState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
+                var slotState = allSlotState.GetCombinationSlotState(0);
                 Assert.NotNull(slotState.Result);
                 Assert.NotNull(slotState.Result.itemUsable);
 
@@ -435,8 +437,7 @@ namespace Lib9c.Tests.Action
                 });
 
                 Assert.True(nextState.TryGetLegacyState(hammerPointAddress, out List serialized));
-                var hammerPointState =
-                    new HammerPointState(hammerPointAddress, serialized);
+                var hammerPointState = new HammerPointState(hammerPointAddress, serialized);
                 if (!doSuperCraft)
                 {
                     Assert.Equal(subRow.RewardHammerPoint, hammerPointState.HammerPoint);
@@ -444,7 +445,8 @@ namespace Lib9c.Tests.Action
                 else
                 {
                     Assert.Equal(0, hammerPointState.HammerPoint);
-                    var slotState = nextState.GetCombinationSlotState(_avatarAddress, 0);
+                    var allSlotState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
+                    var slotState = allSlotState.GetCombinationSlotState(0);
                     Assert.NotNull(slotState.Result);
                     Assert.NotNull(slotState.Result.itemUsable);
                     Assert.NotEmpty(slotState.Result.itemUsable.Skills);

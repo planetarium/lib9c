@@ -127,7 +127,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             );
 
             // Prepare to combination
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 0);
+            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
             stateV2 = CraftUtil.AddMaterialsToInventory(
                 stateV2,
                 _tableSheets,
@@ -174,7 +174,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 RandomSeed = random.Seed,
             });
 
-            var slotState = stateV2.GetCombinationSlotState(_avatarAddr, 0);
+            var allSlotState = stateV2.GetCombinationSlotState(_avatarAddr, out var _);
+            var slotState = allSlotState.GetCombinationSlotState(0);
             // TEST: Combination should be done
             Assert.Equal(
                 stateV2.GetGameConfigState().RequiredAppraiseBlock,

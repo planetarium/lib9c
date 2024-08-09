@@ -116,13 +116,6 @@ namespace Nekoyume.Action
             var states = ctx.PreviousState;
 
             // Collect addresses
-            var slotAddress = avatarAddress.Derive(
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    CombinationSlotState.DeriveFormat,
-                    slotIndex
-                )
-            );
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
 
             var sw = new Stopwatch();
@@ -170,21 +163,25 @@ namespace Nekoyume.Action
                 );
             }
 
-            // Validate combination slot
-            var slotState = states.GetCombinationSlotState(avatarAddress, slotIndex);
-            if (slotState is null)
+            var allSlotState = states.GetCombinationSlotState(avatarAddress, out _);
+            if (allSlotState is null)
             {
-                throw new FailedLoadStateException(
-                    $"{addressesHex} Aborted as the slot state was failed to load. #{slotIndex}"
-                );
+                throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
             }
 
-            if (!slotState.ValidateV2(avatarState, ctx.BlockIndex))
+            // Validate SlotIndex
+            if (!allSlotState.TryGetCombinationSlotState(slotIndex, out var slotState) || slotState is null)
+            {
+                throw new FailedLoadStateException(
+                    $"{addressesHex}Aborted as the slot state is failed to load: # {slotIndex}");
+            }
+
+            if (!slotState.ValidateV2(avatarState, context.BlockIndex))
             {
                 throw new CombinationSlotUnlockException(
-                    $"{addressesHex} Aborted as the slot state was failed to invalid. #{slotIndex}"
-                );
+                    $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {slotIndex}");
             }
+            // ~Validate SlotIndex
 
             sw.Stop();
             Log.Verbose("{AddressesHex} ItemEnhancement Get Equipment: {Elapsed}", addressesHex,
@@ -428,6 +425,7 @@ namespace Nekoyume.Action
 
             // Update slot state
             slotState.Update(result, ctx.BlockIndex, requiredBlockIndex);
+            allSlotState.SetCombinationSlotState(slotState);
 
             // Set state
             sw.Restart();
@@ -439,7 +437,8 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex} ItemEnhancement Total Executed Time: {Elapsed}", addressesHex,
                 ended - started);
-            return states.SetLegacyState(slotAddress, slotState.Serialize());
+            return states
+                .SetCombinationSlotState(avatarAddress, allSlotState);
         }
 
         public static int GetRequiredBlockCount(Equipment preEquipment, Equipment targetEquipment,

@@ -272,6 +272,7 @@ namespace Nekoyume.Module
             return GetWeeklyArenaState(worldState, address);
         }
 
+        [Obsolete("Use AllCombinationSlotState.GetRuneState() instead.")]
         public static CombinationSlotState GetCombinationSlotState(
             this IWorldState worldState,
             Address avatarAddress,

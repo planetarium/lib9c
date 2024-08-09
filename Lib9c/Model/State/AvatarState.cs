@@ -23,6 +23,8 @@ namespace Nekoyume.Model.State
     [Serializable]
     public class AvatarState : State, ICloneable
     {
+        public const int DefaultCombinationSlotCount = 4;
+        
         public const int CombinationSlotCapacity = 4;
         public const int CurrentVersion = 2;
         public string name;
@@ -100,6 +102,8 @@ namespace Nekoyume.Model.State
                 new KeyValuePair<int, int>((int) createEvent, 1),
                 new KeyValuePair<int, int>((int) levelEvent, level),
             };
+            
+            // TODO: Remove this code after the migration.
             combinationSlotAddresses = new List<Address>(CombinationSlotCapacity);
             for (var i = 0; i < CombinationSlotCapacity; i++)
             {

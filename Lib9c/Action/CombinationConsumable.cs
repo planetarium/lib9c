@@ -1,7 +1,8 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
@@ -14,7 +15,6 @@ using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -57,13 +57,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var slotAddress = avatarAddress.Derive(
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    CombinationSlotState.DeriveFormat,
-                    slotIndex
-                )
-            );
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -75,9 +68,14 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
+            var allSlotState = states.GetCombinationSlotState(avatarAddress, out _);
+            if (allSlotState is null)
+            {
+                throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
+            }
+
             // Validate SlotIndex
-            var slotState = states.GetCombinationSlotState(avatarAddress, slotIndex);
-            if (slotState is null)
+            if (!allSlotState.TryGetCombinationSlotState(slotIndex, out var slotState) || slotState is null)
             {
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the slot state is failed to load: # {slotIndex}");
@@ -207,6 +205,7 @@ namespace Nekoyume.Action
                 recipeId = recipeId,
             };
             slotState.Update(attachmentResult, context.BlockIndex, endBlockIndex);
+            allSlotState.SetCombinationSlotState(slotState);
             // ~Update Slot
 
             // Create Mail
@@ -220,9 +219,10 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}Combination Total Executed Time: {Elapsed}", addressesHex, ended - started);
+
             return states
                 .SetAvatarState(avatarAddress, avatarState)
-                .SetLegacyState(slotAddress, slotState.Serialize());
+                .SetCombinationSlotState(avatarAddress, allSlotState);
         }
     }
 }
