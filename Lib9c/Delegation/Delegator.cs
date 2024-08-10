@@ -184,7 +184,7 @@ namespace Nekoyume.Delegation
         {
             if (share.Sign <= 0)
             {
-                    throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException(
                     nameof(share), share, "Share must be positive.");
             }
 
